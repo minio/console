@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Paper } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
@@ -40,6 +40,7 @@ import {
 import { encodeURLString } from "../../../../common/utils";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
+import { useAppDispatch } from "../../../../store";
 
 function a11yProps(index: any) {
   return {
@@ -49,7 +50,7 @@ function a11yProps(index: any) {
 }
 
 const AccessDetails = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
 

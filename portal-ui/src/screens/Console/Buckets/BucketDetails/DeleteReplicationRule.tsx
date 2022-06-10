@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { DialogContentText } from "@mui/material";
 
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -26,6 +26,7 @@ import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import WarningMessage from "../../Common/WarningMessage/WarningMessage";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IDeleteReplicationProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -48,7 +49,7 @@ const DeleteReplicationRule = ({
   allSelected,
   deleteSelectedRules = false,
 }: IDeleteReplicationProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [confirmationText, setConfirmationText] = useState<string>("");
 
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);

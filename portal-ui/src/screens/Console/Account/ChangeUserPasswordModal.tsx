@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -35,6 +35,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import { ChangePasswordIcon } from "../../../icons";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,7 +61,7 @@ const ChangeUserPassword = ({
   userName,
   closeModal,
 }: IChangeUserPasswordProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [newPassword, setNewPassword] = useState<string>("");
   const [reNewPassword, setReNewPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);

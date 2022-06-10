@@ -28,8 +28,8 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "../../../../../../icons/RemoveIcon";
 import { clearValidationError, getRandomString } from "../../../utils";
 import CasinoIcon from "@mui/icons-material/Casino";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import makeStyles from "@mui/styles/makeStyles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const IDPBuiltIn = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const classes = useStyles();
 
   const idpSelection = useSelector(

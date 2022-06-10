@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import IconButton from "@mui/material/IconButton";
 import Snackbar from "@mui/material/Snackbar";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
@@ -25,7 +25,7 @@ import {
   deleteDialogStyles,
   snackBarCommon,
 } from "../FormComponents/common/styleLibrary";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import CloseIcon from "@mui/icons-material/Close";
 import MainError from "../MainError/MainError";
 import { setModalSnackMessage } from "../../../../systemSlice";
@@ -65,7 +65,7 @@ const ModalWrapper = ({
   noContentPadding,
   titleIcon = null,
 }: IModalProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
   const modalSnackMessage = useSelector(

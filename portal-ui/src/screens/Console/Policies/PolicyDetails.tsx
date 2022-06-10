@@ -15,7 +15,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -61,6 +61,7 @@ import PolicyView from "./PolicyView";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 import { selFeatures } from "../consoleSlice";
+import { useAppDispatch } from "../../../store";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -98,7 +99,7 @@ interface IPolicyDetailsProps {
 }
 
 const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
 

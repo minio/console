@@ -24,12 +24,13 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { useDispatch } from "react-redux";
+
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { AddAccessRuleIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IEditAccessRule {
   classes: any;
@@ -54,7 +55,7 @@ const EditAccessRule = ({
   toEdit,
   initial,
 }: IEditAccessRule) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [selectedAccess, setSelectedAccess] = useState<any>(initial);
 
   const accessOptions = [

@@ -33,8 +33,9 @@ import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../../../common/api";
 import { encodeURLString } from "../../../../../../common/utils";
-import { useDispatch } from "react-redux";
+
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,7 +61,7 @@ const SetLegalHoldModal = ({
   bucketName,
   actualInfo,
 }: ISetRetentionProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [legalHoldEnabled, setLegalHoldEnabled] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const versionId = actualInfo.version_id;

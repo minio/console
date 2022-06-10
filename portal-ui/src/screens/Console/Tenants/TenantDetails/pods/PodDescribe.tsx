@@ -39,8 +39,8 @@ import Paper from "@mui/material/Paper";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import LabelValuePair from "../../../Common/UsageBarWrapper/LabelValuePair";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../store";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface IPodEventsProps {
@@ -404,7 +404,7 @@ const PodDescribe = ({
   podName,
   propLoading,
 }: IPodEventsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const loadingTenant = useSelector(
     (state: AppState) => state.tenants.loadingTenant
   );

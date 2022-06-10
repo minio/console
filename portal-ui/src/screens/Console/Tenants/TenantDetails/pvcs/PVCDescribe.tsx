@@ -30,11 +30,11 @@ import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { useDispatch } from "react-redux";
+
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
-import { AppState } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
 import LabelValuePair from "../../../Common/UsageBarWrapper/LabelValuePair";
 import {
   IPVCDescribeProps,
@@ -151,7 +151,7 @@ const PVCDescribe = ({
   const [describeInfo, setDescribeInfo] = useState<DescribeResponse>();
   const [loading, setLoading] = useState<boolean>(true);
   const [curTab, setCurTab] = useState<number>(0);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (propLoading) {

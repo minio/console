@@ -7,7 +7,6 @@ import { Button } from "@mui/material";
 import api from "../../../common/api";
 import { ErrorResponseHandler } from "../../../common/types";
 
-import { useDispatch } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import {
@@ -19,6 +18,7 @@ import withStyles from "@mui/styles/withStyles";
 import { AddMembersToGroupIcon } from "../../../icons";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 type UserPickerModalProps = {
   classes?: any;
@@ -53,7 +53,7 @@ const AddGroupMember = ({
   open,
   onClose,
 }: UserPickerModalProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [selectedUsers, setSelectedUsers] = useState(preSelectedUsers);
 
   function addMembersToGroup() {

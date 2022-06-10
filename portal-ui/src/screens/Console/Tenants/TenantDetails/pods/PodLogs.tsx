@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import {
   AutoSizer,
@@ -38,7 +38,7 @@ import {
   searchField,
 } from "../../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../../common/types";
-import { AppState } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface IPodLogsProps {
@@ -90,7 +90,7 @@ const PodLogs = ({
   podName,
   propLoading,
 }: IPodLogsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const loadingTenant = useSelector(
     (state: AppState) => state.tenants.loadingTenant
   );

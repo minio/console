@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -37,7 +37,7 @@ import {
   modalStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 
-import { AppState } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import { resetEditPoolForm, setInitialPoolDetails } from "./editPoolSlice";
 import EditPoolButton from "./EditPoolButton";
 import makeStyles from "@mui/styles/makeStyles";
@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const EditPool = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const classes = useStyles();

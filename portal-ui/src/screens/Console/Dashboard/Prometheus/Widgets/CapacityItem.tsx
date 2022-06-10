@@ -20,7 +20,6 @@ import { Box } from "@mui/material";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
-import { useDispatch } from "react-redux";
 
 import {
   calculateBytes,
@@ -31,6 +30,7 @@ import { Cell, Pie, PieChart } from "recharts";
 import { ReportedUsageIcon } from "../../../../../icons";
 import Loader from "../../../Common/Loader/Loader";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 const CapacityItem = ({
   value,
@@ -45,7 +45,7 @@ const CapacityItem = ({
   propLoading: boolean;
   apiPrefix: string;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
 
   const [totalUsableFree, setTotalUsableFree] = useState<number>(0);

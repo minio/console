@@ -17,12 +17,12 @@
 import React, { Fragment } from "react";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import { resetAddTenantForm } from "./createTenantSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../store";
 import { useNavigate } from "react-router-dom";
 
 const NewTenantCredentials = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const showNewCredentials = useSelector(

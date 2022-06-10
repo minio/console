@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Link,
   Navigate,
@@ -34,7 +34,7 @@ import {
   pageContentStyles,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import { CircleIcon, MinIOTierIconXs, TrashIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
@@ -163,7 +163,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantDetails = ({ classes }: ITenantDetailsProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const params = useParams();
   const navigate = useNavigate();
   const { pathname = "" } = useLocation();

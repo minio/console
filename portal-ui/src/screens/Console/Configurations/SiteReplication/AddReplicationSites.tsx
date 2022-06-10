@@ -18,7 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, Button, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import useApi from "../../Common/Hooks/useApi";
 import { AddIcon, ClustersIcon, RemoveIcon } from "../../../../icons";
@@ -33,6 +33,7 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 type SiteInputRow = {
   name: string;
@@ -55,7 +56,7 @@ const isValidEndPoint = (ep: string) => {
   }
 };
 const AddReplicationSites = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [existingSites, setExistingSites] = useState<SiteInputRow[]>([]);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -42,6 +42,7 @@ import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../common/types";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IBulkReplicationModal {
   open: boolean;
@@ -78,7 +79,7 @@ const AddBulkReplicationModal = ({
   classes,
   buckets,
 }: IBulkReplicationModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [bucketsToAlter, setBucketsToAlter] = useState<string[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [externalLoading, setExternalLoading] = useState<boolean>(false);

@@ -29,8 +29,8 @@ import { Button, LinearProgress } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import Snackbar from "@mui/material/Snackbar";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../store";
 import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../common/types";
 
@@ -179,7 +179,7 @@ interface IConsoleProps {
 }
 
 const Console = ({ classes }: IConsoleProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { pathname = "" } = useLocation();
   const open = useSelector((state: AppState) => state.system.sidebarOpen);
   const session = useSelector(selSession);

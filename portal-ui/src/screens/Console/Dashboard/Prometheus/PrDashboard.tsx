@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 
 import { Theme } from "@mui/material/styles";
@@ -35,7 +35,7 @@ import api from "../../../../common/api";
 import TabSelector from "../../Common/TabSelector/TabSelector";
 import { componentToUse } from "./widgetUtils";
 import ZoomWidget from "./ZoomWidget";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
 import {
   DLayoutColumnProps,
@@ -67,7 +67,7 @@ const styles = (theme: Theme) =>
   });
 
 const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const zoomOpen = useSelector(
     (state: AppState) => state.dashboard.zoom.openZoom
   );

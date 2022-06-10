@@ -17,11 +17,11 @@
 import { Button } from "@mui/material";
 import React from "react";
 import { addPoolAsync } from "./addPoolThunks";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../../store";
 
 const AddPoolCreateButton = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const selectedStorageClass = useSelector(
     (state: AppState) => state.addPool.setup.storageClass

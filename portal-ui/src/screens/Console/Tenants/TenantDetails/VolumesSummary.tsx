@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -33,7 +33,7 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import SearchIcon from "../../../../icons/SearchIcon";
 import { IPodListElement } from "../ListTenants/types";
 import withSuspense from "../../Common/Components/withSuspense";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -51,7 +51,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantVolumes = ({ classes }: ITenantVolumesProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { tenantName, tenantNamespace } = useParams();
 

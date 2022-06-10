@@ -33,8 +33,8 @@ import PoolResources from "./PoolResources";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import TenantsIcon from "../../../../../../icons/TenantsIcon";
 
-import { AppState } from "../../../../../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../../store";
+import { useSelector } from "react-redux";
 import PoolConfiguration from "./PoolConfiguration";
 import PoolPodPlacement from "./PoolPodPlacement";
 import BackLink from "../../../../../../common/BackLink";
@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const AddPool = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const classes = useStyles();
 

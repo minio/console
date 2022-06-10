@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -50,6 +50,7 @@ import SearchBox from "../Common/SearchBox";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -80,7 +81,7 @@ const styles = (theme: Theme) =>
   });
 
 const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   //Local States
   const [records, setRecords] = useState<TransformedEndpointItem[]>([]);

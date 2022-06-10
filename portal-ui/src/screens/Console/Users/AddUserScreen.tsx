@@ -33,7 +33,6 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import PolicySelectors from "../Policies/PolicySelectors";
 import BackLink from "../../../common/BackLink";
 import GroupsSelectors from "./GroupsSelectors";
-import { useDispatch } from "react-redux";
 
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -45,6 +44,7 @@ import FormLayout from "../Common/FormLayout";
 import AddUserHelpBox from "./AddUserHelpBox";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../store";
 
 interface IAddUserProps {
   classes: any;
@@ -70,7 +70,7 @@ const styles = (theme: Theme) =>
   });
 
 const AddUser = ({ classes }: IAddUserProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [addLoading, setAddLoading] = useState<boolean>(false);

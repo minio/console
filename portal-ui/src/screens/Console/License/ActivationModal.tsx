@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -45,6 +45,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import Link from "@mui/material/Link";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -82,7 +83,7 @@ interface IActivationModal {
 }
 
 const ActivationModal = ({ classes, open, closeModal }: IActivationModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [license, setLicense] = useState<string>("");
   const [subnetPassword, setSubnetPassword] = useState<string>("");
   const [subnetEmail, setSubnetEmail] = useState<string>("");

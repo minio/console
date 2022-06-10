@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -58,6 +58,7 @@ import ServiceAccountPolicy from "./ServiceAccountPolicy";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { selFeatures } from "../consoleSlice";
+import { useAppDispatch } from "../../../store";
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
@@ -78,7 +79,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Account = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const classes = useStyles();

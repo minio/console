@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { useNavigate, useParams } from "react-router-dom";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
@@ -47,6 +47,7 @@ import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 import RegionSelectWrapper from "./RegionSelectWrapper";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -82,7 +83,7 @@ const AddTierConfiguration = ({
   classes,
   history,
 }: IAddNotificationEndpointProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
 

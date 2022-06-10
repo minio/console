@@ -39,8 +39,9 @@ import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import { BucketReplicationIcon } from "../../../../icons";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import { useDispatch } from "react-redux";
+
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IReplicationModal {
   open: boolean;
@@ -86,7 +87,7 @@ const AddReplicationModal = ({
 
   setReplicationRules,
 }: IReplicationModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("1");
   const [accessKey, setAccessKey] = useState<string>("");

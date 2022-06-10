@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { DialogContentText, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -25,7 +25,7 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "../../../../../../icons";
-import { AppState } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import { closeAddNSModal } from "../../createTenantSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { createNamespaceAsync } from "../../thunks/namespaceThunks";
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const AddNamespaceModal = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const classes = useStyles();
 
   const namespace = useSelector(

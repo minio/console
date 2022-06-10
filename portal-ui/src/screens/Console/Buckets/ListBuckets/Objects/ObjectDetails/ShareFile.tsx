@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -42,6 +42,7 @@ import {
   setModalErrorSnackMessage,
   setModalSnackMessage,
 } from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
 
 const CopyIcon = React.lazy(() => import("../../../../../../icons/CopyIcon"));
 
@@ -94,7 +95,7 @@ const ShareFile = ({
   bucketName,
   dataObject,
 }: IShareFileProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const distributedSetup = useSelector(selDistSet);
   const [shareURL, setShareURL] = useState<string>("");
   const [isLoadingVersion, setIsLoadingVersion] = useState<boolean>(true);

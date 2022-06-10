@@ -31,13 +31,13 @@ import {
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { BucketReplicationRule } from "../types";
-import { useDispatch } from "react-redux";
 
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IEditReplicationModal {
   closeModalAndRefresh: (refresh: boolean) => void;
@@ -74,7 +74,7 @@ const EditReplicationModal = ({
   bucketName,
   ruleID,
 }: IEditReplicationModal) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [editLoading, setEditLoading] = useState<boolean>(true);
   const [saveEdit, setSaveEdit] = useState<boolean>(false);
   const [priority, setPriority] = useState<string>("1");
