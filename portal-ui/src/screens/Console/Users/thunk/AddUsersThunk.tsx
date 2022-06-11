@@ -27,8 +27,8 @@ import {AppState} from "../../../../store";
 import api from "../../../../common/api";
 import {ErrorResponseHandler} from "../../../../common/types";
 import {setErrorSnackMessage} from "../../../../systemSlice";
-import history from "../../../../history";
 import {IAM_PAGES} from "../../../../common/SecureComponent/permissions";
+import { useNavigate } from "react-router";
 
 export const resetFormAsync = createAsyncThunk(
     "resetForm/resetFormAsync",
@@ -44,6 +44,7 @@ export const resetFormAsync = createAsyncThunk(
 export const createUserAsync = createAsyncThunk(
     "createTenant/createNamespaceAsync",
     async (_, { getState, rejectWithValue, dispatch }) => {
+        const navigate = useNavigate();
         const state = getState() as AppState;
         const accessKey = state.createUser.userName
         const secretKey = state.createUser.secretKey
@@ -58,7 +59,7 @@ export const createUserAsync = createAsyncThunk(
             })
             .then((res) => {
                 dispatch(setAddLoading(false));
-                history.push(`${IAM_PAGES.USERS}`);
+                navigate(`${IAM_PAGES.USERS}`);
             })
             .catch((err: ErrorResponseHandler) => {
                 dispatch(setAddLoading(false));
