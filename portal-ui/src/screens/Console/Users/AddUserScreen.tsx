@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import UserSelector from "./UserSelector";
+import PasswordSelector from "./PasswordSelector";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -30,14 +31,11 @@ import { CreateUserIcon } from "../../../icons";
 
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
 import PolicySelectors from "../Policies/PolicySelectors";
 import BackLink from "../../../common/BackLink";
 import GroupsSelectors from "./GroupsSelectors";
 
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { useNavigate } from "react-router-dom";
 import FormLayout from "../Common/FormLayout";
@@ -49,8 +47,6 @@ import {AppState} from "../../../store";
 import {
     setSelectedGroups,
     setAddLoading,
-    setShowPassword,
-    setSecretKey,
     setSendEnabled,
 } from "./AddUsersSlice";
 interface IAddUserProps {
@@ -78,17 +74,11 @@ const styles = (theme: Theme) =>
 
 const AddUser = ({ classes }: IAddUserProps) => {
     const dispatch = useAppDispatch();
-    const showPassword = useSelector(
-        (state: AppState) => state.createUser.showPassword
-    )
     const selectedPolicies = useSelector(
         (state: AppState) => state.createUser.selectedPolicies
     )
     const selectedGroups = useSelector(
         (state: AppState) => state.createUser.selectedGroups
-    )
-    const secretKey = useSelector(
-        (state: AppState) => state.createUser.secretKey
     )
     const addLoading = useSelector(
         (state: AppState) => state.createUser.addLoading
@@ -96,11 +86,16 @@ const AddUser = ({ classes }: IAddUserProps) => {
     const sendEnabled = useSelector(
         (state: AppState) => state.createUser.sendEnabled
     )
+    const secretKeylength = useSelector(
+        (state: AppState) => state.createUser.secretKeylength
+    )
     const navigate = useNavigate();
     dispatch(setSendEnabled());
+
+
     const saveRecord = (event: React.FormEvent) => {
         event.preventDefault();
-        if (secretKey.length < 8) {
+        if (secretKeylength < 8) {
             dispatch(
                 setErrorSnackMessage({
                     errorMessage: "Passwords must be at least 8 characters long",
@@ -141,29 +136,7 @@ const AddUser = ({ classes }: IAddUserProps) => {
                                     <UserSelector classes={classes} />
                                 </div>
                                 <div className={classes.formFieldRow}>
-                                    <InputBoxWrapper
-                                        className={classes.spacerBottom}
-                                        classes={{
-                                            inputLabel: classes.sizedLabel,
-                                        }}
-                                        id="standard-multiline-static"
-                                        name="standard-multiline-static"
-                                        label="Password"
-                                        type={showPassword ? "text" : "password"}
-                                        value={secretKey}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                            dispatch(setSecretKey(e.target.value));
-                                        }}
-                                        autoComplete="current-password"
-                                        overlayIcon={
-                                            showPassword ? (
-                                                <VisibilityOffIcon />
-                                            ) : (
-                                                <RemoveRedEyeIcon />
-                                            )
-                                        }
-                                        overlayAction={() => dispatch(setShowPassword(!showPassword))}
-                                    />
+                                    <PasswordSelector classes={classes} />
                                 </div>
                                 <Grid container item spacing="20">
                                     <Grid item xs={12}>
