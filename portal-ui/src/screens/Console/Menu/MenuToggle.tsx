@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Suspense, useEffect } from "react";
+import React, { Fragment, Suspense, useEffect } from "react";
 import OperatorLogo from "../../../icons/OperatorLogo";
-import { VersionIcon } from "../../../icons";
+import { LoginMinIOLogo, VersionIcon } from "../../../icons";
 import { Box, IconButton } from "@mui/material";
 import { ChevronLeft } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -103,7 +103,13 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
           {operatorMode ? (
             <OperatorLogo />
           ) : (
-            <LicensedConsoleLogo plan={plan} isLoading={isLicenseLoading} />
+            <Fragment>
+              <div style={{ margin: "auto", width: 100, textAlign: "right" }}>
+                <LoginMinIOLogo style={{ width: 100 }} />
+                <br />
+                <LicensedConsoleLogo plan={plan} isLoading={isLicenseLoading} />
+              </div>
+            </Fragment>
           )}
         </div>
       ) : (
