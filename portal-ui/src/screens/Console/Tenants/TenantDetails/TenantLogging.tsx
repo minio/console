@@ -197,6 +197,7 @@ const TenantLogging = ({ classes }: ITenantLogs) => {
           diskCapacityGB={logInfo.diskCapacityGB}
           serviceAccountName={logInfo.serviceAccountName}
           dbImage={logInfo.dbImage}
+          dbInitImage={logInfo.dbInitImage}
           dbLabels={logInfo.dbLabels}
           dbAnnotations={logInfo.dbAnnotations}
           dbNodeSelector={logInfo.dbNodeSelector}

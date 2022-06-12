@@ -249,7 +249,7 @@ const EditTenantMonitoringModal = ({
               <InputBoxWrapper
                 id={`image`}
                 label={"Image"}
-                placeholder={"Image"}
+                placeholder={"quay.io/prometheus/prometheus:latest"}
                 name={`image`}
                 value={newImage}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -263,7 +263,7 @@ const EditTenantMonitoringModal = ({
               <InputBoxWrapper
                 id={`sidecarImage`}
                 label={"Sidecar Image"}
-                placeholder={"Sidecar Image"}
+                placeholder={"library/alpine:latest"}
                 name={`sidecarImage`}
                 value={newSidecarImage}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,7 +277,7 @@ const EditTenantMonitoringModal = ({
               <InputBoxWrapper
                 id={`initImage`}
                 label={"Init Image"}
-                placeholder={"Init Image"}
+                placeholder={"library/busybox:1.33.1"}
                 name={`initImage`}
                 value={newInitImage}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

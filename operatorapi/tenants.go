@@ -1376,10 +1376,9 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantLogs)
 	}
 	if minTenant.Spec.Log == nil {
-		retval := &models.TenantLogs{
+		return &models.TenantLogs{
 			Disabled: true,
-		}
-		return retval, nil
+		}, nil
 	}
 	annotations := []*models.Annotation{}
 	for k, v := range minTenant.Spec.Log.Annotations {
@@ -1415,7 +1414,7 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 		minTenant.Spec.Log.Audit = &miniov2.AuditConfig{DiskCapacityGB: swag.Int(0)}
 	}
 
-	retval := &models.TenantLogs{
+	tenantLoggingConfiguration := &models.TenantLogs{
 		Image:                minTenant.Spec.Log.Image,
 		DiskCapacityGB:       fmt.Sprintf("%d", *minTenant.Spec.Log.Audit.DiskCapacityGB),
 		Annotations:          annotations,
@@ -1423,6 +1422,7 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 		NodeSelector:         nodeSelector,
 		ServiceAccountName:   minTenant.Spec.Log.ServiceAccountName,
 		DbImage:              minTenant.Spec.Log.Db.Image,
+		DbInitImage:          minTenant.Spec.Log.Db.InitImage,
 		DbAnnotations:        dbAnnotations,
 		DbLabels:             dbLabels,
 		DbNodeSelector:       dbNodeSelector,
@@ -1434,6 +1434,7 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 	var requestedMem string
 	var requestedDBCPU string
 	var requestedDBMem string
+
 	if minTenant.Spec.Log.Resources.Requests != nil {
 		requestedCPUQ := minTenant.Spec.Log.Resources.Requests["cpu"]
 		requestedCPU = strconv.FormatInt(requestedCPUQ.Value(), 10)
@@ -1445,12 +1446,12 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 		requestedDBMemQ := minTenant.Spec.Log.Db.Resources.Requests["memory"]
 		requestedDBMem = strconv.FormatInt(requestedDBMemQ.Value(), 10)
 
-		retval.LogCPURequest = requestedCPU
-		retval.LogMemRequest = requestedMem
-		retval.LogDBCPURequest = requestedDBCPU
-		retval.LogDBMemRequest = requestedDBMem
+		tenantLoggingConfiguration.LogCPURequest = requestedCPU
+		tenantLoggingConfiguration.LogMemRequest = requestedMem
+		tenantLoggingConfiguration.LogDBCPURequest = requestedDBCPU
+		tenantLoggingConfiguration.LogDBMemRequest = requestedDBMem
 	}
-	return retval, nil
+	return tenantLoggingConfiguration, nil
 }
 
 // setTenantLogsResponse returns the logs of a tenant
