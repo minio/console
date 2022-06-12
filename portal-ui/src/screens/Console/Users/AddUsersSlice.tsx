@@ -28,6 +28,7 @@ export interface ICreateUser {
     sendEnabled: boolean;
     addLoading: boolean;
     apinoerror: boolean;
+    secretKeylength: number;
 }
 
 const initialState: ICreateUser = {
@@ -39,6 +40,7 @@ const initialState: ICreateUser = {
     secretKey: "",
     selectedGroups: [],
     selectedPolicies: [],
+    secretKeylength: 0,
 };
 
 export const createUserSlice = createSlice({
@@ -56,6 +58,7 @@ export const createUserSlice = createSlice({
         },
         setSecretKey: (state, action: PayloadAction<string>) => {
             state.secretKey = action.payload;
+            state.secretKeylength = state.secretKey.length;
         },
         setSelectedPolicies: (state, action: PayloadAction<string[]>) => {
             state.selectedPolicies = action.payload;
