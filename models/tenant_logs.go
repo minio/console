@@ -45,6 +45,9 @@ type TenantLogs struct {
 	// db image
 	DbImage string `json:"dbImage,omitempty"`
 
+	// db init image
+	DbInitImage string `json:"dbInitImage,omitempty"`
+
 	// db labels
 	DbLabels []*Label `json:"dbLabels"`
 
