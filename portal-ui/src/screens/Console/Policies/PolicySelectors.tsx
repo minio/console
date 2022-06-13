@@ -121,7 +121,7 @@ const PolicySelectors = ({
     const checked = targetD.checked;
     
     let elements: string[] = [...currentPolicies]; // We clone the checkedUsers array
-console.log("You clicked a box! elements:", elements);
+
     if (checked) {
       // If the user has checked this field we need to push this to checkedUsersList
       elements.push(value);
@@ -131,7 +131,7 @@ console.log("You clicked a box! elements:", elements);
     }
     // remove empty values
     elements = elements.filter((element) => element !== "");
-    console.log("After handling elements:", elements);
+    
     dispatch(setSelectedPolicies(elements));
   };
 
