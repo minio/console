@@ -123,7 +123,7 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
             helpbox={<AddGroupHelpBox />}
           >
             <form noValidate autoComplete="off" onSubmit={setSaving}>
-              <Grid container marginTop={"16px"}>
+              <Grid container>
                 <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="group-name"

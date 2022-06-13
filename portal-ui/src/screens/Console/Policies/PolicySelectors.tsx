@@ -38,7 +38,6 @@ import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "../Users/AddUsersSlice";
 
-
 interface ISelectPolicyProps {
   classes: any;
   selectedPolicy?: string[];
@@ -137,7 +136,7 @@ const PolicySelectors = ({
   );
 
   return (
-    <React.Fragment>
+    <Grid container>
       <Grid item xs={12}>
         {loading && <LinearProgress />}
         {records.length > 0 ? (
@@ -154,7 +153,12 @@ const PolicySelectors = ({
                 />
               </div>
             </Grid>
-            <Grid item xs={12} className={classes.tableBlock}>
+            <Grid
+              item
+              xs={12}
+              className={classes.tableBlock}
+              style={{ paddingBottom: 16 }}
+            >
               <TableWrapper
                 columns={[{ label: "Policy", elementKey: "name" }]}
                 onSelect={selectionChanged}
@@ -171,7 +175,7 @@ const PolicySelectors = ({
           <div className={classes.noFound}>No Policies Available</div>
         )}
       </Grid>
-    </React.Fragment>
+    </Grid>
   );
 };
 
