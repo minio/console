@@ -195,3 +195,7 @@ export { default as InfoIcon } from "./InfoIcon";
 export { default as ConsoleAgpl } from "./ConsoleAgpl";
 export { default as ConsoleStandard } from "./ConsoleStandard";
 export { default as ConsoleEnterprise } from "./ConsoleEnterprise";
+export { default as AGPLV3LightLogo } from "./AGPLV3LightLogo";
+export { default as AGPLV3Logo } from "./AGPLV3Logo";
+export { default as EnterpriseLightLogo } from "./EnterpriseLightLogo";
+export { default as StandardLightLogo } from "./StandardLightLogo";

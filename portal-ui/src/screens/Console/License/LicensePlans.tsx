@@ -25,19 +25,19 @@ import withStyles from "@mui/styles/withStyles";
 import { Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {
-  ConsoleAgpl,
+  AGPLV3Logo,
   ConsoleEnterprise,
   ConsoleStandard,
   LicenseDocIcon,
 } from "../../../icons";
 import {
-  LICENSE_PLANS,
-  FEATURE_ITEMS,
   COMMUNITY_PLAN_FEATURES,
-  STANDARD_PLAN_FEATURES,
   ENTERPRISE_PLAN_FEATURES,
-  PAID_PLANS,
+  FEATURE_ITEMS,
   getRenderValue,
+  LICENSE_PLANS,
+  PAID_PLANS,
+  STANDARD_PLAN_FEATURES,
 } from "./utils";
 
 const styles = (theme: Theme) => createStyles({});
@@ -84,6 +84,7 @@ const PlanHeader = ({
         justifyContent: "center",
         flexFlow: "column",
         borderLeft: "1px solid #eaeaea",
+        borderBottom: "0px !important",
         "& .plan-header": {
           display: "flex",
           alignItems: "center",
@@ -244,7 +245,7 @@ const LicensePlans = ({
         <Box className="title-block">
           <Box className="title-main">
             <div className="iconContainer">
-              <ConsoleAgpl />
+              <AGPLV3Logo style={{ width: 117 }} />
             </div>
           </Box>
         </Box>
@@ -423,6 +424,7 @@ const LicensePlans = ({
               height: "25px",
               paddingLeft: "26px",
               fontSize: "14px",
+
               background: "#E5E5E5",
 
               "@media (max-width: 600px)": {
@@ -439,7 +441,6 @@ const LicensePlans = ({
               alignItems: "center",
               paddingLeft: "26px",
               fontSize: "14px",
-              fontWeight: 600,
             },
             "& .feature-item": {
               display: "flex",
@@ -523,6 +524,7 @@ const LicensePlans = ({
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "flex-start",
+                        borderBottom: "0px !important",
 
                         "& .link-text": {
                           color: "#2781B0",
@@ -554,11 +556,11 @@ const LicensePlans = ({
                     className={`plan-header`}
                     sx={{
                       fontSize: "14px",
-                      fontWeight: 600,
                       paddingLeft: "26px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "flex-start",
+                      borderBottom: "0px !important",
                     }}
                   >
                     {fi.label}
@@ -595,7 +597,7 @@ const LicensePlans = ({
             >
               {COMMUNITY_PLAN_FEATURES.map((fi, idx) => {
                 const featureLabel = featureList[idx].desc;
-                const { featureTitleRow, isHeader, isOssLicenseLink } = fi;
+                const { featureTitleRow, isHeader } = fi;
 
                 if (isHeader) {
                   return getCommunityPlanHeader();
@@ -609,32 +611,6 @@ const LicensePlans = ({
                   );
                 }
 
-                if (isOssLicenseLink) {
-                  return (
-                    <Box
-                      key={fi.id}
-                      className="feature-item"
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <a
-                        href={"https://www.gnu.org/licenses/agpl-3.0.en.html"}
-                        rel="noreferrer noopener"
-                        className={"link-text"}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setLicenseModal && setLicenseModal(true);
-                        }}
-                      >
-                        GNU AGPL v3
-                      </a>
-                    </Box>
-                  );
-                }
                 return (
                   <PricingFeatureItem
                     key={fi.id}

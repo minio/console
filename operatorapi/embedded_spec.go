@@ -4237,6 +4237,9 @@ func init() {
         "dbImage": {
           "type": "string"
         },
+        "dbInitImage": {
+          "type": "string"
+        },
         "dbLabels": {
           "type": "array",
           "items": {
@@ -9640,6 +9643,9 @@ func init() {
           }
         },
         "dbImage": {
+          "type": "string"
+        },
+        "dbInitImage": {
           "type": "string"
         },
         "dbLabels": {

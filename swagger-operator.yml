@@ -2912,6 +2912,8 @@ definitions:
         type: string
       dbImage:
         type: string
+      dbInitImage:
+        type: string
       dbLabels:
         type: array
         items:
