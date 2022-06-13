@@ -93,7 +93,7 @@ const AddPolicyScreen = () => {
                 addRecord(e);
               }}
             >
-              <Grid container item spacing={1} marginTop={"8px"}>
+              <Grid container item spacing={1}>
                 <Grid item xs={12}>
                   <InputBoxWrapper
                     id="policy-name"
