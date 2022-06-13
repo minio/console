@@ -32,7 +32,6 @@
     "@types/websocket": "^1.0.0",
     "@uiw/react-textarea-code-editor": "^2.0.2",
     "chart.js": "^2.9.3",
-    "history": "^4.10.1",
     "kbar": "^0.1.0-beta.34",
     "local-storage-fallback": "^4.1.1",
     "lodash": "^4.17.21",
