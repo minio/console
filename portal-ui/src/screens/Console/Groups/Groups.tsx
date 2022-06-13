@@ -70,7 +70,6 @@ const SetPolicy = withSuspense(
 interface IGroupsProps {
   classes: any;
   openGroupModal: any;
-  history: any;
 }
 
 const styles = (theme: Theme) =>

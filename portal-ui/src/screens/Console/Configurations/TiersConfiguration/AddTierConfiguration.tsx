@@ -76,12 +76,10 @@ const styles = (theme: Theme) =>
 
 interface IAddNotificationEndpointProps {
   classes: any;
-  history: any;
 }
 
 const AddTierConfiguration = ({
   classes,
-  history,
 }: IAddNotificationEndpointProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -203,7 +201,6 @@ const AddTierConfiguration = ({
     bucket,
     encodedCreds,
     endpoint,
-    history,
     name,
     prefix,
     region,
