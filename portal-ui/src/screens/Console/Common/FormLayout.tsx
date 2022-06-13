@@ -41,6 +41,7 @@ const FormLayout: React.FC<Props> = ({ children, title, helpbox, icon }) => {
     >
       <Box>
         <SectionTitle icon={icon}>{title}</SectionTitle>
+        <Box sx={{ height: 16 }} />
         {children}
       </Box>
 

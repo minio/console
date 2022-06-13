@@ -20,10 +20,10 @@ import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import {createUserAsync, resetFormAsync} from "./thunk/AddUsersThunk";
+import { createUserAsync, resetFormAsync } from "./thunk/AddUsersThunk";
 import {
-    formFieldStyles,
-    modalStyleUtils,
+  formFieldStyles,
+  modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
@@ -42,150 +42,151 @@ import FormLayout from "../Common/FormLayout";
 import AddUserHelpBox from "./AddUserHelpBox";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-import { useSelector} from "react-redux";
-import {AppState} from "../../../store";
+import { useSelector } from "react-redux";
+import { AppState } from "../../../store";
 import {
-    setSelectedGroups,
-    setAddLoading,
-    setSendEnabled,
+  setSelectedGroups,
+  setAddLoading,
+  setSendEnabled,
 } from "./AddUsersSlice";
 interface IAddUserProps {
-    classes: any;
+  classes: any;
 }
 
 const styles = (theme: Theme) =>
-    createStyles({
-        bottomContainer: {
-            display: "flex",
-            flexGrow: 1,
-            alignItems: "center",
-            margin: "auto",
-            justifyContent: "center",
-            "& div": {
-                width: 150,
-                "@media (max-width: 900px)": {
-                    flexFlow: "column",
-                },
-            },
+  createStyles({
+    bottomContainer: {
+      display: "flex",
+      flexGrow: 1,
+      alignItems: "center",
+      margin: "auto",
+      justifyContent: "center",
+      "& div": {
+        width: 150,
+        "@media (max-width: 900px)": {
+          flexFlow: "column",
         },
-        ...formFieldStyles,
-        ...modalStyleUtils,
-    });
+      },
+    },
+    ...formFieldStyles,
+    ...modalStyleUtils,
+  });
 
 const AddUser = ({ classes }: IAddUserProps) => {
-    const dispatch = useAppDispatch();
-    const selectedPolicies = useSelector(
-        (state: AppState) => state.createUser.selectedPolicies
-    )
-    const selectedGroups = useSelector(
-        (state: AppState) => state.createUser.selectedGroups
-    )
-    const addLoading = useSelector(
-        (state: AppState) => state.createUser.addLoading
-    )
-    const sendEnabled = useSelector(
-        (state: AppState) => state.createUser.sendEnabled
-    )
-    const secretKeylength = useSelector(
-        (state: AppState) => state.createUser.secretKeylength
-    )
-    const navigate = useNavigate();
-    dispatch(setSendEnabled());
+  const dispatch = useAppDispatch();
+  const selectedPolicies = useSelector(
+    (state: AppState) => state.createUser.selectedPolicies
+  );
+  const selectedGroups = useSelector(
+    (state: AppState) => state.createUser.selectedGroups
+  );
+  const addLoading = useSelector(
+    (state: AppState) => state.createUser.addLoading
+  );
+  const sendEnabled = useSelector(
+    (state: AppState) => state.createUser.sendEnabled
+  );
+  const secretKeylength = useSelector(
+    (state: AppState) => state.createUser.secretKeylength
+  );
+  const navigate = useNavigate();
+  dispatch(setSendEnabled());
 
+  const saveRecord = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (secretKeylength < 8) {
+      dispatch(
+        setErrorSnackMessage({
+          errorMessage: "Passwords must be at least 8 characters long",
+          detailedError: "",
+        })
+      );
+      dispatch(setAddLoading(false));
+      return;
+    }
+    if (addLoading) {
+      return;
+    }
+    dispatch(setAddLoading(true));
+    dispatch(createUserAsync())
+      .unwrap() // <-- async Thunk returns a promise, that can be 'unwrapped')
+      .then(() => navigate(`${IAM_PAGES.USERS}`));
+  };
 
-    const saveRecord = (event: React.FormEvent) => {
-        event.preventDefault();
-        if (secretKeylength < 8) {
-            dispatch(
-                setErrorSnackMessage({
-                    errorMessage: "Passwords must be at least 8 characters long",
-                    detailedError: "",
-                })
-            );
-            dispatch(setAddLoading(false));
-            return;
-        }
-        if (addLoading) {
-            return;
-        }
-        dispatch(setAddLoading(true));
-        dispatch(createUserAsync())
-            .unwrap() // <-- async Thunk returns a promise, that can be 'unwrapped')
-            .then(() => navigate(`${IAM_PAGES.USERS}`))
-    };
+  return (
+    <Fragment>
+      <Grid item xs={12}>
+        <PageHeader label={<BackLink to={IAM_PAGES.USERS} label={"Users"} />} />
+        <PageLayout>
+          <FormLayout
+            title={"Create User"}
+            icon={<CreateUserIcon />}
+            helpbox={<AddUserHelpBox />}
+          >
+            <form
+              noValidate
+              autoComplete="off"
+              onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                saveRecord(e);
+              }}
+            >
+              <Grid container>
+                <Grid item xs={12}>
+                  <div className={classes.formFieldRow}>
+                    <UserSelector classes={classes} />
+                  </div>
+                </Grid>
+                <Grid item xs={12}>
+                  <div className={classes.formFieldRow}>
+                    <PasswordSelector classes={classes} />
+                  </div>
+                </Grid>
 
-    return (
-        <Fragment>
-            <Grid item xs={12}>
-                <PageHeader label={<BackLink to={IAM_PAGES.USERS} label={"Users"} />} />
-                <PageLayout>
-                    <FormLayout
-                        title={"Create User"}
-                        icon={<CreateUserIcon />}
-                        helpbox={<AddUserHelpBox />}
-                    >
-                        <form
-                            noValidate
-                            autoComplete="off"
-                            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                                saveRecord(e);
-                            }}
-                        >
-                            <Grid item xs={12}>
-                                <div className={classes.formFieldRow}>
-                                    <UserSelector classes={classes} />
-                                </div>
-                                <div className={classes.formFieldRow}>
-                                    <PasswordSelector classes={classes} />
-                                </div>
-                                <Grid container item spacing="20">
-                                    <Grid item xs={12}>
-                                        <PolicySelectors
-                                            selectedPolicy={selectedPolicies}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <GroupsSelectors
-                                            selectedGroups={selectedGroups}
-                                            setSelectedGroups={(elements: string[]) => {
-                                                dispatch(setSelectedGroups(elements));
-                                            }}
-                                        />
-                                    </Grid>
-                                </Grid>
-                                {addLoading && (
-                                    <Grid item xs={12}>
-                                        <LinearProgress />
-                                    </Grid>
-                                )}
-                            </Grid>
-                            <Grid item xs={12} className={classes.modalButtonBar}>
-                                <Button
-                                    type="button"
-                                    variant="outlined"
-                                    color="primary"
-                                    onClick={(e) => {
-                                        dispatch(resetFormAsync());
-                                    }}
-                                >
-                                    Clear
-                                </Button>
+                <Grid item xs={12}>
+                  <PolicySelectors selectedPolicy={selectedPolicies} />
+                </Grid>
+                <Grid item xs={12}>
+                  <GroupsSelectors
+                    selectedGroups={selectedGroups}
+                    setSelectedGroups={(elements: string[]) => {
+                      dispatch(setSelectedGroups(elements));
+                    }}
+                  />
+                </Grid>
+                {addLoading && (
+                  <Grid item xs={12}>
+                    <LinearProgress />
+                  </Grid>
+                )}
 
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={addLoading || !sendEnabled}
-                                >
-                                    Save
-                                </Button>
-                            </Grid>
-                        </form>
-                    </FormLayout>
-                </PageLayout>
-            </Grid>
-        </Fragment>
-    );
+                <Grid item xs={12} className={classes.modalButtonBar}>
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    color="primary"
+                    onClick={(e) => {
+                      dispatch(resetFormAsync());
+                    }}
+                  >
+                    Clear
+                  </Button>
+
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    disabled={addLoading || !sendEnabled}
+                  >
+                    Save
+                  </Button>
+                </Grid>
+              </Grid>
+            </form>
+          </FormLayout>
+        </PageLayout>
+      </Grid>
+    </Fragment>
+  );
 };
 
 export default withStyles(styles)(AddUser);
