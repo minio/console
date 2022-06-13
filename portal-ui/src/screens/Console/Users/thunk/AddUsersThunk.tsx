@@ -27,7 +27,6 @@ import {AppState} from "../../../../store";
 import api from "../../../../common/api";
 import {ErrorResponseHandler} from "../../../../common/types";
 import {setErrorSnackMessage} from "../../../../systemSlice";
-import {IAM_PAGES} from "../../../../common/SecureComponent/permissions";
 
 export const resetFormAsync = createAsyncThunk(
     "resetForm/resetFormAsync",
