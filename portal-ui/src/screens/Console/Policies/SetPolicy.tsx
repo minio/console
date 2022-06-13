@@ -36,7 +36,9 @@ import PolicySelectors from "./PolicySelectors";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
+
+import { useSelector } from "react-redux";
 
 interface ISetPolicyProps {
   classes: any;
@@ -45,6 +47,8 @@ interface ISetPolicyProps {
   selectedGroups: string[] | null;
   open: boolean;
 }
+
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -72,7 +76,7 @@ const SetPolicy = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [actualPolicy, setActualPolicy] = useState<string[]>([]);
   const [selectedPolicy, setSelectedPolicy] = useState<string[]>([]);
-
+  const currentPolicies = useSelector((state: AppState) => state.createUser.selectedPolicies);
   const setPolicyAction = () => {
     let users = null;
     let groups = null;
@@ -88,7 +92,7 @@ const SetPolicy = ({
 
     api
       .invoke("PUT", `/api/v1/set-policy-multi`, {
-        name: selectedPolicy,
+        name: currentPolicies,
         groups: groups,
         users: users,
       })

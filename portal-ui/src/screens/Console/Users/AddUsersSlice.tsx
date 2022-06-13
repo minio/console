@@ -61,6 +61,7 @@ export const createUserSlice = createSlice({
             state.secretKeylength = state.secretKey.length;
         },
         setSelectedPolicies: (state, action: PayloadAction<string[]>) => {
+            console.log("You clicked the thing! You're in the reducer")
             state.selectedPolicies = action.payload;
         },
         setShowPassword: (state, action: PayloadAction<boolean>) => {
