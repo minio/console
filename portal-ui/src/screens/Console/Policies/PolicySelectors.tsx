@@ -35,8 +35,9 @@ import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SearchBox from "../Common/SearchBox";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "../Users/AddUsersSlice";
+import { useSelector } from "react-redux";
 
 interface ISelectPolicyProps {
   classes: any;
@@ -84,9 +85,11 @@ const PolicySelectors = ({
   const [loading, isLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
 
+  const currentPolicies = useSelector((state: AppState) => state.createUser.selectedPolicies);
+
   const fetchPolicies = useCallback(() => {
     isLoading(true);
-
+    
     api
       .invoke("GET", `/api/v1/policies?limit=1000`)
       .then((res: PolicyList) => {
@@ -112,11 +115,12 @@ const PolicySelectors = ({
   }, [loading, fetchPolicies]);
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    
     const targetD = e.target;
     const value = targetD.value;
     const checked = targetD.checked;
-
-    let elements: string[] = [...selectedPolicy]; // We clone the checkedUsers array
+    
+    let elements: string[] = [...currentPolicies]; // We clone the checkedUsers array
 
     if (checked) {
       // If the user has checked this field we need to push this to checkedUsersList
@@ -127,7 +131,7 @@ const PolicySelectors = ({
     }
     // remove empty values
     elements = elements.filter((element) => element !== "");
-
+    
     dispatch(setSelectedPolicies(elements));
   };
 
@@ -162,7 +166,7 @@ const PolicySelectors = ({
               <TableWrapper
                 columns={[{ label: "Policy", elementKey: "name" }]}
                 onSelect={selectionChanged}
-                selectedItems={selectedPolicy}
+                selectedItems={currentPolicies}
                 isLoading={loading}
                 records={filteredRecords}
                 entityName="Policies"
