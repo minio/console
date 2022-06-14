@@ -359,52 +359,6 @@ func init() {
             }
           }
         }
-      },
-      "delete": {
-        "tags": [
-          "OperatorAPI"
-        ],
-        "summary": "Delete email registered for marketplace integration",
-        "operationId": "DeleteMPIntegration",
-        "responses": {
-          "204": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "OperatorAPI"
-        ],
-        "summary": "Update email registered for marketplace integration",
-        "operationId": "PatchMPIntegration",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/mpIntegration"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
       }
     },
     "/namespace": {
@@ -5062,52 +5016,6 @@ func init() {
         ],
         "responses": {
           "201": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "OperatorAPI"
-        ],
-        "summary": "Delete email registered for marketplace integration",
-        "operationId": "DeleteMPIntegration",
-        "responses": {
-          "204": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "OperatorAPI"
-        ],
-        "summary": "Update email registered for marketplace integration",
-        "operationId": "PatchMPIntegration",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/mpIntegration"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
             "description": "A successful response."
           },
           "default": {

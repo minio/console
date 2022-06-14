@@ -1247,18 +1247,6 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - OperatorAPI
-    delete:
-      summary: Delete email registered for marketplace integration
-      operationId: DeleteMPIntegration
-      responses:
-        204:
-          description: A successful response.
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      tags:
-        - OperatorAPI
     post:
       summary: Set email to register for marketplace integration
       operationId: PostMPIntegration
@@ -1270,24 +1258,6 @@ paths:
             $ref: "#/definitions/mpIntegration"
       responses:
         201:
-          description: A successful response.
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      tags:
-        - OperatorAPI
-    patch:
-      summary: Update email registered for marketplace integration
-      operationId: PatchMPIntegration
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/mpIntegration"
-      responses:
-        200:
           description: A successful response.
         default:
           description: Generic error response.

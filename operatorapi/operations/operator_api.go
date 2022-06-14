@@ -73,9 +73,6 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPICreateTenantHandler: operator_api.CreateTenantHandlerFunc(func(params operator_api.CreateTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.CreateTenant has not yet been implemented")
 		}),
-		OperatorAPIDeleteMPIntegrationHandler: operator_api.DeleteMPIntegrationHandlerFunc(func(params operator_api.DeleteMPIntegrationParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation operator_api.DeleteMPIntegration has not yet been implemented")
-		}),
 		OperatorAPIDeletePVCHandler: operator_api.DeletePVCHandlerFunc(func(params operator_api.DeletePVCParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.DeletePVC has not yet been implemented")
 		}),
@@ -168,9 +165,6 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		}),
 		AuthLogoutHandler: auth.LogoutHandlerFunc(func(params auth.LogoutParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation auth.Logout has not yet been implemented")
-		}),
-		OperatorAPIPatchMPIntegrationHandler: operator_api.PatchMPIntegrationHandlerFunc(func(params operator_api.PatchMPIntegrationParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation operator_api.PatchMPIntegration has not yet been implemented")
 		}),
 		OperatorAPIPostMPIntegrationHandler: operator_api.PostMPIntegrationHandlerFunc(func(params operator_api.PostMPIntegrationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.PostMPIntegration has not yet been implemented")
@@ -293,8 +287,6 @@ type OperatorAPI struct {
 	OperatorAPICreateNamespaceHandler operator_api.CreateNamespaceHandler
 	// OperatorAPICreateTenantHandler sets the operation handler for the create tenant operation
 	OperatorAPICreateTenantHandler operator_api.CreateTenantHandler
-	// OperatorAPIDeleteMPIntegrationHandler sets the operation handler for the delete m p integration operation
-	OperatorAPIDeleteMPIntegrationHandler operator_api.DeleteMPIntegrationHandler
 	// OperatorAPIDeletePVCHandler sets the operation handler for the delete p v c operation
 	OperatorAPIDeletePVCHandler operator_api.DeletePVCHandler
 	// OperatorAPIDeletePodHandler sets the operation handler for the delete pod operation
@@ -357,8 +349,6 @@ type OperatorAPI struct {
 	AuthLoginOperatorHandler auth.LoginOperatorHandler
 	// AuthLogoutHandler sets the operation handler for the logout operation
 	AuthLogoutHandler auth.LogoutHandler
-	// OperatorAPIPatchMPIntegrationHandler sets the operation handler for the patch m p integration operation
-	OperatorAPIPatchMPIntegrationHandler operator_api.PatchMPIntegrationHandler
 	// OperatorAPIPostMPIntegrationHandler sets the operation handler for the post m p integration operation
 	OperatorAPIPostMPIntegrationHandler operator_api.PostMPIntegrationHandler
 	// OperatorAPIPutTenantYAMLHandler sets the operation handler for the put tenant y a m l operation
@@ -493,9 +483,6 @@ func (o *OperatorAPI) Validate() error {
 	if o.OperatorAPICreateTenantHandler == nil {
 		unregistered = append(unregistered, "operator_api.CreateTenantHandler")
 	}
-	if o.OperatorAPIDeleteMPIntegrationHandler == nil {
-		unregistered = append(unregistered, "operator_api.DeleteMPIntegrationHandler")
-	}
 	if o.OperatorAPIDeletePVCHandler == nil {
 		unregistered = append(unregistered, "operator_api.DeletePVCHandler")
 	}
@@ -588,9 +575,6 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.AuthLogoutHandler == nil {
 		unregistered = append(unregistered, "auth.LogoutHandler")
-	}
-	if o.OperatorAPIPatchMPIntegrationHandler == nil {
-		unregistered = append(unregistered, "operator_api.PatchMPIntegrationHandler")
 	}
 	if o.OperatorAPIPostMPIntegrationHandler == nil {
 		unregistered = append(unregistered, "operator_api.PostMPIntegrationHandler")
@@ -771,10 +755,6 @@ func (o *OperatorAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/mp-integration"] = operator_api.NewDeleteMPIntegration(o.context, o.OperatorAPIDeleteMPIntegrationHandler)
-	if o.handlers["DELETE"] == nil {
-		o.handlers["DELETE"] = make(map[string]http.Handler)
-	}
 	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}/pvc/{PVCName}"] = operator_api.NewDeletePVC(o.context, o.OperatorAPIDeletePVCHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
@@ -896,10 +876,6 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/logout"] = auth.NewLogout(o.context, o.AuthLogoutHandler)
-	if o.handlers["PATCH"] == nil {
-		o.handlers["PATCH"] = make(map[string]http.Handler)
-	}
-	o.handlers["PATCH"]["/mp-integration"] = operator_api.NewPatchMPIntegration(o.context, o.OperatorAPIPatchMPIntegrationHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
