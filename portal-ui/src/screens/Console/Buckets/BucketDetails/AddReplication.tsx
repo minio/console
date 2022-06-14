@@ -197,7 +197,7 @@ const AddReplication = ({
             return;
           }
 
-          setSnackBarMessage("Successfully added replication rule");
+          history.push(`/buckets/${bucketName}/admin/replication`);
           return;
         }
         setErrorSnackMessage({
