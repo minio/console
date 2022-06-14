@@ -61,7 +61,9 @@ export const addBucketsSlice = createSlice({
       if (state.name.trim() === "") {
         state.invalidFields = [...state.invalidFields, "name"];
       } else {
-        state.invalidFields = state.invalidFields.filter((field) => field !== "name");
+        state.invalidFields = state.invalidFields.filter(
+          (field) => field !== "name"
+        );
       }
     },
     setVersioning: (state, action: PayloadAction<boolean>) => {
@@ -79,21 +81,29 @@ export const addBucketsSlice = createSlice({
     setQuota: (state, action: PayloadAction<boolean>) => {
       state.quotaEnabled = action.payload;
 
-      if(!action.payload) {
+      if (!action.payload) {
         state.quotaSize = "1";
         state.quotaUnit = "Ti";
 
-        state.invalidFields = state.invalidFields.filter((field) => field !== "quotaSize");
+        state.invalidFields = state.invalidFields.filter(
+          (field) => field !== "quotaSize"
+        );
       }
     },
     setQuotaSize: (state, action: PayloadAction<string>) => {
       state.quotaSize = action.payload;
 
       if (state.quotaEnabled) {
-        if (state.quotaSize.trim() === "" || parseInt(state.quotaSize) === 0 || !(/^\d*(?:\.\d{1,2})?$/.test(state.quotaSize))) {
+        if (
+          state.quotaSize.trim() === "" ||
+          parseInt(state.quotaSize) === 0 ||
+          !/^\d*(?:\.\d{1,2})?$/.test(state.quotaSize)
+        ) {
           state.invalidFields = [...state.invalidFields, "quotaSize"];
         } else {
-          state.invalidFields = state.invalidFields.filter((field) => field !== "quotaSize");
+          state.invalidFields = state.invalidFields.filter(
+            (field) => field !== "quotaSize"
+          );
         }
       }
     },
@@ -123,7 +133,9 @@ export const addBucketsSlice = createSlice({
       ) {
         state.invalidFields = [...state.invalidFields, "retentionValidity"];
       } else {
-        state.invalidFields = state.invalidFields.filter((field) => field !== "retentionValidity");
+        state.invalidFields = state.invalidFields.filter(
+          (field) => field !== "retentionValidity"
+        );
       }
     },
     setRetentionMode: (state, action: PayloadAction<string>) => {
@@ -135,12 +147,14 @@ export const addBucketsSlice = createSlice({
     setRetentionValidity: (state, action: PayloadAction<number>) => {
       state.retentionValidity = action.payload;
       if (
-          state.retentionEnabled &&
-          (Number.isNaN(state.retentionValidity) || state.retentionValidity < 1)
+        state.retentionEnabled &&
+        (Number.isNaN(state.retentionValidity) || state.retentionValidity < 1)
       ) {
         state.invalidFields = [...state.invalidFields, "retentionValidity"];
       } else {
-        state.invalidFields = state.invalidFields.filter((field) => field !== "retentionValidity");
+        state.invalidFields = state.invalidFields.filter(
+          (field) => field !== "retentionValidity"
+        );
       }
     },
 

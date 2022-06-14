@@ -130,7 +130,9 @@ const AddBucket = ({ classes }: IsetProps) => {
     (state: AppState) => state.addBucket.retentionValidity
   );
   const addLoading = useSelector((state: AppState) => state.addBucket.loading);
-  const invalidFields = useSelector((state: AppState) => state.addBucket.invalidFields);
+  const invalidFields = useSelector(
+    (state: AppState) => state.addBucket.invalidFields
+  );
   const lockingFieldDisabled = useSelector(
     (state: AppState) => state.addBucket.lockingFieldDisabled
   );
@@ -289,7 +291,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                       id="quota_size"
                       name="quota_size"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          dispatch(setQuotaSize(e.target.value));
+                        dispatch(setQuotaSize(e.target.value));
                       }}
                       label="Capacity"
                       value={quotaSize}
@@ -306,7 +308,11 @@ const AddBucket = ({ classes }: IsetProps) => {
                           disabled={false}
                         />
                       }
-                      error={invalidFields.includes("quotaSize") ? "Please enter a valid quota" : ""}
+                      error={
+                        invalidFields.includes("quotaSize")
+                          ? "Please enter a valid quota"
+                          : ""
+                      }
                     />
                   </Grid>
                 </React.Fragment>
