@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,27 +14,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface IMenuItem {
-  group?: string;
-  type?: string;
-  component?: any;
-  to?: string;
-  name: string;
-  id?: string;
-  icon: any;
-  onClick?: any;
-  forceDisplay?: boolean;
-  extraMargin?: boolean;
-  fsHidden?: boolean;
-  customPermissionFnc?: any;
-  children?: IMenuItem[];
-  badge?: any;
-}
+import * as React from "react";
+import { SVGProps } from "react";
 
-export interface IRouteRule {
-  component: any;
-  path: string;
-  forceDisplay?: boolean;
-  fsHidden?: boolean;
-  customPermissionFnc?: any;
-}
+const MenuToggleIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={`min-icon`}
+    fill={"currentcolor"}
+    viewBox="0 0 10 14"
+    {...props}
+  >
+    <g transform="translate(19825 -11601) rotate(-90)">
+      <path
+        d="M-21-212v-2H-7v2Zm0-4v-2H-7v2Zm0-4v-2H-7v2Z"
+        transform="translate(-11594 -19603)"
+        fill="#fff"
+      />
+    </g>
+  </svg>
+);
+
+export default MenuToggleIcon;
