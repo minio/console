@@ -110,13 +110,9 @@ func (suite *MarketplaceTestSuite) TestRegisterMarketplaceHandlers() {
 	api := &operations.OperatorAPI{}
 	suite.assert.Nil(api.OperatorAPIGetMPIntegrationHandler)
 	suite.assert.Nil(api.OperatorAPIPostMPIntegrationHandler)
-	suite.assert.Nil(api.OperatorAPIPatchMPIntegrationHandler)
-	suite.assert.Nil(api.OperatorAPIDeleteMPIntegrationHandler)
 	registerMarketplaceHandlers(api)
 	suite.assert.NotNil(api.OperatorAPIGetMPIntegrationHandler)
 	suite.assert.NotNil(api.OperatorAPIPostMPIntegrationHandler)
-	suite.assert.NotNil(api.OperatorAPIPatchMPIntegrationHandler)
-	suite.assert.NotNil(api.OperatorAPIDeleteMPIntegrationHandler)
 }
 
 // TODO
@@ -131,27 +127,6 @@ func (suite *MarketplaceTestSuite) TestGetMPIntegrationHandlerWithError() {
 	params.HTTPRequest = &http.Request{}
 	response := api.OperatorAPIGetMPIntegrationHandler.Handle(params, &models.Principal{})
 	_, ok := response.(*operator_api.GetMPIntegrationDefault)
-	suite.assert.True(ok)
-}
-
-func (suite *MarketplaceTestSuite) TestPatchMPIntegrationHandlerWithError() {
-	api := &operations.OperatorAPI{}
-	registerMarketplaceHandlers(api)
-	params := operator_api.NewPatchMPIntegrationParams()
-	params.HTTPRequest = &http.Request{}
-	params.Body = &models.MpIntegration{Email: "mock@mock.com"}
-	response := api.OperatorAPIPatchMPIntegrationHandler.Handle(params, &models.Principal{})
-	_, ok := response.(*operator_api.PatchMPIntegrationDefault)
-	suite.assert.True(ok)
-}
-
-func (suite *MarketplaceTestSuite) TestDeleteMPIntegrationHandlerWithError() {
-	api := &operations.OperatorAPI{}
-	registerMarketplaceHandlers(api)
-	params := operator_api.NewDeleteMPIntegrationParams()
-	params.HTTPRequest = &http.Request{}
-	response := api.OperatorAPIDeleteMPIntegrationHandler.Handle(params, &models.Principal{})
-	_, ok := response.(*operator_api.DeleteMPIntegrationDefault)
 	suite.assert.True(ok)
 }
 
@@ -176,7 +151,7 @@ func (suite *MarketplaceTestSuite) TestGetMPEmailNoError() {
 func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoEmail() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	err := setMPIntegration(ctx, "", false, &suite.kClient)
+	err := setMPIntegration(ctx, "", &suite.kClient)
 	suite.assert.NotNil(err)
 }
 
@@ -184,7 +159,7 @@ func (suite *MarketplaceTestSuite) TestSetMPIntegrationWithError() {
 	testWithError = true
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	err := setMPIntegration(ctx, "mock@mock.com", false, &suite.kClient)
+	err := setMPIntegration(ctx, "mock@mock.com", &suite.kClient)
 	suite.assert.NotNil(err)
 }
 
@@ -192,31 +167,7 @@ func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoError() {
 	testWithError = false
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	err := setMPIntegration(ctx, "mock@mock.com", false, &suite.kClient)
-	suite.assert.Nil(err)
-}
-
-func (suite *MarketplaceTestSuite) TestSetMPIntegrationOverrideNoError() {
-	testWithError = false
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	err := setMPIntegration(ctx, "mock@mock.com", true, &suite.kClient)
-	suite.assert.Nil(err)
-}
-
-func (suite *MarketplaceTestSuite) TestDeleteMPIntegrationWithError() {
-	testWithError = true
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	err := deleteMPIntegration(ctx, &suite.kClient)
-	suite.assert.NotNil(err)
-}
-
-func (suite *MarketplaceTestSuite) TestDeleteMPIntegrationNoError() {
-	testWithError = false
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	err := deleteMPIntegration(ctx, &suite.kClient)
+	err := setMPIntegration(ctx, "mock@mock.com", &suite.kClient)
 	suite.assert.Nil(err)
 }
 
