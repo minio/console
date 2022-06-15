@@ -54,21 +54,6 @@ func registerMarketplaceHandlers(api *operations.OperatorAPI) {
 		}
 		return operator_api.NewPostMPIntegrationCreated()
 	})
-
-	api.OperatorAPIPatchMPIntegrationHandler = operator_api.PatchMPIntegrationHandlerFunc(func(params operator_api.PatchMPIntegrationParams, session *models.Principal) middleware.Responder {
-		err := patchMPIntegrationResponse(session, params)
-		if err != nil {
-			return operator_api.NewPatchMPIntegrationDefault(int(err.Code)).WithPayload(err)
-		}
-		return operator_api.NewPatchMPIntegrationOK()
-	})
-
-	api.OperatorAPIDeleteMPIntegrationHandler = operator_api.DeleteMPIntegrationHandlerFunc(func(params operator_api.DeleteMPIntegrationParams, session *models.Principal) middleware.Responder {
-		if err := deleteMPIntegrationResponse(session, params); err != nil {
-			return operator_api.NewDeleteMPIntegrationDefault(int(err.Code)).WithPayload(err)
-		}
-		return operator_api.NewDeleteMPIntegrationNoContent()
-	})
 }
 
 func getMPIntegrationResponse(session *models.Principal, params operator_api.GetMPIntegrationParams) (*models.MpIntegration, *models.Error) {
@@ -108,37 +93,21 @@ func postMPIntegrationResponse(session *models.Principal, params operator_api.Po
 	if err != nil {
 		return errors.ErrorWithContext(ctx, err)
 	}
-	return setMPIntegration(ctx, params.Body.Email, false, &k8sClient{client: clientSet})
+	return setMPIntegration(ctx, params.Body.Email, &k8sClient{client: clientSet})
 }
 
-func patchMPIntegrationResponse(session *models.Principal, params operator_api.PatchMPIntegrationParams) *models.Error {
-	if true { // This block will be removed once service to register emails is deployed
-		return &models.Error{Code: 501}
-	}
-	clientSet, err := cluster.K8sClient(session.STSSessionToken)
-	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
-	defer cancel()
-	if err != nil {
-		return errors.ErrorWithContext(ctx, err)
-	}
-	return setMPIntegration(ctx, params.Body.Email, true, &k8sClient{client: clientSet})
-}
-
-func setMPIntegration(ctx context.Context, email string, override bool, clientSet K8sClientI) *models.Error {
+func setMPIntegration(ctx context.Context, email string, clientSet K8sClientI) *models.Error {
 	if email == "" {
 		return errors.ErrorWithContext(ctx, errors.ErrBadRequest, fmt.Errorf(emailNotSetMsg))
 	}
-	if _, err := setMPEmail(ctx, email, override, clientSet); err != nil {
+	if _, err := setMPEmail(ctx, email, clientSet); err != nil {
 		return errors.ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
-func setMPEmail(ctx context.Context, email string, override bool, clientSet K8sClientI) (*corev1.ConfigMap, error) {
+func setMPEmail(ctx context.Context, email string, clientSet K8sClientI) (*corev1.ConfigMap, error) {
 	cm := createCM(email)
-	if override {
-		return clientSet.updateConfigMap(ctx, "default", cm, metav1.UpdateOptions{})
-	}
 	return clientSet.createConfigMap(ctx, "default", cm, metav1.CreateOptions{})
 }
 
@@ -154,26 +123,6 @@ func createCM(email string) *corev1.ConfigMap {
 		},
 		Data: map[string]string{mpEmail: email},
 	}
-}
-
-func deleteMPIntegrationResponse(session *models.Principal, params operator_api.DeleteMPIntegrationParams) *models.Error {
-	if true { // This block will be removed once service to register emails is deployed
-		return &models.Error{Code: 501}
-	}
-	clientSet, err := cluster.K8sClient(session.STSSessionToken)
-	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
-	defer cancel()
-	if err != nil {
-		return errors.ErrorWithContext(ctx, err)
-	}
-	return deleteMPIntegration(ctx, &k8sClient{client: clientSet})
-}
-
-func deleteMPIntegration(ctx context.Context, clientSet K8sClientI) *models.Error {
-	if err := clientSet.deleteConfigMap(ctx, "default", getMPConfigMapKey(mpConfigMapKey), metav1.DeleteOptions{}); err != nil {
-		return errors.ErrorWithContext(ctx, err)
-	}
-	return nil
 }
 
 func getMPConfigMapKey(envVar string) string {
