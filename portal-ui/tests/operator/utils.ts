@@ -78,7 +78,7 @@ export const goToVolumesInTenant = async (tenantName: string) => {
 };
 
 export const goToPodsInTenant = async (tenantName: string) => {
-  await t.click(`#list-tenant-${tenantName}`);
+  await t.click(`#list-tenant-${tenantName}`).wait(2000);
   await t.click(Selector(`a[href$="/pods"]`));
 };
 
@@ -95,7 +95,7 @@ export const goToPodSection = async (index: number) => {
 };
 
 export const goToPvcsInTenant = async (tenantName: string) => {
-  await t.click(`#list-tenant-${tenantName}`);
+  await t.click(`#list-tenant-${tenantName}`).wait(2000);
   await t.click(Selector(`a[href$="/volumes"]`));
 };
 
