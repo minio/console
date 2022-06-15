@@ -130,7 +130,7 @@ const AddBucket = ({ classes }: IsetProps) => {
     (state: AppState) => state.addBucket.retentionValidity
   );
   const addLoading = useSelector((state: AppState) => state.addBucket.loading);
-  const valid = useSelector((state: AppState) => state.addBucket.valid);
+  const invalidFields = useSelector((state: AppState) => state.addBucket.invalidFields);
   const lockingFieldDisabled = useSelector(
     (state: AppState) => state.addBucket.lockingFieldDisabled
   );
@@ -285,19 +285,16 @@ const AddBucket = ({ classes }: IsetProps) => {
                 <React.Fragment>
                   <Grid item xs={12}>
                     <InputBoxWrapper
-                      type="number"
+                      type="string"
                       id="quota_size"
                       name="quota_size"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        if (e.target.validity.valid) {
                           dispatch(setQuotaSize(e.target.value));
-                        }
                       }}
                       label="Capacity"
                       value={quotaSize}
                       required
                       min="1"
-                      pattern={"[0-9]*"}
                       overlayObject={
                         <InputUnitMenu
                           id={"quota_unit"}
@@ -309,6 +306,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                           disabled={false}
                         />
                       }
+                      error={invalidFields.includes("quotaSize") ? "Please enter a valid quota" : ""}
                     />
                   </Grid>
                 </React.Fragment>
@@ -387,7 +385,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={addLoading || valid}
+                disabled={addLoading || invalidFields.length > 0}
               >
                 Create Bucket
               </Button>
