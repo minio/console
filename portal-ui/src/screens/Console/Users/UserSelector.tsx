@@ -18,34 +18,32 @@ import React, { Fragment } from "react";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setUserName } from "./AddUsersSlice";
 import { useSelector } from "react-redux";
-import {AppState, useAppDispatch} from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 
 interface IAddUserProps2 {
-    classes: any;
+  classes: any;
 }
 
-const UserSelector = ({ classes }: IAddUserProps2 ) => {
-    const dispatch = useAppDispatch();
-    const userName = useSelector(
-        (state: AppState) => state.createUser.userName
-    )
-    return (
-        <Fragment>
-            <InputBoxWrapper
-                className={classes.spacerBottom}
-                classes={{
-                    inputLabel: classes.sizedLabel,
-                }}
-                id="accesskey-input"
-                name="accesskey-input"
-                label="User Name"
-                value={userName}
-                autoFocus={true}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    dispatch(setUserName(e.target.value));
-                }}
-            />
-        </Fragment>
-    );
+const UserSelector = ({ classes }: IAddUserProps2) => {
+  const dispatch = useAppDispatch();
+  const userName = useSelector((state: AppState) => state.createUser.userName);
+  return (
+    <Fragment>
+      <InputBoxWrapper
+        className={classes.spacerBottom}
+        classes={{
+          inputLabel: classes.sizedLabel,
+        }}
+        id="accesskey-input"
+        name="accesskey-input"
+        label="User Name"
+        value={userName}
+        autoFocus={true}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          dispatch(setUserName(e.target.value));
+        }}
+      />
+    </Fragment>
+  );
 };
 export default UserSelector;

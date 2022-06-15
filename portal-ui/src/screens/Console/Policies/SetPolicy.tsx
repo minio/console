@@ -48,8 +48,6 @@ interface ISetPolicyProps {
   open: boolean;
 }
 
-
-
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
@@ -76,7 +74,9 @@ const SetPolicy = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [actualPolicy, setActualPolicy] = useState<string[]>([]);
   const [selectedPolicy, setSelectedPolicy] = useState<string[]>([]);
-  const currentPolicies = useSelector((state: AppState) => state.createUser.selectedPolicies);
+  const currentPolicies = useSelector(
+    (state: AppState) => state.createUser.selectedPolicies
+  );
   const setPolicyAction = () => {
     let users = null;
     let groups = null;
@@ -175,9 +175,7 @@ const SetPolicy = ({
         )}
         <Grid item xs={12}>
           <div className={classes.tableBlock}>
-            <PolicySelectors
-              selectedPolicy={selectedPolicy}
-            />
+            <PolicySelectors selectedPolicy={selectedPolicy} />
           </div>
         </Grid>
       </Grid>

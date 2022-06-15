@@ -61,7 +61,9 @@ const SetUserPolicies = ({
   const [actualPolicy, setActualPolicy] = useState<string[]>([]);
   const [selectedPolicy, setSelectedPolicy] = useState<string[]>([]);
 
-  const statePolicies = useSelector((state: AppState) => state.createUser.selectedPolicies);
+  const statePolicies = useSelector(
+    (state: AppState) => state.createUser.selectedPolicies
+  );
 
   const SetUserPoliciesAction = () => {
     let entity = "user";
@@ -111,9 +113,7 @@ const SetUserPolicies = ({
     >
       <Grid container>
         <Grid item xs={12}>
-          <PolicySelectors
-            selectedPolicy={selectedPolicy}
-          />
+          <PolicySelectors selectedPolicy={selectedPolicy} />
         </Grid>
       </Grid>
       <Grid item xs={12} className={classes.buttonContainer}>
