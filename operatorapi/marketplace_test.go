@@ -124,6 +124,7 @@ func (suite *MarketplaceTestSuite) TestGetMPIntegrationHandlerWithError() {
 	_, ok := response.(*operator_api.GetMPIntegrationDefault)
 	suite.assert.True(ok)
 }
+
 func (suite *MarketplaceTestSuite) TestPostMPIntegrationHandlerWithError() {
 	api := &operations.OperatorAPI{}
 	registerMarketplaceHandlers(api)

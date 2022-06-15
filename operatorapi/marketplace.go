@@ -159,7 +159,6 @@ func getMPURL() (string, error) {
 		return "", fmt.Errorf("%s not set", mpHostEnvVar)
 	}
 	return fmt.Sprintf("%s/mp-email", mpHost), nil
-
 }
 
 func createCM() *corev1.ConfigMap {
