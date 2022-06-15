@@ -44,13 +44,9 @@ test("Create Tenant Without Audit Log", async (t) => {
 });
 
 test("Test describe section for PODs in new tenant", async (t) => {
-  const tenantName = `tenant-${Math.floor(Math.random() * 10000)}`;
+  const tenantName = "storage-lite";
   await loginToOperator();
-  await createTenant(tenantName);
-  await t.wait(20000); // wait for PODs to be created
   await testPODDescribe(tenantName);
-  await redirectToTenantsList();
-  await deleteTenant(tenantName);
 });
 
 const testPODDescribe = async (tenantName: string) => {
@@ -81,8 +77,6 @@ test("Test describe section for PVCs in new tenant", async (t) => {
   const tenantName = `storage-lite`;
   await loginToOperator();
   await testPvcDescribe(tenantName);
-  await redirectToTenantsList();
-  await deleteTenant(tenantName);
 });
 
 const testPvcDescribe = async (tenantName: string) => {
