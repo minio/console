@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface IEditSecurityContext {
+export interface IEditPrometheusSecurityContext {
     securityContextEnabled: boolean;
     runAsUser: string;
     runAsGroup: string;
@@ -23,7 +23,7 @@ export interface IEditSecurityContext {
     runAsNonRoot: boolean;
 }
 
-const initialState: IEditSecurityContext = {
+const initialState: IEditPrometheusSecurityContext = {
     securityContextEnabled: false,    
         runAsUser: "1000",
         runAsGroup: "1000",
@@ -31,8 +31,8 @@ const initialState: IEditSecurityContext = {
         runAsNonRoot: true,
 };
 
-export const editSecurityContextSlice = createSlice({
-    name: "editSecurityContext",
+export const editPrometheusSecurityContextSlice = createSlice({
+    name: "editPrometheusSecurityContext",
     initialState,
     reducers: {
         setSecurityContextEnabled: (state, action: PayloadAction<boolean>) => {
@@ -59,6 +59,6 @@ export const {
     setRunAsGroup,
     setFSGroup,
     setRunAsNonRoot,
-} = editSecurityContextSlice.actions;
+} = editPrometheusSecurityContextSlice.actions;
 
-export default editSecurityContextSlice.reducer;
+export default editPrometheusSecurityContextSlice.reducer;
