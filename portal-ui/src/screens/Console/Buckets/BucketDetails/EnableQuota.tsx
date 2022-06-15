@@ -70,21 +70,34 @@ const EnableQuota = ({
   const [quotaEnabled, setQuotaEnabled] = useState<boolean>(false);
   const [quotaSize, setQuotaSize] = useState<string>("1");
   const [quotaUnit, setQuotaUnit] = useState<string>("Ti");
+  const [validInput, setValidInput] = useState<boolean>(false);
 
   useEffect(() => {
     if (enabled) {
       setQuotaEnabled(true);
       if (cfg) {
-        const unitCalc = calculateBytes(cfg.quota, false, false, true);
+        const unitCalc = calculateBytes(cfg.quota, true, false, true);
 
         setQuotaSize(unitCalc.total.toString());
         setQuotaUnit(unitCalc.unit);
+        setValidInput(true);
       }
     }
   }, [enabled, cfg]);
 
+  useEffect(() => {
+    const valRegExp = /^\d*(?:\.\d{1,2})?$/;
+
+    if (!quotaEnabled) {
+      setValidInput(true);
+      return;
+    }
+
+    setValidInput(valRegExp.test(quotaSize));
+  }, [quotaEnabled, quotaSize]);
+
   const enableBucketEncryption = () => {
-    if (loading) {
+    if (loading || !validInput) {
       return;
     }
     let req = {
@@ -145,11 +158,13 @@ const EnableQuota = ({
                         id="quota_size"
                         name="quota_size"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          if (e.target.validity.valid) {
-                            setQuotaSize(e.target.value);
+                          setQuotaSize(e.target.value);
+                          if (!e.target.validity.valid) {
+                            setValidInput(false);
+                          } else {
+                            setValidInput(true);
                           }
                         }}
-                        pattern={"[0-9]*"}
                         label="Quota"
                         value={quotaSize}
                         required
@@ -165,6 +180,7 @@ const EnableQuota = ({
                             disabled={false}
                           />
                         }
+                        error={!validInput ? "Please enter a valid quota" : ""}
                       />
                     </Grid>
                   </Grid>
@@ -189,7 +205,7 @@ const EnableQuota = ({
               type="submit"
               variant="contained"
               color="primary"
-              disabled={loading}
+              disabled={loading || !validInput}
             >
               Save
             </Button>

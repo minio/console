@@ -16,50 +16,50 @@
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
-    setSelectedGroups,
-    setUserName,
-    setSecretKey,
-    setSelectedPolicies,
-    setShowPassword,
-    setAddLoading,
+  setSelectedGroups,
+  setUserName,
+  setSecretKey,
+  setSelectedPolicies,
+  setShowPassword,
+  setAddLoading,
 } from "../AddUsersSlice";
-import {AppState} from "../../../../store";
+import { AppState } from "../../../../store";
 import api from "../../../../common/api";
-import {ErrorResponseHandler} from "../../../../common/types";
-import {setErrorSnackMessage} from "../../../../systemSlice";
+import { ErrorResponseHandler } from "../../../../common/types";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 
 export const resetFormAsync = createAsyncThunk(
-    "resetForm/resetFormAsync",
-    async (_, { dispatch }) => {
-        dispatch(setSelectedGroups([]));
-        dispatch(setUserName(""));
-        dispatch(setSecretKey(""));
-        dispatch(setSelectedPolicies([]));
-        dispatch(setShowPassword(false));
-    }
+  "resetForm/resetFormAsync",
+  async (_, { dispatch }) => {
+    dispatch(setSelectedGroups([]));
+    dispatch(setUserName(""));
+    dispatch(setSecretKey(""));
+    dispatch(setSelectedPolicies([]));
+    dispatch(setShowPassword(false));
+  }
 );
 
 export const createUserAsync = createAsyncThunk(
-    "createTenant/createNamespaceAsync",
-    async (_, { getState, rejectWithValue, dispatch }) => {
-        const state = getState() as AppState;
-        const accessKey = state.createUser.userName
-        const secretKey = state.createUser.secretKey
-        const selectedGroups = state.createUser.selectedGroups
-        const selectedPolicies = state.createUser.selectedPolicies
-        return api
-            .invoke("POST", "/api/v1/users", {
-                accessKey,
-                secretKey,
-                groups: selectedGroups,
-                policies: selectedPolicies,
-            })
-            .then((res) => {
-                dispatch(setAddLoading(false));
-            })
-            .catch((err: ErrorResponseHandler) => {
-                dispatch(setAddLoading(false));
-                dispatch(setErrorSnackMessage(err));
-            });
-    }
+  "createTenant/createNamespaceAsync",
+  async (_, { getState, rejectWithValue, dispatch }) => {
+    const state = getState() as AppState;
+    const accessKey = state.createUser.userName;
+    const secretKey = state.createUser.secretKey;
+    const selectedGroups = state.createUser.selectedGroups;
+    const selectedPolicies = state.createUser.selectedPolicies;
+    return api
+      .invoke("POST", "/api/v1/users", {
+        accessKey,
+        secretKey,
+        groups: selectedGroups,
+        policies: selectedPolicies,
+      })
+      .then((res) => {
+        dispatch(setAddLoading(false));
+      })
+      .catch((err: ErrorResponseHandler) => {
+        dispatch(setAddLoading(false));
+        dispatch(setErrorSnackMessage(err));
+      });
+  }
 );
