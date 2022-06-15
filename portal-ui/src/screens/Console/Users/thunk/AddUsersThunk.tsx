@@ -27,8 +27,6 @@ import {AppState} from "../../../../store";
 import api from "../../../../common/api";
 import {ErrorResponseHandler} from "../../../../common/types";
 import {setErrorSnackMessage} from "../../../../systemSlice";
-import history from "../../../../history";
-import {IAM_PAGES} from "../../../../common/SecureComponent/permissions";
 
 export const resetFormAsync = createAsyncThunk(
     "resetForm/resetFormAsync",
@@ -58,7 +56,6 @@ export const createUserAsync = createAsyncThunk(
             })
             .then((res) => {
                 dispatch(setAddLoading(false));
-                history.push(`${IAM_PAGES.USERS}`);
             })
             .catch((err: ErrorResponseHandler) => {
                 dispatch(setAddLoading(false));

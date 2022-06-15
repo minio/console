@@ -325,7 +325,7 @@ const Images = ({ classes }: IImagesProps) => {
             label="MinIO"
             value={imageName}
             error={validationErrors["image"] || ""}
-            placeholder="E.g. minio/minio:RELEASE.2022-02-26T02-54-46Z"
+            placeholder="minio/minio:RELEASE.2022-02-26T02-54-46Z"
           />
         </Grid>
 
@@ -340,7 +340,7 @@ const Images = ({ classes }: IImagesProps) => {
             label="KES"
             value={kesImage}
             error={validationErrors["kesImage"] || ""}
-            placeholder="E.g. minio/kes:v0.17.6"
+            placeholder="minio/kes:v0.17.6"
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -357,7 +357,7 @@ const Images = ({ classes }: IImagesProps) => {
             label="API"
             value={logSearchImage}
             error={validationErrors["logSearchImage"] || ""}
-            placeholder="E.g. minio/operator:v4.4.10"
+            placeholder="minio/operator:v4.4.22"
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -371,7 +371,7 @@ const Images = ({ classes }: IImagesProps) => {
             label="PostgreSQL"
             value={logSearchPostgresImage}
             error={validationErrors["logSearchPostgresImage"] || ""}
-            placeholder="E.g. library/postgres:13"
+            placeholder="library/postgres:13"
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -385,7 +385,7 @@ const Images = ({ classes }: IImagesProps) => {
             label="PostgreSQL Init"
             value={logSearchPostgresInitImage}
             error={validationErrors["logSearchPostgresInitImage"] || ""}
-            placeholder="E.g. library/busybox:1.33.1"
+            placeholder="library/busybox:1.33.1"
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -402,7 +402,7 @@ const Images = ({ classes }: IImagesProps) => {
             label="Prometheus"
             value={prometheusImage}
             error={validationErrors["prometheusImage"] || ""}
-            placeholder="E.g. quay.io/prometheus/prometheus:latest"
+            placeholder="quay.io/prometheus/prometheus:latest"
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -416,7 +416,7 @@ const Images = ({ classes }: IImagesProps) => {
             label="Prometheus Sidecar"
             value={prometheusSidecarImage}
             error={validationErrors["prometheusSidecarImage"] || ""}
-            placeholder="E.g. quay.io/prometheus/prometheus:latest"
+            placeholder="library/alpine:latest"
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -430,7 +430,7 @@ const Images = ({ classes }: IImagesProps) => {
             label="Prometheus Init"
             value={prometheusInitImage}
             error={validationErrors["prometheusInitImage"] || ""}
-            placeholder="E.g. quay.io/prometheus/prometheus:latest"
+            placeholder="library/busybox:1.33.1"
           />
         </Grid>
       </Fragment>
@@ -469,7 +469,7 @@ const Images = ({ classes }: IImagesProps) => {
               label="Endpoint"
               value={imageRegistry}
               error={validationErrors["registry"] || ""}
-              placeholder="E.g. https://index.docker.io/v1/"
+              placeholder="https://index.docker.io/v1/"
               required
             />
           </Grid>

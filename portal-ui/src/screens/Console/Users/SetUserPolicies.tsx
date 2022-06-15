@@ -28,7 +28,8 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import PolicySelectors from "../Policies/PolicySelectors";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
+import { useSelector } from "react-redux";
 
 interface ISetUserPoliciesProps {
   classes: any;
@@ -60,6 +61,8 @@ const SetUserPolicies = ({
   const [actualPolicy, setActualPolicy] = useState<string[]>([]);
   const [selectedPolicy, setSelectedPolicy] = useState<string[]>([]);
 
+  const statePolicies = useSelector((state: AppState) => state.createUser.selectedPolicies);
+
   const SetUserPoliciesAction = () => {
     let entity = "user";
     let value = selectedUser;
@@ -68,7 +71,7 @@ const SetUserPolicies = ({
 
     api
       .invoke("PUT", `/api/v1/set-policy`, {
-        name: selectedPolicy,
+        name: statePolicies,
         entityName: value,
         entityType: entity,
       })
