@@ -321,7 +321,12 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/mpIntegration"
+              "type": "object",
+              "properties": {
+                "isEmailSet": {
+                  "type": "boolean"
+                }
+              }
             }
           },
           "default": {
@@ -4987,7 +4992,12 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/mpIntegration"
+              "type": "object",
+              "properties": {
+                "isEmailSet": {
+                  "type": "boolean"
+                }
+              }
             }
           },
           "default": {

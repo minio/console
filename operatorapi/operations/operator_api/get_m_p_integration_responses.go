@@ -42,7 +42,7 @@ type GetMPIntegrationOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.MpIntegration `json:"body,omitempty"`
+	Payload *GetMPIntegrationOKBody `json:"body,omitempty"`
 }
 
 // NewGetMPIntegrationOK creates GetMPIntegrationOK with default headers values
@@ -52,13 +52,13 @@ func NewGetMPIntegrationOK() *GetMPIntegrationOK {
 }
 
 // WithPayload adds the payload to the get m p integration o k response
-func (o *GetMPIntegrationOK) WithPayload(payload *models.MpIntegration) *GetMPIntegrationOK {
+func (o *GetMPIntegrationOK) WithPayload(payload *GetMPIntegrationOKBody) *GetMPIntegrationOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get m p integration o k response
-func (o *GetMPIntegrationOK) SetPayload(payload *models.MpIntegration) {
+func (o *GetMPIntegrationOK) SetPayload(payload *GetMPIntegrationOKBody) {
 	o.Payload = payload
 }
 
