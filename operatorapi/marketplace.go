@@ -131,11 +131,9 @@ func makePostRequestToMP(url, email, token string) error {
 	client := &http.Client{Timeout: 3 * time.Second}
 	if res, err := client.Do(request); err != nil {
 		return err
-	} else {
-		if res.StatusCode >= http.StatusBadRequest {
-			b, _ := io.ReadAll(res.Body)
-			return fmt.Errorf("request to %s failed with status code %d and error %s", url, res.StatusCode, string(b))
-		}
+	} else if res.StatusCode >= http.StatusBadRequest {
+		b, _ := io.ReadAll(res.Body)
+		return fmt.Errorf("request to %s failed with status code %d and error %s", url, res.StatusCode, string(b))
 	}
 	return nil
 }
