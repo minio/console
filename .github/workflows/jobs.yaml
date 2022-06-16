@@ -1446,6 +1446,15 @@ jobs:
           echo "Create the folder to put the all.out file"
           TARGET_BUCKET=`echo $RANDOM | md5sum | head -c 20; echo;`
           echo "TARGET_BUCKET: ${TARGET_BUCKET}"
+          echo "Only run our test if play is up and running..."
+          PLAY_IS_ON=`wget --spider --server-response https://play.min.io:9443/login 2>&1 | grep '200\ OK' | wc -l`
+          if [ $PLAY_IS_ON == 1 ]
+          then
+            echo "Play is up and running, we will proceed with the test"
+          else
+            echo "Play is down, please report it on hack channel"
+            exit
+          fi
           ./mc mb --ignore-existing play/${TARGET_BUCKET}/
           ./mc version enable play/${TARGET_BUCKET}
           # Via API we are going to test:
@@ -1588,19 +1597,27 @@ jobs:
           wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
           echo "Change the permissions to execute mc command"
           chmod +x mc
-          echo "Create the folder to put the all.out file"
-          ./mc mb --ignore-existing play/builds/
-          echo "Copy the all.out file to play bucket"
-          echo ${{ github.repository }}
-          echo ${{ github.event.number }}
-          echo ${{ github.run_id }}
-          # mc cp can fail due to lack of space: mc: <ERROR> Failed to copy `all.out`.
-          # Storage backend has reached its minimum free disk threshold. Please delete a few objects to proceed.
-          ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-          ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-          go tool cover -html=all.out -o coverage.html
-          ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-          ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+          echo "Only run our test if play is up and running since we require it for replication tests here."
+          PLAY_IS_ON=`wget --spider --server-response https://play.min.io:9443/login 2>&1 | grep '200\ OK' | wc -l`
+          if [ $PLAY_IS_ON == 1 ]
+          then
+            echo "Play is up and running, we will proceed with the play part for coverage"
+            echo "Create the folder to put the all.out file"
+            ./mc mb --ignore-existing play/builds/
+            echo "Copy the all.out file to play bucket"
+            echo ${{ github.repository }}
+            echo ${{ github.event.number }}
+            echo ${{ github.run_id }}
+            # mc cp can fail due to lack of space: mc: <ERROR> Failed to copy `all.out`.
+            # Storage backend has reached its minimum free disk threshold. Please delete a few objects to proceed.
+            ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            go tool cover -html=all.out -o coverage.html
+            ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+          else
+            echo "Play is down, please report it on hack channel, no coverage is going to be uploaded!!!"
+          fi
           echo "grep to obtain the result"
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`

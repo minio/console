@@ -28,6 +28,7 @@ export interface IMenuItem {
   fsHidden?: boolean;
   customPermissionFnc?: any;
   children?: IMenuItem[];
+  badge?: any;
 }
 
 export interface IRouteRule {

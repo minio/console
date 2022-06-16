@@ -16,48 +16,42 @@
 
 import React from "react";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import {setSecretKey, setShowPassword} from "./AddUsersSlice";
+import { setSecretKey, setShowPassword } from "./AddUsersSlice";
 import { useSelector } from "react-redux";
-import {AppState, useAppDispatch} from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
 interface IAddUserProps2 {
-    classes: any;
+  classes: any;
 }
 
-const PasswordSelector = ({ classes }: IAddUserProps2 ) => {
-    const dispatch = useAppDispatch();
-    const showPassword = useSelector(
-        (state: AppState) => state.createUser.showPassword
-    )
-    const secretKey = useSelector(
-        (state: AppState) => state.createUser.secretKey
-    )
-    return (
-        <InputBoxWrapper
-            className={classes.spacerBottom}
-            classes={{
-                inputLabel: classes.sizedLabel,
-            }}
-            id="standard-multiline-static"
-            name="standard-multiline-static"
-            label="Password"
-            type={showPassword ? "text" : "password"}
-            value={secretKey}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                dispatch(setSecretKey(e.target.value));
-            }}
-            autoComplete="current-password"
-            overlayIcon={
-                showPassword ? (
-                    <VisibilityOffIcon />
-                ) : (
-                    <RemoveRedEyeIcon />
-                )
-            }
-            overlayAction={() => dispatch(setShowPassword(!showPassword))}
-        />
-    );
+const PasswordSelector = ({ classes }: IAddUserProps2) => {
+  const dispatch = useAppDispatch();
+  const showPassword = useSelector(
+    (state: AppState) => state.createUser.showPassword
+  );
+  const secretKey = useSelector(
+    (state: AppState) => state.createUser.secretKey
+  );
+  return (
+    <InputBoxWrapper
+      className={classes.spacerBottom}
+      classes={{
+        inputLabel: classes.sizedLabel,
+      }}
+      id="standard-multiline-static"
+      name="standard-multiline-static"
+      label="Password"
+      type={showPassword ? "text" : "password"}
+      value={secretKey}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(setSecretKey(e.target.value));
+      }}
+      autoComplete="current-password"
+      overlayIcon={showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />}
+      overlayAction={() => dispatch(setShowPassword(!showPassword))}
+    />
+  );
 };
 export default PasswordSelector;

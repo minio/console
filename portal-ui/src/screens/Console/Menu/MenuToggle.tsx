@@ -18,13 +18,13 @@ import React, { Fragment, Suspense, useEffect } from "react";
 import OperatorLogo from "../../../icons/OperatorLogo";
 import { LoginMinIOLogo, VersionIcon } from "../../../icons";
 import { Box, IconButton } from "@mui/material";
-import { ChevronLeft } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LicensedConsoleLogo from "../Common/Components/LicensedConsoleLogo";
 import { useSelector } from "react-redux";
 import useApi from "../Common/Hooks/useApi";
 import { setLicenseInfo } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
+import MenuToggleIcon from "../../../icons/MenuToggleIcon";
 
 type MenuToggleProps = {
   isOpen: boolean;
@@ -151,7 +151,7 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
         }}
         size="small"
       >
-        {isOpen ? <ChevronLeft /> : <MenuIcon />}
+        {isOpen ? <MenuToggleIcon /> : <MenuIcon />}
       </IconButton>
     </Box>
   );
