@@ -39,3 +39,4 @@ export const TEST_IAM_POLICY = JSON.stringify({
     },
   ],
 });
+export const TEST_ASSIGN_POLICY_NAME = "consoleAdmin";
