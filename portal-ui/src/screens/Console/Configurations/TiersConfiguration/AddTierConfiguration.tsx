@@ -78,9 +78,7 @@ interface IAddNotificationEndpointProps {
   classes: any;
 }
 
-const AddTierConfiguration = ({
-  classes,
-}: IAddNotificationEndpointProps) => {
+const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();

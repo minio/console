@@ -14,95 +14,92 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-    createUserAsync,
-    resetFormAsync,
-} from "./thunk/AddUsersThunk";
+import { createUserAsync, resetFormAsync } from "./thunk/AddUsersThunk";
 
 export interface ICreateUser {
-    userName: string;
-    secretKey: string;
-    selectedGroups: string[];
-    selectedPolicies: string[];
-    showPassword: boolean;
-    sendEnabled: boolean;
-    addLoading: boolean;
-    apinoerror: boolean;
-    secretKeylength: number;
+  userName: string;
+  secretKey: string;
+  selectedGroups: string[];
+  selectedPolicies: string[];
+  showPassword: boolean;
+  sendEnabled: boolean;
+  addLoading: boolean;
+  apinoerror: boolean;
+  secretKeylength: number;
 }
 
 const initialState: ICreateUser = {
-    addLoading: false,
-    showPassword: false,
-    sendEnabled: false,
-    apinoerror: false,
-    userName: "",
-    secretKey: "",
-    selectedGroups: [],
-    selectedPolicies: [],
-    secretKeylength: 0,
+  addLoading: false,
+  showPassword: false,
+  sendEnabled: false,
+  apinoerror: false,
+  userName: "",
+  secretKey: "",
+  selectedGroups: [],
+  selectedPolicies: [],
+  secretKeylength: 0,
 };
 
 export const createUserSlice = createSlice({
-    name: "createUser",
-    initialState,
-    reducers: {
-        setAddLoading: (state, action: PayloadAction<boolean>) => {
-            state.addLoading = action.payload;
-        },
-        setUserName: (state, action: PayloadAction<string>) => {
-            state.userName = action.payload;
-        },
-        setSelectedGroups: (state, action: PayloadAction<string[]>) => {
-            state.selectedGroups = action.payload;
-        },
-        setSecretKey: (state, action: PayloadAction<string>) => {
-            state.secretKey = action.payload;
-            state.secretKeylength = state.secretKey.length;
-        },
-        setSelectedPolicies: (state, action: PayloadAction<string[]>) => {
-            state.selectedPolicies = action.payload;
-        },
-        setShowPassword: (state, action: PayloadAction<boolean>) => {
-            state.showPassword = action.payload;
-        },
-        setSendEnabled: (state) => {
-            state.sendEnabled = state.userName.trim() !== "";
-        },
-        setApinoerror: (state, action: PayloadAction<boolean>) => {
-            state.apinoerror = action.payload;
-        },
+  name: "createUser",
+  initialState,
+  reducers: {
+    setAddLoading: (state, action: PayloadAction<boolean>) => {
+      state.addLoading = action.payload;
     },
-    extraReducers: (builder) => {
-        builder
-            .addCase(resetFormAsync.fulfilled, (state, action) => {
-                state.userName = "";
-                state.selectedGroups = [];
-                state.secretKey = "";
-                state.selectedPolicies = [];
-                state.showPassword = false;
-            })
-            .addCase(createUserAsync.pending, (state, action) => {
-                state.addLoading = true;
-            })
-            .addCase(createUserAsync.rejected, (state, action) => {
-                state.addLoading = false;
-            })
-            .addCase(createUserAsync.fulfilled, (state, action) => {
-                state.apinoerror = true;
-            });
+    setUserName: (state, action: PayloadAction<string>) => {
+      state.userName = action.payload;
     },
+    setSelectedGroups: (state, action: PayloadAction<string[]>) => {
+      state.selectedGroups = action.payload;
+    },
+    setSecretKey: (state, action: PayloadAction<string>) => {
+      state.secretKey = action.payload;
+      state.secretKeylength = state.secretKey.length;
+    },
+    setSelectedPolicies: (state, action: PayloadAction<string[]>) => {
+      state.selectedPolicies = action.payload;
+    },
+    setShowPassword: (state, action: PayloadAction<boolean>) => {
+      state.showPassword = action.payload;
+    },
+    setSendEnabled: (state) => {
+      state.sendEnabled = state.userName.trim() !== "";
+    },
+    setApinoerror: (state, action: PayloadAction<boolean>) => {
+      state.apinoerror = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(resetFormAsync.fulfilled, (state, action) => {
+        state.userName = "";
+        state.selectedGroups = [];
+        state.secretKey = "";
+        state.selectedPolicies = [];
+        state.showPassword = false;
+      })
+      .addCase(createUserAsync.pending, (state, action) => {
+        state.addLoading = true;
+      })
+      .addCase(createUserAsync.rejected, (state, action) => {
+        state.addLoading = false;
+      })
+      .addCase(createUserAsync.fulfilled, (state, action) => {
+        state.apinoerror = true;
+      });
+  },
 });
 
 export const {
-    setUserName,
-    setSelectedGroups,
-    setSecretKey,
-    setSelectedPolicies,
-    setShowPassword,
-    setAddLoading,
-    setSendEnabled,
-    setApinoerror,
+  setUserName,
+  setSelectedGroups,
+  setSecretKey,
+  setSelectedPolicies,
+  setShowPassword,
+  setAddLoading,
+  setSendEnabled,
+  setApinoerror,
 } = createUserSlice.actions;
 
 export default createUserSlice.reducer;

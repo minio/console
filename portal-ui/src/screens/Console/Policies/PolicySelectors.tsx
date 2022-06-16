@@ -85,11 +85,13 @@ const PolicySelectors = ({
   const [loading, isLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
 
-  const currentPolicies = useSelector((state: AppState) => state.createUser.selectedPolicies);
+  const currentPolicies = useSelector(
+    (state: AppState) => state.createUser.selectedPolicies
+  );
 
   const fetchPolicies = useCallback(() => {
     isLoading(true);
-    
+
     api
       .invoke("GET", `/api/v1/policies?limit=1000`)
       .then((res: PolicyList) => {
@@ -115,11 +117,10 @@ const PolicySelectors = ({
   }, [loading, fetchPolicies]);
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-    
     const targetD = e.target;
     const value = targetD.value;
     const checked = targetD.checked;
-    
+
     let elements: string[] = [...currentPolicies]; // We clone the checkedUsers array
 
     if (checked) {
@@ -131,7 +132,7 @@ const PolicySelectors = ({
     }
     // remove empty values
     elements = elements.filter((element) => element !== "");
-    
+
     dispatch(setSelectedPolicies(elements));
   };
 
