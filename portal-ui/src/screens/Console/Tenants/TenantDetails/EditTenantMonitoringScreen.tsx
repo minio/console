@@ -285,10 +285,8 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
        
         {prometheusEnabled && (                  
            
-              <Fragment>
-                
-                <Grid item xs={12} paddingBottom={2}>
-                  
+              <Fragment>                
+                <Grid item xs={12} paddingBottom={2}>                  
                 <InputBoxWrapper
                 id={`image`}
                 label={"Image"}
@@ -302,7 +300,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                   cleanValidation(`image`)
                 }}
                 key={`image`}
-                pattern={"^[a-zA-Z0-9-.]{1,253}$"}
+                pattern={"^[a-zA-Z0-9-./:]{1,253}$"}  
                 error={validationErrors[`image`] || ""}
               />
                 </Grid>
@@ -320,7 +318,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                   cleanValidation(`sidecarImage`)
                 }}
                 key={`sidecarImage`}
-                pattern={"^[a-zA-Z0-9-.]{1,253}$"}
+                pattern={"^[a-zA-Z0-9-./:]{1,253}$"} 
                 error={validationErrors[`sidecarImage`] || ""}
               />
                 </Grid>
@@ -338,7 +336,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                   cleanValidation(`initImage`)
                 }}
                 key={`initImage`}
-                pattern={"^[a-zA-Z0-9-.]{1,253}$"}
+                pattern={"^[a-zA-Z0-9-./:]{1,253}$"} 
                 error={validationErrors[`initImage`] || ""}
               />
                 </Grid>
