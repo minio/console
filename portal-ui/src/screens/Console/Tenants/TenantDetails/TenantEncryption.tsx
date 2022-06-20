@@ -32,8 +32,8 @@ import {
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../store";
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 
@@ -85,7 +85,7 @@ const styles = (theme: Theme) =>
   });
 
 const TenantEncryption = ({ classes }: ITenantEncryption) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
 

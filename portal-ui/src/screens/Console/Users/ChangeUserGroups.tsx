@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -32,6 +32,7 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import AddMembersToGroup from "../../../icons/AddMembersToGroupIcon";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -55,7 +56,7 @@ const ChangeUserGroups = ({
   selectedUser,
   open,
 }: IChangeUserGroupsContentProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");

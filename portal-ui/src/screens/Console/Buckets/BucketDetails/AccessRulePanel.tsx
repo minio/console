@@ -15,7 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { Paper } from "@mui/material";
@@ -44,6 +45,7 @@ import RBIconButton from "./SummaryItems/RBIconButton";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
+import { useAppDispatch } from "../../../../store";
 
 const AddAccessRuleModal = withSuspense(
   React.lazy(() => import("./AddAccessRule"))
@@ -73,13 +75,10 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-interface IAccessRuleProps {
-  match: any;
-}
-
-const AccessRule = ({ match }: IAccessRuleProps) => {
-  const dispatch = useDispatch();
+const AccessRule = () => {
+  const dispatch = useAppDispatch();
   const classes = useStyles();
+  const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
 
@@ -93,7 +92,7 @@ const AccessRule = ({ match }: IAccessRuleProps) => {
   const [accessRuleToEdit, setAccessRuleToEdit] = useState<string>("");
   const [initialAccess, setInitialAccess] = useState<string>("");
 
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
   const displayAccessRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_BUCKET_POLICY,

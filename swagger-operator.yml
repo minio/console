@@ -1232,6 +1232,40 @@ paths:
       tags:
         - OperatorAPI
 
+  /mp-integration:
+    get:
+      summary: Returns email registered for marketplace integration
+      operationId: GetMPIntegration
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/mpIntegration"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+    post:
+      summary: Set email to register for marketplace integration
+      operationId: PostMPIntegration
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/mpIntegration"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /namespaces/{namespace}/tenants/{tenant}/pvc/{PVCName}:
     delete:
       summary: Delete PVC
@@ -2848,6 +2882,8 @@ definitions:
         type: string
       dbImage:
         type: string
+      dbInitImage:
+        type: string
       dbLabels:
         type: array
         items:
@@ -3346,3 +3382,10 @@ definitions:
     properties:
       domains:
         $ref: "#/definitions/domainsConfiguration"
+  
+  mpIntegration:
+    type: object
+    properties:
+      email:
+        type: string
+

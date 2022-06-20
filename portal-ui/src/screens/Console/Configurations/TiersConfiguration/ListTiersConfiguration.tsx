@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -55,6 +55,8 @@ import { SecureComponent } from "../../../../common/SecureComponent";
 import { tierTypes } from "./utils";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { selDistSet, setErrorSnackMessage } from "../../../../systemSlice";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../../store";
 
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
@@ -62,7 +64,6 @@ const UpdateTierCredentialsModal = withSuspense(
 
 interface IListTiersConfig {
   classes: any;
-  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -93,8 +94,10 @@ const styles = (theme: Theme) =>
     ...tableStyles,
   });
 
-const ListTiersConfiguration = ({ classes, history }: IListTiersConfig) => {
-  const dispatch = useDispatch();
+const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const distributedSetup = useSelector(selDistSet);
   const [records, setRecords] = useState<ITierElement[]>([]);
   const [filter, setFilter] = useState<string>("");
@@ -138,7 +141,7 @@ const ListTiersConfiguration = ({ classes, history }: IListTiersConfig) => {
   });
 
   const addTier = () => {
-    history.push(IAM_PAGES.TIERS_ADD);
+    navigate(IAM_PAGES.TIERS_ADD);
   };
 
   const renderTierName = (item: ITierElement) => {

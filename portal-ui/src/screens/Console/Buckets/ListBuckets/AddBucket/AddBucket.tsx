@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -24,8 +24,8 @@ import { containerForHeader } from "../../../Common/FormComponents/common/styleL
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { k8sScalarUnitsExcluding } from "../../../../../common/utils";
-import { AppState } from "../../../../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../store";
+import { useSelector } from "react-redux";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../../common/BackLink";
@@ -51,6 +51,7 @@ import {
 } from "./addBucketsSlice";
 import { addBucketAsync } from "./addBucketThunks";
 import AddBucketName from "./AddBucketName";
+import { useNavigate } from "react-router-dom";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -102,7 +103,8 @@ interface IsetProps {
 }
 
 const AddBucket = ({ classes }: IsetProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const versioningEnabled = useSelector(
     (state: AppState) => state.addBucket.versioningEnabled
@@ -128,16 +130,29 @@ const AddBucket = ({ classes }: IsetProps) => {
     (state: AppState) => state.addBucket.retentionValidity
   );
   const addLoading = useSelector((state: AppState) => state.addBucket.loading);
-  const valid = useSelector((state: AppState) => state.addBucket.valid);
+  const invalidFields = useSelector(
+    (state: AppState) => state.addBucket.invalidFields
+  );
   const lockingFieldDisabled = useSelector(
     (state: AppState) => state.addBucket.lockingFieldDisabled
   );
   const distributedSetup = useSelector(selDistSet);
   const siteReplicationInfo = useSelector(selSiteRep);
+  const navigateTo = useSelector(
+    (state: AppState) => state.addBucket.navigateTo
+  );
 
   const resForm = () => {
     dispatch(resetForm());
   };
+
+  useEffect(() => {
+    if (navigateTo !== "") {
+      const goTo = `${navigateTo}`;
+      dispatch(resetForm());
+      navigate(goTo);
+    }
+  }, [navigateTo, navigate, dispatch]);
 
   return (
     <Fragment>
@@ -272,19 +287,16 @@ const AddBucket = ({ classes }: IsetProps) => {
                 <React.Fragment>
                   <Grid item xs={12}>
                     <InputBoxWrapper
-                      type="number"
+                      type="string"
                       id="quota_size"
                       name="quota_size"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        if (e.target.validity.valid) {
-                          dispatch(setQuotaSize(e.target.value));
-                        }
+                        dispatch(setQuotaSize(e.target.value));
                       }}
                       label="Capacity"
                       value={quotaSize}
                       required
                       min="1"
-                      pattern={"[0-9]*"}
                       overlayObject={
                         <InputUnitMenu
                           id={"quota_unit"}
@@ -295,6 +307,11 @@ const AddBucket = ({ classes }: IsetProps) => {
                           unitsList={k8sScalarUnitsExcluding(["Ki"])}
                           disabled={false}
                         />
+                      }
+                      error={
+                        invalidFields.includes("quotaSize")
+                          ? "Please enter a valid quota"
+                          : ""
                       }
                     />
                   </Grid>
@@ -374,7 +391,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={addLoading || valid}
+                disabled={addLoading || invalidFields.length > 0}
               >
                 Create Bucket
               </Button>

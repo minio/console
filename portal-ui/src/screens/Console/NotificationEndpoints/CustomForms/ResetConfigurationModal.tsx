@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { DialogContentText, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -27,6 +27,7 @@ import api from "../../../../common/api";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -52,7 +53,7 @@ const ResetConfigurationModal = ({
   closeResetModalAndRefresh,
   resetOpen,
 }: IResetConfiguration) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [resetLoading, setResetLoading] = useState<boolean>(false);
 
   useEffect(() => {

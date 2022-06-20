@@ -15,9 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { Box, DialogContentText, Grid } from "@mui/material";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import PageLayout from "../../Common/Layout/PageLayout";
-import { Box, DialogContentText, Grid } from "@mui/material";
 import useApi from "../../Common/Hooks/useApi";
 import ReplicationSites from "./ReplicationSites";
 import TrashIcon from "../../../../icons/TrashIcon";
@@ -29,17 +31,16 @@ import {
   ConfirmDeleteIcon,
   RecoverIcon,
 } from "../../../../icons";
-import { useDispatch } from "react-redux";
 import { ErrorResponseHandler } from "../../../../common/types";
 import HelpBox from "../../../../common/HelpBox";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import history from "../../../../history";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import AButton from "../../Common/AButton/AButton";
+import { useAppDispatch } from "../../../../store";
 
 export type ReplicationSite = {
   deploymentID: string;
@@ -49,7 +50,9 @@ export type ReplicationSite = {
 };
 
 const SiteReplication = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const [sites, setSites] = useState([]);
 
   const [deleteAll, setIsDeleteAll] = useState(false);
@@ -138,7 +141,7 @@ const SiteReplication = () => {
                 icon={<RecoverIcon />}
                 onClick={(e) => {
                   e.preventDefault();
-                  history.push(IAM_PAGES.SITE_REPLICATION_STATUS);
+                  navigate(IAM_PAGES.SITE_REPLICATION_STATUS);
                 }}
               />
             </Box>
@@ -151,7 +154,7 @@ const SiteReplication = () => {
             disabled={isRemoving}
             icon={<AddIcon />}
             onClick={() => {
-              history.push(IAM_PAGES.SITE_REPLICATION_ADD);
+              navigate(IAM_PAGES.SITE_REPLICATION_ADD);
             }}
           />
         </Box>
@@ -195,7 +198,7 @@ const SiteReplication = () => {
                     To get started,{" "}
                     <AButton
                       onClick={() => {
-                        history.push(IAM_PAGES.SITE_REPLICATION_ADD);
+                        navigate(IAM_PAGES.SITE_REPLICATION_ADD);
                       }}
                     >
                       Add a Replication Site

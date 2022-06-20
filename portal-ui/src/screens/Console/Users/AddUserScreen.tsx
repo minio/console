@@ -14,10 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import UserSelector from "./UserSelector";
+import PasswordSelector from "./PasswordSelector";
+import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import { createUserAsync, resetFormAsync } from "./thunk/AddUsersThunk";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -28,28 +31,26 @@ import { CreateUserIcon } from "../../../icons";
 
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
-import history from "../../../../src/history";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
 import PolicySelectors from "../Policies/PolicySelectors";
 import BackLink from "../../../common/BackLink";
 import GroupsSelectors from "./GroupsSelectors";
-import { useDispatch } from "react-redux";
-import { User } from "./types";
 
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../../src/common/types";
-import api from "../../../../src/common/api";
-
+import { useNavigate } from "react-router-dom";
 import FormLayout from "../Common/FormLayout";
 import AddUserHelpBox from "./AddUserHelpBox";
 import { setErrorSnackMessage } from "../../../systemSlice";
-
+import { useAppDispatch } from "../../../store";
+import { useSelector } from "react-redux";
+import { AppState } from "../../../store";
+import {
+  setSelectedGroups,
+  setAddLoading,
+  setSendEnabled,
+} from "./AddUsersSlice";
 interface IAddUserProps {
   classes: any;
-  selectedUser: User | null;
 }
 
 const styles = (theme: Theme) =>
@@ -72,57 +73,44 @@ const styles = (theme: Theme) =>
   });
 
 const AddUser = ({ classes }: IAddUserProps) => {
-  const dispatch = useDispatch();
-  const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [accessKey, setAccessKey] = useState<string>("");
-  const [secretKey, setSecretKey] = useState<string>("");
-  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
-  const [selectedPolicies, setSelectedPolicies] = useState<string[]>([]);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-
-  const sendEnabled = accessKey.trim() !== "";
+  const dispatch = useAppDispatch();
+  const selectedPolicies = useSelector(
+    (state: AppState) => state.createUser.selectedPolicies
+  );
+  const selectedGroups = useSelector(
+    (state: AppState) => state.createUser.selectedGroups
+  );
+  const addLoading = useSelector(
+    (state: AppState) => state.createUser.addLoading
+  );
+  const sendEnabled = useSelector(
+    (state: AppState) => state.createUser.sendEnabled
+  );
+  const secretKeylength = useSelector(
+    (state: AppState) => state.createUser.secretKeylength
+  );
+  const navigate = useNavigate();
+  dispatch(setSendEnabled());
 
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
-
-    if (secretKey.length < 8) {
+    if (secretKeylength < 8) {
       dispatch(
         setErrorSnackMessage({
           errorMessage: "Passwords must be at least 8 characters long",
           detailedError: "",
         })
       );
-      setAddLoading(false);
+      dispatch(setAddLoading(false));
       return;
     }
-
     if (addLoading) {
       return;
     }
-    setAddLoading(true);
-    api
-      .invoke("POST", "/api/v1/users", {
-        accessKey,
-        secretKey,
-        groups: selectedGroups,
-        policies: selectedPolicies,
-      })
-      .then((res) => {
-        setAddLoading(false);
-        history.push(`${IAM_PAGES.USERS}`);
-      })
-      .catch((err: ErrorResponseHandler) => {
-        setAddLoading(false);
-        dispatch(setErrorSnackMessage(err));
-      });
-  };
-
-  const resetForm = () => {
-    setSelectedGroups([]);
-    setAccessKey("");
-    setSecretKey("");
-    setSelectedPolicies([]);
-    setShowPassword(false);
+    dispatch(setAddLoading(true));
+    dispatch(createUserAsync())
+      .unwrap() // <-- async Thunk returns a promise, that can be 'unwrapped')
+      .then(() => navigate(`${IAM_PAGES.USERS}`));
   };
 
   return (
@@ -142,88 +130,56 @@ const AddUser = ({ classes }: IAddUserProps) => {
                 saveRecord(e);
               }}
             >
-              <Grid item xs={12}>
-                <div className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    className={classes.spacerBottom}
-                    classes={{
-                      inputLabel: classes.sizedLabel,
-                    }}
-                    id="accesskey-input"
-                    name="accesskey-input"
-                    label="User Name"
-                    value={accessKey}
-                    autoFocus={true}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setAccessKey(e.target.value);
+              <Grid container>
+                <Grid item xs={12}>
+                  <div className={classes.formFieldRow}>
+                    <UserSelector classes={classes} />
+                  </div>
+                </Grid>
+                <Grid item xs={12}>
+                  <div className={classes.formFieldRow}>
+                    <PasswordSelector classes={classes} />
+                  </div>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <PolicySelectors selectedPolicy={selectedPolicies} />
+                </Grid>
+                <Grid item xs={12}>
+                  <GroupsSelectors
+                    selectedGroups={selectedGroups}
+                    setSelectedGroups={(elements: string[]) => {
+                      dispatch(setSelectedGroups(elements));
                     }}
                   />
-                </div>
-                <div className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    className={classes.spacerBottom}
-                    classes={{
-                      inputLabel: classes.sizedLabel,
-                    }}
-                    id="standard-multiline-static"
-                    name="standard-multiline-static"
-                    label="Password"
-                    type={showPassword ? "text" : "password"}
-                    value={secretKey}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setSecretKey(e.target.value);
-                    }}
-                    autoComplete="current-password"
-                    overlayIcon={
-                      showPassword ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <RemoveRedEyeIcon />
-                      )
-                    }
-                    overlayAction={() => setShowPassword(!showPassword)}
-                  />
-                </div>
-                <Grid container item spacing="20">
-                  <Grid item xs={12}>
-                    <PolicySelectors
-                      selectedPolicy={selectedPolicies}
-                      setSelectedPolicy={setSelectedPolicies}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <GroupsSelectors
-                      selectedGroups={selectedGroups}
-                      setSelectedGroups={(elements: string[]) => {
-                        setSelectedGroups(elements);
-                      }}
-                    />
-                  </Grid>
                 </Grid>
                 {addLoading && (
                   <Grid item xs={12}>
                     <LinearProgress />
                   </Grid>
                 )}
-              </Grid>
-              <Grid item xs={12} className={classes.modalButtonBar}>
-                <Button
-                  type="button"
-                  variant="outlined"
-                  color="primary"
-                  onClick={resetForm}
-                >
-                  Clear
-                </Button>
 
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={addLoading || !sendEnabled}
-                >
-                  Save
-                </Button>
+                <Grid item xs={12} className={classes.modalButtonBar}>
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    color="primary"
+                    onClick={(e) => {
+                      dispatch(resetFormAsync());
+                    }}
+                  >
+                    Clear
+                  </Button>
+
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    disabled={addLoading || !sendEnabled}
+                  >
+                    Save
+                  </Button>
+                </Grid>
               </Grid>
             </form>
           </FormLayout>

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import {
   Area,
   AreaChart,
@@ -41,6 +41,7 @@ import { useTheme } from "@mui/styles";
 import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -107,7 +108,7 @@ const LinearGraphWidget = ({
   xAxisFormatter = (item: string) => item,
   zoomActivated = false,
 }: ILinearGraphWidget) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<object[]>([]);
   const [dataMax, setDataMax] = useState<number>(0);

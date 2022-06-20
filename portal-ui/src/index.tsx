@@ -17,7 +17,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
-import Routes from "./Routes";
 import { store } from "./store";
 import * as serviceWorker from "./serviceWorker";
 import {
@@ -32,6 +31,7 @@ import "react-resizable/css/styles.css";
 
 import "./index.css";
 import theme from "./theme/main";
+import MainRouter from "./MainRouter";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -137,7 +137,7 @@ root.render(
       <GlobalCss />
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Routes />
+          <MainRouter />
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>

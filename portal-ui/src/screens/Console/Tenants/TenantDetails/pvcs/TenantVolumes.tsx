@@ -22,7 +22,7 @@ import { containerForHeader } from "../../../Common/FormComponents/common/styleL
 import Grid from "@mui/material/Grid";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import api from "../../../../../common/api";
 import { IEvent } from "../../ListTenants/types";
@@ -30,12 +30,12 @@ import { niceDays } from "../../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import EventsList from "../events/EventsList";
 import PVCDescribe from "./PVCDescribe";
-import { useDispatch } from "react-redux";
+
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 interface IPVCDetailsProps {
   classes: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -47,13 +47,12 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantVolumes = ({ classes, match }: IPVCDetailsProps) => {
+const TenantVolumes = ({ classes }: IPVCDetailsProps) => {
+  const dispatch = useAppDispatch();
+  const { tenantName, PVCName, tenantNamespace } = useParams();
+
   const [curTab, setCurTab] = useState<number>(0);
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(true);
-  const tenantNamespace = match.params["tenantNamespace"];
-  const tenantName = match.params["tenantName"];
-  const PVCName = match.params["PVCName"];
   const [events, setEvents] = useState<IEvent[]>([]);
 
   useEffect(() => {
@@ -117,9 +116,9 @@ const TenantVolumes = ({ classes, match }: IPVCDetailsProps) => {
         )}
         {curTab === 1 && (
           <PVCDescribe
-            tenant={tenantName}
-            namespace={tenantNamespace}
-            pvcName={PVCName}
+            tenant={tenantName || ""}
+            namespace={tenantNamespace || ""}
+            pvcName={PVCName || ""}
             propLoading={loading}
           />
         )}

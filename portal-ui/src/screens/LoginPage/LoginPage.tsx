@@ -15,7 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   InputAdornment,
@@ -32,7 +33,6 @@ import Grid from "@mui/material/Grid";
 import { ILoginDetails, loginStrategyType } from "./types";
 import { ErrorResponseHandler } from "../../common/types";
 import api from "../../common/api";
-import history from "../../history";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
 import {
@@ -52,6 +52,7 @@ import GithubIcon from "../../icons/GithubIcon";
 import clsx from "clsx";
 import Loader from "../Console/Common/Loader/Loader";
 import { setErrorSnackMessage, userLogged } from "../../systemSlice";
+import { useAppDispatch } from "../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -286,7 +287,8 @@ interface LoginStrategyPayload {
 }
 
 const Login = ({ classes }: ILoginProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [accessKey, setAccessKey] = useState<string>("");
   const [jwt, setJwt] = useState<string>("");
@@ -338,7 +340,7 @@ const Login = ({ classes }: ILoginProps) => {
           targetPath = `${localStorage.getItem("redirect-path")}`;
           localStorage.setItem("redirect-path", "");
         }
-        history.push(targetPath);
+        navigate(targetPath);
       })
       .catch((err) => {
         setLoginSending(false);

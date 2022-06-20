@@ -30,6 +30,7 @@ var (
 	ErrDefault                          = errors.New("an error occurred, please try again")
 	ErrInvalidLogin                     = errors.New("invalid Login")
 	ErrForbidden                        = errors.New("403 Forbidden")
+	ErrBadRequest                       = errors.New("400 Bad Request")
 	ErrFileTooLarge                     = errors.New("413 File too Large")
 	ErrInvalidSession                   = errors.New("invalid session")
 	ErrNotFound                         = errors.New("not found")
@@ -80,6 +81,9 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 		if err1, exists = err[0].(error); exists {
 			if err1.Error() == ErrForbidden.Error() {
 				errorCode = 403
+			}
+			if err1.Error() == ErrBadRequest.Error() {
+				errorCode = 400
 			}
 			if err1 == ErrNotFound {
 				errorCode = 404

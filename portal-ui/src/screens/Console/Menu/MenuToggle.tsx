@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Suspense, useEffect } from "react";
+import React, { Fragment, Suspense, useEffect } from "react";
 import OperatorLogo from "../../../icons/OperatorLogo";
-import { VersionIcon } from "../../../icons";
+import { LoginMinIOLogo, VersionIcon } from "../../../icons";
 import { Box, IconButton } from "@mui/material";
-import { ChevronLeft } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LicensedConsoleLogo from "../Common/Components/LicensedConsoleLogo";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import useApi from "../Common/Hooks/useApi";
 import { setLicenseInfo } from "../../../systemSlice";
-import { AppState } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
+import MenuToggleIcon from "../../../icons/MenuToggleIcon";
 
 type MenuToggleProps = {
   isOpen: boolean;
@@ -33,7 +33,7 @@ type MenuToggleProps = {
 const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
   const stateClsName = isOpen ? "wide" : "mini";
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const licenseInfo = useSelector(
     (state: AppState) => state?.system?.licenseInfo
@@ -103,7 +103,13 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
           {operatorMode ? (
             <OperatorLogo />
           ) : (
-            <LicensedConsoleLogo plan={plan} isLoading={isLicenseLoading} />
+            <Fragment>
+              <div style={{ margin: "auto", width: 100, textAlign: "right" }}>
+                <LoginMinIOLogo style={{ width: 100 }} />
+                <br />
+                <LicensedConsoleLogo plan={plan} isLoading={isLicenseLoading} />
+              </div>
+            </Fragment>
           )}
         </div>
       ) : (
@@ -145,7 +151,7 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
         }}
         size="small"
       >
-        {isOpen ? <ChevronLeft /> : <MenuIcon />}
+        {isOpen ? <MenuToggleIcon /> : <MenuIcon />}
       </IconButton>
     </Box>
   );

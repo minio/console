@@ -39,6 +39,10 @@ type K8sClientI interface {
 	createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
 	updateSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error)
 	getPVC(ctx context.Context, namespace string, pvcName string, opts metav1.GetOptions) (*v1.PersistentVolumeClaim, error)
+	getConfigMap(ctx context.Context, namespace, configMap string, opts metav1.GetOptions) (*v1.ConfigMap, error)
+	createConfigMap(ctx context.Context, namespace string, cm *v1.ConfigMap, opts metav1.CreateOptions) (*v1.ConfigMap, error)
+	updateConfigMap(ctx context.Context, namespace string, cm *v1.ConfigMap, opts metav1.UpdateOptions) (*v1.ConfigMap, error)
+	deleteConfigMap(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
 }
 
 // Interface implementation
@@ -86,4 +90,20 @@ func (c *k8sClient) getStorageClasses(ctx context.Context, opts metav1.ListOptio
 
 func (c *k8sClient) getPVC(ctx context.Context, namespace string, pvcName string, opts metav1.GetOptions) (*v1.PersistentVolumeClaim, error) {
 	return c.client.CoreV1().PersistentVolumeClaims(namespace).Get(ctx, pvcName, opts)
+}
+
+func (c *k8sClient) getConfigMap(ctx context.Context, namespace, name string, opts metav1.GetOptions) (*v1.ConfigMap, error) {
+	return c.client.CoreV1().ConfigMaps(namespace).Get(ctx, name, opts)
+}
+
+func (c *k8sClient) createConfigMap(ctx context.Context, namespace string, cm *v1.ConfigMap, opts metav1.CreateOptions) (*v1.ConfigMap, error) {
+	return c.client.CoreV1().ConfigMaps(namespace).Create(ctx, cm, opts)
+}
+
+func (c *k8sClient) updateConfigMap(ctx context.Context, namespace string, cm *v1.ConfigMap, opts metav1.UpdateOptions) (*v1.ConfigMap, error) {
+	return c.client.CoreV1().ConfigMaps(namespace).Update(ctx, cm, opts)
+}
+
+func (c *k8sClient) deleteConfigMap(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
+	return c.client.CoreV1().ConfigMaps(namespace).Delete(ctx, name, opts)
 }

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -24,9 +24,9 @@ import Loader from "../../../Common/Loader/Loader";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { splitSizeMetric, widgetDetailsToPanel } from "../utils";
 import { IDashboardPanel } from "../types";
-
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../store";
 
 interface ISingleValueWidget {
   title: string;
@@ -81,7 +81,7 @@ const SingleValueWidget = ({
   apiPrefix,
   renderFn,
 }: ISingleValueWidget) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<string>("");
 

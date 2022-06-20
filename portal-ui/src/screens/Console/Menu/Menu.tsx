@@ -15,18 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Drawer } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import clsx from "clsx";
-import { AppState } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import { clearSession } from "../../../common/utils";
 
-import history, { baseUrl } from "../../../history";
+import { baseUrl } from "../../../history";
 import api from "../../../common/api";
 
 import MenuToggle from "./MenuToggle";
@@ -89,7 +90,8 @@ interface IMenuProps {
 }
 
 const Menu = ({ classes }: IMenuProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const features = useSelector(selFeatures);
 
@@ -105,7 +107,7 @@ const Menu = ({ classes }: IMenuProps) => {
       localStorage.setItem("userLoggedIn", "");
       localStorage.setItem("redirect-path", "");
       dispatch(resetSession());
-      history.push(`${baseUrl}login`);
+      navigate(`${baseUrl}login`);
     };
     api
       .invoke("POST", `/api/v1/logout`)

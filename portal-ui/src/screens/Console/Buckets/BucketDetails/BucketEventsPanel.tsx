@@ -15,7 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -44,6 +45,7 @@ import withSuspense from "../../Common/Components/withSuspense";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
+import { useAppDispatch } from "../../../../store";
 
 const DeleteEvent = withSuspense(React.lazy(() => import("./DeleteEvent")));
 const AddEvent = withSuspense(React.lazy(() => import("./AddEvent")));
@@ -59,11 +61,11 @@ const styles = (theme: Theme) =>
 
 interface IBucketEventsProps {
   classes: any;
-  match: any;
 }
 
-const BucketEventsPanel = ({ classes, match }: IBucketEventsProps) => {
-  const dispatch = useDispatch();
+const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
+  const dispatch = useAppDispatch();
+  const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
 
@@ -73,7 +75,7 @@ const BucketEventsPanel = ({ classes, match }: IBucketEventsProps) => {
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
 
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
   const displayEvents = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,

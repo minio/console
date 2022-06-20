@@ -19,7 +19,7 @@ import { addBucketAsync } from "./addBucketThunks";
 
 export interface AddBucketState {
   loading: boolean;
-  valid: boolean;
+  invalidFields: string[];
   name: string;
   versioningEnabled: boolean;
   lockingEnabled: boolean;
@@ -31,11 +31,12 @@ export interface AddBucketState {
   retentionMode: string;
   retentionUnit: string;
   retentionValidity: number;
+  navigateTo: string;
 }
 
 const initialState: AddBucketState = {
   loading: false,
-  valid: false,
+  invalidFields: ["name"],
   name: "",
   versioningEnabled: false,
   lockingEnabled: false,
@@ -47,6 +48,7 @@ const initialState: AddBucketState = {
   retentionMode: "compliance",
   retentionUnit: "days",
   retentionValidity: 180,
+  navigateTo: "",
 };
 
 export const addBucketsSlice = createSlice({
@@ -55,8 +57,13 @@ export const addBucketsSlice = createSlice({
   reducers: {
     setName: (state, action: PayloadAction<string>) => {
       state.name = action.payload;
+
       if (state.name.trim() === "") {
-        state.valid = false;
+        state.invalidFields = [...state.invalidFields, "name"];
+      } else {
+        state.invalidFields = state.invalidFields.filter(
+          (field) => field !== "name"
+        );
       }
     },
     setVersioning: (state, action: PayloadAction<boolean>) => {
@@ -73,13 +80,30 @@ export const addBucketsSlice = createSlice({
     },
     setQuota: (state, action: PayloadAction<boolean>) => {
       state.quotaEnabled = action.payload;
+
+      if (!action.payload) {
+        state.quotaSize = "1";
+        state.quotaUnit = "Ti";
+
+        state.invalidFields = state.invalidFields.filter(
+          (field) => field !== "quotaSize"
+        );
+      }
     },
     setQuotaSize: (state, action: PayloadAction<string>) => {
       state.quotaSize = action.payload;
 
-      if (state.quotaEnabled && state.valid) {
-        if (state.quotaSize.trim() === "" || parseInt(state.quotaSize) === 0) {
-          state.valid = false;
+      if (state.quotaEnabled) {
+        if (
+          state.quotaSize.trim() === "" ||
+          parseInt(state.quotaSize) === 0 ||
+          !/^\d*(?:\.\d{1,2})?$/.test(state.quotaSize)
+        ) {
+          state.invalidFields = [...state.invalidFields, "quotaSize"];
+        } else {
+          state.invalidFields = state.invalidFields.filter(
+            (field) => field !== "quotaSize"
+          );
         }
       }
     },
@@ -107,7 +131,11 @@ export const addBucketsSlice = createSlice({
         state.retentionEnabled &&
         (Number.isNaN(state.retentionValidity) || state.retentionValidity < 1)
       ) {
-        state.valid = false;
+        state.invalidFields = [...state.invalidFields, "retentionValidity"];
+      } else {
+        state.invalidFields = state.invalidFields.filter(
+          (field) => field !== "retentionValidity"
+        );
       }
     },
     setRetentionMode: (state, action: PayloadAction<string>) => {
@@ -122,7 +150,11 @@ export const addBucketsSlice = createSlice({
         state.retentionEnabled &&
         (Number.isNaN(state.retentionValidity) || state.retentionValidity < 1)
       ) {
-        state.valid = false;
+        state.invalidFields = [...state.invalidFields, "retentionValidity"];
+      } else {
+        state.invalidFields = state.invalidFields.filter(
+          (field) => field !== "retentionValidity"
+        );
       }
     },
 
@@ -138,6 +170,7 @@ export const addBucketsSlice = createSlice({
       })
       .addCase(addBucketAsync.fulfilled, (state, action) => {
         state.loading = false;
+        state.navigateTo = `/buckets/${action.payload}/browse`;
       });
   },
 });

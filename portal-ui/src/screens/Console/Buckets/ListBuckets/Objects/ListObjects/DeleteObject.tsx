@@ -23,8 +23,9 @@ import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../../../../Common/Hooks/useApi";
 import { ConfirmDeleteIcon } from "../../../../../../icons";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { useDispatch } from "react-redux";
+
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -45,7 +46,7 @@ const DeleteObject = ({
   versioning,
   selectedVersion = "",
 }: IDeleteObjectProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
   const onDelError = (err: ErrorResponseHandler) =>
     dispatch(setErrorSnackMessage(err));

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -35,11 +35,13 @@ import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SearchBox from "../Common/SearchBox";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { AppState, useAppDispatch } from "../../../store";
+import { setSelectedPolicies } from "../Users/AddUsersSlice";
+import { useSelector } from "react-redux";
 
 interface ISelectPolicyProps {
   classes: any;
   selectedPolicy?: string[];
-  setSelectedPolicy: any;
 }
 
 const styles = (theme: Theme) =>
@@ -76,13 +78,16 @@ const styles = (theme: Theme) =>
 const PolicySelectors = ({
   classes,
   selectedPolicy = [],
-  setSelectedPolicy,
 }: ISelectPolicyProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   // Local State
   const [records, setRecords] = useState<any[]>([]);
   const [loading, isLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
+
+  const currentPolicies = useSelector(
+    (state: AppState) => state.createUser.selectedPolicies
+  );
 
   const fetchPolicies = useCallback(() => {
     isLoading(true);
@@ -116,7 +121,7 @@ const PolicySelectors = ({
     const value = targetD.value;
     const checked = targetD.checked;
 
-    let elements: string[] = [...selectedPolicy]; // We clone the checkedUsers array
+    let elements: string[] = [...currentPolicies]; // We clone the checkedUsers array
 
     if (checked) {
       // If the user has checked this field we need to push this to checkedUsersList
@@ -128,7 +133,7 @@ const PolicySelectors = ({
     // remove empty values
     elements = elements.filter((element) => element !== "");
 
-    setSelectedPolicy(elements);
+    dispatch(setSelectedPolicies(elements));
   };
 
   const filteredRecords = records.filter((elementItem) =>
@@ -136,7 +141,7 @@ const PolicySelectors = ({
   );
 
   return (
-    <React.Fragment>
+    <Grid container>
       <Grid item xs={12}>
         {loading && <LinearProgress />}
         {records.length > 0 ? (
@@ -153,11 +158,16 @@ const PolicySelectors = ({
                 />
               </div>
             </Grid>
-            <Grid item xs={12} className={classes.tableBlock}>
+            <Grid
+              item
+              xs={12}
+              className={classes.tableBlock}
+              style={{ paddingBottom: 16 }}
+            >
               <TableWrapper
                 columns={[{ label: "Policy", elementKey: "name" }]}
                 onSelect={selectionChanged}
-                selectedItems={selectedPolicy}
+                selectedItems={currentPolicies}
                 isLoading={loading}
                 records={filteredRecords}
                 entityName="Policies"
@@ -170,7 +180,7 @@ const PolicySelectors = ({
           <div className={classes.noFound}>No Policies Available</div>
         )}
       </Grid>
-    </React.Fragment>
+    </Grid>
   );
 };
 

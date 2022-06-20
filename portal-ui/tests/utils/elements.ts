@@ -69,7 +69,8 @@ export const startNewDiagnosticButton = Selector("#start-new-diagnostic");
 export const downloadButton = Selector("button:enabled").withText("Download");
 export const startButton = Selector("button:enabled").withText("Start");
 export const stopButton = Selector("button:enabled").withText("Stop");
-
+export const assignPoliciesButton =
+  Selector("button:enabled").withText("Assign Policies");
 //----------------------------------------------------
 // Links
 //----------------------------------------------------
@@ -209,3 +210,7 @@ export const settingsAuditWebhookTab = Selector(".MuiTab-root").withAttribute(
 export const logWindow = Selector('[data-test-id="logs-list-container"]');
 //Node selector
 export const nodeSelector = Selector('[data-test-id="node-selector"]');
+//----------------------------------------------------
+// User Details
+//----------------------------------------------------
+export const userPolicies = Selector(".MuiTab-root").withText("Policies");

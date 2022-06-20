@@ -42,6 +42,7 @@ import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import RBIconButton from "./SummaryItems/RBIconButton";
 import DeleteBucketLifecycleRule from "./DeleteBucketLifecycleRule";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
+import { useParams } from "react-router-dom";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -54,14 +55,11 @@ const styles = (theme: Theme) =>
 
 interface IBucketLifecyclePanelProps {
   classes: any;
-  match: any;
 }
 
-const BucketLifecyclePanel = ({
-  classes,
-  match,
-}: IBucketLifecyclePanelProps) => {
+const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
   const loadingBucket = useSelector(selBucketDetailsLoading);
+  const params = useParams();
 
   const [loadingLifecycle, setLoadingLifecycle] = useState<boolean>(true);
   const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
@@ -73,7 +71,7 @@ const BucketLifecyclePanel = ({
     useState<boolean>(false);
   const [selectedID, setSelectedID] = useState<string | null>(null);
 
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
   const displayLifeCycleRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,

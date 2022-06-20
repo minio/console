@@ -15,7 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { Paper } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -26,7 +27,6 @@ import { User } from "../../Users/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
-import history from "../../../../history";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
@@ -37,13 +37,10 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../../common/SecureComponent";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import { tableStyles } from "../../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../../common/utils";
 import { setErrorSnackMessage } from "../../../../systemSlice";
-import makeStyles from "@mui/styles/makeStyles";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
+import { useAppDispatch } from "../../../../store";
 
 function a11yProps(index: any) {
   return {
@@ -52,18 +49,10 @@ function a11yProps(index: any) {
   };
 }
 
-interface IAccessDetailsProps {
-  match: any;
-}
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    ...tableStyles,
-  })
-);
-const AccessDetails = ({ match }: IAccessDetailsProps) => {
-  const dispatch = useDispatch();
-  const classes = useStyles();
+const AccessDetails = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
 
@@ -73,7 +62,7 @@ const AccessDetails = ({ match }: IAccessDetailsProps) => {
   const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
   const [bucketUsers, setBucketUsers] = useState<User[]>([]);
 
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
   const displayPoliciesList = hasPermission(bucketName, [
     IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
@@ -110,7 +99,7 @@ const AccessDetails = ({ match }: IAccessDetailsProps) => {
       type: "view",
       disableButtonFunction: () => !viewPolicy,
       onClick: (policy: any) => {
-        history.push(`${IAM_PAGES.POLICIES}/${encodeURLString(policy.name)}`);
+        navigate(`${IAM_PAGES.POLICIES}/${encodeURLString(policy.name)}`);
       },
     },
   ];
@@ -120,7 +109,7 @@ const AccessDetails = ({ match }: IAccessDetailsProps) => {
       type: "view",
       disableButtonFunction: () => !viewUser,
       onClick: (user: any) => {
-        history.push(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
+        navigate(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
       },
     },
   ];
@@ -180,7 +169,7 @@ const AccessDetails = ({ match }: IAccessDetailsProps) => {
         {displayPoliciesList && <Tab label="Policies" {...a11yProps(0)} />}
         {displayUsersList && <Tab label="Users" {...a11yProps(1)} />}
       </Tabs>
-      <Paper className={classes.tableBlock}>
+      <Paper>
         <TabPanel index={0} value={curTab}>
           <SecureComponent
             scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}

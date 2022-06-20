@@ -15,23 +15,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-
-import PageHeader from "../../Common/PageHeader/PageHeader";
+import { useNavigate } from "react-router-dom";
+import { Box } from "@mui/material";
 import { tierTypes } from "./utils";
+import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
+import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
-import { Box } from "@mui/material";
 import TierTypeCard from "./TierTypeCard";
-import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import ContentBox from "../../Common/ContentBox";
 
-interface ITypeTiersConfig {
-  history: any;
-}
+const TierTypeSelector = () => {
+  const navigate = useNavigate();
 
-const TierTypeSelector = ({ history }: ITypeTiersConfig) => {
   const typeSelect = (selectName: string) => {
-    history.push(`${IAM_PAGES.TIERS_ADD}/${selectName}`);
+    navigate(`${IAM_PAGES.TIERS_ADD}/${selectName}`);
   };
 
   return (

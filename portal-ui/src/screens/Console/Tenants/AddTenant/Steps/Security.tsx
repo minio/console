@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -26,7 +26,7 @@ import {
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
 
-import { AppState } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
 import { KeyPair } from "../../ListTenants/utils";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import FileSelector from "../../../Common/FormComponents/FileSelector/FileSelector";
@@ -117,7 +117,7 @@ const styles = (theme: Theme) =>
   });
 
 const Security = ({ classes }: ISecurityProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const enableTLS = useSelector(
     (state: AppState) => state.createTenant.fields.security.enableTLS

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -46,6 +46,8 @@ import RBIconButton from "./SummaryItems/RBIconButton";
 import EditReplicationModal from "./EditReplicationModal";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
+import { useParams } from "react-router-dom";
+import { useAppDispatch } from "../../../../store";
 
 const AddReplicationModal = withSuspense(
   React.lazy(() => import("./AddReplicationModal"))
@@ -56,7 +58,6 @@ const DeleteReplicationRule = withSuspense(
 
 interface IBucketReplicationProps {
   classes: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -68,11 +69,9 @@ const styles = (theme: Theme) =>
     },
   });
 
-const BucketReplicationPanel = ({
-  classes,
-  match,
-}: IBucketReplicationProps) => {
-  const dispatch = useDispatch();
+const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
+  const dispatch = useAppDispatch();
+  const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
 
@@ -90,7 +89,7 @@ const BucketReplicationPanel = ({
   const [deleteSelectedRules, setDeleteSelectedRules] =
     useState<boolean>(false);
 
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
   const displayReplicationRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,

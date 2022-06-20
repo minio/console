@@ -51,8 +51,9 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { useDispatch } from "react-redux";
+
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -95,7 +96,7 @@ const EditLifecycleConfiguration = ({
   lifecycleRule,
   open,
 }: IAddUserContentProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [loadingTiers, setLoadingTiers] = useState<boolean>(true);
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [tags, setTags] = useState<string>("");

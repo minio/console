@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import { Button, Grid } from "@mui/material";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -25,13 +26,12 @@ import {
   formFieldStyles,
   modalStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { connect, useDispatch } from "react-redux";
-import history from "../../../../../../history";
+import { connect } from "react-redux";
 import { encodeURLString } from "../../../../../../common/utils";
 
 import { BucketObjectItem } from "./types";
 import { CreateNewPathIcon } from "../../../../../../icons";
-import { AppState } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 
 interface ICreatePath {
@@ -59,7 +59,9 @@ const CreatePathModal = ({
   existingFiles,
   simplePath,
 }: ICreatePath) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [currentPath, setCurrentPath] = useState(bucketName);
@@ -106,7 +108,7 @@ const CreatePathModal = ({
     const newPath = `/buckets/${bucketName}/browse/${encodeURLString(
       `${folderPath}${cleanPathURL}/`
     )}`;
-    history.push(newPath);
+    navigate(newPath);
     onClose();
   };
 

@@ -15,7 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import Grid from "@mui/material/Grid";
@@ -57,6 +58,7 @@ import ServiceAccountPolicy from "./ServiceAccountPolicy";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { selFeatures } from "../consoleSlice";
+import { useAppDispatch } from "../../../store";
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
@@ -76,12 +78,10 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-interface IServiceAccountsProps {
-  history: any;
-}
+const Account = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-const Account = ({ history }: IServiceAccountsProps) => {
-  const dispatch = useDispatch();
   const classes = useStyles();
   const features = useSelector(selFeatures);
 
@@ -248,7 +248,7 @@ const Account = ({ history }: IServiceAccountsProps) => {
             </SecureComponent>
             <RBIconButton
               onClick={(e) => {
-                history.push(`${IAM_PAGES.ACCOUNT_ADD}`);
+                navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
               }}
               text={`Create service account`}
               icon={<AddIcon />}

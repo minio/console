@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -33,15 +33,14 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import SearchIcon from "../../../../icons/SearchIcon";
 import { IPodListElement } from "../ListTenants/types";
 import withSuspense from "../../Common/Components/withSuspense";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useNavigate, useParams } from "react-router-dom";
 
 const DeletePVC = withSuspense(React.lazy(() => import("./DeletePVC")));
 
 interface ITenantVolumesProps {
   classes: any;
-  history: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -51,8 +50,10 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantVolumes = ({ classes, history, match }: ITenantVolumesProps) => {
-  const dispatch = useDispatch();
+const TenantVolumes = ({ classes }: ITenantVolumesProps) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { tenantName, tenantNamespace } = useParams();
 
   const loadingTenant = useSelector(
     (state: AppState) => state.tenants.loadingTenant
@@ -63,9 +64,6 @@ const TenantVolumes = ({ classes, history, match }: ITenantVolumesProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedPVC, setSelectedPVC] = useState<any>(null);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
 
   useEffect(() => {
     if (loading) {
@@ -101,8 +99,10 @@ const TenantVolumes = ({ classes, history, match }: ITenantVolumesProps) => {
   );
 
   const PVCViewAction = (PVC: IPodListElement) => {
-    history.push(
-      `/namespaces/${tenantNamespace}/tenants/${tenantName}/pvcs/${PVC.name}`
+    navigate(
+      `/namespaces/${tenantNamespace || ""}/tenants/${tenantName || ""}/pvcs/${
+        PVC.name
+      }`
     );
     return;
   };

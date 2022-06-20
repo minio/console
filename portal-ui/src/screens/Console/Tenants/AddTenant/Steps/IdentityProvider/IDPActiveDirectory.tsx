@@ -34,9 +34,9 @@ import {
   setIDPADUsrAtIndex,
   updateAddField,
 } from "../../createTenantSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { clearValidationError } from "../../../utils";
-import { AppState } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const IDPActiveDirectory = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const classes = useStyles();
 
   const idpSelection = useSelector(

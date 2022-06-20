@@ -55,6 +55,7 @@ import {
 } from "../../icons";
 import SettingsIcon from "../../icons/SettingsIcon";
 import React from "react";
+import LicenseBadge from "./Menu/LicenseBadge";
 
 export const validRoutes = (
   features: string[] | null | undefined,
@@ -247,6 +248,7 @@ export const validRoutes = (
       name: "License",
       id: "license",
       icon: LicenseIcon,
+      badge: LicenseBadge,
       forceDisplay: true,
     },
     {

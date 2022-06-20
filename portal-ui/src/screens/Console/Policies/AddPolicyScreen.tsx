@@ -15,55 +15,26 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { Box, Button } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import history from "../../../../src/history";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import BackLink from "../../../common/BackLink";
-import { useDispatch } from "react-redux";
 import { AddAccessRuleIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../../src/common/types";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../../src/common/api";
 import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../store";
 
-interface IAddPolicyProps {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    bottomContainer: {
-      display: "flex",
-      flexGrow: 1,
-      alignItems: "center",
-      margin: "auto",
-      justifyContent: "center",
-      "& div": {
-        width: 150,
-        "@media (max-width: 900px)": {
-          flexFlow: "column",
-        },
-      },
-    },
-    ...formFieldStyles,
-    ...modalStyleUtils,
-  });
-
-const AddPolicyScreen = ({ classes }: IAddPolicyProps) => {
-  const dispatch = useDispatch();
+const AddPolicyScreen = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [policyName, setPolicyName] = useState<string>("");
@@ -82,7 +53,7 @@ const AddPolicyScreen = ({ classes }: IAddPolicyProps) => {
       })
       .then((res) => {
         setAddLoading(false);
-        history.push(`${IAM_PAGES.POLICIES}`);
+        navigate(`${IAM_PAGES.POLICIES}`);
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
@@ -122,7 +93,7 @@ const AddPolicyScreen = ({ classes }: IAddPolicyProps) => {
                 addRecord(e);
               }}
             >
-              <Grid container item spacing={1} marginTop={"8px"}>
+              <Grid container item spacing={1}>
                 <Grid item xs={12}>
                   <InputBoxWrapper
                     id="policy-name"
@@ -184,4 +155,4 @@ const AddPolicyScreen = ({ classes }: IAddPolicyProps) => {
   );
 };
 
-export default withStyles(styles)(AddPolicyScreen);
+export default AddPolicyScreen;

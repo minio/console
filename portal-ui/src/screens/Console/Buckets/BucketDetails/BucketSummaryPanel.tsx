@@ -15,7 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -59,6 +60,7 @@ import {
   selBucketDetailsLoading,
   setBucketDetailsLoad,
 } from "./bucketDetailsSlice";
+import { useAppDispatch } from "../../../../store";
 
 const SetAccessPolicy = withSuspense(
   React.lazy(() => import("./SetAccessPolicy"))
@@ -93,11 +95,11 @@ const twoColCssGridLayoutConfig = {
 
 interface IBucketSummaryProps {
   classes: any;
-  match: any;
 }
 
-const BucketSummary = ({ classes, match }: IBucketSummaryProps) => {
-  const dispatch = useDispatch();
+const BucketSummary = ({ classes }: IBucketSummaryProps) => {
+  const dispatch = useAppDispatch();
+  const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
   const bucketInfo = useSelector(selBucketDetailsInfo);
@@ -135,7 +137,7 @@ const BucketSummary = ({ classes, match }: IBucketSummaryProps) => {
   const [enableVersioningOpen, setEnableVersioningOpen] =
     useState<boolean>(false);
 
-  const bucketName = match.params["bucketName"];
+  const bucketName = params.bucketName || "";
 
   let accessPolicy = "n/a";
   let policyDefinition = "";

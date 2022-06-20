@@ -310,6 +310,57 @@ func init() {
         }
       }
     },
+    "/mp-integration": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Returns email registered for marketplace integration",
+        "operationId": "GetMPIntegration",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mpIntegration"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Set email to register for marketplace integration",
+        "operationId": "PostMPIntegration",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/mpIntegration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespace": {
       "post": {
         "tags": [
@@ -3302,6 +3353,14 @@ func init() {
         }
       }
     },
+    "mpIntegration": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
     "namespace": {
       "type": "object",
       "required": [
@@ -4132,6 +4191,9 @@ func init() {
         "dbImage": {
           "type": "string"
         },
+        "dbInitImage": {
+          "type": "string"
+        },
         "dbLabels": {
           "type": "array",
           "items": {
@@ -4903,6 +4965,57 @@ func init() {
         "operationId": "Logout",
         "responses": {
           "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/mp-integration": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Returns email registered for marketplace integration",
+        "operationId": "GetMPIntegration",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mpIntegration"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Set email to register for marketplace integration",
+        "operationId": "PostMPIntegration",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/mpIntegration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
             "description": "A successful response."
           },
           "default": {
@@ -8737,6 +8850,14 @@ func init() {
         }
       }
     },
+    "mpIntegration": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
     "namespace": {
       "type": "object",
       "required": [
@@ -9430,6 +9551,9 @@ func init() {
           }
         },
         "dbImage": {
+          "type": "string"
+        },
+        "dbInitImage": {
           "type": "string"
         },
         "dbLabels": {

@@ -26,8 +26,8 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import { isPageValid, updateAddField } from "../../createTenantSlice";
 import { clearValidationError } from "../../../utils";
 import {
@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const IDPOpenID = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const classes = useStyles();
 
   const idpSelection = useSelector(

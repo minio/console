@@ -15,7 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -29,7 +30,7 @@ import {
 import { ErrorResponseHandler } from "../../../../common/types";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { getTenantAsync } from "../thunks/tenantDetailsAsync";
 import SectionTitle from "../../Common/SectionTitle";
 
@@ -60,11 +61,11 @@ interface ITenantYAML {
 
 interface ITenantYAMLProps {
   classes: any;
-  history: any;
 }
 
-const TenantYAML = ({ classes, history }: ITenantYAMLProps) => {
-  const dispatch = useDispatch();
+const TenantYAML = ({ classes }: ITenantYAMLProps) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const tenant = useSelector((state: AppState) => state.tenants.currentTenant);
   const namespace = useSelector(
@@ -91,7 +92,7 @@ const TenantYAML = ({ classes, history }: ITenantYAMLProps) => {
         setAddLoading(false);
         dispatch(getTenantAsync());
         setErrorMessage("");
-        history.push(`/namespaces/${namespace}/tenants/${tenant}/summary`);
+        navigate(`/namespaces/${namespace}/tenants/${tenant}/summary`);
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
@@ -157,7 +158,7 @@ const TenantYAML = ({ classes, history }: ITenantYAMLProps) => {
                 color="primary"
                 disabled={addLoading}
                 onClick={() => {
-                  history.push(
+                  navigate(
                     `/namespaces/${namespace}/tenants/${tenant}/summary`
                   );
                 }}

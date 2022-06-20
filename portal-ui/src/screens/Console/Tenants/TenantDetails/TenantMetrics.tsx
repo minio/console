@@ -16,18 +16,18 @@
 
 import React, { useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { useParams } from "react-router-dom";
+import { LinearProgress } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { LinearProgress } from "@mui/material";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 interface ITenantMetrics {
   classes: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -42,9 +42,8 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantMetrics = ({ classes, match }: ITenantMetrics) => {
-  const tenantName = match.params["tenantName"];
-  const tenantNamespace = match.params["tenantNamespace"];
+const TenantMetrics = ({ classes }: ITenantMetrics) => {
+  const { tenantName, tenantNamespace } = useParams();
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -59,7 +58,9 @@ const TenantMetrics = ({ classes, match }: ITenantMetrics) => {
       <iframe
         className={classes.iframeStyle}
         title={"metrics"}
-        src={`/api/proxy/${tenantNamespace}/${tenantName}${IAM_PAGES.DASHBOARD}?cp=y`}
+        src={`/api/proxy/${tenantNamespace || ""}/${tenantName || ""}${
+          IAM_PAGES.DASHBOARD
+        }?cp=y`}
         onLoad={() => {
           setLoading(false);
         }}

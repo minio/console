@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -26,12 +27,11 @@ import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
-import history from "../../../../src/history";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddGroupHelpBox from "./AddGroupHelpBox";
 import UsersSelectors from "./UsersSelectors";
 import BackLink from "../../../common/BackLink";
-import { useDispatch } from "react-redux";
+
 import { CreateGroupIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
@@ -39,6 +39,7 @@ import api from "../../../../src/common/api";
 
 import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IAddGroupProps {
   classes: any;
@@ -64,7 +65,8 @@ const styles = (theme: Theme) =>
   });
 
 const AddGroupScreen = ({ classes }: IAddGroupProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [groupName, setGroupName] = useState<string>("");
   const [saving, isSaving] = useState<boolean>(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -84,7 +86,7 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
           })
           .then((res) => {
             isSaving(false);
-            history.push(`${IAM_PAGES.GROUPS}`);
+            navigate(`${IAM_PAGES.GROUPS}`);
           })
           .catch((err: ErrorResponseHandler) => {
             isSaving(false);
@@ -94,7 +96,7 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
 
       saveRecord();
     }
-  }, [saving, groupName, selectedUsers, dispatch]);
+  }, [saving, groupName, selectedUsers, dispatch, navigate]);
 
   //Fetch Actions
   const setSaving = (event: React.FormEvent) => {
@@ -121,7 +123,7 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
             helpbox={<AddGroupHelpBox />}
           >
             <form noValidate autoComplete="off" onSubmit={setSaving}>
-              <Grid container marginTop={"16px"}>
+              <Grid container>
                 <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     id="group-name"

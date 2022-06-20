@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -28,6 +28,8 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import PolicySelectors from "../Policies/PolicySelectors";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { AppState, useAppDispatch } from "../../../store";
+import { useSelector } from "react-redux";
 
 interface ISetUserPoliciesProps {
   classes: any;
@@ -53,11 +55,15 @@ const SetUserPolicies = ({
   currentPolicies,
   open,
 }: ISetUserPoliciesProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   //Local States
   const [loading, setLoading] = useState<boolean>(false);
   const [actualPolicy, setActualPolicy] = useState<string[]>([]);
   const [selectedPolicy, setSelectedPolicy] = useState<string[]>([]);
+
+  const statePolicies = useSelector(
+    (state: AppState) => state.createUser.selectedPolicies
+  );
 
   const SetUserPoliciesAction = () => {
     let entity = "user";
@@ -67,7 +73,7 @@ const SetUserPolicies = ({
 
     api
       .invoke("PUT", `/api/v1/set-policy`, {
-        name: selectedPolicy,
+        name: statePolicies,
         entityName: value,
         entityType: entity,
       })
@@ -107,10 +113,7 @@ const SetUserPolicies = ({
     >
       <Grid container>
         <Grid item xs={12}>
-          <PolicySelectors
-            selectedPolicy={selectedPolicy}
-            setSelectedPolicy={setSelectedPolicy}
-          />
+          <PolicySelectors selectedPolicy={selectedPolicy} />
         </Grid>
       </Grid>
       <Grid item xs={12} className={classes.buttonContainer}>

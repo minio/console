@@ -19,13 +19,13 @@ import { DialogContentText } from "@mui/material";
 import { IPodListElement } from "../ListTenants/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
-import { useDispatch } from "react-redux";
 
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface IDeletePod {
   deleteOpen: boolean;
@@ -38,7 +38,7 @@ const DeletePod = ({
   selectedPod,
   closeDeleteModalAndRefresh,
 }: IDeletePod) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [retypePod, setRetypePod] = useState("");
 
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);

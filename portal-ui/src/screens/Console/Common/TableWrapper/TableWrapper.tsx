@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { Fragment, useState } from "react";
-import get from "lodash/get";
-import isString from "lodash/isString";
 import {
   Checkbox,
   Grid,
@@ -25,7 +23,10 @@ import {
   Popover,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { AutoSizer, Column, InfiniteLoader, Table } from "react-virtualized";
+import get from "lodash/get";
+import isString from "lodash/isString";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
@@ -33,7 +34,6 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import TableActionButton from "./TableActionButton";
 import CheckboxWrapper from "../FormComponents/CheckboxWrapper/CheckboxWrapper";
-import history from "../../../../history";
 import {
   checkboxIcons,
   radioIcons,
@@ -467,6 +467,8 @@ const TableWrapper = ({
   rowStyle,
   parentClassName = "",
 }: TableWrapperProps) => {
+  const navigate = useNavigate();
+
   const [columnSelectorOpen, setColumnSelectorOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<any>(null);
 
@@ -487,7 +489,7 @@ const TableWrapper = ({
       }
 
       if (findView.to && !disabled) {
-        history.push(`${findView.to}/${valueClick}`);
+        navigate(`${findView.to}/${valueClick}`);
         return;
       }
 

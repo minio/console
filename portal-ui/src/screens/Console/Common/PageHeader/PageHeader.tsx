@@ -16,12 +16,12 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import IconButton from "@mui/material/IconButton";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import OperatorLogo from "../../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../../icons/ConsoleLogo";
 
@@ -101,7 +101,7 @@ const PageHeader = ({
   actions,
   middleComponent,
 }: IPageHeader) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const sidebarOpen = useSelector(
     (state: AppState) => state.system.sidebarOpen

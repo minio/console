@@ -94,6 +94,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIGetAllocatableResourcesHandler: operator_api.GetAllocatableResourcesHandlerFunc(func(params operator_api.GetAllocatableResourcesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetAllocatableResources has not yet been implemented")
 		}),
+		OperatorAPIGetMPIntegrationHandler: operator_api.GetMPIntegrationHandlerFunc(func(params operator_api.GetMPIntegrationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.GetMPIntegration has not yet been implemented")
+		}),
 		OperatorAPIGetMaxAllocatableMemHandler: operator_api.GetMaxAllocatableMemHandlerFunc(func(params operator_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetMaxAllocatableMem has not yet been implemented")
 		}),
@@ -162,6 +165,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		}),
 		AuthLogoutHandler: auth.LogoutHandlerFunc(func(params auth.LogoutParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation auth.Logout has not yet been implemented")
+		}),
+		OperatorAPIPostMPIntegrationHandler: operator_api.PostMPIntegrationHandlerFunc(func(params operator_api.PostMPIntegrationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.PostMPIntegration has not yet been implemented")
 		}),
 		OperatorAPIPutTenantYAMLHandler: operator_api.PutTenantYAMLHandlerFunc(func(params operator_api.PutTenantYAMLParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.PutTenantYAML has not yet been implemented")
@@ -295,6 +301,8 @@ type OperatorAPI struct {
 	OperatorAPIEnableTenantLoggingHandler operator_api.EnableTenantLoggingHandler
 	// OperatorAPIGetAllocatableResourcesHandler sets the operation handler for the get allocatable resources operation
 	OperatorAPIGetAllocatableResourcesHandler operator_api.GetAllocatableResourcesHandler
+	// OperatorAPIGetMPIntegrationHandler sets the operation handler for the get m p integration operation
+	OperatorAPIGetMPIntegrationHandler operator_api.GetMPIntegrationHandler
 	// OperatorAPIGetMaxAllocatableMemHandler sets the operation handler for the get max allocatable mem operation
 	OperatorAPIGetMaxAllocatableMemHandler operator_api.GetMaxAllocatableMemHandler
 	// OperatorAPIGetPVCDescribeHandler sets the operation handler for the get p v c describe operation
@@ -341,6 +349,8 @@ type OperatorAPI struct {
 	AuthLoginOperatorHandler auth.LoginOperatorHandler
 	// AuthLogoutHandler sets the operation handler for the logout operation
 	AuthLogoutHandler auth.LogoutHandler
+	// OperatorAPIPostMPIntegrationHandler sets the operation handler for the post m p integration operation
+	OperatorAPIPostMPIntegrationHandler operator_api.PostMPIntegrationHandler
 	// OperatorAPIPutTenantYAMLHandler sets the operation handler for the put tenant y a m l operation
 	OperatorAPIPutTenantYAMLHandler operator_api.PutTenantYAMLHandler
 	// AuthSessionCheckHandler sets the operation handler for the session check operation
@@ -494,6 +504,9 @@ func (o *OperatorAPI) Validate() error {
 	if o.OperatorAPIGetAllocatableResourcesHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetAllocatableResourcesHandler")
 	}
+	if o.OperatorAPIGetMPIntegrationHandler == nil {
+		unregistered = append(unregistered, "operator_api.GetMPIntegrationHandler")
+	}
 	if o.OperatorAPIGetMaxAllocatableMemHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetMaxAllocatableMemHandler")
 	}
@@ -562,6 +575,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.AuthLogoutHandler == nil {
 		unregistered = append(unregistered, "auth.LogoutHandler")
+	}
+	if o.OperatorAPIPostMPIntegrationHandler == nil {
+		unregistered = append(unregistered, "operator_api.PostMPIntegrationHandler")
 	}
 	if o.OperatorAPIPutTenantYAMLHandler == nil {
 		unregistered = append(unregistered, "operator_api.PutTenantYAMLHandler")
@@ -767,6 +783,10 @@ func (o *OperatorAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/mp-integration"] = operator_api.NewGetMPIntegration(o.context, o.OperatorAPIGetMPIntegrationHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/cluster/max-allocatable-memory"] = operator_api.NewGetMaxAllocatableMem(o.context, o.OperatorAPIGetMaxAllocatableMemHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -856,6 +876,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/logout"] = auth.NewLogout(o.context, o.AuthLogoutHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/mp-integration"] = operator_api.NewPostMPIntegration(o.context, o.OperatorAPIPostMPIntegrationHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

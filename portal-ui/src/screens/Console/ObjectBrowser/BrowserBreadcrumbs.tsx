@@ -15,13 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import CopyToClipboard from "react-copy-to-clipboard";
 import Grid from "@mui/material/Grid";
 import withStyles from "@mui/styles/withStyles";
 import createStyles from "@mui/styles/createStyles";
 import { Theme } from "@mui/material/styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, IconButton, Tooltip } from "@mui/material";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
@@ -29,10 +29,9 @@ import { BackCaretIcon, CopyIcon, NewPathIcon } from "../../../icons";
 import { hasPermission } from "../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
-import history from "../../../history";
 import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
-import { AppState } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 import { setVersionsModeEnabled } from "./objectBrowserSlice";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 
@@ -67,7 +66,8 @@ const BrowserBreadcrumbs = ({
   hidePathButton,
   additionalOptions,
 }: IObjectBrowser) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const rewindEnabled = useSelector(
     (state: AppState) => state.objectBrowser.rewind.rewindEnabled
@@ -157,7 +157,7 @@ const BrowserBreadcrumbs = ({
     if (versionsMode) {
       dispatch(setVersionsModeEnabled({ status: false, objectName: "" }));
     } else {
-      history.goBack();
+      navigate(-1);
     }
   };
 

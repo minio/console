@@ -15,13 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, IconButton, Tooltip } from "@mui/material";
 import get from "lodash/get";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
@@ -48,14 +49,11 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-interface IBrowserHandlerProps {
-  match: any;
-  history: any;
-  classes: any;
-}
+const BrowserHandler = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
 
-const BrowserHandler = ({ match, history, classes }: IBrowserHandlerProps) => {
-  const dispatch = useDispatch();
   const versionsMode = useSelector(
     (state: AppState) => state.objectBrowser.versionsMode
   );
@@ -69,15 +67,15 @@ const BrowserHandler = ({ match, history, classes }: IBrowserHandlerProps) => {
     (state: AppState) => state.objectBrowser.searchVersions
   );
 
-  const bucketName = match.params["bucketName"];
-  const internalPaths = get(match.params, "subpaths", "");
+  const bucketName = params.bucketName || "";
+  const internalPaths = get(params, "subpaths", "");
 
   useEffect(() => {
     dispatch(setVersionsModeEnabled({ status: false }));
   }, [internalPaths, dispatch]);
 
   const openBucketConfiguration = () => {
-    history.push(`/buckets/${bucketName}/admin`);
+    navigate(`/buckets/${bucketName}/admin`);
   };
 
   return (

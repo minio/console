@@ -25,8 +25,8 @@ import {
   isPageValid,
   updateAddField,
 } from "../../createTenantSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../../../store";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import {
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const VaultKMSAdd = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const classes = useStyles();
 
   const vaultEndpoint = useSelector(

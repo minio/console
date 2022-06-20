@@ -15,17 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { useDispatch } from "react-redux";
-import { DialogContentText } from "@mui/material";
 
+import { useNavigate } from "react-router-dom";
+import { DialogContentText } from "@mui/material";
 import { ErrorResponseHandler } from "../../../common/types";
-import history from "../../../history";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IDeleteUserStringProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -38,9 +38,11 @@ const DeleteUserModal = ({
   deleteOpen,
   userName,
 }: IDeleteUserStringProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const onDelSuccess = () => {
-    history.push(IAM_PAGES.USERS);
+    navigate(IAM_PAGES.USERS);
   };
   const onDelError = (err: ErrorResponseHandler) =>
     dispatch(setErrorSnackMessage(err));

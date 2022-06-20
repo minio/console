@@ -15,8 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
+import { useLocation } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -27,7 +28,7 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 
 import PoolsListing from "./Pools/Details/PoolsListing";
 import PoolDetails from "./Pools/Details/PoolDetails";
@@ -36,8 +37,6 @@ import { setOpenPoolDetails } from "../tenantsSlice";
 
 interface IPoolsSummary {
   classes: any;
-  history: any;
-  match: any;
 }
 
 const styles = (theme: Theme) =>
@@ -48,8 +47,9 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PoolsSummary = ({ classes, history, match }: IPoolsSummary) => {
-  const dispatch = useDispatch();
+const PoolsSummary = ({ classes }: IPoolsSummary) => {
+  const dispatch = useAppDispatch();
+  const { pathname = "" } = useLocation();
 
   const selectedPool = useSelector(
     (state: AppState) => state.tenants.selectedPool
@@ -67,7 +67,7 @@ const PoolsSummary = ({ classes, history, match }: IPoolsSummary) => {
               dispatch(setOpenPoolDetails(false));
             }}
             label={"Pools list"}
-            to={match.url}
+            to={pathname}
           />
         </Grid>
       )}
@@ -76,13 +76,12 @@ const PoolsSummary = ({ classes, history, match }: IPoolsSummary) => {
       </h1>
       <Grid container>
         {poolDetailsOpen ? (
-          <PoolDetails history={history} />
+          <PoolDetails />
         ) : (
           <PoolsListing
             setPoolDetailsView={() => {
               dispatch(setOpenPoolDetails(true));
             }}
-            history={history}
           />
         )}
       </Grid>

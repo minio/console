@@ -16,7 +16,6 @@
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AppState } from "../../../../../../store";
-import api from "../../../../../../common/api";
 import { IAddPoolRequest } from "../../../ListTenants/types";
 import { generatePoolName } from "../../../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -24,7 +23,7 @@ import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { getDefaultAffinity, getNodeSelector } from "../../utils";
 import { resetPoolForm } from "./addPoolSlice";
 import { getTenantAsync } from "../../../thunks/tenantDetailsAsync";
-import history from "../../../../../../history";
+import api from "../../../../../../common/api";
 
 export const addPoolAsync = createAsyncThunk(
   "addPool/addPoolAsync",
@@ -98,7 +97,7 @@ export const addPoolAsync = createAsyncThunk(
       .then(() => {
         dispatch(resetPoolForm());
         dispatch(getTenantAsync());
-        history.push(poolsURL);
+        return poolsURL;
       })
       .catch((err: ErrorResponseHandler) => {
         dispatch(setErrorSnackMessage(err));

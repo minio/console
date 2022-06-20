@@ -54,7 +54,7 @@ import {
   IAM_PAGES,
   IAM_PAGES_PERMISSIONS,
 } from "../../../common/SecureComponent/permissions";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import SettingsIcon from "../../../icons/SettingsIcon";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -63,10 +63,10 @@ import RegisterHelpBox from "./RegisterHelpBox";
 import RegistrationStatusBanner from "./RegistrationStatusBanner";
 import BackLink from "../../../common/BackLink";
 import { selOpMode, setErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 interface IRegister {
   classes: any;
-  operatorMode: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -151,7 +151,7 @@ const FormTitle = ({ icon = null, title }: { icon?: any; title: any }) => {
 };
 
 const Register = ({ classes }: IRegister) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const operatorMode = useSelector(selOpMode);
   const [license, setLicense] = useState<string>("");
   const [subnetPassword, setSubnetPassword] = useState<string>("");

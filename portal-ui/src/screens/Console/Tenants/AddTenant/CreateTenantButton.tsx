@@ -16,13 +16,13 @@
 
 import { Button } from "@mui/material";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../../../store";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../../../../store";
 import { requiredPages } from "./common";
 import { createTenantAsync } from "./thunks/createTenantThunk";
 
 const CreateTenantButton = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const addSending = useSelector(
     (state: AppState) => state.createTenant.addingTenant

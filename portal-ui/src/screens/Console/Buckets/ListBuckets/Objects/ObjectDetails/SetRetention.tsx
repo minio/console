@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -37,6 +37,7 @@ import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSel
 import api from "../../../../../../common/api";
 import { encodeURLString } from "../../../../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -81,7 +82,7 @@ const SetRetention = ({
   objectInfo,
   bucketName,
 }: ISetRetentionProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [statusEnabled, setStatusEnabled] = useState<boolean>(true);
   const [type, setType] = useState<string>("");
   const [date, setDate] = useState<string>("");
