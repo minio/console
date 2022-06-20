@@ -293,6 +293,29 @@ func CreateTenant(tenantName string, namespace string, accessKey string, secretK
 	return response, err
 }
 
+func DeleteTenant(nameSpace, tenant string) (*http.Response, error) {
+	/*
+		URL: /namespaces/{namespace}/tenants/{tenant}:
+		HTTP Verb: DELETE
+		Summary: Delete tenant and underlying pvcs
+	*/
+	request, err := http.NewRequest(
+		"DELETE",
+		"http://localhost:9090/api/v1/namespaces/"+nameSpace+"/tenants/"+tenant,
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
 func TestCreateTenant(t *testing.T) {
 	printStartFunc("TestCreateTenant")
 
@@ -414,6 +437,159 @@ func TestCreateTenant(t *testing.T) {
 	if resp != nil {
 		assert.Equal(
 			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	printEndFunc("TestCreateTenant")
+}
+
+func TestDeleteTenant(t *testing.T) {
+	printStartFunc("TestCreateTenant")
+
+	// Variables
+	assert := assert.New(t)
+	erasureCodingParity := 2
+	tenantName := "new-tenant-3"
+	namespace := "new-namespace-3"
+
+	// 0. Create the namespace
+	resp, err := CreateNamespace(namespace)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			201, resp.StatusCode, inspectHTTPResponse(resp))
+	}
+
+	accessKey := ""
+	secretKey := ""
+	var accessKeys []string
+	var secretKeys []string
+	var minio []string
+	var caCertificates []string
+	var consoleCAcertificates []string
+	enableTLS := true
+	enableConsole := true
+	enablePrometheus := true
+	serviceName := ""
+	image := ""
+	exposeMinIO := true
+	exposeConsole := true
+	values := make([]string, 1)
+	values[0] = "new-tenant"
+	values2 := make([]string, 1)
+	values2[0] = "pool-0"
+	keys := make([]map[string]interface{}, 1)
+	keys[0] = map[string]interface{}{
+		"access_key": "IGLksSXdiU3fjcRI",
+		"secret_key": "EqeCPZ1xBYdnygizxxRWnkH09N2350nO",
+	}
+	pools := make([]map[string]interface{}, 1)
+	matchExpressions := make([]map[string]interface{}, 2)
+	matchExpressions[0] = map[string]interface{}{
+		"key":      "v1.min.io/tenant",
+		"operator": "In",
+		"values":   values,
+	}
+	matchExpressions[1] = map[string]interface{}{
+		"key":      "v1.min.io/pool",
+		"operator": "In",
+		"values":   values2,
+	}
+	requiredDuringSchedulingIgnoredDuringExecution := make([]map[string]interface{}, 1)
+	requiredDuringSchedulingIgnoredDuringExecution[0] = map[string]interface{}{
+		"labelSelector": map[string]interface{}{
+			"matchExpressions": matchExpressions,
+		},
+		"topologyKey": "kubernetes.io/hostname",
+	}
+	pools0 := map[string]interface{}{
+		"name":               "pool-0",
+		"servers":            4,
+		"volumes_per_server": 1,
+		"volume_configuration": map[string]interface{}{
+			"size":               26843545600,
+			"storage_class_name": "standard",
+		},
+		"securityContext": nil,
+		"affinity": map[string]interface{}{
+			"podAntiAffinity": map[string]interface{}{
+				"requiredDuringSchedulingIgnoredDuringExecution": requiredDuringSchedulingIgnoredDuringExecution,
+			},
+		},
+		"resources": map[string]interface{}{
+			"requests": map[string]interface{}{
+				"cpu":    2,
+				"memory": 2,
+			},
+		},
+	}
+	logSearchConfiguration := map[string]interface{}{
+		"image":               "",
+		"postgres_image":      "",
+		"postgres_init_image": "",
+	}
+	prometheusConfiguration := map[string]interface{}{
+		"image":         "",
+		"sidecar_image": "",
+		"init_image":    "",
+	}
+	tls := map[string]interface{}{
+		"minio":                   minio,
+		"ca_certificates":         caCertificates,
+		"console_ca_certificates": consoleCAcertificates,
+	}
+	idp := map[string]interface{}{
+		"keys": keys,
+	}
+	pools[0] = pools0
+
+	// 1. Create Tenant
+	resp, err = CreateTenant(
+		tenantName,
+		namespace,
+		accessKey,
+		secretKey,
+		accessKeys,
+		idp,
+		tls,
+		prometheusConfiguration,
+		logSearchConfiguration,
+		erasureCodingParity,
+		pools,
+		exposeConsole,
+		exposeMinIO,
+		image,
+		serviceName,
+		enablePrometheus,
+		enableConsole,
+		enableTLS,
+		secretKeys,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200, resp.StatusCode, "Status Code is incorrect")
+	}
+
+	// 2. Delete tenant
+	resp, err = DeleteTenant(namespace, tenantName)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			204,
+			resp.StatusCode,
+			inspectHTTPResponse(resp),
+		)
 	}
 
 	printEndFunc("TestCreateTenant")
