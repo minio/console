@@ -596,7 +596,7 @@ export const calculateBytes = (
   // Get unit for measure
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  const fractionDigits = showDecimals ? 0 : 1;
+  const fractionDigits = showDecimals ? 1 : 0;
 
   const bytesUnit = bytes / Math.pow(k, i);
 
