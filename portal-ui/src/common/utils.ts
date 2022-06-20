@@ -709,3 +709,13 @@ export const capacityColors = (usedSpace: number, maxSpace: number) => {
 
   return "#07193E";
 };
+
+export const getClientOS = (): string => {
+  const getPlatform = get(window.navigator, "platform", "undefined");
+
+  if (!getPlatform) {
+    return "undefined";
+  }
+
+  return getPlatform;
+};

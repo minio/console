@@ -38,23 +38,27 @@ import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button, DialogContentText } from "@mui/material";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../../systemSlice";
 import { IKeyValue } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { ITenantMonitoringStruct } from "../ListTenants/types";
-import {setPrometheusEnabled,
-        setImage,
-        setSidecarImage,
-        setInitImage,
-        setStorageClassName,        
-        setDiskCapacityGB,
-        setServiceAccountName,
-        setCPURequest,
-        setMemRequest,
-    } from "../TenantDetails/tenantMonitoringSlice" 
+import {
+  setPrometheusEnabled,
+  setImage,
+  setSidecarImage,
+  setInitImage,
+  setStorageClassName,
+  setDiskCapacityGB,
+  setServiceAccountName,
+  setCPURequest,
+  setMemRequest,
+} from "../TenantDetails/tenantMonitoringSlice";
 
-    import { clearValidationError } from "../utils";
+import { clearValidationError } from "../utils";
 
 interface ITenantMonitoring {
   classes: any;
@@ -87,105 +91,136 @@ const styles = (theme: Theme) =>
 const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
   const dispatch = useAppDispatch();
   const { tenantName, tenantNamespace } = useParams();
-  const prometheusEnabled = useSelector((state: AppState) => state.editTenantMonitoring.prometheusEnabled)
-  const image = useSelector((state: AppState) => state.editTenantMonitoring.image)
-  const sidecarImage = useSelector((state: AppState) => state.editTenantMonitoring.sidecarImage)
-  const initImage = useSelector((state: AppState) => state.editTenantMonitoring.initImage)
-  const diskCapacityGB = useSelector((state: AppState) => state.editTenantMonitoring.diskCapacityGB)
-  const cpuRequest = useSelector((state: AppState) => state.editTenantMonitoring.monitoringCPURequest)
-  const memRequest = useSelector((state: AppState) => state.editTenantMonitoring.monitoringMemRequest)
-  const serviceAccountName = useSelector((state: AppState) => state.editTenantMonitoring.serviceAccountName)
-  const storageClassName = useSelector((state: AppState) => state.editTenantMonitoring.storageClassName)
+  const prometheusEnabled = useSelector(
+    (state: AppState) => state.editTenantMonitoring.prometheusEnabled
+  );
+  const image = useSelector(
+    (state: AppState) => state.editTenantMonitoring.image
+  );
+  const sidecarImage = useSelector(
+    (state: AppState) => state.editTenantMonitoring.sidecarImage
+  );
+  const initImage = useSelector(
+    (state: AppState) => state.editTenantMonitoring.initImage
+  );
+  const diskCapacityGB = useSelector(
+    (state: AppState) => state.editTenantMonitoring.diskCapacityGB
+  );
+  const cpuRequest = useSelector(
+    (state: AppState) => state.editTenantMonitoring.monitoringCPURequest
+  );
+  const memRequest = useSelector(
+    (state: AppState) => state.editTenantMonitoring.monitoringMemRequest
+  );
+  const serviceAccountName = useSelector(
+    (state: AppState) => state.editTenantMonitoring.serviceAccountName
+  );
+  const storageClassName = useSelector(
+    (state: AppState) => state.editTenantMonitoring.storageClassName
+  );
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [toggleConfirmOpen, setToggleConfirmOpen] = useState<boolean>(false);
-  
-  const [labels, setLabels] = useState<IKeyValue[]>([{ key: "", value: "" }]  );
-  const [annotations, setAnnotations] = useState<IKeyValue[]>( [{ key: "", value: "" }] );
-  const [nodeSelector, setNodeSelector] = useState<IKeyValue[]>([{ key: "", value: "" }] );
 
+  const [labels, setLabels] = useState<IKeyValue[]>([{ key: "", value: "" }]);
+  const [annotations, setAnnotations] = useState<IKeyValue[]>([
+    { key: "", value: "" },
+  ]);
+  const [nodeSelector, setNodeSelector] = useState<IKeyValue[]>([
+    { key: "", value: "" },
+  ]);
 
-  
-    const [refreshMonitoringInfo, setRefreshMonitoringInfo] =
+  const [refreshMonitoringInfo, setRefreshMonitoringInfo] =
     useState<boolean>(true);
-    const [labelsError, setLabelsError] = useState<any>({});
-    const [annotationsError, setAnnotationsError] = useState<any>({});
-    const [nodeSelectorError, setNodeSelectorError] = useState<any>({});
+  const [labelsError, setLabelsError] = useState<any>({});
+  const [annotationsError, setAnnotationsError] = useState<any>({});
+  const [nodeSelectorError, setNodeSelectorError] = useState<any>({});
 
-    const cleanValidation = (fieldName: string) => {
-      setValidationErrors(clearValidationError(validationErrors, fieldName));
-    };
-  
-    const setMonitoringInfo = (res : ITenantMonitoringStruct) => {
-        dispatch(setImage(res.image));
-        dispatch(setSidecarImage(res.sidecarImage));
-        dispatch(setInitImage(res.initImage));
-        dispatch(setStorageClassName(res.storageClassName));
-        dispatch(setDiskCapacityGB(res.diskCapacityGB));
-        dispatch(setServiceAccountName(res.serviceAccountName));
-        dispatch(setCPURequest(res.monitoringCPURequest));
-        if (res.monitoringMemRequest) {
-        dispatch(setMemRequest(Math.floor(parseInt(res.monitoringMemRequest, 10) / 1000000000).toString()));
-        } else {
-          dispatch(setMemRequest("0"));
-        }
-        res.labels != null ? setLabels(res.labels) : setLabels([{key:"", value:""}]);
-       res.annotations != null ? setAnnotations(res.annotations) :setAnnotations([{key:"", value:""}]);
-       res.nodeSelector != null  ? setNodeSelector(res.nodeSelector) :setNodeSelector([{key:"", value:""}]);
-      }
+  const cleanValidation = (fieldName: string) => {
+    setValidationErrors(clearValidationError(validationErrors, fieldName));
+  };
 
-    const trim = (x: IKeyValue[]): IKeyValue[] => {
-      let retval: IKeyValue[] = [];
-      for (let i = 0; i < x.length; i++) {
-        if (x[i].key !== "") {
-          retval.push(x[i]);
-        }
-      }
-      return retval;
-    };
+  const setMonitoringInfo = (res: ITenantMonitoringStruct) => {
+    dispatch(setImage(res.image));
+    dispatch(setSidecarImage(res.sidecarImage));
+    dispatch(setInitImage(res.initImage));
+    dispatch(setStorageClassName(res.storageClassName));
+    dispatch(setDiskCapacityGB(res.diskCapacityGB));
+    dispatch(setServiceAccountName(res.serviceAccountName));
+    dispatch(setCPURequest(res.monitoringCPURequest));
+    if (res.monitoringMemRequest) {
+      dispatch(
+        setMemRequest(
+          Math.floor(
+            parseInt(res.monitoringMemRequest, 10) / 1000000000
+          ).toString()
+        )
+      );
+    } else {
+      dispatch(setMemRequest("0"));
+    }
+    res.labels != null
+      ? setLabels(res.labels)
+      : setLabels([{ key: "", value: "" }]);
+    res.annotations != null
+      ? setAnnotations(res.annotations)
+      : setAnnotations([{ key: "", value: "" }]);
+    res.nodeSelector != null
+      ? setNodeSelector(res.nodeSelector)
+      : setNodeSelector([{ key: "", value: "" }]);
+  };
 
-    const checkValid = (): boolean => {
-      if (
-        Object.keys(validationErrors).length !== 0 ||
-        Object.keys(labelsError).length !== 0 ||
-        Object.keys(annotationsError).length !== 0 ||
-        Object.keys(nodeSelectorError).length !== 0
-      ) {
-        let err: ErrorResponseHandler = {
-          errorMessage: "Invalid entry",
-          detailedError: "",
-        };
-        dispatch(setErrorSnackMessage(err));
-        return false;
-      } else {
-        return true;
+  const trim = (x: IKeyValue[]): IKeyValue[] => {
+    let retval: IKeyValue[] = [];
+    for (let i = 0; i < x.length; i++) {
+      if (x[i].key !== "") {
+        retval.push(x[i]);
       }
-    };
-  
-    useEffect(() => {
-      if (refreshMonitoringInfo) {
-        api
-          .invoke(
-            "GET",
-            `/api/v1/namespaces/${tenantNamespace || ""}/tenants/${
-              tenantName || ""
-            }/monitoring`
-          )
-          .then((res: ITenantMonitoringStruct) => {
-            dispatch(setPrometheusEnabled(res.prometheusEnabled));
-            setMonitoringInfo(res);
-            setRefreshMonitoringInfo(false);           
-          })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
-            setRefreshMonitoringInfo(false);
-          });
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [refreshMonitoringInfo]);
+    }
+    return retval;
+  };
 
-   
-    const submitMonitoringInfo = () => {
-      if(checkValid()){
+  const checkValid = (): boolean => {
+    if (
+      Object.keys(validationErrors).length !== 0 ||
+      Object.keys(labelsError).length !== 0 ||
+      Object.keys(annotationsError).length !== 0 ||
+      Object.keys(nodeSelectorError).length !== 0
+    ) {
+      let err: ErrorResponseHandler = {
+        errorMessage: "Invalid entry",
+        detailedError: "",
+      };
+      dispatch(setErrorSnackMessage(err));
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  useEffect(() => {
+    if (refreshMonitoringInfo) {
+      api
+        .invoke(
+          "GET",
+          `/api/v1/namespaces/${tenantNamespace || ""}/tenants/${
+            tenantName || ""
+          }/monitoring`
+        )
+        .then((res: ITenantMonitoringStruct) => {
+          dispatch(setPrometheusEnabled(res.prometheusEnabled));
+          setMonitoringInfo(res);
+          setRefreshMonitoringInfo(false);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          dispatch(setErrorSnackMessage(err));
+          setRefreshMonitoringInfo(false);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshMonitoringInfo]);
+
+  const submitMonitoringInfo = () => {
+    if (checkValid()) {
       api
         .invoke(
           "PUT",
@@ -209,36 +244,35 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           dispatch(setSnackBarMessage(`Prometheus configuration updated.`));
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err)
+          setErrorSnackMessage(err);
         });
-      }
-    };
+    }
+  };
 
-    const togglePrometheus = () => {
-      const configInfo = {
-        prometheusEnabled: prometheusEnabled ,
-        toggle: true,
-      };
-      api
-        .invoke(
-          "PUT",
-          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/monitoring`,
-          configInfo
-        )
-        .then(() => {
-          dispatch(setPrometheusEnabled(!prometheusEnabled));
-          setRefreshMonitoringInfo(true);
-          setToggleConfirmOpen(false);
-          setRefreshMonitoringInfo(true);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
-        });
+  const togglePrometheus = () => {
+    const configInfo = {
+      prometheusEnabled: prometheusEnabled,
+      toggle: true,
     };
+    api
+      .invoke(
+        "PUT",
+        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/monitoring`,
+        configInfo
+      )
+      .then(() => {
+        dispatch(setPrometheusEnabled(!prometheusEnabled));
+        setRefreshMonitoringInfo(true);
+        setToggleConfirmOpen(false);
+        setRefreshMonitoringInfo(true);
+      })
+      .catch((err: ErrorResponseHandler) => {
+        dispatch(setErrorSnackMessage(err));
+      });
+  };
 
   return (
     <Fragment>
-      
       {toggleConfirmOpen && (
         <ConfirmDialog
           isOpen={toggleConfirmOpen}
@@ -264,7 +298,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
         <Grid item xs>
           <h1 className={classes.sectionTitle}>Prometheus Monitoring </h1>
         </Grid>
-        <Grid item xs={7} justifyContent={"end"} textAlign={"right"}>         
+        <Grid item xs={7} justifyContent={"end"} textAlign={"right"}>
           <FormSwitchWrapper
             label={""}
             indicatorLabels={["Enabled", "Disabled"]}
@@ -281,176 +315,174 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
         <Grid xs={12}>
           <hr className={classes.hrClass} />
         </Grid>
-        </Grid>
-       
-        {prometheusEnabled && (                  
-           
-              <Fragment>                
-                <Grid item xs={12} paddingBottom={2}>                  
-                <InputBoxWrapper
-                id={`image`}
-                label={"Image"}
-                placeholder={"quay.io/prometheus/prometheus:latest"}
-                name={`image`}
-                value={image}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+      </Grid>
+
+      {prometheusEnabled && (
+        <Fragment>
+          <Grid item xs={12} paddingBottom={2}>
+            <InputBoxWrapper
+              id={`image`}
+              label={"Image"}
+              placeholder={"quay.io/prometheus/prometheus:latest"}
+              name={`image`}
+              value={image}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 if (event.target.validity.valid) {
                   dispatch(setImage(event.target.value));
                 }
-                  cleanValidation(`image`)
-                }}
-                key={`image`}
-                pattern={"^[a-zA-Z0-9-./:]{1,253}$"}  
-                error={validationErrors[`image`] || ""}
-              />
-                </Grid>
-                <Grid item xs={12} paddingBottom={2}>
-                <InputBoxWrapper
-                id={`sidecarImage`}
-                label={"Sidecar Image"}
-                placeholder={"library/alpine:latest"}
-                name={`sidecarImage`}
-                value={sidecarImage}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  if (event.target.validity.valid) {
+                cleanValidation(`image`);
+              }}
+              key={`image`}
+              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+              error={validationErrors[`image`] || ""}
+            />
+          </Grid>
+          <Grid item xs={12} paddingBottom={2}>
+            <InputBoxWrapper
+              id={`sidecarImage`}
+              label={"Sidecar Image"}
+              placeholder={"library/alpine:latest"}
+              name={`sidecarImage`}
+              value={sidecarImage}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                if (event.target.validity.valid) {
                   dispatch(setSidecarImage(event.target.value));
-                  }
-                  cleanValidation(`sidecarImage`)
-                }}
-                key={`sidecarImage`}
-                pattern={"^[a-zA-Z0-9-./:]{1,253}$"} 
-                error={validationErrors[`sidecarImage`] || ""}
-              />
-                </Grid>
-                <Grid item xs={12}  paddingBottom={2}>
-                <InputBoxWrapper
-                id={`initImage`}
-                label={"Init Image"}
-                placeholder={"library/busybox:1.33.1"}
-                name={`initImage`}
-                value={initImage}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                 if (event.target.validity.valid) {
+                }
+                cleanValidation(`sidecarImage`);
+              }}
+              key={`sidecarImage`}
+              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+              error={validationErrors[`sidecarImage`] || ""}
+            />
+          </Grid>
+          <Grid item xs={12} paddingBottom={2}>
+            <InputBoxWrapper
+              id={`initImage`}
+              label={"Init Image"}
+              placeholder={"library/busybox:1.33.1"}
+              name={`initImage`}
+              value={initImage}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                if (event.target.validity.valid) {
                   dispatch(setInitImage(event.target.value));
                 }
-                  cleanValidation(`initImage`)
-                }}
-                key={`initImage`}
-                pattern={"^[a-zA-Z0-9-./:]{1,253}$"} 
-                error={validationErrors[`initImage`] || ""}
-              />
-                </Grid>
-                <Grid item xs={12}  paddingBottom={2}>
-                <InputBoxWrapper
-                id={`diskCapacityGB`}
-                label={"Disk Capacity"}
-                placeholder={"Disk Capacity"}
-                name={`diskCapacityGB`}
-                value={diskCapacityGB}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                 if (event.target.validity.valid) {
+                cleanValidation(`initImage`);
+              }}
+              key={`initImage`}
+              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+              error={validationErrors[`initImage`] || ""}
+            />
+          </Grid>
+          <Grid item xs={12} paddingBottom={2}>
+            <InputBoxWrapper
+              id={`diskCapacityGB`}
+              label={"Disk Capacity"}
+              placeholder={"Disk Capacity"}
+              name={`diskCapacityGB`}
+              value={diskCapacityGB}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                if (event.target.validity.valid) {
                   dispatch(setDiskCapacityGB(event.target.value));
-                 }
-                  cleanValidation(`diskCapacityGB`)
-                }}
-                key={`diskCapacityGB`}
-                pattern={"[0-9]*"}
-                error={validationErrors[`diskCapacityGB`] || ""}
-                overlayObject={
-                  <InputUnitMenu
-                    id={"size-unit"}
-                    onUnitChange={() => {}}
-                    unitSelected={"Gi"}
-                    unitsList={[{ label: "Gi", value: "Gi" }]}
-                    disabled={true}
-                  />
                 }
-              />
-                </Grid>
-                <Grid item xs={12}  paddingBottom={2}>
-                <InputBoxWrapper
-                id={`cpuRequest`}
-                label={"CPU Request"}
-                placeholder={"CPU Request"}
-                name={`cpuRequest`}
-                value={cpuRequest}
-                pattern={"[0-9]*"}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                 if (event.target.validity.valid) {
+                cleanValidation(`diskCapacityGB`);
+              }}
+              key={`diskCapacityGB`}
+              pattern={"[0-9]*"}
+              error={validationErrors[`diskCapacityGB`] || ""}
+              overlayObject={
+                <InputUnitMenu
+                  id={"size-unit"}
+                  onUnitChange={() => {}}
+                  unitSelected={"Gi"}
+                  unitsList={[{ label: "Gi", value: "Gi" }]}
+                  disabled={true}
+                />
+              }
+            />
+          </Grid>
+          <Grid item xs={12} paddingBottom={2}>
+            <InputBoxWrapper
+              id={`cpuRequest`}
+              label={"CPU Request"}
+              placeholder={"CPU Request"}
+              name={`cpuRequest`}
+              value={cpuRequest}
+              pattern={"[0-9]*"}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                if (event.target.validity.valid) {
                   dispatch(setCPURequest(event.target.value));
-               }
-                  cleanValidation(`cpuRequest`)
-                }}
-                key={`cpuRequest`}
-                error={validationErrors[`cpuRequest`] || ""}
-              />
-                </Grid>
-                <Grid item xs={12} paddingBottom={2}>
-                <InputBoxWrapper
-                id={`memRequest`}
-                label={"Memory Request"}
-                placeholder={"Memory request"}
-                name={`memRequest`}
-                value={memRequest}                
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  if (event.target.validity.valid) {
-                    dispatch(setMemRequest(event.target.value));
-                  }
-                  cleanValidation(`memRequest`)
-                }}
-                pattern={"[0-9]*"}
-                key={`memRequest`}
-                error={validationErrors[`memRequest`] || ""}
-                overlayObject={
-                  <InputUnitMenu
-                    id={"size-unit"}
-                    onUnitChange={() => {}}
-                    unitSelected={"Gi"}
-                    unitsList={[{ label: "Gi", value: "Gi" }]}
-                    disabled={true}
-                  />
                 }
-              />
-                </Grid>
-                <Grid item xs={12} paddingBottom={2}>
-                <InputBoxWrapper
-                id={`serviceAccountName`}
-                label={"Service Account"}
-                placeholder={"Service Account Name"}
-                name={`serviceAccountName`}
-                value={serviceAccountName}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              if (event.target.validity.valid) {
+                cleanValidation(`cpuRequest`);
+              }}
+              key={`cpuRequest`}
+              error={validationErrors[`cpuRequest`] || ""}
+            />
+          </Grid>
+          <Grid item xs={12} paddingBottom={2}>
+            <InputBoxWrapper
+              id={`memRequest`}
+              label={"Memory Request"}
+              placeholder={"Memory request"}
+              name={`memRequest`}
+              value={memRequest}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                if (event.target.validity.valid) {
+                  dispatch(setMemRequest(event.target.value));
+                }
+                cleanValidation(`memRequest`);
+              }}
+              pattern={"[0-9]*"}
+              key={`memRequest`}
+              error={validationErrors[`memRequest`] || ""}
+              overlayObject={
+                <InputUnitMenu
+                  id={"size-unit"}
+                  onUnitChange={() => {}}
+                  unitSelected={"Gi"}
+                  unitsList={[{ label: "Gi", value: "Gi" }]}
+                  disabled={true}
+                />
+              }
+            />
+          </Grid>
+          <Grid item xs={12} paddingBottom={2}>
+            <InputBoxWrapper
+              id={`serviceAccountName`}
+              label={"Service Account"}
+              placeholder={"Service Account Name"}
+              name={`serviceAccountName`}
+              value={serviceAccountName}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                if (event.target.validity.valid) {
                   dispatch(setServiceAccountName(event.target.value));
-               }
-                cleanValidation(`serviceAccountName`)
-              }
-              }
-                key={`serviceAccountName`}
-                pattern={"^[a-zA-Z0-9-.]{1,253}$"}
-                error={validationErrors[`serviceAccountName`] || ""}
-              />
-                </Grid>
-                <Grid item xs={12} paddingBottom={2}>
-                <InputBoxWrapper
-                id={`storageClassName`}
-                label={"Storage Class"}
-                placeholder={"Storage Class Name"}
-                name={`storageClassName`}
-                value={storageClassName}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                 if (event.target.validity.valid) {
+                }
+                cleanValidation(`serviceAccountName`);
+              }}
+              key={`serviceAccountName`}
+              pattern={"^[a-zA-Z0-9-.]{1,253}$"}
+              error={validationErrors[`serviceAccountName`] || ""}
+            />
+          </Grid>
+          <Grid item xs={12} paddingBottom={2}>
+            <InputBoxWrapper
+              id={`storageClassName`}
+              label={"Storage Class"}
+              placeholder={"Storage Class Name"}
+              name={`storageClassName`}
+              value={storageClassName}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                if (event.target.validity.valid) {
                   dispatch(setStorageClassName(event.target.value));
-                  }
-                  cleanValidation(`storageClassName`)
-                }}
-                key={`storageClassName`}
-                pattern={"^[a-zA-Z0-9-.]{1,253}$"}
-                error={validationErrors[`storageClassName`] || ""}
-              />
-                </Grid>
-           {labels !== null &&
-                 <Grid item xs={12} className={classes.formFieldRow}>
+                }
+                cleanValidation(`storageClassName`);
+              }}
+              key={`storageClassName`}
+              pattern={"^[a-zA-Z0-9-.]{1,253}$"}
+              error={validationErrors[`storageClassName`] || ""}
+            />
+          </Grid>
+          {labels !== null && (
+            <Grid item xs={12} className={classes.formFieldRow}>
               <span className={classes.inputLabel}>Labels</span>
               <KeyPairEdit
                 newValues={labels}
@@ -459,10 +491,11 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 error={labelsError}
                 setError={setLabelsError}
               />
-            </Grid>} 
-           
-            {annotations !== null &&
-           <Grid item xs={12} className={classes.formFieldRow}>
+            </Grid>
+          )}
+
+          {annotations !== null && (
+            <Grid item xs={12} className={classes.formFieldRow}>
               <span className={classes.inputLabel}>Annotations</span>
               <KeyPairEdit
                 newValues={annotations}
@@ -471,9 +504,9 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 error={annotationsError}
                 setError={setAnnotationsError}
               />
-            </Grid>           
-          }
-          {nodeSelector !== null &&
+            </Grid>
+          )}
+          {nodeSelector !== null && (
             <Grid item xs={12} className={classes.formFieldRow}>
               <span className={classes.inputLabel}>Node Selector</span>
               <KeyPairEdit
@@ -484,22 +517,20 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 setError={setNodeSelectorError}
               />
             </Grid>
-          }
-        <Grid item xs={12} textAlign={"right"}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!checkValid()}
-            onClick={() =>     
-             submitMonitoringInfo()
-            }
-          >
-            Save
-          </Button>
-        </Grid>
-        </Fragment> 
-        )}
+          )}
+          <Grid item xs={12} textAlign={"right"}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={!checkValid()}
+              onClick={() => submitMonitoringInfo()}
+            >
+              Save
+            </Button>
+          </Grid>
+        </Fragment>
+      )}
     </Fragment>
   );
 };

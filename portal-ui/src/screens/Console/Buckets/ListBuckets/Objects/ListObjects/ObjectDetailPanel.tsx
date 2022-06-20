@@ -35,6 +35,7 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 import {
   decodeURLString,
   encodeURLString,
+  getClientOS,
   niceBytes,
   niceBytesInt,
   niceDaysInt,
@@ -87,6 +88,7 @@ import {
   setVersionsModeEnabled,
   updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
+import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
 
 const styles = () =>
   createStyles({
@@ -155,7 +157,6 @@ const ObjectDetailPanel = ({
   bucketName,
   versioning,
   locking,
-
   onClosePanel,
 }: IObjectDetailPanelProps) => {
   const dispatch = useAppDispatch();
@@ -183,6 +184,7 @@ const ObjectDetailPanel = ({
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [totalVersionsSize, setTotalVersionsSize] = useState<number>(0);
+  const [longFileOpen, setLongFileOpen] = useState<boolean>(false);
 
   const internalPathsDecoded = decodeURLString(internalPaths) || "";
   const allPathData = internalPathsDecoded.split("/");
@@ -282,16 +284,29 @@ const ObjectDetailPanel = ({
     setShareFileModalOpen(false);
   };
 
+  const closeFileOpen = () => {
+    setLongFileOpen(false);
+  };
+
   const downloadObject = (object: IFileInfo) => {
     const identityDownload = encodeURLString(
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
+
+    if (
+      object.name.length > 200 &&
+      getClientOS().toLowerCase().includes("win")
+    ) {
+      setLongFileOpen(true);
+      return;
+    }
 
     const downloadCall = download(
       bucketName,
       internalPaths,
       object.version_id,
       parseInt(object.size || "0"),
+      null,
       (progress) => {
         dispatch(
           updateProgress({
@@ -575,6 +590,16 @@ const ObjectDetailPanel = ({
           volumeName={bucketName}
           inspectPath={actualInfo.name}
           closeInspectModalAndRefresh={closeInspectModal}
+        />
+      )}
+      {longFileOpen && actualInfo && (
+        <RenameLongFileName
+          open={longFileOpen}
+          closeModal={closeFileOpen}
+          currentItem={currentItem}
+          bucketName={bucketName}
+          internalPaths={internalPaths}
+          actualInfo={actualInfo}
         />
       )}
 

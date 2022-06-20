@@ -17,91 +17,91 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IKeyValue } from "../ListTenants/types";
 
 export interface IEditTenantMonitoring {
-    prometheusEnabled: boolean;
-    image: string;
-    sidecarImage: string;
-    initImage: string;
-    storageClassName: string;
-    labels: IKeyValue[];
-    annotations: IKeyValue[];
-    nodeSelector: IKeyValue[];
-    diskCapacityGB: string;
-    serviceAccountName: string;    
-    monitoringCPURequest: string;
-    monitoringMemRequest: string;
+  prometheusEnabled: boolean;
+  image: string;
+  sidecarImage: string;
+  initImage: string;
+  storageClassName: string;
+  labels: IKeyValue[];
+  annotations: IKeyValue[];
+  nodeSelector: IKeyValue[];
+  diskCapacityGB: string;
+  serviceAccountName: string;
+  monitoringCPURequest: string;
+  monitoringMemRequest: string;
 }
 
 const initialState: IEditTenantMonitoring = {
-    prometheusEnabled: false,
-    image: "",
-    sidecarImage: "",
-    initImage: "",
-    storageClassName: "",
-    labels: [{key:" ",value:" "}],
-    annotations: [{key:" ",value:" "}],
-    nodeSelector: [{key:" ",value:" "}],
-    diskCapacityGB: "0",
-    serviceAccountName: "",    
-    monitoringCPURequest: "",
-    monitoringMemRequest: "",
+  prometheusEnabled: false,
+  image: "",
+  sidecarImage: "",
+  initImage: "",
+  storageClassName: "",
+  labels: [{ key: " ", value: " " }],
+  annotations: [{ key: " ", value: " " }],
+  nodeSelector: [{ key: " ", value: " " }],
+  diskCapacityGB: "0",
+  serviceAccountName: "",
+  monitoringCPURequest: "",
+  monitoringMemRequest: "",
 };
 
 export const editTenantMonitoringSlice = createSlice({
-    name: "editTenantMonitoring",
-    initialState,
-    reducers: {
-        setPrometheusEnabled: (state, action: PayloadAction<boolean>) => {
-            state.prometheusEnabled = action.payload;
-        },
-        setImage: (state, action: PayloadAction<string>) => {
-            state.image = action.payload;
-        },
-        setSidecarImage:(state, action: PayloadAction<string>) => {
-            state.sidecarImage = action.payload;
-        },
-        setInitImage: (state, action: PayloadAction<string>) => {
-            state.initImage = action.payload;
-        },
-        setStorageClassName: (state, action: PayloadAction<string>) => {
-            state.storageClassName = action.payload;
-        },
-        setLabels: (state, action: PayloadAction<IKeyValue[]>) => {
-            state.labels = action.payload;
-        },
-        setAnnotations: (state, action: PayloadAction<IKeyValue[]>) => {
-            state.annotations = action.payload;
-        },
-        setNodeSelector: (state, action: PayloadAction<IKeyValue[]>) => {
-            state.nodeSelector = action.payload;
-        },
-        setDiskCapacityGB: (state, action: PayloadAction<string>) => {
-            state.diskCapacityGB = action.payload;
-        },
-        setServiceAccountName: (state, action: PayloadAction<string>) => {
-            state.serviceAccountName = action.payload;
-        },
-        setCPURequest: (state, action: PayloadAction<string>) => {
-            state.monitoringCPURequest = action.payload;
-        },
-        setMemRequest: (state, action: PayloadAction<string>) => {
-            state.monitoringMemRequest = action.payload;
-        },
+  name: "editTenantMonitoring",
+  initialState,
+  reducers: {
+    setPrometheusEnabled: (state, action: PayloadAction<boolean>) => {
+      state.prometheusEnabled = action.payload;
     },
+    setImage: (state, action: PayloadAction<string>) => {
+      state.image = action.payload;
+    },
+    setSidecarImage: (state, action: PayloadAction<string>) => {
+      state.sidecarImage = action.payload;
+    },
+    setInitImage: (state, action: PayloadAction<string>) => {
+      state.initImage = action.payload;
+    },
+    setStorageClassName: (state, action: PayloadAction<string>) => {
+      state.storageClassName = action.payload;
+    },
+    setLabels: (state, action: PayloadAction<IKeyValue[]>) => {
+      state.labels = action.payload;
+    },
+    setAnnotations: (state, action: PayloadAction<IKeyValue[]>) => {
+      state.annotations = action.payload;
+    },
+    setNodeSelector: (state, action: PayloadAction<IKeyValue[]>) => {
+      state.nodeSelector = action.payload;
+    },
+    setDiskCapacityGB: (state, action: PayloadAction<string>) => {
+      state.diskCapacityGB = action.payload;
+    },
+    setServiceAccountName: (state, action: PayloadAction<string>) => {
+      state.serviceAccountName = action.payload;
+    },
+    setCPURequest: (state, action: PayloadAction<string>) => {
+      state.monitoringCPURequest = action.payload;
+    },
+    setMemRequest: (state, action: PayloadAction<string>) => {
+      state.monitoringMemRequest = action.payload;
+    },
+  },
 });
 
 export const {
-    setPrometheusEnabled,
-    setImage,
-    setSidecarImage,
-    setInitImage,
-    setStorageClassName,
-    setLabels,
-    setAnnotations,
-    setNodeSelector,
-    setDiskCapacityGB,
-    setServiceAccountName,
-    setCPURequest,
-    setMemRequest,
+  setPrometheusEnabled,
+  setImage,
+  setSidecarImage,
+  setInitImage,
+  setStorageClassName,
+  setLabels,
+  setAnnotations,
+  setNodeSelector,
+  setDiskCapacityGB,
+  setServiceAccountName,
+  setCPURequest,
+  setMemRequest,
 } = editTenantMonitoringSlice.actions;
 
 export default editTenantMonitoringSlice.reducer;
