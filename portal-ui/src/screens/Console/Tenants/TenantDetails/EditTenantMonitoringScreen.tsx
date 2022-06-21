@@ -167,6 +167,10 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
         res.labels != null ? setLabels(res.labels) : setLabels([{key:"", value:""}]);
        res.annotations != null ? setAnnotations(res.annotations) :setAnnotations([{key:"", value:""}]);
        res.nodeSelector != null  ? setNodeSelector(res.nodeSelector) :setNodeSelector([{key:"", value:""}]);
+       dispatch(setRunAsGroup(res.runAsGroup));
+       dispatch(setRunAsUser(res.runAsUser));
+       dispatch(setRunAsNonRoot(res.runAsNonRoot));
+       dispatch(setFSGroup(res.fsGroup));
       }
 
   const setMonitoringInfo = (res: ITenantMonitoringStruct) => {
