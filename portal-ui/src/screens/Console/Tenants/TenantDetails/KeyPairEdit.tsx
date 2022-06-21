@@ -13,6 +13,7 @@ import {
   IValidation,
 } from "../../../../utils/validationFunctions";
 import { clearValidationError } from "../utils";
+import Grid from "@mui/material/Grid";
 
 interface IKeyPairEditProps {
   classes: any;
@@ -81,8 +82,10 @@ const KeyPairEdit = ({
 
   let keyValueInputs = newValues.map((_, index) => {
     return (
-      <Fragment key={`keyvalue-${index.toString()}`}>
-        <div className={classes.shortened}>
+     
+      <Fragment key={`keyvalue-${index.toString()}`} >
+         <Grid paddingBottom={1}>
+        <div className={classes.shortened} >
           <InputBoxWrapper
             id={`key-${index.toString()}`}
             label={""}
@@ -146,6 +149,7 @@ const KeyPairEdit = ({
             </IconButton>
           </Tooltip>
         </div>
+        </Grid>
       </Fragment>
     );
   });
