@@ -63,12 +63,17 @@ function install_operator() {
 	echo "Waiting for k8s api"
 	sleep 10
 
-	echo "Waiting for Operator Pods to come online (2m timeout)"
+	echo "wait for the app=console to be present -> One Pod"
+	wait_for_resource minio-operator console app
+
+	echo "wait for the name=minio-operator to be present -> Two Pods"
 	wait_for_resource minio-operator $value $key
+
+	echo "Waiting for Operator Pods to come online (3m timeout)"
 	try kubectl wait --namespace minio-operator \
 	--for=condition=ready pod \
 	--selector $key=$value \
-	--timeout=120s
+	--timeout=180s
 
 	echo "start - get data to verify proper image is being used"
 	kubectl get pods --namespace minio-operator
