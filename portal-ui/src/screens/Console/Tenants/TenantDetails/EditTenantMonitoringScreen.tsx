@@ -173,36 +173,6 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
        dispatch(setFSGroup(res.fsGroup));
       }
 
-  const setMonitoringInfo = (res: ITenantMonitoringStruct) => {
-    dispatch(setImage(res.image));
-    dispatch(setSidecarImage(res.sidecarImage));
-    dispatch(setInitImage(res.initImage));
-    dispatch(setStorageClassName(res.storageClassName));
-    dispatch(setDiskCapacityGB(res.diskCapacityGB));
-    dispatch(setServiceAccountName(res.serviceAccountName));
-    dispatch(setCPURequest(res.monitoringCPURequest));
-    if (res.monitoringMemRequest) {
-      dispatch(
-        setMemRequest(
-          Math.floor(
-            parseInt(res.monitoringMemRequest, 10) / 1000000000
-          ).toString()
-        )
-      );
-    } else {
-      dispatch(setMemRequest("0"));
-    }
-    res.labels != null
-      ? setLabels(res.labels)
-      : setLabels([{ key: "", value: "" }]);
-    res.annotations != null
-      ? setAnnotations(res.annotations)
-      : setAnnotations([{ key: "", value: "" }]);
-    res.nodeSelector != null
-      ? setNodeSelector(res.nodeSelector)
-      : setNodeSelector([{ key: "", value: "" }]);
-  };
-
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
     for (let i = 0; i < x.length; i++) {
@@ -555,7 +525,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 setError={setNodeSelectorError}
               />
             </Grid>
-          }
+          )}
            <Grid item xs={12} className={classes.formFieldRow}>
             <SecurityContextSelector classes={classes} 
             runAsGroup={runAsGroup}
