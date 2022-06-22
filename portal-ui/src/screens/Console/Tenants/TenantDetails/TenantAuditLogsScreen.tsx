@@ -45,18 +45,26 @@ import {
 import { IKeyValue } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import { ITenantMonitoringStruct } from "../ListTenants/types";
-import {
-  setPrometheusEnabled,
-  setImage,
-  setSidecarImage,
-  setInitImage,
-  setStorageClassName,
-  setDiskCapacityGB,
-  setServiceAccountName,
-  setCPURequest,
-  setMemRequest,
-} from "../TenantDetails/tenantMonitoringSlice";
+import { ITenantLogsStruct } from "../ListTenants/types";
+import { 
+    setAuditLoggingEnabled,
+    setImage,
+    setDBImage,
+    setDBInitImage,
+    setLabels,
+    setAnnotations,
+    setNodeSelector,
+    setDBLabels,
+    setDBAnnotations,
+    setDBNodeSelector,
+    setDiskCapacityGB,
+    setServiceAccountName,
+    setDBServiceAccountName,
+    setCPURequest,
+    setMemRequest,
+    setDBCPURequest,
+    setDBMemRequest,
+} from "../TenantDetails/tenantAuditLogSlice";
 
 import { clearValidationError } from "../utils";
 
@@ -88,35 +96,42 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
+const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
   const dispatch = useAppDispatch();
   const { tenantName, tenantNamespace } = useParams();
-  const prometheusEnabled = useSelector(
-    (state: AppState) => state.editTenantMonitoring.prometheusEnabled
+  const auditLoggingEnabled = useSelector(
+    (state: AppState) => state.editTenantLogging.auditLoggingEnabled
   );
   const image = useSelector(
-    (state: AppState) => state.editTenantMonitoring.image
+    (state: AppState) => state.editTenantLogging.image
   );
-  const sidecarImage = useSelector(
-    (state: AppState) => state.editTenantMonitoring.sidecarImage
+  const dbImage = useSelector(
+    (state: AppState) => state.editTenantLogging.dbImage
   );
-  const initImage = useSelector(
-    (state: AppState) => state.editTenantMonitoring.initImage
+  const dbInitImage = useSelector(
+    (state: AppState) => state.editTenantLogging.dbInitImage
   );
   const diskCapacityGB = useSelector(
-    (state: AppState) => state.editTenantMonitoring.diskCapacityGB
+    (state: AppState) => state.editTenantLogging.diskCapacityGB
   );
   const cpuRequest = useSelector(
-    (state: AppState) => state.editTenantMonitoring.monitoringCPURequest
+    (state: AppState) => state.editTenantLogging.cpuRequest
   );
   const memRequest = useSelector(
-    (state: AppState) => state.editTenantMonitoring.monitoringMemRequest
+    (state: AppState) => state.editTenantLogging.memRequest
+  );
+
+  const dbCpuRequest = useSelector(
+    (state: AppState) => state.editTenantLogging.dbCPURequest
+  );
+  const dbMemRequest = useSelector(
+    (state: AppState) => state.editTenantLogging.dbMemRequest
   );
   const serviceAccountName = useSelector(
-    (state: AppState) => state.editTenantMonitoring.serviceAccountName
+    (state: AppState) => state.editTenantLogging.serviceAccountName
   );
-  const storageClassName = useSelector(
-    (state: AppState) => state.editTenantMonitoring.storageClassName
+  const dbServiceAccountName = useSelector(
+    (state: AppState) => state.editTenantLogging.dbServiceAccountName
   );
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [toggleConfirmOpen, setToggleConfirmOpen] = useState<boolean>(false);
@@ -128,45 +143,65 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
   const [nodeSelector, setNodeSelector] = useState<IKeyValue[]>([
     { key: "", value: "" },
   ]);
+  const [dbLabels, setDBLabels] = useState<IKeyValue[]>([{ key: "", value: "" }]);
+  const [dbAnnotations, setDBAnnotations] = useState<IKeyValue[]>([
+    { key: "", value: "" },
+  ]);
+  const [dbNodeSelector, setDBNodeSelector] = useState<IKeyValue[]>([
+    { key: "", value: "" },
+  ]);
 
-  const [refreshMonitoringInfo, setRefreshMonitoringInfo] =
+  const [refreshLoggingInfo, setRefreshLoggingInfo] =
     useState<boolean>(true);
   const [labelsError, setLabelsError] = useState<any>({});
   const [annotationsError, setAnnotationsError] = useState<any>({});
   const [nodeSelectorError, setNodeSelectorError] = useState<any>({});
 
+  const [dbLabelsError, setDBLabelsError] = useState<any>({});
+  const [dbAnnotationsError, setDBAnnotationsError] = useState<any>({});
+  const [dbNodeSelectorError, setDBNodeSelectorError] = useState<any>({});
+
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
 
-  const setMonitoringInfo = (res: ITenantMonitoringStruct) => {
+  const setLoggingInfo = (res: ITenantLogsStruct) => {
     dispatch(setImage(res.image));
-    dispatch(setSidecarImage(res.sidecarImage));
-    dispatch(setInitImage(res.initImage));
-    dispatch(setStorageClassName(res.storageClassName));
-    dispatch(setDiskCapacityGB(res.diskCapacityGB));
     dispatch(setServiceAccountName(res.serviceAccountName));
-    dispatch(setCPURequest(res.monitoringCPURequest));
-    if (res.monitoringMemRequest) {
-      dispatch(
-        setMemRequest(
-          Math.floor(
-            parseInt(res.monitoringMemRequest, 10) / 1000000000
-          ).toString()
-        )
-      );
-    } else {
-      dispatch(setMemRequest("0"));
-    }
-    res.labels != null
-      ? setLabels(res.labels)
-      : setLabels([{ key: "", value: "" }]);
-    res.annotations != null
-      ? setAnnotations(res.annotations)
-      : setAnnotations([{ key: "", value: "" }]);
-    res.nodeSelector != null
-      ? setNodeSelector(res.nodeSelector)
-      : setNodeSelector([{ key: "", value: "" }]);
+    dispatch(setDBServiceAccountName(res.dbServiceAccountName));
+    dispatch(setDBImage(res.dbImage));
+    dispatch(setDBInitImage(res.dbInitImage));
+    dispatch(setCPURequest(res.logCPURequest));
+    dispatch(setDBCPURequest(res.logDBCPURequest));
+    if (res.logMemRequest) {
+        dispatch(
+          setMemRequest(
+            Math.floor(
+              parseInt(res.logMemRequest, 10) / 1000000000
+            ).toString()
+          )
+        );
+      } else {
+        dispatch(setMemRequest("0"));
+      }
+      if (res.logDBMemRequest) {
+        dispatch(
+          setDBMemRequest(
+            Math.floor(
+              parseInt(res.logDBMemRequest, 10) / 1000000000
+            ).toString()
+          )
+        );
+      } else {
+        dispatch(setDBMemRequest("0"));
+      }  
+    dispatch(setDiskCapacityGB(res.diskCapacityGB));    
+    res.labels != null ? setLabels(res.labels) : setLabels([{ key: "", value: "" }]);
+    res.annotations != null ? setAnnotations(res.annotations) : setAnnotations([{ key: "", value: "" }]);
+    res.nodeSelector != null ? setNodeSelector(res.nodeSelector) : setNodeSelector([{ key: "", value: "" }]);
+    res.dbLabels != null ? setDBLabels(res.dbLabels) : setDBLabels([{ key: "", value: "" }]);
+    res.dbAnnotations != null ? setDBAnnotations(res.dbAnnotations) : setDBAnnotations([{ key: "", value: "" }]);
+    res.dbNodeSelector != null ? setDBNodeSelector(res.dbNodeSelector) : setDBNodeSelector([{ key: "", value: "" }]);
   };
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
@@ -184,7 +219,10 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
       Object.keys(validationErrors).length !== 0 ||
       Object.keys(labelsError).length !== 0 ||
       Object.keys(annotationsError).length !== 0 ||
-      Object.keys(nodeSelectorError).length !== 0
+      Object.keys(nodeSelectorError).length !== 0 ||
+      Object.keys(dbNodeSelectorError).length !== 0 ||
+      Object.keys(dbAnnotationsError).length !== 0 ||
+      Object.keys(dbLabelsError).length !== 0 
     ) {
       let err: ErrorResponseHandler = {
         errorMessage: "Invalid entry",
@@ -198,50 +236,53 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
   };
 
   useEffect(() => {
-    if (refreshMonitoringInfo) {
+    if (refreshLoggingInfo) {
       api
-        .invoke(
-          "GET",
-          `/api/v1/namespaces/${tenantNamespace || ""}/tenants/${
-            tenantName || ""
-          }/monitoring`
-        )
-        .then((res: ITenantMonitoringStruct) => {
-          dispatch(setPrometheusEnabled(res.prometheusEnabled));
-          setMonitoringInfo(res);
-          setRefreshMonitoringInfo(false);
+      .invoke(
+        "GET",
+        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`
+      )
+        .then((res: ITenantLogsStruct) => {
+          dispatch(setAuditLoggingEnabled(res.auditLoggingEnabled));
+          setLoggingInfo(res);
+          setRefreshLoggingInfo(false);
         })
         .catch((err: ErrorResponseHandler) => {
           dispatch(setErrorSnackMessage(err));
-          setRefreshMonitoringInfo(false);
+          setRefreshLoggingInfo(false);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshMonitoringInfo]);
+  }, [refreshLoggingInfo]);
 
-  const submitMonitoringInfo = () => {
+  const submitLoggingInfo = () => {
     if (checkValid()) {
       api
-        .invoke(
-          "PUT",
-          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/monitoring`,
-          {
-            labels: trim(labels),
-            annotations: trim(annotations),
-            nodeSelector: trim(nodeSelector),
-            image: image,
-            sidecarImage: sidecarImage,
-            initImage: initImage,
-            diskCapacityGB: diskCapacityGB,
-            serviceAccountName: serviceAccountName,
-            storageClassName: storageClassName,
-            monitoringCPURequest: cpuRequest,
-            monitoringMemRequest: memRequest + "Gi",
-          }
-        )
+      .invoke(
+        "PUT",
+        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`,
+        {
+          labels: trim(labels),
+          annotations: trim(annotations),
+          nodeSelector: trim(nodeSelector),
+          image: image,
+          diskCapacityGB: diskCapacityGB,
+          serviceAccountName: serviceAccountName,
+          dbLabels: trim(dbLabels),
+          dbAnnotations: trim(dbAnnotations),
+          dbNodeSelector: trim(dbNodeSelector),
+          dbImage: dbImage,
+          dbInitImage: dbInitImage,
+          dbServiceAccountName: dbServiceAccountName,
+          logCPURequest: cpuRequest,
+          logMemRequest: memRequest + "Gi",
+          logDBCPURequest: dbCpuRequest,
+          logDBMemRequest: dbMemRequest + "Gi",
+        }
+      )
         .then(() => {
-          setRefreshMonitoringInfo(true);
-          dispatch(setSnackBarMessage(`Prometheus configuration updated.`));
+          setRefreshLoggingInfo(true);
+          dispatch(setSnackBarMessage(`Audit Log configuration updated.`));
         })
         .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
@@ -249,45 +290,64 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
     }
   };
 
-  const togglePrometheus = () => {
+  const toggleLogging = () => {
     const configInfo = {
-      prometheusEnabled: prometheusEnabled,
+      auditLoggingEnabled: auditLoggingEnabled,
       toggle: true,
     };
+    if(auditLoggingEnabled) {
+        api
+        .invoke(
+          "POST",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/enable-logging`
+        )
+        .then(() => {
+          setRefreshLoggingInfo(true);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage: "Error enabling logging",
+              detailedError: err.detailedError,
+            })
+          );
+        });
+  } else {
     api
-      .invoke(
-        "PUT",
-        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/monitoring`,
-        configInfo
-      )
-      .then(() => {
-        dispatch(setPrometheusEnabled(!prometheusEnabled));
-        setRefreshMonitoringInfo(true);
-        setToggleConfirmOpen(false);
-        setRefreshMonitoringInfo(true);
-      })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
-      });
+    .invoke(
+      "POST",
+      `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/disable-logging`
+    )
+    .then(() => {
+        setRefreshLoggingInfo(true);
+    })
+    .catch((err: ErrorResponseHandler) => {
+      dispatch(
+        setErrorSnackMessage({
+          errorMessage: "Error disabling logging",
+          detailedError: err.detailedError,
+        })
+      );
+    });
   };
-
+  };
   return (
     <Fragment>
       {toggleConfirmOpen && (
         <ConfirmDialog
           isOpen={toggleConfirmOpen}
           title={
-            !prometheusEnabled
+            !auditLoggingEnabled
               ? "Enable Audit Logging for this tenant?"
               : "Disable Audit Logging for this tenant?"
           }
-          confirmText={!prometheusEnabled ? "Enable" : "Disable"}
+          confirmText={!auditLoggingEnabled ? "Enable" : "Disable"}
           cancelText="Cancel"
           onClose={() => setToggleConfirmOpen(false)}
-          onConfirm={togglePrometheus}
+          onConfirm={toggleLogging}
           confirmationContent={
             <DialogContentText>
-              {!prometheusEnabled
+              {!auditLoggingEnabled
                 ? "A small Postgres server will be started per the configuration provided, which will collect the audit logs for your tenant."
                 : " Current configuration will be lost, and defaults reset if reenabled."}
             </DialogContentText>
@@ -302,10 +362,10 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
           <FormSwitchWrapper
             label={""}
             indicatorLabels={["Enabled", "Disabled"]}
-            checked={prometheusEnabled}
-            value={"tenant_monitoring"}
-            id="tenant-monitoring"
-            name="tenant-monitoring"
+            checked={auditLoggingEnabled}
+            value={"tenant_logging"}
+            id="tenant_logging"
+            name="tenant_logging"
             onChange={() => {
               setToggleConfirmOpen(true);
             }}
@@ -317,13 +377,13 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
         </Grid>
       </Grid>
 
-      {prometheusEnabled && (
+      {auditLoggingEnabled && (
         <Fragment>
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`image`}
               label={"Image"}
-              placeholder={"quay.io/prometheus/prometheus:latest"}
+              placeholder={"minio/operator:v4.4.22"}
               name={`image`}
               value={image}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -337,40 +397,40 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
               error={validationErrors[`image`] || ""}
             />
           </Grid>
+          <Grid item xs={12} className={classes.formFieldRow}>
+              <InputBoxWrapper
+                id={`dbImage`}
+                label={"Postgres Image"}
+                placeholder={"library/postgres:13"}
+                name={`dbImage`}
+                value={dbImage}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    if (event.target.validity.valid) {
+                      dispatch(setDBImage(event.target.value));
+                    }
+                    cleanValidation(`dbImage`);
+                  }}
+                key={`dbImage`}
+                pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+                error={validationErrors[`dbImage`] || ""}
+              />
+            </Grid>
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
-              id={`sidecarImage`}
-              label={"Sidecar Image"}
-              placeholder={"library/alpine:latest"}
-              name={`sidecarImage`}
-              value={sidecarImage}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                if (event.target.validity.valid) {
-                  dispatch(setSidecarImage(event.target.value));
-                }
-                cleanValidation(`sidecarImage`);
-              }}
-              key={`sidecarImage`}
-              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
-              error={validationErrors[`sidecarImage`] || ""}
-            />
-          </Grid>
-          <Grid item xs={12} paddingBottom={2}>
-            <InputBoxWrapper
-              id={`initImage`}
-              label={"Init Image"}
+              id={`dbInitImage`}
+              label={"DB Init Image"}
               placeholder={"library/busybox:1.33.1"}
-              name={`initImage`}
-              value={initImage}
+              name={`dbInitImage`}
+              value={dbInitImage}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 if (event.target.validity.valid) {
-                  dispatch(setInitImage(event.target.value));
+                  dispatch(setDBInitImage(event.target.value));
                 }
-                cleanValidation(`initImage`);
+                cleanValidation(`dbInitImage`);
               }}
-              key={`initImage`}
+              key={`dbInitImage`}
               pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
-              error={validationErrors[`initImage`] || ""}
+              error={validationErrors[`dbInitImage`] || ""}
             />
           </Grid>
           <Grid item xs={12} paddingBottom={2}>
@@ -379,10 +439,10 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
               label={"Disk Capacity"}
               placeholder={"Disk Capacity"}
               name={`diskCapacityGB`}
-              value={diskCapacityGB}
+              value={diskCapacityGB.toString()}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 if (event.target.validity.valid) {
-                  dispatch(setDiskCapacityGB(event.target.value));
+                  dispatch(setDiskCapacityGB(parseInt(event.target.value)));
                 }
                 cleanValidation(`diskCapacityGB`);
               }}
@@ -420,6 +480,24 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
           </Grid>
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
+              id={`dbCPURequest`}
+              label={"DB CPU Request"}
+              placeholder={"DB CPU Request"}
+              name={`dbCPURequest`}
+              value={dbCpuRequest}
+              pattern={"[0-9]*"}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                if (event.target.validity.valid) {
+                  dispatch(setDBCPURequest(event.target.value));
+                }
+                cleanValidation(`dbCPURequest`);
+              }}
+              key={`dbCPURequest`}
+              error={validationErrors[`dbCPURequest`] || ""}
+            />
+          </Grid>
+          <Grid item xs={12} paddingBottom={2}>
+            <InputBoxWrapper
               id={`memRequest`}
               label={"Memory Request"}
               placeholder={"Memory request"}
@@ -447,6 +525,33 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
           </Grid>
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
+              id={`dbMemRequest`}
+              label={"DB Memory Request"}
+              placeholder={"DB Memory request"}
+              name={`dbMemRequest`}
+              value={dbMemRequest}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                if (event.target.validity.valid) {
+                  dispatch(setDBMemRequest(event.target.value));
+                }
+                cleanValidation(`dbMemRequest`);
+              }}
+              pattern={"[0-9]*"}
+              key={`dbMemRequest`}
+              error={validationErrors[`dbMemRequest`] || ""}
+              overlayObject={
+                <InputUnitMenu
+                  id={"size-unit"}
+                  onUnitChange={() => {}}
+                  unitSelected={"Gi"}
+                  unitsList={[{ label: "Gi", value: "Gi" }]}
+                  disabled={true}
+                />
+              }
+            />
+          </Grid>
+          <Grid item xs={12} paddingBottom={2}>
+            <InputBoxWrapper
               id={`serviceAccountName`}
               label={"Service Account"}
               placeholder={"Service Account Name"}
@@ -461,24 +566,6 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
               key={`serviceAccountName`}
               pattern={"^[a-zA-Z0-9-.]{1,253}$"}
               error={validationErrors[`serviceAccountName`] || ""}
-            />
-          </Grid>
-          <Grid item xs={12} paddingBottom={2}>
-            <InputBoxWrapper
-              id={`storageClassName`}
-              label={"Storage Class"}
-              placeholder={"Storage Class Name"}
-              name={`storageClassName`}
-              value={storageClassName}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                if (event.target.validity.valid) {
-                  dispatch(setStorageClassName(event.target.value));
-                }
-                cleanValidation(`storageClassName`);
-              }}
-              key={`storageClassName`}
-              pattern={"^[a-zA-Z0-9-.]{1,253}$"}
-              error={validationErrors[`storageClassName`] || ""}
             />
           </Grid>
           {labels !== null && (
@@ -518,13 +605,50 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
               />
             </Grid>
           )}
+             {dbLabels !== null && (
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>DB Labels</span>
+              <KeyPairEdit
+                newValues={dbLabels}
+                setNewValues={setDBLabels}
+                paramName={"dbLabels"}
+                error={dbLabelsError}
+                setError={setDBLabelsError}
+              />
+            </Grid>
+          )}
+
+          {dbAnnotations !== null && (
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>DB Annotations</span>
+              <KeyPairEdit
+                newValues={dbAnnotations}
+                setNewValues={setDBAnnotations}
+                paramName={"dbAnnotations"}
+                error={dbAnnotationsError}
+                setError={setDBAnnotationsError}
+              />
+            </Grid>
+          )}
+          {dbNodeSelector !== null && (
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <span className={classes.inputLabel}>DB Node Selector</span>
+              <KeyPairEdit
+                newValues={dbNodeSelector}
+                setNewValues={setDBNodeSelector}
+                paramName={"DB Node Selector"}
+                error={dbNodeSelectorError}
+                setError={setDBNodeSelectorError}
+              />
+            </Grid>
+          )}
           <Grid item xs={12} textAlign={"right"}>
             <Button
               type="submit"
               variant="contained"
               color="primary"
               disabled={!checkValid()}
-              onClick={() => submitMonitoringInfo()}
+              onClick={() => submitLoggingInfo()}
             >
               Save
             </Button>
@@ -535,4 +659,4 @@ const TenantMonitoring = ({ classes }: ITenantAuditLogs) => {
   );
 };
 
-export default withStyles(styles)(TenantMonitoring);
+export default withStyles(styles)(TenantAuditLogging);
