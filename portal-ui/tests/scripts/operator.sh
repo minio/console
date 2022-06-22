@@ -64,6 +64,7 @@ function install_operator() {
 	sleep 10
 
 	echo "Waiting for Operator Pods to come online (2m timeout)"
+	wait_for_resource minio-operator $value $key
 	try kubectl wait --namespace minio-operator \
 	--for=condition=ready pod \
 	--selector $key=$value \
