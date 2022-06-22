@@ -31,7 +31,7 @@ import createTenantReducer from "./screens/Console/Tenants/AddTenant/createTenan
 import createUserReducer from "./screens/Console/Users/AddUsersSlice";
 import addPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/AddPool/addPoolSlice";
 import editPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/EditPool/editPoolSlice";
-import editTenantMonitoringReducer from "./screens/Console/Tenants/TenantDetails/tenantMonitoringSlice"
+import editTenantMonitoringReducer from "./screens/Console/Tenants/TenantDetails/tenantMonitoringSlice";
 
 const rootReducer = combineReducers({
   system: systemReducer,

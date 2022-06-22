@@ -767,6 +767,7 @@ const ListObjects = () => {
       encodeURLString(object.name),
       object.version_id,
       object.size,
+      null,
       (progress) => {
         dispatch(
           updateProgress({

@@ -392,16 +392,27 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		defer resp.Close()
 
 		isPreview := params.Preview != nil && *params.Preview
+		// override filename is set
+		decodeOverride, err := base64.StdEncoding.DecodeString(*params.OverrideFileName)
+		if err != nil {
+			return
+		}
+
+		overrideName := string(decodeOverride)
+
 		// indicate it's a download / inline content to the browser, and the size of the object
 		var filename string
 		prefixElements := strings.Split(prefix, "/")
-		if len(prefixElements) > 0 {
+		if len(prefixElements) > 0 && overrideName == "" {
 			if prefixElements[len(prefixElements)-1] == "" {
 				filename = prefixElements[len(prefixElements)-2]
 			} else {
 				filename = prefixElements[len(prefixElements)-1]
 			}
+		} else if overrideName != "" {
+			filename = overrideName
 		}
+
 		escapedName := url.PathEscape(filename)
 
 		// indicate object size & content type

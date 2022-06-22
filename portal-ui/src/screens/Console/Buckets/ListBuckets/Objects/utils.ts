@@ -16,12 +16,14 @@
 
 import { BucketObjectItem } from "./ListObjects/types";
 import { IAllowResources } from "../../../types";
+import { encodeURLString } from "../../../../../common/utils";
 
 export const download = (
   bucketName: string,
   objectPath: string,
   versionID: any,
   fileSize: number,
+  overrideFileName: string | null = null,
   progressCallback: (progress: number) => void,
   completeCallback: () => void,
   errorCallback: () => void,
@@ -29,7 +31,11 @@ export const download = (
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
-  let path = `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectPath}`;
+  let path = `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectPath}${
+    overrideFileName !== null && overrideFileName.trim() !== ""
+      ? `&override_file_name=${encodeURLString(overrideFileName || "")}`
+      : ""
+  }`;
   if (versionID) {
     path = path.concat(`&version_id=${versionID}`);
   }
