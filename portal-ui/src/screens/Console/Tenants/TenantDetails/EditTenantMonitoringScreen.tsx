@@ -58,7 +58,7 @@ import {setPrometheusEnabled,
     } from "../TenantDetails/tenantMonitoringSlice" 
 import { clearValidationError } from "../utils";
 import SecurityContextSelector from "../securityContextSelector";
-import { setRunAsUser, setFSGroup, setRunAsGroup, setRunAsNonRoot } from "../securityContextSlice";
+import { setRunAsUser, setFSGroup, setRunAsGroup, setRunAsNonRoot } from "../monitoringSecurityContextSlice";
   
   interface ITenantMonitoring {
   classes: any;

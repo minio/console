@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IEditSecurityContext } from "./types";
+import { IEditMonitoringSecurityContext } from "./types";
 
 
-const initialState: IEditSecurityContext = {
+const initialState: IEditMonitoringSecurityContext = {
         securityContextEnabled: false,    
         runAsUser: "1000",
         runAsGroup: "1000",
@@ -25,8 +25,8 @@ const initialState: IEditSecurityContext = {
         runAsNonRoot: true,
 };
 
-export const editSecurityContextSlice = createSlice({
-    name: "editSecurityContext",
+export const editMonitoringSecurityContextSlice = createSlice({
+    name: "editMonitoringSecurityContext",
     initialState,
     reducers: {
         setSecurityContextEnabled: (state, action: PayloadAction<boolean>) => {
@@ -53,6 +53,6 @@ export const {
     setRunAsGroup,
     setFSGroup,
     setRunAsNonRoot,
-} = editSecurityContextSlice.actions;
+} = editMonitoringSecurityContextSlice.actions;
 
-export default editSecurityContextSlice.reducer;
+export default editMonitoringSecurityContextSlice.reducer;

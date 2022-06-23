@@ -339,7 +339,7 @@ export interface ITenantIdentityProviderResponse {
   };
 }
 
-export interface IEditSecurityContext {
+export interface IEditMonitoringSecurityContext {
   securityContextEnabled: boolean;
   runAsUser: string;
   runAsGroup: string;
