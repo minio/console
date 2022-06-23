@@ -126,6 +126,7 @@ func postEmailToMP(email, token string, isInEU bool) error {
 	}
 	return makePostRequestToMP(mpURL, email, token)
 }
+
 func getMPURL(isInEU bool) (string, error) {
 	mpHost := getMPHost(isInEU)
 	if mpHost == "" {
