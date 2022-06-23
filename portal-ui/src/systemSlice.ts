@@ -27,6 +27,7 @@ const initSideBarOpen = localStorage.getItem("sidebarOpen")
 export interface SystemState {
   value: number;
   loggedIn: boolean;
+  showMarketplace: boolean;
   operatorMode: boolean;
   sidebarOpen: boolean;
   session: string;
@@ -45,6 +46,7 @@ export interface SystemState {
 const initialState: SystemState = {
   value: 0,
   loggedIn: false,
+  showMarketplace: false,
   operatorMode: false,
   session: "",
   userName: "",
@@ -74,6 +76,9 @@ export const systemSlice = createSlice({
   reducers: {
     userLogged: (state, action: PayloadAction<boolean>) => {
       state.loggedIn = action.payload;
+    },
+    showMarketplace: (state, action: PayloadAction<boolean>) => {
+      state.showMarketplace = action.payload;
     },
     operatorMode: (state, action: PayloadAction<boolean>) => {
       state.operatorMode = action.payload;
@@ -147,6 +152,7 @@ export const systemSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   userLogged,
+  showMarketplace,
   operatorMode,
   menuOpen,
   setServerNeedsRestart,
@@ -165,5 +171,6 @@ export const {
 export const selDistSet = (state: AppState) => state.system.distributedSetup;
 export const selSiteRep = (state: AppState) => state.system.siteReplicationInfo;
 export const selOpMode = (state: AppState) => state.system.operatorMode;
+export const selShowMarketplace = (state: AppState) => state.system.showMarketplace;
 
 export default systemSlice.reducer;

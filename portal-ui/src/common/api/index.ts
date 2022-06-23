@@ -67,6 +67,7 @@ export class API {
       const throwMessage: ErrorResponseHandler = {
         errorMessage: capMessage,
         detailedError: capDetailed,
+        statusCode: err.status,
       };
 
       return Promise.reject(throwMessage);

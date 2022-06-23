@@ -126,6 +126,7 @@ const TenantDetails = React.lazy(
   () => import("./Tenants/TenantDetails/TenantDetails")
 );
 const License = React.lazy(() => import("./License/License"));
+const Marketplace = React.lazy(() => import("./Marketplace/Marketplace"));
 const ConfigurationOptions = React.lazy(
   () => import("./Configurations/ConfigurationPanels/ConfigurationOptions")
 );
@@ -449,6 +450,11 @@ const Console = ({ classes }: IConsoleProps) => {
     {
       component: License,
       path: IAM_PAGES.LICENSE,
+      forceDisplay: true,
+    },
+    {
+      component: Marketplace,
+      path: IAM_PAGES.OPERATOR_MARKETPLACE,
       forceDisplay: true,
     },
   ];

@@ -51,7 +51,7 @@ import { SupportMenuIcon } from "../../icons/SidebarMenus";
 import GithubIcon from "../../icons/GithubIcon";
 import clsx from "clsx";
 import Loader from "../Console/Common/Loader/Loader";
-import { setErrorSnackMessage, userLogged } from "../../systemSlice";
+import { setErrorSnackMessage, userLogged, showMarketplace } from "../../systemSlice";
 import { useAppDispatch } from "../../store";
 
 const styles = (theme: Theme) =>
@@ -304,6 +304,10 @@ const Login = ({ classes }: ILoginProps) => {
   const [latestMinIOVersion, setLatestMinIOVersion] = useState<string>("");
   const [loadingVersion, setLoadingVersion] = useState<boolean>(true);
 
+  const isOperator =
+    loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
+    loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount;
+
   const loginStrategyEndpoints: LoginStrategyRoutes = {
     form: "/api/v1/login",
     "service-account": "/api/v1/login/operator",
@@ -316,6 +320,38 @@ const Login = ({ classes }: ILoginProps) => {
   const fetchConfiguration = () => {
     setLoadingFetchConfiguration(true);
   };
+
+  const getTargetPath = () => {
+    let targetPath = "/";
+    if (
+      localStorage.getItem("redirect-path") &&
+      localStorage.getItem("redirect-path") !== ""
+    ) {
+      targetPath = `${localStorage.getItem("redirect-path")}`;
+      localStorage.setItem("redirect-path", "");
+    }
+    return targetPath;
+  }
+
+  const redirectAfterLogin = () => {
+    navigate(getTargetPath());
+  }
+
+  const redirectToMarketplace = () => {
+    api
+      .invoke("GET", "/api/v1/mp-integration/")
+      .then((res: any) => {
+        redirectAfterLogin(); // Email already set, continue with normal flow
+      })
+      .catch((err: ErrorResponseHandler) => {
+        if (err.statusCode === 404) {
+          dispatch(showMarketplace(true));
+          navigate("/marketplace");
+        } else { // Unexpected error, continue with normal flow
+          redirectAfterLogin();
+        }
+      });
+  }
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -332,15 +368,11 @@ const Login = ({ classes }: ILoginProps) => {
         if (loginStrategy.loginStrategy === loginStrategyType.form) {
           localStorage.setItem("userLoggedIn", accessKey);
         }
-        let targetPath = "/";
-        if (
-          localStorage.getItem("redirect-path") &&
-          localStorage.getItem("redirect-path") !== ""
-        ) {
-          targetPath = `${localStorage.getItem("redirect-path")}`;
-          localStorage.setItem("redirect-path", "");
+        if (isOperator) {
+          redirectToMarketplace();
+        } else {
+          redirectAfterLogin();
         }
-        navigate(targetPath);
       })
       .catch((err) => {
         setLoginSending(false);
@@ -586,10 +618,6 @@ const Login = ({ classes }: ILoginProps) => {
         </div>
       );
   }
-
-  const isOperator =
-    loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
-    loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount;
 
   const consoleText = isOperator ? <OperatorLogo /> : <ConsoleLogo />;
 

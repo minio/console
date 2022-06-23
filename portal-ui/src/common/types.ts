@@ -449,6 +449,7 @@ export interface AffinityConfiguration {
 export interface ErrorResponseHandler {
   errorMessage: string;
   detailedError: string;
+  statusCode?: number;
 }
 
 export interface IRetentionConfig {
