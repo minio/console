@@ -286,10 +286,6 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
   };
 
   const toggleLogging = () => {
-    const configInfo = {
-      auditLoggingEnabled: auditLoggingEnabled,
-      toggle: true,
-    };
     if(!auditLoggingEnabled) {
         api
         .invoke(
