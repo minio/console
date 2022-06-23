@@ -20,7 +20,6 @@ import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSw
 import { Grid } from "@mui/material";
 import { useDispatch } from "react-redux";
 import createStyles from "@mui/styles/createStyles";
-import { Theme } from "@mui/material/styles";
 import withStyles from "@mui/styles/withStyles";
 
 interface IEditSecurityContextProps {
@@ -42,7 +41,7 @@ const styles = () =>
       height: "100%",
       width: "100%",
     },
-    /*Below md breakpoint make it horizontal and style it for scrolling tabs*/
+    /*Below md breakpoint make it stack in column*/
     "@media (max-width: 700px)": {
       tabsContainer: {
         flexFlow: "column",
@@ -109,7 +108,7 @@ const SecurityContextSelector = ({ classes, runAsGroup, runAsUser, fsGroup, runA
               </Grid>
               <br />
               <Grid item xs={12}>
-                <div className={classes.multiContainer}>
+                <div className={classes.multiContainer} >
                   <FormSwitchWrapper
                     value="prometheusSecurityContextRunAsNonRoot"
                     id="prometheus_securityContext_runAsNonRoot"
