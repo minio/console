@@ -270,7 +270,7 @@ func (c mcClient) setVersioning(ctx context.Context, status string) *probe.Error
 }
 
 func (c mcClient) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
-	return c.client.Remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
+	return c.client.Remove(ctx, isIncomplete, isRemoveBucket, isBypass, false, contentCh)
 }
 
 func (c mcClient) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
