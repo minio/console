@@ -166,6 +166,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
   };
 
   const setLoggingInfo = (res: ITenantLogsStruct) => {
+    dispatch(setAuditLoggingEnabled(!res.disabled))
     dispatch(setImage(res.image));
     dispatch(setServiceAccountName(res.serviceAccountName));
     dispatch(setDBServiceAccountName(res.dbServiceAccountName));
@@ -266,7 +267,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
           annotations: trim(annotations),
           nodeSelector: trim(nodeSelector),
           image: image,
-          diskCapacityGB: diskCapacityGB,
+          diskCapacityGB: diskCapacityGB.toString(),
           serviceAccountName: serviceAccountName,
           dbLabels: trim(dbLabels),
           dbAnnotations: trim(dbAnnotations),
@@ -295,7 +296,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
       auditLoggingEnabled: auditLoggingEnabled,
       toggle: true,
     };
-    if(auditLoggingEnabled) {
+    if(!auditLoggingEnabled) {
         api
         .invoke(
           "POST",
@@ -303,6 +304,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
         )
         .then(() => {
           setRefreshLoggingInfo(true);
+          setToggleConfirmOpen(false);
         })
         .catch((err: ErrorResponseHandler) => {
           dispatch(
