@@ -51,12 +51,6 @@ import {
     setImage,
     setDBImage,
     setDBInitImage,
-    setLabels,
-    setAnnotations,
-    setNodeSelector,
-    setDBLabels,
-    setDBAnnotations,
-    setDBNodeSelector,
     setDiskCapacityGB,
     setServiceAccountName,
     setDBServiceAccountName,
@@ -197,12 +191,12 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
         dispatch(setDBMemRequest("0"));
       }  
     dispatch(setDiskCapacityGB(res.diskCapacityGB));    
-    res.labels != null ? setLabels(res.labels) : setLabels([{ key: "", value: "" }]);
-    res.annotations != null ? setAnnotations(res.annotations) : setAnnotations([{ key: "", value: "" }]);
-    res.nodeSelector != null ? setNodeSelector(res.nodeSelector) : setNodeSelector([{ key: "", value: "" }]);
-    res.dbLabels != null ? setDBLabels(res.dbLabels) : setDBLabels([{ key: "", value: "" }]);
-    res.dbAnnotations != null ? setDBAnnotations(res.dbAnnotations) : setDBAnnotations([{ key: "", value: "" }]);
-    res.dbNodeSelector != null ? setDBNodeSelector(res.dbNodeSelector) : setDBNodeSelector([{ key: "", value: "" }]);
+    res.labels.length > 0 ? setLabels(res.labels) : setLabels([{ key: "test", value: "test" }]);
+    res.annotations.length > 0 ? setAnnotations(res.annotations) : setAnnotations([{ key: "", value: "" }]);
+    res.nodeSelector.length > 0 ? setNodeSelector(res.nodeSelector) : setNodeSelector([{ key: "", value: "" }]);
+    res.dbLabels.length > 0 ? setDBLabels(res.dbLabels) : setDBLabels([{ key: "", value: "" }]);
+    res.dbAnnotations.length > 0 ? setDBAnnotations(res.dbAnnotations) : setDBAnnotations([{ key: "", value: "" }]);
+    res.dbNodeSelector.length > 0 ? setDBNodeSelector(res.dbNodeSelector) : setDBNodeSelector([{ key: "", value: "" }]);
   };
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
@@ -322,6 +316,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
     )
     .then(() => {
         setRefreshLoggingInfo(true);
+        setToggleConfirmOpen(false);
     })
     .catch((err: ErrorResponseHandler) => {
       dispatch(
@@ -399,10 +394,10 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
               error={validationErrors[`image`] || ""}
             />
           </Grid>
-          <Grid item xs={12} className={classes.formFieldRow}>
+          <Grid item xs={12} paddingBottom={2}>
               <InputBoxWrapper
                 id={`dbImage`}
-                label={"Postgres Image"}
+                label={"DB Postgres Image"}
                 placeholder={"library/postgres:13"}
                 name={`dbImage`}
                 value={dbImage}
