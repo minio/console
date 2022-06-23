@@ -211,6 +211,7 @@ export const IAM_PAGES = {
   NAMESPACE_TENANT_EVENTS:
     "/namespaces/:tenantNamespace/tenants/:tenantName/events",
   NAMESPACE_TENANT_CSR: "/namespaces/:tenantNamespace/tenants/:tenantName/csr",
+  OPERATOR_MARKETPLACE: "/marketplace",
 };
 
 // roles

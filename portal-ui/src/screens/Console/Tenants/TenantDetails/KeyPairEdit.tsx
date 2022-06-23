@@ -13,6 +13,7 @@ import {
   IValidation,
 } from "../../../../utils/validationFunctions";
 import { clearValidationError } from "../utils";
+import Grid from "@mui/material/Grid";
 
 interface IKeyPairEditProps {
   classes: any;
@@ -82,70 +83,72 @@ const KeyPairEdit = ({
   let keyValueInputs = newValues.map((_, index) => {
     return (
       <Fragment key={`keyvalue-${index.toString()}`}>
-        <div className={classes.shortened}>
-          <InputBoxWrapper
-            id={`key-${index.toString()}`}
-            label={""}
-            placeholder={"Key"}
-            name={`key-${index.toString()}`}
-            value={newValues[index].key}
-            onChange={(e) => {
-              let tempLabels = [...newValues];
-              tempLabels[index].key = e.target.value;
-              setNewValues(tempLabels);
-              cleanValidation(`key-${index.toString()}`);
-            }}
-            index={index}
-            key={`csv-key-${index.toString()}`}
-            error={error[`key-${index.toString()}`] || ""}
-          />
-          <InputBoxWrapper
-            id={`val-${index.toString()}`}
-            label={""}
-            placeholder={"Value"}
-            name={`val-${index.toString()}`}
-            value={newValues[index].value}
-            onChange={(e) => {
-              let tempLabels = [...newValues];
-              tempLabels[index].value = e.target.value;
-              setNewValues(tempLabels);
-              cleanValidation(`val-${index.toString()}`);
-            }}
-            index={index}
-            key={`csv-val-${index.toString()}`}
-            error={error[`val-${index.toString()}`] || ""}
-          />
-          <Tooltip title={`Add ${paramName}`} aria-label="addlabel">
-            <IconButton
-              size={"small"}
-              onClick={() => {
+        <Grid paddingBottom={1}>
+          <div className={classes.shortened}>
+            <InputBoxWrapper
+              id={`key-${index.toString()}`}
+              label={""}
+              placeholder={"Key"}
+              name={`key-${index.toString()}`}
+              value={newValues[index].key}
+              onChange={(e) => {
                 let tempLabels = [...newValues];
-                tempLabels.push({ key: "", value: "" });
+                tempLabels[index].key = e.target.value;
                 setNewValues(tempLabels);
+                cleanValidation(`key-${index.toString()}`);
               }}
-            >
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Remove" aria-label="removeLabel">
-            <IconButton
-              size={"small"}
-              style={{ marginLeft: 16 }}
-              onClick={() => {
-                if (newValues.length === 1) {
-                  setNewValues([{ key: "", value: "" }]);
-                }
-                if (newValues.length > 1) {
+              index={index}
+              key={`csv-key-${index.toString()}`}
+              error={error[`key-${index.toString()}`] || ""}
+            />
+            <InputBoxWrapper
+              id={`val-${index.toString()}`}
+              label={""}
+              placeholder={"Value"}
+              name={`val-${index.toString()}`}
+              value={newValues[index].value}
+              onChange={(e) => {
+                let tempLabels = [...newValues];
+                tempLabels[index].value = e.target.value;
+                setNewValues(tempLabels);
+                cleanValidation(`val-${index.toString()}`);
+              }}
+              index={index}
+              key={`csv-val-${index.toString()}`}
+              error={error[`val-${index.toString()}`] || ""}
+            />
+            <Tooltip title={`Add ${paramName}`} aria-label="addlabel">
+              <IconButton
+                size={"small"}
+                onClick={() => {
                   let tempLabels = [...newValues];
-                  tempLabels.splice(index, 1);
+                  tempLabels.push({ key: "", value: "" });
                   setNewValues(tempLabels);
-                }
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        </div>
+                }}
+              >
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Remove" aria-label="removeLabel">
+              <IconButton
+                size={"small"}
+                style={{ marginLeft: 16 }}
+                onClick={() => {
+                  if (newValues.length === 1) {
+                    setNewValues([{ key: "", value: "" }]);
+                  }
+                  if (newValues.length > 1) {
+                    let tempLabels = [...newValues];
+                    tempLabels.splice(index, 1);
+                    setNewValues(tempLabels);
+                  }
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
+        </Grid>
       </Fragment>
     );
   });

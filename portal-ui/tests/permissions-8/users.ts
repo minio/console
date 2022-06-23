@@ -24,6 +24,9 @@ import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 const userListItem = Selector(".ReactVirtualized__Table__rowColumn").withText(
   constants.TEST_USER_NAME
 );
+const policyListItem = Selector(".ReactVirtualized__Table__rowColumn").withText(
+  constants.TEST_ASSIGN_POLICY_NAME
+);
 
 const userDeleteIconButton = userListItem
   .child("checkbox")
@@ -75,6 +78,24 @@ test("Create User Page to create a user", async (t) => {
 test("Users table exists", async (t) => {
   const usersTableExists = elements.table.exists;
   await t.navigateTo(usersPageUrl).expect(usersTableExists).ok();
+});
+
+test("IAM Policy can be set on User", async (t) => {
+  const userListItemExists = userListItem.exists;
+  const policyListItemExists = policyListItem.exists;
+  await t
+    .navigateTo(usersPageUrl)
+    .typeText(elements.searchResourceInput, constants.TEST_USER_NAME)
+    .expect(userListItemExists)
+    .ok()
+    .click(userListItem)
+    .click(elements.userPolicies)
+    .click(elements.assignPoliciesButton)
+    .typeText(elements.searchResourceInput, constants.TEST_ASSIGN_POLICY_NAME)
+    .click(userCheckbox)
+    .click(elements.saveButton)
+    .expect(policyListItemExists)
+    .ok();
 });
 
 test("Created User can be viewed and deleted", async (t) => {

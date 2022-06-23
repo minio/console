@@ -177,7 +177,7 @@ const BucketListItem = ({
   const usageUnit = usage.split(" ")[1];
 
   const quota = get(bucket, "details.quota.quota", "0");
-  const quotaForString = calculateBytes(quota);
+  const quotaForString = calculateBytes(quota, true, false);
 
   const accessToStr = (bucket: Bucket): string => {
     if (bucket.rw_access?.read && !bucket.rw_access?.write) {

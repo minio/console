@@ -1,3 +1,4 @@
+
 swagger: "2.0"
 info:
   title: MinIO Console Server
@@ -432,6 +433,11 @@ paths:
           required: false
           type: boolean
           default: false
+        - name: override_file_name
+          in: query
+          required: false
+          type: string
+          default: ""
       responses:
         200:
           description: A successful response.
