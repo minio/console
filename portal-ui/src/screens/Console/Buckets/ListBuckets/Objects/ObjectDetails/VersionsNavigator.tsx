@@ -251,6 +251,7 @@ const VersionsNavigator = ({
       internalPaths,
       object.version_id,
       parseInt(object.size || "0"),
+      null,
       (progress) => {
         dispatch(
           updateProgress({

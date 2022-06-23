@@ -40,10 +40,14 @@ func NewDownloadObjectParams() DownloadObjectParams {
 	var (
 		// initialize parameters with default values
 
+		overrideFileNameDefault = string("")
+
 		previewDefault = bool(false)
 	)
 
 	return DownloadObjectParams{
+		OverrideFileName: &overrideFileNameDefault,
+
 		Preview: &previewDefault,
 	}
 }
@@ -62,6 +66,11 @@ type DownloadObjectParams struct {
 	  In: path
 	*/
 	BucketName string
+	/*
+	  In: query
+	  Default: ""
+	*/
+	OverrideFileName *string
 	/*
 	  Required: true
 	  In: query
@@ -91,6 +100,11 @@ func (o *DownloadObjectParams) BindRequest(r *http.Request, route *middleware.Ma
 
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qOverrideFileName, qhkOverrideFileName, _ := qs.GetOK("override_file_name")
+	if err := o.bindOverrideFileName(qOverrideFileName, qhkOverrideFileName, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -124,6 +138,25 @@ func (o *DownloadObjectParams) bindBucketName(rawData []string, hasKey bool, for
 	// Required: true
 	// Parameter is provided by construction from the route
 	o.BucketName = raw
+
+	return nil
+}
+
+// bindOverrideFileName binds and validates parameter OverrideFileName from query.
+func (o *DownloadObjectParams) bindOverrideFileName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewDownloadObjectParams()
+		return nil
+	}
+	o.OverrideFileName = &raw
 
 	return nil
 }

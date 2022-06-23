@@ -35,9 +35,10 @@ import (
 type DownloadObjectURL struct {
 	BucketName string
 
-	Prefix    string
-	Preview   *bool
-	VersionID *string
+	OverrideFileName *string
+	Prefix           string
+	Preview          *bool
+	VersionID        *string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -79,6 +80,14 @@ func (o *DownloadObjectURL) Build() (*url.URL, error) {
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
+
+	var overrideFileNameQ string
+	if o.OverrideFileName != nil {
+		overrideFileNameQ = *o.OverrideFileName
+	}
+	if overrideFileNameQ != "" {
+		qs.Set("override_file_name", overrideFileNameQ)
+	}
 
 	prefixQ := o.Prefix
 	if prefixQ != "" {

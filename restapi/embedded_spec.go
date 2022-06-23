@@ -1585,6 +1585,12 @@ func init() {
             "default": false,
             "name": "preview",
             "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "",
+            "name": "override_file_name",
+            "in": "query"
           }
         ],
         "responses": {
@@ -8671,6 +8677,12 @@ func init() {
             "type": "boolean",
             "default": false,
             "name": "preview",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "default": "",
+            "name": "override_file_name",
             "in": "query"
           }
         ],

@@ -391,7 +391,10 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
                 <Route path={"pvcs/:PVCName"} element={<TenantVolumes />} />
                 <Route path={"volumes"} element={<VolumesSummary />} />
                 <Route path={"license"} element={<TenantLicense />} />
-                <Route path={"monitoring"} element={<EditTenantMonitoringScreen />} />
+                <Route
+                  path={"monitoring"}
+                  element={<EditTenantMonitoringScreen />}
+                />
                 <Route path={"logging"} element={<TenantLogging />} />
                 <Route path={"events"} element={<TenantEvents />} />
                 <Route path={"csr"} element={<TenantCSR />} />
