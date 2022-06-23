@@ -37,6 +37,7 @@ import TableWrapper, {
 import {
   decodeURLString,
   encodeURLString,
+  getClientOS,
   niceBytesInt,
 } from "../../../../../../common/utils";
 
@@ -125,6 +126,7 @@ import {
   setBucketDetailsLoad,
   setBucketInfo,
 } from "../../../BucketDetails/bucketDetailsSlice";
+import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
 
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
@@ -335,6 +337,8 @@ const ListObjects = () => {
   const [canShareFile, setCanShareFile] = useState<boolean>(false);
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
+  const [downloadRenameModal, setDownloadRenameModal] =
+    useState<BucketObjectItem | null>(null);
 
   const internalPaths = get(params, "subpaths", "");
   const bucketName = params.bucketName || "";
@@ -1159,6 +1163,18 @@ const ListObjects = () => {
 
       itemsToDownload = filteredRecords.filter(filterFunction);
 
+      // I case just one element is selected, then we trigger download modal validation.
+      // We are going to enforce zip download when multiple files are selected
+      if (itemsToDownload.length === 1) {
+        if (
+          itemsToDownload[0].name.length > 200 &&
+          getClientOS().toLowerCase().includes("win")
+        ) {
+          setDownloadRenameModal(itemsToDownload[0]);
+          return;
+        }
+      }
+
       itemsToDownload.forEach((filteredItem) => {
         downloadObject(filteredItem);
       });
@@ -1201,6 +1217,10 @@ const ListObjects = () => {
   const setDeletedAction = () => {
     dispatch(setShowDeletedObjects(!showDeleted));
     onClosePanel(true);
+  };
+
+  const closeRenameModal = () => {
+    setDownloadRenameModal(null);
   };
 
   const tableActions: ItemActions[] = [
@@ -1284,6 +1304,21 @@ const ListObjects = () => {
           bucketName={bucketName}
           object={selectedPreview}
           onClosePreview={closePreviewWindow}
+        />
+      )}
+      {!!downloadRenameModal && (
+        <RenameLongFileName
+          open={!!downloadRenameModal}
+          closeModal={closeRenameModal}
+          currentItem={downloadRenameModal.name.split("/")?.pop() || ""}
+          bucketName={bucketName}
+          internalPaths={internalPaths}
+          actualInfo={{
+            name: downloadRenameModal.name,
+            last_modified: "",
+            version_id: downloadRenameModal.version_id,
+            size: downloadRenameModal.size.toString(),
+          }}
         />
       )}
       <PageLayout variant={"full"}>
