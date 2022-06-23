@@ -220,6 +220,7 @@ export interface ITenantMonitoringStruct {
 }
 
 export interface ITenantLogsStruct {
+  auditLoggingEnabled: boolean;
   image: string;
   labels: IKeyValue[];
   annotations: IKeyValue[];

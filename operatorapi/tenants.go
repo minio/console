@@ -1639,7 +1639,6 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
 	minTenant.EnsureDefaults()
-
 	// Default class name for Log search
 	diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
 	logSearchStorageClass := "standard"
