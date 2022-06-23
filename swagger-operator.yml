@@ -3391,4 +3391,6 @@ definitions:
     properties:
       email:
         type: string
+      isInEU:
+        type: boolean
 

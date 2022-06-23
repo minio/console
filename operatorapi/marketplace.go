@@ -32,6 +32,7 @@ import (
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
 	errors "github.com/minio/console/restapi"
+	"github.com/minio/pkg/env"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -40,6 +41,9 @@ var (
 	mpConfigMapDefault = "mp-config"
 	mpConfigMapKey     = "MP_CONFIG_KEY"
 	mpHostEnvVar       = "MP_HOST"
+	defaultMPHost      = "marketplace.apps.min.dev"
+	mpEUHostEnvVar     = "MP_EU_HOST"
+	defaultEUMPHost    = "marketplace-eu.apps.min.dev"
 	isMPEmailSet       = "isEmailSet"
 	emailNotSetMsg     = "Email was not sent in request"
 )
@@ -94,33 +98,47 @@ func postMPIntegrationResponse(session *models.Principal, params operator_api.Po
 		return errors.ErrorWithContext(ctx, err)
 	}
 	token, _ := params.HTTPRequest.Cookie("token")
-	return setMPIntegration(ctx, params.Body.Email, token.Value, &k8sClient{client: clientSet})
+	return setMPIntegration(ctx, params.Body.Email, token.Value, params.Body.IsInEU, &k8sClient{client: clientSet})
 }
 
-func setMPIntegration(ctx context.Context, email, token string, clientSet K8sClientI) *models.Error {
+func setMPIntegration(ctx context.Context, email, token string, isInEU bool, clientSet K8sClientI) *models.Error {
 	if email == "" {
 		return errors.ErrorWithContext(ctx, errors.ErrBadRequest, fmt.Errorf(emailNotSetMsg))
 	}
-	if _, err := setMPEmail(ctx, email, token, clientSet); err != nil {
+	if _, err := setMPEmail(ctx, email, token, isInEU, clientSet); err != nil {
 		return errors.ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
-func setMPEmail(ctx context.Context, email, token string, clientSet K8sClientI) (*corev1.ConfigMap, error) {
-	if err := postEmailToMP(email, token); err != nil {
+func setMPEmail(ctx context.Context, email, token string, isInEU bool, clientSet K8sClientI) (*corev1.ConfigMap, error) {
+	if err := postEmailToMP(email, token, isInEU); err != nil {
 		return nil, err
 	}
 	cm := createCM()
 	return clientSet.createConfigMap(ctx, "default", cm, metav1.CreateOptions{})
 }
 
-func postEmailToMP(email, token string) error {
-	mpURL, err := getMPURL()
+func postEmailToMP(email, token string, isInEU bool) error {
+	mpURL, err := getMPURL(isInEU)
 	if err != nil {
 		return err
 	}
 	return makePostRequestToMP(mpURL, email, token)
+}
+func getMPURL(isInEU bool) (string, error) {
+	mpHost := getMPHost(isInEU)
+	if mpHost == "" {
+		return "", fmt.Errorf("mp host not set")
+	}
+	return fmt.Sprintf("%s/mp-email", mpHost), nil
+}
+
+func getMPHost(isInEU bool) string {
+	if isInEU {
+		return env.Get(mpEUHostEnvVar, defaultEUMPHost)
+	}
+	return env.Get(mpHostEnvVar, defaultMPHost)
 }
 
 func makePostRequestToMP(url, email, token string) error {
@@ -151,14 +169,6 @@ func createMPRequest(url, email, token string) (*http.Request, error) {
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s;jwtToken=%s", token, jwtTokenString))
 	request.Header.Add("Content-Type", "application/json")
 	return request, nil
-}
-
-func getMPURL() (string, error) {
-	mpHost := os.Getenv(mpHostEnvVar)
-	if mpHost == "" {
-		return "", fmt.Errorf("%s not set", mpHostEnvVar)
-	}
-	return fmt.Sprintf("%s/mp-email", mpHost), nil
 }
 
 func createCM() *corev1.ConfigMap {

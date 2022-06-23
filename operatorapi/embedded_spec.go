@@ -3363,6 +3363,9 @@ func init() {
       "properties": {
         "email": {
           "type": "string"
+        },
+        "isInEU": {
+          "type": "boolean"
         }
       }
     },
@@ -8865,6 +8868,9 @@ func init() {
       "properties": {
         "email": {
           "type": "string"
+        },
+        "isInEU": {
+          "type": "boolean"
         }
       }
     },

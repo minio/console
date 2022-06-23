@@ -36,6 +36,9 @@ type MpIntegration struct {
 
 	// email
 	Email string `json:"email,omitempty"`
+
+	// is in e u
+	IsInEU bool `json:"isInEU,omitempty"`
 }
 
 // Validate validates this mp integration
