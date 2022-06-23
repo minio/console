@@ -432,7 +432,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
               label={"Disk Capacity"}
               placeholder={"Disk Capacity"}
               name={`diskCapacityGB`}
-              value={diskCapacityGB.toString()}
+              value={!isNaN(diskCapacityGB) ? diskCapacityGB.toString() : "0"}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 if (event.target.validity.valid) {
                   dispatch(setDiskCapacityGB(parseInt(event.target.value)));
