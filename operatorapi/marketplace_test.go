@@ -159,7 +159,7 @@ func (suite *MarketplaceTestSuite) TestGetMPEmailNoError() {
 func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoEmail() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	err := setMPIntegration(ctx, "", "token", &suite.kClient)
+	err := setMPIntegration(ctx, "", "token", false, &suite.kClient)
 	suite.assert.NotNil(err)
 }
 
@@ -167,8 +167,10 @@ func (suite *MarketplaceTestSuite) TestSetMPIntegrationWithError() {
 	testWithError = true
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	err := setMPIntegration(ctx, "mock@mock.com", "token", &suite.kClient)
+	os.Setenv(mpHostEnvVar, "  ")
+	err := setMPIntegration(ctx, "mock@mock.com", "token", false, &suite.kClient)
 	suite.assert.NotNil(err)
+	os.Unsetenv(mpHostEnvVar)
 }
 
 // TODO: Add mock server for testing microservice
