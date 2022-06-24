@@ -68,7 +68,6 @@ const ConsoleMenuList = ({
         justifyContent: "space-between",
         height: "100%",
         flex: 1,
-        marginTop: "35px",
         paddingRight: "8px",
 
         "&.wide": {
@@ -77,10 +76,6 @@ const ConsoleMenuList = ({
 
         "&.mini": {
           marginLeft: "10px",
-          marginTop: "30px",
-          xs: {
-            marginTop: "30px",
-          },
         },
       }}
     >
@@ -131,7 +126,6 @@ const ConsoleMenuList = ({
           paddingTop: 0,
           "&.mini": {
             padding: 0,
-            margin: "auto",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
