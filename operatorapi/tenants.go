@@ -2309,7 +2309,10 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	}
 
 	minTenant.Spec.Prometheus.ServiceAccountName = params.Data.ServiceAccountName
-	minTenant.Spec.Prometheus.SecurityContext, _ = convertModelSCToK8sSC(params.Data.SecurityContext)
+	minTenant.Spec.Prometheus.SecurityContext, err = convertModelSCToK8sSC(params.Data.SecurityContext)
+	if err != nil {
+		return false, restapi.ErrorWithContext(ctx, err)
+	}
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err)
