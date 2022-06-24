@@ -41,6 +41,7 @@ import { makeid, storeCallForObjectWithID } from "./transferManager";
 import { useAppDispatch } from "../../../store";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface IRenameLongFilename {
   open: boolean;
@@ -71,7 +72,8 @@ const RenameLongFileName = ({
   const classes = useStyles();
   const dispatch = useAppDispatch();
 
-  const [newFileName, setNewFileName] = useState(currentItem);
+  const [newFileName, setNewFileName] = useState<string>(currentItem);
+  const [acceptLongName, setAcceptLongName] = useState<boolean>(false);
 
   const doDownload = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -140,7 +142,7 @@ const RenameLongFileName = ({
         This can cause issues on Windows Systems by trimming the file name after
         download.
         <br />
-        <br /> Would you like to rename the file for this download?
+        <br /> We recommend to rename the file download
       </div>
       <form
         noValidate
@@ -158,21 +160,39 @@ const RenameLongFileName = ({
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setNewFileName(event.target.value);
                 }}
-                label="Filename for download"
+                label=""
                 type={"text"}
                 value={newFileName}
+                error={
+                  newFileName.length > 200 && !acceptLongName
+                    ? "Filename should be less than 200 characters long."
+                    : ""
+                }
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.formFieldRow}>
+              <FormSwitchWrapper
+                value="acceptLongName"
+                id="acceptLongName"
+                name="acceptLongName"
+                checked={acceptLongName}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setAcceptLongName(event.target.checked);
+                  if (event.target.checked) {
+                    setNewFileName(currentItem);
+                  }
+                }}
+                label={"Use Original Name"}
               />
             </Grid>
           </Grid>
-          {newFileName.length > 200 && (
-            <Grid item xs={12}>
-              We suggest filename to be less than 200 characters long. <br />
-              Are you sure you want to continue?
-            </Grid>
-          )}
-
           <Grid item xs={12} className={classes.modalButtonBar}>
-            <Button type="submit" variant="contained" color="primary">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={newFileName.length > 200 && !acceptLongName}
+            >
               Download File
             </Button>
           </Grid>

@@ -59,7 +59,7 @@ const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
 const TenantLicense = withSuspense(React.lazy(() => import("./TenantLicense")));
 const PoolsSummary = withSuspense(React.lazy(() => import("./PoolsSummary")));
 const PodsSummary = withSuspense(React.lazy(() => import("./PodsSummary")));
-const TenantLogging = withSuspense(React.lazy(() => import("./TenantLogging")));
+const TenantLogging = withSuspense(React.lazy(() => import("./TenantAuditLogsScreen")));
 const TenantEvents = withSuspense(React.lazy(() => import("./TenantEvents")));
 const TenantCSR = withSuspense(React.lazy(() => import("./TenantCSR")));
 const VolumesSummary = withSuspense(

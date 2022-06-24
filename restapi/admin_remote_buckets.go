@@ -614,10 +614,6 @@ func deleteReplicationRule(ctx context.Context, session *models.Principal, bucke
 	}
 	admClient := AdminClient{Client: mAdmin}
 
-	err3 := deleteRemoteBucket(ctx, admClient, bucketName, getARNFromID(&cfg, ruleID))
-	if err3 != nil {
-		return err3
-	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcClient := mcClient{client: s3Client}
@@ -630,6 +626,12 @@ func deleteReplicationRule(ctx context.Context, session *models.Principal, bucke
 	err2 := mcClient.setReplication(ctx, &cfg, opts)
 	if err2 != nil {
 		return err2.Cause
+	}
+
+	// Replication rule was successfully deleted. We remove remote bucket
+	err3 := deleteRemoteBucket(ctx, admClient, bucketName, getARNFromID(&cfg, ruleID))
+	if err3 != nil {
+		return err3
 	}
 
 	return nil
@@ -663,17 +665,17 @@ func deleteAllReplicationRules(ctx context.Context, session *models.Principal, b
 	}
 	admClient := AdminClient{Client: mAdmin}
 
+	err2 := mcClient.deleteAllReplicationRules(ctx)
+
+	if err2 != nil {
+		return err
+	}
+
 	for i := range cfg.Rules {
 		err3 := deleteRemoteBucket(ctx, admClient, bucketName, cfg.Rules[i].Destination.Bucket)
 		if err3 != nil {
 			return err3
 		}
-	}
-
-	err2 := mcClient.deleteAllReplicationRules(ctx)
-
-	if err2 != nil {
-		return err
 	}
 
 	return nil
@@ -710,11 +712,6 @@ func deleteSelectedReplicationRules(ctx context.Context, session *models.Princip
 	ARNs := getARNsFromIDs(&cfg, rules)
 
 	for i := range rules {
-		err3 := deleteRemoteBucket(ctx, admClient, bucketName, ARNs[i])
-		if err3 != nil {
-			return err3
-		}
-
 		opts := replication.Options{
 			ID: rules[i],
 			Op: replication.RemoveOption,
@@ -722,6 +719,12 @@ func deleteSelectedReplicationRules(ctx context.Context, session *models.Princip
 		err2 := mcClient.setReplication(ctx, &cfg, opts)
 		if err2 != nil {
 			return err2.Cause
+		}
+
+		// In case replication rule was deleted successfully, we remove the remote bucket ARN
+		err3 := deleteRemoteBucket(ctx, admClient, bucketName, ARNs[i])
+		if err3 != nil {
+			return err3
 		}
 	}
 	return nil
