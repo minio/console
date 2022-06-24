@@ -41,9 +41,9 @@ var (
 	mpConfigMapDefault = "mp-config"
 	mpConfigMapKey     = "MP_CONFIG_KEY"
 	mpHostEnvVar       = "MP_HOST"
-	defaultMPHost      = "marketplace.apps.min.dev"
+	defaultMPHost      = "https://marketplace.apps.min.dev"
 	mpEUHostEnvVar     = "MP_EU_HOST"
-	defaultEUMPHost    = "marketplace-eu.apps.min.dev"
+	defaultEUMPHost    = "https://marketplace-eu.apps.min.dev"
 	isMPEmailSet       = "isEmailSet"
 	emailNotSetMsg     = "Email was not sent in request"
 )
