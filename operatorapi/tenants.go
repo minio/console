@@ -2309,16 +2309,7 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	}
 
 	minTenant.Spec.Prometheus.ServiceAccountName = params.Data.ServiceAccountName
-
-	//	var tempSC corev1.PodSecurityContext
-	//fsGroupInt, _ := strconv.ParseInt(params.Data.FsGroup, 10, 64)
-	//tempSC.FSGroup = &fsGroupInt
-	//runAsGroupInt, _ := strconv.ParseInt(params.Data.RunAsGroup, 10, 64)
-	//tempSC.RunAsGroup = &runAsGroupInt
-	//runAsUserInt, _ := strconv.ParseInt(params.Data.RunAsUser, 10, 64)
-	//tempSC.RunAsUser = &runAsUserInt
-	//tempSC.RunAsNonRoot = &params.Data.RunAsNonRoot
-	minTenant.Spec.Prometheus.SecurityContext, _ = convertModelSCToK8sSC(params.Data.SecurityContext) //&tempSC
+	minTenant.Spec.Prometheus.SecurityContext, _ = convertModelSCToK8sSC(params.Data.SecurityContext)
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err)
