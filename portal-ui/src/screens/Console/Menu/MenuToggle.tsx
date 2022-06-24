@@ -63,96 +63,108 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
 
   return (
     <Box
-      className={`${stateClsName}`}
       sx={{
-        marginLeft: "26px",
-        marginTop: "28px",
-        marginRight: "8px",
-        display: "flex",
-        height: "36px",
-
-        "&.mini": {
-          flexFlow: "column",
-          alignItems: "center",
-          margin: "auto",
-          marginTop: "28px",
-        },
-        "& .logo": {
-          background: "transparent",
-          "&.wide": {
-            flex: "1",
-            "& svg": {
-              fill: "white",
-              width: 120,
-            },
-          },
-          "&.mini": {
-            marginBottom: "5px",
-            flex: "1",
-            color: "#ffffff",
-            "& svg": {
-              width: 24,
-              fill: "rgba(255, 255, 255, 0.8)",
-            },
-          },
-        },
+        width: "100%",
+        boxShadow: "0 3px 10px -6px #426198",
       }}
     >
-      {isOpen ? (
-        <div className={`logo ${stateClsName}`}>
-          {operatorMode ? (
-            <OperatorLogo />
-          ) : (
-            <Fragment>
-              <div style={{ margin: "auto", width: 100, textAlign: "right" }}>
-                <LoginMinIOLogo style={{ width: 100 }} />
-                <br />
-                <LicensedConsoleLogo plan={plan} isLoading={isLicenseLoading} />
-              </div>
-            </Fragment>
-          )}
-        </div>
-      ) : (
-        <div className={`logo ${stateClsName}`}>
-          <Suspense fallback={<div>...</div>}>
-            <VersionIcon />
-          </Suspense>
-        </div>
-      )}
-
-      <IconButton
+      <Box
         className={`${stateClsName}`}
         sx={{
-          height: "30px",
-          width: "30px",
+          marginLeft: "26px",
+          marginRight: "8px",
+          display: "flex",
+          alignItems: "center",
+          height: "83px",
+
           "&.mini": {
-            marginBottom: "10px",
-            "&:hover": {
-              background: "#081C42",
+            flexFlow: "column",
+            display: "flex",
+            justifyContent: "center",
+            gap: "3px",
+            alignItems: "center",
+            marginLeft: "auto",
+            marginRight: "auto",
+          },
+          "& .logo": {
+            background: "transparent",
+            "&.wide": {
+              flex: "1",
+              "& svg": {
+                fill: "white",
+                width: 120,
+              },
+            },
+            "&.mini": {
+              color: "#ffffff",
+              "& svg": {
+                width: 24,
+                fill: "rgba(255, 255, 255, 0.8)",
+              },
             },
           },
-
-          "&:hover": {
-            borderRadius: "50%",
-            background: "#073052",
-          },
-          "& svg": {
-            fill: "#ffffff",
-            height: "18px",
-            width: "18px",
-          },
         }}
-        onClick={() => {
-          if (isOpen) {
-            onToggle(false);
-          } else {
-            onToggle(true);
-          }
-        }}
-        size="small"
       >
-        {isOpen ? <MenuToggleIcon /> : <MenuIcon />}
-      </IconButton>
+        {isOpen ? (
+          <div className={`logo ${stateClsName}`}>
+            {operatorMode ? (
+              <OperatorLogo />
+            ) : (
+              <Fragment>
+                <div
+                  style={{ marginLeft: "4px", width: 100, textAlign: "right" }}
+                >
+                  <LoginMinIOLogo style={{ width: 100 }} />
+                  <br />
+                  <LicensedConsoleLogo
+                    plan={plan}
+                    isLoading={isLicenseLoading}
+                  />
+                </div>
+              </Fragment>
+            )}
+          </div>
+        ) : (
+          <div className={`logo ${stateClsName}`}>
+            <Suspense fallback={<div>...</div>}>
+              <VersionIcon />
+            </Suspense>
+          </div>
+        )}
+
+        <IconButton
+          className={`${stateClsName}`}
+          sx={{
+            height: "30px",
+            width: "30px",
+            "&.mini": {
+              "&:hover": {
+                background: "#081C42",
+              },
+            },
+
+            "&:hover": {
+              borderRadius: "50%",
+              background: "#073052",
+            },
+            "& svg": {
+              fill: "#ffffff",
+              height: "18px",
+              width: "18px",
+            },
+          }}
+          onClick={() => {
+            if (isOpen) {
+              onToggle(false);
+            } else {
+              onToggle(true);
+            }
+          }}
+          size="small"
+        >
+          {isOpen ? <MenuToggleIcon /> : <MenuIcon />}
+        </IconButton>
+      </Box>
     </Box>
   );
 };

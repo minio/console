@@ -35,7 +35,7 @@ const styles = (theme: Theme) =>
   createStyles({
     headerContainer: {
       width: "100%",
-      minHeight: 79,
+      minHeight: 83,
       display: "flex",
       backgroundColor: "#fff",
       left: 0,
