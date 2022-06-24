@@ -27,6 +27,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import { euTimezones } from "./euTimezones";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -70,8 +71,14 @@ const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
   };
 
   const onConfirm = () => {
-    invokeApi("POST", "/api/v1/mp-integration", { email });
+    const isInEU = isEU();
+    invokeApi("POST", "/api/v1/mp-integration", { email,  isInEU});
   };
+
+  const isEU = () => {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return euTimezones.includes(tz.toLocaleLowerCase());
+  }
 
   return open ? (
     <ConfirmDialog
@@ -89,15 +96,30 @@ const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
       }}
       confirmationContent={
         <Fragment>
-          Would you like to register an email for your account?
+          <p>
+            Your Marketplace subscription includes support access from the
+            <a
+              href="https://min.io/product/subnet"
+              target="_blank"
+              rel="noreferrer">
+                MinIO Subscription Network (SUBNET)
+            </a>.
+            <br />
+            Enter your email to register now.
+          </p>
+          <p>
+            To register later, contact <a href="mailto: support@min.io">support@min.io</a>.
+          </p>
           <InputBoxWrapper
               id="set-mp-email"
               name="set-mp-email"
               onChange={handleInputChange}
-              label=""
+              label={""}
+              placeholder="Enter email"
               type={"email"}
               value={email}
               />
+
         </Fragment>
       }
     />
