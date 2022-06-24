@@ -2787,10 +2787,7 @@ func TestReplication(t *testing.T) {
 	}
 	finalResponse := inspectHTTPResponse(response)
 	if response != nil {
-		// https://github.com/minio/minio/pull/14972
-		// Disallow deletion of arn when active replication config
-		// no longer 204 is expected due to above change
-		assert.Equal(500, response.StatusCode, finalResponse)
+		assert.Equal(204, response.StatusCode, finalResponse)
 	}
 
 	// 6. Delete 2nd rule only with dedicated end point for single rules:
@@ -2825,10 +2822,7 @@ func TestReplication(t *testing.T) {
 	}
 	finalResponse = inspectHTTPResponse(response)
 	if response != nil {
-		// https://github.com/minio/minio/pull/14972
-		// Disallow deletion of arn when active replication config
-		// 204 is no longer expected but 500
-		assert.Equal(500, response.StatusCode, finalResponse)
+		assert.Equal(204, response.StatusCode, finalResponse)
 	}
 
 	// 8. Get replication, at this point zero rules are expected
@@ -2850,7 +2844,7 @@ func TestReplication(t *testing.T) {
 		log.Println(err)
 		assert.Nil(err)
 	}
-	expected := 3 // none got deleted due to https://github.com/minio/minio/pull/14972
+	expected := 0
 	actual := len(structBucketRepl.Rules)
 	assert.Equal(expected, actual, "Delete failed")
 }
