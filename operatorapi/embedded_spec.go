@@ -4219,9 +4219,6 @@ func init() {
         "diskCapacityGB": {
           "type": "string"
         },
-        "fsGroup": {
-          "type": "string"
-        },
         "image": {
           "type": "string"
         },
@@ -4297,14 +4294,9 @@ func init() {
         "prometheusEnabled": {
           "type": "boolean"
         },
-        "runAsGroup": {
-          "type": "string"
-        },
-        "runAsNonRoot": {
-          "type": "boolean"
-        },
-        "runAsUser": {
-          "type": "string"
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         },
         "serviceAccountName": {
           "type": "string"
@@ -9601,9 +9593,6 @@ func init() {
         "diskCapacityGB": {
           "type": "string"
         },
-        "fsGroup": {
-          "type": "string"
-        },
         "image": {
           "type": "string"
         },
@@ -9679,14 +9668,9 @@ func init() {
         "prometheusEnabled": {
           "type": "boolean"
         },
-        "runAsGroup": {
-          "type": "string"
-        },
-        "runAsNonRoot": {
-          "type": "boolean"
-        },
-        "runAsUser": {
-          "type": "string"
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         },
         "serviceAccountName": {
           "type": "string"

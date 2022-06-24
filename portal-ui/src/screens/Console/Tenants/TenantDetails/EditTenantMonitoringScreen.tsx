@@ -167,10 +167,10 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
         res.labels != null ? setLabels(res.labels) : setLabels([{key:"", value:""}]);
        res.annotations != null ? setAnnotations(res.annotations) :setAnnotations([{key:"", value:""}]);
        res.nodeSelector != null  ? setNodeSelector(res.nodeSelector) :setNodeSelector([{key:"", value:""}]);
-       dispatch(setRunAsGroup(res.runAsGroup));
-       dispatch(setRunAsUser(res.runAsUser));
-       dispatch(setRunAsNonRoot(res.runAsNonRoot));
-       dispatch(setFSGroup(res.fsGroup));
+       dispatch(setRunAsGroup(res.securityContext.runAsGroup));
+       dispatch(setRunAsUser(res.securityContext.runAsUser));
+       dispatch(setRunAsNonRoot(res.securityContext.runAsNonRoot));
+       dispatch(setFSGroup(res.securityContext.fsGroup));
       }
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
@@ -225,6 +225,12 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
 
   const submitMonitoringInfo = () => {
     if (checkValid()) {
+const securityContext = {
+        runAsGroup: runAsGroup != null ? runAsGroup : "",
+        runAsUser: runAsUser != null ? runAsUser : "",
+        fsGroup: fsGroup != null ? fsGroup : "",
+        runAsNonRoot: runAsNonRoot != null ? runAsNonRoot : true,
+      }
       api
         .invoke(
           "PUT",
@@ -241,11 +247,8 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
             storageClassName: storageClassName,
             monitoringCPURequest: cpuRequest,
             monitoringMemRequest: memRequest + "Gi",
-            runAsGroup: runAsGroup,
-            runAsUser: runAsUser,
-            fsGroup: fsGroup,
-            runAsNonRoot: runAsNonRoot,
-          }
+            securityContext: securityContext,
+        }
         )
         .then(() => {
           setRefreshMonitoringInfo(true);

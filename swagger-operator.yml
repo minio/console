@@ -3270,14 +3270,9 @@ definitions:
         type: string
       monitoringMemRequest:
         type: string
-      runAsUser: 
-        type: string
-      runAsGroup: 
-        type: string
-      fsGroup: 
-        type: string
-      runAsNonRoot: 
-        type: boolean
+      securityContext:
+        type: object
+        $ref: "#/definitions/securityContext"
 
   label:
     type: object

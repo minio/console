@@ -2212,18 +2212,7 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 		monitoringInfo.SidecarImage = minInst.Spec.Prometheus.SideCarImage
 	}
 	if minInst.Spec.Prometheus.SecurityContext != nil {
-		if minInst.Spec.Prometheus.SecurityContext.FSGroup != nil {
-			monitoringInfo.FsGroup = strconv.FormatInt(*minInst.Spec.Prometheus.SecurityContext.FSGroup, 10)
-		}
-		if minInst.Spec.Prometheus.SecurityContext.RunAsGroup != nil {
-			monitoringInfo.RunAsGroup = strconv.FormatInt(*minInst.Spec.Prometheus.SecurityContext.RunAsGroup, 10)
-		}
-		if minInst.Spec.Prometheus.SecurityContext.RunAsUser != nil {
-			monitoringInfo.RunAsUser = strconv.FormatInt(*minInst.Spec.Prometheus.SecurityContext.RunAsUser, 10)
-		}
-		if minInst.Spec.Prometheus.SecurityContext.RunAsNonRoot != nil {
-			monitoringInfo.RunAsNonRoot = *minInst.Spec.Prometheus.SecurityContext.RunAsNonRoot
-		}
+		monitoringInfo.SecurityContext = convertK8sSCToModelSC(minInst.Spec.Prometheus.SecurityContext)
 	}
 	return monitoringInfo, nil
 }
@@ -2321,15 +2310,15 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 
 	minTenant.Spec.Prometheus.ServiceAccountName = params.Data.ServiceAccountName
 
-	var tempSC corev1.PodSecurityContext
-	fsGroupInt, _ := strconv.ParseInt(params.Data.FsGroup, 10, 64)
-	tempSC.FSGroup = &fsGroupInt
-	runAsGroupInt, _ := strconv.ParseInt(params.Data.RunAsGroup, 10, 64)
-	tempSC.RunAsGroup = &runAsGroupInt
-	runAsUserInt, _ := strconv.ParseInt(params.Data.RunAsUser, 10, 64)
-	tempSC.RunAsUser = &runAsUserInt
-	tempSC.RunAsNonRoot = &params.Data.RunAsNonRoot
-	minTenant.Spec.Prometheus.SecurityContext = &tempSC
+	//	var tempSC corev1.PodSecurityContext
+	//fsGroupInt, _ := strconv.ParseInt(params.Data.FsGroup, 10, 64)
+	//tempSC.FSGroup = &fsGroupInt
+	//runAsGroupInt, _ := strconv.ParseInt(params.Data.RunAsGroup, 10, 64)
+	//tempSC.RunAsGroup = &runAsGroupInt
+	//runAsUserInt, _ := strconv.ParseInt(params.Data.RunAsUser, 10, 64)
+	//tempSC.RunAsUser = &runAsUserInt
+	//tempSC.RunAsNonRoot = &params.Data.RunAsNonRoot
+	minTenant.Spec.Prometheus.SecurityContext, _ = convertModelSCToK8sSC(params.Data.SecurityContext) //&tempSC
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err)
