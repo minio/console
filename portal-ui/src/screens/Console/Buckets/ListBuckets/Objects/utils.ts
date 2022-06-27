@@ -26,7 +26,7 @@ export const download = (
   overrideFileName: string | null = null,
   progressCallback: (progress: number) => void,
   completeCallback: () => void,
-  errorCallback: () => void,
+  errorCallback: (msg: string) => void,
   abortCallback: () => void
 ) => {
   const anchor = document.createElement("a");
@@ -56,30 +56,43 @@ export const download = (
 
   req.responseType = "blob";
   req.onreadystatechange = () => {
-    if (req.readyState === 4 && req.status === 200) {
-      const rspHeader = req.getResponseHeader("Content-Disposition");
+    if (req.readyState === 4) {
+      if (req.status === 200) {
+        const rspHeader = req.getResponseHeader("Content-Disposition");
 
-      let filename = "download";
-      if (rspHeader) {
-        let rspHeaderDecoded = decodeURIComponent(rspHeader);
-        filename = rspHeaderDecoded.split('"')[1];
+        let filename = "download";
+        if (rspHeader) {
+          let rspHeaderDecoded = decodeURIComponent(rspHeader);
+          filename = rspHeaderDecoded.split('"')[1];
+        }
+
+        if (completeCallback) {
+          completeCallback();
+        }
+
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(req.response);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        if (req.getResponseHeader("Content-Type") === "application/json") {
+          const rspBody: { detailedMessage?: string } = JSON.parse(
+            req.response
+          );
+          if (rspBody.detailedMessage) {
+            errorCallback(rspBody.detailedMessage);
+            return;
+          }
+        }
+        errorCallback(`Unexpected response status code (${req.status}).`);
       }
-
-      if (completeCallback) {
-        completeCallback();
-      }
-
-      var link = document.createElement("a");
-      link.href = window.URL.createObjectURL(req.response);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
     }
   };
   req.onerror = () => {
     if (errorCallback) {
-      errorCallback();
+      errorCallback("A network error occurred.");
     }
   };
   req.onabort = () => {
