@@ -323,7 +323,7 @@ const securityContext = {
             description=""
           />
         </Grid>
-        <Grid xs={12}>
+        <Grid item xs={12}>
           <hr className={classes.hrClass} />
         </Grid>
       </Grid>
