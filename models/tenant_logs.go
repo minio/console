@@ -54,6 +54,9 @@ type TenantLogs struct {
 	// db node selector
 	DbNodeSelector []*NodeSelector `json:"dbNodeSelector"`
 
+	// db security context
+	DbSecurityContext *SecurityContext `json:"dbSecurityContext,omitempty"`
+
 	// db service account name
 	DbServiceAccountName string `json:"dbServiceAccountName,omitempty"`
 
@@ -84,6 +87,9 @@ type TenantLogs struct {
 	// node selector
 	NodeSelector []*NodeSelector `json:"nodeSelector"`
 
+	// security context
+	SecurityContext *SecurityContext `json:"securityContext,omitempty"`
+
 	// service account name
 	ServiceAccountName string `json:"serviceAccountName,omitempty"`
 }
@@ -108,11 +114,19 @@ func (m *TenantLogs) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDbSecurityContext(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateLabels(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateNodeSelector(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSecurityContext(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -226,6 +240,25 @@ func (m *TenantLogs) validateDbNodeSelector(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *TenantLogs) validateDbSecurityContext(formats strfmt.Registry) error {
+	if swag.IsZero(m.DbSecurityContext) { // not required
+		return nil
+	}
+
+	if m.DbSecurityContext != nil {
+		if err := m.DbSecurityContext.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("dbSecurityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("dbSecurityContext")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *TenantLogs) validateLabels(formats strfmt.Registry) error {
 	if swag.IsZero(m.Labels) { // not required
 		return nil
@@ -278,6 +311,25 @@ func (m *TenantLogs) validateNodeSelector(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *TenantLogs) validateSecurityContext(formats strfmt.Registry) error {
+	if swag.IsZero(m.SecurityContext) { // not required
+		return nil
+	}
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this tenant logs based on the context it is used
 func (m *TenantLogs) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -298,11 +350,19 @@ func (m *TenantLogs) ContextValidate(ctx context.Context, formats strfmt.Registr
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateDbSecurityContext(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateLabels(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.contextValidateNodeSelector(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSecurityContext(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -392,6 +452,22 @@ func (m *TenantLogs) contextValidateDbNodeSelector(ctx context.Context, formats 
 	return nil
 }
 
+func (m *TenantLogs) contextValidateDbSecurityContext(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.DbSecurityContext != nil {
+		if err := m.DbSecurityContext.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("dbSecurityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("dbSecurityContext")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *TenantLogs) contextValidateLabels(ctx context.Context, formats strfmt.Registry) error {
 
 	for i := 0; i < len(m.Labels); i++ {
@@ -427,6 +503,22 @@ func (m *TenantLogs) contextValidateNodeSelector(ctx context.Context, formats st
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *TenantLogs) contextValidateSecurityContext(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
+			}
+			return err
+		}
 	}
 
 	return nil
