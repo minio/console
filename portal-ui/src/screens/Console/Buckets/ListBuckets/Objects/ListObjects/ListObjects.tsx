@@ -783,8 +783,8 @@ const ListObjects = () => {
       () => {
         dispatch(completeObject(identityDownload));
       },
-      () => {
-        dispatch(failObject(identityDownload));
+      (msg: string) => {
+        dispatch(failObject({ instanceID: identityDownload, msg }));
       },
       () => {
         dispatch(cancelObjectInList(identityDownload));
@@ -804,6 +804,7 @@ const ListObjects = () => {
         waitingForFile: true,
         failed: false,
         cancelled: false,
+        errorMessage: "",
       })
     );
 
@@ -924,14 +925,24 @@ const ListObjects = () => {
                     errorMessage = "something went wrong";
                   }
                 }
-                dispatch(failObject(identity));
+                dispatch(
+                  failObject({
+                    instanceID: identity,
+                    msg: errorMessage,
+                  })
+                );
                 reject({ status: xhr.status, message: errorMessage });
               }
             };
 
             xhr.upload.addEventListener("error", (event) => {
               reject(errorMessage);
-              dispatch(failObject(identity));
+              dispatch(
+                failObject({
+                  instanceID: identity,
+                  msg: "A network error occurred.",
+                })
+              );
               return;
             });
 
@@ -948,7 +959,12 @@ const ListObjects = () => {
 
             xhr.onerror = () => {
               reject(errorMessage);
-              dispatch(failObject(identity));
+              dispatch(
+                failObject({
+                  instanceID: identity,
+                  msg: "A network error occurred.",
+                })
+              );
               return;
             };
             xhr.onloadend = () => {
@@ -977,6 +993,7 @@ const ListObjects = () => {
                   waitingForFile: false,
                   failed: false,
                   cancelled: false,
+                  errorMessage: "",
                 })
               );
 

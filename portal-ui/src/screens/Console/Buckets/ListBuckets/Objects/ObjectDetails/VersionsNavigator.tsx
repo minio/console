@@ -263,8 +263,8 @@ const VersionsNavigator = ({
       () => {
         dispatch(completeObject(identityDownload));
       },
-      () => {
-        dispatch(failObject(identityDownload));
+      (msg: string) => {
+        dispatch(failObject({ instanceID: identityDownload, msg }));
       },
       () => {
         dispatch(cancelObjectInList(identityDownload));
@@ -284,6 +284,7 @@ const VersionsNavigator = ({
         waitingForFile: true,
         failed: false,
         cancelled: false,
+        errorMessage: "",
       })
     );
 
