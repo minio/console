@@ -144,6 +144,13 @@ const styles = (theme: Theme) =>
       color: "#696969",
       fontWeight: "normal",
     },
+    errorMessage: {
+      fontSize: 12,
+      color: "#C83B51",
+      fontWeight: "normal",
+      marginTop: 6,
+      overflowWrap: "break-word",
+    },
   });
 
 const ObjectHandled = ({
@@ -247,6 +254,12 @@ const ObjectHandled = ({
             />
           )}
         </div>
+        {objectToDisplay.errorMessage !== "" && (
+          <div className={classes.errorMessage}>
+            <strong>Error: </strong>
+            {objectToDisplay.errorMessage}
+          </div>
+        )}
       </div>
     </Fragment>
   );

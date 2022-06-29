@@ -635,7 +635,10 @@ func TestListTenantsByNameSpace(t *testing.T) {
 		log.Println(err)
 		assert.Nil(err)
 	}
-	TenantName := &result.Tenants[0].Name // The array has to be empty, no index accessible
+	if len(result.Tenants) == 0 {
+		assert.Fail("FAIL: There are no tenants in the array")
+	}
+	TenantName := &result.Tenants[0].Name
 	fmt.Println(*TenantName)
 	assert.Equal("new-tenant", *TenantName, *TenantName)
 }

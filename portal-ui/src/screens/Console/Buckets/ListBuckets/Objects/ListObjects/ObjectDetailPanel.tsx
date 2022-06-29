@@ -318,8 +318,8 @@ const ObjectDetailPanel = ({
       () => {
         dispatch(completeObject(identityDownload));
       },
-      () => {
-        dispatch(failObject(identityDownload));
+      (msg: string) => {
+        dispatch(failObject({ instanceID: identityDownload, msg }));
       },
       () => {
         dispatch(cancelObjectInList(identityDownload));
@@ -339,6 +339,7 @@ const ObjectDetailPanel = ({
         waitingForFile: true,
         failed: false,
         cancelled: false,
+        errorMessage: "",
       })
     );
 

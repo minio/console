@@ -99,6 +99,7 @@ export interface IFileItem {
   waitingForFile: boolean;
   failed: boolean;
   cancelled: boolean;
+  errorMessage: string;
 }
 
 interface RewindSetEnabled {
