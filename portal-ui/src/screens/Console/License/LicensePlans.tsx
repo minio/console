@@ -47,7 +47,6 @@ interface IRegisterStatus {
   activateProductModal: any;
   closeModalAndFetchLicenseInfo: any;
   licenseInfo: SubnetInfo | undefined;
-  setLicenseModal: React.Dispatch<React.SetStateAction<boolean>>;
   operatorMode: boolean;
   currentPlanID: number;
   setActivateProductModal: any;
@@ -210,11 +209,7 @@ const PricingFeatureItem = (props: {
   );
 };
 
-const LicensePlans = ({
-  licenseInfo,
-  setLicenseModal,
-  operatorMode,
-}: IRegisterStatus) => {
+const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 

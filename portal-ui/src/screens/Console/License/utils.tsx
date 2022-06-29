@@ -434,3 +434,12 @@ export const PAID_PLANS = [LICENSE_PLANS.STANDARD, LICENSE_PLANS.ENTERPRISE];
 export const getRenderValue = (val: any) => {
   return typeof val === "function" ? val() : val;
 };
+
+export const LICENSE_CONSENT_STORE_KEY = "agpl_minio_license_consent";
+export const setLicenseConsent = () => {
+  localStorage.setItem(LICENSE_CONSENT_STORE_KEY, "true");
+};
+
+export const getLicenseConsent = () => {
+  return localStorage.getItem(LICENSE_CONSENT_STORE_KEY) === "true";
+};
