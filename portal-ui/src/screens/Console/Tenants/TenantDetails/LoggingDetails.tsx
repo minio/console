@@ -27,7 +27,7 @@ import {
   tenantDetailsStyles,
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../store";
 import api from "../../../../common/api";
@@ -43,7 +43,6 @@ import {
 import { IKeyValue, ITenantAuditLogs } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import { ITenantLogsStruct } from "../ListTenants/types";
 import SecurityContextSelector from "../securityContextSelector";
 import { clearValidationError } from "../utils";
 import { 

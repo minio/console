@@ -27,7 +27,7 @@ import {
   tenantDetailsStyles,
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../store";
 import api from "../../../../common/api";
@@ -88,9 +88,6 @@ const styles = (theme: Theme) =>
 const LoggingDBDetails = ({ classes, labels, annotations, nodeSelector }: ITenantAuditLogs) => {
   const dispatch = useAppDispatch();
   const { tenantName, tenantNamespace } = useParams();
-  const auditLoggingEnabled = useSelector(
-    (state: AppState) => state.editTenantLogging.auditLoggingEnabled
-  );
   const dbImage = useSelector(
     (state: AppState) => state.editTenantLogging.dbImage
   );
