@@ -104,13 +104,7 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
     res.dbInitImage != null && dispatch(setDBInitImage(res.dbInitImage));
     res.logDBCPURequest != null && dispatch(setDBCPURequest(res.logDBCPURequest));    
       if (res.logDBMemRequest) {
-        dispatch(
-          setDBMemRequest(
-            Math.floor(
-              parseInt(res.logDBMemRequest, 10) / 1000000000
-            ).toString()
-          )
-        );
+        dispatch(setDBMemRequest(Math.floor(parseInt(res.logDBMemRequest, 10)).toString()));
       } else {
         dispatch(setDBMemRequest("0"));
       }  
@@ -124,13 +118,7 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
         res.serviceAccountName != null && dispatch(setServiceAccountName(res.serviceAccountName));
         res.logCPURequest != null && dispatch(setCPURequest(res.logCPURequest));
         if (res.logMemRequest) {
-            res.dbServiceAccountName != null && dispatch(
-              setMemRequest(
-                Math.floor(
-                  parseInt(res.logMemRequest, 10) / 1000000000
-                ).toString()
-              )
-            );
+            dispatch(setMemRequest(Math.floor(parseInt(res.logMemRequest, 10)).toString()));
           } else {
             dispatch(setMemRequest("0"));
           }
