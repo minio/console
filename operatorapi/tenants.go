@@ -1462,7 +1462,6 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 	}
 
 	if minTenant.Spec.Log.SecurityContext != nil {
-
 	}
 	return tenantLoggingConfiguration, nil
 }
@@ -1552,7 +1551,6 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 	}
 	dbAnnotations := make(map[string]string)
 	if params.Data.DbAnnotations != nil {
-
 		for i := 0; i < len(params.Data.DbAnnotations); i++ {
 			if params.Data.DbAnnotations[i] != nil {
 				dbAnnotations[params.Data.DbAnnotations[i].Key] = params.Data.DbAnnotations[i].Value
@@ -1562,7 +1560,6 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 	}
 	dbNodeSelector := make(map[string]string)
 	if params.Data.DbNodeSelector != nil {
-
 		for i := 0; i < len(params.Data.DbNodeSelector); i++ {
 			if params.Data.DbNodeSelector[i] != nil {
 				dbNodeSelector[params.Data.DbNodeSelector[i].Key] = params.Data.DbNodeSelector[i].Value
