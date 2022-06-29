@@ -27,4 +27,5 @@ var (
 	CommitID = "(dev)"
 	// ShortCommitID - first 12 characters from CommitID.
 	ShortCommitID = "(dev)"
+	MPSecret      = "(dev)"
 )

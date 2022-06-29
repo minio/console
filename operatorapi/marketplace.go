@@ -31,6 +31,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
+	"github.com/minio/console/pkg"
 	errors "github.com/minio/console/restapi"
 	"github.com/minio/pkg/env"
 	corev1 "k8s.io/api/core/v1"
@@ -97,34 +98,33 @@ func postMPIntegrationResponse(session *models.Principal, params operator_api.Po
 	if err != nil {
 		return errors.ErrorWithContext(ctx, err)
 	}
-	token, _ := params.HTTPRequest.Cookie("token")
-	return setMPIntegration(ctx, params.Body.Email, token.Value, params.Body.IsInEU, &k8sClient{client: clientSet})
+	return setMPIntegration(ctx, params.Body.Email, params.Body.IsInEU, &k8sClient{client: clientSet})
 }
 
-func setMPIntegration(ctx context.Context, email, token string, isInEU bool, clientSet K8sClientI) *models.Error {
+func setMPIntegration(ctx context.Context, email string, isInEU bool, clientSet K8sClientI) *models.Error {
 	if email == "" {
 		return errors.ErrorWithContext(ctx, errors.ErrBadRequest, fmt.Errorf(emailNotSetMsg))
 	}
-	if _, err := setMPEmail(ctx, email, token, isInEU, clientSet); err != nil {
+	if _, err := setMPEmail(ctx, email, isInEU, clientSet); err != nil {
 		return errors.ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
-func setMPEmail(ctx context.Context, email, token string, isInEU bool, clientSet K8sClientI) (*corev1.ConfigMap, error) {
-	if err := postEmailToMP(email, token, isInEU); err != nil {
+func setMPEmail(ctx context.Context, email string, isInEU bool, clientSet K8sClientI) (*corev1.ConfigMap, error) {
+	if err := postEmailToMP(email, isInEU); err != nil {
 		return nil, err
 	}
 	cm := createCM()
 	return clientSet.createConfigMap(ctx, "default", cm, metav1.CreateOptions{})
 }
 
-func postEmailToMP(email, token string, isInEU bool) error {
+func postEmailToMP(email string, isInEU bool) error {
 	mpURL, err := getMPURL(isInEU)
 	if err != nil {
 		return err
 	}
-	return makePostRequestToMP(mpURL, email, token)
+	return makePostRequestToMP(mpURL, email)
 }
 
 func getMPURL(isInEU bool) (string, error) {
@@ -142,8 +142,8 @@ func getMPHost(isInEU bool) string {
 	return env.Get(mpHostEnvVar, defaultMPHost)
 }
 
-func makePostRequestToMP(url, email, token string) error {
-	request, err := createMPRequest(url, email, token)
+func makePostRequestToMP(url, email string) error {
+	request, err := createMPRequest(url, email)
 	if err != nil {
 		return err
 	}
@@ -157,17 +157,17 @@ func makePostRequestToMP(url, email, token string) error {
 	return nil
 }
 
-func createMPRequest(url, email, token string) (*http.Request, error) {
+func createMPRequest(url, email string) (*http.Request, error) {
 	request, err := http.NewRequest("POST", url, strings.NewReader(fmt.Sprintf("{\"email\":\"%s\"}", email)))
 	if err != nil {
 		return nil, err
 	}
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{})
-	jwtTokenString, err := jwtToken.SignedString([]byte(token))
+	jwtTokenString, err := jwtToken.SignedString([]byte(pkg.MPSecret))
 	if err != nil {
 		return nil, err
 	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s;jwtToken=%s", token, jwtTokenString))
+	request.Header.Add("Cookie", fmt.Sprintf("jwtToken=%s", jwtTokenString))
 	request.Header.Add("Content-Type", "application/json")
 	return request, nil
 }
