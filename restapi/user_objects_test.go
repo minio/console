@@ -657,33 +657,9 @@ func Test_deleteObjects(t *testing.T) {
 			wantError: nil,
 		},
 		{
-			// Description handle error when error happens on list function
-			// while deleting multiple objects
-			test: "Error on Remove multiple objects 1",
-			args: args{
-				path:       "path/",
-				versionID:  "",
-				recursive:  true,
-				nonCurrent: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
-					resultCh := make(chan mc.RemoveResult, 1)
-					resultCh <- mc.RemoveResult{Err: nil}
-					close(resultCh)
-					return resultCh
-				},
-				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
-					ch := make(chan *mc.ClientContent, 1)
-					ch <- &mc.ClientContent{Err: probe.NewError(errors.New("probe error"))}
-					close(ch)
-					return ch
-				},
-			},
-			wantError: errors.New("probe error"),
-		},
-		{
 			// Description handle error when error happens on remove function
 			// while deleting multiple objects
-			test: "Error on Remove multiple objects 2",
+			test: "Error on Remove multiple objects",
 			args: args{
 				path:       "path/",
 				versionID:  "",
@@ -705,9 +681,7 @@ func Test_deleteObjects(t *testing.T) {
 			wantError: errors.New("probe error"),
 		},
 		{
-			// Description handle error when error happens on remove function
-			// while deleting multiple objects
-			test: "Remove non current objects",
+			test: "Remove non current objects - no error",
 			args: args{
 				path:       "path/",
 				versionID:  "",
