@@ -276,7 +276,7 @@ jobs:
           semgrep --config semgrep.yaml $(pwd)/portal-ui --error
 
   no-warnings-and-make-assets:
-    name: "React Code Has No Warning & Prettified and then Make Assets"
+    name: "React Code Has No Warnings & is Prettified, then Make Assets"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

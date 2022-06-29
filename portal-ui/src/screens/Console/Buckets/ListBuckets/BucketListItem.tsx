@@ -163,6 +163,7 @@ interface IBucketListItem {
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selected: boolean;
   bulkSelect: boolean;
+  noManage?: boolean;
 }
 
 const BucketListItem = ({
@@ -171,6 +172,7 @@ const BucketListItem = ({
   onSelect,
   selected,
   bulkSelect,
+  noManage = false,
 }: IBucketListItem) => {
   const usage = niceBytes(`${bucket.size}` || "0");
   const usageScalar = usage.split(" ")[0];
@@ -236,24 +238,26 @@ const BucketListItem = ({
             </Grid>
           </Grid>
           <Grid item xs={12} sm={5} className={classes.bucketActionButtons}>
-            <SecureComponent
-              scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
-              resource={bucket.name}
-            >
-              <Link
-                to={`/buckets/${bucket.name}/admin`}
-                style={{ textDecoration: "none" }}
+            {!noManage && (
+              <SecureComponent
+                scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
+                resource={bucket.name}
               >
-                <RBIconButton
-                  tooltip={"Manage"}
-                  onClick={() => {}}
-                  text={"Manage"}
-                  icon={<SettingsIcon />}
-                  color={"primary"}
-                  variant={"outlined"}
-                />
-              </Link>
-            </SecureComponent>
+                <Link
+                  to={`/buckets/${bucket.name}/admin`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <RBIconButton
+                    tooltip={"Manage"}
+                    onClick={() => {}}
+                    text={"Manage"}
+                    icon={<SettingsIcon />}
+                    color={"primary"}
+                    variant={"outlined"}
+                  />
+                </Link>
+              </SecureComponent>
+            )}
             <Link
               to={`/buckets/${bucket.name}/browse`}
               style={{ textDecoration: "none" }}

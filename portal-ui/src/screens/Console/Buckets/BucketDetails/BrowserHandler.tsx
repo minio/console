@@ -36,13 +36,15 @@ import {
   IAM_ROLES,
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
-import SearchBox from "../../Common/SearchBox";
 import BackLink from "../../../../common/BackLink";
 import {
   setSearchObjects,
   setSearchVersions,
   setVersionsModeEnabled,
 } from "../../ObjectBrowser/objectBrowserSlice";
+import SearchBox from "../../Common/SearchBox";
+import { selFeatures } from "../../consoleSlice";
+import { LoginMinIOLogo } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -67,8 +69,12 @@ const BrowserHandler = () => {
     (state: AppState) => state.objectBrowser.searchVersions
   );
 
+  const features = useSelector(selFeatures);
+
   const bucketName = params.bucketName || "";
   const internalPaths = get(params, "subpaths", "");
+
+  const obOnly = !!features?.includes("object-browser-only");
 
   useEffect(() => {
     dispatch(setVersionsModeEnabled({ status: false }));
@@ -78,59 +84,79 @@ const BrowserHandler = () => {
     navigate(`/buckets/${bucketName}/admin`);
   };
 
+  const searchBar = (
+    <Fragment>
+      {!versionsMode ? (
+        <SecureComponent
+          scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+          resource={bucketName}
+          errorProps={{ disabled: true }}
+        >
+          <SearchBox
+            placeholder={"Start typing to filter objects in the bucket"}
+            onChange={(value) => {
+              dispatch(setSearchObjects(value));
+            }}
+            value={searchObjects}
+          />
+        </SecureComponent>
+      ) : (
+        <Fragment>
+          <SearchBox
+            placeholder={`Start typing to filter versions of ${versionedFile}`}
+            onChange={(value) => {
+              dispatch(setSearchVersions(value));
+            }}
+            value={searchVersions}
+          />
+        </Fragment>
+      )}
+    </Fragment>
+  );
+
   return (
     <Fragment>
-      <PageHeader
-        label={<BackLink label={"Buckets"} to={IAM_PAGES.BUCKETS} />}
-        actions={
-          <SecureComponent
-            scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
-            resource={bucketName}
-            errorProps={{ disabled: true }}
-          >
-            <Tooltip title={"Configure Bucket"}>
-              <IconButton
-                color="primary"
-                aria-label="Configure Bucket"
-                component="span"
-                onClick={openBucketConfiguration}
-                size="large"
-              >
-                <SettingsIcon />
-              </IconButton>
-            </Tooltip>
-          </SecureComponent>
-        }
-        middleComponent={
-          <Fragment>
-            {!versionsMode ? (
-              <SecureComponent
-                scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
-                resource={bucketName}
-                errorProps={{ disabled: true }}
-              >
-                <SearchBox
-                  placeholder={"Start typing to filter objects in the bucket"}
-                  onChange={(value) => {
-                    dispatch(setSearchObjects(value));
-                  }}
-                  value={searchObjects}
-                />
-              </SecureComponent>
-            ) : (
-              <Fragment>
-                <SearchBox
-                  placeholder={`Start typing to filter versions of ${versionedFile}`}
-                  onChange={(value) => {
-                    dispatch(setSearchVersions(value));
-                  }}
-                  value={searchVersions}
-                />
-              </Fragment>
-            )}
-          </Fragment>
-        }
-      />
+      {!obOnly ? (
+        <PageHeader
+          label={<BackLink label={"Buckets"} to={IAM_PAGES.BUCKETS} />}
+          actions={
+            <SecureComponent
+              scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
+              resource={bucketName}
+              errorProps={{ disabled: true }}
+            >
+              <Tooltip title={"Configure Bucket"}>
+                <IconButton
+                  color="primary"
+                  aria-label="Configure Bucket"
+                  component="span"
+                  onClick={openBucketConfiguration}
+                  size="large"
+                >
+                  <SettingsIcon />
+                </IconButton>
+              </Tooltip>
+            </SecureComponent>
+          }
+          middleComponent={searchBar}
+        />
+      ) : (
+        <Grid
+          container
+          sx={{
+            padding: "20px 32px 0",
+          }}
+        >
+          <Grid>
+            <LoginMinIOLogo
+              style={{ width: 105, marginRight: 30, marginTop: 10 }}
+            />
+          </Grid>
+          <Grid item xs>
+            {searchBar}
+          </Grid>
+        </Grid>
+      )}
       <Grid>
         <ListObjects />
       </Grid>

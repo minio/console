@@ -235,6 +235,10 @@ func getPrometheusExtraLabels() string {
 	return env.Get(PrometheusExtraLabels, "")
 }
 
+func getObjectBrowserOnly() string {
+	return env.Get(ConsoleObjectBrowserOnly, "off")
+}
+
 var (
 	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
 	GlobalRootCAs *x509.CertPool
