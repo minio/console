@@ -78,6 +78,7 @@ const CodeMirrorWrapper = ({
           onChange={(evn) => {
             onBeforeChange(null, null, evn.target.value);
           }}
+          id={"code_wrapper"}
           padding={15}
           style={{
             fontSize: 12,

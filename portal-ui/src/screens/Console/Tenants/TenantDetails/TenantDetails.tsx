@@ -325,6 +325,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
                   }}
                   tooltip={"Edit YAML"}
                   color="primary"
+                  id={"yaml_button"}
                   variant="outlined"
                   aria-label="Edit YAML"
                   onClick={() => {
