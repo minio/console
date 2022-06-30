@@ -1468,7 +1468,6 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 
 // setTenantLogsResponse updates the Audit Log and Log DB configuration for the tenant
 func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
-	time.Sleep(5 * time.Second)
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
