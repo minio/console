@@ -4206,6 +4206,10 @@ func init() {
             "$ref": "#/definitions/nodeSelector"
           }
         },
+        "dbSecurityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
+        },
         "dbServiceAccountName": {
           "type": "string"
         },
@@ -4241,6 +4245,10 @@ func init() {
           "items": {
             "$ref": "#/definitions/nodeSelector"
           }
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         },
         "serviceAccountName": {
           "type": "string"
@@ -9568,6 +9576,10 @@ func init() {
             "$ref": "#/definitions/nodeSelector"
           }
         },
+        "dbSecurityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
+        },
         "dbServiceAccountName": {
           "type": "string"
         },
@@ -9603,6 +9615,10 @@ func init() {
           "items": {
             "$ref": "#/definitions/nodeSelector"
           }
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         },
         "serviceAccountName": {
           "type": "string"

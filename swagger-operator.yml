@@ -2908,6 +2908,12 @@ definitions:
         type: string
       logDBMemRequest:
         type: string
+      securityContext:
+        type: object
+        $ref: "#/definitions/securityContext"
+      dbSecurityContext:
+        type: object
+        $ref: "#/definitions/securityContext"
 
 
   listPVCsResponse:

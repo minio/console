@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IKeyValue } from "../ListTenants/types";
+import { ISecurityContext } from "../types";
 
 export interface IEditTenantAuditLogging {
   auditLoggingEnabled: boolean;
@@ -34,6 +35,9 @@ export interface IEditTenantAuditLogging {
   memRequest: string;
   dbCPURequest: string;
   dbMemRequest: string;
+  securityContext: ISecurityContext;  
+  dbSecurityContext: ISecurityContext;
+  refreshLoggingInfo: boolean;
 }
 
 const initialState: IEditTenantAuditLogging = {
@@ -54,6 +58,19 @@ const initialState: IEditTenantAuditLogging = {
   dbServiceAccountName: "",
   cpuRequest: "",
   memRequest: "",
+  securityContext: {
+  runAsUser: "1000",
+  runAsGroup: "1000",
+  fsGroup: "1000",
+  runAsNonRoot: false,
+  },
+  dbSecurityContext: {
+  runAsUser: "1000",
+  runAsGroup: "1000",
+  fsGroup: "1000",
+  runAsNonRoot: false,
+  },
+  refreshLoggingInfo: true
 };
 
 export const editTenantAuditLoggingSlice = createSlice({
@@ -111,6 +128,34 @@ export const editTenantAuditLoggingSlice = createSlice({
     setDBMemRequest: (state, action: PayloadAction<string>) => {
         state.dbMemRequest = action.payload;
     },
+    setRunAsUser: (state, action: PayloadAction<string>) => {
+      state.securityContext.runAsUser = action.payload;
+    },
+    setRunAsGroup: (state, action: PayloadAction<string>) => {
+      state.securityContext.runAsGroup = action.payload;
+    },
+    setFSGroup: (state, action: PayloadAction<string>) => {
+        state.securityContext.fsGroup = action.payload;
+    },
+    setRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
+        state.securityContext.runAsNonRoot = action.payload;
+    },
+    setDBRunAsUser: (state, action: PayloadAction<string>) => {
+      state.dbSecurityContext.runAsUser = action.payload;
+    },
+    setDBRunAsGroup: (state, action: PayloadAction<string>) => {
+      state.dbSecurityContext.runAsGroup = action.payload;
+    },
+    setDBFSGroup: (state, action: PayloadAction<string>) => {
+        state.dbSecurityContext.fsGroup = action.payload;
+    },
+    setDBRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
+        state.dbSecurityContext.runAsNonRoot = action.payload;
+    },
+    setRefreshLoggingInfo: (state, action: PayloadAction<boolean>) => {
+      state.refreshLoggingInfo = action.payload;
+    },
+    resetAuditLogForm: () => initialState,
   },
 });
 
@@ -132,6 +177,16 @@ export const {
       setMemRequest,
       setDBCPURequest,
       setDBMemRequest,
+      setRunAsUser, 
+      setFSGroup, 
+      setRunAsGroup, 
+      setRunAsNonRoot,
+      setDBRunAsUser, 
+      setDBFSGroup, 
+      setDBRunAsGroup, 
+      setDBRunAsNonRoot,
+      setRefreshLoggingInfo,
+      resetAuditLogForm,
 } = editTenantAuditLoggingSlice.actions;
 
 export default editTenantAuditLoggingSlice.reducer;

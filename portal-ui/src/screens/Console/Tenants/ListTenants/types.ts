@@ -238,6 +238,8 @@ export interface ITenantLogsStruct {
   logMemRequest: string;
   logDBCPURequest: string;
   logDBMemRequest: string;
+  securityContext: ISecurityContext;
+  dbSecurityContext: ISecurityContext;
 }
 
 export interface ValueUnit {
@@ -272,4 +274,11 @@ export interface IEditPoolRequest {
 
 export interface IPlotBarValues {
   [key: string]: CapacityValue;
+}
+
+export interface ITenantAuditLogs {
+  classes: any;
+  labels: IKeyValue[];
+  annotations: IKeyValue[];
+  nodeSelector: IKeyValue[];
 }

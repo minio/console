@@ -795,6 +795,16 @@ export const wizardCommon = {
     alignItems: "center" as const,
     justifyContent: "flex-start" as const,
   },
+  multiContainerStackNarrow: {
+    display: "flex" ,
+    alignItems: "center" ,
+    justifyContent: "flex-start",
+    gap: "8px",
+    "@media (max-width: 750px)": {
+      flexFlow: "column",
+      flexDirection: "column",
+    },
+  },
   sizeFactorContainer: {
     marginLeft: 8,
     alignSelf: "flex-start" as const,
