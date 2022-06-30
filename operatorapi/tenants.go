@@ -1460,9 +1460,6 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 		tenantLoggingConfiguration.LogDBCPURequest = requestedDBCPU
 		tenantLoggingConfiguration.LogDBMemRequest = requestedDBMem
 	}
-
-	if minTenant.Spec.Log.SecurityContext != nil {
-	}
 	return tenantLoggingConfiguration, nil
 }
 
