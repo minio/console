@@ -164,10 +164,10 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
                     id="storage_type"
                     name="storage_type"
                     onChange={(e: SelectChangeEvent<string>) => {
-                      setStorageType({
+                      dispatch(setStorageType({
                         storageType: e.target.value as string,
                         features: features,
-                      });
+                      }));
                     }}
                     label={get(
                       mkPanelConfigurations,
