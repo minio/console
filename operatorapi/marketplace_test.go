@@ -159,7 +159,7 @@ func (suite *MarketplaceTestSuite) TestGetMPEmailNoError() {
 func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoEmail() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	err := setMPIntegration(ctx, "", "token", false, &suite.kClient)
+	err := setMPIntegration(ctx, "", false, &suite.kClient)
 	suite.assert.NotNil(err)
 }
 
@@ -168,7 +168,7 @@ func (suite *MarketplaceTestSuite) TestSetMPIntegrationWithError() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	os.Setenv(mpHostEnvVar, "  ")
-	err := setMPIntegration(ctx, "mock@mock.com", "token", false, &suite.kClient)
+	err := setMPIntegration(ctx, "mock@mock.com", false, &suite.kClient)
 	suite.assert.NotNil(err)
 	os.Unsetenv(mpHostEnvVar)
 }
