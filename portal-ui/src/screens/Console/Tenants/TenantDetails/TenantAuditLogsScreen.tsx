@@ -274,8 +274,8 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab label="Audit Log Configuration" {...a11yProps(0)} />
-            <Tab label="Audit Log DB Configuration" {...a11yProps(1)} />
+            <Tab label="Configuration" {...a11yProps(0)} />
+            <Tab label="DB Configuration" {...a11yProps(1)} />
           </Tabs>
         </Grid>
         <Grid item xs={12}>

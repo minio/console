@@ -1468,6 +1468,7 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 
 // setTenantLogsResponse updates the Audit Log and Log DB configuration for the tenant
 func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
+	time.Sleep(5 * time.Second)
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -1525,7 +1526,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 		}
 	}
 	if len(params.Data.LogMemRequest) > 0 {
-		if reflect.TypeOf(params.Data.LogMemRequest).Kind() == reflect.String {
+		if reflect.TypeOf(params.Data.LogMemRequest).Kind() == reflect.String && params.Data.LogMemRequest != "" {
 			memQuantity, err := resource.ParseQuantity(params.Data.LogMemRequest)
 			if err != nil {
 				return false, restapi.ErrorWithContext(ctx, err)
@@ -1579,7 +1580,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 		}
 	}
 	if len(params.Data.LogDBMemRequest) > 0 {
-		if reflect.TypeOf(params.Data.LogDBMemRequest).Kind() == reflect.String {
+		if reflect.TypeOf(params.Data.LogDBMemRequest).Kind() == reflect.String && params.Data.LogDBMemRequest != "" {
 			dbMemQuantity, err := resource.ParseQuantity(params.Data.LogDBMemRequest)
 			if err != nil {
 				return false, restapi.ErrorWithContext(ctx, err)

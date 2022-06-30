@@ -59,15 +59,15 @@ const initialState: IEditTenantAuditLogging = {
   cpuRequest: "",
   memRequest: "",
   securityContext: {
-  runAsUser: "",
-  runAsGroup: "",
-  fsGroup: "",
+  runAsUser: "1000",
+  runAsGroup: "1000",
+  fsGroup: "1000",
   runAsNonRoot: false,
   },
   dbSecurityContext: {
-  runAsUser: "",
-  runAsGroup: "",
-  fsGroup: "",
+  runAsUser: "1000",
+  runAsGroup: "1000",
+  fsGroup: "1000",
   runAsNonRoot: false,
   },
   refreshLoggingInfo: true

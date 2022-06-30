@@ -117,6 +117,7 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
   )
   
   const [validationErrors, setValidationErrors] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [logLabels, setLabels] = useState<IKeyValue[]>((labels != null && labels.length > 0) ? labels : [{ key: "", value: "" }]);
   const [logAnnotations, setAnnotations] = useState<IKeyValue[]>((annotations != null && annotations.length > 0)? annotations : [{ key: "", value: "" }]);
@@ -159,8 +160,10 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
   };
 
   const submitLoggingInfo = () => {
+   
     if (checkValid()) {
-      const securityContext = {
+       setLoading(true);
+       const securityContext = {
         runAsGroup: runAsGroup != null ? runAsGroup : "",
         runAsUser: runAsUser != null ? runAsUser : "",
         fsGroup: fsGroup != null ? fsGroup : "",
@@ -186,9 +189,11 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
         .then(() => {
           setRefreshLoggingInfo(true);
           dispatch(setSnackBarMessage(`Audit Log configuration updated.`));
+          setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
+          setLoading(false);
         });
     }
   };
@@ -359,7 +364,7 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
               type="submit"
               variant="contained"
               color="primary"
-              disabled={!checkValid()}
+              disabled={loading || !checkValid()}
               onClick={() => submitLoggingInfo()}
             >
               Save
