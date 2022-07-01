@@ -67,7 +67,7 @@ export const editTenantAuditLoggingSlice = createSlice({
       state.image = action.payload;
     },
     setDBImage: (state, action: PayloadAction<string>) => {
-      state.dbImage = action.payload;
+    state.dbImage = action.payload;
     },
     setDBInitImage: (state, action: PayloadAction<string>) => {
       state.dbInitImage = action.payload;
@@ -82,13 +82,13 @@ export const editTenantAuditLoggingSlice = createSlice({
       state.nodeSelector = action.payload;
     },
     setDBLabels: (state, action: PayloadAction<IKeyValue[]>) => {
-      state.dbLabels = action.payload;
+        state.dbLabels = action.payload;
     },
     setDBAnnotations: (state, action: PayloadAction<IKeyValue[]>) => {
-      state.dbAnnotations = action.payload;
+        state.dbAnnotations = action.payload;
     },
-    setDBNodeSelector: (state, action: PayloadAction<IKeyValue[]>) => {
-      state.dbNodeSelector = action.payload;
+      setDBNodeSelector: (state, action: PayloadAction<IKeyValue[]>) => {
+        state.dbNodeSelector = action.payload;
     },
     setDiskCapacityGB: (state, action: PayloadAction<number>) => {
       state.diskCapacityGB = action.payload;
@@ -106,32 +106,32 @@ export const editTenantAuditLoggingSlice = createSlice({
       state.memRequest = action.payload;
     },
     setDBCPURequest: (state, action: PayloadAction<string>) => {
-      state.dbCPURequest = action.payload;
+        state.dbCPURequest = action.payload;
     },
     setDBMemRequest: (state, action: PayloadAction<string>) => {
-      state.dbMemRequest = action.payload;
+        state.dbMemRequest = action.payload;
     },
   },
 });
 
 export const {
-  setAuditLoggingEnabled,
-  setImage,
-  setDBImage,
-  setDBInitImage,
-  setLabels,
-  setAnnotations,
-  setNodeSelector,
-  setDBLabels,
-  setDBAnnotations,
-  setDBNodeSelector,
-  setDiskCapacityGB,
-  setServiceAccountName,
-  setDBServiceAccountName,
-  setCPURequest,
-  setMemRequest,
-  setDBCPURequest,
-  setDBMemRequest,
+    setAuditLoggingEnabled,
+      setImage,
+      setDBImage,
+      setDBInitImage,
+      setLabels,
+      setAnnotations,
+      setNodeSelector,
+      setDBLabels,
+      setDBAnnotations,
+      setDBNodeSelector,
+      setDiskCapacityGB,
+      setServiceAccountName,
+      setDBServiceAccountName,
+      setCPURequest,
+      setMemRequest,
+      setDBCPURequest,
+      setDBMemRequest,
 } = editTenantAuditLoggingSlice.actions;
 
 export default editTenantAuditLoggingSlice.reducer;

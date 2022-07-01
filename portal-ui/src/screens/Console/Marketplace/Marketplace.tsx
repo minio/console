@@ -33,6 +33,7 @@ const Marketplace = () => {
   const displayMarketplace = useSelector(selShowMarketplace);
   const [isMPMode, setMPMode] = useState<boolean>(true);
 
+
   useEffect(() => {
     let mpMode = false;
     if (features && features.length !== 0) {
@@ -48,20 +49,17 @@ const Marketplace = () => {
 
   const getTargetPath = () => {
     let targetPath = "/";
-    if (
-      localStorage.getItem("redirect-path") &&
-      localStorage.getItem("redirect-path") !== ""
-    ) {
+    if (localStorage.getItem("redirect-path") && localStorage.getItem("redirect-path") !== "") {
       targetPath = `${localStorage.getItem("redirect-path")}`;
       localStorage.setItem("redirect-path", "");
     }
     return targetPath;
-  };
+  }
 
   const closeModal = () => {
     dispatch(showMarketplace(false));
     navigate(getTargetPath());
-  };
+  }
 
   if (!displayMarketplace || !isMPMode) {
     return <Navigate to={{ pathname: getTargetPath() }} />;
@@ -72,7 +70,10 @@ const Marketplace = () => {
       <Fragment>
         <PageHeader label="Operator Marketplace" />
         <PageLayout>
-          <SetEmailModal open={true} closeModal={closeModal} />
+        <SetEmailModal
+          open={true}
+          closeModal={closeModal}
+        />
         </PageLayout>
       </Fragment>
     );
