@@ -120,7 +120,10 @@ export const objectBrowserSlice = createSlice({
         false;
       state.objectManager.objectsToManage[objectToComplete].done = true;
     },
-    failObject: (state, action: PayloadAction<{instanceID: string; msg: string}>) => {
+    failObject: (
+      state,
+      action: PayloadAction<{ instanceID: string; msg: string }>
+    ) => {
       const objectToFail = state.objectManager.objectsToManage.findIndex(
         (item) => item.instanceID === action.payload.instanceID
       );
@@ -128,7 +131,8 @@ export const objectBrowserSlice = createSlice({
       state.objectManager.objectsToManage[objectToFail].failed = true;
       state.objectManager.objectsToManage[objectToFail].waitingForFile = false;
       state.objectManager.objectsToManage[objectToFail].done = true;
-      state.objectManager.objectsToManage[objectToFail].errorMessage = action.payload.msg;
+      state.objectManager.objectsToManage[objectToFail].errorMessage =
+        action.payload.msg;
     },
     cancelObjectInList: (state, action: PayloadAction<string>) => {
       const objectToCancel = state.objectManager.objectsToManage.findIndex(

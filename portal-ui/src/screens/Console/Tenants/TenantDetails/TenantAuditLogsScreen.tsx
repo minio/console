@@ -1,4 +1,3 @@
-
 // This file is part of MinIO Console Server
 // Copyright (c) 2021 MinIO, Inc.
 //
@@ -30,34 +29,34 @@ import api from "../../../../common/api";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { setErrorSnackMessage} from "../../../../systemSlice";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { ITenantLogsStruct } from "../ListTenants/types";
 import { IKeyValue } from "../ListTenants/types";
 
 import LoggingDetails from "./LoggingDetails";
 import LoggingDBDetails from "./LoggingDBDetails";
-import { 
+import {
   setAuditLoggingEnabled,
   setDBImage,
   setDBInitImage,
   setDBServiceAccountName,
   setDBCPURequest,
   setDBMemRequest,
-  setDBRunAsUser, 
-  setDBFSGroup, 
-  setDBRunAsGroup, 
+  setDBRunAsUser,
+  setDBFSGroup,
+  setDBRunAsGroup,
   setDBRunAsNonRoot,
-    setImage,
-    setDiskCapacityGB,
-    setServiceAccountName,
-    setCPURequest,
-    setMemRequest,
-    setRunAsUser, 
-    setFSGroup, 
-    setRunAsGroup, 
-    setRunAsNonRoot,
-    resetAuditLogForm,
+  setImage,
+  setDiskCapacityGB,
+  setServiceAccountName,
+  setCPURequest,
+  setMemRequest,
+  setRunAsUser,
+  setFSGroup,
+  setRunAsGroup,
+  setRunAsNonRoot,
+  resetAuditLogForm,
 } from "../TenantDetails/tenantAuditLogSlice";
 
 interface ILoggingScreenProps {
@@ -79,12 +78,22 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [toggleConfirmOpen, setToggleConfirmOpen] = useState<boolean>(false);
   const [refreshLoggingInfo, setRefreshLoggingInfo] = useState<boolean>(true);
-  const [dbLabels, setDBLabels] = useState<IKeyValue[]>([{ key: "", value: "" }]);
-  const [dbAnnotations, setDBAnnotations] = useState<IKeyValue[]>([{ key: "", value: "" }]);
-  const [dbNodeSelector, setDBNodeSelector] = useState<IKeyValue[]>([{ key: "", value: "" }]);
+  const [dbLabels, setDBLabels] = useState<IKeyValue[]>([
+    { key: "", value: "" },
+  ]);
+  const [dbAnnotations, setDBAnnotations] = useState<IKeyValue[]>([
+    { key: "", value: "" },
+  ]);
+  const [dbNodeSelector, setDBNodeSelector] = useState<IKeyValue[]>([
+    { key: "", value: "" },
+  ]);
   const [labels, setLabels] = useState<IKeyValue[]>([{ key: "", value: "" }]);
-  const [annotations, setAnnotations] = useState<IKeyValue[]>([{ key: "", value: "" }]);
-  const [nodeSelector, setNodeSelector] = useState<IKeyValue[]>([{ key: "", value: "" }]);
+  const [annotations, setAnnotations] = useState<IKeyValue[]>([
+    { key: "", value: "" },
+  ]);
+  const [nodeSelector, setNodeSelector] = useState<IKeyValue[]>([
+    { key: "", value: "" },
+  ]);
   const dispatch = useAppDispatch();
   const auditLoggingEnabled = useSelector(
     (state: AppState) => state.editTenantLogging.auditLoggingEnabled
@@ -97,61 +106,83 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
   }
 
   const setLoggingInfo = (res: ITenantLogsStruct) => {
-    if (res !== null)  {
-    dispatch(setAuditLoggingEnabled(res !== null && !res.disabled));
-    res.dbServiceAccountName != null && dispatch(setDBServiceAccountName(res.dbServiceAccountName));
-    res.dbImage != null && dispatch(setDBImage(res.dbImage));
-    res.dbInitImage != null && dispatch(setDBInitImage(res.dbInitImage));
-    res.logDBCPURequest != null && dispatch(setDBCPURequest(res.logDBCPURequest));    
+    if (res !== null) {
+      dispatch(setAuditLoggingEnabled(res !== null && !res.disabled));
+      res.dbServiceAccountName != null &&
+        dispatch(setDBServiceAccountName(res.dbServiceAccountName));
+      res.dbImage != null && dispatch(setDBImage(res.dbImage));
+      res.dbInitImage != null && dispatch(setDBInitImage(res.dbInitImage));
+      res.logDBCPURequest != null &&
+        dispatch(setDBCPURequest(res.logDBCPURequest));
       if (res.logDBMemRequest) {
-        dispatch(setDBMemRequest(Math.floor(parseInt(res.logDBMemRequest, 10)).toString()));
+        dispatch(
+          setDBMemRequest(
+            Math.floor(parseInt(res.logDBMemRequest, 10)).toString()
+          )
+        );
       } else {
         dispatch(setDBMemRequest("0"));
-      }  
-      if (res.dbSecurityContext) {     
+      }
+      if (res.dbSecurityContext) {
         dispatch(setDBRunAsGroup(res.dbSecurityContext.runAsGroup));
         dispatch(setDBRunAsUser(res.dbSecurityContext.runAsUser));
         dispatch(setDBFSGroup(res.dbSecurityContext.fsGroup));
-        dispatch(setDBRunAsNonRoot(res.dbSecurityContext.runAsNonRoot)); 
-      }   
-        res.image != null && dispatch(setImage(res.image));
-        res.serviceAccountName != null && dispatch(setServiceAccountName(res.serviceAccountName));
-        res.logCPURequest != null && dispatch(setCPURequest(res.logCPURequest));
-        if (res.logMemRequest) {
-            dispatch(setMemRequest(Math.floor(parseInt(res.logMemRequest, 10)).toString()));
-          } else {
-            dispatch(setMemRequest("0"));
-          }
-          if (res.securityContext) {       
-            dispatch(setRunAsGroup(res.securityContext.runAsGroup));
-            dispatch(setRunAsUser(res.securityContext.runAsUser));
-            dispatch(setFSGroup(res.securityContext.fsGroup));
-            dispatch(setRunAsNonRoot(res.securityContext.runAsNonRoot));       
-          }
-         
-        res.diskCapacityGB != null && dispatch(setDiskCapacityGB(res.diskCapacityGB));    
-        res.labels != null ? setLabels(res.labels) : setLabels([{ key: "", value: "" }]);
-        res.annotations != null ? setAnnotations(res.annotations) : setAnnotations([{ key: "", value: "" }]);
-        res.nodeSelector != null ? setNodeSelector(res.nodeSelector) : setNodeSelector([{ key: "", value: "" }]);        
-        res.dbLabels != null ? setDBLabels(res.dbLabels) : setDBLabels([{ key: "", value: "" }]);
-        res.dbAnnotations != null ? setDBAnnotations(res.dbAnnotations) : setDBAnnotations([{ key: "", value: "" }]);
-        res.dbNodeSelector != null ? setDBNodeSelector(res.dbNodeSelector) : setDBNodeSelector([{ key: "", value: "" }]);
-        setRefreshLoggingInfo(false); 
-     }
+        dispatch(setDBRunAsNonRoot(res.dbSecurityContext.runAsNonRoot));
+      }
+      res.image != null && dispatch(setImage(res.image));
+      res.serviceAccountName != null &&
+        dispatch(setServiceAccountName(res.serviceAccountName));
+      res.logCPURequest != null && dispatch(setCPURequest(res.logCPURequest));
+      if (res.logMemRequest) {
+        dispatch(
+          setMemRequest(Math.floor(parseInt(res.logMemRequest, 10)).toString())
+        );
+      } else {
+        dispatch(setMemRequest("0"));
+      }
+      if (res.securityContext) {
+        dispatch(setRunAsGroup(res.securityContext.runAsGroup));
+        dispatch(setRunAsUser(res.securityContext.runAsUser));
+        dispatch(setFSGroup(res.securityContext.fsGroup));
+        dispatch(setRunAsNonRoot(res.securityContext.runAsNonRoot));
+      }
+
+      res.diskCapacityGB != null &&
+        dispatch(setDiskCapacityGB(res.diskCapacityGB));
+      res.labels != null
+        ? setLabels(res.labels)
+        : setLabels([{ key: "", value: "" }]);
+      res.annotations != null
+        ? setAnnotations(res.annotations)
+        : setAnnotations([{ key: "", value: "" }]);
+      res.nodeSelector != null
+        ? setNodeSelector(res.nodeSelector)
+        : setNodeSelector([{ key: "", value: "" }]);
+      res.dbLabels != null
+        ? setDBLabels(res.dbLabels)
+        : setDBLabels([{ key: "", value: "" }]);
+      res.dbAnnotations != null
+        ? setDBAnnotations(res.dbAnnotations)
+        : setDBAnnotations([{ key: "", value: "" }]);
+      res.dbNodeSelector != null
+        ? setDBNodeSelector(res.dbNodeSelector)
+        : setDBNodeSelector([{ key: "", value: "" }]);
+      setRefreshLoggingInfo(false);
+    }
   };
 
   useEffect(() => {
     if (refreshLoggingInfo) {
       api
-      .invoke(
-        "GET",
-        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`
-      )
+        .invoke(
+          "GET",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`
+        )
         .then((res: ITenantLogsStruct) => {
-          if (res !== null)  {
-          dispatch(setAuditLoggingEnabled(res.auditLoggingEnabled));
-          setLoggingInfo(res);
-          setRefreshLoggingInfo(false);
+          if (res !== null) {
+            dispatch(setAuditLoggingEnabled(res.auditLoggingEnabled));
+            setLoggingInfo(res);
+            setRefreshLoggingInfo(false);
           }
         })
         .catch((err: ErrorResponseHandler) => {
@@ -170,8 +201,8 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
 
   const toggleLogging = () => {
     dispatch(resetAuditLogForm());
-    if(!auditLoggingEnabled) {
-        api
+    if (!auditLoggingEnabled) {
+      api
         .invoke(
           "POST",
           `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/enable-logging`
@@ -179,7 +210,7 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
         .then(() => {
           setRefreshLoggingInfo(true);
           setToggleConfirmOpen(false);
-          setAuditLoggingEnabled(true);          
+          setAuditLoggingEnabled(true);
         })
         .catch((err: ErrorResponseHandler) => {
           dispatch(
@@ -189,61 +220,59 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
             })
           );
         });
-  } else {
-    api
-    .invoke(
-      "POST",
-      `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/disable-logging`
-    )
-    .then(() => {
-        setAuditLoggingEnabled(false);
-        setRefreshLoggingInfo(true);
-        setToggleConfirmOpen(false);
-        dispatch(resetAuditLogForm());
-    })
-    .catch((err: ErrorResponseHandler) => {
-      dispatch(
-        setErrorSnackMessage({
-          errorMessage: "Error disabling logging",
-          detailedError: err.detailedError,
+    } else {
+      api
+        .invoke(
+          "POST",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/disable-logging`
+        )
+        .then(() => {
+          setAuditLoggingEnabled(false);
+          setRefreshLoggingInfo(true);
+          setToggleConfirmOpen(false);
+          dispatch(resetAuditLogForm());
         })
-      );
-    });
-  };
+        .catch((err: ErrorResponseHandler) => {
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage: "Error disabling logging",
+              detailedError: err.detailedError,
+            })
+          );
+        });
+    }
   };
 
   return (
-    <Fragment> 
-      
-        <Grid item xs>
-        {toggleConfirmOpen && (
-          
-        <ConfirmDialog
-          isOpen={toggleConfirmOpen}
-          title={
-            !auditLoggingEnabled
-              ? "Enable Audit Logging for this tenant?"
-              : "Disable Audit Logging for this tenant?"
-          }
-          confirmText={!auditLoggingEnabled ? "Enable" : "Disable"}
-          cancelText="Cancel"
-          onClose={() => setToggleConfirmOpen(false)}
-          onConfirm={toggleLogging}
-          confirmationContent={
-            <DialogContentText>
-              {!auditLoggingEnabled
-                ? "A small Postgres server will be started per the configuration provided, which will collect the audit logs for your tenant."
-                : " Current configuration will be lost, and defaults reset if reenabled."}
-            </DialogContentText>
-          }
-        />
-      )}
-      </Grid>
-      <Grid container >
+    <Fragment>
       <Grid item xs>
+        {toggleConfirmOpen && (
+          <ConfirmDialog
+            isOpen={toggleConfirmOpen}
+            title={
+              !auditLoggingEnabled
+                ? "Enable Audit Logging for this tenant?"
+                : "Disable Audit Logging for this tenant?"
+            }
+            confirmText={!auditLoggingEnabled ? "Enable" : "Disable"}
+            cancelText="Cancel"
+            onClose={() => setToggleConfirmOpen(false)}
+            onConfirm={toggleLogging}
+            confirmationContent={
+              <DialogContentText>
+                {!auditLoggingEnabled
+                  ? "A small Postgres server will be started per the configuration provided, which will collect the audit logs for your tenant."
+                  : " Current configuration will be lost, and defaults reset if reenabled."}
+              </DialogContentText>
+            }
+          />
+        )}
+      </Grid>
+      <Grid container>
+        <Grid item xs>
           <h1 className={classes.sectionTitle}>Audit Logs</h1>
         </Grid>
-        <Grid  >
+        <Grid>
           <FormSwitchWrapper
             label={""}
             indicatorLabels={["Enabled", "Disabled"]}
@@ -257,48 +286,48 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
             description=""
           />
         </Grid>
-       
-          </Grid> 
+      </Grid>
       <Grid container>
-     {auditLoggingEnabled && (
-      <Fragment>
-        <Grid item xs={9}>
-          <Tabs
-            value={curTab}
-            onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-              setCurTab(newValue);
-            }}
-            indicatorColor="primary"
-            textColor="primary"
-            aria-label="cluster-tabs"
-            variant="scrollable"
-            scrollButtons="auto"
-          >
-            <Tab label="Configuration" {...a11yProps(0)} />
-            <Tab label="DB Configuration" {...a11yProps(1)} />
-          </Tabs>
-        </Grid>
-        <Grid item xs={12}>
-         <hr className={classes.hrClass} />
-        </Grid>
-        {curTab === 0 && (
-          <LoggingDetails 
-            classes={classes}
-            labels={labels}
-            annotations={annotations}
-            nodeSelector={nodeSelector}
-            />
+        {auditLoggingEnabled && (
+          <Fragment>
+            <Grid item xs={9}>
+              <Tabs
+                value={curTab}
+                onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+                  setCurTab(newValue);
+                }}
+                indicatorColor="primary"
+                textColor="primary"
+                aria-label="cluster-tabs"
+                variant="scrollable"
+                scrollButtons="auto"
+              >
+                <Tab label="Configuration" {...a11yProps(0)} />
+                <Tab label="DB Configuration" {...a11yProps(1)} />
+              </Tabs>
+            </Grid>
+            <Grid item xs={12}>
+              <hr className={classes.hrClass} />
+            </Grid>
+            {curTab === 0 && (
+              <LoggingDetails
+                classes={classes}
+                labels={labels}
+                annotations={annotations}
+                nodeSelector={nodeSelector}
+              />
+            )}
+            {curTab === 1 && (
+              <LoggingDBDetails
+                classes={classes}
+                labels={dbLabels}
+                annotations={dbAnnotations}
+                nodeSelector={dbNodeSelector}
+              />
+            )}
+          </Fragment>
         )}
-        {curTab === 1 && (
-          <LoggingDBDetails classes={classes}  
-          labels={dbLabels}
-          annotations={dbAnnotations}
-          nodeSelector={dbNodeSelector}
-          />
-        )}
-        </Fragment>
-    )}
-    </Grid>
+      </Grid>
     </Fragment>
   );
 };

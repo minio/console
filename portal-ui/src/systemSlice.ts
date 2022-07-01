@@ -171,6 +171,7 @@ export const {
 export const selDistSet = (state: AppState) => state.system.distributedSetup;
 export const selSiteRep = (state: AppState) => state.system.siteReplicationInfo;
 export const selOpMode = (state: AppState) => state.system.operatorMode;
-export const selShowMarketplace = (state: AppState) => state.system.showMarketplace;
+export const selShowMarketplace = (state: AppState) =>
+  state.system.showMarketplace;
 
 export default systemSlice.reducer;

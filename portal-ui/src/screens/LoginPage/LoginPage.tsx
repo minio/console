@@ -51,7 +51,11 @@ import { SupportMenuIcon } from "../../icons/SidebarMenus";
 import GithubIcon from "../../icons/GithubIcon";
 import clsx from "clsx";
 import Loader from "../Console/Common/Loader/Loader";
-import { setErrorSnackMessage, userLogged, showMarketplace } from "../../systemSlice";
+import {
+  setErrorSnackMessage,
+  userLogged,
+  showMarketplace,
+} from "../../systemSlice";
 import { useAppDispatch } from "../../store";
 
 const styles = (theme: Theme) =>
@@ -331,11 +335,11 @@ const Login = ({ classes }: ILoginProps) => {
       localStorage.setItem("redirect-path", "");
     }
     return targetPath;
-  }
+  };
 
   const redirectAfterLogin = () => {
     navigate(getTargetPath());
-  }
+  };
 
   const redirectToMarketplace = () => {
     api
@@ -347,11 +351,12 @@ const Login = ({ classes }: ILoginProps) => {
         if (err.statusCode === 404) {
           dispatch(showMarketplace(true));
           navigate("/marketplace");
-        } else { // Unexpected error, continue with normal flow
+        } else {
+          // Unexpected error, continue with normal flow
           redirectAfterLogin();
         }
       });
-  }
+  };
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
