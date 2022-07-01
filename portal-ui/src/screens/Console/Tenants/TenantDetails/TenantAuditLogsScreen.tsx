@@ -46,18 +46,18 @@ import { IKeyValue } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { ITenantLogsStruct } from "../ListTenants/types";
-import { 
-    setAuditLoggingEnabled,
-    setImage,
-    setDBImage,
-    setDBInitImage,
-    setDiskCapacityGB,
-    setServiceAccountName,
-    setDBServiceAccountName,
-    setCPURequest,
-    setMemRequest,
-    setDBCPURequest,
-    setDBMemRequest,
+import {
+  setAuditLoggingEnabled,
+  setImage,
+  setDBImage,
+  setDBInitImage,
+  setDiskCapacityGB,
+  setServiceAccountName,
+  setDBServiceAccountName,
+  setCPURequest,
+  setMemRequest,
+  setDBCPURequest,
+  setDBMemRequest,
 } from "../TenantDetails/tenantAuditLogSlice";
 
 import { clearValidationError } from "../utils";
@@ -96,9 +96,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
   const auditLoggingEnabled = useSelector(
     (state: AppState) => state.editTenantLogging.auditLoggingEnabled
   );
-  const image = useSelector(
-    (state: AppState) => state.editTenantLogging.image
-  );
+  const image = useSelector((state: AppState) => state.editTenantLogging.image);
   const dbImage = useSelector(
     (state: AppState) => state.editTenantLogging.dbImage
   );
@@ -137,7 +135,9 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
   const [nodeSelector, setNodeSelector] = useState<IKeyValue[]>([
     { key: "", value: "" },
   ]);
-  const [dbLabels, setDBLabels] = useState<IKeyValue[]>([{ key: "", value: "" }]);
+  const [dbLabels, setDBLabels] = useState<IKeyValue[]>([
+    { key: "", value: "" },
+  ]);
   const [dbAnnotations, setDBAnnotations] = useState<IKeyValue[]>([
     { key: "", value: "" },
   ]);
@@ -145,8 +145,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
     { key: "", value: "" },
   ]);
 
-  const [refreshLoggingInfo, setRefreshLoggingInfo] =
-    useState<boolean>(true);
+  const [refreshLoggingInfo, setRefreshLoggingInfo] = useState<boolean>(true);
   const [labelsError, setLabelsError] = useState<any>({});
   const [annotationsError, setAnnotationsError] = useState<any>({});
   const [nodeSelectorError, setNodeSelectorError] = useState<any>({});
@@ -160,7 +159,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
   };
 
   const setLoggingInfo = (res: ITenantLogsStruct) => {
-    dispatch(setAuditLoggingEnabled(!res.disabled))
+    dispatch(setAuditLoggingEnabled(!res.disabled));
     dispatch(setImage(res.image));
     dispatch(setServiceAccountName(res.serviceAccountName));
     dispatch(setDBServiceAccountName(res.dbServiceAccountName));
@@ -169,34 +168,42 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
     dispatch(setCPURequest(res.logCPURequest));
     dispatch(setDBCPURequest(res.logDBCPURequest));
     if (res.logMemRequest) {
-        dispatch(
-          setMemRequest(
-            Math.floor(
-              parseInt(res.logMemRequest, 10) / 1000000000
-            ).toString()
-          )
-        );
-      } else {
-        dispatch(setMemRequest("0"));
-      }
-      if (res.logDBMemRequest) {
-        dispatch(
-          setDBMemRequest(
-            Math.floor(
-              parseInt(res.logDBMemRequest, 10) / 1000000000
-            ).toString()
-          )
-        );
-      } else {
-        dispatch(setDBMemRequest("0"));
-      }  
-    dispatch(setDiskCapacityGB(res.diskCapacityGB));    
-    res.labels.length > 0 ? setLabels(res.labels) : setLabels([{ key: "test", value: "test" }]);
-    res.annotations.length > 0 ? setAnnotations(res.annotations) : setAnnotations([{ key: "", value: "" }]);
-    res.nodeSelector.length > 0 ? setNodeSelector(res.nodeSelector) : setNodeSelector([{ key: "", value: "" }]);
-    res.dbLabels.length > 0 ? setDBLabels(res.dbLabels) : setDBLabels([{ key: "", value: "" }]);
-    res.dbAnnotations.length > 0 ? setDBAnnotations(res.dbAnnotations) : setDBAnnotations([{ key: "", value: "" }]);
-    res.dbNodeSelector.length > 0 ? setDBNodeSelector(res.dbNodeSelector) : setDBNodeSelector([{ key: "", value: "" }]);
+      dispatch(
+        setMemRequest(
+          Math.floor(parseInt(res.logMemRequest, 10) / 1000000000).toString()
+        )
+      );
+    } else {
+      dispatch(setMemRequest("0"));
+    }
+    if (res.logDBMemRequest) {
+      dispatch(
+        setDBMemRequest(
+          Math.floor(parseInt(res.logDBMemRequest, 10) / 1000000000).toString()
+        )
+      );
+    } else {
+      dispatch(setDBMemRequest("0"));
+    }
+    dispatch(setDiskCapacityGB(res.diskCapacityGB));
+    res.labels.length > 0
+      ? setLabels(res.labels)
+      : setLabels([{ key: "test", value: "test" }]);
+    res.annotations.length > 0
+      ? setAnnotations(res.annotations)
+      : setAnnotations([{ key: "", value: "" }]);
+    res.nodeSelector.length > 0
+      ? setNodeSelector(res.nodeSelector)
+      : setNodeSelector([{ key: "", value: "" }]);
+    res.dbLabels.length > 0
+      ? setDBLabels(res.dbLabels)
+      : setDBLabels([{ key: "", value: "" }]);
+    res.dbAnnotations.length > 0
+      ? setDBAnnotations(res.dbAnnotations)
+      : setDBAnnotations([{ key: "", value: "" }]);
+    res.dbNodeSelector.length > 0
+      ? setDBNodeSelector(res.dbNodeSelector)
+      : setDBNodeSelector([{ key: "", value: "" }]);
   };
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
@@ -217,7 +224,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
       Object.keys(nodeSelectorError).length !== 0 ||
       Object.keys(dbNodeSelectorError).length !== 0 ||
       Object.keys(dbAnnotationsError).length !== 0 ||
-      Object.keys(dbLabelsError).length !== 0 
+      Object.keys(dbLabelsError).length !== 0
     ) {
       let err: ErrorResponseHandler = {
         errorMessage: "Invalid entry",
@@ -233,10 +240,10 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
   useEffect(() => {
     if (refreshLoggingInfo) {
       api
-      .invoke(
-        "GET",
-        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`
-      )
+        .invoke(
+          "GET",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`
+        )
         .then((res: ITenantLogsStruct) => {
           dispatch(setAuditLoggingEnabled(res.auditLoggingEnabled));
           setLoggingInfo(res);
@@ -253,28 +260,28 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
   const submitLoggingInfo = () => {
     if (checkValid()) {
       api
-      .invoke(
-        "PUT",
-        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`,
-        {
-          labels: trim(labels),
-          annotations: trim(annotations),
-          nodeSelector: trim(nodeSelector),
-          image: image,
-          diskCapacityGB: diskCapacityGB.toString(),
-          serviceAccountName: serviceAccountName,
-          dbLabels: trim(dbLabels),
-          dbAnnotations: trim(dbAnnotations),
-          dbNodeSelector: trim(dbNodeSelector),
-          dbImage: dbImage,
-          dbInitImage: dbInitImage,
-          dbServiceAccountName: dbServiceAccountName,
-          logCPURequest: cpuRequest,
-          logMemRequest: memRequest + "Gi",
-          logDBCPURequest: dbCpuRequest,
-          logDBMemRequest: dbMemRequest + "Gi",
-        }
-      )
+        .invoke(
+          "PUT",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`,
+          {
+            labels: trim(labels),
+            annotations: trim(annotations),
+            nodeSelector: trim(nodeSelector),
+            image: image,
+            diskCapacityGB: diskCapacityGB.toString(),
+            serviceAccountName: serviceAccountName,
+            dbLabels: trim(dbLabels),
+            dbAnnotations: trim(dbAnnotations),
+            dbNodeSelector: trim(dbNodeSelector),
+            dbImage: dbImage,
+            dbInitImage: dbInitImage,
+            dbServiceAccountName: dbServiceAccountName,
+            logCPURequest: cpuRequest,
+            logMemRequest: memRequest + "Gi",
+            logDBCPURequest: dbCpuRequest,
+            logDBMemRequest: dbMemRequest + "Gi",
+          }
+        )
         .then(() => {
           setRefreshLoggingInfo(true);
           dispatch(setSnackBarMessage(`Audit Log configuration updated.`));
@@ -286,8 +293,8 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
   };
 
   const toggleLogging = () => {
-    if(!auditLoggingEnabled) {
-        api
+    if (!auditLoggingEnabled) {
+      api
         .invoke(
           "POST",
           `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/enable-logging`
@@ -304,25 +311,25 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
             })
           );
         });
-  } else {
-    api
-    .invoke(
-      "POST",
-      `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/disable-logging`
-    )
-    .then(() => {
-        setRefreshLoggingInfo(true);
-        setToggleConfirmOpen(false);
-    })
-    .catch((err: ErrorResponseHandler) => {
-      dispatch(
-        setErrorSnackMessage({
-          errorMessage: "Error disabling logging",
-          detailedError: err.detailedError,
+    } else {
+      api
+        .invoke(
+          "POST",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/disable-logging`
+        )
+        .then(() => {
+          setRefreshLoggingInfo(true);
+          setToggleConfirmOpen(false);
         })
-      );
-    });
-  };
+        .catch((err: ErrorResponseHandler) => {
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage: "Error disabling logging",
+              detailedError: err.detailedError,
+            })
+          );
+        });
+    }
   };
   return (
     <Fragment>
@@ -391,23 +398,23 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
             />
           </Grid>
           <Grid item xs={12} paddingBottom={2}>
-              <InputBoxWrapper
-                id={`dbImage`}
-                label={"DB Postgres Image"}
-                placeholder={"library/postgres:13"}
-                name={`dbImage`}
-                value={dbImage}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    if (event.target.validity.valid) {
-                      dispatch(setDBImage(event.target.value));
-                    }
-                    cleanValidation(`dbImage`);
-                  }}
-                key={`dbImage`}
-                pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
-                error={validationErrors[`dbImage`] || ""}
-              />
-            </Grid>
+            <InputBoxWrapper
+              id={`dbImage`}
+              label={"DB Postgres Image"}
+              placeholder={"library/postgres:13"}
+              name={`dbImage`}
+              value={dbImage}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                if (event.target.validity.valid) {
+                  dispatch(setDBImage(event.target.value));
+                }
+                cleanValidation(`dbImage`);
+              }}
+              key={`dbImage`}
+              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+              error={validationErrors[`dbImage`] || ""}
+            />
+          </Grid>
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`dbInitImage`}
@@ -598,7 +605,7 @@ const TenantAuditLogging = ({ classes }: ITenantAuditLogs) => {
               />
             </Grid>
           )}
-             {dbLabels !== null && (
+          {dbLabels !== null && (
             <Grid item xs={12} className={classes.formFieldRow}>
               <span className={classes.inputLabel}>DB Labels</span>
               <KeyPairEdit

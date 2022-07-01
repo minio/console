@@ -21,7 +21,7 @@ import {
   Box,
   InputAdornment,
   LinearProgress,
-  TextFieldProps
+  TextFieldProps,
 } from "@mui/material";
 import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -41,7 +41,7 @@ import {
   DownloadIcon,
   LockIcon,
   MinIOTierIconXs,
-  OperatorLogo
+  OperatorLogo,
 } from "../../icons";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -54,7 +54,7 @@ import Loader from "../Console/Common/Loader/Loader";
 import {
   setErrorSnackMessage,
   showMarketplace,
-  userLogged
+  userLogged,
 } from "../../systemSlice";
 import { useAppDispatch } from "../../store";
 
@@ -66,37 +66,37 @@ const styles = (theme: Theme) =>
       left: 0,
       width: "100%",
       height: "100%",
-      overflow: "auto"
+      overflow: "auto",
     },
     form: {
-      width: "100%" // Fix IE 11 issue.
+      width: "100%", // Fix IE 11 issue.
     },
     submit: {
       margin: "30px 0px 8px",
       height: 40,
       width: "100%",
       boxShadow: "none",
-      padding: "16px 30px"
+      padding: "16px 30px",
     },
     learnMore: {
       textAlign: "center",
       fontSize: 10,
       "& a": {
-        color: "#2781B0"
+        color: "#2781B0",
       },
       "& .min-icon": {
         marginLeft: 12,
         marginTop: 2,
-        width: 10
-      }
+        width: 10,
+      },
     },
     separator: {
       marginLeft: 8,
-      marginRight: 8
+      marginRight: 8,
     },
     linkHolder: {
       marginTop: 20,
-      font: "normal normal normal 14px/16px Lato"
+      font: "normal normal normal 14px/16px Lato",
     },
     miniLinks: {
       margin: "auto",
@@ -104,24 +104,24 @@ const styles = (theme: Theme) =>
       color: "#B2DEF5",
       "& a": {
         color: "#B2DEF5",
-        textDecoration: "none"
+        textDecoration: "none",
       },
       "& .min-icon": {
         width: 10,
-        color: "#B2DEF5"
-      }
+        color: "#B2DEF5",
+      },
     },
     miniLogo: {
       marginTop: 8,
       "& .min-icon": {
         height: 12,
         paddingTop: 2,
-        marginRight: 2
-      }
+        marginRight: 2,
+      },
     },
     loginPage: {
       height: "100%",
-      margin: "auto"
+      margin: "auto",
     },
     loginContainer: {
       flexDirection: "column",
@@ -129,7 +129,7 @@ const styles = (theme: Theme) =>
       margin: "auto",
       "& .right-items": {
         backgroundColor: "white",
-        padding: 40
+        padding: 40,
       },
       "& .consoleTextBanner": {
         fontWeight: 300,
@@ -145,32 +145,32 @@ const styles = (theme: Theme) =>
         "& .logoLine": {
           display: "flex",
           alignItems: "center",
-          fontSize: 18
+          fontSize: 18,
         },
         "& .left-items": {
           marginTop: 100,
           background:
             "transparent linear-gradient(180deg, #FBFAFA 0%, #E4E4E4 100%) 0% 0% no-repeat padding-box",
-          padding: 40
+          padding: 40,
         },
         "& .left-logo": {
           "& .min-icon": {
             color: theme.palette.primary.main,
-            width: 108
+            width: 108,
           },
-          marginBottom: 10
+          marginBottom: 10,
         },
         "& .text-line1": {
-          font: " 100 44px 'Lato'"
+          font: " 100 44px 'Lato'",
         },
         "& .text-line2": {
           fontSize: 80,
           fontWeight: 100,
-          textTransform: "uppercase"
+          textTransform: "uppercase",
         },
         "& .text-line3": {
           fontSize: 14,
-          fontWeight: "bold"
+          fontWeight: "bold",
         },
         "& .logo-console": {
           display: "flex",
@@ -181,11 +181,11 @@ const styles = (theme: Theme) =>
             flexFlow: "column",
 
             "& svg": {
-              width: "50%"
-            }
-          }
-        }
-      }
+              width: "50%",
+            },
+          },
+        },
+      },
     },
     "@media (max-width: 900px)": {
       loginContainer: {
@@ -198,35 +198,35 @@ const styles = (theme: Theme) =>
 
           "& .left-items": {
             alignItems: "center",
-            textAlign: "center"
+            textAlign: "center",
           },
 
           "& .logoLine": {
-            justifyContent: "center"
-          }
-        }
-      }
+            justifyContent: "center",
+          },
+        },
+      },
     },
     loadingLoginStrategy: {
       textAlign: "center",
       width: 40,
-      height: 40
+      height: 40,
     },
     submitContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
     linearPredef: {
-      height: 10
+      height: 10,
     },
     retryButton: {
-      alignSelf: "flex-end"
+      alignSelf: "flex-end",
     },
     iconLogo: {
       "& .min-icon": {
-        width: "100%"
-      }
+        width: "100%",
+      },
     },
-    ...spacingUtils
+    ...spacingUtils,
   });
 
 const inputStyles = makeStyles((theme: Theme) =>
@@ -237,27 +237,27 @@ const inputStyles = makeStyles((theme: Theme) =>
         "& svg": {
           marginLeft: 4,
           height: 14,
-          color: theme.palette.primary.main
+          color: theme.palette.primary.main,
         },
         "& input": {
           padding: 10,
           fontSize: 14,
           paddingLeft: 0,
           "&::placeholder": {
-            fontSize: 12
+            fontSize: 12,
           },
           "@media (max-width: 900px)": {
-            padding: 10
-          }
+            padding: 10,
+          },
         },
         "& fieldset": {},
 
         "& fieldset:hover": {
           borderBottom: "2px solid #000000",
-          borderRadius: 0
-        }
-      }
-    }
+          borderRadius: 0,
+        },
+      },
+    },
   })
 );
 
@@ -267,7 +267,7 @@ function LoginField(props: TextFieldProps) {
   return (
     <TextField
       classes={{
-        root: classes.root
+        root: classes.root,
       }}
       variant="standard"
       {...props}
@@ -299,7 +299,7 @@ const Login = ({ classes }: ILoginProps) => {
   const [secretKey, setSecretKey] = useState<string>("");
   const [loginStrategy, setLoginStrategy] = useState<ILoginDetails>({
     loginStrategy: loginStrategyType.unknown,
-    redirect: ""
+    redirect: "",
   });
   const [loginSending, setLoginSending] = useState<boolean>(false);
   const [loadingFetchConfiguration, setLoadingFetchConfiguration] =
@@ -314,11 +314,11 @@ const Login = ({ classes }: ILoginProps) => {
 
   const loginStrategyEndpoints: LoginStrategyRoutes = {
     form: "/api/v1/login",
-    "service-account": "/api/v1/login/operator"
+    "service-account": "/api/v1/login/operator",
   };
   const loginStrategyPayload: LoginStrategyPayload = {
     form: { accessKey, secretKey },
-    "service-account": { jwt }
+    "service-account": { jwt },
   };
 
   const fetchConfiguration = () => {
@@ -351,7 +351,8 @@ const Login = ({ classes }: ILoginProps) => {
         if (err.statusCode === 404) {
           dispatch(showMarketplace(true));
           navigate("/marketplace");
-        } else { // Unexpected error, continue with normal flow
+        } else {
+          // Unexpected error, continue with normal flow
           redirectAfterLogin();
         }
       });
@@ -405,9 +406,9 @@ const Login = ({ classes }: ILoginProps) => {
         .invoke("GET", "/api/v1/check-version")
         .then(
           ({
-             current_version,
-             latest_version
-           }: {
+            current_version,
+            latest_version,
+          }: {
             current_version: string;
             latest_version: string;
           }) => {
@@ -421,9 +422,9 @@ const Login = ({ classes }: ILoginProps) => {
             .invoke("GET", "/api/v1/check-operator-version")
             .then(
               ({
-                 current_version,
-                 latest_version
-               }: {
+                current_version,
+                latest_version,
+              }: {
                 current_version: string;
                 latest_version: string;
               }) => {
@@ -468,7 +469,7 @@ const Login = ({ classes }: ILoginProps) => {
                       >
                         <UserFilledIcon />
                       </InputAdornment>
-                    )
+                    ),
                   }}
                 />
               </Grid>
@@ -495,7 +496,7 @@ const Login = ({ classes }: ILoginProps) => {
                       >
                         <LockFilledIcon />
                       </InputAdornment>
-                    )
+                    ),
                   }}
                 />
               </Grid>
@@ -564,7 +565,7 @@ const Login = ({ classes }: ILoginProps) => {
                       <InputAdornment position="start">
                         <LockIcon />
                       </InputAdornment>
-                    )
+                    ),
                   }}
                 />
               </Grid>
@@ -639,7 +640,7 @@ const Login = ({ classes }: ILoginProps) => {
           container
           style={{
             maxWidth: 400,
-            margin: "auto"
+            margin: "auto",
           }}
         >
           <Grid
@@ -649,20 +650,20 @@ const Login = ({ classes }: ILoginProps) => {
               background:
                 "transparent linear-gradient(180deg, #FBFAFA 0%, #E4E4E4 100%) 0% 0% no-repeat padding-box",
               padding: 40,
-              color: theme.palette.primary.main
+              color: theme.palette.primary.main,
             }}
             sx={{
               marginTop: {
                 md: 16,
                 sm: 8,
-                xs: 3
-              }
+                xs: 3,
+              },
             }}
           >
             <Box className={classes.iconLogo}>{consoleText}</Box>
             <Box
               style={{
-                font: "normal normal normal 20px/24px Lato"
+                font: "normal normal normal 20px/24px Lato",
               }}
             >
               Multicloud Object Storage
@@ -674,14 +675,14 @@ const Login = ({ classes }: ILoginProps) => {
             style={{
               backgroundColor: "white",
               padding: 40,
-              color: theme.palette.primary.main
+              color: theme.palette.primary.main,
             }}
           >
             {loginComponent}
             <Box
               style={{
                 textAlign: "center",
-                marginTop: 20
+                marginTop: 20,
               }}
             >
               <a
@@ -690,7 +691,7 @@ const Login = ({ classes }: ILoginProps) => {
                 rel="noreferrer"
                 style={{
                   color: theme.colors.link,
-                  font: "normal normal normal 12px/15px Lato"
+                  font: "normal normal normal 12px/15px Lato",
                 }}
               >
                 Learn more about {isOperator ? "OPERATOR CONSOLE" : "CONSOLE"}
@@ -704,7 +705,7 @@ const Login = ({ classes }: ILoginProps) => {
                   font: "normal normal normal 12px/15px Lato",
                   textDecoration: "none",
                   fontWeight: "bold",
-                  paddingLeft: 4
+                  paddingLeft: 4,
                 }}
               >
                 ➔
@@ -754,7 +755,7 @@ const Login = ({ classes }: ILoginProps) => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  marginBottom: 20
+                  marginBottom: 20,
                 }}
               >
                 <MinIOTierIconXs /> <b>Latest Version:</b>&nbsp;
