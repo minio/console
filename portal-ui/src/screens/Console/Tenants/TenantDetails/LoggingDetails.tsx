@@ -45,18 +45,18 @@ import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import SecurityContextSelector from "../securityContextSelector";
 import { clearValidationError } from "../utils";
-import { 
-      setImage,
-      setDiskCapacityGB,
-      setServiceAccountName,
-      setCPURequest,
-      setMemRequest,
-      setRunAsUser, 
-      setFSGroup, 
-      setRunAsGroup, 
-      setRunAsNonRoot,
-      setRefreshLoggingInfo,
-  } from "../TenantDetails/tenantAuditLogSlice";
+import {
+  setImage,
+  setDiskCapacityGB,
+  setServiceAccountName,
+  setCPURequest,
+  setMemRequest,
+  setRunAsUser,
+  setFSGroup,
+  setRunAsGroup,
+  setRunAsNonRoot,
+  setRefreshLoggingInfo,
+} from "../TenantDetails/tenantAuditLogSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -82,15 +82,18 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITenantAuditLogs) => {
+const TenantAuditLogging = ({
+  classes,
+  labels,
+  annotations,
+  nodeSelector,
+}: ITenantAuditLogs) => {
   const dispatch = useAppDispatch();
   const { tenantName, tenantNamespace } = useParams();
   const auditLoggingEnabled = useSelector(
     (state: AppState) => state.editTenantLogging.auditLoggingEnabled
   );
-  const image = useSelector(
-    (state: AppState) => state.editTenantLogging.image
-  );
+  const image = useSelector((state: AppState) => state.editTenantLogging.image);
   const diskCapacityGB = useSelector(
     (state: AppState) => state.editTenantLogging.diskCapacityGB
   );
@@ -108,21 +111,31 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
   );
   const runAsUser = useSelector(
     (state: AppState) => state.editTenantLogging.securityContext.runAsUser
-  )
+  );
   const fsGroup = useSelector(
     (state: AppState) => state.editTenantLogging.securityContext.fsGroup
-  )
+  );
   const runAsNonRoot = useSelector(
     (state: AppState) => state.editTenantLogging.securityContext.runAsNonRoot
-  )
-  
+  );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [logLabels, setLabels] = useState<IKeyValue[]>((labels != null && labels.length > 0) ? labels : [{ key: "", value: "" }]);
-  const [logAnnotations, setAnnotations] = useState<IKeyValue[]>((annotations != null && annotations.length > 0)? annotations : [{ key: "", value: "" }]);
-  const [logNodeSelector, setNodeSelector] = useState<IKeyValue[]>((nodeSelector != null && nodeSelector.length > 0)? nodeSelector :[{ key: "", value: "" }]);
-  
+  const [logLabels, setLabels] = useState<IKeyValue[]>(
+    labels != null && labels.length > 0 ? labels : [{ key: "", value: "" }]
+  );
+  const [logAnnotations, setAnnotations] = useState<IKeyValue[]>(
+    annotations != null && annotations.length > 0
+      ? annotations
+      : [{ key: "", value: "" }]
+  );
+  const [logNodeSelector, setNodeSelector] = useState<IKeyValue[]>(
+    nodeSelector != null && nodeSelector.length > 0
+      ? nodeSelector
+      : [{ key: "", value: "" }]
+  );
+
   const [labelsError, setLabelsError] = useState<any>({});
   const [annotationsError, setAnnotationsError] = useState<any>({});
   const [nodeSelectorError, setNodeSelectorError] = useState<any>({});
@@ -146,7 +159,7 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
       Object.keys(validationErrors).length !== 0 ||
       Object.keys(labelsError).length !== 0 ||
       Object.keys(annotationsError).length !== 0 ||
-      Object.keys(nodeSelectorError).length !== 0 
+      Object.keys(nodeSelectorError).length !== 0
     ) {
       let err: ErrorResponseHandler = {
         errorMessage: "Invalid entry",
@@ -160,32 +173,31 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
   };
 
   const submitLoggingInfo = () => {
-   
     if (checkValid()) {
-       setLoading(true);
-       const securityContext = {
+      setLoading(true);
+      const securityContext = {
         runAsGroup: runAsGroup != null ? runAsGroup : "",
         runAsUser: runAsUser != null ? runAsUser : "",
         fsGroup: fsGroup != null ? fsGroup : "",
         runAsNonRoot: runAsNonRoot != null ? runAsNonRoot : true,
-      }
-      
+      };
+
       api
-      .invoke(
-        "PUT",
-        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`,
-        {
-          labels: trim(logLabels),
-          annotations: trim(logAnnotations),
-          nodeSelector: trim(logNodeSelector),
-          image: image,
-          diskCapacityGB: diskCapacityGB.toString(),
-          serviceAccountName: serviceAccountName,
-          logCPURequest: cpuRequest,
-          logMemRequest: memRequest,
-          securityContext: securityContext,
-        }
-      )
+        .invoke(
+          "PUT",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`,
+          {
+            labels: trim(logLabels),
+            annotations: trim(logAnnotations),
+            nodeSelector: trim(logNodeSelector),
+            image: image,
+            diskCapacityGB: diskCapacityGB.toString(),
+            serviceAccountName: serviceAccountName,
+            logCPURequest: cpuRequest,
+            logMemRequest: memRequest,
+            securityContext: securityContext,
+          }
+        )
         .then(() => {
           setRefreshLoggingInfo(true);
           dispatch(setSnackBarMessage(`Audit Log configuration updated.`));
@@ -197,9 +209,9 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
         });
     }
   };
-  
+
   return (
-    <Fragment>      
+    <Fragment>
       {auditLoggingEnabled && (
         <Fragment>
           <Grid item xs={12} paddingBottom={2}>
@@ -220,7 +232,7 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
               error={validationErrors[`image`] || ""}
             />
           </Grid>
-         
+
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`diskCapacityGB`}
@@ -266,7 +278,7 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
               error={validationErrors[`cpuRequest`] || ""}
             />
           </Grid>
-          
+
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`memRequest`}
@@ -294,7 +306,7 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
               }
             />
           </Grid>
-         
+
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`serviceAccountName`}
@@ -314,51 +326,54 @@ const TenantAuditLogging = ({ classes, labels, annotations, nodeSelector }: ITen
             />
           </Grid>
           <Grid item xs={12} className={classes.formFieldRow}>
-            <SecurityContextSelector classes={classes} 
-            runAsGroup={runAsGroup}
-            runAsUser={runAsUser}
-            fsGroup={fsGroup}
-            runAsNonRoot={runAsNonRoot}
-            setFSGroup={(value : string)=>dispatch(setFSGroup(value))}
-            setRunAsUser={(value : string)=>dispatch(setRunAsUser(value))}
-           setRunAsGroup={(value : string)=>dispatch(setRunAsGroup(value))}
-            setRunAsNonRoot={(value : boolean)=>dispatch(setRunAsNonRoot(value))}
+            <SecurityContextSelector
+              classes={classes}
+              runAsGroup={runAsGroup}
+              runAsUser={runAsUser}
+              fsGroup={fsGroup}
+              runAsNonRoot={runAsNonRoot}
+              setFSGroup={(value: string) => dispatch(setFSGroup(value))}
+              setRunAsUser={(value: string) => dispatch(setRunAsUser(value))}
+              setRunAsGroup={(value: string) => dispatch(setRunAsGroup(value))}
+              setRunAsNonRoot={(value: boolean) =>
+                dispatch(setRunAsNonRoot(value))
+              }
             />
-            </Grid>
-          
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <span className={classes.inputLabel}>Labels</span>
-              <KeyPairEdit
-                newValues={logLabels}
-                setNewValues={setLabels}
-                paramName={"Labels"}
-                error={labelsError}
-                setError={setLabelsError}
-              />
-            </Grid>
-        
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <span className={classes.inputLabel}>Annotations</span> 
-              <KeyPairEdit
-                newValues={logAnnotations }
-                setNewValues={setAnnotations}
-                paramName={"Annotations"}
-                error={annotationsError}
-                setError={setAnnotationsError}
-              />
-            </Grid>
-          
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <span className={classes.inputLabel}>Node Selector</span>
-              <KeyPairEdit
-                newValues={logNodeSelector}
-                setNewValues={setNodeSelector}
-                paramName={"Node Selector"}
-                error={nodeSelectorError}
-                setError={setNodeSelectorError}
-              />
-            </Grid>
- 
+          </Grid>
+
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <span className={classes.inputLabel}>Labels</span>
+            <KeyPairEdit
+              newValues={logLabels}
+              setNewValues={setLabels}
+              paramName={"Labels"}
+              error={labelsError}
+              setError={setLabelsError}
+            />
+          </Grid>
+
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <span className={classes.inputLabel}>Annotations</span>
+            <KeyPairEdit
+              newValues={logAnnotations}
+              setNewValues={setAnnotations}
+              paramName={"Annotations"}
+              error={annotationsError}
+              setError={setAnnotationsError}
+            />
+          </Grid>
+
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <span className={classes.inputLabel}>Node Selector</span>
+            <KeyPairEdit
+              newValues={logNodeSelector}
+              setNewValues={setNodeSelector}
+              paramName={"Node Selector"}
+              error={nodeSelectorError}
+              setError={setNodeSelectorError}
+            />
+          </Grid>
+
           <Grid item xs={12} textAlign={"right"}>
             <Button
               type="submit"

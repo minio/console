@@ -34,7 +34,6 @@ import editPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/EditP
 import editTenantMonitoringReducer from "./screens/Console/Tenants/TenantDetails/tenantMonitoringSlice";
 import editTenantAuditLoggingReducer from "./screens/Console/Tenants/TenantDetails/tenantAuditLogSlice";
 
-
 const rootReducer = combineReducers({
   system: systemReducer,
   trace: traceReducer,

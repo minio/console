@@ -42,8 +42,9 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-// eslint-disable-next-line
-const reEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const reEmail =
+  // eslint-disable-next-line
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
   const dispatch = useAppDispatch();
@@ -52,7 +53,7 @@ const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
     dispatch(setErrorSnackMessage(err));
     closeModal();
   };
-  
+
   const onSuccess = (res: any) => {
     let msg = `Email ${email} has been saved`;
     dispatch(setSnackBarMessage(msg));
@@ -62,7 +63,6 @@ const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
   const [isLoading, invokeApi] = useApi(onSuccess, onError);
   const [email, setEmail] = useState<string>("");
   const [isEmailSet, setIsEmailSet] = useState<boolean>(false);
-  
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let v = event.target.value;
@@ -72,13 +72,13 @@ const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
 
   const onConfirm = () => {
     const isInEU = isEU();
-    invokeApi("POST", "/api/v1/mp-integration", { email,  isInEU});
+    invokeApi("POST", "/api/v1/mp-integration", { email, isInEU });
   };
 
   const isEU = () => {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     return euTimezones.includes(tz.toLocaleLowerCase());
-  }
+  };
 
   return open ? (
     <ConfirmDialog
@@ -101,25 +101,27 @@ const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
             <a
               href="https://min.io/product/subnet"
               target="_blank"
-              rel="noreferrer">
-                MinIO Subscription Network (SUBNET)
-            </a>.
+              rel="noreferrer"
+            >
+              MinIO Subscription Network (SUBNET)
+            </a>
+            .
             <br />
             Enter your email to register now.
           </p>
           <p>
-            To register later, contact <a href="mailto: support@min.io">support@min.io</a>.
+            To register later, contact{" "}
+            <a href="mailto: support@min.io">support@min.io</a>.
           </p>
           <InputBoxWrapper
-              id="set-mp-email"
-              name="set-mp-email"
-              onChange={handleInputChange}
-              label={""}
-              placeholder="Enter email"
-              type={"email"}
-              value={email}
-              />
-
+            id="set-mp-email"
+            name="set-mp-email"
+            onChange={handleInputChange}
+            label={""}
+            placeholder="Enter email"
+            type={"email"}
+            value={email}
+          />
         </Fragment>
       }
     />

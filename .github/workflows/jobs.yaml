@@ -276,7 +276,7 @@ jobs:
           semgrep --config semgrep.yaml $(pwd)/portal-ui --error
 
   no-warnings-and-make-assets:
-    name: "React Code Has No Warnings and then Make Assets"
+    name: "React Code Has No Warning & Prettified and then Make Assets"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -329,6 +329,11 @@ jobs:
         continue-on-error: false
         run: |
           ./check-warnings.sh
+      - name: Check if Files are Prettified
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          ./check-prettier.sh
 
   reuse-golang-dependencies:
     name: reuse golang dependencies

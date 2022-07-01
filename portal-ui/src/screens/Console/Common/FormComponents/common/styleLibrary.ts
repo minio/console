@@ -796,8 +796,8 @@ export const wizardCommon = {
     justifyContent: "flex-start" as const,
   },
   multiContainerStackNarrow: {
-    display: "flex" ,
-    alignItems: "center" ,
+    display: "flex",
+    alignItems: "center",
     justifyContent: "flex-start",
     gap: "8px",
     "@media (max-width: 750px)": {

@@ -35,7 +35,7 @@ export interface IEditTenantAuditLogging {
   memRequest: string;
   dbCPURequest: string;
   dbMemRequest: string;
-  securityContext: ISecurityContext;  
+  securityContext: ISecurityContext;
   dbSecurityContext: ISecurityContext;
   refreshLoggingInfo: boolean;
 }
@@ -59,18 +59,18 @@ const initialState: IEditTenantAuditLogging = {
   cpuRequest: "",
   memRequest: "",
   securityContext: {
-  runAsUser: "1000",
-  runAsGroup: "1000",
-  fsGroup: "1000",
-  runAsNonRoot: false,
+    runAsUser: "1000",
+    runAsGroup: "1000",
+    fsGroup: "1000",
+    runAsNonRoot: false,
   },
   dbSecurityContext: {
-  runAsUser: "1000",
-  runAsGroup: "1000",
-  fsGroup: "1000",
-  runAsNonRoot: false,
+    runAsUser: "1000",
+    runAsGroup: "1000",
+    fsGroup: "1000",
+    runAsNonRoot: false,
   },
-  refreshLoggingInfo: true
+  refreshLoggingInfo: true,
 };
 
 export const editTenantAuditLoggingSlice = createSlice({
@@ -84,7 +84,7 @@ export const editTenantAuditLoggingSlice = createSlice({
       state.image = action.payload;
     },
     setDBImage: (state, action: PayloadAction<string>) => {
-    state.dbImage = action.payload;
+      state.dbImage = action.payload;
     },
     setDBInitImage: (state, action: PayloadAction<string>) => {
       state.dbInitImage = action.payload;
@@ -99,13 +99,13 @@ export const editTenantAuditLoggingSlice = createSlice({
       state.nodeSelector = action.payload;
     },
     setDBLabels: (state, action: PayloadAction<IKeyValue[]>) => {
-        state.dbLabels = action.payload;
+      state.dbLabels = action.payload;
     },
     setDBAnnotations: (state, action: PayloadAction<IKeyValue[]>) => {
-        state.dbAnnotations = action.payload;
+      state.dbAnnotations = action.payload;
     },
-      setDBNodeSelector: (state, action: PayloadAction<IKeyValue[]>) => {
-        state.dbNodeSelector = action.payload;
+    setDBNodeSelector: (state, action: PayloadAction<IKeyValue[]>) => {
+      state.dbNodeSelector = action.payload;
     },
     setDiskCapacityGB: (state, action: PayloadAction<number>) => {
       state.diskCapacityGB = action.payload;
@@ -123,10 +123,10 @@ export const editTenantAuditLoggingSlice = createSlice({
       state.memRequest = action.payload;
     },
     setDBCPURequest: (state, action: PayloadAction<string>) => {
-        state.dbCPURequest = action.payload;
+      state.dbCPURequest = action.payload;
     },
     setDBMemRequest: (state, action: PayloadAction<string>) => {
-        state.dbMemRequest = action.payload;
+      state.dbMemRequest = action.payload;
     },
     setRunAsUser: (state, action: PayloadAction<string>) => {
       state.securityContext.runAsUser = action.payload;
@@ -135,10 +135,10 @@ export const editTenantAuditLoggingSlice = createSlice({
       state.securityContext.runAsGroup = action.payload;
     },
     setFSGroup: (state, action: PayloadAction<string>) => {
-        state.securityContext.fsGroup = action.payload;
+      state.securityContext.fsGroup = action.payload;
     },
     setRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
-        state.securityContext.runAsNonRoot = action.payload;
+      state.securityContext.runAsNonRoot = action.payload;
     },
     setDBRunAsUser: (state, action: PayloadAction<string>) => {
       state.dbSecurityContext.runAsUser = action.payload;
@@ -147,10 +147,10 @@ export const editTenantAuditLoggingSlice = createSlice({
       state.dbSecurityContext.runAsGroup = action.payload;
     },
     setDBFSGroup: (state, action: PayloadAction<string>) => {
-        state.dbSecurityContext.fsGroup = action.payload;
+      state.dbSecurityContext.fsGroup = action.payload;
     },
     setDBRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
-        state.dbSecurityContext.runAsNonRoot = action.payload;
+      state.dbSecurityContext.runAsNonRoot = action.payload;
     },
     setRefreshLoggingInfo: (state, action: PayloadAction<boolean>) => {
       state.refreshLoggingInfo = action.payload;
@@ -160,33 +160,33 @@ export const editTenantAuditLoggingSlice = createSlice({
 });
 
 export const {
-    setAuditLoggingEnabled,
-      setImage,
-      setDBImage,
-      setDBInitImage,
-      setLabels,
-      setAnnotations,
-      setNodeSelector,
-      setDBLabels,
-      setDBAnnotations,
-      setDBNodeSelector,
-      setDiskCapacityGB,
-      setServiceAccountName,
-      setDBServiceAccountName,
-      setCPURequest,
-      setMemRequest,
-      setDBCPURequest,
-      setDBMemRequest,
-      setRunAsUser, 
-      setFSGroup, 
-      setRunAsGroup, 
-      setRunAsNonRoot,
-      setDBRunAsUser, 
-      setDBFSGroup, 
-      setDBRunAsGroup, 
-      setDBRunAsNonRoot,
-      setRefreshLoggingInfo,
-      resetAuditLogForm,
+  setAuditLoggingEnabled,
+  setImage,
+  setDBImage,
+  setDBInitImage,
+  setLabels,
+  setAnnotations,
+  setNodeSelector,
+  setDBLabels,
+  setDBAnnotations,
+  setDBNodeSelector,
+  setDiskCapacityGB,
+  setServiceAccountName,
+  setDBServiceAccountName,
+  setCPURequest,
+  setMemRequest,
+  setDBCPURequest,
+  setDBMemRequest,
+  setRunAsUser,
+  setFSGroup,
+  setRunAsGroup,
+  setRunAsNonRoot,
+  setDBRunAsUser,
+  setDBFSGroup,
+  setDBRunAsGroup,
+  setDBRunAsNonRoot,
+  setRefreshLoggingInfo,
+  resetAuditLogForm,
 } = editTenantAuditLoggingSlice.actions;
 
 export default editTenantAuditLoggingSlice.reducer;

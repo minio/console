@@ -6,3 +6,9 @@ build-static:
 
 test-warnings:
 	./check-warnings.sh
+
+test-prettier:
+	./check-prettier.sh
+
+prettify:
+	yarn prettier --write . --loglevel warn

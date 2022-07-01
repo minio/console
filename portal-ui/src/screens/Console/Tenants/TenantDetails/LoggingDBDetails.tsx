@@ -44,18 +44,17 @@ import {
 import { IKeyValue, ITenantAuditLogs } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import {    
-    setDBImage,
-    setDBInitImage,
-    setDBCPURequest,
-    setDBMemRequest,
-    setDBRunAsUser, 
-    setDBFSGroup, 
-    setDBRunAsGroup, 
-    setDBRunAsNonRoot,
-    setRefreshLoggingInfo,
-  } from "../TenantDetails/tenantAuditLogSlice";
-
+import {
+  setDBImage,
+  setDBInitImage,
+  setDBCPURequest,
+  setDBMemRequest,
+  setDBRunAsUser,
+  setDBFSGroup,
+  setDBRunAsGroup,
+  setDBRunAsNonRoot,
+  setRefreshLoggingInfo,
+} from "../TenantDetails/tenantAuditLogSlice";
 
 import SecurityContextSelector from "../securityContextSelector";
 
@@ -85,7 +84,12 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const LoggingDBDetails = ({ classes, labels, annotations, nodeSelector }: ITenantAuditLogs) => {
+const LoggingDBDetails = ({
+  classes,
+  labels,
+  annotations,
+  nodeSelector,
+}: ITenantAuditLogs) => {
   const dispatch = useAppDispatch();
   const { tenantName, tenantNamespace } = useParams();
   const dbImage = useSelector(
@@ -109,18 +113,28 @@ const LoggingDBDetails = ({ classes, labels, annotations, nodeSelector }: ITenan
   );
   const dbRunAsUser = useSelector(
     (state: AppState) => state.editTenantLogging.dbSecurityContext.runAsUser
-  )
+  );
   const dbFSGroup = useSelector(
     (state: AppState) => state.editTenantLogging.dbSecurityContext.fsGroup
-  )
+  );
   const dbRunAsNonRoot = useSelector(
     (state: AppState) => state.editTenantLogging.dbSecurityContext.runAsNonRoot
-  )
+  );
   const [validationErrors, setValidationErrors] = useState<any>({});
 
-  const [dbLabels, setDBLabels] = useState<IKeyValue[]>((labels != null && labels.length > 0) ? labels : [{ key: "", value: "" }]);
-  const [dbAnnotations, setDBAnnotations] = useState<IKeyValue[]>((annotations != null && annotations.length > 0)? annotations : [{ key: "", value: "" }]);
-  const [dbNodeSelector, setDBNodeSelector] = useState<IKeyValue[]>((nodeSelector != null && nodeSelector.length > 0)? nodeSelector :[{ key: "", value: "" }]);
+  const [dbLabels, setDBLabels] = useState<IKeyValue[]>(
+    labels != null && labels.length > 0 ? labels : [{ key: "", value: "" }]
+  );
+  const [dbAnnotations, setDBAnnotations] = useState<IKeyValue[]>(
+    annotations != null && annotations.length > 0
+      ? annotations
+      : [{ key: "", value: "" }]
+  );
+  const [dbNodeSelector, setDBNodeSelector] = useState<IKeyValue[]>(
+    nodeSelector != null && nodeSelector.length > 0
+      ? nodeSelector
+      : [{ key: "", value: "" }]
+  );
 
   const [dbLabelsError, setDBLabelsError] = useState<any>({});
   const [dbAnnotationsError, setDBAnnotationsError] = useState<any>({});
@@ -129,8 +143,6 @@ const LoggingDBDetails = ({ classes, labels, annotations, nodeSelector }: ITenan
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
-
-  
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
@@ -147,7 +159,7 @@ const LoggingDBDetails = ({ classes, labels, annotations, nodeSelector }: ITenan
       Object.keys(validationErrors).length !== 0 ||
       Object.keys(dbNodeSelectorError).length !== 0 ||
       Object.keys(dbAnnotationsError).length !== 0 ||
-      Object.keys(dbLabelsError).length !== 0 
+      Object.keys(dbLabelsError).length !== 0
     ) {
       let err: ErrorResponseHandler = {
         errorMessage: "Invalid entry",
@@ -160,32 +172,30 @@ const LoggingDBDetails = ({ classes, labels, annotations, nodeSelector }: ITenan
     }
   };
 
- 
-
   const submitLoggingInfo = () => {
-    if (checkValid()) {      
+    if (checkValid()) {
       const dbSecurityContext = {
         runAsGroup: dbRunAsGroup != null ? dbRunAsGroup : "",
         runAsUser: dbRunAsUser != null ? dbRunAsUser : "",
         fsGroup: dbFSGroup != null ? dbFSGroup : "",
         runAsNonRoot: dbRunAsNonRoot != null ? dbRunAsNonRoot : true,
-      }
+      };
       api
-      .invoke(
-        "PUT",
-        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`,
-        {      
-          dbLabels: trim(dbLabels),
-          dbAnnotations: trim(dbAnnotations),
-          dbNodeSelector: trim(dbNodeSelector),
-          dbImage: dbImage,
-          dbInitImage: dbInitImage,
-          dbServiceAccountName: dbServiceAccountName,          
-          logDBCPURequest: dbCpuRequest,
-          logDBMemRequest: dbMemRequest,          
-          dbSecurityContext: dbSecurityContext,
-        }
-      )
+        .invoke(
+          "PUT",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log`,
+          {
+            dbLabels: trim(dbLabels),
+            dbAnnotations: trim(dbAnnotations),
+            dbNodeSelector: trim(dbNodeSelector),
+            dbImage: dbImage,
+            dbInitImage: dbInitImage,
+            dbServiceAccountName: dbServiceAccountName,
+            logDBCPURequest: dbCpuRequest,
+            logDBMemRequest: dbMemRequest,
+            dbSecurityContext: dbSecurityContext,
+          }
+        )
         .then(() => {
           setRefreshLoggingInfo(true);
           dispatch(setSnackBarMessage(`Audit Log DB configuration updated.`));
@@ -196,149 +206,150 @@ const LoggingDBDetails = ({ classes, labels, annotations, nodeSelector }: ITenan
     }
   };
 
-  
   return (
     <Fragment>
-        <Fragment>
-          
-           <Grid item xs={12} paddingBottom={2}>
-              <InputBoxWrapper
-                id={`dbImage`}
-                label={"DB Postgres Image"}
-                placeholder={"library/postgres:13"}
-                name={`dbImage`}
-                value={dbImage}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    if (event.target.validity.valid) {
-                      dispatch(setDBImage(event.target.value));
-                    }
-                    cleanValidation(`dbImage`);
-                  }}
-                key={`dbImage`}
-                pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
-                error={validationErrors[`dbImage`] || ""}
-              />
-            </Grid>
-          <Grid item xs={12} paddingBottom={2}>
-            <InputBoxWrapper
-              id={`dbInitImage`}
-              label={"DB Init Image"}
-              placeholder={"library/busybox:1.33.1"}
-              name={`dbInitImage`}
-              value={dbInitImage}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                if (event.target.validity.valid) {
-                  dispatch(setDBInitImage(event.target.value));
-                }
-                cleanValidation(`dbInitImage`);
-              }}
-              key={`dbInitImage`}
-              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
-              error={validationErrors[`dbInitImage`] || ""}
-            />
-          </Grid>
-          <Grid item xs={12} paddingBottom={2}>
-            <InputBoxWrapper
-              id={`dbCPURequest`}
-              label={"DB CPU Request"}
-              placeholder={"DB CPU Request"}
-              name={`dbCPURequest`}
-              value={dbCpuRequest}
-              pattern={"[0-9]*"}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                if (event.target.validity.valid) {
-                  dispatch(setDBCPURequest(event.target.value));
-                }
-                cleanValidation(`dbCPURequest`);
-              }}
-              key={`dbCPURequest`}
-              error={validationErrors[`dbCPURequest`] || ""}
-            />
-          </Grid>
-          <Grid item xs={12} paddingBottom={2}>
-            <InputBoxWrapper
-              id={`dbMemRequest`}
-              label={"DB Memory Request"}
-              placeholder={"DB Memory request"}
-              name={`dbMemRequest`}
-              value={dbMemRequest}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                if (event.target.validity.valid) {
-                  dispatch(setDBMemRequest(event.target.value));
-                }
-                cleanValidation(`dbMemRequest`);
-              }}
-              pattern={"[0-9]*"}
-              key={`dbMemRequest`}
-              error={validationErrors[`dbMemRequest`] || ""}
-              overlayObject={
-                <InputUnitMenu
-                  id={"size-unit"}
-                  onUnitChange={() => {}}
-                  unitSelected={"Gi"}
-                  unitsList={[{ label: "Gi", value: "Gi" }]}
-                  disabled={true}
-                />
+      <Fragment>
+        <Grid item xs={12} paddingBottom={2}>
+          <InputBoxWrapper
+            id={`dbImage`}
+            label={"DB Postgres Image"}
+            placeholder={"library/postgres:13"}
+            name={`dbImage`}
+            value={dbImage}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              if (event.target.validity.valid) {
+                dispatch(setDBImage(event.target.value));
               }
-            />
-          </Grid>
-          
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <span className={classes.inputLabel}>DB Labels</span>
-              <KeyPairEdit
-                newValues={dbLabels}
-                setNewValues={setDBLabels}
-                paramName={"dbLabels"}
-                error={dbLabelsError}
-                setError={setDBLabelsError}
+              cleanValidation(`dbImage`);
+            }}
+            key={`dbImage`}
+            pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+            error={validationErrors[`dbImage`] || ""}
+          />
+        </Grid>
+        <Grid item xs={12} paddingBottom={2}>
+          <InputBoxWrapper
+            id={`dbInitImage`}
+            label={"DB Init Image"}
+            placeholder={"library/busybox:1.33.1"}
+            name={`dbInitImage`}
+            value={dbInitImage}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              if (event.target.validity.valid) {
+                dispatch(setDBInitImage(event.target.value));
+              }
+              cleanValidation(`dbInitImage`);
+            }}
+            key={`dbInitImage`}
+            pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+            error={validationErrors[`dbInitImage`] || ""}
+          />
+        </Grid>
+        <Grid item xs={12} paddingBottom={2}>
+          <InputBoxWrapper
+            id={`dbCPURequest`}
+            label={"DB CPU Request"}
+            placeholder={"DB CPU Request"}
+            name={`dbCPURequest`}
+            value={dbCpuRequest}
+            pattern={"[0-9]*"}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              if (event.target.validity.valid) {
+                dispatch(setDBCPURequest(event.target.value));
+              }
+              cleanValidation(`dbCPURequest`);
+            }}
+            key={`dbCPURequest`}
+            error={validationErrors[`dbCPURequest`] || ""}
+          />
+        </Grid>
+        <Grid item xs={12} paddingBottom={2}>
+          <InputBoxWrapper
+            id={`dbMemRequest`}
+            label={"DB Memory Request"}
+            placeholder={"DB Memory request"}
+            name={`dbMemRequest`}
+            value={dbMemRequest}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              if (event.target.validity.valid) {
+                dispatch(setDBMemRequest(event.target.value));
+              }
+              cleanValidation(`dbMemRequest`);
+            }}
+            pattern={"[0-9]*"}
+            key={`dbMemRequest`}
+            error={validationErrors[`dbMemRequest`] || ""}
+            overlayObject={
+              <InputUnitMenu
+                id={"size-unit"}
+                onUnitChange={() => {}}
+                unitSelected={"Gi"}
+                unitsList={[{ label: "Gi", value: "Gi" }]}
+                disabled={true}
               />
-            </Grid>         
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <span className={classes.inputLabel}>DB Annotations</span>
-              <KeyPairEdit
-                newValues={dbAnnotations}
-                setNewValues={setDBAnnotations}
-                paramName={"dbAnnotations"}
-                error={dbAnnotationsError}
-                setError={setDBAnnotationsError}
-              />
-            </Grid>
-         
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <span className={classes.inputLabel}>DB Node Selector</span>
-              <KeyPairEdit
-                newValues={dbNodeSelector}
-                setNewValues={setDBNodeSelector}
-                paramName={"DB Node Selector"}
-                error={dbNodeSelectorError}
-                setError={setDBNodeSelectorError}
-              />
-            </Grid>
-          
-           <Grid item xs={12} className={classes.formFieldRow}>
-            <SecurityContextSelector classes={classes} 
+            }
+          />
+        </Grid>
+
+        <Grid item xs={12} className={classes.formFieldRow}>
+          <span className={classes.inputLabel}>DB Labels</span>
+          <KeyPairEdit
+            newValues={dbLabels}
+            setNewValues={setDBLabels}
+            paramName={"dbLabels"}
+            error={dbLabelsError}
+            setError={setDBLabelsError}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.formFieldRow}>
+          <span className={classes.inputLabel}>DB Annotations</span>
+          <KeyPairEdit
+            newValues={dbAnnotations}
+            setNewValues={setDBAnnotations}
+            paramName={"dbAnnotations"}
+            error={dbAnnotationsError}
+            setError={setDBAnnotationsError}
+          />
+        </Grid>
+
+        <Grid item xs={12} className={classes.formFieldRow}>
+          <span className={classes.inputLabel}>DB Node Selector</span>
+          <KeyPairEdit
+            newValues={dbNodeSelector}
+            setNewValues={setDBNodeSelector}
+            paramName={"DB Node Selector"}
+            error={dbNodeSelectorError}
+            setError={setDBNodeSelectorError}
+          />
+        </Grid>
+
+        <Grid item xs={12} className={classes.formFieldRow}>
+          <SecurityContextSelector
+            classes={classes}
             runAsGroup={dbRunAsGroup}
             runAsUser={dbRunAsUser}
             fsGroup={dbFSGroup}
             runAsNonRoot={dbRunAsNonRoot}
-            setFSGroup={(value : string)=>dispatch(setDBFSGroup(value))}
-            setRunAsUser={(value : string)=>dispatch(setDBRunAsUser(value))}
-           setRunAsGroup={(value : string)=>dispatch(setDBRunAsGroup(value))}
-            setRunAsNonRoot={(value : boolean)=>dispatch(setDBRunAsNonRoot(value))}
-            /></Grid>
-          <Grid item xs={12} textAlign={"right"}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={!checkValid()}
-              onClick={() => submitLoggingInfo()}
-            >
-              Save
-            </Button>
-          </Grid>
-        </Fragment>
-
+            setFSGroup={(value: string) => dispatch(setDBFSGroup(value))}
+            setRunAsUser={(value: string) => dispatch(setDBRunAsUser(value))}
+            setRunAsGroup={(value: string) => dispatch(setDBRunAsGroup(value))}
+            setRunAsNonRoot={(value: boolean) =>
+              dispatch(setDBRunAsNonRoot(value))
+            }
+          />
+        </Grid>
+        <Grid item xs={12} textAlign={"right"}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={!checkValid()}
+            onClick={() => submitLoggingInfo()}
+          >
+            Save
+          </Button>
+        </Grid>
+      </Fragment>
     </Fragment>
   );
 };
