@@ -139,21 +139,43 @@ export const checkMonitoringFieldsAcceptValues = async (tenantName: string) => {
     .click("#yaml_button")
     .expect(Selector("#code_wrapper").exists)
     .ok();
-   await t
-    .expect((await Selector("#code_wrapper").textContent).includes("image: quay.io/prometheus/prometheus:latest"))
+  await t
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("image: quay.io/prometheus/prometheus:latest")
+    )
     .ok()
-    .expect((await Selector("#code_wrapper").textContent).includes("initimage: library/busybox:1.33.1"))
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("initimage: library/busybox:1.33.1")
+    )
     .ok()
-    .expect((await Selector("#code_wrapper").textContent).includes("diskCapacityGB: 1"))
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("diskCapacityGB: 1")
+    )
     .ok()
-    .expect((await Selector("#code_wrapper").textContent).includes("cpu: \"1\""))
+    .expect((await Selector("#code_wrapper").textContent).includes('cpu: "1"'))
     .ok()
-    .expect((await Selector("#code_wrapper").textContent).includes("memory: 01Gi"))
+    .expect(
+      (await Selector("#code_wrapper").textContent).includes("memory: 01Gi")
+    )
     .ok()
-    .expect((await Selector("#code_wrapper").textContent).includes("serviceAccountName: monitoringTestServiceAccountName"))
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("serviceAccountName: monitoringTestServiceAccountName")
+    )
     .ok()
-    .expect((await Selector("#code_wrapper").textContent).includes("sidecarimage: library/alpine:latest"))
-    .ok()
-    //.expect((await Selector("#code_wrapper").textContent).includes("storageClassName: monitoringTestStorageClassName"))
-   // .ok();
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("sidecarimage: library/alpine:latest")
+    )
+    .ok();
+  //.expect((await Selector("#code_wrapper").textContent).includes("storageClassName: monitoringTestStorageClassName"))
+  // .ok();
 };
