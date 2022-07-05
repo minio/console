@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-//import {  ISecurityContext} from "../types";
+
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -55,10 +55,14 @@ import {setPrometheusEnabled,
         setServiceAccountName,
         setCPURequest,
         setMemRequest,
+        setRunAsGroup,
+        setFSGroup,
+        setRunAsUser,
+        setRunAsNonRoot,
     } from "../TenantDetails/tenantMonitoringSlice" 
 import { clearValidationError } from "../utils";
 import SecurityContextSelector from "../securityContextSelector";
-import { setRunAsUser, setFSGroup, setRunAsGroup, setRunAsNonRoot } from "../monitoringSecurityContextSlice";
+
   
   interface ITenantMonitoring {
   classes: any;
@@ -136,16 +140,15 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
   const [nodeSelectorError, setNodeSelectorError] = useState<any>({});
 
     const runAsGroup = useSelector(
-      (state: AppState) => state.editSecurityContext.runAsGroup
-    )
+      (state: AppState) => state.editTenantMonitoring.runAsGroup)
     const runAsUser = useSelector(
-      (state: AppState) => state.editSecurityContext.runAsUser
+      (state: AppState) => state.editTenantMonitoring.runAsUser
     )
     const fsGroup = useSelector(
-      (state: AppState) => state.editSecurityContext.fsGroup
+      (state: AppState) => state.editTenantMonitoring.fsGroup
     )
     const runAsNonRoot = useSelector(
-      (state: AppState) => state.editSecurityContext.runAsNonRoot
+      (state: AppState) => state.editTenantMonitoring.runAsNonRoot
     )
     const cleanValidation = (fieldName: string) => {
       setValidationErrors(clearValidationError(validationErrors, fieldName));
@@ -226,9 +229,9 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
   const submitMonitoringInfo = () => {
     if (checkValid()) {
 const securityContext = {
-        runAsGroup: runAsGroup != null ? runAsGroup : "",
-        runAsUser: runAsUser != null ? runAsUser : "",
-        fsGroup: fsGroup != null ? fsGroup : "",
+        runAsGroup: runAsGroup != null ? runAsGroup : "0",
+        runAsUser: runAsUser != null ? runAsUser : "0",
+        fsGroup: fsGroup != null ? fsGroup : "0",
         runAsNonRoot: runAsNonRoot != null ? runAsNonRoot : true,
       }
       api
