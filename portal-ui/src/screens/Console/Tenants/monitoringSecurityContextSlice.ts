@@ -16,43 +16,42 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IEditMonitoringSecurityContext } from "./types";
 
-
 const initialState: IEditMonitoringSecurityContext = {
-        securityContextEnabled: false,    
-        runAsUser: "1000",
-        runAsGroup: "1000",
-        fsGroup: "1000",
-        runAsNonRoot: true,
+  securityContextEnabled: false,
+  runAsUser: "1000",
+  runAsGroup: "1000",
+  fsGroup: "1000",
+  runAsNonRoot: true,
 };
 
 export const editMonitoringSecurityContextSlice = createSlice({
-    name: "editMonitoringSecurityContext",
-    initialState,
-    reducers: {
-        setSecurityContextEnabled: (state, action: PayloadAction<boolean>) => {
-            state.securityContextEnabled = action.payload;
-        },
-        setRunAsUser: (state, action: PayloadAction<string>) => {
-            state.runAsUser = action.payload;
-        },
-        setRunAsGroup:(state, action: PayloadAction<string>) => {
-            state.runAsGroup = action.payload;
-        },
-        setFSGroup: (state, action: PayloadAction<string>) => {
-            state.fsGroup = action.payload;
-        },
-        setRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
-            state.runAsNonRoot = action.payload;
-        },
+  name: "editMonitoringSecurityContext",
+  initialState,
+  reducers: {
+    setSecurityContextEnabled: (state, action: PayloadAction<boolean>) => {
+      state.securityContextEnabled = action.payload;
     },
+    setRunAsUser: (state, action: PayloadAction<string>) => {
+      state.runAsUser = action.payload;
+    },
+    setRunAsGroup: (state, action: PayloadAction<string>) => {
+      state.runAsGroup = action.payload;
+    },
+    setFSGroup: (state, action: PayloadAction<string>) => {
+      state.fsGroup = action.payload;
+    },
+    setRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
+      state.runAsNonRoot = action.payload;
+    },
+  },
 });
 
 export const {
-    setSecurityContextEnabled,
-    setRunAsUser, 
-    setRunAsGroup,
-    setFSGroup,
-    setRunAsNonRoot,
+  setSecurityContextEnabled,
+  setRunAsUser,
+  setRunAsGroup,
+  setFSGroup,
+  setRunAsNonRoot,
 } = editMonitoringSecurityContextSlice.actions;
 
 export default editMonitoringSecurityContextSlice.reducer;

@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -46,25 +45,25 @@ import { IKeyValue } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { ITenantMonitoringStruct } from "../ListTenants/types";
-import {setPrometheusEnabled,
-        setImage,
-        setSidecarImage,
-        setInitImage,
-        setStorageClassName,        
-        setDiskCapacityGB,
-        setServiceAccountName,
-        setCPURequest,
-        setMemRequest,
-        setRunAsGroup,
-        setFSGroup,
-        setRunAsUser,
-        setRunAsNonRoot,
-    } from "../TenantDetails/tenantMonitoringSlice" 
+import {
+  setPrometheusEnabled,
+  setImage,
+  setSidecarImage,
+  setInitImage,
+  setStorageClassName,
+  setDiskCapacityGB,
+  setServiceAccountName,
+  setCPURequest,
+  setMemRequest,
+  setRunAsGroup,
+  setFSGroup,
+  setRunAsUser,
+  setRunAsNonRoot,
+} from "../TenantDetails/tenantMonitoringSlice";
 import { clearValidationError } from "../utils";
 import SecurityContextSelector from "../securityContextSelector";
 
-  
-  interface ITenantMonitoring {
+interface ITenantMonitoring {
   classes: any;
 }
 
@@ -139,42 +138,55 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
   const [annotationsError, setAnnotationsError] = useState<any>({});
   const [nodeSelectorError, setNodeSelectorError] = useState<any>({});
 
-    const runAsGroup = useSelector(
-      (state: AppState) => state.editTenantMonitoring.runAsGroup)
-    const runAsUser = useSelector(
-      (state: AppState) => state.editTenantMonitoring.runAsUser
-    )
-    const fsGroup = useSelector(
-      (state: AppState) => state.editTenantMonitoring.fsGroup
-    )
-    const runAsNonRoot = useSelector(
-      (state: AppState) => state.editTenantMonitoring.runAsNonRoot
-    )
-    const cleanValidation = (fieldName: string) => {
-      setValidationErrors(clearValidationError(validationErrors, fieldName));
-    };
-  
-    const setMonitoringInfo = (res : ITenantMonitoringStruct) => {
-        dispatch(setImage(res.image));
-        dispatch(setSidecarImage(res.sidecarImage));
-        dispatch(setInitImage(res.initImage));
-        dispatch(setStorageClassName(res.storageClassName));
-        dispatch(setDiskCapacityGB(res.diskCapacityGB));
-        dispatch(setServiceAccountName(res.serviceAccountName));
-        dispatch(setCPURequest(res.monitoringCPURequest));
-        if (res.monitoringMemRequest) {
-        dispatch(setMemRequest(Math.floor(parseInt(res.monitoringMemRequest, 10) / 1000000000).toString()));
-        } else {
-          dispatch(setMemRequest("0"));
-        }
-        res.labels != null ? setLabels(res.labels) : setLabels([{key:"", value:""}]);
-       res.annotations != null ? setAnnotations(res.annotations) :setAnnotations([{key:"", value:""}]);
-       res.nodeSelector != null  ? setNodeSelector(res.nodeSelector) :setNodeSelector([{key:"", value:""}]);
-       dispatch(setRunAsGroup(res.securityContext.runAsGroup));
-       dispatch(setRunAsUser(res.securityContext.runAsUser));
-       dispatch(setRunAsNonRoot(res.securityContext.runAsNonRoot));
-       dispatch(setFSGroup(res.securityContext.fsGroup));
-      }
+  const runAsGroup = useSelector(
+    (state: AppState) => state.editTenantMonitoring.runAsGroup
+  );
+  const runAsUser = useSelector(
+    (state: AppState) => state.editTenantMonitoring.runAsUser
+  );
+  const fsGroup = useSelector(
+    (state: AppState) => state.editTenantMonitoring.fsGroup
+  );
+  const runAsNonRoot = useSelector(
+    (state: AppState) => state.editTenantMonitoring.runAsNonRoot
+  );
+  const cleanValidation = (fieldName: string) => {
+    setValidationErrors(clearValidationError(validationErrors, fieldName));
+  };
+
+  const setMonitoringInfo = (res: ITenantMonitoringStruct) => {
+    dispatch(setImage(res.image));
+    dispatch(setSidecarImage(res.sidecarImage));
+    dispatch(setInitImage(res.initImage));
+    dispatch(setStorageClassName(res.storageClassName));
+    dispatch(setDiskCapacityGB(res.diskCapacityGB));
+    dispatch(setServiceAccountName(res.serviceAccountName));
+    dispatch(setCPURequest(res.monitoringCPURequest));
+    if (res.monitoringMemRequest) {
+      dispatch(
+        setMemRequest(
+          Math.floor(
+            parseInt(res.monitoringMemRequest, 10) / 1000000000
+          ).toString()
+        )
+      );
+    } else {
+      dispatch(setMemRequest("0"));
+    }
+    res.labels != null
+      ? setLabels(res.labels)
+      : setLabels([{ key: "", value: "" }]);
+    res.annotations != null
+      ? setAnnotations(res.annotations)
+      : setAnnotations([{ key: "", value: "" }]);
+    res.nodeSelector != null
+      ? setNodeSelector(res.nodeSelector)
+      : setNodeSelector([{ key: "", value: "" }]);
+    dispatch(setRunAsGroup(res.securityContext.runAsGroup));
+    dispatch(setRunAsUser(res.securityContext.runAsUser));
+    dispatch(setRunAsNonRoot(res.securityContext.runAsNonRoot));
+    dispatch(setFSGroup(res.securityContext.fsGroup));
+  };
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
@@ -228,12 +240,12 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
 
   const submitMonitoringInfo = () => {
     if (checkValid()) {
-const securityContext = {
+      const securityContext = {
         runAsGroup: runAsGroup != null ? runAsGroup : "0",
         runAsUser: runAsUser != null ? runAsUser : "0",
         fsGroup: fsGroup != null ? fsGroup : "0",
         runAsNonRoot: runAsNonRoot != null ? runAsNonRoot : true,
-      }
+      };
       api
         .invoke(
           "PUT",
@@ -251,7 +263,7 @@ const securityContext = {
             monitoringCPURequest: cpuRequest,
             monitoringMemRequest: memRequest + "Gi",
             securityContext: securityContext,
-        }
+          }
         )
         .then(() => {
           setRefreshMonitoringInfo(true);
@@ -532,32 +544,34 @@ const securityContext = {
               />
             </Grid>
           )}
-           <Grid item xs={12} className={classes.formFieldRow}>
-            <SecurityContextSelector classes={classes} 
-            runAsGroup={runAsGroup}
-            runAsUser={runAsUser}
-            fsGroup={fsGroup}
-            runAsNonRoot={runAsNonRoot}
-            setFSGroup={(value : string)=>dispatch(setFSGroup(value))}
-            setRunAsUser={(value : string)=>dispatch(setRunAsUser(value))}
-            setRunAsGroup={(value : string)=>dispatch(setRunAsGroup(value))}
-            setRunAsNonRoot={(value : boolean)=>dispatch(setRunAsNonRoot(value))}
-            /></Grid>
-        <Grid item xs={12} textAlign={"right"}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!checkValid()}
-            onClick={() =>     
-             submitMonitoringInfo()
-            }
-          >
-            Save
-          </Button>
-        </Grid>
-        </Fragment> 
-        )}
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <SecurityContextSelector
+              classes={classes}
+              runAsGroup={runAsGroup}
+              runAsUser={runAsUser}
+              fsGroup={fsGroup}
+              runAsNonRoot={runAsNonRoot}
+              setFSGroup={(value: string) => dispatch(setFSGroup(value))}
+              setRunAsUser={(value: string) => dispatch(setRunAsUser(value))}
+              setRunAsGroup={(value: string) => dispatch(setRunAsGroup(value))}
+              setRunAsNonRoot={(value: boolean) =>
+                dispatch(setRunAsNonRoot(value))
+              }
+            />
+          </Grid>
+          <Grid item xs={12} textAlign={"right"}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={!checkValid()}
+              onClick={() => submitMonitoringInfo()}
+            >
+              Save
+            </Button>
+          </Grid>
+        </Fragment>
+      )}
     </Fragment>
   );
 };

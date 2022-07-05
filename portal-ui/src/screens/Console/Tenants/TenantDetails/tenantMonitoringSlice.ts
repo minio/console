@@ -95,20 +95,19 @@ export const editTenantMonitoringSlice = createSlice({
       state.monitoringMemRequest = action.payload;
     },
     setRunAsUser: (state, action: PayloadAction<string>) => {
-          state.runAsUser = action.payload;
-      },
-      setRunAsGroup:(state, action: PayloadAction<string>) => {
-          state.runAsGroup = action.payload;
-      },
-        setFSGroup: (state, action: PayloadAction<string>) => {
-            state.fsGroup = action.payload;
-        },
-        setRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
-            state.runAsNonRoot = action.payload;
-        },
+      state.runAsUser = action.payload;
+    },
+    setRunAsGroup: (state, action: PayloadAction<string>) => {
+      state.runAsGroup = action.payload;
+    },
+    setFSGroup: (state, action: PayloadAction<string>) => {
+      state.fsGroup = action.payload;
+    },
+    setRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
+      state.runAsNonRoot = action.payload;
     },
   },
-);
+});
 
 export const {
   setPrometheusEnabled,
@@ -123,7 +122,7 @@ export const {
   setServiceAccountName,
   setCPURequest,
   setMemRequest,
-  setRunAsUser, 
+  setRunAsUser,
   setRunAsGroup,
   setFSGroup,
   setRunAsNonRoot,

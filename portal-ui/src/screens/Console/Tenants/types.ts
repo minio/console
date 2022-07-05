@@ -346,4 +346,3 @@ export interface IEditMonitoringSecurityContext {
   fsGroup: string;
   runAsNonRoot: boolean;
 }
-
