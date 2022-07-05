@@ -22,8 +22,8 @@ require (
 	github.com/minio/cli v1.22.0
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.19.2
-	github.com/minio/madmin-go v1.4.2
-	github.com/minio/mc v0.0.0-20220701230404-82a6c4f20f5b
+	github.com/minio/madmin-go v1.4.3
+	github.com/minio/mc v0.0.0-20220705180830-01b87ecc02ff
 	github.com/minio/minio-go/v7 v7.0.30
 	github.com/minio/operator v0.0.0-20220414212219-ba4c097324b2
 	github.com/minio/pkg v1.1.23
