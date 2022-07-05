@@ -19,15 +19,18 @@ import { useSelector } from "react-redux";
 import { AppState } from "../../../store";
 import { Box } from "@mui/material";
 import { CircleIcon } from "../../../icons";
+import { getLicenseConsent } from "../License/utils";
 
 const LicenseBadge = () => {
   const licenseInfo = useSelector(
     (state: AppState) => state?.system?.licenseInfo
   );
 
+  const isAgplAckDone = getLicenseConsent();
+
   const { plan = "" } = licenseInfo || {};
 
-  if (plan) {
+  if (plan || isAgplAckDone) {
     return null;
   }
 

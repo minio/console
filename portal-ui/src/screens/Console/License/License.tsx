@@ -37,7 +37,12 @@ import PageLayout from "../Common/Layout/PageLayout";
 import RegistrationStatusBanner from "../Support/RegistrationStatusBanner";
 import makeStyles from "@mui/styles/makeStyles";
 import { selOpMode } from "../../../systemSlice";
-import LicenseModal from "./LicenseModal";
+import withSuspense from "../Common/Components/withSuspense";
+import { getLicenseConsent } from "./utils";
+
+const LicenseConsentModal = withSuspense(
+  React.lazy(() => import("./LicenseConsentModal"))
+);
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -115,7 +120,6 @@ const License = () => {
   const [activateProductModal, setActivateProductModal] =
     useState<boolean>(false);
 
-  const [licenseModal, setLicenseModal] = useState<boolean>(false);
   const [licenseInfo, setLicenseInfo] = useState<SubnetInfo>();
   const [currentPlanID, setCurrentPlanID] = useState<number>(0);
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(false);
@@ -123,6 +127,9 @@ const License = () => {
     useState<boolean>(true);
   useState<boolean>(false);
   const [clusterRegistered, setClusterRegistered] = useState<boolean>(false);
+
+  const [isLicenseConsentOpen, setIsLicenseConsentOpen] =
+    useState<boolean>(false);
 
   const getSubnetInfo = hasPermission(
     CONSOLE_UI_RESOURCE,
@@ -134,6 +141,24 @@ const License = () => {
     setActivateProductModal(false);
     fetchLicenseInfo();
   };
+
+  const isRegistered = licenseInfo && clusterRegistered;
+
+  const isAgplConsentDone = getLicenseConsent();
+
+  useEffect(() => {
+    const shouldConsent =
+      !isRegistered && !isAgplConsentDone && !initialLicenseLoading;
+
+    if (shouldConsent && !loadingLicenseInfo) {
+      setIsLicenseConsentOpen(true);
+    }
+  }, [
+    isRegistered,
+    isAgplConsentDone,
+    initialLicenseLoading,
+    loadingLicenseInfo,
+  ]);
 
   const fetchLicenseInfo = useCallback(() => {
     if (loadingLicenseInfo) {
@@ -180,8 +205,6 @@ const License = () => {
       </Grid>
     );
   }
-
-  const isRegistered = licenseInfo && clusterRegistered;
 
   return (
     <Fragment>
@@ -335,16 +358,18 @@ const License = () => {
           activateProductModal={activateProductModal}
           closeModalAndFetchLicenseInfo={closeModalAndFetchLicenseInfo}
           licenseInfo={licenseInfo}
-          setLicenseModal={setLicenseModal}
           operatorMode={operatorMode}
           currentPlanID={currentPlanID}
           setActivateProductModal={setActivateProductModal}
         />
+
+        <LicenseConsentModal
+          isOpen={isLicenseConsentOpen}
+          onClose={() => {
+            setIsLicenseConsentOpen(false);
+          }}
+        />
       </PageLayout>
-      <LicenseModal
-        open={licenseModal}
-        closeModal={() => setLicenseModal(false)}
-      />
     </Fragment>
   );
 };

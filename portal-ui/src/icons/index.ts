@@ -199,3 +199,4 @@ export { default as AGPLV3LightLogo } from "./AGPLV3LightLogo";
 export { default as AGPLV3Logo } from "./AGPLV3Logo";
 export { default as EnterpriseLightLogo } from "./EnterpriseLightLogo";
 export { default as StandardLightLogo } from "./StandardLightLogo";
+export { default as AGPLV3DarkLogo } from "./AGPLV3DarkLogo";
