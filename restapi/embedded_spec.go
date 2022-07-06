@@ -5969,6 +5969,9 @@ func init() {
         },
         "hm": {
           "type": "boolean"
+        },
+        "ob": {
+          "type": "boolean"
         }
       }
     },
@@ -13186,6 +13189,9 @@ func init() {
           "type": "string"
         },
         "hm": {
+          "type": "boolean"
+        },
+        "ob": {
           "type": "boolean"
         }
       }
