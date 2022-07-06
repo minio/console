@@ -14,25 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  InputAdornment,
-  LinearProgress,
-  TextFieldProps,
-} from "@mui/material";
+import { Box, InputAdornment, LinearProgress } from "@mui/material";
 import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
-import withStyles from "@mui/styles/withStyles";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import { ILoginDetails, loginStrategyType } from "./types";
-import { ErrorResponseHandler } from "../../common/types";
-import api from "../../common/api";
+import { loginStrategyType } from "./types";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
 import {
@@ -45,20 +36,22 @@ import {
 } from "../../icons";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 import CssBaseline from "@mui/material/CssBaseline";
-import LockFilledIcon from "../../icons/LockFilledIcon";
-import UserFilledIcon from "../../icons/UsersFilledIcon";
 import { SupportMenuIcon } from "../../icons/SidebarMenus";
 import GithubIcon from "../../icons/GithubIcon";
 import clsx from "clsx";
 import Loader from "../Console/Common/Loader/Loader";
+import { AppState, useAppDispatch } from "../../store";
+import { useSelector } from "react-redux";
 import {
-  setErrorSnackMessage,
-  userLogged,
-  showMarketplace,
-} from "../../systemSlice";
-import { useAppDispatch } from "../../store";
+  doLoginAsync,
+  getFetchConfigurationAsync,
+  getVersionAsync,
+} from "./loginThunks";
+import { resetForm, setJwt } from "./loginSlice";
+import StrategyForm from "./StrategyForm";
+import { LoginField } from "./LoginField";
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       position: "absolute",
@@ -77,18 +70,6 @@ const styles = (theme: Theme) =>
       width: "100%",
       boxShadow: "none",
       padding: "16px 30px",
-    },
-    learnMore: {
-      textAlign: "center",
-      fontSize: 10,
-      "& a": {
-        color: "#2781B0",
-      },
-      "& .min-icon": {
-        marginLeft: 12,
-        marginTop: 2,
-        width: 10,
-      },
     },
     separator: {
       marginLeft: 8,
@@ -227,298 +208,89 @@ const styles = (theme: Theme) =>
       },
     },
     ...spacingUtils,
-  });
-
-const inputStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      "& .MuiOutlinedInput-root": {
-        paddingLeft: 0,
-        "& svg": {
-          marginLeft: 4,
-          height: 14,
-          color: theme.palette.primary.main,
-        },
-        "& input": {
-          padding: 10,
-          fontSize: 14,
-          paddingLeft: 0,
-          "&::placeholder": {
-            fontSize: 12,
-          },
-          "@media (max-width: 900px)": {
-            padding: 10,
-          },
-        },
-        "& fieldset": {},
-
-        "& fieldset:hover": {
-          borderBottom: "2px solid #000000",
-          borderRadius: 0,
-        },
-      },
-    },
   })
 );
 
-function LoginField(props: TextFieldProps) {
-  const classes = inputStyles();
-
-  return (
-    <TextField
-      classes={{
-        root: classes.root,
-      }}
-      variant="standard"
-      {...props}
-    />
-  );
-}
-
-// The inferred type will look like:
-// {isOn: boolean, toggleOn: () => void}
-
-interface ILoginProps {
-  classes: any;
-}
-
-interface LoginStrategyRoutes {
+export interface LoginStrategyRoutes {
   [key: string]: string;
 }
 
-interface LoginStrategyPayload {
+export interface LoginStrategyPayload {
   [key: string]: any;
 }
 
-const Login = ({ classes }: ILoginProps) => {
+export const loginStrategyEndpoints: LoginStrategyRoutes = {
+  form: "/api/v1/login",
+  "service-account": "/api/v1/login/operator",
+};
+
+export const getTargetPath = () => {
+  let targetPath = "/";
+  if (
+    localStorage.getItem("redirect-path") &&
+    localStorage.getItem("redirect-path") !== ""
+  ) {
+    targetPath = `${localStorage.getItem("redirect-path")}`;
+    localStorage.setItem("redirect-path", "");
+  }
+  return targetPath;
+};
+
+const Login = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const classes = useStyles();
 
-  const [accessKey, setAccessKey] = useState<string>("");
-  const [jwt, setJwt] = useState<string>("");
-  const [secretKey, setSecretKey] = useState<string>("");
-  const [loginStrategy, setLoginStrategy] = useState<ILoginDetails>({
-    loginStrategy: loginStrategyType.unknown,
-    redirect: "",
-  });
-  const [loginSending, setLoginSending] = useState<boolean>(false);
-  const [loadingFetchConfiguration, setLoadingFetchConfiguration] =
-    useState<boolean>(true);
+  const jwt = useSelector((state: AppState) => state.login.jwt);
+  const loginStrategy = useSelector(
+    (state: AppState) => state.login.loginStrategy
+  );
+  const loginSending = useSelector(
+    (state: AppState) => state.login.loginSending
+  );
+  const loadingFetchConfiguration = useSelector(
+    (state: AppState) => state.login.loadingFetchConfiguration
+  );
 
-  const [latestMinIOVersion, setLatestMinIOVersion] = useState<string>("");
-  const [loadingVersion, setLoadingVersion] = useState<boolean>(true);
+  const latestMinIOVersion = useSelector(
+    (state: AppState) => state.login.latestMinIOVersion
+  );
+  const loadingVersion = useSelector(
+    (state: AppState) => state.login.loadingVersion
+  );
+  const navigateTo = useSelector((state: AppState) => state.login.navigateTo);
 
   const isOperator =
     loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
     loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount;
 
-  const loginStrategyEndpoints: LoginStrategyRoutes = {
-    form: "/api/v1/login",
-    "service-account": "/api/v1/login/operator",
-  };
-  const loginStrategyPayload: LoginStrategyPayload = {
-    form: { accessKey, secretKey },
-    "service-account": { jwt },
-  };
-
-  const fetchConfiguration = () => {
-    setLoadingFetchConfiguration(true);
-  };
-
-  const getTargetPath = () => {
-    let targetPath = "/";
-    if (
-      localStorage.getItem("redirect-path") &&
-      localStorage.getItem("redirect-path") !== ""
-    ) {
-      targetPath = `${localStorage.getItem("redirect-path")}`;
-      localStorage.setItem("redirect-path", "");
-    }
-    return targetPath;
-  };
-
-  const redirectAfterLogin = () => {
-    navigate(getTargetPath());
-  };
-
-  const redirectToMarketplace = () => {
-    api
-      .invoke("GET", "/api/v1/mp-integration/")
-      .then((res: any) => {
-        redirectAfterLogin(); // Email already set, continue with normal flow
-      })
-      .catch((err: ErrorResponseHandler) => {
-        if (err.statusCode === 404) {
-          dispatch(showMarketplace(true));
-          navigate("/marketplace");
-        } else {
-          // Unexpected error, continue with normal flow
-          redirectAfterLogin();
-        }
-      });
-  };
+  if (navigateTo !== "") {
+    navigate(navigateTo);
+    dispatch(resetForm());
+  }
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoginSending(true);
-    api
-      .invoke(
-        "POST",
-        loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login",
-        loginStrategyPayload[loginStrategy.loginStrategy]
-      )
-      .then(() => {
-        // We set the state in redux
-        dispatch(userLogged(true));
-        if (loginStrategy.loginStrategy === loginStrategyType.form) {
-          localStorage.setItem("userLoggedIn", accessKey);
-        }
-        if (isOperator) {
-          redirectToMarketplace();
-        } else {
-          redirectAfterLogin();
-        }
-      })
-      .catch((err) => {
-        setLoginSending(false);
-        dispatch(setErrorSnackMessage(err));
-      });
+    dispatch(doLoginAsync());
   };
 
   useEffect(() => {
     if (loadingFetchConfiguration) {
-      api
-        .invoke("GET", "/api/v1/login")
-        .then((loginDetails: ILoginDetails) => {
-          setLoginStrategy(loginDetails);
-          setLoadingFetchConfiguration(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
-          setLoadingFetchConfiguration(false);
-        });
+      dispatch(getFetchConfigurationAsync());
     }
   }, [loadingFetchConfiguration, dispatch]);
 
   useEffect(() => {
     if (loadingVersion) {
-      api
-        .invoke("GET", "/api/v1/check-version")
-        .then(
-          ({
-            current_version,
-            latest_version,
-          }: {
-            current_version: string;
-            latest_version: string;
-          }) => {
-            setLatestMinIOVersion(latest_version);
-            setLoadingVersion(false);
-          }
-        )
-        .catch((err: ErrorResponseHandler) => {
-          // try the operator version
-          api
-            .invoke("GET", "/api/v1/check-operator-version")
-            .then(
-              ({
-                current_version,
-                latest_version,
-              }: {
-                current_version: string;
-                latest_version: string;
-              }) => {
-                setLatestMinIOVersion(latest_version);
-                setLoadingVersion(false);
-              }
-            )
-            .catch((err: ErrorResponseHandler) => {
-              setLoadingVersion(false);
-            });
-        });
+      dispatch(getVersionAsync());
     }
-  }, [loadingVersion, setLoadingVersion, setLatestMinIOVersion]);
+  }, [dispatch, loadingVersion]);
 
-  let loginComponent = null;
+  let loginComponent;
 
   switch (loginStrategy.loginStrategy) {
     case loginStrategyType.form: {
-      loginComponent = (
-        <React.Fragment>
-          <form className={classes.form} noValidate onSubmit={formSubmit}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} className={classes.spacerBottom}>
-                <LoginField
-                  fullWidth
-                  id="accessKey"
-                  className={classes.inputField}
-                  value={accessKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setAccessKey(e.target.value)
-                  }
-                  placeholder={"Username"}
-                  name="accessKey"
-                  autoComplete="username"
-                  disabled={loginSending}
-                  variant={"outlined"}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment
-                        position="start"
-                        className={classes.iconColor}
-                      >
-                        <UserFilledIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <LoginField
-                  fullWidth
-                  className={classes.inputField}
-                  value={secretKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setSecretKey(e.target.value)
-                  }
-                  name="secretKey"
-                  type="password"
-                  id="secretKey"
-                  autoComplete="current-password"
-                  disabled={loginSending}
-                  placeholder={"Password"}
-                  variant={"outlined"}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment
-                        position="start"
-                        className={classes.iconColor}
-                      >
-                        <LockFilledIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-            </Grid>
-            <Grid item xs={12} className={classes.submitContainer}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                id="do-login"
-                className={classes.submit}
-                disabled={secretKey === "" || accessKey === "" || loginSending}
-              >
-                Login
-              </Button>
-            </Grid>
-            <Grid item xs={12} className={classes.linearPredef}>
-              {loginSending && <LinearProgress />}
-            </Grid>
-          </form>
-        </React.Fragment>
-      );
+      loginComponent = <StrategyForm />;
       break;
     }
     case loginStrategyType.redirect:
@@ -553,7 +325,7 @@ const Login = ({ classes }: ILoginProps) => {
                   id="jwt"
                   value={jwt}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setJwt(e.target.value)
+                    dispatch(setJwt(e.target.value))
                   }
                   name="jwt"
                   autoComplete="off"
@@ -607,7 +379,7 @@ const Login = ({ classes }: ILoginProps) => {
               <div>
                 <Button
                   onClick={() => {
-                    fetchConfiguration();
+                    dispatch(getFetchConfigurationAsync());
                   }}
                   endIcon={<RefreshIcon />}
                   color={"primary"}
@@ -771,4 +543,4 @@ const Login = ({ classes }: ILoginProps) => {
   );
 };
 
-export default withStyles(styles)(Login);
+export default Login;

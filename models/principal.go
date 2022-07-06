@@ -48,6 +48,9 @@ type Principal struct {
 
 	// hm
 	Hm bool `json:"hm,omitempty"`
+
+	// ob
+	Ob bool `json:"ob,omitempty"`
 }
 
 // Validate validates this principal

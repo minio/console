@@ -37,6 +37,7 @@ import (
 
 	"github.com/minio/console/pkg/logger"
 	"github.com/minio/console/pkg/utils"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"github.com/klauspost/compress/gzhttp"
 
@@ -93,6 +94,7 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 			STSSessionToken:    claims.STSSessionToken,
 			AccountAccessKey:   claims.AccountAccessKey,
 			Hm:                 claims.HideMenu,
+			Ob:                 claims.ObjectBrowser,
 		}, nil
 	}
 
@@ -335,6 +337,7 @@ func (w *notFoundRedirectRespWr) Write(p []byte) (int, error) {
 	return len(p), nil // Lie that we successfully wrote it
 }
 
+// handleSPA handles the serving of the React Single Page Application
 func handleSPA(w http.ResponseWriter, r *http.Request) {
 	basePath := "/"
 	// For SPA mode we will replace root base with a sub path if configured unless we received cp=y and cpb=/NEW/BASE
@@ -352,6 +355,29 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	sts := r.URL.Query().Get("sts")
+	stsAccessKey := r.URL.Query().Get("sts_a")
+	stsSecretKey := r.URL.Query().Get("sts_s")
+	// if these three parameters are present we are being asked to issue a session with these values
+	if sts != "" && stsAccessKey != "" && stsSecretKey != "" {
+		creds := credentials.NewStaticV4(stsAccessKey, stsSecretKey, sts)
+		consoleCreds := &ConsoleCredentials{
+			ConsoleCredentials: creds,
+			AccountAccessKey:   stsAccessKey,
+		}
+		sf := &auth.SessionFeatures{}
+		sf.HideMenu = true
+		sf.ObjectBrowser = true
+
+		sessionID, err := login(consoleCreds, sf)
+		if err != nil {
+			log.Println(err)
+		} else {
+			cookie := NewSessionCookieForConsole(*sessionID)
+			http.SetCookie(w, &cookie)
+		}
 	}
 
 	indexPageBytes, err := io.ReadAll(indexPage)

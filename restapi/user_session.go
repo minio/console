@@ -254,7 +254,6 @@ func getListOfEnabledFeatures(session *models.Principal) []string {
 	logSearchURL := getLogSearchURL()
 	oidcEnabled := oauth2.IsIDPEnabled()
 	ldapEnabled := ldap.GetLDAPEnabled()
-	browserOnly := getObjectBrowserOnly()
 
 	if logSearchURL != "" {
 		features = append(features, "log-search")
@@ -269,8 +268,7 @@ func getListOfEnabledFeatures(session *models.Principal) []string {
 	if session.Hm {
 		features = append(features, "hide-menu")
 	}
-
-	if browserOnly == "on" {
+	if session.Ob {
 		features = append(features, "object-browser-only")
 	}
 

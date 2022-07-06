@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import systemReducer from "./systemSlice";
+import loginReducer from "./screens/LoginPage/loginSlice";
 import traceReducer from "./screens/Console/Trace/traceSlice";
 import logReducer from "./screens/Console/Logs/logsSlice";
 import healthInfoReducer from "./screens/Console/HealthInfo/healthInfoSlice";
@@ -36,6 +37,7 @@ import editTenantAuditLoggingReducer from "./screens/Console/Tenants/TenantDetai
 
 const rootReducer = combineReducers({
   system: systemReducer,
+  login: loginReducer,
   trace: traceReducer,
   logs: logReducer,
   watch: watchReducer,
