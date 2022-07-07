@@ -82,7 +82,7 @@ func (suite *MarketplaceTestSuite) getConfigMapMock(ctx context.Context, namespa
 	if testWithError {
 		return nil, errMock
 	}
-	return &corev1.ConfigMap{Data: map[string]string{mpEmail: "mock@mock.com"}}, nil
+	return &corev1.ConfigMap{Data: map[string]string{isMPEmailSet: "true"}}, nil
 }
 
 func (suite *MarketplaceTestSuite) createConfigMapMock(ctx context.Context, namespace string, cm *corev1.ConfigMap, opts metav1.CreateOptions) (*corev1.ConfigMap, error) {
@@ -115,11 +115,6 @@ func (suite *MarketplaceTestSuite) TestRegisterMarketplaceHandlers() {
 	suite.assert.NotNil(api.OperatorAPIPostMPIntegrationHandler)
 }
 
-// TODO
-// WIP - Complete successful tests to RUD handlers
-// WIP - Add tests to POST handler
-// WIP - Check how to mock k8s objects for tests with no error
-
 func (suite *MarketplaceTestSuite) TestGetMPIntegrationHandlerWithError() {
 	api := &operations.OperatorAPI{}
 	registerMarketplaceHandlers(api)
@@ -127,6 +122,19 @@ func (suite *MarketplaceTestSuite) TestGetMPIntegrationHandlerWithError() {
 	params.HTTPRequest = &http.Request{}
 	response := api.OperatorAPIGetMPIntegrationHandler.Handle(params, &models.Principal{})
 	_, ok := response.(*operator_api.GetMPIntegrationDefault)
+	suite.assert.True(ok)
+}
+
+func (suite *MarketplaceTestSuite) TestPostMPIntegrationHandlerWithError() {
+	api := &operations.OperatorAPI{}
+	registerMarketplaceHandlers(api)
+	params := operator_api.NewPostMPIntegrationParams()
+	params.Body = &models.MpIntegration{Email: ""}
+	params.HTTPRequest = &http.Request{}
+	params.HTTPRequest.Header = map[string][]string{}
+	params.HTTPRequest.AddCookie(&http.Cookie{Value: "token", Name: "token"})
+	response := api.OperatorAPIPostMPIntegrationHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*operator_api.PostMPIntegrationDefault)
 	suite.assert.True(ok)
 }
 
@@ -143,15 +151,15 @@ func (suite *MarketplaceTestSuite) TestGetMPEmailNoError() {
 	testWithError = false
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	email, err := getMPEmail(ctx, &suite.kClient)
+	isSet, err := getMPEmail(ctx, &suite.kClient)
 	suite.assert.Nil(err)
-	suite.assert.NotEmpty(email)
+	suite.assert.True(isSet)
 }
 
 func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoEmail() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	err := setMPIntegration(ctx, "", &suite.kClient)
+	err := setMPIntegration(ctx, "", false, &suite.kClient)
 	suite.assert.NotNil(err)
 }
 
@@ -159,17 +167,20 @@ func (suite *MarketplaceTestSuite) TestSetMPIntegrationWithError() {
 	testWithError = true
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	err := setMPIntegration(ctx, "mock@mock.com", &suite.kClient)
+	os.Setenv(mpHostEnvVar, "  ")
+	err := setMPIntegration(ctx, "mock@mock.com", false, &suite.kClient)
 	suite.assert.NotNil(err)
+	os.Unsetenv(mpHostEnvVar)
 }
 
-func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoError() {
-	testWithError = false
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	err := setMPIntegration(ctx, "mock@mock.com", &suite.kClient)
-	suite.assert.Nil(err)
-}
+// TODO: Add mock server for testing microservice
+// func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoError() {
+// 	testWithError = false
+// 	ctx, cancel := context.WithCancel(context.Background())
+// 	defer cancel()
+// 	err := setMPIntegration(ctx, "mock@mock.com", "token", &suite.kClient)
+// 	suite.assert.Nil(err)
+// }
 
 func TestMarketplace(t *testing.T) {
 	suite.Run(t, new(MarketplaceTestSuite))

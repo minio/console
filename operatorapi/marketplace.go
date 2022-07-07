@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -19,14 +19,21 @@ package operatorapi
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
+	"github.com/minio/console/pkg"
 	errors "github.com/minio/console/restapi"
+	"github.com/minio/pkg/env"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -34,7 +41,11 @@ import (
 var (
 	mpConfigMapDefault = "mp-config"
 	mpConfigMapKey     = "MP_CONFIG_KEY"
-	mpEmail            = "email"
+	mpHostEnvVar       = "MP_HOST"
+	defaultMPHost      = "https://marketplace.apps.min.dev"
+	mpEUHostEnvVar     = "MP_EU_HOST"
+	defaultEUMPHost    = "https://marketplace-eu.apps.min.dev"
+	isMPEmailSet       = "isEmailSet"
 	emailNotSetMsg     = "Email was not sent in request"
 )
 
@@ -56,62 +67,112 @@ func registerMarketplaceHandlers(api *operations.OperatorAPI) {
 	})
 }
 
-func getMPIntegrationResponse(session *models.Principal, params operator_api.GetMPIntegrationParams) (*models.MpIntegration, *models.Error) {
-	if true { // This block will be removed once service to register emails is deployed
-		return nil, &models.Error{Code: 501}
-	}
+func getMPIntegrationResponse(session *models.Principal, params operator_api.GetMPIntegrationParams) (*operator_api.GetMPIntegrationOKBody, *models.Error) {
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	if err != nil {
 		return nil, errors.ErrorWithContext(ctx, err)
 	}
-	mpEmail, err := getMPEmail(ctx, &k8sClient{client: clientSet})
+	isMPEmailSet, err := getMPEmail(ctx, &k8sClient{client: clientSet})
 	if err != nil {
 		return nil, errors.ErrorWithContext(ctx, errors.ErrNotFound)
 	}
-	return &models.MpIntegration{
-		Email: mpEmail,
+	return &operator_api.GetMPIntegrationOKBody{
+		IsEmailSet: isMPEmailSet,
 	}, nil
 }
 
-func getMPEmail(ctx context.Context, clientSet K8sClientI) (string, error) {
+func getMPEmail(ctx context.Context, clientSet K8sClientI) (bool, error) {
 	cm, err := clientSet.getConfigMap(ctx, "default", getMPConfigMapKey(mpConfigMapKey), metav1.GetOptions{})
 	if err != nil {
-		return "", err
+		return false, err
 	}
-	return cm.Data[mpEmail], nil
+	return cm.Data[isMPEmailSet] == "true", nil
 }
 
 func postMPIntegrationResponse(session *models.Principal, params operator_api.PostMPIntegrationParams) *models.Error {
-	if true { // This block will be removed once service to register emails is deployed
-		return &models.Error{Code: 501}
-	}
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	if err != nil {
 		return errors.ErrorWithContext(ctx, err)
 	}
-	return setMPIntegration(ctx, params.Body.Email, &k8sClient{client: clientSet})
+	return setMPIntegration(ctx, params.Body.Email, params.Body.IsInEU, &k8sClient{client: clientSet})
 }
 
-func setMPIntegration(ctx context.Context, email string, clientSet K8sClientI) *models.Error {
+func setMPIntegration(ctx context.Context, email string, isInEU bool, clientSet K8sClientI) *models.Error {
 	if email == "" {
 		return errors.ErrorWithContext(ctx, errors.ErrBadRequest, fmt.Errorf(emailNotSetMsg))
 	}
-	if _, err := setMPEmail(ctx, email, clientSet); err != nil {
+	if _, err := setMPEmail(ctx, email, isInEU, clientSet); err != nil {
 		return errors.ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
-func setMPEmail(ctx context.Context, email string, clientSet K8sClientI) (*corev1.ConfigMap, error) {
-	cm := createCM(email)
+func setMPEmail(ctx context.Context, email string, isInEU bool, clientSet K8sClientI) (*corev1.ConfigMap, error) {
+	if err := postEmailToMP(email, isInEU); err != nil {
+		return nil, err
+	}
+	cm := createCM()
 	return clientSet.createConfigMap(ctx, "default", cm, metav1.CreateOptions{})
 }
 
-func createCM(email string) *corev1.ConfigMap {
+func postEmailToMP(email string, isInEU bool) error {
+	mpURL, err := getMPURL(isInEU)
+	if err != nil {
+		return err
+	}
+	return makePostRequestToMP(mpURL, email)
+}
+
+func getMPURL(isInEU bool) (string, error) {
+	mpHost := getMPHost(isInEU)
+	if mpHost == "" {
+		return "", fmt.Errorf("mp host not set")
+	}
+	return fmt.Sprintf("%s/mp-email", mpHost), nil
+}
+
+func getMPHost(isInEU bool) string {
+	if isInEU {
+		return env.Get(mpEUHostEnvVar, defaultEUMPHost)
+	}
+	return env.Get(mpHostEnvVar, defaultMPHost)
+}
+
+func makePostRequestToMP(url, email string) error {
+	request, err := createMPRequest(url, email)
+	if err != nil {
+		return err
+	}
+	client := &http.Client{Timeout: 3 * time.Second}
+	if res, err := client.Do(request); err != nil {
+		return err
+	} else if res.StatusCode >= http.StatusBadRequest {
+		b, _ := io.ReadAll(res.Body)
+		return fmt.Errorf("request to %s failed with status code %d and error %s", url, res.StatusCode, string(b))
+	}
+	return nil
+}
+
+func createMPRequest(url, email string) (*http.Request, error) {
+	request, err := http.NewRequest("POST", url, strings.NewReader(fmt.Sprintf("{\"email\":\"%s\"}", email)))
+	if err != nil {
+		return nil, err
+	}
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{})
+	jwtTokenString, err := jwtToken.SignedString([]byte(pkg.MPSecret))
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("jwtToken=%s", jwtTokenString))
+	request.Header.Add("Content-Type", "application/json")
+	return request, nil
+}
+
+func createCM() *corev1.ConfigMap {
 	return &corev1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ConfigMap",
@@ -121,7 +182,7 @@ func createCM(email string) *corev1.ConfigMap {
 			Name:      getMPConfigMapKey(mpConfigMapKey),
 			Namespace: "default",
 		},
-		Data: map[string]string{mpEmail: email},
+		Data: map[string]string{isMPEmailSet: "true"},
 	}
 }
 

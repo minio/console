@@ -321,7 +321,12 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/mpIntegration"
+              "type": "object",
+              "properties": {
+                "isEmailSet": {
+                  "type": "boolean"
+                }
+              }
             }
           },
           "default": {
@@ -3358,6 +3363,9 @@ func init() {
       "properties": {
         "email": {
           "type": "string"
+        },
+        "isInEU": {
+          "type": "boolean"
         }
       }
     },
@@ -4995,7 +5003,12 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/mpIntegration"
+              "type": "object",
+              "properties": {
+                "isEmailSet": {
+                  "type": "boolean"
+                }
+              }
             }
           },
           "default": {
@@ -8863,6 +8876,9 @@ func init() {
       "properties": {
         "email": {
           "type": "string"
+        },
+        "isInEU": {
+          "type": "boolean"
         }
       }
     },

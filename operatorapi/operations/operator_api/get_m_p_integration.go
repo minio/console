@@ -23,9 +23,12 @@ package operator_api
 // Editing this file might prove futile when you re-run the generate command
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 
 	"github.com/minio/console/models"
 )
@@ -85,4 +88,41 @@ func (o *GetMPIntegration) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	res := o.Handler.Handle(Params, principal) // actually handle the request
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
+}
+
+// GetMPIntegrationOKBody get m p integration o k body
+//
+// swagger:model GetMPIntegrationOKBody
+type GetMPIntegrationOKBody struct {
+
+	// is email set
+	IsEmailSet bool `json:"isEmailSet,omitempty"`
+}
+
+// Validate validates this get m p integration o k body
+func (o *GetMPIntegrationOKBody) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this get m p integration o k body based on context it is used
+func (o *GetMPIntegrationOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *GetMPIntegrationOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *GetMPIntegrationOKBody) UnmarshalBinary(b []byte) error {
+	var res GetMPIntegrationOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
 }

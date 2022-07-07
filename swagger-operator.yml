@@ -1240,7 +1240,10 @@ paths:
         200:
           description: A successful response.
           schema:
-            $ref: "#/definitions/mpIntegration"
+            type: object
+            properties:
+              isEmailSet:
+                type: boolean
         default:
           description: Generic error response.
           schema:
@@ -3394,4 +3397,6 @@ definitions:
     properties:
       email:
         type: string
+      isInEU:
+        type: boolean
 
