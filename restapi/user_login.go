@@ -21,7 +21,6 @@ import (
 	"net/http"
 
 	"github.com/minio/madmin-go"
-
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"github.com/go-openapi/runtime"
@@ -113,11 +112,23 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *model
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	lr := params.Body
-	// prepare console credentials
-	consoleCreds, err := getConsoleCredentials(*lr.AccessKey, *lr.SecretKey)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err, ErrInvalidLogin, err)
+	var err error
+	var consoleCreds *ConsoleCredentials
+	// if we receive an STS we use that instead of the credentials
+	if lr.Sts != "" {
+		creds := credentials.NewStaticV4(lr.AccessKey, lr.SecretKey, lr.Sts)
+		consoleCreds = &ConsoleCredentials{
+			ConsoleCredentials: creds,
+			AccountAccessKey:   lr.AccessKey,
+		}
+	} else {
+		// prepare console credentials
+		consoleCreds, err = getConsoleCredentials(lr.AccessKey, lr.SecretKey)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err, ErrInvalidLogin, err)
+		}
 	}
+
 	sf := &auth.SessionFeatures{}
 	if lr.Features != nil {
 		sf.HideMenu = lr.Features.HideMenu

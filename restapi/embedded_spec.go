@@ -5412,10 +5412,6 @@ func init() {
     },
     "loginRequest": {
       "type": "object",
-      "required": [
-        "accessKey",
-        "secretKey"
-      ],
       "properties": {
         "accessKey": {
           "type": "string"
@@ -5429,6 +5425,9 @@ func init() {
           }
         },
         "secretKey": {
+          "type": "string"
+        },
+        "sts": {
           "type": "string"
         }
       }
@@ -5969,6 +5968,9 @@ func init() {
           "type": "string"
         },
         "hm": {
+          "type": "boolean"
+        },
+        "ob": {
           "type": "boolean"
         }
       }
@@ -12631,10 +12633,6 @@ func init() {
     },
     "loginRequest": {
       "type": "object",
-      "required": [
-        "accessKey",
-        "secretKey"
-      ],
       "properties": {
         "accessKey": {
           "type": "string"
@@ -12648,6 +12646,9 @@ func init() {
           }
         },
         "secretKey": {
+          "type": "string"
+        },
+        "sts": {
           "type": "string"
         }
       }
@@ -13188,6 +13189,9 @@ func init() {
           "type": "string"
         },
         "hm": {
+          "type": "boolean"
+        },
+        "ob": {
           "type": "boolean"
         }
       }

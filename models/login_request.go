@@ -28,7 +28,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // LoginRequest login request
@@ -37,45 +36,29 @@ import (
 type LoginRequest struct {
 
 	// access key
-	// Required: true
-	AccessKey *string `json:"accessKey"`
+	AccessKey string `json:"accessKey,omitempty"`
 
 	// features
 	Features *LoginRequestFeatures `json:"features,omitempty"`
 
 	// secret key
-	// Required: true
-	SecretKey *string `json:"secretKey"`
+	SecretKey string `json:"secretKey,omitempty"`
+
+	// sts
+	Sts string `json:"sts,omitempty"`
 }
 
 // Validate validates this login request
 func (m *LoginRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAccessKey(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateFeatures(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateSecretKey(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *LoginRequest) validateAccessKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("accessKey", "body", m.AccessKey); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -93,15 +76,6 @@ func (m *LoginRequest) validateFeatures(formats strfmt.Registry) error {
 			}
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (m *LoginRequest) validateSecretKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("secretKey", "body", m.SecretKey); err != nil {
-		return err
 	}
 
 	return nil
