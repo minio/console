@@ -268,6 +268,9 @@ func getListOfEnabledFeatures(session *models.Principal) []string {
 	if session.Hm {
 		features = append(features, "hide-menu")
 	}
+	if session.Ob {
+		features = append(features, "object-browser-only")
+	}
 
 	return features
 }

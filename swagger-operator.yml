@@ -1394,13 +1394,12 @@ definitions:
         type: string
   loginRequest:
     type: object
-    required:
-      - accessKey
-      - secretKey
     properties:
       accessKey:
         type: string
       secretKey:
+        type: string
+      sts:
         type: string
       features:
         type: object

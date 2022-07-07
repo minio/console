@@ -203,6 +203,8 @@ const Console = ({ classes }: IConsoleProps) => {
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
+  const obOnly = !!features?.includes("object-browser-only");
+
   const restartServer = () => {
     dispatch(serverIsLoading(true));
     api
@@ -461,16 +463,17 @@ const Console = ({ classes }: IConsoleProps) => {
 
   const allowedRoutes = (
     operatorMode ? operatorConsoleRoutes : consoleAdminRoutes
-  ).filter(
-    (route: any) =>
-      (route.forceDisplay ||
-        (route.customPermissionFnc
-          ? route.customPermissionFnc()
-          : hasPermission(
-              CONSOLE_UI_RESOURCE,
-              IAM_PAGES_PERMISSIONS[route.path]
-            ))) &&
-      !route.fsHidden
+  ).filter((route: any) =>
+    obOnly
+      ? route.path.includes("buckets")
+      : (route.forceDisplay ||
+          (route.customPermissionFnc
+            ? route.customPermissionFnc()
+            : hasPermission(
+                CONSOLE_UI_RESOURCE,
+                IAM_PAGES_PERMISSIONS[route.path]
+              ))) &&
+        !route.fsHidden
   );
 
   const closeSnackBar = () => {
@@ -493,6 +496,8 @@ const Console = ({ classes }: IConsoleProps) => {
   if (features?.includes("hide-menu")) {
     hideMenu = true;
   } else if (pathname.endsWith("/hop")) {
+    hideMenu = true;
+  } else if (obOnly) {
     hideMenu = true;
   }
 

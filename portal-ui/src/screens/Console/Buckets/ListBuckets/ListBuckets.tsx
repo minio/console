@@ -27,6 +27,7 @@ import {
   AddIcon,
   BucketsIcon,
   LifecycleConfigIcon,
+  LoginMinIOLogo,
   SelectAllIcon,
 } from "../../../../icons";
 import {
@@ -57,6 +58,8 @@ import BulkLifecycleModal from "./BulkLifecycleModal";
 import hasPermission from "../../../../common/SecureComponent/accessControl";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { useSelector } from "react-redux";
+import { selFeatures } from "../../consoleSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -98,8 +101,10 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
   const [replicationModalOpen, setReplicationModalOpen] =
     useState<boolean>(false);
   const [lifecycleModalOpen, setLifecycleModalOpen] = useState<boolean>(false);
-
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
+
+  const features = useSelector(selFeatures);
+  const obOnly = !!features?.includes("object-browser-only");
 
   useEffect(() => {
     if (loading) {
@@ -172,6 +177,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
           onSelect={selectListBuckets}
           selected={selectedBuckets.includes(bucket.name)}
           bulkSelect={bulkSelect}
+          noManage={obOnly}
         />
       );
     }
@@ -209,9 +215,16 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
           open={lifecycleModalOpen}
         />
       )}
-      <PageHeader label={"Buckets"} />
+      {!obOnly && <PageHeader label={"Buckets"} />}
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray} display="flex">
+          {obOnly && (
+            <Grid item xs>
+              <LoginMinIOLogo
+                style={{ width: 105, marginRight: 15, marginTop: 10 }}
+              />
+            </Grid>
+          )}
           <SearchBox
             onChange={setFilterBuckets}
             placeholder="Search Buckets"
@@ -226,58 +239,62 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
             alignItems={"center"}
             justifyContent={"flex-end"}
           >
-            <RBIconButton
-              tooltip={
-                bulkSelect ? "Unselect Buckets" : "Select Multiple Buckets"
-              }
-              onClick={() => {
-                setBulkSelect(!bulkSelect);
-                setSelectedBuckets([]);
-              }}
-              text={""}
-              icon={<SelectMultipleIcon />}
-              color={"primary"}
-              variant={bulkSelect ? "contained" : "outlined"}
-            />
+            {!obOnly && (
+              <Fragment>
+                <RBIconButton
+                  tooltip={
+                    bulkSelect ? "Unselect Buckets" : "Select Multiple Buckets"
+                  }
+                  onClick={() => {
+                    setBulkSelect(!bulkSelect);
+                    setSelectedBuckets([]);
+                  }}
+                  text={""}
+                  icon={<SelectMultipleIcon />}
+                  color={"primary"}
+                  variant={bulkSelect ? "contained" : "outlined"}
+                />
 
-            {bulkSelect && (
-              <RBIconButton
-                tooltip={
-                  selectedBuckets.length === filteredRecords.length
-                    ? "Unselect All Buckets"
-                    : "Select All Buckets"
-                }
-                onClick={selectAllBuckets}
-                text={""}
-                icon={<SelectAllIcon />}
-                color={"primary"}
-                variant={"outlined"}
-              />
+                {bulkSelect && (
+                  <RBIconButton
+                    tooltip={
+                      selectedBuckets.length === filteredRecords.length
+                        ? "Unselect All Buckets"
+                        : "Select All Buckets"
+                    }
+                    onClick={selectAllBuckets}
+                    text={""}
+                    icon={<SelectAllIcon />}
+                    color={"primary"}
+                    variant={"outlined"}
+                  />
+                )}
+
+                <RBIconButton
+                  tooltip={"Set Lifecycle"}
+                  onClick={() => {
+                    setLifecycleModalOpen(true);
+                  }}
+                  text={""}
+                  icon={<LifecycleConfigIcon />}
+                  disabled={selectedBuckets.length === 0}
+                  color={"primary"}
+                  variant={"outlined"}
+                />
+
+                <RBIconButton
+                  tooltip={"Set Replication"}
+                  onClick={() => {
+                    setReplicationModalOpen(true);
+                  }}
+                  text={""}
+                  icon={<MultipleBucketsIcon />}
+                  disabled={selectedBuckets.length === 0}
+                  color={"primary"}
+                  variant={"outlined"}
+                />
+              </Fragment>
             )}
-
-            <RBIconButton
-              tooltip={"Set Lifecycle"}
-              onClick={() => {
-                setLifecycleModalOpen(true);
-              }}
-              text={""}
-              icon={<LifecycleConfigIcon />}
-              disabled={selectedBuckets.length === 0}
-              color={"primary"}
-              variant={"outlined"}
-            />
-
-            <RBIconButton
-              tooltip={"Set Replication"}
-              onClick={() => {
-                setReplicationModalOpen(true);
-              }}
-              text={""}
-              icon={<MultipleBucketsIcon />}
-              disabled={selectedBuckets.length === 0}
-              color={"primary"}
-              variant={"outlined"}
-            />
 
             <RBIconButton
               tooltip={"Refresh"}
@@ -290,17 +307,19 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
               variant={"outlined"}
             />
 
-            <RBIconButton
-              tooltip={"Create Bucket"}
-              onClick={() => {
-                navigate(IAM_PAGES.ADD_BUCKETS);
-              }}
-              text={"Create Bucket"}
-              icon={<AddIcon />}
-              color={"primary"}
-              variant={"contained"}
-              disabled={!canCreateBucket}
-            />
+            {!obOnly && (
+              <RBIconButton
+                tooltip={"Create Bucket"}
+                onClick={() => {
+                  navigate(IAM_PAGES.ADD_BUCKETS);
+                }}
+                text={"Create Bucket"}
+                icon={<AddIcon />}
+                color={"primary"}
+                variant={"contained"}
+                disabled={!canCreateBucket}
+              />
+            )}
           </Grid>
         </Grid>
 
