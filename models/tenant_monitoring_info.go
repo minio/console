@@ -63,6 +63,9 @@ type TenantMonitoringInfo struct {
 	// prometheus enabled
 	PrometheusEnabled bool `json:"prometheusEnabled,omitempty"`
 
+	// security context
+	SecurityContext *SecurityContext `json:"securityContext,omitempty"`
+
 	// service account name
 	ServiceAccountName string `json:"serviceAccountName,omitempty"`
 
@@ -89,6 +92,10 @@ func (m *TenantMonitoringInfo) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateNodeSelector(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSecurityContext(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -176,6 +183,25 @@ func (m *TenantMonitoringInfo) validateNodeSelector(formats strfmt.Registry) err
 	return nil
 }
 
+func (m *TenantMonitoringInfo) validateSecurityContext(formats strfmt.Registry) error {
+	if swag.IsZero(m.SecurityContext) { // not required
+		return nil
+	}
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this tenant monitoring info based on the context it is used
 func (m *TenantMonitoringInfo) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -189,6 +215,10 @@ func (m *TenantMonitoringInfo) ContextValidate(ctx context.Context, formats strf
 	}
 
 	if err := m.contextValidateNodeSelector(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSecurityContext(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -253,6 +283,22 @@ func (m *TenantMonitoringInfo) contextValidateNodeSelector(ctx context.Context, 
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *TenantMonitoringInfo) contextValidateSecurityContext(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
+			}
+			return err
+		}
 	}
 
 	return nil

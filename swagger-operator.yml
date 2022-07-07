@@ -3272,6 +3272,9 @@ definitions:
         type: string
       monitoringMemRequest:
         type: string
+      securityContext:
+        type: object
+        $ref: "#/definitions/securityContext"
 
   label:
     type: object

@@ -29,6 +29,10 @@ export interface IEditTenantMonitoring {
   serviceAccountName: string;
   monitoringCPURequest: string;
   monitoringMemRequest: string;
+  runAsUser: string;
+  runAsGroup: string;
+  fsGroup: string;
+  runAsNonRoot: boolean;
 }
 
 const initialState: IEditTenantMonitoring = {
@@ -44,6 +48,10 @@ const initialState: IEditTenantMonitoring = {
   serviceAccountName: "",
   monitoringCPURequest: "",
   monitoringMemRequest: "",
+  runAsUser: "1000",
+  runAsGroup: "1000",
+  fsGroup: "1000",
+  runAsNonRoot: true,
 };
 
 export const editTenantMonitoringSlice = createSlice({
@@ -86,6 +94,18 @@ export const editTenantMonitoringSlice = createSlice({
     setMemRequest: (state, action: PayloadAction<string>) => {
       state.monitoringMemRequest = action.payload;
     },
+    setRunAsUser: (state, action: PayloadAction<string>) => {
+      state.runAsUser = action.payload;
+    },
+    setRunAsGroup: (state, action: PayloadAction<string>) => {
+      state.runAsGroup = action.payload;
+    },
+    setFSGroup: (state, action: PayloadAction<string>) => {
+      state.fsGroup = action.payload;
+    },
+    setRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
+      state.runAsNonRoot = action.payload;
+    },
   },
 });
 
@@ -102,6 +122,10 @@ export const {
   setServiceAccountName,
   setCPURequest,
   setMemRequest,
+  setRunAsUser,
+  setRunAsGroup,
+  setFSGroup,
+  setRunAsNonRoot,
 } = editTenantMonitoringSlice.actions;
 
 export default editTenantMonitoringSlice.reducer;

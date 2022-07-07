@@ -199,6 +199,7 @@ export interface ITenantMonitoringStruct {
   prometheusEnabled: boolean;
   monitoringCPURequest: string;
   monitoringMemRequest: string;
+  securityContext: ISecurityContext;
 }
 
 export interface IKeyValue {

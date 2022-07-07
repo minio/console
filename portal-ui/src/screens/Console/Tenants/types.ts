@@ -338,3 +338,11 @@ export interface ITenantIdentityProviderResponse {
     user_dn_search_filter: string;
   };
 }
+
+export interface IEditMonitoringSecurityContext {
+  securityContextEnabled: boolean;
+  runAsUser: string;
+  runAsGroup: string;
+  fsGroup: string;
+  runAsNonRoot: boolean;
+}

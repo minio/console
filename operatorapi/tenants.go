@@ -2137,11 +2137,10 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 		client: opClientClientSet,
 	}
 
-	minInst, err := opClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
+	minInst, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
-
 	monitoringInfo := &models.TenantMonitoringInfo{}
 
 	if minInst.Spec.Prometheus != nil {
@@ -2212,7 +2211,9 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if len(minInst.Spec.Prometheus.SideCarImage) != 0 {
 		monitoringInfo.SidecarImage = minInst.Spec.Prometheus.SideCarImage
 	}
-
+	if minInst.Spec.Prometheus.SecurityContext != nil {
+		monitoringInfo.SecurityContext = convertK8sSCToModelSC(minInst.Spec.Prometheus.SecurityContext)
+	}
 	return monitoringInfo, nil
 }
 
@@ -2306,12 +2307,16 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if err == nil {
 		*minTenant.Spec.Prometheus.DiskCapacityDB = diskCapacityGB
 	}
+
 	minTenant.Spec.Prometheus.ServiceAccountName = params.Data.ServiceAccountName
+	minTenant.Spec.Prometheus.SecurityContext, err = convertModelSCToK8sSC(params.Data.SecurityContext)
+	if err != nil {
+		return false, restapi.ErrorWithContext(ctx, err)
+	}
 	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err)
 	}
-
 	return true, nil
 }
 

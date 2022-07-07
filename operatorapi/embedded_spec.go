@@ -4301,6 +4301,10 @@ func init() {
         "prometheusEnabled": {
           "type": "boolean"
         },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
+        },
         "serviceAccountName": {
           "type": "string"
         },
@@ -9677,6 +9681,10 @@ func init() {
         },
         "prometheusEnabled": {
           "type": "boolean"
+        },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
         },
         "serviceAccountName": {
           "type": "string"

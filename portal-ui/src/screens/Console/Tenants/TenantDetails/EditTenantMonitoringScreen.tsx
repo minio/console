@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-//import {  ISecurityContext} from "../types";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -56,9 +55,13 @@ import {
   setServiceAccountName,
   setCPURequest,
   setMemRequest,
+  setRunAsGroup,
+  setFSGroup,
+  setRunAsUser,
+  setRunAsNonRoot,
 } from "../TenantDetails/tenantMonitoringSlice";
-
 import { clearValidationError } from "../utils";
+import SecurityContextSelector from "../securityContextSelector";
 
 interface ITenantMonitoring {
   classes: any;
@@ -135,6 +138,18 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
   const [annotationsError, setAnnotationsError] = useState<any>({});
   const [nodeSelectorError, setNodeSelectorError] = useState<any>({});
 
+  const runAsGroup = useSelector(
+    (state: AppState) => state.editTenantMonitoring.runAsGroup
+  );
+  const runAsUser = useSelector(
+    (state: AppState) => state.editTenantMonitoring.runAsUser
+  );
+  const fsGroup = useSelector(
+    (state: AppState) => state.editTenantMonitoring.fsGroup
+  );
+  const runAsNonRoot = useSelector(
+    (state: AppState) => state.editTenantMonitoring.runAsNonRoot
+  );
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
@@ -167,6 +182,10 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
     res.nodeSelector != null
       ? setNodeSelector(res.nodeSelector)
       : setNodeSelector([{ key: "", value: "" }]);
+    dispatch(setRunAsGroup(res.securityContext.runAsGroup));
+    dispatch(setRunAsUser(res.securityContext.runAsUser));
+    dispatch(setRunAsNonRoot(res.securityContext.runAsNonRoot));
+    dispatch(setFSGroup(res.securityContext.fsGroup));
   };
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
@@ -221,6 +240,12 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
 
   const submitMonitoringInfo = () => {
     if (checkValid()) {
+      const securityContext = {
+        runAsGroup: runAsGroup != null ? runAsGroup : "0",
+        runAsUser: runAsUser != null ? runAsUser : "0",
+        fsGroup: fsGroup != null ? fsGroup : "0",
+        runAsNonRoot: runAsNonRoot != null ? runAsNonRoot : true,
+      };
       api
         .invoke(
           "PUT",
@@ -237,6 +262,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
             storageClassName: storageClassName,
             monitoringCPURequest: cpuRequest,
             monitoringMemRequest: memRequest + "Gi",
+            securityContext: securityContext,
           }
         )
         .then(() => {
@@ -312,7 +338,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
             description=""
           />
         </Grid>
-        <Grid xs={12}>
+        <Grid item xs={12}>
           <hr className={classes.hrClass} />
         </Grid>
       </Grid>
@@ -518,6 +544,21 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
               />
             </Grid>
           )}
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <SecurityContextSelector
+              classes={classes}
+              runAsGroup={runAsGroup}
+              runAsUser={runAsUser}
+              fsGroup={fsGroup}
+              runAsNonRoot={runAsNonRoot}
+              setFSGroup={(value: string) => dispatch(setFSGroup(value))}
+              setRunAsUser={(value: string) => dispatch(setRunAsUser(value))}
+              setRunAsGroup={(value: string) => dispatch(setRunAsGroup(value))}
+              setRunAsNonRoot={(value: boolean) =>
+                dispatch(setRunAsNonRoot(value))
+              }
+            />
+          </Grid>
           <Grid item xs={12} textAlign={"right"}>
             <Button
               type="submit"
