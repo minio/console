@@ -21,13 +21,14 @@ import {
   IAM_PAGES,
   IAM_PAGES_PERMISSIONS,
   IAM_SCOPES,
-  S3_ALL_RESOURCES,
+  S3_ALL_RESOURCES
 } from "../../common/SecureComponent/permissions";
 import {
   AccessMenuIcon,
   AccountsMenuIcon,
   AuditLogsMenuIcon,
   BucketsMenuIcon,
+  CallHomeMenuIcon,
   DrivesMenuIcon,
   GroupsMenuIcon,
   HealthMenuIcon,
@@ -40,7 +41,7 @@ import {
   ProfileMenuIcon,
   SupportMenuIcon,
   TraceMenuIcon,
-  UsersMenuIcon,
+  UsersMenuIcon
 } from "../../icons/SidebarMenus";
 import { hasPermission } from "../../common/SecureComponent";
 import WatchIcon from "../../icons/WatchIcon";
@@ -51,7 +52,7 @@ import {
   LicenseIcon,
   RecoverIcon,
   TenantsOutlineIcon,
-  TiersIcon,
+  TiersIcon
 } from "../../icons";
 import SettingsIcon from "../../icons/SettingsIcon";
 import React from "react";
@@ -70,7 +71,7 @@ export const validRoutes = (
       to: IAM_PAGES.BUCKETS,
       icon: BucketsMenuIcon,
       forceDisplay: true,
-      children: [],
+      children: []
     },
     {
       name: "Identity",
@@ -86,7 +87,7 @@ export const validRoutes = (
             hasPermission(S3_ALL_RESOURCES, [IAM_SCOPES.ADMIN_CREATE_USER]),
           name: "Users",
           icon: UsersMenuIcon,
-          fsHidden: ldapIsEnabled,
+          fsHidden: ldapIsEnabled
         },
         {
           component: NavLink,
@@ -94,7 +95,7 @@ export const validRoutes = (
           to: IAM_PAGES.GROUPS,
           name: "Groups",
           icon: GroupsMenuIcon,
-          fsHidden: ldapIsEnabled,
+          fsHidden: ldapIsEnabled
         },
         {
           component: NavLink,
@@ -102,16 +103,16 @@ export const validRoutes = (
           to: IAM_PAGES.ACCOUNT,
           name: "Service Accounts",
           icon: AccountsMenuIcon,
-          forceDisplay: true,
-        },
-      ],
+          forceDisplay: true
+        }
+      ]
     },
     {
       name: "Access",
       component: NavLink,
       id: "access",
       to: IAM_PAGES.POLICIES,
-      icon: AccessMenuIcon,
+      icon: AccessMenuIcon
     },
 
     {
@@ -124,72 +125,72 @@ export const validRoutes = (
           id: "monitorMetrics",
           to: IAM_PAGES.DASHBOARD,
           icon: MetricsMenuIcon,
-          component: NavLink,
+          component: NavLink
         },
         {
           name: "Logs ",
           id: "monitorLogs",
           to: IAM_PAGES.TOOLS_LOGS,
           icon: LogsMenuIcon,
-          component: NavLink,
+          component: NavLink
         },
         {
           name: "Audit",
           id: "monitorAudit",
           to: IAM_PAGES.TOOLS_AUDITLOGS,
           icon: AuditLogsMenuIcon,
-          component: NavLink,
+          component: NavLink
         },
         {
           name: "Trace",
           id: "monitorTrace",
           to: IAM_PAGES.TOOLS_TRACE,
           icon: TraceMenuIcon,
-          component: NavLink,
+          component: NavLink
         },
         {
           name: "Watch",
           id: "watch",
           component: NavLink,
           icon: WatchIcon,
-          to: IAM_PAGES.TOOLS_WATCH,
+          to: IAM_PAGES.TOOLS_WATCH
         },
         {
           name: "Drives",
           id: "monitorDrives",
           to: IAM_PAGES.TOOLS_HEAL,
           icon: DrivesMenuIcon,
-          component: NavLink,
-        },
-      ],
+          component: NavLink
+        }
+      ]
     },
     {
       component: NavLink,
       to: IAM_PAGES.NOTIFICATIONS_ENDPOINTS,
       name: "Notifications",
       icon: LambdaIcon,
-      id: "lambda",
+      id: "lambda"
     },
     {
       component: NavLink,
       to: IAM_PAGES.TIERS,
       name: "Tiers",
       icon: TiersIcon,
-      id: "tiers",
+      id: "tiers"
     },
     {
       component: NavLink,
       to: IAM_PAGES.SITE_REPLICATION,
       name: "Site Replication",
       icon: RecoverIcon,
-      id: "sitereplication",
+      id: "sitereplication"
     },
     {
       component: NavLink,
       to: IAM_PAGES.SETTINGS,
       name: "Configurations",
       id: "configurations",
-      icon: SettingsIcon,
+      icon: SettingsIcon
     },
     {
       name: "Support",
@@ -201,45 +202,44 @@ export const validRoutes = (
           id: "register",
           component: NavLink,
           icon: RegisterMenuIcon,
-          to: IAM_PAGES.REGISTER_SUPPORT,
+          to: IAM_PAGES.REGISTER_SUPPORT
         },
         {
           name: "Health",
           id: "diagnostics",
           component: NavLink,
           icon: HealthMenuIcon,
-          to: IAM_PAGES.TOOLS_DIAGNOSTICS,
+          to: IAM_PAGES.TOOLS_DIAGNOSTICS
         },
         {
           name: "Performance",
           id: "performance",
           component: NavLink,
           icon: PerformanceMenuIcon,
-          to: IAM_PAGES.TOOLS_SPEEDTEST,
+          to: IAM_PAGES.TOOLS_SPEEDTEST
         },
         {
           name: "Profile",
           id: "profile",
           component: NavLink,
           icon: ProfileMenuIcon,
-          to: IAM_PAGES.PROFILE,
+          to: IAM_PAGES.PROFILE
         },
-
-        // {
-        //   name: "Call Home",
-        //   id: "callhome",
-        //   component: NavLink,
-        //   icon: CallHomeMenuIcon,
-        //   to: IAM_PAGES.CALL_HOME,
-        // },
         {
           name: "Inspect",
           id: "inspectObjects",
           to: IAM_PAGES.SUPPORT_INSPECT,
           icon: InspectMenuIcon,
-          component: NavLink,
+          component: NavLink
         },
-      ],
+        {
+          name: "Call Home",
+          id: "callhome",
+          component: NavLink,
+          icon: CallHomeMenuIcon,
+          to: IAM_PAGES.CALL_HOME
+        }
+      ]
     },
     {
       component: NavLink,
@@ -248,7 +248,7 @@ export const validRoutes = (
       id: "license",
       icon: LicenseIcon,
       badge: LicenseBadge,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       type: "item",
@@ -265,8 +265,8 @@ export const validRoutes = (
       ) => {
         e.preventDefault();
         window.open("https://docs.min.io/?ref=con", "_blank");
-      },
-    },
+      }
+    }
   ];
 
   let operatorMenus: IMenuItem[] = [
@@ -278,7 +278,7 @@ export const validRoutes = (
       to: IAM_PAGES.TENANTS,
       name: "Tenants",
       icon: TenantsOutlineIcon,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       group: "Operator",
@@ -288,7 +288,7 @@ export const validRoutes = (
       to: IAM_PAGES.LICENSE,
       name: "License",
       icon: LicenseIcon,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       group: "Operator",
@@ -307,8 +307,8 @@ export const validRoutes = (
       ) => {
         e.preventDefault();
         window.open("https://docs.min.io/?ref=op", "_blank");
-      },
-    },
+      }
+    }
   ];
 
   const allowedItems = (operatorMode ? operatorMenus : consoleMenus).filter(
@@ -317,8 +317,8 @@ export const validRoutes = (
         const c = item.children?.filter((childItem: IMenuItem) => {
           return (
             ((childItem.customPermissionFnc
-              ? childItem.customPermissionFnc()
-              : hasPermission(
+                ? childItem.customPermissionFnc()
+                : hasPermission(
                   CONSOLE_UI_RESOURCE,
                   IAM_PAGES_PERMISSIONS[childItem.to ?? ""]
                 )) ||
@@ -331,8 +331,8 @@ export const validRoutes = (
 
       const res =
         ((item.customPermissionFnc
-          ? item.customPermissionFnc()
-          : hasPermission(
+            ? item.customPermissionFnc()
+            : hasPermission(
               CONSOLE_UI_RESOURCE,
               IAM_PAGES_PERMISSIONS[item.to ?? ""]
             )) ||
