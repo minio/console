@@ -35,7 +35,7 @@ import (
 func registerLoginHandlers(api *operations.ConsoleAPI) {
 	// GET login strategy
 	api.AuthLoginDetailHandler = authApi.LoginDetailHandlerFunc(func(params authApi.LoginDetailParams) middleware.Responder {
-		loginDetails, err := getLoginDetailsResponse(params)
+		loginDetails, err := getLoginDetailsResponse(params, api.OpenIDProviders, oauth2.DefaultIDPConfig)
 		if err != nil {
 			return authApi.NewLoginDetailDefault(int(err.Code)).WithPayload(err)
 		}
@@ -56,7 +56,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	})
 	// POST login using external IDP
 	api.AuthLoginOauth2AuthHandler = authApi.LoginOauth2AuthHandlerFunc(func(params authApi.LoginOauth2AuthParams) middleware.Responder {
-		loginResponse, err := getLoginOauth2AuthResponse(params)
+		loginResponse, err := getLoginOauth2AuthResponse(params, api.OpenIDProviders, oauth2.DefaultIDPConfig)
 		if err != nil {
 			return authApi.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
 		}
@@ -145,16 +145,16 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *model
 }
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
-func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDetails, *models.Error) {
+func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders oauth2.OpenIDPCfg, idpName string) (*models.LoginDetails, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
 	r := params.HTTPRequest
-	if oauth2.IsIDPEnabled() {
+	if openIDProviders != nil {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		// initialize new oauth2 client
-		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, GetConsoleHTTPClient())
+		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(idpName, nil, r, GetConsoleHTTPClient())
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err, ErrOauth2Provider)
 		}
@@ -180,14 +180,14 @@ func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, 
 	return userCredentials, nil
 }
 
-func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams) (*models.LoginResponse, *models.Error) {
+func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProviders oauth2.OpenIDPCfg, idpName string) (*models.LoginResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	r := params.HTTPRequest
 	lr := params.Body
-	if oauth2.IsIDPEnabled() {
+	if openIDProviders != nil {
 		// initialize new oauth2 client
-		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, GetConsoleHTTPClient())
+		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(idpName, nil, r, GetConsoleHTTPClient())
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
