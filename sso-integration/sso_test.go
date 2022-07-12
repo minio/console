@@ -250,5 +250,5 @@ func TestBadLogin(t *testing.T) {
 	fmt.Println(response)
 	fmt.Println(err)
 	expectedError := response.Status
-	assert.Equal("500 Internal Server Error", expectedError)
+	assert.Equal("401 Unauthorized", expectedError)
 }
