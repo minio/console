@@ -28,6 +28,7 @@ import (
 // ProviderConfig - OpenID IDP Configuration for console.
 type ProviderConfig struct {
 	URL                      string
+	DisplayName              string // user-provided - can be empty
 	ClientID, ClientSecret   string
 	HMACSalt, HMACPassphrase string
 	Scopes                   string
