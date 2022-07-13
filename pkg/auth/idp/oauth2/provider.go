@@ -206,6 +206,8 @@ func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.
 	return client, nil
 }
 
+var defaultScopes = []string{"openid", "profile", "email"}
+
 // NewOauth2ProviderClient instantiates a new oauth2 client using the
 // `OpenIDPCfg` configuration struct. It returns a *Provider object that
 // contains the necessary configuration to initiate an oauth2 authentication
@@ -234,9 +236,19 @@ func (o OpenIDPCfg) NewOauth2ProviderClient(name string, scopes []string, r *htt
 		return nil, fmt.Errorf("expected 'code' response type - got %s, login not allowed", ddoc.ResponseTypesSupported)
 	}
 
-	// If provided scopes are empty we use a default list or the user configured list
+	// If provided scopes are empty we use the user configured list or a default
+	// list.
 	if len(scopes) == 0 {
-		scopes = strings.Split(o[name].Scopes, ",")
+		scopesTmp := strings.Split(o[name].Scopes, ",")
+		for _, s := range scopesTmp {
+			w := strings.TrimSpace(s)
+			if w != "" {
+				scopes = append(scopes, w)
+			}
+		}
+		if len(scopes) == 0 {
+			scopes = defaultScopes
+		}
 	}
 
 	redirectURL := o[name].RedirectCallback
