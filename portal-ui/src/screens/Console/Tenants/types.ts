@@ -42,6 +42,7 @@ export interface ICustomCertificates {
 export interface ITenantSecurityResponse {
   autoCert: boolean;
   customCertificates: ICustomCertificates;
+  securityContext: ISecurityContext;
 }
 
 export interface IVaultTLS {
@@ -340,6 +341,14 @@ export interface ITenantIdentityProviderResponse {
 }
 
 export interface IEditMonitoringSecurityContext {
+  securityContextEnabled: boolean;
+  runAsUser: string;
+  runAsGroup: string;
+  fsGroup: string;
+  runAsNonRoot: boolean;
+}
+
+export interface IEditTenantSecurityContext {
   securityContextEnabled: boolean;
   runAsUser: string;
   runAsGroup: string;

@@ -41,6 +41,9 @@ type TenantSecurityResponse struct {
 
 	// custom certificates
 	CustomCertificates *TenantSecurityResponseCustomCertificates `json:"customCertificates,omitempty"`
+
+	// security context
+	SecurityContext *SecurityContext `json:"securityContext,omitempty"`
 }
 
 // Validate validates this tenant security response
@@ -48,6 +51,10 @@ func (m *TenantSecurityResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCustomCertificates(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSecurityContext(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -76,11 +83,34 @@ func (m *TenantSecurityResponse) validateCustomCertificates(formats strfmt.Regis
 	return nil
 }
 
+func (m *TenantSecurityResponse) validateSecurityContext(formats strfmt.Registry) error {
+	if swag.IsZero(m.SecurityContext) { // not required
+		return nil
+	}
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this tenant security response based on the context it is used
 func (m *TenantSecurityResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateCustomCertificates(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSecurityContext(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -98,6 +128,22 @@ func (m *TenantSecurityResponse) contextValidateCustomCertificates(ctx context.C
 				return ve.ValidateName("customCertificates")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("customCertificates")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TenantSecurityResponse) contextValidateSecurityContext(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("securityContext")
 			}
 			return err
 		}
