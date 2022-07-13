@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect } from "react";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { Button, LinearProgress, Box } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -186,6 +186,87 @@ const AddBucket = ({ classes }: IsetProps) => {
                   <br />
                   <b>Retention</b> imposes rules to prevent object deletion for
                   a period of time.
+                  <br />
+                  <br />
+                  <b>Bucket Naming Rules</b>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexFlow: "column",
+                      fontSize: "14px",
+                      flex: "2",
+                      "& .step-number": {
+                        color: "#ffffff",
+                        height: "25px",
+                        width: "25px",
+                        background: "#081C42",
+                        marginRight: "10px",
+                        textAlign: "center",
+                        fontWeight: 600,
+                        borderRadius: "50%",
+                      },
+
+                      "& .step-row": {
+                        fontSize: "14px",
+                        display: "flex",
+                        marginTop: "15px",
+                        marginBottom: "2px",
+
+                        "&.step-text": {
+                          fontWeight: 400,
+                        },
+                        "&:before": {
+                          content: "' '",
+                          height: "7px",
+                          width: "7px",
+                          backgroundColor: "#2781B0",
+                          marginRight: "10px",
+                          marginTop: "7px",
+                          flexShrink: 0,
+                        },
+                      },
+                    }}
+                  >
+                    <Box className="step-row">
+                      <div className="step-text">
+                        Bucket names must be between 3 (min) and 63 (max)
+                        characters long.
+                      </div>
+                    </Box>
+                    <Box className="step-row">
+                      <div className="step-text">
+                        Bucket names can consist only of lowercase letters,
+                        numbers, dots (.), and hyphens (-).
+                      </div>
+                    </Box>
+                    <Box className="step-row">
+                      <div className="step-text">
+                        Bucket names must not contain two adjacent periods.
+                      </div>
+                    </Box>
+                    <Box className="step-row">
+                      <div className="step-text">
+                        Bucket names must not be formatted as an IP address (for
+                        example, 192.168.5.4).
+                      </div>
+                    </Box>
+                    <Box className="step-row">
+                      <div className="step-text">
+                        Bucket names must not start with the prefix xn--.
+                      </div>
+                    </Box>
+                    <Box className="step-row">
+                      <div className="step-text">
+                        Bucket names must not end with the suffix -s3alias. This
+                        suffix is reserved for access point alias names.
+                      </div>
+                    </Box>
+                    <Box className="step-row">
+                      <div className="step-text">
+                        Bucket names must be unique within a partition.
+                      </div>
+                    </Box>
+                  </Box>
                 </Fragment>
               }
             />
