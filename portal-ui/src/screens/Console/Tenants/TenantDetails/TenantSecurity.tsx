@@ -45,7 +45,12 @@ import Loader from "../../Common/Loader/Loader";
 import TLSCertificate from "../../Common/TLSCertificate/TLSCertificate";
 import SectionTitle from "../../Common/SectionTitle";
 import SecurityContextSelector from "../securityContextSelector";
-import { setRunAsUser, setFSGroup, setRunAsGroup, setRunAsNonRoot } from "../tenantSecurityContextSlice";
+import {
+  setRunAsUser,
+  setFSGroup,
+  setRunAsGroup,
+  setRunAsNonRoot,
+} from "../tenantSecurityContextSlice";
 
 interface ITenantSecurity {
   classes: any;
@@ -103,17 +108,17 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
     useState<ICertificateInfo[]>([]);
 
   const runAsGroup = useSelector(
-      (state: AppState) => state.editTenantSecurityContext.runAsGroup
-    )
+    (state: AppState) => state.editTenantSecurityContext.runAsGroup
+  );
   const runAsUser = useSelector(
-      (state: AppState) => state.editTenantSecurityContext.runAsUser
-    )
+    (state: AppState) => state.editTenantSecurityContext.runAsUser
+  );
   const fsGroup = useSelector(
-      (state: AppState) => state.editTenantSecurityContext.fsGroup
-    )
+    (state: AppState) => state.editTenantSecurityContext.fsGroup
+  );
   const runAsNonRoot = useSelector(
-      (state: AppState) => state.editTenantSecurityContext.runAsNonRoot
-    )
+    (state: AppState) => state.editTenantSecurityContext.runAsNonRoot
+  );
 
   const getTenantSecurityInfo = useCallback(() => {
     api
@@ -128,10 +133,10 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
         }
         setMinioTLSCertificateSecrets(res.customCertificates.minio || []);
         setMinioTLSCaCertificateSecrets(res.customCertificates.minioCAs || []);
-        dispatch(setRunAsGroup(res.securityContext.runAsGroup))
-        dispatch(setRunAsUser(res.securityContext.runAsUser))
-        dispatch(setFSGroup(res.securityContext.fsGroup))
-        dispatch(setRunAsNonRoot(res.securityContext.runAsNonRoot))
+        dispatch(setRunAsGroup(res.securityContext.runAsGroup));
+        dispatch(setRunAsUser(res.securityContext.runAsUser));
+        dispatch(setFSGroup(res.securityContext.fsGroup));
+        dispatch(setRunAsNonRoot(res.securityContext.runAsNonRoot));
       })
       .catch((err: ErrorResponseHandler) => {
         dispatch(setErrorSnackMessage(err));
@@ -149,7 +154,12 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
     let payload = {
       autoCert: enableAutoCert,
       customCertificates: {},
-      securityContext: {runAsGroup: runAsGroup, runAsUser: runAsUser, runAsNonRoot : runAsNonRoot, fsGroup: fsGroup},
+      securityContext: {
+        runAsGroup: runAsGroup,
+        runAsUser: runAsUser,
+        runAsNonRoot: runAsNonRoot,
+        fsGroup: fsGroup,
+      },
     };
     if (enableCustomCerts) {
       payload["customCertificates"] = {
@@ -532,17 +542,21 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
               </Grid>
             </Fragment>
           )}
-        <Grid item xs={12} className={classes.formFieldRow}>
-            <SecurityContextSelector classes={classes} 
-            runAsGroup={runAsGroup}
-            runAsUser={runAsUser}
-            fsGroup={fsGroup}
-            runAsNonRoot={runAsNonRoot}
-            setFSGroup={(value : string)=>dispatch(setFSGroup(value))}
-            setRunAsUser={(value : string)=>dispatch(setRunAsUser(value))}
-            setRunAsGroup={(value : string)=>dispatch(setRunAsGroup(value))}
-            setRunAsNonRoot={(value : boolean)=>dispatch(setRunAsNonRoot(value))}
-            /></Grid>
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <SecurityContextSelector
+              classes={classes}
+              runAsGroup={runAsGroup}
+              runAsUser={runAsUser}
+              fsGroup={fsGroup}
+              runAsNonRoot={runAsNonRoot}
+              setFSGroup={(value: string) => dispatch(setFSGroup(value))}
+              setRunAsUser={(value: string) => dispatch(setRunAsUser(value))}
+              setRunAsGroup={(value: string) => dispatch(setRunAsGroup(value))}
+              setRunAsNonRoot={(value: boolean) =>
+                dispatch(setRunAsNonRoot(value))
+              }
+            />
+          </Grid>
           <Grid item xs={12} textAlign={"right"}>
             <Button
               type="submit"

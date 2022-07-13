@@ -14,45 +14,44 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IEditTenantSecurityContext } from "./types"
-
+import { IEditTenantSecurityContext } from "./types";
 
 const initialState: IEditTenantSecurityContext = {
-        securityContextEnabled: false,    
-        runAsUser: "1000",
-        runAsGroup: "1000",
-        fsGroup: "1000",
-        runAsNonRoot: true,
+  securityContextEnabled: false,
+  runAsUser: "1000",
+  runAsGroup: "1000",
+  fsGroup: "1000",
+  runAsNonRoot: true,
 };
 
 export const editTenantSecurityContextSlice = createSlice({
-    name: "editTenantSecurityContext",
-    initialState,
-    reducers: {
-        setSecurityContextEnabled: (state, action: PayloadAction<boolean>) => {
-            state.securityContextEnabled = action.payload;
-        },
-        setRunAsUser: (state, action: PayloadAction<string>) => {
-            state.runAsUser = action.payload;
-        },
-        setRunAsGroup:(state, action: PayloadAction<string>) => {
-            state.runAsGroup = action.payload;
-        },
-        setFSGroup: (state, action: PayloadAction<string>) => {
-            state.fsGroup = action.payload;
-        },
-        setRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
-            state.runAsNonRoot = action.payload;
-        },
+  name: "editTenantSecurityContext",
+  initialState,
+  reducers: {
+    setSecurityContextEnabled: (state, action: PayloadAction<boolean>) => {
+      state.securityContextEnabled = action.payload;
     },
+    setRunAsUser: (state, action: PayloadAction<string>) => {
+      state.runAsUser = action.payload;
+    },
+    setRunAsGroup: (state, action: PayloadAction<string>) => {
+      state.runAsGroup = action.payload;
+    },
+    setFSGroup: (state, action: PayloadAction<string>) => {
+      state.fsGroup = action.payload;
+    },
+    setRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
+      state.runAsNonRoot = action.payload;
+    },
+  },
 });
 
 export const {
-    setSecurityContextEnabled,
-    setRunAsUser, 
-    setRunAsGroup,
-    setFSGroup,
-    setRunAsNonRoot,
+  setSecurityContextEnabled,
+  setRunAsUser,
+  setRunAsGroup,
+  setFSGroup,
+  setRunAsNonRoot,
 } = editTenantSecurityContextSlice.actions;
 
 export default editTenantSecurityContextSlice.reducer;
