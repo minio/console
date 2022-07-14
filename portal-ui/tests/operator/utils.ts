@@ -127,14 +127,20 @@ export const redirectToPath = async (path: string) => {
 export const checkMonitoringFieldsAcceptValues = async (tenantName: string) => {
   await goToMonitoringSection(tenantName);
   await t
-    .typeText("#image", "quay.io/prometheus/prometheus:latest")
-    .typeText("#sidecarImage", "library/alpine:latest")
-    .typeText("#initImage", "library/busybox:1.33.1")
-    .typeText("#diskCapacityGB", "1")
-    .typeText("#cpuRequest", "1")
-    .typeText("#memRequest", "1")
-    .typeText("#serviceAccountName", "monitoringTestServiceAccountName")
-    .typeText("#storageClassName", "monitoringTestStorageClassName")
+    .typeText("#image", "quay.io/prometheus/prometheus:latest", {
+      replace: true,
+    })
+    .typeText("#sidecarImage", "library/alpine:latest", { replace: true })
+    .typeText("#initImage", "library/busybox:1.33.1", { replace: true })
+    .typeText("#diskCapacityGB", "1", { replace: true })
+    .typeText("#cpuRequest", "1", { replace: true })
+    .typeText("#memRequest", "1", { replace: true })
+    .typeText("#serviceAccountName", "monitoringTestServiceAccountName", {
+      replace: true,
+    })
+    .typeText("#storageClassName", "monitoringTestStorageClassName", {
+      replace: true,
+    })
     .click("#submit_button")
     .click("#yaml_button")
     .expect(Selector("#code_wrapper").exists)
@@ -161,7 +167,7 @@ export const checkMonitoringFieldsAcceptValues = async (tenantName: string) => {
     .expect((await Selector("#code_wrapper").textContent).includes('cpu: "1"'))
     .ok()
     .expect(
-      (await Selector("#code_wrapper").textContent).includes("memory: 01Gi")
+      (await Selector("#code_wrapper").textContent).includes("memory: 1Gi")
     )
     .ok()
     .expect(
