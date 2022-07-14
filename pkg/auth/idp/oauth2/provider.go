@@ -206,6 +206,79 @@ func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.
 	return client, nil
 }
 
+var defaultScopes = []string{"openid", "profile", "email"}
+
+// NewOauth2ProviderClient instantiates a new oauth2 client using the
+// `OpenIDPCfg` configuration struct. It returns a *Provider object that
+// contains the necessary configuration to initiate an oauth2 authentication
+// flow.
+//
+// We only support Authentication with the Authorization Code Flow - spec:
+// https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
+func (o OpenIDPCfg) NewOauth2ProviderClient(name string, scopes []string, r *http.Request, httpClient *http.Client) (*Provider, error) {
+	ddoc, err := parseDiscoveryDoc(o[name].URL, httpClient)
+	if err != nil {
+		return nil, err
+	}
+
+	supportedResponseTypes := set.NewStringSet()
+	for _, responseType := range ddoc.ResponseTypesSupported {
+		// FIXME: ResponseTypesSupported is a JSON array of strings - it
+		// may not actually have strings with spaces inside them -
+		// making the following code unnecessary.
+		for _, s := range strings.Fields(responseType) {
+			supportedResponseTypes.Add(s)
+		}
+	}
+	isSupported := requiredResponseTypes.Difference(supportedResponseTypes).IsEmpty()
+
+	if !isSupported {
+		return nil, fmt.Errorf("expected 'code' response type - got %s, login not allowed", ddoc.ResponseTypesSupported)
+	}
+
+	// If provided scopes are empty we use the user configured list or a default
+	// list.
+	if len(scopes) == 0 {
+		scopesTmp := strings.Split(o[name].Scopes, ",")
+		for _, s := range scopesTmp {
+			w := strings.TrimSpace(s)
+			if w != "" {
+				scopes = append(scopes, w)
+			}
+		}
+		if len(scopes) == 0 {
+			scopes = defaultScopes
+		}
+	}
+
+	redirectURL := o[name].RedirectCallback
+	if o[name].RedirectCallbackDynamic {
+		// dynamic redirect if set, will generate redirect URLs
+		// dynamically based on incoming requests.
+		redirectURL = getLoginCallbackURL(r)
+	}
+
+	// add "openid" scope always.
+	scopes = append(scopes, "openid")
+
+	client := new(Provider)
+	client.oauth2Config = &xoauth2.Config{
+		ClientID:     o[name].ClientID,
+		ClientSecret: o[name].ClientSecret,
+		RedirectURL:  redirectURL,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  ddoc.AuthEndpoint,
+			TokenURL: ddoc.TokenEndpoint,
+		},
+		Scopes: scopes,
+	}
+
+	client.ClientID = o[name].ClientID
+	client.UserInfo = o[name].Userinfo
+	client.provHTTPClient = httpClient
+	return client, nil
+}
+
 type User struct {
 	AppMetadata       map[string]interface{} `json:"app_metadata"`
 	Blocked           bool                   `json:"blocked"`

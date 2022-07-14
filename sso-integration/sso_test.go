@@ -24,13 +24,13 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"os/exec"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/go-openapi/loads"
+	consoleoauth2 "github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/console/restapi"
 	"github.com/minio/console/restapi/operations"
 	"github.com/stretchr/testify/assert"
@@ -40,10 +40,14 @@ var token string
 
 func initConsoleServer(consoleIDPURL string) (*restapi.Server, error) {
 	// Configure Console Server with vars to get the idp config from the container
-	os.Setenv("CONSOLE_IDP_URL", consoleIDPURL)
-	os.Setenv("CONSOLE_IDP_CLIENT_ID", "minio-client-app")
-	os.Setenv("CONSOLE_IDP_SECRET", "minio-client-app-secret")
-	os.Setenv("CONSOLE_IDP_CALLBACK", "http://127.0.0.1:9090/oauth_callback")
+	pcfg := map[string]consoleoauth2.ProviderConfig{
+		consoleoauth2.DefaultIDPConfig: {
+			URL:              consoleIDPURL,
+			ClientID:         "minio-client-app",
+			ClientSecret:     "minio-client-app-secret",
+			RedirectCallback: "http://127.0.0.1:9090/oauth_callback",
+		},
+	}
 
 	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
 	if err != nil {
@@ -58,7 +62,7 @@ func initConsoleServer(consoleIDPURL string) (*restapi.Server, error) {
 	restapi.LogInfo = noLog
 	restapi.LogError = noLog
 
-	api := operations.NewConsoleAPI(swaggerSpec)
+	api := operations.NewConsoleAPI(swaggerSpec, pcfg)
 	api.Logger = noLog
 
 	server := restapi.NewServer(api)
@@ -246,5 +250,5 @@ func TestBadLogin(t *testing.T) {
 	fmt.Println(response)
 	fmt.Println(err)
 	expectedError := response.Status
-	assert.Equal("500 Internal Server Error", expectedError)
+	assert.Equal("401 Unauthorized", expectedError)
 }

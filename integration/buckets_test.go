@@ -71,7 +71,7 @@ func initConsoleServer() (*restapi.Server, error) {
 	restapi.LogInfo = noLog
 	restapi.LogError = noLog
 
-	api := operations.NewConsoleAPI(swaggerSpec)
+	api := operations.NewConsoleAPI(swaggerSpec, nil)
 	api.Logger = noLog
 
 	server := restapi.NewServer(api)

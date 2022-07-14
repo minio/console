@@ -69,7 +69,7 @@ func TestRegisterAdminArnsHandlers(t *testing.T) {
 	if err != nil {
 		assert.Fail("Error")
 	}
-	api := operations.NewConsoleAPI(swaggerSpec)
+	api := operations.NewConsoleAPI(swaggerSpec, nil)
 	api.SystemArnListHandler = nil
 	registerAdminArnsHandlers(api)
 	if api.SystemArnListHandler == nil {

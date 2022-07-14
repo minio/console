@@ -25,6 +25,22 @@ import (
 	"github.com/minio/pkg/env"
 )
 
+// ProviderConfig - OpenID IDP Configuration for console.
+type ProviderConfig struct {
+	URL                      string
+	DisplayName              string // user-provided - can be empty
+	ClientID, ClientSecret   string
+	HMACSalt, HMACPassphrase string
+	Scopes                   string
+	Userinfo                 bool
+	RedirectCallbackDynamic  bool
+	RedirectCallback         string
+}
+
+type OpenIDPCfg map[string]ProviderConfig
+
+var DefaultIDPConfig = "_"
+
 func GetSTSEndpoint() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
 }
