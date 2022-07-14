@@ -181,7 +181,11 @@ export const checkMonitoringFieldsAcceptValues = async (tenantName: string) => {
         await Selector("#code_wrapper").textContent
       ).includes("sidecarimage: library/alpine:latest")
     )
+    .ok()
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("storageClassName: monitoringTestStorageClassName")
+    )
     .ok();
-  //.expect((await Selector("#code_wrapper").textContent).includes("storageClassName: monitoringTestStorageClassName"))
-  // .ok();
 };
