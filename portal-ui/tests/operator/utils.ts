@@ -111,10 +111,81 @@ export const goToPvcSection = async (index: number) => {
     .click(Selector(`#simple-tab-${index}`));
 };
 
+export const goToMonitoringSection = async (tenantName: string) => {
+  await t.click(`#list-tenant-${tenantName}`).wait(2000);
+  await t.click(Selector(`a[href$="/monitoring"]`));
+};
+
 export const redirectToTenantsList = async () => {
   await redirectToPath(`${host}/tenants`);
 };
 
 export const redirectToPath = async (path: string) => {
   await t.navigateTo(path);
+};
+
+export const checkMonitoringFieldsAcceptValues = async (tenantName: string) => {
+  await goToMonitoringSection(tenantName);
+  await t
+    .typeText("#image", "quay.io/prometheus/prometheus:latest", {
+      replace: true,
+    })
+    .typeText("#sidecarImage", "library/alpine:latest", { replace: true })
+    .typeText("#initImage", "library/busybox:1.33.1", { replace: true })
+    .typeText("#diskCapacityGB", "1", { replace: true })
+    .typeText("#cpuRequest", "1", { replace: true })
+    .typeText("#memRequest", "1", { replace: true })
+    .typeText("#serviceAccountName", "monitoringTestServiceAccountName", {
+      replace: true,
+    })
+    .typeText("#storageClassName", "monitoringTestStorageClassName", {
+      replace: true,
+    })
+    .click("#submit_button")
+    .click("#yaml_button")
+    .expect(Selector("#code_wrapper").exists)
+    .ok();
+  await t
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("image: quay.io/prometheus/prometheus:latest")
+    )
+    .ok()
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("initimage: library/busybox:1.33.1")
+    )
+    .ok()
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("diskCapacityGB: 1")
+    )
+    .ok()
+    .expect((await Selector("#code_wrapper").textContent).includes('cpu: "1"'))
+    .ok()
+    .expect(
+      (await Selector("#code_wrapper").textContent).includes("memory: 1Gi")
+    )
+    .ok()
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("serviceAccountName: monitoringTestServiceAccountName")
+    )
+    .ok()
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("sidecarimage: library/alpine:latest")
+    )
+    .ok()
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("storageClassName: monitoringTestStorageClassName")
+    )
+    .ok();
 };

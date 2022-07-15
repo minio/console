@@ -25,6 +25,7 @@ import {
   goToPodSection,
   goToPvcInTenant,
   goToPvcSection,
+  checkMonitoringFieldsAcceptValues,
 } from "./utils";
 
 fixture("For user with default permissions").page("http://localhost:9090");
@@ -94,3 +95,9 @@ const checkPvcDescribeHasSections = async () => {
     .expect(Selector("#pvc-describe-labels").exists)
     .ok();
 };
+
+test("Test Prometheus config fields can be edited and submitted", async (t) => {
+  const tenantName = `storage-lite`;
+  await loginToOperator();
+  await checkMonitoringFieldsAcceptValues(tenantName);
+});
