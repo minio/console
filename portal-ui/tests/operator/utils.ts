@@ -115,6 +115,10 @@ export const goToMonitoringSection = async (tenantName: string) => {
   await t.click(`#list-tenant-${tenantName}`).wait(2000);
   await t.click(Selector(`a[href$="/monitoring"]`));
 };
+export const goToLoggingSection = async (tenantName: string) => {
+  await t.click(`#list-tenant-${tenantName}`).wait(2000);
+  await t.click(Selector(`a[href$="/logging"]`));
+};
 
 export const redirectToTenantsList = async () => {
   await redirectToPath(`${host}/tenants`);
@@ -186,6 +190,47 @@ export const checkMonitoringFieldsAcceptValues = async (tenantName: string) => {
       (
         await Selector("#code_wrapper").textContent
       ).includes("storageClassName: monitoringTestStorageClassName")
+    )
+    .ok();
+};
+
+export const checkLoggingFieldsAcceptValues = async (tenantName: string) => {
+  await goToLoggingSection(tenantName);
+  await t
+    .typeText("#image", "minio/operator:v4.4.22", { replace: true })
+    .typeText("#diskCapacityGB", "3", { replace: true })
+    .typeText("#cpuRequest", "3", { replace: true })
+    .typeText("#memRequest", "3", { replace: true })
+    .typeText("#serviceAccountName", "loggingTestServiceAccountName", {
+      replace: true,
+    })
+    .click("#submit_button")
+    .click("#yaml_button")
+    .expect(Selector("#code_wrapper").exists)
+    .ok();
+  await t
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("image: minio/operator:v4.4.22")
+    )
+    .ok()
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("diskCapacityGB: 3")
+    )
+    .ok()
+    .expect((await Selector("#code_wrapper").textContent).includes('cpu: "3"'))
+    .ok()
+    .expect(
+      (await Selector("#code_wrapper").textContent).includes('memory: "3"')
+    )
+    .ok()
+    .expect(
+      (
+        await Selector("#code_wrapper").textContent
+      ).includes("serviceAccountName: loggingTestServiceAccountName")
     )
     .ok();
 };

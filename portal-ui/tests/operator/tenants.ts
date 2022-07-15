@@ -26,6 +26,7 @@ import {
   goToPvcInTenant,
   goToPvcSection,
   checkMonitoringFieldsAcceptValues,
+  checkLoggingFieldsAcceptValues,
 } from "./utils";
 
 fixture("For user with default permissions").page("http://localhost:9090");
@@ -100,4 +101,10 @@ test("Test Prometheus config fields can be edited and submitted", async (t) => {
   const tenantName = `storage-lite`;
   await loginToOperator();
   await checkMonitoringFieldsAcceptValues(tenantName);
+});
+
+test("Test Audit Log config fields can be edited and submitted", async (t) => {
+  const tenantName = `storage-lite`;
+  await loginToOperator();
+  await checkLoggingFieldsAcceptValues(tenantName);
 });
