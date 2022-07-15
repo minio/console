@@ -89,7 +89,9 @@ test
     await t
       .useRole(roles.bucketRead)
       .navigateTo("http://localhost:9090/buckets")
+      .wait(2000)
       .click(testBucketBrowseButtonFor("bucketread3"))
+      .wait(2000)
       .expect(elements.table.exists)
       .ok();
   })

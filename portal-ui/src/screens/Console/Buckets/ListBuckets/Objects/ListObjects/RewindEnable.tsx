@@ -24,6 +24,7 @@ import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapp
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   resetRewind,
+  setLoadingObjectsList,
   setRewindEnable,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
 
@@ -71,6 +72,8 @@ const RewindEnable = ({
         })
       );
     }
+    dispatch(setLoadingObjectsList(true));
+
     closeModalAndRefresh();
   };
 
@@ -114,6 +117,7 @@ const RewindEnable = ({
             color="primary"
             disabled={rewindEnabling || (!dateSelected && rewindEnableButton)}
             onClick={rewindApply}
+            id={"rewind-apply-button"}
           >
             {!rewindEnableButton && rewindEnabled
               ? "Show Current Data"
