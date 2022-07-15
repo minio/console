@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-//import {  ISecurityContext} from "../types";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -341,6 +340,7 @@ const LoggingDBDetails = ({
         <Grid item xs={12} textAlign={"right"}>
           <Button
             type="submit"
+            id={"submit_button"}
             variant="contained"
             color="primary"
             disabled={!checkValid()}

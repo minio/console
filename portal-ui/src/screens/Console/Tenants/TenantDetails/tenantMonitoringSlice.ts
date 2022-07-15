@@ -51,7 +51,7 @@ const initialState: IEditTenantMonitoring = {
   runAsUser: "1000",
   runAsGroup: "1000",
   fsGroup: "1000",
-  runAsNonRoot: true,
+  runAsNonRoot: false,
 };
 
 export const editTenantMonitoringSlice = createSlice({
