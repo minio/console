@@ -377,6 +377,7 @@ const TenantAuditLogging = ({
           <Grid item xs={12} textAlign={"right"}>
             <Button
               type="submit"
+              id={"submit_button"}
               variant="contained"
               color="primary"
               disabled={loading || !checkValid()}

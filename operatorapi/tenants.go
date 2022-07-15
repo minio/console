@@ -1617,8 +1617,11 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 			}
 		}
 	}
-	if params.Data.DbLabels != nil {
+	if len(params.Data.ServiceAccountName) > 0 {
 		minTenant.Spec.Log.ServiceAccountName = params.Data.ServiceAccountName
+	}
+	if params.Data.DbLabels != nil {
+
 		if params.Data.DbImage != "" || params.Data.DbServiceAccountName != "" {
 			modified = true
 		}
