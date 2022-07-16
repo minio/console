@@ -19,6 +19,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoutes";
 import LoadingComponent from "./common/LoadingComponent";
 import AppConsole from "./screens/Console/ConsoleKBar";
+import { baseUrl } from "./history";
 
 const Login = React.lazy(() => import("./screens/LoginPage/LoginPage"));
 const LoginCallback = React.lazy(
@@ -27,7 +28,7 @@ const LoginCallback = React.lazy(
 
 const MainRouter = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={baseUrl}>
       <Routes>
         <Route
           path="/oauth_callback"
