@@ -77,7 +77,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	})
 
 	api.SubnetSubnetAPIKeyHandler = subnetApi.SubnetAPIKeyHandlerFunc(func(params subnetApi.SubnetAPIKeyParams, session *models.Principal) middleware.Responder {
-		resp, err := GetSubnetApiKeyResponse(session, params)
+		resp, err := GetSubnetAPIKeyResponse(session, params)
 		if err != nil {
 			return subnetApi.NewSubnetAPIKeyDefault(int(err.Code)).WithPayload(err)
 		}
@@ -370,7 +370,7 @@ func GetSubnetRegTokenResponse(session *models.Principal, params subnetApi.Subne
 	}, nil
 }
 
-func GetSubnetApiKeyResponse(session *models.Principal, params subnetApi.SubnetAPIKeyParams) (*models.APIKey, *models.Error) {
+func GetSubnetAPIKeyResponse(session *models.Principal, params subnetApi.SubnetAPIKeyParams) (*models.APIKey, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
