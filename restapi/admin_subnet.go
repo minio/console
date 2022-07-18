@@ -75,6 +75,14 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 		}
 		return subnetApi.NewSubnetRegTokenOK().WithPayload(resp)
 	})
+
+	api.SubnetSubnetAPIKeyHandler = subnetApi.SubnetAPIKeyHandlerFunc(func(params subnetApi.SubnetAPIKeyParams, session *models.Principal) middleware.Responder {
+		resp, err := GetSubnetAPIKeyResponse(session, params)
+		if err != nil {
+			return subnetApi.NewSubnetAPIKeyDefault(int(err.Code)).WithPayload(err)
+		}
+		return subnetApi.NewSubnetAPIKeyOK().WithPayload(resp)
+	})
 }
 
 func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKey string) (bool, error) {
@@ -360,4 +368,24 @@ func GetSubnetRegTokenResponse(session *models.Principal, params subnetApi.Subne
 	return &models.SubnetRegTokenResponse{
 		RegToken: token,
 	}, nil
+}
+
+func GetSubnetAPIKeyResponse(session *models.Principal, params subnetApi.SubnetAPIKeyParams) (*models.APIKey, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	adminClient := AdminClient{Client: mAdmin}
+	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, adminClient)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	token := params.HTTPRequest.URL.Query().Get("token")
+	apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.APIKey{APIKey: apiKey}, nil
 }
