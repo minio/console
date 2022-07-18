@@ -165,3 +165,13 @@ func ParseLicense(client http.ClientI, license string) (*licverifier.LicenseInfo
 
 	return licenseInfo, nil
 }
+
+func GetAPIKey(client http.ClientI, token string) (string, error) {
+	resp, err := subnetGetReq(client, subnetAPIKeyURL(), subnetAuthHeaders(token))
+	if err != nil {
+		return "", err
+	}
+	respJSON := gjson.Parse(resp)
+	apiKey := respJSON.Get("api_key").String()
+	return apiKey, nil
+}

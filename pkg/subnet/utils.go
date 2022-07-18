@@ -56,6 +56,10 @@ func subnetMFAURL() string {
 	return subnetBaseURL() + "/api/auth/mfa-login"
 }
 
+func subnetAPIKeyURL() string {
+	return subnetBaseURL() + "/api/auth/api-key"
+}
+
 func GenerateRegToken(clusterRegInfo mc.ClusterRegistrationInfo) (string, error) {
 	token, e := json.Marshal(clusterRegInfo)
 	if e != nil {
