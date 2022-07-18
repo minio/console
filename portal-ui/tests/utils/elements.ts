@@ -214,3 +214,22 @@ export const nodeSelector = Selector('[data-test-id="node-selector"]');
 // User Details
 //----------------------------------------------------
 export const userPolicies = Selector(".MuiTab-root").withText("Policies");
+//----------------------------------------------------
+// Rewind Options
+//----------------------------------------------------
+export const rewindButton = Selector("button").withAttribute(
+  "id",
+  "rewind-objects-list"
+);
+export const rewindToInput = Selector("input").withAttribute(
+  "id",
+  "rewind-selector"
+);
+export const rewindDataButton = Selector("button").withAttribute(
+  "id",
+  "rewind-apply-button"
+);
+export const locationEmpty = Selector("div").withAttribute(
+  "id",
+  "empty-results"
+);

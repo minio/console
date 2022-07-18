@@ -1416,7 +1416,7 @@ const ListObjects = () => {
                     }}
                     disabled={
                       !isVersioned ||
-                      !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
+                      !hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT])
                     }
                   />
                   <RBIconButton

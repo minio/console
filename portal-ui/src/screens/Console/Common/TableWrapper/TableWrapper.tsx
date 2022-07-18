@@ -779,7 +779,7 @@ const TableWrapper = ({
         ) : (
           <Fragment>
             {!isLoading && (
-              <div>
+              <div id={"empty-results"}>
                 {customEmptyMessage !== ""
                   ? customEmptyMessage
                   : `There are no ${entityName} yet.`}
