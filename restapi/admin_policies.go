@@ -634,8 +634,8 @@ func getPolicyInfoResponse(session *models.Principal, params policyApi.PolicyInf
 	return policy, nil
 }
 
-// setPolicy() calls MinIO server to assign policy to a group or user.
-func setPolicy(ctx context.Context, client MinioAdmin, name, entityName string, entityType models.PolicyEntity) error {
+// SetPolicy calls MinIO server to assign policy to a group or user.
+func SetPolicy(ctx context.Context, client MinioAdmin, name, entityName string, entityType models.PolicyEntity) error {
 	isGroup := false
 	if entityType == models.PolicyEntityGroup {
 		isGroup = true
@@ -643,7 +643,7 @@ func setPolicy(ctx context.Context, client MinioAdmin, name, entityName string, 
 	return client.setPolicy(ctx, name, entityName, isGroup)
 }
 
-// getSetPolicyResponse() performs setPolicy() and serializes it to the handler's output
+// getSetPolicyResponse() performs SetPolicy() and serializes it to the handler's output
 func getSetPolicyResponse(session *models.Principal, params policyApi.SetPolicyParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -656,7 +656,7 @@ func getSetPolicyResponse(session *models.Principal, params policyApi.SetPolicyP
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	if err := setPolicy(ctx, adminClient, strings.Join(params.Body.Name, ","), *params.Body.EntityName, *params.Body.EntityType); err != nil {
+	if err := SetPolicy(ctx, adminClient, strings.Join(params.Body.Name, ","), *params.Body.EntityName, *params.Body.EntityType); err != nil {
 		return ErrorWithContext(ctx, err)
 	}
 	return nil

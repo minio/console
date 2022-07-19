@@ -60,7 +60,7 @@ func (ac adminClientMock) addPolicy(ctx context.Context, name string, policy *ia
 	return minioAddPolicyMock(name, policy)
 }
 
-// mock function setPolicy()
+// mock function SetPolicy()
 func (ac adminClientMock) setPolicy(ctx context.Context, policyName, entityName string, isGroup bool) error {
 	return minioSetPolicyMock(policyName, entityName, isGroup)
 }
@@ -202,32 +202,32 @@ func TestSetPolicy(t *testing.T) {
 	minioSetPolicyMock = func(policyName, entityName string, isGroup bool) error {
 		return nil
 	}
-	// Test-1 : setPolicy() set policy to user
-	function := "setPolicy()"
-	err := setPolicy(ctx, adminClient, policyName, entityName, entityObject)
+	// Test-1 : SetPolicy() set policy to user
+	function := "SetPolicy()"
+	err := SetPolicy(ctx, adminClient, policyName, entityName, entityObject)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
-	// Test-2 : setPolicy() set policy to group
+	// Test-2 : SetPolicy() set policy to group
 	entityObject = models.PolicyEntityGroup
-	err = setPolicy(ctx, adminClient, policyName, entityName, entityObject)
+	err = SetPolicy(ctx, adminClient, policyName, entityName, entityObject)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
-	// Test-3 : setPolicy() set policy to user and get error
+	// Test-3 : SetPolicy() set policy to user and get error
 	entityObject = models.PolicyEntityUser
 	minioSetPolicyMock = func(policyName, entityName string, isGroup bool) error {
 		return errors.New("error")
 	}
-	if err := setPolicy(ctx, adminClient, policyName, entityName, entityObject); funcAssert.Error(err) {
+	if err := SetPolicy(ctx, adminClient, policyName, entityName, entityObject); funcAssert.Error(err) {
 		funcAssert.Equal("error", err.Error())
 	}
-	// Test-4 : setPolicy() set policy to group and get error
+	// Test-4 : SetPolicy() set policy to group and get error
 	entityObject = models.PolicyEntityGroup
 	minioSetPolicyMock = func(policyName, entityName string, isGroup bool) error {
 		return errors.New("error")
 	}
-	if err := setPolicy(ctx, adminClient, policyName, entityName, entityObject); funcAssert.Error(err) {
+	if err := SetPolicy(ctx, adminClient, policyName, entityName, entityObject); funcAssert.Error(err) {
 		funcAssert.Equal("error", err.Error())
 	}
 }

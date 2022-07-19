@@ -42,9 +42,6 @@ type TenantMonitoringInfo struct {
 	// disk capacity g b
 	DiskCapacityGB string `json:"diskCapacityGB,omitempty"`
 
-	// fs group
-	FsGroup string `json:"fsGroup,omitempty"`
-
 	// image
 	Image string `json:"image,omitempty"`
 

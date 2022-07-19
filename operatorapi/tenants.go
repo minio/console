@@ -128,6 +128,15 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 		return operator_api.NewUpdateTenantSecurityNoContent()
 	})
 
+	// Set Tenant Administrators
+	api.OperatorAPISetTenantAdministratorsHandler = operator_api.SetTenantAdministratorsHandlerFunc(func(params operator_api.SetTenantAdministratorsParams, session *models.Principal) middleware.Responder {
+		err := getSetTenantAdministratorsResponse(session, params)
+		if err != nil {
+			return operator_api.NewSetTenantAdministratorsDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewSetTenantAdministratorsNoContent()
+	})
+
 	// Tenant identity provider details
 	api.OperatorAPITenantIdentityProviderHandler = operator_api.TenantIdentityProviderHandlerFunc(func(params operator_api.TenantIdentityProviderParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantIdentityProviderResponse(session, params)
@@ -908,6 +917,58 @@ func getUpdateTenantIdentityProviderResponse(session *models.Principal, params o
 	}
 	if err := updateTenantIdentityProvider(ctx, opClient, &k8sClient, params.Namespace, params); err != nil {
 		return restapi.ErrorWithContext(ctx, err, errors.New("unable to update tenant"))
+	}
+	return nil
+}
+
+func getSetTenantAdministratorsResponse(session *models.Principal, params operator_api.SetTenantAdministratorsParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return restapi.ErrorWithContext(ctx, err)
+	}
+	// get Kubernetes Client
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return restapi.ErrorWithContext(ctx, err)
+	}
+	k8sClient := &k8sClient{
+		client: clientSet,
+	}
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return restapi.ErrorWithContext(ctx, err)
+	}
+	minTenant.EnsureDefaults()
+
+	svcURL := GetTenantServiceURL(minTenant)
+	// getTenantAdminClient will use all certificates under ~/.console/certs/CAs to trust the TLS connections with MinIO tenants
+	mAdmin, err := getTenantAdminClient(
+		ctx,
+		k8sClient,
+		minTenant,
+		svcURL,
+	)
+	if err != nil {
+		return restapi.ErrorWithContext(ctx, err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := restapi.AdminClient{Client: mAdmin}
+	for _, user := range params.Body.UserDNS {
+		if err := restapi.SetPolicy(ctx, adminClient, "consoleAdmin", user, "user"); err != nil {
+			return restapi.ErrorWithContext(ctx, err)
+		}
+	}
+	for _, group := range params.Body.GroupDNS {
+		if err := restapi.SetPolicy(ctx, adminClient, "consoleAdmin", group, "group"); err != nil {
+			return restapi.ErrorWithContext(ctx, err)
+		}
 	}
 	return nil
 }

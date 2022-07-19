@@ -1704,6 +1704,48 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/set-administrators": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Set the consoleAdmin policy to the specified users and groups",
+        "operationId": "SetTenantAdministrators",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setAdministratorsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/usage": {
       "get": {
         "tags": [
@@ -4005,6 +4047,23 @@ func init() {
         }
       }
     },
+    "setAdministratorsRequest": {
+      "type": "object",
+      "properties": {
+        "group_dns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_dns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "state": {
       "type": "object",
       "properties": {
@@ -4272,9 +4331,6 @@ func init() {
           }
         },
         "diskCapacityGB": {
-          "type": "string"
-        },
-        "fsGroup": {
           "type": "string"
         },
         "image": {
@@ -6384,6 +6440,48 @@ func init() {
             "required": true,
             "schema": {
               "$ref": "#/definitions/updateTenantSecurityRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/set-administrators": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Set the consoleAdmin policy to the specified users and groups",
+        "operationId": "SetTenantAdministrators",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setAdministratorsRequest"
             }
           }
         ],
@@ -9397,6 +9495,23 @@ func init() {
         }
       }
     },
+    "setAdministratorsRequest": {
+      "type": "object",
+      "properties": {
+        "group_dns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_dns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "state": {
       "type": "object",
       "properties": {
@@ -9664,9 +9779,6 @@ func init() {
           }
         },
         "diskCapacityGB": {
-          "type": "string"
-        },
-        "fsGroup": {
           "type": "string"
         },
         "image": {
