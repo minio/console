@@ -486,7 +486,6 @@ const checkLoggingDBFieldsAcceptValues = async (tenantName: string) => {
     .ok();
 };
 
-
 test("Test Prometheus monitoring can be disabled and enabled", async (t) => {
   const tenantName = `storage-lite`;
   await loginToOperator();
