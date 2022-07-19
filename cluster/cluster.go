@@ -17,6 +17,7 @@
 package cluster
 
 import (
+	directpvclient "github.com/minio/directpv/pkg/client"
 	operator "github.com/minio/operator/pkg/client/clientset/versioned"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -62,4 +63,14 @@ func OperatorClient(token string) (*operator.Clientset, error) {
 // K8sClient returns kubernetes client using GetK8sConfig for its config
 func K8sClient(token string) (*kubernetes.Clientset, error) {
 	return kubernetes.NewForConfig(GetK8sConfig(token))
+}
+
+// DirectPV interfaces  required to fetch information
+
+func DirectPVDriveInterface(token string) (*directpvclient.DirectCSIDriveInterface, error) {
+	return directpvclient.DirectCSIDriveInterfaceForConfig(GetK8sConfig(token))
+}
+
+func DirectPVVolumeInterface(token string) (*directpvclient.DirectCSIVolumeInterface, error) {
+	return directpvclient.DirectCSIVolumeInterfaceForConfig(GetK8sConfig(token))
 }
