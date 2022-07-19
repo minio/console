@@ -119,7 +119,7 @@ export const checkMonitoringToggle = async (tenantName: string) => {
     .click("#tenant-monitoring")
     .click("#confirm-ok")
     .wait(1000)
-    .expect(Selector("#image").exists)
+    .expect(Selector("#prometheus_image").exists)
     .ok()
     .click("#yaml_button")
     .expect(Selector("#code_wrapper").exists)
@@ -133,7 +133,7 @@ export const checkMonitoringToggle = async (tenantName: string) => {
 export const checkMonitoringFieldsAcceptValues = async (tenantName: string) => {
   await goToMonitoringSection(tenantName);
   await t
-    .typeText("#image", "quay.io/prometheus/prometheus:latest", {
+    .typeText("#prometheus_image", "quay.io/prometheus/prometheus:latest", {
       replace: true,
     })
     .typeText("#sidecarImage", "library/alpine:latest", { replace: true })
