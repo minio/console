@@ -426,6 +426,9 @@ func NewConsoleAPI(spec *loads.Document, openIDProviders oauth2.OpenIDPCfg) *Con
 		SiteReplicationSiteReplicationRemoveHandler: site_replication.SiteReplicationRemoveHandlerFunc(func(params site_replication.SiteReplicationRemoveParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation site_replication.SiteReplicationRemove has not yet been implemented")
 		}),
+		SubnetSubnetAPIKeyHandler: subnet.SubnetAPIKeyHandlerFunc(func(params subnet.SubnetAPIKeyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation subnet.SubnetAPIKey has not yet been implemented")
+		}),
 		SubnetSubnetInfoHandler: subnet.SubnetInfoHandlerFunc(func(params subnet.SubnetInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation subnet.SubnetInfo has not yet been implemented")
 		}),
@@ -746,6 +749,8 @@ type ConsoleAPI struct {
 	SiteReplicationSiteReplicationInfoAddHandler site_replication.SiteReplicationInfoAddHandler
 	// SiteReplicationSiteReplicationRemoveHandler sets the operation handler for the site replication remove operation
 	SiteReplicationSiteReplicationRemoveHandler site_replication.SiteReplicationRemoveHandler
+	// SubnetSubnetAPIKeyHandler sets the operation handler for the subnet Api key operation
+	SubnetSubnetAPIKeyHandler subnet.SubnetAPIKeyHandler
 	// SubnetSubnetInfoHandler sets the operation handler for the subnet info operation
 	SubnetSubnetInfoHandler subnet.SubnetInfoHandler
 	// SubnetSubnetLoginHandler sets the operation handler for the subnet login operation
@@ -1196,6 +1201,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.SiteReplicationSiteReplicationRemoveHandler == nil {
 		unregistered = append(unregistered, "site_replication.SiteReplicationRemoveHandler")
+	}
+	if o.SubnetSubnetAPIKeyHandler == nil {
+		unregistered = append(unregistered, "subnet.SubnetAPIKeyHandler")
 	}
 	if o.SubnetSubnetInfoHandler == nil {
 		unregistered = append(unregistered, "subnet.SubnetInfoHandler")
@@ -1786,6 +1794,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/admin/site-replication"] = site_replication.NewSiteReplicationRemove(o.context, o.SiteReplicationSiteReplicationRemoveHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/subnet/apikey"] = subnet.NewSubnetAPIKey(o.context, o.SubnetSubnetAPIKeyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

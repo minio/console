@@ -2319,6 +2319,26 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - Subnet
+  /subnet/apikey:
+    get:
+      summary: Subnet api key
+      operationId: SubnetApiKey
+      parameters:
+        - name: token
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/apiKey"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Subnet
   /subnet/register:
     post:
       summary: Register cluster with Subnet
@@ -4582,6 +4602,11 @@ definitions:
       plan:
         type: string
       expires_at:
+        type: string
+  apiKey:
+    type: object
+    properties:
+      apiKey:
         type: string
 
   policyArgs:

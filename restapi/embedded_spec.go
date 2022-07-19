@@ -3707,6 +3707,37 @@ func init() {
         }
       }
     },
+    "/subnet/apikey": {
+      "get": {
+        "tags": [
+          "Subnet"
+        ],
+        "summary": "Subnet api key",
+        "operationId": "SubnetApiKey",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "token",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiKey"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/subnet/info": {
       "get": {
         "tags": [
@@ -4559,6 +4590,14 @@ func init() {
           "items": {
             "$ref": "#/definitions/widget"
           }
+        }
+      }
+    },
+    "apiKey": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string"
         }
       }
     },
@@ -10802,6 +10841,37 @@ func init() {
         }
       }
     },
+    "/subnet/apikey": {
+      "get": {
+        "tags": [
+          "Subnet"
+        ],
+        "summary": "Subnet api key",
+        "operationId": "SubnetApiKey",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "token",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiKey"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/subnet/info": {
       "get": {
         "tags": [
@@ -11780,6 +11850,14 @@ func init() {
           "items": {
             "$ref": "#/definitions/widget"
           }
+        }
+      }
+    },
+    "apiKey": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string"
         }
       }
     },
