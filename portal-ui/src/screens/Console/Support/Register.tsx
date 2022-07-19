@@ -591,8 +591,19 @@ const Register = ({ classes }: IRegister) => {
         }}
       >
         {clusterRegistered && licenseInfo ? (
-            <ClusterRegistered email={licenseInfo.email} linkClass={classes.link} />
-          ) : <ApiKeyRegister classes={classes} setApiKey={setLicense} apiKey={license} loading={loading} onRegister={subnetLogin}/>}
+          <ClusterRegistered
+            email={licenseInfo.email}
+            linkClass={classes.link}
+          />
+        ) : (
+          <ApiKeyRegister
+            classes={classes}
+            setApiKey={setLicense}
+            apiKey={license}
+            loading={loading}
+            onRegister={subnetLogin}
+          />
+        )}
       </Box>
     </Fragment>
   );
@@ -608,7 +619,12 @@ const Register = ({ classes }: IRegister) => {
           padding: "43px",
         }}
       >
-        {clusterRegistered && licenseInfo ? <ClusterRegistered email={licenseInfo.email} linkClass={classes.link} /> : null}
+        {clusterRegistered && licenseInfo ? (
+          <ClusterRegistered
+            email={licenseInfo.email}
+            linkClass={classes.link}
+          />
+        ) : null}
         <Box
           sx={{
             "& .title-text": {

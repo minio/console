@@ -22,79 +22,89 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import GetApiKeyModal from "./GetApiKeyModal";
 
 interface IApiKeyRegister {
-  classes: any,
-  apiKey: string
-  setApiKey: (v: string) => void,
-  onRegister: () => void,
-  loading: boolean,
+  classes: any;
+  apiKey: string;
+  setApiKey: (v: string) => void;
+  onRegister: () => void;
+  loading: boolean;
 }
 
-const ApiKeyRegister = ({ classes, apiKey, setApiKey, loading, onRegister }: IApiKeyRegister) => {
+const ApiKeyRegister = ({
+  classes,
+  apiKey,
+  setApiKey,
+  loading,
+  onRegister,
+}: IApiKeyRegister) => {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
-  
+
   return (
     <Fragment>
       <Box
-          sx={{
-            "& .title-text": {
-              marginLeft: "27px",
-              fontWeight: 600,
-            },
+        sx={{
+          "& .title-text": {
+            marginLeft: "27px",
+            fontWeight: 600,
+          },
+        }}
+      >
+        <FormTitle
+          icon={<OnlineRegistrationIcon />}
+          title={`API key activation of MinIO Subscription Network License`}
+        />
+      </Box>
+
+      <Box
+        sx={{
+          flex: "1",
+          paddingTop: "30px",
+        }}
+      >
+        <InputBoxWrapper
+          className={classes.spacerBottom}
+          classes={{
+            inputLabel: classes.sizedLabel,
           }}
-        >
-          <FormTitle
-            icon={<OnlineRegistrationIcon />}
-            title={`API key activation of MinIO Subscription Network License`}
-          />
-        </Box>
+          id="api-key"
+          name="api-key"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setApiKey(event.target.value)
+          }
+          label="API Key"
+          value={apiKey}
+        />
 
         <Box
-            sx={{
-              flex: "1",
-              paddingTop: "30px",
-            }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            variant="outlined"
+            className={classes.spacerRight}
+            disabled={loading}
+            onClick={() => setShowApiKeyModal(true)}
           >
-            <InputBoxWrapper
-              className={classes.spacerBottom}
-              classes={{
-                inputLabel: classes.sizedLabel,
-              }}
-              id="api-key"
-              name="api-key"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setApiKey(event.target.value)
-              }
-              label="API Key"
-              value={apiKey}
-            />
-
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Button
-                  variant="outlined"
-                  className={classes.spacerRight}
-                  disabled={loading}
-                  onClick={() => setShowApiKeyModal(true)}
-                >
-                  Get from SUBNET
-                </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={ loading || apiKey.trim().length === 0 }
-                onClick={() => onRegister()}
-              >
-                Register
-              </Button>
-              <GetApiKeyModal open={showApiKeyModal} closeModal={() => setShowApiKeyModal(false)} onSet={setApiKey}/>
-            </Box>
-          </Box>
+            Get from SUBNET
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={loading || apiKey.trim().length === 0}
+            onClick={() => onRegister()}
+          >
+            Register
+          </Button>
+          <GetApiKeyModal
+            open={showApiKeyModal}
+            closeModal={() => setShowApiKeyModal(false)}
+            onSet={setApiKey}
+          />
+        </Box>
+      </Box>
     </Fragment>
   );
 };

@@ -20,7 +20,10 @@ import withStyles from "@mui/styles/withStyles";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { containerForHeader, spacingUtils } from "../Common/FormComponents/common/styleLibrary";
+import {
+  containerForHeader,
+  spacingUtils,
+} from "../Common/FormComponents/common/styleLibrary";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../Common/Hooks/useApi";
 import React, { useState } from "react";
@@ -45,7 +48,7 @@ const styles = (theme: Theme) =>
       minWidth: "75px",
     },
     ...containerForHeader(theme.spacing(4)),
-    ...spacingUtils
+    ...spacingUtils,
   });
 
 interface IGetApiKeyModalProps {
@@ -54,9 +57,13 @@ interface IGetApiKeyModalProps {
   onSet: (apiKey: string) => void;
   classes: any;
 }
-  
 
-const GetApiKeyModal = ({ open, closeModal, classes, onSet }: IGetApiKeyModalProps) => {
+const GetApiKeyModal = ({
+  open,
+  closeModal,
+  classes,
+  onSet,
+}: IGetApiKeyModalProps) => {
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState("");
@@ -78,7 +85,7 @@ const GetApiKeyModal = ({ open, closeModal, classes, onSet }: IGetApiKeyModalPro
     if (res.mfa_token) {
       setMfaToken(res.mfa_token);
     } else if (res.access_token) {
-      invokeApi("GET", `/api/v1/subnet/apikey?token=${res.access_token}`)
+      invokeApi("GET", `/api/v1/subnet/apikey?token=${res.access_token}`);
     } else {
       onSet(res.apiKey);
       closeModal();
@@ -89,7 +96,11 @@ const GetApiKeyModal = ({ open, closeModal, classes, onSet }: IGetApiKeyModalPro
 
   const onConfirm = () => {
     if (mfaToken !== "") {
-      invokeApi("POST", "/api/v1/subnet/login/mfa", { username: email, otp: subnetOTP, mfa_token: mfaToken });
+      invokeApi("POST", "/api/v1/subnet/login/mfa", {
+        username: email,
+        otp: subnetOTP,
+        mfa_token: mfaToken,
+      });
     } else {
       invokeApi("POST", "/api/v1/subnet/login", { username: email, password });
     }
@@ -100,51 +111,51 @@ const GetApiKeyModal = ({ open, closeModal, classes, onSet }: IGetApiKeyModalPro
       return getCredentialsDialog();
     }
     return getMFADialog();
-  }
+  };
 
   const getCredentialsDialog = () => {
     return (
-      <Box sx={{width: 500}}>
-          <InputBoxWrapper
-              className={classes.spacerBottom}
-              classes={{
-                inputLabel: classes.sizedLabel,
-              }}
-              id="subnet-email"
-              name="subnet-email"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setEmail(event.target.value)
-              }
-              label="Email"
-              value={email}
-              overlayIcon={<UsersIcon />}
-            />
-            <InputBoxWrapper
-              className={classes.spacerBottom}
-              classes={{
-                inputLabel: classes.sizedLabel,
-              }}
-              id="subnet-password"
-              name="subnet-password"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(event.target.value)
-              }
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              value={password}
-              overlayIcon={
-                showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
-              }
-              overlayAction={() => setShowPassword(!showPassword)}
-            />
-        </Box>
+      <Box sx={{ width: 500 }}>
+        <InputBoxWrapper
+          className={classes.spacerBottom}
+          classes={{
+            inputLabel: classes.sizedLabel,
+          }}
+          id="subnet-email"
+          name="subnet-email"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(event.target.value)
+          }
+          label="Email"
+          value={email}
+          overlayIcon={<UsersIcon />}
+        />
+        <InputBoxWrapper
+          className={classes.spacerBottom}
+          classes={{
+            inputLabel: classes.sizedLabel,
+          }}
+          id="subnet-password"
+          name="subnet-password"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(event.target.value)
+          }
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          overlayIcon={
+            showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
+          }
+          overlayAction={() => setShowPassword(!showPassword)}
+        />
+      </Box>
     );
-  }
+  };
 
   const getMFADialog = () => {
     return (
       <Box sx={{ display: "flex" }}>
-        <Box sx={{ display: "flex", flexFlow: "column", flex: "2", }} >
+        <Box sx={{ display: "flex", flexFlow: "column", flex: "2" }}>
           <Box
             sx={{
               fontSize: "16px",
@@ -186,13 +197,11 @@ const GetApiKeyModal = ({ open, closeModal, classes, onSet }: IGetApiKeyModalPro
               alignItems: "center",
               justifyContent: "flex-end",
             }}
-          >
-          </Box>
+          ></Box>
         </Box>
       </Box>
     );
-  }
-  
+  };
 
   return open ? (
     <ConfirmDialog
