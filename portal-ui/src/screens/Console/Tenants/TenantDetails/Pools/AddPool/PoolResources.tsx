@@ -274,7 +274,7 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
           id="storage_class"
           name="storage_class"
           onChange={(e: SelectChangeEvent<string>) => {
-            setFieldInfo("storageClasses", e.target.value as string);
+            setFieldInfo("storageClass", e.target.value as string);
           }}
           label="Storage Class"
           value={storageClass}
