@@ -35,9 +35,9 @@ import SectionTitle from "../../Common/SectionTitle";
 import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { EditIcon } from "../../../../icons";
 import EditDomains from "./EditDomains";
-import { setTenantDetailsLoad } from "../tenantsSlice";
 import { ITenant } from "../ListTenants/types";
 import { useParams } from "react-router-dom";
+import { getTenantAsync } from "../thunks/tenantDetailsAsync";
 
 interface ITenantsSummary {
   classes: any;
@@ -221,9 +221,8 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
 
   const closeEditDomainsModal = (refresh: boolean) => {
     setEditDomainsOpen(false);
-
     if (refresh) {
-      dispatch(setTenantDetailsLoad(true));
+      dispatch(getTenantAsync());
     }
   };
 
@@ -232,8 +231,11 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
       {updateMinioVersion && (
         <UpdateTenantModal
           open={updateMinioVersion}
-          closeModalAndRefresh={() => {
+          closeModalAndRefresh={(refresh: boolean) => {
             setUpdateMinioVersion(false);
+            if (refresh) {
+              dispatch(getTenantAsync());
+            }
           }}
           idTenant={tenantName || ""}
           namespace={tenantNamespace || ""}

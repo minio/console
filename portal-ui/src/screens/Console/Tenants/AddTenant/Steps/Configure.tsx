@@ -181,8 +181,7 @@ const Configure = ({ classes }: IConfigureProps) => {
           fieldKey: `minio-domain-${index.toString()}`,
           required: false,
           value: validation,
-          pattern:
-            /((http|https):\/\/)+[a-zA-Z0-9\-.]{3,}\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/,
+          pattern: /^(https?):\/\/([a-zA-Z0-9\-.]+)(:[0-9]+)?$/,
           customPatternMessage:
             "MinIO domain is not in the form of http|https://subdomain.domain",
         };
@@ -196,7 +195,7 @@ const Configure = ({ classes }: IConfigureProps) => {
           required: false,
           value: consoleDomain,
           pattern:
-            /((http|https):\/\/)+[a-zA-Z0-9\-.]{3,}\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?(:[1-9]{1}([0-9]{1,4})?)?(\/[a-zA-Z0-9]{1,})*?$/,
+            /^(https?):\/\/([a-zA-Z0-9\-.]+)(:[0-9]+)?(\/[a-zA-Z0-9\-./]*)?$/,
           customPatternMessage:
             "Console domain is not in the form of http|https://subdomain.domain:port/subpath1/subpath2",
         },
