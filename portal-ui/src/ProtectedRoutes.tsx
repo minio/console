@@ -21,7 +21,6 @@ import { ISessionResponse } from "./screens/Console/types";
 import useApi from "./screens/Console/Common/Hooks/useApi";
 import { ErrorResponseHandler } from "./common/types";
 import { ReplicationSite } from "./screens/Console/Configurations/SiteReplication/SiteReplication";
-import { baseUrl } from "./history";
 import { useSelector } from "react-redux";
 import {
   globalSetDistributedSetup,
@@ -50,7 +49,7 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
 
   const StorePathAndRedirect = () => {
     localStorage.setItem("redirect-path", pathname);
-    return <Navigate to={{ pathname: `${baseUrl}login` }} />;
+    return <Navigate to={{ pathname: `login` }} />;
   };
 
   useEffect(() => {
