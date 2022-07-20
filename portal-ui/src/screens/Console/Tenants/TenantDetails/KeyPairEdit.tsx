@@ -86,7 +86,7 @@ const KeyPairEdit = ({
         <Grid paddingBottom={1}>
           <div className={classes.shortened}>
             <InputBoxWrapper
-              id={`key-${index.toString()}`}
+              id={`key-${paramName.replace(/ /g, "")}-${index.toString()}`}
               label={""}
               placeholder={"Key"}
               name={`key-${index.toString()}`}
@@ -102,7 +102,7 @@ const KeyPairEdit = ({
               error={error[`key-${index.toString()}`] || ""}
             />
             <InputBoxWrapper
-              id={`val-${index.toString()}`}
+              id={`val-${paramName.replace(/ /g, "")}-${index.toString()}`}
               label={""}
               placeholder={"Value"}
               name={`val-${index.toString()}`}
@@ -119,6 +119,7 @@ const KeyPairEdit = ({
             />
             <Tooltip title={`Add ${paramName}`} aria-label="addlabel">
               <IconButton
+                id={`add-${paramName.replace(/ /g, "")}-${index.toString()}`}
                 size={"small"}
                 onClick={() => {
                   let tempLabels = [...newValues];
@@ -131,6 +132,7 @@ const KeyPairEdit = ({
             </Tooltip>
             <Tooltip title="Remove" aria-label="removeLabel">
               <IconButton
+                id={`remove-${paramName.replace(/ /g, "")}-${index.toString()}`}
                 size={"small"}
                 style={{ marginLeft: 16 }}
                 onClick={() => {

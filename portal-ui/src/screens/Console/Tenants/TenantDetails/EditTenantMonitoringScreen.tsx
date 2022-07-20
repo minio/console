@@ -347,7 +347,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
         <Fragment>
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
-              id={`image`}
+              id={`prometheus_image`}
               label={"Image"}
               placeholder={"quay.io/prometheus/prometheus:latest"}
               name={`image`}
