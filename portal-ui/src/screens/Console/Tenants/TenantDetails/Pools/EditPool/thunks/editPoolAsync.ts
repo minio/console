@@ -23,7 +23,7 @@ import { generatePoolName } from "../../../../../../../common/utils";
 import { getDefaultAffinity, getNodeSelector } from "../../../utils";
 import { IEditPoolItem, IEditPoolRequest } from "../../../../ListTenants/types";
 import { resetEditPoolForm } from "../editPoolSlice";
-import { setTenantDetailsLoad } from "../../../../tenantsSlice";
+import { getTenantAsync } from "../../../../thunks/tenantDetailsAsync";
 
 export const editPoolAsync = createAsyncThunk(
   "editPool/editPoolAsync",
@@ -128,7 +128,7 @@ export const editPoolAsync = createAsyncThunk(
       )
       .then(() => {
         dispatch(resetEditPoolForm());
-        dispatch(setTenantDetailsLoad(true));
+        dispatch(getTenantAsync());
         return poolsURL;
       })
       .catch((err: ErrorResponseHandler) => {
