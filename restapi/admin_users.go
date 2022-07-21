@@ -194,7 +194,7 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 	// set policies for the newly created user
 	if len(policies) > 0 {
 		policyString := strings.Join(policies, ",")
-		if err := setPolicy(ctx, client, policyString, *accessKey, "user"); err != nil {
+		if err := SetPolicy(ctx, client, policyString, *accessKey, "user"); err != nil {
 			return nil, err
 		}
 	}

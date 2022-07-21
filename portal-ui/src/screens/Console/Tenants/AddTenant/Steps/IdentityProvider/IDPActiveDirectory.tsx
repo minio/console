@@ -33,6 +33,9 @@ import {
   removeIDPADUsrAtIndex,
   setIDPADUsrAtIndex,
   updateAddField,
+  addIDPADGroupAtIndex,
+  removeIDPADGroupAtIndex,
+  setIDPADGroupAtIndex,
 } from "../../createTenantSlice";
 import { useSelector } from "react-redux";
 import { clearValidationError } from "../../../utils";
@@ -48,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     adUserDnRows: {
       display: "flex",
+      marginBottom: 10,
     },
     buttonTray: {
       marginLeft: 10,
@@ -101,6 +105,9 @@ const IDPActiveDirectory = () => {
   );
   const ADUserDNs = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.ADUserDNs
+  );
+  const ADGroupDNs = useSelector(
+    (state: AppState) => state.createTenant.fields.identityProvider.ADGroupDNs
   );
   const ADLookupBindDN = useSelector(
     (state: AppState) =>
@@ -160,14 +167,6 @@ const IDPActiveDirectory = () => {
           value: ADLookupBindDN,
         },
       ];
-      // validate user DNs
-      for (let i = 0; i < ADUserDNs.length; i++) {
-        customIDPValidation.push({
-          fieldKey: `ad-userdn-${i.toString()}`,
-          required: true,
-          value: ADUserDNs[i],
-        });
-      }
     }
 
     const commonVal = commonFormValidation(customIDPValidation);
@@ -187,6 +186,7 @@ const IDPActiveDirectory = () => {
     ADGroupSearchBaseDN,
     ADGroupSearchFilter,
     ADUserDNs,
+    ADGroupDNs,
     dispatch,
   ]);
 
@@ -385,6 +385,67 @@ const IDPActiveDirectory = () => {
                         onClick={() => {
                           if (ADUserDNs.length > 1) {
                             dispatch(removeIDPADUsrAtIndex(index));
+                          }
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                </div>
+              </Fragment>
+            );
+          })}
+        </Grid>
+      </fieldset>
+      <fieldset className={classes.fieldGroup}>
+        <legend className={classes.descriptionText}>
+          List of group DNs (Distinguished Names) to be Tenant Administrators
+        </legend>
+        <Grid item xs={12}>
+          {ADGroupDNs.map((_, index) => {
+            return (
+              <Fragment key={`identityField-${index.toString()}`}>
+                <div className={classes.adUserDnRows}>
+                  <InputBoxWrapper
+                    id={`ad-groupdn-${index.toString()}`}
+                    label={""}
+                    placeholder=""
+                    name={`ad-groupdn-${index.toString()}`}
+                    value={ADGroupDNs[index]}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      dispatch(
+                        setIDPADGroupAtIndex({
+                          index: index,
+                          userDN: e.target.value,
+                        })
+                      );
+                      cleanValidation(`ad-groupdn-${index.toString()}`);
+                    }}
+                    index={index}
+                    key={`csv-ad-groupdn-${index.toString()}`}
+                    error={
+                      validationErrors[`ad-groupdn-${index.toString()}`] || ""
+                    }
+                  />
+                  <div className={classes.buttonTray}>
+                    <Tooltip title="Add Group" aria-label="add">
+                      <IconButton
+                        size={"small"}
+                        onClick={() => {
+                          dispatch(addIDPADGroupAtIndex());
+                        }}
+                      >
+                        <AddIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Remove" aria-label="add">
+                      <IconButton
+                        size={"small"}
+                        style={{ marginLeft: 16 }}
+                        onClick={() => {
+                          if (ADGroupDNs.length > 1) {
+                            dispatch(removeIDPADGroupAtIndex(index));
                           }
                         }}
                       >

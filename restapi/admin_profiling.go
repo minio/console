@@ -116,7 +116,7 @@ func stopProfiling(ctx context.Context, client MinioAdmin) (io.ReadCloser, error
 	return zippedData, nil
 }
 
-// getProfilingStopResponse() performs setPolicy() and serializes it to the handler's output
+// getProfilingStopResponse() performs SetPolicy() and serializes it to the handler's output
 func getProfilingStopResponse(session *models.Principal, params profileApi.ProfilingStopParams) (io.ReadCloser, *models.Error) {
 	ctx := params.HTTPRequest.Context()
 	mAdmin, err := NewMinioAdminClient(session)
