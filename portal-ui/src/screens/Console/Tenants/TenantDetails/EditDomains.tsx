@@ -33,7 +33,10 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../../common/api";
 import RemoveIcon from "../../../../icons/RemoveIcon";
-import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import {
+  setModalErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 
 interface IEditDomains {
@@ -90,7 +93,7 @@ const EditDomains = ({
       if (consoleDomainSet !== "") {
         // We Validate console domain
         const consoleRegExp = new RegExp(
-          /((http|https):\/\/)+[a-zA-Z0-9\-.]{3,}\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?(:[1-9]{1}([0-9]{1,4})?)?(\/[a-zA-Z0-9]{1,})*?$/
+          /^(https?):\/\/([a-zA-Z0-9\-.]+)(:[0-9]+)?(\/[a-zA-Z0-9\-./]*)?$/
         );
 
         setConsoleDomainValid(consoleRegExp.test(consoleDomainSet));
@@ -102,7 +105,7 @@ const EditDomains = ({
         setMinioDomains(domains.minio);
 
         const minioRegExp = new RegExp(
-          /((http|https):\/\/)+[a-zA-Z0-9\-.]{3,}\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/
+          /^(https?):\/\/([a-zA-Z0-9\-.]+)(:[0-9]+)?$/
         );
 
         const initialValidations = domains.minio.map((domain) => {
@@ -146,11 +149,12 @@ const EditDomains = ({
       )
       .then(() => {
         setIsSending(false);
+        dispatch(setSnackBarMessage(`Domains updated successfully`));
         closeModalAndRefresh(true);
       })
       .catch((error: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(error));
         setIsSending(false);
+        dispatch(setModalErrorSnackMessage(error));
       });
   };
 
@@ -191,7 +195,6 @@ const EditDomains = ({
 
     setMinioDomainValid(cloneValidation);
   };
-
   return (
     <ModalWrapper
       title={`Edit Tenant Domains - ${idTenant}`}
@@ -216,7 +219,7 @@ const EditDomains = ({
                   "Eg. http://subdomain.domain:port/subpath1/subpath2"
                 }
                 pattern={
-                  "((http|https):\\/\\/)+[a-zA-Z0-9\\-.]{3,}\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?(:[1-9]{1}([0-9]{1,4})?)?(\\/[a-zA-Z0-9]{1,})*?$"
+                  "^(https?):\\/\\/([a-zA-Z0-9\\-.]+)(:[0-9]+)?(\\/[a-zA-Z0-9\\-.\\/]*)?$"
                 }
                 error={
                   !consoleDomainValid
@@ -248,7 +251,7 @@ const EditDomains = ({
                         value={domain}
                         placeholder={"Eg. http://subdomain.domain"}
                         pattern={
-                          "((http|https):\\/\\/)+[a-zA-Z0-9\\-.]{3,}\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+                          "^(https?):\\/\\/([a-zA-Z0-9\\-.]+)(:[0-9]+)?$"
                         }
                         error={
                           !minioDomainValid[index]

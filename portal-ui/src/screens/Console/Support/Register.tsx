@@ -67,7 +67,6 @@ import Tab from "@mui/material/Tab";
 import { TabPanel } from "../../shared/tabs";
 import { ClusterRegistered, FormTitle } from "./utils";
 import ApiKeyRegister from "./ApiKeyRegister";
-
 interface IRegister {
   classes: any;
 }

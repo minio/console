@@ -386,6 +386,34 @@ paths:
       tags:
         - OperatorAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/set-administrators:
+    post:
+      summary: Set the consoleAdmin policy to the specified users and groups
+      operationId: SetTenantAdministrators
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setAdministratorsRequest"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /namespaces/{namespace}/tenants/{tenant}/security:
     get:
       summary: Tenant Security
@@ -1854,6 +1882,19 @@ definitions:
       securityContext:
         type: object
         $ref: "#/definitions/securityContext"
+
+  setAdministratorsRequest:
+    type: object
+    properties:
+      user_dns:
+        type: array
+        items:
+          type: string
+      group_dns:
+        type: array
+        items:
+          type: string
+
   idpConfiguration:
     type: object
     properties:

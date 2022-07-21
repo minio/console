@@ -361,7 +361,7 @@ func TestSetBucketAccess(t *testing.T) {
 		assert.Equal("error: bucket access not present", err.Error())
 	}
 
-	// Test-5: setBucketAccessPolicy() handle errors on setPolicy call
+	// Test-5: setBucketAccessPolicy() handle errors on SetPolicy call
 	minioSetBucketPolicyWithContextMock = func(ctx context.Context, bucketName, policy string) error {
 		return errors.New("error")
 	}

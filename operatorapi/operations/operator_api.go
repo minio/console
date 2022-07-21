@@ -175,6 +175,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		AuthSessionCheckHandler: auth.SessionCheckHandlerFunc(func(params auth.SessionCheckParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation auth.SessionCheck has not yet been implemented")
 		}),
+		OperatorAPISetTenantAdministratorsHandler: operator_api.SetTenantAdministratorsHandlerFunc(func(params operator_api.SetTenantAdministratorsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.SetTenantAdministrators has not yet been implemented")
+		}),
 		OperatorAPISetTenantLogsHandler: operator_api.SetTenantLogsHandlerFunc(func(params operator_api.SetTenantLogsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.SetTenantLogs has not yet been implemented")
 		}),
@@ -355,6 +358,8 @@ type OperatorAPI struct {
 	OperatorAPIPutTenantYAMLHandler operator_api.PutTenantYAMLHandler
 	// AuthSessionCheckHandler sets the operation handler for the session check operation
 	AuthSessionCheckHandler auth.SessionCheckHandler
+	// OperatorAPISetTenantAdministratorsHandler sets the operation handler for the set tenant administrators operation
+	OperatorAPISetTenantAdministratorsHandler operator_api.SetTenantAdministratorsHandler
 	// OperatorAPISetTenantLogsHandler sets the operation handler for the set tenant logs operation
 	OperatorAPISetTenantLogsHandler operator_api.SetTenantLogsHandler
 	// OperatorAPISetTenantMonitoringHandler sets the operation handler for the set tenant monitoring operation
@@ -584,6 +589,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.AuthSessionCheckHandler == nil {
 		unregistered = append(unregistered, "auth.SessionCheckHandler")
+	}
+	if o.OperatorAPISetTenantAdministratorsHandler == nil {
+		unregistered = append(unregistered, "operator_api.SetTenantAdministratorsHandler")
 	}
 	if o.OperatorAPISetTenantLogsHandler == nil {
 		unregistered = append(unregistered, "operator_api.SetTenantLogsHandler")
@@ -888,6 +896,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/session"] = auth.NewSessionCheck(o.context, o.AuthSessionCheckHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/set-administrators"] = operator_api.NewSetTenantAdministrators(o.context, o.OperatorAPISetTenantAdministratorsHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

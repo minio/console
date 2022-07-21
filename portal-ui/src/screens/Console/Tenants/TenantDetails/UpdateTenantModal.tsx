@@ -29,7 +29,10 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../common/api";
-import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import {
+  setModalErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 
 interface IUpdateTenantModal {
@@ -127,6 +130,7 @@ const UpdateTenantModal = ({
       )
       .then(() => {
         setIsSending(false);
+        dispatch(setSnackBarMessage(`Image updated successfully`));
         closeModalAndRefresh(true);
       })
       .catch((error: ErrorResponseHandler) => {

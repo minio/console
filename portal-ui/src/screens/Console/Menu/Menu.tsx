@@ -26,8 +26,6 @@ import { AppState, useAppDispatch } from "../../../store";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import { clearSession } from "../../../common/utils";
-
-import { baseUrl } from "../../../history";
 import api from "../../../common/api";
 
 import MenuToggle from "./MenuToggle";
@@ -107,7 +105,7 @@ const Menu = ({ classes }: IMenuProps) => {
       localStorage.setItem("userLoggedIn", "");
       localStorage.setItem("redirect-path", "");
       dispatch(resetSession());
-      navigate(`${baseUrl}login`);
+      navigate(`login`);
     };
     api
       .invoke("POST", `/api/v1/logout`)

@@ -189,6 +189,7 @@ export interface IIdentityProviderFields {
   ADGroupSearchBaseDN: string;
   ADGroupSearchFilter: string;
   ADUserDNs: string[];
+  ADGroupDNs: string[];
   ADLookupBindDN: string;
   ADLookupBindPassword: string;
   ADUserDNSearchBaseDN: string;
@@ -338,6 +339,11 @@ export interface ITenantIdentityProviderResponse {
     user_dn_search_base_dn: string;
     user_dn_search_filter: string;
   };
+}
+
+export interface ITenantSetAdministratorsRequest {
+  user_dns?: string[];
+  group_dns?: string[];
 }
 
 export interface IEditMonitoringSecurityContext {

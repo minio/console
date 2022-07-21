@@ -54,6 +54,7 @@ export const createTenantAsync = createAsyncThunk(
     const ADGroupSearchBaseDN = fields.identityProvider.ADGroupSearchBaseDN;
     const ADGroupSearchFilter = fields.identityProvider.ADGroupSearchFilter;
     const ADUserDNs = fields.identityProvider.ADUserDNs;
+    const ADGroupDNs = fields.identityProvider.ADGroupDNs;
     const ADLookupBindDN = fields.identityProvider.ADLookupBindDN;
     const ADLookupBindPassword = fields.identityProvider.ADLookupBindPassword;
     const ADUserDNSearchBaseDN = fields.identityProvider.ADUserDNSearchBaseDN;
@@ -541,7 +542,8 @@ export const createTenantAsync = createAsyncThunk(
             server_insecure: ADServerInsecure,
             group_search_base_dn: ADGroupSearchBaseDN,
             group_search_filter: ADGroupSearchFilter,
-            user_dns: ADUserDNs,
+            user_dns: ADUserDNs.filter((user) => user.trim() !== ""),
+            group_dns: ADGroupDNs.filter((group) => group.trim() !== ""),
             lookup_bind_dn: ADLookupBindDN,
             lookup_bind_password: ADLookupBindPassword,
             user_dn_search_base_dn: ADUserDNSearchBaseDN,

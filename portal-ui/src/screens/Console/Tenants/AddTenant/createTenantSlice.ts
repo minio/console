@@ -162,6 +162,7 @@ const initialState: ICreateTenant = {
       ADGroupSearchBaseDN: "",
       ADGroupSearchFilter: "",
       ADUserDNs: [""],
+      ADGroupDNs: [""],
       ADLookupBindDN: "",
       ADLookupBindPassword: "",
       ADUserDNSearchBaseDN: "",
@@ -789,6 +790,28 @@ export const createTenantSlice = createSlice({
           action.payload.userDN;
       }
     },
+    addIDPADGroupAtIndex: (state) => {
+      state.fields.identityProvider.ADGroupDNs.push("");
+    },
+    removeIDPADGroupAtIndex: (state, action: PayloadAction<number>) => {
+      if (state.fields.identityProvider.ADGroupDNs.length > action.payload) {
+        state.fields.identityProvider.ADGroupDNs.splice(action.payload, 1);
+      }
+    },
+    setIDPADGroupAtIndex: (
+      state,
+      action: PayloadAction<{
+        index: number;
+        userDN: string;
+      }>
+    ) => {
+      if (
+        state.fields.identityProvider.ADGroupDNs.length > action.payload.index
+      ) {
+        state.fields.identityProvider.ADGroupDNs[action.payload.index] =
+          action.payload.userDN;
+      }
+    },
     setIDP: (state, action: PayloadAction<string>) => {
       state.fields.identityProvider.idpSelection = action.payload;
     },
@@ -982,6 +1005,9 @@ export const {
   setIDPPwdAtIndex,
   setIDPADUsrAtIndex,
   addIDPADUsrAtIndex,
+  setIDPADGroupAtIndex,
+  addIDPADGroupAtIndex,
+  removeIDPADGroupAtIndex,
   removeIDPADUsrAtIndex,
   setIDP,
   setTenantName,

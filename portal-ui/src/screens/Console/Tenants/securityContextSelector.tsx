@@ -98,9 +98,9 @@ const SecurityContextSelector = ({
         <Grid item xs={12}>
           <div className={classes.multiContainer}>
             <FormSwitchWrapper
-              value="prometheusSecurityContextRunAsNonRoot"
-              id="prometheus_securityContext_runAsNonRoot"
-              name="prometheus_securityContext_runAsNonRoot"
+              value="SecurityContextRunAsNonRoot"
+              id="securityContext_runAsNonRoot"
+              name="securityContext_runAsNonRoot"
               checked={runAsNonRoot}
               onChange={() => {
                 dispatch(setRunAsNonRoot(!runAsNonRoot));
