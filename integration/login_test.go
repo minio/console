@@ -157,7 +157,7 @@ func TestBadLogin(t *testing.T) {
 
 	response, err := client.Do(request)
 
-	assert.Equal(response.StatusCode, 500, "Login request not rejected")
+	assert.Equal(401, response.StatusCode, "Login request not rejected")
 	assert.NotNil(response, "Login response is  nil")
 	assert.Nil(err, "Login errored out")
 }
