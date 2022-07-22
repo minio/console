@@ -26,6 +26,7 @@ import api from "../../../common/api";
 import { useAppDispatch } from "../../../store";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { ErrorResponseHandler } from "../../../common/types";
+import { useCallback } from "react";
 
 interface IApiKeyRegister {
   classes: any;
@@ -37,20 +38,9 @@ const ApiKeyRegister = ({ classes, afterRegister }: IApiKeyRegister) => {
   const [apiKey, setApiKey] = useState("");
   const [loading, setLoading] = useState(false);
   const [fromModal, setFromModal] = useState(false);
-
-  useEffect(() => {
-    if (apiKey && fromModal) {
-      onRegister();
-    }
-  }, [apiKey, fromModal]);
-
   const dispatch = useAppDispatch();
-  const reset = () => {
-    setApiKey("");
-    setFromModal(false);
-  };
 
-  const onRegister = () => {
+  const onRegister = useCallback(() => {
     if (loading) {
       return;
     }
@@ -70,6 +60,18 @@ const ApiKeyRegister = ({ classes, afterRegister }: IApiKeyRegister) => {
         setLoading(false);
         reset();
       });
+  }, [afterRegister, apiKey, dispatch, loading]);
+
+  useEffect(() => {
+    console.log("here");
+    if (fromModal) {
+      onRegister();
+    }
+  }, [fromModal, onRegister]);
+
+  const reset = () => {
+    setApiKey("");
+    setFromModal(false);
   };
 
   return (
