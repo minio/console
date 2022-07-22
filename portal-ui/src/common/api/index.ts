@@ -30,8 +30,12 @@ export class API {
       .send(data)
       .then((res) => res.body)
       .catch((err) => {
-        // if we get unauthorized, kick out the user
-        if (err.status === 401 && localStorage.getItem("userLoggedIn")) {
+        // if we get unauthorized and we are not doing login, kick out the user
+        if (
+          err.status === 401 &&
+          localStorage.getItem("userLoggedIn") &&
+          !targetURL.includes("api/v1/login")
+        ) {
           if (window.location.pathname !== "/") {
             localStorage.setItem("redirect-path", window.location.pathname);
           }
@@ -41,6 +45,7 @@ export class API {
           window.location.href = `${baseUrl}login`;
           return;
         }
+
         return this.onError(err);
       });
   }

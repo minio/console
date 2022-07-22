@@ -62,12 +62,13 @@ export const doLoginAsync = createAsyncThunk(
         loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login",
         loginStrategyPayload[loginStrategy.loginStrategy]
       )
-      .then(() => {
+      .then((res) => {
         // We set the state in redux
         dispatch(userLogged(true));
         if (loginStrategy.loginStrategy === loginStrategyType.form) {
           localStorage.setItem("userLoggedIn", accessKey);
         }
+        // if it's in operator mode, check the Marketplace integration
         if (isOperator) {
           api
             .invoke("GET", "/api/v1/mp-integration/")
