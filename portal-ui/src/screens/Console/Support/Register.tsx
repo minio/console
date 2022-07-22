@@ -24,7 +24,7 @@ import {
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Button, Grid, Link } from "@mui/material";
+import { Box, Button, Link } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import { CopyIcon, UsersIcon } from "../../../icons";
@@ -55,11 +55,7 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
 
-import SettingsIcon from "../../../icons/SettingsIcon";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-
 import RegisterHelpBox from "./RegisterHelpBox";
-import RegistrationStatusBanner from "./RegistrationStatusBanner";
 import { selOpMode, setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import Tabs from "@mui/material/Tabs";
