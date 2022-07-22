@@ -378,6 +378,8 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 			cookie := NewSessionCookieForConsole(*sessionID)
 			http.SetCookie(w, &cookie)
 		}
+		// Allow us to be iframed
+		w.Header().Del("X-Frame-Options")
 	}
 
 	indexPageBytes, err := io.ReadAll(indexPage)
