@@ -65,7 +65,8 @@ import { useAppDispatch } from "../../../store";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { TabPanel } from "../../shared/tabs";
-
+import { ClusterRegistered, FormTitle } from "./utils";
+import ApiKeyRegister from "./ApiKeyRegister";
 interface IRegister {
   classes: any;
 }
@@ -135,21 +136,6 @@ const styles = (theme: Theme) =>
     ...spacingUtils,
     ...containerForHeader(theme.spacing(4)),
   });
-
-const FormTitle = ({ icon = null, title }: { icon?: any; title: any }) => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-start",
-      }}
-    >
-      {icon}
-      <div className="title-text">{title}</div>
-    </Box>
-  );
-};
 
 const Register = ({ classes }: IRegister) => {
   const dispatch = useAppDispatch();
@@ -592,6 +578,35 @@ const Register = ({ classes }: IRegister) => {
     );
   }
 
+  const apiKeyRegistration = (
+    <Fragment>
+      <Box
+        sx={{
+          border: "1px solid #eaeaea",
+          borderRadius: "2px",
+          display: "flex",
+          flexFlow: "column",
+          padding: "43px",
+        }}
+      >
+        {clusterRegistered && licenseInfo ? (
+          <ClusterRegistered
+            email={licenseInfo.email}
+            linkClass={classes.link}
+          />
+        ) : (
+          <ApiKeyRegister
+            classes={classes}
+            setApiKey={setLicense}
+            apiKey={license}
+            loading={loading}
+            onRegister={subnetLogin}
+          />
+        )}
+      </Box>
+    </Fragment>
+  );
+
   const offlineRegistration = (
     <Fragment>
       <Box
@@ -603,31 +618,11 @@ const Register = ({ classes }: IRegister) => {
           padding: "43px",
         }}
       >
-        {clusterRegistered && (
-          <RegistrationStatusBanner email={licenseInfo?.email} />
-        )}
-        {clusterRegistered ? (
-          <Grid item xs={12} marginTop={"25px"}>
-            <Box
-              sx={{
-                padding: "20px",
-                "& a": {
-                  color: "#2781B0",
-                  cursor: "pointer",
-                },
-              }}
-            >
-              Login to{" "}
-              <Link
-                href="https://subnet.min.io"
-                target="_blank"
-                className={classes.link}
-              >
-                SUBNET
-              </Link>{" "}
-              to avail support for this MinIO cluster
-            </Box>
-          </Grid>
+        {clusterRegistered && licenseInfo ? (
+          <ClusterRegistered
+            email={licenseInfo.email}
+            linkClass={classes.link}
+          />
         ) : null}
         <Box
           sx={{
@@ -976,9 +971,14 @@ const Register = ({ classes }: IRegister) => {
             aria-controls="simple-tabpanel-0"
           />
           <Tab
-            label="Offline Activation"
+            label="API Key Activation"
             id="simple-tab-1"
             aria-controls="simple-tabpanel-1"
+          />
+          <Tab
+            label="Offline Activation"
+            id="simple-tab-2"
+            aria-controls="simple-tabpanel-2"
             onClick={() => fetchSubnetRegToken()}
           />
         </Tabs>
@@ -987,6 +987,9 @@ const Register = ({ classes }: IRegister) => {
           {uiToShow}
         </TabPanel>
         <TabPanel index={1} value={curTab}>
+          {apiKeyRegistration}
+        </TabPanel>
+        <TabPanel index={2} value={curTab}>
           {offlineRegistration}
         </TabPanel>
       </PageLayout>
