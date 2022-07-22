@@ -865,7 +865,7 @@ const Register = ({ classes }: IRegister) => {
               display: "flex",
               padding: "23px",
               marginTop: "40px",
-              alignItems: "center",
+              alignItems: "start",
               justifyContent: "space-between",
             }}
           >
