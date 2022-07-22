@@ -14,29 +14,63 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Box, Button } from "@mui/material";
 import { OnlineRegistrationIcon } from "../../../icons";
 import { FormTitle } from "./utils";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import GetApiKeyModal from "./GetApiKeyModal";
+import RegisterHelpBox from "./RegisterHelpBox";
+import { SubnetLoginRequest, SubnetLoginResponse } from "../License/types";
+import api from "../../../common/api";
+import { useAppDispatch } from "../../../store";
+import { setErrorSnackMessage } from "../../../systemSlice";
+import { ErrorResponseHandler } from "../../../common/types";
 
 interface IApiKeyRegister {
   classes: any;
-  apiKey: string;
-  setApiKey: (v: string) => void;
-  onRegister: () => void;
-  loading: boolean;
+  afterRegister: () => void;
 }
 
-const ApiKeyRegister = ({
-  classes,
-  apiKey,
-  setApiKey,
-  loading,
-  onRegister,
-}: IApiKeyRegister) => {
+const ApiKeyRegister = ({ classes, afterRegister }: IApiKeyRegister) => {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [fromModal, setFromModal] = useState(false);
+
+  useEffect(() => {
+    if (apiKey && fromModal) {
+      onRegister();
+    }
+  }, [apiKey, fromModal]);
+
+  const dispatch = useAppDispatch();
+  const reset = () => {
+    setApiKey("");
+    setFromModal(false);
+  };
+
+  const onRegister = () => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    let request: SubnetLoginRequest = { apiKey };
+    api
+      .invoke("POST", "/api/v1/subnet/login", request)
+      .then((resp: SubnetLoginResponse) => {
+        setLoading(false);
+        if (resp && resp.registered) {
+          reset();
+          afterRegister();
+        }
+      })
+      .catch((err: ErrorResponseHandler) => {
+        dispatch(setErrorSnackMessage(err));
+        setLoading(false);
+        reset();
+      });
+  };
 
   return (
     <Fragment>
@@ -53,57 +87,89 @@ const ApiKeyRegister = ({
           title={`API key activation of MinIO Subscription Network License`}
         />
       </Box>
-
       <Box
         sx={{
-          flex: "1",
-          paddingTop: "30px",
+          display: "flex",
+          flexFlow: {
+            xs: "column",
+            md: "row",
+          },
         }}
       >
-        <InputBoxWrapper
-          className={classes.spacerBottom}
-          classes={{
-            inputLabel: classes.sizedLabel,
-          }}
-          id="api-key"
-          name="api-key"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            setApiKey(event.target.value)
-          }
-          label="API Key"
-          value={apiKey}
-        />
-
         <Box
           sx={{
             display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
+            flexFlow: "column",
+            flex: "2",
           }}
         >
-          <Button
-            variant="outlined"
-            className={classes.spacerRight}
-            disabled={loading}
-            onClick={() => setShowApiKeyModal(true)}
+          <Box
+            sx={{
+              fontSize: "16px",
+              display: "flex",
+              flexFlow: "column",
+              marginTop: "30px",
+              marginBottom: "30px",
+            }}
           >
-            Get from SUBNET
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={loading || apiKey.trim().length === 0}
-            onClick={() => onRegister()}
+            Use your MinIO Subscription Network API Key to register this
+            cluster.
+          </Box>
+          <Box
+            sx={{
+              flex: "1",
+            }}
           >
-            Register
-          </Button>
-          <GetApiKeyModal
-            open={showApiKeyModal}
-            closeModal={() => setShowApiKeyModal(false)}
-            onSet={setApiKey}
-          />
+            <InputBoxWrapper
+              className={classes.spacerBottom}
+              classes={{
+                inputLabel: classes.sizedLabel,
+              }}
+              id="api-key"
+              name="api-key"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setApiKey(event.target.value)
+              }
+              label="API Key"
+              value={apiKey}
+            />
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button
+                variant="outlined"
+                className={classes.spacerRight}
+                disabled={loading}
+                onClick={() => setShowApiKeyModal(true)}
+              >
+                Get from SUBNET
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={loading || apiKey.trim().length === 0}
+                onClick={() => onRegister()}
+              >
+                Register
+              </Button>
+              <GetApiKeyModal
+                open={showApiKeyModal}
+                closeModal={() => setShowApiKeyModal(false)}
+                onSet={(value) => {
+                  setApiKey(value);
+                  setFromModal(true);
+                }}
+              />
+            </Box>
+          </Box>
         </Box>
+        <RegisterHelpBox />
       </Box>
     </Fragment>
   );
