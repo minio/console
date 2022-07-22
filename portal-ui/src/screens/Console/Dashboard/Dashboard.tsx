@@ -79,7 +79,7 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
         </Grid>
       ) : (
         <Fragment>
-          {widgets !== null ? (
+          {widgets !== null || true ? (
             <PrDashboard />
           ) : (
             <BasicDashboard usage={basicResult} />

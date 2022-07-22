@@ -32,7 +32,7 @@ import withStyles from "@mui/styles/withStyles";
 import { IBarChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import BarChartTooltip from "./tooltips/BarChartTooltip";
-
+import { WidgetDownloadButton } from "../Widgets/WidgetDownloadButton";
 import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
@@ -160,7 +160,8 @@ const BarChartWidget = ({
     <div className={zoomActivated ? "" : classes.singleValueContainer}>
       {!zoomActivated && (
         <div className={classes.titleContainer}>
-          {title} <ExpandGraphLink panelItem={panelItem} />
+          <WidgetDownloadButton title={title} data={data} /> {title}{" "}
+          <ExpandGraphLink panelItem={panelItem} />
         </div>
       )}
       {loading && (

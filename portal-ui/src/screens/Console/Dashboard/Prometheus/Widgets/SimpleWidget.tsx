@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
 import { IDashboardPanel } from "../types";
-
+import { WidgetDownloadButton } from "../Widgets/WidgetDownloadButton";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import Loader from "../../../Common/Loader/Loader";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
@@ -135,9 +135,12 @@ const SimpleWidget = ({
         </div>
       )}
       {!loading && (
-        <span className={classes.mainWidgetContainer}>
+        <span className={classes.mainWidgetContainer} id="simple_widget">
           <span className={classes.icon}>{iconWidget ? iconWidget : null}</span>
-          <span className={classes.widgetLabel}>{title}: </span>
+          <span className={classes.widgetLabel}>
+            <WidgetDownloadButton title={title} data={data} />
+            {title}:{" "}
+          </span>
           <span className={classes.widgetValue}>{data}</span>
         </span>
       )}

@@ -139,7 +139,7 @@ const SingleValueWidget = ({
       {!loading && (
         <Fragment>
           <div className={classes.metric}>{splitSizeMetric(data)}</div>
-          <div className={classes.titleElement}>{title}</div>
+          <div className={classes.titleElement}> {title}</div>
         </Fragment>
       )}
     </div>

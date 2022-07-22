@@ -42,6 +42,7 @@ import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../store";
+import { WidgetDownloadButton } from "../Widgets/WidgetDownloadButton";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -194,7 +195,9 @@ const LinearGraphWidget = ({
     <Box className={zoomActivated ? "" : classes.singleValueContainer}>
       {!zoomActivated && (
         <div className={classes.titleContainer}>
-          {title} <ExpandGraphLink panelItem={panelItem} />
+          <WidgetDownloadButton title={title} data={data} />
+          {title}
+          <ExpandGraphLink panelItem={panelItem} />
         </div>
       )}
       <Box
