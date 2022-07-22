@@ -70,59 +70,77 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 	if err != nil {
 		return nil, err
 	}
-	tierInfo, err := client.tierStats(ctx)
+
+	tiersInfo, err := client.tierStats(ctx)
 	if err != nil {
 		return nil, err
 	}
+
 	var tiersList []*models.Tier
-	for i := range tiers {
-		switch tiers[i].Type {
+	for _, tierData := range tiers {
+
+		// Default Tier Stats
+		stats := madmin.TierStats{
+			NumObjects:  0,
+			NumVersions: 0,
+			TotalSize:   0,
+		}
+
+		// We look for the correct tier stats & set the values.
+		for _, stat := range tiersInfo {
+			if stat.Name == tierData.Name {
+				stats = stat.Stats
+				break
+			}
+		}
+
+		switch tierData.Type {
 		case madmin.S3:
 			tiersList = append(tiersList, &models.Tier{
 				Type: models.TierTypeS3,
 				S3: &models.TierS3{
-					Accesskey:    tiers[i].S3.AccessKey,
-					Bucket:       tiers[i].S3.Bucket,
-					Endpoint:     tiers[i].S3.Endpoint,
-					Name:         tiers[i].Name,
-					Prefix:       tiers[i].S3.Prefix,
-					Region:       tiers[i].S3.Region,
-					Secretkey:    tiers[i].S3.SecretKey,
-					Storageclass: tiers[i].S3.StorageClass,
-					Usage:        humanize.IBytes(tierInfo[i+1].Stats.TotalSize),
-					Objects:      strconv.Itoa(tierInfo[i+1].Stats.NumObjects),
-					Versions:     strconv.Itoa(tierInfo[i+1].Stats.NumVersions),
+					Accesskey:    tierData.S3.AccessKey,
+					Bucket:       tierData.S3.Bucket,
+					Endpoint:     tierData.S3.Endpoint,
+					Name:         tierData.Name,
+					Prefix:       tierData.S3.Prefix,
+					Region:       tierData.S3.Region,
+					Secretkey:    tierData.S3.SecretKey,
+					Storageclass: tierData.S3.StorageClass,
+					Usage:        humanize.IBytes(stats.TotalSize),
+					Objects:      strconv.Itoa(stats.NumObjects),
+					Versions:     strconv.Itoa(stats.NumVersions),
 				},
 			})
 		case madmin.GCS:
 			tiersList = append(tiersList, &models.Tier{
 				Type: models.TierTypeGcs,
 				Gcs: &models.TierGcs{
-					Bucket:   tiers[i].GCS.Bucket,
-					Creds:    tiers[i].GCS.Creds,
-					Endpoint: tiers[i].GCS.Endpoint,
-					Name:     tiers[i].Name,
-					Prefix:   tiers[i].GCS.Prefix,
-					Region:   tiers[i].GCS.Region,
-					Usage:    humanize.IBytes(tierInfo[i+1].Stats.TotalSize),
-					Objects:  strconv.Itoa(tierInfo[i+1].Stats.NumObjects),
-					Versions: strconv.Itoa(tierInfo[i+1].Stats.NumVersions),
+					Bucket:   tierData.GCS.Bucket,
+					Creds:    tierData.GCS.Creds,
+					Endpoint: tierData.GCS.Endpoint,
+					Name:     tierData.Name,
+					Prefix:   tierData.GCS.Prefix,
+					Region:   tierData.GCS.Region,
+					Usage:    humanize.IBytes(stats.TotalSize),
+					Objects:  strconv.Itoa(stats.NumObjects),
+					Versions: strconv.Itoa(stats.NumVersions),
 				},
 			})
 		case madmin.Azure:
 			tiersList = append(tiersList, &models.Tier{
 				Type: models.TierTypeAzure,
 				Azure: &models.TierAzure{
-					Accountkey:  tiers[i].Azure.AccountKey,
-					Accountname: tiers[i].Azure.AccountName,
-					Bucket:      tiers[i].Azure.Bucket,
-					Endpoint:    tiers[i].Azure.Endpoint,
-					Name:        tiers[i].Name,
-					Prefix:      tiers[i].Azure.Prefix,
-					Region:      tiers[i].Azure.Region,
-					Usage:       humanize.IBytes(tierInfo[i+1].Stats.TotalSize),
-					Objects:     strconv.Itoa(tierInfo[i+1].Stats.NumObjects),
-					Versions:    strconv.Itoa(tierInfo[i+1].Stats.NumVersions),
+					Accountkey:  tierData.Azure.AccountKey,
+					Accountname: tierData.Azure.AccountName,
+					Bucket:      tierData.Azure.Bucket,
+					Endpoint:    tierData.Azure.Endpoint,
+					Name:        tierData.Name,
+					Prefix:      tierData.Azure.Prefix,
+					Region:      tierData.Azure.Region,
+					Usage:       humanize.IBytes(stats.TotalSize),
+					Objects:     strconv.Itoa(stats.NumObjects),
+					Versions:    strconv.Itoa(stats.NumVersions),
 				},
 			})
 		case madmin.Unsupported:
@@ -242,7 +260,7 @@ func getAddTierResponse(session *models.Principal, params tieringApi.AddTierPara
 	// serialize output
 	errTier := addTier(ctx, adminClient, &params)
 	if errTier != nil {
-		return ErrorWithContext(ctx, err)
+		return ErrorWithContext(ctx, errTier)
 	}
 	return nil
 }
