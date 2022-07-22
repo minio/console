@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -45,7 +44,6 @@ func startProfiling(ctx context.Context, conn WSConn, client MinioAdmin, pOpts *
 		return err
 	}
 	items = []*models.StartProfilingItem{}
-	fmt.Println(profilingResults)
 	for _, result := range profilingResults {
 		items = append(items, &models.StartProfilingItem{
 			Success:  result.Success,
@@ -53,11 +51,6 @@ func startProfiling(ctx context.Context, conn WSConn, client MinioAdmin, pOpts *
 			NodeName: result.NodeName,
 		})
 	}
-	profilingList := &models.StartProfilingList{
-		StartResults: items,
-		Total:        int64(len(items)),
-	}
-	fmt.Println(profilingList)
 	zippedData, err := client.stopProfiling(ctx)
 	if err != nil {
 		return err
