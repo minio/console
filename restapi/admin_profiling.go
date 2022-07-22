@@ -59,5 +59,5 @@ func startProfiling(ctx context.Context, conn WSConn, client MinioAdmin, pOpts *
 	if err != nil {
 		return err
 	}
-	return conn.writeMessage(websocket.BinaryMessage, []byte(message))
+	return conn.writeMessage(websocket.BinaryMessage, message)
 }
