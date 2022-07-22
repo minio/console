@@ -109,7 +109,7 @@ const Profile = ({ classes }: IProfileProps) => {
       };
       c.onmessage = (message: IMessageEvent) => {
         // process received message
-        let response = new Blob([message.data], {type: "application/zip"});
+        let response = new Blob([message.data], { type: "application/zip" });
         let filename = "profile.zip";
         setProfilingStarted(false);
         var link = document.createElement("a");
