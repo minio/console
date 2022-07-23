@@ -135,6 +135,7 @@ jobs:
         run: |
           echo "The idea is to build minio image from downloaded repository";
           cd $GITHUB_WORKSPACE/minio_repository;
+          echo "replace github.com/minio/console => ../" >> go.mod
           echo "Get git version to build MinIO Image";
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
