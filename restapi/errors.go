@@ -218,7 +218,7 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 				errorCode = 400
 				errorMessage = "Bucket already exists"
 			}
-			LogError(err1.Error(), err...)
+			LogError("ErrorWithContext:%v", err...)
 			LogIf(ctx, err1, err...)
 		}
 
