@@ -151,7 +151,7 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
 	r := params.HTTPRequest
-	if openIDProviders != nil {
+	if len(openIDProviders) > 0 {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		// initialize new oauth2 client
 		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(idpName, nil, r, GetConsoleHTTPClient())
