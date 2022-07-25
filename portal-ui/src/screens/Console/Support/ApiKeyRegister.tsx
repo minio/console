@@ -63,7 +63,6 @@ const ApiKeyRegister = ({ classes, afterRegister }: IApiKeyRegister) => {
   }, [afterRegister, apiKey, dispatch, loading]);
 
   useEffect(() => {
-    console.log("here");
     if (fromModal) {
       onRegister();
     }
