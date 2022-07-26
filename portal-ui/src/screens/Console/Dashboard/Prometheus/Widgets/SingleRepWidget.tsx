@@ -33,6 +33,7 @@ interface ISingleRepWidget {
   timeStart: any;
   timeEnd: any;
   propLoading: boolean;
+
   color?: string;
   fillColor?: string;
   apiPrefix: string;
@@ -44,6 +45,7 @@ const SingleRepWidget = ({
   timeStart,
   timeEnd,
   propLoading,
+
   apiPrefix,
 }: ISingleRepWidget) => {
   const dispatch = useAppDispatch();

@@ -22,6 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { IPieChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
+
 import { IDashboardPanel } from "../types";
 import { splitSizeMetric, widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
@@ -74,6 +75,7 @@ const PieChartWidget = ({
   timeStart,
   timeEnd,
   propLoading,
+
   apiPrefix,
 }: IPieChartWidget) => {
   const dispatch = useAppDispatch();
@@ -144,7 +146,7 @@ const PieChartWidget = ({
           <span className={classes.pieChartLabel}>
             {middleLabel && splitSizeMetric(middleLabel)}
           </span>
-          <div className={classes.chartContainer} id="pie_chart_widget">
+          <div className={classes.chartContainer}>
             <ResponsiveContainer width="99%">
               <PieChart margin={{ top: 5, bottom: 5 }}>
                 {dataOuter && (
