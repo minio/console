@@ -23,6 +23,7 @@ import { ErrorResponseHandler } from "./common/types";
 import { ReplicationSite } from "./screens/Console/Configurations/SiteReplication/SiteReplication";
 import { useSelector } from "react-redux";
 import {
+  directPVMode,
   globalSetDistributedSetup,
   operatorMode,
   selOpMode,
@@ -63,6 +64,7 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
         // check for tenants presence, that indicates we are in operator mode
         if (res.operator) {
           dispatch(operatorMode(true));
+          dispatch(directPVMode(!!res.directPV));
           document.title = "MinIO Operator";
         }
       })

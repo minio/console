@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,16 +14,37 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface ILoginDetails {
-  loginStrategy: loginStrategyType;
-  redirect: string;
-  isDirectPV?: boolean;
+export interface IDirectPVDrives {
+  joinName: string;
+  drive: string;
+  capacity: string;
+  allocated: string;
+  volumes: number;
+  node: string;
+  status: "Available" | "Unavailable" | "InUse" | "Ready" | "Terminating";
 }
 
-export enum loginStrategyType {
-  unknown = "unknown",
-  form = "form",
-  redirect = "redirect",
-  serviceAccount = "service-account",
-  redirectServiceAccount = "redirect-service-account",
+export interface IDirectPVVolumes {
+  volume: string;
+  capacity: string;
+  node: string;
+  drive: string;
+}
+
+export interface IDrivesResponse {
+  drives: IDirectPVDrives[];
+}
+
+export interface IVolumesResponse {
+  volumes: IDirectPVVolumes[];
+}
+
+export interface IDirectPVFormatResult {
+  formatIssuesList: IDirectPVFormatResItem[];
+}
+
+export interface IDirectPVFormatResItem {
+  node: string;
+  drive: string;
+  error: string;
 }

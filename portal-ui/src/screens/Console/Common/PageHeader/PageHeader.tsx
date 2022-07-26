@@ -24,12 +24,13 @@ import IconButton from "@mui/material/IconButton";
 import { AppState, useAppDispatch } from "../../../../store";
 import OperatorLogo from "../../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../../icons/ConsoleLogo";
+import DirectPVLogo from "../../../../icons/DirectPVLogo";
 
 import { CircleIcon, ObjectManagerIcon } from "../../../../icons";
 import { Box } from "@mui/material";
 import { toggleList } from "../../ObjectBrowser/objectBrowserSlice";
 import { selFeatures } from "../../consoleSlice";
-import { selOpMode } from "../../../../systemSlice";
+import { selDirectPVMode, selOpMode } from "../../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -107,6 +108,7 @@ const PageHeader = ({
     (state: AppState) => state.system.sidebarOpen
   );
   const operatorMode = useSelector(selOpMode);
+  const directPVMode = useSelector(selDirectPVMode);
   const managerObjects = useSelector(
     (state: AppState) => state.objectBrowser.objectManager.objectsToManage
   );
@@ -151,7 +153,13 @@ const PageHeader = ({
       >
         {!sidebarOpen && (
           <div className={classes.logo}>
-            {operatorMode ? <OperatorLogo /> : <ConsoleLogo />}
+            {!operatorMode && !directPVMode ? (
+              <ConsoleLogo />
+            ) : (
+              <Fragment>
+                {directPVMode ? <DirectPVLogo /> : <OperatorLogo />}
+              </Fragment>
+            )}
           </div>
         )}
         <Box

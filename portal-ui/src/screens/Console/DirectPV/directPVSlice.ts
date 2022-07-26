@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,16 +14,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface ILoginDetails {
-  loginStrategy: loginStrategyType;
-  redirect: string;
-  isDirectPV?: boolean;
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+export interface IDirectPVReducer {
+  selectedDrive: string;
 }
 
-export enum loginStrategyType {
-  unknown = "unknown",
-  form = "form",
-  redirect = "redirect",
-  serviceAccount = "service-account",
-  redirectServiceAccount = "redirect-service-account",
-}
+const initialState: IDirectPVReducer = {
+  selectedDrive: "",
+};
+export const directPVSlice = createSlice({
+  name: "directPV",
+  initialState,
+  reducers: {
+    selectDrive: (state, action: PayloadAction<string>) => {
+      if (action.payload !== "") {
+        state.selectedDrive = action.payload;
+      }
+    },
+  },
+});
+
+export const { selectDrive } = directPVSlice.actions;
+
+export default directPVSlice.reducer;

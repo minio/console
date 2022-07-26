@@ -212,6 +212,11 @@ export const IAM_PAGES = {
     "/namespaces/:tenantNamespace/tenants/:tenantName/events",
   NAMESPACE_TENANT_CSR: "/namespaces/:tenantNamespace/tenants/:tenantName/csr",
   OPERATOR_MARKETPLACE: "/marketplace",
+
+  /* DirectPV */
+  DIRECTPV_STORAGE: "/storage",
+  DIRECTPV_DRIVES: "/drives",
+  DIRECTPV_VOLUMES: "/volumes",
 };
 
 // roles
