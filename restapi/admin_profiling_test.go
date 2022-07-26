@@ -21,6 +21,8 @@ import (
 	"context"
 	"errors"
 	"io"
+	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/minio/madmin-go"
@@ -101,5 +103,18 @@ func TestStartProfiling(t *testing.T) {
 	err = startProfiling(ctx, mockWSConn, adminClient, testOptions)
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
+	}
+
+	// Test-3: getProfileOptionsFromReq() correctly returns profile options from request
+	u, _ := url.Parse("ws://localhost/ws/profile?types=cpu,mem,block,mutex,trace,threads,goroutines")
+	req := &http.Request{
+		URL: u,
+	}
+	opts, err := getProfileOptionsFromReq(req)
+	if assert.NoError(err) {
+		expectedOptions := profileOptions{
+			Types: "cpu,mem,block,mutex,trace,threads,goroutines",
+		}
+		assert.Equal(expectedOptions.Types, opts.Types)
 	}
 }
