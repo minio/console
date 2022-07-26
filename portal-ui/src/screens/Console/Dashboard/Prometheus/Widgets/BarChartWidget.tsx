@@ -160,7 +160,7 @@ const BarChartWidget = ({
     <div className={zoomActivated ? "" : classes.singleValueContainer}>
       {!zoomActivated && (
         <div className={classes.titleContainer}>
-          <WidgetDownloadButton title={title} data={data} /> {title}{" "}
+          <WidgetDownloadButton title={title} data={data} /> {title}
           <ExpandGraphLink panelItem={panelItem} />
         </div>
       )}

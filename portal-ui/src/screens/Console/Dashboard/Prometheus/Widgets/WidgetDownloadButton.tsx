@@ -16,6 +16,9 @@
 
 import { DownloadIcon } from "../../../../../icons";
 import RBIconButton from "../../../../Console/Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { setErrorSnackMessage } from "../../../../../../src/systemSlice";
+import { ErrorResponseHandler } from "../../../../../../src/common/types";
+import { useAppDispatch } from "../../../../../../src/store";
 
 interface IWidgetDownloadButton {
   data: any;
@@ -26,6 +29,10 @@ export const WidgetDownloadButton = ({
   data,
   title,
 }: IWidgetDownloadButton) => {
+  const dispatch = useAppDispatch();
+  const onDownloadError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
+
   const download = (filename: string, text: string) => {
     let element = document.createElement("a");
     element.setAttribute("href", "data:text/plain;charset=utf-8," + text);
@@ -40,18 +47,37 @@ export const WidgetDownloadButton = ({
 
   const convertToCSV = (objectToConvert: any) => {
     const array = [Object.keys(objectToConvert[0])].concat(objectToConvert);
+    console.log("In download array:", array);
     return array
       .map((it) => {
         return Object.values(it).toString();
       })
-      .join("\n");
+      .join(",");
   };
 
-  const widgetDataFileName = (data: any) => {
-    return (title + "_" + Date.now().toString() + ".csv")
-      .replace(/\s+/g, "")
-      .trim()
-      .toLowerCase();
+  const widgetDataFileName = () => {
+    if (title !== null) {
+      return (title + "_" + Date.now().toString() + ".csv")
+        .replace(/\s+/g, "")
+        .trim()
+        .toLowerCase();
+    } else {
+      return "widgetData_" + Date.now().toString() + ".csv";
+    }
+  };
+
+  const downloadWidgetData = () => {
+    if (data !== null) {
+      console.log("In download data:", data);
+      download(widgetDataFileName(), convertToCSV(data));
+    } else {
+      let err: ErrorResponseHandler;
+      err = {
+        errorMessage: "Unable to download widget data",
+        detailedError: "Unable to download widget data - data not available",
+      };
+      onDownloadError(err);
+    }
   };
 
   return (
@@ -60,7 +86,7 @@ export const WidgetDownloadButton = ({
       tooltip={"Download data for this widget"}
       marginRight=".9rem"
       onClick={() => {
-        download(widgetDataFileName(data), convertToCSV(data));
+        downloadWidgetData();
       }}
       icon={<DownloadIcon />}
       variant="outlined"
