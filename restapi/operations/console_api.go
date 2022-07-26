@@ -38,7 +38,6 @@ import (
 	"github.com/go-openapi/swag"
 
 	"github.com/minio/console/models"
-	"github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/console/restapi/operations/account"
 	"github.com/minio/console/restapi/operations/auth"
 	"github.com/minio/console/restapi/operations/bucket"
@@ -59,7 +58,7 @@ import (
 )
 
 // NewConsoleAPI creates a new Console instance
-func NewConsoleAPI(spec *loads.Document, openIDProviders oauth2.OpenIDPCfg) *ConsoleAPI {
+func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 	return &ConsoleAPI{
 		handlers:            make(map[string]map[string]http.Handler),
 		formats:             strfmt.Default,
@@ -75,8 +74,6 @@ func NewConsoleAPI(spec *loads.Document, openIDProviders oauth2.OpenIDPCfg) *Con
 		BasicAuthenticator:  security.BasicAuth,
 		APIKeyAuthenticator: security.APIKeyAuth,
 		BearerAuthenticator: security.BearerAuth,
-
-		OpenIDProviders: openIDProviders,
 
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
@@ -483,9 +480,6 @@ type ConsoleAPI struct {
 	defaultProduces string
 	Middleware      func(middleware.Builder) http.Handler
 	useSwaggerUI    bool
-
-	// Configuration passed in from MinIO for MinIO console.
-	OpenIDProviders oauth2.OpenIDPCfg
 
 	// BasicAuthenticator generates a runtime.Authenticator from the supplied basic auth function.
 	// It has a default implementation in the security package, however you can replace it for your particular usage.
