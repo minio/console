@@ -145,6 +145,7 @@ const LinearGraphWidget = ({
         .then((res: any) => {
           const widgetsWithValue = widgetDetailsToPanel(res, panelItem);
           setData(widgetsWithValue.data);
+          console.log("In api data:", widgetsWithValue.data);
           setResult(widgetsWithValue);
           setLoading(false);
           let maxVal = 0;
