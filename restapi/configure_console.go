@@ -118,8 +118,6 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerBucketsLifecycleHandlers(api)
 	// Register service handlers
 	registerServiceHandlers(api)
-	// Register profiling handlers
-	registerProfilingHandler(api)
 	// Register session handlers
 	registerSessionHandlers(api)
 	// Register version handlers

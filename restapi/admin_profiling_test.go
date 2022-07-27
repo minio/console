@@ -21,6 +21,8 @@ import (
 	"context"
 	"errors"
 	"io"
+	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/minio/madmin-go"
@@ -32,14 +34,24 @@ var (
 	minioStopProfiling  func() (io.ReadCloser, error)
 )
 
-// mock function of startProfiling()
+// mock function for startProfiling()
 func (ac adminClientMock) startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
 	return minioStartProfiling(profiler)
 }
 
-// mock function of stopProfiling()
+// mock function for stopProfiling()
 func (ac adminClientMock) stopProfiling(ctx context.Context) (io.ReadCloser, error) {
 	return minioStopProfiling()
+}
+
+// Implementing fake closingBuffer to mock stopProfiling() (io.ReadCloser, error)
+type ClosingBuffer struct {
+	*bytes.Buffer
+}
+
+// Implementing a fake Close function for io.ReadCloser
+func (cb *ClosingBuffer) Close() error {
+	return nil
 }
 
 func TestStartProfiling(t *testing.T) {
@@ -47,7 +59,13 @@ func TestStartProfiling(t *testing.T) {
 	defer cancel()
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
-	// Test-1 : startProfiling() Get response from Minio server with one profiling object
+	mockWSConn := mockConn{}
+	function := "startProfiling()"
+	testOptions := &profileOptions{
+		Types: "cpu",
+	}
+
+	// Test-1 : startProfiling() Get response from MinIO server with one profiling object without errors
 	// mock function response from startProfiling()
 	minioStartProfiling = func(profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
 		return []madmin.StartProfilingResult{
@@ -63,56 +81,40 @@ func TestStartProfiling(t *testing.T) {
 			},
 		}, nil
 	}
-	function := "startProfiling()"
-	cpuProfiler := "cpu"
-	startProfilingResults, err := startProfiling(ctx, adminClient, cpuProfiler)
+	// mock function response from stopProfiling()
+	minioStopProfiling = func() (io.ReadCloser, error) {
+		return &ClosingBuffer{bytes.NewBufferString("In memory string eaeae")}, nil
+	}
+	// mock function response from mockConn.writeMessage()
+	connWriteMessageMock = func(messageType int, p []byte) error {
+		return nil
+	}
+	err := startProfiling(ctx, mockWSConn, adminClient, testOptions)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
-	assert.Equal(2, len(startProfilingResults))
-	// Test-2 : startProfiling() Correctly handles errors returned by Minio
+	assert.Equal(err, nil)
+
+	// Test-2 : startProfiling() Correctly handles errors returned by MinIO
 	// mock function response from startProfiling()
 	minioStartProfiling = func(profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
 		return nil, errors.New("error")
 	}
-	_, err = startProfiling(ctx, adminClient, cpuProfiler)
+	err = startProfiling(ctx, mockWSConn, adminClient, testOptions)
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
-}
 
-// Implementing fake closingBuffer need it to mock stopProfiling() (io.ReadCloser, error)
-type ClosingBuffer struct {
-	*bytes.Buffer
-}
-
-// Implementing a fake Close function for io.ReadCloser
-func (cb *ClosingBuffer) Close() error {
-	return nil
-}
-
-func TestStopProfiling(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	assert := assert.New(t)
-	adminClient := adminClientMock{}
-	// Test-1 : stopProfiling() Get response from Minio server and that response is a readCloser interface
-	// mock function response from startProfiling()
-	minioStopProfiling = func() (io.ReadCloser, error) {
-		return &ClosingBuffer{bytes.NewBufferString("In memory string eaeae")}, nil
+	// Test-3: getProfileOptionsFromReq() correctly returns profile options from request
+	u, _ := url.Parse("ws://localhost/ws/profile?types=cpu,mem,block,mutex,trace,threads,goroutines")
+	req := &http.Request{
+		URL: u,
 	}
-	function := "stopProfiling()"
-	_, err := stopProfiling(ctx, adminClient)
-	if err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-	// Test-2 : stopProfiling() Correctly handles errors returned by Minio
-	// mock function response from stopProfiling()
-	minioStopProfiling = func() (io.ReadCloser, error) {
-		return nil, errors.New("error")
-	}
-	_, err = stopProfiling(ctx, adminClient)
-	if assert.Error(err) {
-		assert.Equal("error", err.Error())
+	opts, err := getProfileOptionsFromReq(req)
+	if assert.NoError(err) {
+		expectedOptions := profileOptions{
+			Types: "cpu,mem,block,mutex,trace,threads,goroutines",
+		}
+		assert.Equal(expectedOptions.Types, opts.Types)
 	}
 }
