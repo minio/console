@@ -21,6 +21,7 @@ import (
 	"errors"
 
 	xhttp "github.com/minio/console/pkg/http"
+	"github.com/minio/console/pkg/subnet"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -31,22 +32,25 @@ import (
 
 func registerOperatorSubnetHandlers(api *operations.OperatorAPI) {
 	api.OperatorAPIOperatorSubnetLoginHandler = operator_api.OperatorSubnetLoginHandlerFunc(func(params operator_api.OperatorSubnetLoginParams, session *models.Principal) middleware.Responder {
-		resp, err := getOperatorSubnetLoginResponse(session, params)
+		res, err := getOperatorSubnetLoginResponse(session, params)
 		if err != nil {
 			return operator_api.NewOperatorSubnetLoginDefault(int(err.Code)).WithPayload(err)
 		}
-		return operator_api.NewOperatorSubnetLoginOK().WithPayload(resp)
+		return operator_api.NewOperatorSubnetLoginOK().WithPayload(res)
 	})
 	api.OperatorAPIOperatorSubnetLoginMFAHandler = operator_api.OperatorSubnetLoginMFAHandlerFunc(func(params operator_api.OperatorSubnetLoginMFAParams, session *models.Principal) middleware.Responder {
-		resp, err := getOperatorSubnetLoginMFAResponse(session, params)
+		res, err := getOperatorSubnetLoginMFAResponse(session, params)
 		if err != nil {
 			return operator_api.NewOperatorSubnetLoginMFADefault(int(err.Code)).WithPayload(err)
 		}
-		return operator_api.NewOperatorSubnetLoginMFAOK().WithPayload(resp)
+		return operator_api.NewOperatorSubnetLoginMFAOK().WithPayload(res)
 	})
 	api.OperatorAPIOperatorSubnetAPIKeyHandler = operator_api.OperatorSubnetAPIKeyHandlerFunc(func(params operator_api.OperatorSubnetAPIKeyParams, session *models.Principal) middleware.Responder {
-		// TODO: Implement
-		return operator_api.NewOperatorSubnetAPIKeyOK()
+		res, err := getOperatorSubnetAPIKeyResponse(session, params)
+		if err != nil {
+			return operator_api.NewOperatorSubnetAPIKeyDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewOperatorSubnetAPIKeyOK().WithPayload(res)
 	})
 	api.OperatorAPIOperatorSubnetRegisterAPIKeyHandler = operator_api.OperatorSubnetRegisterAPIKeyHandlerFunc(func(params operator_api.OperatorSubnetRegisterAPIKeyParams, session *models.Principal) middleware.Responder {
 		// TODO: Implement
@@ -84,4 +88,16 @@ func getOperatorSubnetLoginMFAResponse(session *models.Principal, params operato
 	return &models.OperatorSubnetLoginResponse{
 		AccessToken: res.AccessToken,
 	}, nil
+}
+
+func getOperatorSubnetAPIKeyResponse(session *models.Principal, params operator_api.OperatorSubnetAPIKeyParams) (*models.OperatorSubnetAPIKey, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient()}
+	token := params.HTTPRequest.URL.Query().Get("token")
+	apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err)
+	}
+	return &models.OperatorSubnetAPIKey{APIKey: apiKey}, nil
 }
