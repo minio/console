@@ -1906,6 +1906,133 @@ func init() {
         }
       }
     },
+    "/subnet/apikey": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Subnet api key",
+        "operationId": "OperatorSubnetApiKey",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "token",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetAPIKey"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/apikey/register": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Register Operator with Subnet",
+        "operationId": "OperatorSubnetRegisterAPIKey",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetAPIKey"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Login to subnet",
+        "operationId": "OperatorSubnetLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetLoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login/mfa": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Login to subnet using mfa",
+        "operationId": "OperatorSubnetLoginMFA",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetLoginMFARequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/subscription/info": {
       "get": {
         "tags": [
@@ -3544,6 +3671,55 @@ func init() {
           "enum": [
             "ok"
           ]
+        }
+      }
+    },
+    "operatorSubnetAPIKey": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string"
+        }
+      }
+    },
+    "operatorSubnetLoginMFARequest": {
+      "type": "object",
+      "required": [
+        "username",
+        "otp",
+        "mfa_token"
+      ],
+      "properties": {
+        "mfa_token": {
+          "type": "string"
+        },
+        "otp": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "operatorSubnetLoginRequest": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "operatorSubnetLoginResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "mfa_token": {
+          "type": "string"
         }
       }
     },
@@ -6658,6 +6834,133 @@ func init() {
         }
       }
     },
+    "/subnet/apikey": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Subnet api key",
+        "operationId": "OperatorSubnetApiKey",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "token",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetAPIKey"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/apikey/register": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Register Operator with Subnet",
+        "operationId": "OperatorSubnetRegisterAPIKey",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetAPIKey"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Login to subnet",
+        "operationId": "OperatorSubnetLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetLoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subnet/login/mfa": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Login to subnet using mfa",
+        "operationId": "OperatorSubnetLoginMFA",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetLoginMFARequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetLoginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/subscription/info": {
       "get": {
         "tags": [
@@ -9083,6 +9386,55 @@ func init() {
           "enum": [
             "ok"
           ]
+        }
+      }
+    },
+    "operatorSubnetAPIKey": {
+      "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string"
+        }
+      }
+    },
+    "operatorSubnetLoginMFARequest": {
+      "type": "object",
+      "required": [
+        "username",
+        "otp",
+        "mfa_token"
+      ],
+      "properties": {
+        "mfa_token": {
+          "type": "string"
+        },
+        "otp": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "operatorSubnetLoginRequest": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "operatorSubnetLoginResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "mfa_token": {
+          "type": "string"
         }
       }
     },

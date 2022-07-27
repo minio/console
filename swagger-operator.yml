@@ -1397,6 +1397,87 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - OperatorAPI
+  /subnet/login:
+    post:
+      summary: Login to subnet
+      operationId: OperatorSubnetLogin
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/operatorSubnetLoginRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/operatorSubnetLoginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+  /subnet/login/mfa:
+    post:
+      summary: Login to subnet using mfa
+      operationId: OperatorSubnetLoginMFA
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/operatorSubnetLoginMFARequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/operatorSubnetLoginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+  /subnet/apikey:
+    get:
+      summary: Subnet api key
+      operationId: OperatorSubnetApiKey
+      parameters:
+        - name: token
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/operatorSubnetAPIKey"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+  /subnet/apikey/register:
+    post:
+      summary: Register Operator with Subnet
+      operationId: OperatorSubnetRegisterAPIKey
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/operatorSubnetAPIKey"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
 
 definitions:
   error:
@@ -3449,3 +3530,38 @@ definitions:
       isInEU:
         type: boolean
 
+  operatorSubnetLoginRequest:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+
+  operatorSubnetLoginResponse:
+    type: object
+    properties:
+      access_token:
+        type: string
+      mfa_token:
+        type: string
+
+  operatorSubnetLoginMFARequest:
+    type: object
+    required:
+      - username
+      - otp
+      - mfa_token
+    properties:
+      username:
+        type: string
+      otp:
+        type: string
+      mfa_token:
+        type: string
+
+  operatorSubnetAPIKey:
+    type: object
+    properties:
+      apiKey:
+        type: string
