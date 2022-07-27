@@ -47,7 +47,6 @@ export const WidgetDownloadButton = ({
 
   const convertToCSV = (objectToConvert: any) => {
     const array = [Object.keys(objectToConvert[0])].concat(objectToConvert);
-    console.log("In download array:", array);
     return array
       .map((it) => {
         return Object.values(it).toString();
@@ -68,7 +67,6 @@ export const WidgetDownloadButton = ({
 
   const downloadWidgetData = () => {
     if (data !== null) {
-      console.log("In download data:", data);
       download(widgetDataFileName(), convertToCSV(data));
     } else {
       let err: ErrorResponseHandler;
