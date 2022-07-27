@@ -250,7 +250,6 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-
 		wsAdminClient, err := newWebSocketAdminClient(conn, session)
 		if err != nil {
 			ErrorWithContext(ctx, err)
@@ -258,6 +257,20 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		go wsAdminClient.speedtest(ctx, speedtestOpts)
+	case strings.HasPrefix(wsPath, `/profile`):
+		pOptions, err := getProfileOptionsFromReq(req)
+		if err != nil {
+			ErrorWithContext(ctx, fmt.Errorf("error getting profile options: %v", err))
+			closeWsConn(conn)
+			return
+		}
+		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+		if err != nil {
+			ErrorWithContext(ctx, err)
+			closeWsConn(conn)
+			return
+		}
+		go wsAdminClient.profile(ctx, pOptions)
 
 	default:
 		// path not found
@@ -460,6 +473,21 @@ func (wsc *wsAdminClient) speedtest(ctx context.Context, opts *madmin.SpeedtestO
 	ctx = wsReadClientCtx(ctx, wsc.conn)
 
 	err := startSpeedtest(ctx, wsc.conn, wsc.client, opts)
+
+	sendWsCloseMessage(wsc.conn, err)
+}
+
+func (wsc *wsAdminClient) profile(ctx context.Context, opts *profileOptions) {
+	defer func() {
+		LogInfo("profile stopped")
+		// close connection after return
+		wsc.conn.close()
+	}()
+	LogInfo("profile started")
+
+	ctx = wsReadClientCtx(ctx, wsc.conn)
+
+	err := startProfiling(ctx, wsc.conn, wsc.client, opts)
 
 	sendWsCloseMessage(wsc.conn, err)
 }
