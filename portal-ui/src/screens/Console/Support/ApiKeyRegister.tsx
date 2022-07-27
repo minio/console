@@ -27,11 +27,23 @@ import { useAppDispatch } from "../../../store";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { ErrorResponseHandler } from "../../../common/types";
 import { useCallback } from "react";
+import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 
 interface IApiKeyRegister {
   classes: any;
   afterRegister: () => void;
 }
+
+const styles = (theme: Theme) =>
+  createStyles({
+    sizedLabel: {
+      minWidth: "75px",
+    },
+    ...spacingUtils,
+  });
 
 const ApiKeyRegister = ({ classes, afterRegister }: IApiKeyRegister) => {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
@@ -176,4 +188,4 @@ const ApiKeyRegister = ({ classes, afterRegister }: IApiKeyRegister) => {
   );
 };
 
-export default ApiKeyRegister;
+export default withStyles(styles)(ApiKeyRegister);

@@ -607,7 +607,7 @@ const Register = ({ classes }: IRegister) => {
             linkClass={classes.link}
           />
         ) : (
-          <ApiKeyRegister classes={classes} afterRegister={fetchLicenseInfo} />
+          <ApiKeyRegister afterRegister={fetchLicenseInfo} />
         )}
       </Box>
       <ProxyConfiguration linkClass={classes.link} />
