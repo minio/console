@@ -80,8 +80,8 @@ func (suite *MarketplaceTestSuite) SetupSuite() {
 }
 
 func (suite *MarketplaceTestSuite) postHandler(
-	w http.ResponseWriter, r *http.Request) {
-
+	w http.ResponseWriter, r *http.Request,
+) {
 	if testServerWithError {
 		w.WriteHeader(400)
 	} else {
@@ -197,6 +197,7 @@ func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoError() {
 	suite.assert.Nil(err)
 	os.Unsetenv(mpHostEnvVar)
 }
+
 func (suite *MarketplaceTestSuite) TestSetMPIntegrationWithRequestError() {
 	testWithError = false
 	testServerWithError = true
