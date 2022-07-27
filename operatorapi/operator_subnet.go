@@ -17,20 +17,32 @@
 package operatorapi
 
 import (
+	"context"
+	"errors"
+
+	xhttp "github.com/minio/console/pkg/http"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
+	"github.com/minio/console/restapi"
 )
 
 func registerOperatorSubnetHandlers(api *operations.OperatorAPI) {
 	api.OperatorAPIOperatorSubnetLoginHandler = operator_api.OperatorSubnetLoginHandlerFunc(func(params operator_api.OperatorSubnetLoginParams, session *models.Principal) middleware.Responder {
-		// TODO: Implement
-		return operator_api.NewOperatorSubnetLoginOK()
+		resp, err := getOperatorSubnetLoginResponse(session, params)
+		if err != nil {
+			return operator_api.NewOperatorSubnetLoginDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewOperatorSubnetLoginOK().WithPayload(resp)
 	})
 	api.OperatorAPIOperatorSubnetLoginMFAHandler = operator_api.OperatorSubnetLoginMFAHandlerFunc(func(params operator_api.OperatorSubnetLoginMFAParams, session *models.Principal) middleware.Responder {
-		// TODO: Implement
-		return operator_api.NewOperatorSubnetLoginMFAOK()
+		resp, err := getOperatorSubnetLoginMFAResponse(session, params)
+		if err != nil {
+			return operator_api.NewOperatorSubnetLoginMFADefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewOperatorSubnetLoginMFAOK().WithPayload(resp)
 	})
 	api.OperatorAPIOperatorSubnetAPIKeyHandler = operator_api.OperatorSubnetAPIKeyHandlerFunc(func(params operator_api.OperatorSubnetAPIKeyParams, session *models.Principal) middleware.Responder {
 		// TODO: Implement
@@ -40,4 +52,36 @@ func registerOperatorSubnetHandlers(api *operations.OperatorAPI) {
 		// TODO: Implement
 		return operator_api.NewOperatorSubnetRegisterAPIKeyOK()
 	})
+}
+
+func getOperatorSubnetLoginResponse(session *models.Principal, params operator_api.OperatorSubnetLoginParams) (*models.OperatorSubnetLoginResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	username := params.Body.Username
+	password := params.Body.Password
+	if username == "" || password == "" {
+		return nil, restapi.ErrorWithContext(ctx, errors.New("empty credentials"))
+	}
+	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient()}
+	token, mfa, err := restapi.SubnetLogin(subnetHTTPClient, username, password)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err)
+	}
+	return &models.OperatorSubnetLoginResponse{
+		AccessToken: token,
+		MfaToken:    mfa,
+	}, nil
+}
+
+func getOperatorSubnetLoginMFAResponse(session *models.Principal, params operator_api.OperatorSubnetLoginMFAParams) (*models.OperatorSubnetLoginResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient()}
+	res, err := restapi.SubnetLoginWithMFA(subnetHTTPClient, *params.Body.Username, *params.Body.MfaToken, *params.Body.Otp)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err)
+	}
+	return &models.OperatorSubnetLoginResponse{
+		AccessToken: res.AccessToken,
+	}, nil
 }
