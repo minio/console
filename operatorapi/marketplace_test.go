@@ -19,7 +19,9 @@ package operatorapi
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 
@@ -34,6 +36,7 @@ import (
 
 var (
 	testWithError                = false
+	testServerWithError          = false
 	errMock                      = errors.New("mock error")
 	k8sClientGetConfigMapMock    func(ctx context.Context, namespace, configMap string, opts metav1.GetOptions) (*corev1.ConfigMap, error)
 	k8sClientCreateConfigMapMock func(ctx context.Context, namespace string, cm *corev1.ConfigMap, opts metav1.CreateOptions) (*corev1.ConfigMap, error)
@@ -43,9 +46,10 @@ var (
 
 type MarketplaceTestSuite struct {
 	suite.Suite
-	assert    *assert.Assertions
-	kClient   k8sClientMock
-	namespace string
+	assert     *assert.Assertions
+	kClient    k8sClientMock
+	namespace  string
+	postServer *httptest.Server
 }
 
 func (c k8sClientMock) getConfigMap(ctx context.Context, namespace, configMap string, opts metav1.GetOptions) (*corev1.ConfigMap, error) {
@@ -72,6 +76,17 @@ func (suite *MarketplaceTestSuite) SetupSuite() {
 	k8sClientUpdateConfigMapMock = suite.updateConfigMapMock
 	k8sClientDeleteConfigMapMock = suite.deleteConfigMapMock
 	os.Setenv(mpConfigMapKey, "mp-mock-config")
+	suite.postServer = httptest.NewServer(http.HandlerFunc(suite.postHandler))
+}
+
+func (suite *MarketplaceTestSuite) postHandler(
+	w http.ResponseWriter, r *http.Request,
+) {
+	if testServerWithError {
+		w.WriteHeader(400)
+	} else {
+		fmt.Fprintf(w, `{"post": "Post response"}`)
+	}
 }
 
 func (suite *MarketplaceTestSuite) TearDownSuite() {
@@ -173,14 +188,26 @@ func (suite *MarketplaceTestSuite) TestSetMPIntegrationWithError() {
 	os.Unsetenv(mpHostEnvVar)
 }
 
-// TODO: Add mock server for testing microservice
-// func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoError() {
-// 	testWithError = false
-// 	ctx, cancel := context.WithCancel(context.Background())
-// 	defer cancel()
-// 	err := setMPIntegration(ctx, "mock@mock.com", "token", &suite.kClient)
-// 	suite.assert.Nil(err)
-// }
+func (suite *MarketplaceTestSuite) TestSetMPIntegrationNoError() {
+	testWithError = false
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	os.Setenv(mpHostEnvVar, suite.postServer.URL)
+	err := setMPIntegration(ctx, "mock@mock.com", false, &suite.kClient)
+	suite.assert.Nil(err)
+	os.Unsetenv(mpHostEnvVar)
+}
+
+func (suite *MarketplaceTestSuite) TestSetMPIntegrationWithRequestError() {
+	testWithError = false
+	testServerWithError = true
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	os.Setenv(mpHostEnvVar, suite.postServer.URL)
+	err := setMPIntegration(ctx, "mock@mock.com", false, &suite.kClient)
+	suite.assert.NotNil(err)
+	os.Unsetenv(mpHostEnvVar)
+}
 
 func TestMarketplace(t *testing.T) {
 	suite.Run(t, new(MarketplaceTestSuite))
