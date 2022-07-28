@@ -182,30 +182,28 @@ const IDPBuiltIn = () => {
                 error={validationErrors[`secretkey-${index.toString()}`] || ""}
               />
               <div className={classes.buttonTray}>
-                <Tooltip title="Add User" aria-label="add">
-                  <div className={classes.overlayAction}>
-                    <IconButton
-                      size={"small"}
-                      onClick={() => {
-                        dispatch(addIDPNewKeyPair());
-                      }}
-                    >
-                      <AddIcon />
-                    </IconButton>
-                  </div>
-                </Tooltip>
-                <Tooltip title="Remove" aria-label="add">
-                  <div className={classes.overlayAction}>
-                    <IconButton
-                      size={"small"}
-                      onClick={() => {
-                        dispatch(removeIDPKeyPairAtIndex(index));
-                      }}
-                    >
-                      <RemoveIcon />
-                    </IconButton>
-                  </div>
-                </Tooltip>
+                <div className={classes.overlayAction}>
+                  <IconButton
+                    size={"small"}
+                    onClick={() => {
+                      dispatch(addIDPNewKeyPair());
+                    }}
+                    disabled={index !== accessKeys.length - 1}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </div>
+                <div className={classes.overlayAction}>
+                  <IconButton
+                    size={"small"}
+                    onClick={() => {
+                      dispatch(removeIDPKeyPairAtIndex(index));
+                    }}
+                    disabled={accessKeys.length <= 1}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                </div>
                 <Tooltip title="Randomize Credentials" aria-label="add">
                   <div className={classes.overlayAction}>
                     <IconButton
