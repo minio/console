@@ -81,7 +81,7 @@ func getOperatorSubnetLoginMFAResponse(session *models.Principal, params operato
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient()}
-	res, err := restapi.SubnetLoginWithMFA(subnetHTTPClient, *params.Body.Username, *params.Body.MfaToken, *params.Body.Otp)
+	res, err := subnet.LoginWithMFA(subnetHTTPClient, *params.Body.Username, *params.Body.MfaToken, *params.Body.Otp)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
