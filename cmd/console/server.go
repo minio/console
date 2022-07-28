@@ -98,7 +98,7 @@ func buildServer() (*restapi.Server, error) {
 		return nil, err
 	}
 
-	api := operations.NewConsoleAPI(swaggerSpec, nil)
+	api := operations.NewConsoleAPI(swaggerSpec)
 	api.Logger = restapi.LogInfo
 	server := restapi.NewServer(api)
 

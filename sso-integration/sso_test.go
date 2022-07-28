@@ -62,8 +62,12 @@ func initConsoleServer(consoleIDPURL string) (*restapi.Server, error) {
 	restapi.LogInfo = noLog
 	restapi.LogError = noLog
 
-	api := operations.NewConsoleAPI(swaggerSpec, pcfg)
+	api := operations.NewConsoleAPI(swaggerSpec)
 	api.Logger = noLog
+
+	restapi.GlobalMinIOConfig = restapi.MinIOConfig{
+		OpenIDProviders: pcfg,
+	}
 
 	server := restapi.NewServer(api)
 	// register all APIs
