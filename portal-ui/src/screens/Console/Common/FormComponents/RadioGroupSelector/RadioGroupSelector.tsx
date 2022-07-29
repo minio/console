@@ -27,15 +27,16 @@ import makeStyles from "@mui/styles/makeStyles";
 import { fieldBasic, radioIcons, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 
+
 export interface SelectorTypes {
-  label: string;
+  label: any;
   value: string;
 }
 
 interface RadioGroupProps {
   selectorOptions: SelectorTypes[];
   currentSelection: string;
-  label: string;
+  label: any;
   id: string;
   name: string;
   tooltip?: string;

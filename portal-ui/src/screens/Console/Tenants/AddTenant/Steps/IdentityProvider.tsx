@@ -31,6 +31,9 @@ import IDPActiveDirectory from "./IdentityProvider/IDPActiveDirectory";
 import IDPOpenID from "./IdentityProvider/IDPOpenID";
 import makeStyles from "@mui/styles/makeStyles";
 import IDPBuiltIn from "./IdentityProvider/IDPBuiltIn";
+import OIDCIcon from "../../../../../icons/OIDCIcon";
+import LDAPIcon from "../../../../../icons/LDAPIcon";
+import { UsersIcon } from "../../../../../icons";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,7 +43,8 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: 10,
 
       "& label": {
-        fontSize: 14,
+        fontSize: 16,
+        fontWeight: 600,
       },
       "& div": {
         display: "flex",
@@ -58,6 +62,51 @@ const IdentityProvider = () => {
   const dispatch = useAppDispatch();
   const classes = useStyles();
 
+  const OIDCLogoElement = () => {
+    return (
+      <div>
+        <Grid spacing={1} container direction="row">
+          <Grid textAlign={"start"} item className={classes.descriptionText}>
+            Open ID
+          </Grid>
+          <Grid item>
+            <OIDCIcon />
+          </Grid>
+        </Grid>
+      </div>
+    );
+  };
+
+  const LDAPLogoElement = () => {
+    return (
+      <div>
+        <Grid spacing={1} container direction="row">
+          <Grid textAlign={"start"} item className={classes.descriptionText}>
+            LDAP / Active Directory
+          </Grid>
+          <Grid item>
+            <LDAPIcon />
+          </Grid>
+        </Grid>
+      </div>
+    );
+  };
+
+  const BuiltInLogoElement = () => {
+    return (
+      <div>
+        <Grid spacing={1} container direction="row">
+          <Grid textAlign={"start"} item>
+            Built-in
+          </Grid>
+          <Grid item>
+            <UsersIcon />
+          </Grid>
+        </Grid>
+      </div>
+    );
+  };
+
   const idpSelection = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.idpSelection
   );
@@ -71,7 +120,12 @@ const IdentityProvider = () => {
           Manager.
         </span>
       </div>
-      <Grid item xs={12} className={classes.protocolRadioOptions}>
+      <Grid
+        item
+        xs={12}
+        className={classes.protocolRadioOptions}
+        padding="10px"
+      >
         <label>Protocol</label>
         <RadioGroupSelector
           currentSelection={idpSelection}
@@ -82,9 +136,9 @@ const IdentityProvider = () => {
             dispatch(setIDP(e.target.value));
           }}
           selectorOptions={[
-            { label: "Built-in", value: "Built-in" },
-            { label: "OpenID", value: "OpenID" },
-            { label: "Active Directory", value: "AD" },
+            { label: <BuiltInLogoElement />, value: "Built-in" },
+            { label: <OIDCLogoElement />, value: "OpenID" },
+            { label: <LDAPLogoElement />, value: "AD" },
           ]}
         />
       </Grid>
