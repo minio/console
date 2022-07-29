@@ -27,7 +27,6 @@ import makeStyles from "@mui/styles/makeStyles";
 import { fieldBasic, radioIcons, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 
-
 export interface SelectorTypes {
   label: any;
   value: string;
