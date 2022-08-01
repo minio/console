@@ -35,6 +35,8 @@ export const notificationTransform = (
   return notificationElements.map((element) => {
     return {
       service_name: `${element.service}:${element.account_id}`,
+      name: element.service,
+      account_id: element.account_id,
       status: element.status,
     };
   });
@@ -557,4 +559,21 @@ export const notificationEndpointsFields: any = {
     },
     ...commonFields,
   ],
+};
+
+const serviceToConfigMap: Record<string, string> = {
+  webhook: "notify_webhook",
+  amqp: "notify_amqp",
+  kafka: "notify_kafka",
+  mqtt: "notify_mqtt",
+  nats: "notify_nats",
+  nsq: "notify_nsq",
+  mysql: "notify_mysql",
+  postgresql: "notify_postgres", //looks different in server response(postgresql as opposed to postgres) from restapi/admin_notification_endpoints.go
+  elasticsearch: "notify_elasticsearch",
+  redis: "notify_redis",
+};
+
+export const getNotificationConfigKey = (serviceName: string) => {
+  return serviceToConfigMap[serviceName];
 };

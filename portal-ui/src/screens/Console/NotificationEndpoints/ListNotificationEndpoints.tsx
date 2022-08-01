@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { LinearProgress } from "@mui/material";
+import { DialogContentText, LinearProgress } from "@mui/material";
 import { red } from "@mui/material/colors";
 import Grid from "@mui/material/Grid";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
@@ -29,8 +29,8 @@ import {
   NotificationEndpointsList,
   TransformedEndpointItem,
 } from "./types";
-import { notificationTransform } from "./utils";
-import { AddIcon, LambdaIcon } from "../../../icons";
+import { getNotificationConfigKey, notificationTransform } from "./utils";
+import { AddIcon, ConfirmModalIcon, LambdaIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 import {
@@ -49,8 +49,12 @@ import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setServerNeedsRestart,
+} from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -88,6 +92,10 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const [isDelConfirmOpen, setIsDelConfirmOpen] = useState<boolean>(false);
+  const [selNotifyEndPoint, setSelNotifyEndpoint] =
+    useState<TransformedEndpointItem | null>();
+
   //Effects
   // load records on mount
   useEffect(() => {
@@ -115,6 +123,36 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
   useEffect(() => {
     setIsLoading(true);
   }, []);
+
+  const resetNotificationConfig = (name?: string) => {
+    if (name) {
+      const configKey = getNotificationConfigKey(name);
+      if (configKey) {
+        api
+          .invoke("POST", `/api/v1/configs/${configKey}/reset`)
+          .then((res) => {
+            dispatch(setServerNeedsRestart(true));
+            setSelNotifyEndpoint(null);
+            setIsDelConfirmOpen(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setIsDelConfirmOpen(false);
+            dispatch(setErrorSnackMessage(err));
+          });
+      } else {
+        setSelNotifyEndpoint(null);
+        setIsDelConfirmOpen(false);
+        console.log(`Unable to find Config key for ${name}`);
+      }
+    }
+  };
+
+  const confirmDelNotifyEndpoint = (record: TransformedEndpointItem) => {
+    setSelNotifyEndpoint(record);
+    setIsDelConfirmOpen(true);
+  };
+
+  const tableActions = [{ type: "delete", onClick: confirmDelNotifyEndpoint }];
 
   const filteredRecords = records.filter((b: TransformedEndpointItem) => {
     if (filter === "") {
@@ -180,7 +218,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
               <Fragment>
                 <Grid item xs={12} className={classes.tableBlock}>
                   <TableWrapper
-                    itemActions={[]}
+                    itemActions={tableActions}
                     columns={[
                       {
                         label: "Status",
@@ -262,6 +300,35 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
             )}
           </Fragment>
         )}
+
+        {isDelConfirmOpen ? (
+          <ConfirmDialog
+            title={`Delete Endpoint`}
+            confirmText={"Delete"}
+            confirmButtonProps={{
+              color: "secondary",
+              variant: "contained",
+            }}
+            isOpen={isDelConfirmOpen}
+            titleIcon={<ConfirmModalIcon />}
+            isLoading={false}
+            onConfirm={() => {
+              resetNotificationConfig(selNotifyEndPoint?.name);
+            }}
+            onClose={() => {
+              setIsDelConfirmOpen(false);
+            }}
+            confirmationContent={
+              <React.Fragment>
+                <DialogContentText>
+                  Are you sure you want to delete the notification endpoint ?
+                  {selNotifyEndPoint?.service_name} which is{" "}
+                  {selNotifyEndPoint?.status}
+                </DialogContentText>
+              </React.Fragment>
+            }
+          />
+        ) : null}
       </PageLayout>
     </Fragment>
   );
