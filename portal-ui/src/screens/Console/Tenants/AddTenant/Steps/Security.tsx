@@ -30,7 +30,7 @@ import { AppState, useAppDispatch } from "../../../../../store";
 import { KeyPair } from "../../ListTenants/utils";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import FileSelector from "../../../Common/FormComponents/FileSelector/FileSelector";
-import AddIcon from "../../../../../icons/AddIcon";
+import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "../../../../../icons/RemoveIcon";
 import SectionTitle from "../../../Common/SectionTitle";
 import {
@@ -43,6 +43,7 @@ import {
   isPageValid,
   updateAddField,
 } from "../createTenantSlice";
+import TLSHelpBox from "../../HelpBox/TLSHelpBox";
 
 interface ISecurityProps {
   classes: any;
@@ -223,9 +224,14 @@ const Security = ({ classes }: ISecurityProps) => {
             </Grid>
             {enableCustomCerts && (
               <Fragment>
+                {!enableAutoCert && (
+                  <Grid item xs={12}>
+                    <TLSHelpBox />
+                  </Grid>
+                )}
                 <Grid item xs={12} className={classes.minioCertsContainer}>
                   <SectionTitle>MinIO Certificates</SectionTitle>
-                  {minioCertificates.map((keyPair: KeyPair) => (
+                  {minioCertificates.map((keyPair: KeyPair, index) => (
                     <Grid
                       item
                       xs={12}
@@ -276,6 +282,7 @@ const Security = ({ classes }: ISecurityProps) => {
                             onClick={() => {
                               dispatch(addKeyPair());
                             }}
+                            disabled={index !== minioCertificates.length - 1}
                           >
                             <AddIcon />
                           </IconButton>
@@ -286,6 +293,7 @@ const Security = ({ classes }: ISecurityProps) => {
                             onClick={() => {
                               dispatch(deleteKeyPair(keyPair.id));
                             }}
+                            disabled={minioCertificates.length <= 1}
                           >
                             <RemoveIcon />
                           </IconButton>
@@ -298,7 +306,7 @@ const Security = ({ classes }: ISecurityProps) => {
                 <Grid item xs={12} className={classes.minioCertsContainer}>
                   <SectionTitle>MinIO CA Certificates</SectionTitle>
 
-                  {caCertificates.map((keyPair: KeyPair) => (
+                  {caCertificates.map((keyPair: KeyPair, index) => (
                     <Grid
                       item
                       xs={12}
@@ -332,6 +340,7 @@ const Security = ({ classes }: ISecurityProps) => {
                               onClick={() => {
                                 dispatch(addCaCertificate());
                               }}
+                              disabled={index !== caCertificates.length - 1}
                             >
                               <AddIcon />
                             </IconButton>
@@ -342,6 +351,7 @@ const Security = ({ classes }: ISecurityProps) => {
                               onClick={() => {
                                 dispatch(deleteCaCertificate(keyPair.id));
                               }}
+                              disabled={caCertificates.length <= 1}
                             >
                               <RemoveIcon />
                             </IconButton>

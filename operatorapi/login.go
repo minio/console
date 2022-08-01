@@ -118,6 +118,7 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDet
 	loginDetails := &models.LoginDetails{
 		LoginStrategy: loginStrategy,
 		Redirect:      redirectURL,
+		IsDirectPV:    getDirectPVEnabled(),
 	}
 	return loginDetails, nil
 }

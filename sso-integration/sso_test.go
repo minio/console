@@ -62,8 +62,12 @@ func initConsoleServer(consoleIDPURL string) (*restapi.Server, error) {
 	restapi.LogInfo = noLog
 	restapi.LogError = noLog
 
-	api := operations.NewConsoleAPI(swaggerSpec, pcfg)
+	api := operations.NewConsoleAPI(swaggerSpec)
 	api.Logger = noLog
+
+	restapi.GlobalMinIOConfig = restapi.MinIOConfig{
+		OpenIDProviders: pcfg,
+	}
 
 	server := restapi.NewServer(api)
 	// register all APIs
@@ -250,5 +254,5 @@ func TestBadLogin(t *testing.T) {
 	fmt.Println(response)
 	fmt.Println(err)
 	expectedError := response.Status
-	assert.Equal("401 Unauthorized", expectedError)
+	assert.Equal("500 Internal Server Error", expectedError)
 }

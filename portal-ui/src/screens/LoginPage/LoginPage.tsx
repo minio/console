@@ -50,6 +50,7 @@ import {
 import { resetForm, setJwt } from "./loginSlice";
 import StrategyForm from "./StrategyForm";
 import { LoginField } from "./LoginField";
+import DirectPVLogo from "../../icons/DirectPVLogo";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -260,6 +261,8 @@ const Login = () => {
   );
   const navigateTo = useSelector((state: AppState) => state.login.navigateTo);
 
+  const directPVMode = useSelector((state: AppState) => state.login.isDirectPV);
+
   const isOperator =
     loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
     loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount;
@@ -396,7 +399,13 @@ const Login = () => {
       );
   }
 
-  const consoleText = isOperator ? <OperatorLogo /> : <ConsoleLogo />;
+  let modeLogo = <ConsoleLogo />;
+
+  if (directPVMode) {
+    modeLogo = <DirectPVLogo />;
+  } else if (isOperator) {
+    modeLogo = <OperatorLogo />;
+  }
 
   const hyperLink = isOperator
     ? "https://docs.min.io/minio/k8s/operator-console/operator-console.html?ref=con"
@@ -432,7 +441,7 @@ const Login = () => {
               },
             }}
           >
-            <Box className={classes.iconLogo}>{consoleText}</Box>
+            <Box className={classes.iconLogo}>{modeLogo}</Box>
             <Box
               style={{
                 font: "normal normal normal 20px/24px Lato",

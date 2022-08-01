@@ -35,7 +35,7 @@ import (
 func registerLoginHandlers(api *operations.ConsoleAPI) {
 	// GET login strategy
 	api.AuthLoginDetailHandler = authApi.LoginDetailHandlerFunc(func(params authApi.LoginDetailParams) middleware.Responder {
-		loginDetails, err := getLoginDetailsResponse(params, api.OpenIDProviders, oauth2.DefaultIDPConfig)
+		loginDetails, err := getLoginDetailsResponse(params, GlobalMinIOConfig.OpenIDProviders, oauth2.DefaultIDPConfig)
 		if err != nil {
 			return authApi.NewLoginDetailDefault(int(err.Code)).WithPayload(err)
 		}
@@ -56,7 +56,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	})
 	// POST login using external IDP
 	api.AuthLoginOauth2AuthHandler = authApi.LoginOauth2AuthHandlerFunc(func(params authApi.LoginOauth2AuthParams) middleware.Responder {
-		loginResponse, err := getLoginOauth2AuthResponse(params, api.OpenIDProviders, oauth2.DefaultIDPConfig)
+		loginResponse, err := getLoginOauth2AuthResponse(params, GlobalMinIOConfig.OpenIDProviders, oauth2.DefaultIDPConfig)
 		if err != nil {
 			return authApi.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
 		}
