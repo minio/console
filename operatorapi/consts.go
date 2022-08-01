@@ -25,6 +25,9 @@ const (
 	prometheusPath   = "prometheus.io/path"
 	prometheusPort   = "prometheus.io/port"
 	prometheusScrape = "prometheus.io/scrape"
+
+	// Constants for DirectPV
+	DirectPVMode = "DIRECTPV_MODE"
 )
 
 // Image versions

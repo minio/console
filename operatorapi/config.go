@@ -69,3 +69,10 @@ func getK8sSAToken() string {
 func getMarketplace() string {
 	return env.Get(ConsoleMarketplace, "")
 }
+
+// Get DirectPVMode
+func getDirectPVEnabled() bool {
+	currentMode := env.Get(DirectPVMode, "off")
+
+	return currentMode == "on"
+}
