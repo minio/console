@@ -436,14 +436,15 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 			defer close(remoteProc)
 
 			createRemoteBucketParams := models.CreateRemoteBucket{
-				AccessKey:    params.Body.AccessKey,
-				SecretKey:    params.Body.SecretKey,
-				SourceBucket: &sourceBucket,
-				TargetBucket: &targetBucket,
-				Region:       params.Body.Region,
-				TargetURL:    params.Body.TargetURL,
-				SyncMode:     params.Body.SyncMode,
-				Bandwidth:    params.Body.Bandwidth,
+				AccessKey:         params.Body.AccessKey,
+				SecretKey:         params.Body.SecretKey,
+				SourceBucket:      &sourceBucket,
+				TargetBucket:      &targetBucket,
+				Region:            params.Body.Region,
+				TargetURL:         params.Body.TargetURL,
+				SyncMode:          params.Body.SyncMode,
+				Bandwidth:         params.Body.Bandwidth,
+				HealthCheckPeriod: params.Body.HealthCheckPeriod,
 			}
 
 			// We add the remote bucket reference & store the arn or errors returned

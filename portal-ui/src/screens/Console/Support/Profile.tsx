@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from "react";
+import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -6,8 +7,7 @@ import { Button, Grid } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
-import api from "../../../common/api";
-import { ErrorResponseHandler } from "../../../common/types";
+import { wsProtocol } from "../../../utils/wsUtils";
 import {
   actionsTray,
   containerForHeader,
@@ -52,6 +52,8 @@ interface IProfileProps {
   classes: any;
 }
 
+var c: any = null;
+
 const Profile = ({ classes }: IProfileProps) => {
   const [profilingStarted, setProfilingStarted] = useState<boolean>(false);
   const [types, setTypes] = useState<string[]>([
@@ -85,43 +87,53 @@ const Profile = ({ classes }: IProfileProps) => {
   };
 
   const startProfiling = () => {
-    if (!profilingStarted) {
-      const typeString = types.join(",");
-      setProfilingStarted(true);
-      api
-        .invoke("POST", `/api/v1/profiling/start`, {
-          type: typeString,
-        })
-        .then(() => {})
-        .catch((err: ErrorResponseHandler) => {
-          console.log(err);
-          setProfilingStarted(false);
-        });
+    const typeString = types.join(",");
+
+    const url = new URL(window.location.toString());
+    const isDev = process.env.NODE_ENV === "development";
+    const port = isDev ? "9090" : url.port;
+
+    // check if we are using base path, if not this always is `/`
+    const baseLocation = new URL(document.baseURI);
+    const baseUrl = baseLocation.pathname;
+
+    const wsProt = wsProtocol(url.protocol);
+    c = new W3CWebSocket(
+      `${wsProt}://${url.hostname}:${port}${baseUrl}ws/profile?types=${typeString}`
+    );
+
+    if (c !== null) {
+      c.onopen = () => {
+        setProfilingStarted(true);
+        c.send("ok");
+      };
+      c.onmessage = (message: IMessageEvent) => {
+        // process received message
+        let response = new Blob([message.data], { type: "application/zip" });
+        let filename = "profile.zip";
+        setProfilingStarted(false);
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(response);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+      c.onclose = () => {
+        console.log("connection closed by server");
+        setProfilingStarted(false);
+      };
+      return () => {
+        c.close(1000);
+        console.log("closing websockets");
+        setProfilingStarted(false);
+      };
     }
   };
 
   const stopProfiling = () => {
-    if (profilingStarted) {
-      const anchor = document.createElement("a");
-      document.body.appendChild(anchor);
-      let path = "/api/v1/profiling/stop";
-      var req = new XMLHttpRequest();
-      req.open("POST", path, true);
-      req.responseType = "blob";
-      req.onreadystatechange = () => {
-        if (req.readyState === 4 && req.status === 200) {
-          let filename = "profile.zip";
-          setProfilingStarted(false);
-          var link = document.createElement("a");
-          link.href = window.URL.createObjectURL(req.response);
-          link.download = filename;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-      };
-      req.send();
-    }
+    c.close(1000);
+    setProfilingStarted(false);
   };
 
   return (

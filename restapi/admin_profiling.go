@@ -18,59 +18,32 @@ package restapi
 
 import (
 	"context"
-	"io"
+	"io/ioutil"
 	"net/http"
 
-	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/runtime/middleware"
+	"github.com/gorilla/websocket"
 	"github.com/minio/console/models"
-	"github.com/minio/console/restapi/operations"
-	profileApi "github.com/minio/console/restapi/operations/profile"
 	"github.com/minio/madmin-go"
 )
 
-func registerProfilingHandler(api *operations.ConsoleAPI) {
-	// Start Profiling
-	api.ProfileProfilingStartHandler = profileApi.ProfilingStartHandlerFunc(func(params profileApi.ProfilingStartParams, session *models.Principal) middleware.Responder {
-		profilingStartResponse, err := getProfilingStartResponse(session, params)
-		if err != nil {
-			return profileApi.NewProfilingStartDefault(int(err.Code)).WithPayload(err)
-		}
-		return profileApi.NewProfilingStartCreated().WithPayload(profilingStartResponse)
-	})
-	// Stop and download profiling data
-	api.ProfileProfilingStopHandler = profileApi.ProfilingStopHandlerFunc(func(params profileApi.ProfilingStopParams, session *models.Principal) middleware.Responder {
-		profilingStopResponse, err := getProfilingStopResponse(session, params)
-		if err != nil {
-			return profileApi.NewProfilingStopDefault(int(err.Code)).WithPayload(err)
-		}
-		// Custom response writer to set the content-disposition header to tell the
-		// HTTP client the name and extension of the file we are returning
-		return middleware.ResponderFunc(func(w http.ResponseWriter, _ runtime.Producer) {
-			defer profilingStopResponse.Close()
-			w.Header().Set("Content-Type", "application/zip")
-			w.Header().Set("Content-Disposition", "attachment; filename=profile.zip")
-			io.Copy(w, profilingStopResponse)
-		})
-	})
+var items []*models.StartProfilingItem
+
+type profileOptions struct {
+	Types string
 }
 
-// startProfiling() starts the profiling on the Minio server
-// Enable 1 of the 7 profiling mechanisms: "cpu","mem","block","mutex","trace","threads","goroutines"
-// in the Minio server, returns []*models.StartProfilingItem that contains individual status of this operation
-// for each Minio node, ie:
-//
-//	{
-//		"Success": true,
-//		"nodeName": "127.0.0.1:9000"
-//		"errors": ""
-//	}
-func startProfiling(ctx context.Context, client MinioAdmin, profilerType string) ([]*models.StartProfilingItem, error) {
-	profilingResults, err := client.startProfiling(ctx, madmin.ProfilerType(profilerType))
+func getProfileOptionsFromReq(req *http.Request) (*profileOptions, error) {
+	pOptions := profileOptions{}
+	pOptions.Types = req.FormValue("types")
+	return &pOptions, nil
+}
+
+func startProfiling(ctx context.Context, conn WSConn, client MinioAdmin, pOpts *profileOptions) error {
+	profilingResults, err := client.startProfiling(ctx, madmin.ProfilerType(pOpts.Types))
 	if err != nil {
-		return nil, err
+		return err
 	}
-	var items []*models.StartProfilingItem
+	items = []*models.StartProfilingItem{}
 	for _, result := range profilingResults {
 		items = append(items, &models.StartProfilingItem{
 			Success:  result.Success,
@@ -78,57 +51,13 @@ func startProfiling(ctx context.Context, client MinioAdmin, profilerType string)
 			NodeName: result.NodeName,
 		})
 	}
-	return items, nil
-}
-
-// getProfilingStartResponse performs startProfiling() and serializes it to the handler's output
-func getProfilingStartResponse(session *models.Principal, params profileApi.ProfilingStartParams) (*models.StartProfilingList, *models.Error) {
-	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
-	defer cancel()
-	if params.Body == nil {
-		return nil, ErrorWithContext(ctx, ErrPolicyBodyNotInRequest)
-	}
-	mAdmin, err := NewMinioAdminClient(session)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-	// create a MinIO Admin Client interface implementation
-	// defining the client to be used
-	adminClient := AdminClient{Client: mAdmin}
-	profilingItems, err := startProfiling(ctx, adminClient, *params.Body.Type)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-	profilingList := &models.StartProfilingList{
-		StartResults: profilingItems,
-		Total:        int64(len(profilingItems)),
-	}
-	return profilingList, nil
-}
-
-// stopProfiling() stop the profiling on the Minio server and returns
-// the generated Zip file as io.ReadCloser
-func stopProfiling(ctx context.Context, client MinioAdmin) (io.ReadCloser, error) {
 	zippedData, err := client.stopProfiling(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return zippedData, nil
-}
-
-// getProfilingStopResponse() performs SetPolicy() and serializes it to the handler's output
-func getProfilingStopResponse(session *models.Principal, params profileApi.ProfilingStopParams) (io.ReadCloser, *models.Error) {
-	ctx := params.HTTPRequest.Context()
-	mAdmin, err := NewMinioAdminClient(session)
+	message, err := ioutil.ReadAll(zippedData)
 	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
+		return err
 	}
-	// create a MinIO Admin Client interface implementation
-	// defining the client to be used
-	adminClient := AdminClient{Client: mAdmin}
-	profilingData, err := stopProfiling(ctx, adminClient)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-	return profilingData, nil
+	return conn.writeMessage(websocket.BinaryMessage, message)
 }

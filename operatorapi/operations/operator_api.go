@@ -166,6 +166,18 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		AuthLogoutHandler: auth.LogoutHandlerFunc(func(params auth.LogoutParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation auth.Logout has not yet been implemented")
 		}),
+		OperatorAPIOperatorSubnetAPIKeyHandler: operator_api.OperatorSubnetAPIKeyHandlerFunc(func(params operator_api.OperatorSubnetAPIKeyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.OperatorSubnetAPIKey has not yet been implemented")
+		}),
+		OperatorAPIOperatorSubnetLoginHandler: operator_api.OperatorSubnetLoginHandlerFunc(func(params operator_api.OperatorSubnetLoginParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.OperatorSubnetLogin has not yet been implemented")
+		}),
+		OperatorAPIOperatorSubnetLoginMFAHandler: operator_api.OperatorSubnetLoginMFAHandlerFunc(func(params operator_api.OperatorSubnetLoginMFAParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.OperatorSubnetLoginMFA has not yet been implemented")
+		}),
+		OperatorAPIOperatorSubnetRegisterAPIKeyHandler: operator_api.OperatorSubnetRegisterAPIKeyHandlerFunc(func(params operator_api.OperatorSubnetRegisterAPIKeyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.OperatorSubnetRegisterAPIKey has not yet been implemented")
+		}),
 		OperatorAPIPostMPIntegrationHandler: operator_api.PostMPIntegrationHandlerFunc(func(params operator_api.PostMPIntegrationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.PostMPIntegration has not yet been implemented")
 		}),
@@ -352,6 +364,14 @@ type OperatorAPI struct {
 	AuthLoginOperatorHandler auth.LoginOperatorHandler
 	// AuthLogoutHandler sets the operation handler for the logout operation
 	AuthLogoutHandler auth.LogoutHandler
+	// OperatorAPIOperatorSubnetAPIKeyHandler sets the operation handler for the operator subnet Api key operation
+	OperatorAPIOperatorSubnetAPIKeyHandler operator_api.OperatorSubnetAPIKeyHandler
+	// OperatorAPIOperatorSubnetLoginHandler sets the operation handler for the operator subnet login operation
+	OperatorAPIOperatorSubnetLoginHandler operator_api.OperatorSubnetLoginHandler
+	// OperatorAPIOperatorSubnetLoginMFAHandler sets the operation handler for the operator subnet login m f a operation
+	OperatorAPIOperatorSubnetLoginMFAHandler operator_api.OperatorSubnetLoginMFAHandler
+	// OperatorAPIOperatorSubnetRegisterAPIKeyHandler sets the operation handler for the operator subnet register API key operation
+	OperatorAPIOperatorSubnetRegisterAPIKeyHandler operator_api.OperatorSubnetRegisterAPIKeyHandler
 	// OperatorAPIPostMPIntegrationHandler sets the operation handler for the post m p integration operation
 	OperatorAPIPostMPIntegrationHandler operator_api.PostMPIntegrationHandler
 	// OperatorAPIPutTenantYAMLHandler sets the operation handler for the put tenant y a m l operation
@@ -580,6 +600,18 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.AuthLogoutHandler == nil {
 		unregistered = append(unregistered, "auth.LogoutHandler")
+	}
+	if o.OperatorAPIOperatorSubnetAPIKeyHandler == nil {
+		unregistered = append(unregistered, "operator_api.OperatorSubnetAPIKeyHandler")
+	}
+	if o.OperatorAPIOperatorSubnetLoginHandler == nil {
+		unregistered = append(unregistered, "operator_api.OperatorSubnetLoginHandler")
+	}
+	if o.OperatorAPIOperatorSubnetLoginMFAHandler == nil {
+		unregistered = append(unregistered, "operator_api.OperatorSubnetLoginMFAHandler")
+	}
+	if o.OperatorAPIOperatorSubnetRegisterAPIKeyHandler == nil {
+		unregistered = append(unregistered, "operator_api.OperatorSubnetRegisterAPIKeyHandler")
 	}
 	if o.OperatorAPIPostMPIntegrationHandler == nil {
 		unregistered = append(unregistered, "operator_api.PostMPIntegrationHandler")
@@ -884,6 +916,22 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/logout"] = auth.NewLogout(o.context, o.AuthLogoutHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/subnet/apikey"] = operator_api.NewOperatorSubnetAPIKey(o.context, o.OperatorAPIOperatorSubnetAPIKeyHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subnet/login"] = operator_api.NewOperatorSubnetLogin(o.context, o.OperatorAPIOperatorSubnetLoginHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subnet/login/mfa"] = operator_api.NewOperatorSubnetLoginMFA(o.context, o.OperatorAPIOperatorSubnetLoginMFAHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subnet/apikey/register"] = operator_api.NewOperatorSubnetRegisterAPIKey(o.context, o.OperatorAPIOperatorSubnetRegisterAPIKeyHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

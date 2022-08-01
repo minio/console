@@ -37,6 +37,9 @@ import (
 // swagger:model operatorSessionResponse
 type OperatorSessionResponse struct {
 
+	// direct p v
+	DirectPV bool `json:"directPV,omitempty"`
+
 	// features
 	Features []string `json:"features"`
 

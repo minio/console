@@ -20,18 +20,16 @@ import (
 	"archive/zip"
 	"bytes"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"strings"
 	"testing"
-	"time"
 
+	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestStartProfiling(t *testing.T) {
-	testAsser := assert.New(t)
+	testAssert := assert.New(t)
 
 	tests := []struct {
 		name string
@@ -58,53 +56,28 @@ func TestStartProfiling(t *testing.T) {
 				"profile-127.0.0.1:9000-mutex-before.pprof":            false,
 			}
 
-			client := &http.Client{
-				Timeout: 3 * time.Second,
-			}
+			wsDestination := "/ws/profile?types=cpu,mem,block,mutex,trace,threads,goroutines"
+			wsFinalURL := fmt.Sprintf("ws://localhost:9090%s", wsDestination)
 
-			destination := "/api/v1/profiling/start"
-			finalURL := fmt.Sprintf("http://localhost:9090%s", destination)
-			request, err := http.NewRequest("POST", finalURL, strings.NewReader("{\"type\":\"cpu,mem,block,mutex,trace,threads,goroutines\"}"))
+			ws, _, err := websocket.DefaultDialer.Dial(wsFinalURL, nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			defer ws.Close()
+
+			_, zipFileBytes, err := ws.ReadMessage()
 			if err != nil {
 				log.Println(err)
 				return
 			}
 
-			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-			request.Header.Add("Content-Type", "application/json")
-
-			response, err := client.Do(request)
-
-			testAsser.Nil(err, fmt.Sprintf("%s returned an error: %v", tt.name, err))
-			testAsser.Equal(201, response.StatusCode)
-
-			time.Sleep(5 * time.Second)
-
-			destination = "/api/v1/profiling/stop"
-			finalURL = fmt.Sprintf("http://localhost:9090%s", destination)
-			request, err = http.NewRequest("POST", finalURL, nil)
-			if err != nil {
-				log.Println(err)
-				return
-			}
-
-			request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-			request.Header.Add("Content-Type", "application/json")
-
-			response, err = client.Do(request)
-
-			testAsser.Nil(err, fmt.Sprintf("%s returned an error: %v", tt.name, err))
-			testAsser.Equal(200, response.StatusCode)
-			zipFileBytes, err := io.ReadAll(response.Body)
-			if err != nil {
-				testAsser.Nil(err, fmt.Sprintf("%s returned an error: %v", tt.name, err))
-			}
 			filetype := http.DetectContentType(zipFileBytes)
-			testAsser.Equal("application/zip", filetype)
+			testAssert.Equal("application/zip", filetype)
 
 			zipReader, err := zip.NewReader(bytes.NewReader(zipFileBytes), int64(len(zipFileBytes)))
 			if err != nil {
-				testAsser.Nil(err, fmt.Sprintf("%s returned an error: %v", tt.name, err))
+				testAssert.Nil(err, fmt.Sprintf("%s returned an error: %v", tt.name, err))
 			}
 
 			// Read all the files from zip archive
@@ -113,7 +86,7 @@ func TestStartProfiling(t *testing.T) {
 			}
 
 			for k, v := range files {
-				testAsser.Equal(true, v, fmt.Sprintf("%s : compressed file expected to have %v file inside", tt.name, k))
+				testAssert.Equal(true, v, fmt.Sprintf("%s : compressed file expected to have %v file inside", tt.name, k))
 			}
 		})
 	}
