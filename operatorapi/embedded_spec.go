@@ -3415,6 +3415,9 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "isDirectPV": {
+          "type": "boolean"
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -3648,6 +3651,9 @@ func init() {
     "operatorSessionResponse": {
       "type": "object",
       "properties": {
+        "directPV": {
+          "type": "boolean"
+        },
         "features": {
           "type": "array",
           "items": {
@@ -9174,6 +9180,9 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "isDirectPV": {
+          "type": "boolean"
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -9363,6 +9372,9 @@ func init() {
     "operatorSessionResponse": {
       "type": "object",
       "properties": {
+        "directPV": {
+          "type": "boolean"
+        },
         "features": {
           "type": "array",
           "items": {

@@ -23,11 +23,12 @@ import { Bucket } from "./Buckets/types";
 export const routesAsKbarActions = (
   features: string[] | null,
   operatorMode: boolean,
+  directPVMode: boolean,
   buckets: Bucket[],
   navigate: (url: string) => void
 ) => {
   const initialActions: Action[] = [];
-  const allowedMenuItems = validRoutes(features, operatorMode);
+  const allowedMenuItems = validRoutes(features, operatorMode, directPVMode);
   for (const i of allowedMenuItems) {
     if (i.children && i.children.length > 0) {
       for (const childI of i.children) {
