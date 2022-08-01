@@ -1501,6 +1501,8 @@ definitions:
         enum: [ form, redirect, service-account, redirect-service-account ]
       redirect:
         type: string
+      isDirectPV:
+        type: boolean
   loginRequest:
     type: object
     properties:
@@ -1543,6 +1545,8 @@ definitions:
         type: string
         enum: [ ok ]
       operator:
+        type: boolean
+      directPV:
         type: boolean
       permissions:
         type: object

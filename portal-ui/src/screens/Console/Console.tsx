@@ -52,6 +52,7 @@ import EditPool from "./Tenants/TenantDetails/Pools/EditPool/EditPool";
 import ComponentsScreen from "./Common/ComponentsScreen";
 import {
   menuOpen,
+  selDirectPVMode,
   selDistSet,
   selOpMode,
   serverIsLoading,
@@ -145,6 +146,12 @@ const AddReplicationSites = React.lazy(
   () => import("./Configurations/SiteReplication/AddReplicationSites")
 );
 
+const StoragePVCs = React.lazy(() => import("./Storage/StoragePVCs"));
+
+const DirectPVDrives = React.lazy(() => import("./DirectPV/DirectPVDrives"));
+
+const DirectPVVolumes = React.lazy(() => import("./DirectPV/DirectPVVolumes"));
+
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -187,6 +194,7 @@ const Console = ({ classes }: IConsoleProps) => {
   const features = useSelector(selFeatures);
   const distributedSetup = useSelector(selDistSet);
   const operatorMode = useSelector(selOpMode);
+  const directPVMode = useSelector(selDirectPVMode);
   const snackBarMessage = useSelector(
     (state: AppState) => state.system.snackBar
   );
@@ -461,9 +469,38 @@ const Console = ({ classes }: IConsoleProps) => {
     },
   ];
 
-  const allowedRoutes = (
-    operatorMode ? operatorConsoleRoutes : consoleAdminRoutes
-  ).filter((route: any) =>
+  const directPVRoutes: IRouteRule[] = [
+    {
+      component: StoragePVCs,
+      path: IAM_PAGES.DIRECTPV_STORAGE,
+      forceDisplay: true,
+    },
+    {
+      component: DirectPVDrives,
+      path: IAM_PAGES.DIRECTPV_DRIVES,
+      forceDisplay: true,
+    },
+    {
+      component: DirectPVVolumes,
+      path: IAM_PAGES.DIRECTPV_VOLUMES,
+      forceDisplay: true,
+    },
+    {
+      component: License,
+      path: IAM_PAGES.LICENSE,
+      forceDisplay: true,
+    },
+  ];
+
+  let routes = consoleAdminRoutes;
+
+  if (directPVMode) {
+    routes = directPVRoutes;
+  } else if (operatorMode) {
+    routes = operatorConsoleRoutes;
+  }
+
+  const allowedRoutes = routes.filter((route: any) =>
     obOnly
       ? route.path.includes("buckets")
       : (route.forceDisplay ||

@@ -16,13 +16,19 @@
 
 import React, { Fragment, Suspense, useEffect } from "react";
 import OperatorLogo from "../../../icons/OperatorLogo";
+import DirectPVLogo from "../../../icons/DirectPVLogo";
+
 import { LoginMinIOLogo, VersionIcon } from "../../../icons";
 import { Box, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LicensedConsoleLogo from "../Common/Components/LicensedConsoleLogo";
 import { useSelector } from "react-redux";
 import useApi from "../Common/Hooks/useApi";
-import { setLicenseInfo } from "../../../systemSlice";
+import {
+  selDirectPVMode,
+  selOpMode,
+  setLicenseInfo,
+} from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import MenuToggleIcon from "../../../icons/MenuToggleIcon";
 
@@ -38,9 +44,9 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
   const licenseInfo = useSelector(
     (state: AppState) => state?.system?.licenseInfo
   );
-  const operatorMode = useSelector(
-    (state: AppState) => state.system.operatorMode
-  );
+  const operatorMode = useSelector(selOpMode);
+
+  const directPVMode = useSelector(selDirectPVMode);
 
   const [isLicenseLoading, invokeLicenseInfoApi] = useApi(
     (res: any) => {
@@ -107,9 +113,7 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
       >
         {isOpen ? (
           <div className={`logo ${stateClsName}`}>
-            {operatorMode ? (
-              <OperatorLogo />
-            ) : (
+            {!operatorMode && !directPVMode ? (
               <Fragment>
                 <div
                   style={{ marginLeft: "4px", width: 100, textAlign: "right" }}
@@ -121,6 +125,10 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
                     isLoading={isLicenseLoading}
                   />
                 </div>
+              </Fragment>
+            ) : (
+              <Fragment>
+                {directPVMode ? <DirectPVLogo /> : <OperatorLogo />}
               </Fragment>
             )}
           </div>
