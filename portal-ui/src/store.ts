@@ -35,6 +35,7 @@ import editPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/EditP
 import editTenantMonitoringReducer from "./screens/Console/Tenants/TenantDetails/tenantMonitoringSlice";
 import editTenantAuditLoggingReducer from "./screens/Console/Tenants/TenantDetails/tenantAuditLogSlice";
 import editTenantSecurityContextReducer from "./screens/Console/Tenants/tenantSecurityContextSlice";
+import directPVReducer from "./screens/Console/DirectPV/directPVSlice";
 
 const rootReducer = combineReducers({
   system: systemReducer,
@@ -57,6 +58,7 @@ const rootReducer = combineReducers({
   editTenantMonitoring: editTenantMonitoringReducer,
   editTenantLogging: editTenantAuditLoggingReducer,
   editTenantSecurityContext: editTenantSecurityContextReducer,
+  directPV: directPVReducer,
 });
 
 export const store = configureStore({

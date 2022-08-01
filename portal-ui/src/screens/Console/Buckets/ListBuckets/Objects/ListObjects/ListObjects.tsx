@@ -23,7 +23,7 @@ import React, {
   useState,
 } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -275,6 +275,7 @@ const ListObjects = () => {
   const dispatch = useAppDispatch();
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const rewindEnabled = useSelector(
     (state: AppState) => state.objectBrowser.rewind.rewindEnabled
@@ -340,7 +341,9 @@ const ListObjects = () => {
   const [downloadRenameModal, setDownloadRenameModal] =
     useState<BucketObjectItem | null>(null);
 
-  const internalPaths = get(params, "subpaths", "");
+  const pathSegment = location.pathname.split("/browse/");
+
+  const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
   const bucketName = params.bucketName || "";
 
   const fileUpload = useRef<HTMLInputElement>(null);

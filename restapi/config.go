@@ -22,6 +22,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/minio/console/pkg/auth/idp/oauth2"
 	xcerts "github.com/minio/pkg/certs"
 	"github.com/minio/pkg/env"
 	xnet "github.com/minio/pkg/net"
@@ -45,6 +46,25 @@ var (
 
 	ConsoleResourceName = "console-ui"
 )
+
+var (
+	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
+	GlobalRootCAs *x509.CertPool
+	// GlobalPublicCerts has certificates Console will use to serve clients
+	GlobalPublicCerts []*x509.Certificate
+	// GlobalTLSCertsManager custom TLS Manager for SNI support
+	GlobalTLSCertsManager *xcerts.Manager
+)
+
+// MinIOConfig represents application configuration passed in from the MinIO
+// server to the console.
+type MinIOConfig struct {
+	OpenIDProviders oauth2.OpenIDPCfg
+}
+
+// GlobalMinIOConfig is the global application configuration passed in from the
+// MinIO server.
+var GlobalMinIOConfig MinIOConfig
 
 func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
@@ -234,12 +254,3 @@ func getPrometheusJobID() string {
 func getPrometheusExtraLabels() string {
 	return env.Get(PrometheusExtraLabels, "")
 }
-
-var (
-	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
-	GlobalRootCAs *x509.CertPool
-	// GlobalPublicCerts has certificates Console will use to serve clients
-	GlobalPublicCerts []*x509.Certificate
-	// GlobalTLSCertsManager custom TLS Manager for SNI support
-	GlobalTLSCertsManager *xcerts.Manager
-)

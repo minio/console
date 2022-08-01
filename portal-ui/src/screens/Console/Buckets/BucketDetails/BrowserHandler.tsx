@@ -16,12 +16,11 @@
 
 import React, { Fragment, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, IconButton, Tooltip } from "@mui/material";
-import get from "lodash/get";
 import { AppState, useAppDispatch } from "../../../../store";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 
@@ -55,6 +54,7 @@ const BrowserHandler = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
+  const location = useLocation();
 
   const versionsMode = useSelector(
     (state: AppState) => state.objectBrowser.versionsMode
@@ -72,7 +72,9 @@ const BrowserHandler = () => {
   const features = useSelector(selFeatures);
 
   const bucketName = params.bucketName || "";
-  const internalPaths = get(params, "subpaths", "");
+  const pathSegment = location.pathname.split("/browse/");
+
+  const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
 
   const obOnly = !!features?.includes("object-browser-only");
 
