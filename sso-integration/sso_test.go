@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -28,6 +29,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/minio/console/models"
 
 	"github.com/go-openapi/loads"
 	consoleoauth2 "github.com/minio/console/pkg/auth/idp/oauth2"
@@ -254,5 +257,15 @@ func TestBadLogin(t *testing.T) {
 	fmt.Println(response)
 	fmt.Println(err)
 	expectedError := response.Status
-	assert.Equal("500 Internal Server Error", expectedError)
+	assert.Equal("400 Bad Request", expectedError)
+	bodyBytes, _ := ioutil.ReadAll(response.Body)
+	result2 := models.Error{}
+	err = json.Unmarshal(bodyBytes, &result2)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	detailedMessage := *result2.DetailedMessage
+	fmt.Println(detailedMessage)
+	assert.Equal("expected 'code' response type - got [], login not allowed", detailedMessage)
 }
