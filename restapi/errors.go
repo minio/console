@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
@@ -69,6 +70,7 @@ var (
 	ErrDeletingEncryptionConfig         = errors.New("error disabling tenant encryption")
 	ErrEncryptionConfigNotFound         = errors.New("encryption configuration not found")
 	ErrPolicyNotFound                   = errors.New("policy does not exist")
+	ErrLoginNotAllowed                  = errors.New("login not allowed")
 )
 
 // ErrorWithContext :
@@ -92,6 +94,10 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 			if errors.Is(err1, ErrInvalidLogin) {
 				errorCode = 401
 				errorMessage = ErrInvalidLogin.Error()
+			}
+			if strings.Contains(err1.Error(), ErrLoginNotAllowed.Error()) {
+				errorCode = 400
+				errorMessage = ErrLoginNotAllowed.Error()
 			}
 			// console invalid erasure coding value
 			if errors.Is(err1, ErrInvalidErasureCodingValue) {
