@@ -14,7 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 
@@ -146,17 +152,26 @@ const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
       <Fragment key={`widget-${key}`}>
         {panelInfo ? (
           <Fragment>
-            {panelInfo.mergedPanels ? (
-              <MergedWidgetsRenderer
-                info={panelInfo}
-                timeStart={timeStart}
-                timeEnd={timeEnd}
-                loading={loading}
-                apiPrefix={apiPrefix}
-              />
-            ) : (
-              componentToUse(panelInfo, timeStart, timeEnd, loading, apiPrefix)
-            )}
+            <Box>
+              {panelInfo.mergedPanels ? (
+                <MergedWidgetsRenderer
+                  info={panelInfo}
+                  timeStart={timeStart}
+                  timeEnd={timeEnd}
+                  loading={loading}
+                  apiPrefix={apiPrefix}
+                />
+              ) : (
+                componentToUse(
+                  panelInfo,
+                  timeStart,
+                  timeEnd,
+                  loading,
+                  apiPrefix,
+                  zoomOpen
+                )
+              )}
+            </Box>
           </Fragment>
         ) : null}
       </Fragment>

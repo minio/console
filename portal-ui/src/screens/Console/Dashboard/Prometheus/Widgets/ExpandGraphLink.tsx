@@ -53,17 +53,6 @@ const ExpandGraphLink = ({ panelItem }: { panelItem: IDashboardPanel }) => {
         },
       }}
     >
-      <a
-        href={`void:(0);`}
-        rel="noreferrer noopener"
-        className={"link-text"}
-        onClick={(e) => {
-          e.preventDefault();
-          dispatch(openZoomPage(panelItem));
-        }}
-      >
-        Expand Graph
-      </a>
       <button
         onClick={() => {
           dispatch(openZoomPage(panelItem));

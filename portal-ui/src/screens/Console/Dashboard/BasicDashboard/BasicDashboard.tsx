@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
-import { Box } from "@mui/material";
+import React, { Fragment, useRef } from "react";
+import { Box, Grid } from "@mui/material";
 import {
   ArrowRightIcon,
   BucketsIcon,
@@ -113,7 +113,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
     serversGroup;
   const drivesGroup = groupBy(allDrivesArray, "state");
   const { offline: offlineDrives = [], ok: onlineDrives = [] } = drivesGroup;
-
+  const componentRef = useRef();
   return (
     <Box
       sx={{
@@ -199,6 +199,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
           }}
         >
           <Box
+            ref={componentRef}
             sx={{
               display: "grid",
               gridTemplateRows: "136px",
@@ -247,15 +248,16 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                 counterValue={usage ? representationNumber(usage.objects) : 0}
               />
             </BoxItem>
-
-            <BoxItem>
-              <StatusCountCard
-                onlineCount={onlineServers.length}
-                offlineCount={offlineServers.length}
-                label={"Servers"}
-                icon={<ServersIcon />}
-              />
-            </BoxItem>
+            <Grid container>
+              <BoxItem>
+                <StatusCountCard
+                  onlineCount={onlineServers.length}
+                  offlineCount={offlineServers.length}
+                  label={"Servers"}
+                  icon={<ServersIcon />}
+                />
+              </BoxItem>
+            </Grid>
             <BoxItem>
               <StatusCountCard
                 offlineCount={offlineDrives.length}
