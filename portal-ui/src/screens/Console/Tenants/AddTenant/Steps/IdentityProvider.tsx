@@ -31,9 +31,7 @@ import IDPActiveDirectory from "./IdentityProvider/IDPActiveDirectory";
 import IDPOpenID from "./IdentityProvider/IDPOpenID";
 import makeStyles from "@mui/styles/makeStyles";
 import IDPBuiltIn from "./IdentityProvider/IDPBuiltIn";
-import OIDCIcon from "../../../../../icons/OIDCIcon";
-import LDAPIcon from "../../../../../icons/LDAPIcon";
-import { UsersIcon } from "../../../../../icons";
+import { OIDCLogoElement, LDAPLogoElement, BuiltInLogoElement } from "../../LogoComponents";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,8 +46,8 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       "& div": {
         display: "flex",
-        flexFlow: "column",
-        alignItems: "baseline",
+        flexFlow: "row",
+        alignItems: "top",
       },
     },
     ...createTenantCommon,
@@ -61,51 +59,6 @@ const useStyles = makeStyles((theme: Theme) =>
 const IdentityProvider = () => {
   const dispatch = useAppDispatch();
   const classes = useStyles();
-
-  const OIDCLogoElement = () => {
-    return (
-      <div>
-        <Grid spacing={1} container direction="row">
-          <Grid textAlign={"start"} item className={classes.descriptionText}>
-            Open ID
-          </Grid>
-          <Grid item>
-            <OIDCIcon />
-          </Grid>
-        </Grid>
-      </div>
-    );
-  };
-
-  const LDAPLogoElement = () => {
-    return (
-      <div>
-        <Grid spacing={1} container direction="row">
-          <Grid textAlign={"start"} item className={classes.descriptionText}>
-            LDAP / Active Directory
-          </Grid>
-          <Grid item>
-            <LDAPIcon />
-          </Grid>
-        </Grid>
-      </div>
-    );
-  };
-
-  const BuiltInLogoElement = () => {
-    return (
-      <div>
-        <Grid spacing={1} container direction="row">
-          <Grid textAlign={"start"} item>
-            Built-in
-          </Grid>
-          <Grid item>
-            <UsersIcon />
-          </Grid>
-        </Grid>
-      </div>
-    );
-  };
 
   const idpSelection = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.idpSelection

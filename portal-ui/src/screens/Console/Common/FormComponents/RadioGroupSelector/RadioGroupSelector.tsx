@@ -109,9 +109,9 @@ export const RadioGroupSelector = ({
   displayInColumn = false,
 }: RadioGroupProps) => {
   return (
-    <Grid container alignItems={"center"}>
-      <Grid item xs>
-        <InputLabel htmlFor={id} className={classes.inputLabel}>
+    <Grid container >
+      <Grid item xs={1}>
+        <InputLabel htmlFor={id} className={classes.inputLabel} size={"small"}>
           <span>{label}</span>
           {tooltip !== "" && (
             <div className={classes.tooltipContainer}>
@@ -124,7 +124,7 @@ export const RadioGroupSelector = ({
           )}
         </InputLabel>
       </Grid>
-      <Grid item xs className={classes.radioOptionsLayout}>
+      <Grid item alignItems={"start"} alignContent={"stretch"} xs={12} >
         <RadioGroup
           aria-label={id}
           id={id}
@@ -132,7 +132,7 @@ export const RadioGroupSelector = ({
           value={currentSelection}
           onChange={onChange}
           row={!displayInColumn}
-          style={{ display: "block", textAlign: "right" }}
+          style={{ display: "flex", textAlign: "right",   }}
         >
           {selectorOptions.map((selectorOption) => {
             return (
@@ -141,11 +141,14 @@ export const RadioGroupSelector = ({
                 value={selectorOption.value}
                 control={<RadioButton />}
                 label={selectorOption.label}
+                labelPlacement="end"
                 disabled={disableOptions}
                 className={clsx(classes.optionLabel, {
                   [classes.checkedOption]:
                     selectorOption.value === currentSelection,
                 })}
+               
+  justify-content= "space-between"
               />
             );
           })}
