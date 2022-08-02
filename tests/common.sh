@@ -41,7 +41,7 @@ function install_operator() {
     echo "Installing Current Operator"
 
     # TODO: Compile the current branch and create an overlay to use that image version
-    try kubectl apply -k "${SCRIPT_DIR}/../../portal-ui/tests/scripts/resources"
+    try kubectl apply -k "${SCRIPT_DIR}/../portal-ui/tests/scripts/resources"
 
     echo "Waiting for k8s api"
     sleep 10

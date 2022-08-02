@@ -3457,7 +3457,6 @@ definitions:
       - runAsUser
       - runAsGroup
       - runAsNonRoot
-      - fsGroup
     properties:
       runAsUser:
         type: string
@@ -3466,6 +3465,8 @@ definitions:
       runAsNonRoot:
         type: boolean
       fsGroup:
+        type: string
+      fsGroupChangePolicy:
         type: string
 
   allocatableResourcesResponse:

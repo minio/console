@@ -4203,11 +4203,13 @@ func init() {
       "required": [
         "runAsUser",
         "runAsGroup",
-        "runAsNonRoot",
-        "fsGroup"
+        "runAsNonRoot"
       ],
       "properties": {
         "fsGroup": {
+          "type": "string"
+        },
+        "fsGroupChangePolicy": {
           "type": "string"
         },
         "runAsGroup": {
@@ -9833,11 +9835,13 @@ func init() {
       "required": [
         "runAsUser",
         "runAsGroup",
-        "runAsNonRoot",
-        "fsGroup"
+        "runAsNonRoot"
       ],
       "properties": {
         "fsGroup": {
+          "type": "string"
+        },
+        "fsGroupChangePolicy": {
           "type": "string"
         },
         "runAsGroup": {

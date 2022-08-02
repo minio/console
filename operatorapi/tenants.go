@@ -2762,15 +2762,28 @@ func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 	var securityContext models.SecurityContext
 
 	if pool.SecurityContext != nil {
-		fsGroup := strconv.Itoa(int(*pool.SecurityContext.FSGroup))
-		runAsGroup := strconv.Itoa(int(*pool.SecurityContext.RunAsGroup))
-		runAsUser := strconv.Itoa(int(*pool.SecurityContext.RunAsUser))
-
+		var fsGroup string
+		var runAsGroup string
+		var runAsUser string
+		var fsGroupChangePolicy string
+		if pool.SecurityContext.FSGroup != nil {
+			fsGroup = strconv.Itoa(int(*pool.SecurityContext.FSGroup))
+		}
+		if pool.SecurityContext.RunAsGroup != nil {
+			runAsGroup = strconv.Itoa(int(*pool.SecurityContext.RunAsGroup))
+		}
+		if pool.SecurityContext.RunAsUser != nil {
+			runAsUser = strconv.Itoa(int(*pool.SecurityContext.RunAsUser))
+		}
+		if pool.SecurityContext.FSGroupChangePolicy != nil {
+			fsGroupChangePolicy = string(*pool.SecurityContext.FSGroupChangePolicy)
+		}
 		securityContext = models.SecurityContext{
-			FsGroup:      &fsGroup,
-			RunAsGroup:   &runAsGroup,
-			RunAsNonRoot: pool.SecurityContext.RunAsNonRoot,
-			RunAsUser:    &runAsUser,
+			FsGroup:             fsGroup,
+			RunAsGroup:          &runAsGroup,
+			RunAsNonRoot:        pool.SecurityContext.RunAsNonRoot,
+			RunAsUser:           &runAsUser,
+			FsGroupChangePolicy: fsGroupChangePolicy,
 		}
 	}
 
