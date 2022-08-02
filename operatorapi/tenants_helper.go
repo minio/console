@@ -50,32 +50,32 @@ func convertModelSCToK8sSC(sc *models.SecurityContext) (*corev1.PodSecurityConte
 	if err != nil {
 		return nil, err
 	}
-	RunAsGroup, err := strconv.ParseInt(*sc.RunAsGroup, 10, 64)
+	runAsGroup, err := strconv.ParseInt(*sc.RunAsGroup, 10, 64)
 	if err != nil {
 		return nil, err
 	}
-	FsGroup, err := strconv.ParseInt(*sc.FsGroup, 10, 64)
+	fsGroup, err := strconv.ParseInt(sc.FsGroup, 10, 64)
 	if err != nil {
 		return nil, err
 	}
 	return &corev1.PodSecurityContext{
 		RunAsUser:    &runAsUser,
-		RunAsGroup:   &RunAsGroup,
+		RunAsGroup:   &runAsGroup,
 		RunAsNonRoot: sc.RunAsNonRoot,
-		FSGroup:      &FsGroup,
+		FSGroup:      &fsGroup,
 	}, nil
 }
 
 // convertK8sSCToModelSC validates and converts from corev1.PodSecurityContext to models.SecurityContext
 func convertK8sSCToModelSC(sc *corev1.PodSecurityContext) *models.SecurityContext {
 	runAsUser := strconv.FormatInt(*sc.RunAsUser, 10)
-	RunAsGroup := strconv.FormatInt(*sc.RunAsGroup, 10)
-	FsGroup := strconv.FormatInt(*sc.FSGroup, 10)
+	runAsGroup := strconv.FormatInt(*sc.RunAsGroup, 10)
+	fsGroup := strconv.FormatInt(*sc.FSGroup, 10)
 	return &models.SecurityContext{
 		RunAsUser:    &runAsUser,
-		RunAsGroup:   &RunAsGroup,
+		RunAsGroup:   &runAsGroup,
 		RunAsNonRoot: sc.RunAsNonRoot,
-		FsGroup:      &FsGroup,
+		FsGroup:      fsGroup,
 	}
 }
 
