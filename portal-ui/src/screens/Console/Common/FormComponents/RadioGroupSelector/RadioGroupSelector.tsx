@@ -109,9 +109,9 @@ export const RadioGroupSelector = ({
   displayInColumn = false,
 }: RadioGroupProps) => {
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={1}>
-        <InputLabel htmlFor={id} className={classes.inputLabel} size={"small"}>
+    <Grid container spacing={1}>
+      <Grid item>
+        <InputLabel htmlFor={id} className={classes.inputLabel}>
           <span>{label}</span>
           {tooltip !== "" && (
             <div className={classes.tooltipContainer}>
@@ -124,7 +124,7 @@ export const RadioGroupSelector = ({
           )}
         </InputLabel>
       </Grid>
-      <Grid item alignItems={"start"} alignContent={"stretch"} xs={12}>
+      <Grid item>
         <RadioGroup
           aria-label={id}
           id={id}
@@ -141,13 +141,11 @@ export const RadioGroupSelector = ({
                 value={selectorOption.value}
                 control={<RadioButton />}
                 label={selectorOption.label}
-                labelPlacement="end"
                 disabled={disableOptions}
                 className={clsx(classes.optionLabel, {
                   [classes.checkedOption]:
                     selectorOption.value === currentSelection,
                 })}
-                justify-content="space-between"
               />
             );
           })}
