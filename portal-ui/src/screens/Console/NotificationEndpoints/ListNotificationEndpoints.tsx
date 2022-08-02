@@ -124,12 +124,15 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
     setIsLoading(true);
   }, []);
 
-  const resetNotificationConfig = (name?: string) => {
-    if (name) {
-      const configKey = getNotificationConfigKey(name);
+  const resetNotificationConfig = (
+    ep: TransformedEndpointItem | undefined | null
+  ) => {
+    if (ep?.name) {
+      const configKey = getNotificationConfigKey(ep.name);
+      let accountId = `:${ep.account_id}`;
       if (configKey) {
         api
-          .invoke("POST", `/api/v1/configs/${configKey}/reset`)
+          .invoke("POST", `/api/v1/configs/${configKey}${accountId}/reset`)
           .then((res) => {
             dispatch(setServerNeedsRestart(true));
             setSelNotifyEndpoint(null);
@@ -142,7 +145,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
       } else {
         setSelNotifyEndpoint(null);
         setIsDelConfirmOpen(false);
-        console.log(`Unable to find Config key for ${name}`);
+        console.log(`Unable to find Config key for ${ep.name}`);
       }
     }
   };
@@ -313,7 +316,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
             titleIcon={<ConfirmModalIcon />}
             isLoading={false}
             onConfirm={() => {
-              resetNotificationConfig(selNotifyEndPoint?.name);
+              resetNotificationConfig(selNotifyEndPoint);
             }}
             onClose={() => {
               setIsDelConfirmOpen(false);
