@@ -20,37 +20,34 @@ import OIDCIcon from "../../../icons/OIDCIcon";
 import { UsersIcon } from "../../../icons";
 
 export const OIDCLogoElement = () => {
-     return (
-     <Grid container columnGap={1}>  
-      <Grid><OIDCIcon />
+  return (
+    <Grid container columnGap={1}>
+      <Grid>
+        <OIDCIcon />
       </Grid>
-     <Grid item>
-            Open ID
-              </Grid>
-      </Grid>
-    );
-  };
+      <Grid item>Open ID</Grid>
+    </Grid>
+  );
+};
 
-  export const LDAPLogoElement = () => {
-    return (
-     <Grid container columnGap={1}>  
-      <Grid><LDAPIcon /> 
+export const LDAPLogoElement = () => {
+  return (
+    <Grid container columnGap={1}>
+      <Grid>
+        <LDAPIcon />
       </Grid>
-     <Grid item>
-            LDAP / Active Directory
-              </Grid>
-      </Grid>
-    );
-  };
+      <Grid item>LDAP / Active Directory</Grid>
+    </Grid>
+  );
+};
 
-  export const BuiltInLogoElement = () => {
-    return (
-     <Grid container columnGap={1}>  
-      <Grid><UsersIcon />
+export const BuiltInLogoElement = () => {
+  return (
+    <Grid container columnGap={1}>
+      <Grid>
+        <UsersIcon />
       </Grid>
-     <Grid item>
-            Built-in
-              </Grid>
-      </Grid>
-    );
-  };
+      <Grid item>Built-in</Grid>
+    </Grid>
+  );
+};

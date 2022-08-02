@@ -31,7 +31,11 @@ import IDPActiveDirectory from "./IdentityProvider/IDPActiveDirectory";
 import IDPOpenID from "./IdentityProvider/IDPOpenID";
 import makeStyles from "@mui/styles/makeStyles";
 import IDPBuiltIn from "./IdentityProvider/IDPBuiltIn";
-import { OIDCLogoElement, LDAPLogoElement, BuiltInLogoElement } from "../../LogoComponents";
+import {
+  OIDCLogoElement,
+  LDAPLogoElement,
+  BuiltInLogoElement,
+} from "../../LogoComponents";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,11 +77,7 @@ const IdentityProvider = () => {
           Manager.
         </span>
       </div>
-      <Grid
-        item
-        xs={12}
-        padding="10px"
-      >
+      <Grid item xs={12} padding="10px">
         <RadioGroupSelector
           currentSelection={idpSelection}
           id="idp-options"
