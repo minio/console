@@ -38,6 +38,11 @@ const OperatorSubnetRegisterAPIKeyOKCode int = 200
 swagger:response operatorSubnetRegisterApiKeyOK
 */
 type OperatorSubnetRegisterAPIKeyOK struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.OperatorSubnetRegisterAPIKeyResponse `json:"body,omitempty"`
 }
 
 // NewOperatorSubnetRegisterAPIKeyOK creates OperatorSubnetRegisterAPIKeyOK with default headers values
@@ -46,12 +51,27 @@ func NewOperatorSubnetRegisterAPIKeyOK() *OperatorSubnetRegisterAPIKeyOK {
 	return &OperatorSubnetRegisterAPIKeyOK{}
 }
 
+// WithPayload adds the payload to the operator subnet register Api key o k response
+func (o *OperatorSubnetRegisterAPIKeyOK) WithPayload(payload *models.OperatorSubnetRegisterAPIKeyResponse) *OperatorSubnetRegisterAPIKeyOK {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the operator subnet register Api key o k response
+func (o *OperatorSubnetRegisterAPIKeyOK) SetPayload(payload *models.OperatorSubnetRegisterAPIKeyResponse) {
+	o.Payload = payload
+}
+
 // WriteResponse to the client
 func (o *OperatorSubnetRegisterAPIKeyOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(200)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
 /*OperatorSubnetRegisterAPIKeyDefault Generic error response.

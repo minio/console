@@ -1472,6 +1472,23 @@ paths:
       responses:
         200:
           description: A successful response.
+          schema:
+            $ref: "#/definitions/operatorSubnetRegisterAPIKeyResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+  /subnet/apikey/info:
+    get:
+      summary: Subnet API key info
+      operationId: OperatorSubnetAPIKeyInfo
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/operatorSubnetRegisterAPIKeyResponse"
         default:
           description: Generic error response.
           schema:
@@ -3570,3 +3587,9 @@ definitions:
     properties:
       apiKey:
         type: string
+
+  operatorSubnetRegisterAPIKeyResponse:
+    type: object
+    properties:
+      registered:
+        type: boolean

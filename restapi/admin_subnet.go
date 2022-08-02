@@ -90,7 +90,7 @@ func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKe
 	if err != nil {
 		return false, err
 	}
-	registerResult, err := subnet.Register(httpClient, serverInfo, apiKey, "", "")
+	registerResult, err := subnet.Register(GetConsoleHTTPClient(), serverInfo, apiKey, "", "")
 	if err != nil {
 		return false, err
 	}
