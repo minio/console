@@ -76,11 +76,11 @@ test
 test
   .before(async (t) => {
     // Create a bucket
-    await functions.setUpBucket(t, "bucketread3");
+    await functions.setUpBucket(t, "aread3");
     await t
       .useRole(roles.admin)
       .navigateTo("http://localhost:9090/buckets")
-      .click(testBucketBrowseButtonFor("bucketread3"))
+      .click(testBucketBrowseButtonFor("aread3"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
       .click(logoutItem);
@@ -90,12 +90,12 @@ test
       .useRole(roles.bucketRead)
       .navigateTo("http://localhost:9090/buckets")
       .wait(2000)
-      .click(testBucketBrowseButtonFor("bucketread3"))
+      .click(testBucketBrowseButtonFor("aread3"))
       .wait(2000)
       .expect(elements.table.exists)
       .ok();
   })
   .after(async (t) => {
     // Cleanup created bucket and corresponding uploads
-    await functions.cleanUpBucketAndUploads(t, "bucketread3");
+    await functions.cleanUpBucketAndUploads(t, "aread3");
   });
