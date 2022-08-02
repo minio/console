@@ -39,7 +39,7 @@ import { useSelector } from "react-redux";
 import useApi from "./Common/Hooks/useApi";
 import { Bucket, BucketList } from "./Buckets/types";
 import { selFeatures } from "./consoleSlice";
-import { selOpMode } from "../../systemSlice";
+import { selOpMode, selDirectPVMode } from "../../systemSlice";
 
 const useStyles = makeStyles((theme: Theme) => ({
   resultItem: {
@@ -128,6 +128,7 @@ const KBarStateChangeMonitor = ({
 
 const CommandBar = () => {
   const operatorMode = useSelector(selOpMode);
+  const directPVMode = useSelector(selDirectPVMode);
   const features = useSelector(selFeatures);
   const navigate = useNavigate();
 
@@ -148,6 +149,7 @@ const CommandBar = () => {
   const initialActions: Action[] = routesAsKbarActions(
     features,
     operatorMode,
+    directPVMode,
     buckets,
     navigate
   );

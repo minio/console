@@ -90,6 +90,7 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 	// Namespaces handlers
 	registerNamespaceHandlers(api)
 	registerMarketplaceHandlers(api)
+	registerOperatorSubnetHandlers(api)
 
 	api.PreServerShutdown = func() {}
 

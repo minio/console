@@ -88,6 +88,7 @@ const Speedtest = () => {
 
   const [size, setSize] = useState<string>("64");
   const [sizeUnit, setSizeUnit] = useState<string>("MB");
+  const [duration, setDuration] = useState<string>("10");
 
   const [topDate, setTopDate] = useState<number>(0);
   const [currentValue, setCurrentValue] = useState<number>(0);
@@ -107,7 +108,7 @@ const Speedtest = () => {
 
       const wsProt = wsProtocol(url.protocol);
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/speedtest?&size=${size}${sizeUnit}`
+        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/speedtest?&size=${size}${sizeUnit}&duration=${duration}s`
       );
 
       const baseDate = moment();
@@ -167,7 +168,7 @@ const Speedtest = () => {
       // reset start status
       setStart(false);
     }
-  }, [size, sizeUnit, start]);
+  }, [size, sizeUnit, start, duration]);
 
   useEffect(() => {
     const actualSeconds = (topDate - currentValue) / 1000;
@@ -197,7 +198,7 @@ const Speedtest = () => {
           >
             <Grid item xs={12} className={classes.boxy}>
               <Grid container>
-                <Grid item md={6} sm={12}>
+                <Grid item md={4} sm={12}>
                   <div className={classes.stepProgressText}>
                     {start ? (
                       <Fragment>
@@ -223,7 +224,7 @@ const Speedtest = () => {
                     />
                   </div>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item md sm={12}>
                   <div style={{ marginLeft: 10, width: 300 }}>
                     <InputBoxWrapper
                       id={"size"}
@@ -251,7 +252,34 @@ const Speedtest = () => {
                     />
                   </div>
                 </Grid>
-                <Grid item xs={2} textAlign={"right"}>
+                <Grid item md sm={12}>
+                  <div style={{ marginLeft: 10, width: 300 }}>
+                    <InputBoxWrapper
+                      id={"duration"}
+                      name={"duration"}
+                      label={"Duration"}
+                      onChange={(e) => {
+                        if (e.target.validity.valid) {
+                          setDuration(e.target.value);
+                        }
+                      }}
+                      noLabelMinWidth={true}
+                      value={duration}
+                      disabled={start}
+                      overlayObject={
+                        <InputUnitMenu
+                          id={"size-unit"}
+                          onUnitChange={() => {}}
+                          unitSelected={"s"}
+                          unitsList={[{ label: "s", value: "s" }]}
+                          disabled={start}
+                        />
+                      }
+                      pattern={"[0-9]*"}
+                    />
+                  </div>
+                </Grid>
+                <Grid item md={1} sm={12} textAlign={"right"}>
                   <Button
                     onClick={() => {
                       setCurrStatus(null);
@@ -264,7 +292,9 @@ const Speedtest = () => {
                       currStatus !== null && !start ? "contained" : "outlined"
                     }
                     className={`${classes.buttonBackground} ${classes.speedStart}`}
-                    disabled={"10".trim() === "" || size.trim() === "" || start}
+                    disabled={
+                      duration.trim() === "" || size.trim() === "" || start
+                    }
                   >
                     {!start && (
                       <Fragment>

@@ -37,8 +37,10 @@ import (
 type SecurityContext struct {
 
 	// fs group
-	// Required: true
-	FsGroup *string `json:"fsGroup"`
+	FsGroup string `json:"fsGroup,omitempty"`
+
+	// fs group change policy
+	FsGroupChangePolicy string `json:"fsGroupChangePolicy,omitempty"`
 
 	// run as group
 	// Required: true
@@ -57,10 +59,6 @@ type SecurityContext struct {
 func (m *SecurityContext) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateFsGroup(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateRunAsGroup(formats); err != nil {
 		res = append(res, err)
 	}
@@ -76,15 +74,6 @@ func (m *SecurityContext) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *SecurityContext) validateFsGroup(formats strfmt.Registry) error {
-
-	if err := validate.Required("fsGroup", "body", m.FsGroup); err != nil {
-		return err
-	}
-
 	return nil
 }
 

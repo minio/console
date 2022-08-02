@@ -33,7 +33,7 @@ import {
   prettyNumber,
 } from "../../../../common/utils";
 import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   IAM_PERMISSIONS,
   IAM_ROLES,
@@ -174,6 +174,8 @@ const BucketListItem = ({
   bulkSelect,
   noManage = false,
 }: IBucketListItem) => {
+  const navigate = useNavigate();
+
   const usage = niceBytes(`${bucket.size}` || "0");
   const usageScalar = usage.split(" ")[0];
   const usageUnit = usage.split(" ")[1];
@@ -243,34 +245,26 @@ const BucketListItem = ({
                 scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
                 resource={bucket.name}
               >
-                <Link
-                  to={`/buckets/${bucket.name}/admin`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <RBIconButton
-                    tooltip={"Manage"}
-                    onClick={() => {}}
-                    text={"Manage"}
-                    icon={<SettingsIcon />}
-                    color={"primary"}
-                    variant={"outlined"}
-                  />
-                </Link>
+                <RBIconButton
+                  tooltip={"Manage"}
+                  onClick={() => navigate(`/buckets/${bucket.name}/admin`)}
+                  text={"Manage"}
+                  icon={<SettingsIcon />}
+                  color={"primary"}
+                  variant={"outlined"}
+                  id={`manage-${bucket.name}`}
+                />
               </SecureComponent>
             )}
-            <Link
-              to={`/buckets/${bucket.name}/browse`}
-              style={{ textDecoration: "none" }}
-            >
-              <RBIconButton
-                tooltip={"Browse"}
-                onClick={() => {}}
-                text={"Browse"}
-                icon={<ArrowRightIcon />}
-                color={"primary"}
-                variant={"contained"}
-              />
-            </Link>
+            <RBIconButton
+              tooltip={"Browse"}
+              onClick={() => navigate(`/buckets/${bucket.name}/browse`)}
+              text={"Browse"}
+              icon={<ArrowRightIcon />}
+              color={"primary"}
+              variant={"contained"}
+              id={`browse-${bucket.name}`}
+            />
             <Box display={{ xs: "none", sm: "block" }}>
               <div style={{ marginBottom: 10 }} />
             </Box>

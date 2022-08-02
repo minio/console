@@ -122,10 +122,8 @@ export const cleanUpBucket = (t, modifier) => {
 };
 
 export const namedTestBucketBrowseButtonFor = (name) => {
-  return Selector("h1")
-    .withText(name)
-    .parent(4)
-    .find("button:enabled")
+  return Selector("button:enabled")
+    .withAttribute("id", `browse-${name}`)
     .withText("Browse");
 };
 
