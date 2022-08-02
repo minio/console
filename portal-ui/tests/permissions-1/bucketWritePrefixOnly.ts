@@ -48,7 +48,7 @@ test
       const uploadButton = elements.uploadButton;
       await t
         .useRole(roles.bucketWritePrefixOnly)
-        .navigateTo("http://localhost:9090/buckets/testcafe/browse/d3JpdGU=/")
+        .navigateTo("http://localhost:9090/buckets/testcafe/browse/d3JpdGU=")
         .click(uploadButton)
         .expect(Selector("li").withText("Upload File").hasClass("Mui-disabled"))
         .notOk()

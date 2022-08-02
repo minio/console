@@ -57,7 +57,7 @@ const Buckets = () => {
         }
       />
       <Route
-        path=":bucketName/browse/:subpaths"
+        path=":bucketName/browse/*"
         element={
           <Suspense fallback={<LoadingComponent />}>
             <BrowserHandler />

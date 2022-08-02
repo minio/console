@@ -31,7 +31,12 @@ import api from "../../../common/api";
 import MenuToggle from "./MenuToggle";
 import ConsoleMenuList from "./ConsoleMenuList";
 import { validRoutes } from "../valid-routes";
-import { menuOpen, selOpMode, userLogged } from "../../../systemSlice";
+import {
+  menuOpen,
+  selDirectPVMode,
+  selOpMode,
+  userLogged,
+} from "../../../systemSlice";
 import { resetSession, selFeatures } from "../consoleSlice";
 
 const drawerWidth = 250;
@@ -97,6 +102,7 @@ const Menu = ({ classes }: IMenuProps) => {
     (state: AppState) => state.system.sidebarOpen
   );
   const operatorMode = useSelector(selOpMode);
+  const directPVMode = useSelector(selDirectPVMode);
 
   const logout = () => {
     const deleteSession = () => {
@@ -117,7 +123,7 @@ const Menu = ({ classes }: IMenuProps) => {
         deleteSession();
       });
   };
-  const allowedMenuItems = validRoutes(features, operatorMode);
+  const allowedMenuItems = validRoutes(features, operatorMode, directPVMode);
 
   return (
     <Drawer

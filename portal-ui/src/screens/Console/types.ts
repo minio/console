@@ -28,6 +28,7 @@ export interface ISessionResponse {
   status: string;
   features: string[];
   operator: boolean;
+  directPV?: boolean;
   distributedMode: boolean;
   permissions: ISessionPermissions;
   allowResources: IAllowResources[] | null;

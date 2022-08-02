@@ -37,6 +37,9 @@ import (
 // swagger:model loginDetails
 type LoginDetails struct {
 
+	// is direct p v
+	IsDirectPV bool `json:"isDirectPV,omitempty"`
+
 	// login strategy
 	// Enum: [form redirect service-account redirect-service-account]
 	LoginStrategy string `json:"loginStrategy,omitempty"`
