@@ -76,15 +76,13 @@ const IdentityProvider = () => {
       <Grid
         item
         xs={12}
-        className={classes.protocolRadioOptions}
         padding="10px"
       >
-        <label>Protocol</label>
         <RadioGroupSelector
           currentSelection={idpSelection}
           id="idp-options"
           name="idp-options"
-          label=" "
+          label="Protocol"
           onChange={(e) => {
             dispatch(setIDP(e.target.value));
           }}

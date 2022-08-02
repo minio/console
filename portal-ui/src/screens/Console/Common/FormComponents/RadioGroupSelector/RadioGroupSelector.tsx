@@ -109,8 +109,8 @@ export const RadioGroupSelector = ({
   displayInColumn = false,
 }: RadioGroupProps) => {
   return (
-    <Grid container >
-      <Grid item xs={1}>
+    <Grid container spacing={3}>
+      <Grid item xs={1} >
         <InputLabel htmlFor={id} className={classes.inputLabel} size={"small"}>
           <span>{label}</span>
           {tooltip !== "" && (

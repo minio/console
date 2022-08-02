@@ -42,6 +42,7 @@ import {
   ITenantIdentityProviderResponse,
   ITenantSetAdministratorsRequest,
 } from "../types";
+import { OIDCLogoElement, LDAPLogoElement, BuiltInLogoElement } from "../LogoComponents";
 import { clearValidationError } from "../utils";
 import {
   commonFormValidation,
@@ -63,6 +64,8 @@ import api from "../../../../common/api";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SectionTitle from "../../Common/SectionTitle";
+
+
 
 interface ITenantIdentityProvider {
   classes: any;
@@ -371,7 +374,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
             <h1 className={classes.sectionTitle}>Identity Provider</h1>
             <hr className={classes.hrClass} />
           </Grid>
-          <Grid item xs={12} className={classes.protocolRadioOptions}>
+          <Grid item xs={12} className={classes.protocolRadioOptions} paddingBottom={1}>
             <RadioGroupSelector
               currentSelection={idpSelection}
               id="idp-options"
@@ -381,9 +384,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                 setIdpSelection(e.target.value);
               }}
               selectorOptions={[
-                { label: "Built-in", value: "Built-in" },
-                { label: "OpenID", value: "OpenID" },
-                { label: "Active Directory", value: "AD" },
+            { label: <BuiltInLogoElement />, value: "Built-in" },
+            { label: <OIDCLogoElement />, value: "OpenID" },
+            { label: <LDAPLogoElement />, value: "AD" },
               ]}
             />
           </Grid>
