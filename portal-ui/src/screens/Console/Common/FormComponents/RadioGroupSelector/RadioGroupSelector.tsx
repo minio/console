@@ -112,7 +112,7 @@ export const RadioGroupSelector = ({
     <Grid container spacing={1}>
       <Grid item fontSize={60}>
         <InputLabel htmlFor={id} className={classes.inputLabel}>
-          <span >{label}</span>
+          <span>{label}</span>
           {tooltip !== "" && (
             <div className={classes.tooltipContainer}>
               <Tooltip title={tooltip} placement="top-start">
@@ -124,7 +124,7 @@ export const RadioGroupSelector = ({
           )}
         </InputLabel>
       </Grid>
-      <Grid item >
+      <Grid item>
         <RadioGroup
           aria-label={id}
           id={id}
@@ -140,13 +140,12 @@ export const RadioGroupSelector = ({
                 key={`rd-${name}-${selectorOption.value}`}
                 value={selectorOption.value}
                 control={<RadioButton />}
-                label={selectorOption.label}               
+                label={selectorOption.label}
                 disabled={disableOptions}
                 className={clsx(classes.optionLabel, {
                   [classes.checkedOption]:
                     selectorOption.value === currentSelection,
-                })}      
-                          
+                })}
               />
             );
           })}

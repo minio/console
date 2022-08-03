@@ -16,14 +16,14 @@
 
 import { Grid } from "@mui/material";
 import LDAPIcon from "../../../icons/LDAPIcon";
-import {OIDCIcon} from "../../../icons";
+import { OIDCIcon } from "../../../icons";
 import { UsersIcon } from "../../../icons";
 
 export const OIDCLogoElement = () => {
   return (
-    <Grid container columnGap={1} >
-      <Grid >
-        <OIDCIcon width= {"16px"} height={"16px"}/>
+    <Grid container columnGap={1}>
+      <Grid>
+        <OIDCIcon width={"16px"} height={"16px"} />
       </Grid>
       <Grid item>Open ID</Grid>
     </Grid>
@@ -34,9 +34,9 @@ export const LDAPLogoElement = () => {
   return (
     <Grid container columnGap={1}>
       <Grid>
-        <LDAPIcon width= {"16px"} height={"16px"}/>
+        <LDAPIcon width={"16px"} height={"16px"} />
       </Grid>
-      <Grid item >LDAP / Active Directory</Grid>
+      <Grid item>LDAP / Active Directory</Grid>
     </Grid>
   );
 };
@@ -44,10 +44,10 @@ export const LDAPLogoElement = () => {
 export const BuiltInLogoElement = () => {
   return (
     <Grid container columnGap={1}>
-      <Grid >
-        <UsersIcon  width= {"16px"} height={"16px"}/>
+      <Grid>
+        <UsersIcon width={"16px"} height={"16px"} />
       </Grid>
-      <Grid item >Built-in</Grid>
+      <Grid item>Built-in</Grid>
     </Grid>
   );
 };

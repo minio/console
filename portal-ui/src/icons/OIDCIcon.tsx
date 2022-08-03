@@ -22,8 +22,8 @@ const OIDCIcon = (props: SVGProps<SVGSVGElement>) => (
     fill={"currentcolor"}
     className={`min-icon`}
     viewBox="0 0 275 275"
-     xmlns="http://www.w3.org/2000/svg"
-     {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
   >
     <defs id="defs3736" />
     <g
