@@ -54,7 +54,7 @@ interface ILinearGraphWidget {
   apiPrefix: string;
   hideYAxis?: boolean;
   yAxisFormatter?: (item: string) => string;
-  xAxisFormatter?: (item: string) => string;
+  xAxisFormatter?: (item: string, var1: boolean, var2: boolean) => string;
   areaWidget?: boolean;
   zoomActivated?: boolean;
 }
@@ -105,7 +105,7 @@ const LinearGraphWidget = ({
   hideYAxis = false,
   areaWidget = false,
   yAxisFormatter = (item: string) => item,
-  xAxisFormatter = (item: string) => item,
+  xAxisFormatter = (item: string, var1: boolean, var2: boolean) => item,
   zoomActivated = false,
 }: ILinearGraphWidget) => {
   const dispatch = useAppDispatch();
@@ -190,6 +190,12 @@ const LinearGraphWidget = ({
   const theme = useTheme();
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
 
+  let dspLongDate = false;
+
+  if (zoomActivated) {
+    dspLongDate = true;
+  }
+
   return (
     <Box className={zoomActivated ? "" : classes.singleValueContainer}>
       {!zoomActivated && (
@@ -257,7 +263,9 @@ const LinearGraphWidget = ({
                   />
                   <XAxis
                     dataKey="name"
-                    tickFormatter={(value: any) => xAxisFormatter(value)}
+                    tickFormatter={(value: any) =>
+                      xAxisFormatter(value, dspLongDate, true)
+                    }
                     interval={intervalCount}
                     tick={{
                       fontSize: "68%",
