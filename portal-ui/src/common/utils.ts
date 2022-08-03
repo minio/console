@@ -553,9 +553,14 @@ export const niceDaysInt = (seconds: number, timeVariant: string = "s") => {
   }`;
 };
 
+const twoDigitsNumberString = (value: number) => {
+  return `${value < 10 ? "0" : ""}${value}`;
+};
+
 export const getTimeFromTimestamp = (
   timestamp: string,
-  fullDate: boolean = false
+  fullDate: boolean = false,
+  simplifiedDate: boolean = false
 ) => {
   const timestampToInt = parseInt(timestamp);
   if (isNaN(timestampToInt)) {
@@ -564,7 +569,15 @@ export const getTimeFromTimestamp = (
   const dateObject = new Date(timestampToInt * 1000);
 
   if (fullDate) {
-    return dateObject.toLocaleString();
+    if (simplifiedDate) {
+      return `${twoDigitsNumberString(
+        dateObject.getMonth() + 1
+      )}/${twoDigitsNumberString(dateObject.getDate())} ${twoDigitsNumberString(
+        dateObject.getHours()
+      )}:${twoDigitsNumberString(dateObject.getMinutes())}`;
+    } else {
+      return dateObject.toLocaleString();
+    }
   }
   return `${dateObject.getHours()}:${String(dateObject.getMinutes()).padStart(
     2,
