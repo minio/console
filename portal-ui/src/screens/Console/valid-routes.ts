@@ -296,6 +296,16 @@ export const validRoutes = (
     {
       group: "Operator",
       type: "item",
+      id: "Register",
+      component: NavLink,
+      to: IAM_PAGES.REGISTER_SUPPORT,
+      name: "Register",
+      icon: RegisterMenuIcon,
+      forceDisplay: true,
+    },
+    {
+      group: "Operator",
+      type: "item",
       id: "Documentation",
       component: NavLink,
       to: IAM_PAGES.DOCUMENTATION,
