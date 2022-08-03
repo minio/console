@@ -33,7 +33,7 @@ type FeatureItem = {
 const FeatureLink = ({ text, anchor }: { text: string; anchor: string }) => {
   return (
     <a
-      href={`https://min.io/product/subnet?ref=con#{anchor}`}
+      href={`https://min.io/product/subnet?ref=con#${anchor}`}
       className={"link-text"}
       target="_blank"
       rel="noopener noreferrer"
@@ -69,7 +69,12 @@ export const FEATURE_ITEMS: FeatureItem[] = [
   },
   {
     desc: () => {
-      return <FeatureLink anchor={"sa-long"} text={"Software Release"} />;
+      return (
+        <FeatureLink
+          anchor={"sa-long-term-support"}
+          text={"Software Release"}
+        />
+      );
     },
   },
   {
@@ -83,37 +88,27 @@ export const FEATURE_ITEMS: FeatureItem[] = [
   },
   {
     desc: () => {
-      return <FeatureLink anchor={"sa-instantaneous"} text={"Panic Button"} />;
-    },
-  },
-  {
-    desc: () => {
-      return <FeatureLink anchor={"sa-healthy"} text={"Health Diagnostics"} />;
+      return <FeatureLink anchor={"sa-panic-button"} text={"Panic Button"} />;
     },
   },
   {
     desc: () => {
       return (
-        <FeatureLink anchor={"sa-deep"} text={"Annual Architecture Review"} />
+        <FeatureLink anchor={"sa-healthcheck"} text={"Health Diagnostics"} />
       );
     },
   },
   {
-    desc: () => {
-      return (
-        <FeatureLink anchor={"sa-deep"} text={"Annual Performance Review"} />
-      );
-    },
+    desc: "Annual Architecture Review",
+  },
+  {
+    desc: "Annual Performance Review",
   },
   {
     desc: "Indemnification",
   },
   {
-    desc: () => {
-      return (
-        <FeatureLink anchor={"sa-deep"} text={"Security and Policy Review"} />
-      );
-    },
+    desc: "Security and Policy Review",
   },
 ];
 
