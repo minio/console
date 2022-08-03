@@ -19,13 +19,11 @@ import { SVGProps } from "react";
 
 const OIDCIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    height={25}
-    width={25}
     fill={"currentcolor"}
     className={`min-icon`}
-    viewBox="0 0 281.6524 260.84427"
-    id="svg3732"
-    version="1.1"
+    viewBox="0 0 275 275"
+     xmlns="http://www.w3.org/2000/svg"
+     {...props}
   >
     <defs id="defs3736" />
     <g

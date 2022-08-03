@@ -24,8 +24,7 @@ const LDAPIcon = (props: SVGProps<SVGSVGElement>) => (
     fill={"currentcolor"}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 550 350"
-    height={25}
-    width={25}
+    
   >
     <metadata id="metadata4860"></metadata>
     <defs id="defs4858">
