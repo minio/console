@@ -69,7 +69,12 @@ export const FEATURE_ITEMS: FeatureItem[] = [
   },
   {
     desc: () => {
-      return <FeatureLink anchor={"sa-long-term-support"} text={"Software Release"} />;
+      return (
+        <FeatureLink
+          anchor={"sa-long-term-support"}
+          text={"Software Release"}
+        />
+      );
     },
   },
   {
@@ -88,7 +93,9 @@ export const FEATURE_ITEMS: FeatureItem[] = [
   },
   {
     desc: () => {
-      return <FeatureLink anchor={"sa-healthcheck"} text={"Health Diagnostics"} />;
+      return (
+        <FeatureLink anchor={"sa-healthcheck"} text={"Health Diagnostics"} />
+      );
     },
   },
   {
