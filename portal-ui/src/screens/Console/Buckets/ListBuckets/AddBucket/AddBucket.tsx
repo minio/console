@@ -16,8 +16,9 @@
 
 import React, { Fragment, useEffect } from "react";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress, Box } from "@mui/material";
+import { Box, Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
@@ -51,7 +52,8 @@ import {
 } from "./addBucketsSlice";
 import { addBucketAsync } from "./addBucketThunks";
 import AddBucketName from "./AddBucketName";
-import { useNavigate } from "react-router-dom";
+import { IAM_SCOPES } from "../../../../../common/SecureComponent/permissions";
+import { hasPermission } from "../../../../../common/SecureComponent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -142,6 +144,11 @@ const AddBucket = ({ classes }: IsetProps) => {
     (state: AppState) => state.addBucket.navigateTo
   );
 
+  const lockingAllowed = hasPermission("*", [
+    IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+    IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
+  ]);
+
   const resForm = () => {
     dispatch(resetForm());
   };
@@ -178,15 +185,31 @@ const AddBucket = ({ classes }: IsetProps) => {
                   <br />
                   <b>Object Locking</b> prevents objects from being deleted.
                   Required to support retention and legal hold. Can only be
-                  enabled at bucket creation.
+                  enabled at bucket creation.{" "}
+                  {!lockingAllowed ? (
+                    <Fragment>
+                      <br />
+                      <span>
+                        To enable this option{" "}
+                        <i>s3:PutBucketObjectLockConfiguration</i> and{" "}
+                        <i>s3:PutBucketVersioning</i> permissions must be set.
+                      </span>
+                    </Fragment>
+                  ) : (
+                    ""
+                  )}
                   <br />
                   <br />
                   <b>Quota</b> limits the amount of data in the bucket.
-                  <br />
-                  <br />
-                  <b>Retention</b> imposes rules to prevent object deletion for
-                  a period of time. Versioning must be enabled in order to set
-                  bucket retention policies.
+                  {lockingAllowed && (
+                    <Fragment>
+                      <br />
+                      <br />
+                      <b>Retention</b> imposes rules to prevent object deletion
+                      for a period of time. Versioning must be enabled in order
+                      to set bucket retention policies.
+                    </Fragment>
+                  )}
                   <br />
                   <br />
                   <b>Bucket Naming Rules</b>
@@ -340,7 +363,9 @@ const AddBucket = ({ classes }: IsetProps) => {
                   value="locking"
                   id="locking"
                   name="locking"
-                  disabled={lockingFieldDisabled || !distributedSetup}
+                  disabled={
+                    lockingFieldDisabled || !distributedSetup || !lockingAllowed
+                  }
                   checked={lockingEnabled}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     dispatch(setEnableObjectLocking(event.target.checked));
@@ -399,7 +424,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                   </Grid>
                 </React.Fragment>
               )}
-              {versioningEnabled && distributedSetup && (
+              {versioningEnabled && distributedSetup && lockingAllowed && (
                 <Grid item xs={12}>
                   <FormSwitchWrapper
                     value="bucket_retention"
