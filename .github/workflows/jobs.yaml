@@ -290,15 +290,16 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
       - name: Read .nvmrc
         id: node_version
-        run: echo ::set-output name=NODE_VERSION::$(cat .nvmrc)
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
 
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ env.NVMRC }}
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -392,11 +393,17 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -471,11 +478,17 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -550,11 +563,17 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -631,11 +650,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -700,11 +722,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -769,11 +794,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -838,11 +866,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -907,11 +938,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -976,11 +1010,17 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -1055,11 +1095,18 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
+
       - uses: actions/cache@v2
         name: Go Mod Cache
         with:
