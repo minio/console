@@ -31,6 +31,11 @@ import IDPActiveDirectory from "./IdentityProvider/IDPActiveDirectory";
 import IDPOpenID from "./IdentityProvider/IDPOpenID";
 import makeStyles from "@mui/styles/makeStyles";
 import IDPBuiltIn from "./IdentityProvider/IDPBuiltIn";
+import {
+  OIDCLogoElement,
+  LDAPLogoElement,
+  BuiltInLogoElement,
+} from "../../LogoComponents";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,12 +45,13 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: 10,
 
       "& label": {
-        fontSize: 14,
+        fontSize: 16,
+        fontWeight: 600,
       },
       "& div": {
         display: "flex",
-        flexFlow: "column",
-        alignItems: "baseline",
+        flexFlow: "row",
+        alignItems: "top",
       },
     },
     ...createTenantCommon,
@@ -71,20 +77,19 @@ const IdentityProvider = () => {
           Manager.
         </span>
       </div>
-      <Grid item xs={12} className={classes.protocolRadioOptions}>
-        <label>Protocol</label>
+      <Grid item xs={12} padding="10px">
         <RadioGroupSelector
           currentSelection={idpSelection}
           id="idp-options"
           name="idp-options"
-          label=" "
+          label="Protocol"
           onChange={(e) => {
             dispatch(setIDP(e.target.value));
           }}
           selectorOptions={[
-            { label: "Built-in", value: "Built-in" },
-            { label: "OpenID", value: "OpenID" },
-            { label: "Active Directory", value: "AD" },
+            { label: <BuiltInLogoElement />, value: "Built-in" },
+            { label: <OIDCLogoElement />, value: "OpenID" },
+            { label: <LDAPLogoElement />, value: "AD" },
           ]}
         />
       </Grid>
