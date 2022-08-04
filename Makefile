@@ -64,7 +64,8 @@ swagger-operator:
 	@swagger generate server -A operator --main-package=operator --server-package=operatorapi --exclude-main -P models.Principal -f ./swagger-operator.yml -r NOTICE
 
 assets:
-	@(cd portal-ui; yarn install --prefer-offline; make build-static; yarn prettier --write . --loglevel warn; cd ..)
+	@(if [ -f "${NVM_DIR}/nvm.sh" ]; then \. "${NVM_DIR}/nvm.sh" && nvm install && nvm use && npm install -g yarn ; fi &&\
+	  cd portal-ui; yarn install --prefer-offline; make build-static; yarn prettier --write . --loglevel warn; cd ..)
 
 test-integration:
 	@(docker stop pgsqlcontainer || true)
