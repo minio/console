@@ -6,6 +6,7 @@ BUILD_TIME:=$(shell date 2>/dev/null)
 TAG ?= "minio/console:$(BUILD_VERSION)-dev"
 MINIO_VERSION ?= "quay.io/minio/minio:latest"
 TARGET_BUCKET ?= "target"
+NODE_VERSION := $(shell cat .nvmrc)
 
 default: console
 
@@ -15,7 +16,7 @@ console:
 	@(GO111MODULE=on CGO_ENABLED=0 go build -trimpath --tags=kqueue,operator --ldflags "-s -w" -o console ./cmd/console)
 
 k8sdev:
-	@docker build -t $(TAG) --build-arg build_version=$(BUILD_VERSION) --build-arg build_time='$(BUILD_TIME)' .
+	@docker build -t $(TAG) --build-arg build_version=$(BUILD_VERSION) --build-arg build_time='$(BUILD_TIME)' --build-arg NODE_VERSION='$(NODE_VERSION)' .
 	@kind load docker-image $(TAG)
 	@echo "Done, now restart your console deployment"
 
@@ -261,7 +262,7 @@ clean:
 	@rm -vf console
 
 docker:
-	@docker buildx build --output=type=docker --platform linux/amd64 -t $(TAG) --build-arg build_version=$(BUILD_VERSION) --build-arg build_time='$(BUILD_TIME)' .
+	@docker buildx build --output=type=docker --platform linux/amd64 -t $(TAG) --build-arg build_version=$(BUILD_VERSION) --build-arg build_time='$(BUILD_TIME)' --build-arg NODE_VERSION='$(NODE_VERSION)' .
 
 release: swagger-gen
 	@echo "Generating Release: $(RELEASE)"

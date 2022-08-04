@@ -289,9 +289,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NODE_VERSION::$(cat .nvmrc)
+
       - uses: actions/setup-node@v2
         with:
-          node-version: '17'
+          node-version: ${{ env.NVMRC }}
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 

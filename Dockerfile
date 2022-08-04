@@ -1,4 +1,5 @@
-FROM node:17 as uilayer
+ARG NODE_VERSION
+FROM node:$NODE_VERSION as uilayer
 
 WORKDIR /app
 
