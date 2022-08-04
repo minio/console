@@ -24,7 +24,7 @@ import {
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Button, Grid, Link } from "@mui/material";
+import { Box, Button, Link } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import { CopyIcon, UsersIcon } from "../../../icons";
@@ -55,17 +55,13 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
 
-import SettingsIcon from "../../../icons/SettingsIcon";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-
 import RegisterHelpBox from "./RegisterHelpBox";
-import RegistrationStatusBanner from "./RegistrationStatusBanner";
 import { selOpMode, setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { TabPanel } from "../../shared/tabs";
-import { ClusterRegistered, FormTitle } from "./utils";
+import { ClusterRegistered, FormTitle, ProxyConfiguration } from "./utils";
 import ApiKeyRegister from "./ApiKeyRegister";
 interface IRegister {
   classes: any;
@@ -161,7 +157,6 @@ const Register = ({ classes }: IRegister) => {
 
   const [initialLicenseLoading, setInitialLicenseLoading] =
     useState<boolean>(true);
-  const [displaySubnetProxy, setDisplaySubnetProxy] = useState<boolean>(false);
   const clearForm = () => {
     setSubnetAccessToken("");
     setSelectedSubnetOrganization("");
@@ -470,111 +465,128 @@ const Register = ({ classes }: IRegister) => {
     );
   } else {
     clusterRegistrationForm = (
-      <Box
-        sx={{
-          display: "flex",
-          flexFlow: {
-            xs: "column",
-            md: "row",
-          },
-        }}
-      >
+      <Fragment>
+        <Box
+          sx={{
+            "& .title-text": {
+              marginLeft: "27px",
+              fontWeight: 600,
+            },
+          }}
+        >
+          <FormTitle
+            icon={<OnlineRegistrationIcon />}
+            title={`Online activation of MinIO Subscription Network License`}
+          />
+        </Box>
         <Box
           sx={{
             display: "flex",
-            flexFlow: "column",
-            flex: "2",
+            flexFlow: {
+              xs: "column",
+              md: "row",
+            },
           }}
         >
           <Box
             sx={{
-              fontSize: "16px",
               display: "flex",
               flexFlow: "column",
-              marginTop: "30px",
-              marginBottom: "30px",
+              flex: "2",
             }}
           >
-            Use your MinIO Subscription Network login credentials to register
-            this cluster.
-          </Box>
-          <Box
-            sx={{
-              flex: "1",
-            }}
-          >
-            <InputBoxWrapper
-              className={classes.spacerBottom}
-              classes={{
-                inputLabel: classes.sizedLabel,
-              }}
-              id="subnet-email"
-              name="subnet-email"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setSubnetEmail(event.target.value)
-              }
-              label="Email"
-              value={subnetEmail}
-              overlayIcon={<UsersIcon />}
-            />
-            <InputBoxWrapper
-              className={classes.spacerBottom}
-              classes={{
-                inputLabel: classes.sizedLabel,
-              }}
-              id="subnet-password"
-              name="subnet-password"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setSubnetPassword(event.target.value)
-              }
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              value={subnetPassword}
-              overlayIcon={
-                showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
-              }
-              overlayAction={() => setShowPassword(!showPassword)}
-            />
-
             <Box
               sx={{
+                fontSize: "16px",
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
+                flexFlow: "column",
+                marginTop: "30px",
+                marginBottom: "30px",
               }}
             >
-              <Button
-                type="submit"
-                className={classes.spacerRight}
-                variant="outlined"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.open(
-                    `https://min.io/signup?ref=${operatorMode ? "op" : "con"}`,
-                    "_blank"
-                  );
+              Use your MinIO Subscription Network login credentials to register
+              this cluster.
+            </Box>
+            <Box
+              sx={{
+                flex: "1",
+              }}
+            >
+              <InputBoxWrapper
+                className={classes.spacerBottom}
+                classes={{
+                  inputLabel: classes.sizedLabel,
+                }}
+                id="subnet-email"
+                name="subnet-email"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setSubnetEmail(event.target.value)
+                }
+                label="Email"
+                value={subnetEmail}
+                overlayIcon={<UsersIcon />}
+              />
+              <InputBoxWrapper
+                className={classes.spacerBottom}
+                classes={{
+                  inputLabel: classes.sizedLabel,
+                }}
+                id="subnet-password"
+                name="subnet-password"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setSubnetPassword(event.target.value)
+                }
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                value={subnetPassword}
+                overlayIcon={
+                  showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
+                }
+                overlayAction={() => setShowPassword(!showPassword)}
+              />
+
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
                 }}
               >
-                Sign up
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={
-                  loading ||
-                  subnetEmail.trim().length === 0 ||
-                  subnetPassword.trim().length === 0
-                }
-                onClick={() => subnetLogin()}
-              >
-                Register
-              </Button>
+                <Button
+                  type="submit"
+                  className={classes.spacerRight}
+                  variant="outlined"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.open(
+                      `https://min.io/signup?ref=${
+                        operatorMode ? "op" : "con"
+                      }`,
+                      "_blank"
+                    );
+                  }}
+                >
+                  Sign up
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={
+                    loading ||
+                    subnetEmail.trim().length === 0 ||
+                    subnetPassword.trim().length === 0
+                  }
+                  onClick={() => subnetLogin()}
+                >
+                  Register
+                </Button>
+              </Box>
             </Box>
           </Box>
+          <RegisterHelpBox />
         </Box>
-        <RegisterHelpBox />
-      </Box>
+      </Fragment>
     );
   }
 
@@ -595,15 +607,10 @@ const Register = ({ classes }: IRegister) => {
             linkClass={classes.link}
           />
         ) : (
-          <ApiKeyRegister
-            classes={classes}
-            setApiKey={setLicense}
-            apiKey={license}
-            loading={loading}
-            onRegister={subnetLogin}
-          />
+          <ApiKeyRegister afterRegister={fetchLicenseInfo} />
         )}
       </Box>
+      <ProxyConfiguration linkClass={classes.link} />
     </Fragment>
   );
 
@@ -791,9 +798,6 @@ const Register = ({ classes }: IRegister) => {
     </Fragment>
   );
 
-  const proxyConfigurationCommand =
-    "mc admin config set {alias} subnet proxy={proxy}";
-
   const regUi = (
     <Fragment>
       <Box
@@ -805,141 +809,17 @@ const Register = ({ classes }: IRegister) => {
           padding: "43px",
         }}
       >
-        {clusterRegistered && (
-          <RegistrationStatusBanner email={licenseInfo?.email} />
+        {clusterRegistered && licenseInfo ? (
+          <ClusterRegistered
+            email={licenseInfo.email}
+            linkClass={classes.link}
+          />
+        ) : (
+          clusterRegistrationForm
         )}
-        {clusterRegistered ? (
-          <Grid item xs={12} marginTop={"25px"}>
-            <Box
-              sx={{
-                padding: "20px",
-                "& a": {
-                  color: "#2781B0",
-                  cursor: "pointer",
-                },
-              }}
-            >
-              Login to{" "}
-              <Link
-                href="https://subnet.min.io"
-                target="_blank"
-                className={classes.link}
-              >
-                SUBNET
-              </Link>{" "}
-              to avail support for this MinIO cluster
-            </Box>
-          </Grid>
-        ) : null}
-
-        {clusterRegistered ? null : (
-          <Box
-            sx={{
-              "& .title-text": {
-                marginLeft: "27px",
-                fontWeight: 600,
-              },
-            }}
-          >
-            <FormTitle
-              icon={<OnlineRegistrationIcon />}
-              title={`Online activation of MinIO Subscription Network License`}
-            />
-          </Box>
-        )}
-
-        {clusterRegistered ? null : clusterRegistrationForm}
       </Box>
 
-      {!clusterRegistered && (
-        <Fragment>
-          <Box
-            sx={{
-              border: "1px solid #eaeaea",
-              borderRadius: "2px",
-              display: "flex",
-              padding: "23px",
-              marginTop: "40px",
-              alignItems: "start",
-              justifyContent: "space-between",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexFlow: "column",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  "& .min-icon": {
-                    height: "22px",
-                    width: "22px",
-                  },
-                }}
-              >
-                <SettingsIcon />
-                <div style={{ marginLeft: "10px", fontWeight: 600 }}>
-                  Proxy Configuration
-                </div>
-              </Box>
-              <Box
-                sx={{
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                  fontSize: "14px",
-                }}
-              >
-                For airgap/firewalled environments it is possible to{" "}
-                <Link
-                  className={classes.link}
-                  href="https://docs.min.io/docs/minio-server-configuration-guide.html?ref=con"
-                  target="_blank"
-                >
-                  configure a proxy
-                </Link>{" "}
-                to connect to SUBNET .
-              </Box>
-              <Box>
-                {displaySubnetProxy && (
-                  <InputBoxWrapper
-                    disabled
-                    id="subnetProxy"
-                    name="subnetProxy"
-                    placeholder=""
-                    onChange={() => {}}
-                    label=""
-                    value={proxyConfigurationCommand}
-                    overlayIcon={<CopyIcon />}
-                    extraInputProps={{
-                      readOnly: true,
-                    }}
-                    overlayAction={() =>
-                      navigator.clipboard.writeText(proxyConfigurationCommand)
-                    }
-                  />
-                )}
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-              }}
-            >
-              <FormSwitchWrapper
-                value="enableProxy"
-                id="enableProxy"
-                name="enableProxy"
-                checked={displaySubnetProxy}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setDisplaySubnetProxy(event.target.checked);
-                }}
-              />
-            </Box>
-          </Box>
-        </Fragment>
-      )}
+      {!clusterRegistered && <ProxyConfiguration linkClass={classes.link} />}
     </Fragment>
   );
 
