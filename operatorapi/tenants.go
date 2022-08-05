@@ -1541,7 +1541,7 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-
+	fmt.Println("In setLogs params.Data:", params.Data)
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
@@ -1725,6 +1725,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 				minTenant.Spec.Log.Db.Annotations = dbAnnotations
 				minTenant.Spec.Log.Db.NodeSelector = dbNodeSelector
 				minTenant.Spec.Log.Db.Image = params.Data.DbImage
+				minTenant.Spec.Log.Db.InitImage = params.Data.DbInitImage
 				minTenant.Spec.Log.Db.ServiceAccountName = params.Data.DbServiceAccountName
 				minTenant.Spec.Log.Db.SecurityContext, err = convertModelSCToK8sSC(params.Data.DbSecurityContext)
 				if err != nil {
