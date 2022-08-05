@@ -222,7 +222,7 @@ const LoggingDBDetails = ({
               cleanValidation(`dbImage`);
             }}
             key={`dbImage`}
-            pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+            pattern={"^[a-zA-Z0-9-_./:]{1,253}$"}
             error={validationErrors[`dbImage`] || ""}
           />
         </Grid>
@@ -240,7 +240,7 @@ const LoggingDBDetails = ({
               cleanValidation(`dbInitImage`);
             }}
             key={`dbInitImage`}
-            pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+            pattern={"^[a-zA-Z0-9-_./:]{1,253}$"}
             error={validationErrors[`dbInitImage`] || ""}
           />
         </Grid>

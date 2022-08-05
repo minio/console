@@ -1541,7 +1541,6 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 func setTenantLogsResponse(session *models.Principal, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	fmt.Println("In setLogs params.Data:", params.Data)
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)

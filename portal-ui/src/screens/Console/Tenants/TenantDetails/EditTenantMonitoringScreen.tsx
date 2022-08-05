@@ -359,7 +359,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`image`);
               }}
               key={`image`}
-              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+              pattern={"^[a-zA-Z0-9-_./:]{1,253}$"}
               error={validationErrors[`image`] || ""}
             />
           </Grid>
@@ -377,7 +377,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`sidecarImage`);
               }}
               key={`sidecarImage`}
-              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+              pattern={"^[a-zA-Z0-9-_./:]{1,253}$"}
               error={validationErrors[`sidecarImage`] || ""}
             />
           </Grid>
@@ -395,7 +395,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`initImage`);
               }}
               key={`initImage`}
-              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+              pattern={"^[a-zA-Z0-9-_./:]{1,253}$"}
               error={validationErrors[`initImage`] || ""}
             />
           </Grid>
