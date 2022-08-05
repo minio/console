@@ -161,8 +161,8 @@ func createServiceAccountCreds(ctx context.Context, userClient MinioAdmin, polic
 }
 
 // getCreateServiceAccountResponse creates a service account with the defined policy for the user that
-//   is requestingit ,it first gets the credentials of the user and creates a client which is going to
-//   make the call to create the Service Account
+// is requesting, it first gets the credentials of the user and creates a client which is going to
+// make the call to create the Service Account
 func getCreateServiceAccountResponse(session *models.Principal, params saApi.CreateServiceAccountParams) (*models.ServiceAccountCreds, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -222,8 +222,8 @@ func createAUserServiceAccountCreds(ctx context.Context, userClient MinioAdmin, 
 }
 
 // getCreateServiceAccountResponse creates a service account with the defined policy for the user that
-//   is requesting it ,it first gets the credentials of the user and creates a client which is going to
-//   make the call to create the Service Account
+// is requesting it ,it first gets the credentials of the user and creates a client which is going to
+// make the call to create the Service Account
 func getCreateAUserServiceAccountResponse(session *models.Principal, params userApi.CreateAUserServiceAccountParams) (*models.ServiceAccountCreds, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -247,7 +247,7 @@ func getCreateAUserServiceAccountResponse(session *models.Principal, params user
 }
 
 // getCreateServiceAccountCredsResponse creates a service account with the defined policy for the user that
-//   is requesting it, and with the credentials provided
+// is requesting it, and with the credentials provided
 func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params userApi.CreateServiceAccountCredentialsParams) (*models.ServiceAccountCreds, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
