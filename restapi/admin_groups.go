@@ -280,8 +280,8 @@ func setGroupStatus(ctx context.Context, client MinioAdmin, group, status string
 }
 
 // getUpdateGroupResponse updates a group by adding or removing it's members depending on the request,
-// 	also sets the group's status if status in the request is different than the current one.
-//  Then serializes the output to be used by the handler.
+// also sets the group's status if status in the request is different than the current one.
+// Then serializes the output to be used by the handler.
 func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGroupParams) (*models.Group, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -320,8 +320,8 @@ func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGro
 }
 
 // groupUpdate updates a group given the expected parameters, compares the expected parameters against the current ones
-//   and updates them accordingly, status is only updated if the expected status is different than the current one.
-//   Then fetches the group again to return the object updated.
+// and updates them accordingly, status is only updated if the expected status is different than the current one.
+// Then fetches the group again to return the object updated.
 func groupUpdate(ctx context.Context, client MinioAdmin, groupName string, expectedGroup *models.UpdateGroupRequest) (*madmin.GroupDesc, error) {
 	expectedMembers := expectedGroup.Members
 	expectedStatus := *expectedGroup.Status

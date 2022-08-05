@@ -547,7 +547,7 @@ func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName s
 }
 
 // getBucketSetPolicyResponse calls setBucketAccessPolicy() to set a access policy to a bucket
-//   and returns the serialized output.
+// and returns the serialized output.
 func getBucketSetPolicyResponse(session *models.Principal, params bucketApi.BucketSetPolicyParams) (*models.Bucket, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()

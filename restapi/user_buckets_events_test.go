@@ -37,7 +37,7 @@ func (mc minioClientMock) getBucketNotification(ctx context.Context, bucketName 
 	return minioGetBucketNotificationMock(ctx, bucketName)
 }
 
-//// Mock mc S3Client functions ////
+// // Mock mc S3Client functions ////
 var (
 	mcAddNotificationConfigMock    func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
 	mcRemoveNotificationConfigMock func(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error
