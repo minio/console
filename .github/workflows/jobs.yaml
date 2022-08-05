@@ -29,7 +29,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
 
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -98,7 +98,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
 
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -168,7 +168,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
 
     steps:
 
@@ -210,7 +210,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -234,7 +234,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -281,7 +281,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -341,7 +341,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -379,7 +379,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -458,7 +458,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -537,7 +537,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -618,7 +618,7 @@ jobs:
     timeout-minutes: 5
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -687,7 +687,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -756,7 +756,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -825,7 +825,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -894,7 +894,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -963,7 +963,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1042,7 +1042,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1116,7 +1116,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1154,7 +1154,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1192,7 +1192,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1230,7 +1230,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1268,7 +1268,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1306,7 +1306,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1344,7 +1344,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1382,7 +1382,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1428,7 +1428,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1475,7 +1475,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
 
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1587,7 +1587,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}

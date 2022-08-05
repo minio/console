@@ -288,8 +288,9 @@ type httpRange struct {
 }
 
 // Example:
-//   "Content-Range": "bytes 100-200/1000"
-//   "Content-Range": "bytes 100-200/*"
+//
+//	"Content-Range": "bytes 100-200/1000"
+//	"Content-Range": "bytes 100-200/*"
 func getRange(start, end, total int64) string {
 	// unknown total: -1
 	if total == -1 {
@@ -300,10 +301,11 @@ func getRange(start, end, total int64) string {
 }
 
 // Example:
-//   "Range": "bytes=100-200"
-//   "Range": "bytes=-50"
-//   "Range": "bytes=150-"
-//   "Range": "bytes=0-0,-1"
+//
+//	"Range": "bytes=100-200"
+//	"Range": "bytes=-50"
+//	"Range": "bytes=150-"
+//	"Range": "bytes=0-0,-1"
 func parseRange(s string, size int64) ([]httpRange, error) {
 	if s == "" {
 		return nil, nil // header not present
@@ -669,8 +671,9 @@ func deleteObjects(ctx context.Context, client MCClient, bucket string, path str
 }
 
 // deleteMultipleObjects uses listing before removal, it can list recursively or not,
-//   Use cases:
-//      * Remove objects recursively
+//
+//	Use cases:
+//	   * Remove objects recursively
 func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool, allVersions bool) error {
 	isBypass := false
 	isIncomplete := false

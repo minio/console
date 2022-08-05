@@ -4,6 +4,12 @@ linters-settings:
 
   misspell:
     locale: US
+    
+  goheader:
+    values:
+      regexp:
+        copyright-holder: Copyright \(c\) (20\d\d\-20\d\d)|2021|({{year}})
+    template-path: .license.tmpl
 
 linters:
   disable-all: true
@@ -28,13 +34,6 @@ linters:
     - tenv
     - durationcheck
 
-linters-settings:
-  goheader:
-    values:
-      regexp:
-        copyright-holder: Copyright \(c\) (20\d\d\-20\d\d)|2021|({{year}})
-    template-path: .license.tmpl
-
 service:
   golangci-lint-version: 1.43.0 # use the fixed version to not introduce new linters unexpectedly
 
@@ -52,3 +51,4 @@ run:
   skip-dirs:
     - pkg/clientgen
     - pkg/apis/networking.gke.io
+    - restapi/operations
