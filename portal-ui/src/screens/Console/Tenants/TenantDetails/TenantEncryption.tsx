@@ -97,6 +97,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
     useState<boolean>(false);
   const [securityContext, setSecurityContext] = useState<ISecurityContext>({
     fsGroup: "1000",
+    fsGroupChangePolicy: "Always",
     runAsGroup: "1000",
     runAsNonRoot: true,
     runAsUser: "1000",
