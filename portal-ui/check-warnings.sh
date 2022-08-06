@@ -10,7 +10,7 @@ die() {
 
 try() { "$@" &> yarn.log || die "cannot $*"; }
 
-rm yarn.log
+rm -f yarn.log
 try make build-static
 
 if cat yarn.log | grep "Compiled with warnings"; then
