@@ -127,6 +127,7 @@ import {
   setBucketInfo,
 } from "../../../BucketDetails/bucketDetailsSlice";
 import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
+import { selFeatures } from "../../../../consoleSlice";
 
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
@@ -155,6 +156,9 @@ const useStyles = makeStyles((theme: Theme) =>
     browsePaper: {
       border: 0,
       height: "calc(100vh - 210px)",
+      "&.isEmbedded": {
+        height: "calc(100vh - 315px)",
+      },
       "&.actionsPanelOpen": {
         minHeight: "100%",
       },
@@ -314,6 +318,9 @@ const ListObjects = () => {
   const allowResources = useSelector(
     (state: AppState) => state.console.session.allowResources
   );
+
+  const features = useSelector(selFeatures);
+  const obOnly = !!features?.includes("object-browser-only");
 
   const [records, setRecords] = useState<BucketObjectItem[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
@@ -1539,8 +1546,8 @@ const ListObjects = () => {
                     idField="name"
                     records={payload}
                     customPaperHeight={`${classes.browsePaper} ${
-                      detailsOpen ? "actionsPanelOpen" : ""
-                    }`}
+                      obOnly ? "isEmbedded" : ""
+                    } ${detailsOpen ? "actionsPanelOpen" : ""}`}
                     selectedItems={selectedObjects}
                     onSelect={selectListObjects}
                     customEmptyMessage={`This location is empty${
