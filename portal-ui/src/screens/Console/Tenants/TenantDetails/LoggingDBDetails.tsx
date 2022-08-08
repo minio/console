@@ -57,7 +57,7 @@ import {
 
 import SecurityContextSelector from "../securityContextSelector";
 
-import { clearValidationError, imagePattern, resourcePattern } from "../utils";
+import { clearValidationError, imagePattern, numericPattern } from "../utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -251,7 +251,7 @@ const LoggingDBDetails = ({
             placeholder={"DB CPU Request"}
             name={`dbCPURequest`}
             value={dbCpuRequest}
-            pattern={resourcePattern}
+            pattern={numericPattern}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               if (event.target.validity.valid) {
                 dispatch(setDBCPURequest(event.target.value));
@@ -275,7 +275,7 @@ const LoggingDBDetails = ({
               }
               cleanValidation(`dbMemRequest`);
             }}
-            pattern={resourcePattern}
+            pattern={numericPattern}
             key={`dbMemRequest`}
             error={validationErrors[`dbMemRequest`] || ""}
             overlayObject={

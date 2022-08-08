@@ -44,7 +44,7 @@ import { IKeyValue, ITenantAuditLogs } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import SecurityContextSelector from "../securityContextSelector";
-import { clearValidationError, imagePattern, resourcePattern } from "../utils";
+import { clearValidationError, imagePattern, numericPattern } from "../utils";
 import {
   setImage,
   setDiskCapacityGB,
@@ -247,7 +247,7 @@ const TenantAuditLogging = ({
                 cleanValidation(`diskCapacityGB`);
               }}
               key={`diskCapacityGB`}
-              pattern={resourcePattern}
+              pattern={numericPattern}
               error={validationErrors[`diskCapacityGB`] || ""}
               overlayObject={
                 <InputUnitMenu
@@ -267,7 +267,7 @@ const TenantAuditLogging = ({
               placeholder={"CPU Request"}
               name={`cpuRequest`}
               value={cpuRequest}
-              pattern={resourcePattern}
+              pattern={numericPattern}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 if (event.target.validity.valid) {
                   dispatch(setCPURequest(event.target.value));
@@ -292,7 +292,7 @@ const TenantAuditLogging = ({
                 }
                 cleanValidation(`memRequest`);
               }}
-              pattern={resourcePattern}
+              pattern={numericPattern}
               key={`memRequest`}
               error={validationErrors[`memRequest`] || ""}
               overlayObject={

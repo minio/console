@@ -60,7 +60,7 @@ import {
   setRunAsUser,
   setRunAsNonRoot,
 } from "../TenantDetails/tenantMonitoringSlice";
-import { clearValidationError, imagePattern, resourcePattern } from "../utils";
+import { clearValidationError, imagePattern, numericPattern } from "../utils";
 import SecurityContextSelector from "../securityContextSelector";
 
 interface ITenantMonitoring {
@@ -413,7 +413,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`diskCapacityGB`);
               }}
               key={`diskCapacityGB`}
-              pattern={resourcePattern}
+              pattern={numericPattern}
               error={validationErrors[`diskCapacityGB`] || ""}
               overlayObject={
                 <InputUnitMenu
@@ -433,7 +433,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
               placeholder={"CPU Request"}
               name={`cpuRequest`}
               value={cpuRequest}
-              pattern={resourcePattern}
+              pattern={numericPattern}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 if (event.target.validity.valid) {
                   dispatch(setCPURequest(event.target.value));
@@ -457,7 +457,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 }
                 cleanValidation(`memRequest`);
               }}
-              pattern={resourcePattern}
+              pattern={numericPattern}
               key={`memRequest`}
               error={validationErrors[`memRequest`] || ""}
               overlayObject={
