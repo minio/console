@@ -213,7 +213,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -237,7 +237,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -250,7 +250,7 @@ jobs:
 
       - name: Build on ${{ matrix.os }}
         continue-on-error: false
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'self-hosted'
         env:
           CGO_ENABLED: 0
           GO111MODULE: on
@@ -269,7 +269,7 @@ jobs:
       image: "returntocorp/semgrep"
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Check out source code
         uses: actions/checkout@v2
@@ -284,7 +284,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -350,7 +350,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -388,7 +388,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -473,7 +473,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -558,7 +558,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -645,7 +645,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -717,7 +717,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -789,7 +789,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -861,7 +861,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -933,7 +933,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1005,7 +1005,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1090,7 +1090,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1171,7 +1171,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1209,7 +1209,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1247,7 +1247,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1285,7 +1285,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1323,7 +1323,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1361,7 +1361,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1399,7 +1399,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1437,7 +1437,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1483,7 +1483,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
@@ -1642,7 +1642,7 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
-        os: [ ubuntu-latest ]
+        os: [ self-hosted ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v2
