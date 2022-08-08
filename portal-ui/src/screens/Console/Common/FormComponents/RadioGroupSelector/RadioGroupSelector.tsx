@@ -28,14 +28,14 @@ import { fieldBasic, radioIcons, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 
 export interface SelectorTypes {
-  label: string;
+  label: any;
   value: string;
 }
 
 interface RadioGroupProps {
   selectorOptions: SelectorTypes[];
   currentSelection: string;
-  label: string;
+  label: any;
   id: string;
   name: string;
   tooltip?: string;
@@ -109,8 +109,8 @@ export const RadioGroupSelector = ({
   displayInColumn = false,
 }: RadioGroupProps) => {
   return (
-    <Grid container alignItems={"center"}>
-      <Grid item xs>
+    <Grid container spacing={1}>
+      <Grid item fontSize={60}>
         <InputLabel htmlFor={id} className={classes.inputLabel}>
           <span>{label}</span>
           {tooltip !== "" && (
@@ -124,7 +124,7 @@ export const RadioGroupSelector = ({
           )}
         </InputLabel>
       </Grid>
-      <Grid item xs className={classes.radioOptionsLayout}>
+      <Grid item>
         <RadioGroup
           aria-label={id}
           id={id}
@@ -132,7 +132,7 @@ export const RadioGroupSelector = ({
           value={currentSelection}
           onChange={onChange}
           row={!displayInColumn}
-          style={{ display: "block", textAlign: "right" }}
+          style={{ display: "flex", textAlign: "right" }}
         >
           {selectorOptions.map((selectorOption) => {
             return (

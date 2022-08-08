@@ -180,8 +180,9 @@ const (
 // or data key provided as plaintext.
 //
 // The returned ciphertext data consists of:
-//    AEAD ID | iv | nonce | encrypted data
-//       1      16		 12     ~ len(data)
+//
+//	AEAD ID | iv | nonce | encrypted data
+//	   1      16		 12     ~ len(data)
 func encrypt(plaintext, associatedData []byte) ([]byte, error) {
 	iv, err := sioutil.Random(16) // 16 bytes IV
 	if err != nil {

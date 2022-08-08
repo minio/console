@@ -29,7 +29,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
 
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -98,7 +98,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
 
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -168,7 +168,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
 
     steps:
 
@@ -210,7 +210,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -234,7 +234,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -281,7 +281,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -289,11 +289,17 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '17'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -341,7 +347,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -379,7 +385,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -387,11 +393,17 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -458,7 +470,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -466,11 +478,17 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -537,7 +555,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -545,11 +563,17 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -618,7 +642,7 @@ jobs:
     timeout-minutes: 5
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -626,11 +650,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -687,7 +714,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -695,11 +722,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -756,7 +786,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -764,11 +794,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -825,7 +858,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -833,11 +866,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -894,7 +930,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -902,11 +938,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -963,7 +1002,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -971,11 +1010,17 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -1042,7 +1087,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1050,11 +1095,18 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
+
       - uses: actions/cache@v2
         name: Go Mod Cache
         with:
@@ -1116,7 +1168,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1154,7 +1206,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1192,7 +1244,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1230,7 +1282,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1268,7 +1320,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1306,7 +1358,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1344,7 +1396,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1382,7 +1434,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1428,7 +1480,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1475,7 +1527,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
 
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1587,7 +1639,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
