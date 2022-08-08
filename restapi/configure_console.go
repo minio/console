@@ -250,6 +250,8 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	return RejectS3Middleware(next)
 }
 
+const apiRequestErr = `<?xml version="1.0" encoding="UTF-8"?><Error><Code>InvalidArgument</Code><Message>S3 API Requests must be made to API port.</Message><RequestId>0</RequestId></Error>`
+
 // RejectS3Middleware will reject requests that have AWS S3 specific headers.
 func RejectS3Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -257,15 +259,10 @@ func RejectS3Middleware(next http.Handler) http.Handler {
 			len(r.Header.Get("X-Amz-Date")) > 0 ||
 			strings.HasPrefix(r.Header.Get("Authorization"), "AWS4-HMAC-SHA256") ||
 			r.URL.Query().Get("AWSAccessKeyId") != "" {
-			w.WriteHeader(http.StatusForbidden)
+
 			w.Header().Set("Location", getMinIOServer())
-			w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
-<Error>
-  <Code>AccessDenied</Code>
-  <Message>S3 API Request made to Console port. S3 Requests should be sent to API port.</Message>
-  <RequestId>0</RequestId>
-</Error>
-`))
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(apiRequestErr))
 			return
 		}
 		next.ServeHTTP(w, r)
