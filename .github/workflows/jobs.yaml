@@ -14,6 +14,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
   cancel-in-progress: true
 
+
+
 jobs:
 
   replication:
@@ -25,7 +27,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     strategy:
       matrix:
@@ -94,7 +96,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     strategy:
       matrix:
@@ -164,7 +166,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     strategy:
       matrix:
@@ -1523,7 +1525,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     strategy:
       matrix:
@@ -1616,7 +1618,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
