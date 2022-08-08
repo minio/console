@@ -44,7 +44,7 @@ import { IKeyValue, ITenantAuditLogs } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import SecurityContextSelector from "../securityContextSelector";
-import { clearValidationError } from "../utils";
+import { clearValidationError, imagePattern, resourcePattern } from "../utils";
 import {
   setImage,
   setDiskCapacityGB,
@@ -143,7 +143,7 @@ const TenantAuditLogging = ({
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
-  const imagePattern = "^[a-zA-Z0-9-_./:]{1,253}$";
+
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
     for (let i = 0; i < x.length; i++) {
@@ -247,7 +247,7 @@ const TenantAuditLogging = ({
                 cleanValidation(`diskCapacityGB`);
               }}
               key={`diskCapacityGB`}
-              pattern={"[0-9]*"}
+              pattern={resourcePattern}
               error={validationErrors[`diskCapacityGB`] || ""}
               overlayObject={
                 <InputUnitMenu
@@ -267,7 +267,7 @@ const TenantAuditLogging = ({
               placeholder={"CPU Request"}
               name={`cpuRequest`}
               value={cpuRequest}
-              pattern={"[0-9]*"}
+              pattern={resourcePattern}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 if (event.target.validity.valid) {
                   dispatch(setCPURequest(event.target.value));
@@ -292,7 +292,7 @@ const TenantAuditLogging = ({
                 }
                 cleanValidation(`memRequest`);
               }}
-              pattern={"[0-9]*"}
+              pattern={resourcePattern}
               key={`memRequest`}
               error={validationErrors[`memRequest`] || ""}
               overlayObject={

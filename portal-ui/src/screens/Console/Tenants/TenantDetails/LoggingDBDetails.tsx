@@ -57,7 +57,7 @@ import {
 
 import SecurityContextSelector from "../securityContextSelector";
 
-import { clearValidationError } from "../utils";
+import { clearValidationError, imagePattern, resourcePattern } from "../utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -142,7 +142,6 @@ const LoggingDBDetails = ({
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
-  const imagePattern = "^[a-zA-Z0-9-_./:]{1,253}$";
 
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
@@ -252,7 +251,7 @@ const LoggingDBDetails = ({
             placeholder={"DB CPU Request"}
             name={`dbCPURequest`}
             value={dbCpuRequest}
-            pattern={"[0-9]*"}
+            pattern={resourcePattern}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               if (event.target.validity.valid) {
                 dispatch(setDBCPURequest(event.target.value));
@@ -276,7 +275,7 @@ const LoggingDBDetails = ({
               }
               cleanValidation(`dbMemRequest`);
             }}
-            pattern={"[0-9]*"}
+            pattern={resourcePattern}
             key={`dbMemRequest`}
             error={validationErrors[`dbMemRequest`] || ""}
             overlayObject={

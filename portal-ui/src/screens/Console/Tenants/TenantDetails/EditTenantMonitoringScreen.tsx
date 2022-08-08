@@ -60,7 +60,7 @@ import {
   setRunAsUser,
   setRunAsNonRoot,
 } from "../TenantDetails/tenantMonitoringSlice";
-import { clearValidationError } from "../utils";
+import { clearValidationError, imagePattern, resourcePattern } from "../utils";
 import SecurityContextSelector from "../securityContextSelector";
 
 interface ITenantMonitoring {
@@ -187,7 +187,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
     dispatch(setRunAsNonRoot(res.securityContext.runAsNonRoot));
     dispatch(setFSGroup(res.securityContext.fsGroup));
   };
-  const imagePattern = "^[a-zA-Z0-9-_./:]{1,253}$";
+
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
     for (let i = 0; i < x.length; i++) {
@@ -413,7 +413,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`diskCapacityGB`);
               }}
               key={`diskCapacityGB`}
-              pattern={"[0-9]*"}
+              pattern={resourcePattern}
               error={validationErrors[`diskCapacityGB`] || ""}
               overlayObject={
                 <InputUnitMenu
@@ -433,7 +433,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
               placeholder={"CPU Request"}
               name={`cpuRequest`}
               value={cpuRequest}
-              pattern={"[0-9]*"}
+              pattern={resourcePattern}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 if (event.target.validity.valid) {
                   dispatch(setCPURequest(event.target.value));
@@ -457,7 +457,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 }
                 cleanValidation(`memRequest`);
               }}
-              pattern={"[0-9]*"}
+              pattern={resourcePattern}
               key={`memRequest`}
               error={validationErrors[`memRequest`] || ""}
               overlayObject={

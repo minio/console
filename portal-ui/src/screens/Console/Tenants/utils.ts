@@ -35,3 +35,7 @@ export const getRandomString = function (length = 16): string {
   }
   return retval;
 };
+
+export const imagePattern = "^[a-zA-Z0-9-_./:]{1,253}$";
+
+export const resourcePattern = "[0-9]*";
