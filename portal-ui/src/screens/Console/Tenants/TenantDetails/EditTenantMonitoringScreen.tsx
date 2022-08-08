@@ -187,7 +187,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
     dispatch(setRunAsNonRoot(res.securityContext.runAsNonRoot));
     dispatch(setFSGroup(res.securityContext.fsGroup));
   };
-
+  const imagePattern = "^[a-zA-Z0-9-_./:]{1,253}$";
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
     for (let i = 0; i < x.length; i++) {
@@ -359,7 +359,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`image`);
               }}
               key={`image`}
-              pattern={"^[a-zA-Z0-9-_./:]{1,253}$"}
+              pattern={imagePattern}
               error={validationErrors[`image`] || ""}
             />
           </Grid>
@@ -377,7 +377,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`sidecarImage`);
               }}
               key={`sidecarImage`}
-              pattern={"^[a-zA-Z0-9-_./:]{1,253}$"}
+              pattern={imagePattern}
               error={validationErrors[`sidecarImage`] || ""}
             />
           </Grid>
@@ -395,7 +395,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`initImage`);
               }}
               key={`initImage`}
-              pattern={"^[a-zA-Z0-9-_./:]{1,253}$"}
+              pattern={imagePattern}
               error={validationErrors[`initImage`] || ""}
             />
           </Grid>

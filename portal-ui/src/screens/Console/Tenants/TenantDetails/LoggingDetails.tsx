@@ -143,7 +143,7 @@ const TenantAuditLogging = ({
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
-
+  const imagePattern = "^[a-zA-Z0-9-_./:]{1,253}$";
   const trim = (x: IKeyValue[]): IKeyValue[] => {
     let retval: IKeyValue[] = [];
     for (let i = 0; i < x.length; i++) {
@@ -228,7 +228,7 @@ const TenantAuditLogging = ({
                 cleanValidation(`image`);
               }}
               key={`image`}
-              pattern={"^[a-zA-Z0-9-_./:]{1,253}$"}
+              pattern={imagePattern}
               error={validationErrors[`image`] || ""}
             />
           </Grid>
