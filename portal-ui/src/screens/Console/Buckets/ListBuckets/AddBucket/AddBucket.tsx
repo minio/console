@@ -185,7 +185,8 @@ const AddBucket = ({ classes }: IsetProps) => {
                   <br />
                   <br />
                   <b>Retention</b> imposes rules to prevent object deletion for
-                  a period of time.
+                  a period of time. Versioning must be enabled in order to set
+                  bucket retention policies.
                   <br />
                   <br />
                   <b>Bucket Naming Rules</b>
