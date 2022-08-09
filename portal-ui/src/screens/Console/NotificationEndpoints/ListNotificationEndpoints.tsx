@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { DialogContentText, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { red } from "@mui/material/colors";
 import Grid from "@mui/material/Grid";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
@@ -30,7 +30,7 @@ import {
   TransformedEndpointItem,
 } from "./types";
 import { getNotificationConfigKey, notificationTransform } from "./utils";
-import { AddIcon, ConfirmModalIcon, LambdaIcon } from "../../../icons";
+import { AddIcon, LambdaIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 import {
@@ -54,7 +54,7 @@ import {
   setServerNeedsRestart,
 } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
+import ConfirmDeleteTargetModal from "./ConfirmDeleteTargetModal";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -305,31 +305,15 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
         )}
 
         {isDelConfirmOpen ? (
-          <ConfirmDialog
-            title={`Delete Endpoint`}
-            confirmText={"Delete"}
-            confirmButtonProps={{
-              color: "secondary",
-              variant: "contained",
-            }}
-            isOpen={isDelConfirmOpen}
-            titleIcon={<ConfirmModalIcon />}
-            isLoading={false}
+          <ConfirmDeleteTargetModal
             onConfirm={() => {
               resetNotificationConfig(selNotifyEndPoint);
             }}
+            status={`${selNotifyEndPoint?.status}`}
+            serviceName={`${selNotifyEndPoint?.service_name}`}
             onClose={() => {
               setIsDelConfirmOpen(false);
             }}
-            confirmationContent={
-              <React.Fragment>
-                <DialogContentText>
-                  Are you sure you want to delete the notification endpoint ?
-                  {selNotifyEndPoint?.service_name} which is{" "}
-                  {selNotifyEndPoint?.status}
-                </DialogContentText>
-              </React.Fragment>
-            }
           />
         ) : null}
       </PageLayout>
