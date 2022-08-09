@@ -19,15 +19,24 @@ package operatorapi
 import (
 	"context"
 	"errors"
-
-	xhttp "github.com/minio/console/pkg/http"
-	"github.com/minio/console/pkg/subnet"
+	"os"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
+	xhttp "github.com/minio/console/pkg/http"
+	"github.com/minio/console/pkg/subnet"
 	"github.com/minio/console/restapi"
+	v2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+var (
+	apiKeySecretDefault = "operator-subnet"
+	apiKeySecretEnvVar  = "API_KEY_SECRET_NAME"
 )
 
 func registerOperatorSubnetHandlers(api *operations.OperatorAPI) {
@@ -38,6 +47,7 @@ func registerOperatorSubnetHandlers(api *operations.OperatorAPI) {
 		}
 		return operator_api.NewOperatorSubnetLoginOK().WithPayload(res)
 	})
+
 	api.OperatorAPIOperatorSubnetLoginMFAHandler = operator_api.OperatorSubnetLoginMFAHandlerFunc(func(params operator_api.OperatorSubnetLoginMFAParams, session *models.Principal) middleware.Responder {
 		res, err := getOperatorSubnetLoginMFAResponse(session, params)
 		if err != nil {
@@ -45,6 +55,7 @@ func registerOperatorSubnetHandlers(api *operations.OperatorAPI) {
 		}
 		return operator_api.NewOperatorSubnetLoginMFAOK().WithPayload(res)
 	})
+
 	api.OperatorAPIOperatorSubnetAPIKeyHandler = operator_api.OperatorSubnetAPIKeyHandlerFunc(func(params operator_api.OperatorSubnetAPIKeyParams, session *models.Principal) middleware.Responder {
 		res, err := getOperatorSubnetAPIKeyResponse(session, params)
 		if err != nil {
@@ -52,9 +63,20 @@ func registerOperatorSubnetHandlers(api *operations.OperatorAPI) {
 		}
 		return operator_api.NewOperatorSubnetAPIKeyOK().WithPayload(res)
 	})
+
 	api.OperatorAPIOperatorSubnetRegisterAPIKeyHandler = operator_api.OperatorSubnetRegisterAPIKeyHandlerFunc(func(params operator_api.OperatorSubnetRegisterAPIKeyParams, session *models.Principal) middleware.Responder {
-		// TODO: Implement
-		return operator_api.NewOperatorSubnetRegisterAPIKeyOK()
+		res, err := getOperatorSubnetRegisterAPIKeyResponse(session, params)
+		if err != nil {
+			return operator_api.NewOperatorSubnetRegisterAPIKeyDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewOperatorSubnetRegisterAPIKeyOK().WithPayload(res)
+	})
+	api.OperatorAPIOperatorSubnetAPIKeyInfoHandler = operator_api.OperatorSubnetAPIKeyInfoHandlerFunc(func(params operator_api.OperatorSubnetAPIKeyInfoParams, session *models.Principal) middleware.Responder {
+		res, err := getOperatorSubnetAPIKeyInfoResponse(session, params)
+		if err != nil {
+			return operator_api.NewOperatorSubnetAPIKeyInfoDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewOperatorSubnetAPIKeyInfoOK().WithPayload(res)
 	})
 }
 
@@ -100,4 +122,82 @@ func getOperatorSubnetAPIKeyResponse(session *models.Principal, params operator_
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	return &models.OperatorSubnetAPIKey{APIKey: apiKey}, nil
+}
+
+func getOperatorSubnetRegisterAPIKeyResponse(session *models.Principal, params operator_api.OperatorSubnetRegisterAPIKeyParams) (*models.OperatorSubnetRegisterAPIKeyResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err)
+	}
+	tenants, err := getTenantsToRegister(ctx, session)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err)
+	}
+	k8sClient := &k8sClient{client: clientSet}
+	return registerTenants(ctx, tenants.Items, params.Body.APIKey, k8sClient)
+}
+
+func getTenantsToRegister(ctx context.Context, session *models.Principal) (*v2.TenantList, error) {
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return nil, err
+	}
+	opClient := &operatorClient{client: opClientClientSet}
+	return opClient.TenantList(ctx, "", metav1.ListOptions{})
+}
+
+func registerTenants(ctx context.Context, tenants []v2.Tenant, apiKey string, k8sClient K8sClientI) (*models.OperatorSubnetRegisterAPIKeyResponse, *models.Error) {
+	for _, tenant := range tenants {
+		if err := registerTenant(ctx, tenant, apiKey, k8sClient); err != nil {
+			return nil, restapi.ErrorWithContext(ctx, err)
+		}
+	}
+	if err := createSubnetAPIKeySecret(ctx, apiKey, k8sClient); err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err)
+	}
+	return &models.OperatorSubnetRegisterAPIKeyResponse{Registered: true}, nil
+}
+
+func registerTenant(ctx context.Context, tenant v2.Tenant, apiKey string, k8sClient K8sClientI) error {
+	svcURL := tenant.GetTenantServiceURL()
+	mAdmin, err := getTenantAdminClient(ctx, k8sClient, &tenant, svcURL)
+	if err != nil {
+		return err
+	}
+	adminClient := restapi.AdminClient{Client: mAdmin}
+	_, err = restapi.SubnetRegisterWithAPIKey(ctx, adminClient, apiKey)
+	return err
+}
+
+func createSubnetAPIKeySecret(ctx context.Context, apiKey string, k8sClient K8sClientI) error {
+	apiKeySecret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{Name: getAPIKeySecretName()},
+		Type:       corev1.SecretTypeOpaque,
+		Data:       map[string][]byte{"api-key": []byte(apiKey)},
+	}
+	_, err := k8sClient.createSecret(ctx, "default", apiKeySecret, metav1.CreateOptions{})
+	return err
+}
+
+func getOperatorSubnetAPIKeyInfoResponse(session *models.Principal, params operator_api.OperatorSubnetAPIKeyInfoParams) (*models.OperatorSubnetRegisterAPIKeyResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err)
+	}
+	k8sClient := &k8sClient{client: clientSet}
+	if _, err := k8sClient.getSecret(ctx, "default", getAPIKeySecretName(), metav1.GetOptions{}); err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err)
+	}
+	return &models.OperatorSubnetRegisterAPIKeyResponse{Registered: true}, nil
+}
+
+func getAPIKeySecretName() string {
+	if s := os.Getenv(apiKeySecretEnvVar); s != "" {
+		return s
+	}
+	return apiKeySecretDefault
 }
