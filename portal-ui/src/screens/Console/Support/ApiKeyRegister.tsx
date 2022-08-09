@@ -34,6 +34,7 @@ import withStyles from "@mui/styles/withStyles";
 
 interface IApiKeyRegister {
   classes: any;
+  registerEndpoint: string;
   afterRegister: () => void;
 }
 
@@ -45,7 +46,11 @@ const styles = (theme: Theme) =>
     ...spacingUtils,
   });
 
-const ApiKeyRegister = ({ classes, afterRegister }: IApiKeyRegister) => {
+const ApiKeyRegister = ({
+  classes,
+  registerEndpoint,
+  afterRegister,
+}: IApiKeyRegister) => {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [loading, setLoading] = useState(false);
@@ -59,7 +64,7 @@ const ApiKeyRegister = ({ classes, afterRegister }: IApiKeyRegister) => {
     setLoading(true);
     let request: SubnetLoginRequest = { apiKey };
     api
-      .invoke("POST", "/api/v1/subnet/login", request)
+      .invoke("POST", registerEndpoint, request)
       .then((resp: SubnetLoginResponse) => {
         setLoading(false);
         if (resp && resp.registered) {
@@ -72,7 +77,7 @@ const ApiKeyRegister = ({ classes, afterRegister }: IApiKeyRegister) => {
         setLoading(false);
         reset();
       });
-  }, [afterRegister, apiKey, dispatch, loading]);
+  }, [afterRegister, apiKey, dispatch, loading, registerEndpoint]);
 
   useEffect(() => {
     if (fromModal) {

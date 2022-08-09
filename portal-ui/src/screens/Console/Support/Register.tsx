@@ -607,7 +607,10 @@ const Register = ({ classes }: IRegister) => {
             linkClass={classes.link}
           />
         ) : (
-          <ApiKeyRegister afterRegister={fetchLicenseInfo} />
+          <ApiKeyRegister
+            afterRegister={fetchLicenseInfo}
+            registerEndpoint={"/api/v1/subnet/login"}
+          />
         )}
       </Box>
       <ProxyConfiguration linkClass={classes.link} />
