@@ -75,6 +75,9 @@ const styles = (theme: Theme) =>
     bucketList: {
       marginTop: 25,
       height: "calc(100vh - 210px)",
+      "&.isEmbedded": {
+        height: "calc(100vh - 128px)",
+      },
     },
     searchField: {
       ...searchField.searchField,
@@ -221,7 +224,12 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
           {obOnly && (
             <Grid item xs>
               <LoginMinIOLogo
-                style={{ width: 105, marginRight: 15, marginTop: 10 }}
+                style={{
+                  width: 105,
+                  marginRight: 15,
+                  marginTop: 10,
+                  fill: "#081C42",
+                }}
               />
             </Grid>
           )}
@@ -325,7 +333,11 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
 
         {loading && <LinearProgress />}
         {!loading && (
-          <Grid item xs={12} className={classes.bucketList}>
+          <Grid
+            item
+            xs={12}
+            className={`${classes.bucketList} ${obOnly ? "isEmbedded" : ""}`}
+          >
             {filteredRecords.length !== 0 && (
               <VirtualizedList
                 rowRenderFunction={renderItemLine}

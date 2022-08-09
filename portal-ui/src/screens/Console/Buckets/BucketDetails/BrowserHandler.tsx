@@ -151,7 +151,12 @@ const BrowserHandler = () => {
         >
           <Grid>
             <LoginMinIOLogo
-              style={{ width: 105, marginRight: 30, marginTop: 10 }}
+              style={{
+                width: 105,
+                marginRight: 30,
+                marginTop: 10,
+                fill: "#081C42",
+              }}
             />
           </Grid>
           <Grid item xs>
