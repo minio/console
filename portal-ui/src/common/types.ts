@@ -14,10 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import {
-  ILabelKeyPair,
-  ISecurityContext,
-} from "../screens/Console/Tenants/types";
+import { ILabelKeyPair, ISecurityContext } from "../screens/Console/Tenants/types";
 
 export interface ITenantsObject {
   tenants: ITenant[];
@@ -461,4 +458,19 @@ export interface IRetentionConfig {
 export interface IBytesCalc {
   total: number;
   unit: string;
+}
+
+export interface IEmbeddedCustomButton {
+  backgroundColor: string;
+  textColor: string;
+  hoverColor: string;
+  hoverText: string;
+  activeColor: string;
+  activeText: string;
+}
+
+export interface IEmbeddedCustomStyles {
+  backgroundColor: string;
+  fontColor: string;
+  buttonStyles: IEmbeddedCustomButton;
 }

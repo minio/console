@@ -18,6 +18,10 @@ package restapi
 
 import (
 	"crypto/rand"
+	"encoding/base64"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -39,6 +43,21 @@ import (
 // The reason is that if 256 / len(letters) is not a natural number then certain characters become
 // more likely then others.
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
+
+type CustomButtonStyle struct {
+	BackgroundColor *string `json:"backgroundColor"`
+	TextColor       *string `json:"textColor"`
+	HoverColor      *string `json:"hoverColor"`
+	HoverText       *string `json:"hoverText"`
+	ActiveColor     *string `json:"activeColor"`
+	ActiveText      *string `json:"activeText"`
+}
+
+type CustomStyles struct {
+	BackgroundColor *string            `json:"backgroundColor"`
+	FontColor       *string            `json:"fontColor"`
+	ButtonStyles    *CustomButtonStyle `json:"buttonStyles"`
+}
 
 func RandomCharStringWithAlphabet(n int, alphabet string) string {
 	random := make([]byte, n)
@@ -128,6 +147,45 @@ func ExpireSessionCookie() http.Cookie {
 		// read more: https://web.dev/samesite-cookies-explained/
 		SameSite: http.SameSiteLaxMode,
 	}
+}
+
+func EmbeddedStyleCookie(encodedStyles string) (http.Cookie, error) {
+	// encodedStyle JSON validation
+	str, err := base64.StdEncoding.DecodeString(encodedStyles)
+
+	if err != nil {
+		fmt.Println("Error Decode", err)
+		return http.Cookie{}, err
+	}
+
+	var styleElements *CustomStyles
+
+	err = json.Unmarshal(str, &styleElements)
+
+	if err != nil {
+		fmt.Println("Encoded: ", string(str))
+		fmt.Println("Error Marshal", err)
+		return http.Cookie{}, err
+	}
+
+	if styleElements.BackgroundColor == nil || styleElements.FontColor == nil || styleElements.ButtonStyles == nil {
+		return http.Cookie{}, errors.New("specified style is not in the correct format")
+	}
+
+	sessionDuration := xjwt.GetConsoleSTSDuration()
+	return http.Cookie{
+		Path:     "/",
+		Name:     "eb_st",
+		Value:    encodedStyles,
+		MaxAge:   int(sessionDuration.Seconds()), // default 1 hr
+		Expires:  time.Now().Add(sessionDuration),
+		HttpOnly: true,
+		// if len(GlobalPublicCerts) > 0 is true, that means Console is running with TLS enable and the browser
+		// should not leak any cookie if we access the site using HTTP
+		Secure: len(GlobalPublicCerts) > 0,
+		// read more: https://web.dev/samesite-cookies-explained/
+		SameSite: http.SameSiteLaxMode,
+	}, nil
 }
 
 // SanitizeEncodedPrefix replaces spaces for + since those are lost when you do GET parameters

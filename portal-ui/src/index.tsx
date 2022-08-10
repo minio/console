@@ -32,6 +32,7 @@ import "react-resizable/css/styles.css";
 import "./index.css";
 import theme from "./theme/main";
 import MainRouter from "./MainRouter";
+import { getCookieValue } from "./common/utils";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -54,12 +55,10 @@ const GlobalCss = withStyles({
       alignItems: "stretch",
     },
     ".min-icon": {
-      // height: 26,
       width: 26,
     },
     ".MuiButton-endIcon": {
       "& .min-icon": {
-        // height: 26,
         width: 16,
       },
     },

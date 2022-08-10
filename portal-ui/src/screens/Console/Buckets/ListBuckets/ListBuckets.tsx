@@ -34,7 +34,7 @@ import {
   containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
+import { ErrorResponseHandler, IEmbeddedCustomStyles } from "../../../../common/types";
 import api from "../../../../common/api";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BucketListItem from "./BucketListItem";
@@ -60,6 +60,7 @@ import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { useSelector } from "react-redux";
 import { selFeatures } from "../../consoleSlice";
+import { getCookieValue } from "../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -108,6 +109,8 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
 
   const features = useSelector(selFeatures);
   const obOnly = !!features?.includes("object-browser-only");
+
+  console.log(getCookieValue("eb_st"))
 
   useEffect(() => {
     if (loading) {

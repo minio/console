@@ -355,6 +355,8 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 	sts := r.URL.Query().Get("sts")
 	stsAccessKey := r.URL.Query().Get("sts_a")
 	stsSecretKey := r.URL.Query().Get("sts_s")
+	overridenStyles := r.URL.Query().Get("ov_st")
+
 	// if these three parameters are present we are being asked to issue a session with these values
 	if sts != "" && stsAccessKey != "" && stsSecretKey != "" {
 		creds := credentials.NewStaticV4(stsAccessKey, stsSecretKey, sts)
@@ -372,6 +374,16 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 		} else {
 			cookie := NewSessionCookieForConsole(*sessionID)
 			http.SetCookie(w, &cookie)
+
+			if overridenStyles != "" {
+				stylesCookie, err := EmbeddedStyleCookie(overridenStyles)
+
+				if err != nil {
+					log.Println(err)
+				} else {
+					http.SetCookie(w, &stylesCookie)
+				}
+			}
 		}
 		// Allow us to be iframed
 		w.Header().Del("X-Frame-Options")
