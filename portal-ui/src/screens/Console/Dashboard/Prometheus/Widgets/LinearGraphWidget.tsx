@@ -31,7 +31,6 @@ import withStyles from "@mui/styles/withStyles";
 import { ILinearGraphConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { IDashboardPanel } from "../types";
-
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
@@ -41,10 +40,6 @@ import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../store";
-import RBIconButton from "../../../Buckets/BucketDetails/SummaryItems/RBIconButton";
-import { WarnIcon } from "../../../../../icons";
-import { exportComponentAsPNG } from "react-component-export-image";
-import PNGDownloadButton from "../../PNGDownloadButton";
 import DownloadWidgetDataButton from "../../DownloadWidgetDataButton";
 
 interface ILinearGraphWidget {

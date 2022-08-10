@@ -15,18 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Theme } from "@mui/material/styles";
 import { Menu, MenuItem, Box } from "@mui/material";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  actionsTray,
-  widgetContainerCommon,
-} from "../Common/FormComponents/common/styleLibrary";
 import ListItemText from "@mui/material/ListItemText";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import { UploadFolderIcon, UploadIcon, DownloadIcon } from "../../../icons";
-import RBIconButton from "../../Console/Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { DownloadIcon } from "../../../icons";
 import { exportComponentAsPNG } from "react-component-export-image";
 import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../../src/store";

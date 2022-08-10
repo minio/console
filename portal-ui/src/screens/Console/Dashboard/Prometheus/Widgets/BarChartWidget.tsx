@@ -32,7 +32,6 @@ import withStyles from "@mui/styles/withStyles";
 import { IBarChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import BarChartTooltip from "./tooltips/BarChartTooltip";
-
 import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
@@ -42,7 +41,6 @@ import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../store";
-import PNGDownloadButton from "../../PNGDownloadButton";
 import DownloadWidgetDataButton from "../../DownloadWidgetDataButton";
 
 interface IBarChartWidget {
