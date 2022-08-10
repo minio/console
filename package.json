@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.8.2",
+    "react-component-export-image": "^1.0.6",
+    "react-router-dom": "6",
+    "testcafe": "^1.19.0"
+  }
+}
