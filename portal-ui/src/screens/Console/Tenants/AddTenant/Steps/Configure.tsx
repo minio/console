@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Grid, IconButton, Paper } from "@mui/material";
+import { Grid, IconButton, Paper, SelectChangeEvent } from "@mui/material";
 import {
   createTenantCommon,
   modalBasic,
@@ -42,6 +42,7 @@ import {
   removeMinIODomain,
   updateAddField,
 } from "../createTenantSlice";
+import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 
 interface IConfigureProps {
   classes: any;
@@ -438,6 +439,13 @@ const Configure = ({ classes }: IConfigureProps) => {
                     min="0"
                   />
                 </div>
+              </div>
+            </Grid>
+            <br />
+            <Grid item xs={12} className={`${classes.configSectionItem}`}>
+              <div
+                className={`${classes.multiContainer} ${classes.responsiveSectionItem}`}
+              >
                 <div className={classes.containerItem}>
                   <InputBoxWrapper
                     type="number"
@@ -458,6 +466,32 @@ const Configure = ({ classes }: IConfigureProps) => {
                     }
                     min="0"
                   />
+                </div>
+                <div className={classes.containerItem}>
+                  <div className={classes.configSectionItem}>
+                    <SelectWrapper
+                      label="FsGroupChangePolicy"
+                      id="securityContext_fsGroupChangePolicy"
+                      name="securityContext_fsGroupChangePolicy"
+                      value={tenantSecurityContext.fsGroupChangePolicy}
+                      onChange={(e: SelectChangeEvent<string>) => {
+                        updateField("tenantSecurityContext", {
+                          ...tenantSecurityContext,
+                          fsGroupChangePolicy: e.target.value,
+                        });
+                      }}
+                      options={[
+                        {
+                          label: "Always",
+                          value: "Always",
+                        },
+                        {
+                          label: "OnRootMismatch",
+                          value: "OnRootMismatch",
+                        },
+                      ]}
+                    />
+                  </div>
                 </div>
               </div>
             </Grid>

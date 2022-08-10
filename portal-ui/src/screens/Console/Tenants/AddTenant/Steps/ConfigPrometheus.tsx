@@ -368,6 +368,13 @@ const ConfigPrometheus = ({ classes }: IConfigureProps) => {
                       min="0"
                     />
                   </div>
+                </div>
+              </Grid>
+              <br />
+              <Grid item xs={12} className={classes.configSectionItem}>
+                <div
+                  className={`${classes.multiContainer} ${classes.responsiveSectionItem}`}
+                >
                   <div className={classes.configSectionItem}>
                     <InputBoxWrapper
                       type="number"
@@ -391,8 +398,33 @@ const ConfigPrometheus = ({ classes }: IConfigureProps) => {
                       min="0"
                     />
                   </div>
+                  <div className={classes.configSectionItem}>
+                    <SelectWrapper
+                      label="FsGroupChangePolicy"
+                      id="securityContext_fsGroupChangePolicy"
+                      name="securityContext_fsGroupChangePolicy"
+                      value={prometheusSecurityContext.fsGroupChangePolicy}
+                      onChange={(e: SelectChangeEvent<string>) => {
+                        updateField("prometheusSecurityContext", {
+                          ...prometheusSecurityContext,
+                          fsGroupChangePolicy: e.target.value,
+                        });
+                      }}
+                      options={[
+                        {
+                          label: "Always",
+                          value: "Always",
+                        },
+                        {
+                          label: "OnRootMismatch",
+                          value: "OnRootMismatch",
+                        },
+                      ]}
+                    />
+                  </div>
                 </div>
               </Grid>
+              <br />
               <Grid item xs={12} className={classes.configSectionItem}>
                 <div
                   className={`${classes.multiContainer} ${classes.fieldSpaceTop}`}

@@ -137,6 +137,7 @@ export interface ISecurityContext {
   runAsGroup: string;
   runAsNonRoot: boolean;
   fsGroup: string;
+  fsGroupChangePolicy: "Always" | "OnRootMismatch";
 }
 
 export interface IConfigureFields {
