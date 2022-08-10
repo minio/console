@@ -50,6 +50,7 @@ const initialState: IEditPool = {
         runAsUser: "1000",
         runAsGroup: "1000",
         fsGroup: "1000",
+        fsGroupChangePolicy: "Always",
         runAsNonRoot: true,
       },
     },
@@ -151,6 +152,8 @@ export const editPoolSlice = createSlice({
             runAsUser: action.payload.securityContext?.runAsUser || "",
             runAsGroup: action.payload.securityContext?.runAsGroup || "",
             fsGroup: action.payload.securityContext?.fsGroup || "",
+            fsGroupChangePolicy:
+              action.payload.securityContext?.fsGroupChangePolicy || "Always",
             runAsNonRoot: !!action.payload.securityContext?.runAsNonRoot,
           },
         },
