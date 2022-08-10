@@ -41,6 +41,11 @@ lint:
 	@GO111MODULE=on ${GOPATH}/bin/golangci-lint cache clean
 	@GO111MODULE=on ${GOPATH}/bin/golangci-lint run --timeout=5m --config ./.golangci.yml
 
+lint-for-containers:
+	@echo "Running $@ check in container:"
+	@GO111MODULE=on /usr/bin/golangci-lint cache clean
+	@GO111MODULE=on /usr/bin/golangci-lint run --timeout=5m --config ./.golangci.yml
+
 install: console
 	@echo "Installing console binary to '$(GOPATH)/bin/console'"
 	@mkdir -p $(GOPATH)/bin && cp -f $(PWD)/console $(GOPATH)/bin/console

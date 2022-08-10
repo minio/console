@@ -229,6 +229,21 @@ jobs:
         run: |
           make verifiers
 
+  lint-job-for-containers:
+    name: Checking Lint
+    runs-on: self-hosted
+    steps:
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Run Lint Job Test
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make lint-for-containers
+
   vulnerable-dependencies-checks:
     name: "Check for vulnerable dependencies"
     runs-on: ${{ matrix.os }}
