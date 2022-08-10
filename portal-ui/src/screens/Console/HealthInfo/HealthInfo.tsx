@@ -107,7 +107,8 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
   const [startDiagnostic, setStartDiagnostic] = useState(false);
   const [downloadDisabled, setDownloadDisabled] = useState(true);
   const [localMessage, setMessage] = useState<string>("");
-  const [buttonStartText, setButtonStartText] = useState<string>("Start Diagnostic");
+  const [buttonStartText, setButtonStartText] =
+    useState<string>("Start Diagnostic");
   const [title, setTitle] = useState<string>("New Diagnostic");
   const [diagFileContent, setDiagFileContent] = useState<string>("");
 
@@ -266,17 +267,18 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                   </div>
                 ) : (
                   <Fragment>
-                    {(serverDiagnosticStatus !== DiagStatError && !downloadDisabled) && (
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        onClick={() => download()}
-                        disabled={downloadDisabled}
-                      >
-                        Download
-                      </Button>
-                    )}
+                    {serverDiagnosticStatus !== DiagStatError &&
+                      !downloadDisabled && (
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          onClick={() => download()}
+                          disabled={downloadDisabled}
+                        >
+                          Download
+                        </Button>
+                      )}
                     <Grid
                       item
                       xs={12}
