@@ -30,6 +30,7 @@ const initialState: ConsoleState = {
     distributedMode: false,
     permissions: {},
     allowResources: null,
+    customStyles: null,
   },
 };
 

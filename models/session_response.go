@@ -41,6 +41,9 @@ type SessionResponse struct {
 	// allow resources
 	AllowResources []*PermissionResource `json:"allowResources"`
 
+	// custom styles
+	CustomStyles string `json:"customStyles,omitempty"`
+
 	// distributed mode
 	DistributedMode bool `json:"distributedMode,omitempty"`
 

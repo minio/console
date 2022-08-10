@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { snackBarMessage, SRInfoStateType } from "./types";
-import { ErrorResponseHandler } from "./common/types";
+import { ErrorResponseHandler, IEmbeddedCustomStyles } from "./common/types";
 import { AppState } from "./store";
 import { SubnetInfo } from "./screens/Console/License/types";
 
@@ -42,6 +42,7 @@ export interface SystemState {
   distributedSetup: boolean;
   siteReplicationInfo: SRInfoStateType;
   licenseInfo: null | SubnetInfo;
+  overrideStyles: null | IEmbeddedCustomStyles;
 }
 
 const initialState: SystemState = {
@@ -70,6 +71,7 @@ const initialState: SystemState = {
   serverDiagnosticStatus: "",
   distributedSetup: false,
   licenseInfo: null,
+  overrideStyles: null,
 };
 
 export const systemSlice = createSlice({
@@ -151,6 +153,12 @@ export const systemSlice = createSlice({
     setLicenseInfo: (state, action: PayloadAction<SubnetInfo | null>) => {
       state.licenseInfo = action.payload;
     },
+    setOverrideStyles: (
+      state,
+      action: PayloadAction<IEmbeddedCustomStyles>
+    ) => {
+      state.overrideStyles = action.payload;
+    },
   },
 });
 
@@ -172,6 +180,7 @@ export const {
   globalSetDistributedSetup,
   setSiteReplicationInfo,
   setLicenseInfo,
+  setOverrideStyles,
 } = systemSlice.actions;
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;

@@ -18,6 +18,9 @@ package restapi
 
 import (
 	"crypto/rand"
+	"encoding/base64"
+	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strings"
@@ -39,6 +42,21 @@ import (
 // The reason is that if 256 / len(letters) is not a natural number then certain characters become
 // more likely then others.
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"
+
+type CustomButtonStyle struct {
+	BackgroundColor *string `json:"backgroundColor"`
+	TextColor       *string `json:"textColor"`
+	HoverColor      *string `json:"hoverColor"`
+	HoverText       *string `json:"hoverText"`
+	ActiveColor     *string `json:"activeColor"`
+	ActiveText      *string `json:"activeText"`
+}
+
+type CustomStyles struct {
+	BackgroundColor *string            `json:"backgroundColor"`
+	FontColor       *string            `json:"fontColor"`
+	ButtonStyles    *CustomButtonStyle `json:"buttonStyles"`
+}
 
 func RandomCharStringWithAlphabet(n int, alphabet string) string {
 	random := make([]byte, n)
@@ -128,6 +146,28 @@ func ExpireSessionCookie() http.Cookie {
 		// read more: https://web.dev/samesite-cookies-explained/
 		SameSite: http.SameSiteLaxMode,
 	}
+}
+
+func ValidateEncodedStyles(encodedStyles string) error {
+	// encodedStyle JSON validation
+	str, err := base64.StdEncoding.DecodeString(encodedStyles)
+	if err != nil {
+		return err
+	}
+
+	var styleElements *CustomStyles
+
+	err = json.Unmarshal(str, &styleElements)
+
+	if err != nil {
+		return err
+	}
+
+	if styleElements.BackgroundColor == nil || styleElements.FontColor == nil || styleElements.ButtonStyles == nil {
+		return errors.New("specified style is not in the correct format")
+	}
+
+	return nil
 }
 
 // SanitizeEncodedPrefix replaces spaces for + since those are lost when you do GET parameters

@@ -95,6 +95,7 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 			AccountAccessKey:   claims.AccountAccessKey,
 			Hm:                 claims.HideMenu,
 			Ob:                 claims.ObjectBrowser,
+			CustomStyleOb:      claims.CustomStyleOB,
 		}, nil
 	}
 
@@ -355,6 +356,8 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 	sts := r.URL.Query().Get("sts")
 	stsAccessKey := r.URL.Query().Get("sts_a")
 	stsSecretKey := r.URL.Query().Get("sts_s")
+	overridenStyles := r.URL.Query().Get("ov_st")
+
 	// if these three parameters are present we are being asked to issue a session with these values
 	if sts != "" && stsAccessKey != "" && stsSecretKey != "" {
 		creds := credentials.NewStaticV4(stsAccessKey, stsSecretKey, sts)
@@ -365,6 +368,14 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 		sf := &auth.SessionFeatures{}
 		sf.HideMenu = true
 		sf.ObjectBrowser = true
+
+		err := ValidateEncodedStyles(overridenStyles)
+
+		if err != nil {
+			log.Println(err)
+		} else {
+			sf.CustomStyleOB = overridenStyles
+		}
 
 		sessionID, err := login(consoleCreds, sf)
 		if err != nil {

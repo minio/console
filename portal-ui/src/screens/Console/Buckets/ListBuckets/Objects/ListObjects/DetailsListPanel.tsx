@@ -17,23 +17,21 @@
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { Grid, IconButton } from "@mui/material";
 import { ClosePanelIcon } from "../../../../../../icons";
+import makeStyles from "@mui/styles/makeStyles";
 
 interface IDetailsListPanel {
-  classes: any;
   open: boolean;
   className?: string;
   closePanel: () => void;
   children: React.ReactNode;
 }
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     detailsList: {
       borderColor: "#EAEDEE",
-      backgroundColor: "#fff",
       borderWidth: 0,
       borderStyle: "solid",
       borderRadius: 3,
@@ -68,19 +66,23 @@ const styles = (theme: Theme) =>
         width: 14,
       },
     },
-  });
+  })
+);
 
 const DetailsListPanel = ({
-  classes,
   open,
   closePanel,
   className = "",
   children,
 }: IDetailsListPanel) => {
+  const classes = useStyles();
+
   return (
     <Grid
       item
-      className={`${classes.detailsList} ${open ? "open" : ""} ${className}`}
+      className={`${classes.detailsList} ${
+        open ? "open" : ""
+      } ${className} detailsListPanel`}
     >
       <IconButton onClick={closePanel} className={classes.closePanel}>
         <ClosePanelIcon />
@@ -90,4 +92,4 @@ const DetailsListPanel = ({
   );
 };
 
-export default withStyles(styles)(DetailsListPanel);
+export default DetailsListPanel;
