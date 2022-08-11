@@ -178,10 +178,10 @@ const BarChartWidget = ({
           <Grid item xs={10} alignItems={"start"} justifyItems={"start"}>
             <div className={classes.titleContainer}>{title}</div>
           </Grid>
-          <Grid item xs={1} display={"flex"} alignItems={"right"}>
+          <Grid item xs={1} display={"flex"} justifyContent={"flex-end"}>
             {hover && <ExpandGraphLink panelItem={panelItem} />}
           </Grid>
-          <Grid item xs={1} display={"flex"} alignItems={"right"}>
+          <Grid item xs={1} display={"flex"} justifyContent={"flex-end"}>
             <DownloadWidgetDataButton
               title={title}
               componentRef={componentRef}

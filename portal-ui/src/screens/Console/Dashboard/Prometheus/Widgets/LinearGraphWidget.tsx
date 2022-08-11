@@ -210,14 +210,14 @@ const LinearGraphWidget = ({
       onMouseLeave={onStopHover}
     >
       {!zoomActivated && (
-        <Grid container>
+        <Grid container alignItems={"left"}>
           <Grid item xs={10} alignItems={"start"}>
             <div className={classes.titleContainer}>{title}</div>
           </Grid>
-          <Grid item xs={1} display={"flex"} alignItems={"right"}>
+          <Grid item xs={1} alignItems={"center"} justifyContent={"end"}>
             {hover && <ExpandGraphLink panelItem={panelItem} />}
           </Grid>
-          <Grid item xs={1} display={"flex"} alignItems={"right"}>
+          <Grid item xs={1} display={"flex"} justifyContent={"flex-end"}>
             <DownloadWidgetDataButton
               title={title}
               componentRef={componentRef}

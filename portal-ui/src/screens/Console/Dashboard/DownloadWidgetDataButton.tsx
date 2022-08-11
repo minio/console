@@ -106,16 +106,8 @@ const DownloadWidgetDataButton = ({
   return (
     <Fragment>
       <Box
+        justifyItems={"center"}
         sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          "& .link-text": {
-            color: "#2781B0",
-            fontSize: "12px",
-            fontWeight: 600,
-          },
-
           "& .download-icon": {
             backgroundColor: "transparent",
             border: 0,
@@ -143,14 +135,6 @@ const DownloadWidgetDataButton = ({
           open={openDownloadMenu}
           onClose={() => {
             handleCloseDownload();
-          }}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center",
           }}
         >
           <MenuItem
