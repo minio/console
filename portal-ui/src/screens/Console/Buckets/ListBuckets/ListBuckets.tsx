@@ -34,7 +34,7 @@ import {
   containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler, IEmbeddedCustomStyles } from "../../../../common/types";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BucketListItem from "./BucketListItem";

@@ -20,6 +20,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, IconButton } from "@mui/material";
 import { ClosePanelIcon } from "../../../../../../icons";
+import { getOverrideColorVariants } from "../../../../../../utils/stylesUtils";
 
 interface IDetailsListPanel {
   classes: any;
@@ -29,11 +30,19 @@ interface IDetailsListPanel {
   children: React.ReactNode;
 }
 
+let detailsListExtras: any = {backgroundColor: "#fff"};
+
+const colorVariants = getOverrideColorVariants();
+
+if (colorVariants !== false) {
+detailsListExtras = {backgroundColor: colorVariants.backgroundColor, color: colorVariants.fontColor}
+}
+
+
 const styles = (theme: Theme) =>
   createStyles({
     detailsList: {
       borderColor: "#EAEDEE",
-      backgroundColor: "#fff",
       borderWidth: 0,
       borderStyle: "solid",
       borderRadius: 3,
@@ -46,6 +55,7 @@ const styles = (theme: Theme) =>
       position: "relative",
       opacity: 0,
       marginLeft: -1,
+      ...detailsListExtras,
       "&.open": {
         width: 300,
         minWidth: 300,
