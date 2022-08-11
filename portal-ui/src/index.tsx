@@ -32,7 +32,7 @@ import "react-resizable/css/styles.css";
 import "./index.css";
 import theme from "./theme/main";
 import MainRouter from "./MainRouter";
-import { getCookieValue } from "./common/utils";
+import { generateOverrideTheme, getOverrideColorVariants } from "./utils/stylesUtils";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -126,6 +126,14 @@ const GlobalCss = withStyles({
   },
 })(() => null);
 
+const colorVariants = getOverrideColorVariants();
+
+let thm = theme;
+
+if (colorVariants !== false) {
+  thm = generateOverrideTheme(colorVariants);
+}
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
@@ -135,7 +143,7 @@ root.render(
     <Provider store={store}>
       <GlobalCss />
       <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={thm}>
           <MainRouter />
         </ThemeProvider>
       </StyledEngineProvider>

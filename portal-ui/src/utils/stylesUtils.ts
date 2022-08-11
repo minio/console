@@ -1,0 +1,164 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2022 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import { getCookieValue } from "../common/utils";
+import { IEmbeddedCustomStyles } from "../common/types";
+import { createTheme } from "@mui/material";
+
+export const getOverrideColorVariants: () => false | IEmbeddedCustomStyles = () => {
+  try {
+    const cookieValue = getCookieValue("eb_st");
+
+    if(cookieValue === "") {
+      return false;
+    }
+
+    return  JSON.parse(atob(cookieValue)) as IEmbeddedCustomStyles;
+  } catch (e) {
+    console.error("Error processing override styles, skipping.", e)
+    return false;
+  }
+};
+
+export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
+  const theme = createTheme({
+    palette: {
+      primary: {
+        light: overrideVars.buttonStyles.hoverColor,
+        main: overrideVars.buttonStyles.backgroundColor,
+        dark: overrideVars.buttonStyles.activeColor,
+        contrastText: overrideVars.buttonStyles.textColor,
+      },
+      secondary: {
+        light: "#ff7961",
+        main: "#f44336",
+        dark: "#ba000d",
+        contrastText: "#000",
+      },
+      grey: {
+        100: "#f0f0f0",
+        200: "#e6e6e6",
+        300: "#cccccc",
+        400: "#999999",
+        500: "#8c8c8c",
+        600: "#737373",
+        700: "#666666",
+        800: "#4d4d4d",
+        900: "#333333",
+      },
+      background: {
+        default: overrideVars.backgroundColor,
+      },
+      success: {
+        main: "#4ccb92",
+      },
+      warning: {
+        main: "#FFBD62",
+      },
+      error: {
+        light: "#e03a48",
+        main: "#C83B51",
+        contrastText: "#fff",
+      },
+    },
+    typography: {
+      fontFamily: ["Lato", "sans-serif"].join(","),
+      h1: {
+        fontWeight: "bold",
+        color: "#081C42",
+      },
+      h2: {
+        fontWeight: "bold",
+        color: "#081C42",
+      },
+      h3: {
+        fontWeight: "bold",
+        color: "#081C42",
+      },
+      h4: {
+        fontWeight: "bold",
+        color: "#081C42",
+      },
+      h5: {
+        fontWeight: "bold",
+        color: "#081C42",
+      },
+      h6: {
+        fontWeight: "bold",
+        color: "#000000",
+      },
+    },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            textTransform: "none",
+            borderRadius: 3,
+            height: 40,
+            padding: "0 20px",
+            fontSize: 14,
+            fontWeight: 600,
+            boxShadow: "none",
+            "& .min-icon": {
+              maxHeight: 18,
+            },
+            "&.MuiButton-contained.Mui-disabled": {
+              backgroundColor: "#EAEDEE",
+              fontWeight: 600,
+              color: "#767676",
+            },
+            "& .MuiButton-iconSizeMedium > *:first-of-type": {
+              fontSize: 12,
+            },
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          elevation1: {
+            boxShadow: "none",
+            border: "#EAEDEE 1px solid",
+            borderRadius: 3,
+          },
+        },
+      },
+      MuiListItem: {
+        styleOverrides: {
+          root: {
+            "&.MuiListItem-root.Mui-selected": {
+              background: "inherit",
+              "& .MuiTypography-root": {
+                fontWeight: "bold",
+              },
+            },
+          },
+        },
+      },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            textTransform: "none",
+          },
+        },
+      },
+    },
+    colors: {
+      link: "#2781B0",
+    },
+  });
+
+  return theme;
+};
