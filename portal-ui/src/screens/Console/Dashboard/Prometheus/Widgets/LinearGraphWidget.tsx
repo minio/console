@@ -214,7 +214,13 @@ const LinearGraphWidget = ({
           <Grid item xs={10} alignItems={"start"}>
             <div className={classes.titleContainer}>{title}</div>
           </Grid>
-          <Grid item xs={1} alignItems={"center"} justifyContent={"end"}>
+          <Grid
+            item
+            xs={1}
+            display={"flex"}
+            justifyContent={"flex-end"}
+            alignContent={"flex-end"}
+          >
             {hover && <ExpandGraphLink panelItem={panelItem} />}
           </Grid>
           <Grid item xs={1} display={"flex"} justifyContent={"flex-end"}>

@@ -27,7 +27,7 @@ const ExpandGraphLink = ({ panelItem }: { panelItem: IDashboardPanel }) => {
   return (
     <Box
       sx={{
-        alignItems: "center",
+        alignItems: "right",
         gap: "10px",
         "& .link-text": {
           color: "#2781B0",
