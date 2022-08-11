@@ -39,6 +39,17 @@ declare module "@mui/styles/defaultTheme" {
   interface DefaultTheme extends Theme {}
 }
 
+const colorVariants = getOverrideColorVariants();
+
+let thm = theme;
+let globalBody = {};
+
+if (colorVariants !== false) {
+  thm = generateOverrideTheme(colorVariants);
+
+  globalBody = {backgroundColor: colorVariants.backgroundColor}
+}
+
 const GlobalCss = withStyles({
   // @global is handled by jss-plugin-global.
   "@global": {
@@ -46,6 +57,7 @@ const GlobalCss = withStyles({
       height: "100vh",
       width: "100vw",
       fontFamily: "Lato, sans-serif",
+      ...globalBody
     },
     "#root": {
       height: "100%",
@@ -125,14 +137,6 @@ const GlobalCss = withStyles({
     },
   },
 })(() => null);
-
-const colorVariants = getOverrideColorVariants();
-
-let thm = theme;
-
-if (colorVariants !== false) {
-  thm = generateOverrideTheme(colorVariants);
-}
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

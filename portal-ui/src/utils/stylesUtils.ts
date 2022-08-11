@@ -48,17 +48,6 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
         dark: "#ba000d",
         contrastText: "#000",
       },
-      grey: {
-        100: "#f0f0f0",
-        200: "#e6e6e6",
-        300: "#cccccc",
-        400: "#999999",
-        500: "#8c8c8c",
-        600: "#737373",
-        700: "#666666",
-        800: "#4d4d4d",
-        900: "#333333",
-      },
       background: {
         default: overrideVars.backgroundColor,
       },
@@ -78,27 +67,27 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
       fontFamily: ["Lato", "sans-serif"].join(","),
       h1: {
         fontWeight: "bold",
-        color: "#081C42",
+        color: overrideVars.fontColor,
       },
       h2: {
         fontWeight: "bold",
-        color: "#081C42",
+        color: overrideVars.fontColor,
       },
       h3: {
         fontWeight: "bold",
-        color: "#081C42",
+        color: overrideVars.fontColor,
       },
       h4: {
         fontWeight: "bold",
-        color: "#081C42",
+        color: overrideVars.fontColor,
       },
       h5: {
         fontWeight: "bold",
-        color: "#081C42",
+        color: overrideVars.fontColor,
       },
       h6: {
         fontWeight: "bold",
-        color: "#000000",
+        color: overrideVars.fontColor,
       },
     },
     components: {
@@ -128,6 +117,10 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
       },
       MuiPaper: {
         styleOverrides: {
+          root: {
+            backgroundColor: overrideVars.backgroundColor,
+            color: overrideVars.fontColor
+          },
           elevation1: {
             boxShadow: "none",
             border: "#EAEDEE 1px solid",
