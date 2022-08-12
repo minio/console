@@ -40,7 +40,7 @@ import {
   TableRowPredefStyles,
 } from "../FormComponents/common/styleLibrary";
 import Loader from "../Loader/Loader";
-import { generateOverrideTheme, getOverrideColorVariants } from "../../../../utils/stylesUtils";
+import { getOverrideColorVariants } from "../../../../utils/stylesUtils";
 
 //Interfaces for table Items
 
