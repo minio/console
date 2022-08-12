@@ -40,6 +40,7 @@ import {
   TableRowPredefStyles,
 } from "../FormComponents/common/styleLibrary";
 import Loader from "../Loader/Loader";
+import { generateOverrideTheme, getOverrideColorVariants } from "../../../../utils/stylesUtils";
 
 //Interfaces for table Items
 
@@ -115,6 +116,14 @@ interface TableWrapperProps {
 
 const borderColor = "#9c9c9c80";
 
+const colorVariants = getOverrideColorVariants();
+
+let textColor:string = "#000";
+
+if (colorVariants !== false) {
+  textColor= colorVariants.fontColor;
+}
+
 const styles = () =>
   createStyles({
     paper: {
@@ -172,7 +181,7 @@ const styles = () =>
       ".rowLine": {
         borderBottom: `1px solid ${borderColor}`,
         height: 40,
-        color: "#393939",
+        color: textColor,
         fontSize: 14,
         transitionDuration: 0.3,
         "&:focus": {
