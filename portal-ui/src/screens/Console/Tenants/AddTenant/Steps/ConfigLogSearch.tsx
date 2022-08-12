@@ -400,6 +400,13 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                       min="0"
                     />
                   </div>
+                </div>
+              </Grid>
+              <br />
+              <Grid item xs={12}>
+                <div
+                  className={`${classes.multiContainer} ${classes.responsiveSectionItem}`}
+                >
                   <div className={classes.configSectionItem}>
                     <InputBoxWrapper
                       type="number"
@@ -420,6 +427,30 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                         ""
                       }
                       min="0"
+                    />
+                  </div>
+                  <div className={classes.configSectionItem}>
+                    <SelectWrapper
+                      label="FsGroupChangePolicy"
+                      id="securityContext_fsGroupChangePolicy"
+                      name="securityContext_fsGroupChangePolicy"
+                      value={logSearchSecurityContext.fsGroupChangePolicy}
+                      onChange={(e: SelectChangeEvent<string>) => {
+                        updateField("logSearchSecurityContext", {
+                          ...logSearchSecurityContext,
+                          fsGroupChangePolicy: e.target.value,
+                        });
+                      }}
+                      options={[
+                        {
+                          label: "Always",
+                          value: "Always",
+                        },
+                        {
+                          label: "OnRootMismatch",
+                          value: "OnRootMismatch",
+                        },
+                      ]}
                     />
                   </div>
                 </div>
@@ -500,6 +531,13 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                       min="0"
                     />
                   </div>
+                </div>
+              </Grid>
+              <br />
+              <Grid item xs={12}>
+                <div
+                  className={`${classes.multiContainer} ${classes.responsiveSectionItem}`}
+                >
                   <div className={classes.configSectionItem}>
                     <InputBoxWrapper
                       type="number"
@@ -520,6 +558,32 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                         ""
                       }
                       min="0"
+                    />
+                  </div>
+                  <div className={classes.configSectionItem}>
+                    <SelectWrapper
+                      label="FsGroupChangePolicy"
+                      id="securityContext_fsGroupChangePolicy"
+                      name="securityContext_fsGroupChangePolicy"
+                      value={
+                        logSearchPostgresSecurityContext.fsGroupChangePolicy
+                      }
+                      onChange={(e: SelectChangeEvent<string>) => {
+                        updateField("logSearchPostgresSecurityContext", {
+                          ...logSearchPostgresSecurityContext,
+                          fsGroupChangePolicy: e.target.value,
+                        });
+                      }}
+                      options={[
+                        {
+                          label: "Always",
+                          value: "Always",
+                        },
+                        {
+                          label: "OnRootMismatch",
+                          value: "OnRootMismatch",
+                        },
+                      ]}
                     />
                   </div>
                 </div>

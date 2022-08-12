@@ -1937,6 +1937,29 @@ func init() {
         }
       }
     },
+    "/subnet/apikey/info": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Subnet API key info",
+        "operationId": "OperatorSubnetAPIKeyInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetRegisterAPIKeyResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/subnet/apikey/register": {
       "post": {
         "tags": [
@@ -1956,7 +1979,10 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "A successful response."
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetRegisterAPIKeyResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -3726,6 +3752,14 @@ func init() {
         },
         "mfa_token": {
           "type": "string"
+        }
+      }
+    },
+    "operatorSubnetRegisterAPIKeyResponse": {
+      "type": "object",
+      "properties": {
+        "registered": {
+          "type": "boolean"
         }
       }
     },
@@ -6873,6 +6907,29 @@ func init() {
         }
       }
     },
+    "/subnet/apikey/info": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Subnet API key info",
+        "operationId": "OperatorSubnetAPIKeyInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetRegisterAPIKeyResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/subnet/apikey/register": {
       "post": {
         "tags": [
@@ -6892,7 +6949,10 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "A successful response."
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/operatorSubnetRegisterAPIKeyResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -9449,6 +9509,14 @@ func init() {
         },
         "mfa_token": {
           "type": "string"
+        }
+      }
+    },
+    "operatorSubnetRegisterAPIKeyResponse": {
+      "type": "object",
+      "properties": {
+        "registered": {
+          "type": "boolean"
         }
       }
     },

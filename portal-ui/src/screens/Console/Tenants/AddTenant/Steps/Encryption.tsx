@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Paper } from "@mui/material";
+import { Paper, SelectChangeEvent } from "@mui/material";
 import Grid from "@mui/material/Grid";
 
 import {
@@ -50,6 +50,7 @@ import AzureKMSAdd from "./Encryption/AzureKMSAdd";
 import GCPKMSAdd from "./Encryption/GCPKMSAdd";
 import GemaltoKMSAdd from "./Encryption/GemaltoKMSAdd";
 import AWSKMSAdd from "./Encryption/AWSKMSAdd";
+import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 
 interface IEncryptionProps {
   classes: any;
@@ -525,6 +526,13 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                         min="0"
                       />
                     </div>
+                  </div>
+                </Grid>
+                <br />
+                <Grid item xs={12} className={classes.kesSecurityContext}>
+                  <div
+                    className={`${classes.multiContainer} ${classes.responsiveContainer}`}
+                  >
                     <div
                       className={`${classes.formFieldRow} ${classes.rightSpacer}`}
                     >
@@ -546,6 +554,32 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                           validationErrors["kes_securityContext_fsGroup"] || ""
                         }
                         min="0"
+                      />
+                    </div>
+                    <div
+                      className={`${classes.formFieldRow} ${classes.rightSpacer}`}
+                    >
+                      <SelectWrapper
+                        label="FsGroupChangePolicy"
+                        id="securityContext_fsGroupChangePolicy"
+                        name="securityContext_fsGroupChangePolicy"
+                        value={kesSecurityContext.fsGroupChangePolicy}
+                        onChange={(e: SelectChangeEvent<string>) => {
+                          updateField("kesSecurityContext", {
+                            ...kesSecurityContext,
+                            fsGroupChangePolicy: e.target.value,
+                          });
+                        }}
+                        options={[
+                          {
+                            label: "Always",
+                            value: "Always",
+                          },
+                          {
+                            label: "OnRootMismatch",
+                            value: "OnRootMismatch",
+                          },
+                        ]}
                       />
                     </div>
                   </div>

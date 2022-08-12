@@ -57,7 +57,7 @@ import {
 
 import SecurityContextSelector from "../securityContextSelector";
 
-import { clearValidationError } from "../utils";
+import { clearValidationError, imagePattern, numericPattern } from "../utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -222,7 +222,7 @@ const LoggingDBDetails = ({
               cleanValidation(`dbImage`);
             }}
             key={`dbImage`}
-            pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+            pattern={imagePattern}
             error={validationErrors[`dbImage`] || ""}
           />
         </Grid>
@@ -240,7 +240,7 @@ const LoggingDBDetails = ({
               cleanValidation(`dbInitImage`);
             }}
             key={`dbInitImage`}
-            pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+            pattern={imagePattern}
             error={validationErrors[`dbInitImage`] || ""}
           />
         </Grid>
@@ -251,7 +251,7 @@ const LoggingDBDetails = ({
             placeholder={"DB CPU Request"}
             name={`dbCPURequest`}
             value={dbCpuRequest}
-            pattern={"[0-9]*"}
+            pattern={numericPattern}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               if (event.target.validity.valid) {
                 dispatch(setDBCPURequest(event.target.value));
@@ -275,7 +275,7 @@ const LoggingDBDetails = ({
               }
               cleanValidation(`dbMemRequest`);
             }}
-            pattern={"[0-9]*"}
+            pattern={numericPattern}
             key={`dbMemRequest`}
             error={validationErrors[`dbMemRequest`] || ""}
             overlayObject={
