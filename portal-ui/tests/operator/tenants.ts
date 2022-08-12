@@ -264,7 +264,7 @@ const checkLoggingToggle = async (tenantName: string) => {
   await t
     .click("#tenant_logging")
     .click("#confirm-ok")
-    .wait(1000)
+    .wait(3000)
     .expect(Selector("#image").exists)
     .notOk()
     .click("#yaml_button")
@@ -277,7 +277,7 @@ const checkLoggingToggle = async (tenantName: string) => {
     .click(Selector(`a[href$="/logging"]`))
     .click("#tenant_logging")
     .click("#confirm-ok")
-    .wait(1000)
+    .wait(3000)
     .expect(Selector("#image").exists)
     .ok()
     .click("#yaml_button")
@@ -291,6 +291,7 @@ const checkLoggingToggle = async (tenantName: string) => {
 const checkLoggingFieldsAcceptValues = async (tenantName: string) => {
   await goToLoggingSection(tenantName);
   await t
+    .wait(3000)
     .typeText("#image", "minio/operator:v4.4.22", { replace: true })
     .typeText("#diskCapacityGB", "3", { replace: true })
     .typeText("#cpuRequest", "3", { replace: true })
