@@ -118,7 +118,7 @@ export const checkMonitoringToggle = async (tenantName: string) => {
     .click(Selector(`a[href$="/monitoring"]`))
     .click("#tenant-monitoring")
     .click("#confirm-ok")
-    .wait(1000)
+    .wait(5000)
     .expect(Selector("#prometheus_image").exists)
     .ok()
     .click("#yaml_button")

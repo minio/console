@@ -58,11 +58,14 @@ func convertModelSCToK8sSC(sc *models.SecurityContext) (*corev1.PodSecurityConte
 	if err != nil {
 		return nil, err
 	}
+	FSGroupChangePolicy := corev1.PodFSGroupChangePolicy(sc.FsGroupChangePolicy)
+
 	return &corev1.PodSecurityContext{
-		RunAsUser:    &runAsUser,
-		RunAsGroup:   &runAsGroup,
-		RunAsNonRoot: sc.RunAsNonRoot,
-		FSGroup:      &fsGroup,
+		RunAsUser:           &runAsUser,
+		RunAsGroup:          &runAsGroup,
+		RunAsNonRoot:        sc.RunAsNonRoot,
+		FSGroup:             &fsGroup,
+		FSGroupChangePolicy: &FSGroupChangePolicy,
 	}, nil
 }
 
@@ -71,11 +74,18 @@ func convertK8sSCToModelSC(sc *corev1.PodSecurityContext) *models.SecurityContex
 	runAsUser := strconv.FormatInt(*sc.RunAsUser, 10)
 	runAsGroup := strconv.FormatInt(*sc.RunAsGroup, 10)
 	fsGroup := strconv.FormatInt(*sc.FSGroup, 10)
+	fsGroupPolicy := ""
+
+	if sc.FSGroupChangePolicy != nil {
+		fsGroupPolicy = string(*sc.FSGroupChangePolicy)
+	}
+
 	return &models.SecurityContext{
-		RunAsUser:    &runAsUser,
-		RunAsGroup:   &runAsGroup,
-		RunAsNonRoot: sc.RunAsNonRoot,
-		FsGroup:      fsGroup,
+		RunAsUser:           &runAsUser,
+		RunAsGroup:          &runAsGroup,
+		RunAsNonRoot:        sc.RunAsNonRoot,
+		FsGroup:             fsGroup,
+		FsGroupChangePolicy: fsGroupPolicy,
 	}
 }
 

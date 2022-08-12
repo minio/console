@@ -166,6 +166,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		AuthLogoutHandler: auth.LogoutHandlerFunc(func(params auth.LogoutParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation auth.Logout has not yet been implemented")
 		}),
+		OperatorAPIOperatorSubnetAPIKeyInfoHandler: operator_api.OperatorSubnetAPIKeyInfoHandlerFunc(func(params operator_api.OperatorSubnetAPIKeyInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.OperatorSubnetAPIKeyInfo has not yet been implemented")
+		}),
 		OperatorAPIOperatorSubnetAPIKeyHandler: operator_api.OperatorSubnetAPIKeyHandlerFunc(func(params operator_api.OperatorSubnetAPIKeyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.OperatorSubnetAPIKey has not yet been implemented")
 		}),
@@ -364,6 +367,8 @@ type OperatorAPI struct {
 	AuthLoginOperatorHandler auth.LoginOperatorHandler
 	// AuthLogoutHandler sets the operation handler for the logout operation
 	AuthLogoutHandler auth.LogoutHandler
+	// OperatorAPIOperatorSubnetAPIKeyInfoHandler sets the operation handler for the operator subnet API key info operation
+	OperatorAPIOperatorSubnetAPIKeyInfoHandler operator_api.OperatorSubnetAPIKeyInfoHandler
 	// OperatorAPIOperatorSubnetAPIKeyHandler sets the operation handler for the operator subnet Api key operation
 	OperatorAPIOperatorSubnetAPIKeyHandler operator_api.OperatorSubnetAPIKeyHandler
 	// OperatorAPIOperatorSubnetLoginHandler sets the operation handler for the operator subnet login operation
@@ -600,6 +605,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.AuthLogoutHandler == nil {
 		unregistered = append(unregistered, "auth.LogoutHandler")
+	}
+	if o.OperatorAPIOperatorSubnetAPIKeyInfoHandler == nil {
+		unregistered = append(unregistered, "operator_api.OperatorSubnetAPIKeyInfoHandler")
 	}
 	if o.OperatorAPIOperatorSubnetAPIKeyHandler == nil {
 		unregistered = append(unregistered, "operator_api.OperatorSubnetAPIKeyHandler")
@@ -916,6 +924,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/logout"] = auth.NewLogout(o.context, o.AuthLogoutHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/subnet/apikey/info"] = operator_api.NewOperatorSubnetAPIKeyInfo(o.context, o.OperatorAPIOperatorSubnetAPIKeyInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

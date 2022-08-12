@@ -66,6 +66,7 @@ const Heal = React.lazy(() => import("./Heal/Heal"));
 const Watch = React.lazy(() => import("./Watch/Watch"));
 const HealthInfo = React.lazy(() => import("./HealthInfo/HealthInfo"));
 const Hop = React.lazy(() => import("./Tenants/TenantDetails/hop/Hop"));
+const RegisterOperator = React.lazy(() => import("./Support/RegisterOperator"));
 
 const AddTenant = React.lazy(() => import("./Tenants/AddTenant/AddTenant"));
 
@@ -460,6 +461,11 @@ const Console = ({ classes }: IConsoleProps) => {
     {
       component: License,
       path: IAM_PAGES.LICENSE,
+      forceDisplay: true,
+    },
+    {
+      component: RegisterOperator,
+      path: IAM_PAGES.REGISTER_SUPPORT,
       forceDisplay: true,
     },
     {

@@ -60,7 +60,7 @@ import {
   setRunAsUser,
   setRunAsNonRoot,
 } from "../TenantDetails/tenantMonitoringSlice";
-import { clearValidationError } from "../utils";
+import { clearValidationError, imagePattern, numericPattern } from "../utils";
 import SecurityContextSelector from "../securityContextSelector";
 
 interface ITenantMonitoring {
@@ -359,7 +359,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`image`);
               }}
               key={`image`}
-              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+              pattern={imagePattern}
               error={validationErrors[`image`] || ""}
             />
           </Grid>
@@ -377,7 +377,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`sidecarImage`);
               }}
               key={`sidecarImage`}
-              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+              pattern={imagePattern}
               error={validationErrors[`sidecarImage`] || ""}
             />
           </Grid>
@@ -395,7 +395,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`initImage`);
               }}
               key={`initImage`}
-              pattern={"^[a-zA-Z0-9-./:]{1,253}$"}
+              pattern={imagePattern}
               error={validationErrors[`initImage`] || ""}
             />
           </Grid>
@@ -413,7 +413,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 cleanValidation(`diskCapacityGB`);
               }}
               key={`diskCapacityGB`}
-              pattern={"[0-9]*"}
+              pattern={numericPattern}
               error={validationErrors[`diskCapacityGB`] || ""}
               overlayObject={
                 <InputUnitMenu
@@ -433,7 +433,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
               placeholder={"CPU Request"}
               name={`cpuRequest`}
               value={cpuRequest}
-              pattern={"[0-9]*"}
+              pattern={numericPattern}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 if (event.target.validity.valid) {
                   dispatch(setCPURequest(event.target.value));
@@ -457,7 +457,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                 }
                 cleanValidation(`memRequest`);
               }}
-              pattern={"[0-9]*"}
+              pattern={numericPattern}
               key={`memRequest`}
               error={validationErrors[`memRequest`] || ""}
               overlayObject={

@@ -17,6 +17,7 @@
 package operatorapi
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -28,19 +29,26 @@ import (
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
 	"github.com/minio/console/pkg/subnet"
+	v2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type OperatorSubnetTestSuite struct {
 	suite.Suite
-	assert             *assert.Assertions
-	loginServer        *httptest.Server
-	loginWithError     bool
-	loginMFAServer     *httptest.Server
-	loginMFAWithError  bool
-	getAPIKeyServer    *httptest.Server
-	getAPIKeyWithError bool
+	assert                  *assert.Assertions
+	loginServer             *httptest.Server
+	loginWithError          bool
+	loginMFAServer          *httptest.Server
+	loginMFAWithError       bool
+	getAPIKeyServer         *httptest.Server
+	getAPIKeyWithError      bool
+	registerAPIKeyServer    *httptest.Server
+	registerAPIKeyWithError bool
+	k8sClient               k8sClientMock
 }
 
 func (suite *OperatorSubnetTestSuite) SetupSuite() {
@@ -48,6 +56,20 @@ func (suite *OperatorSubnetTestSuite) SetupSuite() {
 	suite.loginServer = httptest.NewServer(http.HandlerFunc(suite.loginHandler))
 	suite.loginMFAServer = httptest.NewServer(http.HandlerFunc(suite.loginMFAHandler))
 	suite.getAPIKeyServer = httptest.NewServer(http.HandlerFunc(suite.getAPIKeyHandler))
+	suite.registerAPIKeyServer = httptest.NewServer(http.HandlerFunc(suite.registerAPIKeyHandler))
+	suite.k8sClient = k8sClientMock{}
+	CreateSecretMock = func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
+		return &corev1.Secret{}, nil
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		data := make(map[string][]byte)
+		data["secretkey"] = []byte("secret")
+		data["accesskey"] = []byte("access")
+		sec := &corev1.Secret{
+			Data: data,
+		}
+		return sec, nil
+	}
 }
 
 func (suite *OperatorSubnetTestSuite) loginHandler(
@@ -74,6 +96,16 @@ func (suite *OperatorSubnetTestSuite) getAPIKeyHandler(
 	w http.ResponseWriter, r *http.Request,
 ) {
 	if suite.getAPIKeyWithError {
+		w.WriteHeader(400)
+	} else {
+		fmt.Fprintf(w, `{"api_key": "mockAPIKey"}`)
+	}
+}
+
+func (suite *OperatorSubnetTestSuite) registerAPIKeyHandler(
+	w http.ResponseWriter, r *http.Request,
+) {
+	if suite.registerAPIKeyWithError {
 		w.WriteHeader(400)
 	} else {
 		fmt.Fprintf(w, `{"api_key": "mockAPIKey"}`)
@@ -180,6 +212,90 @@ func (suite *OperatorSubnetTestSuite) TestOperatorSubnetAPIKeyHandlerWithoutErro
 func (suite *OperatorSubnetTestSuite) initSubnetAPIKeyRequest() (params operator_api.OperatorSubnetAPIKeyParams, api operations.OperatorAPI) {
 	registerOperatorSubnetHandlers(&api)
 	params.HTTPRequest = &http.Request{URL: &url.URL{}}
+	return params, api
+}
+
+// TODO: Improve register tests (make code more testable)
+// func (suite *OperatorSubnetTestSuite) TestOperatorSubnetRegisterAPIKeyHandlerWithServerError() {
+// 	params, api := suite.initSubnetRegisterAPIKeyRequest()
+// 	suite.registerAPIKeyWithError = true
+// 	os.Setenv(subnet.ConsoleSubnetURL, suite.registerAPIKeyServer.URL)
+// 	response := api.OperatorAPIOperatorSubnetRegisterAPIKeyHandler.Handle(params, &models.Principal{})
+// 	_, ok := response.(*operator_api.OperatorSubnetRegisterAPIKeyDefault)
+// 	suite.assert.True(ok)
+// 	os.Unsetenv(subnet.ConsoleSubnetURL)
+// }
+
+// func (suite *OperatorSubnetTestSuite) TestOperatorSubnetRegisterAPIKeyHandlerWithError() {
+// 	ctx := context.Background()
+// 	suite.registerAPIKeyWithError = false
+// 	os.Setenv(subnet.ConsoleSubnetURL, suite.registerAPIKeyServer.URL)
+// 	res, err := registerTenants([]v2.Tenant{{
+// 		Spec: v2.TenantSpec{CredsSecret: &corev1.LocalObjectReference{Name: "secret-name"}},
+// 	}}, "mockAPIKey", ctx, suite.k8sClient)
+// 	suite.assert.Nil(res)
+// 	suite.assert.NotNil(err)
+// 	os.Unsetenv(subnet.ConsoleSubnetURL)
+// }
+
+// func (suite *OperatorSubnetTestSuite) TestOperatorSubnetRegisterAPIKeyHandlerGetTenants() {
+// 	ctx := context.Background()
+// 	res, err := getTenantsToRegister(ctx, &models.Principal{})
+// 	suite.assert.NotNil(res)
+// 	suite.assert.Nil(err)
+// }
+
+func (suite *OperatorSubnetTestSuite) TestOperatorSubnetRegisterAPIKeyHandlerWithUnreachableTenant() {
+	ctx := context.Background()
+	res, err := registerTenants(ctx, []v2.Tenant{{
+		Spec: v2.TenantSpec{CredsSecret: &corev1.LocalObjectReference{Name: "secret-name"}},
+	}}, "mockAPIKey", suite.k8sClient)
+	suite.assert.Nil(res)
+	suite.assert.NotNil(err)
+}
+
+func (suite *OperatorSubnetTestSuite) TestOperatorSubnetRegisterAPIKeyHandlerZeroTenants() {
+	ctx := context.Background()
+	res, err := registerTenants(ctx, []v2.Tenant{}, "mockAPIKey", suite.k8sClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
+}
+
+// func (suite *OperatorSubnetTestSuite) initSubnetRegisterAPIKeyRequest() (params operator_api.OperatorSubnetRegisterAPIKeyParams, api operations.OperatorAPI) {
+// 	registerOperatorSubnetHandlers(&api)
+// 	params.Body = &models.OperatorSubnetAPIKey{APIKey: "mockAPIKey"}
+// 	params.HTTPRequest = &http.Request{}
+// 	return params, api
+// }
+
+func (suite *OperatorSubnetTestSuite) TestOperatorSubnetAPIKeyInfoHandlerWithNoSecret() {
+	params, api := suite.initSubnetAPIKeyInfoRequest()
+	os.Setenv(apiKeySecretEnvVar, "mock-operator-subnet")
+	response := api.OperatorAPIOperatorSubnetAPIKeyInfoHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*operator_api.OperatorSubnetAPIKeyInfoDefault)
+	suite.assert.True(ok)
+	os.Unsetenv(apiKeySecretEnvVar)
+}
+
+// func (suite *OperatorSubnetTestSuite) TestOperatorSubnetAPIKeyInfoHandlerWithSecret() {
+// 	params, api := suite.initSubnetAPIKeyInfoRequest()
+// 	os.Setenv(apiKeySecretEnvVar, "mock-operator-subnet")
+// 	session := &models.Principal{}
+// 	clientSet, _ := cluster.K8sClient(session.STSSessionToken)
+// 	k8sClient := &k8sClient{client: clientSet}
+// 	ctx := context.Background()
+// 	secret := &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: getAPIKeySecretName()}}
+// 	k8sClient.createSecret(ctx, "default", secret, metav1.CreateOptions{})
+// 	response := api.OperatorAPIOperatorSubnetAPIKeyInfoHandler.Handle(params, session)
+// 	_, ok := response.(*operator_api.OperatorSubnetAPIKeyInfoOK)
+// 	suite.assert.True(ok)
+// 	k8sClient.deleteSecret(ctx, "default", getAPIKeySecretName(), metav1.DeleteOptions{})
+// 	os.Unsetenv(apiKeySecretEnvVar)
+// }
+
+func (suite *OperatorSubnetTestSuite) initSubnetAPIKeyInfoRequest() (params operator_api.OperatorSubnetAPIKeyInfoParams, api operations.OperatorAPI) {
+	registerOperatorSubnetHandlers(&api)
+	params.HTTPRequest = &http.Request{}
 	return params, api
 }
 
