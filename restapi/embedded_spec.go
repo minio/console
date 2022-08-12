@@ -5070,6 +5070,43 @@ func init() {
         }
       }
     },
+    "customButtons": {
+      "type": "object",
+      "properties": {
+        "activeColor": {
+          "type": "string"
+        },
+        "activeText": {
+          "type": "string"
+        },
+        "backgroundColor": {
+          "type": "string"
+        },
+        "hoverColor": {
+          "type": "string"
+        },
+        "hoverText": {
+          "type": "string"
+        },
+        "textColor": {
+          "type": "string"
+        }
+      }
+    },
+    "customStyles": {
+      "type": "object",
+      "properties": {
+        "backgroundColor": {
+          "type": "string"
+        },
+        "buttonStyles": {
+          "$ref": "#/definitions/customButtons"
+        },
+        "fontColor": {
+          "type": "string"
+        }
+      }
+    },
     "deleteFile": {
       "type": "object",
       "properties": {
@@ -6317,6 +6354,9 @@ func init() {
           "items": {
             "$ref": "#/definitions/permissionResource"
           }
+        },
+        "customStyles": {
+          "$ref": "#/definitions/customStyles"
         },
         "distributedMode": {
           "type": "boolean"
@@ -12330,6 +12370,43 @@ func init() {
         }
       }
     },
+    "customButtons": {
+      "type": "object",
+      "properties": {
+        "activeColor": {
+          "type": "string"
+        },
+        "activeText": {
+          "type": "string"
+        },
+        "backgroundColor": {
+          "type": "string"
+        },
+        "hoverColor": {
+          "type": "string"
+        },
+        "hoverText": {
+          "type": "string"
+        },
+        "textColor": {
+          "type": "string"
+        }
+      }
+    },
+    "customStyles": {
+      "type": "object",
+      "properties": {
+        "backgroundColor": {
+          "type": "string"
+        },
+        "buttonStyles": {
+          "$ref": "#/definitions/customButtons"
+        },
+        "fontColor": {
+          "type": "string"
+        }
+      }
+    },
     "deleteFile": {
       "type": "object",
       "properties": {
@@ -13577,6 +13654,9 @@ func init() {
           "items": {
             "$ref": "#/definitions/permissionResource"
           }
+        },
+        "customStyles": {
+          "$ref": "#/definitions/customStyles"
         },
         "distributedMode": {
           "type": "boolean"

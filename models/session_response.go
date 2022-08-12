@@ -41,6 +41,9 @@ type SessionResponse struct {
 	// allow resources
 	AllowResources []*PermissionResource `json:"allowResources"`
 
+	// custom styles
+	CustomStyles *CustomStyles `json:"customStyles,omitempty"`
+
 	// distributed mode
 	DistributedMode bool `json:"distributedMode,omitempty"`
 
@@ -63,6 +66,10 @@ func (m *SessionResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAllowResources(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCustomStyles(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -97,6 +104,25 @@ func (m *SessionResponse) validateAllowResources(formats strfmt.Registry) error 
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *SessionResponse) validateCustomStyles(formats strfmt.Registry) error {
+	if swag.IsZero(m.CustomStyles) { // not required
+		return nil
+	}
+
+	if m.CustomStyles != nil {
+		if err := m.CustomStyles.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("customStyles")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customStyles")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -149,6 +175,10 @@ func (m *SessionResponse) ContextValidate(ctx context.Context, formats strfmt.Re
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateCustomStyles(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -170,6 +200,22 @@ func (m *SessionResponse) contextValidateAllowResources(ctx context.Context, for
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *SessionResponse) contextValidateCustomStyles(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.CustomStyles != nil {
+		if err := m.CustomStyles.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("customStyles")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customStyles")
+			}
+			return err
+		}
 	}
 
 	return nil

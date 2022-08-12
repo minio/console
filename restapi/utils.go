@@ -174,11 +174,12 @@ func EmbeddedStyleCookie(encodedStyles string) (http.Cookie, error) {
 
 	sessionDuration := xjwt.GetConsoleSTSDuration()
 	return http.Cookie{
-		Path:     "/",
-		Name:     "eb_st",
-		Value:    encodedStyles,
-		MaxAge:   int(sessionDuration.Seconds()), // default 1 hr
-		Expires:  time.Now().Add(sessionDuration),
+		Path:    "/",
+		Name:    "eb_st",
+		Value:   encodedStyles,
+		MaxAge:  int(sessionDuration.Seconds()), // default 1 hr
+		Expires: time.Now().Add(sessionDuration),
+		// We need this cookie to be accessible from javascript
 		HttpOnly: false,
 		// if len(GlobalPublicCerts) > 0 is true, that means Console is running with TLS enable and the browser
 		// should not leak any cookie if we access the site using HTTP

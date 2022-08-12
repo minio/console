@@ -3780,6 +3780,8 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/permissionResource"
+      customStyles:
+        $ref: "#/definitions/customStyles"
 
   widgetResult:
     type: object
@@ -4903,4 +4905,28 @@ definitions:
     type: object
     properties:
       policy:
+        type: string
+  customStyles:
+    type: object
+    properties:
+      backgroundColor:
+        type: string
+      fontColor:
+        type: string
+      buttonStyles:
+        $ref: "#/definitions/customButtons"
+  customButtons:
+    type: object
+    properties:
+      backgroundColor:
+        type: string
+      textColor:
+        type: string
+      hoverColor:
+        type: string
+      hoverText:
+        type: string
+      activeColor:
+        type: string
+      activeText:
         type: string
