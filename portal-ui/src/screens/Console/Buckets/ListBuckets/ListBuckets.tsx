@@ -110,7 +110,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
   const features = useSelector(selFeatures);
   const obOnly = !!features?.includes("object-browser-only");
 
-  console.log(getCookieValue("eb_st"))
+  console.log(getCookieValue("eb_st"));
 
   useEffect(() => {
     if (loading) {

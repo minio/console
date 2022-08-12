@@ -179,7 +179,7 @@ func EmbeddedStyleCookie(encodedStyles string) (http.Cookie, error) {
 		Value:    encodedStyles,
 		MaxAge:   int(sessionDuration.Seconds()), // default 1 hr
 		Expires:  time.Now().Add(sessionDuration),
-		HttpOnly: true,
+		HttpOnly: false,
 		// if len(GlobalPublicCerts) > 0 is true, that means Console is running with TLS enable and the browser
 		// should not leak any cookie if we access the site using HTTP
 		Secure: len(GlobalPublicCerts) > 0,

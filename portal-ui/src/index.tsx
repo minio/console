@@ -32,7 +32,10 @@ import "react-resizable/css/styles.css";
 import "./index.css";
 import theme from "./theme/main";
 import MainRouter from "./MainRouter";
-import { generateOverrideTheme, getOverrideColorVariants } from "./utils/stylesUtils";
+import {
+  generateOverrideTheme,
+  getOverrideColorVariants,
+} from "./utils/stylesUtils";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -47,7 +50,7 @@ let globalBody = {};
 if (colorVariants !== false) {
   thm = generateOverrideTheme(colorVariants);
 
-  globalBody = {backgroundColor: colorVariants.backgroundColor}
+  globalBody = { backgroundColor: colorVariants.backgroundColor };
 }
 
 const GlobalCss = withStyles({
@@ -57,7 +60,7 @@ const GlobalCss = withStyles({
       height: "100vh",
       width: "100vw",
       fontFamily: "Lato, sans-serif",
-      ...globalBody
+      ...globalBody,
     },
     "#root": {
       height: "100%",

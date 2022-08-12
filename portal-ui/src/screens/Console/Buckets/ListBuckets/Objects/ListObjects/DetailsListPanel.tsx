@@ -30,14 +30,16 @@ interface IDetailsListPanel {
   children: React.ReactNode;
 }
 
-let detailsListExtras: any = {backgroundColor: "#fff"};
+let detailsListExtras: any = { backgroundColor: "#fff" };
 
 const colorVariants = getOverrideColorVariants();
 
 if (colorVariants !== false) {
-detailsListExtras = {backgroundColor: colorVariants.backgroundColor, color: colorVariants.fontColor}
+  detailsListExtras = {
+    backgroundColor: colorVariants.backgroundColor,
+    color: colorVariants.fontColor,
+  };
 }
-
 
 const styles = (theme: Theme) =>
   createStyles({

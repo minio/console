@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { ILabelKeyPair, ISecurityContext } from "../screens/Console/Tenants/types";
+import {
+  ILabelKeyPair,
+  ISecurityContext,
+} from "../screens/Console/Tenants/types";
 
 export interface ITenantsObject {
   tenants: ITenant[];

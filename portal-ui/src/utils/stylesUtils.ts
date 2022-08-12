@@ -18,17 +18,19 @@ import { getCookieValue } from "../common/utils";
 import { IEmbeddedCustomStyles } from "../common/types";
 import { createTheme } from "@mui/material";
 
-export const getOverrideColorVariants: () => false | IEmbeddedCustomStyles = () => {
+export const getOverrideColorVariants: () =>
+  | false
+  | IEmbeddedCustomStyles = () => {
   try {
     const cookieValue = getCookieValue("eb_st");
 
-    if(cookieValue === "") {
+    if (cookieValue === "") {
       return false;
     }
 
-    return  JSON.parse(atob(cookieValue)) as IEmbeddedCustomStyles;
+    return JSON.parse(atob(cookieValue)) as IEmbeddedCustomStyles;
   } catch (e) {
-    console.error("Error processing override styles, skipping.", e)
+    console.error("Error processing override styles, skipping.", e);
     return false;
   }
 };
@@ -119,7 +121,7 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
         styleOverrides: {
           root: {
             backgroundColor: overrideVars.backgroundColor,
-            color: overrideVars.fontColor
+            color: overrideVars.fontColor,
           },
           elevation1: {
             boxShadow: "none",

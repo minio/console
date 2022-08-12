@@ -118,10 +118,10 @@ const borderColor = "#9c9c9c80";
 
 const colorVariants = getOverrideColorVariants();
 
-let textColor:string = "#000";
+let textColor: string = "#000";
 
 if (colorVariants !== false) {
-  textColor= colorVariants.fontColor;
+  textColor = colorVariants.fontColor;
 }
 
 const styles = () =>
