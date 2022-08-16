@@ -63,7 +63,7 @@ test("Download button exists after Diagnostic is completed", async (t) => {
   // Only proceed if there is no error
   const matchingElement = ClientFunction(() =>
     document.evaluate(
-      "//div[text()='An error occurred while getting Diagnostic file.']",
+      "//div[text()='An error occurred while getting the Diagnostic file.']",
       document,
       null,
       XPathResult.FIRST_ORDERED_NODE_TYPE,
@@ -87,7 +87,7 @@ test("Download button is clickable after Diagnostic is completed", async (t) => 
   // Only proceed if there is no error
   const matchingElement = ClientFunction(() =>
     document.evaluate(
-      "//div[text()='An error occurred while getting Diagnostic file.']",
+      "//div[text()='An error occurred while getting the Diagnostic file.']",
       document,
       null,
       XPathResult.FIRST_ORDERED_NODE_TYPE,
@@ -111,7 +111,7 @@ test("Start New Diagnostic button exists after Diagnostic is completed", async (
   // Only proceed if there is no error
   const matchingElement = ClientFunction(() =>
     document.evaluate(
-      "//div[text()='An error occurred while getting Diagnostic file.']",
+      "//div[text()='An error occurred while getting the Diagnostic file.']",
       document,
       null,
       XPathResult.FIRST_ORDERED_NODE_TYPE,
@@ -139,7 +139,7 @@ test("Start New Diagnostic button is clickable after Diagnostic is completed", a
   // Only proceed if there is no error
   const matchingElement = ClientFunction(() =>
     document.evaluate(
-      "//div[text()='An error occurred while getting Diagnostic file.']",
+      "//div[text()='An error occurred while getting the Diagnostic file.']",
       document,
       null,
       XPathResult.FIRST_ORDERED_NODE_TYPE,
