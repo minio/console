@@ -221,6 +221,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                   <Link
                     to={IAM_PAGES.BUCKETS}
                     style={{
+                      zIndex: 999,
                       textDecoration: "none",
                       top: "40px",
                       position: "relative",
