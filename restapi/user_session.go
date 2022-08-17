@@ -103,6 +103,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 	}
 	currTime := time.Now().UTC()
 
+	customStyles := session.CustomStyleOb
 	// This actions will be global, meaning has to be attached to all resources
 	conditionValues := map[string][]string{
 		condition.AWSUsername.Name(): {session.AccountAccessKey},
@@ -244,6 +245,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		DistributedMode: erasure,
 		Permissions:     resourcePermissions,
 		AllowResources:  allowResources,
+		CustomStyles:    customStyles,
 	}
 	return sessionResp, nil
 }

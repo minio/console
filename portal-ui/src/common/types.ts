@@ -462,3 +462,18 @@ export interface IBytesCalc {
   total: number;
   unit: string;
 }
+
+export interface IEmbeddedCustomButton {
+  backgroundColor?: string;
+  textColor?: string;
+  hoverColor?: string;
+  hoverText?: string;
+  activeColor?: string;
+  activeText?: string;
+}
+
+export interface IEmbeddedCustomStyles {
+  backgroundColor: string;
+  fontColor: string;
+  buttonStyles: IEmbeddedCustomButton;
+}

@@ -172,7 +172,6 @@ const styles = () =>
       ".rowLine": {
         borderBottom: `1px solid ${borderColor}`,
         height: 40,
-        color: "#393939",
         fontSize: 14,
         transitionDuration: 0.3,
         "&:focus": {
