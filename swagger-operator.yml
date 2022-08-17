@@ -1496,6 +1496,78 @@ paths:
       tags:
         - OperatorAPI
 
+  /directpv/drives:
+    get:
+      summary: Get directpv drives list
+      operationId: GetDirectPVDriveList
+      parameters:
+        - name: nodes
+          in: query
+          required: false
+          type: string
+        - name: drives
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/getDirectPVDriveListResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /directpv/volumes:
+    get:
+      summary: Get directpv volumes list
+      operationId: GetDirectPVVolumeList
+      parameters:
+        - name: nodes
+          in: query
+          required: false
+          type: string
+        - name: drives
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/getDirectPVVolumeListResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /directpv/drives/format:
+    post:
+      summary: Format directpv drives from a list
+      operationId: DirectPVFormatDrive
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/formatConfiguration"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/formatDirectPVDrivesResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
 definitions:
   error:
     type: object
@@ -2936,15 +3008,15 @@ definitions:
       expires_at:
         type: string
 
-  getDirectCSIDriveListResponse:
+  getDirectPVDriveListResponse:
     type: object
     properties:
       drives:
         type: array
         items:
-          $ref: "#/definitions/directCSIDriveInfo"
+          $ref: "#/definitions/directPVDriveInfo"
 
-  directCSIDriveInfo:
+  directPVDriveInfo:
     type: object
     properties:
       drive:
@@ -2965,15 +3037,15 @@ definitions:
       message:
         type: string
 
-  getDirectCSIVolumeListResponse:
+  getDirectPVVolumeListResponse:
     type: object
     properties:
       volumes:
         type: array
         items:
-          $ref: "#/definitions/directCSIVolumeInfo"
+          $ref: "#/definitions/directPVVolumeInfo"
 
-  directCSIVolumeInfo:
+  directPVVolumeInfo:
     type: object
     properties:
       volume:
@@ -2986,7 +3058,7 @@ definitions:
       drive:
         type: string
 
-  csiFormatErrorResponse:
+  pvFormatErrorResponse:
     type: object
     properties:
       node:
@@ -2996,13 +3068,13 @@ definitions:
       error:
         type: string
 
-  formatDirectCSIDrivesResponse:
+  formatDirectPVDrivesResponse:
     type: object
     properties:
       formatIssuesList:
         type: array
         items:
-          $ref: "#/definitions/csiFormatErrorResponse"
+          $ref: "#/definitions/pvFormatErrorResponse"
 
   tenantYAML:
     type: object

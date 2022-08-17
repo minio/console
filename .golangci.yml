@@ -4,7 +4,7 @@ linters-settings:
 
   misspell:
     locale: US
-    
+
   goheader:
     values:
       regexp:
@@ -40,13 +40,13 @@ service:
 issues:
   exclude-use-default: false
   exclude:
-      - should have a package comment
-      # TODO(y4m4): Remove once all exported ident. have comments!      
-      - comment on exported function
-      - comment on exported type
-      - should have comment
-      - use leading k in Go names
-      - comment on exported const
+    - should have a package comment
+    # TODO(y4m4): Remove once all exported ident. have comments!
+    - comment on exported function
+    - comment on exported type
+    - should have comment
+    - use leading k in Go names
+    - comment on exported const
 run:
   skip-dirs:
     - pkg/clientgen

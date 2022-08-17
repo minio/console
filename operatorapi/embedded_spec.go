@@ -142,6 +142,109 @@ func init() {
         }
       }
     },
+    "/directpv/drives": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get directpv drives list",
+        "operationId": "GetDirectPVDriveList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "nodes",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "drives",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getDirectPVDriveListResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/directpv/drives/format": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Format directpv drives from a list",
+        "operationId": "DirectPVFormatDrive",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/formatConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/formatDirectPVDrivesResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/directpv/volumes": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get directpv volumes list",
+        "operationId": "GetDirectPVVolumeList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "nodes",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "drives",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getDirectPVVolumeListResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/get-parity/{nodes}/{disksPerNode}": {
       "get": {
         "tags": [
@@ -2590,20 +2693,6 @@ func init() {
         }
       }
     },
-    "csiFormatErrorResponse": {
-      "type": "object",
-      "properties": {
-        "drive": {
-          "type": "string"
-        },
-        "error": {
-          "type": "string"
-        },
-        "node": {
-          "type": "string"
-        }
-      }
-    },
     "csrElement": {
       "type": "object",
       "properties": {
@@ -2796,7 +2885,7 @@ func init() {
         }
       }
     },
-    "directCSIDriveInfo": {
+    "directPVDriveInfo": {
       "type": "object",
       "properties": {
         "allocated": {
@@ -2825,7 +2914,7 @@ func init() {
         }
       }
     },
-    "directCSIVolumeInfo": {
+    "directPVVolumeInfo": {
       "type": "object",
       "properties": {
         "capacity": {
@@ -3042,13 +3131,13 @@ func init() {
         }
       }
     },
-    "formatDirectCSIDrivesResponse": {
+    "formatDirectPVDrivesResponse": {
       "type": "object",
       "properties": {
         "formatIssuesList": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/csiFormatErrorResponse"
+            "$ref": "#/definitions/pvFormatErrorResponse"
           }
         }
       }
@@ -3193,24 +3282,24 @@ func init() {
         }
       }
     },
-    "getDirectCSIDriveListResponse": {
+    "getDirectPVDriveListResponse": {
       "type": "object",
       "properties": {
         "drives": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/directCSIDriveInfo"
+            "$ref": "#/definitions/directPVDriveInfo"
           }
         }
       }
     },
-    "getDirectCSIVolumeListResponse": {
+    "getDirectPVVolumeListResponse": {
       "type": "object",
       "properties": {
         "volumes": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/directCSIVolumeInfo"
+            "$ref": "#/definitions/directPVVolumeInfo"
           }
         }
       }
@@ -4148,6 +4237,20 @@ func init() {
         "storageSize": {
           "type": "number",
           "default": 5
+        }
+      }
+    },
+    "pvFormatErrorResponse": {
+      "type": "object",
+      "properties": {
+        "drive": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
         }
       }
     },
@@ -5101,6 +5204,109 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/maxAllocatableMemResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/directpv/drives": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get directpv drives list",
+        "operationId": "GetDirectPVDriveList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "nodes",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "drives",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getDirectPVDriveListResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/directpv/drives/format": {
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Format directpv drives from a list",
+        "operationId": "DirectPVFormatDrive",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/formatConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/formatDirectPVDrivesResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/directpv/volumes": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get directpv volumes list",
+        "operationId": "GetDirectPVVolumeList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "nodes",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "drives",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getDirectPVVolumeListResponse"
             }
           },
           "default": {
@@ -8403,20 +8609,6 @@ func init() {
         }
       }
     },
-    "csiFormatErrorResponse": {
-      "type": "object",
-      "properties": {
-        "drive": {
-          "type": "string"
-        },
-        "error": {
-          "type": "string"
-        },
-        "node": {
-          "type": "string"
-        }
-      }
-    },
     "csrElement": {
       "type": "object",
       "properties": {
@@ -8609,7 +8801,7 @@ func init() {
         }
       }
     },
-    "directCSIDriveInfo": {
+    "directPVDriveInfo": {
       "type": "object",
       "properties": {
         "allocated": {
@@ -8638,7 +8830,7 @@ func init() {
         }
       }
     },
-    "directCSIVolumeInfo": {
+    "directPVVolumeInfo": {
       "type": "object",
       "properties": {
         "capacity": {
@@ -8855,13 +9047,13 @@ func init() {
         }
       }
     },
-    "formatDirectCSIDrivesResponse": {
+    "formatDirectPVDrivesResponse": {
       "type": "object",
       "properties": {
         "formatIssuesList": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/csiFormatErrorResponse"
+            "$ref": "#/definitions/pvFormatErrorResponse"
           }
         }
       }
@@ -9006,24 +9198,24 @@ func init() {
         }
       }
     },
-    "getDirectCSIDriveListResponse": {
+    "getDirectPVDriveListResponse": {
       "type": "object",
       "properties": {
         "drives": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/directCSIDriveInfo"
+            "$ref": "#/definitions/directPVDriveInfo"
           }
         }
       }
     },
-    "getDirectCSIVolumeListResponse": {
+    "getDirectPVVolumeListResponse": {
       "type": "object",
       "properties": {
         "volumes": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/directCSIVolumeInfo"
+            "$ref": "#/definitions/directPVVolumeInfo"
           }
         }
       }
@@ -9814,6 +10006,20 @@ func init() {
         "storageSize": {
           "type": "number",
           "default": 5
+        }
+      }
+    },
+    "pvFormatErrorResponse": {
+      "type": "object",
+      "properties": {
+        "drive": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
         }
       }
     },
