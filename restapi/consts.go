@@ -51,7 +51,6 @@ const (
 	PrometheusExtraLabels                        = "CONSOLE_PROMETHEUS_EXTRA_LABELS"
 	ConsoleLogQueryURL                           = "CONSOLE_LOG_QUERY_URL"
 	ConsoleLogQueryAuthToken                     = "CONSOLE_LOG_QUERY_AUTH_TOKEN"
-	ConsoleObjectBrowserOnly                     = "CONSOLE_OBJECT_BROWSER_ONLY"
 	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
 	SlashSeparator                               = "/"
 )

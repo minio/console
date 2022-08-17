@@ -27,12 +27,14 @@ import {
   globalSetDistributedSetup,
   operatorMode,
   selOpMode,
+  setOverrideStyles,
   setSiteReplicationInfo,
   userLogged,
 } from "./systemSlice";
 import { SRInfoStateType } from "./types";
 import { AppState, useAppDispatch } from "./store";
 import { saveSessionResponse } from "./screens/Console/consoleSlice";
+import { getOverrideColorVariants } from "./utils/stylesUtils";
 
 interface ProtectedRouteProps {
   Component: any;
@@ -66,6 +68,16 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
           dispatch(operatorMode(true));
           dispatch(directPVMode(!!res.directPV));
           document.title = "MinIO Operator";
+        }
+
+        if (res.customStyles && res.customStyles !== "") {
+          const overrideColorVariants = getOverrideColorVariants(
+            res.customStyles
+          );
+
+          if (overrideColorVariants !== false) {
+            dispatch(setOverrideStyles(overrideColorVariants));
+          }
         }
       })
       .catch(() => setSessionLoading(false));

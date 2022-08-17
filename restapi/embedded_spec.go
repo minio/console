@@ -6006,6 +6006,9 @@ func init() {
         "accountAccessKey": {
           "type": "string"
         },
+        "customStyleOb": {
+          "type": "string"
+        },
         "hm": {
           "type": "boolean"
         },
@@ -6317,6 +6320,9 @@ func init() {
           "items": {
             "$ref": "#/definitions/permissionResource"
           }
+        },
+        "customStyles": {
+          "type": "string"
         },
         "distributedMode": {
           "type": "boolean"
@@ -13266,6 +13272,9 @@ func init() {
         "accountAccessKey": {
           "type": "string"
         },
+        "customStyleOb": {
+          "type": "string"
+        },
         "hm": {
           "type": "boolean"
         },
@@ -13577,6 +13586,9 @@ func init() {
           "items": {
             "$ref": "#/definitions/permissionResource"
           }
+        },
+        "customStyles": {
+          "type": "string"
         },
         "distributedMode": {
           "type": "boolean"

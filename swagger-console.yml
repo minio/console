@@ -3729,6 +3729,8 @@ definitions:
         type: boolean
       ob:
         type: boolean
+      customStyleOb:
+        type: string
   startProfilingItem:
     type: object
     properties:
@@ -3776,6 +3778,8 @@ definitions:
           type: array
           items:
             type: string
+      customStyles:
+        type: string
       allowResources:
         type: array
         items:

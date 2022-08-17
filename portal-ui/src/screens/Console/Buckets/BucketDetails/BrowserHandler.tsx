@@ -43,7 +43,7 @@ import {
 } from "../../ObjectBrowser/objectBrowserSlice";
 import SearchBox from "../../Common/SearchBox";
 import { selFeatures } from "../../consoleSlice";
-import { LoginMinIOLogo } from "../../../../icons";
+import AutoColorIcon from "../../Common/Components/AutoColorIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -150,14 +150,7 @@ const BrowserHandler = () => {
           }}
         >
           <Grid>
-            <LoginMinIOLogo
-              style={{
-                width: 105,
-                marginRight: 30,
-                marginTop: 10,
-                fill: "#081C42",
-              }}
-            />
+            <AutoColorIcon marginRight={30} marginTop={10} />
           </Grid>
           <Grid item xs>
             {searchBar}

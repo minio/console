@@ -46,6 +46,9 @@ type Principal struct {
 	// account access key
 	AccountAccessKey string `json:"accountAccessKey,omitempty"`
 
+	// custom style ob
+	CustomStyleOb string `json:"customStyleOb,omitempty"`
+
 	// hm
 	Hm bool `json:"hm,omitempty"`
 

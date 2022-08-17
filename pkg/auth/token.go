@@ -68,6 +68,7 @@ type TokenClaims struct {
 	AccountAccessKey   string `json:"accountAccessKey,omitempty"`
 	HideMenu           bool   `json:"hm,omitempty"`
 	ObjectBrowser      bool   `json:"ob,omitempty"`
+	CustomStyleOB      string `json:"customStyleOb,omitempty"`
 }
 
 // STSClaims claims struct for STS Token
@@ -79,6 +80,7 @@ type STSClaims struct {
 type SessionFeatures struct {
 	HideMenu      bool
 	ObjectBrowser bool
+	CustomStyleOB string
 }
 
 // SessionTokenAuthenticate takes a session token, decode it, extract claims and validate the signature
@@ -123,7 +125,9 @@ func NewEncryptedTokenForClient(credentials *credentials.Value, accountAccessKey
 		if features != nil {
 			tokenClaims.HideMenu = features.HideMenu
 			tokenClaims.ObjectBrowser = features.ObjectBrowser
+			tokenClaims.CustomStyleOB = features.CustomStyleOB
 		}
+
 		encryptedClaims, err := encryptClaims(tokenClaims)
 		if err != nil {
 			return "", err

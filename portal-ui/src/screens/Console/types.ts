@@ -32,4 +32,5 @@ export interface ISessionResponse {
   distributedMode: boolean;
   permissions: ISessionPermissions;
   allowResources: IAllowResources[] | null;
+  customStyles?: string | null;
 }

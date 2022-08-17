@@ -27,7 +27,6 @@ import {
   AddIcon,
   BucketsIcon,
   LifecycleConfigIcon,
-  LoginMinIOLogo,
   SelectAllIcon,
 } from "../../../../icons";
 import {
@@ -60,6 +59,7 @@ import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { useSelector } from "react-redux";
 import { selFeatures } from "../../consoleSlice";
+import AutoColorIcon from "../../Common/Components/AutoColorIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -223,14 +223,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
         <Grid item xs={12} className={classes.actionsTray} display="flex">
           {obOnly && (
             <Grid item xs>
-              <LoginMinIOLogo
-                style={{
-                  width: 105,
-                  marginRight: 15,
-                  marginTop: 10,
-                  fill: "#081C42",
-                }}
-              />
+              <AutoColorIcon marginRight={15} marginTop={10} />
             </Grid>
           )}
           <SearchBox
