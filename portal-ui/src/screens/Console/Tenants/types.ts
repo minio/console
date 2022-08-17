@@ -132,12 +132,14 @@ export interface LabelKeyPair {
   value: string;
 }
 
+export type fsGroupChangePolicyType = "Always" | "OnRootMismatch";
+
 export interface ISecurityContext {
   runAsUser: string;
   runAsGroup: string;
   runAsNonRoot: boolean;
   fsGroup: string;
-  fsGroupChangePolicy: "Always" | "OnRootMismatch";
+  fsGroupChangePolicy: fsGroupChangePolicyType;
 }
 
 export interface IConfigureFields {
@@ -360,5 +362,6 @@ export interface IEditTenantSecurityContext {
   runAsUser: string;
   runAsGroup: string;
   fsGroup: string;
+  fsGroupChangePolicy: fsGroupChangePolicyType;
   runAsNonRoot: boolean;
 }
