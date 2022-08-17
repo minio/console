@@ -29,7 +29,7 @@ import {
   NotificationEndpointsList,
   TransformedEndpointItem,
 } from "./types";
-import { notificationTransform } from "./utils";
+import { getNotificationConfigKey, notificationTransform } from "./utils";
 import { AddIcon, LambdaIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
@@ -49,8 +49,12 @@ import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setServerNeedsRestart,
+} from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import ConfirmDeleteTargetModal from "./ConfirmDeleteTargetModal";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -88,6 +92,10 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const [isDelConfirmOpen, setIsDelConfirmOpen] = useState<boolean>(false);
+  const [selNotifyEndPoint, setSelNotifyEndpoint] =
+    useState<TransformedEndpointItem | null>();
+
   //Effects
   // load records on mount
   useEffect(() => {
@@ -115,6 +123,39 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
   useEffect(() => {
     setIsLoading(true);
   }, []);
+
+  const resetNotificationConfig = (
+    ep: TransformedEndpointItem | undefined | null
+  ) => {
+    if (ep?.name) {
+      const configKey = getNotificationConfigKey(ep.name);
+      let accountId = `:${ep.account_id}`;
+      if (configKey) {
+        api
+          .invoke("POST", `/api/v1/configs/${configKey}${accountId}/reset`)
+          .then((res) => {
+            dispatch(setServerNeedsRestart(true));
+            setSelNotifyEndpoint(null);
+            setIsDelConfirmOpen(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            setIsDelConfirmOpen(false);
+            dispatch(setErrorSnackMessage(err));
+          });
+      } else {
+        setSelNotifyEndpoint(null);
+        setIsDelConfirmOpen(false);
+        console.log(`Unable to find Config key for ${ep.name}`);
+      }
+    }
+  };
+
+  const confirmDelNotifyEndpoint = (record: TransformedEndpointItem) => {
+    setSelNotifyEndpoint(record);
+    setIsDelConfirmOpen(true);
+  };
+
+  const tableActions = [{ type: "delete", onClick: confirmDelNotifyEndpoint }];
 
   const filteredRecords = records.filter((b: TransformedEndpointItem) => {
     if (filter === "") {
@@ -180,7 +221,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
               <Fragment>
                 <Grid item xs={12} className={classes.tableBlock}>
                   <TableWrapper
-                    itemActions={[]}
+                    itemActions={tableActions}
                     columns={[
                       {
                         label: "Status",
@@ -262,6 +303,19 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
             )}
           </Fragment>
         )}
+
+        {isDelConfirmOpen ? (
+          <ConfirmDeleteTargetModal
+            onConfirm={() => {
+              resetNotificationConfig(selNotifyEndPoint);
+            }}
+            status={`${selNotifyEndPoint?.status}`}
+            serviceName={`${selNotifyEndPoint?.service_name}`}
+            onClose={() => {
+              setIsDelConfirmOpen(false);
+            }}
+          />
+        ) : null}
       </PageLayout>
     </Fragment>
   );
