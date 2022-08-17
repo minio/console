@@ -644,7 +644,7 @@ const Register = ({ classes }: IRegister) => {
         >
           <FormTitle
             icon={<OfflineRegistrationIcon />}
-            title={`Offline activation of MinIO Subscription Network License`}
+            title={`Register cluster in an Airgap environment`}
           />
         </Box>
 
@@ -849,17 +849,17 @@ const Register = ({ classes }: IRegister) => {
           scrollButtons="auto"
         >
           <Tab
-            label="Online Activation"
+            label="Credentials"
             id="simple-tab-0"
             aria-controls="simple-tabpanel-0"
           />
           <Tab
-            label="API Key Activation"
+            label="API Key"
             id="simple-tab-1"
             aria-controls="simple-tabpanel-1"
           />
           <Tab
-            label="Offline Activation"
+            label="Airgap"
             id="simple-tab-2"
             aria-controls="simple-tabpanel-2"
             onClick={() => fetchSubnetRegToken()}

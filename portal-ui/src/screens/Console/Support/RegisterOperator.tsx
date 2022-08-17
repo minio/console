@@ -169,7 +169,7 @@ const RegisterOperator = ({ classes }: IRegister) => {
           scrollButtons="auto"
         >
           <Tab
-            label="API Key Activation"
+            label="API Key"
             id="simple-tab-0"
             aria-controls="simple-tabpanel-1"
           />

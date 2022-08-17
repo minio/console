@@ -102,7 +102,7 @@ const ApiKeyRegister = ({
       >
         <FormTitle
           icon={<OnlineRegistrationIcon />}
-          title={`API key activation of MinIO Subscription Network License`}
+          title={`Register cluster with API key`}
         />
       </Box>
       <Box
