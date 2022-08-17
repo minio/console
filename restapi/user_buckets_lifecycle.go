@@ -26,8 +26,6 @@ import (
 
 	"github.com/rs/xid"
 
-	"github.com/minio/mc/pkg/probe"
-
 	"github.com/minio/mc/cmd/ilm"
 
 	"github.com/minio/minio-go/v7"
@@ -182,23 +180,25 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 			return errors.New("only one expiry configuration can be set (days or date)")
 		}
 
+		status := !params.Body.Disable
 		opts = ilm.LifecycleOptions{
-			ID:                                   id,
-			Prefix:                               params.Body.Prefix,
-			Status:                               !params.Body.Disable,
-			IsTagsSet:                            params.Body.Tags != "",
-			Tags:                                 params.Body.Tags,
-			ExpiredObjectDeleteMarker:            params.Body.ExpiredObjectDeleteMarker,
-			IsTransitionDaysSet:                  params.Body.TransitionDays != 0,
-			IsNoncurrentVersionTransitionDaysSet: params.Body.NoncurrentversionTransitionDays != 0,
+			ID:                        id,
+			Prefix:                    &params.Body.Prefix,
+			Status:                    &status,
+			Tags:                      &params.Body.Tags,
+			ExpiredObjectDeleteMarker: &params.Body.ExpiredObjectDeleteMarker,
 		}
 
 		if params.Body.NoncurrentversionTransitionDays > 0 {
-			opts.NoncurrentVersionTransitionDays = int(params.Body.NoncurrentversionTransitionDays)
-			opts.NoncurrentVersionTransitionStorageClass = strings.ToUpper(params.Body.NoncurrentversionTransitionStorageClass)
+			noncurrentVersionTransitionDays := int(params.Body.NoncurrentversionTransitionDays)
+			noncurrentVersionTransitionStorageClass := strings.ToUpper(params.Body.NoncurrentversionTransitionStorageClass)
+			opts.NoncurrentVersionTransitionDays = &noncurrentVersionTransitionDays
+			opts.NoncurrentVersionTransitionStorageClass = &noncurrentVersionTransitionStorageClass
 		} else {
-			opts.TransitionDays = strconv.Itoa(int(params.Body.TransitionDays))
-			opts.StorageClass = strings.ToUpper(params.Body.StorageClass)
+			tdays := strconv.Itoa(int(params.Body.TransitionDays))
+			sclass := strings.ToUpper(params.Body.StorageClass)
+			opts.TransitionDays = &tdays
+			opts.StorageClass = &sclass
 		}
 	case models.AddBucketLifecycleTypeExpiry:
 		// Verify if expiry items are set
@@ -210,30 +210,33 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 			return errors.New("non current version Transition Storage Class cannot be set when expiry is being configured")
 		}
 
+		status := !params.Body.Disable
 		opts = ilm.LifecycleOptions{
 			ID:                        id,
-			Prefix:                    params.Body.Prefix,
-			Status:                    !params.Body.Disable,
-			IsTagsSet:                 params.Body.Tags != "",
-			Tags:                      params.Body.Tags,
-			ExpiredObjectDeleteMarker: params.Body.ExpiredObjectDeleteMarker,
+			Prefix:                    &params.Body.Prefix,
+			Status:                    &status,
+			Tags:                      &params.Body.Tags,
+			ExpiredObjectDeleteMarker: &params.Body.ExpiredObjectDeleteMarker,
 		}
 
 		if params.Body.NoncurrentversionExpirationDays > 0 {
-			opts.NoncurrentVersionExpirationDays = int(params.Body.NoncurrentversionExpirationDays)
+			days := int(params.Body.NoncurrentversionExpirationDays)
+			opts.NoncurrentVersionExpirationDays = &days
 		} else {
-			opts.ExpiryDays = strconv.Itoa(int(params.Body.ExpiryDays))
+			days := strconv.Itoa(int(params.Body.ExpiryDays))
+			opts.ExpiryDays = &days
 		}
 	default:
 		// Non set, we return errors
 		return errors.New("no valid lifecycle configuration requested")
 	}
 
-	var err2 *probe.Error
-	lfcCfg, err2 = opts.ToConfig(lfcCfg)
+	newRule, err2 := opts.ToILMRule(lfcCfg)
 	if err2.ToGoError() != nil {
 		return err2.ToGoError()
 	}
+
+	lfcCfg.Rules = append(lfcCfg.Rules, newRule)
 
 	return client.setBucketLifecycle(ctx, params.BucketName, lfcCfg)
 }
@@ -281,23 +284,26 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 			return errors.New("you must select transition days or non-current transition days configuration")
 		}
 
+		status := !params.Body.Disable
 		opts = ilm.LifecycleOptions{
-			ID:                                   id,
-			Prefix:                               params.Body.Prefix,
-			Status:                               !params.Body.Disable,
-			IsTagsSet:                            params.Body.Tags != "",
-			Tags:                                 params.Body.Tags,
-			ExpiredObjectDeleteMarker:            params.Body.ExpiredObjectDeleteMarker,
-			IsTransitionDaysSet:                  params.Body.TransitionDays != 0,
-			IsNoncurrentVersionTransitionDaysSet: params.Body.NoncurrentversionTransitionDays != 0,
+			ID:                        id,
+			Prefix:                    &params.Body.Prefix,
+			Status:                    &status,
+			Tags:                      &params.Body.Tags,
+			ExpiredObjectDeleteMarker: &params.Body.ExpiredObjectDeleteMarker,
 		}
 
 		if params.Body.NoncurrentversionTransitionDays > 0 {
-			opts.NoncurrentVersionTransitionDays = int(params.Body.NoncurrentversionTransitionDays)
-			opts.NoncurrentVersionTransitionStorageClass = strings.ToUpper(params.Body.NoncurrentversionTransitionStorageClass)
+			noncurrentVersionTransitionDays := int(params.Body.NoncurrentversionTransitionDays)
+			noncurrentVersionTransitionStorageClass := strings.ToUpper(params.Body.NoncurrentversionTransitionStorageClass)
+			opts.NoncurrentVersionTransitionDays = &noncurrentVersionTransitionDays
+			opts.NoncurrentVersionTransitionStorageClass = &noncurrentVersionTransitionStorageClass
+
 		} else {
-			opts.TransitionDays = strconv.Itoa(int(params.Body.TransitionDays))
-			opts.StorageClass = strings.ToUpper(params.Body.StorageClass)
+			tdays := strconv.Itoa(int(params.Body.TransitionDays))
+			sclass := strings.ToUpper(params.Body.StorageClass)
+			opts.TransitionDays = &tdays
+			opts.StorageClass = &sclass
 		}
 	case models.UpdateBucketLifecycleTypeExpiry: // Verify if expiry configuration is set
 		if params.Body.NoncurrentversionTransitionDays != 0 {
@@ -308,29 +314,41 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 			return errors.New("non current version Transition Storage Class cannot be set when expiry is being configured")
 		}
 
+		status := !params.Body.Disable
 		opts = ilm.LifecycleOptions{
 			ID:                        id,
-			Prefix:                    params.Body.Prefix,
-			Status:                    !params.Body.Disable,
-			IsTagsSet:                 params.Body.Tags != "",
-			Tags:                      params.Body.Tags,
-			ExpiredObjectDeleteMarker: params.Body.ExpiredObjectDeleteMarker,
+			Prefix:                    &params.Body.Prefix,
+			Status:                    &status,
+			Tags:                      &params.Body.Tags,
+			ExpiredObjectDeleteMarker: &params.Body.ExpiredObjectDeleteMarker,
 		}
 
 		if params.Body.NoncurrentversionExpirationDays > 0 {
-			opts.NoncurrentVersionExpirationDays = int(params.Body.NoncurrentversionExpirationDays)
+			days := int(params.Body.NoncurrentversionExpirationDays)
+			opts.NoncurrentVersionExpirationDays = &days
 		} else {
-			opts.ExpiryDays = strconv.Itoa(int(params.Body.ExpiryDays))
+			days := strconv.Itoa(int(params.Body.ExpiryDays))
+			opts.ExpiryDays = &days
 		}
 	default:
 		// Non set, we return errors
 		return errors.New("no valid configuration requested")
 	}
 
-	var err2 *probe.Error
-	lfcCfg, err2 = opts.ToConfig(lfcCfg)
+	var rule *lifecycle.Rule
+	for i := range lfcCfg.Rules {
+		if lfcCfg.Rules[i].ID == opts.ID {
+			rule = &lfcCfg.Rules[i]
+			break
+		}
+	}
+	if rule == nil {
+		return errors.New("unable to find the matching rule to update")
+	}
+
+	err2 := ilm.ApplyRuleFields(rule, opts)
 	if err2.ToGoError() != nil {
-		return err2.ToGoError()
+		return fmt.Errorf("Unable to generate new lifecycle rule: %v", err2.ToGoError())
 	}
 
 	return client.setBucketLifecycle(ctx, params.BucketName, lfcCfg)

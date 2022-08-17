@@ -516,7 +516,7 @@ func Test_getConfig(t *testing.T) {
 				}
 			},
 			want:    nil,
-			wantErr: true,
+			wantErr: false,
 		},
 		{
 			name: "random bytes coming out of getConfigKv",
