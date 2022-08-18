@@ -96,9 +96,7 @@ const BarChartWidget = ({
   const [data, setData] = useState<any>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
   const [hover, setHover] = useState<boolean>(false);
-  const componentRef = useRef();
-
-  const thisRef = React.createRef();
+  const componentRef = useRef<HTMLElement>();
 
   const onHover = () => {
     setHover(true);
@@ -197,7 +195,7 @@ const BarChartWidget = ({
       )}
       {!loading && (
         <div
-          ref={thisRef as React.RefObject<HTMLDivElement>}
+          ref={componentRef as React.RefObject<HTMLDivElement>}
           className={
             zoomActivated ? classes.zoomChartCont : classes.contentContainer
           }

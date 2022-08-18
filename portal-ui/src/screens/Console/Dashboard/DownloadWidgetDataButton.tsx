@@ -63,7 +63,7 @@ const DownloadWidgetDataButton = ({
       .map((it) => {
         return Object.values(it).toString();
       })
-      .join(",");
+      .join("\n");
   };
 
   const widgetDataCSVFileName = () => {
@@ -78,7 +78,7 @@ const DownloadWidgetDataButton = ({
   };
 
   const downloadAsCSV = () => {
-    if (data !== null) {
+    if (data !== null && data.length > 0) {
       download(widgetDataCSVFileName(), convertToCSV(data));
     } else {
       let err: ErrorResponseHandler;

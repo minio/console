@@ -112,7 +112,7 @@ const LinearGraphWidget = ({
   const [dataMax, setDataMax] = useState<number>(0);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
 
-  const componentRef = useRef();
+  const componentRef = useRef<HTMLElement>();
 
   useEffect(() => {
     if (propLoading) {
