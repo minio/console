@@ -109,6 +109,7 @@ const LinearGraphWidget = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [hover, setHover] = useState<boolean>(false);
   const [data, setData] = useState<object[]>([]);
+  const [csvData, setCsvData] = useState<object[]>([]);
   const [dataMax, setDataMax] = useState<number>(0);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
 
@@ -180,6 +181,14 @@ const LinearGraphWidget = ({
   const onStopHover = () => {
     setHover(false);
   };
+  useEffect(() => {
+    var dateFormatData = data;
+    dateFormatData.forEach((element: any) => {
+      var date = new Date(element.name * 1000);
+      element.name = date;
+    });
+    setCsvData(dateFormatData);
+  }, [data]);
 
   const linearConfiguration = result
     ? (result?.widgetConfiguration as ILinearGraphConfiguration[])
@@ -227,7 +236,7 @@ const LinearGraphWidget = ({
             <DownloadWidgetDataButton
               title={title}
               componentRef={componentRef}
-              data={data}
+              data={csvData}
             />
           </Grid>
         </Grid>
