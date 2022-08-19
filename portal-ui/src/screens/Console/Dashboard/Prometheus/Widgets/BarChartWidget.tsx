@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState, useRef } from "react";
 
 import {
   Bar,
@@ -25,14 +25,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useMediaQuery } from "@mui/material";
+import { useMediaQuery, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IBarChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import BarChartTooltip from "./tooltips/BarChartTooltip";
-
 import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
@@ -42,6 +41,7 @@ import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../store";
+import DownloadWidgetDataButton from "../../DownloadWidgetDataButton";
 
 interface IBarChartWidget {
   classes: any;
@@ -95,6 +95,15 @@ const BarChartWidget = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
+  const [hover, setHover] = useState<boolean>(false);
+  const componentRef = useRef<HTMLElement>();
+
+  const onHover = () => {
+    setHover(true);
+  };
+  const onStopHover = () => {
+    setHover(false);
+  };
 
   useEffect(() => {
     if (propLoading) {
@@ -157,11 +166,27 @@ const BarChartWidget = ({
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
-    <div className={zoomActivated ? "" : classes.singleValueContainer}>
+    <div
+      className={zoomActivated ? "" : classes.singleValueContainer}
+      onMouseOver={onHover}
+      onMouseLeave={onStopHover}
+    >
       {!zoomActivated && (
-        <div className={classes.titleContainer}>
-          {title} <ExpandGraphLink panelItem={panelItem} />
-        </div>
+        <Grid container>
+          <Grid item xs={10} alignItems={"start"} justifyItems={"start"}>
+            <div className={classes.titleContainer}>{title}</div>
+          </Grid>
+          <Grid item xs={1} display={"flex"} justifyContent={"flex-end"}>
+            {hover && <ExpandGraphLink panelItem={panelItem} />}
+          </Grid>
+          <Grid item xs={1} display={"flex"} justifyContent={"flex-end"}>
+            <DownloadWidgetDataButton
+              title={title}
+              componentRef={componentRef}
+              data={data}
+            />
+          </Grid>
+        </Grid>
       )}
       {loading && (
         <div className={classes.loadingAlign}>
@@ -170,6 +195,7 @@ const BarChartWidget = ({
       )}
       {!loading && (
         <div
+          ref={componentRef as React.RefObject<HTMLDivElement>}
           className={
             zoomActivated ? classes.zoomChartCont : classes.contentContainer
           }

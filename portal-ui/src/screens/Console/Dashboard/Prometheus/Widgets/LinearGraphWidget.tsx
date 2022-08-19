@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
-
+import React, { Fragment, useEffect, useState, useRef } from "react";
 import {
   Area,
   AreaChart,
@@ -25,14 +24,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery, Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { ILinearGraphConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { IDashboardPanel } from "../types";
-
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
@@ -42,6 +40,7 @@ import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../store";
+import DownloadWidgetDataButton from "../../DownloadWidgetDataButton";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -50,7 +49,6 @@ interface ILinearGraphWidget {
   timeStart: any;
   timeEnd: any;
   propLoading: boolean;
-
   apiPrefix: string;
   hideYAxis?: boolean;
   yAxisFormatter?: (item: string) => string;
@@ -96,7 +94,6 @@ const styles = (theme: Theme) =>
 const LinearGraphWidget = ({
   classes,
   title,
-
   timeStart,
   timeEnd,
   propLoading,
@@ -110,9 +107,12 @@ const LinearGraphWidget = ({
 }: ILinearGraphWidget) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
+  const [hover, setHover] = useState<boolean>(false);
   const [data, setData] = useState<object[]>([]);
   const [dataMax, setDataMax] = useState<number>(0);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
+
+  const componentRef = useRef<HTMLElement>();
 
   useEffect(() => {
     if (propLoading) {
@@ -174,6 +174,13 @@ const LinearGraphWidget = ({
 
   let intervalCount = Math.floor(data.length / 5);
 
+  const onHover = () => {
+    setHover(true);
+  };
+  const onStopHover = () => {
+    setHover(false);
+  };
+
   const linearConfiguration = result
     ? (result?.widgetConfiguration as ILinearGraphConfiguration[])
     : [];
@@ -197,11 +204,33 @@ const LinearGraphWidget = ({
   }
 
   return (
-    <Box className={zoomActivated ? "" : classes.singleValueContainer}>
+    <Box
+      className={zoomActivated ? "" : classes.singleValueContainer}
+      onMouseOver={onHover}
+      onMouseLeave={onStopHover}
+    >
       {!zoomActivated && (
-        <div className={classes.titleContainer}>
-          {title} <ExpandGraphLink panelItem={panelItem} />
-        </div>
+        <Grid container alignItems={"left"}>
+          <Grid item xs={10} alignItems={"start"}>
+            <div className={classes.titleContainer}>{title}</div>
+          </Grid>
+          <Grid
+            item
+            xs={1}
+            display={"flex"}
+            justifyContent={"flex-end"}
+            alignContent={"flex-end"}
+          >
+            {hover && <ExpandGraphLink panelItem={panelItem} />}
+          </Grid>
+          <Grid item xs={1} display={"flex"} justifyContent={"flex-end"}>
+            <DownloadWidgetDataButton
+              title={title}
+              componentRef={componentRef}
+              data={data}
+            />
+          </Grid>
+        </Grid>
       )}
       <Box
         sx={
@@ -217,6 +246,7 @@ const LinearGraphWidget = ({
               }
         }
         style={areaWidget ? { gridTemplateColumns: "1fr" } : {}}
+        ref={componentRef}
       >
         {loading && <Loader className={classes.loadingAlign} />}
         {!loading && (

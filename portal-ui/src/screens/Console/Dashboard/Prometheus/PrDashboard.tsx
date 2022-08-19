@@ -17,7 +17,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
-
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -146,17 +145,26 @@ const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
       <Fragment key={`widget-${key}`}>
         {panelInfo ? (
           <Fragment>
-            {panelInfo.mergedPanels ? (
-              <MergedWidgetsRenderer
-                info={panelInfo}
-                timeStart={timeStart}
-                timeEnd={timeEnd}
-                loading={loading}
-                apiPrefix={apiPrefix}
-              />
-            ) : (
-              componentToUse(panelInfo, timeStart, timeEnd, loading, apiPrefix)
-            )}
+            <Box>
+              {panelInfo.mergedPanels ? (
+                <MergedWidgetsRenderer
+                  info={panelInfo}
+                  timeStart={timeStart}
+                  timeEnd={timeEnd}
+                  loading={loading}
+                  apiPrefix={apiPrefix}
+                />
+              ) : (
+                componentToUse(
+                  panelInfo,
+                  timeStart,
+                  timeEnd,
+                  loading,
+                  apiPrefix,
+                  zoomOpen
+                )
+              )}
+            </Box>
           </Fragment>
         ) : null}
       </Fragment>
