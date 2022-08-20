@@ -72,6 +72,12 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: "none",
       padding: "16px 30px",
     },
+    ssoSubmit: {
+      marginTop: "15px",
+      "&:first-of-type": {
+        marginTop: 0
+      }
+    },
     separator: {
       marginLeft: 8,
       marginRight: 8,
@@ -298,21 +304,42 @@ const Login = () => {
     }
     case loginStrategyType.redirect:
     case loginStrategyType.redirectServiceAccount: {
-      loginComponent = (
-        <React.Fragment>
-          <Button
-            component={"a"}
-            href={loginStrategy.redirect}
-            type="submit"
-            variant="contained"
-            color="primary"
-            id="sso-login"
-            className={classes.submit}
-          >
-            Login with SSO
-          </Button>
-        </React.Fragment>
-      );
+      if (loginStrategy.redirect.length > 1) {
+        loginComponent = (
+          <React.Fragment>
+            {loginStrategy.redirect.map((r, idx) => (
+              <Button
+                key={`login-button-${idx}`}
+                component={"a"}
+                href={r}
+                type="submit"
+                variant="contained"
+                color="primary"
+                id="sso-login"
+                className={clsx(classes.submit, classes.ssoSubmit)}
+              >
+                Login with SSO
+              </Button>
+            ))}
+          </React.Fragment>
+        );
+      } else if (loginStrategy.redirect.length === 1) {
+        loginComponent = (
+          <React.Fragment>
+            <Button
+              component={"a"}
+              href={loginStrategy.redirect[0]}
+              type="submit"
+              variant="contained"
+              color="primary"
+              id="sso-login"
+              className={classes.submit}
+            >
+              Login with SSO
+            </Button>
+          </React.Fragment>
+        );
+      }
       break;
     }
     case loginStrategyType.serviceAccount: {

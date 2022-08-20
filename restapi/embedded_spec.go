@@ -5433,7 +5433,10 @@ func init() {
           ]
         },
         "redirect": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -12702,7 +12705,10 @@ func init() {
           ]
         },
         "redirect": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

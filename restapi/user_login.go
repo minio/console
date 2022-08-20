@@ -149,10 +149,23 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
-	redirectURL := ""
+	redirectURL := []string{}
 	r := params.HTTPRequest
-	if len(openIDProviders) > 0 {
-		loginStrategy = models.LoginDetailsLoginStrategyRedirect
+	var loginDetails *models.LoginDetails
+	loginStrategy = models.LoginDetailsLoginStrategyRedirect
+	if len(openIDProviders) > 1 {
+		for name := range openIDProviders {
+			// initialize new oauth2 client
+			oauth2Client, err := openIDProviders.NewOauth2ProviderClient(name, nil, r, GetConsoleHTTPClient())
+			if err != nil {
+				return nil, ErrorWithContext(ctx, err, ErrOauth2Provider)
+			}
+			// Validate user against IDP
+			identityProvider := &auth.IdentityProvider{Client: oauth2Client}
+			redirectURL = append(redirectURL, identityProvider.GenerateLoginURL())
+
+		}
+	} else if len(openIDProviders) == 1 {
 		// initialize new oauth2 client
 		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(idpName, nil, r, GetConsoleHTTPClient())
 		if err != nil {
@@ -160,10 +173,9 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 		}
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
-		redirectURL = identityProvider.GenerateLoginURL()
+		redirectURL = append(redirectURL, identityProvider.GenerateLoginURL())
 	}
-
-	loginDetails := &models.LoginDetails{
+	loginDetails = &models.LoginDetails{
 		LoginStrategy: loginStrategy,
 		Redirect:      redirectURL,
 	}

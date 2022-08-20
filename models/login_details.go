@@ -45,7 +45,7 @@ type LoginDetails struct {
 	LoginStrategy string `json:"loginStrategy,omitempty"`
 
 	// redirect
-	Redirect string `json:"redirect,omitempty"`
+	Redirect []string `json:"redirect"`
 }
 
 // Validate validates this login details

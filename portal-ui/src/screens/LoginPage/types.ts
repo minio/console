@@ -16,7 +16,7 @@
 
 export interface ILoginDetails {
   loginStrategy: loginStrategyType;
-  redirect: string;
+  redirect: string[];
   isDirectPV?: boolean;
 }
 
