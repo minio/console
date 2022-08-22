@@ -17,7 +17,7 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import Grid from "@mui/material/Grid";
-import { Button } from "@mui/material";
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -247,24 +247,22 @@ const AddEvent = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"cancel-add-event"}
               type="button"
-              variant="outlined"
-              color="primary"
+              variant="regular"
               disabled={addLoading}
               onClick={() => {
                 closeModalAndRefresh();
               }}
-            >
-              Cancel
-            </Button>
+              label={"Cancel"}
+            />
             <Button
+              id={"save-event"}
               type="submit"
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={addLoading}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
         </Grid>
       </form>

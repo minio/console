@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-
+import { Button } from "mds";
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -47,7 +47,7 @@ import HelpBox from "../../../common/HelpBox";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import {
   setErrorSnackMessage,
@@ -55,6 +55,7 @@ import {
 } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import ConfirmDeleteTargetModal from "./ConfirmDeleteTargetModal";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -191,27 +192,28 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
             value={filter}
           />
           <div className={classes.rightActionItems}>
-            <RBIconButton
-              tooltip={"Refresh List"}
-              text={"Refresh"}
-              variant="outlined"
-              color="primary"
-              icon={<RefreshIcon />}
-              onClick={() => {
-                setIsLoading(true);
-              }}
-            />
-
-            <RBIconButton
-              tooltip={"Add Notification Target"}
-              text={" Add Notification Target"}
-              variant="contained"
-              color="primary"
-              icon={<AddIcon />}
-              onClick={() => {
-                navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
-              }}
-            />
+            <TooltipWrapper tooltip={"Refresh List"}>
+              <Button
+                id={"reload-notification-endpoints"}
+                label={"Refresh"}
+                variant="regular"
+                icon={<RefreshIcon />}
+                onClick={() => {
+                  setIsLoading(true);
+                }}
+              />
+            </TooltipWrapper>
+            <TooltipWrapper tooltip={"Add Notification Target"}>
+              <Button
+                id={"add-notification-target"}
+                label={" Add Notification Target"}
+                variant="callAction"
+                icon={<AddIcon />}
+                onClick={() => {
+                  navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
+                }}
+              />
+            </TooltipWrapper>
           </div>
         </Grid>
         {isLoading && <LinearProgress />}

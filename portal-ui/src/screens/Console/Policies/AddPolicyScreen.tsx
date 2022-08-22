@@ -16,7 +16,8 @@
 
 import React, { Fragment, useState } from "react";
 import Grid from "@mui/material/Grid";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
+import { Button } from "mds";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -132,22 +133,21 @@ const AddPolicyScreen = () => {
                     }}
                   >
                     <Button
+                      id={"clear"}
                       type="button"
-                      variant="outlined"
-                      color="primary"
+                      variant="regular"
                       onClick={resetForm}
-                    >
-                      Clear
-                    </Button>
+                      label={"Clear"}
+                    />
 
                     <Button
+                      id={"save-policy"}
                       type="submit"
-                      variant="contained"
+                      variant="callAction"
                       color="primary"
                       disabled={addLoading || !validSave}
-                    >
-                      Save
-                    </Button>
+                      label={"Save"}
+                    />
                   </Box>
                 </Grid>
               </Grid>

@@ -20,9 +20,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import {
   fileInputStyles,
   formFieldStyles,
@@ -516,13 +517,12 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
             </Grid>
             <Grid item xs={12} className={classes.settingsButtonContainer}>
               <Button
+                id={"save-tier-configuration"}
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 disabled={saving || !isFormValid}
-              >
-                Save Tier Configuration
-              </Button>
+                label={"Save Tier Configuration"}
+              />
             </Grid>
           </form>
         </Grid>

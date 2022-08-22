@@ -20,7 +20,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
+import { Button } from "mds";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -265,26 +265,24 @@ const SetRetention = ({
         </Grid>
         <Grid item xs={12} className={classes.modalButtonBar}>
           <Button
+            id={"reset"}
             type="button"
-            variant="outlined"
-            color="primary"
+            variant="regular"
             onClick={resetForm}
-          >
-            Reset
-          </Button>
+            label={"Reset"}
+          />
           <Button
+            id={"save"}
             type="submit"
-            variant="contained"
-            color="primary"
+            variant="callAction"
             disabled={
               (statusEnabled && type === "") ||
               (statusEnabled && !isDateValid) ||
               isSaving
             }
             onClick={saveNewRetentionPolicy}
-          >
-            Save
-          </Button>
+            label={"Save"}
+          />
         </Grid>
       </form>
     </ModalWrapper>

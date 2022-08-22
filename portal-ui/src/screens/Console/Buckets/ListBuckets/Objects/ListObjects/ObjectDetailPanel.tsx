@@ -16,8 +16,9 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { withStyles } from "@mui/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
@@ -620,7 +621,7 @@ const ObjectDetailPanel = ({
             items={multiActionButtons}
           />
 
-          <Grid item xs={12} sx={{ textAlign: "center" }}>
+          <Grid item xs={12} sx={{ justifyContent: "center", display: "flex" }}>
             <SecureComponent
               resource={[
                 bucketName,
@@ -631,24 +632,21 @@ const ObjectDetailPanel = ({
               errorProps={{ disabled: true }}
             >
               <Button
-                startIcon={<DeleteIcon />}
-                color="secondary"
-                variant={"outlined"}
+                id={"delete-element-click"}
+                icon={<DeleteIcon />}
+                iconLocation={"start"}
+                fullWidth
+                variant={"secondary"}
                 onClick={() => {
                   setDeleteOpen(true);
                 }}
                 disabled={selectedVersion === "" && actualInfo.is_delete_marker}
-                sx={{
+                style={{
                   width: "calc(100% - 44px)",
                   margin: "8px 0",
-                  "& svg.min-icon": {
-                    width: 14,
-                    height: 14,
-                  },
                 }}
-              >
-                Delete{selectedVersion !== "" ? " version" : ""}
-              </Button>
+                label={`Delete${selectedVersion !== "" ? " version" : ""}`}
+              />
             </SecureComponent>
           </Grid>
           <Grid item xs={12} className={classes.headerForSection}>

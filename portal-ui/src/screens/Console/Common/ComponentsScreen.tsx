@@ -19,17 +19,12 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, DialogContentText, Grid } from "@mui/material";
+import { DialogContentText, Grid } from "@mui/material";
 import PageHeader from "./PageHeader/PageHeader";
 import PageLayout from "./Layout/PageLayout";
 import SectionTitle from "./SectionTitle";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
-import {
-  ArrowIcon,
-  ConfirmDeleteIcon,
-  EditIcon,
-  TrashIcon,
-} from "../../../icons";
+import { Button } from "mds";
+import { ConfirmDeleteIcon } from "../../../icons";
 import ConfirmDialog from "./ModalWrapper/ConfirmDialog";
 
 interface IComponentsScreen {
@@ -63,157 +58,6 @@ const ComponentsScreen = ({ classes }: IComponentsScreen) => {
       <PageLayout>
         <Grid container spacing={1}>
           <Grid item xs={12}>
-            <SectionTitle>Buttons</SectionTitle>
-          </Grid>
-          <Grid item xs={12}>
-            <p>Buttons should always be of one of the following four types:</p>
-          </Grid>
-          <Grid item xs={12}>
-            <Grid container spacing={1}>
-              <Grid item>
-                <Button
-                  type="button"
-                  variant={"contained"}
-                  className={classes.clearButton}
-                  onClick={() => {}}
-                >
-                  Primary
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {}}
-                  disabled={true}
-                >
-                  Primary Disabled
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button type="button" variant={"outlined"} onClick={() => {}}>
-                  Generic
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  type="button"
-                  variant={"outlined"}
-                  onClick={() => {}}
-                  disabled={true}
-                >
-                  Generic Disabled
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  type="button"
-                  variant={"outlined"}
-                  color={"secondary"}
-                  onClick={() => {}}
-                >
-                  Dangerous
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  type="button"
-                  variant={"outlined"}
-                  color={"secondary"}
-                  onClick={() => {}}
-                  disabled={true}
-                >
-                  Dangerous Disabled
-                </Button>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <ul>
-              <li>
-                <b>Primary:</b> A call to action.
-              </li>
-              <li>
-                <b>Generic:</b> An optional action.
-              </li>
-              <li>
-                <b>Dangerous:</b> An irreversible action.
-              </li>
-            </ul>
-          </Grid>
-          <Grid item xs={12}>
-            <SectionTitle>Icon Buttons</SectionTitle>
-          </Grid>
-          <Grid item xs={12}>
-            <p>Icon Buttons should always be of one of the following types:</p>
-          </Grid>
-          <Grid item xs={12}>
-            <Grid container spacing={1}>
-              <Grid item>
-                <RBIconButton
-                  tooltip={"Primary"}
-                  onClick={() => {}}
-                  text={"Primary"}
-                  icon={<ArrowIcon />}
-                  color={"primary"}
-                  variant={"outlined"}
-                />
-              </Grid>
-              <Grid item>
-                <RBIconButton
-                  tooltip={"Primary Disabled"}
-                  onClick={() => {}}
-                  text={"Primary Disabled"}
-                  icon={<ArrowIcon />}
-                  color={"primary"}
-                  variant={"outlined"}
-                  disabled={true}
-                />
-              </Grid>
-              <Grid item>
-                <RBIconButton
-                  tooltip={"Delete Bucket"}
-                  onClick={() => {}}
-                  text={"Generic"}
-                  icon={<EditIcon />}
-                  variant={"outlined"}
-                />
-              </Grid>
-              <Grid item>
-                <RBIconButton
-                  tooltip={"Delete Bucket"}
-                  onClick={() => {}}
-                  text={"Generic Disabled"}
-                  icon={<EditIcon />}
-                  variant={"outlined"}
-                  disabled={true}
-                />
-              </Grid>
-              <Grid item>
-                <RBIconButton
-                  tooltip={"Dangerous"}
-                  onClick={() => {}}
-                  text={"Dangerous"}
-                  icon={<TrashIcon />}
-                  color={"secondary"}
-                  variant={"outlined"}
-                />
-              </Grid>
-              <Grid item>
-                <RBIconButton
-                  tooltip={"Dangerous"}
-                  onClick={() => {}}
-                  text={"Dangerous Disabled"}
-                  icon={<TrashIcon />}
-                  color={"secondary"}
-                  variant={"outlined"}
-                  disabled={true}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
             <SectionTitle>Confirm Dialogs</SectionTitle>
           </Grid>
           <Grid item xs={12}>
@@ -221,14 +65,14 @@ const ComponentsScreen = ({ classes }: IComponentsScreen) => {
           </Grid>
           <Grid item xs={12}>
             <Button
+              id={"open-dialog-test"}
               type="button"
-              variant={"outlined"}
+              variant={"regular"}
               onClick={() => {
                 setDialogOpen(true);
               }}
-            >
-              Open Dialog
-            </Button>
+              label={"Open Dialog"}
+            />
             <ConfirmDialog
               title={`Delete Bucket`}
               confirmText={"Delete"}

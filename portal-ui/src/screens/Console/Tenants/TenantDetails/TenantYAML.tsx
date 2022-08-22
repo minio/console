@@ -17,9 +17,10 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
+import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../../common/api";
@@ -153,27 +154,25 @@ const TenantYAML = ({ classes }: ITenantYAMLProps) => {
             </Grid>
             <Grid item xs={12} style={{ textAlign: "right", paddingTop: 16 }}>
               <Button
+                id={"cancel-tenant-yaml"}
                 type="button"
-                variant="outlined"
-                color="primary"
+                variant="regular"
                 disabled={addLoading}
                 onClick={() => {
                   navigate(
                     `/namespaces/${namespace}/tenants/${tenant}/summary`
                   );
                 }}
-              >
-                Cancel
-              </Button>
+                label={"Cancel"}
+              />
               <Button
+                id={"save-tenant-yaml"}
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 disabled={addLoading || !validSave}
                 style={{ marginLeft: 8 }}
-              >
-                Save
-              </Button>
+                label={"Save"}
+              />
             </Grid>
           </Grid>
         </form>

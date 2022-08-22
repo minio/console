@@ -18,6 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../common/api";
@@ -48,13 +49,13 @@ import {
   S3_ALL_RESOURCES,
 } from "../../../common/SecureComponent/permissions";
 
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import {
   hasPermission,
   SecureComponent,
 } from "../../../common/SecureComponent";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 const DeleteUser = withSuspense(React.lazy(() => import("./DeleteUser")));
 const AddToGroup = withSuspense(React.lazy(() => import("./BulkAddToGroup")));
@@ -215,37 +216,39 @@ const ListUsers = ({ classes }: IUsersProps) => {
             matchAll
             errorProps={{ disabled: true }}
           >
-            <RBIconButton
-              tooltip={"Delete Selected"}
-              onClick={() => {
-                setDeleteOpen(true);
-              }}
-              text={"Delete Selected"}
-              icon={<DeleteIcon />}
-              color="secondary"
-              disabled={checkedUsers.length === 0}
-              variant={"outlined"}
-              aria-label="delete-selected-users"
-            />
+            <TooltipWrapper tooltip={"Delete Selected"}>
+              <Button
+                id={"delete-selected-users"}
+                onClick={() => {
+                  setDeleteOpen(true);
+                }}
+                label={"Delete Selected"}
+                icon={<DeleteIcon />}
+                disabled={checkedUsers.length === 0}
+                variant={"secondary"}
+                aria-label="delete-selected-users"
+              />
+            </TooltipWrapper>
           </SecureComponent>
           <SecureComponent
             scopes={[IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP]}
             resource={CONSOLE_UI_RESOURCE}
             errorProps={{ disabled: true }}
           >
-            <RBIconButton
-              tooltip={"Add to Group"}
-              text={"Add to Group"}
-              icon={<GroupsIcon />}
-              color="primary"
-              disabled={checkedUsers.length <= 0}
-              onClick={() => {
-                if (checkedUsers.length > 0) {
-                  setAddGroupOpen(true);
-                }
-              }}
-              variant={"outlined"}
-            />
+            <TooltipWrapper tooltip={"Add to Group"}>
+              <Button
+                id={"add-to-group"}
+                label={"Add to Group"}
+                icon={<GroupsIcon />}
+                disabled={checkedUsers.length <= 0}
+                onClick={() => {
+                  if (checkedUsers.length > 0) {
+                    setAddGroupOpen(true);
+                  }
+                }}
+                variant={"regular"}
+              />
+            </TooltipWrapper>
           </SecureComponent>
           <SecureComponent
             scopes={[
@@ -257,16 +260,17 @@ const ListUsers = ({ classes }: IUsersProps) => {
             matchAll
             errorProps={{ disabled: true }}
           >
-            <RBIconButton
-              tooltip={"Create User"}
-              text={"Create User"}
-              icon={<AddIcon />}
-              color="primary"
-              onClick={() => {
-                navigate(`${IAM_PAGES.USER_ADD}`);
-              }}
-              variant={"contained"}
-            />
+            <TooltipWrapper tooltip={"Create User"}>
+              <Button
+                id={"create-user"}
+                label={"Create User"}
+                icon={<AddIcon />}
+                onClick={() => {
+                  navigate(`${IAM_PAGES.USER_ADD}`);
+                }}
+                variant={"callAction"}
+              />
+            </TooltipWrapper>
           </SecureComponent>
         </Grid>
 

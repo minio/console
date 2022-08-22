@@ -24,5 +24,5 @@ test("Login to Operator Web Page", async (t) => {
   await t
     .navigateTo("http://localhost:9090/login")
     .typeText("#jwt", "anyrandompasswordwillwork")
-    .click("button.MuiButton-root");
+    .click("#do-login");
 });

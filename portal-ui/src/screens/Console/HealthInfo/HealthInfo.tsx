@@ -22,6 +22,7 @@ import {
 } from "websocket";
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
+import { Button } from "mds";
 import {
   DiagStatError,
   DiagStatInProgress,
@@ -42,7 +43,7 @@ import {
   actionsTray,
   containerForHeader,
 } from "../Common/FormComponents/common/styleLibrary";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
@@ -78,7 +79,8 @@ const styles = (theme: Theme) =>
       marginBottom: 25,
     },
     startDiagnostic: {
-      textAlign: "right",
+      display: "flex",
+      justifyContent: "flex-end",
       margin: 25,
       marginBottom: 0,
     },
@@ -270,14 +272,13 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                     {serverDiagnosticStatus !== DiagStatError &&
                       !downloadDisabled && (
                         <Button
+                          id={"download"}
                           type="submit"
-                          variant="contained"
-                          color="primary"
+                          variant="callAction"
                           onClick={() => download()}
                           disabled={downloadDisabled}
-                        >
-                          Download
-                        </Button>
+                          label={"Download"}
+                        />
                       )}
                     <Grid
                       item
@@ -289,13 +290,11 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                       <Button
                         id="start-new-diagnostic"
                         type="submit"
-                        variant="contained"
-                        color="primary"
+                        variant="callAction"
                         disabled={startDiagnostic}
                         onClick={() => setStartDiagnostic(true)}
-                      >
-                        {buttonStartText}
-                      </Button>
+                        label={buttonStartText}
+                      />
                     </Grid>
                   </Fragment>
                 )}

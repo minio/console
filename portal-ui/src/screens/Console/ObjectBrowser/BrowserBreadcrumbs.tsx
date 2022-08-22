@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import createStyles from "@mui/styles/createStyles";
 import { Theme } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
 import { BackCaretIcon, CopyIcon, NewPathIcon } from "../../../icons";
@@ -33,7 +33,7 @@ import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { setVersionsModeEnabled } from "./objectBrowserSlice";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { Button } from "mds";
 
 const CreatePathModal = withSuspense(
   React.lazy(
@@ -192,31 +192,28 @@ const BrowserBreadcrumbs = ({
             {listBreadcrumbs}
           </div>
           <CopyToClipboard text={`${bucketName}/${splitPaths.join("/")}`}>
-            <RBIconButton
+            <Button
               id={"copy-path"}
-              icon={<CopyIcon />}
-              disableTouchRipple
-              disableRipple
-              focusRipple={false}
-              variant={"outlined"}
+              icon={
+                <CopyIcon
+                  style={{
+                    width: "12px",
+                    height: "12px",
+                    fill: "#969FA8",
+                    marginTop: -1,
+                  }}
+                />
+              }
+              variant={"regular"}
               onClick={() => {
                 dispatch(setSnackBarMessage("Path copied to clipboard"));
               }}
-              sx={{
-                marginRight: "3px",
-                padding: "0",
-                color: "#969FA8",
-                border: "#969FA8 1px solid",
+              style={{
                 width: "28px",
                 height: "28px",
-
-                "& .MuiButton-root": {
-                  height: "28px",
-                },
-                "& .min-icon": {
-                  width: "12px",
-                  height: "12px",
-                },
+                color: "#969FA8",
+                border: "#969FA8 1px solid",
+                marginRight: 5,
               }}
             />
           </CopyToClipboard>
@@ -233,25 +230,15 @@ const BrowserBreadcrumbs = ({
                 rewindEnabled ||
                 !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
               }
-              endIcon={<NewPathIcon />}
-              disableTouchRipple
-              disableRipple
-              focusRipple={false}
-              sx={{
+              icon={<NewPathIcon style={{ fill: "#969FA8" }} />}
+              style={{
+                whiteSpace: "nowrap",
                 color: "#969FA8",
                 border: "#969FA8 1px solid",
-                whiteSpace: "nowrap",
-                minWidth: "160px",
-                "@media (max-width: 1060px)": {
-                  fontSize: 0,
-                  minWidth: 40,
-                  padding: "0 10px 0 0",
-                },
               }}
-              variant={"outlined"}
-            >
-              Create new path
-            </Button>
+              variant={"regular"}
+              label={"Create new path"}
+            />
           </Tooltip>
         )}
       </div>

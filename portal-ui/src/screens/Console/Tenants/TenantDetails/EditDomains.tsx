@@ -15,9 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-
 import { Theme } from "@mui/material/styles";
-import { Button, Grid, IconButton } from "@mui/material";
+import { Button } from "mds";
+import { Grid, IconButton } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import AddIcon from "@mui/icons-material/Add";
@@ -286,26 +286,24 @@ const EditDomains = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"clear-edit-domain"}
               type="button"
-              color="primary"
-              variant="outlined"
+              variant="regular"
               onClick={resetForm}
-            >
-              Clear
-            </Button>
+              label={"Clear"}
+            />
             <Button
+              id={"save-domain"}
               type="submit"
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={
                 isSending ||
                 !consoleDomainValid ||
                 minioDomainValid.filter((domain) => !domain).length > 0
               }
               onClick={updateDomainsList}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
         </Grid>
       </Grid>

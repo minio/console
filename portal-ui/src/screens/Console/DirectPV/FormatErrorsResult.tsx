@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Button, Grid, Theme } from "@mui/material";
+import React from "react";
+import { Grid, Theme } from "@mui/material";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import React from "react";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { IDirectPVFormatResItem } from "./types";
@@ -97,22 +98,19 @@ const FormatErrorsResult = ({
         </Grid>
         <Grid item xs={12} className={classes.modalButtonBar}>
           <Button
-            color="primary"
-            variant="outlined"
+            id={"download-results"}
+            variant="regular"
             onClick={() => {
               download("csiFormatErrors.json", JSON.stringify([...errorsList]));
             }}
-          >
-            Download
-          </Button>
+            label={"Download"}
+          />
           <Button
+            id={"finish"}
             onClick={onCloseFormatErrorsList}
-            color="primary"
-            variant="contained"
-            autoFocus
-          >
-            Done
-          </Button>
+            variant="callAction"
+            label={"Donw"}
+          />
         </Grid>
       </Grid>
     </ModalWrapper>

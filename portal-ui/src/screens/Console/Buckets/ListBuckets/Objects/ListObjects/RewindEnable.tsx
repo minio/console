@@ -16,7 +16,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
+import { Button } from "mds";
 import Grid from "@mui/material/Grid";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DateTimePickerWrapper from "../../../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
@@ -96,7 +97,7 @@ const RewindEnable = ({
       </Grid>
       <Grid container>
         {rewindEnabled && (
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ marginBottom: "10px" }}>
             <FormSwitchWrapper
               value="status"
               id="status"
@@ -110,19 +111,23 @@ const RewindEnable = ({
             />
           </Grid>
         )}
-        <Grid item xs={12} style={{ textAlign: "right" }}>
+        <Grid
+          item
+          xs={12}
+          style={{ justifyContent: "flex-end", display: "flex" }}
+        >
           <Button
             type="button"
-            variant="contained"
-            color="primary"
+            variant="callAction"
             disabled={rewindEnabling || (!dateSelected && rewindEnableButton)}
             onClick={rewindApply}
             id={"rewind-apply-button"}
-          >
-            {!rewindEnableButton && rewindEnabled
-              ? "Show Current Data"
-              : "Show Rewind Data"}
-          </Button>
+            label={
+              !rewindEnableButton && rewindEnabled
+                ? "Show Current Data"
+                : "Show Rewind Data"
+            }
+          />
         </Grid>
         {rewindEnabling && (
           <Grid item xs={12}>

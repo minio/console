@@ -1,19 +1,18 @@
 import React from "react";
 import {
-  Button,
-  ButtonProps,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
+import { Button } from "mds";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { deleteDialogStyles } from "../FormComponents/common/styleLibrary";
+import { ButtonProps } from "../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -31,8 +30,10 @@ type ConfirmDialogProps = {
   confirmationContent: React.ReactNode | React.ReactNode[];
   cancelText?: string;
   confirmText?: string;
-  confirmButtonProps?: Partial<ButtonProps>;
-  cancelButtonProps?: Partial<ButtonProps>;
+  confirmButtonProps?: ButtonProps &
+    React.ButtonHTMLAttributes<HTMLButtonElement>;
+  cancelButtonProps?: ButtonProps &
+    React.ButtonHTMLAttributes<HTMLButtonElement>;
   titleIcon?: React.ReactNode;
 };
 
@@ -47,8 +48,8 @@ const ConfirmDialog = ({
   confirmationContent,
   cancelText = "Cancel",
   confirmText = "Confirm",
-  confirmButtonProps = {},
-  cancelButtonProps = {},
+  confirmButtonProps = undefined,
+  cancelButtonProps = undefined,
   titleIcon = null,
 }: ConfirmDialogProps) => {
   return (
@@ -88,34 +89,22 @@ const ConfirmDialog = ({
       </DialogContent>
       <DialogActions className={classes.actions}>
         <Button
-          className={classes.cancelButton}
           onClick={onCancel || onClose}
           disabled={isLoading}
           type="button"
           {...cancelButtonProps}
-          variant="outlined"
-          color="primary"
+          variant="regular"
           id={"confirm-cancel"}
-        >
-          {cancelText}
-        </Button>
-
-        <LoadingButton
-          className={classes.confirmButton}
-          type="button"
-          onClick={onConfirm}
-          loading={isLoading}
-          disabled={isLoading}
-          variant="outlined"
-          color="secondary"
-          loadingPosition="start"
-          startIcon={<React.Fragment />}
-          autoFocus
+          label={cancelText}
+        />
+        <Button
           id={"confirm-ok"}
+          onClick={onConfirm}
+          label={confirmText}
+          disabled={isLoading}
+          variant={"secondary"}
           {...confirmButtonProps}
-        >
-          {confirmText}
-        </LoadingButton>
+        />
       </DialogActions>
     </Dialog>
   );

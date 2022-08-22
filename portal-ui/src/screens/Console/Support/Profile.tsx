@@ -1,9 +1,10 @@
 import React, { Fragment, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
@@ -17,9 +18,10 @@ import {
 const styles = (theme: Theme) =>
   createStyles({
     buttonContainer: {
+      display: "flex",
+      justifyContent: "flex-end",
       marginTop: 24,
-      textAlign: "right",
-      "& .MuiButton-root": {
+      "& button": {
         marginLeft: 8,
       },
     },
@@ -166,27 +168,26 @@ const Profile = ({ classes }: IProfileProps) => {
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button
+              id={"start-profiling"}
               type="submit"
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={profilingStarted || types.length < 1}
               onClick={() => {
                 startProfiling();
               }}
-            >
-              Start Profiling
-            </Button>
+              label={"Start Profiling"}
+            />
             <Button
+              id={"stop-profiling"}
               type="submit"
-              variant="contained"
+              variant="callAction"
               color="primary"
               disabled={!profilingStarted}
               onClick={() => {
                 stopProfiling();
               }}
-            >
-              Stop Profiling
-            </Button>
+              label={"Stop Profiling"}
+            />
           </Grid>
         </Grid>
       </PageLayout>

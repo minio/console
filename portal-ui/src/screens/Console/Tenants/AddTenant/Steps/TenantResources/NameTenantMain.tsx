@@ -50,6 +50,7 @@ const styles = (theme: Theme) =>
       background: "#FFFFFF",
       border: "1px solid #EAEAEA",
       padding: 2,
+      marginTop: 20,
     },
     ...formFieldStyles,
     ...modalBasic,
@@ -124,7 +125,7 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
   return (
     <Fragment>
       <Grid container>
-        <Grid item xs={8} md={9}>
+        <Grid item sx={{ width: "calc(100% - 300px)" }}>
           <Paper className={classes.paperWrapper} sx={{ minHeight: 550 }}>
             <Grid container>
               <Grid item xs={12}>
@@ -197,7 +198,7 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={4} md={3}>
+        <Grid item>
           <div className={classes.sizePreview}>
             <SizePreview />
           </div>

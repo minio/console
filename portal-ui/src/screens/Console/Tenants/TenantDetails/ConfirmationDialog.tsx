@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -7,7 +8,6 @@ import {
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -69,12 +69,19 @@ const ConfirmationDialog = ({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={cancelOnClick} color="primary" disabled={isSending}>
-          {cancelLabel || "Cancel"}
-        </Button>
-        <Button onClick={onClick} color="secondary" autoFocus>
-          {okLabel || "Ok"}
-        </Button>
+        <Button
+          id="cancel-dialog"
+          variant={"callAction"}
+          onClick={cancelOnClick}
+          disabled={isSending}
+          label={cancelLabel || "Cancel"}
+        />
+        <Button
+          id="accept-dialog"
+          variant={"secondary"}
+          onClick={onClick}
+          label={okLabel || "Ok"}
+        />
       </DialogActions>
     </Dialog>
   );

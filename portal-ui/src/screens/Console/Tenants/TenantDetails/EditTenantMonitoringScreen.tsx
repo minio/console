@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -26,7 +28,6 @@ import {
   tenantDetailsStyles,
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../store";
 import api from "../../../../common/api";
@@ -35,7 +36,7 @@ import { useParams } from "react-router-dom";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { Button, DialogContentText } from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import {
   setErrorSnackMessage,
@@ -569,17 +570,19 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
               }
             />
           </Grid>
-          <Grid item xs={12} textAlign={"right"}>
+          <Grid
+            item
+            xs={12}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
             <Button
               type="submit"
               id={"submit_button"}
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={!checkValid()}
               onClick={() => submitMonitoringInfo()}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
         </Fragment>
       )}

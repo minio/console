@@ -17,7 +17,8 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
-import { Button, DialogContentText, IconButton } from "@mui/material";
+import { DialogContentText, IconButton } from "@mui/material";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
@@ -818,16 +819,19 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                 }
               />
             </Grid>
-            <Grid item xs={12} textAlign={"right"}>
+            <Grid
+              item
+              xs={12}
+              sx={{ display: "flex", justifyContent: "flex-end" }}
+            >
               <Button
+                id={"save-security"}
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 disabled={dialogOpen || isSending}
                 onClick={() => setDialogOpen(true)}
-              >
-                Save
-              </Button>
+                label={"Save"}
+              />
             </Grid>
           </Grid>
         </Grid>

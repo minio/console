@@ -493,7 +493,8 @@ export const settingsCommon: any = {
   },
   settingsButtonContainer: {
     padding: "15px 38px",
-    textAlign: "right" as const,
+    display: "flex",
+    justifyContent: "flex-end",
   },
   innerSettingsButtonContainer: {
     maxWidth: 840,
@@ -882,7 +883,8 @@ export const hrClass = {
 
 export const tenantDetailsStyles = {
   buttonContainer: {
-    textAlign: "right" as const,
+    display: "flex",
+    justifyContent: "flex-end",
   },
   multiContainer: {
     display: "flex" as const,
@@ -1133,7 +1135,8 @@ export const serviceAccountStyles: any = {
     width: "100%",
   },
   buttonContainer: {
-    textAlign: "right",
+    display: "flex",
+    justifyContent: "flex-end",
   },
   infoDetails: {
     color: "#393939",

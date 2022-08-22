@@ -17,6 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -24,7 +25,7 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import {
   IAMPoliciesIcon,
   PasswordKeyIcon,
@@ -305,16 +306,18 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                   </Grid>
                   <Grid item xs={12} className={classes.modalButtonBar}>
                     <Button
+                      id={"clear-add-sa"}
                       type="button"
-                      variant="outlined"
-                      color="primary"
+                      variant="regular"
                       onClick={resetForm}
-                    >
-                      Clear
-                    </Button>
-                    <Button type="submit" variant="contained" color="primary">
-                      Create
-                    </Button>
+                      label={"Clear"}
+                    />
+                    <Button
+                      id="create-sa"
+                      type="submit"
+                      variant="callAction"
+                      label={"Create"}
+                    />
                   </Grid>
                 </Grid>
               </form>

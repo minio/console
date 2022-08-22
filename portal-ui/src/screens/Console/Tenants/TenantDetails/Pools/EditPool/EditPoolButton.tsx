@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Button } from "@mui/material";
+import { Button } from "mds";
 import React from "react";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../../../store";
@@ -43,17 +43,15 @@ const EditPoolButton = () => {
   return (
     <Button
       id={"wizard-button-Update"}
-      variant="contained"
+      variant="callAction"
       color="primary"
-      size="small"
       onClick={() => {
         dispatch(editPoolAsync());
       }}
       disabled={!enabled}
       key={`button-EditPool-Update`}
-    >
-      Update
-    </Button>
+      label={"Update"}
+    />
   );
 };
 

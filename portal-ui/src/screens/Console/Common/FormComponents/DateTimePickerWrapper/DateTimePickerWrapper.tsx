@@ -16,9 +16,9 @@
 
 import React, { Fragment } from "react";
 import { Grid, InputLabel, TextField, Tooltip } from "@mui/material";
-import DateTimePicker from "@mui/lab/DateTimePicker";
-import AdapterMoment from "@mui/lab/AdapterMoment";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import InputAdornment from "@mui/material/InputAdornment";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import { Theme } from "@mui/material/styles";
@@ -293,7 +293,7 @@ const DateTimePickerWrapper = ({
         label=""
         className={clsName}
         disabled={disabled}
-        renderInput={(props) => (
+        renderInput={(props: any) => (
           <TextField id={id} variant="standard" {...props} disabled />
         )}
         ampm={false}

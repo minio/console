@@ -20,7 +20,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Grid, IconButton, Tooltip } from "@mui/material";
+import { Grid } from "@mui/material";
 import { AppState, useAppDispatch } from "../../../../store";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 
@@ -44,6 +44,8 @@ import {
 import SearchBox from "../../Common/SearchBox";
 import { selFeatures } from "../../consoleSlice";
 import AutoColorIcon from "../../Common/Components/AutoColorIcon";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import { Button } from "mds";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -127,17 +129,22 @@ const BrowserHandler = () => {
               resource={bucketName}
               errorProps={{ disabled: true }}
             >
-              <Tooltip title={"Configure Bucket"}>
-                <IconButton
+              <TooltipWrapper tooltip={"Configure Bucket"}>
+                <Button
+                  id={"configure-bucket-main"}
                   color="primary"
                   aria-label="Configure Bucket"
-                  component="span"
                   onClick={openBucketConfiguration}
-                  size="large"
-                >
-                  <SettingsIcon />
-                </IconButton>
-              </Tooltip>
+                  icon={
+                    <SettingsIcon
+                      style={{ width: 20, height: 20, marginTop: -3 }}
+                    />
+                  }
+                  style={{
+                    padding: "0 10px",
+                  }}
+                />
+              </TooltipWrapper>
             </SecureComponent>
           }
           middleComponent={searchBar}

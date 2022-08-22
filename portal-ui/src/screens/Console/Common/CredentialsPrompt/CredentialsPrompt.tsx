@@ -17,6 +17,7 @@
 import React from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { NewServiceAccount } from "./types";
@@ -25,8 +26,7 @@ import Grid from "@mui/material/Grid";
 import CredentialItem from "./CredentialItem";
 import WarnIcon from "../../../../icons/WarnIcon";
 import { DownloadIcon, ServiceAccountCredentialsIcon } from "../../../../icons";
-
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import TooltipWrapper from "../TooltipWrapper/TooltipWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -48,7 +48,8 @@ const styles = (theme: Theme) =>
       fontSize: ".9rem",
     },
     buttonContainer: {
-      textAlign: "right",
+      display: "flex",
+      justifyContent: "flex-end",
       marginTop: "1rem",
     },
     credentialsPanel: {
@@ -96,6 +97,71 @@ const CredentialsPrompt = ({
   }
   const consoleCreds = get(newServiceAccount, "console", null);
   const idp = get(newServiceAccount, "idp", false);
+
+  const downloadImport = () => {
+    let consoleExtras = {};
+
+    if (consoleCreds) {
+      if (!Array.isArray(consoleCreds)) {
+        consoleExtras = {
+          url: consoleCreds.url,
+          accessKey: consoleCreds.accessKey,
+          secretKey: consoleCreds.secretKey,
+          api: "s3v4",
+          path: "auto",
+        };
+      } else {
+        const cCreds = consoleCreds.map((itemMap) => {
+          return {
+            url: itemMap.url,
+            accessKey: itemMap.accessKey,
+            secretKey: itemMap.secretKey,
+            api: "s3v4",
+            path: "auto",
+          };
+        });
+        consoleExtras = cCreds[0];
+      }
+    } else {
+      consoleExtras = {
+        url: newServiceAccount.url,
+        accessKey: newServiceAccount.accessKey,
+        secretKey: newServiceAccount.secretKey,
+        api: "s3v4",
+        path: "auto",
+      };
+    }
+
+    download(
+      "credentials.json",
+      JSON.stringify({
+        ...consoleExtras,
+      })
+    );
+  };
+
+  const downloaddAllCredentials = () => {
+    let allCredentials = {};
+    if (
+      consoleCreds &&
+      Array.isArray(consoleCreds) &&
+      consoleCreds.length > 1
+    ) {
+      const cCreds = consoleCreds.map((itemMap) => {
+        return {
+          accessKey: itemMap.accessKey,
+          secretKey: itemMap.secretKey,
+        };
+      });
+      allCredentials = cCreds;
+    }
+    download(
+      "all_credentials.json",
+      JSON.stringify({
+        ...allCredentials,
+      })
+    );
+  };
 
   return (
     <ModalWrapper
@@ -178,89 +244,37 @@ const CredentialsPrompt = ({
         <Grid item xs={12} className={classes.buttonContainer}>
           {!idp && (
             <>
-              <RBIconButton
-                id={"download-button"}
+              <TooltipWrapper
                 tooltip={
                   "Download credentials in a JSON file formatted for import using mc alias import. This will only include the default login credentials."
                 }
-                text={"Download for import"}
-                className={classes.buttonSpacer}
-                onClick={() => {
-                  let consoleExtras = {};
-
-                  if (consoleCreds) {
-                    if (!Array.isArray(consoleCreds)) {
-                      consoleExtras = {
-                        url: consoleCreds.url,
-                        accessKey: consoleCreds.accessKey,
-                        secretKey: consoleCreds.secretKey,
-                        api: "s3v4",
-                        path: "auto",
-                      };
-                    } else {
-                      const cCreds = consoleCreds.map((itemMap) => {
-                        return {
-                          url: itemMap.url,
-                          accessKey: itemMap.accessKey,
-                          secretKey: itemMap.secretKey,
-                          api: "s3v4",
-                          path: "auto",
-                        };
-                      });
-                      consoleExtras = cCreds[0];
-                    }
-                  } else {
-                    consoleExtras = {
-                      url: newServiceAccount.url,
-                      accessKey: newServiceAccount.accessKey,
-                      secretKey: newServiceAccount.secretKey,
-                      api: "s3v4",
-                      path: "auto",
-                    };
-                  }
-
-                  download(
-                    "credentials.json",
-                    JSON.stringify({
-                      ...consoleExtras,
-                    })
-                  );
-                }}
-                icon={<DownloadIcon />}
-                variant="contained"
-                color="primary"
-              />
+              >
+                <Button
+                  id={"download-button"}
+                  label={"Download for import"}
+                  className={classes.buttonSpacer}
+                  onClick={downloadImport}
+                  icon={<DownloadIcon />}
+                  variant="callAction"
+                />
+              </TooltipWrapper>
 
               {Array.isArray(consoleCreds) && consoleCreds.length > 1 && (
-                <RBIconButton
-                  id={"download-all-button"}
+                <TooltipWrapper
                   tooltip={
                     "Download all access credentials to a JSON file. NOTE: This file is not formatted for import using mc alias import. If you plan to import this alias from the file, please use the Download for Import button. "
                   }
-                  text={"Download all access credentials"}
-                  className={classes.buttonSpacer}
-                  onClick={() => {
-                    let allCredentials = {};
-                    if (consoleCreds) {
-                      const cCreds = consoleCreds.map((itemMap) => {
-                        return {
-                          accessKey: itemMap.accessKey,
-                          secretKey: itemMap.secretKey,
-                        };
-                      });
-                      allCredentials = cCreds;
-                    }
-                    download(
-                      "all_credentials.json",
-                      JSON.stringify({
-                        ...allCredentials,
-                      })
-                    );
-                  }}
-                  icon={<DownloadIcon />}
-                  variant="contained"
-                  color="primary"
-                />
+                >
+                  <Button
+                    id={"download-all-button"}
+                    label={"Download all access credentials"}
+                    className={classes.buttonSpacer}
+                    onClick={downloaddAllCredentials}
+                    icon={<DownloadIcon />}
+                    variant="callAction"
+                    color="primary"
+                  />
+                </TooltipWrapper>
               )}
             </>
           )}

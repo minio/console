@@ -16,6 +16,7 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import {
   actionsTray,
@@ -24,7 +25,7 @@ import {
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Button, Link } from "@mui/material";
+import { Box, Link } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import { CopyIcon, UsersIcon } from "../../../icons";
@@ -378,14 +379,12 @@ const Register = ({ classes }: IRegister) => {
               }}
             >
               <Button
-                className={classes.button}
-                color="primary"
+                id={"register-cluster"}
                 onClick={() => subnetRegister()}
                 disabled={loading || subnetAccessToken.trim().length === 0}
-                variant="contained"
-              >
-                Register
-              </Button>
+                variant="callAction"
+                label={"Register"}
+              />
             </Box>
           </Box>
         </Box>
@@ -449,17 +448,16 @@ const Register = ({ classes }: IRegister) => {
             }}
           >
             <Button
-              color="primary"
+              id={"verify"}
               onClick={() => subnetLoginWithMFA()}
               disabled={
                 loading ||
                 subnetOTP.trim().length === 0 ||
                 subnetMFAToken.trim().length === 0
               }
-              variant="contained"
-            >
-              Verify
-            </Button>
+              variant="callAction"
+              label={"Verify"}
+            />
           </Box>
         </Box>
 
@@ -553,12 +551,16 @@ const Register = ({ classes }: IRegister) => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "flex-end",
+                  "& button": {
+                    marginLeft: "8px",
+                  },
                 }}
               >
                 <Button
+                  id={"sign-up"}
                   type="submit"
                   className={classes.spacerRight}
-                  variant="outlined"
+                  variant="regular"
                   onClick={(e) => {
                     e.preventDefault();
                     window.open(
@@ -568,22 +570,20 @@ const Register = ({ classes }: IRegister) => {
                       "_blank"
                     );
                   }}
-                >
-                  Sign up
-                </Button>
+                  label={"Sign up"}
+                />
                 <Button
+                  id={"register-credentials"}
                   type="submit"
-                  variant="contained"
-                  color="primary"
+                  variant="callAction"
                   disabled={
                     loading ||
                     subnetEmail.trim().length === 0 ||
                     subnetPassword.trim().length === 0
                   }
                   onClick={() => subnetLogin()}
-                >
-                  Register
-                </Button>
+                  label={"Register"}
+                />
               </Box>
             </Box>
           </Box>
@@ -789,13 +789,13 @@ const Register = ({ classes }: IRegister) => {
               }}
             >
               <Button
-                variant="contained"
+                id={"register-subnet"}
+                variant="callAction"
                 color="primary"
                 onClick={() => subnetLogin()}
                 disabled={loading || license.trim().length === 0}
-              >
-                Register
-              </Button>
+                label={"Register"}
+              />
             </Box>
           </Box>
           <RegisterHelpBox />

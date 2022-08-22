@@ -17,6 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
@@ -56,11 +57,12 @@ import {
 } from "../../../common/SecureComponent";
 
 import withSuspense from "../Common/Components/withSuspense";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+
 import { encodeURLString } from "../../../common/utils";
 
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const SetPolicy = withSuspense(
@@ -236,17 +238,18 @@ const Groups = ({ classes }: IGroupsProps) => {
               matchAll
               errorProps={{ disabled: true }}
             >
-              <RBIconButton
-                tooltip={"Select Policy"}
-                onClick={() => {
-                  setPolicyOpen(true);
-                }}
-                text={"Assign Policy"}
-                icon={<IAMPoliciesIcon />}
-                color="primary"
-                disabled={checkedGroups.length < 1}
-                variant={"outlined"}
-              />
+              <TooltipWrapper tooltip={"Select Policy"}>
+                <Button
+                  id={"assign-policy"}
+                  onClick={() => {
+                    setPolicyOpen(true);
+                  }}
+                  label={"Assign Policy"}
+                  icon={<IAMPoliciesIcon />}
+                  disabled={checkedGroups.length < 1}
+                  variant={"regular"}
+                />
+              </TooltipWrapper>
             </SecureComponent>
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
@@ -254,17 +257,18 @@ const Groups = ({ classes }: IGroupsProps) => {
               matchAll
               errorProps={{ disabled: true }}
             >
-              <RBIconButton
-                tooltip={"Delete Selected"}
-                onClick={() => {
-                  setDeleteOpen(true);
-                }}
-                text={"Delete Selected"}
-                icon={<DeleteIcon />}
-                color="secondary"
-                disabled={checkedGroups.length === 0}
-                variant={"outlined"}
-              />
+              <TooltipWrapper tooltip={"Delete Selected"}>
+                <Button
+                  id="delete-selected-groups"
+                  onClick={() => {
+                    setDeleteOpen(true);
+                  }}
+                  label={"Delete Selected"}
+                  icon={<DeleteIcon />}
+                  variant="secondary"
+                  disabled={checkedGroups.length === 0}
+                />
+              </TooltipWrapper>
             </SecureComponent>
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
@@ -275,16 +279,17 @@ const Groups = ({ classes }: IGroupsProps) => {
               matchAll
               errorProps={{ disabled: true }}
             >
-              <RBIconButton
-                tooltip={"Create Group"}
-                text={"Create Group"}
-                variant="contained"
-                color="primary"
-                icon={<AddIcon />}
-                onClick={() => {
-                  navigate(`${IAM_PAGES.GROUPS_ADD}`);
-                }}
-              />
+              <TooltipWrapper tooltip={"Create Group"}>
+                <Button
+                  id={"create-group"}
+                  label={"Create Group"}
+                  variant="callAction"
+                  icon={<AddIcon />}
+                  onClick={() => {
+                    navigate(`${IAM_PAGES.GROUPS_ADD}`);
+                  }}
+                />
+              </TooltipWrapper>
             </SecureComponent>
           </Box>
         </Grid>

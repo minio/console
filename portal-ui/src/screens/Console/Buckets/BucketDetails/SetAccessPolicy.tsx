@@ -15,8 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Button, SelectChangeEvent } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
@@ -157,26 +158,24 @@ const SetAccessPolicy = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"cancel"}
               type="button"
-              variant="outlined"
-              color="primary"
+              variant="regular"
               onClick={() => {
                 closeModalAndRefresh();
               }}
               disabled={addLoading}
-            >
-              Cancel
-            </Button>
+              label={"Cancel"}
+            />
             <Button
+              id={"set"}
               type="submit"
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={
                 addLoading || (accessPolicy === "CUSTOM" && !policyDefinition)
               }
-            >
-              Set
-            </Button>
+              label={"Set"}
+            />
           </Grid>
         </Grid>
       </form>

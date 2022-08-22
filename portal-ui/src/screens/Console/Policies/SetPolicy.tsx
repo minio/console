@@ -15,12 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState, Fragment } from "react";
-
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {
   modalBasic,
@@ -58,8 +58,12 @@ const styles = (theme: Theme) =>
       marginTop: 15,
     },
     buttonContainer: {
-      textAlign: "right",
+      display: "flex",
+      justifyContent: "flex-end",
       marginTop: ".9rem",
+      "& button": {
+        marginLeft: 8,
+      },
     },
   });
 
@@ -185,23 +189,22 @@ const SetPolicy = ({
       </Grid>
       <Grid item xs={12} className={classes.buttonContainer}>
         <Button
+          id={"reset"}
           type="button"
-          variant="outlined"
-          color="primary"
+          variant="regular"
           className={classes.spacerRight}
           onClick={resetSelection}
-        >
-          Reset
-        </Button>
+          label={"Reset"}
+        />
         <Button
+          id={"save"}
           type="button"
-          variant="contained"
+          variant="callAction"
           color="primary"
           disabled={loading}
           onClick={setPolicyAction}
-        >
-          Save
-        </Button>
+          label={"Save"}
+        />
       </Grid>
       {loading && (
         <Grid item xs={12}>

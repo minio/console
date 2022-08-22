@@ -17,7 +17,7 @@
 import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
-import { Button } from "@mui/material";
+import { Button } from "mds";
 import makeStyles from "@mui/styles/makeStyles";
 import { Theme } from "@mui/material/styles";
 import { EditIcon } from "../../../icons";
@@ -189,13 +189,13 @@ const RenameLongFileName = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"download-file"}
               type="submit"
-              variant="contained"
+              variant="callAction"
               color="primary"
               disabled={newFileName.length > 200 && !acceptLongName}
-            >
-              Download File
-            </Button>
+              label={"Download File"}
+            />
           </Grid>
         </Grid>
       </form>

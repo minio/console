@@ -18,8 +18,9 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
+import { Button } from "mds";
 import { Paper } from "@mui/material";
+import createStyles from "@mui/styles/createStyles";
 import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
@@ -41,11 +42,11 @@ import {
 } from "../../../../common/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
-import RBIconButton from "./SummaryItems/RBIconButton";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const AddAccessRuleModal = withSuspense(
   React.lazy(() => import("./AddAccessRule"))
@@ -203,16 +204,17 @@ const AccessRule = () => {
           matchAll
           errorProps={{ disabled: true }}
         >
-          <RBIconButton
-            tooltip={"Add Access Rule"}
-            onClick={() => {
-              setAddAccessRuleOpen(true);
-            }}
-            text={"Add Access Rule"}
-            icon={<AddIcon />}
-            color="primary"
-            variant={"contained"}
-          />
+          <TooltipWrapper tooltip={"Add Access Rule"}>
+            <Button
+              id={"add-bucket-access-rule"}
+              onClick={() => {
+                setAddAccessRuleOpen(true);
+              }}
+              label={"Add Access Rule"}
+              icon={<AddIcon />}
+              variant={"callAction"}
+            />
+          </TooltipWrapper>
         </SecureComponent>
       </Grid>
       <Paper className={classes.tableBlock}>
