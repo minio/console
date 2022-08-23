@@ -107,30 +107,36 @@ func getListConfigResponse(session *models.Principal, params cfgApi.ListConfigPa
 	return listGroupsResponse, nil
 }
 
-// getConfig gets the key values for a defined configuration
+// getConfig gets the key values for a defined configuration.
+//
+// FIXME: This currently only returns config parameters in the default target
+// `madmin.Default`. Some configuration sub-systems are multi-target and since
+// this function does not accept a target argument, it ignores all non-default
+// targets.
 func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.ConfigurationKV, error) {
-	configKeysHelp, err := client.helpConfigKV(ctx, name, "", false)
-	if err != nil {
-		return nil, err
-	}
 	configBytes, err := client.getConfigKV(ctx, name)
 	if err != nil {
 		return nil, err
 	}
 
-	target, err := madmin.ParseSubSysTarget(configBytes, configKeysHelp)
+	subSysConfigs, err := madmin.ParseServerConfigOutput(string(configBytes))
 	if err != nil {
 		return nil, err
 	}
-	if len(target.KVS) > 0 {
-		// return Key Values, first element contains info
-		var confkv []*models.ConfigurationKV
-		for _, kv := range target.KVS {
-			confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value})
+
+	for _, scfg := range subSysConfigs {
+		if scfg.Target == "" {
+			var confkv []*models.ConfigurationKV
+			for _, kv := range scfg.KV {
+				// FIXME: Ignoring env-overrides for now as support for this
+				// needs to be added for presentation.
+				confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value})
+			}
+			return confkv, nil
 		}
-		return confkv, nil
 	}
-	return nil, fmt.Errorf("error retrieving configuration for: %s", name)
+
+	return nil, fmt.Errorf("unable to find configuration for: %s (default target)", name)
 }
 
 // getConfigResponse performs getConfig() and serializes it to the handler's output

@@ -240,30 +240,27 @@ func GetSubnetLoginWithMFAResponse(session *models.Principal, params subnetApi.S
 }
 
 func GetSubnetKeyFromMinIOConfig(ctx context.Context, minioClient MinioAdmin) (*subnet.LicenseTokenConfig, error) {
-	sh, err := minioClient.helpConfigKV(ctx, "subnet", "", false)
+	buf, err := minioClient.getConfigKV(ctx, madmin.SubnetSubSys)
 	if err != nil {
 		return nil, err
 	}
-	buf, err := minioClient.getConfigKV(ctx, "subnet")
+
+	subSysConfigs, err := madmin.ParseServerConfigOutput(string(buf))
 	if err != nil {
 		return nil, err
 	}
-	tgt, err := madmin.ParseSubSysTarget(buf, sh)
-	if err != nil {
-		return nil, err
-	}
-	res := subnet.LicenseTokenConfig{}
-	for _, kv := range tgt.KVS {
-		switch kv.Key {
-		case "api_key":
-			res.APIKey = kv.Value
-		case "license":
-			res.License = kv.Value
-		case "proxy":
-			res.Proxy = kv.Value
+
+	for _, scfg := range subSysConfigs {
+		if scfg.Target == "" {
+			res := subnet.LicenseTokenConfig{}
+			res.APIKey, _ = scfg.Lookup("api_key")
+			res.License, _ = scfg.Lookup("license")
+			res.Proxy, _ = scfg.Lookup("proxy")
+			return &res, nil
 		}
 	}
-	return &res, nil
+
+	return nil, errors.New("unable to find subnet configuration")
 }
 
 func GetSubnetRegister(ctx context.Context, minioClient MinioAdmin, httpClient xhttp.ClientI, params subnetApi.SubnetRegisterParams) error {

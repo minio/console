@@ -246,6 +246,7 @@ func TestUpdateLifecycleRule(t *testing.T) {
 			Tags:                                    "",
 			TransitionDays:                          0,
 		},
+		LifecycleID: "TESTRULE",
 	}
 
 	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
@@ -273,6 +274,7 @@ func TestUpdateLifecycleRule(t *testing.T) {
 			Tags:                                    "",
 			TransitionDays:                          int32(16),
 		},
+		LifecycleID: "TESTRULE",
 	}
 
 	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
