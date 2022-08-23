@@ -75,8 +75,8 @@ const useStyles = makeStyles((theme: Theme) =>
     ssoSubmit: {
       marginTop: "15px",
       "&:first-of-type": {
-        marginTop: 0
-      }
+        marginTop: 0,
+      },
     },
     separator: {
       marginLeft: 8,
@@ -195,6 +195,9 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
+    loginStrategyMessage: {
+      textAlign: "center",
+    },
     loadingLoginStrategy: {
       textAlign: "center",
       width: 40,
@@ -304,7 +307,7 @@ const Login = () => {
     }
     case loginStrategyType.redirect:
     case loginStrategyType.redirectServiceAccount: {
-      if (loginStrategy.redirect.length > 1) {
+      if (loginStrategy.redirect.length >= 1) {
         loginComponent = (
           <React.Fragment>
             {loginStrategy.redirect.map((r, idx) => (
@@ -323,21 +326,11 @@ const Login = () => {
             ))}
           </React.Fragment>
         );
-      } else if (loginStrategy.redirect.length === 1) {
+      } else {
         loginComponent = (
-          <React.Fragment>
-            <Button
-              component={"a"}
-              href={loginStrategy.redirect[0]}
-              type="submit"
-              variant="contained"
-              color="primary"
-              id="sso-login"
-              className={classes.submit}
-            >
-              {loginStrategy.displayNames[0]}
-            </Button>
-          </React.Fragment>
+          <div className={classes.loginStrategyMessage}>
+            Cannot retrieve redirect from login strategy
+          </div>
         );
       }
       break;

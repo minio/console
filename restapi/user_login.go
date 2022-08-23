@@ -150,11 +150,12 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 	defer cancel()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := []string{}
+	displayNames := []string{}
 	r := params.HTTPRequest
 	var loginDetails *models.LoginDetails
-	loginStrategy = models.LoginDetailsLoginStrategyRedirect
-	if len(openIDProviders) > 1 {
-		for name := range openIDProviders {
+	if len(openIDProviders) >= 1 {
+		loginStrategy = models.LoginDetailsLoginStrategyRedirect
+		for name, provider := range openIDProviders {
 			// initialize new oauth2 client
 			oauth2Client, err := openIDProviders.NewOauth2ProviderClient(name, nil, r, GetConsoleHTTPClient())
 			if err != nil {
@@ -163,21 +164,17 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 			// Validate user against IDP
 			identityProvider := &auth.IdentityProvider{Client: oauth2Client}
 			redirectURL = append(redirectURL, identityProvider.GenerateLoginURL())
-
+			if provider.DisplayName != "" {
+				displayNames = append(displayNames, provider.DisplayName)
+			} else {
+				displayNames = append(displayNames, "Login with SSO")
+			}
 		}
-	} else if len(openIDProviders) == 1 {
-		// initialize new oauth2 client
-		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(idpName, nil, r, GetConsoleHTTPClient())
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err, ErrOauth2Provider)
-		}
-		// Validate user against IDP
-		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
-		redirectURL = append(redirectURL, identityProvider.GenerateLoginURL())
 	}
 	loginDetails = &models.LoginDetails{
 		LoginStrategy: loginStrategy,
 		Redirect:      redirectURL,
+		DisplayNames:  displayNames,
 	}
 	return loginDetails, nil
 }
