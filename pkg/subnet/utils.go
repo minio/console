@@ -26,10 +26,10 @@ import (
 	"net/http"
 
 	xhttp "github.com/minio/console/pkg/http"
+	"github.com/minio/pkg/env"
 
 	"github.com/minio/madmin-go"
 	mc "github.com/minio/mc/cmd"
-	"github.com/minio/pkg/env"
 )
 
 const (
@@ -37,7 +37,7 @@ const (
 )
 
 func subnetBaseURL() string {
-	return env.Get(ConsoleSubnetURL, "https://subnet.min.io")
+	return env.Get(ConsoleSubnetURL, "http://localhost:9000")
 }
 
 func subnetRegisterURL() string {
