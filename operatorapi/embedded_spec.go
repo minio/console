@@ -3530,6 +3530,12 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "displayNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "isDirectPV": {
           "type": "boolean"
         },
@@ -9437,6 +9443,12 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "displayNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "isDirectPV": {
           "type": "boolean"
         },

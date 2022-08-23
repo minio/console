@@ -318,7 +318,7 @@ const Login = () => {
                 id="sso-login"
                 className={clsx(classes.submit, classes.ssoSubmit)}
               >
-                Login with SSO
+                {loginStrategy.displayNames[idx]}
               </Button>
             ))}
           </React.Fragment>
@@ -335,7 +335,7 @@ const Login = () => {
               id="sso-login"
               className={classes.submit}
             >
-              Login with SSO
+              {loginStrategy.displayNames[0]}
             </Button>
           </React.Fragment>
         );

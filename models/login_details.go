@@ -37,6 +37,9 @@ import (
 // swagger:model loginDetails
 type LoginDetails struct {
 
+	// display names
+	DisplayNames []string `json:"displayNames"`
+
 	// is direct p v
 	IsDirectPV bool `json:"isDirectPV,omitempty"`
 

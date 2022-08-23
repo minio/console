@@ -3688,6 +3688,10 @@ definitions:
         type: array
         items:
           type: string
+      displayNames:
+        type: array
+        items:
+          type: string
   loginOauth2AuthRequest:
     type: object
     required:

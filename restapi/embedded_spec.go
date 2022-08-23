@@ -5423,6 +5423,12 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "displayNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -12695,6 +12701,12 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "displayNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [

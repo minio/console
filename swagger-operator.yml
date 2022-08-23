@@ -1592,6 +1592,10 @@ definitions:
         type: array
         items:
           type: string
+      displayNames:
+        type: array
+        items:
+          type: string
       isDirectPV:
         type: boolean
   loginRequest:
