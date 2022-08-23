@@ -213,7 +213,6 @@ const AddBucket = ({ classes }: IsetProps) => {
                   )}
                   <br />
                   <br />
-                  
                 </Fragment>
               }
             />
@@ -407,7 +406,6 @@ const AddBucket = ({ classes }: IsetProps) => {
                       }
                     />
                   </Grid>
-                  
                 </React.Fragment>
               )}
             </Grid>

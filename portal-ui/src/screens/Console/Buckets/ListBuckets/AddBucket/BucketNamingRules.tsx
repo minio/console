@@ -16,7 +16,8 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";import { AppState, useAppDispatch } from "../../../../../store";
+import { Button, LinearProgress } from "@mui/material";
+import { AppState, useAppDispatch } from "../../../../../store";
 import { useSelector } from "react-redux";
 import api from "../../../../../common/api";
 import ShowTextIcon from "../../../../../icons/ShowTextIcon";
@@ -59,7 +60,6 @@ const BucketNamingRules = () => {
   const [uniqueName, setUniqueName] = useState<boolean>(true);
   const [noAdjacentPeriods, setNoAdjacentPeriods] = useState<boolean>(true);
   const addLoading = useSelector((state: AppState) => state.addBucket.loading);
-
 
   useEffect(() => {
     const fetchRecords = () => {
@@ -125,8 +125,17 @@ const BucketNamingRules = () => {
 
   return (
     <Fragment>
-      <Grid item xs={12} >
-       {showNamingRules ? <span style={{ color: "#0a66fa", textDecoration : "underline" }}> Hide Bucket Naming Rules </span> : <span style={{ color: "#0a66fa" , textDecoration : "underline"}}>View Bucket Naming Rules</span>}
+      <Grid item xs={12}>
+        {showNamingRules ? (
+          <span style={{ color: "#0a66fa", textDecoration: "underline" }}>
+            {" "}
+            Hide Bucket Naming Rules{" "}
+          </span>
+        ) : (
+          <span style={{ color: "#0a66fa", textDecoration: "underline" }}>
+            View Bucket Naming Rules
+          </span>
+        )}
         <Button
           variant="text"
           size="small"
