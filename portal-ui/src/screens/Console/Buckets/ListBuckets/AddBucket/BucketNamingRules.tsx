@@ -16,12 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
-import { AppState, useAppDispatch } from "../../../../../store";
+import { Button, LinearProgress } from "@mui/material";import { AppState, useAppDispatch } from "../../../../../store";
 import { useSelector } from "react-redux";
 import api from "../../../../../common/api";
 import ShowTextIcon from "../../../../../icons/ShowTextIcon";
@@ -32,56 +27,7 @@ import { BucketList } from "../../types";
 import ValidRule from "./ValidRule";
 import InvalidRule from "./InvalidRule";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      marginTop: 24,
-      textAlign: "right",
-      "& .MuiButton-root": {
-        marginLeft: 8,
-      },
-    },
-    error: {
-      color: "#b53b4b",
-      border: "1px solid #b53b4b",
-      padding: 8,
-      borderRadius: 3,
-    },
-    alertVersioning: {
-      border: "#E2E2E2 1px solid",
-      backgroundColor: "#FBFAFA",
-      borderRadius: 3,
-      display: "flex",
-      alignItems: "center",
-      padding: "10px",
-      color: "#767676",
-      "& > .min-icon ": {
-        width: 20,
-        height: 20,
-        marginRight: 10,
-      },
-    },
-    title: {
-      marginBottom: 8,
-    },
-    headTitle: {
-      fontWeight: "bold",
-      fontSize: 16,
-      paddingLeft: 8,
-    },
-    h6title: {
-      fontWeight: "bold",
-      color: "#000000",
-      fontSize: 20,
-    },
-    ...containerForHeader(theme.spacing(4)),
-  });
-
-interface IBucketNameRulesProps {
-  classes: any;
-}
-
-const BucketNamingRules = ({ classes }: IBucketNameRulesProps) => {
+const BucketNamingRules = () => {
   const dispatch = useAppDispatch();
 
   const lengthRuleText =
@@ -245,4 +191,4 @@ const BucketNamingRules = ({ classes }: IBucketNameRulesProps) => {
   );
 };
 
-export default withStyles(styles)(BucketNamingRules);
+export default BucketNamingRules;
