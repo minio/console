@@ -80,46 +80,19 @@ const BucketNamingRules = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (validBucketCharacters.test(bucketName)) {
-      setValidCharacters(true);
-    } else {
-      setValidCharacters(false);
-    }
-    if (ipAddressFormat.test(bucketName)) {
-      setNotIPFormat(false);
-    } else {
-      setNotIPFormat(true);
-    }
-    if (
-      bucketName.includes(".-") ||
-      bucketName.includes("-.") ||
-      bucketName.includes("..")
-    ) {
-      setNoAdjacentPeriods(false);
-    } else {
-      setNoAdjacentPeriods(true);
-    }
-
-    if (bucketName.startsWith("xn--")) {
-      setNoPrefix(false);
-    } else {
-      setNoPrefix(true);
-    }
-    if (bucketName.endsWith("-s3alias")) {
-      setNoSuffix(false);
-    } else {
-      setNoSuffix(true);
-    }
-    if (bucketName.length < 3 || bucketName.length > 63) {
-      setLengthRule(false);
-    } else {
-      setLengthRule(true);
-    }
-    if (records.includes(bucketName)) {
-      setUniqueName(false);
-    } else {
-      setUniqueName(true);
-    }
+    setValidCharacters(validBucketCharacters.test(bucketName));
+    setNotIPFormat(!ipAddressFormat.test(bucketName));
+    setNoAdjacentPeriods(
+      !(
+        bucketName.includes(".-") ||
+        bucketName.includes("-.") ||
+        bucketName.includes("..")
+      )
+    );
+    setNoPrefix(!bucketName.startsWith("xn--"));
+    setNoSuffix(!bucketName.endsWith("-s3alias"));
+    setLengthRule(!(bucketName.length < 3 || bucketName.length > 63));
+    setUniqueName(!records.includes(bucketName));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucketName]);
 
