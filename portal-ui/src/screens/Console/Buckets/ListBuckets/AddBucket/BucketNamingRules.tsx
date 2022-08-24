@@ -14,23 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
-import { AppState, useAppDispatch } from "../../../../../store";
+import { AppState } from "../../../../../store";
 import { useSelector } from "react-redux";
-import api from "../../../../../common/api";
 import ShowTextIcon from "../../../../../icons/ShowTextIcon";
 import HideTextIcon from "../../../../../icons/HideTextIcon";
-import { setErrorSnackMessage } from "../../../../../systemSlice";
-import { ErrorResponseHandler } from "../../../../../common/types";
-import { BucketList } from "../../types";
+
 import ValidRule from "./ValidRule";
 import InvalidRule from "./InvalidRule";
 import NARule from "./NARule";
 
-const BucketNamingRules = () => {
-  const dispatch = useAppDispatch();
+const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
+ 
 
   const lengthRuleText =
     "Bucket names must be between 3 (min) and 63 (max) characters long.";
@@ -45,57 +42,21 @@ const BucketNamingRules = () => {
     "Bucket names must not end with the suffix -s3alias. This suffix is reserved for access point alias names.";
   const uniqueRuleText = "Bucket names must be unique within a partition.";
 
-  const validBucketCharacters = new RegExp(`^$|[a-z0-9.-]$`);
-  const ipAddressFormat = new RegExp(
-    "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
-  );
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
 
-  const [records, setRecords] = useState<string[]>([]);
   const [showNamingRules, setShowNamingRules] = useState<boolean>(false);
-  const [lengthRule, setLengthRule] = useState<boolean>(false);
-  const [validCharacters, setValidCharacters] = useState<boolean>(true);
-  const [notIPFormat, setNotIPFormat] = useState<boolean>(false);
-  const [noPrefix, setNoPrefix] = useState<boolean>(true);
-  const [noSuffix, setNoSuffix] = useState<boolean>(true);
-  const [uniqueName, setUniqueName] = useState<boolean>(true);
-  const [noAdjacentPeriods, setNoAdjacentPeriods] = useState<boolean>(true);
+  
   const addLoading = useSelector((state: AppState) => state.addBucket.loading);
 
-  useEffect(() => {
-    const fetchRecords = () => {
-      api
-        .invoke("GET", `/api/v1/buckets`)
-        .then((res: BucketList) => {
-          var bucketList: string[] = [];
-          res.buckets.forEach((bucket) => {
-            bucketList.push(bucket.name);
-          });
-          setRecords(bucketList);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
-        });
-    };
-    fetchRecords();
-  }, [dispatch]);
-
-  useEffect(() => {
-    setValidCharacters(validBucketCharacters.test(bucketName));
-    setNotIPFormat(!ipAddressFormat.test(bucketName));
-    setNoAdjacentPeriods(
-      !(
-        bucketName.includes(".-") ||
-        bucketName.includes("-.") ||
-        bucketName.includes("..")
-      )
-    );
-    setNoPrefix(!bucketName.startsWith("xn--"));
-    setNoSuffix(!bucketName.endsWith("-s3alias"));
-    setLengthRule(!(bucketName.length < 3 || bucketName.length > 63));
-    setUniqueName(!records.includes(bucketName));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bucketName]);
+  const [
+    lengthRule,
+    validCharacters,
+    noAdjacentPeriods,
+    notIPFormat,
+    noPrefix,
+    noSuffix,
+    uniqueName,
+  ] = errorList;
 
   return (
     <Fragment>

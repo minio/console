@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Button, LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -31,7 +31,10 @@ import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../../common/BackLink";
 import { BucketsIcon, InfoIcon } from "../../../../../icons";
-
+import { setErrorSnackMessage } from "../../../../../systemSlice";
+import { ErrorResponseHandler } from "../../../../../common/types";
+import { BucketList } from "../../types";
+import api from "../../../../../common/api";
 import PageLayout from "../../../Common/Layout/PageLayout";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import FormLayout from "../../../Common/FormLayout";
@@ -40,6 +43,7 @@ import SectionTitle from "../../../Common/SectionTitle";
 import { selDistSet, selSiteRep } from "../../../../../systemSlice";
 import {
   resetForm,
+  setBucketNameErrors,
   setEnableObjectLocking,
   setQuota,
   setQuotaSize,
@@ -109,6 +113,15 @@ const AddBucket = ({ classes }: IsetProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const validBucketCharacters = new RegExp(`^[a-z0-9.-]*$`);
+  const ipAddressFormat = new RegExp(
+    "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
+  );
+  const bucketName = useSelector((state: AppState) => state.addBucket.name);
+  const validationResult = useSelector((state: AppState) => state.addBucket.bucketNameErrorList);
+  const errorList = validationResult.filter((v) => !v);
+  const hasErrors = errorList.length > 0;
+  const [records, setRecords] = useState<string[]>([]);
   const versioningEnabled = useSelector(
     (state: AppState) => state.addBucket.versioningEnabled
   );
@@ -149,6 +162,44 @@ const AddBucket = ({ classes }: IsetProps) => {
     IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
     IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
   ]);
+
+
+  useEffect(() => {
+    const bucketNameErrors = [
+      (!(bucketName.length < 3 || bucketName.length > 63)),
+      (validBucketCharacters.test(bucketName)),          
+      !(
+        bucketName.includes(".-") ||
+        bucketName.includes("-.") ||
+        bucketName.includes("..")
+      ),
+      (!ipAddressFormat.test(bucketName)),
+      (!bucketName.startsWith("xn--")),
+      (!bucketName.endsWith("-s3alias")),
+      (!records.includes(bucketName)),
+        ] ;
+        dispatch(setBucketNameErrors(bucketNameErrors));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bucketName]);
+
+  useEffect(() => {
+    const fetchRecords = () => {
+      api
+        .invoke("GET", `/api/v1/buckets`)
+        .then((res: BucketList) => {
+          var bucketList: string[] = [];
+          if (res != null){
+          res.buckets.forEach((bucket) => {
+            bucketList.push(bucket.name);
+          });}
+          setRecords(bucketList);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          dispatch(setErrorSnackMessage(err));
+        });
+    };
+    fetchRecords();
+  }, [dispatch]);
 
   const resForm = () => {
     dispatch(resetForm());
@@ -228,10 +279,10 @@ const AddBucket = ({ classes }: IsetProps) => {
           >
             <Grid container marginTop={1} spacing={2}>
               <Grid item xs={12}>
-                <AddBucketName />
+                <AddBucketName hasErrors={hasErrors}/>
               </Grid>
               <Grid item xs={12}>
-                <BucketNamingRules />
+                <BucketNamingRules errorList={validationResult}/>
               </Grid>
               <Grid item xs={12}>
                 <SectionTitle>Features</SectionTitle>
@@ -422,7 +473,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={addLoading || invalidFields.length > 0}
+                disabled={addLoading || invalidFields.length > 0 || hasErrors}
               >
                 Create Bucket
               </Button>
