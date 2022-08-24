@@ -33,7 +33,8 @@ import (
 // ListConfigOKCode is the HTTP code returned for type ListConfigOK
 const ListConfigOKCode int = 200
 
-/*ListConfigOK A successful response.
+/*
+ListConfigOK A successful response.
 
 swagger:response listConfigOK
 */
@@ -74,7 +75,8 @@ func (o *ListConfigOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 	}
 }
 
-/*ListConfigDefault Generic error response.
+/*
+ListConfigDefault Generic error response.
 
 swagger:response listConfigDefault
 */

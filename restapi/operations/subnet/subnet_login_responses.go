@@ -33,7 +33,8 @@ import (
 // SubnetLoginOKCode is the HTTP code returned for type SubnetLoginOK
 const SubnetLoginOKCode int = 200
 
-/*SubnetLoginOK A successful response.
+/*
+SubnetLoginOK A successful response.
 
 swagger:response subnetLoginOK
 */
@@ -74,7 +75,8 @@ func (o *SubnetLoginOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
-/*SubnetLoginDefault Generic error response.
+/*
+SubnetLoginDefault Generic error response.
 
 swagger:response subnetLoginDefault
 */

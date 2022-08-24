@@ -33,7 +33,8 @@ import (
 // LoginNoContentCode is the HTTP code returned for type LoginNoContent
 const LoginNoContentCode int = 204
 
-/*LoginNoContent A successful login.
+/*
+LoginNoContent A successful login.
 
 swagger:response loginNoContent
 */
@@ -54,7 +55,8 @@ func (o *LoginNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.
 	rw.WriteHeader(204)
 }
 
-/*LoginDefault Generic error response.
+/*
+LoginDefault Generic error response.
 
 swagger:response loginDefault
 */

@@ -33,7 +33,8 @@ import (
 // GetBucketVersioningOKCode is the HTTP code returned for type GetBucketVersioningOK
 const GetBucketVersioningOKCode int = 200
 
-/*GetBucketVersioningOK A successful response.
+/*
+GetBucketVersioningOK A successful response.
 
 swagger:response getBucketVersioningOK
 */
@@ -74,7 +75,8 @@ func (o *GetBucketVersioningOK) WriteResponse(rw http.ResponseWriter, producer r
 	}
 }
 
-/*GetBucketVersioningDefault Generic error response.
+/*
+GetBucketVersioningDefault Generic error response.
 
 swagger:response getBucketVersioningDefault
 */

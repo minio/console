@@ -48,10 +48,10 @@ func NewAddNotificationEndpoint(ctx *middleware.Context, handler AddNotification
 	return &AddNotificationEndpoint{Context: ctx, Handler: handler}
 }
 
-/* AddNotificationEndpoint swagger:route POST /admin/notification_endpoints Configuration addNotificationEndpoint
+/*
+	AddNotificationEndpoint swagger:route POST /admin/notification_endpoints Configuration addNotificationEndpoint
 
 Allows to configure a new notification endpoint
-
 */
 type AddNotificationEndpoint struct {
 	Context *middleware.Context

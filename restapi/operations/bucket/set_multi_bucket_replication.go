@@ -48,10 +48,10 @@ func NewSetMultiBucketReplication(ctx *middleware.Context, handler SetMultiBucke
 	return &SetMultiBucketReplication{Context: ctx, Handler: handler}
 }
 
-/* SetMultiBucketReplication swagger:route POST /buckets-replication Bucket setMultiBucketReplication
+/*
+	SetMultiBucketReplication swagger:route POST /buckets-replication Bucket setMultiBucketReplication
 
 Sets Multi Bucket Replication in multiple Buckets
-
 */
 type SetMultiBucketReplication struct {
 	Context *middleware.Context

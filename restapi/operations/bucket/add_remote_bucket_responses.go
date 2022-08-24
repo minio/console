@@ -33,7 +33,8 @@ import (
 // AddRemoteBucketCreatedCode is the HTTP code returned for type AddRemoteBucketCreated
 const AddRemoteBucketCreatedCode int = 201
 
-/*AddRemoteBucketCreated A successful response.
+/*
+AddRemoteBucketCreated A successful response.
 
 swagger:response addRemoteBucketCreated
 */
@@ -54,7 +55,8 @@ func (o *AddRemoteBucketCreated) WriteResponse(rw http.ResponseWriter, producer 
 	rw.WriteHeader(201)
 }
 
-/*AddRemoteBucketDefault Generic error response.
+/*
+AddRemoteBucketDefault Generic error response.
 
 swagger:response addRemoteBucketDefault
 */

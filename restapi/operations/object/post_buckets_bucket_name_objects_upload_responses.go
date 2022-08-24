@@ -33,7 +33,8 @@ import (
 // PostBucketsBucketNameObjectsUploadOKCode is the HTTP code returned for type PostBucketsBucketNameObjectsUploadOK
 const PostBucketsBucketNameObjectsUploadOKCode int = 200
 
-/*PostBucketsBucketNameObjectsUploadOK A successful response.
+/*
+PostBucketsBucketNameObjectsUploadOK A successful response.
 
 swagger:response postBucketsBucketNameObjectsUploadOK
 */
@@ -54,7 +55,8 @@ func (o *PostBucketsBucketNameObjectsUploadOK) WriteResponse(rw http.ResponseWri
 	rw.WriteHeader(200)
 }
 
-/*PostBucketsBucketNameObjectsUploadDefault Generic error response.
+/*
+PostBucketsBucketNameObjectsUploadDefault Generic error response.
 
 swagger:response postBucketsBucketNameObjectsUploadDefault
 */

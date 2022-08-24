@@ -48,10 +48,10 @@ func NewAdminInfo(ctx *middleware.Context, handler AdminInfoHandler) *AdminInfo 
 	return &AdminInfo{Context: ctx, Handler: handler}
 }
 
-/* AdminInfo swagger:route GET /admin/info System adminInfo
+/*
+	AdminInfo swagger:route GET /admin/info System adminInfo
 
 Returns information about the deployment
-
 */
 type AdminInfo struct {
 	Context *middleware.Context

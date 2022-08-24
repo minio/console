@@ -33,7 +33,8 @@ import (
 // GetBucketRewindOKCode is the HTTP code returned for type GetBucketRewindOK
 const GetBucketRewindOKCode int = 200
 
-/*GetBucketRewindOK A successful response.
+/*
+GetBucketRewindOK A successful response.
 
 swagger:response getBucketRewindOK
 */
@@ -74,7 +75,8 @@ func (o *GetBucketRewindOK) WriteResponse(rw http.ResponseWriter, producer runti
 	}
 }
 
-/*GetBucketRewindDefault Generic error response.
+/*
+GetBucketRewindDefault Generic error response.
 
 swagger:response getBucketRewindDefault
 */

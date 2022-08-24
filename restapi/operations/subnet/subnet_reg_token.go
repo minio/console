@@ -48,10 +48,10 @@ func NewSubnetRegToken(ctx *middleware.Context, handler SubnetRegTokenHandler) *
 	return &SubnetRegToken{Context: ctx, Handler: handler}
 }
 
-/* SubnetRegToken swagger:route GET /subnet/registration-token Subnet subnetRegToken
+/*
+	SubnetRegToken swagger:route GET /subnet/registration-token Subnet subnetRegToken
 
 Subnet registraton token
-
 */
 type SubnetRegToken struct {
 	Context *middleware.Context

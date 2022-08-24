@@ -48,10 +48,10 @@ func NewAddMultiBucketLifecycle(ctx *middleware.Context, handler AddMultiBucketL
 	return &AddMultiBucketLifecycle{Context: ctx, Handler: handler}
 }
 
-/* AddMultiBucketLifecycle swagger:route POST /buckets/multi-lifecycle Bucket addMultiBucketLifecycle
+/*
+	AddMultiBucketLifecycle swagger:route POST /buckets/multi-lifecycle Bucket addMultiBucketLifecycle
 
 Add Multi Bucket Lifecycle
-
 */
 type AddMultiBucketLifecycle struct {
 	Context *middleware.Context

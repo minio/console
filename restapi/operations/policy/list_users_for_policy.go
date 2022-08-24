@@ -48,10 +48,10 @@ func NewListUsersForPolicy(ctx *middleware.Context, handler ListUsersForPolicyHa
 	return &ListUsersForPolicy{Context: ctx, Handler: handler}
 }
 
-/* ListUsersForPolicy swagger:route GET /policies/{policy}/users Policy listUsersForPolicy
+/*
+	ListUsersForPolicy swagger:route GET /policies/{policy}/users Policy listUsersForPolicy
 
 List Users for a Policy
-
 */
 type ListUsersForPolicy struct {
 	Context *middleware.Context

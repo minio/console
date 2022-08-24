@@ -33,7 +33,8 @@ import (
 // BulkUpdateUsersGroupsOKCode is the HTTP code returned for type BulkUpdateUsersGroupsOK
 const BulkUpdateUsersGroupsOKCode int = 200
 
-/*BulkUpdateUsersGroupsOK A successful response.
+/*
+BulkUpdateUsersGroupsOK A successful response.
 
 swagger:response bulkUpdateUsersGroupsOK
 */
@@ -54,7 +55,8 @@ func (o *BulkUpdateUsersGroupsOK) WriteResponse(rw http.ResponseWriter, producer
 	rw.WriteHeader(200)
 }
 
-/*BulkUpdateUsersGroupsDefault Generic error response.
+/*
+BulkUpdateUsersGroupsDefault Generic error response.
 
 swagger:response bulkUpdateUsersGroupsDefault
 */

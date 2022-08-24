@@ -33,7 +33,8 @@ import (
 // ArnListOKCode is the HTTP code returned for type ArnListOK
 const ArnListOKCode int = 200
 
-/*ArnListOK A successful response.
+/*
+ArnListOK A successful response.
 
 swagger:response arnListOK
 */
@@ -74,7 +75,8 @@ func (o *ArnListOK) WriteResponse(rw http.ResponseWriter, producer runtime.Produ
 	}
 }
 
-/*ArnListDefault Generic error response.
+/*
+ArnListDefault Generic error response.
 
 swagger:response arnListDefault
 */

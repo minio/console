@@ -48,10 +48,10 @@ func NewListObjects(ctx *middleware.Context, handler ListObjectsHandler) *ListOb
 	return &ListObjects{Context: ctx, Handler: handler}
 }
 
-/* ListObjects swagger:route GET /buckets/{bucket_name}/objects Object listObjects
+/*
+	ListObjects swagger:route GET /buckets/{bucket_name}/objects Object listObjects
 
 List Objects
-
 */
 type ListObjects struct {
 	Context *middleware.Context

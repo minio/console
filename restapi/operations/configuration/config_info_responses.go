@@ -33,7 +33,8 @@ import (
 // ConfigInfoOKCode is the HTTP code returned for type ConfigInfoOK
 const ConfigInfoOKCode int = 200
 
-/*ConfigInfoOK A successful response.
+/*
+ConfigInfoOK A successful response.
 
 swagger:response configInfoOK
 */
@@ -74,7 +75,8 @@ func (o *ConfigInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 	}
 }
 
-/*ConfigInfoDefault Generic error response.
+/*
+ConfigInfoDefault Generic error response.
 
 swagger:response configInfoDefault
 */

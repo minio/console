@@ -33,7 +33,8 @@ import (
 // RemoveUserNoContentCode is the HTTP code returned for type RemoveUserNoContent
 const RemoveUserNoContentCode int = 204
 
-/*RemoveUserNoContent A successful response.
+/*
+RemoveUserNoContent A successful response.
 
 swagger:response removeUserNoContent
 */
@@ -54,7 +55,8 @@ func (o *RemoveUserNoContent) WriteResponse(rw http.ResponseWriter, producer run
 	rw.WriteHeader(204)
 }
 
-/*RemoveUserDefault Generic error response.
+/*
+RemoveUserDefault Generic error response.
 
 swagger:response removeUserDefault
 */

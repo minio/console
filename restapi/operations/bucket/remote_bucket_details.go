@@ -48,10 +48,10 @@ func NewRemoteBucketDetails(ctx *middleware.Context, handler RemoteBucketDetails
 	return &RemoteBucketDetails{Context: ctx, Handler: handler}
 }
 
-/* RemoteBucketDetails swagger:route GET /remote-buckets/{name} Bucket remoteBucketDetails
+/*
+	RemoteBucketDetails swagger:route GET /remote-buckets/{name} Bucket remoteBucketDetails
 
 Remote Bucket Details
-
 */
 type RemoteBucketDetails struct {
 	Context *middleware.Context

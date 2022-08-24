@@ -33,7 +33,8 @@ import (
 // DeleteAccessRuleWithBucketOKCode is the HTTP code returned for type DeleteAccessRuleWithBucketOK
 const DeleteAccessRuleWithBucketOKCode int = 200
 
-/*DeleteAccessRuleWithBucketOK A successful response.
+/*
+DeleteAccessRuleWithBucketOK A successful response.
 
 swagger:response deleteAccessRuleWithBucketOK
 */
@@ -72,7 +73,8 @@ func (o *DeleteAccessRuleWithBucketOK) WriteResponse(rw http.ResponseWriter, pro
 	}
 }
 
-/*DeleteAccessRuleWithBucketDefault Generic error response.
+/*
+DeleteAccessRuleWithBucketDefault Generic error response.
 
 swagger:response deleteAccessRuleWithBucketDefault
 */

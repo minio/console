@@ -48,10 +48,10 @@ func NewPutObjectRetention(ctx *middleware.Context, handler PutObjectRetentionHa
 	return &PutObjectRetention{Context: ctx, Handler: handler}
 }
 
-/* PutObjectRetention swagger:route PUT /buckets/{bucket_name}/objects/retention Object putObjectRetention
+/*
+	PutObjectRetention swagger:route PUT /buckets/{bucket_name}/objects/retention Object putObjectRetention
 
 Put Object's retention status
-
 */
 type PutObjectRetention struct {
 	Context *middleware.Context

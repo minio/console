@@ -33,7 +33,8 @@ import (
 // ListAUserServiceAccountsOKCode is the HTTP code returned for type ListAUserServiceAccountsOK
 const ListAUserServiceAccountsOKCode int = 200
 
-/*ListAUserServiceAccountsOK A successful response.
+/*
+ListAUserServiceAccountsOK A successful response.
 
 swagger:response listAUserServiceAccountsOK
 */
@@ -77,7 +78,8 @@ func (o *ListAUserServiceAccountsOK) WriteResponse(rw http.ResponseWriter, produ
 	}
 }
 
-/*ListAUserServiceAccountsDefault Generic error response.
+/*
+ListAUserServiceAccountsDefault Generic error response.
 
 swagger:response listAUserServiceAccountsDefault
 */

@@ -48,10 +48,10 @@ func NewUpdateGroup(ctx *middleware.Context, handler UpdateGroupHandler) *Update
 	return &UpdateGroup{Context: ctx, Handler: handler}
 }
 
-/* UpdateGroup swagger:route PUT /group/{name} Group updateGroup
+/*
+	UpdateGroup swagger:route PUT /group/{name} Group updateGroup
 
 Update Group Members or Status
-
 */
 type UpdateGroup struct {
 	Context *middleware.Context

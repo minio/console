@@ -33,7 +33,8 @@ import (
 // SetBucketRetentionConfigOKCode is the HTTP code returned for type SetBucketRetentionConfigOK
 const SetBucketRetentionConfigOKCode int = 200
 
-/*SetBucketRetentionConfigOK A successful response.
+/*
+SetBucketRetentionConfigOK A successful response.
 
 swagger:response setBucketRetentionConfigOK
 */
@@ -54,7 +55,8 @@ func (o *SetBucketRetentionConfigOK) WriteResponse(rw http.ResponseWriter, produ
 	rw.WriteHeader(200)
 }
 
-/*SetBucketRetentionConfigDefault Generic error response.
+/*
+SetBucketRetentionConfigDefault Generic error response.
 
 swagger:response setBucketRetentionConfigDefault
 */

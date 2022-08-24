@@ -48,10 +48,10 @@ func NewGetUserInfo(ctx *middleware.Context, handler GetUserInfoHandler) *GetUse
 	return &GetUserInfo{Context: ctx, Handler: handler}
 }
 
-/* GetUserInfo swagger:route GET /user/{name} User getUserInfo
+/*
+	GetUserInfo swagger:route GET /user/{name} User getUserInfo
 
 Get User Info
-
 */
 type GetUserInfo struct {
 	Context *middleware.Context

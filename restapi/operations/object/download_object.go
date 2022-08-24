@@ -48,10 +48,10 @@ func NewDownloadObject(ctx *middleware.Context, handler DownloadObjectHandler) *
 	return &DownloadObject{Context: ctx, Handler: handler}
 }
 
-/* DownloadObject swagger:route GET /buckets/{bucket_name}/objects/download Object downloadObject
+/*
+	DownloadObject swagger:route GET /buckets/{bucket_name}/objects/download Object downloadObject
 
 Download Object
-
 */
 type DownloadObject struct {
 	Context *middleware.Context

@@ -46,10 +46,10 @@ func NewCheckMinIOVersion(ctx *middleware.Context, handler CheckMinIOVersionHand
 	return &CheckMinIOVersion{Context: ctx, Handler: handler}
 }
 
-/* CheckMinIOVersion swagger:route GET /check-version System checkMinIOVersion
+/*
+	CheckMinIOVersion swagger:route GET /check-version System checkMinIOVersion
 
 Checks the current MinIO version against the latest
-
 */
 type CheckMinIOVersion struct {
 	Context *middleware.Context

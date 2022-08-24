@@ -33,7 +33,8 @@ import (
 // GetSAUserPolicyOKCode is the HTTP code returned for type GetSAUserPolicyOK
 const GetSAUserPolicyOKCode int = 200
 
-/*GetSAUserPolicyOK A successful response.
+/*
+GetSAUserPolicyOK A successful response.
 
 swagger:response getSAUserPolicyOK
 */
@@ -74,7 +75,8 @@ func (o *GetSAUserPolicyOK) WriteResponse(rw http.ResponseWriter, producer runti
 	}
 }
 
-/*GetSAUserPolicyDefault Generic error response.
+/*
+GetSAUserPolicyDefault Generic error response.
 
 swagger:response getSAUserPolicyDefault
 */

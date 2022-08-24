@@ -48,10 +48,10 @@ func NewCheckUserServiceAccounts(ctx *middleware.Context, handler CheckUserServi
 	return &CheckUserServiceAccounts{Context: ctx, Handler: handler}
 }
 
-/* CheckUserServiceAccounts swagger:route POST /users/service-accounts User checkUserServiceAccounts
+/*
+	CheckUserServiceAccounts swagger:route POST /users/service-accounts User checkUserServiceAccounts
 
 Check number of service accounts for each user specified
-
 */
 type CheckUserServiceAccounts struct {
 	Context *middleware.Context

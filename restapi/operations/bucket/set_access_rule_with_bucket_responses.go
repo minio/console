@@ -33,7 +33,8 @@ import (
 // SetAccessRuleWithBucketOKCode is the HTTP code returned for type SetAccessRuleWithBucketOK
 const SetAccessRuleWithBucketOKCode int = 200
 
-/*SetAccessRuleWithBucketOK A successful response.
+/*
+SetAccessRuleWithBucketOK A successful response.
 
 swagger:response setAccessRuleWithBucketOK
 */
@@ -72,7 +73,8 @@ func (o *SetAccessRuleWithBucketOK) WriteResponse(rw http.ResponseWriter, produc
 	}
 }
 
-/*SetAccessRuleWithBucketDefault Generic error response.
+/*
+SetAccessRuleWithBucketDefault Generic error response.
 
 swagger:response setAccessRuleWithBucketDefault
 */

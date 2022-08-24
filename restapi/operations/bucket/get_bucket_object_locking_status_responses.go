@@ -33,7 +33,8 @@ import (
 // GetBucketObjectLockingStatusOKCode is the HTTP code returned for type GetBucketObjectLockingStatusOK
 const GetBucketObjectLockingStatusOKCode int = 200
 
-/*GetBucketObjectLockingStatusOK A successful response.
+/*
+GetBucketObjectLockingStatusOK A successful response.
 
 swagger:response getBucketObjectLockingStatusOK
 */
@@ -74,7 +75,8 @@ func (o *GetBucketObjectLockingStatusOK) WriteResponse(rw http.ResponseWriter, p
 	}
 }
 
-/*GetBucketObjectLockingStatusDefault Generic error response.
+/*
+GetBucketObjectLockingStatusDefault Generic error response.
 
 swagger:response getBucketObjectLockingStatusDefault
 */

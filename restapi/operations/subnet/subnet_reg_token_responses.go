@@ -33,7 +33,8 @@ import (
 // SubnetRegTokenOKCode is the HTTP code returned for type SubnetRegTokenOK
 const SubnetRegTokenOKCode int = 200
 
-/*SubnetRegTokenOK A successful response.
+/*
+SubnetRegTokenOK A successful response.
 
 swagger:response subnetRegTokenOK
 */
@@ -74,7 +75,8 @@ func (o *SubnetRegTokenOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*SubnetRegTokenDefault Generic error response.
+/*
+SubnetRegTokenDefault Generic error response.
 
 swagger:response subnetRegTokenDefault
 */

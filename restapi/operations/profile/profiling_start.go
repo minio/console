@@ -48,10 +48,10 @@ func NewProfilingStart(ctx *middleware.Context, handler ProfilingStartHandler) *
 	return &ProfilingStart{Context: ctx, Handler: handler}
 }
 
-/* ProfilingStart swagger:route POST /profiling/start Profile profilingStart
+/*
+	ProfilingStart swagger:route POST /profiling/start Profile profilingStart
 
 Start recording profile data
-
 */
 type ProfilingStart struct {
 	Context *middleware.Context

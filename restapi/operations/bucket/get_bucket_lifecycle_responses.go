@@ -33,7 +33,8 @@ import (
 // GetBucketLifecycleOKCode is the HTTP code returned for type GetBucketLifecycleOK
 const GetBucketLifecycleOKCode int = 200
 
-/*GetBucketLifecycleOK A successful response.
+/*
+GetBucketLifecycleOK A successful response.
 
 swagger:response getBucketLifecycleOK
 */
@@ -74,7 +75,8 @@ func (o *GetBucketLifecycleOK) WriteResponse(rw http.ResponseWriter, producer ru
 	}
 }
 
-/*GetBucketLifecycleDefault Generic error response.
+/*
+GetBucketLifecycleDefault Generic error response.
 
 swagger:response getBucketLifecycleDefault
 */

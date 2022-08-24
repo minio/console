@@ -48,10 +48,10 @@ func NewPutObjectTags(ctx *middleware.Context, handler PutObjectTagsHandler) *Pu
 	return &PutObjectTags{Context: ctx, Handler: handler}
 }
 
-/* PutObjectTags swagger:route PUT /buckets/{bucket_name}/objects/tags Object putObjectTags
+/*
+	PutObjectTags swagger:route PUT /buckets/{bucket_name}/objects/tags Object putObjectTags
 
 Put Object's tags
-
 */
 type PutObjectTags struct {
 	Context *middleware.Context

@@ -48,10 +48,10 @@ func NewAddGroup(ctx *middleware.Context, handler AddGroupHandler) *AddGroup {
 	return &AddGroup{Context: ctx, Handler: handler}
 }
 
-/* AddGroup swagger:route POST /groups Group addGroup
+/*
+	AddGroup swagger:route POST /groups Group addGroup
 
 Add Group
-
 */
 type AddGroup struct {
 	Context *middleware.Context

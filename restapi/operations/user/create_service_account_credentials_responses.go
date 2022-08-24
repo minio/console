@@ -33,7 +33,8 @@ import (
 // CreateServiceAccountCredentialsCreatedCode is the HTTP code returned for type CreateServiceAccountCredentialsCreated
 const CreateServiceAccountCredentialsCreatedCode int = 201
 
-/*CreateServiceAccountCredentialsCreated A successful response.
+/*
+CreateServiceAccountCredentialsCreated A successful response.
 
 swagger:response createServiceAccountCredentialsCreated
 */
@@ -74,7 +75,8 @@ func (o *CreateServiceAccountCredentialsCreated) WriteResponse(rw http.ResponseW
 	}
 }
 
-/*CreateServiceAccountCredentialsDefault Generic error response.
+/*
+CreateServiceAccountCredentialsDefault Generic error response.
 
 swagger:response createServiceAccountCredentialsDefault
 */

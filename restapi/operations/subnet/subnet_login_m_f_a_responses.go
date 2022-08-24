@@ -33,7 +33,8 @@ import (
 // SubnetLoginMFAOKCode is the HTTP code returned for type SubnetLoginMFAOK
 const SubnetLoginMFAOKCode int = 200
 
-/*SubnetLoginMFAOK A successful response.
+/*
+SubnetLoginMFAOK A successful response.
 
 swagger:response subnetLoginMFAOK
 */
@@ -74,7 +75,8 @@ func (o *SubnetLoginMFAOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*SubnetLoginMFADefault Generic error response.
+/*
+SubnetLoginMFADefault Generic error response.
 
 swagger:response subnetLoginMFADefault
 */

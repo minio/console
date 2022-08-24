@@ -48,10 +48,10 @@ func NewGetUserPolicy(ctx *middleware.Context, handler GetUserPolicyHandler) *Ge
 	return &GetUserPolicy{Context: ctx, Handler: handler}
 }
 
-/* GetUserPolicy swagger:route GET /user/policy Policy getUserPolicy
+/*
+	GetUserPolicy swagger:route GET /user/policy Policy getUserPolicy
 
 returns policies for logged in user
-
 */
 type GetUserPolicy struct {
 	Context *middleware.Context

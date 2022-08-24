@@ -33,7 +33,8 @@ import (
 // AccountChangePasswordNoContentCode is the HTTP code returned for type AccountChangePasswordNoContent
 const AccountChangePasswordNoContentCode int = 204
 
-/*AccountChangePasswordNoContent A successful login.
+/*
+AccountChangePasswordNoContent A successful login.
 
 swagger:response accountChangePasswordNoContent
 */
@@ -54,7 +55,8 @@ func (o *AccountChangePasswordNoContent) WriteResponse(rw http.ResponseWriter, p
 	rw.WriteHeader(204)
 }
 
-/*AccountChangePasswordDefault Generic error response.
+/*
+AccountChangePasswordDefault Generic error response.
 
 swagger:response accountChangePasswordDefault
 */

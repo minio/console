@@ -33,7 +33,8 @@ import (
 // PutObjectRestoreOKCode is the HTTP code returned for type PutObjectRestoreOK
 const PutObjectRestoreOKCode int = 200
 
-/*PutObjectRestoreOK A successful response.
+/*
+PutObjectRestoreOK A successful response.
 
 swagger:response putObjectRestoreOK
 */
@@ -54,7 +55,8 @@ func (o *PutObjectRestoreOK) WriteResponse(rw http.ResponseWriter, producer runt
 	rw.WriteHeader(200)
 }
 
-/*PutObjectRestoreDefault Generic error response.
+/*
+PutObjectRestoreDefault Generic error response.
 
 swagger:response putObjectRestoreDefault
 */

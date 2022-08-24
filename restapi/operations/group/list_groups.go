@@ -48,10 +48,10 @@ func NewListGroups(ctx *middleware.Context, handler ListGroupsHandler) *ListGrou
 	return &ListGroups{Context: ctx, Handler: handler}
 }
 
-/* ListGroups swagger:route GET /groups Group listGroups
+/*
+	ListGroups swagger:route GET /groups Group listGroups
 
 List Groups
-
 */
 type ListGroups struct {
 	Context *middleware.Context

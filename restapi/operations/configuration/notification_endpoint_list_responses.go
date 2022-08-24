@@ -33,7 +33,8 @@ import (
 // NotificationEndpointListOKCode is the HTTP code returned for type NotificationEndpointListOK
 const NotificationEndpointListOKCode int = 200
 
-/*NotificationEndpointListOK A successful response.
+/*
+NotificationEndpointListOK A successful response.
 
 swagger:response notificationEndpointListOK
 */
@@ -74,7 +75,8 @@ func (o *NotificationEndpointListOK) WriteResponse(rw http.ResponseWriter, produ
 	}
 }
 
-/*NotificationEndpointListDefault Generic error response.
+/*
+NotificationEndpointListDefault Generic error response.
 
 swagger:response notificationEndpointListDefault
 */

@@ -33,7 +33,8 @@ import (
 // PutBucketTagsOKCode is the HTTP code returned for type PutBucketTagsOK
 const PutBucketTagsOKCode int = 200
 
-/*PutBucketTagsOK A successful response.
+/*
+PutBucketTagsOK A successful response.
 
 swagger:response putBucketTagsOK
 */
@@ -54,7 +55,8 @@ func (o *PutBucketTagsOK) WriteResponse(rw http.ResponseWriter, producer runtime
 	rw.WriteHeader(200)
 }
 
-/*PutBucketTagsDefault Generic error response.
+/*
+PutBucketTagsDefault Generic error response.
 
 swagger:response putBucketTagsDefault
 */

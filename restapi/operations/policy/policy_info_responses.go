@@ -33,7 +33,8 @@ import (
 // PolicyInfoOKCode is the HTTP code returned for type PolicyInfoOK
 const PolicyInfoOKCode int = 200
 
-/*PolicyInfoOK A successful response.
+/*
+PolicyInfoOK A successful response.
 
 swagger:response policyInfoOK
 */
@@ -74,7 +75,8 @@ func (o *PolicyInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 	}
 }
 
-/*PolicyInfoDefault Generic error response.
+/*
+PolicyInfoDefault Generic error response.
 
 swagger:response policyInfoDefault
 */

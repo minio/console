@@ -33,7 +33,8 @@ import (
 // GetObjectMetadataOKCode is the HTTP code returned for type GetObjectMetadataOK
 const GetObjectMetadataOKCode int = 200
 
-/*GetObjectMetadataOK A successful response.
+/*
+GetObjectMetadataOK A successful response.
 
 swagger:response getObjectMetadataOK
 */
@@ -74,7 +75,8 @@ func (o *GetObjectMetadataOK) WriteResponse(rw http.ResponseWriter, producer run
 	}
 }
 
-/*GetObjectMetadataDefault Generic error response.
+/*
+GetObjectMetadataDefault Generic error response.
 
 swagger:response getObjectMetadataDefault
 */

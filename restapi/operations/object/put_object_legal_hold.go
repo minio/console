@@ -48,10 +48,10 @@ func NewPutObjectLegalHold(ctx *middleware.Context, handler PutObjectLegalHoldHa
 	return &PutObjectLegalHold{Context: ctx, Handler: handler}
 }
 
-/* PutObjectLegalHold swagger:route PUT /buckets/{bucket_name}/objects/legalhold Object putObjectLegalHold
+/*
+	PutObjectLegalHold swagger:route PUT /buckets/{bucket_name}/objects/legalhold Object putObjectLegalHold
 
 Put Object's legalhold status
-
 */
 type PutObjectLegalHold struct {
 	Context *middleware.Context

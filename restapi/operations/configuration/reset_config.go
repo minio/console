@@ -48,10 +48,10 @@ func NewResetConfig(ctx *middleware.Context, handler ResetConfigHandler) *ResetC
 	return &ResetConfig{Context: ctx, Handler: handler}
 }
 
-/* ResetConfig swagger:route POST /configs/{name}/reset Configuration resetConfig
+/*
+	ResetConfig swagger:route POST /configs/{name}/reset Configuration resetConfig
 
 Configuration reset
-
 */
 type ResetConfig struct {
 	Context *middleware.Context

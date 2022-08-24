@@ -48,10 +48,10 @@ func NewConfigInfo(ctx *middleware.Context, handler ConfigInfoHandler) *ConfigIn
 	return &ConfigInfo{Context: ctx, Handler: handler}
 }
 
-/* ConfigInfo swagger:route GET /configs/{name} Configuration configInfo
+/*
+	ConfigInfo swagger:route GET /configs/{name} Configuration configInfo
 
 Configuration info
-
 */
 type ConfigInfo struct {
 	Context *middleware.Context

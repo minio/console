@@ -48,10 +48,10 @@ func NewAddRemoteBucket(ctx *middleware.Context, handler AddRemoteBucketHandler)
 	return &AddRemoteBucket{Context: ctx, Handler: handler}
 }
 
-/* AddRemoteBucket swagger:route POST /remote-buckets Bucket addRemoteBucket
+/*
+	AddRemoteBucket swagger:route POST /remote-buckets Bucket addRemoteBucket
 
 Add Remote Bucket
-
 */
 type AddRemoteBucket struct {
 	Context *middleware.Context

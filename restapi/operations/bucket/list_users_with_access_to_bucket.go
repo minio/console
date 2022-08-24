@@ -48,10 +48,10 @@ func NewListUsersWithAccessToBucket(ctx *middleware.Context, handler ListUsersWi
 	return &ListUsersWithAccessToBucket{Context: ctx, Handler: handler}
 }
 
-/* ListUsersWithAccessToBucket swagger:route GET /bucket-users/{bucket} Bucket listUsersWithAccessToBucket
+/*
+	ListUsersWithAccessToBucket swagger:route GET /bucket-users/{bucket} Bucket listUsersWithAccessToBucket
 
 List Users With Access to a Given Bucket
-
 */
 type ListUsersWithAccessToBucket struct {
 	Context *middleware.Context

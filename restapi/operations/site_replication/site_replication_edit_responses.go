@@ -33,7 +33,8 @@ import (
 // SiteReplicationEditOKCode is the HTTP code returned for type SiteReplicationEditOK
 const SiteReplicationEditOKCode int = 200
 
-/*SiteReplicationEditOK A successful response.
+/*
+SiteReplicationEditOK A successful response.
 
 swagger:response siteReplicationEditOK
 */
@@ -74,7 +75,8 @@ func (o *SiteReplicationEditOK) WriteResponse(rw http.ResponseWriter, producer r
 	}
 }
 
-/*SiteReplicationEditDefault Generic error response.
+/*
+SiteReplicationEditDefault Generic error response.
 
 swagger:response siteReplicationEditDefault
 */

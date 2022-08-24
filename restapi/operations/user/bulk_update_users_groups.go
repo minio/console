@@ -48,10 +48,10 @@ func NewBulkUpdateUsersGroups(ctx *middleware.Context, handler BulkUpdateUsersGr
 	return &BulkUpdateUsersGroups{Context: ctx, Handler: handler}
 }
 
-/* BulkUpdateUsersGroups swagger:route PUT /users-groups-bulk User bulkUpdateUsersGroups
+/*
+	BulkUpdateUsersGroups swagger:route PUT /users-groups-bulk User bulkUpdateUsersGroups
 
 Bulk functionality to Add Users to Groups
-
 */
 type BulkUpdateUsersGroups struct {
 	Context *middleware.Context
