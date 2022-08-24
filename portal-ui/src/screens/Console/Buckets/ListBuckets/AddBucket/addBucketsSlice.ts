@@ -50,7 +50,7 @@ const initialState: AddBucketState = {
   retentionUnit: "days",
   retentionValidity: 180,
   navigateTo: "",
-  bucketNameErrorList: []
+  bucketNameErrorList: [],
 };
 
 export const addBucketsSlice = createSlice({

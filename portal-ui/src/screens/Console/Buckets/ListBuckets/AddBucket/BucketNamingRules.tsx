@@ -27,8 +27,6 @@ import InvalidRule from "./InvalidRule";
 import NARule from "./NARule";
 
 const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
- 
-
   const lengthRuleText =
     "Bucket names must be between 3 (min) and 63 (max) characters long.";
   const characterRuleText =
@@ -45,7 +43,7 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
 
   const [showNamingRules, setShowNamingRules] = useState<boolean>(false);
-  
+
   const addLoading = useSelector((state: AppState) => state.addBucket.loading);
 
   const [

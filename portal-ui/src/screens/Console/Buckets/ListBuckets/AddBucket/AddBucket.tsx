@@ -118,7 +118,9 @@ const AddBucket = ({ classes }: IsetProps) => {
     "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
   );
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
-  const validationResult = useSelector((state: AppState) => state.addBucket.bucketNameErrorList);
+  const validationResult = useSelector(
+    (state: AppState) => state.addBucket.bucketNameErrorList
+  );
   const errorList = validationResult.filter((v) => !v);
   const hasErrors = errorList.length > 0;
   const [records, setRecords] = useState<string[]>([]);
@@ -163,22 +165,21 @@ const AddBucket = ({ classes }: IsetProps) => {
     IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
   ]);
 
-
   useEffect(() => {
     const bucketNameErrors = [
-      (!(bucketName.length < 3 || bucketName.length > 63)),
-      (validBucketCharacters.test(bucketName)),          
+      !(bucketName.length < 3 || bucketName.length > 63),
+      validBucketCharacters.test(bucketName),
       !(
         bucketName.includes(".-") ||
         bucketName.includes("-.") ||
         bucketName.includes("..")
       ),
-      (!ipAddressFormat.test(bucketName)),
-      (!bucketName.startsWith("xn--")),
-      (!bucketName.endsWith("-s3alias")),
-      (!records.includes(bucketName)),
-        ] ;
-        dispatch(setBucketNameErrors(bucketNameErrors));
+      !ipAddressFormat.test(bucketName),
+      !bucketName.startsWith("xn--"),
+      !bucketName.endsWith("-s3alias"),
+      !records.includes(bucketName),
+    ];
+    dispatch(setBucketNameErrors(bucketNameErrors));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucketName]);
 
@@ -188,10 +189,11 @@ const AddBucket = ({ classes }: IsetProps) => {
         .invoke("GET", `/api/v1/buckets`)
         .then((res: BucketList) => {
           var bucketList: string[] = [];
-          if (res != null){
-          res.buckets.forEach((bucket) => {
-            bucketList.push(bucket.name);
-          });}
+          if (res != null) {
+            res.buckets.forEach((bucket) => {
+              bucketList.push(bucket.name);
+            });
+          }
           setRecords(bucketList);
         })
         .catch((err: ErrorResponseHandler) => {
@@ -279,10 +281,10 @@ const AddBucket = ({ classes }: IsetProps) => {
           >
             <Grid container marginTop={1} spacing={2}>
               <Grid item xs={12}>
-                <AddBucketName hasErrors={hasErrors}/>
+                <AddBucketName hasErrors={hasErrors} />
               </Grid>
               <Grid item xs={12}>
-                <BucketNamingRules errorList={validationResult}/>
+                <BucketNamingRules errorList={validationResult} />
               </Grid>
               <Grid item xs={12}>
                 <SectionTitle>Features</SectionTitle>
