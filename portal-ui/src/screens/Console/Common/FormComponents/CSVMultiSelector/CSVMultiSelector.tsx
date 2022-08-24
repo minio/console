@@ -17,12 +17,11 @@ import React, {
   ChangeEvent,
   createRef,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
+  useCallback,
 } from "react";
 import get from "lodash/get";
-import debounce from "lodash/debounce";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -110,14 +109,26 @@ const CSVMultiSelector = ({
     }
   }, [currentElements, bottomList]);
 
+  const onChangeCallback = useCallback(
+    (newString: string) => {
+      onChange(newString);
+    },
+    [onChange]
+  );
+
   // We avoid multiple re-renders / hang issue typing too fast
   const firstUpdate = useRef(true);
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false;
       return;
     }
-    debouncedOnChange();
+    const elementsString = currentElements
+      .filter((element) => element.trim() !== "")
+      .join(",");
+
+    onChangeCallback(elementsString);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentElements]);
 
@@ -141,18 +152,12 @@ const CSVMultiSelector = ({
     setCurrentElements(updatedElement);
   };
 
-  // Debounce for On Change
-  const debouncedOnChange = debounce(() => {
-    const elementsString = currentElements
-      .filter((element) => element.trim() !== "")
-      .join(",");
-
-    onChange(elementsString);
-  }, 500);
-
   const inputs = currentElements.map((element, index) => {
     return (
-      <div className={classes.inputBoxSpacer}>
+      <div
+        className={classes.inputBoxSpacer}
+        key={`csv-multi-${name}-${index.toString()}`}
+      >
         <InputBoxWrapper
           id={`${name}-${index.toString()}`}
           label={""}

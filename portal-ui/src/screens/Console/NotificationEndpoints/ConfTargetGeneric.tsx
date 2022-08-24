@@ -58,7 +58,7 @@ export const valueDef = (
     const storedConfig = defaults.find((element) => element.key === key);
 
     if (storedConfig) {
-      defValue = storedConfig.value;
+      defValue = storedConfig.value || "";
     }
   }
 
@@ -77,13 +77,12 @@ const ConfTargetGeneric = ({
 
   // Effect to create all the values to hold
   useEffect(() => {
-    const values: IElementValue[] = [];
-    fields.forEach((field) => {
+    const values: IElementValue[] = fields.map((field) => {
       const stateInsert: IElementValue = {
         key: field.name,
         value: valueDef(field.name, field.type, defValList),
       };
-      values.push(stateInsert);
+      return stateInsert;
     });
 
     setValueHolder(values);
@@ -127,9 +126,9 @@ const ConfTargetGeneric = ({
             elements={valueHolder[item] ? valueHolder[item].value : ""}
             label={field.label}
             name={field.name}
-            onChange={(value: string) =>
-              setValueElement(field.name, value, item)
-            }
+            onChange={(value: string) => {
+              setValueElement(field.name, value, item);
+            }}
             tooltip={field.tooltip}
             commonPlaceholder={field.placeholder}
             withBorder={true}
