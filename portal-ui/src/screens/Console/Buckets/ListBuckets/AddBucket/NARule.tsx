@@ -16,32 +16,29 @@
 
 import React, { Fragment } from "react";
 import Grid from "@mui/material/Grid";
-import { ConfirmDeleteIcon } from "../../../../../icons";
+import { CircleIcon } from "../../../../../icons";
 
-interface IInvalidRule {
+interface INARule {
   ruleText: string;
 }
 
-const InvalidRule = ({ ruleText }: IInvalidRule) => {
+const NARule = ({ ruleText }: INARule) => {
   return (
     <Fragment>
-      <Grid
-        container
-        style={{
-          color: "#C83B51",
-          display: "flex",
-          justifyContent: "flex-start",
-        }}
-      >
+      <Grid container style={{ display: "flex", justifyContent: "flex-start" }}>
         <Grid item xs={1} paddingRight={1}>
-          <ConfirmDeleteIcon width={"16px"} height={"16px"} />
+          <CircleIcon
+            width={"12px"}
+            height={"12px"}
+            style={{ color: "#8f949c" }}
+          />
         </Grid>
         <Grid
           item
           xs={9}
           paddingLeft={1}
           style={{
-            color: "#C83B51",
+            color: "#8f949c",
             display: "flex",
             justifyContent: "flex-start",
           }}
@@ -53,4 +50,4 @@ const InvalidRule = ({ ruleText }: IInvalidRule) => {
   );
 };
 
-export default InvalidRule;
+export default NARule;

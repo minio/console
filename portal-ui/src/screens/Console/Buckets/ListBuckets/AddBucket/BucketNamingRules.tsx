@@ -27,6 +27,7 @@ import { ErrorResponseHandler } from "../../../../../common/types";
 import { BucketList } from "../../types";
 import ValidRule from "./ValidRule";
 import InvalidRule from "./InvalidRule";
+import NARule from "./NARule";
 
 const BucketNamingRules = () => {
   const dispatch = useAppDispatch();
@@ -100,12 +101,12 @@ const BucketNamingRules = () => {
     <Fragment>
       <Grid item xs={12}>
         {showNamingRules ? (
-          <span style={{ color: "#0a66fa", textDecoration: "underline" }}>
+          <span style={{ color: "#0288D1", textDecoration: "underline" }}>
             {" "}
             Hide Bucket Naming Rules{" "}
           </span>
         ) : (
-          <span style={{ color: "#0a66fa", textDecoration: "underline" }}>
+          <span style={{ color: "#0288D1", textDecoration: "underline" }}>
             View Bucket Naming Rules
           </span>
         )}
@@ -121,41 +122,55 @@ const BucketNamingRules = () => {
         {showNamingRules && (
           <Grid container>
             <Grid item xs={6}>
-              {lengthRule ? (
+              {bucketName.length === 0 ? (
+                <NARule ruleText={lengthRuleText} />
+              ) : lengthRule ? (
                 <ValidRule ruleText={lengthRuleText} />
               ) : (
                 <InvalidRule ruleText={lengthRuleText} />
               )}
-              {validCharacters ? (
+              {bucketName.length === 0 ? (
+                <NARule ruleText={characterRuleText} />
+              ) : validCharacters ? (
                 <ValidRule ruleText={characterRuleText} />
               ) : (
                 <InvalidRule ruleText={characterRuleText} />
               )}
-              {noAdjacentPeriods ? (
+              {bucketName.length === 0 ? (
+                <NARule ruleText={periodRuleText} />
+              ) : noAdjacentPeriods ? (
                 <ValidRule ruleText={periodRuleText} />
               ) : (
                 <InvalidRule ruleText={periodRuleText} />
               )}
-              {notIPFormat ? (
+              {bucketName.length === 0 ? (
+                <NARule ruleText={ipRuleText} />
+              ) : notIPFormat ? (
                 <ValidRule ruleText={ipRuleText} />
               ) : (
                 <InvalidRule ruleText={ipRuleText} />
               )}
             </Grid>
             <Grid item xs={6}>
-              {noPrefix ? (
+              {bucketName.length === 0 ? (
+                <NARule ruleText={prefixRuleText} />
+              ) : noPrefix ? (
                 <ValidRule ruleText={prefixRuleText} />
               ) : (
                 <InvalidRule ruleText={prefixRuleText} />
               )}
 
-              {noSuffix ? (
+              {bucketName.length === 0 ? (
+                <NARule ruleText={suffixRuleText} />
+              ) : noSuffix ? (
                 <ValidRule ruleText={suffixRuleText} />
               ) : (
                 <InvalidRule ruleText={suffixRuleText} />
               )}
 
-              {uniqueName ? (
+              {bucketName.length === 0 ? (
+                <NARule ruleText={uniqueRuleText} />
+              ) : uniqueName ? (
                 <ValidRule ruleText={uniqueRuleText} />
               ) : (
                 <InvalidRule ruleText={uniqueRuleText} />
