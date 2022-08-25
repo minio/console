@@ -33,7 +33,8 @@ import (
 // CheckMinIOVersionOKCode is the HTTP code returned for type CheckMinIOVersionOK
 const CheckMinIOVersionOKCode int = 200
 
-/*CheckMinIOVersionOK A successful response.
+/*
+CheckMinIOVersionOK A successful response.
 
 swagger:response checkMinIOVersionOK
 */
@@ -74,7 +75,8 @@ func (o *CheckMinIOVersionOK) WriteResponse(rw http.ResponseWriter, producer run
 	}
 }
 
-/*CheckMinIOVersionDefault Generic error response.
+/*
+CheckMinIOVersionDefault Generic error response.
 
 swagger:response checkMinIOVersionDefault
 */

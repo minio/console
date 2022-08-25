@@ -48,10 +48,10 @@ func NewBucketSetPolicy(ctx *middleware.Context, handler BucketSetPolicyHandler)
 	return &BucketSetPolicy{Context: ctx, Handler: handler}
 }
 
-/* BucketSetPolicy swagger:route PUT /buckets/{name}/set-policy Bucket bucketSetPolicy
+/*
+	BucketSetPolicy swagger:route PUT /buckets/{name}/set-policy Bucket bucketSetPolicy
 
 Bucket Set Policy
-
 */
 type BucketSetPolicy struct {
 	Context *middleware.Context

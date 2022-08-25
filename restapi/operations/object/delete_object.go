@@ -48,10 +48,10 @@ func NewDeleteObject(ctx *middleware.Context, handler DeleteObjectHandler) *Dele
 	return &DeleteObject{Context: ctx, Handler: handler}
 }
 
-/* DeleteObject swagger:route DELETE /buckets/{bucket_name}/objects Object deleteObject
+/*
+	DeleteObject swagger:route DELETE /buckets/{bucket_name}/objects Object deleteObject
 
 Delete Object
-
 */
 type DeleteObject struct {
 	Context *middleware.Context

@@ -48,10 +48,10 @@ func NewGetBucketObjectLockingStatus(ctx *middleware.Context, handler GetBucketO
 	return &GetBucketObjectLockingStatus{Context: ctx, Handler: handler}
 }
 
-/* GetBucketObjectLockingStatus swagger:route GET /buckets/{bucket_name}/object-locking Bucket getBucketObjectLockingStatus
+/*
+	GetBucketObjectLockingStatus swagger:route GET /buckets/{bucket_name}/object-locking Bucket getBucketObjectLockingStatus
 
 Returns the status of object locking support on the bucket
-
 */
 type GetBucketObjectLockingStatus struct {
 	Context *middleware.Context

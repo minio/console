@@ -33,7 +33,8 @@ import (
 // DeleteBucketEventNoContentCode is the HTTP code returned for type DeleteBucketEventNoContent
 const DeleteBucketEventNoContentCode int = 204
 
-/*DeleteBucketEventNoContent A successful response.
+/*
+DeleteBucketEventNoContent A successful response.
 
 swagger:response deleteBucketEventNoContent
 */
@@ -54,7 +55,8 @@ func (o *DeleteBucketEventNoContent) WriteResponse(rw http.ResponseWriter, produ
 	rw.WriteHeader(204)
 }
 
-/*DeleteBucketEventDefault Generic error response.
+/*
+DeleteBucketEventDefault Generic error response.
 
 swagger:response deleteBucketEventDefault
 */

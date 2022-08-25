@@ -48,10 +48,10 @@ func NewSubnetLogin(ctx *middleware.Context, handler SubnetLoginHandler) *Subnet
 	return &SubnetLogin{Context: ctx, Handler: handler}
 }
 
-/* SubnetLogin swagger:route POST /subnet/login Subnet subnetLogin
+/*
+	SubnetLogin swagger:route POST /subnet/login Subnet subnetLogin
 
 Login to subnet
-
 */
 type SubnetLogin struct {
 	Context *middleware.Context

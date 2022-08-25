@@ -48,10 +48,10 @@ func NewPolicyInfo(ctx *middleware.Context, handler PolicyInfoHandler) *PolicyIn
 	return &PolicyInfo{Context: ctx, Handler: handler}
 }
 
-/* PolicyInfo swagger:route GET /policy/{name} Policy policyInfo
+/*
+	PolicyInfo swagger:route GET /policy/{name} Policy policyInfo
 
 Policy info
-
 */
 type PolicyInfo struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // SetPolicyNoContentCode is the HTTP code returned for type SetPolicyNoContent
 const SetPolicyNoContentCode int = 204
 
-/*SetPolicyNoContent A successful response.
+/*
+SetPolicyNoContent A successful response.
 
 swagger:response setPolicyNoContent
 */
@@ -54,7 +55,8 @@ func (o *SetPolicyNoContent) WriteResponse(rw http.ResponseWriter, producer runt
 	rw.WriteHeader(204)
 }
 
-/*SetPolicyDefault Generic error response.
+/*
+SetPolicyDefault Generic error response.
 
 swagger:response setPolicyDefault
 */

@@ -33,7 +33,8 @@ import (
 // LoginDetailOKCode is the HTTP code returned for type LoginDetailOK
 const LoginDetailOKCode int = 200
 
-/*LoginDetailOK A successful response.
+/*
+LoginDetailOK A successful response.
 
 swagger:response loginDetailOK
 */
@@ -74,7 +75,8 @@ func (o *LoginDetailOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
-/*LoginDetailDefault Generic error response.
+/*
+LoginDetailDefault Generic error response.
 
 swagger:response loginDetailDefault
 */

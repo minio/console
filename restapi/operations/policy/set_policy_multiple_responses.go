@@ -33,7 +33,8 @@ import (
 // SetPolicyMultipleNoContentCode is the HTTP code returned for type SetPolicyMultipleNoContent
 const SetPolicyMultipleNoContentCode int = 204
 
-/*SetPolicyMultipleNoContent A successful response.
+/*
+SetPolicyMultipleNoContent A successful response.
 
 swagger:response setPolicyMultipleNoContent
 */
@@ -54,7 +55,8 @@ func (o *SetPolicyMultipleNoContent) WriteResponse(rw http.ResponseWriter, produ
 	rw.WriteHeader(204)
 }
 
-/*SetPolicyMultipleDefault Generic error response.
+/*
+SetPolicyMultipleDefault Generic error response.
 
 swagger:response setPolicyMultipleDefault
 */

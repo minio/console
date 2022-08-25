@@ -48,10 +48,10 @@ func NewGetBucketReplication(ctx *middleware.Context, handler GetBucketReplicati
 	return &GetBucketReplication{Context: ctx, Handler: handler}
 }
 
-/* GetBucketReplication swagger:route GET /buckets/{bucket_name}/replication Bucket getBucketReplication
+/*
+	GetBucketReplication swagger:route GET /buckets/{bucket_name}/replication Bucket getBucketReplication
 
 Bucket Replication
-
 */
 type GetBucketReplication struct {
 	Context *middleware.Context

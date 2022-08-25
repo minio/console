@@ -33,7 +33,8 @@ import (
 // CheckUserServiceAccountsOKCode is the HTTP code returned for type CheckUserServiceAccountsOK
 const CheckUserServiceAccountsOKCode int = 200
 
-/*CheckUserServiceAccountsOK A successful response.
+/*
+CheckUserServiceAccountsOK A successful response.
 
 swagger:response checkUserServiceAccountsOK
 */
@@ -74,7 +75,8 @@ func (o *CheckUserServiceAccountsOK) WriteResponse(rw http.ResponseWriter, produ
 	}
 }
 
-/*CheckUserServiceAccountsDefault Generic error response.
+/*
+CheckUserServiceAccountsDefault Generic error response.
 
 swagger:response checkUserServiceAccountsDefault
 */

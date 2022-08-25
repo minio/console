@@ -48,10 +48,10 @@ func NewGetObjectMetadata(ctx *middleware.Context, handler GetObjectMetadataHand
 	return &GetObjectMetadata{Context: ctx, Handler: handler}
 }
 
-/* GetObjectMetadata swagger:route GET /buckets/{bucket_name}/objects/metadata Object getObjectMetadata
+/*
+	GetObjectMetadata swagger:route GET /buckets/{bucket_name}/objects/metadata Object getObjectMetadata
 
 Gets the metadata of an object
-
 */
 type GetObjectMetadata struct {
 	Context *middleware.Context

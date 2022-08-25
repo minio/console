@@ -33,7 +33,8 @@ import (
 // SubnetRegisterOKCode is the HTTP code returned for type SubnetRegisterOK
 const SubnetRegisterOKCode int = 200
 
-/*SubnetRegisterOK A successful response.
+/*
+SubnetRegisterOK A successful response.
 
 swagger:response subnetRegisterOK
 */
@@ -54,7 +55,8 @@ func (o *SubnetRegisterOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	rw.WriteHeader(200)
 }
 
-/*SubnetRegisterDefault Generic error response.
+/*
+SubnetRegisterDefault Generic error response.
 
 swagger:response subnetRegisterDefault
 */

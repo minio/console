@@ -48,10 +48,10 @@ func NewSetBucketVersioning(ctx *middleware.Context, handler SetBucketVersioning
 	return &SetBucketVersioning{Context: ctx, Handler: handler}
 }
 
-/* SetBucketVersioning swagger:route PUT /buckets/{bucket_name}/versioning Bucket setBucketVersioning
+/*
+	SetBucketVersioning swagger:route PUT /buckets/{bucket_name}/versioning Bucket setBucketVersioning
 
 Set Bucket Versioning
-
 */
 type SetBucketVersioning struct {
 	Context *middleware.Context

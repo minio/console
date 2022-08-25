@@ -33,7 +33,8 @@ import (
 // ListGroupsOKCode is the HTTP code returned for type ListGroupsOK
 const ListGroupsOKCode int = 200
 
-/*ListGroupsOK A successful response.
+/*
+ListGroupsOK A successful response.
 
 swagger:response listGroupsOK
 */
@@ -74,7 +75,8 @@ func (o *ListGroupsOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 	}
 }
 
-/*ListGroupsDefault Generic error response.
+/*
+ListGroupsDefault Generic error response.
 
 swagger:response listGroupsDefault
 */

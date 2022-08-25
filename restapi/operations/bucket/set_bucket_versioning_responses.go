@@ -33,7 +33,8 @@ import (
 // SetBucketVersioningCreatedCode is the HTTP code returned for type SetBucketVersioningCreated
 const SetBucketVersioningCreatedCode int = 201
 
-/*SetBucketVersioningCreated A successful response.
+/*
+SetBucketVersioningCreated A successful response.
 
 swagger:response setBucketVersioningCreated
 */
@@ -54,7 +55,8 @@ func (o *SetBucketVersioningCreated) WriteResponse(rw http.ResponseWriter, produ
 	rw.WriteHeader(201)
 }
 
-/*SetBucketVersioningDefault Generic error response.
+/*
+SetBucketVersioningDefault Generic error response.
 
 swagger:response setBucketVersioningDefault
 */

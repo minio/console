@@ -33,7 +33,8 @@ import (
 // RemoveGroupNoContentCode is the HTTP code returned for type RemoveGroupNoContent
 const RemoveGroupNoContentCode int = 204
 
-/*RemoveGroupNoContent A successful response.
+/*
+RemoveGroupNoContent A successful response.
 
 swagger:response removeGroupNoContent
 */
@@ -54,7 +55,8 @@ func (o *RemoveGroupNoContent) WriteResponse(rw http.ResponseWriter, producer ru
 	rw.WriteHeader(204)
 }
 
-/*RemoveGroupDefault Generic error response.
+/*
+RemoveGroupDefault Generic error response.
 
 swagger:response removeGroupDefault
 */

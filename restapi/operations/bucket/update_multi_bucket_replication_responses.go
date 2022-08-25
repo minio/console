@@ -33,7 +33,8 @@ import (
 // UpdateMultiBucketReplicationCreatedCode is the HTTP code returned for type UpdateMultiBucketReplicationCreated
 const UpdateMultiBucketReplicationCreatedCode int = 201
 
-/*UpdateMultiBucketReplicationCreated A successful response.
+/*
+UpdateMultiBucketReplicationCreated A successful response.
 
 swagger:response updateMultiBucketReplicationCreated
 */
@@ -54,7 +55,8 @@ func (o *UpdateMultiBucketReplicationCreated) WriteResponse(rw http.ResponseWrit
 	rw.WriteHeader(201)
 }
 
-/*UpdateMultiBucketReplicationDefault Generic error response.
+/*
+UpdateMultiBucketReplicationDefault Generic error response.
 
 swagger:response updateMultiBucketReplicationDefault
 */

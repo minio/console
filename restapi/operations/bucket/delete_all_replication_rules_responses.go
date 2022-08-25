@@ -33,7 +33,8 @@ import (
 // DeleteAllReplicationRulesNoContentCode is the HTTP code returned for type DeleteAllReplicationRulesNoContent
 const DeleteAllReplicationRulesNoContentCode int = 204
 
-/*DeleteAllReplicationRulesNoContent A successful response.
+/*
+DeleteAllReplicationRulesNoContent A successful response.
 
 swagger:response deleteAllReplicationRulesNoContent
 */
@@ -54,7 +55,8 @@ func (o *DeleteAllReplicationRulesNoContent) WriteResponse(rw http.ResponseWrite
 	rw.WriteHeader(204)
 }
 
-/*DeleteAllReplicationRulesDefault Generic error response.
+/*
+DeleteAllReplicationRulesDefault Generic error response.
 
 swagger:response deleteAllReplicationRulesDefault
 */

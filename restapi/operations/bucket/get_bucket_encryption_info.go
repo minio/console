@@ -48,10 +48,10 @@ func NewGetBucketEncryptionInfo(ctx *middleware.Context, handler GetBucketEncryp
 	return &GetBucketEncryptionInfo{Context: ctx, Handler: handler}
 }
 
-/* GetBucketEncryptionInfo swagger:route GET /buckets/{bucket_name}/encryption/info Bucket getBucketEncryptionInfo
+/*
+	GetBucketEncryptionInfo swagger:route GET /buckets/{bucket_name}/encryption/info Bucket getBucketEncryptionInfo
 
 Get bucket encryption information.
-
 */
 type GetBucketEncryptionInfo struct {
 	Context *middleware.Context

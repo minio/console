@@ -33,7 +33,8 @@ import (
 // RemovePolicyNoContentCode is the HTTP code returned for type RemovePolicyNoContent
 const RemovePolicyNoContentCode int = 204
 
-/*RemovePolicyNoContent A successful response.
+/*
+RemovePolicyNoContent A successful response.
 
 swagger:response removePolicyNoContent
 */
@@ -54,7 +55,8 @@ func (o *RemovePolicyNoContent) WriteResponse(rw http.ResponseWriter, producer r
 	rw.WriteHeader(204)
 }
 
-/*RemovePolicyDefault Generic error response.
+/*
+RemovePolicyDefault Generic error response.
 
 swagger:response removePolicyDefault
 */

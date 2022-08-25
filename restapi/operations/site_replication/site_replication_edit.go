@@ -48,10 +48,10 @@ func NewSiteReplicationEdit(ctx *middleware.Context, handler SiteReplicationEdit
 	return &SiteReplicationEdit{Context: ctx, Handler: handler}
 }
 
-/* SiteReplicationEdit swagger:route PUT /admin/site-replication SiteReplication siteReplicationEdit
+/*
+	SiteReplicationEdit swagger:route PUT /admin/site-replication SiteReplication siteReplicationEdit
 
 Edit a Replication Site
-
 */
 type SiteReplicationEdit struct {
 	Context *middleware.Context

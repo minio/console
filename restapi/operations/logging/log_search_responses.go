@@ -33,7 +33,8 @@ import (
 // LogSearchOKCode is the HTTP code returned for type LogSearchOK
 const LogSearchOKCode int = 200
 
-/*LogSearchOK A successful response.
+/*
+LogSearchOK A successful response.
 
 swagger:response logSearchOK
 */
@@ -74,7 +75,8 @@ func (o *LogSearchOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pro
 	}
 }
 
-/*LogSearchDefault Generic error response.
+/*
+LogSearchDefault Generic error response.
 
 swagger:response logSearchDefault
 */

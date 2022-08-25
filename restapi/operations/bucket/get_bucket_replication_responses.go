@@ -33,7 +33,8 @@ import (
 // GetBucketReplicationOKCode is the HTTP code returned for type GetBucketReplicationOK
 const GetBucketReplicationOKCode int = 200
 
-/*GetBucketReplicationOK A successful response.
+/*
+GetBucketReplicationOK A successful response.
 
 swagger:response getBucketReplicationOK
 */
@@ -74,7 +75,8 @@ func (o *GetBucketReplicationOK) WriteResponse(rw http.ResponseWriter, producer 
 	}
 }
 
-/*GetBucketReplicationDefault Generic error response.
+/*
+GetBucketReplicationDefault Generic error response.
 
 swagger:response getBucketReplicationDefault
 */

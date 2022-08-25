@@ -33,7 +33,8 @@ import (
 // UpdateBucketLifecycleOKCode is the HTTP code returned for type UpdateBucketLifecycleOK
 const UpdateBucketLifecycleOKCode int = 200
 
-/*UpdateBucketLifecycleOK A successful response.
+/*
+UpdateBucketLifecycleOK A successful response.
 
 swagger:response updateBucketLifecycleOK
 */
@@ -54,7 +55,8 @@ func (o *UpdateBucketLifecycleOK) WriteResponse(rw http.ResponseWriter, producer
 	rw.WriteHeader(200)
 }
 
-/*UpdateBucketLifecycleDefault Generic error response.
+/*
+UpdateBucketLifecycleDefault Generic error response.
 
 swagger:response updateBucketLifecycleDefault
 */

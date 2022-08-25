@@ -48,10 +48,10 @@ func NewSiteReplicationInfoAdd(ctx *middleware.Context, handler SiteReplicationI
 	return &SiteReplicationInfoAdd{Context: ctx, Handler: handler}
 }
 
-/* SiteReplicationInfoAdd swagger:route POST /admin/site-replication SiteReplication siteReplicationInfoAdd
+/*
+	SiteReplicationInfoAdd swagger:route POST /admin/site-replication SiteReplication siteReplicationInfoAdd
 
 Add a Replication Site
-
 */
 type SiteReplicationInfoAdd struct {
 	Context *middleware.Context

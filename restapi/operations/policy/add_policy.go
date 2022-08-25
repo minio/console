@@ -48,10 +48,10 @@ func NewAddPolicy(ctx *middleware.Context, handler AddPolicyHandler) *AddPolicy 
 	return &AddPolicy{Context: ctx, Handler: handler}
 }
 
-/* AddPolicy swagger:route POST /policies Policy addPolicy
+/*
+	AddPolicy swagger:route POST /policies Policy addPolicy
 
 Add Policy
-
 */
 type AddPolicy struct {
 	Context *middleware.Context

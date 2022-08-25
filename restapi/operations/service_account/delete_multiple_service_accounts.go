@@ -48,10 +48,10 @@ func NewDeleteMultipleServiceAccounts(ctx *middleware.Context, handler DeleteMul
 	return &DeleteMultipleServiceAccounts{Context: ctx, Handler: handler}
 }
 
-/* DeleteMultipleServiceAccounts swagger:route DELETE /service-accounts/delete-multi ServiceAccount deleteMultipleServiceAccounts
+/*
+	DeleteMultipleServiceAccounts swagger:route DELETE /service-accounts/delete-multi ServiceAccount deleteMultipleServiceAccounts
 
 Delete Multiple Service Accounts
-
 */
 type DeleteMultipleServiceAccounts struct {
 	Context *middleware.Context

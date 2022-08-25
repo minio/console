@@ -33,7 +33,8 @@ import (
 // UpdateUserInfoOKCode is the HTTP code returned for type UpdateUserInfoOK
 const UpdateUserInfoOKCode int = 200
 
-/*UpdateUserInfoOK A successful response.
+/*
+UpdateUserInfoOK A successful response.
 
 swagger:response updateUserInfoOK
 */
@@ -74,7 +75,8 @@ func (o *UpdateUserInfoOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*UpdateUserInfoDefault Generic error response.
+/*
+UpdateUserInfoDefault Generic error response.
 
 swagger:response updateUserInfoDefault
 */

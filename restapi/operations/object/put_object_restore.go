@@ -48,10 +48,10 @@ func NewPutObjectRestore(ctx *middleware.Context, handler PutObjectRestoreHandle
 	return &PutObjectRestore{Context: ctx, Handler: handler}
 }
 
-/* PutObjectRestore swagger:route PUT /buckets/{bucket_name}/objects/restore Object putObjectRestore
+/*
+	PutObjectRestore swagger:route PUT /buckets/{bucket_name}/objects/restore Object putObjectRestore
 
 Restore Object to a selected version
-
 */
 type PutObjectRestore struct {
 	Context *middleware.Context

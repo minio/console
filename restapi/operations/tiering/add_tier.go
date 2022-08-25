@@ -48,10 +48,10 @@ func NewAddTier(ctx *middleware.Context, handler AddTierHandler) *AddTier {
 	return &AddTier{Context: ctx, Handler: handler}
 }
 
-/* AddTier swagger:route POST /admin/tiers Tiering addTier
+/*
+	AddTier swagger:route POST /admin/tiers Tiering addTier
 
 Allows to configure a new tier
-
 */
 type AddTier struct {
 	Context *middleware.Context

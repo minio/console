@@ -33,7 +33,8 @@ import (
 // TiersListOKCode is the HTTP code returned for type TiersListOK
 const TiersListOKCode int = 200
 
-/*TiersListOK A successful response.
+/*
+TiersListOK A successful response.
 
 swagger:response tiersListOK
 */
@@ -74,7 +75,8 @@ func (o *TiersListOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pro
 	}
 }
 
-/*TiersListDefault Generic error response.
+/*
+TiersListDefault Generic error response.
 
 swagger:response tiersListDefault
 */

@@ -33,7 +33,8 @@ import (
 // SubnetInfoOKCode is the HTTP code returned for type SubnetInfoOK
 const SubnetInfoOKCode int = 200
 
-/*SubnetInfoOK A successful response.
+/*
+SubnetInfoOK A successful response.
 
 swagger:response subnetInfoOK
 */
@@ -74,7 +75,8 @@ func (o *SubnetInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 	}
 }
 
-/*SubnetInfoDefault Generic error response.
+/*
+SubnetInfoDefault Generic error response.
 
 swagger:response subnetInfoDefault
 */

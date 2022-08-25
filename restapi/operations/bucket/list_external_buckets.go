@@ -48,10 +48,10 @@ func NewListExternalBuckets(ctx *middleware.Context, handler ListExternalBuckets
 	return &ListExternalBuckets{Context: ctx, Handler: handler}
 }
 
-/* ListExternalBuckets swagger:route POST /list-external-buckets Bucket listExternalBuckets
+/*
+	ListExternalBuckets swagger:route POST /list-external-buckets Bucket listExternalBuckets
 
 Lists an External list of buckets using custom credentials
-
 */
 type ListExternalBuckets struct {
 	Context *middleware.Context

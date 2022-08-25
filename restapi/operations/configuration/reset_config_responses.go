@@ -33,7 +33,8 @@ import (
 // ResetConfigOKCode is the HTTP code returned for type ResetConfigOK
 const ResetConfigOKCode int = 200
 
-/*ResetConfigOK A successful response.
+/*
+ResetConfigOK A successful response.
 
 swagger:response resetConfigOK
 */
@@ -74,7 +75,8 @@ func (o *ResetConfigOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
-/*ResetConfigDefault Generic error response.
+/*
+ResetConfigDefault Generic error response.
 
 swagger:response resetConfigDefault
 */

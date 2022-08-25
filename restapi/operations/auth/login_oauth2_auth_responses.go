@@ -33,7 +33,8 @@ import (
 // LoginOauth2AuthNoContentCode is the HTTP code returned for type LoginOauth2AuthNoContent
 const LoginOauth2AuthNoContentCode int = 204
 
-/*LoginOauth2AuthNoContent A successful login.
+/*
+LoginOauth2AuthNoContent A successful login.
 
 swagger:response loginOauth2AuthNoContent
 */
@@ -54,7 +55,8 @@ func (o *LoginOauth2AuthNoContent) WriteResponse(rw http.ResponseWriter, produce
 	rw.WriteHeader(204)
 }
 
-/*LoginOauth2AuthDefault Generic error response.
+/*
+LoginOauth2AuthDefault Generic error response.
 
 swagger:response loginOauth2AuthDefault
 */
