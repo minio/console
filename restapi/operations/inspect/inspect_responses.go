@@ -34,7 +34,8 @@ import (
 // InspectOKCode is the HTTP code returned for type InspectOK
 const InspectOKCode int = 200
 
-/*InspectOK A successful response.
+/*
+InspectOK A successful response.
 
 swagger:response inspectOK
 */
@@ -73,7 +74,8 @@ func (o *InspectOK) WriteResponse(rw http.ResponseWriter, producer runtime.Produ
 	}
 }
 
-/*InspectDefault Generic error response.
+/*
+InspectDefault Generic error response.
 
 swagger:response inspectDefault
 */

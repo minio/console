@@ -48,10 +48,10 @@ func NewListBucketEvents(ctx *middleware.Context, handler ListBucketEventsHandle
 	return &ListBucketEvents{Context: ctx, Handler: handler}
 }
 
-/* ListBucketEvents swagger:route GET /buckets/{bucket_name}/events Bucket listBucketEvents
+/*
+	ListBucketEvents swagger:route GET /buckets/{bucket_name}/events Bucket listBucketEvents
 
 List Bucket Events
-
 */
 type ListBucketEvents struct {
 	Context *middleware.Context

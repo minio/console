@@ -48,10 +48,10 @@ func NewSubnetRegister(ctx *middleware.Context, handler SubnetRegisterHandler) *
 	return &SubnetRegister{Context: ctx, Handler: handler}
 }
 
-/* SubnetRegister swagger:route POST /subnet/register Subnet subnetRegister
+/*
+	SubnetRegister swagger:route POST /subnet/register Subnet subnetRegister
 
 Register cluster with Subnet
-
 */
 type SubnetRegister struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // GetSiteReplicationInfoOKCode is the HTTP code returned for type GetSiteReplicationInfoOK
 const GetSiteReplicationInfoOKCode int = 200
 
-/*GetSiteReplicationInfoOK A successful response.
+/*
+GetSiteReplicationInfoOK A successful response.
 
 swagger:response getSiteReplicationInfoOK
 */
@@ -74,7 +75,8 @@ func (o *GetSiteReplicationInfoOK) WriteResponse(rw http.ResponseWriter, produce
 	}
 }
 
-/*GetSiteReplicationInfoDefault Generic error response.
+/*
+GetSiteReplicationInfoDefault Generic error response.
 
 swagger:response getSiteReplicationInfoDefault
 */

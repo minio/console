@@ -48,10 +48,10 @@ func NewSubnetInfo(ctx *middleware.Context, handler SubnetInfoHandler) *SubnetIn
 	return &SubnetInfo{Context: ctx, Handler: handler}
 }
 
-/* SubnetInfo swagger:route GET /subnet/info Subnet subnetInfo
+/*
+	SubnetInfo swagger:route GET /subnet/info Subnet subnetInfo
 
 Subnet info
-
 */
 type SubnetInfo struct {
 	Context *middleware.Context

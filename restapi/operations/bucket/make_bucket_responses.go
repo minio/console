@@ -33,7 +33,8 @@ import (
 // MakeBucketCreatedCode is the HTTP code returned for type MakeBucketCreated
 const MakeBucketCreatedCode int = 201
 
-/*MakeBucketCreated A successful response.
+/*
+MakeBucketCreated A successful response.
 
 swagger:response makeBucketCreated
 */
@@ -54,7 +55,8 @@ func (o *MakeBucketCreated) WriteResponse(rw http.ResponseWriter, producer runti
 	rw.WriteHeader(201)
 }
 
-/*MakeBucketDefault Generic error response.
+/*
+MakeBucketDefault Generic error response.
 
 swagger:response makeBucketDefault
 */

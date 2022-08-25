@@ -48,10 +48,10 @@ func NewEditTierCredentials(ctx *middleware.Context, handler EditTierCredentials
 	return &EditTierCredentials{Context: ctx, Handler: handler}
 }
 
-/* EditTierCredentials swagger:route PUT /admin/tiers/{type}/{name}/credentials Tiering editTierCredentials
+/*
+	EditTierCredentials swagger:route PUT /admin/tiers/{type}/{name}/credentials Tiering editTierCredentials
 
 Edit Tier Credentials
-
 */
 type EditTierCredentials struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // SetConfigOKCode is the HTTP code returned for type SetConfigOK
 const SetConfigOKCode int = 200
 
-/*SetConfigOK A successful response.
+/*
+SetConfigOK A successful response.
 
 swagger:response setConfigOK
 */
@@ -74,7 +75,8 @@ func (o *SetConfigOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pro
 	}
 }
 
-/*SetConfigDefault Generic error response.
+/*
+SetConfigDefault Generic error response.
 
 swagger:response setConfigDefault
 */

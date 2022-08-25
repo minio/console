@@ -33,7 +33,8 @@ import (
 // BucketSetPolicyOKCode is the HTTP code returned for type BucketSetPolicyOK
 const BucketSetPolicyOKCode int = 200
 
-/*BucketSetPolicyOK A successful response.
+/*
+BucketSetPolicyOK A successful response.
 
 swagger:response bucketSetPolicyOK
 */
@@ -74,7 +75,8 @@ func (o *BucketSetPolicyOK) WriteResponse(rw http.ResponseWriter, producer runti
 	}
 }
 
-/*BucketSetPolicyDefault Generic error response.
+/*
+BucketSetPolicyDefault Generic error response.
 
 swagger:response bucketSetPolicyDefault
 */

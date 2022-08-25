@@ -48,10 +48,10 @@ func NewBucketInfo(ctx *middleware.Context, handler BucketInfoHandler) *BucketIn
 	return &BucketInfo{Context: ctx, Handler: handler}
 }
 
-/* BucketInfo swagger:route GET /buckets/{name} Bucket bucketInfo
+/*
+	BucketInfo swagger:route GET /buckets/{name} Bucket bucketInfo
 
 Bucket Info
-
 */
 type BucketInfo struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // PutObjectLegalHoldOKCode is the HTTP code returned for type PutObjectLegalHoldOK
 const PutObjectLegalHoldOKCode int = 200
 
-/*PutObjectLegalHoldOK A successful response.
+/*
+PutObjectLegalHoldOK A successful response.
 
 swagger:response putObjectLegalHoldOK
 */
@@ -54,7 +55,8 @@ func (o *PutObjectLegalHoldOK) WriteResponse(rw http.ResponseWriter, producer ru
 	rw.WriteHeader(200)
 }
 
-/*PutObjectLegalHoldDefault Generic error response.
+/*
+PutObjectLegalHoldDefault Generic error response.
 
 swagger:response putObjectLegalHoldDefault
 */

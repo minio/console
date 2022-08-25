@@ -33,7 +33,8 @@ import (
 // DeleteMultipleServiceAccountsNoContentCode is the HTTP code returned for type DeleteMultipleServiceAccountsNoContent
 const DeleteMultipleServiceAccountsNoContentCode int = 204
 
-/*DeleteMultipleServiceAccountsNoContent A successful response.
+/*
+DeleteMultipleServiceAccountsNoContent A successful response.
 
 swagger:response deleteMultipleServiceAccountsNoContent
 */
@@ -54,7 +55,8 @@ func (o *DeleteMultipleServiceAccountsNoContent) WriteResponse(rw http.ResponseW
 	rw.WriteHeader(204)
 }
 
-/*DeleteMultipleServiceAccountsDefault Generic error response.
+/*
+DeleteMultipleServiceAccountsDefault Generic error response.
 
 swagger:response deleteMultipleServiceAccountsDefault
 */

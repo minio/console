@@ -48,10 +48,10 @@ func NewDeleteBucketLifecycleRule(ctx *middleware.Context, handler DeleteBucketL
 	return &DeleteBucketLifecycleRule{Context: ctx, Handler: handler}
 }
 
-/* DeleteBucketLifecycleRule swagger:route DELETE /buckets/{bucket_name}/lifecycle/{lifecycle_id} Bucket deleteBucketLifecycleRule
+/*
+	DeleteBucketLifecycleRule swagger:route DELETE /buckets/{bucket_name}/lifecycle/{lifecycle_id} Bucket deleteBucketLifecycleRule
 
 Delete Lifecycle rule
-
 */
 type DeleteBucketLifecycleRule struct {
 	Context *middleware.Context

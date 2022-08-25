@@ -18,21 +18,21 @@
 
 // Package restapi MinIO Console Server
 //
-//  Schemes:
-//    http
-//    ws
-//  Host: localhost
-//  BasePath: /api/v1
-//  Version: 0.1.0
+//	Schemes:
+//	  http
+//	  ws
+//	Host: localhost
+//	BasePath: /api/v1
+//	Version: 0.1.0
 //
-//  Consumes:
-//    - application/json
-//    - multipart/form-data
+//	Consumes:
+//	  - application/json
+//	  - multipart/form-data
 //
-//  Produces:
-//    - application/zip
-//    - application/octet-stream
-//    - application/json
+//	Produces:
+//	  - application/zip
+//	  - application/octet-stream
+//	  - application/json
 //
 // swagger:meta
 package restapi

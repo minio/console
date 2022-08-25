@@ -48,10 +48,10 @@ func NewGetBucketRewind(ctx *middleware.Context, handler GetBucketRewindHandler)
 	return &GetBucketRewind{Context: ctx, Handler: handler}
 }
 
-/* GetBucketRewind swagger:route GET /buckets/{bucket_name}/rewind/{date} Bucket getBucketRewind
+/*
+	GetBucketRewind swagger:route GET /buckets/{bucket_name}/rewind/{date} Bucket getBucketRewind
 
 Get objects in a bucket for a rewind date
-
 */
 type GetBucketRewind struct {
 	Context *middleware.Context

@@ -48,10 +48,10 @@ func NewSetServiceAccountPolicy(ctx *middleware.Context, handler SetServiceAccou
 	return &SetServiceAccountPolicy{Context: ctx, Handler: handler}
 }
 
-/* SetServiceAccountPolicy swagger:route PUT /service-accounts/{access_key}/policy ServiceAccount setServiceAccountPolicy
+/*
+	SetServiceAccountPolicy swagger:route PUT /service-accounts/{access_key}/policy ServiceAccount setServiceAccountPolicy
 
 Set Service Account Policy
-
 */
 type SetServiceAccountPolicy struct {
 	Context *middleware.Context

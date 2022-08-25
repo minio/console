@@ -33,7 +33,8 @@ import (
 // ShareObjectOKCode is the HTTP code returned for type ShareObjectOK
 const ShareObjectOKCode int = 200
 
-/*ShareObjectOK A successful response.
+/*
+ShareObjectOK A successful response.
 
 swagger:response shareObjectOK
 */
@@ -72,7 +73,8 @@ func (o *ShareObjectOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
-/*ShareObjectDefault Generic error response.
+/*
+ShareObjectDefault Generic error response.
 
 swagger:response shareObjectDefault
 */

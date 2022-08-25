@@ -48,10 +48,10 @@ func NewDisableBucketEncryption(ctx *middleware.Context, handler DisableBucketEn
 	return &DisableBucketEncryption{Context: ctx, Handler: handler}
 }
 
-/* DisableBucketEncryption swagger:route POST /buckets/{bucket_name}/encryption/disable Bucket disableBucketEncryption
+/*
+	DisableBucketEncryption swagger:route POST /buckets/{bucket_name}/encryption/disable Bucket disableBucketEncryption
 
 Disable bucket encryption.
-
 */
 type DisableBucketEncryption struct {
 	Context *middleware.Context

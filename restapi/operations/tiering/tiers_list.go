@@ -48,10 +48,10 @@ func NewTiersList(ctx *middleware.Context, handler TiersListHandler) *TiersList 
 	return &TiersList{Context: ctx, Handler: handler}
 }
 
-/* TiersList swagger:route GET /admin/tiers Tiering tiersList
+/*
+	TiersList swagger:route GET /admin/tiers Tiering tiersList
 
 Returns a list of tiers for ilm
-
 */
 type TiersList struct {
 	Context *middleware.Context

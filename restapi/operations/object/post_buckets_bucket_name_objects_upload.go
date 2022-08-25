@@ -48,10 +48,10 @@ func NewPostBucketsBucketNameObjectsUpload(ctx *middleware.Context, handler Post
 	return &PostBucketsBucketNameObjectsUpload{Context: ctx, Handler: handler}
 }
 
-/* PostBucketsBucketNameObjectsUpload swagger:route POST /buckets/{bucket_name}/objects/upload Object postBucketsBucketNameObjectsUpload
+/*
+	PostBucketsBucketNameObjectsUpload swagger:route POST /buckets/{bucket_name}/objects/upload Object postBucketsBucketNameObjectsUpload
 
 Uploads an Object.
-
 */
 type PostBucketsBucketNameObjectsUpload struct {
 	Context *middleware.Context

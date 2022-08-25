@@ -48,10 +48,10 @@ func NewGetBucketLifecycle(ctx *middleware.Context, handler GetBucketLifecycleHa
 	return &GetBucketLifecycle{Context: ctx, Handler: handler}
 }
 
-/* GetBucketLifecycle swagger:route GET /buckets/{bucket_name}/lifecycle Bucket getBucketLifecycle
+/*
+	GetBucketLifecycle swagger:route GET /buckets/{bucket_name}/lifecycle Bucket getBucketLifecycle
 
 Bucket Lifecycle
-
 */
 type GetBucketLifecycle struct {
 	Context *middleware.Context

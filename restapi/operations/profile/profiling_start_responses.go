@@ -33,7 +33,8 @@ import (
 // ProfilingStartCreatedCode is the HTTP code returned for type ProfilingStartCreated
 const ProfilingStartCreatedCode int = 201
 
-/*ProfilingStartCreated A successful response.
+/*
+ProfilingStartCreated A successful response.
 
 swagger:response profilingStartCreated
 */
@@ -74,7 +75,8 @@ func (o *ProfilingStartCreated) WriteResponse(rw http.ResponseWriter, producer r
 	}
 }
 
-/*ProfilingStartDefault Generic error response.
+/*
+ProfilingStartDefault Generic error response.
 
 swagger:response profilingStartDefault
 */

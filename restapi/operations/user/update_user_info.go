@@ -48,10 +48,10 @@ func NewUpdateUserInfo(ctx *middleware.Context, handler UpdateUserInfoHandler) *
 	return &UpdateUserInfo{Context: ctx, Handler: handler}
 }
 
-/* UpdateUserInfo swagger:route PUT /user/{name} User updateUserInfo
+/*
+UpdateUserInfo swagger:route PUT /user/{name} User updateUserInfo
 
 Update User Info
-
 */
 type UpdateUserInfo struct {
 	Context *middleware.Context

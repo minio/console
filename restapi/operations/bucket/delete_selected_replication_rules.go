@@ -48,10 +48,10 @@ func NewDeleteSelectedReplicationRules(ctx *middleware.Context, handler DeleteSe
 	return &DeleteSelectedReplicationRules{Context: ctx, Handler: handler}
 }
 
-/* DeleteSelectedReplicationRules swagger:route DELETE /buckets/{bucket_name}/delete-selected-replication-rules Bucket deleteSelectedReplicationRules
+/*
+	DeleteSelectedReplicationRules swagger:route DELETE /buckets/{bucket_name}/delete-selected-replication-rules Bucket deleteSelectedReplicationRules
 
 Deletes selected replication rules from a bucket
-
 */
 type DeleteSelectedReplicationRules struct {
 	Context *middleware.Context

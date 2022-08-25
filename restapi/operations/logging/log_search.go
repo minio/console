@@ -48,10 +48,10 @@ func NewLogSearch(ctx *middleware.Context, handler LogSearchHandler) *LogSearch 
 	return &LogSearch{Context: ctx, Handler: handler}
 }
 
-/* LogSearch swagger:route GET /logs/search Logging logSearch
+/*
+	LogSearch swagger:route GET /logs/search Logging logSearch
 
 Search the logs
-
 */
 type LogSearch struct {
 	Context *middleware.Context

@@ -48,10 +48,10 @@ func NewShareObject(ctx *middleware.Context, handler ShareObjectHandler) *ShareO
 	return &ShareObject{Context: ctx, Handler: handler}
 }
 
-/* ShareObject swagger:route GET /buckets/{bucket_name}/objects/share Object shareObject
+/*
+	ShareObject swagger:route GET /buckets/{bucket_name}/objects/share Object shareObject
 
 Shares an Object on a url
-
 */
 type ShareObject struct {
 	Context *middleware.Context

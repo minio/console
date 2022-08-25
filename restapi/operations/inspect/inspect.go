@@ -48,10 +48,10 @@ func NewInspect(ctx *middleware.Context, handler InspectHandler) *Inspect {
 	return &Inspect{Context: ctx, Handler: handler}
 }
 
-/* Inspect swagger:route GET /admin/inspect Inspect inspect
+/*
+	Inspect swagger:route GET /admin/inspect Inspect inspect
 
 Inspect Files on Drive
-
 */
 type Inspect struct {
 	Context *middleware.Context

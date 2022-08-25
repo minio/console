@@ -46,10 +46,10 @@ func NewLoginOauth2Auth(ctx *middleware.Context, handler LoginOauth2AuthHandler)
 	return &LoginOauth2Auth{Context: ctx, Handler: handler}
 }
 
-/* LoginOauth2Auth swagger:route POST /login/oauth2/auth Auth loginOauth2Auth
+/*
+	LoginOauth2Auth swagger:route POST /login/oauth2/auth Auth loginOauth2Auth
 
 Identity Provider oauth2 callback endpoint.
-
 */
 type LoginOauth2Auth struct {
 	Context *middleware.Context

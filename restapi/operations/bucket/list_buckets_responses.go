@@ -33,7 +33,8 @@ import (
 // ListBucketsOKCode is the HTTP code returned for type ListBucketsOK
 const ListBucketsOKCode int = 200
 
-/*ListBucketsOK A successful response.
+/*
+ListBucketsOK A successful response.
 
 swagger:response listBucketsOK
 */
@@ -74,7 +75,8 @@ func (o *ListBucketsOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
-/*ListBucketsDefault Generic error response.
+/*
+ListBucketsDefault Generic error response.
 
 swagger:response listBucketsDefault
 */

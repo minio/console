@@ -33,7 +33,8 @@ import (
 // AddPolicyCreatedCode is the HTTP code returned for type AddPolicyCreated
 const AddPolicyCreatedCode int = 201
 
-/*AddPolicyCreated A successful response.
+/*
+AddPolicyCreated A successful response.
 
 swagger:response addPolicyCreated
 */
@@ -74,7 +75,8 @@ func (o *AddPolicyCreated) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*AddPolicyDefault Generic error response.
+/*
+AddPolicyDefault Generic error response.
 
 swagger:response addPolicyDefault
 */

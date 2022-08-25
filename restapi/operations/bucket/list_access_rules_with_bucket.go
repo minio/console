@@ -48,10 +48,10 @@ func NewListAccessRulesWithBucket(ctx *middleware.Context, handler ListAccessRul
 	return &ListAccessRulesWithBucket{Context: ctx, Handler: handler}
 }
 
-/* ListAccessRulesWithBucket swagger:route GET /bucket/{bucket}/access-rules Bucket listAccessRulesWithBucket
+/*
+	ListAccessRulesWithBucket swagger:route GET /bucket/{bucket}/access-rules Bucket listAccessRulesWithBucket
 
 List Access Rules With Given Bucket
-
 */
 type ListAccessRulesWithBucket struct {
 	Context *middleware.Context

@@ -48,10 +48,10 @@ func NewGetBucketVersioning(ctx *middleware.Context, handler GetBucketVersioning
 	return &GetBucketVersioning{Context: ctx, Handler: handler}
 }
 
-/* GetBucketVersioning swagger:route GET /buckets/{bucket_name}/versioning Bucket getBucketVersioning
+/*
+	GetBucketVersioning swagger:route GET /buckets/{bucket_name}/versioning Bucket getBucketVersioning
 
 Bucket Versioning
-
 */
 type GetBucketVersioning struct {
 	Context *middleware.Context

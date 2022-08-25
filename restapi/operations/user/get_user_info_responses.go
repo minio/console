@@ -33,7 +33,8 @@ import (
 // GetUserInfoOKCode is the HTTP code returned for type GetUserInfoOK
 const GetUserInfoOKCode int = 200
 
-/*GetUserInfoOK A successful response.
+/*
+GetUserInfoOK A successful response.
 
 swagger:response getUserInfoOK
 */
@@ -74,7 +75,8 @@ func (o *GetUserInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
-/*GetUserInfoDefault Generic error response.
+/*
+GetUserInfoDefault Generic error response.
 
 swagger:response getUserInfoDefault
 */

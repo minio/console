@@ -48,10 +48,10 @@ func NewDeleteObjectRetention(ctx *middleware.Context, handler DeleteObjectReten
 	return &DeleteObjectRetention{Context: ctx, Handler: handler}
 }
 
-/* DeleteObjectRetention swagger:route DELETE /buckets/{bucket_name}/objects/retention Object deleteObjectRetention
+/*
+	DeleteObjectRetention swagger:route DELETE /buckets/{bucket_name}/objects/retention Object deleteObjectRetention
 
 Delete Object retention from an object
-
 */
 type DeleteObjectRetention struct {
 	Context *middleware.Context

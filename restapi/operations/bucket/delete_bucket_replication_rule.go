@@ -48,10 +48,10 @@ func NewDeleteBucketReplicationRule(ctx *middleware.Context, handler DeleteBucke
 	return &DeleteBucketReplicationRule{Context: ctx, Handler: handler}
 }
 
-/* DeleteBucketReplicationRule swagger:route DELETE /buckets/{bucket_name}/replication/{rule_id} Bucket deleteBucketReplicationRule
+/*
+	DeleteBucketReplicationRule swagger:route DELETE /buckets/{bucket_name}/replication/{rule_id} Bucket deleteBucketReplicationRule
 
 Bucket Replication Rule Delete
-
 */
 type DeleteBucketReplicationRule struct {
 	Context *middleware.Context

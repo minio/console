@@ -48,10 +48,10 @@ func NewSetBucketQuota(ctx *middleware.Context, handler SetBucketQuotaHandler) *
 	return &SetBucketQuota{Context: ctx, Handler: handler}
 }
 
-/* SetBucketQuota swagger:route PUT /buckets/{name}/quota Bucket setBucketQuota
+/*
+	SetBucketQuota swagger:route PUT /buckets/{name}/quota Bucket setBucketQuota
 
 Bucket Quota
-
 */
 type SetBucketQuota struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // AdminInfoOKCode is the HTTP code returned for type AdminInfoOK
 const AdminInfoOKCode int = 200
 
-/*AdminInfoOK A successful response.
+/*
+AdminInfoOK A successful response.
 
 swagger:response adminInfoOK
 */
@@ -74,7 +75,8 @@ func (o *AdminInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pro
 	}
 }
 
-/*AdminInfoDefault Generic error response.
+/*
+AdminInfoDefault Generic error response.
 
 swagger:response adminInfoDefault
 */

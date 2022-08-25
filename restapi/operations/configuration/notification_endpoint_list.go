@@ -48,10 +48,10 @@ func NewNotificationEndpointList(ctx *middleware.Context, handler NotificationEn
 	return &NotificationEndpointList{Context: ctx, Handler: handler}
 }
 
-/* NotificationEndpointList swagger:route GET /admin/notification_endpoints Configuration notificationEndpointList
+/*
+	NotificationEndpointList swagger:route GET /admin/notification_endpoints Configuration notificationEndpointList
 
 Returns a list of active notification endpoints
-
 */
 type NotificationEndpointList struct {
 	Context *middleware.Context

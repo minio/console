@@ -48,10 +48,10 @@ func NewDeleteMultipleObjects(ctx *middleware.Context, handler DeleteMultipleObj
 	return &DeleteMultipleObjects{Context: ctx, Handler: handler}
 }
 
-/* DeleteMultipleObjects swagger:route POST /buckets/{bucket_name}/delete-objects Object deleteMultipleObjects
+/*
+	DeleteMultipleObjects swagger:route POST /buckets/{bucket_name}/delete-objects Object deleteMultipleObjects
 
 Delete Multiple Objects
-
 */
 type DeleteMultipleObjects struct {
 	Context *middleware.Context

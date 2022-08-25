@@ -33,7 +33,8 @@ import (
 // DashboardWidgetDetailsOKCode is the HTTP code returned for type DashboardWidgetDetailsOK
 const DashboardWidgetDetailsOKCode int = 200
 
-/*DashboardWidgetDetailsOK A successful response.
+/*
+DashboardWidgetDetailsOK A successful response.
 
 swagger:response dashboardWidgetDetailsOK
 */
@@ -74,7 +75,8 @@ func (o *DashboardWidgetDetailsOK) WriteResponse(rw http.ResponseWriter, produce
 	}
 }
 
-/*DashboardWidgetDetailsDefault Generic error response.
+/*
+DashboardWidgetDetailsDefault Generic error response.
 
 swagger:response dashboardWidgetDetailsDefault
 */

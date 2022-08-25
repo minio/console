@@ -33,7 +33,8 @@ import (
 // AddUserCreatedCode is the HTTP code returned for type AddUserCreated
 const AddUserCreatedCode int = 201
 
-/*AddUserCreated A successful response.
+/*
+AddUserCreated A successful response.
 
 swagger:response addUserCreated
 */
@@ -74,7 +75,8 @@ func (o *AddUserCreated) WriteResponse(rw http.ResponseWriter, producer runtime.
 	}
 }
 
-/*AddUserDefault Generic error response.
+/*
+AddUserDefault Generic error response.
 
 swagger:response addUserDefault
 */

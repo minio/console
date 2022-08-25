@@ -33,7 +33,8 @@ import (
 // CreateBucketEventCreatedCode is the HTTP code returned for type CreateBucketEventCreated
 const CreateBucketEventCreatedCode int = 201
 
-/*CreateBucketEventCreated A successful response.
+/*
+CreateBucketEventCreated A successful response.
 
 swagger:response createBucketEventCreated
 */
@@ -54,7 +55,8 @@ func (o *CreateBucketEventCreated) WriteResponse(rw http.ResponseWriter, produce
 	rw.WriteHeader(201)
 }
 
-/*CreateBucketEventDefault Generic error response.
+/*
+CreateBucketEventDefault Generic error response.
 
 swagger:response createBucketEventDefault
 */

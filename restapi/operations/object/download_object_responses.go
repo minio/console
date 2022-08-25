@@ -34,7 +34,8 @@ import (
 // DownloadObjectOKCode is the HTTP code returned for type DownloadObjectOK
 const DownloadObjectOKCode int = 200
 
-/*DownloadObjectOK A successful response.
+/*
+DownloadObjectOK A successful response.
 
 swagger:response downloadObjectOK
 */
@@ -73,7 +74,8 @@ func (o *DownloadObjectOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*DownloadObjectDefault Generic error response.
+/*
+DownloadObjectDefault Generic error response.
 
 swagger:response downloadObjectDefault
 */

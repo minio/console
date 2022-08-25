@@ -33,7 +33,8 @@ import (
 // SiteReplicationRemoveNoContentCode is the HTTP code returned for type SiteReplicationRemoveNoContent
 const SiteReplicationRemoveNoContentCode int = 204
 
-/*SiteReplicationRemoveNoContent A successful response.
+/*
+SiteReplicationRemoveNoContent A successful response.
 
 swagger:response siteReplicationRemoveNoContent
 */
@@ -74,7 +75,8 @@ func (o *SiteReplicationRemoveNoContent) WriteResponse(rw http.ResponseWriter, p
 	}
 }
 
-/*SiteReplicationRemoveDefault Generic error response.
+/*
+SiteReplicationRemoveDefault Generic error response.
 
 swagger:response siteReplicationRemoveDefault
 */

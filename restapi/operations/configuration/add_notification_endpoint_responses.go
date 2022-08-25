@@ -33,7 +33,8 @@ import (
 // AddNotificationEndpointCreatedCode is the HTTP code returned for type AddNotificationEndpointCreated
 const AddNotificationEndpointCreatedCode int = 201
 
-/*AddNotificationEndpointCreated A successful response.
+/*
+AddNotificationEndpointCreated A successful response.
 
 swagger:response addNotificationEndpointCreated
 */
@@ -74,7 +75,8 @@ func (o *AddNotificationEndpointCreated) WriteResponse(rw http.ResponseWriter, p
 	}
 }
 
-/*AddNotificationEndpointDefault Generic error response.
+/*
+AddNotificationEndpointDefault Generic error response.
 
 swagger:response addNotificationEndpointDefault
 */

@@ -48,10 +48,10 @@ func NewSetPolicy(ctx *middleware.Context, handler SetPolicyHandler) *SetPolicy 
 	return &SetPolicy{Context: ctx, Handler: handler}
 }
 
-/* SetPolicy swagger:route PUT /set-policy Policy setPolicy
+/*
+	SetPolicy swagger:route PUT /set-policy Policy setPolicy
 
 Set policy
-
 */
 type SetPolicy struct {
 	Context *middleware.Context

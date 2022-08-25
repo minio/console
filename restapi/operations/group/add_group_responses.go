@@ -33,7 +33,8 @@ import (
 // AddGroupCreatedCode is the HTTP code returned for type AddGroupCreated
 const AddGroupCreatedCode int = 201
 
-/*AddGroupCreated A successful response.
+/*
+AddGroupCreated A successful response.
 
 swagger:response addGroupCreated
 */
@@ -54,7 +55,8 @@ func (o *AddGroupCreated) WriteResponse(rw http.ResponseWriter, producer runtime
 	rw.WriteHeader(201)
 }
 
-/*AddGroupDefault Generic error response.
+/*
+AddGroupDefault Generic error response.
 
 swagger:response addGroupDefault
 */

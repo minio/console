@@ -33,7 +33,8 @@ import (
 // DeleteMultipleObjectsOKCode is the HTTP code returned for type DeleteMultipleObjectsOK
 const DeleteMultipleObjectsOKCode int = 200
 
-/*DeleteMultipleObjectsOK A successful response.
+/*
+DeleteMultipleObjectsOK A successful response.
 
 swagger:response deleteMultipleObjectsOK
 */
@@ -54,7 +55,8 @@ func (o *DeleteMultipleObjectsOK) WriteResponse(rw http.ResponseWriter, producer
 	rw.WriteHeader(200)
 }
 
-/*DeleteMultipleObjectsDefault Generic error response.
+/*
+DeleteMultipleObjectsDefault Generic error response.
 
 swagger:response deleteMultipleObjectsDefault
 */

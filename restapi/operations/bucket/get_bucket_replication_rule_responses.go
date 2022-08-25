@@ -33,7 +33,8 @@ import (
 // GetBucketReplicationRuleOKCode is the HTTP code returned for type GetBucketReplicationRuleOK
 const GetBucketReplicationRuleOKCode int = 200
 
-/*GetBucketReplicationRuleOK A successful response.
+/*
+GetBucketReplicationRuleOK A successful response.
 
 swagger:response getBucketReplicationRuleOK
 */
@@ -74,7 +75,8 @@ func (o *GetBucketReplicationRuleOK) WriteResponse(rw http.ResponseWriter, produ
 	}
 }
 
-/*GetBucketReplicationRuleDefault Generic error response.
+/*
+GetBucketReplicationRuleDefault Generic error response.
 
 swagger:response getBucketReplicationRuleDefault
 */

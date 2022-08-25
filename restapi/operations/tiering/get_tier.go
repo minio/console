@@ -48,10 +48,10 @@ func NewGetTier(ctx *middleware.Context, handler GetTierHandler) *GetTier {
 	return &GetTier{Context: ctx, Handler: handler}
 }
 
-/* GetTier swagger:route GET /admin/tiers/{type}/{name} Tiering getTier
+/*
+	GetTier swagger:route GET /admin/tiers/{type}/{name} Tiering getTier
 
 Get Tier
-
 */
 type GetTier struct {
 	Context *middleware.Context

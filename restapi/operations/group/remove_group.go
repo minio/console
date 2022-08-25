@@ -48,10 +48,10 @@ func NewRemoveGroup(ctx *middleware.Context, handler RemoveGroupHandler) *Remove
 	return &RemoveGroup{Context: ctx, Handler: handler}
 }
 
-/* RemoveGroup swagger:route DELETE /group/{name} Group removeGroup
+/*
+	RemoveGroup swagger:route DELETE /group/{name} Group removeGroup
 
 Remove group
-
 */
 type RemoveGroup struct {
 	Context *middleware.Context
