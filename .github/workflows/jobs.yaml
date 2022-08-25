@@ -262,18 +262,20 @@ jobs:
 
   semgrep-static-code-analysis:
     name: "semgrep checks"
-    runs-on: ${{ matrix.os }}
-    container:
-      image: "returntocorp/semgrep"
+    runs-on: self-hosted
     strategy:
       matrix:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Scanning code on ${{ matrix.os }}
         continue-on-error: false
         run: |
+          # Install semgrep rather than using a container due to:
+          # https://github.com/actions/checkout/issues/334
+          sudo apt install -y python3-pip || apt install -y python3-pip
+          pip3 install semgrep
           semgrep --config semgrep.yaml $(pwd)/portal-ui --error
 
   no-warnings-and-make-assets:
