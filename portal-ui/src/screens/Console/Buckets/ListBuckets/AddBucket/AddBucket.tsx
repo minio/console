@@ -43,7 +43,6 @@ import SectionTitle from "../../../Common/SectionTitle";
 import { selDistSet, selSiteRep } from "../../../../../systemSlice";
 import {
   resetForm,
-  setBucketNameErrors,
   setEnableObjectLocking,
   setQuota,
   setQuotaSize,
@@ -118,9 +117,7 @@ const AddBucket = ({ classes }: IsetProps) => {
     "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
   );
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
-  const validationResult = useSelector(
-    (state: AppState) => state.addBucket.bucketNameErrorList
-  );
+  const [validationResult, setValidationResult] = useState<boolean[]>([]);
   const errorList = validationResult.filter((v) => !v);
   const hasErrors = errorList.length > 0;
   const [records, setRecords] = useState<string[]>([]);
@@ -179,7 +176,7 @@ const AddBucket = ({ classes }: IsetProps) => {
       !bucketName.endsWith("-s3alias"),
       !records.includes(bucketName),
     ];
-    dispatch(setBucketNameErrors(bucketNameErrors));
+    setValidationResult(bucketNameErrors);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucketName]);
 
@@ -189,7 +186,7 @@ const AddBucket = ({ classes }: IsetProps) => {
         .invoke("GET", `/api/v1/buckets`)
         .then((res: BucketList) => {
           var bucketList: string[] = [];
-          if (res != null) {
+          if (res.buckets != null && res.buckets.length > 0) {
             res.buckets.forEach((bucket) => {
               bucketList.push(bucket.name);
             });

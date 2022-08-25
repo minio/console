@@ -32,7 +32,6 @@ export interface AddBucketState {
   retentionUnit: string;
   retentionValidity: number;
   navigateTo: string;
-  bucketNameErrorList: boolean[];
 }
 
 const initialState: AddBucketState = {
@@ -50,7 +49,6 @@ const initialState: AddBucketState = {
   retentionUnit: "days",
   retentionValidity: 180,
   navigateTo: "",
-  bucketNameErrorList: [],
 };
 
 export const addBucketsSlice = createSlice({
@@ -159,9 +157,6 @@ export const addBucketsSlice = createSlice({
         );
       }
     },
-    setBucketNameErrors: (state, action: PayloadAction<boolean[]>) => {
-      state.bucketNameErrorList = action.payload;
-    },
 
     resetForm: (state) => initialState,
   },
@@ -192,7 +187,6 @@ export const {
   setRetentionMode,
   setRetentionUnit,
   setRetentionValidity,
-  setBucketNameErrors,
 } = addBucketsSlice.actions;
 
 export default addBucketsSlice.reducer;
