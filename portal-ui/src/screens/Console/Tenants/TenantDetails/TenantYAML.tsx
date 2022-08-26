@@ -141,7 +141,7 @@ const TenantYAML = ({ classes }: ITenantYAMLProps) => {
             <Grid item xs={12}>
               <SectionTitle>Tenant Specification</SectionTitle>
             </Grid>
-            <Grid item xs={12} style={{ border: "1px solid #eaeaea" }}>
+            <Grid item xs={12}>
               <CodeMirrorWrapper
                 value={tenantYaml}
                 mode={"yaml"}
