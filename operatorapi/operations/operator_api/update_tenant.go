@@ -48,10 +48,10 @@ func NewUpdateTenant(ctx *middleware.Context, handler UpdateTenantHandler) *Upda
 	return &UpdateTenant{Context: ctx, Handler: handler}
 }
 
-/* UpdateTenant swagger:route PUT /namespaces/{namespace}/tenants/{tenant} OperatorAPI updateTenant
+/*
+	UpdateTenant swagger:route PUT /namespaces/{namespace}/tenants/{tenant} OperatorAPI updateTenant
 
 Update Tenant
-
 */
 type UpdateTenant struct {
 	Context *middleware.Context

@@ -48,10 +48,10 @@ func NewLogout(ctx *middleware.Context, handler LogoutHandler) *Logout {
 	return &Logout{Context: ctx, Handler: handler}
 }
 
-/* Logout swagger:route POST /logout Auth logout
+/*
+	Logout swagger:route POST /logout Auth logout
 
 Logout from Operator.
-
 */
 type Logout struct {
 	Context *middleware.Context

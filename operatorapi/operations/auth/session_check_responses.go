@@ -33,7 +33,8 @@ import (
 // SessionCheckOKCode is the HTTP code returned for type SessionCheckOK
 const SessionCheckOKCode int = 200
 
-/*SessionCheckOK A successful response.
+/*
+SessionCheckOK A successful response.
 
 swagger:response sessionCheckOK
 */
@@ -74,7 +75,8 @@ func (o *SessionCheckOK) WriteResponse(rw http.ResponseWriter, producer runtime.
 	}
 }
 
-/*SessionCheckDefault Generic error response.
+/*
+SessionCheckDefault Generic error response.
 
 swagger:response sessionCheckDefault
 */

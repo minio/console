@@ -33,7 +33,8 @@ import (
 // TenantAddPoolCreatedCode is the HTTP code returned for type TenantAddPoolCreated
 const TenantAddPoolCreatedCode int = 201
 
-/*TenantAddPoolCreated A successful response.
+/*
+TenantAddPoolCreated A successful response.
 
 swagger:response tenantAddPoolCreated
 */
@@ -54,7 +55,8 @@ func (o *TenantAddPoolCreated) WriteResponse(rw http.ResponseWriter, producer ru
 	rw.WriteHeader(201)
 }
 
-/*TenantAddPoolDefault Generic error response.
+/*
+TenantAddPoolDefault Generic error response.
 
 swagger:response tenantAddPoolDefault
 */

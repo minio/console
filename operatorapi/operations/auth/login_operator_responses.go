@@ -33,7 +33,8 @@ import (
 // LoginOperatorNoContentCode is the HTTP code returned for type LoginOperatorNoContent
 const LoginOperatorNoContentCode int = 204
 
-/*LoginOperatorNoContent A successful login.
+/*
+LoginOperatorNoContent A successful login.
 
 swagger:response loginOperatorNoContent
 */
@@ -54,7 +55,8 @@ func (o *LoginOperatorNoContent) WriteResponse(rw http.ResponseWriter, producer 
 	rw.WriteHeader(204)
 }
 
-/*LoginOperatorDefault Generic error response.
+/*
+LoginOperatorDefault Generic error response.
 
 swagger:response loginOperatorDefault
 */

@@ -33,7 +33,8 @@ import (
 // GetPVCEventsOKCode is the HTTP code returned for type GetPVCEventsOK
 const GetPVCEventsOKCode int = 200
 
-/*GetPVCEventsOK A successful response.
+/*
+GetPVCEventsOK A successful response.
 
 swagger:response getPVCEventsOK
 */
@@ -77,7 +78,8 @@ func (o *GetPVCEventsOK) WriteResponse(rw http.ResponseWriter, producer runtime.
 	}
 }
 
-/*GetPVCEventsDefault Generic error response.
+/*
+GetPVCEventsDefault Generic error response.
 
 swagger:response getPVCEventsDefault
 */

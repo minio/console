@@ -48,10 +48,10 @@ func NewGetTenantLogs(ctx *middleware.Context, handler GetTenantLogsHandler) *Ge
 	return &GetTenantLogs{Context: ctx, Handler: handler}
 }
 
-/* GetTenantLogs swagger:route GET /namespaces/{namespace}/tenants/{tenant}/log OperatorAPI getTenantLogs
+/*
+	GetTenantLogs swagger:route GET /namespaces/{namespace}/tenants/{tenant}/log OperatorAPI getTenantLogs
 
 Get Tenant Logs
-
 */
 type GetTenantLogs struct {
 	Context *middleware.Context

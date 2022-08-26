@@ -33,7 +33,8 @@ import (
 // GetAllocatableResourcesOKCode is the HTTP code returned for type GetAllocatableResourcesOK
 const GetAllocatableResourcesOKCode int = 200
 
-/*GetAllocatableResourcesOK A successful response.
+/*
+GetAllocatableResourcesOK A successful response.
 
 swagger:response getAllocatableResourcesOK
 */
@@ -74,7 +75,8 @@ func (o *GetAllocatableResourcesOK) WriteResponse(rw http.ResponseWriter, produc
 	}
 }
 
-/*GetAllocatableResourcesDefault Generic error response.
+/*
+GetAllocatableResourcesDefault Generic error response.
 
 swagger:response getAllocatableResourcesDefault
 */

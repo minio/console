@@ -48,10 +48,10 @@ func NewDescribePod(ctx *middleware.Context, handler DescribePodHandler) *Descri
 	return &DescribePod{Context: ctx, Handler: handler}
 }
 
-/* DescribePod swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods/{podName}/describe OperatorAPI describePod
+/*
+	DescribePod swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods/{podName}/describe OperatorAPI describePod
 
 Describe Pod
-
 */
 type DescribePod struct {
 	Context *middleware.Context

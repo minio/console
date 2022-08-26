@@ -33,7 +33,8 @@ import (
 // OperatorSubnetAPIKeyOKCode is the HTTP code returned for type OperatorSubnetAPIKeyOK
 const OperatorSubnetAPIKeyOKCode int = 200
 
-/*OperatorSubnetAPIKeyOK A successful response.
+/*
+OperatorSubnetAPIKeyOK A successful response.
 
 swagger:response operatorSubnetApiKeyOK
 */
@@ -74,7 +75,8 @@ func (o *OperatorSubnetAPIKeyOK) WriteResponse(rw http.ResponseWriter, producer 
 	}
 }
 
-/*OperatorSubnetAPIKeyDefault Generic error response.
+/*
+OperatorSubnetAPIKeyDefault Generic error response.
 
 swagger:response operatorSubnetApiKeyDefault
 */

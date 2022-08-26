@@ -48,10 +48,10 @@ func NewPutTenantYAML(ctx *middleware.Context, handler PutTenantYAMLHandler) *Pu
 	return &PutTenantYAML{Context: ctx, Handler: handler}
 }
 
-/* PutTenantYAML swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/yaml OperatorAPI putTenantYAML
+/*
+	PutTenantYAML swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/yaml OperatorAPI putTenantYAML
 
 Put the Tenant YAML
-
 */
 type PutTenantYAML struct {
 	Context *middleware.Context

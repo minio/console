@@ -48,10 +48,10 @@ func NewSetTenantLogs(ctx *middleware.Context, handler SetTenantLogsHandler) *Se
 	return &SetTenantLogs{Context: ctx, Handler: handler}
 }
 
-/* SetTenantLogs swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/log OperatorAPI setTenantLogs
+/*
+	SetTenantLogs swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/log OperatorAPI setTenantLogs
 
 Set Tenant Logs
-
 */
 type SetTenantLogs struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // DescribePodOKCode is the HTTP code returned for type DescribePodOK
 const DescribePodOKCode int = 200
 
-/*DescribePodOK A successful response.
+/*
+DescribePodOK A successful response.
 
 swagger:response describePodOK
 */
@@ -74,7 +75,8 @@ func (o *DescribePodOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
-/*DescribePodDefault Generic error response.
+/*
+DescribePodDefault Generic error response.
 
 swagger:response describePodDefault
 */

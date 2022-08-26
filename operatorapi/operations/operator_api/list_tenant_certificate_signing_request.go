@@ -48,10 +48,10 @@ func NewListTenantCertificateSigningRequest(ctx *middleware.Context, handler Lis
 	return &ListTenantCertificateSigningRequest{Context: ctx, Handler: handler}
 }
 
-/* ListTenantCertificateSigningRequest swagger:route GET /namespaces/{namespace}/tenants/{tenant}/csr OperatorAPI listTenantCertificateSigningRequest
+/*
+	ListTenantCertificateSigningRequest swagger:route GET /namespaces/{namespace}/tenants/{tenant}/csr OperatorAPI listTenantCertificateSigningRequest
 
 List Tenant Certificate Signing Request
-
 */
 type ListTenantCertificateSigningRequest struct {
 	Context *middleware.Context

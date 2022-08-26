@@ -33,7 +33,8 @@ import (
 // GetDirectPVDriveListOKCode is the HTTP code returned for type GetDirectPVDriveListOK
 const GetDirectPVDriveListOKCode int = 200
 
-/*GetDirectPVDriveListOK A successful response.
+/*
+GetDirectPVDriveListOK A successful response.
 
 swagger:response getDirectPVDriveListOK
 */
@@ -74,7 +75,8 @@ func (o *GetDirectPVDriveListOK) WriteResponse(rw http.ResponseWriter, producer 
 	}
 }
 
-/*GetDirectPVDriveListDefault Generic error response.
+/*
+GetDirectPVDriveListDefault Generic error response.
 
 swagger:response getDirectPVDriveListDefault
 */

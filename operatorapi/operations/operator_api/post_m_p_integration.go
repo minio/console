@@ -48,10 +48,10 @@ func NewPostMPIntegration(ctx *middleware.Context, handler PostMPIntegrationHand
 	return &PostMPIntegration{Context: ctx, Handler: handler}
 }
 
-/* PostMPIntegration swagger:route POST /mp-integration OperatorAPI postMPIntegration
+/*
+	PostMPIntegration swagger:route POST /mp-integration OperatorAPI postMPIntegration
 
 Set email to register for marketplace integration
-
 */
 type PostMPIntegration struct {
 	Context *middleware.Context

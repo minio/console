@@ -33,7 +33,8 @@ import (
 // TenantDetailsOKCode is the HTTP code returned for type TenantDetailsOK
 const TenantDetailsOKCode int = 200
 
-/*TenantDetailsOK A successful response.
+/*
+TenantDetailsOK A successful response.
 
 swagger:response tenantDetailsOK
 */
@@ -74,7 +75,8 @@ func (o *TenantDetailsOK) WriteResponse(rw http.ResponseWriter, producer runtime
 	}
 }
 
-/*TenantDetailsDefault Generic error response.
+/*
+TenantDetailsDefault Generic error response.
 
 swagger:response tenantDetailsDefault
 */

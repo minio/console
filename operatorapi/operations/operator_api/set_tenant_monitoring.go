@@ -48,10 +48,10 @@ func NewSetTenantMonitoring(ctx *middleware.Context, handler SetTenantMonitoring
 	return &SetTenantMonitoring{Context: ctx, Handler: handler}
 }
 
-/* SetTenantMonitoring swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/monitoring OperatorAPI setTenantMonitoring
+/*
+	SetTenantMonitoring swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/monitoring OperatorAPI setTenantMonitoring
 
 Set Prometheus monitoring fields for tenant
-
 */
 type SetTenantMonitoring struct {
 	Context *middleware.Context

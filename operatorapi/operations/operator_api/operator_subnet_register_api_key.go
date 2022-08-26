@@ -48,10 +48,10 @@ func NewOperatorSubnetRegisterAPIKey(ctx *middleware.Context, handler OperatorSu
 	return &OperatorSubnetRegisterAPIKey{Context: ctx, Handler: handler}
 }
 
-/* OperatorSubnetRegisterAPIKey swagger:route POST /subnet/apikey/register OperatorAPI operatorSubnetRegisterApiKey
+/*
+	OperatorSubnetRegisterAPIKey swagger:route POST /subnet/apikey/register OperatorAPI operatorSubnetRegisterApiKey
 
 Register Operator with Subnet
-
 */
 type OperatorSubnetRegisterAPIKey struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // GetPodEventsOKCode is the HTTP code returned for type GetPodEventsOK
 const GetPodEventsOKCode int = 200
 
-/*GetPodEventsOK A successful response.
+/*
+GetPodEventsOK A successful response.
 
 swagger:response getPodEventsOK
 */
@@ -77,7 +78,8 @@ func (o *GetPodEventsOK) WriteResponse(rw http.ResponseWriter, producer runtime.
 	}
 }
 
-/*GetPodEventsDefault Generic error response.
+/*
+GetPodEventsDefault Generic error response.
 
 swagger:response getPodEventsDefault
 */

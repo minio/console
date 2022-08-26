@@ -48,10 +48,10 @@ func NewTenantUpdateCertificate(ctx *middleware.Context, handler TenantUpdateCer
 	return &TenantUpdateCertificate{Context: ctx, Handler: handler}
 }
 
-/* TenantUpdateCertificate swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/certificates OperatorAPI tenantUpdateCertificate
+/*
+	TenantUpdateCertificate swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/certificates OperatorAPI tenantUpdateCertificate
 
 Tenant Update Certificates
-
 */
 type TenantUpdateCertificate struct {
 	Context *middleware.Context

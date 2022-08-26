@@ -48,10 +48,10 @@ func NewGetTenantPods(ctx *middleware.Context, handler GetTenantPodsHandler) *Ge
 	return &GetTenantPods{Context: ctx, Handler: handler}
 }
 
-/* GetTenantPods swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods OperatorAPI getTenantPods
+/*
+	GetTenantPods swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods OperatorAPI getTenantPods
 
 Get Pods For The Tenant
-
 */
 type GetTenantPods struct {
 	Context *middleware.Context

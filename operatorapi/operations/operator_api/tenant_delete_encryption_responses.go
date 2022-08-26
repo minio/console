@@ -33,7 +33,8 @@ import (
 // TenantDeleteEncryptionNoContentCode is the HTTP code returned for type TenantDeleteEncryptionNoContent
 const TenantDeleteEncryptionNoContentCode int = 204
 
-/*TenantDeleteEncryptionNoContent A successful response.
+/*
+TenantDeleteEncryptionNoContent A successful response.
 
 swagger:response tenantDeleteEncryptionNoContent
 */
@@ -54,7 +55,8 @@ func (o *TenantDeleteEncryptionNoContent) WriteResponse(rw http.ResponseWriter, 
 	rw.WriteHeader(204)
 }
 
-/*TenantDeleteEncryptionDefault Generic error response.
+/*
+TenantDeleteEncryptionDefault Generic error response.
 
 swagger:response tenantDeleteEncryptionDefault
 */

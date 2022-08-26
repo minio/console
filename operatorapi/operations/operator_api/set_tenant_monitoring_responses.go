@@ -33,7 +33,8 @@ import (
 // SetTenantMonitoringCreatedCode is the HTTP code returned for type SetTenantMonitoringCreated
 const SetTenantMonitoringCreatedCode int = 201
 
-/*SetTenantMonitoringCreated A successful response.
+/*
+SetTenantMonitoringCreated A successful response.
 
 swagger:response setTenantMonitoringCreated
 */
@@ -54,7 +55,8 @@ func (o *SetTenantMonitoringCreated) WriteResponse(rw http.ResponseWriter, produ
 	rw.WriteHeader(201)
 }
 
-/*SetTenantMonitoringDefault Generic error response.
+/*
+SetTenantMonitoringDefault Generic error response.
 
 swagger:response setTenantMonitoringDefault
 */
