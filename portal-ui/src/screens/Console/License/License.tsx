@@ -25,12 +25,7 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import { ArrowRightLink, HelpIconFilled, LoginMinIOLogo } from "../../../icons";
-import { hasPermission } from "../../../common/SecureComponent";
-import {
-  CONSOLE_UI_RESOURCE,
-  IAM_PAGES,
-  IAM_PAGES_PERMISSIONS,
-} from "../../../common/SecureComponent/permissions";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import LicensePlans from "./LicensePlans";
 import { Link } from "react-router-dom";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -131,12 +126,6 @@ const License = () => {
   const [isLicenseConsentOpen, setIsLicenseConsentOpen] =
     useState<boolean>(false);
 
-  const getSubnetInfo = hasPermission(
-    CONSOLE_UI_RESOURCE,
-    IAM_PAGES_PERMISSIONS[IAM_PAGES.LICENSE],
-    true
-  );
-
   const closeModalAndFetchLicenseInfo = () => {
     setActivateProductModal(false);
     fetchLicenseInfo();
@@ -164,32 +153,28 @@ const License = () => {
     if (loadingLicenseInfo) {
       return;
     }
-    if (getSubnetInfo) {
-      setLoadingLicenseInfo(true);
-      api
-        .invoke("GET", `/api/v1/subnet/info`)
-        .then((res: SubnetInfo) => {
-          if (res) {
-            if (res.plan === "STANDARD") {
-              setCurrentPlanID(1);
-            } else if (res.plan === "ENTERPRISE") {
-              setCurrentPlanID(2);
-            } else {
-              setCurrentPlanID(1);
-            }
-            setLicenseInfo(res);
+    setLoadingLicenseInfo(true);
+    api
+      .invoke("GET", `/api/v1/subnet/info`)
+      .then((res: SubnetInfo) => {
+        if (res) {
+          if (res.plan === "STANDARD") {
+            setCurrentPlanID(1);
+          } else if (res.plan === "ENTERPRISE") {
+            setCurrentPlanID(2);
+          } else {
+            setCurrentPlanID(1);
           }
-          setClusterRegistered(true);
-          setLoadingLicenseInfo(false);
-        })
-        .catch(() => {
-          setClusterRegistered(false);
-          setLoadingLicenseInfo(false);
-        });
-    } else {
-      setLoadingLicenseInfo(false);
-    }
-  }, [loadingLicenseInfo, getSubnetInfo]);
+          setLicenseInfo(res);
+        }
+        setClusterRegistered(true);
+        setLoadingLicenseInfo(false);
+      })
+      .catch(() => {
+        setClusterRegistered(false);
+        setLoadingLicenseInfo(false);
+      });
+  }, [loadingLicenseInfo]);
 
   useEffect(() => {
     if (initialLicenseLoading) {
