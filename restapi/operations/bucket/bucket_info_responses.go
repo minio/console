@@ -33,7 +33,8 @@ import (
 // BucketInfoOKCode is the HTTP code returned for type BucketInfoOK
 const BucketInfoOKCode int = 200
 
-/*BucketInfoOK A successful response.
+/*
+BucketInfoOK A successful response.
 
 swagger:response bucketInfoOK
 */
@@ -74,7 +75,8 @@ func (o *BucketInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 	}
 }
 
-/*BucketInfoDefault Generic error response.
+/*
+BucketInfoDefault Generic error response.
 
 swagger:response bucketInfoDefault
 */

@@ -48,10 +48,10 @@ func NewGetSiteReplicationInfo(ctx *middleware.Context, handler GetSiteReplicati
 	return &GetSiteReplicationInfo{Context: ctx, Handler: handler}
 }
 
-/* GetSiteReplicationInfo swagger:route GET /admin/site-replication SiteReplication getSiteReplicationInfo
+/*
+	GetSiteReplicationInfo swagger:route GET /admin/site-replication SiteReplication getSiteReplicationInfo
 
 Get list of Replication Sites
-
 */
 type GetSiteReplicationInfo struct {
 	Context *middleware.Context

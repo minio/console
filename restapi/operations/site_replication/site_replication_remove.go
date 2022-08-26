@@ -48,10 +48,10 @@ func NewSiteReplicationRemove(ctx *middleware.Context, handler SiteReplicationRe
 	return &SiteReplicationRemove{Context: ctx, Handler: handler}
 }
 
-/* SiteReplicationRemove swagger:route DELETE /admin/site-replication SiteReplication siteReplicationRemove
+/*
+	SiteReplicationRemove swagger:route DELETE /admin/site-replication SiteReplication siteReplicationRemove
 
 Remove a Replication Site
-
 */
 type SiteReplicationRemove struct {
 	Context *middleware.Context

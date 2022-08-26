@@ -33,13 +33,8 @@ import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import PageLayout from "../../Common/Layout/PageLayout";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
-
-import withSuspense from "../../Common/Components/withSuspense";
+import ConfigurationForm from "./ConfigurationForm";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
-
-const ConfigurationForm = withSuspense(
-  React.lazy(() => import("./ConfigurationForm"))
-);
 
 interface IConfigurationOptions {
   classes: any;
@@ -118,7 +113,7 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
         </Grid>
         <Grid item xs={12} sx={{ paddingTop: "15px" }}>
           <HelpBox
-            title={"Learn more about CONFIGURATIONS"}
+            title={"Learn more about Configurations"}
             iconComponent={<SettingsIcon />}
             help={
               <Fragment>

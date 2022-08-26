@@ -33,7 +33,8 @@ import (
 // EditTierCredentialsOKCode is the HTTP code returned for type EditTierCredentialsOK
 const EditTierCredentialsOKCode int = 200
 
-/*EditTierCredentialsOK A successful response.
+/*
+EditTierCredentialsOK A successful response.
 
 swagger:response editTierCredentialsOK
 */
@@ -54,7 +55,8 @@ func (o *EditTierCredentialsOK) WriteResponse(rw http.ResponseWriter, producer r
 	rw.WriteHeader(200)
 }
 
-/*EditTierCredentialsDefault Generic error response.
+/*
+EditTierCredentialsDefault Generic error response.
 
 swagger:response editTierCredentialsDefault
 */

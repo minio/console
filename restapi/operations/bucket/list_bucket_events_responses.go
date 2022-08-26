@@ -33,7 +33,8 @@ import (
 // ListBucketEventsOKCode is the HTTP code returned for type ListBucketEventsOK
 const ListBucketEventsOKCode int = 200
 
-/*ListBucketEventsOK A successful response.
+/*
+ListBucketEventsOK A successful response.
 
 swagger:response listBucketEventsOK
 */
@@ -74,7 +75,8 @@ func (o *ListBucketEventsOK) WriteResponse(rw http.ResponseWriter, producer runt
 	}
 }
 
-/*ListBucketEventsDefault Generic error response.
+/*
+ListBucketEventsDefault Generic error response.
 
 swagger:response listBucketEventsDefault
 */

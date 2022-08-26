@@ -33,7 +33,8 @@ import (
 // GetTierOKCode is the HTTP code returned for type GetTierOK
 const GetTierOKCode int = 200
 
-/*GetTierOK A successful response.
+/*
+GetTierOK A successful response.
 
 swagger:response getTierOK
 */
@@ -74,7 +75,8 @@ func (o *GetTierOK) WriteResponse(rw http.ResponseWriter, producer runtime.Produ
 	}
 }
 
-/*GetTierDefault Generic error response.
+/*
+GetTierDefault Generic error response.
 
 swagger:response getTierDefault
 */

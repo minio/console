@@ -33,7 +33,8 @@ import (
 // LogoutOKCode is the HTTP code returned for type LogoutOK
 const LogoutOKCode int = 200
 
-/*LogoutOK A successful response.
+/*
+LogoutOK A successful response.
 
 swagger:response logoutOK
 */
@@ -54,7 +55,8 @@ func (o *LogoutOK) WriteResponse(rw http.ResponseWriter, producer runtime.Produc
 	rw.WriteHeader(200)
 }
 
-/*LogoutDefault Generic error response.
+/*
+LogoutDefault Generic error response.
 
 swagger:response logoutDefault
 */

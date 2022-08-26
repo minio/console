@@ -16,12 +16,12 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Button, LinearProgress } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import api from "../../../../common/api";
 import ConfTargetGeneric from "../ConfTargetGeneric";
@@ -43,8 +43,10 @@ import ResetConfigurationModal from "./ResetConfigurationModal";
 import {
   setErrorSnackMessage,
   setServerNeedsRestart,
+  setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import Loader from "../../Common/Loader/Loader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -70,6 +72,10 @@ const EditConfiguration = ({
 }: IAddNotificationEndpointProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { pathname = "" } = useLocation();
+
+  let selConfigTab = pathname.substring(pathname.lastIndexOf("/") + 1);
+  selConfigTab = selConfigTab === "settings" ? "region" : selConfigTab;
 
   //Local States
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
@@ -78,7 +84,11 @@ const EditConfiguration = ({
   const [configValues, setConfigValues] = useState<IElementValue[]>([]);
   const [resetConfigurationOpen, setResetConfigurationOpen] =
     useState<boolean>(false);
-  //Effects
+
+  useEffect(() => {
+    setLoadingConfig(true);
+  }, [selConfigTab]);
+
   useEffect(() => {
     if (loadingConfig) {
       const configId = get(selectedConfiguration, "configuration_id", false);
@@ -116,8 +126,9 @@ const EditConfiguration = ({
         .then((res) => {
           setSaving(false);
           dispatch(setServerNeedsRestart(res.restart));
-
-          navigate("/settings");
+          if (!res.restart) {
+            dispatch(setSnackBarMessage("Configuration saved successfully"));
+          }
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
@@ -157,8 +168,8 @@ const EditConfiguration = ({
         />
       )}
       {loadingConfig ? (
-        <Grid item xs={12}>
-          <LinearProgress />
+        <Grid item xs={12} sx={{ textAlign: "center", paddingTop: "15px" }}>
+          <Loader />
         </Grid>
       ) : (
         <Box

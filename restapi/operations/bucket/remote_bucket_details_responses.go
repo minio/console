@@ -33,7 +33,8 @@ import (
 // RemoteBucketDetailsOKCode is the HTTP code returned for type RemoteBucketDetailsOK
 const RemoteBucketDetailsOKCode int = 200
 
-/*RemoteBucketDetailsOK A successful response.
+/*
+RemoteBucketDetailsOK A successful response.
 
 swagger:response remoteBucketDetailsOK
 */
@@ -74,7 +75,8 @@ func (o *RemoteBucketDetailsOK) WriteResponse(rw http.ResponseWriter, producer r
 	}
 }
 
-/*RemoteBucketDetailsDefault Generic error response.
+/*
+RemoteBucketDetailsDefault Generic error response.
 
 swagger:response remoteBucketDetailsDefault
 */

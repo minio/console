@@ -33,7 +33,8 @@ import (
 // ListUsersForPolicyOKCode is the HTTP code returned for type ListUsersForPolicyOK
 const ListUsersForPolicyOKCode int = 200
 
-/*ListUsersForPolicyOK A successful response.
+/*
+ListUsersForPolicyOK A successful response.
 
 swagger:response listUsersForPolicyOK
 */
@@ -77,7 +78,8 @@ func (o *ListUsersForPolicyOK) WriteResponse(rw http.ResponseWriter, producer ru
 	}
 }
 
-/*ListUsersForPolicyDefault Generic error response.
+/*
+ListUsersForPolicyDefault Generic error response.
 
 swagger:response listUsersForPolicyDefault
 */

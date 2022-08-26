@@ -33,7 +33,8 @@ import (
 // SetMultiBucketReplicationOKCode is the HTTP code returned for type SetMultiBucketReplicationOK
 const SetMultiBucketReplicationOKCode int = 200
 
-/*SetMultiBucketReplicationOK A successful response.
+/*
+SetMultiBucketReplicationOK A successful response.
 
 swagger:response setMultiBucketReplicationOK
 */
@@ -74,7 +75,8 @@ func (o *SetMultiBucketReplicationOK) WriteResponse(rw http.ResponseWriter, prod
 	}
 }
 
-/*SetMultiBucketReplicationDefault Generic error response.
+/*
+SetMultiBucketReplicationDefault Generic error response.
 
 swagger:response setMultiBucketReplicationDefault
 */

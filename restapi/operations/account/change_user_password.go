@@ -48,10 +48,10 @@ func NewChangeUserPassword(ctx *middleware.Context, handler ChangeUserPasswordHa
 	return &ChangeUserPassword{Context: ctx, Handler: handler}
 }
 
-/* ChangeUserPassword swagger:route POST /account/change-user-password Account changeUserPassword
+/*
+	ChangeUserPassword swagger:route POST /account/change-user-password Account changeUserPassword
 
 Change password of currently logged in user.
-
 */
 type ChangeUserPassword struct {
 	Context *middleware.Context

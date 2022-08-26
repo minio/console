@@ -48,10 +48,10 @@ func NewUpdateBucketLifecycle(ctx *middleware.Context, handler UpdateBucketLifec
 	return &UpdateBucketLifecycle{Context: ctx, Handler: handler}
 }
 
-/* UpdateBucketLifecycle swagger:route PUT /buckets/{bucket_name}/lifecycle/{lifecycle_id} Bucket updateBucketLifecycle
+/*
+	UpdateBucketLifecycle swagger:route PUT /buckets/{bucket_name}/lifecycle/{lifecycle_id} Bucket updateBucketLifecycle
 
 Update Lifecycle rule
-
 */
 type UpdateBucketLifecycle struct {
 	Context *middleware.Context

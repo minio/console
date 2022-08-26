@@ -33,7 +33,8 @@ import (
 // DeleteRemoteBucketNoContentCode is the HTTP code returned for type DeleteRemoteBucketNoContent
 const DeleteRemoteBucketNoContentCode int = 204
 
-/*DeleteRemoteBucketNoContent A successful response.
+/*
+DeleteRemoteBucketNoContent A successful response.
 
 swagger:response deleteRemoteBucketNoContent
 */
@@ -54,7 +55,8 @@ func (o *DeleteRemoteBucketNoContent) WriteResponse(rw http.ResponseWriter, prod
 	rw.WriteHeader(204)
 }
 
-/*DeleteRemoteBucketDefault Generic error response.
+/*
+DeleteRemoteBucketDefault Generic error response.
 
 swagger:response deleteRemoteBucketDefault
 */

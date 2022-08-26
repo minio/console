@@ -48,10 +48,10 @@ func NewCreateServiceAccount(ctx *middleware.Context, handler CreateServiceAccou
 	return &CreateServiceAccount{Context: ctx, Handler: handler}
 }
 
-/* CreateServiceAccount swagger:route POST /service-accounts ServiceAccount createServiceAccount
+/*
+	CreateServiceAccount swagger:route POST /service-accounts ServiceAccount createServiceAccount
 
 Create Service Account
-
 */
 type CreateServiceAccount struct {
 	Context *middleware.Context

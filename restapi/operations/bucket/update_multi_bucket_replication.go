@@ -48,10 +48,10 @@ func NewUpdateMultiBucketReplication(ctx *middleware.Context, handler UpdateMult
 	return &UpdateMultiBucketReplication{Context: ctx, Handler: handler}
 }
 
-/* UpdateMultiBucketReplication swagger:route PUT /buckets/{bucket_name}/replication/{rule_id} Bucket updateMultiBucketReplication
+/*
+	UpdateMultiBucketReplication swagger:route PUT /buckets/{bucket_name}/replication/{rule_id} Bucket updateMultiBucketReplication
 
 Update Replication rule
-
 */
 type UpdateMultiBucketReplication struct {
 	Context *middleware.Context

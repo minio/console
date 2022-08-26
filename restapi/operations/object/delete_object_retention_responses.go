@@ -33,7 +33,8 @@ import (
 // DeleteObjectRetentionOKCode is the HTTP code returned for type DeleteObjectRetentionOK
 const DeleteObjectRetentionOKCode int = 200
 
-/*DeleteObjectRetentionOK A successful response.
+/*
+DeleteObjectRetentionOK A successful response.
 
 swagger:response deleteObjectRetentionOK
 */
@@ -54,7 +55,8 @@ func (o *DeleteObjectRetentionOK) WriteResponse(rw http.ResponseWriter, producer
 	rw.WriteHeader(200)
 }
 
-/*DeleteObjectRetentionDefault Generic error response.
+/*
+DeleteObjectRetentionDefault Generic error response.
 
 swagger:response deleteObjectRetentionDefault
 */

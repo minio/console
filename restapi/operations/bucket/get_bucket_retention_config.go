@@ -48,10 +48,10 @@ func NewGetBucketRetentionConfig(ctx *middleware.Context, handler GetBucketReten
 	return &GetBucketRetentionConfig{Context: ctx, Handler: handler}
 }
 
-/* GetBucketRetentionConfig swagger:route GET /buckets/{bucket_name}/retention Bucket getBucketRetentionConfig
+/*
+	GetBucketRetentionConfig swagger:route GET /buckets/{bucket_name}/retention Bucket getBucketRetentionConfig
 
 Get Bucket's retention config
-
 */
 type GetBucketRetentionConfig struct {
 	Context *middleware.Context

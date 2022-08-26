@@ -33,7 +33,8 @@ import (
 // AddBucketLifecycleCreatedCode is the HTTP code returned for type AddBucketLifecycleCreated
 const AddBucketLifecycleCreatedCode int = 201
 
-/*AddBucketLifecycleCreated A successful response.
+/*
+AddBucketLifecycleCreated A successful response.
 
 swagger:response addBucketLifecycleCreated
 */
@@ -54,7 +55,8 @@ func (o *AddBucketLifecycleCreated) WriteResponse(rw http.ResponseWriter, produc
 	rw.WriteHeader(201)
 }
 
-/*AddBucketLifecycleDefault Generic error response.
+/*
+AddBucketLifecycleDefault Generic error response.
 
 swagger:response addBucketLifecycleDefault
 */

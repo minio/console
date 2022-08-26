@@ -33,7 +33,8 @@ import (
 // EnableBucketEncryptionOKCode is the HTTP code returned for type EnableBucketEncryptionOK
 const EnableBucketEncryptionOKCode int = 200
 
-/*EnableBucketEncryptionOK A successful response.
+/*
+EnableBucketEncryptionOK A successful response.
 
 swagger:response enableBucketEncryptionOK
 */
@@ -54,7 +55,8 @@ func (o *EnableBucketEncryptionOK) WriteResponse(rw http.ResponseWriter, produce
 	rw.WriteHeader(200)
 }
 
-/*EnableBucketEncryptionDefault Generic error response.
+/*
+EnableBucketEncryptionDefault Generic error response.
 
 swagger:response enableBucketEncryptionDefault
 */

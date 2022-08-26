@@ -33,7 +33,8 @@ import (
 // SetBucketQuotaOKCode is the HTTP code returned for type SetBucketQuotaOK
 const SetBucketQuotaOKCode int = 200
 
-/*SetBucketQuotaOK A successful response.
+/*
+SetBucketQuotaOK A successful response.
 
 swagger:response setBucketQuotaOK
 */
@@ -74,7 +75,8 @@ func (o *SetBucketQuotaOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*SetBucketQuotaDefault Generic error response.
+/*
+SetBucketQuotaDefault Generic error response.
 
 swagger:response setBucketQuotaDefault
 */

@@ -48,10 +48,10 @@ func NewSetConfig(ctx *middleware.Context, handler SetConfigHandler) *SetConfig 
 	return &SetConfig{Context: ctx, Handler: handler}
 }
 
-/* SetConfig swagger:route PUT /configs/{name} Configuration setConfig
+/*
+	SetConfig swagger:route PUT /configs/{name} Configuration setConfig
 
 Set Configuration
-
 */
 type SetConfig struct {
 	Context *middleware.Context

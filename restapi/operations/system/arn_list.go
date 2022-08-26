@@ -48,10 +48,10 @@ func NewArnList(ctx *middleware.Context, handler ArnListHandler) *ArnList {
 	return &ArnList{Context: ctx, Handler: handler}
 }
 
-/* ArnList swagger:route GET /admin/arns System arnList
+/*
+	ArnList swagger:route GET /admin/arns System arnList
 
 Returns a list of active ARNs in the instance
-
 */
 type ArnList struct {
 	Context *middleware.Context

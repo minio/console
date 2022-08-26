@@ -33,7 +33,8 @@ import (
 // PutObjectRetentionOKCode is the HTTP code returned for type PutObjectRetentionOK
 const PutObjectRetentionOKCode int = 200
 
-/*PutObjectRetentionOK A successful response.
+/*
+PutObjectRetentionOK A successful response.
 
 swagger:response putObjectRetentionOK
 */
@@ -54,7 +55,8 @@ func (o *PutObjectRetentionOK) WriteResponse(rw http.ResponseWriter, producer ru
 	rw.WriteHeader(200)
 }
 
-/*PutObjectRetentionDefault Generic error response.
+/*
+PutObjectRetentionDefault Generic error response.
 
 swagger:response putObjectRetentionDefault
 */

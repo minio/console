@@ -48,10 +48,10 @@ func NewSubnetAPIKey(ctx *middleware.Context, handler SubnetAPIKeyHandler) *Subn
 	return &SubnetAPIKey{Context: ctx, Handler: handler}
 }
 
-/* SubnetAPIKey swagger:route GET /subnet/apikey Subnet subnetApiKey
+/*
+	SubnetAPIKey swagger:route GET /subnet/apikey Subnet subnetApiKey
 
 Subnet api key
-
 */
 type SubnetAPIKey struct {
 	Context *middleware.Context

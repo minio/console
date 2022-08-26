@@ -33,7 +33,8 @@ import (
 // DeleteObjectOKCode is the HTTP code returned for type DeleteObjectOK
 const DeleteObjectOKCode int = 200
 
-/*DeleteObjectOK A successful response.
+/*
+DeleteObjectOK A successful response.
 
 swagger:response deleteObjectOK
 */
@@ -54,7 +55,8 @@ func (o *DeleteObjectOK) WriteResponse(rw http.ResponseWriter, producer runtime.
 	rw.WriteHeader(200)
 }
 
-/*DeleteObjectDefault Generic error response.
+/*
+DeleteObjectDefault Generic error response.
 
 swagger:response deleteObjectDefault
 */

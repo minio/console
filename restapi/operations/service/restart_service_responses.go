@@ -33,7 +33,8 @@ import (
 // RestartServiceNoContentCode is the HTTP code returned for type RestartServiceNoContent
 const RestartServiceNoContentCode int = 204
 
-/*RestartServiceNoContent A successful response.
+/*
+RestartServiceNoContent A successful response.
 
 swagger:response restartServiceNoContent
 */
@@ -54,7 +55,8 @@ func (o *RestartServiceNoContent) WriteResponse(rw http.ResponseWriter, producer
 	rw.WriteHeader(204)
 }
 
-/*RestartServiceDefault Generic error response.
+/*
+RestartServiceDefault Generic error response.
 
 swagger:response restartServiceDefault
 */

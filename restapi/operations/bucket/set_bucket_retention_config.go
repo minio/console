@@ -48,10 +48,10 @@ func NewSetBucketRetentionConfig(ctx *middleware.Context, handler SetBucketReten
 	return &SetBucketRetentionConfig{Context: ctx, Handler: handler}
 }
 
-/* SetBucketRetentionConfig swagger:route PUT /buckets/{bucket_name}/retention Bucket setBucketRetentionConfig
+/*
+	SetBucketRetentionConfig swagger:route PUT /buckets/{bucket_name}/retention Bucket setBucketRetentionConfig
 
 Set Bucket's retention config
-
 */
 type SetBucketRetentionConfig struct {
 	Context *middleware.Context

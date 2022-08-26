@@ -48,10 +48,10 @@ func NewProfilingStop(ctx *middleware.Context, handler ProfilingStopHandler) *Pr
 	return &ProfilingStop{Context: ctx, Handler: handler}
 }
 
-/* ProfilingStop swagger:route POST /profiling/stop Profile profilingStop
+/*
+	ProfilingStop swagger:route POST /profiling/stop Profile profilingStop
 
 Stop and download profile data
-
 */
 type ProfilingStop struct {
 	Context *middleware.Context

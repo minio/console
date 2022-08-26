@@ -33,7 +33,8 @@ import (
 // GroupInfoOKCode is the HTTP code returned for type GroupInfoOK
 const GroupInfoOKCode int = 200
 
-/*GroupInfoOK A successful response.
+/*
+GroupInfoOK A successful response.
 
 swagger:response groupInfoOK
 */
@@ -74,7 +75,8 @@ func (o *GroupInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pro
 	}
 }
 
-/*GroupInfoDefault Generic error response.
+/*
+GroupInfoDefault Generic error response.
 
 swagger:response groupInfoDefault
 */

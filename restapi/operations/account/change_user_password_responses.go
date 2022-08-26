@@ -33,7 +33,8 @@ import (
 // ChangeUserPasswordCreatedCode is the HTTP code returned for type ChangeUserPasswordCreated
 const ChangeUserPasswordCreatedCode int = 201
 
-/*ChangeUserPasswordCreated Password successfully changed.
+/*
+ChangeUserPasswordCreated Password successfully changed.
 
 swagger:response changeUserPasswordCreated
 */
@@ -54,7 +55,8 @@ func (o *ChangeUserPasswordCreated) WriteResponse(rw http.ResponseWriter, produc
 	rw.WriteHeader(201)
 }
 
-/*ChangeUserPasswordDefault Generic error response.
+/*
+ChangeUserPasswordDefault Generic error response.
 
 swagger:response changeUserPasswordDefault
 */

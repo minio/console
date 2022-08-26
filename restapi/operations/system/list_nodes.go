@@ -48,10 +48,10 @@ func NewListNodes(ctx *middleware.Context, handler ListNodesHandler) *ListNodes 
 	return &ListNodes{Context: ctx, Handler: handler}
 }
 
-/* ListNodes swagger:route GET /nodes System listNodes
+/*
+	ListNodes swagger:route GET /nodes System listNodes
 
 Lists Nodes
-
 */
 type ListNodes struct {
 	Context *middleware.Context

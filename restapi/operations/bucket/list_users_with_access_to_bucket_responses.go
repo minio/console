@@ -33,7 +33,8 @@ import (
 // ListUsersWithAccessToBucketOKCode is the HTTP code returned for type ListUsersWithAccessToBucketOK
 const ListUsersWithAccessToBucketOKCode int = 200
 
-/*ListUsersWithAccessToBucketOK A successful response.
+/*
+ListUsersWithAccessToBucketOK A successful response.
 
 swagger:response listUsersWithAccessToBucketOK
 */
@@ -77,7 +78,8 @@ func (o *ListUsersWithAccessToBucketOK) WriteResponse(rw http.ResponseWriter, pr
 	}
 }
 
-/*ListUsersWithAccessToBucketDefault Generic error response.
+/*
+ListUsersWithAccessToBucketDefault Generic error response.
 
 swagger:response listUsersWithAccessToBucketDefault
 */

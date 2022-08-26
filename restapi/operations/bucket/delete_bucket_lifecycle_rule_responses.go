@@ -33,7 +33,8 @@ import (
 // DeleteBucketLifecycleRuleNoContentCode is the HTTP code returned for type DeleteBucketLifecycleRuleNoContent
 const DeleteBucketLifecycleRuleNoContentCode int = 204
 
-/*DeleteBucketLifecycleRuleNoContent A successful response.
+/*
+DeleteBucketLifecycleRuleNoContent A successful response.
 
 swagger:response deleteBucketLifecycleRuleNoContent
 */
@@ -54,7 +55,8 @@ func (o *DeleteBucketLifecycleRuleNoContent) WriteResponse(rw http.ResponseWrite
 	rw.WriteHeader(204)
 }
 
-/*DeleteBucketLifecycleRuleDefault Generic error response.
+/*
+DeleteBucketLifecycleRuleDefault Generic error response.
 
 swagger:response deleteBucketLifecycleRuleDefault
 */

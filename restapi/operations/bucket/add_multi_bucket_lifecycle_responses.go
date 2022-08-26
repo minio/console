@@ -33,7 +33,8 @@ import (
 // AddMultiBucketLifecycleOKCode is the HTTP code returned for type AddMultiBucketLifecycleOK
 const AddMultiBucketLifecycleOKCode int = 200
 
-/*AddMultiBucketLifecycleOK A successful response.
+/*
+AddMultiBucketLifecycleOK A successful response.
 
 swagger:response addMultiBucketLifecycleOK
 */
@@ -74,7 +75,8 @@ func (o *AddMultiBucketLifecycleOK) WriteResponse(rw http.ResponseWriter, produc
 	}
 }
 
-/*AddMultiBucketLifecycleDefault Generic error response.
+/*
+AddMultiBucketLifecycleDefault Generic error response.
 
 swagger:response addMultiBucketLifecycleDefault
 */

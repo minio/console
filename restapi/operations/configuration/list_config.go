@@ -48,10 +48,10 @@ func NewListConfig(ctx *middleware.Context, handler ListConfigHandler) *ListConf
 	return &ListConfig{Context: ctx, Handler: handler}
 }
 
-/* ListConfig swagger:route GET /configs Configuration listConfig
+/*
+	ListConfig swagger:route GET /configs Configuration listConfig
 
 List Configurations
-
 */
 type ListConfig struct {
 	Context *middleware.Context

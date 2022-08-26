@@ -33,7 +33,8 @@ import (
 // SetServiceAccountPolicyOKCode is the HTTP code returned for type SetServiceAccountPolicyOK
 const SetServiceAccountPolicyOKCode int = 200
 
-/*SetServiceAccountPolicyOK A successful response.
+/*
+SetServiceAccountPolicyOK A successful response.
 
 swagger:response setServiceAccountPolicyOK
 */
@@ -54,7 +55,8 @@ func (o *SetServiceAccountPolicyOK) WriteResponse(rw http.ResponseWriter, produc
 	rw.WriteHeader(200)
 }
 
-/*SetServiceAccountPolicyDefault Generic error response.
+/*
+SetServiceAccountPolicyDefault Generic error response.
 
 swagger:response setServiceAccountPolicyDefault
 */

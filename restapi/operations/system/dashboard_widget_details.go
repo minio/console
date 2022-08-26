@@ -48,10 +48,10 @@ func NewDashboardWidgetDetails(ctx *middleware.Context, handler DashboardWidgetD
 	return &DashboardWidgetDetails{Context: ctx, Handler: handler}
 }
 
-/* DashboardWidgetDetails swagger:route GET /admin/info/widgets/{widgetId} System dashboardWidgetDetails
+/*
+	DashboardWidgetDetails swagger:route GET /admin/info/widgets/{widgetId} System dashboardWidgetDetails
 
 Returns information about the deployment
-
 */
 type DashboardWidgetDetails struct {
 	Context *middleware.Context

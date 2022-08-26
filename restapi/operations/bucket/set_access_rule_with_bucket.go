@@ -48,10 +48,10 @@ func NewSetAccessRuleWithBucket(ctx *middleware.Context, handler SetAccessRuleWi
 	return &SetAccessRuleWithBucket{Context: ctx, Handler: handler}
 }
 
-/* SetAccessRuleWithBucket swagger:route PUT /bucket/{bucket}/access-rules Bucket setAccessRuleWithBucket
+/*
+	SetAccessRuleWithBucket swagger:route PUT /bucket/{bucket}/access-rules Bucket setAccessRuleWithBucket
 
 Add Access Rule To Given Bucket
-
 */
 type SetAccessRuleWithBucket struct {
 	Context *middleware.Context

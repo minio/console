@@ -33,7 +33,8 @@ import (
 // ListExternalBucketsOKCode is the HTTP code returned for type ListExternalBucketsOK
 const ListExternalBucketsOKCode int = 200
 
-/*ListExternalBucketsOK A successful response.
+/*
+ListExternalBucketsOK A successful response.
 
 swagger:response listExternalBucketsOK
 */
@@ -74,7 +75,8 @@ func (o *ListExternalBucketsOK) WriteResponse(rw http.ResponseWriter, producer r
 	}
 }
 
-/*ListExternalBucketsDefault Generic error response.
+/*
+ListExternalBucketsDefault Generic error response.
 
 swagger:response listExternalBucketsDefault
 */

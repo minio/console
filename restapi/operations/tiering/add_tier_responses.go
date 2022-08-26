@@ -33,7 +33,8 @@ import (
 // AddTierCreatedCode is the HTTP code returned for type AddTierCreated
 const AddTierCreatedCode int = 201
 
-/*AddTierCreated A successful response.
+/*
+AddTierCreated A successful response.
 
 swagger:response addTierCreated
 */
@@ -54,7 +55,8 @@ func (o *AddTierCreated) WriteResponse(rw http.ResponseWriter, producer runtime.
 	rw.WriteHeader(201)
 }
 
-/*AddTierDefault Generic error response.
+/*
+AddTierDefault Generic error response.
 
 swagger:response addTierDefault
 */

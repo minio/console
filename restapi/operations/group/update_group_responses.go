@@ -33,7 +33,8 @@ import (
 // UpdateGroupOKCode is the HTTP code returned for type UpdateGroupOK
 const UpdateGroupOKCode int = 200
 
-/*UpdateGroupOK A successful response.
+/*
+UpdateGroupOK A successful response.
 
 swagger:response updateGroupOK
 */
@@ -74,7 +75,8 @@ func (o *UpdateGroupOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
-/*UpdateGroupDefault Generic error response.
+/*
+UpdateGroupDefault Generic error response.
 
 swagger:response updateGroupDefault
 */

@@ -34,7 +34,8 @@ import (
 // ProfilingStopCreatedCode is the HTTP code returned for type ProfilingStopCreated
 const ProfilingStopCreatedCode int = 201
 
-/*ProfilingStopCreated A successful response.
+/*
+ProfilingStopCreated A successful response.
 
 swagger:response profilingStopCreated
 */
@@ -73,7 +74,8 @@ func (o *ProfilingStopCreated) WriteResponse(rw http.ResponseWriter, producer ru
 	}
 }
 
-/*ProfilingStopDefault Generic error response.
+/*
+ProfilingStopDefault Generic error response.
 
 swagger:response profilingStopDefault
 */
