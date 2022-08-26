@@ -79,6 +79,7 @@ test("Create Policy modal can be submitted after inputs are entered", async (t) 
     .typeText(elements.createPolicyName, constants.TEST_IAM_POLICY_NAME)
     .typeText(elements.createPolicyTextfield, constants.TEST_IAM_POLICY, {
       paste: true,
+      replace: true,
     })
     .click(elements.saveButton);
 }).after(async (t) => {
@@ -98,6 +99,7 @@ test("Created Policy can be viewed and deleted", async (t) => {
     .typeText(elements.createPolicyName, constants.TEST_IAM_POLICY_NAME)
     .typeText(elements.createPolicyTextfield, constants.TEST_IAM_POLICY, {
       paste: true,
+      replace: true,
     })
     .click(elements.saveButton)
     .typeText(elements.searchResourceInput, constants.TEST_IAM_POLICY_NAME)

@@ -56,7 +56,7 @@ const CodeMirrorWrapper = ({
 }: ICodeWrapper) => {
   return (
     <React.Fragment>
-      <Grid item xs={12}>
+      <Grid item xs={12} sx={{ marginBottom: "10px" }}>
         <InputLabel className={classes.inputLabel}>
           <span>{label}</span>
           {tooltip !== "" && (
@@ -71,7 +71,15 @@ const CodeMirrorWrapper = ({
         </InputLabel>
       </Grid>
 
-      <Grid item xs={12} style={{ maxHeight: editorHeight, overflow: "auto" }}>
+      <Grid
+        item
+        xs={12}
+        style={{
+          maxHeight: editorHeight,
+          overflow: "auto",
+          border: "1px solid #eaeaea",
+        }}
+      >
         <CodeEditor
           value={value}
           language={mode}
@@ -85,6 +93,8 @@ const CodeMirrorWrapper = ({
             backgroundColor: "#fefefe",
             fontFamily:
               "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+            minHeight: editorHeight || "initial",
+            color: "#000000",
           }}
         />
       </Grid>
@@ -92,8 +102,9 @@ const CodeMirrorWrapper = ({
         item
         xs={12}
         sx={{
-          borderTop: "1px solid #eaeaea",
           background: "#f7f7f7",
+          border: "1px solid #eaeaea",
+          borderTop: 0,
         }}
       >
         <Box
