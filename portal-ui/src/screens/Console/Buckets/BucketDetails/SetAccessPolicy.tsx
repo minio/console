@@ -35,6 +35,7 @@ import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/Cod
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { emptyPolicy } from "../../Policies/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -76,7 +77,7 @@ const SetAccessPolicy = ({
   const dispatch = useAppDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [accessPolicy, setAccessPolicy] = useState<string>("");
-  const [policyDefinition, setPolicyDefinition] = useState<string>("");
+  const [policyDefinition, setPolicyDefinition] = useState<string>(emptyPolicy);
   const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
     if (addLoading) {
@@ -103,7 +104,7 @@ const SetAccessPolicy = ({
     setPolicyDefinition(
       actualDefinition
         ? JSON.stringify(JSON.parse(actualDefinition), null, 4)
-        : ""
+        : emptyPolicy
     );
   }, [setAccessPolicy, actualPolicy, setPolicyDefinition, actualDefinition]);
 

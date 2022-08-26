@@ -31,6 +31,7 @@ import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
+import { emptyPolicy } from "./utils";
 
 const AddPolicyScreen = () => {
   const dispatch = useAppDispatch();
@@ -38,7 +39,7 @@ const AddPolicyScreen = () => {
 
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [policyName, setPolicyName] = useState<string>("");
-  const [policyDefinition, setPolicyDefinition] = useState<string>("");
+  const [policyDefinition, setPolicyDefinition] = useState<string>(emptyPolicy);
 
   const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -72,7 +73,10 @@ const AddPolicyScreen = () => {
     } else return "";
   };
 
-  const validSave = policyName.trim() !== "" && policyName.indexOf(" ") === -1;
+  const validSave =
+    policyName.trim() !== "" &&
+    policyName.indexOf(" ") === -1 &&
+    policyDefinition.trim() !== "";
 
   return (
     <Fragment>
