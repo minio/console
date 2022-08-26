@@ -190,7 +190,10 @@ const Register = ({ classes }: IRegister) => {
           setLoadingLicenseInfo(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          if (err.errorMessage !== "License not found") {
+          if (
+            err.detailedError.toLowerCase() !==
+            "License is not present".toLowerCase()
+          ) {
             dispatch(setErrorSnackMessage(err));
           }
           setClusterRegistered(false);
