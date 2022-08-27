@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 
 	xhttp "github.com/minio/console/pkg/http"
 
@@ -307,22 +308,11 @@ func GetSubnetRegisterResponse(session *models.Principal, params subnetApi.Subne
 func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInfoParams) (*models.License, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-	adminClient := AdminClient{Client: mAdmin}
-	subnetTokens, err := GetSubnetKeyFromMinIOConfig(ctx, adminClient)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-	if subnetTokens.APIKey == "" {
-		return nil, ErrorWithContext(ctx, ErrLicenseNotFound)
-	}
 	client := &xhttp.Client{
 		Client: GetConsoleHTTPClient(),
 	}
-	licenseInfo, err := subnet.ParseLicense(client, subnetTokens.License)
+
+	licenseInfo, err := subnet.ParseLicense(client, os.Getenv("CONSOLE_SUBNET_LICENSE"))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

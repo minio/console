@@ -484,7 +484,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                   }}
                 >
                   <Grid container>
-                    <Grid item xs={12} style={{ border: "1px solid #eaeaea" }}>
+                    <Grid item xs={12}>
                       <CodeMirrorWrapper
                         readOnly={!editPolicy}
                         value={policyDefinition}
