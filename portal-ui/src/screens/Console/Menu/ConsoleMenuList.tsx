@@ -136,7 +136,8 @@ const ConsoleMenuList = ({
       >
         <ListItem
           button
-          onClick={onLogoutClick}
+          component="a"
+          href="/logout"
           disableRipple
           sx={{
             ...menuItemContainerStyles,
