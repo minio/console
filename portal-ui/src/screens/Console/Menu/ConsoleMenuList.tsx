@@ -34,12 +34,10 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 const ConsoleMenuList = ({
   menuItems,
-  onLogoutClick,
   isOpen,
 }: {
   menuItems: any[];
   isOpen: boolean;
-  onLogoutClick: () => void;
 }) => {
   const stateClsName = isOpen ? "wide" : "mini";
   const { pathname = "" } = useLocation();
@@ -136,7 +134,8 @@ const ConsoleMenuList = ({
       >
         <ListItem
           button
-          onClick={onLogoutClick}
+          component="a"
+          href="/logout"
           disableRipple
           sx={{
             ...menuItemContainerStyles,

@@ -24,20 +24,11 @@ import createStyles from "@mui/styles/createStyles";
 import clsx from "clsx";
 import { AppState, useAppDispatch } from "../../../store";
 
-import { ErrorResponseHandler } from "../../../common/types";
-import { clearSession } from "../../../common/utils";
-import api from "../../../common/api";
-
 import MenuToggle from "./MenuToggle";
 import ConsoleMenuList from "./ConsoleMenuList";
 import { validRoutes } from "../valid-routes";
-import {
-  menuOpen,
-  selDirectPVMode,
-  selOpMode,
-  userLogged,
-} from "../../../systemSlice";
-import { resetSession, selFeatures } from "../consoleSlice";
+import { menuOpen, selDirectPVMode, selOpMode } from "../../../systemSlice";
+import { selFeatures } from "../consoleSlice";
 
 const drawerWidth = 250;
 
@@ -104,25 +95,6 @@ const Menu = ({ classes }: IMenuProps) => {
   const operatorMode = useSelector(selOpMode);
   const directPVMode = useSelector(selDirectPVMode);
 
-  const logout = () => {
-    const deleteSession = () => {
-      clearSession();
-      dispatch(userLogged(false));
-      localStorage.setItem("userLoggedIn", "");
-      localStorage.setItem("redirect-path", "");
-      dispatch(resetSession());
-      navigate(`login`);
-    };
-    api
-      .invoke("POST", `/api/v1/logout`)
-      .then(() => {
-        deleteSession();
-      })
-      .catch((err: ErrorResponseHandler) => {
-        console.log(err);
-        deleteSession();
-      });
-  };
   const allowedMenuItems = validRoutes(features, operatorMode, directPVMode);
 
   return (
@@ -147,11 +119,7 @@ const Menu = ({ classes }: IMenuProps) => {
         isOpen={sidebarOpen}
       />
 
-      <ConsoleMenuList
-        menuItems={allowedMenuItems}
-        isOpen={sidebarOpen}
-        onLogoutClick={logout}
-      />
+      <ConsoleMenuList menuItems={allowedMenuItems} isOpen={sidebarOpen} />
     </Drawer>
   );
 };
