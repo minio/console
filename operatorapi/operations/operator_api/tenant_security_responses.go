@@ -33,7 +33,8 @@ import (
 // TenantSecurityOKCode is the HTTP code returned for type TenantSecurityOK
 const TenantSecurityOKCode int = 200
 
-/*TenantSecurityOK A successful response.
+/*
+TenantSecurityOK A successful response.
 
 swagger:response tenantSecurityOK
 */
@@ -74,7 +75,8 @@ func (o *TenantSecurityOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*TenantSecurityDefault Generic error response.
+/*
+TenantSecurityDefault Generic error response.
 
 swagger:response tenantSecurityDefault
 */

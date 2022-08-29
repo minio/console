@@ -48,10 +48,10 @@ func NewGetAllocatableResources(ctx *middleware.Context, handler GetAllocatableR
 	return &GetAllocatableResources{Context: ctx, Handler: handler}
 }
 
-/* GetAllocatableResources swagger:route GET /cluster/allocatable-resources OperatorAPI getAllocatableResources
+/*
+	GetAllocatableResources swagger:route GET /cluster/allocatable-resources OperatorAPI getAllocatableResources
 
 Get allocatable cpu and memory for given number of nodes
-
 */
 type GetAllocatableResources struct {
 	Context *middleware.Context

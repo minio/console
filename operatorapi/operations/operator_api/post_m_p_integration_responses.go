@@ -33,7 +33,8 @@ import (
 // PostMPIntegrationCreatedCode is the HTTP code returned for type PostMPIntegrationCreated
 const PostMPIntegrationCreatedCode int = 201
 
-/*PostMPIntegrationCreated A successful response.
+/*
+PostMPIntegrationCreated A successful response.
 
 swagger:response postMPIntegrationCreated
 */
@@ -54,7 +55,8 @@ func (o *PostMPIntegrationCreated) WriteResponse(rw http.ResponseWriter, produce
 	rw.WriteHeader(201)
 }
 
-/*PostMPIntegrationDefault Generic error response.
+/*
+PostMPIntegrationDefault Generic error response.
 
 swagger:response postMPIntegrationDefault
 */

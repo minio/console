@@ -33,7 +33,8 @@ import (
 // TenantEncryptionInfoOKCode is the HTTP code returned for type TenantEncryptionInfoOK
 const TenantEncryptionInfoOKCode int = 200
 
-/*TenantEncryptionInfoOK A successful response.
+/*
+TenantEncryptionInfoOK A successful response.
 
 swagger:response tenantEncryptionInfoOK
 */
@@ -74,7 +75,8 @@ func (o *TenantEncryptionInfoOK) WriteResponse(rw http.ResponseWriter, producer 
 	}
 }
 
-/*TenantEncryptionInfoDefault Generic error response.
+/*
+TenantEncryptionInfoDefault Generic error response.
 
 swagger:response tenantEncryptionInfoDefault
 */

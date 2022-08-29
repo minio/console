@@ -48,10 +48,10 @@ func NewSubscriptionValidate(ctx *middleware.Context, handler SubscriptionValida
 	return &SubscriptionValidate{Context: ctx, Handler: handler}
 }
 
-/* SubscriptionValidate swagger:route POST /subscription/validate OperatorAPI subscriptionValidate
+/*
+	SubscriptionValidate swagger:route POST /subscription/validate OperatorAPI subscriptionValidate
 
 Validates subscription license
-
 */
 type SubscriptionValidate struct {
 	Context *middleware.Context

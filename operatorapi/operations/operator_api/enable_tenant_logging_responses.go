@@ -33,7 +33,8 @@ import (
 // EnableTenantLoggingOKCode is the HTTP code returned for type EnableTenantLoggingOK
 const EnableTenantLoggingOKCode int = 200
 
-/*EnableTenantLoggingOK A successful response.
+/*
+EnableTenantLoggingOK A successful response.
 
 swagger:response enableTenantLoggingOK
 */
@@ -72,7 +73,8 @@ func (o *EnableTenantLoggingOK) WriteResponse(rw http.ResponseWriter, producer r
 	}
 }
 
-/*EnableTenantLoggingDefault Generic error response.
+/*
+EnableTenantLoggingDefault Generic error response.
 
 swagger:response enableTenantLoggingDefault
 */

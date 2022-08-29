@@ -33,7 +33,8 @@ import (
 // DeleteTenantNoContentCode is the HTTP code returned for type DeleteTenantNoContent
 const DeleteTenantNoContentCode int = 204
 
-/*DeleteTenantNoContent A successful response.
+/*
+DeleteTenantNoContent A successful response.
 
 swagger:response deleteTenantNoContent
 */
@@ -54,7 +55,8 @@ func (o *DeleteTenantNoContent) WriteResponse(rw http.ResponseWriter, producer r
 	rw.WriteHeader(204)
 }
 
-/*DeleteTenantDefault Generic error response.
+/*
+DeleteTenantDefault Generic error response.
 
 swagger:response deleteTenantDefault
 */

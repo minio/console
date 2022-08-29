@@ -48,10 +48,10 @@ func NewTenantDeleteEncryption(ctx *middleware.Context, handler TenantDeleteEncr
 	return &TenantDeleteEncryption{Context: ctx, Handler: handler}
 }
 
-/* TenantDeleteEncryption swagger:route DELETE /namespaces/{namespace}/tenants/{tenant}/encryption OperatorAPI tenantDeleteEncryption
+/*
+	TenantDeleteEncryption swagger:route DELETE /namespaces/{namespace}/tenants/{tenant}/encryption OperatorAPI tenantDeleteEncryption
 
 Tenant Delete Encryption
-
 */
 type TenantDeleteEncryption struct {
 	Context *middleware.Context

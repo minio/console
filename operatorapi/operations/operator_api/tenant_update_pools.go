@@ -48,10 +48,10 @@ func NewTenantUpdatePools(ctx *middleware.Context, handler TenantUpdatePoolsHand
 	return &TenantUpdatePools{Context: ctx, Handler: handler}
 }
 
-/* TenantUpdatePools swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/pools OperatorAPI tenantUpdatePools
+/*
+	TenantUpdatePools swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/pools OperatorAPI tenantUpdatePools
 
 Tenant Update Pools
-
 */
 type TenantUpdatePools struct {
 	Context *middleware.Context

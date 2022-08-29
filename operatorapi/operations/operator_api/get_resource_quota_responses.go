@@ -33,7 +33,8 @@ import (
 // GetResourceQuotaOKCode is the HTTP code returned for type GetResourceQuotaOK
 const GetResourceQuotaOKCode int = 200
 
-/*GetResourceQuotaOK A successful response.
+/*
+GetResourceQuotaOK A successful response.
 
 swagger:response getResourceQuotaOK
 */
@@ -74,7 +75,8 @@ func (o *GetResourceQuotaOK) WriteResponse(rw http.ResponseWriter, producer runt
 	}
 }
 
-/*GetResourceQuotaDefault Generic error response.
+/*
+GetResourceQuotaDefault Generic error response.
 
 swagger:response getResourceQuotaDefault
 */

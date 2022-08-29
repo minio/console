@@ -33,7 +33,8 @@ import (
 // PutTenantYAMLCreatedCode is the HTTP code returned for type PutTenantYAMLCreated
 const PutTenantYAMLCreatedCode int = 201
 
-/*PutTenantYAMLCreated A successful response.
+/*
+PutTenantYAMLCreated A successful response.
 
 swagger:response putTenantYAMLCreated
 */
@@ -54,7 +55,8 @@ func (o *PutTenantYAMLCreated) WriteResponse(rw http.ResponseWriter, producer ru
 	rw.WriteHeader(201)
 }
 
-/*PutTenantYAMLDefault Generic error response.
+/*
+PutTenantYAMLDefault Generic error response.
 
 swagger:response putTenantYAMLDefault
 */

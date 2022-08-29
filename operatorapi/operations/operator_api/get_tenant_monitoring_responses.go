@@ -33,7 +33,8 @@ import (
 // GetTenantMonitoringOKCode is the HTTP code returned for type GetTenantMonitoringOK
 const GetTenantMonitoringOKCode int = 200
 
-/*GetTenantMonitoringOK A successful response.
+/*
+GetTenantMonitoringOK A successful response.
 
 swagger:response getTenantMonitoringOK
 */
@@ -74,7 +75,8 @@ func (o *GetTenantMonitoringOK) WriteResponse(rw http.ResponseWriter, producer r
 	}
 }
 
-/*GetTenantMonitoringDefault Generic error response.
+/*
+GetTenantMonitoringDefault Generic error response.
 
 swagger:response getTenantMonitoringDefault
 */

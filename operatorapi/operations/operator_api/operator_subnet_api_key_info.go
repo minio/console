@@ -48,10 +48,10 @@ func NewOperatorSubnetAPIKeyInfo(ctx *middleware.Context, handler OperatorSubnet
 	return &OperatorSubnetAPIKeyInfo{Context: ctx, Handler: handler}
 }
 
-/* OperatorSubnetAPIKeyInfo swagger:route GET /subnet/apikey/info OperatorAPI operatorSubnetApiKeyInfo
+/*
+	OperatorSubnetAPIKeyInfo swagger:route GET /subnet/apikey/info OperatorAPI operatorSubnetApiKeyInfo
 
 Subnet API key info
-
 */
 type OperatorSubnetAPIKeyInfo struct {
 	Context *middleware.Context

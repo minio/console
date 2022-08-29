@@ -48,10 +48,10 @@ func NewTenantEncryptionInfo(ctx *middleware.Context, handler TenantEncryptionIn
 	return &TenantEncryptionInfo{Context: ctx, Handler: handler}
 }
 
-/* TenantEncryptionInfo swagger:route GET /namespaces/{namespace}/tenants/{tenant}/encryption OperatorAPI tenantEncryptionInfo
+/*
+	TenantEncryptionInfo swagger:route GET /namespaces/{namespace}/tenants/{tenant}/encryption OperatorAPI tenantEncryptionInfo
 
 Tenant Encryption Info
-
 */
 type TenantEncryptionInfo struct {
 	Context *middleware.Context

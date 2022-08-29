@@ -33,7 +33,8 @@ import (
 // SubscriptionInfoOKCode is the HTTP code returned for type SubscriptionInfoOK
 const SubscriptionInfoOKCode int = 200
 
-/*SubscriptionInfoOK A successful response.
+/*
+SubscriptionInfoOK A successful response.
 
 swagger:response subscriptionInfoOK
 */
@@ -74,7 +75,8 @@ func (o *SubscriptionInfoOK) WriteResponse(rw http.ResponseWriter, producer runt
 	}
 }
 
-/*SubscriptionInfoDefault Generic error response.
+/*
+SubscriptionInfoDefault Generic error response.
 
 swagger:response subscriptionInfoDefault
 */
