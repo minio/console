@@ -33,7 +33,8 @@ import (
 // GetParityOKCode is the HTTP code returned for type GetParityOK
 const GetParityOKCode int = 200
 
-/*GetParityOK A successful response.
+/*
+GetParityOK A successful response.
 
 swagger:response getParityOK
 */
@@ -77,7 +78,8 @@ func (o *GetParityOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pro
 	}
 }
 
-/*GetParityDefault Generic error response.
+/*
+GetParityDefault Generic error response.
 
 swagger:response getParityDefault
 */

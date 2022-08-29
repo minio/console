@@ -48,10 +48,10 @@ func NewTenantAddPool(ctx *middleware.Context, handler TenantAddPoolHandler) *Te
 	return &TenantAddPool{Context: ctx, Handler: handler}
 }
 
-/* TenantAddPool swagger:route POST /namespaces/{namespace}/tenants/{tenant}/pools OperatorAPI tenantAddPool
+/*
+	TenantAddPool swagger:route POST /namespaces/{namespace}/tenants/{tenant}/pools OperatorAPI tenantAddPool
 
 Tenant Add Pool
-
 */
 type TenantAddPool struct {
 	Context *middleware.Context

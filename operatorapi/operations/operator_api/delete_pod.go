@@ -48,10 +48,10 @@ func NewDeletePod(ctx *middleware.Context, handler DeletePodHandler) *DeletePod 
 	return &DeletePod{Context: ctx, Handler: handler}
 }
 
-/* DeletePod swagger:route DELETE /namespaces/{namespace}/tenants/{tenant}/pods/{podName} OperatorAPI deletePod
+/*
+	DeletePod swagger:route DELETE /namespaces/{namespace}/tenants/{tenant}/pods/{podName} OperatorAPI deletePod
 
 Delete pod
-
 */
 type DeletePod struct {
 	Context *middleware.Context

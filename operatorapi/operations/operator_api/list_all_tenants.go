@@ -48,10 +48,10 @@ func NewListAllTenants(ctx *middleware.Context, handler ListAllTenantsHandler) *
 	return &ListAllTenants{Context: ctx, Handler: handler}
 }
 
-/* ListAllTenants swagger:route GET /tenants OperatorAPI listAllTenants
+/*
+	ListAllTenants swagger:route GET /tenants OperatorAPI listAllTenants
 
 List Tenant of All Namespaces
-
 */
 type ListAllTenants struct {
 	Context *middleware.Context

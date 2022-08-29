@@ -33,7 +33,8 @@ import (
 // GetTenantYAMLOKCode is the HTTP code returned for type GetTenantYAMLOK
 const GetTenantYAMLOKCode int = 200
 
-/*GetTenantYAMLOK A successful response.
+/*
+GetTenantYAMLOK A successful response.
 
 swagger:response getTenantYAMLOK
 */
@@ -74,7 +75,8 @@ func (o *GetTenantYAMLOK) WriteResponse(rw http.ResponseWriter, producer runtime
 	}
 }
 
-/*GetTenantYAMLDefault Generic error response.
+/*
+GetTenantYAMLDefault Generic error response.
 
 swagger:response getTenantYAMLDefault
 */

@@ -48,10 +48,10 @@ func NewCreateNamespace(ctx *middleware.Context, handler CreateNamespaceHandler)
 	return &CreateNamespace{Context: ctx, Handler: handler}
 }
 
-/* CreateNamespace swagger:route POST /namespace OperatorAPI createNamespace
+/*
+	CreateNamespace swagger:route POST /namespace OperatorAPI createNamespace
 
 Creates a new Namespace with given information
-
 */
 type CreateNamespace struct {
 	Context *middleware.Context

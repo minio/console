@@ -48,10 +48,10 @@ func NewSubscriptionRefresh(ctx *middleware.Context, handler SubscriptionRefresh
 	return &SubscriptionRefresh{Context: ctx, Handler: handler}
 }
 
-/* SubscriptionRefresh swagger:route POST /subscription/refresh OperatorAPI subscriptionRefresh
+/*
+	SubscriptionRefresh swagger:route POST /subscription/refresh OperatorAPI subscriptionRefresh
 
 Refresh existing subscription license
-
 */
 type SubscriptionRefresh struct {
 	Context *middleware.Context

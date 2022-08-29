@@ -33,7 +33,8 @@ import (
 // DisableTenantLoggingOKCode is the HTTP code returned for type DisableTenantLoggingOK
 const DisableTenantLoggingOKCode int = 200
 
-/*DisableTenantLoggingOK A successful response.
+/*
+DisableTenantLoggingOK A successful response.
 
 swagger:response disableTenantLoggingOK
 */
@@ -72,7 +73,8 @@ func (o *DisableTenantLoggingOK) WriteResponse(rw http.ResponseWriter, producer 
 	}
 }
 
-/*DisableTenantLoggingDefault Generic error response.
+/*
+DisableTenantLoggingDefault Generic error response.
 
 swagger:response disableTenantLoggingDefault
 */

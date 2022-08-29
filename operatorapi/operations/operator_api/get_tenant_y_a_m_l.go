@@ -48,10 +48,10 @@ func NewGetTenantYAML(ctx *middleware.Context, handler GetTenantYAMLHandler) *Ge
 	return &GetTenantYAML{Context: ctx, Handler: handler}
 }
 
-/* GetTenantYAML swagger:route GET /namespaces/{namespace}/tenants/{tenant}/yaml OperatorAPI getTenantYAML
+/*
+	GetTenantYAML swagger:route GET /namespaces/{namespace}/tenants/{tenant}/yaml OperatorAPI getTenantYAML
 
 Get the Tenant YAML
-
 */
 type GetTenantYAML struct {
 	Context *middleware.Context

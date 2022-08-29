@@ -33,7 +33,8 @@ import (
 // GetTenantPodsOKCode is the HTTP code returned for type GetTenantPodsOK
 const GetTenantPodsOKCode int = 200
 
-/*GetTenantPodsOK A successful response.
+/*
+GetTenantPodsOK A successful response.
 
 swagger:response getTenantPodsOK
 */
@@ -77,7 +78,8 @@ func (o *GetTenantPodsOK) WriteResponse(rw http.ResponseWriter, producer runtime
 	}
 }
 
-/*GetTenantPodsDefault Generic error response.
+/*
+GetTenantPodsDefault Generic error response.
 
 swagger:response getTenantPodsDefault
 */

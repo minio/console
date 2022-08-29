@@ -33,7 +33,8 @@ import (
 // TenantUpdateEncryptionCreatedCode is the HTTP code returned for type TenantUpdateEncryptionCreated
 const TenantUpdateEncryptionCreatedCode int = 201
 
-/*TenantUpdateEncryptionCreated A successful response.
+/*
+TenantUpdateEncryptionCreated A successful response.
 
 swagger:response tenantUpdateEncryptionCreated
 */
@@ -54,7 +55,8 @@ func (o *TenantUpdateEncryptionCreated) WriteResponse(rw http.ResponseWriter, pr
 	rw.WriteHeader(201)
 }
 
-/*TenantUpdateEncryptionDefault Generic error response.
+/*
+TenantUpdateEncryptionDefault Generic error response.
 
 swagger:response tenantUpdateEncryptionDefault
 */

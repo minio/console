@@ -33,7 +33,8 @@ import (
 // CreateNamespaceCreatedCode is the HTTP code returned for type CreateNamespaceCreated
 const CreateNamespaceCreatedCode int = 201
 
-/*CreateNamespaceCreated A successful response.
+/*
+CreateNamespaceCreated A successful response.
 
 swagger:response createNamespaceCreated
 */
@@ -54,7 +55,8 @@ func (o *CreateNamespaceCreated) WriteResponse(rw http.ResponseWriter, producer 
 	rw.WriteHeader(201)
 }
 
-/*CreateNamespaceDefault Generic error response.
+/*
+CreateNamespaceDefault Generic error response.
 
 swagger:response createNamespaceDefault
 */

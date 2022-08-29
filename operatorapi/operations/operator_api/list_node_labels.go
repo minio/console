@@ -48,10 +48,10 @@ func NewListNodeLabels(ctx *middleware.Context, handler ListNodeLabelsHandler) *
 	return &ListNodeLabels{Context: ctx, Handler: handler}
 }
 
-/* ListNodeLabels swagger:route GET /nodes/labels OperatorAPI listNodeLabels
+/*
+	ListNodeLabels swagger:route GET /nodes/labels OperatorAPI listNodeLabels
 
 List node labels
-
 */
 type ListNodeLabels struct {
 	Context *middleware.Context

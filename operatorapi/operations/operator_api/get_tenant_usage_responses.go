@@ -33,7 +33,8 @@ import (
 // GetTenantUsageOKCode is the HTTP code returned for type GetTenantUsageOK
 const GetTenantUsageOKCode int = 200
 
-/*GetTenantUsageOK A successful response.
+/*
+GetTenantUsageOK A successful response.
 
 swagger:response getTenantUsageOK
 */
@@ -74,7 +75,8 @@ func (o *GetTenantUsageOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*GetTenantUsageDefault Generic error response.
+/*
+GetTenantUsageDefault Generic error response.
 
 swagger:response getTenantUsageDefault
 */

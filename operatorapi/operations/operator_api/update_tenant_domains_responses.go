@@ -33,7 +33,8 @@ import (
 // UpdateTenantDomainsNoContentCode is the HTTP code returned for type UpdateTenantDomainsNoContent
 const UpdateTenantDomainsNoContentCode int = 204
 
-/*UpdateTenantDomainsNoContent A successful response.
+/*
+UpdateTenantDomainsNoContent A successful response.
 
 swagger:response updateTenantDomainsNoContent
 */
@@ -54,7 +55,8 @@ func (o *UpdateTenantDomainsNoContent) WriteResponse(rw http.ResponseWriter, pro
 	rw.WriteHeader(204)
 }
 
-/*UpdateTenantDomainsDefault Generic error response.
+/*
+UpdateTenantDomainsDefault Generic error response.
 
 swagger:response updateTenantDomainsDefault
 */

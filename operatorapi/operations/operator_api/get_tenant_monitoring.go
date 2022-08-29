@@ -48,10 +48,10 @@ func NewGetTenantMonitoring(ctx *middleware.Context, handler GetTenantMonitoring
 	return &GetTenantMonitoring{Context: ctx, Handler: handler}
 }
 
-/* GetTenantMonitoring swagger:route GET /namespaces/{namespace}/tenants/{tenant}/monitoring OperatorAPI getTenantMonitoring
+/*
+	GetTenantMonitoring swagger:route GET /namespaces/{namespace}/tenants/{tenant}/monitoring OperatorAPI getTenantMonitoring
 
 Get Prometheus Monitoring config info For The Tenant
-
 */
 type GetTenantMonitoring struct {
 	Context *middleware.Context

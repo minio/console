@@ -48,10 +48,10 @@ func NewDirectPVFormatDrive(ctx *middleware.Context, handler DirectPVFormatDrive
 	return &DirectPVFormatDrive{Context: ctx, Handler: handler}
 }
 
-/* DirectPVFormatDrive swagger:route POST /directpv/drives/format OperatorAPI directPVFormatDrive
+/*
+	DirectPVFormatDrive swagger:route POST /directpv/drives/format OperatorAPI directPVFormatDrive
 
 Format directpv drives from a list
-
 */
 type DirectPVFormatDrive struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // UpdateTenantIdentityProviderNoContentCode is the HTTP code returned for type UpdateTenantIdentityProviderNoContent
 const UpdateTenantIdentityProviderNoContentCode int = 204
 
-/*UpdateTenantIdentityProviderNoContent A successful response.
+/*
+UpdateTenantIdentityProviderNoContent A successful response.
 
 swagger:response updateTenantIdentityProviderNoContent
 */
@@ -54,7 +55,8 @@ func (o *UpdateTenantIdentityProviderNoContent) WriteResponse(rw http.ResponseWr
 	rw.WriteHeader(204)
 }
 
-/*UpdateTenantIdentityProviderDefault Generic error response.
+/*
+UpdateTenantIdentityProviderDefault Generic error response.
 
 swagger:response updateTenantIdentityProviderDefault
 */
