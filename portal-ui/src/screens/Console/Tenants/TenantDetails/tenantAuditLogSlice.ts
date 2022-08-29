@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IKeyValue } from "../ListTenants/types";
-import { ISecurityContext } from "../types";
+import { fsGroupChangePolicyType, ISecurityContext } from "../types";
 
 export interface IEditTenantAuditLogging {
   auditLoggingEnabled: boolean;
@@ -151,6 +151,12 @@ export const editTenantAuditLoggingSlice = createSlice({
     setDBFSGroup: (state, action: PayloadAction<string>) => {
       state.dbSecurityContext.fsGroup = action.payload;
     },
+    setDBFSGroupChangePolicy: (
+      state,
+      action: PayloadAction<fsGroupChangePolicyType>
+    ) => {
+      state.dbSecurityContext.fsGroupChangePolicy = action.payload;
+    },
     setDBRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
       state.dbSecurityContext.runAsNonRoot = action.payload;
     },
@@ -185,6 +191,7 @@ export const {
   setRunAsNonRoot,
   setDBRunAsUser,
   setDBFSGroup,
+  setDBFSGroupChangePolicy,
   setDBRunAsGroup,
   setDBRunAsNonRoot,
   setRefreshLoggingInfo,

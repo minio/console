@@ -1096,8 +1096,13 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 
 	// set Security Context
 	var newTenantSecurityContext *corev1.PodSecurityContext
-	newTenantSecurityContext, _ = convertModelSCToK8sSC(params.Body.SecurityContext)
-	minInst.Spec.Pools[0].SecurityContext = newTenantSecurityContext
+	newTenantSecurityContext, err = convertModelSCToK8sSC(params.Body.SecurityContext)
+	if err != nil {
+		return err
+	}
+	for index := range minInst.Spec.Pools {
+		minInst.Spec.Pools[index].SecurityContext = newTenantSecurityContext
+	}
 
 	// Update External Certificates
 	minInst.Spec.ExternalCertSecret = newMinIOExternalCertSecret

@@ -57,6 +57,8 @@ import {
   setRunAsNonRoot,
   setRefreshLoggingInfo,
 } from "../TenantDetails/tenantAuditLogSlice";
+import { setFSGroupChangePolicy } from "../tenantSecurityContextSlice";
+import { fsGroupChangePolicyType } from "../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -117,6 +119,9 @@ const TenantAuditLogging = ({
   );
   const runAsNonRoot = useSelector(
     (state: AppState) => state.editTenantLogging.securityContext.runAsNonRoot
+  );
+  const fsGroupChangePolicy = useSelector(
+    (state: AppState) => state.editTenantSecurityContext.fsGroupChangePolicy
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});
@@ -332,11 +337,15 @@ const TenantAuditLogging = ({
               runAsUser={runAsUser}
               fsGroup={fsGroup}
               runAsNonRoot={runAsNonRoot}
+              fsGroupChangePolicy={fsGroupChangePolicy}
               setFSGroup={(value: string) => dispatch(setFSGroup(value))}
               setRunAsUser={(value: string) => dispatch(setRunAsUser(value))}
               setRunAsGroup={(value: string) => dispatch(setRunAsGroup(value))}
               setRunAsNonRoot={(value: boolean) =>
                 dispatch(setRunAsNonRoot(value))
+              }
+              setFSGroupChangePolicy={(value: fsGroupChangePolicyType) =>
+                dispatch(setFSGroupChangePolicy(value))
               }
             />
           </Grid>

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IEditTenantSecurityContext } from "./types";
+import { fsGroupChangePolicyType, IEditTenantSecurityContext } from "./types";
 
 const initialState: IEditTenantSecurityContext = {
   securityContextEnabled: false,
@@ -22,6 +22,7 @@ const initialState: IEditTenantSecurityContext = {
   runAsGroup: "1000",
   fsGroup: "1000",
   runAsNonRoot: true,
+  fsGroupChangePolicy: "Always",
 };
 
 export const editTenantSecurityContextSlice = createSlice({
@@ -43,6 +44,12 @@ export const editTenantSecurityContextSlice = createSlice({
     setRunAsNonRoot: (state, action: PayloadAction<boolean>) => {
       state.runAsNonRoot = action.payload;
     },
+    setFSGroupChangePolicy: (
+      state,
+      action: PayloadAction<fsGroupChangePolicyType>
+    ) => {
+      state.fsGroupChangePolicy = action.payload;
+    },
   },
 });
 
@@ -52,6 +59,7 @@ export const {
   setRunAsGroup,
   setFSGroup,
   setRunAsNonRoot,
+  setFSGroupChangePolicy,
 } = editTenantSecurityContextSlice.actions;
 
 export default editTenantSecurityContextSlice.reducer;
