@@ -33,7 +33,8 @@ import (
 // DeletePVCNoContentCode is the HTTP code returned for type DeletePVCNoContent
 const DeletePVCNoContentCode int = 204
 
-/*DeletePVCNoContent A successful response.
+/*
+DeletePVCNoContent A successful response.
 
 swagger:response deletePVCNoContent
 */
@@ -54,7 +55,8 @@ func (o *DeletePVCNoContent) WriteResponse(rw http.ResponseWriter, producer runt
 	rw.WriteHeader(204)
 }
 
-/*DeletePVCDefault Generic error response.
+/*
+DeletePVCDefault Generic error response.
 
 swagger:response deletePVCDefault
 */

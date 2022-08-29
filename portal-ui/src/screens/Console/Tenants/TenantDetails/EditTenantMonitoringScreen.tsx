@@ -62,6 +62,8 @@ import {
 } from "../TenantDetails/tenantMonitoringSlice";
 import { clearValidationError, imagePattern, numericPattern } from "../utils";
 import SecurityContextSelector from "../securityContextSelector";
+import { setFSGroupChangePolicy } from "../tenantSecurityContextSlice";
+import { fsGroupChangePolicyType } from "../types";
 
 interface ITenantMonitoring {
   classes: any;
@@ -150,6 +152,10 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
   const runAsNonRoot = useSelector(
     (state: AppState) => state.editTenantMonitoring.runAsNonRoot
   );
+  const fsGroupChangePolicy = useSelector(
+    (state: AppState) => state.editTenantSecurityContext.fsGroupChangePolicy
+  );
+
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
@@ -551,11 +557,15 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
               runAsUser={runAsUser}
               fsGroup={fsGroup}
               runAsNonRoot={runAsNonRoot}
+              fsGroupChangePolicy={fsGroupChangePolicy}
               setFSGroup={(value: string) => dispatch(setFSGroup(value))}
               setRunAsUser={(value: string) => dispatch(setRunAsUser(value))}
               setRunAsGroup={(value: string) => dispatch(setRunAsGroup(value))}
               setRunAsNonRoot={(value: boolean) =>
                 dispatch(setRunAsNonRoot(value))
+              }
+              setFSGroupChangePolicy={(value: fsGroupChangePolicyType) =>
+                dispatch(setFSGroupChangePolicy(value))
               }
             />
           </Grid>

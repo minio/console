@@ -33,7 +33,8 @@ import (
 // GetPodLogsOKCode is the HTTP code returned for type GetPodLogsOK
 const GetPodLogsOKCode int = 200
 
-/*GetPodLogsOK A successful response.
+/*
+GetPodLogsOK A successful response.
 
 swagger:response getPodLogsOK
 */
@@ -72,7 +73,8 @@ func (o *GetPodLogsOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 	}
 }
 
-/*GetPodLogsDefault Generic error response.
+/*
+GetPodLogsDefault Generic error response.
 
 swagger:response getPodLogsDefault
 */

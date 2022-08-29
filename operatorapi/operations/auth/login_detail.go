@@ -46,10 +46,10 @@ func NewLoginDetail(ctx *middleware.Context, handler LoginDetailHandler) *LoginD
 	return &LoginDetail{Context: ctx, Handler: handler}
 }
 
-/* LoginDetail swagger:route GET /login Auth loginDetail
+/*
+	LoginDetail swagger:route GET /login Auth loginDetail
 
 Returns login strategy, form or sso.
-
 */
 type LoginDetail struct {
 	Context *middleware.Context

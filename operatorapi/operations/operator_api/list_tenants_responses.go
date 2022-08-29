@@ -33,7 +33,8 @@ import (
 // ListTenantsOKCode is the HTTP code returned for type ListTenantsOK
 const ListTenantsOKCode int = 200
 
-/*ListTenantsOK A successful response.
+/*
+ListTenantsOK A successful response.
 
 swagger:response listTenantsOK
 */
@@ -74,7 +75,8 @@ func (o *ListTenantsOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
-/*ListTenantsDefault Generic error response.
+/*
+ListTenantsDefault Generic error response.
 
 swagger:response listTenantsDefault
 */

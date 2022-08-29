@@ -48,10 +48,10 @@ func NewGetResourceQuota(ctx *middleware.Context, handler GetResourceQuotaHandle
 	return &GetResourceQuota{Context: ctx, Handler: handler}
 }
 
-/* GetResourceQuota swagger:route GET /namespaces/{namespace}/resourcequotas/{resource-quota-name} OperatorAPI getResourceQuota
+/*
+	GetResourceQuota swagger:route GET /namespaces/{namespace}/resourcequotas/{resource-quota-name} OperatorAPI getResourceQuota
 
 Get Resource Quota
-
 */
 type GetResourceQuota struct {
 	Context *middleware.Context

@@ -48,10 +48,10 @@ func NewDisableTenantLogging(ctx *middleware.Context, handler DisableTenantLoggi
 	return &DisableTenantLogging{Context: ctx, Handler: handler}
 }
 
-/* DisableTenantLogging swagger:route POST /namespaces/{namespace}/tenants/{tenant}/disable-logging OperatorAPI disableTenantLogging
+/*
+	DisableTenantLogging swagger:route POST /namespaces/{namespace}/tenants/{tenant}/disable-logging OperatorAPI disableTenantLogging
 
 Disable Tenant Logging
-
 */
 type DisableTenantLogging struct {
 	Context *middleware.Context

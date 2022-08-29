@@ -33,7 +33,8 @@ import (
 // UpdateTenantSecurityNoContentCode is the HTTP code returned for type UpdateTenantSecurityNoContent
 const UpdateTenantSecurityNoContentCode int = 204
 
-/*UpdateTenantSecurityNoContent A successful response.
+/*
+UpdateTenantSecurityNoContent A successful response.
 
 swagger:response updateTenantSecurityNoContent
 */
@@ -54,7 +55,8 @@ func (o *UpdateTenantSecurityNoContent) WriteResponse(rw http.ResponseWriter, pr
 	rw.WriteHeader(204)
 }
 
-/*UpdateTenantSecurityDefault Generic error response.
+/*
+UpdateTenantSecurityDefault Generic error response.
 
 swagger:response updateTenantSecurityDefault
 */

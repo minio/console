@@ -48,10 +48,10 @@ func NewUpdateTenantIdentityProvider(ctx *middleware.Context, handler UpdateTena
 	return &UpdateTenantIdentityProvider{Context: ctx, Handler: handler}
 }
 
-/* UpdateTenantIdentityProvider swagger:route POST /namespaces/{namespace}/tenants/{tenant}/identity-provider OperatorAPI updateTenantIdentityProvider
+/*
+	UpdateTenantIdentityProvider swagger:route POST /namespaces/{namespace}/tenants/{tenant}/identity-provider OperatorAPI updateTenantIdentityProvider
 
 Update Tenant Identity Provider
-
 */
 type UpdateTenantIdentityProvider struct {
 	Context *middleware.Context

@@ -48,10 +48,10 @@ func NewGetPodEvents(ctx *middleware.Context, handler GetPodEventsHandler) *GetP
 	return &GetPodEvents{Context: ctx, Handler: handler}
 }
 
-/* GetPodEvents swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events OperatorAPI getPodEvents
+/*
+	GetPodEvents swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events OperatorAPI getPodEvents
 
 Get Events for Pod
-
 */
 type GetPodEvents struct {
 	Context *middleware.Context

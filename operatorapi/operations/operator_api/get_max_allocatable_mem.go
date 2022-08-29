@@ -48,10 +48,10 @@ func NewGetMaxAllocatableMem(ctx *middleware.Context, handler GetMaxAllocatableM
 	return &GetMaxAllocatableMem{Context: ctx, Handler: handler}
 }
 
-/* GetMaxAllocatableMem swagger:route GET /cluster/max-allocatable-memory OperatorAPI getMaxAllocatableMem
+/*
+	GetMaxAllocatableMem swagger:route GET /cluster/max-allocatable-memory OperatorAPI getMaxAllocatableMem
 
 Get maximum allocatable memory for given number of nodes
-
 */
 type GetMaxAllocatableMem struct {
 	Context *middleware.Context

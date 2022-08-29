@@ -33,7 +33,8 @@ import (
 // ListNodeLabelsOKCode is the HTTP code returned for type ListNodeLabelsOK
 const ListNodeLabelsOKCode int = 200
 
-/*ListNodeLabelsOK A successful response.
+/*
+ListNodeLabelsOK A successful response.
 
 swagger:response listNodeLabelsOK
 */
@@ -77,7 +78,8 @@ func (o *ListNodeLabelsOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*ListNodeLabelsDefault Generic error response.
+/*
+ListNodeLabelsDefault Generic error response.
 
 swagger:response listNodeLabelsDefault
 */

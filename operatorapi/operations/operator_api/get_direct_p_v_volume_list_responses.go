@@ -33,7 +33,8 @@ import (
 // GetDirectPVVolumeListOKCode is the HTTP code returned for type GetDirectPVVolumeListOK
 const GetDirectPVVolumeListOKCode int = 200
 
-/*GetDirectPVVolumeListOK A successful response.
+/*
+GetDirectPVVolumeListOK A successful response.
 
 swagger:response getDirectPVVolumeListOK
 */
@@ -74,7 +75,8 @@ func (o *GetDirectPVVolumeListOK) WriteResponse(rw http.ResponseWriter, producer
 	}
 }
 
-/*GetDirectPVVolumeListDefault Generic error response.
+/*
+GetDirectPVVolumeListDefault Generic error response.
 
 swagger:response getDirectPVVolumeListDefault
 */

@@ -48,10 +48,10 @@ func NewSessionCheck(ctx *middleware.Context, handler SessionCheckHandler) *Sess
 	return &SessionCheck{Context: ctx, Handler: handler}
 }
 
-/* SessionCheck swagger:route GET /session Auth sessionCheck
+/*
+	SessionCheck swagger:route GET /session Auth sessionCheck
 
 Endpoint to check if your session is still valid
-
 */
 type SessionCheck struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // UpdateTenantCreatedCode is the HTTP code returned for type UpdateTenantCreated
 const UpdateTenantCreatedCode int = 201
 
-/*UpdateTenantCreated A successful response.
+/*
+UpdateTenantCreated A successful response.
 
 swagger:response updateTenantCreated
 */
@@ -54,7 +55,8 @@ func (o *UpdateTenantCreated) WriteResponse(rw http.ResponseWriter, producer run
 	rw.WriteHeader(201)
 }
 
-/*UpdateTenantDefault Generic error response.
+/*
+UpdateTenantDefault Generic error response.
 
 swagger:response updateTenantDefault
 */

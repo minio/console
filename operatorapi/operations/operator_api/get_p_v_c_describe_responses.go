@@ -33,7 +33,8 @@ import (
 // GetPVCDescribeOKCode is the HTTP code returned for type GetPVCDescribeOK
 const GetPVCDescribeOKCode int = 200
 
-/*GetPVCDescribeOK A successful response.
+/*
+GetPVCDescribeOK A successful response.
 
 swagger:response getPVCDescribeOK
 */
@@ -74,7 +75,8 @@ func (o *GetPVCDescribeOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-/*GetPVCDescribeDefault Generic error response.
+/*
+GetPVCDescribeDefault Generic error response.
 
 swagger:response getPVCDescribeDefault
 */

@@ -33,7 +33,8 @@ import (
 // TenantUpdatePoolsOKCode is the HTTP code returned for type TenantUpdatePoolsOK
 const TenantUpdatePoolsOKCode int = 200
 
-/*TenantUpdatePoolsOK A successful response.
+/*
+TenantUpdatePoolsOK A successful response.
 
 swagger:response tenantUpdatePoolsOK
 */
@@ -74,7 +75,8 @@ func (o *TenantUpdatePoolsOK) WriteResponse(rw http.ResponseWriter, producer run
 	}
 }
 
-/*TenantUpdatePoolsDefault Generic error response.
+/*
+TenantUpdatePoolsDefault Generic error response.
 
 swagger:response tenantUpdatePoolsDefault
 */

@@ -33,7 +33,8 @@ import (
 // ListPVCsForTenantOKCode is the HTTP code returned for type ListPVCsForTenantOK
 const ListPVCsForTenantOKCode int = 200
 
-/*ListPVCsForTenantOK A successful response.
+/*
+ListPVCsForTenantOK A successful response.
 
 swagger:response listPVCsForTenantOK
 */
@@ -74,7 +75,8 @@ func (o *ListPVCsForTenantOK) WriteResponse(rw http.ResponseWriter, producer run
 	}
 }
 
-/*ListPVCsForTenantDefault Generic error response.
+/*
+ListPVCsForTenantDefault Generic error response.
 
 swagger:response listPVCsForTenantDefault
 */
