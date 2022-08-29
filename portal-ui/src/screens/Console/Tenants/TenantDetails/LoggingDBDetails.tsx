@@ -50,14 +50,16 @@ import {
   setDBMemRequest,
   setDBRunAsUser,
   setDBFSGroup,
+  setDBFSGroupChangePolicy,
   setDBRunAsGroup,
   setDBRunAsNonRoot,
   setRefreshLoggingInfo,
-} from "../TenantDetails/tenantAuditLogSlice";
+} from "./tenantAuditLogSlice";
 
 import SecurityContextSelector from "../securityContextSelector";
 
 import { clearValidationError, imagePattern, numericPattern } from "../utils";
+import { fsGroupChangePolicyType } from "../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -115,6 +117,10 @@ const LoggingDBDetails = ({
   );
   const dbFSGroup = useSelector(
     (state: AppState) => state.editTenantLogging.dbSecurityContext.fsGroup
+  );
+  const dbFSGroupChangePolicy = useSelector(
+    (state: AppState) =>
+      state.editTenantLogging.dbSecurityContext.fsGroupChangePolicy
   );
   const dbRunAsNonRoot = useSelector(
     (state: AppState) => state.editTenantLogging.dbSecurityContext.runAsNonRoot
@@ -178,6 +184,8 @@ const LoggingDBDetails = ({
         runAsUser: dbRunAsUser != null ? dbRunAsUser : "",
         fsGroup: dbFSGroup != null ? dbFSGroup : "",
         runAsNonRoot: dbRunAsNonRoot != null ? dbRunAsNonRoot : true,
+        fsGroupChangePolicy:
+          dbFSGroupChangePolicy != null ? dbFSGroupChangePolicy : "Always",
       };
       api
         .invoke(
@@ -328,12 +336,16 @@ const LoggingDBDetails = ({
             runAsGroup={dbRunAsGroup}
             runAsUser={dbRunAsUser}
             fsGroup={dbFSGroup}
+            fsGroupChangePolicy={dbFSGroupChangePolicy}
             runAsNonRoot={dbRunAsNonRoot}
             setFSGroup={(value: string) => dispatch(setDBFSGroup(value))}
             setRunAsUser={(value: string) => dispatch(setDBRunAsUser(value))}
             setRunAsGroup={(value: string) => dispatch(setDBRunAsGroup(value))}
             setRunAsNonRoot={(value: boolean) =>
               dispatch(setDBRunAsNonRoot(value))
+            }
+            setFSGroupChangePolicy={(value: fsGroupChangePolicyType) =>
+              dispatch(setDBFSGroupChangePolicy(value))
             }
           />
         </Grid>
