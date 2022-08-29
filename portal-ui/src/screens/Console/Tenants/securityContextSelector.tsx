@@ -17,30 +17,51 @@
 import React, { Fragment } from "react";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { Grid } from "@mui/material";
+import SelectWrapper from "../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { Grid, SelectChangeEvent } from "@mui/material";
 import { useDispatch } from "react-redux";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { fsGroupChangePolicyType } from "./types";
 
 interface IEditSecurityContextProps {
   classes: any;
   runAsUser: string;
   runAsGroup: string;
   fsGroup: string;
+  fsGroupChangePolicy: fsGroupChangePolicyType;
   runAsNonRoot: boolean;
   setRunAsUser: any;
   setRunAsGroup: any;
   setFSGroup: any;
   setRunAsNonRoot: any;
+  setFSGroupChangePolicy: any;
 }
+
+const styles = (theme: Theme) =>
+  createStyles({
+    configSectionItem: {
+      marginRight: 15,
+      marginBottom: 15,
+      "& .multiContainer": {
+        border: "1px solid red",
+      },
+    },
+  });
+
 const SecurityContextSelector = ({
   classes,
   runAsGroup,
   runAsUser,
   fsGroup,
+  fsGroupChangePolicy,
   runAsNonRoot,
   setRunAsUser,
   setRunAsGroup,
   setFSGroup,
   setRunAsNonRoot,
+  setFSGroupChangePolicy,
 }: IEditSecurityContextProps) => {
   const dispatch = useDispatch();
   return (
@@ -78,6 +99,10 @@ const SecurityContextSelector = ({
                 min="0"
               />
             </div>
+          </div>
+        </Grid>
+        <Grid item xs={12}>
+          <div className={`${classes.multiContainerStackNarrow} `}>
             <div className={classes.configSectionItem}>
               <InputBoxWrapper
                 type="number"
@@ -92,9 +117,30 @@ const SecurityContextSelector = ({
                 min="0"
               />
             </div>
+
+            <div className={classes.configSectionItem}>
+              <SelectWrapper
+                label="FsGroupChangePolicy"
+                id="securityContext_fsGroupChangePolicy"
+                name="securityContext_fsGroupChangePolicy"
+                onChange={(e: SelectChangeEvent<string>) => {
+                  dispatch(setFSGroupChangePolicy(e.target.value));
+                }}
+                value={fsGroupChangePolicy}
+                options={[
+                  {
+                    label: "Always",
+                    value: "Always",
+                  },
+                  {
+                    label: "OnRootMismatch",
+                    value: "OnRootMismatch",
+                  },
+                ]}
+              />
+            </div>
           </div>
         </Grid>
-        <br />
         <Grid item xs={12}>
           <div className={classes.multiContainer}>
             <FormSwitchWrapper
@@ -113,4 +159,5 @@ const SecurityContextSelector = ({
     </Fragment>
   );
 };
-export default SecurityContextSelector;
+
+export default withStyles(styles)(SecurityContextSelector);
