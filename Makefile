@@ -43,8 +43,12 @@ install: console
 	@mkdir -p $(GOPATH)/bin && cp -f $(PWD)/console $(GOPATH)/bin/console
 	@echo "Installation successful. To learn more, try \"console --help\"."
 
-swagger-gen: clean-swagger swagger-console swagger-operator
+swagger-gen: clean-swagger swagger-console swagger-operator apply-gofmt
 	@echo "Done Generating swagger server code from yaml"
+
+apply-gofmt:
+	@echo "Applying gofmt to all generated an existing files"
+	@GO111MODULE=on gofmt -w .
 
 clean-swagger:
 	@echo "cleaning"
