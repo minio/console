@@ -28,10 +28,7 @@ verifiers: getdeps fmt lint
 
 fmt:
 	@echo "Running $@ check"
-	@GO111MODULE=on gofmt -d restapi/
-	@GO111MODULE=on gofmt -d pkg/
-	@GO111MODULE=on gofmt -d cmd/
-	@GO111MODULE=on gofmt -d cluster/
+	@(env bash $(PWD)/verify-gofmt.sh)
 
 crosscompile:
 	@(env bash $(PWD)/cross-compile.sh $(arg1))
