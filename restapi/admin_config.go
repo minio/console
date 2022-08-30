@@ -115,7 +115,6 @@ func getListConfigResponse(session *models.Principal, params cfgApi.ListConfigPa
 // this function does not accept a target argument, it ignores all non-default
 // targets.
 func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.Configuration, error) {
-
 	configBytes, err := client.getConfigKV(ctx, name)
 	if err != nil {
 		return nil, err

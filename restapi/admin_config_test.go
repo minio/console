@@ -375,7 +375,6 @@ func Test_setConfigWithARN(t *testing.T) {
 }
 
 func Test_getConfig(t *testing.T) {
-
 	client := adminClientMock{}
 	type args struct {
 		client MinioAdmin
@@ -457,7 +456,8 @@ func Test_getConfig(t *testing.T) {
 							Key:   PostgresTable,
 							Value: "bucketevents",
 						},
-					}, Name: "notify_postgres"},
+					}, Name: "notify_postgres",
+				},
 			},
 			wantErr: false,
 		},
