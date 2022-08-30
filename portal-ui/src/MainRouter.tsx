@@ -39,7 +39,7 @@ const MainRouter = () => {
             </Suspense>
           }
         />
-        <Route path="/logout" component={Logout} />
+        <Route path="/logout" element={<Logout />} />
         <Route
           path="/login"
           element={
