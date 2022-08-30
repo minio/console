@@ -17,13 +17,20 @@
 import React, { useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { Box, InputAdornment, LinearProgress } from "@mui/material";
+import {
+  Box,
+  InputAdornment,
+  LinearProgress,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { loginStrategyType } from "./types";
+import LogoutIcon from "../../icons/LogoutIcon";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
 import {
@@ -71,6 +78,31 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "100%",
       boxShadow: "none",
       padding: "16px 30px",
+    },
+    loginSsoText: {
+      fontWeight: "700",
+      marginBottom: "15px",
+    },
+    ssoSelect: {
+      width: "100%",
+      fontSize: "13px",
+      fontWeight: "700",
+      color: "grey",
+    },
+    ssoMenuItem: {
+      fontSize: "15px",
+      fontWeight: "700",
+      color: theme.palette.primary.light,
+      "&.MuiMenuItem-divider:last-of-type": {
+        borderBottom: "none",
+      },
+      "&.Mui-focusVisible": {
+        backgroundColor: theme.palette.grey["100"],
+      },
+    },
+    ssoLoginIcon: {
+      height: "13px",
+      marginRight: "25px",
     },
     ssoSubmit: {
       marginTop: "15px",
@@ -310,20 +342,32 @@ const Login = () => {
       if (loginStrategy.redirect.length >= 1) {
         loginComponent = (
           <React.Fragment>
-            {loginStrategy.redirect.map((r, idx) => (
-              <Button
-                key={`login-button-${idx}`}
-                component={"a"}
-                href={r}
-                type="submit"
-                variant="contained"
-                color="primary"
-                id="sso-login"
-                className={clsx(classes.submit, classes.ssoSubmit)}
-              >
-                {loginStrategy.displayNames[idx]}
-              </Button>
-            ))}
+            <div className={classes.loginSsoText}>Login with SSO:</div>
+            <Select
+              id="ssoLogin"
+              name="ssoLogin"
+              data-test-id="sso-login"
+              onChange={(e) => {
+                if (e.target.value) {
+                  window.location.href = e.target.value as string;
+                }
+              }}
+              displayEmpty
+              className={classes.ssoSelect}
+              renderValue={() => "Select Provider"}
+            >
+              {loginStrategy.redirect.map((r, idx) => (
+                <MenuItem
+                  value={r}
+                  key={`sso-login-option-${idx}`}
+                  className={classes.ssoMenuItem}
+                  divider={true}
+                >
+                  <LogoutIcon className={classes.ssoLoginIcon} />
+                  {loginStrategy.displayNames[idx]}
+                </MenuItem>
+              ))}
+            </Select>
           </React.Fragment>
         );
       } else {
