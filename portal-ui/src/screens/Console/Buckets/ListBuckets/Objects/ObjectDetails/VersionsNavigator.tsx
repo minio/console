@@ -212,13 +212,22 @@ const VersionsNavigator = ({
         )
         .then((res: IFileInfo[]) => {
           const result = get(res, "objects", []);
+
+          const decodedInternalPaths = decodeURLString(internalPaths);
+
+          // Filter the results prefixes as API can return more files than expected.
+          const filteredPrefixes = result.filter(
+            (item: IFileInfo) => item.name === decodedInternalPaths
+          );
+
           if (distributedSetup) {
             setActualInfo(
-              result.find((el: IFileInfo) => el.is_latest) || emptyFile
+              filteredPrefixes.find((el: IFileInfo) => el.is_latest) ||
+                emptyFile
             );
-            setVersions(result);
+            setVersions(filteredPrefixes);
           } else {
-            setActualInfo(result[0]);
+            setActualInfo(filteredPrefixes[0]);
             setVersions([]);
           }
 
