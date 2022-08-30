@@ -20,7 +20,7 @@ import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/Inpu
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../../store";
 
-const AddBucketName = () => {
+const AddBucketName = ({ hasErrors }: { hasErrors: boolean }) => {
   const dispatch = useAppDispatch();
 
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
@@ -28,12 +28,14 @@ const AddBucketName = () => {
     <InputBoxWrapper
       id="bucket-name"
       name="bucket-name"
+      error={hasErrors ? "Invalid bucket Name" : ""}
       autoFocus={true}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(setName(event.target.value));
       }}
       label="Bucket Name"
       value={bucketName}
+      required
     />
   );
 };
