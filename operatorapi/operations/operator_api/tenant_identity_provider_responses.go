@@ -33,7 +33,8 @@ import (
 // TenantIdentityProviderOKCode is the HTTP code returned for type TenantIdentityProviderOK
 const TenantIdentityProviderOKCode int = 200
 
-/*TenantIdentityProviderOK A successful response.
+/*
+TenantIdentityProviderOK A successful response.
 
 swagger:response tenantIdentityProviderOK
 */
@@ -74,7 +75,8 @@ func (o *TenantIdentityProviderOK) WriteResponse(rw http.ResponseWriter, produce
 	}
 }
 
-/*TenantIdentityProviderDefault Generic error response.
+/*
+TenantIdentityProviderDefault Generic error response.
 
 swagger:response tenantIdentityProviderDefault
 */

@@ -48,10 +48,10 @@ func NewOperatorSubnetLogin(ctx *middleware.Context, handler OperatorSubnetLogin
 	return &OperatorSubnetLogin{Context: ctx, Handler: handler}
 }
 
-/* OperatorSubnetLogin swagger:route POST /subnet/login OperatorAPI operatorSubnetLogin
+/*
+	OperatorSubnetLogin swagger:route POST /subnet/login OperatorAPI operatorSubnetLogin
 
 Login to subnet
-
 */
 type OperatorSubnetLogin struct {
 	Context *middleware.Context

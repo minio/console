@@ -48,10 +48,10 @@ func NewGetDirectPVDriveList(ctx *middleware.Context, handler GetDirectPVDriveLi
 	return &GetDirectPVDriveList{Context: ctx, Handler: handler}
 }
 
-/* GetDirectPVDriveList swagger:route GET /directpv/drives OperatorAPI getDirectPVDriveList
+/*
+	GetDirectPVDriveList swagger:route GET /directpv/drives OperatorAPI getDirectPVDriveList
 
 Get directpv drives list
-
 */
 type GetDirectPVDriveList struct {
 	Context *middleware.Context

@@ -48,10 +48,10 @@ func NewSubscriptionInfo(ctx *middleware.Context, handler SubscriptionInfoHandle
 	return &SubscriptionInfo{Context: ctx, Handler: handler}
 }
 
-/* SubscriptionInfo swagger:route GET /subscription/info OperatorAPI subscriptionInfo
+/*
+	SubscriptionInfo swagger:route GET /subscription/info OperatorAPI subscriptionInfo
 
 Subscription info
-
 */
 type SubscriptionInfo struct {
 	Context *middleware.Context

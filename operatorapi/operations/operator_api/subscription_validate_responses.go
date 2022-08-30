@@ -33,7 +33,8 @@ import (
 // SubscriptionValidateOKCode is the HTTP code returned for type SubscriptionValidateOK
 const SubscriptionValidateOKCode int = 200
 
-/*SubscriptionValidateOK A successful response.
+/*
+SubscriptionValidateOK A successful response.
 
 swagger:response subscriptionValidateOK
 */
@@ -74,7 +75,8 @@ func (o *SubscriptionValidateOK) WriteResponse(rw http.ResponseWriter, producer 
 	}
 }
 
-/*SubscriptionValidateDefault Generic error response.
+/*
+SubscriptionValidateDefault Generic error response.
 
 swagger:response subscriptionValidateDefault
 */

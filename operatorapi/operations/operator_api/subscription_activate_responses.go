@@ -33,7 +33,8 @@ import (
 // SubscriptionActivateNoContentCode is the HTTP code returned for type SubscriptionActivateNoContent
 const SubscriptionActivateNoContentCode int = 204
 
-/*SubscriptionActivateNoContent A successful response.
+/*
+SubscriptionActivateNoContent A successful response.
 
 swagger:response subscriptionActivateNoContent
 */
@@ -54,7 +55,8 @@ func (o *SubscriptionActivateNoContent) WriteResponse(rw http.ResponseWriter, pr
 	rw.WriteHeader(204)
 }
 
-/*SubscriptionActivateDefault Generic error response.
+/*
+SubscriptionActivateDefault Generic error response.
 
 swagger:response subscriptionActivateDefault
 */

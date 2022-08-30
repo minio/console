@@ -48,10 +48,10 @@ func NewListTenants(ctx *middleware.Context, handler ListTenantsHandler) *ListTe
 	return &ListTenants{Context: ctx, Handler: handler}
 }
 
-/* ListTenants swagger:route GET /namespaces/{namespace}/tenants OperatorAPI listTenants
+/*
+	ListTenants swagger:route GET /namespaces/{namespace}/tenants OperatorAPI listTenants
 
 List Tenants by Namespace
-
 */
 type ListTenants struct {
 	Context *middleware.Context

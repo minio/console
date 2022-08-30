@@ -48,10 +48,10 @@ func NewSetTenantAdministrators(ctx *middleware.Context, handler SetTenantAdmini
 	return &SetTenantAdministrators{Context: ctx, Handler: handler}
 }
 
-/* SetTenantAdministrators swagger:route POST /namespaces/{namespace}/tenants/{tenant}/set-administrators OperatorAPI setTenantAdministrators
+/*
+	SetTenantAdministrators swagger:route POST /namespaces/{namespace}/tenants/{tenant}/set-administrators OperatorAPI setTenantAdministrators
 
 Set the consoleAdmin policy to the specified users and groups
-
 */
 type SetTenantAdministrators struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // SubscriptionRefreshOKCode is the HTTP code returned for type SubscriptionRefreshOK
 const SubscriptionRefreshOKCode int = 200
 
-/*SubscriptionRefreshOK A successful response.
+/*
+SubscriptionRefreshOK A successful response.
 
 swagger:response subscriptionRefreshOK
 */
@@ -74,7 +75,8 @@ func (o *SubscriptionRefreshOK) WriteResponse(rw http.ResponseWriter, producer r
 	}
 }
 
-/*SubscriptionRefreshDefault Generic error response.
+/*
+SubscriptionRefreshDefault Generic error response.
 
 swagger:response subscriptionRefreshDefault
 */

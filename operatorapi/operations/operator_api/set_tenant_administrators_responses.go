@@ -33,7 +33,8 @@ import (
 // SetTenantAdministratorsNoContentCode is the HTTP code returned for type SetTenantAdministratorsNoContent
 const SetTenantAdministratorsNoContentCode int = 204
 
-/*SetTenantAdministratorsNoContent A successful response.
+/*
+SetTenantAdministratorsNoContent A successful response.
 
 swagger:response setTenantAdministratorsNoContent
 */
@@ -54,7 +55,8 @@ func (o *SetTenantAdministratorsNoContent) WriteResponse(rw http.ResponseWriter,
 	rw.WriteHeader(204)
 }
 
-/*SetTenantAdministratorsDefault Generic error response.
+/*
+SetTenantAdministratorsDefault Generic error response.
 
 swagger:response setTenantAdministratorsDefault
 */

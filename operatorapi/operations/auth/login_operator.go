@@ -46,10 +46,10 @@ func NewLoginOperator(ctx *middleware.Context, handler LoginOperatorHandler) *Lo
 	return &LoginOperator{Context: ctx, Handler: handler}
 }
 
-/* LoginOperator swagger:route POST /login/operator Auth loginOperator
+/*
+	LoginOperator swagger:route POST /login/operator Auth loginOperator
 
 Login to Operator Console.
-
 */
 type LoginOperator struct {
 	Context *middleware.Context

@@ -33,7 +33,8 @@ import (
 // DeletePodNoContentCode is the HTTP code returned for type DeletePodNoContent
 const DeletePodNoContentCode int = 204
 
-/*DeletePodNoContent A successful response.
+/*
+DeletePodNoContent A successful response.
 
 swagger:response deletePodNoContent
 */
@@ -54,7 +55,8 @@ func (o *DeletePodNoContent) WriteResponse(rw http.ResponseWriter, producer runt
 	rw.WriteHeader(204)
 }
 
-/*DeletePodDefault Generic error response.
+/*
+DeletePodDefault Generic error response.
 
 swagger:response deletePodDefault
 */

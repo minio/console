@@ -48,10 +48,10 @@ func NewCreateTenant(ctx *middleware.Context, handler CreateTenantHandler) *Crea
 	return &CreateTenant{Context: ctx, Handler: handler}
 }
 
-/* CreateTenant swagger:route POST /tenants OperatorAPI createTenant
+/*
+	CreateTenant swagger:route POST /tenants OperatorAPI createTenant
 
 Create Tenant
-
 */
 type CreateTenant struct {
 	Context *middleware.Context

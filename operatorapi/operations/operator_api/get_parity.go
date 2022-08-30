@@ -48,10 +48,10 @@ func NewGetParity(ctx *middleware.Context, handler GetParityHandler) *GetParity 
 	return &GetParity{Context: ctx, Handler: handler}
 }
 
-/* GetParity swagger:route GET /get-parity/{nodes}/{disksPerNode} OperatorAPI getParity
+/*
+	GetParity swagger:route GET /get-parity/{nodes}/{disksPerNode} OperatorAPI getParity
 
 Gets parity by sending number of nodes & number of disks
-
 */
 type GetParity struct {
 	Context *middleware.Context

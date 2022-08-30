@@ -48,10 +48,10 @@ func NewTenantUpdateEncryption(ctx *middleware.Context, handler TenantUpdateEncr
 	return &TenantUpdateEncryption{Context: ctx, Handler: handler}
 }
 
-/* TenantUpdateEncryption swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/encryption OperatorAPI tenantUpdateEncryption
+/*
+	TenantUpdateEncryption swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/encryption OperatorAPI tenantUpdateEncryption
 
 Tenant Update Encryption
-
 */
 type TenantUpdateEncryption struct {
 	Context *middleware.Context

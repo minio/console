@@ -33,7 +33,8 @@ import (
 // ListTenantCertificateSigningRequestOKCode is the HTTP code returned for type ListTenantCertificateSigningRequestOK
 const ListTenantCertificateSigningRequestOKCode int = 200
 
-/*ListTenantCertificateSigningRequestOK A successful response.
+/*
+ListTenantCertificateSigningRequestOK A successful response.
 
 swagger:response listTenantCertificateSigningRequestOK
 */
@@ -74,7 +75,8 @@ func (o *ListTenantCertificateSigningRequestOK) WriteResponse(rw http.ResponseWr
 	}
 }
 
-/*ListTenantCertificateSigningRequestDefault Generic error response.
+/*
+ListTenantCertificateSigningRequestDefault Generic error response.
 
 swagger:response listTenantCertificateSigningRequestDefault
 */

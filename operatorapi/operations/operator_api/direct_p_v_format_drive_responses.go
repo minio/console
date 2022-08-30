@@ -33,7 +33,8 @@ import (
 // DirectPVFormatDriveOKCode is the HTTP code returned for type DirectPVFormatDriveOK
 const DirectPVFormatDriveOKCode int = 200
 
-/*DirectPVFormatDriveOK A successful response.
+/*
+DirectPVFormatDriveOK A successful response.
 
 swagger:response directPVFormatDriveOK
 */
@@ -74,7 +75,8 @@ func (o *DirectPVFormatDriveOK) WriteResponse(rw http.ResponseWriter, producer r
 	}
 }
 
-/*DirectPVFormatDriveDefault Generic error response.
+/*
+DirectPVFormatDriveDefault Generic error response.
 
 swagger:response directPVFormatDriveDefault
 */

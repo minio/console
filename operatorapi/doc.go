@@ -18,18 +18,18 @@
 
 // Package operatorapi MinIO Console Server
 //
-//  Schemes:
-//    http
-//    ws
-//  Host: localhost
-//  BasePath: /api/v1
-//  Version: 0.1.0
+//	Schemes:
+//	  http
+//	  ws
+//	Host: localhost
+//	BasePath: /api/v1
+//	Version: 0.1.0
 //
-//  Consumes:
-//    - application/json
+//	Consumes:
+//	  - application/json
 //
-//  Produces:
-//    - application/json
+//	Produces:
+//	  - application/json
 //
 // swagger:meta
 package operatorapi
