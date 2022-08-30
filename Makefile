@@ -28,10 +28,7 @@ verifiers: getdeps fmt lint
 
 fmt:
 	@echo "Running $@ check"
-	@GO111MODULE=on gofmt -d restapi/
-	@GO111MODULE=on gofmt -d pkg/
-	@GO111MODULE=on gofmt -d cmd/
-	@GO111MODULE=on gofmt -d cluster/
+	@(env bash $(PWD)/verify-gofmt.sh)
 
 crosscompile:
 	@(env bash $(PWD)/cross-compile.sh $(arg1))
@@ -46,8 +43,12 @@ install: console
 	@mkdir -p $(GOPATH)/bin && cp -f $(PWD)/console $(GOPATH)/bin/console
 	@echo "Installation successful. To learn more, try \"console --help\"."
 
-swagger-gen: clean-swagger swagger-console swagger-operator
+swagger-gen: clean-swagger swagger-console swagger-operator apply-gofmt
 	@echo "Done Generating swagger server code from yaml"
+
+apply-gofmt:
+	@echo "Applying gofmt to all generated an existing files"
+	@GO111MODULE=on gofmt -w .
 
 clean-swagger:
 	@echo "cleaning"
