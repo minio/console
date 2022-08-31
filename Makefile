@@ -15,6 +15,10 @@ console:
 	@echo "Building Console binary to './console'"
 	@(GO111MODULE=on CGO_ENABLED=0 go build -trimpath --tags=kqueue,operator --ldflags "-s -w" -o console ./cmd/console)
 
+console-sso-testing:
+	@echo "Building Console binary to test SSO './console'"
+	@(GO111MODULE=on CGO_ENABLED=0 go build -trimpath --tags=kqueue,operator -ldflags="-s -w -X 'main.ssoTesting=readFromVars'" -o console ./cmd/console)
+
 k8sdev:
 	@docker build -t $(TAG) --build-arg build_version=$(BUILD_VERSION) --build-arg build_time='$(BUILD_TIME)' --build-arg NODE_VERSION='$(NODE_VERSION)' .
 	@kind load docker-image $(TAG)
@@ -40,6 +44,11 @@ lint:
 
 install: console
 	@echo "Installing console binary to '$(GOPATH)/bin/console'"
+	@mkdir -p $(GOPATH)/bin && cp -f $(PWD)/console $(GOPATH)/bin/console
+	@echo "Installation successful. To learn more, try \"console --help\"."
+
+install-sso: console-sso-testing
+	@echo "Installing console binary to '$(GOPATH)/bin/console' for SSO testing"
 	@mkdir -p $(GOPATH)/bin && cp -f $(PWD)/console $(GOPATH)/bin/console
 	@echo "Installation successful. To learn more, try \"console --help\"."
 

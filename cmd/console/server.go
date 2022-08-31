@@ -19,12 +19,14 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"syscall"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/minio/cli"
+	consoleoauth2 "github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/console/pkg/certs"
 	"github.com/minio/console/restapi"
 	"github.com/minio/console/restapi/operations"
@@ -92,7 +94,44 @@ var serverCmd = cli.Command{
 	},
 }
 
+var ssoTesting = ""
+
 func buildServer() (*restapi.Server, error) {
+	pcfg := map[string]consoleoauth2.ProviderConfig{
+		"_": {
+			URL:              "",
+			ClientID:         "",
+			ClientSecret:     "",
+			RedirectCallback: "",
+		},
+	}
+	if ssoTesting == "readFromVars" {
+		URL := os.Getenv("CONSOLE_IDP_URL")
+		ClientID := os.Getenv("CONSOLE_IDP_CLIENT_ID")
+		ClientSecret := os.Getenv("CONSOLE_IDP_SECRET")
+		RedirectCallback := os.Getenv("CONSOLE_IDP_CALLBACK")
+		fmt.Println(" ")
+		fmt.Println("=========================================================")
+		fmt.Println("We are going to be testing with Environment Variables SSO")
+		fmt.Println("CONSOLE_IDP_URL: ", URL)
+		fmt.Println("CONSOLE_IDP_CLIENT_ID: ", ClientID)
+		fmt.Println("CONSOLE_IDP_SECRET: ", ClientSecret)
+		fmt.Println("CONSOLE_IDP_CALLBACK: ", RedirectCallback)
+		fmt.Println("=========================================================")
+		fmt.Println(" ")
+
+		// Configure Console Server with vars to get the idp config from the container
+		pcfg = map[string]consoleoauth2.ProviderConfig{
+			"_": {
+				URL:              URL,
+				ClientID:         ClientID,
+				ClientSecret:     ClientSecret,
+				RedirectCallback: RedirectCallback,
+			},
+		}
+
+	}
+
 	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
 	if err != nil {
 		return nil, err
@@ -100,6 +139,14 @@ func buildServer() (*restapi.Server, error) {
 
 	api := operations.NewConsoleAPI(swaggerSpec)
 	api.Logger = restapi.LogInfo
+
+	// Only set via environmental variables when testing console in dev env.
+	if ssoTesting == "readFromVars" {
+		restapi.GlobalMinIOConfig = restapi.MinIOConfig{
+			OpenIDProviders: pcfg,
+		}
+	}
+
 	server := restapi.NewServer(api)
 
 	parser := flags.NewParser(server, flags.Default)
