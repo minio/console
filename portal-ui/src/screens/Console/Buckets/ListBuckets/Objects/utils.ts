@@ -31,7 +31,9 @@ export const download = (
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
-  let path = `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectPath}${
+  let basename = document.baseURI.replace(window.location.origin, "");
+
+  let path = `${window.location.origin}${basename}api/v1/buckets/${bucketName}/objects/download?prefix=${objectPath}${
     overrideFileName !== null && overrideFileName.trim() !== ""
       ? `&override_file_name=${encodeURLString(overrideFileName || "")}`
       : ""
