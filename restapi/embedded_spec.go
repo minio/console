@@ -2543,7 +2543,10 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/configuration"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/configuration"
+              }
             }
           },
           "default": {
@@ -9683,7 +9686,10 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/configuration"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/configuration"
+              }
             }
           },
           "default": {

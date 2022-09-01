@@ -384,7 +384,7 @@ func Test_getConfig(t *testing.T) {
 		name    string
 		args    args
 		mock    func()
-		want    []*models.ConfigurationKV
+		want    []*models.Configuration
 		wantErr bool
 	}{
 		{
@@ -445,14 +445,18 @@ func Test_getConfig(t *testing.T) {
 					return mockConfigList, nil
 				}
 			},
-			want: []*models.ConfigurationKV{
+			want: []*models.Configuration{
 				{
-					Key:   PostgresConnectionString,
-					Value: "host=localhost dbname=minio_events user=postgres password=password port=5432 sslmode=disable",
-				},
-				{
-					Key:   PostgresTable,
-					Value: "bucketevents",
+					KeyValues: []*models.ConfigurationKV{
+						{
+							Key:   PostgresConnectionString,
+							Value: "host=localhost dbname=minio_events user=postgres password=password port=5432 sslmode=disable",
+						},
+						{
+							Key:   PostgresTable,
+							Value: "bucketevents",
+						},
+					}, Name: "notify_postgres",
 				},
 			},
 			wantErr: false,
@@ -516,7 +520,7 @@ func Test_getConfig(t *testing.T) {
 				}
 			},
 			want:    nil,
-			wantErr: false,
+			wantErr: true,
 		},
 		{
 			name: "random bytes coming out of getConfigKv",

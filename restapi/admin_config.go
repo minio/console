@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -113,34 +114,39 @@ func getListConfigResponse(session *models.Principal, params cfgApi.ListConfigPa
 // `madmin.Default`. Some configuration sub-systems are multi-target and since
 // this function does not accept a target argument, it ignores all non-default
 // targets.
-func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.ConfigurationKV, error) {
+func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.Configuration, error) {
 	configBytes, err := client.getConfigKV(ctx, name)
 	if err != nil {
 		return nil, err
 	}
-
 	subSysConfigs, err := madmin.ParseServerConfigOutput(string(configBytes))
 	if err != nil {
 		return nil, err
 	}
-
+	var configSubSysList []*models.Configuration
 	for _, scfg := range subSysConfigs {
-		if scfg.Target == "" {
-			var confkv []*models.ConfigurationKV
-			for _, kv := range scfg.KV {
-				// FIXME: Ignoring env-overrides for now as support for this
-				// needs to be added for presentation.
-				confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value})
-			}
-			return confkv, nil
+		var confkv []*models.ConfigurationKV
+		for _, kv := range scfg.KV {
+			// FIXME: Ignoring env-overrides for now as support for this
+			// needs to be added for presentation.
+			confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value})
 		}
+		if len(confkv) == 0 {
+			return nil, errors.New("Invalid SubSystem - check config format")
+		}
+		var fullConfigName string
+		if scfg.Target == "" {
+			fullConfigName = scfg.SubSystem
+		} else {
+			fullConfigName = scfg.SubSystem + ":" + scfg.Target
+		}
+		configSubSysList = append(configSubSysList, &models.Configuration{KeyValues: confkv, Name: fullConfigName})
 	}
-
-	return nil, fmt.Errorf("unable to find configuration for: %s (default target)", name)
+	return configSubSysList, nil
 }
 
 // getConfigResponse performs getConfig() and serializes it to the handler's output
-func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams) (*models.Configuration, *models.Error) {
+func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams) ([]*models.Configuration, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
@@ -151,7 +157,7 @@ func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	configkv, err := getConfig(ctx, adminClient, params.Name)
+	configurations, err := getConfig(ctx, adminClient, params.Name)
 	if err != nil {
 		errorVal := ErrorWithContext(ctx, err)
 		minioError := madmin.ToErrorResponse(err)
@@ -160,11 +166,7 @@ func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams
 		}
 		return nil, errorVal
 	}
-	configurationObj := &models.Configuration{
-		Name:      params.Name,
-		KeyValues: configkv,
-	}
-	return configurationObj, nil
+	return configurations, nil
 }
 
 // setConfig sets a configuration with the defined key values
