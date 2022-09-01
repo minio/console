@@ -61,6 +61,7 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../common/SecureComponent";
 import { useAppDispatch } from "../../../store";
+import { policyDetailsSort } from "../../../utils/sortFunctions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -134,19 +135,24 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
         setAddLoading(false);
         const memberOf = res.memberOf || [];
         setSelectedGroups(memberOf);
-        let currentGroups: IGroupItem[] = [];
-        for (let group of memberOf) {
-          currentGroups.push({
+
+        const currentGroups: IGroupItem[] = memberOf.map((group: string) => {
+          return {
             group: group,
-          });
-        }
+          };
+        });
+
         setCurrentGroups(currentGroups);
-        let currentPolicies: IPolicyItem[] = [];
-        for (let policy of res.policy) {
-          currentPolicies.push({
-            policy: policy,
-          });
-        }
+        const currentPolicies: IPolicyItem[] = res.policy.map(
+          (policy: string) => {
+            return {
+              policy: policy,
+            };
+          }
+        );
+
+        currentPolicies.sort(policyDetailsSort);
+
         setCurrentPolicies(currentPolicies);
         setEnabled(res.status === "enabled");
         setHasPolicy(res.hasPolicy);

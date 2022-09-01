@@ -44,6 +44,7 @@ import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import { setSelectedPolicies } from "../Users/AddUsersSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -350,6 +351,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           closeModalAndRefresh={() => {
             setPolicyOpen(false);
             fetchGroupInfo();
+            dispatch(setSelectedPolicies([]));
           }}
         />
       ) : null}

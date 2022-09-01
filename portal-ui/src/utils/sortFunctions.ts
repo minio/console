@@ -22,6 +22,10 @@ interface policyInterface {
   name: string;
 }
 
+interface policyDetailsInterface {
+  policy: string;
+}
+
 export const usersSort = (a: userInterface, b: userInterface) => {
   if (a.accessKey > b.accessKey) {
     return 1;
@@ -49,6 +53,20 @@ export const stringSort = (a: string, b: string) => {
     return 1;
   }
   if (a < b) {
+    return -1;
+  }
+  // a must be equal to b
+  return 0;
+};
+
+export const policyDetailsSort = (
+  a: policyDetailsInterface,
+  b: policyDetailsInterface
+) => {
+  if (a.policy > b.policy) {
+    return 1;
+  }
+  if (a.policy < b.policy) {
     return -1;
   }
   // a must be equal to b
