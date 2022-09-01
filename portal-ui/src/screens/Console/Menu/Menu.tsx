@@ -16,7 +16,6 @@
 
 import React from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { Drawer } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
@@ -85,8 +84,6 @@ interface IMenuProps {
 
 const Menu = ({ classes }: IMenuProps) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
   const features = useSelector(selFeatures);
 
   const sidebarOpen = useSelector(
