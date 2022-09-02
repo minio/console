@@ -339,7 +339,7 @@ const Login = () => {
     }
     case loginStrategyType.redirect:
     case loginStrategyType.redirectServiceAccount: {
-      if (loginStrategy.redirect.length >= 1) {
+      if (loginStrategy.redirect.length > 1) {
         loginComponent = (
           <React.Fragment>
             <div className={classes.loginSsoText}>Login with SSO:</div>
@@ -369,6 +369,21 @@ const Login = () => {
               ))}
             </Select>
           </React.Fragment>
+        );
+      } else if (loginStrategy.redirect.length === 1) {
+        loginComponent = (
+          <Button
+            key={`login-button`}
+            component={"a"}
+            href={loginStrategy.redirect[0]}
+            type="submit"
+            variant="contained"
+            color="primary"
+            id="sso-login"
+            className={clsx(classes.submit, classes.ssoSubmit)}
+          >
+            {loginStrategy.displayNames[0]}
+          </Button>
         );
       } else {
         loginComponent = (
