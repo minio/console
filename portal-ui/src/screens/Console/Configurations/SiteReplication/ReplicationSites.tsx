@@ -110,11 +110,13 @@ const ReplicationSites = ({
           flex: 1,
           padding: "0",
           marginTop: "25px",
-          height: "calc( 100vh - 450px )",
+          height: "calc( 100vh - 640px )",
+          minHeight: "250px",
           border: "1px solid #eaeaea",
           marginBottom: "25px",
+          overflowY: "auto",
         }}
-        component="nav"
+        component="div"
         aria-labelledby="nested-list-subheader"
       >
         <Box
