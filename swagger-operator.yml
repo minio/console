@@ -1589,7 +1589,13 @@ definitions:
         type: string
         enum: [ form, redirect, service-account, redirect-service-account ]
       redirect:
-        type: string
+        type: array
+        items:
+          type: string
+      displayNames:
+        type: array
+        items:
+          type: string
       isDirectPV:
         type: boolean
   loginRequest:
@@ -2600,7 +2606,6 @@ definitions:
         type: object
       requests:
         additionalProperties:
-          additionalProperties:
           type: integer
           format: int64
         description: "Requests describes the minimum amount of compute

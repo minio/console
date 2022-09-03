@@ -5423,6 +5423,12 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "displayNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -5433,7 +5439,10 @@ func init() {
           ]
         },
         "redirect": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -12692,6 +12701,12 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "displayNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -12702,7 +12717,10 @@ func init() {
           ]
         },
         "redirect": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

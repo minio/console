@@ -130,19 +130,20 @@ func TestMain(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var jsonMap map[string]interface{}
+	var jsonMap map[string][]interface{}
 	json.Unmarshal(body, &jsonMap)
-	fmt.Println(jsonMap["redirect"])
-	redirect := jsonMap["redirect"]
+	fmt.Println(jsonMap["redirect"][0])
+	redirect := jsonMap["redirect"][0]
 	redirectAsString := fmt.Sprint(redirect)
 	fmt.Println(redirectAsString)
 
 	// execute script to get the code and state
 	cmd, err := exec.Command("python3", "dex-requests.py", redirectAsString).Output()
 	if err != nil {
-		fmt.Printf("error %s", err)
+		fmt.Printf("error %s\n", err)
 	}
 	urlOutput := string(cmd)
+	fmt.Println("url output:", urlOutput)
 	requestLoginBody := bytes.NewReader([]byte("login=dillon%40example.io&password=dillon"))
 
 	// parse url remove carriage return
@@ -163,7 +164,9 @@ func TestMain(t *testing.T) {
 		urlOutput,
 		requestLoginBody,
 	)
-	fmt.Println(newRequestError)
+	if newRequestError != nil {
+		fmt.Println(newRequestError)
+	}
 	httpRequestLogin.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	responseLogin, errorLogin := client.Do(httpRequestLogin)
 	if errorLogin != nil {
