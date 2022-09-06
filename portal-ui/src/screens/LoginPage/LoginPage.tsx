@@ -17,13 +17,20 @@
 import React, { useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { Box, InputAdornment, LinearProgress } from "@mui/material";
+import {
+  Box,
+  InputAdornment,
+  LinearProgress,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { loginStrategyType } from "./types";
+import LogoutIcon from "../../icons/LogoutIcon";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
 import {
@@ -71,6 +78,37 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "100%",
       boxShadow: "none",
       padding: "16px 30px",
+    },
+    loginSsoText: {
+      fontWeight: "700",
+      marginBottom: "15px",
+    },
+    ssoSelect: {
+      width: "100%",
+      fontSize: "13px",
+      fontWeight: "700",
+      color: "grey",
+    },
+    ssoMenuItem: {
+      fontSize: "15px",
+      fontWeight: "700",
+      color: theme.palette.primary.light,
+      "&.MuiMenuItem-divider:last-of-type": {
+        borderBottom: "none",
+      },
+      "&.Mui-focusVisible": {
+        backgroundColor: theme.palette.grey["100"],
+      },
+    },
+    ssoLoginIcon: {
+      height: "13px",
+      marginRight: "25px",
+    },
+    ssoSubmit: {
+      marginTop: "15px",
+      "&:first-of-type": {
+        marginTop: 0,
+      },
     },
     separator: {
       marginLeft: 8,
@@ -189,6 +227,9 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
+    loginStrategyMessage: {
+      textAlign: "center",
+    },
     loadingLoginStrategy: {
       textAlign: "center",
       width: 40,
@@ -298,21 +339,59 @@ const Login = () => {
     }
     case loginStrategyType.redirect:
     case loginStrategyType.redirectServiceAccount: {
-      loginComponent = (
-        <React.Fragment>
+      if (loginStrategy.redirect.length > 1) {
+        loginComponent = (
+          <React.Fragment>
+            <div className={classes.loginSsoText}>Login with SSO:</div>
+            <Select
+              id="ssoLogin"
+              name="ssoLogin"
+              data-test-id="sso-login"
+              onChange={(e) => {
+                if (e.target.value) {
+                  window.location.href = e.target.value as string;
+                }
+              }}
+              displayEmpty
+              className={classes.ssoSelect}
+              renderValue={() => "Select Provider"}
+            >
+              {loginStrategy.redirect.map((r, idx) => (
+                <MenuItem
+                  value={r}
+                  key={`sso-login-option-${idx}`}
+                  className={classes.ssoMenuItem}
+                  divider={true}
+                >
+                  <LogoutIcon className={classes.ssoLoginIcon} />
+                  {loginStrategy.displayNames[idx]}
+                </MenuItem>
+              ))}
+            </Select>
+          </React.Fragment>
+        );
+      } else if (loginStrategy.redirect.length === 1) {
+        loginComponent = (
           <Button
+            key={`login-button`}
             component={"a"}
-            href={loginStrategy.redirect}
+            href={loginStrategy.redirect[0]}
             type="submit"
             variant="contained"
             color="primary"
             id="sso-login"
-            className={classes.submit}
+            className={clsx(classes.submit, classes.ssoSubmit)}
           >
-            Login with SSO
+            {loginStrategy.displayNames[0]}
           </Button>
-        </React.Fragment>
-      );
+        );
+      } else {
+        loginComponent = (
+          <div className={classes.loginStrategyMessage}>
+            Cannot retrieve redirect from login strategy
+          </div>
+        );
+      }
       break;
     }
     case loginStrategyType.serviceAccount: {

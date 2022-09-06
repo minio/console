@@ -123,8 +123,8 @@ const Encryption = ({ classes }: IEncryptionProps) => {
   const enableTLS = useSelector(
     (state: AppState) => state.createTenant.fields.security.enableTLS
   );
-  const minioCertificates = useSelector(
-    (state: AppState) => state.createTenant.certificates.minioCertificates
+  const minioServerCertificates = useSelector(
+    (state: AppState) => state.createTenant.certificates.minioServerCertificates
   );
   const serverCertificate = useSelector(
     (state: AppState) => state.createTenant.certificates.serverCertificate
@@ -146,8 +146,8 @@ const Encryption = ({ classes }: IEncryptionProps) => {
   if (
     enableTLS &&
     (enableAutoCert ||
-      (minioCertificates &&
-        minioCertificates.filter(
+      (minioServerCertificates &&
+        minioServerCertificates.filter(
           (item) => item.encoded_key && item.encoded_cert
         ).length > 0))
   ) {

@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pdb, sys, requests, pdb
+import pdb, sys, requests
 from bs4 import BeautifulSoup
-from urllib.parse import unquote
 
 # Log in to Your Account via OpenLDAP Connector
 result = requests.get(sys.argv[1])

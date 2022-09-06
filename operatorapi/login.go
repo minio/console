@@ -101,7 +101,7 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDet
 	r := params.HTTPRequest
 
 	loginStrategy := models.LoginDetailsLoginStrategyServiceDashAccount
-	redirectURL := ""
+	redirectURL := []string{}
 
 	if oauth2.IsIDPEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirectDashServiceDashAccount
@@ -112,7 +112,7 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDet
 		}
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
-		redirectURL = identityProvider.GenerateLoginURL()
+		redirectURL = append(redirectURL, identityProvider.GenerateLoginURL())
 	}
 
 	loginDetails := &models.LoginDetails{

@@ -2651,7 +2651,7 @@ func init() {
         "logSearchConfiguration": {
           "$ref": "#/definitions/logSearchConfiguration"
         },
-        "mounth_path": {
+        "mount_path": {
           "type": "string"
         },
         "name": {
@@ -3530,6 +3530,12 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "displayNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "isDirectPV": {
           "type": "boolean"
         },
@@ -3543,7 +3549,10 @@ func init() {
           ]
         },
         "redirect": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -4748,6 +4757,12 @@ func init() {
         "customCertificates": {
           "type": "object",
           "properties": {
+            "client": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/certificateInfo"
+              }
+            },
             "minio": {
               "type": "array",
               "items": {
@@ -4852,13 +4867,19 @@ func init() {
     "tlsConfiguration": {
       "type": "object",
       "properties": {
-        "ca_certificates": {
+        "minioCAsCertificates": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "minio": {
+        "minioClientCertificates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/keyPairConfiguration"
+          }
+        },
+        "minioServerCertificates": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/keyPairConfiguration"
@@ -4921,16 +4942,22 @@ func init() {
         "customCertificates": {
           "type": "object",
           "properties": {
-            "minio": {
+            "minioCAsCertificates": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "minioClientCertificates": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/keyPairConfiguration"
               }
             },
-            "minioCAs": {
+            "minioServerCertificates": {
               "type": "array",
               "items": {
-                "type": "string"
+                "$ref": "#/definitions/keyPairConfiguration"
               }
             },
             "secretsToBeDeleted": {
@@ -8119,6 +8146,12 @@ func init() {
     "TenantSecurityResponseCustomCertificates": {
       "type": "object",
       "properties": {
+        "client": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/certificateInfo"
+          }
+        },
         "minio": {
           "type": "array",
           "items": {
@@ -8157,16 +8190,22 @@ func init() {
     "UpdateTenantSecurityRequestCustomCertificates": {
       "type": "object",
       "properties": {
-        "minio": {
+        "minioCAsCertificates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "minioClientCertificates": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/keyPairConfiguration"
           }
         },
-        "minioCAs": {
+        "minioServerCertificates": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/keyPairConfiguration"
           }
         },
         "secretsToBeDeleted": {
@@ -8567,7 +8606,7 @@ func init() {
         "logSearchConfiguration": {
           "$ref": "#/definitions/logSearchConfiguration"
         },
-        "mounth_path": {
+        "mount_path": {
           "type": "string"
         },
         "name": {
@@ -9434,6 +9473,12 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "displayNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "isDirectPV": {
           "type": "boolean"
         },
@@ -9447,7 +9492,10 @@ func init() {
           ]
         },
         "redirect": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -10517,6 +10565,12 @@ func init() {
         "customCertificates": {
           "type": "object",
           "properties": {
+            "client": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/certificateInfo"
+              }
+            },
             "minio": {
               "type": "array",
               "items": {
@@ -10621,13 +10675,19 @@ func init() {
     "tlsConfiguration": {
       "type": "object",
       "properties": {
-        "ca_certificates": {
+        "minioCAsCertificates": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "minio": {
+        "minioClientCertificates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/keyPairConfiguration"
+          }
+        },
+        "minioServerCertificates": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/keyPairConfiguration"
@@ -10690,16 +10750,22 @@ func init() {
         "customCertificates": {
           "type": "object",
           "properties": {
-            "minio": {
+            "minioCAsCertificates": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "minioClientCertificates": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/keyPairConfiguration"
               }
             },
-            "minioCAs": {
+            "minioServerCertificates": {
               "type": "array",
               "items": {
-                "type": "string"
+                "$ref": "#/definitions/keyPairConfiguration"
               }
             },
             "secretsToBeDeleted": {

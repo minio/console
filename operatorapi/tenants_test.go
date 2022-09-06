@@ -28,6 +28,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+
 	xhttp "github.com/minio/console/pkg/http"
 
 	"github.com/minio/console/operatorapi/operations/operator_api"
@@ -41,7 +43,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	types "k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes/fake"
 )
 
@@ -1212,6 +1214,143 @@ func Test_UpdateDomainsResponse(t *testing.T) {
 			if err := updateTenantDomains(tt.args.ctx, tt.args.operatorClient, tt.args.nameSpace, tt.args.tenantName, tt.args.domains); (err != nil) != tt.wantErr {
 				t.Errorf("updateTenantDomains() error = %v, wantErr %v", err, tt.wantErr)
 			}
+		})
+	}
+}
+
+func Test_parseTenantCertificates(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	kClient := k8sClientMock{}
+	type args struct {
+		ctx       context.Context
+		clientSet K8sClientI
+		namespace string
+		secrets   []*miniov2.LocalCertificateReference
+	}
+	tests := []struct {
+		name          string
+		args          args
+		want          []*models.CertificateInfo
+		mockGetSecret func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
+		wantErr       bool
+	}{
+		{
+			name: "empty secrets list",
+			args: args{
+				ctx:       ctx,
+				clientSet: kClient,
+				secrets:   nil,
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				return nil, nil
+			},
+			want:    nil,
+			wantErr: false,
+		},
+		{
+			name: "error getting secret",
+			args: args{
+				ctx:       ctx,
+				clientSet: kClient,
+				secrets: []*miniov2.LocalCertificateReference{
+					{
+						Name: "certificate-1",
+					},
+				},
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				return nil, errors.New("error getting secret")
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "error getting certificate because of missing public key",
+			args: args{
+				ctx:       ctx,
+				clientSet: kClient,
+				secrets: []*miniov2.LocalCertificateReference{
+					{
+						Name: "certificate-1",
+						Type: "Opaque",
+					},
+				},
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				certificateSecret := &corev1.Secret{
+					Data: map[string][]byte{
+						"eaeaeae": []byte(`
+-----BEGIN CERTIFICATE-----
+MIIBUDCCAQKgAwIBAgIRALdFZh8hLU348ho9wYzlZbAwBQYDK2VwMBIxEDAOBgNV
+BAoTB0FjbWUgQ28wHhcNMjIwODE4MjAxMzUzWhcNMjMwODE4MjAxMzUzWjASMRAw
+DgYDVQQKEwdBY21lIENvMCowBQYDK2VwAyEAct5c3dzzbNOTi+C62w7QHoSivEWD
+MYAheDXZWHC55tGjbTBrMA4GA1UdDwEB/wQEAwIChDATBgNVHSUEDDAKBggrBgEF
+BQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTs0At8sTSLCjiM24AZhxFY
+a2CswjAUBgNVHREEDTALgglsb2NhbGhvc3QwBQYDK2VwA0EABan+d16CeN8UD+QF
+a8HBhPAiOpaZeEF6+EqTlq9VfL3eSVd7CLRI+/KtY7ptwomuTeYzuV73adKdE9N2
+ZrJuAw==
+-----END CERTIFICATE-----
+						`),
+					},
+					Type: "Opaque",
+				}
+				return certificateSecret, nil
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "return certificate from existing secret",
+			args: args{
+				ctx:       ctx,
+				clientSet: kClient,
+				secrets: []*miniov2.LocalCertificateReference{
+					{
+						Name: "certificate-1",
+						Type: "Opaque",
+					},
+				},
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				certificateSecret := &corev1.Secret{
+					Data: map[string][]byte{
+						"public.crt": []byte(`
+-----BEGIN CERTIFICATE-----
+MIIBUDCCAQKgAwIBAgIRALdFZh8hLU348ho9wYzlZbAwBQYDK2VwMBIxEDAOBgNV
+BAoTB0FjbWUgQ28wHhcNMjIwODE4MjAxMzUzWhcNMjMwODE4MjAxMzUzWjASMRAw
+DgYDVQQKEwdBY21lIENvMCowBQYDK2VwAyEAct5c3dzzbNOTi+C62w7QHoSivEWD
+MYAheDXZWHC55tGjbTBrMA4GA1UdDwEB/wQEAwIChDATBgNVHSUEDDAKBggrBgEF
+BQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTs0At8sTSLCjiM24AZhxFY
+a2CswjAUBgNVHREEDTALgglsb2NhbGhvc3QwBQYDK2VwA0EABan+d16CeN8UD+QF
+a8HBhPAiOpaZeEF6+EqTlq9VfL3eSVd7CLRI+/KtY7ptwomuTeYzuV73adKdE9N2
+ZrJuAw==
+-----END CERTIFICATE-----
+						`),
+					},
+					Type: "Opaque",
+				}
+				return certificateSecret, nil
+			},
+			want: []*models.CertificateInfo{
+				{
+					SerialNumber: "243609062983998893460787085129017550256",
+					Name:         "certificate-1",
+					Expiry:       "2023-08-18T20:13:53Z",
+					Domains:      []string{"localhost"},
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		k8sclientGetSecretMock = tt.mockGetSecret
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := parseTenantCertificates(tt.args.ctx, tt.args.clientSet, tt.args.namespace, tt.args.secrets)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("parseTenantCertificates(%v, %v, %v, %v)error = %v, wantErr %v", tt.args.ctx, tt.args.clientSet, tt.args.namespace, tt.args.secrets, err, tt.wantErr)
+			}
+			assert.Equalf(t, tt.want, got, "parseTenantCertificates(%v, %v, %v, %v)", tt.args.ctx, tt.args.clientSet, tt.args.namespace, tt.args.secrets)
 		})
 	}
 }

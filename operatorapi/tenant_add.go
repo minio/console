@@ -256,7 +256,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		}
 	}
 
-	isEncryptionEnabled := false
+	canEncryptionBeEnabled := false
 
 	if tenantReq.EnableTLS != nil {
 		// if enableTLS is defined in the create tenant request we assign the value
@@ -264,25 +264,35 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		minInst.Spec.RequestAutoCert = tenantReq.EnableTLS
 		if *tenantReq.EnableTLS {
 			// requestAutoCert is enabled, MinIO will be deployed with TLS enabled and encryption can be enabled
-			isEncryptionEnabled = true
+			canEncryptionBeEnabled = true
 		}
 	}
-	// External TLS certificates for MinIO
-	if tenantReq.TLS != nil && len(tenantReq.TLS.Minio) > 0 {
-		isEncryptionEnabled = true
+	// External server TLS certificates for MinIO
+	if tenantReq.TLS != nil && len(tenantReq.TLS.MinioServerCertificates) > 0 {
+		canEncryptionBeEnabled = true
 		// Certificates used by the MinIO instance
-		externalCertSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
-		externalCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, tenantReq.TLS.Minio, externalCertSecretName, tenantName)
+		externalCertSecretName := fmt.Sprintf("%s-external-server-certificate", tenantName)
+		externalCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, tenantReq.TLS.MinioServerCertificates, externalCertSecretName, tenantName)
 		if err != nil {
 			return nil, restapi.ErrorWithContext(ctx, err)
 		}
 		minInst.Spec.ExternalCertSecret = externalCertSecret
 	}
+	// External client TLS certificates for MinIO
+	if tenantReq.TLS != nil && len(tenantReq.TLS.MinioClientCertificates) > 0 {
+		// Client certificates used by the MinIO instance
+		externalClientCertSecretName := fmt.Sprintf("%s-external-client-certificate", tenantName)
+		externalClientCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, tenantReq.TLS.MinioClientCertificates, externalClientCertSecretName, tenantName)
+		if err != nil {
+			return nil, restapi.ErrorWithContext(ctx, err)
+		}
+		minInst.Spec.ExternalClientCertSecrets = externalClientCertSecret
+	}
 	// If encryption configuration is present and TLS will be enabled (using AutoCert or External certificates)
-	if tenantReq.Encryption != nil && isEncryptionEnabled {
+	if tenantReq.Encryption != nil && canEncryptionBeEnabled {
 		// KES client mTLSCertificates used by MinIO instance
 		if tenantReq.Encryption.Client != nil {
-			tenantExternalClientCertSecretName := fmt.Sprintf("%s-tenant-external-client-cert", secretName)
+			tenantExternalClientCertSecretName := fmt.Sprintf("%s-external-client-certificate-kes", tenantName)
 			certificates := []*models.KeyPairConfiguration{tenantReq.Encryption.Client}
 			certificateSecrets, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, certificates, tenantExternalClientCertSecretName, tenantName)
 			if err != nil {
@@ -312,15 +322,15 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		}
 	}
 	// External TLS CA certificates for MinIO
-	if tenantReq.TLS != nil && len(tenantReq.TLS.CaCertificates) > 0 {
+	if tenantReq.TLS != nil && len(tenantReq.TLS.MinioCAsCertificates) > 0 {
 		var caCertificates []tenantSecret
-		for i, caCertificate := range tenantReq.TLS.CaCertificates {
+		for i, caCertificate := range tenantReq.TLS.MinioCAsCertificates {
 			certificateContent, err := base64.StdEncoding.DecodeString(caCertificate)
 			if err != nil {
 				return nil, restapi.ErrorWithContext(ctx, restapi.ErrDefault, nil, err)
 			}
 			caCertificates = append(caCertificates, tenantSecret{
-				Name: fmt.Sprintf("ca-certificate-%d", i),
+				Name: fmt.Sprintf("%s-ca-certificate-%d", tenantName, i),
 				Content: map[string][]byte{
 					"public.crt": certificateContent,
 				},
@@ -353,8 +363,8 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	}
 
 	// Set Mount Path if provided
-	if tenantReq.MounthPath != "" {
-		minInst.Spec.Mountpath = tenantReq.MounthPath
+	if tenantReq.MountPath != "" {
+		minInst.Spec.Mountpath = tenantReq.MountPath
 	}
 
 	// We accept either `image_pull_secret` or the individual details of the `image_registry` but not both

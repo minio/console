@@ -34,6 +34,7 @@ export interface ICertificateInfo {
 
 export interface ICustomCertificates {
   minio: ICertificateInfo[];
+  client: ICertificateInfo[];
   minioCAs: ICertificateInfo[];
   console: ICertificateInfo[];
   consoleCAs: ICertificateInfo[];
@@ -99,8 +100,9 @@ export interface ITenantEncryptionResponse {
 }
 
 export interface ICertificatesItems {
-  minioCertificates: KeyPair[];
-  caCertificates: KeyPair[];
+  minioServerCertificates: KeyPair[];
+  minioClientCertificates: KeyPair[];
+  minioCAsCertificates: KeyPair[];
   consoleCaCertificates: KeyPair[];
   consoleCertificate: KeyPair;
   serverCertificate: KeyPair;

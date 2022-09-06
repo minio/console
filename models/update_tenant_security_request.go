@@ -175,11 +175,14 @@ func (m *UpdateTenantSecurityRequest) UnmarshalBinary(b []byte) error {
 // swagger:model UpdateTenantSecurityRequestCustomCertificates
 type UpdateTenantSecurityRequestCustomCertificates struct {
 
-	// minio
-	Minio []*KeyPairConfiguration `json:"minio"`
+	// minio c as certificates
+	MinioCAsCertificates []string `json:"minioCAsCertificates"`
 
-	// minio c as
-	MinioCAs []string `json:"minioCAs"`
+	// minio client certificates
+	MinioClientCertificates []*KeyPairConfiguration `json:"minioClientCertificates"`
+
+	// minio server certificates
+	MinioServerCertificates []*KeyPairConfiguration `json:"minioServerCertificates"`
 
 	// secrets to be deleted
 	SecretsToBeDeleted []string `json:"secretsToBeDeleted"`
@@ -189,7 +192,11 @@ type UpdateTenantSecurityRequestCustomCertificates struct {
 func (m *UpdateTenantSecurityRequestCustomCertificates) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateMinio(formats); err != nil {
+	if err := m.validateMinioClientCertificates(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMinioServerCertificates(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -199,22 +206,48 @@ func (m *UpdateTenantSecurityRequestCustomCertificates) Validate(formats strfmt.
 	return nil
 }
 
-func (m *UpdateTenantSecurityRequestCustomCertificates) validateMinio(formats strfmt.Registry) error {
-	if swag.IsZero(m.Minio) { // not required
+func (m *UpdateTenantSecurityRequestCustomCertificates) validateMinioClientCertificates(formats strfmt.Registry) error {
+	if swag.IsZero(m.MinioClientCertificates) { // not required
 		return nil
 	}
 
-	for i := 0; i < len(m.Minio); i++ {
-		if swag.IsZero(m.Minio[i]) { // not required
+	for i := 0; i < len(m.MinioClientCertificates); i++ {
+		if swag.IsZero(m.MinioClientCertificates[i]) { // not required
 			continue
 		}
 
-		if m.Minio[i] != nil {
-			if err := m.Minio[i].Validate(formats); err != nil {
+		if m.MinioClientCertificates[i] != nil {
+			if err := m.MinioClientCertificates[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("customCertificates" + "." + "minio" + "." + strconv.Itoa(i))
+					return ve.ValidateName("customCertificates" + "." + "minioClientCertificates" + "." + strconv.Itoa(i))
 				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("customCertificates" + "." + "minio" + "." + strconv.Itoa(i))
+					return ce.ValidateName("customCertificates" + "." + "minioClientCertificates" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UpdateTenantSecurityRequestCustomCertificates) validateMinioServerCertificates(formats strfmt.Registry) error {
+	if swag.IsZero(m.MinioServerCertificates) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.MinioServerCertificates); i++ {
+		if swag.IsZero(m.MinioServerCertificates[i]) { // not required
+			continue
+		}
+
+		if m.MinioServerCertificates[i] != nil {
+			if err := m.MinioServerCertificates[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("customCertificates" + "." + "minioServerCertificates" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customCertificates" + "." + "minioServerCertificates" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -229,7 +262,11 @@ func (m *UpdateTenantSecurityRequestCustomCertificates) validateMinio(formats st
 func (m *UpdateTenantSecurityRequestCustomCertificates) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateMinio(ctx, formats); err != nil {
+	if err := m.contextValidateMinioClientCertificates(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMinioServerCertificates(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -239,16 +276,36 @@ func (m *UpdateTenantSecurityRequestCustomCertificates) ContextValidate(ctx cont
 	return nil
 }
 
-func (m *UpdateTenantSecurityRequestCustomCertificates) contextValidateMinio(ctx context.Context, formats strfmt.Registry) error {
+func (m *UpdateTenantSecurityRequestCustomCertificates) contextValidateMinioClientCertificates(ctx context.Context, formats strfmt.Registry) error {
 
-	for i := 0; i < len(m.Minio); i++ {
+	for i := 0; i < len(m.MinioClientCertificates); i++ {
 
-		if m.Minio[i] != nil {
-			if err := m.Minio[i].ContextValidate(ctx, formats); err != nil {
+		if m.MinioClientCertificates[i] != nil {
+			if err := m.MinioClientCertificates[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("customCertificates" + "." + "minio" + "." + strconv.Itoa(i))
+					return ve.ValidateName("customCertificates" + "." + "minioClientCertificates" + "." + strconv.Itoa(i))
 				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("customCertificates" + "." + "minio" + "." + strconv.Itoa(i))
+					return ce.ValidateName("customCertificates" + "." + "minioClientCertificates" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UpdateTenantSecurityRequestCustomCertificates) contextValidateMinioServerCertificates(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.MinioServerCertificates); i++ {
+
+		if m.MinioServerCertificates[i] != nil {
+			if err := m.MinioServerCertificates[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("customCertificates" + "." + "minioServerCertificates" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customCertificates" + "." + "minioServerCertificates" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
