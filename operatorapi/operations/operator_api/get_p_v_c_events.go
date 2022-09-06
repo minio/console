@@ -48,10 +48,10 @@ func NewGetPVCEvents(ctx *middleware.Context, handler GetPVCEventsHandler) *GetP
 	return &GetPVCEvents{Context: ctx, Handler: handler}
 }
 
-/* GetPVCEvents swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/events OperatorAPI getPVCEvents
+/*
+	GetPVCEvents swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/events OperatorAPI getPVCEvents
 
 Get Events for PVC
-
 */
 type GetPVCEvents struct {
 	Context *middleware.Context

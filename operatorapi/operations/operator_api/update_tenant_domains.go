@@ -48,10 +48,10 @@ func NewUpdateTenantDomains(ctx *middleware.Context, handler UpdateTenantDomains
 	return &UpdateTenantDomains{Context: ctx, Handler: handler}
 }
 
-/* UpdateTenantDomains swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/domains OperatorAPI updateTenantDomains
+/*
+	UpdateTenantDomains swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/domains OperatorAPI updateTenantDomains
 
 Update Domains for a Tenant
-
 */
 type UpdateTenantDomains struct {
 	Context *middleware.Context

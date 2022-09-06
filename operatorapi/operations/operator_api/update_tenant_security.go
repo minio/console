@@ -48,10 +48,10 @@ func NewUpdateTenantSecurity(ctx *middleware.Context, handler UpdateTenantSecuri
 	return &UpdateTenantSecurity{Context: ctx, Handler: handler}
 }
 
-/* UpdateTenantSecurity swagger:route POST /namespaces/{namespace}/tenants/{tenant}/security OperatorAPI updateTenantSecurity
+/*
+	UpdateTenantSecurity swagger:route POST /namespaces/{namespace}/tenants/{tenant}/security OperatorAPI updateTenantSecurity
 
 Update Tenant Security
-
 */
 type UpdateTenantSecurity struct {
 	Context *middleware.Context

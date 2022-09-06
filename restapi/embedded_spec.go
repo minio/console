@@ -2543,7 +2543,10 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/configuration"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/configuration"
+              }
             }
           },
           "default": {
@@ -5420,6 +5423,12 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "displayNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -5430,7 +5439,10 @@ func init() {
           ]
         },
         "redirect": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -9683,7 +9695,10 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/configuration"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/configuration"
+              }
             }
           },
           "default": {
@@ -12686,6 +12701,12 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
+        "displayNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -12696,7 +12717,10 @@ func init() {
           ]
         },
         "redirect": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

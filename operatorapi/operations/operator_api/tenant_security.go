@@ -48,10 +48,10 @@ func NewTenantSecurity(ctx *middleware.Context, handler TenantSecurityHandler) *
 	return &TenantSecurity{Context: ctx, Handler: handler}
 }
 
-/* TenantSecurity swagger:route GET /namespaces/{namespace}/tenants/{tenant}/security OperatorAPI tenantSecurity
+/*
+	TenantSecurity swagger:route GET /namespaces/{namespace}/tenants/{tenant}/security OperatorAPI tenantSecurity
 
 Tenant Security
-
 */
 type TenantSecurity struct {
 	Context *middleware.Context

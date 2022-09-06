@@ -48,10 +48,10 @@ func NewGetTenantUsage(ctx *middleware.Context, handler GetTenantUsageHandler) *
 	return &GetTenantUsage{Context: ctx, Handler: handler}
 }
 
-/* GetTenantUsage swagger:route GET /namespaces/{namespace}/tenants/{tenant}/usage OperatorAPI getTenantUsage
+/*
+	GetTenantUsage swagger:route GET /namespaces/{namespace}/tenants/{tenant}/usage OperatorAPI getTenantUsage
 
 Get Usage For The Tenant
-
 */
 type GetTenantUsage struct {
 	Context *middleware.Context

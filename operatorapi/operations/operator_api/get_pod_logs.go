@@ -48,10 +48,10 @@ func NewGetPodLogs(ctx *middleware.Context, handler GetPodLogsHandler) *GetPodLo
 	return &GetPodLogs{Context: ctx, Handler: handler}
 }
 
-/* GetPodLogs swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods/{podName} OperatorAPI getPodLogs
+/*
+	GetPodLogs swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods/{podName} OperatorAPI getPodLogs
 
 Get Logs for Pod
-
 */
 type GetPodLogs struct {
 	Context *middleware.Context

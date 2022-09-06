@@ -48,10 +48,10 @@ func NewGetPVCDescribe(ctx *middleware.Context, handler GetPVCDescribeHandler) *
 	return &GetPVCDescribe{Context: ctx, Handler: handler}
 }
 
-/* GetPVCDescribe swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/describe OperatorAPI getPVCDescribe
+/*
+	GetPVCDescribe swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pvcs/{PVCName}/describe OperatorAPI getPVCDescribe
 
 Get Describe output for PVC
-
 */
 type GetPVCDescribe struct {
 	Context *middleware.Context

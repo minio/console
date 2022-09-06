@@ -99,20 +99,12 @@ func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClient
 	if err != nil {
 		return err
 	}
-	secretName := fmt.Sprintf("%s-secret", tenantName)
 	body := params.Body
 	// check if MinIO is deployed with external certs and user provided new MinIO keypair
-	if tenant.ExternalCert() && body.Minio != nil {
-		minioCertSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
+	if tenant.ExternalCert() && body.MinioServerCertificates != nil {
+		minioCertSecretName := fmt.Sprintf("%s-instance-external-certificates", tenantName)
 		// update certificates
-		if _, err := createOrReplaceExternalCertSecrets(ctx, clientSet, namespace, body.Minio, minioCertSecretName, tenantName); err != nil {
-			return err
-		}
-		// restart MinIO pods
-		err := clientSet.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenantName),
-		})
-		if err != nil {
+		if _, err := createOrReplaceExternalCertSecrets(ctx, clientSet, namespace, body.MinioServerCertificates, minioCertSecretName, tenantName); err != nil {
 			return err
 		}
 	}

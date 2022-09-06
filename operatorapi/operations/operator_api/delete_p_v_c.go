@@ -48,10 +48,10 @@ func NewDeletePVC(ctx *middleware.Context, handler DeletePVCHandler) *DeletePVC 
 	return &DeletePVC{Context: ctx, Handler: handler}
 }
 
-/* DeletePVC swagger:route DELETE /namespaces/{namespace}/tenants/{tenant}/pvc/{PVCName} OperatorAPI deletePVC
+/*
+	DeletePVC swagger:route DELETE /namespaces/{namespace}/tenants/{tenant}/pvc/{PVCName} OperatorAPI deletePVC
 
 Delete PVC
-
 */
 type DeletePVC struct {
 	Context *middleware.Context

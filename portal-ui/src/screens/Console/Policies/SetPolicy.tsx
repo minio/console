@@ -39,6 +39,7 @@ import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 
 import { useSelector } from "react-redux";
+import { setSelectedPolicies } from "../Users/AddUsersSlice";
 
 interface ISetPolicyProps {
   classes: any;
@@ -114,6 +115,7 @@ const SetPolicy = ({
           const groupPolicy: String = get(res, "policy", "");
           setActualPolicy(groupPolicy.split(","));
           setSelectedPolicy(groupPolicy.split(","));
+          dispatch(setSelectedPolicies(groupPolicy.split(",")));
         })
         .catch((err: ErrorResponseHandler) => {
           dispatch(setModalErrorSnackMessage(err));
@@ -124,6 +126,7 @@ const SetPolicy = ({
 
   const resetSelection = () => {
     setSelectedPolicy(actualPolicy);
+    dispatch(setSelectedPolicies(actualPolicy));
   };
 
   useEffect(() => {
@@ -136,6 +139,7 @@ const SetPolicy = ({
       const userPolicy: string[] = get(selectedUser, "policy", []);
       setActualPolicy(userPolicy);
       setSelectedPolicy(userPolicy);
+      dispatch(setSelectedPolicies(userPolicy));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, selectedGroups?.length, selectedUser]);

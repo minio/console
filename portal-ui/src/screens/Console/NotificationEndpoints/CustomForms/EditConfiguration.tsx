@@ -47,6 +47,7 @@ import {
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import Loader from "../../Common/Loader/Loader";
+import EndpointDisplay from "./EndpointDisplay";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -82,6 +83,7 @@ const EditConfiguration = ({
   const [saving, setSaving] = useState<boolean>(false);
   const [loadingConfig, setLoadingConfig] = useState<boolean>(true);
   const [configValues, setConfigValues] = useState<IElementValue[]>([]);
+  const [configSubsysList, setConfigSubsysList] = useState<any>([]);
   const [resetConfigurationOpen, setResetConfigurationOpen] =
     useState<boolean>(false);
 
@@ -97,7 +99,8 @@ const EditConfiguration = ({
         api
           .invoke("GET", `/api/v1/configs/${configId}`)
           .then((res) => {
-            const keyVals = get(res, "key_values", []);
+            setConfigSubsysList(res);
+            const keyVals = get(res[0], "key_values", []);
             setConfigValues(keyVals);
             setLoadingConfig(false);
           })
@@ -196,6 +199,13 @@ const EditConfiguration = ({
                 onChange={onValueChange}
                 defaultVals={configValues}
               />
+              {(selectedConfiguration.configuration_id === "logger_webhook" ||
+                selectedConfiguration.configuration_id === "audit_webhook") && (
+                <EndpointDisplay
+                  classes={classes}
+                  configSubsysList={configSubsysList}
+                />
+              )}
             </Grid>
             <Grid
               item

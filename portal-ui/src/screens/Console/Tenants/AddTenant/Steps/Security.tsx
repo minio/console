@@ -32,14 +32,16 @@ import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/
 import FileSelector from "../../../Common/FormComponents/FileSelector/FileSelector";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "../../../../../icons/RemoveIcon";
-import SectionTitle from "../../../Common/SectionTitle";
 import {
   addCaCertificate,
+  deleteCaCertificate,
   addFileToCaCertificates,
   addFileToKeyPair,
   addKeyPair,
-  deleteCaCertificate,
   deleteKeyPair,
+  addClientKeyPair,
+  deleteClientKeyPair,
+  addFileToClientKeyPair,
   isPageValid,
   updateAddField,
 } from "../createTenantSlice";
@@ -130,10 +132,13 @@ const Security = ({ classes }: ISecurityProps) => {
     (state: AppState) => state.createTenant.fields.security.enableCustomCerts
   );
   const minioCertificates = useSelector(
-    (state: AppState) => state.createTenant.certificates.minioCertificates
+    (state: AppState) => state.createTenant.certificates.minioServerCertificates
+  );
+  const minioClientCertificates = useSelector(
+    (state: AppState) => state.createTenant.certificates.minioClientCertificates
   );
   const caCertificates = useSelector(
-    (state: AppState) => state.createTenant.certificates.caCertificates
+    (state: AppState) => state.createTenant.certificates.minioCAsCertificates
   );
 
   // Common
@@ -230,7 +235,7 @@ const Security = ({ classes }: ISecurityProps) => {
                   </Grid>
                 )}
                 <Grid item xs={12} className={classes.minioCertsContainer}>
-                  <SectionTitle>MinIO Certificates</SectionTitle>
+                  <h5>MinIO Server Certificates</h5>
                   {minioCertificates.map((keyPair: KeyPair, index) => (
                     <Grid
                       item
@@ -302,10 +307,83 @@ const Security = ({ classes }: ISecurityProps) => {
                     </Grid>
                   ))}
                 </Grid>
-
                 <Grid item xs={12} className={classes.minioCertsContainer}>
-                  <SectionTitle>MinIO CA Certificates</SectionTitle>
+                  <h5>MinIO Client Certificates</h5>
+                  {minioClientCertificates.map((keyPair: KeyPair, index) => (
+                    <Grid
+                      item
+                      xs={12}
+                      key={`minio-certs-${keyPair.id}`}
+                      className={classes.minioCertificateRows}
+                    >
+                      <Grid item xs={10} className={classes.fileItem}>
+                        <FileSelector
+                          onChange={(encodedValue, fileName) => {
+                            dispatch(
+                              addFileToClientKeyPair({
+                                id: keyPair.id,
+                                key: "cert",
+                                fileName: fileName,
+                                value: encodedValue,
+                              })
+                            );
+                          }}
+                          accept=".cer,.crt,.cert,.pem"
+                          id="tlsCert"
+                          name="tlsCert"
+                          label="Cert"
+                          value={keyPair.cert}
+                        />
+                        <FileSelector
+                          onChange={(encodedValue, fileName) => {
+                            dispatch(
+                              addFileToClientKeyPair({
+                                id: keyPair.id,
+                                key: "key",
+                                fileName: fileName,
+                                value: encodedValue,
+                              })
+                            );
+                          }}
+                          accept=".key,.pem"
+                          id="tlsKey"
+                          name="tlsKey"
+                          label="Key"
+                          value={keyPair.key}
+                        />
+                      </Grid>
 
+                      <Grid item xs={2} className={classes.rowActions}>
+                        <div className={classes.overlayAction}>
+                          <IconButton
+                            size={"small"}
+                            onClick={() => {
+                              dispatch(addClientKeyPair());
+                            }}
+                            disabled={
+                              index !== minioClientCertificates.length - 1
+                            }
+                          >
+                            <AddIcon />
+                          </IconButton>
+                        </div>
+                        <div className={classes.overlayAction}>
+                          <IconButton
+                            size={"small"}
+                            onClick={() => {
+                              dispatch(deleteClientKeyPair(keyPair.id));
+                            }}
+                            disabled={minioClientCertificates.length <= 1}
+                          >
+                            <RemoveIcon />
+                          </IconButton>
+                        </div>
+                      </Grid>
+                    </Grid>
+                  ))}
+                </Grid>
+                <Grid item xs={12} className={classes.minioCertsContainer}>
+                  <h5>MinIO CA Certificates</h5>
                   {caCertificates.map((keyPair: KeyPair, index) => (
                     <Grid
                       item

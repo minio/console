@@ -48,10 +48,10 @@ func NewTenantDetails(ctx *middleware.Context, handler TenantDetailsHandler) *Te
 	return &TenantDetails{Context: ctx, Handler: handler}
 }
 
-/* TenantDetails swagger:route GET /namespaces/{namespace}/tenants/{tenant} OperatorAPI tenantDetails
+/*
+	TenantDetails swagger:route GET /namespaces/{namespace}/tenants/{tenant} OperatorAPI tenantDetails
 
 Tenant Details
-
 */
 type TenantDetails struct {
 	Context *middleware.Context

@@ -51,10 +51,10 @@ func NewGetMPIntegration(ctx *middleware.Context, handler GetMPIntegrationHandle
 	return &GetMPIntegration{Context: ctx, Handler: handler}
 }
 
-/* GetMPIntegration swagger:route GET /mp-integration OperatorAPI getMPIntegration
+/*
+	GetMPIntegration swagger:route GET /mp-integration OperatorAPI getMPIntegration
 
 Returns email registered for marketplace integration
-
 */
 type GetMPIntegration struct {
 	Context *middleware.Context

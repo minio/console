@@ -33,7 +33,8 @@ import (
 // GetMaxAllocatableMemOKCode is the HTTP code returned for type GetMaxAllocatableMemOK
 const GetMaxAllocatableMemOKCode int = 200
 
-/*GetMaxAllocatableMemOK A successful response.
+/*
+GetMaxAllocatableMemOK A successful response.
 
 swagger:response getMaxAllocatableMemOK
 */
@@ -74,7 +75,8 @@ func (o *GetMaxAllocatableMemOK) WriteResponse(rw http.ResponseWriter, producer 
 	}
 }
 
-/*GetMaxAllocatableMemDefault Generic error response.
+/*
+GetMaxAllocatableMemDefault Generic error response.
 
 swagger:response getMaxAllocatableMemDefault
 */

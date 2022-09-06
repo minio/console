@@ -30,6 +30,7 @@ import PolicySelectors from "../Policies/PolicySelectors";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
+import { setSelectedPolicies } from "./AddUsersSlice";
 
 interface ISetUserPoliciesProps {
   classes: any;
@@ -59,7 +60,6 @@ const SetUserPolicies = ({
   //Local States
   const [loading, setLoading] = useState<boolean>(false);
   const [actualPolicy, setActualPolicy] = useState<string[]>([]);
-  const [selectedPolicy, setSelectedPolicy] = useState<string[]>([]);
 
   const statePolicies = useSelector(
     (state: AppState) => state.createUser.selectedPolicies
@@ -79,6 +79,7 @@ const SetUserPolicies = ({
       })
       .then(() => {
         setLoading(false);
+        dispatch(setSelectedPolicies([]));
         closeModalAndRefresh();
       })
       .catch((err: ErrorResponseHandler) => {
@@ -88,17 +89,16 @@ const SetUserPolicies = ({
   };
 
   const resetSelection = () => {
-    setSelectedPolicy(actualPolicy);
+    dispatch(setSelectedPolicies(actualPolicy));
   };
 
   useEffect(() => {
     if (open) {
-      const userPolicy: string[] = [];
-      for (let pol of currentPolicies) {
-        userPolicy.push(pol.policy);
-      }
+      const userPolicy: string[] = currentPolicies.map((pol) => {
+        return pol.policy;
+      });
       setActualPolicy(userPolicy);
-      setSelectedPolicy(userPolicy);
+      dispatch(setSelectedPolicies(userPolicy));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, selectedUser]);
@@ -113,7 +113,7 @@ const SetUserPolicies = ({
     >
       <Grid container>
         <Grid item xs={12}>
-          <PolicySelectors selectedPolicy={selectedPolicy} />
+          <PolicySelectors selectedPolicy={statePolicies} />
         </Grid>
       </Grid>
       <Grid item xs={12} className={classes.buttonContainer}>

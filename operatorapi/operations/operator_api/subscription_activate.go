@@ -48,10 +48,10 @@ func NewSubscriptionActivate(ctx *middleware.Context, handler SubscriptionActiva
 	return &SubscriptionActivate{Context: ctx, Handler: handler}
 }
 
-/* SubscriptionActivate swagger:route POST /subscription/namespaces/{namespace}/tenants/{tenant}/activate OperatorAPI subscriptionActivate
+/*
+	SubscriptionActivate swagger:route POST /subscription/namespaces/{namespace}/tenants/{tenant}/activate OperatorAPI subscriptionActivate
 
 Activate a particular tenant using the existing subscription license
-
 */
 type SubscriptionActivate struct {
 	Context *middleware.Context

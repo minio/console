@@ -48,10 +48,10 @@ func NewGetTenantEvents(ctx *middleware.Context, handler GetTenantEventsHandler)
 	return &GetTenantEvents{Context: ctx, Handler: handler}
 }
 
-/* GetTenantEvents swagger:route GET /namespaces/{namespace}/tenants/{tenant}/events OperatorAPI getTenantEvents
+/*
+	GetTenantEvents swagger:route GET /namespaces/{namespace}/tenants/{tenant}/events OperatorAPI getTenantEvents
 
 Get Events for given Tenant
-
 */
 type GetTenantEvents struct {
 	Context *middleware.Context

@@ -48,10 +48,10 @@ func NewListPVCs(ctx *middleware.Context, handler ListPVCsHandler) *ListPVCs {
 	return &ListPVCs{Context: ctx, Handler: handler}
 }
 
-/* ListPVCs swagger:route GET /list-pvcs OperatorAPI listPVCs
+/*
+	ListPVCs swagger:route GET /list-pvcs OperatorAPI listPVCs
 
 List all PVCs from namespaces that the user has access to
-
 */
 type ListPVCs struct {
 	Context *middleware.Context

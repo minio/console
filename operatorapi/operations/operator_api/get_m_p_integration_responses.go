@@ -33,7 +33,8 @@ import (
 // GetMPIntegrationOKCode is the HTTP code returned for type GetMPIntegrationOK
 const GetMPIntegrationOKCode int = 200
 
-/*GetMPIntegrationOK A successful response.
+/*
+GetMPIntegrationOK A successful response.
 
 swagger:response getMPIntegrationOK
 */
@@ -74,7 +75,8 @@ func (o *GetMPIntegrationOK) WriteResponse(rw http.ResponseWriter, producer runt
 	}
 }
 
-/*GetMPIntegrationDefault Generic error response.
+/*
+GetMPIntegrationDefault Generic error response.
 
 swagger:response getMPIntegrationDefault
 */

@@ -33,7 +33,8 @@ import (
 // SetTenantLogsOKCode is the HTTP code returned for type SetTenantLogsOK
 const SetTenantLogsOKCode int = 200
 
-/*SetTenantLogsOK A successful response.
+/*
+SetTenantLogsOK A successful response.
 
 swagger:response setTenantLogsOK
 */
@@ -72,7 +73,8 @@ func (o *SetTenantLogsOK) WriteResponse(rw http.ResponseWriter, producer runtime
 	}
 }
 
-/*SetTenantLogsDefault Generic error response.
+/*
+SetTenantLogsDefault Generic error response.
 
 swagger:response setTenantLogsDefault
 */
