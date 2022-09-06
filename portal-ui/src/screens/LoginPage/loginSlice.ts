@@ -50,7 +50,8 @@ const initialState: LoginState = {
   jwt: "",
   loginStrategy: {
     loginStrategy: loginStrategyType.unknown,
-    redirect: "",
+    redirect: [],
+    displayNames: [],
   },
   loginSending: false,
   loadingFetchConfiguration: true,

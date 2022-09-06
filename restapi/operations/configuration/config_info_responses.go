@@ -43,7 +43,7 @@ type ConfigInfoOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Configuration `json:"body,omitempty"`
+	Payload []*models.Configuration `json:"body,omitempty"`
 }
 
 // NewConfigInfoOK creates ConfigInfoOK with default headers values
@@ -53,13 +53,13 @@ func NewConfigInfoOK() *ConfigInfoOK {
 }
 
 // WithPayload adds the payload to the config info o k response
-func (o *ConfigInfoOK) WithPayload(payload *models.Configuration) *ConfigInfoOK {
+func (o *ConfigInfoOK) WithPayload(payload []*models.Configuration) *ConfigInfoOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the config info o k response
-func (o *ConfigInfoOK) SetPayload(payload *models.Configuration) {
+func (o *ConfigInfoOK) SetPayload(payload []*models.Configuration) {
 	o.Payload = payload
 }
 
@@ -67,11 +67,14 @@ func (o *ConfigInfoOK) SetPayload(payload *models.Configuration) {
 func (o *ConfigInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
+	payload := o.Payload
+	if payload == nil {
+		// return empty array
+		payload = make([]*models.Configuration, 0, 50)
+	}
+
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
 	}
 }
 
