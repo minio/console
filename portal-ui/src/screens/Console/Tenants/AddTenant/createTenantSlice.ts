@@ -293,7 +293,7 @@ const initialState: ICreateTenant = {
     },
   },
   certificates: {
-    minioCertificates: [
+    minioServerCertificates: [
       {
         id: Date.now().toString(),
         key: "",
@@ -302,7 +302,16 @@ const initialState: ICreateTenant = {
         encoded_cert: "",
       },
     ],
-    caCertificates: [
+    minioClientCertificates: [
+      {
+        id: Date.now().toString(),
+        key: "",
+        cert: "",
+        encoded_key: "",
+        encoded_cert: "",
+      },
+    ],
+    minioCAsCertificates: [
       {
         id: Date.now().toString(),
         key: "",
@@ -535,7 +544,7 @@ export const createTenantSlice = createSlice({
     },
     addKeyPair: (state) => {
       const minioCerts = [
-        ...state.certificates.minioCertificates,
+        ...state.certificates.minioServerCertificates,
         {
           id: Date.now().toString(),
           key: "",
@@ -544,10 +553,10 @@ export const createTenantSlice = createSlice({
           encoded_cert: "",
         },
       ];
-      state.certificates.minioCertificates = [...minioCerts];
+      state.certificates.minioServerCertificates = [...minioCerts];
     },
     addFileToKeyPair: (state, action: PayloadAction<CertificateFile>) => {
-      const minioCertificates = state.certificates.minioCertificates;
+      const minioCertificates = state.certificates.minioServerCertificates;
 
       const NCertList = minioCertificates.map((item: KeyPair) => {
         if (item.id === action.payload.id) {
@@ -559,19 +568,58 @@ export const createTenantSlice = createSlice({
         }
         return item;
       });
-      state.certificates.minioCertificates = [...NCertList];
+      state.certificates.minioServerCertificates = [...NCertList];
     },
     deleteKeyPair: (state, action: PayloadAction<string>) => {
-      const minioCertsList = state.certificates.minioCertificates;
+      const minioCertsList = state.certificates.minioServerCertificates;
 
       if (minioCertsList.length > 1) {
-        state.certificates.minioCertificates = minioCertsList.filter(
+        state.certificates.minioServerCertificates = minioCertsList.filter(
           (item: KeyPair) => item.id !== action.payload
         );
       }
     },
+    addClientKeyPair: (state) => {
+      const minioClientCerts = [
+        ...state.certificates.minioClientCertificates,
+        {
+          id: Date.now().toString(),
+          key: "",
+          cert: "",
+          encoded_key: "",
+          encoded_cert: "",
+        },
+      ];
+      state.certificates.minioClientCertificates = [...minioClientCerts];
+    },
+    addFileToClientKeyPair: (state, action: PayloadAction<CertificateFile>) => {
+      const minioClientCertificates =
+        state.certificates.minioClientCertificates;
+
+      const NCertList = minioClientCertificates.map((item: KeyPair) => {
+        if (item.id === action.payload.id) {
+          return {
+            ...item,
+            [action.payload.key]: action.payload.fileName,
+            [`encoded_${action.payload.key}`]: action.payload.value,
+          };
+        }
+        return item;
+      });
+      state.certificates.minioClientCertificates = [...NCertList];
+    },
+    deleteClientKeyPair: (state, action: PayloadAction<string>) => {
+      const minioClientCertsList = state.certificates.minioClientCertificates;
+
+      if (minioClientCertsList.length > 1) {
+        state.certificates.minioClientCertificates =
+          minioClientCertsList.filter(
+            (item: KeyPair) => item.id !== action.payload
+          );
+      }
+    },
     addCaCertificate: (state) => {
-      state.certificates.caCertificates.push({
+      state.certificates.minioCAsCertificates.push({
         id: Date.now().toString(),
         key: "",
         cert: "",
@@ -583,7 +631,7 @@ export const createTenantSlice = createSlice({
       state,
       action: PayloadAction<CertificateFile>
     ) => {
-      const caCertificates = state.certificates.caCertificates;
+      const caCertificates = state.certificates.minioCAsCertificates;
 
       const NACList = caCertificates.map((item: KeyPair) => {
         if (item.id === action.payload.id) {
@@ -595,15 +643,14 @@ export const createTenantSlice = createSlice({
         }
         return item;
       });
-      state.certificates.caCertificates = NACList;
+      state.certificates.minioCAsCertificates = NACList;
     },
     deleteCaCertificate: (state, action: PayloadAction<string>) => {
-      const CACertsList = state.certificates.caCertificates;
+      const CACertsList = state.certificates.minioCAsCertificates;
       if (CACertsList.length > 1) {
-        const cleanCaCertsList = CACertsList.filter(
+        state.certificates.minioCAsCertificates = CACertsList.filter(
           (item: KeyPair) => item.id !== action.payload
         );
-        state.certificates.caCertificates = cleanCaCertsList;
       }
     },
     addConsoleCertificate: (state, action: PayloadAction<CertificateFile>) => {
@@ -991,6 +1038,9 @@ export const {
   addKeyPair,
   deleteKeyPair,
   addFileToKeyPair,
+  addClientKeyPair,
+  deleteClientKeyPair,
+  addFileToClientKeyPair,
   addConsoleCertificate,
   addFileServerCert,
   addFileClientCert,

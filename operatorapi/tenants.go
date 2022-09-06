@@ -614,65 +614,70 @@ func parseTenantCertificates(ctx context.Context, clientSet K8sClientI, namespac
 		if err != nil {
 			return nil, err
 		}
-
 		if v, ok := secretTypePublicKeyNameMap[secret.Type]; ok {
 			publicKey = v
 		}
-
-		// Extract public key from certificate TLS secret
-		if rawCert, ok := keyPair.Data[publicKey]; ok {
-			var blocks []byte
-			for {
-				var block *pem.Block
-				block, rawCert = pem.Decode(rawCert)
-				if block == nil {
-					break
-				}
-				if block.Type == "CERTIFICATE" {
-					blocks = append(blocks, block.Bytes...)
+		var rawCert []byte
+		if _, ok := keyPair.Data[publicKey]; !ok {
+			return nil, fmt.Errorf("public key: %v not found inside certificate secret %v", publicKey, secret.Name)
+		}
+		rawCert = keyPair.Data[publicKey]
+		var blocks []byte
+		for {
+			var block *pem.Block
+			block, rawCert = pem.Decode(rawCert)
+			if block == nil {
+				break
+			}
+			if block.Type == "CERTIFICATE" {
+				blocks = append(blocks, block.Bytes...)
+			}
+		}
+		// parse all certificates we found on this k8s secret
+		certs, err := x509.ParseCertificates(blocks)
+		if err != nil {
+			return nil, err
+		}
+		for _, cert := range certs {
+			var domains []string
+			if cert.Subject.CommonName != "" {
+				domains = append(domains, cert.Subject.CommonName)
+			}
+			// append certificate domain names
+			if len(cert.DNSNames) > 0 {
+				domains = append(domains, cert.DNSNames...)
+			}
+			// append certificate IPs
+			if len(cert.IPAddresses) > 0 {
+				for _, ip := range cert.IPAddresses {
+					domains = append(domains, ip.String())
 				}
 			}
-			// parse all certificates we found on this k8s secret
-			certs, err := x509.ParseCertificates(blocks)
-			if err != nil {
-				return nil, err
-			}
-			for _, cert := range certs {
-				var domains []string
-				if cert.Subject.CommonName != "" {
-					domains = append(domains, cert.Subject.CommonName)
-				}
-				// append certificate domain names
-				if len(cert.DNSNames) > 0 {
-					domains = append(domains, cert.DNSNames...)
-				}
-				// append certificate IPs
-				if len(cert.IPAddresses) > 0 {
-					for _, ip := range cert.IPAddresses {
-						domains = append(domains, ip.String())
-					}
-				}
-				certificates = append(certificates, &models.CertificateInfo{
-					SerialNumber: cert.SerialNumber.String(),
-					Name:         secret.Name,
-					Domains:      domains,
-					Expiry:       cert.NotAfter.Format(time.RFC3339),
-				})
-			}
+			certificates = append(certificates, &models.CertificateInfo{
+				SerialNumber: cert.SerialNumber.String(),
+				Name:         secret.Name,
+				Domains:      domains,
+				Expiry:       cert.NotAfter.Format(time.RFC3339),
+			})
 		}
 	}
 	return certificates, nil
 }
 
 func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov2.Tenant) (response *models.TenantSecurityResponse, err error) {
-	var minioExternalCertificates []*models.CertificateInfo
+	var minioExternalServerCertificates []*models.CertificateInfo
+	var minioExternalClientCertificates []*models.CertificateInfo
 	var minioExternalCaCertificates []*models.CertificateInfo
 	var tenantSecurityContext *models.SecurityContext
-	// Certificates used by MinIO server
-	if minioExternalCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCertSecret); err != nil {
+	// Server certificates used by MinIO
+	if minioExternalServerCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCertSecret); err != nil {
 		return nil, err
 	}
-	// CA Certificates used by MinIO server
+	// Client certificates used by MinIO
+	if minioExternalClientCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalClientCertSecrets); err != nil {
+		return nil, err
+	}
+	// CA Certificates used by MinIO
 	if minioExternalCaCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCaCertSecret); err != nil {
 		return nil, err
 	}
@@ -683,8 +688,9 @@ func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov
 	return &models.TenantSecurityResponse{
 		AutoCert: tenant.AutoCert(),
 		CustomCertificates: &models.TenantSecurityResponseCustomCertificates{
-			Minio:    minioExternalCertificates,
+			Minio:    minioExternalServerCertificates,
 			MinioCAs: minioExternalCaCertificates,
+			Client:   minioExternalClientCertificates,
 		},
 		SecurityContext: tenantSecurityContext,
 	}, nil
@@ -854,13 +860,6 @@ func updateTenantIdentityProvider(ctx context.Context, operatorClient OperatorCl
 	tenant.EnsureDefaults()
 	// update tenant CRD
 	_, err = operatorClient.TenantUpdate(ctx, tenant, metav1.UpdateOptions{})
-	if err != nil {
-		return err
-	}
-	// restart all MinIO pods at the same time
-	err = client.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenant.Name),
-	})
 	if err != nil {
 		return err
 	}
@@ -1034,47 +1033,55 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 	}
 	// Update AutoCert
 	minInst.Spec.RequestAutoCert = &params.Body.AutoCert
-	var newMinIOExternalCertSecret []*miniov2.LocalCertificateReference
-	var newMinIOExternalCaCertSecret []*miniov2.LocalCertificateReference
-	// Remove Certificate Secrets from MinIO (Tenant.Spec.ExternalCertSecret)
-	for _, certificate := range minInst.Spec.ExternalCertSecret {
-		skip := false
-		for _, certificateToBeDeleted := range params.Body.CustomCertificates.SecretsToBeDeleted {
-			if certificate.Name == certificateToBeDeleted {
-				skip = true
-				break
+	var newExternalCertSecret []*miniov2.LocalCertificateReference
+	var newExternalClientCertSecrets []*miniov2.LocalCertificateReference
+	var newExternalCaCertSecret []*miniov2.LocalCertificateReference
+	secretsToBeRemoved := map[string]bool{}
+
+	if params.Body.CustomCertificates != nil {
+		// Copy certificate secrets to be deleted into map
+		for _, secret := range params.Body.CustomCertificates.SecretsToBeDeleted {
+			secretsToBeRemoved[secret] = true
+		}
+
+		// Remove certificates from Tenant.Spec.ExternalCertSecret
+		for _, certificate := range minInst.Spec.ExternalCertSecret {
+			if _, ok := secretsToBeRemoved[certificate.Name]; !ok {
+				newExternalCertSecret = append(newExternalCertSecret, certificate)
 			}
 		}
-		if skip {
-			continue
-		}
-		newMinIOExternalCertSecret = append(newMinIOExternalCertSecret, certificate)
-	}
-	// Remove Certificate Secrets from MinIO CAs (Tenant.Spec.ExternalCaCertSecret)
-	for _, certificate := range minInst.Spec.ExternalCaCertSecret {
-		skip := false
-		for _, certificateToBeDeleted := range params.Body.CustomCertificates.SecretsToBeDeleted {
-			if certificate.Name == certificateToBeDeleted {
-				skip = true
-				break
+		// Remove certificates from Tenant.Spec.ExternalClientCertSecrets
+		for _, certificate := range minInst.Spec.ExternalClientCertSecrets {
+			if _, ok := secretsToBeRemoved[certificate.Name]; !ok {
+				newExternalClientCertSecrets = append(newExternalClientCertSecrets, certificate)
 			}
 		}
-		if skip {
-			continue
+		// Remove certificates from Tenant.Spec.ExternalCaCertSecret
+		for _, certificate := range minInst.Spec.ExternalCaCertSecret {
+			if _, ok := secretsToBeRemoved[certificate.Name]; !ok {
+				newExternalCaCertSecret = append(newExternalCaCertSecret, certificate)
+			}
 		}
-		newMinIOExternalCaCertSecret = append(newMinIOExternalCaCertSecret, certificate)
+
 	}
-	// Create new Certificate Secrets for MinIO
 	secretName := fmt.Sprintf("%s-%s", minInst.Name, strings.ToLower(utils.RandomCharString(5)))
-	externalCertSecretName := fmt.Sprintf("%s-external-certificates", secretName)
-	externalCertSecrets, err := createOrReplaceExternalCertSecrets(ctx, client, minInst.Namespace, params.Body.CustomCertificates.Minio, externalCertSecretName, minInst.Name)
+	// Create new Server Certificate Secrets for MinIO
+	externalServerCertSecretName := fmt.Sprintf("%s-external-server-certificate", secretName)
+	externalServerCertSecrets, err := createOrReplaceExternalCertSecrets(ctx, client, minInst.Namespace, params.Body.CustomCertificates.MinioServerCertificates, externalServerCertSecretName, minInst.Name)
 	if err != nil {
 		return err
 	}
-	newMinIOExternalCertSecret = append(newMinIOExternalCertSecret, externalCertSecrets...)
+	newExternalCertSecret = append(newExternalCertSecret, externalServerCertSecrets...)
+	// Create new Client Certificate Secrets for MinIO
+	externalClientCertSecretName := fmt.Sprintf("%s-external-client-certificate", secretName)
+	externalClientCertSecrets, err := createOrReplaceExternalCertSecrets(ctx, client, minInst.Namespace, params.Body.CustomCertificates.MinioClientCertificates, externalClientCertSecretName, minInst.Name)
+	if err != nil {
+		return err
+	}
+	newExternalClientCertSecrets = append(newExternalClientCertSecrets, externalClientCertSecrets...)
 	// Create new CAs Certificate Secrets for MinIO
 	var caCertificates []tenantSecret
-	for i, caCertificate := range params.Body.CustomCertificates.MinioCAs {
+	for i, caCertificate := range params.Body.CustomCertificates.MinioCAsCertificates {
 		certificateContent, err := base64.StdEncoding.DecodeString(caCertificate)
 		if err != nil {
 			return err
@@ -1091,7 +1098,7 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 		if err != nil {
 			return err
 		}
-		newMinIOExternalCaCertSecret = append(newMinIOExternalCaCertSecret, certificateSecrets...)
+		newExternalCaCertSecret = append(newExternalCaCertSecret, certificateSecrets...)
 	}
 
 	// set Security Context
@@ -1105,17 +1112,10 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 	}
 
 	// Update External Certificates
-	minInst.Spec.ExternalCertSecret = newMinIOExternalCertSecret
-	minInst.Spec.ExternalCaCertSecret = newMinIOExternalCaCertSecret
+	minInst.Spec.ExternalCertSecret = newExternalCertSecret
+	minInst.Spec.ExternalClientCertSecrets = newExternalClientCertSecrets
+	minInst.Spec.ExternalCaCertSecret = newExternalCaCertSecret
 	_, err = operatorClient.TenantUpdate(ctx, minInst, metav1.UpdateOptions{})
-	if err != nil {
-		return err
-	}
-
-	// restart all MinIO pods at the same time
-	err = client.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, minInst.Name),
-	})
 	if err != nil {
 		return err
 	}

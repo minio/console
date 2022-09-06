@@ -85,8 +85,8 @@ type CreateTenantRequest struct {
 	// log search configuration
 	LogSearchConfiguration *LogSearchConfiguration `json:"logSearchConfiguration,omitempty"`
 
-	// mounth path
-	MounthPath string `json:"mounth_path,omitempty"`
+	// mount path
+	MountPath string `json:"mount_path,omitempty"`
 
 	// name
 	// Required: true
