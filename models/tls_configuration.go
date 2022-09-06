@@ -36,18 +36,25 @@ import (
 // swagger:model tlsConfiguration
 type TLSConfiguration struct {
 
-	// ca certificates
-	CaCertificates []string `json:"ca_certificates"`
+	// minio c as certificates
+	MinioCAsCertificates []string `json:"minioCAsCertificates"`
 
-	// minio
-	Minio []*KeyPairConfiguration `json:"minio"`
+	// minio client certificates
+	MinioClientCertificates []*KeyPairConfiguration `json:"minioClientCertificates"`
+
+	// minio server certificates
+	MinioServerCertificates []*KeyPairConfiguration `json:"minioServerCertificates"`
 }
 
 // Validate validates this tls configuration
 func (m *TLSConfiguration) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateMinio(formats); err != nil {
+	if err := m.validateMinioClientCertificates(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMinioServerCertificates(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -57,22 +64,48 @@ func (m *TLSConfiguration) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *TLSConfiguration) validateMinio(formats strfmt.Registry) error {
-	if swag.IsZero(m.Minio) { // not required
+func (m *TLSConfiguration) validateMinioClientCertificates(formats strfmt.Registry) error {
+	if swag.IsZero(m.MinioClientCertificates) { // not required
 		return nil
 	}
 
-	for i := 0; i < len(m.Minio); i++ {
-		if swag.IsZero(m.Minio[i]) { // not required
+	for i := 0; i < len(m.MinioClientCertificates); i++ {
+		if swag.IsZero(m.MinioClientCertificates[i]) { // not required
 			continue
 		}
 
-		if m.Minio[i] != nil {
-			if err := m.Minio[i].Validate(formats); err != nil {
+		if m.MinioClientCertificates[i] != nil {
+			if err := m.MinioClientCertificates[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("minio" + "." + strconv.Itoa(i))
+					return ve.ValidateName("minioClientCertificates" + "." + strconv.Itoa(i))
 				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("minio" + "." + strconv.Itoa(i))
+					return ce.ValidateName("minioClientCertificates" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *TLSConfiguration) validateMinioServerCertificates(formats strfmt.Registry) error {
+	if swag.IsZero(m.MinioServerCertificates) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.MinioServerCertificates); i++ {
+		if swag.IsZero(m.MinioServerCertificates[i]) { // not required
+			continue
+		}
+
+		if m.MinioServerCertificates[i] != nil {
+			if err := m.MinioServerCertificates[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("minioServerCertificates" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("minioServerCertificates" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -87,7 +120,11 @@ func (m *TLSConfiguration) validateMinio(formats strfmt.Registry) error {
 func (m *TLSConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateMinio(ctx, formats); err != nil {
+	if err := m.contextValidateMinioClientCertificates(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMinioServerCertificates(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -97,16 +134,36 @@ func (m *TLSConfiguration) ContextValidate(ctx context.Context, formats strfmt.R
 	return nil
 }
 
-func (m *TLSConfiguration) contextValidateMinio(ctx context.Context, formats strfmt.Registry) error {
+func (m *TLSConfiguration) contextValidateMinioClientCertificates(ctx context.Context, formats strfmt.Registry) error {
 
-	for i := 0; i < len(m.Minio); i++ {
+	for i := 0; i < len(m.MinioClientCertificates); i++ {
 
-		if m.Minio[i] != nil {
-			if err := m.Minio[i].ContextValidate(ctx, formats); err != nil {
+		if m.MinioClientCertificates[i] != nil {
+			if err := m.MinioClientCertificates[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("minio" + "." + strconv.Itoa(i))
+					return ve.ValidateName("minioClientCertificates" + "." + strconv.Itoa(i))
 				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("minio" + "." + strconv.Itoa(i))
+					return ce.ValidateName("minioClientCertificates" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *TLSConfiguration) contextValidateMinioServerCertificates(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.MinioServerCertificates); i++ {
+
+		if m.MinioServerCertificates[i] != nil {
+			if err := m.MinioServerCertificates[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("minioServerCertificates" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("minioServerCertificates" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

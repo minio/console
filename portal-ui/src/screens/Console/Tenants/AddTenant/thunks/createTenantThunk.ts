@@ -62,10 +62,9 @@ export const createTenantAsync = createAsyncThunk(
     const ADServerStartTLS = fields.identityProvider.ADServerStartTLS;
     const accessKeys = fields.identityProvider.accessKeys;
     const secretKeys = fields.identityProvider.secretKeys;
-    const minioCertificates = certificates.minioCertificates;
-    const caCertificates = certificates.caCertificates;
-    const consoleCaCertificates = certificates.consoleCaCertificates;
-    const consoleCertificate = certificates.consoleCertificate;
+    const minioServerCertificates = certificates.minioServerCertificates;
+    const minioClientCertificates = certificates.minioClientCertificates;
+    const minioCAsCertificates = certificates.minioCAsCertificates;
     const serverCertificate = certificates.serverCertificate;
     const clientCertificate = certificates.clientCertificate;
     const vaultCertificate = certificates.vaultCertificate;
@@ -290,30 +289,13 @@ export const createTenantAsync = createAsyncThunk(
       };
     }
 
-    let tenantCerts: any = null;
-    let consoleCerts: any = null;
-    let caCerts: any = null;
-    let consoleCaCerts: any = null;
+    let tenantServerCertificates: any = null;
+    let tenantClientCertificates: any = null;
+    let tenantCAsCertificates: any = null;
 
-    if (caCertificates.length > 0) {
-      caCerts = {
-        ca_certificates: caCertificates
-          .map((keyPair: KeyPair) => keyPair.encoded_cert)
-          .filter((keyPair) => keyPair),
-      };
-    }
-
-    if (consoleCaCertificates.length > 0) {
-      consoleCaCerts = {
-        console_ca_certificates: consoleCaCertificates
-          .map((keyPair: KeyPair) => keyPair.encoded_cert)
-          .filter((keyPair) => keyPair),
-      };
-    }
-
-    if (enableTLS && minioCertificates.length > 0) {
-      tenantCerts = {
-        minio: minioCertificates
+    if (enableTLS && minioServerCertificates.length > 0) {
+      tenantServerCertificates = {
+        minioServerCertificates: minioServerCertificates
           .map((keyPair: KeyPair) => ({
             crt: keyPair.encoded_cert,
             key: keyPair.encoded_key,
@@ -322,27 +304,36 @@ export const createTenantAsync = createAsyncThunk(
       };
     }
 
-    if (
-      enableTLS &&
-      consoleCertificate.encoded_cert !== "" &&
-      consoleCertificate.encoded_key !== ""
-    ) {
-      consoleCerts = {
-        console: {
-          crt: consoleCertificate.encoded_cert,
-          key: consoleCertificate.encoded_key,
-        },
+    if (enableTLS && minioClientCertificates.length > 0) {
+      tenantClientCertificates = {
+        minioClientCertificates: minioClientCertificates
+          .map((keyPair: KeyPair) => ({
+            crt: keyPair.encoded_cert,
+            key: keyPair.encoded_key,
+          }))
+          .filter((keyPair) => keyPair.crt && keyPair.key),
       };
     }
 
-    if (tenantCerts || consoleCerts || caCerts || consoleCaCerts) {
+    if (enableTLS && minioCAsCertificates.length > 0) {
+      tenantCAsCertificates = {
+        minioCAsCertificates: minioCAsCertificates
+          .map((keyPair: KeyPair) => keyPair.encoded_cert)
+          .filter((keyPair) => keyPair),
+      };
+    }
+
+    if (
+      minioServerCertificates ||
+      minioClientCertificates ||
+      minioCAsCertificates
+    ) {
       dataSend = {
         ...dataSend,
         tls: {
-          ...tenantCerts,
-          ...consoleCerts,
-          ...caCerts,
-          ...consoleCaCerts,
+          ...tenantServerCertificates,
+          ...tenantClientCertificates,
+          ...tenantCAsCertificates,
         },
       };
     }

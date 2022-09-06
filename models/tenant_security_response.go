@@ -175,6 +175,9 @@ func (m *TenantSecurityResponse) UnmarshalBinary(b []byte) error {
 // swagger:model TenantSecurityResponseCustomCertificates
 type TenantSecurityResponseCustomCertificates struct {
 
+	// client
+	Client []*CertificateInfo `json:"client"`
+
 	// minio
 	Minio []*CertificateInfo `json:"minio"`
 
@@ -185,6 +188,10 @@ type TenantSecurityResponseCustomCertificates struct {
 // Validate validates this tenant security response custom certificates
 func (m *TenantSecurityResponseCustomCertificates) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateClient(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateMinio(formats); err != nil {
 		res = append(res, err)
@@ -197,6 +204,32 @@ func (m *TenantSecurityResponseCustomCertificates) Validate(formats strfmt.Regis
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *TenantSecurityResponseCustomCertificates) validateClient(formats strfmt.Registry) error {
+	if swag.IsZero(m.Client) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Client); i++ {
+		if swag.IsZero(m.Client[i]) { // not required
+			continue
+		}
+
+		if m.Client[i] != nil {
+			if err := m.Client[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("customCertificates" + "." + "client" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customCertificates" + "." + "client" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -256,6 +289,10 @@ func (m *TenantSecurityResponseCustomCertificates) validateMinioCAs(formats strf
 func (m *TenantSecurityResponseCustomCertificates) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateClient(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateMinio(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -267,6 +304,26 @@ func (m *TenantSecurityResponseCustomCertificates) ContextValidate(ctx context.C
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *TenantSecurityResponseCustomCertificates) contextValidateClient(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Client); i++ {
+
+		if m.Client[i] != nil {
+			if err := m.Client[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("customCertificates" + "." + "client" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customCertificates" + "." + "client" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
