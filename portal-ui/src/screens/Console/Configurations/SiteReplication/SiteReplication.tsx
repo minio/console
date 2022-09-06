@@ -207,7 +207,7 @@ const SiteReplication = () => {
                     <br />
                     You can learn more at our{" "}
                     <a
-                      href="https://github.com/minio/minio/tree/master/docs/site-replication?ref=con"
+                      href="https://docs.min.io/minio/baremetal/replication/site-replication-overview.html?ref=con"
                       target="_blank"
                       rel="noreferrer"
                     >
