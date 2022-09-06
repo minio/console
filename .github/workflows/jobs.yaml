@@ -172,7 +172,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.18.x, 1.19.x ]
+        go-version: [ 1.18.x ]
 
     steps:
 
@@ -183,6 +183,19 @@ jobs:
         id: go
 
       - uses: actions/checkout@v2
+
+      # To build operator image, we need to clone the repository first
+      - name: clone https://github.com/minio/operator
+        uses: actions/checkout@master
+        with:
+
+          # Repository name with owner. For example, actions/checkout
+          # Default: ${{ github.repository }}
+          repository: minio/operator
+
+          # Relative path under $GITHUB_WORKSPACE to place the repository
+          # To have two repositories under the same test
+          path: 'operator_repository'
 
       - uses: actions/cache@v2
         name: Go Mod Cache
@@ -1093,7 +1106,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.18.x, 1.19.x ]
+        go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
@@ -1104,6 +1117,19 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+
+      # To build operator image, we need to clone the repository first
+      - name: clone https://github.com/minio/operator
+        uses: actions/checkout@master
+        with:
+
+          # Repository name with owner. For example, actions/checkout
+          # Default: ${{ github.repository }}
+          repository: minio/operator
+
+          # Relative path under $GITHUB_WORKSPACE to place the repository
+          # To have two repositories under the same test
+          path: 'operator_repository'
 
       - name: Read .nvmrc
         id: node_version

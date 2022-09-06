@@ -38,10 +38,31 @@ function setup_kind() {
 }
 
 function install_operator() {
-    echo "Installing Current Operator"
 
-    # TODO: Compile the current branch and create an overlay to use that image version
-    try kubectl apply -k "${SCRIPT_DIR}/../portal-ui/tests/scripts/resources"
+    echo " "
+    echo "==================Compile Operator:====================="
+    echo "  Change Directory to: $GITHUB_WORKSPACE/operator_repository"
+    cd "$GITHUB_WORKSPACE/operator_repository"
+    echo "  Compile Operator: make docker"
+    make docker # It will generate: docker.io/minio/operator:dev
+    echo "  Load minio/operator:dev image to the cluster"
+    kind load docker-image minio/operator:dev
+
+    echo "  Value of image before:"
+    yq '.spec.template.spec.containers[0].image' "${GITHUB_WORKSPACE}/operator_repository/resources/base/deployment.yaml"
+
+    echo "  Change image of template from v4.4.28 to dev"
+    yq e -i '.spec.template.spec.containers[0].image = "minio/operator:dev"' "${GITHUB_WORKSPACE}/operator_repository/resources/base/deployment.yaml"
+
+    echo "  Value of image after:"
+    yq '.spec.template.spec.containers[0].image' "${GITHUB_WORKSPACE}/operator_repository/resources/base/deployment.yaml"
+
+    cd $GITHUB_WORKSPACE # Back to the workspace
+    echo "========================================================"
+    echo " "
+
+    echo "Installing Latest Operator"
+    try kubectl apply -k "${GITHUB_WORKSPACE}/operator_repository/resources"
 
     echo "Waiting for k8s api"
     sleep 10
@@ -91,4 +112,55 @@ function check_tenant_status() {
     kubectl run admin-mc -i --tty --image minio/mc --command -- bash -c "until (mc alias set minio/ https://minio.$1.svc.cluster.local $USER $PASSWORD); do echo \"...waiting... for 5secs\" && sleep 5; done; mc admin info minio/;"
 
     echo "Done."
+}
+
+function wait_for_resource() {
+	waitdone=0
+	totalwait=0
+	echo "command to wait on:"
+	command_to_wait="kubectl -n $1 get pods -l $3=$2 --no-headers"
+	echo $command_to_wait
+
+	while true; do
+	waitdone=$($command_to_wait | wc -l)
+	if [ "$waitdone" -ne 0 ]; then
+		echo "Found $waitdone pods"
+			break
+	fi
+	sleep 5
+	totalwait=$((totalwait + 5))
+	if [ "$totalwait" -gt 305 ]; then
+			echo "Unable to get resource after 5 minutes, exiting."
+			try false
+	fi
+	done
+}
+
+# Install tenant function is being used by deploy-tenant and check-prometheus
+function install_tenant() {
+
+	namespace=tenant-lite
+	key=v1.min.io/tenant
+	value=storage-lite
+	echo "Installing lite tenant"
+
+	try kubectl apply -k "${SCRIPT_DIR}/tenant-lite"
+
+	echo "Waiting for the tenant statefulset, this indicates the tenant is being fulfilled"
+	echo $namespace
+	echo $value
+	echo $key
+	wait_for_resource $namespace $value $key
+
+	echo "Waiting for tenant pods to come online (5m timeout)"
+	try kubectl wait --namespace $namespace \
+	--for=condition=ready pod \
+	--selector $key=$value \
+	--timeout=300s
+
+	echo "Wait for Prometheus PVC to be bound"
+	while [[ $(kubectl get pvc storage-lite-prometheus-storage-lite-prometheus-0 -n tenant-lite -o 'jsonpath={..status.phase}') != "Bound" ]]; do echo "waiting for PVC status" && sleep 1 && kubectl get pvc -A; done
+
+	echo "Build passes basic tenant creation"
+
 }
