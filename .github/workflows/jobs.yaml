@@ -136,6 +136,10 @@ jobs:
           echo "The idea is to build minio image from downloaded repository";
           cd $GITHUB_WORKSPACE/minio_repository;
           echo "replace github.com/minio/console => ../" >> go.mod
+
+          echo "updates to go.mod needed; to update it: go mod tidy"
+          go mod tidy
+
           echo "Get git version to build MinIO Image";
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
