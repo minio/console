@@ -297,7 +297,7 @@ jobs:
 
   no-warnings-and-make-assets:
     name: "React Code Has No Warnings & is Prettified, then Make Assets"
-    runs-on: ${{ matrix.os }}
+    runs-on: self-hosted
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
