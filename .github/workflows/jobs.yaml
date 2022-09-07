@@ -401,7 +401,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
+    runs-on: [ self-hosted, vm-docker, xvfb-run ]
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
@@ -465,6 +465,18 @@ jobs:
         run: |
           make console
 
+      - name: Install dependencies
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          cd portal-ui; yarn install;
+
+      - name: clean-previous-containers-if-any
+        run: |
+          docker stop minio || true;
+          docker container prune -f || true;
+
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
@@ -472,7 +484,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions-1/ --skip-js-errors -c 3'
+          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-1/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |
