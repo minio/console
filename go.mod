@@ -2,6 +2,10 @@ module github.com/minio/console
 
 go 1.17
 
+replace github.com/minio/madmin-go v1.4.27 => /Users/jillii/madmin-go
+
+replace github.com/minio/mc v0.0.0-20220818165341-8c239d16aa37 => /Users/jillii/mc
+
 require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cheggaaa/pb/v3 v3.0.8
@@ -23,9 +27,9 @@ require (
 	github.com/minio/directpv v1.4.4-0.20220805090942-948ca4731651
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.19.2
-	github.com/minio/madmin-go v1.4.26
+	github.com/minio/madmin-go v1.4.27
 	github.com/minio/mc v0.0.0-20220818165341-8c239d16aa37
-	github.com/minio/minio-go/v7 v7.0.35
+	github.com/minio/minio-go/v7 v7.0.36
 	github.com/minio/operator v0.0.0-20220902184351-21e4073132b0
 	github.com/minio/pkg v1.3.2
 	github.com/minio/selfupdate v0.5.0

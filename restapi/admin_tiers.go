@@ -70,12 +70,10 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 	if err != nil {
 		return nil, err
 	}
-
 	tiersInfo, err := client.tierStats(ctx)
 	if err != nil {
 		return nil, err
 	}
-
 	var tiersList []*models.Tier
 	for _, tierData := range tiers {
 
@@ -107,6 +105,23 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Region:       tierData.S3.Region,
 					Secretkey:    tierData.S3.SecretKey,
 					Storageclass: tierData.S3.StorageClass,
+					Usage:        humanize.IBytes(stats.TotalSize),
+					Objects:      strconv.Itoa(stats.NumObjects),
+					Versions:     strconv.Itoa(stats.NumVersions),
+				},
+			})
+		case madmin.MinIO:
+			tiersList = append(tiersList, &models.Tier{
+				Type: models.TierTypeMinio,
+				Minio: &models.TierMinio{
+					Accesskey:    tierData.MinIO.AccessKey,
+					Bucket:       tierData.MinIO.Bucket,
+					Endpoint:     tierData.MinIO.Endpoint,
+					Name:         tierData.Name,
+					Prefix:       tierData.MinIO.Prefix,
+					Region:       tierData.MinIO.Region,
+					Secretkey:    tierData.MinIO.SecretKey,
+					Storageclass: tierData.MinIO.StorageClass,
 					Usage:        humanize.IBytes(stats.TotalSize),
 					Objects:      strconv.Itoa(stats.NumObjects),
 					Versions:     strconv.Itoa(stats.NumVersions),
@@ -181,6 +196,7 @@ func addTier(ctx context.Context, client MinioAdmin, params *tieringApi.AddTierP
 	var err error
 
 	switch params.Body.Type {
+
 	case models.TierTypeS3:
 		cfg, err = madmin.NewTierS3(
 			params.Body.S3.Name,
@@ -191,6 +207,21 @@ func addTier(ctx context.Context, client MinioAdmin, params *tieringApi.AddTierP
 			madmin.S3Prefix(params.Body.S3.Prefix),
 			madmin.S3Endpoint(params.Body.S3.Endpoint),
 			madmin.S3StorageClass(params.Body.S3.Storageclass),
+		)
+		if err != nil {
+			return err
+		}
+	case models.TierTypeMinio:
+		cfg, err = madmin.NewTierMinIO(
+			params.Body.Minio.Name,
+			params.Body.Minio.Accesskey,
+			params.Body.Minio.Secretkey,
+			params.Body.Minio.Endpoint,
+			params.Body.Minio.Bucket,
+			madmin.MinIORegion(params.Body.Minio.Region),
+			madmin.MinIOPrefix(params.Body.Minio.Prefix),
+			madmin.MinIOEndpoint(params.Body.Minio.Endpoint),
+			madmin.MinIOStorageClass(params.Body.Minio.Storageclass),
 		)
 		if err != nil {
 			return err

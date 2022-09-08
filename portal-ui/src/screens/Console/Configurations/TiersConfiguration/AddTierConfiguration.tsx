@@ -142,12 +142,21 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
 
       let tierType = type;
 
-      if (type === "minio") {
-        tierType = "s3";
-      }
+      //if (type === "minio") {
+       // tierType = "s3";
+      //}
 
       switch (type) {
         case "minio":
+          request = {
+            minio: {
+              ...fields,
+              accesskey: accessKey,
+              secretkey: secretKey,
+              storageclass: storageClass,
+            },
+          };
+          break;
         case "s3":
           request = {
             s3: {
