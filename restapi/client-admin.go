@@ -37,7 +37,7 @@ const globalAppName = "MinIO Console"
 
 // NewAdminClientWithInsecure gives a new madmin client interface either secure or insecure based on parameter
 func NewAdminClientWithInsecure(url, accessKey, secretKey, sessionToken string, insecure bool) (*madmin.AdminClient, *probe.Error) {
-	s3Client, err := s3AdminNew(&mcCmd.Config{
+	admClient, err := s3AdminNew(&mcCmd.Config{
 		HostURL:      url,
 		AccessKey:    accessKey,
 		SecretKey:    secretKey,
@@ -50,8 +50,10 @@ func NewAdminClientWithInsecure(url, accessKey, secretKey, sessionToken string, 
 		return nil, err.Trace(url)
 	}
 	stsClient := PrepareConsoleHTTPClient(insecure)
-	s3Client.SetCustomTransport(stsClient.Transport)
-	return s3Client, nil
+	admClient.SetCustomTransport(stsClient.Transport)
+	// set user-agent to differentiate Console UI requests for auditing.
+	admClient.SetAppInfo("MinIO Console", pkg.Version)
+	return admClient, nil
 }
 
 // s3AdminNew returns an initialized minioAdmin structure. If debug is enabled,
