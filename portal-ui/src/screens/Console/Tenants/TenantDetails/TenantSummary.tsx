@@ -32,7 +32,7 @@ import SummaryUsageBar from "../../Common/UsageBarWrapper/SummaryUsageBar";
 import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import SectionTitle from "../../Common/SectionTitle";
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { Button } from "mds";
 import { EditIcon } from "../../../../icons";
 import EditDomains from "./EditDomains";
 import { ITenant } from "../ListTenants/types";
@@ -284,9 +284,9 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
           <Grid item xs={12}>
             <h3>
               Domains
-              <RBIconButton
+              <Button
+                id={"edit-domains"}
                 icon={<EditIcon />}
-                title={""}
                 onClick={() => {
                   setEditDomainsOpen(true);
                 }}

@@ -16,9 +16,10 @@
 
 import React from "react";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
+import { Box, Grid } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Button, Grid } from "@mui/material";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import { actionsTray, widgetContainerCommon } from "../common/styleLibrary";
@@ -42,11 +43,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
     ...widgetContainerCommon,
-    syncButton: {
-      "&.MuiButton-root .MuiButton-iconSizeMedium > *:first-of-type": {
-        fontSize: 18,
-      },
-    },
     schedulerIcon: {
       opacity: 0.4,
       fontSize: 10,
@@ -272,15 +268,13 @@ const DateRangeSelector = ({
             }}
           >
             <Button
+              id={"sync"}
               type="button"
-              variant="contained"
-              color="primary"
+              variant="callAction"
               onClick={triggerSync}
-              endIcon={<SyncIcon />}
-              className={classes.syncButton}
-            >
-              Sync
-            </Button>
+              icon={<SyncIcon />}
+              label={"Sync"}
+            />
           </Box>
         )}
       </Box>

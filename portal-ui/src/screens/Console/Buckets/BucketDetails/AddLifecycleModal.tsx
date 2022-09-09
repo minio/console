@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
+import { Button } from "mds";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -24,7 +25,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Button,
   LinearProgress,
   SelectChangeEvent,
   Typography,
@@ -403,24 +403,23 @@ const AddLifecycleModal = ({
             </Grid>
             <Grid item xs={12} className={classes.modalButtonBar}>
               <Button
+                id={"reset"}
                 type="button"
-                variant="outlined"
-                color="primary"
+                variant="regular"
                 disabled={addLoading}
                 onClick={() => {
                   closeModalAndRefresh(false);
                 }}
-              >
-                Cancel
-              </Button>
+                label={"Cancel"}
+              />
               <Button
+                id={"save-lifecycle"}
                 type="submit"
-                variant="contained"
+                variant="callAction"
                 color="primary"
                 disabled={addLoading || !isFormValid}
-              >
-                Save
-              </Button>
+                label={"Save"}
+              />
             </Grid>
             {addLoading && (
               <Grid item xs={12}>

@@ -15,7 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
+import { Button } from "mds";
 import { OnlineRegistrationIcon } from "../../../icons";
 import { FormTitle } from "./utils";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -157,25 +158,27 @@ const ApiKeyRegister = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "flex-end",
+                "& button": {
+                  marginLeft: "8px",
+                },
               }}
             >
               <Button
-                variant="outlined"
+                id={"get-from-subnet"}
+                variant="regular"
                 className={classes.spacerRight}
                 disabled={loading}
                 onClick={() => setShowApiKeyModal(true)}
-              >
-                Get from SUBNET
-              </Button>
+                label={"Get from SUBNET"}
+              />
               <Button
+                id={"register"}
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 disabled={loading || apiKey.trim().length === 0}
                 onClick={() => onRegister()}
-              >
-                Register
-              </Button>
+                label={"Register"}
+              />
               <GetApiKeyModal
                 open={showApiKeyModal}
                 closeModal={() => setShowApiKeyModal(false)}

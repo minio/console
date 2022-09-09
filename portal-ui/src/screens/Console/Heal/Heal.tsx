@@ -18,7 +18,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { HorizontalBar } from "react-chartjs-2";
 import {
-  Button,
   FormControl,
   Grid,
   InputBase,
@@ -28,6 +27,7 @@ import {
 } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { wsProtocol } from "../../../utils/wsUtils";
@@ -342,14 +342,14 @@ const Heal = () => {
               </Grid>
               <Grid item xs={12} className={classes.buttonBar}>
                 <Button
+                  id={"start-heal"}
                   type="submit"
-                  variant="contained"
+                  variant="callAction"
                   color="primary"
                   disabled={start}
                   onClick={() => setStart(true)}
-                >
-                  Start
-                </Button>
+                  label={"Start"}
+                />
               </Grid>
             </Grid>
             <Grid item xs={12} className={classes.graphContainer}>

@@ -3,7 +3,7 @@ import UsersSelectors from "./UsersSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import Grid from "@mui/material/Grid";
-import { Button } from "@mui/material";
+import { Button } from "mds";
 import api from "../../../common/api";
 import { ErrorResponseHandler } from "../../../common/types";
 
@@ -95,26 +95,24 @@ const AddGroupMember = ({
       </Grid>
       <Grid item xs={12} className={classes.modalButtonBar}>
         <Button
+          id={"reset-add-group-member"}
           type="button"
-          variant="outlined"
-          color="primary"
+          variant="regular"
           onClick={() => {
             setSelectedUsers(preSelectedUsers);
           }}
-        >
-          Reset
-        </Button>
+          label={"Reset"}
+        />
 
         <Button
+          id={"save-add-group-member"}
           type="button"
-          variant="contained"
-          color="primary"
+          variant="callAction"
           onClick={() => {
             addMembersToGroup();
           }}
-        >
-          Save
-        </Button>
+          label={"Save"}
+        />
       </Grid>
     </ModalWrapper>
   );

@@ -16,7 +16,8 @@
 
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
+import { LinearProgress, SelectChangeEvent } from "@mui/material";
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -166,24 +167,22 @@ const EnableBucketEncryption = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"cancel"}
               type="submit"
-              variant="outlined"
-              color="primary"
+              variant="regular"
               onClick={() => {
                 closeModalAndRefresh();
               }}
               disabled={loading}
-            >
-              Cancel
-            </Button>
+              label={"Cancel"}
+            />
             <Button
+              id={"save"}
               type="submit"
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={loading}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
           {loading && (
             <Grid item xs={12}>

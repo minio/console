@@ -15,9 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-
 import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
@@ -51,7 +51,7 @@ import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import BackLink from "../../../common/BackLink";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import {
@@ -62,6 +62,7 @@ import {
 import { hasPermission } from "../../../common/SecureComponent";
 import { useAppDispatch } from "../../../store";
 import { policyDetailsSort } from "../../../utils/sortFunctions";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -282,23 +283,23 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                   switchOnly
                 />
 
-                <RBIconButton
-                  tooltip={"Delete User"}
-                  text={""}
-                  onClick={deleteUser}
-                  icon={<TrashIcon />}
-                  color="secondary"
-                  variant={"outlined"}
-                />
+                <TooltipWrapper tooltip={"Delete User"}>
+                  <Button
+                    id={"delete-user"}
+                    onClick={deleteUser}
+                    icon={<TrashIcon />}
+                    variant={"secondary"}
+                  />
+                </TooltipWrapper>
 
-                <RBIconButton
-                  tooltip={"Change Password"}
-                  text={""}
-                  onClick={changeUserPassword}
-                  icon={<PasswordKeyIcon />}
-                  color="primary"
-                  variant={"outlined"}
-                />
+                <TooltipWrapper tooltip={"Change Password"}>
+                  <Button
+                    id={"change-user-password"}
+                    onClick={changeUserPassword}
+                    icon={<PasswordKeyIcon />}
+                    variant={"regular"}
+                  />
+                </TooltipWrapper>
               </Fragment>
             }
           />
@@ -314,16 +315,17 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                 <React.Fragment>
                   <div className={classes.actionsTray}>
                     <PanelTitle>Groups</PanelTitle>
-                    <RBIconButton
-                      tooltip={"Add to Groups"}
-                      text={"Add to Groups"}
-                      onClick={() => {
-                        setAddGroupOpen(true);
-                      }}
-                      icon={<AddIcon />}
-                      color="primary"
-                      variant={"contained"}
-                    />
+                    <TooltipWrapper tooltip={"Add to Groups"}>
+                      <Button
+                        id={"add-groups"}
+                        label={"Add to Groups"}
+                        onClick={() => {
+                          setAddGroupOpen(true);
+                        }}
+                        icon={<AddIcon />}
+                        variant={"callAction"}
+                      />
+                    </TooltipWrapper>
                   </div>
                   <div className={classes.tableBlock}>
                     <TableWrapper
@@ -358,16 +360,17 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                   <div className={classes.actionsTray}>
                     <PanelTitle>Policies</PanelTitle>
 
-                    <RBIconButton
-                      tooltip={"Assign Policies"}
-                      text={"Assign Policies"}
-                      onClick={() => {
-                        setPolicyOpen(true);
-                      }}
-                      icon={<IAMPoliciesIcon />}
-                      color="primary"
-                      variant={"contained"}
-                    />
+                    <TooltipWrapper tooltip={"Assign Policies"}>
+                      <Button
+                        id={"assign-policies"}
+                        label={"Assign Policies"}
+                        onClick={() => {
+                          setPolicyOpen(true);
+                        }}
+                        icon={<IAMPoliciesIcon />}
+                        variant={"callAction"}
+                      />
+                    </TooltipWrapper>
                   </div>
                   <div className={classes.tableBlock}>
                     <TableWrapper

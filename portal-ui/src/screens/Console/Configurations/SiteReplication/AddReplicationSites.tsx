@@ -16,10 +16,9 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-import { Box, Button, LinearProgress } from "@mui/material";
+import { Box, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { Button } from "mds";
 import useApi from "../../Common/Hooks/useApi";
 import { AddIcon, ClustersIcon, RemoveIcon } from "../../../../icons";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -34,6 +33,7 @@ import {
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 type SiteInputRow = {
   name: string;
@@ -415,38 +415,49 @@ const AddReplicationSites = () => {
                             },
                           }}
                         >
-                          <RBIconButton
-                            tooltip={"Add a Row"}
-                            text={""}
-                            variant="outlined"
-                            color="primary"
-                            icon={<AddIcon />}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              const newRows = [...siteConfig];
-                              //add at the next index
-                              newRows.splice(index + 1, 0, {
-                                name: "",
-                                endpoint: "",
-                              });
+                          <TooltipWrapper tooltip={"Add a Row"}>
+                            <Button
+                              id={`add-row-${index}`}
+                              variant="regular"
+                              icon={<AddIcon />}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                const newRows = [...siteConfig];
+                                //add at the next index
+                                newRows.splice(index + 1, 0, {
+                                  name: "",
+                                  endpoint: "",
+                                });
 
-                              setSiteConfig(newRows);
-                            }}
-                          />
-                          <RBIconButton
-                            tooltip={"Remove Row"}
-                            text={""}
-                            variant="outlined"
-                            disabled={isDelDisabled}
-                            color="primary"
-                            icon={<RemoveIcon />}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setSiteConfig(
-                                siteConfig.filter((_, idx) => idx !== index)
-                              );
-                            }}
-                          />
+                                setSiteConfig(newRows);
+                              }}
+                              style={{
+                                width: 25,
+                                height: 25,
+                                padding: 0,
+                              }}
+                            />
+                          </TooltipWrapper>
+                          <TooltipWrapper tooltip={"Remove Row"}>
+                            <Button
+                              id={`remove-row-${index}`}
+                              variant="regular"
+                              disabled={isDelDisabled}
+                              icon={<RemoveIcon />}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setSiteConfig(
+                                  siteConfig.filter((_, idx) => idx !== index)
+                                );
+                              }}
+                              style={{
+                                width: 25,
+                                height: 25,
+                                padding: 0,
+                                marginLeft: 8,
+                              }}
+                            />
+                          </TooltipWrapper>
                         </Box>
                       </Grid>
                     </Fragment>
@@ -465,28 +476,26 @@ const AddReplicationSites = () => {
                   }}
                 >
                   <Button
+                    id={"clear"}
                     type="button"
-                    variant="outlined"
-                    color="primary"
+                    variant="regular"
                     disabled={isAdding}
                     onClick={resetForm}
-                  >
-                    Clear
-                  </Button>
+                    label={"Clear"}
+                  />
 
                   <Button
+                    id={"save"}
                     type="submit"
-                    variant="contained"
-                    color="primary"
+                    variant="callAction"
                     disabled={
                       isAdding ||
                       !accessKey ||
                       !secretKey ||
                       !isAllEndpointsValid
                     }
-                  >
-                    Save
-                  </Button>
+                    label={"Save"}
+                  />
                 </Box>
               </Grid>
             </form>

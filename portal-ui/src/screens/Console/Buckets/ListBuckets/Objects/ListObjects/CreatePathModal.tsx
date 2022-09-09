@@ -16,8 +16,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "mds";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -168,22 +169,21 @@ const CreatePathModal = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"clear"}
               type="button"
               color="primary"
-              variant="outlined"
+              variant="regular"
               onClick={resetForm}
-            >
-              Clear
-            </Button>
+              label={"Clear"}
+            />
             <Button
+              id={"create"}
               type="submit"
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={!isFormValid}
               onClick={createProcess}
-            >
-              Create
-            </Button>
+              label={"Create"}
+            />
           </Grid>
         </Grid>
       </ModalWrapper>

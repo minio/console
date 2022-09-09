@@ -70,8 +70,7 @@ const EnableVersioningModal = ({
       titleIcon={<ConfirmModalIcon />}
       onConfirm={enableVersioning}
       confirmButtonProps={{
-        color: "primary",
-        variant: "contained",
+        variant: "callAction",
       }}
       onClose={() => {
         closeVersioningModalAndRefresh(false);

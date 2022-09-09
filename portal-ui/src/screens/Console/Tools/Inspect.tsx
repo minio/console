@@ -15,7 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Box, Button, DialogContentText } from "@mui/material";
+import { Box, DialogContentText } from "@mui/material";
+import { Button } from "mds";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -318,26 +319,24 @@ const Inspect = ({ classes }: { classes: any }) => {
                   }}
                 >
                   <Button
-                    sx={{
+                    id={"inspect-clear-button"}
+                    style={{
                       marginRight: "15px",
                     }}
                     type="button"
-                    color="primary"
-                    variant="outlined"
+                    variant="regular"
                     data-test-id="inspect-clear-button"
                     onClick={resetForm}
-                  >
-                    Clear
-                  </Button>
+                    label={"Clear"}
+                  />
                   <Button
+                    id={"inspect-start"}
                     type="submit"
-                    variant="contained"
-                    color="primary"
+                    variant="callAction"
                     data-test-id="inspect-submit-button"
                     disabled={!isFormValid}
-                  >
-                    Inspect
-                  </Button>
+                    label={"Inspect"}
+                  />
                 </Box>
               </form>
             </Box>

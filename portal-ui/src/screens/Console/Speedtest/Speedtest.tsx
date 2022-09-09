@@ -17,8 +17,9 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import moment from "moment/moment";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -182,6 +183,10 @@ const Speedtest = () => {
     setSpeedometerValue(percToDisplay);
   }, [start, currentValue, topDate, totalSeconds]);
 
+  const stoppedLabel = currStatus !== null ? "Retest" : "Start";
+
+  const buttonLabel = start ? "Start" : stoppedLabel;
+
   return (
     <Fragment>
       <PageHeader label="Performance" />
@@ -289,20 +294,14 @@ const Speedtest = () => {
                     type="button"
                     id={"start-speed-test"}
                     variant={
-                      currStatus !== null && !start ? "contained" : "outlined"
+                      currStatus !== null && !start ? "callAction" : "regular"
                     }
                     className={`${classes.buttonBackground} ${classes.speedStart}`}
                     disabled={
                       duration.trim() === "" || size.trim() === "" || start
                     }
-                  >
-                    {!start && (
-                      <Fragment>
-                        {currStatus !== null ? "Retest" : "Start"}
-                      </Fragment>
-                    )}
-                    {start ? "Start" : ""}
-                  </Button>
+                    label={buttonLabel}
+                  />
                 </Grid>
               </Grid>
               <Grid container className={classes.multiModule}>

@@ -20,6 +20,7 @@ import {
   ITenantEncryptionResponse,
 } from "../types";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -42,7 +43,7 @@ import Grid from "@mui/material/Grid";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { Button, DialogContentText } from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { KeyPair } from "../ListTenants/utils";
@@ -1762,16 +1763,15 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
             </Grid>
           </Fragment>
         )}
-        <Grid item xs={12} textAlign={"right"}>
+        <Grid item xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
+            id={"save-encryption"}
             type="submit"
-            variant="contained"
-            color="primary"
+            variant="callAction"
             disabled={!isFormValid}
             onClick={() => setConfirmOpen(true)}
-          >
-            Save
-          </Button>
+            label={"Save"}
+          />
         </Grid>
       </Grid>
     </React.Fragment>

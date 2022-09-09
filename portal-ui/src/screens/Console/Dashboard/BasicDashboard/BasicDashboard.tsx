@@ -35,10 +35,11 @@ import ServersList from "./ServersList";
 import CounterCard from "./CounterCard";
 import ReportedUsage from "./ReportedUsage";
 import { DiagnosticsMenuIcon } from "../../../../icons/SidebarMenus";
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { Button } from "mds";
 import { Link } from "react-router-dom";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import TimeStatItem from "../TimeStatItem";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const BoxItem = ({ children }: { children: any }) => {
   return (
@@ -228,14 +229,15 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                       marginRight: "75px",
                     }}
                   >
-                    <RBIconButton
-                      tooltip={"Browse"}
-                      onClick={() => {}}
-                      text={"Browse"}
-                      icon={<ArrowRightIcon />}
-                      color={"primary"}
-                      variant={"outlined"}
-                    />
+                    <TooltipWrapper tooltip={"Browse"}>
+                      <Button
+                        id={"browse-dashboard"}
+                        onClick={() => {}}
+                        label={"Browse"}
+                        icon={<ArrowRightIcon />}
+                        variant={"regular"}
+                      />
+                    </TooltipWrapper>
                   </Link>
                 }
               />

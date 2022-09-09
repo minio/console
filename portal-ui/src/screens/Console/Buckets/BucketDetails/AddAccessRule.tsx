@@ -16,7 +16,8 @@
 
 import React, { useState } from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
+import { Button } from "mds";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -121,22 +122,21 @@ const AddAccessRule = ({
         </Grid>
         <Grid item xs={12} className={classes.modalButtonBar}>
           <Button
+            id={"clear"}
             type="button"
-            color="primary"
-            variant="outlined"
+            variant="regular"
             onClick={resetForm}
-          >
-            Clear
-          </Button>
+            label={"Clear"}
+          />
+
           <Button
+            id={"add-access-save"}
             type="submit"
-            variant="contained"
-            color="primary"
+            variant="callAction"
             disabled={prefix.trim() === ""}
             onClick={createProcess}
-          >
-            Save
-          </Button>
+            label={"Save"}
+          />
         </Grid>
       </Grid>
     </ModalWrapper>

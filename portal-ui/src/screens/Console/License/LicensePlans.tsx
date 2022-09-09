@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import Button from "@mui/material/Button";
+import { Button } from "mds";
 import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { SubnetInfo } from "./types";
@@ -296,20 +296,12 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
       currentPlan !== "community" ? "https://subnet.min.io" : link;
     return (
       <Button
+        id={`license-action-${link}`}
         variant={variant}
-        color="primary"
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{
+        style={{
           marginTop: "12px",
           width: "80%",
-          "&.MuiButton-contained": {
-            padding: 0,
-            paddingLeft: "8px",
-            paddingRight: "8px",
-          },
         }}
-        href={linkToNav}
         disabled={
           currentPlan !== LICENSE_PLANS.COMMUNITY && currentPlan !== plan
         }
@@ -321,9 +313,8 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
             "_blank"
           );
         }}
-      >
-        {btnText}
-      </Button>
+        label={btnText}
+      />
     );
   };
 
@@ -621,7 +612,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
                 {getButton(
                   `https://slack.min.io${linkTracker}`,
                   "Join Slack",
-                  "outlined",
+                  "regular",
                   LICENSE_PLANS.COMMUNITY
                 )}
               </Box>
@@ -663,7 +654,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
                 !PAID_PLANS.includes(currentPlan)
                   ? "Subscribe"
                   : "Login to SUBNET",
-                "contained",
+                "callAction",
                 LICENSE_PLANS.STANDARD
               )}
             </Box>
@@ -715,7 +706,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
                 !PAID_PLANS.includes(currentPlan)
                   ? "Subscribe"
                   : "Login to SUBNET",
-                "contained",
+                "callAction",
                 LICENSE_PLANS.ENTERPRISE
               )}
             </Box>

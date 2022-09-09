@@ -20,7 +20,6 @@ import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import IconButton from "@mui/material/IconButton";
 import { AppState, useAppDispatch } from "../../../../store";
 import OperatorLogo from "../../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../../icons/ConsoleLogo";
@@ -31,6 +30,7 @@ import { Box } from "@mui/material";
 import { toggleList } from "../../ObjectBrowser/objectBrowserSlice";
 import { selFeatures } from "../../consoleSlice";
 import { selDirectPVMode, selOpMode } from "../../../../systemSlice";
+import { Button } from "mds";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -48,7 +48,12 @@ const styles = (theme: Theme) =>
       alignItems: "center",
     },
     rightMenu: {
-      textAlign: "right",
+      display: "flex",
+      justifyContent: "flex-end",
+      paddingRight: 20,
+      "& button": {
+        marginLeft: 8,
+      },
     },
     logo: {
       marginLeft: 34,
@@ -68,8 +73,8 @@ const styles = (theme: Theme) =>
       width: 15,
       height: 15,
       top: 0,
-      right: 2,
-      marginTop: -16,
+      right: 4,
+      marginTop: 4,
       transitionDuration: "0.2s",
       color: "#32C787",
       "& svg": {
@@ -195,40 +200,31 @@ const PageHeader = ({
       >
         {actions && actions}
         {managerObjects && managerObjects.length > 0 && (
-          <IconButton
-            color="primary"
+          <Button
             aria-label="Refresh List"
-            component="span"
             onClick={() => {
               dispatch(toggleList());
             }}
+            icon={
+              <Fragment>
+                <div
+                  className={`${classes.indicator} ${
+                    newObject ? "newItem" : ""
+                  }`}
+                  style={{
+                    opacity: managerObjects.length > 0 && newItems ? 1 : 0,
+                  }}
+                >
+                  <CircleIcon />
+                </div>
+                <ObjectManagerIcon
+                  style={{ width: 20, height: 20, marginTop: -2 }}
+                />
+              </Fragment>
+            }
             id="object-manager-toggle"
-            size="large"
-            sx={{
-              marginRight: "20px",
-              color: "#5E5E5E",
-              position: "relative",
-              border: "#E2E2E2 1px solid",
-              borderRadius: "3px",
-              width: "40px",
-              height: "40px",
-              backgroundColor: "#F8F8F8",
-              padding: 0,
-              "&>svg": {
-                width: "25px",
-              },
-            }}
-          >
-            <div
-              className={`${classes.indicator} ${newObject ? "newItem" : ""}`}
-              style={{
-                opacity: managerObjects.length > 0 && newItems ? 1 : 0,
-              }}
-            >
-              <CircleIcon />
-            </div>
-            <ObjectManagerIcon />
-          </IconButton>
+            style={{ position: "relative", padding: "0 10px" }}
+          />
         )}
       </Grid>
     </Grid>

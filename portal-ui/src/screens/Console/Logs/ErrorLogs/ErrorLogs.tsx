@@ -16,17 +16,11 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { useSelector } from "react-redux";
-import {
-  Button,
-  FormControl,
-  Grid,
-  InputBase,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { FormControl, Grid, InputBase, MenuItem, Select } from "@mui/material";
 
 import moment from "moment/moment";
 import { ErrorResponseHandler } from "../../../../../src/common/types";
@@ -330,27 +324,29 @@ const ErrorLogs = () => {
               </FormControl>
             )}
           </Grid>
-          <Grid item xs={2} textAlign={"right"}>
+          <Grid
+            item
+            xs={2}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
             {!logsStarted && (
               <Button
+                id={"start-logs"}
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 disabled={false}
                 onClick={startLogs}
-              >
-                Start Logs
-              </Button>
+                label={"Start Logs"}
+              />
             )}
             {logsStarted && (
               <Button
+                id={"stop-logs"}
                 type="button"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 onClick={stopLogs}
-              >
-                Stop Logs
-              </Button>
+                label={"Stop Logs"}
+              />
             )}
           </Grid>
           <Grid item xs={12} className={classes.actionsTray}>

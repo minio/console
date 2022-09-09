@@ -16,11 +16,11 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {
   formFieldStyles,
@@ -47,7 +47,8 @@ interface ITierCredentialsModal {
 const styles = (theme: Theme) =>
   createStyles({
     buttonContainer: {
-      textAlign: "right",
+      display: "flex",
+      justifyContent: "flex-end",
     },
     ...modalBasic,
     ...formFieldStyles,
@@ -217,13 +218,12 @@ const UpdateTierCredentialsModal = ({
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button
+              id={"save-credentials"}
               type="submit"
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={savingTiers || !isFormValid}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
           {savingTiers && (
             <Grid item xs={12}>

@@ -22,10 +22,11 @@ import React, {
   useState,
 } from "react";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import debounce from "lodash/debounce";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import Snackbar from "@mui/material/Snackbar";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
@@ -33,10 +34,8 @@ import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../store";
 import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../common/types";
-
 import Menu from "./Menu/Menu";
 import api from "../../common/api";
-
 import MainError from "./Common/MainError/MainError";
 import {
   CONSOLE_UI_RESOURCE,
@@ -174,7 +173,12 @@ const styles = (theme: Theme) =>
       heigh: "60px",
       widht: "100%",
       lineHeight: "60px",
-      textAlign: "center",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      "& button": {
+        marginLeft: 8,
+      },
     },
     progress: {
       height: "3px",
@@ -564,14 +568,13 @@ const Console = ({ classes }: IConsoleProps) => {
                     The instance needs to be restarted for configuration changes
                     to take effect.{" "}
                     <Button
-                      color="secondary"
-                      size="small"
+                      id={"restart-server"}
+                      variant="secondary"
                       onClick={() => {
                         restartServer();
                       }}
-                    >
-                      Restart
-                    </Button>
+                      label={"Restart"}
+                    />
                   </Fragment>
                 )}
               </div>

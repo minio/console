@@ -84,8 +84,7 @@ const RestoreFileVersion = ({
       titleIcon={<RecoverIcon />}
       onConfirm={restoreVersion}
       confirmButtonProps={{
-        color: "secondary",
-        variant: "outlined",
+        variant: "secondary",
         disabled: restoreLoading,
       }}
       onClose={() => {

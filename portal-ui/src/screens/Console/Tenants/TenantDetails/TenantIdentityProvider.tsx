@@ -17,13 +17,13 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect, useSelector } from "react-redux";
 import {
-  Button,
   DialogContentText,
   IconButton,
   Tooltip,
   Typography,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -659,14 +659,14 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
 
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button
+              id={"save-idp"}
               type="submit"
-              variant="contained"
+              variant="callAction"
               color="primary"
               disabled={!isFormValid || isSending}
               onClick={() => setDialogOpen(true)}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
 
           {idpSelection === "AD" && (
@@ -808,14 +808,13 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
               <br />
               <Grid item xs={12} className={classes.buttonContainer}>
                 <Button
+                  id={"add-additional-dns"}
                   type="submit"
-                  variant="contained"
-                  color="primary"
+                  variant="callAction"
                   disabled={!isFormValid || isSending}
                   onClick={() => setAdministrators()}
-                >
-                  Add additional DNs
-                </Button>
+                  label={"Add additional DNs"}
+                />
               </Grid>
             </Fragment>
           )}

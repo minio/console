@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Button } from "mds";
 import {
   Link,
   Navigate,
@@ -45,7 +46,6 @@ import TenantsIcon from "../../../../icons/TenantsIcon";
 import PageLayout from "../../Common/Layout/PageLayout";
 import BackLink from "../../../../common/BackLink";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
-import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import withSuspense from "../../Common/Components/withSuspense";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import { tenantIsOnline } from "../ListTenants/utils";
@@ -53,6 +53,7 @@ import { setSnackBarMessage } from "../../../../systemSlice";
 import { setTenantName } from "../tenantsSlice";
 import { getTenantAsync } from "../thunks/tenantDetailsAsync";
 import { LinearProgress } from "@mui/material";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const TenantYAML = withSuspense(React.lazy(() => import("./TenantYAML")));
 const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
@@ -302,71 +303,57 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
               </Fragment>
             }
             actions={
-              <div>
-                <BoxIconButton
-                  id={"delete-tenant"}
-                  tooltip={"Delete"}
-                  variant="outlined"
-                  aria-label="Delete"
-                  onClick={() => {
-                    confirmDeleteTenant();
-                  }}
-                  color="secondary"
-                  classes={{
-                    root: `${classes.tenantActionButton} ${classes.deleteBtn}`,
-                  }}
-                  size="large"
-                >
-                  <span>Delete</span> <TrashIcon />
-                </BoxIconButton>
-                <BoxIconButton
-                  classes={{
-                    root: classes.tenantActionButton,
-                  }}
-                  tooltip={"Edit YAML"}
-                  color="primary"
-                  id={"yaml_button"}
-                  variant="outlined"
-                  aria-label="Edit YAML"
-                  onClick={() => {
-                    editYaml();
-                  }}
-                  size="large"
-                >
-                  <span>YAML</span>
-                  <EditIcon />
-                </BoxIconButton>
-                <BoxIconButton
-                  classes={{
-                    root: classes.tenantActionButton,
-                  }}
-                  tooltip={"Management Console"}
-                  onClick={() => {
-                    navigate(
-                      `/namespaces/${tenantNamespace}/tenants/${tenantName}/hop`
-                    );
-                  }}
-                  disabled={!tenantInfo || !tenantIsOnline(tenantInfo)}
-                  variant={"outlined"}
-                  color="primary"
-                >
-                  <span>Console</span>{" "}
-                  <MinIOTierIconXs style={{ height: 16 }} />
-                </BoxIconButton>
-                <BoxIconButton
-                  classes={{
-                    root: classes.tenantActionButton,
-                  }}
-                  tooltip={"Refresh"}
-                  color="primary"
-                  variant="outlined"
-                  aria-label="Refresh List"
-                  onClick={() => {
-                    dispatch(getTenantAsync());
-                  }}
-                >
-                  <span>Refresh</span> <RefreshIcon />
-                </BoxIconButton>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <TooltipWrapper tooltip={"Delete"}>
+                  <Button
+                    id={"delete-tenant"}
+                    variant="secondary"
+                    onClick={() => {
+                      confirmDeleteTenant();
+                    }}
+                    color="secondary"
+                    label={"Delete"}
+                    icon={<TrashIcon />}
+                  />
+                </TooltipWrapper>
+                <TooltipWrapper tooltip={"Edit YAML"}>
+                  <Button
+                    label={"YAML"}
+                    icon={<EditIcon />}
+                    id={"yaml_button"}
+                    variant="regular"
+                    aria-label="Edit YAML"
+                    onClick={() => {
+                      editYaml();
+                    }}
+                  />
+                </TooltipWrapper>
+                <TooltipWrapper tooltip={"Management Console"}>
+                  <Button
+                    id={"tenant-hop"}
+                    onClick={() => {
+                      navigate(
+                        `/namespaces/${tenantNamespace}/tenants/${tenantName}/hop`
+                      );
+                    }}
+                    disabled={!tenantInfo || !tenantIsOnline(tenantInfo)}
+                    variant={"regular"}
+                    label={"Console"}
+                    icon={<MinIOTierIconXs style={{ height: 16 }} />}
+                  />
+                </TooltipWrapper>
+                <TooltipWrapper tooltip={"Refresh"}>
+                  <Button
+                    id={"tenant-refresh"}
+                    variant="regular"
+                    aria-label="Refresh List"
+                    onClick={() => {
+                      dispatch(getTenantAsync());
+                    }}
+                    label={"Refresh"}
+                    icon={<RefreshIcon />}
+                  />
+                </TooltipWrapper>
               </div>
             }
           />

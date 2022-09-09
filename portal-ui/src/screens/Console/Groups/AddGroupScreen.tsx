@@ -24,7 +24,8 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
+import { Button } from "mds";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -146,23 +147,21 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
               </Grid>
               <Grid item xs={12} className={classes.modalButtonBar}>
                 <Button
+                  id={"clear-group"}
                   type="button"
-                  variant="outlined"
-                  color="primary"
-                  className={classes.spacerRight}
+                  variant="regular"
+                  style={classes.spacerRight}
                   onClick={resetForm}
-                >
-                  Clear
-                </Button>
+                  label={"Clear"}
+                />
 
                 <Button
+                  id={"save-group"}
                   type="submit"
-                  variant="contained"
-                  color="primary"
+                  variant="callAction"
                   disabled={saving || !validGroup}
-                >
-                  Save
-                </Button>
+                  label={"Save"}
+                />
               </Grid>
               {saving && (
                 <Grid item xs={12}>

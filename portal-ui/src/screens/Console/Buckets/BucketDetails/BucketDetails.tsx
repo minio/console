@@ -23,6 +23,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
+import { Button } from "mds";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -41,7 +42,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Box } from "@mui/material";
 
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
@@ -54,7 +55,6 @@ import {
 } from "../../../../common/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
-import RBIconButton from "./SummaryItems/RBIconButton";
 import { TrashIcon } from "../../../../icons";
 import {
   selDistSet,
@@ -68,6 +68,7 @@ import {
   setBucketInfo,
 } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const BucketsIcon = React.lazy(() => import("../../../../icons/BucketsIcon"));
 const FolderIcon = React.lazy(() => import("../../../../icons/FolderIcon"));
@@ -208,19 +209,19 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
       <PageHeader
         label={<BackLink to={"/buckets"} label={"Buckets"} />}
         actions={
-          <Fragment>
-            <Tooltip title={"Browse Bucket"}>
-              <IconButton
-                color="primary"
-                aria-label="Browse Bucket"
-                component="span"
-                onClick={openBucketBrowser}
-                size="large"
-              >
-                <FolderIcon />
-              </IconButton>
-            </Tooltip>
-          </Fragment>
+          <TooltipWrapper tooltip={"Browse Bucket"}>
+            <Button
+              id={"switch-browse-view"}
+              aria-label="Browse Bucket"
+              onClick={openBucketBrowser}
+              icon={
+                <FolderIcon style={{ width: 20, height: 20, marginTop: -3 }} />
+              }
+              style={{
+                padding: "0 10px",
+              }}
+            />
+          </TooltipWrapper>
         }
       />
       <PageLayout className={classes.pageContainer}>
@@ -259,24 +260,25 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   resource={bucketName}
                   errorProps={{ disabled: true }}
                 >
-                  <RBIconButton
-                    tooltip={"Delete Bucket"}
-                    onClick={() => {
-                      setDeleteOpen(true);
-                    }}
-                    text={"Delete Bucket"}
-                    icon={<TrashIcon />}
-                    color={"secondary"}
-                    variant={"outlined"}
-                  />
+                  <TooltipWrapper tooltip={"Delete Bucket"}>
+                    <Button
+                      id={"delete-bucket-button"}
+                      onClick={() => {
+                        setDeleteOpen(true);
+                      }}
+                      label={"Delete Bucket"}
+                      icon={<TrashIcon />}
+                      variant={"secondary"}
+                    />
+                  </TooltipWrapper>
                 </SecureComponent>
-                <RBIconButton
+                <Button
+                  id={"refresh-bucket-info"}
                   onClick={() => {
                     dispatch(setBucketDetailsLoad(true));
                   }}
-                  text={`Refresh`}
+                  label={"Refresh"}
                   icon={<RefreshIcon />}
-                  color={"primary"}
                 />
               </Fragment>
             }

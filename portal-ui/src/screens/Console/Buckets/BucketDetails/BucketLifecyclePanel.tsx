@@ -39,10 +39,11 @@ import {
   SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import RBIconButton from "./SummaryItems/RBIconButton";
 import DeleteBucketLifecycleRule from "./DeleteBucketLifecycleRule";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useParams } from "react-router-dom";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import { Button } from "mds";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -282,16 +283,17 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
             matchAll
             errorProps={{ disabled: true }}
           >
-            <RBIconButton
-              tooltip={"Add Lifecycle Rule"}
-              onClick={() => {
-                setAddLifecycleOpen(true);
-              }}
-              text={"Add Lifecycle Rule"}
-              icon={<AddIcon />}
-              color="primary"
-              variant={"contained"}
-            />
+            <TooltipWrapper tooltip={"Add Lifecycle Rule"}>
+              <Button
+                id={"add-bucket-lifecycle-rule"}
+                onClick={() => {
+                  setAddLifecycleOpen(true);
+                }}
+                label={"Add Lifecycle Rule"}
+                icon={<AddIcon />}
+                variant={"callAction"}
+              />
+            </TooltipWrapper>
           </SecureComponent>
         </Grid>
         <Grid item xs={12}>
