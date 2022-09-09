@@ -382,6 +382,8 @@ func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	// set user-agent to differentiate Console UI requests for auditing.
+	minioClient.SetAppInfo("MinIO Console", pkg.Version)
 	return minioClient, nil
 }
 
