@@ -15,9 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import get from "lodash/get";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
+import get from "lodash/get";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -79,13 +80,12 @@ const LogSearchFullModal = ({
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button
-              type="button"
-              variant="contained"
+              id={"close-log-search"}
+              variant="callAction"
               color="primary"
               onClick={onClose}
-            >
-              Close
-            </Button>
+              label={"Close"}
+            />
           </Grid>
         </Grid>
       </ModalWrapper>

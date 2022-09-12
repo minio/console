@@ -24,7 +24,7 @@ import { baseUrl } from "../../history";
 import { Paper } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import { Button } from "mds";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const styles = (theme: Theme) =>
@@ -177,12 +177,13 @@ const LoginCallback = ({ classes }: ILoginCallBackProps) => {
               {errorDescription}
             </Typography>
             <Button
-              component={"a"}
-              href={`${baseUrl}login`}
+              id={"back-to-login"}
+              onClick={() => {
+                window.location.href = `${baseUrl}login`;
+              }}
               type="submit"
-              variant="contained"
-              color="primary"
-              className={classes.submit}
+              variant="callAction"
+              fullWidth
             >
               Back to Login
             </Button>

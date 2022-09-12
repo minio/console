@@ -22,9 +22,10 @@ import withStyles from "@mui/styles/withStyles";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import { UploadFolderIcon, UploadIcon } from "../../../../icons";
-import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../common/SecureComponent";
+import { Button } from "mds";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 interface IUploadFilesButton {
   uploadPath: string;
@@ -77,19 +78,19 @@ const UploadFilesButton = ({
 
   return (
     <Fragment>
-      <RBIconButton
-        id={"upload-main"}
-        tooltip={"Upload Files"}
-        aria-controls={`upload-main-menu`}
-        aria-haspopup="true"
-        aria-expanded={openUploadMenu ? "true" : undefined}
-        onClick={handleClick}
-        text={"Upload"}
-        icon={<UploadIcon />}
-        color="primary"
-        variant={"contained"}
-        disabled={forceDisable || !uploadEnabled}
-      />
+      <TooltipWrapper tooltip={"Upload Files"}>
+        <Button
+          id={"upload-main"}
+          aria-controls={`upload-main-menu`}
+          aria-haspopup="true"
+          aria-expanded={openUploadMenu ? "true" : undefined}
+          onClick={handleClick}
+          label={"Upload"}
+          icon={<UploadIcon />}
+          variant={"callAction"}
+          disabled={forceDisable || !uploadEnabled}
+        />
+      </TooltipWrapper>
       <Menu
         id={`upload-main-menu`}
         aria-labelledby={`upload-main`}

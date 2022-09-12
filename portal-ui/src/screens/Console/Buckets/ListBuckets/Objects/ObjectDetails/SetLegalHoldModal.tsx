@@ -20,7 +20,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
+import { Button } from "mds";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -135,21 +135,19 @@ const SetLegalHoldModal = ({
         </Grid>
         <Grid item xs={12} className={classes.modalButtonBar}>
           <Button
+            id={"clear"}
             type="button"
-            color="primary"
-            variant="outlined"
+            variant="regular"
             onClick={resetForm}
-          >
-            Clear
-          </Button>
+            label={"Clear"}
+          />
           <Button
+            id={"save"}
             type="submit"
-            variant="contained"
-            color="primary"
+            variant="callAction"
             disabled={isSaving}
-          >
-            Save
-          </Button>
+            label={" Save"}
+          />
         </Grid>
       </form>
     </ModalWrapper>

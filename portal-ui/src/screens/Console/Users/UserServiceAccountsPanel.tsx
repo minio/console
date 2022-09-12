@@ -15,10 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-
 import { Theme } from "@mui/material/styles";
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -36,7 +36,7 @@ import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { AddIcon, DeleteIcon } from "../../../icons";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
 import { selectSAs } from "../Configurations/utils";
 import ServiceAccountPolicy from "../Account/ServiceAccountPolicy";
@@ -48,6 +48,7 @@ import { SecureComponent } from "../../../common/SecureComponent";
 import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -224,18 +225,19 @@ const UserServiceAccountsPanel = ({
       )}
       <div className={classes.actionsTray}>
         <PanelTitle>Service Accounts</PanelTitle>
-        <Box>
-          <RBIconButton
-            tooltip={"Delete Selected"}
-            onClick={() => {
-              setDeleteMultipleOpen(true);
-            }}
-            text={"Delete Selected"}
-            icon={<DeleteIcon />}
-            color="secondary"
-            disabled={selectedSAs.length === 0}
-            variant={"outlined"}
-          />
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <TooltipWrapper tooltip={"Delete Selected"}>
+            <Button
+              id={"delete-selected"}
+              onClick={() => {
+                setDeleteMultipleOpen(true);
+              }}
+              label={"Delete Selected"}
+              icon={<DeleteIcon />}
+              disabled={selectedSAs.length === 0}
+              variant={"secondary"}
+            />
+          </TooltipWrapper>
           <SecureComponent
             scopes={[
               IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,
@@ -247,19 +249,20 @@ const UserServiceAccountsPanel = ({
             matchAll
             errorProps={{ disabled: true }}
           >
-            <RBIconButton
-              tooltip={"Create service account"}
-              text={"Create service account"}
-              variant="contained"
-              color="primary"
-              icon={<AddIcon />}
-              onClick={() => {
-                navigate(
-                  `/identity/users/new-user-sa/${encodeURLString(user)}`
-                );
-              }}
-              disabled={!hasPolicy}
-            />
+            <TooltipWrapper tooltip={"Create service account"}>
+              <Button
+                id={"create-service-account"}
+                label={"Create service account"}
+                variant="callAction"
+                icon={<AddIcon />}
+                onClick={() => {
+                  navigate(
+                    `/identity/users/new-user-sa/${encodeURLString(user)}`
+                  );
+                }}
+                disabled={!hasPolicy}
+              />
+            </TooltipWrapper>
           </SecureComponent>
         </Box>
       </div>

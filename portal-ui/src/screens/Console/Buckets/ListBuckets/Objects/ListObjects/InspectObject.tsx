@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-
+import { Button } from "mds";
 import withStyles from "@mui/styles/withStyles";
 import {
   decodeURLString,
@@ -27,7 +27,6 @@ import {
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import { InspectMenuIcon } from "../../../../../../icons/SidebarMenus";
-import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -156,13 +155,13 @@ const InspectObject = ({
             />
             <Grid item xs={12} className={classes.modalButtonBar}>
               <Button
+                id={"inspect"}
                 type="submit"
-                variant="contained"
+                variant="callAction"
                 color="primary"
                 onClick={performInspect}
-              >
-                Inspect
-              </Button>
+                label={"Inspect"}
+              />
             </Grid>
           </form>
         </ModalWrapper>

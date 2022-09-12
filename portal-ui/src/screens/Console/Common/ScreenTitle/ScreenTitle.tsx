@@ -81,6 +81,9 @@ const styles = (theme: Theme) =>
     rightItems: {
       display: "flex",
       alignItems: "center",
+      "& button": {
+        marginLeft: 8,
+      },
       "@media (max-width: 600px)": {
         width: "100%",
       },

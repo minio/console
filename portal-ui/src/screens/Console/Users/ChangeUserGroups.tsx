@@ -15,10 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -173,23 +173,21 @@ const ChangeUserGroups = ({
             </Grid>
             <Grid item xs={12} className={classes.buttonContainer}>
               <Button
+                id={"clear-change-user-groups"}
                 type="button"
-                variant="outlined"
-                color="primary"
-                className={classes.spacerRight}
+                variant="regular"
+                style={classes.spacerRight}
                 onClick={resetForm}
-              >
-                Clear
-              </Button>
+                label={"Clear"}
+              />
 
               <Button
+                id={"save-user-groups"}
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 disabled={addLoading || !sendEnabled}
-              >
-                Save
-              </Button>
+                label={"Save"}
+              />
             </Grid>
             {addLoading && (
               <Grid item xs={12}>

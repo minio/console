@@ -17,6 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
@@ -42,12 +43,12 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import withSuspense from "../../Common/Components/withSuspense";
-import RBIconButton from "./SummaryItems/RBIconButton";
 import EditReplicationModal from "./EditReplicationModal";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useParams } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const AddReplicationModal = withSuspense(
   React.lazy(() => import("./AddReplicationModal"))
@@ -250,24 +251,26 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <PanelTitle>Replication</PanelTitle>
-          <div>
+          <div style={{ display: "flex" }}>
             <SecureComponent
               scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
               resource={bucketName}
               matchAll
               errorProps={{ disabled: true }}
             >
-              <RBIconButton
-                tooltip={"Remove Selected Replication Rules"}
-                onClick={() => {
-                  confirmDeleteSelectedReplicationRules();
-                }}
-                text={"Remove Selected Rules"}
-                icon={<TrashIcon />}
-                color={"secondary"}
-                variant={"outlined"}
-                disabled={selectedRepRules.length === 0}
-              />
+              <TooltipWrapper tooltip={"Remove Selected Replication Rules"}>
+                <Button
+                  id={"remove-bucket-replication-rule"}
+                  onClick={() => {
+                    confirmDeleteSelectedReplicationRules();
+                  }}
+                  label={"Remove Selected Rules"}
+                  icon={<TrashIcon />}
+                  color={"secondary"}
+                  disabled={selectedRepRules.length === 0}
+                  variant={"secondary"}
+                />
+              </TooltipWrapper>
             </SecureComponent>
             <SecureComponent
               scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
@@ -275,16 +278,17 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
               matchAll
               errorProps={{ disabled: true }}
             >
-              <RBIconButton
-                tooltip={"Add Replication Rule"}
-                onClick={() => {
-                  setOpenReplicationOpen(true);
-                }}
-                text={"Add Replication Rule"}
-                icon={<AddIcon />}
-                color="primary"
-                variant={"contained"}
-              />
+              <TooltipWrapper tooltip={"Add Replication Rule"}>
+                <Button
+                  id={"add-bucket-replication-rule"}
+                  onClick={() => {
+                    setOpenReplicationOpen(true);
+                  }}
+                  label={"Add Replication Rule"}
+                  icon={<AddIcon />}
+                  variant={"callAction"}
+                />
+              </TooltipWrapper>
             </SecureComponent>
           </div>
         </Grid>

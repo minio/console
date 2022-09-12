@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, InputAdornment, TextField } from "@mui/material";
@@ -38,9 +39,7 @@ import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import RefreshIcon from "../../../icons/RefreshIcon";
 import SearchIcon from "../../../icons/SearchIcon";
-import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import HelpBox from "../../../common/HelpBox";
-import BoxButton from "../Common/BoxButton/BoxButton";
 
 import withSuspense from "../Common/Components/withSuspense";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -243,35 +242,32 @@ const DirectPVMain = ({ classes }: IDirectPVMain) => {
             disabled={notAvailable}
             variant="standard"
           />
-          <BoxIconButton
+          <Button
+            id={"refresh-directpv-list"}
             color="primary"
-            aria-label="Refresh Tenant List"
+            aria-label="Refresh DirectPV List"
             onClick={() => {
               setLoading(true);
             }}
             disabled={notAvailable}
-            size="large"
-          >
-            <RefreshIcon />
-          </BoxIconButton>
-          <BoxButton
-            variant="contained"
-            color="primary"
+            icon={<RefreshIcon />}
+          />
+          <Button
+            id={"format-selected-drives"}
+            variant="callAction"
             disabled={checkedDrives.length <= 0 || notAvailable}
             onClick={formatSelectedDrives}
             label={"Format Selected Drives"}
-          >
-            <GroupIcon />
-          </BoxButton>
-          <BoxButton
-            variant="contained"
-            color="primary"
+            icon={<GroupIcon />}
+          />
+          <Button
+            id={"format-all-drives"}
+            variant="callAction"
             label={"Format All Drives"}
             onClick={formatAllDrives}
             disabled={notAvailable}
-          >
-            <AddIcon />
-          </BoxButton>
+            icon={<AddIcon />}
+          />
         </Grid>
 
         <Grid item xs={12}>

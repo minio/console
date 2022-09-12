@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import Grid from "@mui/material/Grid";
 import get from "lodash/get";
@@ -86,7 +87,6 @@ import {
 import UploadFilesButton from "../../UploadFilesButton";
 import DetailsListPanel from "./DetailsListPanel";
 import ObjectDetailPanel from "./ObjectDetailPanel";
-import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 import ActionsListSection from "./ActionsListSection";
 import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
 import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
@@ -128,6 +128,7 @@ import {
 } from "../../../BucketDetails/bucketDetailsSlice";
 import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
 import { selFeatures } from "../../../../consoleSlice";
+import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
@@ -1396,58 +1397,60 @@ const ListObjects = () => {
             actions={
               <Fragment>
                 <div className={classes.actionsSection}>
-                  <RBIconButton
-                    id={"rewind-objects-list"}
-                    tooltip={"Rewind Bucket"}
-                    text={"Rewind"}
-                    icon={
-                      <Badge
-                        badgeContent=" "
-                        color="secondary"
-                        variant="dot"
-                        invisible={!rewindEnabled}
-                        className={classes.badgeOverlap}
-                        sx={{ height: 16 }}
-                      >
-                        <HistoryIcon
-                          style={{
-                            minWidth: 16,
-                            minHeight: 16,
-                            width: 16,
-                            height: 16,
-                          }}
-                        />
-                      </Badge>
-                    }
-                    color="primary"
-                    variant={"outlined"}
-                    onClick={() => {
-                      setRewindSelect(true);
-                    }}
-                    disabled={
-                      !isVersioned ||
-                      !hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT])
-                    }
-                  />
-                  <RBIconButton
-                    id={"refresh-objects-list"}
-                    tooltip={"Reload List"}
-                    text={"Refresh"}
-                    icon={<RefreshIcon />}
-                    color="primary"
-                    variant={"outlined"}
-                    onClick={() => {
-                      if (versionsMode) {
-                        dispatch(setLoadingVersions(true));
-                      } else {
-                        dispatch(setLoadingObjectsList(true));
+                  <TooltipWrapper tooltip={"Rewind Bucket"}>
+                    <Button
+                      id={"rewind-objects-list"}
+                      label={"Rewind"}
+                      icon={
+                        <Badge
+                          badgeContent=" "
+                          color="secondary"
+                          variant="dot"
+                          invisible={!rewindEnabled}
+                          className={classes.badgeOverlap}
+                          sx={{ height: 16 }}
+                        >
+                          <HistoryIcon
+                            style={{
+                              minWidth: 16,
+                              minHeight: 16,
+                              width: 16,
+                              height: 16,
+                              marginTop: -3,
+                            }}
+                          />
+                        </Badge>
                       }
-                    }}
-                    disabled={
-                      !hasPermission(bucketName, [IAM_SCOPES.S3_LIST_BUCKET]) ||
-                      rewindEnabled
-                    }
-                  />
+                      variant={"regular"}
+                      onClick={() => {
+                        setRewindSelect(true);
+                      }}
+                      disabled={
+                        !isVersioned ||
+                        !hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT])
+                      }
+                    />
+                  </TooltipWrapper>
+                  <TooltipWrapper tooltip={"Reload List"}>
+                    <Button
+                      id={"refresh-objects-list"}
+                      label={"Refresh"}
+                      icon={<RefreshIcon />}
+                      variant={"regular"}
+                      onClick={() => {
+                        if (versionsMode) {
+                          dispatch(setLoadingVersions(true));
+                        } else {
+                          dispatch(setLoadingObjectsList(true));
+                        }
+                      }}
+                      disabled={
+                        !hasPermission(bucketName, [
+                          IAM_SCOPES.S3_LIST_BUCKET,
+                        ]) || rewindEnabled
+                      }
+                    />
+                  </TooltipWrapper>
                   <input
                     type="file"
                     multiple

@@ -18,6 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
@@ -40,7 +41,6 @@ import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import HelpBox from "../../../../common/HelpBox";
 import RefreshIcon from "../../../../icons/RefreshIcon";
-import AButton from "../../Common/AButton/AButton";
 import MultipleBucketsIcon from "../../../../icons/MultipleBucketsIcon";
 import SelectMultipleIcon from "../../../../icons/SelectMultipleIcon";
 import { SecureComponent } from "../../../../common/SecureComponent";
@@ -52,7 +52,6 @@ import {
 import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
-import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
 import BulkLifecycleModal from "./BulkLifecycleModal";
 import hasPermission from "../../../../common/SecureComponent/accessControl";
 import { setErrorSnackMessage } from "../../../../systemSlice";
@@ -60,6 +59,8 @@ import { useAppDispatch } from "../../../../store";
 import { useSelector } from "react-redux";
 import { selFeatures } from "../../consoleSlice";
 import AutoColorIcon from "../../Common/Components/AutoColorIcon";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import AButton from "../../Common/AButton/AButton";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -239,87 +240,97 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
             display={"flex"}
             alignItems={"center"}
             justifyContent={"flex-end"}
+            sx={{
+              "& button": {
+                marginLeft: "8px",
+              },
+            }}
           >
             {!obOnly && (
               <Fragment>
-                <RBIconButton
+                <TooltipWrapper
                   tooltip={
                     bulkSelect ? "Unselect Buckets" : "Select Multiple Buckets"
                   }
-                  onClick={() => {
-                    setBulkSelect(!bulkSelect);
-                    setSelectedBuckets([]);
-                  }}
-                  text={""}
-                  icon={<SelectMultipleIcon />}
-                  color={"primary"}
-                  variant={bulkSelect ? "contained" : "outlined"}
-                />
+                >
+                  <Button
+                    id={"multiple-bucket-seection"}
+                    onClick={() => {
+                      setBulkSelect(!bulkSelect);
+                      setSelectedBuckets([]);
+                    }}
+                    icon={<SelectMultipleIcon />}
+                    variant={bulkSelect ? "callAction" : "regular"}
+                  />
+                </TooltipWrapper>
 
                 {bulkSelect && (
-                  <RBIconButton
+                  <TooltipWrapper
                     tooltip={
                       selectedBuckets.length === filteredRecords.length
                         ? "Unselect All Buckets"
                         : "Select All Buckets"
                     }
-                    onClick={selectAllBuckets}
-                    text={""}
-                    icon={<SelectAllIcon />}
-                    color={"primary"}
-                    variant={"outlined"}
-                  />
+                  >
+                    <Button
+                      id={"select-all-buckets"}
+                      onClick={selectAllBuckets}
+                      icon={<SelectAllIcon />}
+                      variant={"regular"}
+                    />
+                  </TooltipWrapper>
                 )}
 
-                <RBIconButton
-                  tooltip={"Set Lifecycle"}
-                  onClick={() => {
-                    setLifecycleModalOpen(true);
-                  }}
-                  text={""}
-                  icon={<LifecycleConfigIcon />}
-                  disabled={selectedBuckets.length === 0}
-                  color={"primary"}
-                  variant={"outlined"}
-                />
+                <TooltipWrapper tooltip={"Set Lifecycle"}>
+                  <Button
+                    id={"set-lifecycle"}
+                    onClick={() => {
+                      setLifecycleModalOpen(true);
+                    }}
+                    icon={<LifecycleConfigIcon />}
+                    variant={"regular"}
+                    disabled={selectedBuckets.length === 0}
+                  />
+                </TooltipWrapper>
 
-                <RBIconButton
-                  tooltip={"Set Replication"}
-                  onClick={() => {
-                    setReplicationModalOpen(true);
-                  }}
-                  text={""}
-                  icon={<MultipleBucketsIcon />}
-                  disabled={selectedBuckets.length === 0}
-                  color={"primary"}
-                  variant={"outlined"}
-                />
+                <TooltipWrapper tooltip={"Set Replication"}>
+                  <Button
+                    id={"set-replication"}
+                    onClick={() => {
+                      setReplicationModalOpen(true);
+                    }}
+                    icon={<MultipleBucketsIcon />}
+                    variant={"regular"}
+                    disabled={selectedBuckets.length === 0}
+                  />
+                </TooltipWrapper>
               </Fragment>
             )}
 
-            <RBIconButton
-              tooltip={"Refresh"}
-              onClick={() => {
-                setLoading(true);
-              }}
-              text={""}
-              icon={<RefreshIcon />}
-              color={"primary"}
-              variant={"outlined"}
-            />
+            <TooltipWrapper tooltip={"Refresh"}>
+              <Button
+                id={"refresh-buckets"}
+                onClick={() => {
+                  setLoading(true);
+                }}
+                icon={<RefreshIcon />}
+                variant={"regular"}
+              />
+            </TooltipWrapper>
 
             {!obOnly && (
-              <RBIconButton
-                tooltip={"Create Bucket"}
-                onClick={() => {
-                  navigate(IAM_PAGES.ADD_BUCKETS);
-                }}
-                text={"Create Bucket"}
-                icon={<AddIcon />}
-                color={"primary"}
-                variant={"contained"}
-                disabled={!canCreateBucket}
-              />
+              <TooltipWrapper tooltip={"Create Bucket"}>
+                <Button
+                  id={"create-bucket"}
+                  onClick={() => {
+                    navigate(IAM_PAGES.ADD_BUCKETS);
+                  }}
+                  icon={<AddIcon />}
+                  variant={"callAction"}
+                  disabled={!canCreateBucket}
+                  label={"Create Bucket"}
+                />
+              </TooltipWrapper>
             )}
           </Grid>
         </Grid>

@@ -15,11 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -221,17 +221,15 @@ const UpdateTenantModal = ({
         </Grid>
         <Grid item xs={12} className={classes.modalButtonBar}>
           <Button
-            type="button"
-            color="primary"
-            variant="outlined"
+            id={"clear"}
+            variant="regular"
             onClick={resetForm}
-          >
-            Clear
-          </Button>
+            label="Clear"
+          />
           <Button
+            id={"save-tenant"}
             type="submit"
-            variant="contained"
-            color="primary"
+            variant="callAction"
             disabled={
               !validMinioImage ||
               (imageRegistry &&
@@ -241,9 +239,8 @@ const UpdateTenantModal = ({
               isSending
             }
             onClick={updateMinIOImage}
-          >
-            Save
-          </Button>
+            label={"Save"}
+          />
         </Grid>
       </Grid>
     </ModalWrapper>

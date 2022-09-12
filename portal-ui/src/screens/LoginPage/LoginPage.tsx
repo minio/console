@@ -24,10 +24,10 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { Button } from "mds";
 import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
-import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { loginStrategyType } from "./types";
 import LogoutIcon from "../../icons/LogoutIcon";
@@ -143,6 +143,10 @@ const useStyles = makeStyles((theme: Theme) =>
       height: "100%",
       margin: "auto",
     },
+    buttonRetry: {
+      display: "flex",
+      justifyContent: "center",
+    },
     loginContainer: {
       flexDirection: "column",
       maxWidth: 400,
@@ -237,6 +241,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     submitContainer: {
       textAlign: "right",
+      marginTop: 30,
     },
     linearPredef: {
       height: 10,
@@ -372,18 +377,16 @@ const Login = () => {
         );
       } else if (loginStrategy.redirect.length === 1) {
         loginComponent = (
-          <Button
-            key={`login-button`}
-            component={"a"}
-            href={loginStrategy.redirect[0]}
-            type="submit"
-            variant="contained"
-            color="primary"
-            id="sso-login"
-            className={clsx(classes.submit, classes.ssoSubmit)}
-          >
-            {loginStrategy.displayNames[0]}
-          </Button>
+          <div className={clsx(classes.submit, classes.ssoSubmit)}>
+            <Button
+              key={`login-button`}
+              variant="callAction"
+              id="sso-login"
+              label={loginStrategy.displayNames[0]}
+              onClick={() => (window.location.href = loginStrategy.redirect[0])}
+              fullWidth
+            />
+          </div>
         );
       } else {
         loginComponent = (
@@ -426,15 +429,12 @@ const Login = () => {
             </Grid>
             <Grid item xs={12} className={classes.submitContainer}>
               <Button
-                type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 id="do-login"
-                className={classes.submit}
                 disabled={jwt === "" || loginSending}
-              >
-                Login
-              </Button>
+                label={"Login"}
+                fullWidth
+              />
             </Grid>
             <Grid item xs={12} className={classes.linearPredef}>
               {loginSending && <LinearProgress />}
@@ -458,19 +458,17 @@ const Login = () => {
                   The backend cannot be reached.
                 </p>
               </div>
-              <div>
+              <div className={classes.buttonRetry}>
                 <Button
                   onClick={() => {
                     dispatch(getFetchConfigurationAsync());
                   }}
-                  endIcon={<RefreshIcon />}
-                  color={"primary"}
-                  variant="outlined"
+                  icon={<RefreshIcon />}
+                  iconLocation={"end"}
+                  variant="regular"
                   id="retry"
-                  className={classes.retryButton}
-                >
-                  Retry
-                </Button>
+                  label={"Retry"}
+                />
               </div>
             </React.Fragment>
           )}

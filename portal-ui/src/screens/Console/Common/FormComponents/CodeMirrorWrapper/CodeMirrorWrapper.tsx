@@ -23,9 +23,10 @@ import withStyles from "@mui/styles/withStyles";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import { fieldBasic } from "../common/styleLibrary";
 import { CopyIcon } from "../../../../../icons";
-import RBIconButton from "../../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { Button } from "mds";
 import CopyToClipboard from "react-copy-to-clipboard";
 import CodeEditor from "@uiw/react-textarea-code-editor";
+import TooltipWrapper from "../../TooltipWrapper/TooltipWrapper";
 
 interface ICodeWrapper {
   value: string;
@@ -124,16 +125,17 @@ const CodeMirrorWrapper = ({
             },
           }}
         >
-          <CopyToClipboard text={value}>
-            <RBIconButton
-              tooltip={"Copy to Clipboard"}
-              onClick={() => {}}
-              text={""}
-              icon={<CopyIcon />}
-              color={"primary"}
-              variant={"outlined"}
-            />
-          </CopyToClipboard>
+          <TooltipWrapper tooltip={"Copy to Clipboard"}>
+            <CopyToClipboard text={value}>
+              <Button
+                type={"button"}
+                id={"copy-code-mirror"}
+                icon={<CopyIcon />}
+                color={"primary"}
+                variant={"regular"}
+              />
+            </CopyToClipboard>
+          </TooltipWrapper>
         </Box>
       </Grid>
     </React.Fragment>

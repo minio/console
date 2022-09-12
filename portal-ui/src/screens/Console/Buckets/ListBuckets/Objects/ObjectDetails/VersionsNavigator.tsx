@@ -57,7 +57,6 @@ import {
 import FileVersionItem from "./FileVersionItem";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import PreviewFileModal from "../Preview/PreviewFileModal";
-import RBIconButton from "../../../BucketDetails/SummaryItems/RBIconButton";
 import DeleteNonCurrent from "../ListObjects/DeleteNonCurrent";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import DeleteSelectedVersions from "./DeleteSelectedVersions";
@@ -80,6 +79,8 @@ import {
   updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
 import { List, ListRowProps } from "react-virtualized";
+import { Button } from "mds";
+import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -548,44 +549,43 @@ const VersionsNavigator = ({
                 }
                 actions={
                   <Fragment>
-                    <RBIconButton
-                      id={"select-multiple-versions"}
-                      tooltip={"Select Multiple Versions"}
-                      onClick={() => {
-                        setSelectEnabled(!selectEnabled);
-                      }}
-                      text={""}
-                      icon={<SelectMultipleIcon />}
-                      color="primary"
-                      variant={selectEnabled ? "contained" : "outlined"}
-                      style={{ marginRight: 8 }}
-                    />
-                    {selectEnabled && (
-                      <RBIconButton
-                        id={"delete-multiple-versions"}
-                        tooltip={"Delete Selected Versions"}
+                    <TooltipWrapper tooltip={"Select Multiple Versions"}>
+                      <Button
+                        id={"select-multiple-versions"}
                         onClick={() => {
-                          setDelSelectedVOpen(true);
+                          setSelectEnabled(!selectEnabled);
                         }}
-                        text={""}
-                        icon={<DeleteIcon />}
-                        color="secondary"
+                        icon={<SelectMultipleIcon />}
+                        variant={selectEnabled ? "callAction" : "regular"}
                         style={{ marginRight: 8 }}
-                        disabled={selectedItems.length === 0}
                       />
+                    </TooltipWrapper>
+                    {selectEnabled && (
+                      <TooltipWrapper tooltip={"Delete Selected Versions"}>
+                        <Button
+                          id={"delete-multiple-versions"}
+                          onClick={() => {
+                            setDelSelectedVOpen(true);
+                          }}
+                          icon={<DeleteIcon />}
+                          variant={"secondary"}
+                          style={{ marginRight: 8 }}
+                          disabled={selectedItems.length === 0}
+                        />
+                      </TooltipWrapper>
                     )}
-                    <RBIconButton
-                      id={"delete-non-current"}
-                      tooltip={"Delete Non Current Versions"}
-                      onClick={() => {
-                        setDeleteNonCurrentOpen(true);
-                      }}
-                      text={""}
-                      icon={<DeleteNonCurrentIcon />}
-                      color="secondary"
-                      style={{ marginRight: 15 }}
-                      disabled={versions.length <= 1}
-                    />
+                    <TooltipWrapper tooltip={"Delete Non Current Versions"}>
+                      <Button
+                        id={"delete-non-current"}
+                        onClick={() => {
+                          setDeleteNonCurrentOpen(true);
+                        }}
+                        icon={<DeleteNonCurrentIcon />}
+                        variant={"secondary"}
+                        style={{ marginRight: 15 }}
+                        disabled={versions.length <= 1}
+                      />
+                    </TooltipWrapper>
                     <span className={classes.sortByLabel}>Sort by</span>
                     <SelectWrapper
                       id={"sort-by"}

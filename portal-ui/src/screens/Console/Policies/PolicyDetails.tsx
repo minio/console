@@ -17,6 +17,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -28,7 +29,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -56,20 +57,25 @@ import {
 } from "../../../common/SecureComponent";
 
 import withSuspense from "../Common/Components/withSuspense";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+
 import PolicyView from "./PolicyView";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
 const styles = (theme: Theme) =>
   createStyles({
     buttonContainer: {
-      textAlign: "right",
+      display: "flex",
+      justifyContent: "flex-end",
       paddingTop: 16,
+      "& button": {
+        marginLeft: 8,
+      },
     },
     pageContainer: {
       border: "1px solid #EAEAEA",
@@ -349,28 +355,30 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                   resource={CONSOLE_UI_RESOURCE}
                   errorProps={{ disabled: true }}
                 >
-                  <RBIconButton
-                    tooltip={"Delete Policy"}
-                    text={"Delete Policy"}
-                    variant="outlined"
-                    color="secondary"
-                    icon={<TrashIcon />}
-                    onClick={deletePolicy}
-                  />
+                  <TooltipWrapper tooltip={"Delete Policy"}>
+                    <Button
+                      id={"delete-policy"}
+                      label={"Delete Policy"}
+                      variant="secondary"
+                      icon={<TrashIcon />}
+                      onClick={deletePolicy}
+                    />
+                  </TooltipWrapper>
                 </SecureComponent>
 
-                <RBIconButton
-                  tooltip={"Refresh"}
-                  text={"Refresh"}
-                  variant="outlined"
-                  color="primary"
-                  icon={<RefreshIcon />}
-                  onClick={() => {
-                    setLoadingUsers(true);
-                    setLoadingGroups(true);
-                    setLoadingPolicy(true);
-                  }}
-                />
+                <TooltipWrapper tooltip={"Refresh"}>
+                  <Button
+                    id={"refresh-policy"}
+                    label={"Refresh"}
+                    variant="regular"
+                    icon={<RefreshIcon />}
+                    onClick={() => {
+                      setLoadingUsers(true);
+                      setLoadingGroups(true);
+                      setLoadingPolicy(true);
+                    }}
+                  />
+                </TooltipWrapper>
               </Fragment>
             }
           />
@@ -513,13 +521,13 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                         errorProps={{ disabled: true }}
                       >
                         <Button
+                          id={"save"}
                           type="submit"
-                          variant="contained"
+                          variant="callAction"
                           color="primary"
                           disabled={addLoading || !validSave}
-                        >
-                          Save
-                        </Button>
+                          label={"Save"}
+                        />
                       </SecureComponent>
                     </Grid>
                     {addLoading && (

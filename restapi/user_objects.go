@@ -800,6 +800,9 @@ func uploadFiles(ctx context.Context, client MinioClient, params objectApi.PostB
 			return err
 		}
 		prefix = string(decodedPrefix)
+		// trim any leading '/', since that is not expected
+		// for any object.
+		prefix = strings.TrimPrefix(prefix, "/")
 	}
 
 	// parse a request body as multipart/form-data.
@@ -825,7 +828,7 @@ func uploadFiles(ctx context.Context, client MinioClient, params objectApi.PostB
 			contentType = mimedb.TypeByExtension(filepath.Ext(p.FileName()))
 		}
 
-		_, err = client.putObject(ctx, params.BucketName, path.Join(prefix, p.FileName()), p, size, minio.PutObjectOptions{
+		_, err = client.putObject(ctx, params.BucketName, path.Join(prefix, path.Clean(p.FileName())), p, size, minio.PutObjectOptions{
 			ContentType:      contentType,
 			DisableMultipart: true, // Do not upload as multipart stream for console uploader.
 		})

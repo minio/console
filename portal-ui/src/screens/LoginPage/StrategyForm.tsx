@@ -16,11 +16,11 @@
 
 import Grid from "@mui/material/Grid";
 import React, { Fragment } from "react";
+import { Button } from "mds";
 import { setAccessKey, setSecretKey, setSTS, setUseSTS } from "./loginSlice";
 import { Box, InputAdornment, LinearProgress } from "@mui/material";
 import UserFilledIcon from "../../icons/UsersFilledIcon";
 import LockFilledIcon from "../../icons/LockFilledIcon";
-import Button from "@mui/material/Button";
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import { LoginField } from "./LoginField";
@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     submitContainer: {
       textAlign: "right",
+      marginTop: 30,
     },
     linearPredef: {
       height: 10,
@@ -170,7 +171,7 @@ const StrategyForm = () => {
         <Grid item xs={12} className={classes.submitContainer}>
           <Button
             type="submit"
-            variant="contained"
+            variant="callAction"
             color="primary"
             id="do-login"
             className={classes.submit}
@@ -179,9 +180,9 @@ const StrategyForm = () => {
               (useSTS && sts === "") ||
               loginSending
             }
-          >
-            Login
-          </Button>
+            label={"Login"}
+            fullWidth
+          />
         </Grid>
         <Grid item xs={12} className={classes.linearPredef}>
           {loginSending && <LinearProgress />}

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-
+import { Button } from "mds";
 import Grid from "@mui/material/Grid";
 import { LinearProgress, SelectChangeEvent } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -41,13 +41,13 @@ import AButton from "../../Common/AButton/AButton";
 
 import withSuspense from "../../Common/Components/withSuspense";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import SearchBox from "../../Common/SearchBox";
 import PageLayout from "../../Common/Layout/PageLayout";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../../Common/CredentialsPrompt/CredentialsPrompt"))
@@ -269,29 +269,33 @@ const ListTenants = ({ classes }: ITenantsList) => {
           />
         }
         actions={
-          <Grid item xs={12} marginRight={"30px"}>
-            <RBIconButton
-              id={"refresh-tenant-list"}
-              tooltip={"Refresh Tenant List"}
-              text={""}
-              onClick={() => {
-                setIsLoading(true);
-              }}
-              icon={<RefreshIcon />}
-              color="primary"
-              variant={"outlined"}
-            />
-            <RBIconButton
-              id={"create-tenant"}
-              tooltip={"Create Tenant"}
-              text={"Create Tenant"}
-              onClick={() => {
-                navigate("/tenants/add");
-              }}
-              icon={<AddIcon />}
-              color="primary"
-              variant={"contained"}
-            />
+          <Grid
+            item
+            xs={12}
+            marginRight={"30px"}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
+            <TooltipWrapper tooltip={"Refresh Tenant List"}>
+              <Button
+                id={"refresh-tenant-list"}
+                onClick={() => {
+                  setIsLoading(true);
+                }}
+                icon={<RefreshIcon />}
+                variant={"regular"}
+              />
+            </TooltipWrapper>
+            <TooltipWrapper tooltip={"Create Tenant"}>
+              <Button
+                id={"create-tenant"}
+                label={"Create Tenant"}
+                onClick={() => {
+                  navigate("/tenants/add");
+                }}
+                icon={<AddIcon />}
+                variant={"callAction"}
+              />
+            </TooltipWrapper>
           </Grid>
         }
       />

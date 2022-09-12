@@ -214,8 +214,7 @@ const GetApiKeyModal = ({
       onConfirm={onConfirm}
       onClose={closeModal}
       confirmButtonProps={{
-        color: "primary",
-        variant: "contained",
+        variant: "callAction",
         disabled: !email || !password || isLoading,
         hidden: true,
       }}

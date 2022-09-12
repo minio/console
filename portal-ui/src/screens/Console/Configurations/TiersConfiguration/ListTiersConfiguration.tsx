@@ -21,6 +21,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box, LinearProgress } from "@mui/material";
+import { Button } from "mds";
 import Grid from "@mui/material/Grid";
 import {
   actionsTray,
@@ -53,7 +54,7 @@ import {
 } from "../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../common/SecureComponent";
 import { tierTypes } from "./utils";
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+
 import { selDistSet, setErrorSnackMessage } from "../../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
@@ -276,10 +277,10 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                 value={filter}
               />
               <div className={classes.rightActionButtons}>
-                <RBIconButton
+                <Button
+                  id={"refresh-list"}
                   icon={<RefreshIcon />}
-                  color="primary"
-                  text={`Refresh List`}
+                  label={`Refresh List`}
                   onClick={() => {
                     setIsLoading(true);
                   }}
@@ -290,12 +291,12 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                   resource={CONSOLE_UI_RESOURCE}
                   errorProps={{ disabled: true }}
                 >
-                  <RBIconButton
+                  <Button
+                    id={"add-tier"}
                     icon={<AddIcon />}
-                    color="primary"
-                    text={`Create Tier`}
+                    label={`Create Tier`}
                     onClick={addTier}
-                    variant="contained"
+                    variant="callAction"
                   />
                 </SecureComponent>
               </div>

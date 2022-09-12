@@ -16,9 +16,9 @@
 
 import React, { useState } from "react";
 import { Box, Grid } from "@mui/material";
+import { Button } from "mds";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import { ClustersIcon } from "../../../../icons";
 import useApi from "../../Common/Hooks/useApi";
 import { StatsResponseType } from "./SiteReplicationStatus";
@@ -27,6 +27,7 @@ import Loader from "../../Common/Loader/Loader";
 import PolicyEntityStatus from "./LookupStatus/PolicyEntityStatus";
 import GroupEntityStatus from "./LookupStatus/GroupEntityStatus";
 import UserEntityStatus from "./LookupStatus/UserEntityStatus";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const EntityReplicationLookup = () => {
   const [entityType, setEntityType] = useState<string>("bucket");
@@ -140,18 +141,19 @@ const EntityReplicationLookup = () => {
             maxWidth: "80px",
           }}
         >
-          <RBIconButton
-            type={"button"}
-            onClick={() => {
-              getStats(entityType, entityValue);
-            }}
-            text={`View `}
-            tooltip={"View across sites"}
-            icon={<ClustersIcon />}
-            color={"primary"}
-            showLabelAlways
-            disabled={!entityValue || !entityType}
-          />
+          <TooltipWrapper tooltip={"View across sites"}>
+            <Button
+              id={"view-across-sites"}
+              type={"button"}
+              onClick={() => {
+                getStats(entityType, entityValue);
+              }}
+              label={`View`}
+              icon={<ClustersIcon />}
+              collapseOnSmall={false}
+              disabled={!entityValue || !entityType}
+            />
+          </TooltipWrapper>
         </Box>
       </Box>
 

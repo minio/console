@@ -16,10 +16,11 @@
 
 import React from "react";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IWizardButton, IWizardPage } from "./types";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -56,7 +57,8 @@ const styles = (theme: Theme) =>
     },
     buttonInnerContainer: {
       width: "100%",
-      textAlign: "right" as const,
+      display: "flex",
+      justifyContent: "flex-end",
       marginRight: 15,
     },
   });
@@ -109,17 +111,14 @@ const WizardPage = ({
             return (
               <Button
                 id={"wizard-button-" + btn.label}
-                variant="contained"
-                color="primary"
-                size="small"
+                variant="regular"
                 onClick={() => {
                   buttonAction(btn);
                 }}
                 disabled={!btn.enabled}
                 key={`button-${page.label}-${btn.label}`}
-              >
-                {btn.label}
-              </Button>
+                label={btn.label}
+              />
             );
           })}
         </div>

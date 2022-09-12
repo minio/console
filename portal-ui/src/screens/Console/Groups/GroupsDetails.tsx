@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import {
   actionsTray,
@@ -40,11 +41,12 @@ import {
   SecureComponent,
 } from "../../../common/SecureComponent";
 import GroupDetailsHeader from "./GroupDetailsHeader";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "../Users/AddUsersSlice";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -189,16 +191,17 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           scopes={[IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP]}
           errorProps={{ disabled: true }}
         >
-          <RBIconButton
-            tooltip={memberActionText}
-            text={memberActionText}
-            variant="contained"
-            color="primary"
-            icon={<AddIcon />}
-            onClick={() => {
-              setUsersOpen(true);
-            }}
-          />
+          <TooltipWrapper tooltip={memberActionText}>
+            <Button
+              id={"add-user-group"}
+              label={memberActionText}
+              variant="callAction"
+              icon={<AddIcon />}
+              onClick={() => {
+                setUsersOpen(true);
+              }}
+            />
+          </TooltipWrapper>
         </SecureComponent>
       </div>
 
@@ -233,17 +236,17 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
     <React.Fragment>
       <div className={classes.actionsTray}>
         <PanelTitle>Policies</PanelTitle>
-
-        <RBIconButton
-          tooltip={`Set Policies`}
-          text={`Set Policies`}
-          variant="contained"
-          color="primary"
-          icon={<IAMPoliciesIcon />}
-          onClick={() => {
-            setPolicyOpen(true);
-          }}
-        />
+        <TooltipWrapper tooltip={"Set Policies"}>
+          <Button
+            id={"set-policies"}
+            label={`Set Policies`}
+            variant="callAction"
+            icon={<IAMPoliciesIcon />}
+            onClick={() => {
+              setPolicyOpen(true);
+            }}
+          />
+        </TooltipWrapper>
       </div>
       <div className={classes.tableBlock}>
         <TableWrapper
@@ -312,16 +315,16 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                   errorProps={{ disabled: true }}
                 >
                   <div className={classes.spacerLeft}>
-                    <RBIconButton
-                      tooltip={`Delete Group`}
-                      text={``}
-                      variant="outlined"
-                      color="secondary"
-                      icon={<TrashIcon />}
-                      onClick={() => {
-                        setDeleteOpen(true);
-                      }}
-                    />
+                    <TooltipWrapper tooltip={"Delete Group"}>
+                      <Button
+                        id={"delete-user-group"}
+                        variant="secondary"
+                        icon={<TrashIcon />}
+                        onClick={() => {
+                          setDeleteOpen(true);
+                        }}
+                      />
+                    </TooltipWrapper>
                   </div>
                 </SecureComponent>
               </Fragment>

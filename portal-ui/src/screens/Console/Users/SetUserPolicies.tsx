@@ -15,11 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
+import { LinearProgress } from "@mui/material";
+import { useSelector } from "react-redux";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { IPolicyItem } from "../Users/types";
@@ -29,7 +30,6 @@ import api from "../../../common/api";
 import PolicySelectors from "../Policies/PolicySelectors";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
-import { useSelector } from "react-redux";
 import { setSelectedPolicies } from "./AddUsersSlice";
 
 interface ISetUserPoliciesProps {
@@ -44,8 +44,12 @@ const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
     buttonContainer: {
-      textAlign: "right",
+      display: "flex",
+      justifyContent: "flex-end",
       marginTop: ".9rem",
+      "& button": {
+        marginLeft: 8,
+      },
     },
   });
 
@@ -117,23 +121,24 @@ const SetUserPolicies = ({
         </Grid>
       </Grid>
       <Grid item xs={12} className={classes.buttonContainer}>
-        <button
+        <Button
+          id={"reset-user-policies"}
           type="button"
+          variant="regular"
           color="primary"
           className={classes.clearButton}
           onClick={resetSelection}
-        >
-          Reset
-        </button>
+          label={"Reset"}
+        />
         <Button
+          id={"save-user-policy"}
           type="button"
-          variant="contained"
+          variant="callAction"
           color="primary"
           disabled={loading}
           onClick={SetUserPoliciesAction}
-        >
-          Save
-        </Button>
+          label={"Save"}
+        />
       </Grid>
       {loading && (
         <Grid item xs={12}>

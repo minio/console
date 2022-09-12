@@ -16,7 +16,8 @@
 
 import React from "react";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
+import { Button } from "mds";
 import { AGPLV3DarkLogo } from "../../../icons";
 import { setLicenseConsent } from "./utils";
 
@@ -109,13 +110,12 @@ const LicenseConsentModal = ({
           }}
         >
           <Button
+            id={"confirm"}
             type="button"
-            variant="contained"
-            color="primary"
+            variant="callAction"
             onClick={recordAgplConsent}
-          >
-            Acknowledge
-          </Button>
+            label={"Acknowledge"}
+          />
         </Box>
       </Box>
     </ModalWrapper>

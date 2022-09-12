@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-
-import { Button, LinearProgress } from "@mui/material";
+import { Button } from "mds";
+import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -184,24 +184,23 @@ const SetRetentionConfig = ({
             </Grid>
             <Grid item xs={12} className={classes.modalButtonBar}>
               <Button
+                id={"cancel"}
                 type="button"
-                variant="outlined"
-                color="primary"
+                variant="regular"
                 disabled={addLoading}
                 onClick={() => {
                   closeModalAndRefresh();
                 }}
-              >
-                Cancel
-              </Button>
+                label={"Cancel"}
+              />
               <Button
+                id={"set"}
                 type="submit"
-                variant="contained"
+                variant="callAction"
                 color="primary"
                 disabled={addLoading || !valid}
-              >
-                Set
-              </Button>
+                label={"Set"}
+              />
             </Grid>
             {addLoading && (
               <Grid item xs={12}>

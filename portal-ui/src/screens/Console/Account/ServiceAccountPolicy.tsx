@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import { Button } from "@mui/material";
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -139,24 +139,23 @@ const ServiceAccountPolicy = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"cancel-sa-policy"}
               type="button"
-              variant="outlined"
-              color="primary"
+              variant="regular"
               onClick={() => {
                 closeModalAndRefresh();
               }}
               disabled={loading}
-            >
-              Cancel
-            </Button>
+              label={"Cancel"}
+            />
             <Button
+              id={"save-sa-policy"}
               type="submit"
-              variant="contained"
+              variant="callAction"
               color="primary"
               disabled={loading}
-            >
-              Set
-            </Button>
+              label={"Set"}
+            />
           </Grid>
         </Grid>
       </form>

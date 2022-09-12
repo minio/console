@@ -23,7 +23,7 @@ import PageLayout from "../../Common/Layout/PageLayout";
 import useApi from "../../Common/Hooks/useApi";
 import ReplicationSites from "./ReplicationSites";
 import TrashIcon from "../../../../icons/TrashIcon";
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { Button } from "mds";
 import Loader from "../../Common/Loader/Loader";
 import {
   AddIcon,
@@ -41,6 +41,7 @@ import {
 } from "../../../../systemSlice";
 import AButton from "../../Common/AButton/AButton";
 import { useAppDispatch } from "../../../../store";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 export type ReplicationSite = {
   deploymentID: string;
@@ -118,45 +119,51 @@ const SiteReplication = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-end",
+            "& button": {
+              marginLeft: "8px",
+            },
           }}
         >
           {hasSites ? (
-            <Box>
-              <RBIconButton
-                tooltip={"Delete All"}
-                text={"Delete All"}
-                variant="outlined"
-                color="secondary"
-                disabled={isRemoving}
-                icon={<TrashIcon />}
-                onClick={() => {
-                  setIsDeleteAll(true);
-                }}
-              />
-              <RBIconButton
-                tooltip={"Replication Status"}
-                text={"Replication Status"}
-                variant="outlined"
-                color="primary"
-                icon={<RecoverIcon />}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(IAM_PAGES.SITE_REPLICATION_STATUS);
-                }}
-              />
-            </Box>
+            <Fragment>
+              <TooltipWrapper tooltip={"Delete All"}>
+                <Button
+                  id={"delete-all"}
+                  label={"Delete All"}
+                  variant="secondary"
+                  disabled={isRemoving}
+                  icon={<TrashIcon />}
+                  onClick={() => {
+                    setIsDeleteAll(true);
+                  }}
+                />
+              </TooltipWrapper>
+              <TooltipWrapper tooltip={"Replication Status"}>
+                <Button
+                  id={"replication-status"}
+                  label={"Replication Status"}
+                  variant="regular"
+                  icon={<RecoverIcon />}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(IAM_PAGES.SITE_REPLICATION_STATUS);
+                  }}
+                />
+              </TooltipWrapper>
+            </Fragment>
           ) : null}
-          <RBIconButton
-            tooltip={"Add Replication Sites"}
-            text={"Add Sites"}
-            variant="contained"
-            color="primary"
-            disabled={isRemoving}
-            icon={<AddIcon />}
-            onClick={() => {
-              navigate(IAM_PAGES.SITE_REPLICATION_ADD);
-            }}
-          />
+          <TooltipWrapper tooltip={"Add Replication Sites"}>
+            <Button
+              id={"add-replication-site"}
+              label={"Add Sites"}
+              variant="callAction"
+              disabled={isRemoving}
+              icon={<AddIcon />}
+              onClick={() => {
+                navigate(IAM_PAGES.SITE_REPLICATION_ADD);
+              }}
+            />
+          </TooltipWrapper>
         </Box>
         {hasSites ? (
           <ReplicationSites

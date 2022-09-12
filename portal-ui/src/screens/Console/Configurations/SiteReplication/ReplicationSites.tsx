@@ -17,9 +17,9 @@
 import React, { useState } from "react";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
-import { Box, Button, DialogContentText, Tooltip } from "@mui/material";
+import { Box, DialogContentText, Tooltip } from "@mui/material";
+import { Button } from "mds";
 import { ReplicationSite } from "./SiteReplication";
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import TrashIcon from "../../../../icons/TrashIcon";
 import { CircleIcon, ConfirmDeleteIcon, EditIcon } from "../../../../icons";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
@@ -41,6 +41,7 @@ import {
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -228,33 +229,46 @@ const ReplicationSites = ({
                     },
                   }}
                 >
-                  <RBIconButton
+                  <TooltipWrapper
                     tooltip={
                       sites.length <= 2
                         ? "Minimum two sites are required for replication"
                         : "Delete Site"
                     }
-                    text={""}
-                    variant="outlined"
-                    color="secondary"
-                    disabled={sites.length <= 2}
-                    icon={<TrashIcon />}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsDeleteSiteKey(key);
-                    }}
-                  />
-                  <RBIconButton
-                    tooltip={"Edit Endpoint"}
-                    text={""}
-                    variant="contained"
-                    color="primary"
-                    icon={<EditIcon />}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setEditSite(siteInfo);
-                    }}
-                  />
+                  >
+                    <Button
+                      id={`delete-site-${key}-${index}`}
+                      variant="secondary"
+                      disabled={sites.length <= 2}
+                      icon={<TrashIcon />}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsDeleteSiteKey(key);
+                      }}
+                      style={{
+                        width: "25px",
+                        height: "25px",
+                        padding: "0",
+                      }}
+                    />
+                  </TooltipWrapper>
+                  <TooltipWrapper tooltip={"Edit Endpoint"}>
+                    <Button
+                      id={`edit-icon-${key}-${index}`}
+                      variant="regular"
+                      icon={<EditIcon />}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setEditSite(siteInfo);
+                      }}
+                      style={{
+                        width: "25px",
+                        height: "25px",
+                        padding: "0",
+                        marginLeft: "8px",
+                      }}
+                    />
+                  </TooltipWrapper>
                 </Box>
               </ListItemButton>
 
@@ -326,26 +340,24 @@ const ReplicationSites = ({
 
                   <Grid item xs={12} className={classes.modalButtonBar}>
                     <Button
+                      id={"close"}
                       type="button"
-                      variant="outlined"
-                      color="primary"
+                      variant="regular"
                       onClick={() => {
                         setEditSite(null);
                       }}
-                    >
-                      Close
-                    </Button>
+                      label={"Close"}
+                    />
                     <Button
+                      id={"update"}
                       type="button"
-                      variant="contained"
-                      color="primary"
+                      variant="callAction"
                       disabled={isEditing || !isValidEndPointUrl}
                       onClick={() => {
                         updatePeerSite();
                       }}
-                    >
-                      Update
-                    </Button>
+                      label={"Update"}
+                    />
                   </Grid>
                 </ModalWrapper>
               ) : null}

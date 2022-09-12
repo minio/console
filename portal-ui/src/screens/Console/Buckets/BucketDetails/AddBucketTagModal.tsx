@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-
-import { Button, Grid } from "@mui/material";
+import { Button } from "mds";
+import { Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -127,24 +127,23 @@ const AddBucketTagModal = ({
         </Grid>
         <Grid item xs={12} className={classes.modalButtonBar}>
           <Button
+            id={"clear"}
             type="button"
-            variant="outlined"
-            color="primary"
+            variant="regular"
             onClick={resetForm}
-          >
-            Clear
-          </Button>
+            label={"Clear"}
+          />
           <Button
+            id={"save-add-bucket-tag"}
             type="submit"
-            variant="contained"
+            variant="callAction"
             color="primary"
             disabled={
               newLabel.trim() === "" || newKey.trim() === "" || isSending
             }
             onClick={addTagProcess}
-          >
-            Save
-          </Button>
+            label={"Save"}
+          />
         </Grid>
       </Grid>
     </ModalWrapper>

@@ -15,13 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-
+import { Button } from "mds";
 import { useLocation, useNavigate } from "react-router-dom";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import api from "../../../../common/api";
 import ConfTargetGeneric from "../ConfTargetGeneric";
@@ -220,30 +220,21 @@ const EditConfiguration = ({
               }}
             >
               <Button
-                type="button"
-                variant="outlined"
-                color="secondary"
-                sx={{
-                  padding: {
-                    xs: "3px", //avoid wrapping on smaller screens
-                    md: "20px",
-                  },
-                }}
+                id={"restore-defaults"}
+                variant="secondary"
                 onClick={() => {
                   setResetConfigurationOpen(true);
                 }}
-              >
-                Restore Defaults
-              </Button>
+                label={"Restore Defaults"}
+              />
               &nbsp; &nbsp;
               <Button
+                id={"save"}
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 disabled={saving}
-              >
-                Save
-              </Button>
+                label={"Save"}
+              />
             </Grid>
           </form>
         </Box>
