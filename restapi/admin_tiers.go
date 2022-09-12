@@ -114,17 +114,16 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 			tiersList = append(tiersList, &models.Tier{
 				Type: models.TierTypeMinio,
 				Minio: &models.TierMinio{
-					Accesskey:    tierData.MinIO.AccessKey,
-					Bucket:       tierData.MinIO.Bucket,
-					Endpoint:     tierData.MinIO.Endpoint,
-					Name:         tierData.Name,
-					Prefix:       tierData.MinIO.Prefix,
-					Region:       tierData.MinIO.Region,
-					Secretkey:    tierData.MinIO.SecretKey,
-					Storageclass: tierData.MinIO.StorageClass,
-					Usage:        humanize.IBytes(stats.TotalSize),
-					Objects:      strconv.Itoa(stats.NumObjects),
-					Versions:     strconv.Itoa(stats.NumVersions),
+					Accesskey: tierData.MinIO.AccessKey,
+					Bucket:    tierData.MinIO.Bucket,
+					Endpoint:  tierData.MinIO.Endpoint,
+					Name:      tierData.Name,
+					Prefix:    tierData.MinIO.Prefix,
+					Region:    tierData.MinIO.Region,
+					Secretkey: tierData.MinIO.SecretKey,
+					Usage:     humanize.IBytes(stats.TotalSize),
+					Objects:   strconv.Itoa(stats.NumObjects),
+					Versions:  strconv.Itoa(stats.NumVersions),
 				},
 			})
 		case madmin.GCS:
@@ -214,14 +213,12 @@ func addTier(ctx context.Context, client MinioAdmin, params *tieringApi.AddTierP
 	case models.TierTypeMinio:
 		cfg, err = madmin.NewTierMinIO(
 			params.Body.Minio.Name,
+			params.Body.Minio.Endpoint,
 			params.Body.Minio.Accesskey,
 			params.Body.Minio.Secretkey,
-			params.Body.Minio.Endpoint,
 			params.Body.Minio.Bucket,
 			madmin.MinIORegion(params.Body.Minio.Region),
 			madmin.MinIOPrefix(params.Body.Minio.Prefix),
-			madmin.MinIOEndpoint(params.Body.Minio.Endpoint),
-			madmin.MinIOStorageClass(params.Body.Minio.Storageclass),
 		)
 		if err != nil {
 			return err

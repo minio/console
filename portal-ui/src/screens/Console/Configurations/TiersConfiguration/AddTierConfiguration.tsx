@@ -190,7 +190,6 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
         .invoke("POST", `/api/v1/admin/tiers`, payload)
         .then(() => {
           setSaving(false);
-
           navigate(IAM_PAGES.TIERS);
         })
         .catch((err: ErrorResponseHandler) => {
