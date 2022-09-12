@@ -84,12 +84,15 @@ const RenameLongFileName = ({
       }-${new Date().getTime()}-${Math.random()}`
     );
 
+    const ID = makeid(8);
+
     const downloadCall = download(
       bucketName,
       internalPaths,
       actualInfo.version_id,
       parseInt(actualInfo.size || "0"),
       newFileName,
+      ID,
       (progress) => {
         dispatch(
           updateProgress({
@@ -108,7 +111,7 @@ const RenameLongFileName = ({
         dispatch(cancelObjectInList(identityDownload));
       }
     );
-    const ID = makeid(8);
+
     storeCallForObjectWithID(ID, downloadCall);
     dispatch(
       setNewObject({
@@ -125,8 +128,6 @@ const RenameLongFileName = ({
         errorMessage: "",
       })
     );
-
-    downloadCall.send();
     closeModal();
   };
 

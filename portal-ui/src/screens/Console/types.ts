@@ -26,6 +26,11 @@ export interface IAllowResources {
   resource: string;
 }
 
+export interface IEnvironmentContants {
+  maxConcurrentDownloads: number;
+  maxConcurrentUploads: number;
+}
+
 export interface ISessionResponse {
   status: string;
   features: string[];
@@ -35,6 +40,7 @@ export interface ISessionResponse {
   permissions: ISessionPermissions;
   allowResources: IAllowResources[] | null;
   customStyles?: string | null;
+  envConstants?: IEnvironmentContants | null;
 }
 
 export interface ButtonProps {

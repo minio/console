@@ -19,6 +19,7 @@ import Console from "./Console";
 import { useSelector } from "react-redux";
 import CommandBar from "./CommandBar";
 import { selFeatures } from "./consoleSlice";
+import TrafficMonitor from "./Common/ObjectManager/TrafficMonitor";
 
 const ConsoleKBar = () => {
   const features = useSelector(selFeatures);
@@ -33,6 +34,7 @@ const ConsoleKBar = () => {
         enableHistory: true,
       }}
     >
+      <TrafficMonitor />
       <CommandBar />
       <Console />
     </KBarProvider>

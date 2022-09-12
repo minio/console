@@ -4009,6 +4009,8 @@ definitions:
         type: array
         items:
           type: string
+      isDirectPV:
+        type: boolean
   loginOauth2AuthRequest:
     type: object
     required:
@@ -4109,6 +4111,8 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/permissionResource"
+      envConstants:
+        $ref: "#/definitions/environmentConstants"
 
   widgetResult:
     type: object
@@ -5239,6 +5243,7 @@ definitions:
         type: string
       shortName:
         type: string
+
   checkVersionResponse:
     type: object
     properties:
@@ -5258,6 +5263,7 @@ definitions:
         type: array
         items:
           type: string
+
   aUserPolicyResponse:
     type: object
     properties:
@@ -5311,3 +5317,11 @@ definitions:
       type: object
   kmsListIdentitiesResponse:
       type: object
+
+  environmentConstants:
+    type: object
+    properties:
+      maxConcurrentUploads:
+        type: integer
+      maxConcurrentDownloads:
+        type: integer
