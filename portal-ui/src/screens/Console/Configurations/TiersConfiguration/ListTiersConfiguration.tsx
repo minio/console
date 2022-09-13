@@ -291,20 +291,19 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                     setIsLoading(true);
                   }}
                 />
-
-                <SecureComponent
-                  scopes={[IAM_SCOPES.ADMIN_SET_TIER]}
-                  resource={CONSOLE_UI_RESOURCE}
-                  errorProps={{ disabled: true }}
+                <TooltipWrapper
+                  tooltip={
+                    hasSetTier
+                      ? ""
+                      : "You require additional permissions in order to create a new Tier. Please ask your MinIO administrator to grant you " +
+                        IAM_SCOPES.ADMIN_SET_TIER +
+                        " permission in order to create a Tier."
+                  }
                 >
-                  <TooltipWrapper
-                    tooltip={
-                      hasSetTier
-                        ? ""
-                        : "You require additional permissions in order to create a new Tier. Please ask your MinIO administrator to grant you " +
-                          IAM_SCOPES.ADMIN_SET_TIER +
-                          " permission in order to create a Tier."
-                    }
+                  <SecureComponent
+                    scopes={[IAM_SCOPES.ADMIN_SET_TIER]}
+                    resource={CONSOLE_UI_RESOURCE}
+                    errorProps={{ disabled: true }}
                   >
                     <Button
                       id={"add-tier"}
@@ -312,10 +311,9 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                       label={`Create Tier`}
                       onClick={addTier}
                       variant="callAction"
-                      disabled={!hasSetTier}
                     />
-                  </TooltipWrapper>
-                </SecureComponent>
+                  </SecureComponent>
+                </TooltipWrapper>
               </div>
             </Grid>
             {isLoading && <LinearProgress />}
@@ -466,13 +464,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                                 .
                               </div>
                             ) : (
-                              <div>
-                                You require additional permissions in order to
-                                create a new Tier. Please ask your MinIO
-                                administrator to grant you{" "}
-                                <b>{IAM_SCOPES.ADMIN_SET_TIER}</b> permission in
-                                order to create a Tier.
-                              </div>
+                              ""
                             )}
                           </Fragment>
                         }
