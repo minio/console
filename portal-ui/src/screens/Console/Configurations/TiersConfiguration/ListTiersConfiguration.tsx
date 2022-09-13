@@ -111,7 +111,9 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     type: "unsupported",
   });
 
-  const hasSetTier = hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_SET_TIER,])
+  const hasSetTier = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_SET_TIER,
+  ]);
 
   useEffect(() => {
     if (isLoading) {
@@ -291,21 +293,27 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                 />
 
                 <SecureComponent
-                  scopes={[
-                    IAM_SCOPES.ADMIN_SET_TIER,
-                  ]}
+                  scopes={[IAM_SCOPES.ADMIN_SET_TIER]}
                   resource={CONSOLE_UI_RESOURCE}
                   errorProps={{ disabled: true }}
                 >
-                  <TooltipWrapper tooltip={hasSetTier ? "" : "You require additional permissions in order to create a new Tier. Please ask your MinIO administrator to grant you " + IAM_SCOPES.ADMIN_SET_TIER +" permission in order to create a Tier."}>
-                  <Button
-                    id={"add-tier"}
-                    icon={<AddIcon />}
-                    label={`Create Tier`}
-                    onClick={addTier}
-                    variant="callAction"
-                    disabled={!hasSetTier}
-                  />
+                  <TooltipWrapper
+                    tooltip={
+                      hasSetTier
+                        ? ""
+                        : "You require additional permissions in order to create a new Tier. Please ask your MinIO administrator to grant you " +
+                          IAM_SCOPES.ADMIN_SET_TIER +
+                          " permission in order to create a Tier."
+                    }
+                  >
+                    <Button
+                      id={"add-tier"}
+                      icon={<AddIcon />}
+                      label={`Create Tier`}
+                      onClick={addTier}
+                      variant="callAction"
+                      disabled={!hasSetTier}
+                    />
                   </TooltipWrapper>
                 </SecureComponent>
               </div>
@@ -451,11 +459,21 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                             tier.
                             <br />
                             <br />
-                            {hasSetTier ?
-                            <div>To get started,{" "}
-                            <AButton onClick={addTier}>Create Tier</AButton>.
-                            </div>
-                            : <div>You require additional permissions in order to create a new Tier. Please ask your MinIO administrator to grant you <b>{IAM_SCOPES.ADMIN_SET_TIER}</b> permission in order to create a Tier.</div>}
+                            {hasSetTier ? (
+                              <div>
+                                To get started,{" "}
+                                <AButton onClick={addTier}>Create Tier</AButton>
+                                .
+                              </div>
+                            ) : (
+                              <div>
+                                You require additional permissions in order to
+                                create a new Tier. Please ask your MinIO
+                                administrator to grant you{" "}
+                                <b>{IAM_SCOPES.ADMIN_SET_TIER}</b> permission in
+                                order to create a Tier.
+                              </div>
+                            )}
                           </Fragment>
                         }
                       />
