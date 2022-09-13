@@ -25,7 +25,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, vm-docker ]
 
     strategy:
       matrix:
