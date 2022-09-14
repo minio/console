@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -96,11 +96,11 @@ func TestError(t *testing.T) {
 	}
 	tests = append(tests,
 		testError{
-			name: "passing multiple errors",
+			name: "passing multiple errors but ErrInvalidLogin is last",
 			args: args{
 				err: []interface{}{ErrDefault, ErrInvalidLogin},
 			},
-			want: &models.Error{Code: int32(500), Message: swag.String(ErrDefault.Error()), DetailedMessage: swag.String(ErrDefault.Error())},
+			want: &models.Error{Code: int32(401), Message: swag.String(ErrDefault.Error()), DetailedMessage: swag.String(ErrDefault.Error())},
 		})
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
