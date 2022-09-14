@@ -498,7 +498,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
+    runs-on: [ self-hosted, vm-docker, xvfb-run ]
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
@@ -562,6 +562,11 @@ jobs:
         run: |
           make console
 
+      - name: clean-previous-containers-if-any
+        run: |
+          docker stop minio || true;
+          docker container prune -f || true;
+
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
@@ -569,7 +574,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions-2/ --skip-js-errors -c 3'
+          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-2/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |
@@ -583,7 +588,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
+    runs-on: [ self-hosted, vm-docker, xvfb-run ]
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
@@ -647,6 +652,11 @@ jobs:
         run: |
           make console
 
+      - name: clean-previous-containers-if-any
+        run: |
+          docker stop minio || true;
+          docker container prune -f || true;
+
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
@@ -654,7 +664,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions-3/ --skip-js-errors -c 3'
+          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-3/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |
@@ -669,7 +679,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
+    runs-on: [ self-hosted, vm-docker, xvfb-run ]
     timeout-minutes: 5
     strategy:
       matrix:
@@ -725,6 +735,12 @@ jobs:
           GOOS: linux
         run: |
           make console
+
+      - name: clean-previous-containers-if-any
+        run: |
+          docker stop minio || true;
+          docker container prune -f || true;
+
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
@@ -732,7 +748,7 @@ jobs:
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions-4/ --skip-js-errors'
+          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-4/ --skip-js-errors'
 
   all-permissions-5:
     name: Permissions Tests Part 5
@@ -742,7 +758,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
+    runs-on: [ self-hosted, vm-docker, xvfb-run ]
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
@@ -797,6 +813,12 @@ jobs:
           GOOS: linux
         run: |
           make console
+
+      - name: clean-previous-containers-if-any
+        run: |
+          docker stop minio || true;
+          docker container prune -f || true;
+
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
@@ -804,7 +826,7 @@ jobs:
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions-5/ --skip-js-errors'
+          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-5/ --skip-js-errors'
 
   all-permissions-6:
     name: Permissions Tests Part 6
@@ -814,7 +836,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
+    runs-on: [ self-hosted, vm-docker, xvfb-run ]
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
@@ -869,6 +891,12 @@ jobs:
           GOOS: linux
         run: |
           make console
+
+      - name: clean-previous-containers-if-any
+        run: |
+          docker stop minio || true;
+          docker container prune -f || true;
+
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
@@ -876,7 +904,7 @@ jobs:
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions-6/ --skip-js-errors'
+          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-6/ --skip-js-errors'
 
   all-permissions-7:
     name: Permissions Tests Part 7
@@ -886,7 +914,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
+    runs-on: [ self-hosted, vm-docker, xvfb-run ]
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
@@ -941,6 +969,12 @@ jobs:
           GOOS: linux
         run: |
           make console
+
+      - name: clean-previous-containers-if-any
+        run: |
+          docker stop minio || true;
+          docker container prune -f || true;
+
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
@@ -948,7 +982,7 @@ jobs:
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions-7/ --skip-js-errors'
+          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-7/ --skip-js-errors'
 
   all-permissions-8:
     name: Permissions Tests Part 8
@@ -958,7 +992,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
+    runs-on: [ self-hosted, vm-docker, xvfb-run ]
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
@@ -1013,6 +1047,12 @@ jobs:
           GOOS: linux
         run: |
           make console
+
+      - name: clean-previous-containers-if-any
+        run: |
+          docker stop minio || true;
+          docker container prune -f || true;
+
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
@@ -1020,7 +1060,7 @@ jobs:
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions-8/ --skip-js-errors'
+          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-8/ --skip-js-errors'
 
   all-permissions-9:
     name: Permissions Tests Part 9
@@ -1030,7 +1070,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
+    runs-on: [ self-hosted, vm-docker, xvfb-run ]
     strategy:
       matrix:
         go-version: [ 1.18.x, 1.19.x ]
@@ -1094,6 +1134,11 @@ jobs:
         run: |
           make console
 
+      - name: clean-previous-containers-if-any
+        run: |
+          docker stop minio || true;
+          docker container prune -f || true;
+
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
@@ -1101,7 +1146,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome:headless" portal-ui/tests/permissions-9/ --skip-js-errors -c 3'
+          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-9/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |
