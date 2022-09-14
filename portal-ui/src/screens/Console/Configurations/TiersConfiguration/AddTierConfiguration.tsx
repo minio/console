@@ -503,8 +503,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                     name="region"
                     type={type as "azure" | "s3" | "minio" | "gcs"}
                   />
-                  {type === s3ServiceName ||
-                    (type === minioServiceName && (
+                  {type === s3ServiceName  && (
                       <InputBoxWrapper
                         id="storageClass"
                         name="storageClass"
@@ -515,7 +514,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                           setStorageClass(e.target.value);
                         }}
                       />
-                    ))}
+                    )}
                 </Fragment>
               )}
             </Grid>
