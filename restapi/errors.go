@@ -81,6 +81,10 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 	var exists bool
 	if len(err) > 0 {
 		if err1, exists = err[0].(error); exists {
+			var lastError error
+			if len(err) > 1 {
+				lastError = err[len(err)-1].(error)
+			}
 			if err1.Error() == ErrForbidden.Error() {
 				errorCode = 403
 			}
@@ -94,6 +98,11 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 			if errors.Is(err1, ErrInvalidLogin) {
 				errorCode = 401
 				errorMessage = ErrInvalidLogin.Error()
+			}
+			// If the last error is ErrInvalidLogin, this is a login failure
+			if errors.Is(lastError, ErrInvalidLogin) {
+				errorCode = 401
+				errorMessage = err1.Error()
 			}
 			if strings.Contains(err1.Error(), ErrLoginNotAllowed.Error()) {
 				errorCode = 400
