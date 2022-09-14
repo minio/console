@@ -56,13 +56,17 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
     uniqueName,
   ] = errorList;
 
+  const toggleNamingRules = () => {
+    setShowNamingRules(!showNamingRules);
+  };
+
   return (
     <Fragment>
       <Grid item xs={12}>
         {showNamingRules ? (
           <span
             onClick={() => {
-              setShowNamingRules(!showNamingRules);
+              toggleNamingRules();
             }}
             style={{ color: "#0288D1", textDecoration: "underline" }}
           >
@@ -72,7 +76,7 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
         ) : (
           <span
             onClick={() => {
-              setShowNamingRules(!showNamingRules);
+              toggleNamingRules();
             }}
             style={{ color: "#0288D1", textDecoration: "underline" }}
           >
@@ -83,7 +87,7 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
           variant="text"
           size="small"
           onClick={() => {
-            setShowNamingRules(!showNamingRules);
+            toggleNamingRules();
           }}
         >
           {showNamingRules ? <ShowTextIcon /> : <HideTextIcon />}
