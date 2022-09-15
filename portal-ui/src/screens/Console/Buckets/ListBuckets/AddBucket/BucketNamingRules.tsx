@@ -63,6 +63,7 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
   return (
     <Fragment>
       <Button
+        type="button"
         id={"toggle-naming-rules"}
         onClick={() => {
           toggleNamingRules();
