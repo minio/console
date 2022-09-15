@@ -46,6 +46,7 @@ import { selFeatures } from "../../consoleSlice";
 import AutoColorIcon from "../../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import { Button } from "mds";
+import hasPermission from "../../../../common/SecureComponent/accessControl";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -88,6 +89,8 @@ const BrowserHandler = () => {
     navigate(`/buckets/${bucketName}/admin`);
   };
 
+  const configureBucketAllowed = hasPermission("*", [IAM_ROLES.BUCKET_ADMIN]);
+
   const searchBar = (
     <Fragment>
       {!versionsMode ? (
@@ -129,7 +132,15 @@ const BrowserHandler = () => {
               resource={bucketName}
               errorProps={{ disabled: true }}
             >
-              <TooltipWrapper tooltip={"Configure Bucket"}>
+              <TooltipWrapper
+                tooltip={
+                  configureBucketAllowed
+                    ? "Configure Bucket"
+                    : "You do not have the required permissions to configure this bucket. Please contact your MinIO administrator to request " +
+                      IAM_ROLES.BUCKET_ADMIN +
+                      " permisions."
+                }
+              >
                 <Button
                   id={"configure-bucket-main"}
                   color="primary"
