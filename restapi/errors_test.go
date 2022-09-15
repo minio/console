@@ -96,11 +96,11 @@ func TestError(t *testing.T) {
 	}
 	tests = append(tests,
 		testError{
-			name: "passing multiple errors",
+			name: "passing multiple errors but ErrInvalidLogin is last",
 			args: args{
 				err: []interface{}{ErrDefault, ErrInvalidLogin},
 			},
-			want: &models.Error{Code: int32(500), Message: swag.String(ErrDefault.Error()), DetailedMessage: swag.String(ErrDefault.Error())},
+			want: &models.Error{Code: int32(401), Message: swag.String(ErrDefault.Error()), DetailedMessage: swag.String(ErrDefault.Error())},
 		})
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
