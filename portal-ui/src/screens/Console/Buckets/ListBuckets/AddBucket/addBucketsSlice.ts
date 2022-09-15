@@ -19,6 +19,7 @@ import { addBucketAsync } from "./addBucketThunks";
 
 export interface AddBucketState {
   loading: boolean;
+  isDirty: boolean;
   invalidFields: string[];
   name: string;
   versioningEnabled: boolean;
@@ -36,7 +37,8 @@ export interface AddBucketState {
 
 const initialState: AddBucketState = {
   loading: false,
-  invalidFields: ["name"],
+  isDirty: false,
+  invalidFields: [],
   name: "",
   versioningEnabled: false,
   lockingEnabled: false,
@@ -55,6 +57,9 @@ export const addBucketsSlice = createSlice({
   name: "addBuckets",
   initialState,
   reducers: {
+    setIsDirty: (state, action: PayloadAction<boolean>) => {
+      state.isDirty = action.payload;
+    },
     setName: (state, action: PayloadAction<string>) => {
       state.name = action.payload;
 
@@ -177,6 +182,7 @@ export const addBucketsSlice = createSlice({
 
 export const {
   setName,
+  setIsDirty,
   setVersioning,
   setEnableObjectLocking,
   setQuota,
