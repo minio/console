@@ -70,11 +70,12 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
           }}
           icon={showNamingRules ? <ShowTextIcon /> : <HideTextIcon />}
           label={(showNamingRules ? "Hide" : "View") + " Bucket Naming Rules"}
-          style={{height:"10px", 
-                  width:"225px", 
-                  fontSize:"9px", 
-                  border:"none",
-                }}
+          style={{
+            height: "10px",
+            width: "225px",
+            fontSize: "9px",
+            border: "none",
+          }}
         ></Button>
         {showNamingRules && (
           <Grid container fontSize={14} paddingTop={2}>
