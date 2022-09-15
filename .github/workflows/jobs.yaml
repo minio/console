@@ -77,6 +77,12 @@ jobs:
           VERSION="minio/minio:$VERSION";
           echo $VERSION;
           make test-replication MINIO_VERSION=$VERSION;
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: replication-artifact
+          path: ./replication/coverage/replication.out
+
       - uses: actions/cache@v2
         id: coverage-cache-replication
         name: Coverage Cache Replication
