@@ -18,6 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import CopyToClipboard from "react-copy-to-clipboard";
@@ -36,7 +37,6 @@ import PredefinedList from "../../../../Common/FormComponents/PredefinedList/Pre
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
 import { encodeURLString } from "../../../../../../common/utils";
 import { ShareIcon } from "../../../../../../icons";
-import BoxIconButton from "../../../../Common/BoxIconButton/BoxIconButton";
 import {
   selDistSet,
   setModalErrorSnackMessage,
@@ -248,8 +248,9 @@ const ShareFile = ({
                   content={shareURL}
                   actionButton={
                     <CopyToClipboard text={shareURL}>
-                      <BoxIconButton
-                        variant="outlined"
+                      <Button
+                        id={"copy-path"}
+                        variant="regular"
                         onClick={() => {
                           dispatch(
                             setModalSnackMessage(
@@ -258,15 +259,14 @@ const ShareFile = ({
                           );
                         }}
                         disabled={shareURL === "" || isLoadingFile}
-                        sx={{
+                        style={{
                           marginRight: "5px",
                           width: "28px",
                           height: "28px",
                           padding: "0px",
                         }}
-                      >
-                        <CopyIcon />
-                      </BoxIconButton>
+                        icon={<CopyIcon />}
+                      />
                     </CopyToClipboard>
                   }
                 />

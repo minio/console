@@ -15,11 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {
   formFieldStyles,
@@ -151,21 +151,20 @@ const BulkAddToGroup = ({
             </Grid>
             <Grid item xs={12} className={classes.modalButtonBar}>
               <Button
+                id={"clear-bulk-add-group"}
                 type="button"
-                variant="outlined"
+                variant="regular"
                 color="primary"
                 onClick={resetForm}
-              >
-                Clear
-              </Button>
+                label={"Clear"}
+              />
               <Button
+                id={"save-add-group"}
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 disabled={saving || selectedGroups.length < 1}
-              >
-                Save
-              </Button>
+                label={"Save"}
+              />
             </Grid>
             {saving && (
               <Grid item xs={12}>

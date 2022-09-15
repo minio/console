@@ -21,7 +21,7 @@ import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button } from "@mui/material";
+import { Button } from "mds";
 
 import api from "../../../common/api";
 import {
@@ -227,13 +227,12 @@ const AddNotificationEndpoint = ({
                 </Grid>
                 <Grid item xs={12} className={classes.settingsButtonContainer}>
                   <Button
+                    id={"save-notification-target"}
                     type="submit"
-                    variant="contained"
-                    color="primary"
+                    variant="callAction"
                     disabled={saving}
-                  >
-                    Save Notification Target
-                  </Button>
+                    label={"Save Notification Target"}
+                  />
                 </Grid>
               </div>
             </Fragment>

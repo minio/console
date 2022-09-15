@@ -24,7 +24,7 @@ import Grid from "@mui/material/Grid";
 import { TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "../../../../../../icons/SearchIcon";
-import RBIconButton from "../../../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { Button } from "mds";
 import { AddIcon } from "../../../../../../icons";
 import TableWrapper from "../../../../Common/TableWrapper/TableWrapper";
 import { Theme } from "@mui/material/styles";
@@ -36,6 +36,7 @@ import {
   tenantDetailsStyles,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { setSelectedPool } from "../../../tenantsSlice";
+import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 
 interface IPoolsSummary {
   classes: any;
@@ -109,20 +110,21 @@ const PoolsListing = ({ classes, setPoolDetailsView }: IPoolsSummary) => {
           variant="standard"
         />
 
-        <RBIconButton
-          tooltip={"Expand Tenant"}
-          text={"Expand Tenant"}
-          onClick={() => {
-            navigate(
-              `/namespaces/${tenant?.namespace || ""}/tenants/${
-                tenant?.name || ""
-              }/add-pool`
-            );
-          }}
-          icon={<AddIcon />}
-          color="primary"
-          variant={"contained"}
-        />
+        <TooltipWrapper tooltip={"Expand Tenant"}>
+          <Button
+            id={"expand-tenant"}
+            label={"Expand Tenant"}
+            onClick={() => {
+              navigate(
+                `/namespaces/${tenant?.namespace || ""}/tenants/${
+                  tenant?.name || ""
+                }/add-pool`
+              );
+            }}
+            icon={<AddIcon />}
+            variant={"callAction"}
+          />
+        </TooltipWrapper>
       </Grid>
       <Grid item xs={12} className={classes.tableBlock}>
         <TableWrapper

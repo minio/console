@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   FormControl,
   Grid,
   InputBase,
@@ -26,6 +25,7 @@ import {
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { AppState, useAppDispatch } from "../../../store";
@@ -234,22 +234,20 @@ const Watch = () => {
             />
             {start ? (
               <Button
+                id={"stop-watch"}
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 onClick={() => setStart(false)}
-              >
-                Stop
-              </Button>
+                label={"Stop"}
+              />
             ) : (
               <Button
+                id={"start-watch"}
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="callAction"
                 onClick={() => setStart(true)}
-              >
-                Start
-              </Button>
+                label={"Start"}
+              />
             )}
           </Grid>
 

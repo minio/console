@@ -125,7 +125,7 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *model
 		// prepare console credentials
 		consoleCreds, err = getConsoleCredentials(lr.AccessKey, lr.SecretKey)
 		if err != nil {
-			return nil, ErrorWithContext(ctx, ErrInvalidLogin)
+			return nil, ErrorWithContext(ctx, err, ErrInvalidLogin)
 		}
 	}
 
@@ -135,7 +135,7 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *model
 	}
 	sessionID, err := login(consoleCreds, sf)
 	if err != nil {
-		return nil, ErrorWithContext(ctx, ErrInvalidLogin)
+		return nil, ErrorWithContext(ctx, err, ErrInvalidLogin)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-
+import { Button } from "mds";
 import { useNavigate } from "react-router-dom";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -49,10 +49,11 @@ import {
 import SearchBox from "../Common/SearchBox";
 
 import withSuspense from "../Common/Components/withSuspense";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+
 import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -193,16 +194,17 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
               resource={CONSOLE_UI_RESOURCE}
               errorProps={{ disabled: true }}
             >
-              <RBIconButton
-                tooltip={"Create Policy"}
-                text={"Create Policy"}
-                variant="contained"
-                color="primary"
-                icon={<AddIcon />}
-                onClick={() => {
-                  navigate(`${IAM_PAGES.POLICY_ADD}`);
-                }}
-              />
+              <TooltipWrapper tooltip={"Create Policy"}>
+                <Button
+                  id={"create-policy"}
+                  label={"Create Policy"}
+                  variant="callAction"
+                  icon={<AddIcon />}
+                  onClick={() => {
+                    navigate(`${IAM_PAGES.POLICY_ADD}`);
+                  }}
+                />
+              </TooltipWrapper>
             </SecureComponent>
           </Grid>
           <Grid item xs={12} className={classes.tableBlock}>

@@ -61,8 +61,7 @@ const AddNamespaceModal = () => {
       title={`New namespace`}
       confirmText={"Create"}
       confirmButtonProps={{
-        color: "primary",
-        variant: "contained",
+        variant: "callAction",
       }}
       isOpen={addNamespaceOpen}
       titleIcon={<ConfirmModalIcon />}

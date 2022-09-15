@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import React from "react";
+
 export interface ISessionPermissions {
   [key: string]: string[];
 }
@@ -33,4 +35,14 @@ export interface ISessionResponse {
   permissions: ISessionPermissions;
   allowResources: IAllowResources[] | null;
   customStyles?: string | null;
+}
+
+export interface ButtonProps {
+  label?: string;
+  variant?: "regular" | "callAction" | "secondary";
+  icon?: React.ReactNode;
+  iconLocation?: "start" | "end";
+  fullWidth?: boolean;
+  disabled?: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }

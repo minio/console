@@ -16,9 +16,10 @@
 
 import React, { useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, SelectChangeEvent } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import {
@@ -451,24 +452,23 @@ const AddReplicationModal = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"cancel"}
               type="button"
-              variant="outlined"
-              color="primary"
+              variant="regular"
               disabled={addLoading}
               onClick={() => {
                 closeModalAndRefresh();
               }}
-            >
-              Cancel
-            </Button>
+              label={"Cancel"}
+            />
             <Button
+              id={"submit"}
               type="submit"
-              variant="contained"
+              variant="callAction"
               color="primary"
               disabled={addLoading}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
         </Grid>
       </form>

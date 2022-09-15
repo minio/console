@@ -16,6 +16,7 @@
 import React, { Fragment } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -39,8 +40,8 @@ import {
   IAM_ROLES,
 } from "../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../common/SecureComponent";
-import RBIconButton from "../BucketDetails/SummaryItems/RBIconButton";
 import clsx from "clsx";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,7 +54,6 @@ const styles = (theme: Theme) =>
       "& .min-icon": {
         height: 14,
         width: 14,
-        marginRight: 4,
       },
       "& .MuiTypography-body2": {
         fontSize: 14,
@@ -151,6 +151,10 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       justifyContent: "flex-end",
 
+      "& button": {
+        marginLeft: 8,
+      },
+
       "@media (max-width: 900px)": {
         marginTop: "-33px",
       },
@@ -245,26 +249,28 @@ const BucketListItem = ({
                 scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
                 resource={bucket.name}
               >
-                <RBIconButton
-                  tooltip={"Manage"}
-                  onClick={() => navigate(`/buckets/${bucket.name}/admin`)}
-                  text={"Manage"}
-                  icon={<SettingsIcon />}
-                  color={"primary"}
-                  variant={"outlined"}
-                  id={`manage-${bucket.name}`}
-                />
+                <TooltipWrapper tooltip={"Manage"}>
+                  <Button
+                    onClick={() => navigate(`/buckets/${bucket.name}/admin`)}
+                    label={"Manage"}
+                    icon={<SettingsIcon />}
+                    color={"primary"}
+                    variant={"regular"}
+                    id={`manage-${bucket.name}`}
+                  />
+                </TooltipWrapper>
               </SecureComponent>
             )}
-            <RBIconButton
-              tooltip={"Browse"}
-              onClick={() => navigate(`/buckets/${bucket.name}/browse`)}
-              text={"Browse"}
-              icon={<ArrowRightIcon />}
-              color={"primary"}
-              variant={"contained"}
-              id={`browse-${bucket.name}`}
-            />
+            <TooltipWrapper tooltip={"Browse"}>
+              <Button
+                onClick={() => navigate(`/buckets/${bucket.name}/browse`)}
+                label={"Browse"}
+                icon={<ArrowRightIcon />}
+                color={"primary"}
+                variant={"callAction"}
+                id={`browse-${bucket.name}`}
+              />
+            </TooltipWrapper>
             <Box display={{ xs: "none", sm: "block" }}>
               <div style={{ marginBottom: 10 }} />
             </Box>

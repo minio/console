@@ -19,12 +19,12 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Button,
   LinearProgress,
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
@@ -542,24 +542,23 @@ const EditLifecycleConfiguration = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"cancel"}
               type="button"
-              variant="outlined"
-              color="primary"
+              variant="regular"
               disabled={addLoading}
               onClick={() => {
                 closeModalAndRefresh(false);
               }}
-            >
-              Cancel
-            </Button>
+              label={"Cancel"}
+            />
             <Button
+              id={"save"}
               type="submit"
-              variant="contained"
+              variant="callAction"
               color="primary"
               disabled={addLoading || !isFormValid}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
           {addLoading && (
             <Grid item xs={12}>

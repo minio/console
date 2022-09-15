@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import { Button } from "mds";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
@@ -51,7 +52,7 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
@@ -59,6 +60,7 @@ import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
@@ -220,40 +222,41 @@ const Account = () => {
             }}
           >
             {" "}
-            <RBIconButton
-              tooltip={"Delete Selected"}
-              onClick={() => {
-                setDeleteMultipleOpen(true);
-              }}
-              text={"Delete Selected"}
-              icon={<DeleteIcon />}
-              color="secondary"
-              disabled={selectedSAs.length === 0}
-              variant={"outlined"}
-            />
+            <TooltipWrapper tooltip={"Delete Selected"}>
+              <Button
+                id={"delete-selected-accounts"}
+                onClick={() => {
+                  setDeleteMultipleOpen(true);
+                }}
+                label={"Delete Selected"}
+                icon={<DeleteIcon />}
+                disabled={selectedSAs.length === 0}
+                variant={"secondary"}
+              />
+            </TooltipWrapper>
             <SecureComponent
               scopes={[IAM_SCOPES.ADMIN_CREATE_USER]}
               resource={CONSOLE_UI_RESOURCE}
               matchAll
               errorProps={{ disabled: true }}
             >
-              <RBIconButton
+              <Button
+                id={"change-password"}
                 onClick={() => setChangePasswordModalOpen(true)}
-                text={`Change Password`}
+                label={`Change Password`}
                 icon={<PasswordKeyIcon />}
-                color={"primary"}
-                variant={"outlined"}
+                variant={"regular"}
                 disabled={userIDP}
               />
             </SecureComponent>
-            <RBIconButton
-              onClick={(e) => {
+            <Button
+              id={"create-service-account"}
+              onClick={() => {
                 navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
               }}
-              text={`Create service account`}
+              label={`Create service account`}
               icon={<AddIcon />}
-              color={"primary"}
-              variant={"contained"}
+              variant={"callAction"}
             />
           </Box>
         </Grid>

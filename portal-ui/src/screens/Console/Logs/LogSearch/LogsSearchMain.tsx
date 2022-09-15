@@ -16,11 +16,12 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import get from "lodash/get";
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
+import { Grid } from "@mui/material";
+import get from "lodash/get";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, Grid } from "@mui/material";
 import {
   advancedFilterToggleStyles,
   containerForHeader,
@@ -400,13 +401,12 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
               </Grid>
               <Grid item xs={12} className={classes.endLineAction}>
                 <Button
+                  id={"get-information"}
                   type="button"
-                  variant="contained"
-                  color="primary"
+                  variant="callAction"
                   onClick={triggerLoad}
-                >
-                  Get Information
-                </Button>
+                  label={"Get Information"}
+                />
               </Grid>
             </Grid>
             <Grid item xs={12} className={classes.tableBlock}>

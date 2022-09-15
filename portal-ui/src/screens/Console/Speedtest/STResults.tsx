@@ -17,6 +17,7 @@
 import React, { Fragment, useState } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
@@ -31,7 +32,6 @@ import {
   UploadStatIcon,
   VersionIcon,
 } from "../../../icons";
-import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer } from "recharts";
 import { cleanMetrics } from "./utils";
@@ -311,21 +311,19 @@ const STResults = ({ classes, results, start }: ISTResults) => {
             <Grid item xs={12} md={6} className={classes.actionButtons}>
               {!start && (
                 <Fragment>
-                  <BoxIconButton
-                    aria-label="Download"
+                  <Button
+                    id={"download-results"}
+                    aria-label="Download Results"
                     onClick={downloadResults}
-                    size="large"
-                  >
-                    <DownloadIcon />
-                  </BoxIconButton>
+                    icon={<DownloadIcon />}
+                  />
                   &nbsp;
-                  <BoxIconButton
-                    aria-label="Download"
+                  <Button
+                    id={"toggle-json"}
+                    aria-label="Toogle JSON"
                     onClick={toggleJSONView}
-                    size="large"
-                  >
-                    <JSONIcon />
-                  </BoxIconButton>
+                    icon={<JSONIcon />}
+                  />
                 </Fragment>
               )}
             </Grid>

@@ -15,9 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import { Box, Grid } from "@mui/material";
+import { Button } from "mds";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import PageLayout from "../../Common/Layout/PageLayout";
-import { Box, Grid } from "@mui/material";
 import useApi from "../../Common/Hooks/useApi";
 import BackLink from "../../../../common/BackLink";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
@@ -30,9 +31,9 @@ import {
   RefreshIcon,
   UsersIcon,
 } from "../../../../icons";
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
 import EntityReplicationLookup from "./EntityReplicationLookup";
 import Loader from "../../Common/Loader/Loader";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 export type StatsResponseType = {
   maxBuckets?: number;
@@ -128,17 +129,18 @@ const SiteReplicationStatus = () => {
           title={"Replication status from all Sites"}
           actions={
             <Fragment>
-              <RBIconButton
-                onClick={() => {
-                  getStats();
-                }}
-                tooltip={"Refresh"}
-                text={"Refresh"}
-                showLabelAlways
-                icon={<RefreshIcon />}
-                color="primary"
-                variant={"contained"}
-              />
+              <TooltipWrapper tooltip={"Refresh"}>
+                <Button
+                  id={"refresh"}
+                  onClick={() => {
+                    getStats();
+                  }}
+                  label={"Refresh"}
+                  icon={<RefreshIcon />}
+                  variant={"regular"}
+                  collapseOnSmall={false}
+                />
+              </TooltipWrapper>
             </Fragment>
           }
         />

@@ -26,8 +26,9 @@ import Moment from "react-moment";
 import { Link } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { ITenant } from "../ListTenants/types";
-import RBIconButton from "../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { Button } from "mds";
 import { SubnetInfo } from "../../License/types";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 interface ISubnetLicenseTenant {
   classes: any;
@@ -230,24 +231,26 @@ const SubnetLicenseTenant = ({
                 }}
                 className={classes.noUnderLine}
               >
-                <RBIconButton
-                  tooltip={"Activate Product"}
-                  text={"Activate Product"}
-                  onClick={() => false}
-                  color="primary"
-                  variant={"contained"}
-                />
+                <TooltipWrapper tooltip={"Activate Product"}>
+                  <Button
+                    id={"activate-product"}
+                    label={"Activate Product"}
+                    onClick={() => false}
+                    variant={"callAction"}
+                  />
+                </TooltipWrapper>
               </Link>
             )}
             {licenseInfo && tenant && (
-              <RBIconButton
-                disabled={loadingActivateProduct}
-                tooltip={"Attach License"}
-                text={"Attach License"}
-                onClick={() => activateProduct(tenant.namespace, tenant.name)}
-                color="primary"
-                variant={"contained"}
-              />
+              <TooltipWrapper tooltip={"Attach License"}>
+                <Button
+                  id={"attach-license"}
+                  disabled={loadingActivateProduct}
+                  label={"Attach License"}
+                  onClick={() => activateProduct(tenant.namespace, tenant.name)}
+                  variant={"callAction"}
+                />
+              </TooltipWrapper>
             )}
           </Grid>
         )

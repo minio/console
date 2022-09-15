@@ -30,6 +30,7 @@ import { generateOverrideTheme } from "./utils/stylesUtils";
 import "./index.css";
 import { useSelector } from "react-redux";
 import { AppState } from "./store";
+import { ThemeHandler } from "mds";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -84,10 +85,6 @@ const StyleHandler = ({ children }: IStyleHandler) => {
         "& .min-icon": {
           width: 16,
         },
-      },
-      // You should target [class*="MuiButton-root"] instead if you nest themes.
-      ".MuiButton-root:not(.noDefaultHeight)": {
-        height: 38,
       },
       ".MuiButton-contained": {
         fontSize: "14px",
@@ -155,11 +152,14 @@ const StyleHandler = ({ children }: IStyleHandler) => {
     },
   })(() => null);
 
+  // ThemeHandler is needed for MDS components theming. Eventually we will remove Theme Provider & use only mds themes.
   return (
     <Fragment>
       <GlobalCss />
       <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={thm}>{children}</ThemeProvider>
+        <ThemeProvider theme={thm}>
+          <ThemeHandler>{children}</ThemeHandler>
+        </ThemeProvider>
       </StyledEngineProvider>
     </Fragment>
   );

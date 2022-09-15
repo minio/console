@@ -15,14 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import {
   containerForHeader,
   formFieldStyles,
@@ -156,16 +156,16 @@ const ChangeUserPassword = ({
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button
+              id={"save-user-password"}
               type="submit"
-              variant="contained"
+              variant="callAction"
               color="primary"
               disabled={
                 loading ||
                 !(reNewPassword.length > 0 && newPassword === reNewPassword)
               }
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
           {loading && (
             <Grid item xs={12}>

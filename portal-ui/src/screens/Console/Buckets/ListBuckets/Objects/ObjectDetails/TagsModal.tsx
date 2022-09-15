@@ -17,7 +17,8 @@
 import React, { Fragment, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -219,22 +220,19 @@ const AddTagModal = ({
               ?
               <Grid item xs={12} className={classes.modalButtonBar}>
                 <Button
+                  id={"cancel"}
                   type="button"
-                  variant="outlined"
-                  color="primary"
+                  variant="regular"
                   onClick={cancelDelete}
-                >
-                  Cancel
-                </Button>
+                  label={"Cancel"}
+                />
                 <Button
                   type="submit"
-                  variant="outlined"
-                  color="secondary"
+                  variant="secondary"
                   onClick={deleteTagProcess}
                   id={"deleteTag"}
-                >
-                  Delete Tag
-                </Button>
+                  label={"Delete Tag"}
+                />
               </Grid>
             </Grid>
           </Fragment>
@@ -335,17 +333,16 @@ const AddTagModal = ({
                 </Grid>
                 <Grid item xs={12} className={classes.modalButtonBar}>
                   <Button
+                    id={"clear"}
                     type="button"
-                    variant="outlined"
+                    variant="regular"
                     color="primary"
                     onClick={resetForm}
-                  >
-                    Clear
-                  </Button>
+                    label={"Clear"}
+                  />
                   <Button
                     type="submit"
-                    variant="contained"
-                    color="primary"
+                    variant="callAction"
                     disabled={
                       newLabel.trim() === "" ||
                       newKey.trim() === "" ||
@@ -353,9 +350,8 @@ const AddTagModal = ({
                     }
                     onClick={addTagProcess}
                     id="saveTag"
-                  >
-                    Save
-                  </Button>
+                    label={"Save"}
+                  />
                 </Grid>
               </Grid>
             </SecureComponent>

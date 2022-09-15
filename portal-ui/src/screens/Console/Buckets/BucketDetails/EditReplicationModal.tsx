@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
-import { Button } from "@mui/material";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -321,24 +321,22 @@ const EditReplicationModal = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"cancel-edit-replication"}
               type="button"
-              variant="outlined"
-              color="primary"
+              variant="regular"
               disabled={editLoading || saveEdit}
               onClick={() => {
                 closeModalAndRefresh(false);
               }}
-            >
-              Cancel
-            </Button>
+              label={"Cancel"}
+            />
             <Button
+              id={"save-replication"}
               type="submit"
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={editLoading || saveEdit}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
         </Grid>
       </form>

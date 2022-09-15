@@ -15,8 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
@@ -190,25 +191,23 @@ const EnableQuota = ({
           </Grid>
           <Grid item xs={12} className={classes.modalButtonBar}>
             <Button
+              id={"cancel"}
               type="button"
-              variant="outlined"
-              color="primary"
+              variant="regular"
               disabled={loading}
               onClick={() => {
                 closeModalAndRefresh();
               }}
-            >
-              Cancel
-            </Button>
+              label={"Cancel"}
+            />
 
             <Button
+              id={"save"}
               type="submit"
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={loading || !validInput}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
           {loading && (
             <Grid item xs={12}>

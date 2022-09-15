@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Button } from "@mui/material";
+import { Button } from "mds";
 import React from "react";
 import { addPoolAsync } from "./addPoolThunks";
 import { useSelector } from "react-redux";
@@ -37,17 +37,14 @@ const AddPoolCreateButton = () => {
   return (
     <Button
       id={"wizard-button-Create"}
-      variant="contained"
-      color="primary"
-      size="small"
+      variant="callAction"
       onClick={() => {
         dispatch(addPoolAsync());
       }}
       disabled={!enabled}
       key={`button-AddTenant-Create`}
-    >
-      Create
-    </Button>
+      label={"Create"}
+    />
   );
 };
 

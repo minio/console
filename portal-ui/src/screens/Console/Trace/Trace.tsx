@@ -17,9 +17,9 @@
 import React, { Fragment, useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
+import { Button } from "mds";
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
-
 import { TraceMessage } from "./types";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -40,13 +40,14 @@ import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWr
 import moment from "moment/moment";
 import PageLayout from "../Common/Layout/PageLayout";
 import { FilterIcon } from "../../../icons";
-import RBIconButton from "../Buckets/BucketDetails/SummaryItems/RBIconButton";
+
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import {
   setTraceStarted,
   traceMessageReceived,
   traceResetMessages,
 } from "./traceSlice";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -338,29 +339,29 @@ const Trace = ({ classes }: ITrace) => {
                   gap: "15px",
                 }}
               >
-                <RBIconButton
-                  tooltip={"More filter options"}
-                  onClick={() => {
-                    setToggleFilter(!toggleFilter);
-                  }}
-                  text={"Filters"}
-                  icon={<FilterIcon />}
-                  color={"primary"}
-                  variant={"outlined"}
-                  className={"filters-toggle-button"}
-                  style={{
-                    width: "118px",
-                    background: toggleFilter ? "rgba(8, 28, 66, 0.04)" : "",
-                  }}
-                />
+                <TooltipWrapper tooltip={"More filter options"}>
+                  <Button
+                    id={"filter-toggle"}
+                    onClick={() => {
+                      setToggleFilter(!toggleFilter);
+                    }}
+                    label={"Filters"}
+                    icon={<FilterIcon />}
+                    variant={"regular"}
+                    className={"filters-toggle-button"}
+                    style={{
+                      width: "118px",
+                      background: toggleFilter ? "rgba(8, 28, 66, 0.04)" : "",
+                    }}
+                  />
+                </TooltipWrapper>
 
                 {!traceStarted && (
-                  <RBIconButton
-                    text={"Start"}
+                  <Button
+                    id={"start-trace"}
+                    label={"Start"}
                     data-test-id={"trace-start-button"}
-                    icon={null}
-                    color={"primary"}
-                    variant="contained"
+                    variant="callAction"
                     onClick={startTrace}
                     style={{
                       width: "118px",
@@ -368,12 +369,11 @@ const Trace = ({ classes }: ITrace) => {
                   />
                 )}
                 {traceStarted && (
-                  <RBIconButton
-                    text={"Stop Trace"}
+                  <Button
+                    id={"stop-trace"}
+                    label={"Stop Trace"}
                     data-test-id={"trace-stop-button"}
-                    icon={null}
-                    color={"primary"}
-                    variant="contained"
+                    variant="callAction"
                     onClick={stopTrace}
                     style={{
                       width: "118px",

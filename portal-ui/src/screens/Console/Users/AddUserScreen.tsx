@@ -14,19 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import UserSelector from "./UserSelector";
-import PasswordSelector from "./PasswordSelector";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import UserSelector from "./UserSelector";
+import PasswordSelector from "./PasswordSelector";
 import { createUserAsync, resetFormAsync } from "./thunk/AddUsersThunk";
 import {
   formFieldStyles,
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { CreateUserIcon } from "../../../icons";
 
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -161,24 +162,23 @@ const AddUser = ({ classes }: IAddUserProps) => {
 
                 <Grid item xs={12} className={classes.modalButtonBar}>
                   <Button
+                    id={"clear-add-user"}
                     type="button"
-                    variant="outlined"
-                    color="primary"
+                    variant="regular"
                     onClick={(e) => {
                       dispatch(resetFormAsync());
                     }}
-                  >
-                    Clear
-                  </Button>
+                    label={"Clear"}
+                  />
 
                   <Button
+                    id={"save-user"}
                     type="submit"
-                    variant="contained"
+                    variant="callAction"
                     color="primary"
                     disabled={addLoading || !sendEnabled}
-                  >
-                    Save
-                  </Button>
+                    label={"Save"}
+                  />
                 </Grid>
               </Grid>
             </form>

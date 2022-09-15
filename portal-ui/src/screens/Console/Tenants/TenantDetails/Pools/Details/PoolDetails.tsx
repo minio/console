@@ -23,7 +23,7 @@ import Grid from "@mui/material/Grid";
 import LabelValuePair from "../../../../Common/UsageBarWrapper/LabelValuePair";
 import { niceBytesInt } from "../../../../../../common/utils";
 import StackRow from "../../../../Common/UsageBarWrapper/StackRow";
-import RBIconButton from "../../../../Buckets/BucketDetails/SummaryItems/RBIconButton";
+import { Button } from "mds";
 import { EditTenantIcon } from "../../../../../../icons";
 
 const stylingLayout = {
@@ -84,7 +84,7 @@ const PoolDetails = () => {
     <Fragment>
       <Grid item xs={12} sx={{ ...stylingLayout }}>
         <div style={{ position: "absolute", right: 20, top: 18 }}>
-          <RBIconButton
+          <Button
             icon={<EditTenantIcon />}
             onClick={() => {
               navigate(
@@ -93,7 +93,7 @@ const PoolDetails = () => {
                 }/edit-pool`
               );
             }}
-            text={"Edit Pool"}
+            label={"Edit Pool"}
             id={"editPool"}
           />
         </div>

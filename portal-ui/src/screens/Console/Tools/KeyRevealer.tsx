@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Box, Button } from "@mui/material";
+import React, { useState } from "react";
+import { Box } from "@mui/material";
+import { Button } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { CopyIcon } from "../../../icons";
-import { useState } from "react";
 
 const KeyRevealer = ({ value }: { value: string }) => {
   const [shown, setShown] = useState<boolean>(false);
@@ -49,14 +50,14 @@ const KeyRevealer = ({ value }: { value: string }) => {
       />
 
       <Button
-        sx={{
+        id={"show-hide-key"}
+        style={{
           marginLeft: "10px",
         }}
-        variant="contained"
+        variant="callAction"
         onClick={() => setShown(!shown)}
-      >
-        Show/Hide
-      </Button>
+        label={"Show/Hide"}
+      />
     </Box>
   );
 };

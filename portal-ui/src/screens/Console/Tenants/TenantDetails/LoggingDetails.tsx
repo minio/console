@@ -35,7 +35,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import { useParams } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { Button } from "@mui/material";
+import { Button } from "mds";
 import {
   setErrorSnackMessage,
   setSnackBarMessage,
@@ -383,17 +383,19 @@ const TenantAuditLogging = ({
             />
           </Grid>
 
-          <Grid item xs={12} textAlign={"right"}>
+          <Grid
+            item
+            xs={12}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
             <Button
               type="submit"
               id={"submit_button"}
-              variant="contained"
-              color="primary"
+              variant="callAction"
               disabled={loading || !checkValid()}
               onClick={() => submitLoggingInfo()}
-            >
-              Save
-            </Button>
+              label={"Save"}
+            />
           </Grid>
         </Fragment>
       )}

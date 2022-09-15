@@ -18,6 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
@@ -42,10 +43,10 @@ import {
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 
 import withSuspense from "../../Common/Components/withSuspense";
-import RBIconButton from "./SummaryItems/RBIconButton";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const DeleteEvent = withSuspense(React.lazy(() => import("./DeleteEvent")));
 const AddEvent = withSuspense(React.lazy(() => import("./AddEvent")));
@@ -160,16 +161,17 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
             matchAll
             errorProps={{ disabled: true }}
           >
-            <RBIconButton
-              tooltip={"Subscribe to Event"}
-              onClick={() => {
-                setAddEventScreenOpen(true);
-              }}
-              text={"Subscribe to Event"}
-              icon={<AddIcon />}
-              color="primary"
-              variant={"contained"}
-            />
+            <TooltipWrapper tooltip={"Subscribe to Event"}>
+              <Button
+                id={"Subscribe-bucket-event"}
+                onClick={() => {
+                  setAddEventScreenOpen(true);
+                }}
+                label={"Subscribe to Event"}
+                icon={<AddIcon />}
+                variant={"callAction"}
+              />
+            </TooltipWrapper>
           </SecureComponent>
         </Grid>
         <Grid item xs={12}>

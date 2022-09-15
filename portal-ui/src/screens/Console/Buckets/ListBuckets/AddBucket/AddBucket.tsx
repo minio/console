@@ -16,9 +16,10 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
@@ -63,8 +64,9 @@ const styles = (theme: Theme) =>
   createStyles({
     buttonContainer: {
       marginTop: 24,
-      textAlign: "right",
-      "& .MuiButton-root": {
+      display: "flex",
+      justifyContent: "flex-end",
+      "& button": {
         marginLeft: 8,
       },
     },
@@ -461,21 +463,21 @@ const AddBucket = ({ classes }: IsetProps) => {
             </Grid>
             <Grid item xs={12} className={classes.buttonContainer}>
               <Button
+                id={"clear"}
                 type="button"
-                variant={"outlined"}
+                variant={"regular"}
                 className={classes.clearButton}
                 onClick={resForm}
-              >
-                Clear
-              </Button>
+                label={"Clear"}
+              />
               <Button
+                id={"create-bucket"}
                 type="submit"
-                variant="contained"
+                variant="callAction"
                 color="primary"
                 disabled={addLoading || invalidFields.length > 0 || hasErrors}
-              >
-                Create Bucket
-              </Button>
+                label={"Create Bucket"}
+              />
             </Grid>
             {addLoading && (
               <Grid item xs={12}>
