@@ -58,6 +58,8 @@ import { tierTypes } from "./utils";
 import { selDistSet, setErrorSnackMessage } from "../../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
+import { hasPermission } from "../../../../common/SecureComponent";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
@@ -108,6 +110,10 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const [selectedTier, setSelectedTier] = useState<ITierElement>({
     type: "unsupported",
   });
+
+  const hasSetTier = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.ADMIN_SET_TIER,
+  ]);
 
   useEffect(() => {
     if (isLoading) {
@@ -285,20 +291,29 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                     setIsLoading(true);
                   }}
                 />
-
-                <SecureComponent
-                  scopes={[IAM_SCOPES.ADMIN_SET_TIER]}
-                  resource={CONSOLE_UI_RESOURCE}
-                  errorProps={{ disabled: true }}
+                <TooltipWrapper
+                  tooltip={
+                    hasSetTier
+                      ? ""
+                      : "You require additional permissions in order to create a new Tier. Please ask your MinIO administrator to grant you " +
+                        IAM_SCOPES.ADMIN_SET_TIER +
+                        " permission in order to create a Tier."
+                  }
                 >
-                  <Button
-                    id={"add-tier"}
-                    icon={<AddIcon />}
-                    label={`Create Tier`}
-                    onClick={addTier}
-                    variant="callAction"
-                  />
-                </SecureComponent>
+                  <SecureComponent
+                    scopes={[IAM_SCOPES.ADMIN_SET_TIER]}
+                    resource={CONSOLE_UI_RESOURCE}
+                    errorProps={{ disabled: true }}
+                  >
+                    <Button
+                      id={"add-tier"}
+                      icon={<AddIcon />}
+                      label={`Create Tier`}
+                      onClick={addTier}
+                      variant="callAction"
+                    />
+                  </SecureComponent>
+                </TooltipWrapper>
               </div>
             </Grid>
             {isLoading && <LinearProgress />}
@@ -442,8 +457,15 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                             tier.
                             <br />
                             <br />
-                            To get started,{" "}
-                            <AButton onClick={addTier}>Create Tier</AButton>.
+                            {hasSetTier ? (
+                              <div>
+                                To get started,{" "}
+                                <AButton onClick={addTier}>Create Tier</AButton>
+                                .
+                              </div>
+                            ) : (
+                              ""
+                            )}
                           </Fragment>
                         }
                       />
