@@ -23,7 +23,6 @@ package tiering
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"io"
 	"net/http"
 
@@ -94,7 +93,7 @@ func (o *EditTierCredentialsParams) BindRequest(r *http.Request, route *middlewa
 				res = append(res, err)
 			}
 
-			ctx := validate.WithOperationRequest(context.Background())
+			ctx := validate.WithOperationRequest(r.Context())
 			if err := body.ContextValidate(ctx, route.Formats); err != nil {
 				res = append(res, err)
 			}
@@ -157,7 +156,7 @@ func (o *EditTierCredentialsParams) bindType(rawData []string, hasKey bool, form
 // validateType carries on validations for parameter Type
 func (o *EditTierCredentialsParams) validateType(formats strfmt.Registry) error {
 
-	if err := validate.EnumCase("type", "path", o.Type, []interface{}{"s3", "gcs", "azure"}, true); err != nil {
+	if err := validate.EnumCase("type", "path", o.Type, []interface{}{"s3", "gcs", "azure", "minio"}, true); err != nil {
 		return err
 	}
 

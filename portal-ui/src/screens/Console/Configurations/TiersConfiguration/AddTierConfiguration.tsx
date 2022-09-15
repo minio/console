@@ -142,12 +142,16 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
 
       let tierType = type;
 
-      if (type === "minio") {
-        tierType = "s3";
-      }
-
       switch (type) {
         case "minio":
+          request = {
+            minio: {
+              ...fields,
+              accesskey: accessKey,
+              secretkey: secretKey,
+            },
+          };
+          break;
         case "s3":
           request = {
             s3: {
@@ -185,7 +189,6 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
         .invoke("POST", `/api/v1/admin/tiers`, payload)
         .then(() => {
           setSaving(false);
-
           navigate(IAM_PAGES.TIERS);
         })
         .catch((err: ErrorResponseHandler) => {
@@ -499,19 +502,18 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                     name="region"
                     type={type as "azure" | "s3" | "minio" | "gcs"}
                   />
-                  {type === s3ServiceName ||
-                    (type === minioServiceName && (
-                      <InputBoxWrapper
-                        id="storageClass"
-                        name="storageClass"
-                        label="Storage Class"
-                        placeholder="Enter Storage Class"
-                        value={storageClass}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setStorageClass(e.target.value);
-                        }}
-                      />
-                    ))}
+                  {type === s3ServiceName && (
+                    <InputBoxWrapper
+                      id="storageClass"
+                      name="storageClass"
+                      label="Storage Class"
+                      placeholder="Enter Storage Class"
+                      value={storageClass}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setStorageClass(e.target.value);
+                      }}
+                    />
+                  )}
                 </Fragment>
               )}
             </Grid>
