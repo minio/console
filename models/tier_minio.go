@@ -29,45 +29,57 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DirectCSIDriveInfo direct c s i drive info
+// TierMinio tier minio
 //
-// swagger:model directCSIDriveInfo
-type DirectCSIDriveInfo struct {
+// swagger:model tier_minio
+type TierMinio struct {
 
-	// allocated
-	Allocated int64 `json:"allocated,omitempty"`
+	// accesskey
+	Accesskey string `json:"accesskey,omitempty"`
 
-	// capacity
-	Capacity int64 `json:"capacity,omitempty"`
+	// bucket
+	Bucket string `json:"bucket,omitempty"`
 
-	// drive
-	Drive string `json:"drive,omitempty"`
+	// endpoint
+	Endpoint string `json:"endpoint,omitempty"`
 
-	// message
-	Message string `json:"message,omitempty"`
+	// name
+	Name string `json:"name,omitempty"`
 
-	// node
-	Node string `json:"node,omitempty"`
+	// objects
+	Objects string `json:"objects,omitempty"`
 
-	// status
-	Status string `json:"status,omitempty"`
+	// prefix
+	Prefix string `json:"prefix,omitempty"`
 
-	// volumes
-	Volumes int64 `json:"volumes,omitempty"`
+	// region
+	Region string `json:"region,omitempty"`
+
+	// secretkey
+	Secretkey string `json:"secretkey,omitempty"`
+
+	// storageclass
+	Storageclass string `json:"storageclass,omitempty"`
+
+	// usage
+	Usage string `json:"usage,omitempty"`
+
+	// versions
+	Versions string `json:"versions,omitempty"`
 }
 
-// Validate validates this direct c s i drive info
-func (m *DirectCSIDriveInfo) Validate(formats strfmt.Registry) error {
+// Validate validates this tier minio
+func (m *TierMinio) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this direct c s i drive info based on context it is used
-func (m *DirectCSIDriveInfo) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this tier minio based on context it is used
+func (m *TierMinio) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *DirectCSIDriveInfo) MarshalBinary() ([]byte, error) {
+func (m *TierMinio) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -75,8 +87,8 @@ func (m *DirectCSIDriveInfo) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DirectCSIDriveInfo) UnmarshalBinary(b []byte) error {
-	var res DirectCSIDriveInfo
+func (m *TierMinio) UnmarshalBinary(b []byte) error {
+	var res TierMinio
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -14,6 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+export interface ITierMinio {
+  name: string;
+  endpoint: string;
+  accesskey: string;
+  secretkey: string;
+  bucket: string;
+  prefix: string;
+  region: string;
+  storageclass: string;
+  usage: string;
+  objects: string;
+  versions: string;
+}
+
 export interface ITierS3 {
   name: string;
   endpoint: string;
@@ -56,10 +70,11 @@ export interface ITierAzure {
 }
 
 export interface ITierElement {
-  type: "s3" | "gcs" | "azure" | "unsupported";
+  type: "s3" | "gcs" | "azure" | "minio" | "unsupported";
   s3?: ITierS3;
   gcs?: ITierGCS;
   azure?: ITierAzure;
+  minio?: ITierMinio;
 }
 
 export interface ITierResponse {

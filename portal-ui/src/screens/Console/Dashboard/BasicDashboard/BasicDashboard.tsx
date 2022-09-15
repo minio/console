@@ -236,6 +236,11 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                         label={"Browse"}
                         icon={<ArrowRightIcon />}
                         variant={"regular"}
+                        style={{
+                          padding: 5,
+                          height: 30,
+                          fontSize: 14,
+                        }}
                       />
                     </TooltipWrapper>
                   </Link>

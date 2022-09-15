@@ -49,7 +49,7 @@ export interface IDriveInfo {
   healing: boolean;
   model: string;
   totalSpace: number;
-  usedSpace: number;
+  usedSpace?: number;
   availableSpace: number;
 }
 

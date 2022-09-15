@@ -557,7 +557,8 @@ func init() {
             "enum": [
               "s3",
               "gcs",
-              "azure"
+              "azure",
+              "minio"
             ],
             "type": "string",
             "name": "type",
@@ -599,7 +600,8 @@ func init() {
             "enum": [
               "s3",
               "gcs",
-              "azure"
+              "azure",
+              "minio"
             ],
             "type": "string",
             "name": "type",
@@ -6733,6 +6735,10 @@ func init() {
           "type": "object",
           "$ref": "#/definitions/tier_gcs"
         },
+        "minio": {
+          "type": "object",
+          "$ref": "#/definitions/tier_minio"
+        },
         "s3": {
           "type": "object",
           "$ref": "#/definitions/tier_s3"
@@ -6743,6 +6749,7 @@ func init() {
             "s3",
             "gcs",
             "azure",
+            "minio",
             "unsupported"
           ]
         }
@@ -6831,6 +6838,44 @@ func init() {
           "type": "string"
         },
         "region": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "versions": {
+          "type": "string"
+        }
+      }
+    },
+    "tier_minio": {
+      "type": "object",
+      "properties": {
+        "accesskey": {
+          "type": "string"
+        },
+        "bucket": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "objects": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretkey": {
+          "type": "string"
+        },
+        "storageclass": {
           "type": "string"
         },
         "usage": {
@@ -7709,7 +7754,8 @@ func init() {
             "enum": [
               "s3",
               "gcs",
-              "azure"
+              "azure",
+              "minio"
             ],
             "type": "string",
             "name": "type",
@@ -7751,7 +7797,8 @@ func init() {
             "enum": [
               "s3",
               "gcs",
-              "azure"
+              "azure",
+              "minio"
             ],
             "type": "string",
             "name": "type",
@@ -14011,6 +14058,10 @@ func init() {
           "type": "object",
           "$ref": "#/definitions/tier_gcs"
         },
+        "minio": {
+          "type": "object",
+          "$ref": "#/definitions/tier_minio"
+        },
         "s3": {
           "type": "object",
           "$ref": "#/definitions/tier_s3"
@@ -14021,6 +14072,7 @@ func init() {
             "s3",
             "gcs",
             "azure",
+            "minio",
             "unsupported"
           ]
         }
@@ -14109,6 +14161,44 @@ func init() {
           "type": "string"
         },
         "region": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "versions": {
+          "type": "string"
+        }
+      }
+    },
+    "tier_minio": {
+      "type": "object",
+      "properties": {
+        "accesskey": {
+          "type": "string"
+        },
+        "bucket": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "objects": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretkey": {
+          "type": "string"
+        },
+        "storageclass": {
           "type": "string"
         },
         "usage": {
