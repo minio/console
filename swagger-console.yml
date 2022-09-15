@@ -2683,6 +2683,7 @@ paths:
             - s3
             - gcs
             - azure
+            - minio
         - name: name
           in: path
           required: true
@@ -2712,6 +2713,7 @@ paths:
             - s3
             - gcs
             - azure
+            - minio
         - name: name
           in: path
           required: true
@@ -4657,6 +4659,32 @@ definitions:
       versions:
         type: string
 
+  tier_minio:
+    type: object
+    properties:
+      name:
+        type: string
+      endpoint:
+        type: string
+      accesskey:
+        type: string
+      secretkey:
+        type: string
+      bucket:
+        type: string
+      prefix:
+        type: string
+      region:
+        type: string
+      storageclass:
+        type: string
+      usage:
+        type: string
+      objects:
+        type: string
+      versions:
+        type: string
+
   tier_azure:
     type: object
     properties:
@@ -4732,6 +4760,7 @@ definitions:
           - s3
           - gcs
           - azure
+          - minio
           - unsupported
       s3:
         type: object
@@ -4742,6 +4771,9 @@ definitions:
       azure:
         type: object
         $ref: "#/definitions/tier_azure"
+      minio:
+        type: object
+        $ref: "#/definitions/tier_minio"  
 
   tierListResponse:
     type: object

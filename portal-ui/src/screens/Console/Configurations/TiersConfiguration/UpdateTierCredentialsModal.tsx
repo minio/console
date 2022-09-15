@@ -80,7 +80,7 @@ const UpdateTierCredentialsModal = ({
   useEffect(() => {
     let valid = true;
 
-    if (type === "s3" || type === "azure") {
+    if (type === "s3" || type === "azure" || type === "minio") {
       if (accountName === "" || accountKey === "") {
         valid = false;
       }
@@ -95,7 +95,7 @@ const UpdateTierCredentialsModal = ({
   const addRecord = () => {
     let rules = {};
 
-    if (type === "s3" || type === "azure") {
+    if (type === "s3" || type === "azure" || type === "minio") {
       rules = {
         access_key: accountName,
         secret_key: accountKey,
@@ -144,7 +144,7 @@ const UpdateTierCredentialsModal = ({
       >
         <Grid container>
           <Grid item xs={12}>
-            {type === "s3" && (
+            {(type === "s3" || type === "minio") && (
               <Fragment>
                 <div className={classes.formFieldRow}>
                   <InputBoxWrapper

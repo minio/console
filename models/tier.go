@@ -43,11 +43,14 @@ type Tier struct {
 	// gcs
 	Gcs *TierGcs `json:"gcs,omitempty"`
 
+	// minio
+	Minio *TierMinio `json:"minio,omitempty"`
+
 	// s3
 	S3 *TierS3 `json:"s3,omitempty"`
 
 	// type
-	// Enum: [s3 gcs azure unsupported]
+	// Enum: [s3 gcs azure minio unsupported]
 	Type string `json:"type,omitempty"`
 }
 
@@ -60,6 +63,10 @@ func (m *Tier) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateGcs(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMinio(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -115,6 +122,25 @@ func (m *Tier) validateGcs(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Tier) validateMinio(formats strfmt.Registry) error {
+	if swag.IsZero(m.Minio) { // not required
+		return nil
+	}
+
+	if m.Minio != nil {
+		if err := m.Minio.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("minio")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("minio")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *Tier) validateS3(formats strfmt.Registry) error {
 	if swag.IsZero(m.S3) { // not required
 		return nil
@@ -138,7 +164,7 @@ var tierTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["s3","gcs","azure","unsupported"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["s3","gcs","azure","minio","unsupported"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -156,6 +182,9 @@ const (
 
 	// TierTypeAzure captures enum value "azure"
 	TierTypeAzure string = "azure"
+
+	// TierTypeMinio captures enum value "minio"
+	TierTypeMinio string = "minio"
 
 	// TierTypeUnsupported captures enum value "unsupported"
 	TierTypeUnsupported string = "unsupported"
@@ -194,6 +223,10 @@ func (m *Tier) ContextValidate(ctx context.Context, formats strfmt.Registry) err
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateMinio(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateS3(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -228,6 +261,22 @@ func (m *Tier) contextValidateGcs(ctx context.Context, formats strfmt.Registry) 
 				return ve.ValidateName("gcs")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("gcs")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Tier) contextValidateMinio(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Minio != nil {
+		if err := m.Minio.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("minio")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("minio")
 			}
 			return err
 		}
