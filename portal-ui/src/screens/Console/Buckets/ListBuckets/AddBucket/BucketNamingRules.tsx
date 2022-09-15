@@ -62,7 +62,6 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
 
   return (
     <Fragment>
-      <Grid item xs={12}>
         <Button
           id={"toggle-naming-rules"}
           onClick={() => {
@@ -72,11 +71,13 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
           label={(showNamingRules ? "Hide" : "View") + " Bucket Naming Rules"}
           style={{
             height: "10px",
-            width: "225px",
+            width: "200px",
+            textAlign: "left",
+            paddingLeft: 0,
             fontSize: "9px",
             border: "none",
           }}
-        ></Button>
+        />
         {showNamingRules && (
           <Grid container fontSize={14} paddingTop={2}>
             <Grid item xs={6}>
@@ -136,7 +137,7 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
             </Grid>
           </Grid>
         )}
-      </Grid>
+
       {addLoading && (
         <Grid item xs={12}>
           <LinearProgress />
