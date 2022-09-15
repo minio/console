@@ -48,13 +48,7 @@ jobs:
           # To have two repositories under the same test
           path: 'minio_repository'
 
-      - uses: actions/cache@v2
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
+
 
       - name: Build on ${{ matrix.os }}
         run: |
@@ -77,13 +71,7 @@ jobs:
           name: replication-artifact
           path: ./replication/coverage/replication.out
 
-      - uses: actions/cache@v2
-        id: coverage-cache-replication
-        name: Coverage Cache Replication
-        with:
-          path: |
-            ./replication/coverage/
-          key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
+
 
   coverage:
     name: "Coverage Limit Check"
@@ -107,74 +95,27 @@ jobs:
         with:
           repository: wadey/gocovmerge
           path: gocovmerge
-      - uses: actions/cache@v2
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
-      - uses: actions/cache@v2
-        id: coverage-cache
-        name: Coverage Cache
-        with:
-          path: |
-            ./integration/coverage/
-          key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
 
-      - uses: actions/cache@v2
-        id: coverage-cache-sso
-        name: Coverage Cache SSO
-        with:
-          path: |
-            ./sso-integration/coverage/
-          key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
 
-      - uses: actions/cache@v2
-        id: coverage-cache-replication
-        name: Coverage Cache Replication
-        with:
-          path: |
-            ./replication/coverage/
-          key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
 
-      - uses: actions/cache@v2
-        id: coverage-cache-operator
-        name: Coverage Cache Operator
-        with:
-          path: |
-            ./operator-integration/coverage/
-          key: ${{ runner.os }}-coverage-2-operator-${{ github.run_id }}
 
-      - uses: actions/cache@v2
-        id: coverage-cache-restapi
-        name: Coverage Cache RestAPI
-        with:
-          path: |
-            ./restapi/coverage/
-          key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
+
+
+
 
 
       - uses: actions/download-artifact@v3
         with:
           name: replication-artifact
+          path: ../replication/coverage/replication.out
 
-      - uses: actions/cache@v2
-        id: coverage-cache-unittest-operatorapi
-        name: Coverage Cache unit test operatorAPI
-        with:
-          path: |
-            ./operatorapi/coverage/
-          key: ${{ runner.os }}-coverage-unittest-operatorapi-2-${{ github.run_id }}
 
-      - uses: actions/cache@v2
-        id: coverage-cache-pkg
-        name: Coverage Cache Pkg
-        with:
-          path: |
-            ./pkg/coverage/
-          key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
+
+
+
+
+
 
       - name: Get coverage
         run: |
