@@ -108,7 +108,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: replication-artifact
-          path: replication/coverage/replication.out
+          path: replication/coverage
 
 
 
