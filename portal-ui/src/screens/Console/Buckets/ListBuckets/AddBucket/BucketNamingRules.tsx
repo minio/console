@@ -16,12 +16,12 @@
 
 import React, { Fragment, useState } from "react";
 import Grid from "@mui/material/Grid";
-import { Button, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { AppState } from "../../../../../store";
 import { useSelector } from "react-redux";
 import ShowTextIcon from "../../../../../icons/ShowTextIcon";
 import HideTextIcon from "../../../../../icons/HideTextIcon";
-
+import { Button } from "mds";
 import ValidRule from "./ValidRule";
 import InvalidRule from "./InvalidRule";
 import NARule from "./NARule";
@@ -63,37 +63,17 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
   return (
     <Fragment>
       <Grid item xs={12}>
-        {showNamingRules ? (
-          <span
-            onClick={() => {
-              toggleNamingRules();
-            }}
-            style={{ color: "#0288D1", textDecoration: "underline" }}
-          >
-            {" "}
-            Hide Bucket Naming Rules{" "}
-          </span>
-        ) : (
-          <span
-            onClick={() => {
-              toggleNamingRules();
-            }}
-            style={{ color: "#0288D1", textDecoration: "underline" }}
-          >
-            View Bucket Naming Rules
-          </span>
-        )}
         <Button
-          variant="text"
-          size="small"
+          id={"toggle-naming-rules"}
           onClick={() => {
             toggleNamingRules();
           }}
-        >
-          {showNamingRules ? <ShowTextIcon /> : <HideTextIcon />}
+          icon={showNamingRules ? <ShowTextIcon /> : <HideTextIcon />}
+          label={(showNamingRules ? "Hide" : "View") + " Bucket Naming Rules" }
+        > 
         </Button>
         {showNamingRules && (
-          <Grid container>
+          <Grid container fontSize={14}>
             <Grid item xs={6}>
               {bucketName.length === 0 ? (
                 <NARule ruleText={lengthRuleText} />
