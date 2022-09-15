@@ -1,4 +1,4 @@
-# MinIO Console
+# MinIO Console:
 
 ![build](https://github.com/minio/console/workflows/Go/badge.svg) ![license](https://img.shields.io/badge/license-AGPL%20V3-blue)
 
