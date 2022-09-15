@@ -69,11 +69,15 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
             toggleNamingRules();
           }}
           icon={showNamingRules ? <ShowTextIcon /> : <HideTextIcon />}
-          label={(showNamingRules ? "Hide" : "View") + " Bucket Naming Rules" }
-        > 
-        </Button>
+          label={(showNamingRules ? "Hide" : "View") + " Bucket Naming Rules"}
+          style={{height:"10px", 
+                  width:"225px", 
+                  fontSize:"9px", 
+                  border:"none",
+                }}
+        ></Button>
         {showNamingRules && (
-          <Grid container fontSize={14}>
+          <Grid container fontSize={14} paddingTop={2}>
             <Grid item xs={6}>
               {bucketName.length === 0 ? (
                 <NARule ruleText={lengthRuleText} />
