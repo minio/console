@@ -83,7 +83,9 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 		if err1, exists = err[0].(error); exists {
 			var lastError error
 			if len(err) > 1 {
-				lastError = err[len(err)-1].(error)
+				if err2, lastExists := err[1].(error); lastExists {
+					lastError = err2
+				}
 			}
 			if err1.Error() == ErrForbidden.Error() {
 				errorCode = 403
