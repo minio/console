@@ -85,6 +85,13 @@ jobs:
             ./replication/coverage/
           key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
 
+      # To save our replication.out file into an artifact.
+      # By default, GitHub stores build logs and artifacts for 90 days.
+      - uses: actions/upload-artifact@v3
+        with:
+          name: replication-artifact
+          path: ./replication/coverage/replication.out
+
   sso-integration:
 
     name: SSO Integration Test
@@ -1806,6 +1813,12 @@ jobs:
           path: |
             ./pkg/coverage/
           key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
+
+      # Get the replication.out file from the artifact since this is working for self host runner.
+      - uses: actions/download-artifact@v3
+        with:
+          name: replication-artifact
+          path: replication/coverage
 
       - name: Get coverage
         run: |
