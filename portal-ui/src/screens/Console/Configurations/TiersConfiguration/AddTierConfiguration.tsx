@@ -149,7 +149,6 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
               ...fields,
               accesskey: accessKey,
               secretkey: secretKey,
-              storageclass: storageClass,
             },
           };
           break;
@@ -503,18 +502,18 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                     name="region"
                     type={type as "azure" | "s3" | "minio" | "gcs"}
                   />
-                  {type === s3ServiceName  && (
-                      <InputBoxWrapper
-                        id="storageClass"
-                        name="storageClass"
-                        label="Storage Class"
-                        placeholder="Enter Storage Class"
-                        value={storageClass}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setStorageClass(e.target.value);
-                        }}
-                      />
-                    )}
+                  {type === s3ServiceName && (
+                    <InputBoxWrapper
+                      id="storageClass"
+                      name="storageClass"
+                      label="Storage Class"
+                      placeholder="Enter Storage Class"
+                      value={storageClass}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setStorageClass(e.target.value);
+                      }}
+                    />
+                  )}
                 </Fragment>
               )}
             </Grid>

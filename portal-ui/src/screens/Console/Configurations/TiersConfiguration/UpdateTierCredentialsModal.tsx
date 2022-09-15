@@ -144,7 +144,7 @@ const UpdateTierCredentialsModal = ({
       >
         <Grid container>
           <Grid item xs={12}>
-            {type === "s3" || type === "minio" && (
+            {(type === "s3" || type === "minio") && (
               <Fragment>
                 <div className={classes.formFieldRow}>
                   <InputBoxWrapper
