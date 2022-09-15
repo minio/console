@@ -368,13 +368,14 @@ export const IAM_PAGES_PERMISSIONS = {
   ],
   [IAM_PAGES.TIERS]: [
     IAM_SCOPES.ADMIN_LIST_TIERS, // display tiers list
-    IAM_SCOPES.ADMIN_SET_TIER, // display "add tier" button
   ],
   [IAM_PAGES.TIERS_ADD]: [
     IAM_SCOPES.ADMIN_SET_TIER, // display "add tier" button / shows add service tier page
+    IAM_SCOPES.ADMIN_LIST_TIERS, // display tiers list
   ],
   [IAM_PAGES.TIERS_ADD_SERVICE]: [
     IAM_SCOPES.ADMIN_SET_TIER, // display "add tier" button / shows add service tier page
+    IAM_SCOPES.ADMIN_LIST_TIERS, // display tiers list
   ],
   [IAM_PAGES.TOOLS]: [
     IAM_SCOPES.S3_LISTEN_NOTIFICATIONS, // displays watch notifications
