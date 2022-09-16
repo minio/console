@@ -52,13 +52,16 @@ const driveStatusColor = (health_status: string) => {
 };
 
 const DriveInfoItem = ({ drive }: ICardProps) => {
-  const freeSpace = drive.totalSpace - drive.usedSpace;
+  const totalSpace = drive.totalSpace || 0;
+  const usedSpace = drive.usedSpace || 0;
+
+  const freeSpace = totalSpace - usedSpace;
 
   const plotValues = [
     { value: freeSpace, color: "#D6D6D6", label: "Free Space" },
     {
       value: drive.usedSpace,
-      color: capacityColors(drive.usedSpace, drive.totalSpace),
+      color: capacityColors(usedSpace, totalSpace),
       label: "Used Space",
     },
   ];
@@ -154,7 +157,7 @@ const DriveInfoItem = ({ drive }: ICardProps) => {
                   fontSize: 12,
                 }}
               >
-                {niceBytesInt(drive.usedSpace)}
+                {drive.usedSpace ? niceBytesInt(drive.usedSpace) : "-"}
               </span>
               <div>
                 <PieChart width={110} height={110}>

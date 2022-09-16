@@ -119,7 +119,7 @@ func (o *GetTierParams) bindType(rawData []string, hasKey bool, formats strfmt.R
 // validateType carries on validations for parameter Type
 func (o *GetTierParams) validateType(formats strfmt.Registry) error {
 
-	if err := validate.EnumCase("type", "path", o.Type, []interface{}{"s3", "gcs", "azure"}, true); err != nil {
+	if err := validate.EnumCase("type", "path", o.Type, []interface{}{"s3", "gcs", "azure", "minio"}, true); err != nil {
 		return err
 	}
 
