@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { setName } from "./addBucketsSlice";
+import { setName, setIsDirty } from "./addBucketsSlice";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../../store";
@@ -28,8 +28,10 @@ const AddBucketName = ({ hasErrors }: { hasErrors: boolean }) => {
     <InputBoxWrapper
       id="bucket-name"
       name="bucket-name"
-      error={hasErrors ? "Invalid bucket Name" : ""}
-      autoFocus={true}
+      error={hasErrors ? "Invalid bucket name" : ""}
+      onFocus={() => {
+        dispatch(setIsDirty(true));
+      }}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(setName(event.target.value));
       }}
