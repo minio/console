@@ -417,25 +417,25 @@ const Affinity = ({ classes }: IAffinityProps) => {
 
                               dispatch(setKeyValuePairs(arrCp));
                             }}
+                            disabled={i !== keyValuePairs.length - 1}
                           >
                             <AddIcon />
                           </IconButton>
                         </div>
-                        {keyValuePairs.length > 1 && (
-                          <div className={classes.overlayAction}>
-                            <IconButton
-                              size={"small"}
-                              onClick={() => {
-                                const arrCp = keyValuePairs.filter(
-                                  (item, index) => index !== i
-                                );
-                                dispatch(setKeyValuePairs(arrCp));
-                              }}
-                            >
-                              <RemoveIcon />
-                            </IconButton>
-                          </div>
-                        )}
+                        <div className={classes.overlayAction}>
+                          <IconButton
+                            size={"small"}
+                            onClick={() => {
+                              const arrCp = keyValuePairs.filter(
+                                (item, index) => index !== i
+                              );
+                              dispatch(setKeyValuePairs(arrCp));
+                            }}
+                            disabled={keyValuePairs.length <= 1}
+                          >
+                            <RemoveIcon />
+                          </IconButton>
+                        </div>
                       </Grid>
                     </Grid>
                   );
