@@ -45,6 +45,8 @@ import { selDistSet, selSiteRep } from "../../../../../systemSlice";
 import {
   resetForm,
   setEnableObjectLocking,
+  setIsDirty,
+  setName,
   setQuota,
   setQuotaSize,
   setQuotaUnit,
@@ -181,9 +183,11 @@ const AddBucket = ({ classes }: IsetProps) => {
     ];
     setValidationResult(bucketNameErrors);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bucketName]);
+  }, [bucketName, isDirty]);
 
   useEffect(() => {
+    dispatch(setName(""));
+    dispatch(setIsDirty(false));
     const fetchRecords = () => {
       api
         .invoke("GET", `/api/v1/buckets`)
@@ -476,7 +480,12 @@ const AddBucket = ({ classes }: IsetProps) => {
                 type="submit"
                 variant="callAction"
                 color="primary"
-                disabled={addLoading || invalidFields.length > 0 || hasErrors}
+                disabled={
+                  addLoading ||
+                  invalidFields.length > 0 ||
+                  !isDirty ||
+                  hasErrors
+                }
                 label={"Create Bucket"}
               />
             </Grid>
