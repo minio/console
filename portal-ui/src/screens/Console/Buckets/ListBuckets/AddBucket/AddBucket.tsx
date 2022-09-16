@@ -45,6 +45,8 @@ import { selDistSet, selSiteRep } from "../../../../../systemSlice";
 import {
   resetForm,
   setEnableObjectLocking,
+  setIsDirty,
+  setName,
   setQuota,
   setQuotaSize,
   setQuotaUnit,
@@ -119,6 +121,7 @@ const AddBucket = ({ classes }: IsetProps) => {
     "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
   );
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
+  const isDirty = useSelector((state: AppState) => state.addBucket.isDirty);
   const [validationResult, setValidationResult] = useState<boolean[]>([]);
   const errorList = validationResult.filter((v) => !v);
   const hasErrors = errorList.length > 0;
@@ -166,7 +169,7 @@ const AddBucket = ({ classes }: IsetProps) => {
 
   useEffect(() => {
     const bucketNameErrors = [
-      !(bucketName.length < 3 || bucketName.length > 63),
+      !(isDirty && (bucketName.length < 3 || bucketName.length > 63)),
       validBucketCharacters.test(bucketName),
       !(
         bucketName.includes(".-") ||
@@ -180,9 +183,11 @@ const AddBucket = ({ classes }: IsetProps) => {
     ];
     setValidationResult(bucketNameErrors);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bucketName]);
+  }, [bucketName, isDirty]);
 
   useEffect(() => {
+    dispatch(setName(""));
+    dispatch(setIsDirty(false));
     const fetchRecords = () => {
       api
         .invoke("GET", `/api/v1/buckets`)
@@ -475,7 +480,12 @@ const AddBucket = ({ classes }: IsetProps) => {
                 type="submit"
                 variant="callAction"
                 color="primary"
-                disabled={addLoading || invalidFields.length > 0 || hasErrors}
+                disabled={
+                  addLoading ||
+                  invalidFields.length > 0 ||
+                  !isDirty ||
+                  hasErrors
+                }
                 label={"Create Bucket"}
               />
             </Grid>
