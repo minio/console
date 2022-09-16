@@ -46,6 +46,7 @@ import { selFeatures } from "../../consoleSlice";
 import AutoColorIcon from "../../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import { Button } from "mds";
+import hasPermission from "../../../../common/SecureComponent/accessControl";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -88,6 +89,29 @@ const BrowserHandler = () => {
     navigate(`/buckets/${bucketName}/admin`);
   };
 
+  const configureBucketAllowed = hasPermission(bucketName, [
+    IAM_SCOPES.S3_GET_BUCKET_POLICY,
+    IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+    IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
+    IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+    IAM_SCOPES.S3_GET_BUCKET_ENCRYPTION_CONFIGURATION,
+    IAM_SCOPES.S3_PUT_BUCKET_ENCRYPTION_CONFIGURATION,
+    IAM_SCOPES.S3_DELETE_BUCKET,
+    IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
+    IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
+    IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
+    IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+    IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
+    IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+    IAM_SCOPES.ADMIN_GET_BUCKET_QUOTA,
+    IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA,
+    IAM_SCOPES.S3_PUT_BUCKET_TAGGING,
+    IAM_SCOPES.S3_GET_BUCKET_TAGGING,
+    IAM_SCOPES.S3_LIST_BUCKET_VERSIONS,
+    IAM_SCOPES.S3_GET_BUCKET_POLICY_STATUS,
+    IAM_SCOPES.S3_DELETE_BUCKET_POLICY,
+  ]);
+
   const searchBar = (
     <Fragment>
       {!versionsMode ? (
@@ -129,7 +153,15 @@ const BrowserHandler = () => {
               resource={bucketName}
               errorProps={{ disabled: true }}
             >
-              <TooltipWrapper tooltip={"Configure Bucket"}>
+              <TooltipWrapper
+                tooltip={
+                  configureBucketAllowed
+                    ? "Configure Bucket"
+                    : "You do not have the required permissions to configure this bucket. Please contact your MinIO administrator to request " +
+                      IAM_ROLES.BUCKET_ADMIN +
+                      " permisions."
+                }
+              >
                 <Button
                   id={"configure-bucket-main"}
                   color="primary"

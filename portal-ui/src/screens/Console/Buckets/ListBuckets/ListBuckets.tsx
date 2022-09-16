@@ -202,6 +202,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
   };
 
   const canCreateBucket = hasPermission("*", [IAM_SCOPES.S3_CREATE_BUCKET]);
+  const canListBuckets = hasPermission("*", [IAM_SCOPES.S3_LIST_BUCKET]);
 
   return (
     <Fragment>
@@ -319,7 +320,15 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
             </TooltipWrapper>
 
             {!obOnly && (
-              <TooltipWrapper tooltip={"Create Bucket"}>
+              <TooltipWrapper
+                tooltip={
+                  canCreateBucket
+                    ? "Create Bucket"
+                    : "You require additional permissions in order to create a new Bucket. Please ask your MinIO administrator to grant you " +
+                      IAM_SCOPES.S3_CREATE_BUCKET +
+                      " permission in order to create a Bucket."
+                }
+              >
                 <Button
                   id={"create-bucket"}
                   onClick={() => {
@@ -384,6 +393,13 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                         MinIO uses buckets to organize objects. A bucket is
                         similar to a folder or directory in a filesystem, where
                         each bucket can hold an arbitrary number of objects.
+                        <br></br>
+                        <br></br>
+                        {canListBuckets
+                          ? ""
+                          : "In order to view the buckets on this server, you require " +
+                            IAM_SCOPES.S3_LIST_BUCKET +
+                            " permission. Please contact your MinIO administrator to establish this permission."}
                         <SecureComponent
                           scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
                           resource={CONSOLE_UI_RESOURCE}

@@ -40,11 +40,14 @@ import PageLayout from "../../../Common/Layout/PageLayout";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import FormLayout from "../../../Common/FormLayout";
 import HelpBox from "../../../../../common/HelpBox";
+import TooltipWrapper from "../../../Common/TooltipWrapper/TooltipWrapper";
 import SectionTitle from "../../../Common/SectionTitle";
 import { selDistSet, selSiteRep } from "../../../../../systemSlice";
 import {
   resetForm,
   setEnableObjectLocking,
+  setIsDirty,
+  setName,
   setQuota,
   setQuotaSize,
   setQuotaUnit,
@@ -119,6 +122,7 @@ const AddBucket = ({ classes }: IsetProps) => {
     "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
   );
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
+  const isDirty = useSelector((state: AppState) => state.addBucket.isDirty);
   const [validationResult, setValidationResult] = useState<boolean[]>([]);
   const errorList = validationResult.filter((v) => !v);
   const hasErrors = errorList.length > 0;
@@ -159,14 +163,22 @@ const AddBucket = ({ classes }: IsetProps) => {
     (state: AppState) => state.addBucket.navigateTo
   );
 
-  const lockingAllowed = hasPermission("*", [
+  const lockingAllowed = hasPermission(
+    "*",
+    [
+      IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+      IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
+    ],
+    true
+  );
+
+  const versioningAllowed = hasPermission("*", [
     IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
-    IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
   ]);
 
   useEffect(() => {
     const bucketNameErrors = [
-      !(bucketName.length < 3 || bucketName.length > 63),
+      !(isDirty && (bucketName.length < 3 || bucketName.length > 63)),
       validBucketCharacters.test(bucketName),
       !(
         bucketName.includes(".-") ||
@@ -180,9 +192,11 @@ const AddBucket = ({ classes }: IsetProps) => {
     ];
     setValidationResult(bucketNameErrors);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bucketName]);
+  }, [bucketName, isDirty]);
 
   useEffect(() => {
+    dispatch(setName(""));
+    dispatch(setIsDirty(false));
     const fetchRecords = () => {
       api
         .invoke("GET", `/api/v1/buckets`)
@@ -238,19 +252,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                   <br />
                   <b>Object Locking</b> prevents objects from being deleted.
                   Required to support retention and legal hold. Can only be
-                  enabled at bucket creation.{" "}
-                  {!lockingAllowed ? (
-                    <Fragment>
-                      <br />
-                      <span>
-                        To enable this option{" "}
-                        <i>s3:PutBucketObjectLockConfiguration</i> and{" "}
-                        <i>s3:PutBucketVersioning</i> permissions must be set.
-                      </span>
-                    </Fragment>
-                  ) : (
-                    ""
-                  )}
+                  enabled at bucket creation.
                   <br />
                   <br />
                   <b>Quota</b> limits the amount of data in the bucket.
@@ -318,39 +320,68 @@ const AddBucket = ({ classes }: IsetProps) => {
                     <br />
                   </Fragment>
                 )}
-                <FormSwitchWrapper
-                  value="versioned"
-                  id="versioned"
-                  name="versioned"
-                  checked={versioningEnabled}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    dispatch(setVersioning(event.target.checked));
-                  }}
-                  label={"Versioning"}
-                  disabled={
-                    !distributedSetup ||
-                    lockingEnabled ||
-                    siteReplicationInfo.enabled
+                <TooltipWrapper
+                  tooltip={
+                    versioningAllowed
+                      ? ""
+                      : "You require additional permissions in order to enable Versioning. Please ask your MinIO administrator to grant you " +
+                        IAM_SCOPES.S3_PUT_BUCKET_VERSIONING +
+                        " permission in order to enable Versioning."
                   }
-                />
+                >
+                  <FormSwitchWrapper
+                    value="versioned"
+                    id="versioned"
+                    name="versioned"
+                    checked={versioningEnabled}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      dispatch(setVersioning(event.target.checked));
+                    }}
+                    label={"Versioning"}
+                    disabled={
+                      !distributedSetup ||
+                      lockingEnabled ||
+                      siteReplicationInfo.enabled ||
+                      !versioningAllowed
+                    }
+                  />
+                </TooltipWrapper>
               </Grid>
               <Grid item xs={12}>
-                <FormSwitchWrapper
-                  value="locking"
-                  id="locking"
-                  name="locking"
-                  disabled={
-                    lockingFieldDisabled || !distributedSetup || !lockingAllowed
+                <TooltipWrapper
+                  tooltip={
+                    lockingAllowed
+                      ? ""
+                      : "You require additional permissions in order to enable Locking. Please ask your MinIO administrator to grant you " +
+                        (versioningAllowed
+                          ? ""
+                          : IAM_SCOPES.S3_PUT_BUCKET_VERSIONING + " and ") +
+                        IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION +
+                        " permissions in order to enable Locking."
                   }
-                  checked={lockingEnabled}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    dispatch(setEnableObjectLocking(event.target.checked));
-                    if (event.target.checked && !siteReplicationInfo.enabled) {
-                      dispatch(setVersioning(true));
+                >
+                  <FormSwitchWrapper
+                    value="locking"
+                    id="locking"
+                    name="locking"
+                    disabled={
+                      lockingFieldDisabled ||
+                      !distributedSetup ||
+                      !lockingAllowed
                     }
-                  }}
-                  label={"Object Locking"}
-                />
+                    checked={lockingEnabled}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      dispatch(setEnableObjectLocking(event.target.checked));
+                      if (
+                        event.target.checked &&
+                        !siteReplicationInfo.enabled
+                      ) {
+                        dispatch(setVersioning(true));
+                      }
+                    }}
+                    label={"Object Locking"}
+                  />
+                </TooltipWrapper>
               </Grid>
 
               <Grid item xs={12}>
@@ -475,7 +506,12 @@ const AddBucket = ({ classes }: IsetProps) => {
                 type="submit"
                 variant="callAction"
                 color="primary"
-                disabled={addLoading || invalidFields.length > 0 || hasErrors}
+                disabled={
+                  addLoading ||
+                  invalidFields.length > 0 ||
+                  !isDirty ||
+                  hasErrors
+                }
                 label={"Create Bucket"}
               />
             </Grid>
