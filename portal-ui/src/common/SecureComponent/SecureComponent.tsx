@@ -29,7 +29,7 @@ interface ISecureComponentProps {
 
 const SecureComponent = ({
   children,
-  RenderError = () => <></>,
+  RenderError,
   errorProps = null,
   matchAll = false,
   scopes = [],
@@ -42,7 +42,13 @@ const SecureComponent = ({
     matchAll,
     containsResource
   );
-  if (!permissionGranted && !errorProps) return <RenderError />;
+  if (!RenderError) {
+    RenderError = <></>;
+  }
+  if (!permissionGranted && !errorProps) {
+    console.log("no permission ", resource, scopes, matchAll, containsResource);
+    return RenderError;
+  }
   if (!permissionGranted && errorProps) {
     return Array.isArray(children) ? (
       <>{children.map((child) => cloneElement(child, { ...errorProps }))}</>
