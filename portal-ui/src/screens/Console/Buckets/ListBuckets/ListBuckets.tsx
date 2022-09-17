@@ -47,7 +47,10 @@ import { SecureComponent } from "../../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
+  IAM_PERMISSIONS,
+  IAM_ROLES,
   IAM_SCOPES,
+  permissionTooltipHelper,
 } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
@@ -105,6 +108,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
   const [replicationModalOpen, setReplicationModalOpen] =
     useState<boolean>(false);
   const [lifecycleModalOpen, setLifecycleModalOpen] = useState<boolean>(false);
+  const [canPutLifecycle, setCanPutLifecycle] = useState<boolean>(false);
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
 
   const features = useSelector(selFeatures);
@@ -171,6 +175,16 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
       setSelectedBuckets([]);
     }
   };
+
+  useEffect(() => {
+    var failLifecycle = false;
+    selectedBuckets.forEach((bucket: string) => {
+      hasPermission(bucket, IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE], true)
+        ? setCanPutLifecycle(true)
+        : (failLifecycle = true);
+    });
+    failLifecycle ? setCanPutLifecycle(false) : setCanPutLifecycle(true);
+  }, [selectedBuckets]);
 
   const renderItemLine = (index: number) => {
     const bucket = filteredRecords[index] || null;
@@ -282,7 +296,20 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                   </TooltipWrapper>
                 )}
 
-                <TooltipWrapper tooltip={"Set Lifecycle"}>
+                <TooltipWrapper
+                  tooltip={
+                    selectedBuckets.length === 0
+                      ? bulkSelect
+                        ? "Please select at least one bucket on which to configure Lifecycle"
+                        : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
+                      : canPutLifecycle
+                      ? "Set Lifecycle"
+                      : permissionTooltipHelper(
+                          IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
+                          "configuring lifecycle for the selected buckets"
+                        )
+                  }
+                >
                   <Button
                     id={"set-lifecycle"}
                     onClick={() => {
@@ -290,7 +317,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                     }}
                     icon={<LifecycleConfigIcon />}
                     variant={"regular"}
-                    disabled={selectedBuckets.length === 0}
+                    disabled={selectedBuckets.length === 0 || !canPutLifecycle}
                   />
                 </TooltipWrapper>
 
@@ -323,10 +350,11 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
               <TooltipWrapper
                 tooltip={
                   canCreateBucket
-                    ? "Create Bucket"
-                    : "You require additional permissions in order to create a new Bucket. Please ask your MinIO administrator to grant you " +
-                      IAM_SCOPES.S3_CREATE_BUCKET +
-                      " permission in order to create a Bucket."
+                    ? ""
+                    : permissionTooltipHelper(
+                        [IAM_SCOPES.S3_CREATE_BUCKET],
+                        "creating a bucket"
+                      )
                 }
               >
                 <Button

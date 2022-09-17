@@ -18,6 +18,7 @@ export const IAM_ROLES = {
   BUCKET_OWNER: "BUCKET_OWNER", // upload/delete objects from the bucket
   BUCKET_VIEWER: "BUCKET_VIEWER", // only view objects on the bucket
   BUCKET_ADMIN: "BUCKET_ADMIN", // administrate the bucket
+  BUCKET_LIFECYCLE: "BUCKET_LIFECYCLE", // can manage bucket lifecycle
 };
 
 export const IAM_SCOPES = {
@@ -281,6 +282,12 @@ export const IAM_PERMISSIONS = {
     IAM_SCOPES.ADMIN_LIST_USERS,
     IAM_SCOPES.ADMIN_HEAL,
   ],
+  [IAM_ROLES.BUCKET_LIFECYCLE]: [
+    IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
+    IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+    IAM_SCOPES.ADMIN_LIST_TIERS,
+    IAM_SCOPES.ADMIN_SET_TIER,
+  ],
 };
 
 // application pages/routes and required scopes/roles
@@ -434,6 +441,10 @@ export const permissionTooltipHelper = (scopes: string[], name: string) => {
     name +
     ". Please ask your MinIO administrator to grant you " +
     scopes +
-    " permission in order to enable Versioning."
+    " permission" +
+    (scopes.length > 1 ? "s" : "") +
+    " in order to enable " +
+    name +
+    "."
   );
 };
