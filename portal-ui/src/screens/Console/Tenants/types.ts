@@ -155,6 +155,7 @@ export interface IConfigureFields {
   exposeConsole: boolean;
   prometheusEnabled: boolean;
   tenantCustom: boolean;
+  envVars: LabelKeyPair[];
   logSearchEnabled: boolean;
   logSearchVolumeSize: string;
   logSearchSizeFactor: string;

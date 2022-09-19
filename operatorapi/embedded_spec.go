@@ -2620,6 +2620,12 @@ func init() {
           "type": "object",
           "$ref": "#/definitions/encryptionConfiguration"
         },
+        "environmentVariables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/environmentVariable"
+          }
+        },
         "erasureCodingParity": {
           "type": "integer"
         },
@@ -8574,6 +8580,12 @@ func init() {
         "encryption": {
           "type": "object",
           "$ref": "#/definitions/encryptionConfiguration"
+        },
+        "environmentVariables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/environmentVariable"
+          }
         },
         "erasureCodingParity": {
           "type": "integer"

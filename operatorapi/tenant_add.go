@@ -537,6 +537,11 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		Console: tenantReq.ExposeConsole,
 	}
 
+	// set custom environment variables in configuration file
+	for _, envVar := range tenantReq.EnvironmentVariables {
+		tenantConfigurationENV[envVar.Key] = envVar.Value
+	}
+
 	// write tenant configuration to secret that contains config.env
 	tenantConfigurationName := fmt.Sprintf("%s-env-configuration", tenantName)
 	_, err = createOrReplaceSecrets(ctx, &k8sClient, ns, []tenantSecret{
