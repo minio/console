@@ -382,7 +382,12 @@ const Login = () => {
               key={`login-button`}
               variant="callAction"
               id="sso-login"
-              label={loginStrategy.displayNames[0]}
+              label={
+                loginStrategy.displayNames &&
+                loginStrategy.displayNames.length > 0
+                  ? loginStrategy.displayNames[0]
+                  : "Login with SSO"
+              }
               onClick={() => (window.location.href = loginStrategy.redirect[0])}
               fullWidth
             />
