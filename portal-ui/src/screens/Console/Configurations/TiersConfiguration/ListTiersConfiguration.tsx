@@ -150,9 +150,9 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
           } else {
             tier.status = false;
           }
-          xhr.onerror = () => {
-            tier.status = false;
-          };
+        };
+        xhr.onerror = () => {
+          tier.status = false;
         };
       });
       setRecords(records);
