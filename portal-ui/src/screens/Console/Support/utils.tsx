@@ -108,7 +108,7 @@ export const ProxyConfiguration = ({ linkClass }: { linkClass: string }) => {
             For airgap/firewalled environments it is possible to{" "}
             <Link
               className={linkClass}
-              href="https://docs.min.io/docs/minio-server-configuration-guide.html?ref=con"
+              href="https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-config.html?ref=con"
               target="_blank"
             >
               configure a proxy

@@ -182,7 +182,7 @@ func setConfig(ctx context.Context, client MinioAdmin, configName *string, kvs [
 func setConfigWithARNAccountID(ctx context.Context, client MinioAdmin, configName *string, kvs []*models.ConfigurationKV, arnAccountID string) (restart bool, err error) {
 	// if arnAccountID is not empty the configuration will be treated as a notification target
 	// arnAccountID will be used as an identifier for that specific target
-	// docs: https://docs.min.io/docs/minio-bucket-notification-guide.html
+	// docs: https://min.io/docs/minio/linux/administration/monitoring/bucket-notifications.html
 	if arnAccountID != "" {
 		configName = swag.String(fmt.Sprintf("%s:%s", *configName, arnAccountID))
 	}

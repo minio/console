@@ -51,7 +51,7 @@ const DistributedOnly = ({ iconComponent, entity }: IDistributedOnly) => {
               <div>
                 Please deploy a server in{" "}
                 <a
-                  href="https://docs.min.io/minio/baremetal/installation/deploy-minio-distributed.html?ref=con"
+                  href="https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-multi-node-multi-drive.html?ref=con"
                   target="_blank"
                   rel="noreferrer"
                 >
