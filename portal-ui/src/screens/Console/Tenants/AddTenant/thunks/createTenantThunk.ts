@@ -137,6 +137,7 @@ export const createTenantAsync = createAsyncThunk(
     const setDomains = fields.configure.setDomains;
     const minioDomains = fields.configure.minioDomains;
     const consoleDomain = fields.configure.consoleDomain;
+    const environmentVariables = fields.configure.envVars;
 
     let tolerations = state.createTenant.tolerations;
     let namespace = state.createTenant.fields.nameTenant.namespace;
@@ -547,6 +548,7 @@ export const createTenantAsync = createAsyncThunk(
 
     let domains: any = {};
     let sendDomain: any = {};
+    let sendEnvironmentVariables: any = {};
 
     if (setDomains) {
       if (consoleDomain !== "") {
@@ -564,9 +566,17 @@ export const createTenantAsync = createAsyncThunk(
       }
     }
 
+    sendEnvironmentVariables.environmentVariables = environmentVariables
+      .map((envVar) => ({
+        key: envVar.key.trim(),
+        value: envVar.value.trim(),
+      }))
+      .filter((envVar) => envVar.key !== "");
+
     dataSend = {
       ...dataSend,
       ...sendDomain,
+      ...sendEnvironmentVariables,
       idp: { ...dataIDP },
     };
 

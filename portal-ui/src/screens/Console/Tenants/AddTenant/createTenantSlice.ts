@@ -103,6 +103,7 @@ const initialState: ICreateTenant = {
       exposeMinIO: true,
       exposeConsole: true,
       tenantCustom: false,
+      envVars: [{ key: "", value: "" }],
       logSearchEnabled: true,
       prometheusEnabled: true,
       logSearchVolumeSize: "5",
@@ -746,6 +747,9 @@ export const createTenantSlice = createSlice({
     setKeyValuePairs: (state, action: PayloadAction<LabelKeyPair[]>) => {
       state.nodeSelectorPairs = action.payload;
     },
+    setEnvVars: (state, action: PayloadAction<LabelKeyPair[]>) => {
+      state.fields.configure.envVars = action.payload;
+    },
     setTolerationInfo: (
       state,
       action: PayloadAction<{
@@ -1049,6 +1053,7 @@ export const {
   addFileGemaltoCa,
   resetAddTenantForm,
   setKeyValuePairs,
+  setEnvVars,
   setTolerationInfo,
   addNewToleration,
   removeToleration,
