@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React from "react";
+import React, { useState } from "react";
 import {
   Grid,
   IconButton,
@@ -24,6 +24,8 @@ import {
 } from "@mui/material";
 import { OutlinedInputProps } from "@mui/material/OutlinedInput";
 import { InputProps as StandardInputProps } from "@mui/material/Input";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
@@ -137,6 +139,7 @@ const InputBoxWrapper = ({
   onFocus,
 }: InputBoxProps) => {
   let inputProps: any = { "data-index": index, ...extraInputProps };
+  const [toggleTextInput, setToggleTextInput] = useState<boolean>(false);
 
   if (type === "number" && min) {
     inputProps["min"] = min;
@@ -148,6 +151,18 @@ const InputBoxWrapper = ({
 
   if (pattern !== "") {
     inputProps["pattern"] = pattern;
+  }
+
+  let inputBoxWrapperIcon = overlayIcon;
+  let inputBoxWrapperType = type;
+
+  if (type === "password" && overlayIcon === null) {
+    inputBoxWrapperIcon = toggleTextInput ? (
+      <VisibilityOffIcon />
+    ) : (
+      <RemoveRedEyeIcon />
+    );
+    inputBoxWrapperType = toggleTextInput ? "text" : "password";
   }
 
   return (
@@ -191,7 +206,7 @@ const InputBoxWrapper = ({
             autoFocus={autoFocus}
             disabled={disabled}
             onChange={onChange}
-            type={type}
+            type={inputBoxWrapperType}
             multiline={multiline}
             autoComplete={autoComplete}
             inputProps={inputProps}
@@ -202,7 +217,7 @@ const InputBoxWrapper = ({
             onKeyPress={onKeyPress}
             onFocus={onFocus}
           />
-          {overlayIcon && (
+          {inputBoxWrapperIcon && (
             <div
               className={`${classes.overlayAction} ${
                 label !== "" ? "withLabel" : ""
@@ -214,7 +229,7 @@ const InputBoxWrapper = ({
                     ? () => {
                         overlayAction();
                       }
-                    : () => null
+                    : () => setToggleTextInput(!toggleTextInput)
                 }
                 id={overlayId}
                 size={"small"}
@@ -222,7 +237,7 @@ const InputBoxWrapper = ({
                 disableRipple={false}
                 disableTouchRipple={false}
               >
-                {overlayIcon}
+                {inputBoxWrapperIcon}
               </IconButton>
             </div>
           )}

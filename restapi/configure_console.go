@@ -137,6 +137,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerLogSearchHandlers(api)
 	// Register admin subnet handlers
 	registerSubnetHandlers(api)
+	// Register admin KMS handlers
+	registerKMSHandlers(api)
 	// Register Account handlers
 	registerAdminTiersHandlers(api)
 	// Register Inspect Handler
