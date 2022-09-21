@@ -19,11 +19,18 @@ import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Grid, IconButton, Paper, SelectChangeEvent } from "@mui/material";
+import {
+  Divider,
+  Grid,
+  IconButton,
+  Paper,
+  SelectChangeEvent,
+} from "@mui/material";
 import {
   createTenantCommon,
   modalBasic,
   wizardCommon,
+  formFieldStyles,
 } from "../../../Common/FormComponents/common/styleLibrary";
 
 import { AppState, useAppDispatch } from "../../../../../store";
@@ -40,6 +47,7 @@ import {
   addNewMinIODomain,
   isPageValid,
   removeMinIODomain,
+  setEnvVars,
   updateAddField,
 } from "../createTenantSlice";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
@@ -86,13 +94,44 @@ const styles = (theme: Theme) =>
       display: "flex",
       marginBottom: 15,
     },
-    overlayAction: {
-      marginLeft: 10,
+    envVarRow: {
       display: "flex",
       alignItems: "center",
+      justifyContent: "flex-start",
+      "&:last-child": {
+        borderBottom: 0,
+      },
+      "@media (max-width: 900px)": {
+        flex: 1,
+
+        "& div label": {
+          minWidth: 50,
+        },
+      },
+    },
+    fileItem: {
+      marginRight: 10,
+      display: "flex",
+      "& div label": {
+        minWidth: 50,
+      },
+
+      "@media (max-width: 900px)": {
+        flexFlow: "column",
+      },
+    },
+    rowActions: {
+      display: "flex",
+      justifyContent: "flex-end",
+      "@media (max-width: 900px)": {
+        flex: 1,
+      },
+    },
+    overlayAction: {
+      marginLeft: 10,
       "& svg": {
-        width: 15,
-        height: 15,
+        maxWidth: 15,
+        maxHeight: 15,
       },
       "& button": {
         background: "#EAEAEA",
@@ -100,6 +139,7 @@ const styles = (theme: Theme) =>
     },
     ...modalBasic,
     ...wizardCommon,
+    ...formFieldStyles,
   });
 
 const Configure = ({ classes }: IConfigureProps) => {
@@ -122,6 +162,9 @@ const Configure = ({ classes }: IConfigureProps) => {
   );
   const tenantCustom = useSelector(
     (state: AppState) => state.createTenant.fields.configure.tenantCustom
+  );
+  const tenantEnvVars = useSelector(
+    (state: AppState) => state.createTenant.fields.configure.envVars
   );
   const tenantSecurityContext = useSelector(
     (state: AppState) =>
@@ -242,7 +285,7 @@ const Configure = ({ classes }: IConfigureProps) => {
         </span>
       </div>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Services</h3>
+        <h4 className={classes.h3Section}>Services</h4>
         <span className={classes.descriptionText}>
           Whether the tenant's services should request an external IP via
           LoadBalancer service type.
@@ -518,6 +561,99 @@ const Configure = ({ classes }: IConfigureProps) => {
           </fieldset>
         </Grid>
       )}
+      <Divider />
+
+      <div className={classes.headerElement}>
+        <h3 className={classes.h3Section}>Additional Environment Variables</h3>
+        <span className={classes.descriptionText}>
+          Define additional environment variables to be used by your MinIO pods
+        </span>
+      </div>
+      <Grid container>
+        {tenantEnvVars.map((envVar, index) => (
+          <Grid
+            item
+            xs={12}
+            className={`${classes.formFieldRow} ${classes.envVarRow}`}
+            key={`tenant-envVar-${index.toString()}`}
+          >
+            <Grid item xs={5} className={classes.fileItem}>
+              <InputBoxWrapper
+                id="env_var_key"
+                name="env_var_key"
+                label="Key"
+                value={envVar.key}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const existingEnvVars = [...tenantEnvVars];
+                  dispatch(
+                    setEnvVars(
+                      existingEnvVars.map((keyPair, i) =>
+                        i === index
+                          ? { key: e.target.value, value: keyPair.value }
+                          : keyPair
+                      )
+                    )
+                  );
+                }}
+                index={index}
+                key={`env_var_key_${index.toString()}`}
+              />
+            </Grid>
+            <Grid item xs={5} className={classes.fileItem}>
+              <InputBoxWrapper
+                id="env_var_value"
+                name="env_var_value"
+                label="Value"
+                value={envVar.value}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const existingEnvVars = [...tenantEnvVars];
+                  dispatch(
+                    setEnvVars(
+                      existingEnvVars.map((keyPair, i) =>
+                        i === index
+                          ? { key: keyPair.key, value: e.target.value }
+                          : keyPair
+                      )
+                    )
+                  );
+                }}
+                index={index}
+                key={`env_var_value_${index.toString()}`}
+              />
+            </Grid>
+            <Grid item xs={2} className={classes.rowActions}>
+              <div className={classes.overlayAction}>
+                <IconButton
+                  size={"small"}
+                  onClick={() => {
+                    const existingEnvVars = [...tenantEnvVars];
+                    existingEnvVars.push({ key: "", value: "" });
+
+                    dispatch(setEnvVars(existingEnvVars));
+                  }}
+                  disabled={index !== tenantEnvVars.length - 1}
+                >
+                  <AddIcon />
+                </IconButton>
+              </div>
+              <div className={classes.overlayAction}>
+                <IconButton
+                  size={"small"}
+                  onClick={() => {
+                    const existingEnvVars = tenantEnvVars.filter(
+                      (item, fIndex) => fIndex !== index
+                    );
+                    dispatch(setEnvVars(existingEnvVars));
+                  }}
+                  disabled={tenantEnvVars.length <= 1}
+                >
+                  <RemoveIcon />
+                </IconButton>
+              </div>
+            </Grid>
+          </Grid>
+        ))}
+      </Grid>
     </Paper>
   );
 };

@@ -58,6 +58,9 @@ type CreateTenantRequest struct {
 	// encryption
 	Encryption *EncryptionConfiguration `json:"encryption,omitempty"`
 
+	// environment variables
+	EnvironmentVariables []*EnvironmentVariable `json:"environmentVariables"`
+
 	// erasure coding parity
 	ErasureCodingParity int64 `json:"erasureCodingParity,omitempty"`
 
@@ -120,6 +123,10 @@ func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEncryption(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEnvironmentVariables(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -194,6 +201,32 @@ func (m *CreateTenantRequest) validateEncryption(formats strfmt.Registry) error 
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) validateEnvironmentVariables(formats strfmt.Registry) error {
+	if swag.IsZero(m.EnvironmentVariables) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.EnvironmentVariables); i++ {
+		if swag.IsZero(m.EnvironmentVariables[i]) { // not required
+			continue
+		}
+
+		if m.EnvironmentVariables[i] != nil {
+			if err := m.EnvironmentVariables[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("environmentVariables" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("environmentVariables" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -355,6 +388,10 @@ func (m *CreateTenantRequest) ContextValidate(ctx context.Context, formats strfm
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateEnvironmentVariables(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateIdp(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -412,6 +449,26 @@ func (m *CreateTenantRequest) contextValidateEncryption(ctx context.Context, for
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) contextValidateEnvironmentVariables(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.EnvironmentVariables); i++ {
+
+		if m.EnvironmentVariables[i] != nil {
+			if err := m.EnvironmentVariables[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("environmentVariables" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("environmentVariables" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

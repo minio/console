@@ -1991,6 +1991,10 @@ definitions:
       domains:
         type: object
         $ref: "#/definitions/domainsConfiguration"
+      environmentVariables:
+        type: array
+        items:
+          $ref: "#/definitions/environmentVariable"
 
   metadataFields:
     type: object
