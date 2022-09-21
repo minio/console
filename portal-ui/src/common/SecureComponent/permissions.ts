@@ -427,3 +427,13 @@ export const IAM_PAGES_PERMISSIONS = {
 
 export const S3_ALL_RESOURCES = "arn:aws:s3:::*";
 export const CONSOLE_UI_RESOURCE = "console-ui";
+
+export const permissionTooltipHelper = (scopes: string[], name: string) => {
+  return (
+    "You require additional permissions in order to enable " +
+    name +
+    ". Please ask your MinIO administrator to grant you " +
+    scopes +
+    " permission in order to enable Versioning."
+  );
+};

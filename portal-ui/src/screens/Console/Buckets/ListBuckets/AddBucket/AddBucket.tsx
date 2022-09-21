@@ -59,7 +59,10 @@ import {
 } from "./addBucketsSlice";
 import { addBucketAsync } from "./addBucketThunks";
 import AddBucketName from "./AddBucketName";
-import { IAM_SCOPES } from "../../../../../common/SecureComponent/permissions";
+import {
+  IAM_SCOPES,
+  permissionTooltipHelper,
+} from "../../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../../common/SecureComponent";
 import BucketNamingRules from "./BucketNamingRules";
 
@@ -323,10 +326,13 @@ const AddBucket = ({ classes }: IsetProps) => {
                 <TooltipWrapper
                   tooltip={
                     versioningAllowed
-                      ? ""
-                      : "You require additional permissions in order to enable Versioning. Please ask your MinIO administrator to grant you " +
-                        IAM_SCOPES.S3_PUT_BUCKET_VERSIONING +
-                        " permission in order to enable Versioning."
+                      ? lockingEnabled && versioningEnabled
+                        ? "You must disable Locking before Versioning can be disabled"
+                        : ""
+                      : permissionTooltipHelper(
+                          [IAM_SCOPES.S3_PUT_BUCKET_VERSIONING],
+                          "Versioning"
+                        )
                   }
                 >
                   <FormSwitchWrapper
@@ -352,12 +358,13 @@ const AddBucket = ({ classes }: IsetProps) => {
                   tooltip={
                     lockingAllowed
                       ? ""
-                      : "You require additional permissions in order to enable Locking. Please ask your MinIO administrator to grant you " +
-                        (versioningAllowed
-                          ? ""
-                          : IAM_SCOPES.S3_PUT_BUCKET_VERSIONING + " and ") +
-                        IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION +
-                        " permissions in order to enable Locking."
+                      : permissionTooltipHelper(
+                          [
+                            IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+                            IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
+                          ],
+                          "Locking"
+                        )
                   }
                 >
                   <FormSwitchWrapper
@@ -501,19 +508,27 @@ const AddBucket = ({ classes }: IsetProps) => {
                 onClick={resForm}
                 label={"Clear"}
               />
-              <Button
-                id={"create-bucket"}
-                type="submit"
-                variant="callAction"
-                color="primary"
-                disabled={
-                  addLoading ||
-                  invalidFields.length > 0 ||
-                  !isDirty ||
-                  hasErrors
+              <TooltipWrapper
+                tooltip={
+                  invalidFields.length > 0 || !isDirty || hasErrors
+                    ? "You must apply a valid name to the bucket"
+                    : ""
                 }
-                label={"Create Bucket"}
-              />
+              >
+                <Button
+                  id={"create-bucket"}
+                  type="submit"
+                  variant="callAction"
+                  color="primary"
+                  disabled={
+                    addLoading ||
+                    invalidFields.length > 0 ||
+                    !isDirty ||
+                    hasErrors
+                  }
+                  label={"Create Bucket"}
+                />
+              </TooltipWrapper>
             </Grid>
             {addLoading && (
               <Grid item xs={12}>
