@@ -578,7 +578,7 @@ const Login = () => {
           <Grid item xs={12} className={classes.linkHolder}>
             <div className={classes.miniLinks}>
               <a
-                href="https://min.io/docs/minio/kubernetes/upstream/index.html?ref=con"
+                href="https://min.io/docs/minio/linux/index.html?ref=con"
                 target="_blank"
                 rel="noreferrer"
               >
