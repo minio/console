@@ -233,8 +233,6 @@ const BrowserBreadcrumbs = ({
               icon={<NewPathIcon style={{ fill: "#969FA8" }} />}
               style={{
                 whiteSpace: "nowrap",
-                color: "#969FA8",
-                border: "#969FA8 1px solid",
               }}
               variant={"regular"}
               label={"Create new path"}
