@@ -162,7 +162,10 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 				return nil, ErrorWithContext(ctx, err, ErrOauth2Provider)
 			}
 			// Validate user against IDP
-			identityProvider := &auth.IdentityProvider{Client: oauth2Client}
+			identityProvider := &auth.IdentityProvider{
+				KeyFunc: provider.GetStateKeyFunc(),
+				Client:  oauth2Client,
+			}
 			redirectURL = append(redirectURL, identityProvider.GenerateLoginURL())
 			if provider.DisplayName != "" {
 				displayNames = append(displayNames, provider.DisplayName)
@@ -201,7 +204,10 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProv
 			return nil, ErrorWithContext(ctx, err)
 		}
 		// initialize new identity provider
-		identityProvider := auth.IdentityProvider{Client: oauth2Client}
+		identityProvider := auth.IdentityProvider{
+			KeyFunc: openIDProviders[idpName].GetStateKeyFunc(),
+			Client:  oauth2Client,
+		}
 		// Validate user against IDP
 		userCredentials, err := verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, *lr.State)
 		if err != nil {

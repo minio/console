@@ -38,20 +38,21 @@ type IdentityProviderI interface {
 // Define the structure of a IdentityProvider with Client inside and define the functions that are used
 // during the authentication flow.
 type IdentityProvider struct {
-	Client *oauth2.Provider
+	KeyFunc oauth2.StateKeyFunc
+	Client  *oauth2.Provider
 }
 
 // VerifyIdentity will verify the user identity against the idp using the authorization code flow
 func (c IdentityProvider) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
-	return c.Client.VerifyIdentity(ctx, code, state)
+	return c.Client.VerifyIdentity(ctx, code, state, c.KeyFunc)
 }
 
 // VerifyIdentityForOperator will verify the user identity against the idp using the authorization code flow
 func (c IdentityProvider) VerifyIdentityForOperator(ctx context.Context, code, state string) (*xoauth2.Token, error) {
-	return c.Client.VerifyIdentityForOperator(ctx, code, state)
+	return c.Client.VerifyIdentityForOperator(ctx, code, state, c.KeyFunc)
 }
 
 // GenerateLoginURL returns a new URL used by the user to login against the idp
 func (c IdentityProvider) GenerateLoginURL() string {
-	return c.Client.GenerateLoginURL()
+	return c.Client.GenerateLoginURL(c.KeyFunc)
 }
