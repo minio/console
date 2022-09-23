@@ -255,7 +255,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                         <br />
                         You can learn more at our{" "}
                         <a
-                          href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
+                          href="https://min.io/docs/minio/linux/administration/monitoring/bucket-notifications.html?ref=con"
                           target="_blank"
                           rel="noreferrer"
                         >

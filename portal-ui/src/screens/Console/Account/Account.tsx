@@ -291,7 +291,7 @@ const Account = () => {
                 <br />
                 You can learn more at our{" "}
                 <a
-                  href="https://docs.min.io/minio/baremetal/security/minio-identity-management/user-management.html?ref=con#service-accounts"
+                  href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html?ref=con#service-accounts"
                   target="_blank"
                   rel="noreferrer"
                 >

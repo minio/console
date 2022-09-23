@@ -330,7 +330,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                         <br />
                         You can learn more at our{" "}
                         <a
-                          href="https://docs.min.io/minio/k8s/tutorials/group-management.html?ref=con"
+                          href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-group-management.html?ref=con"
                           target="_blank"
                           rel="noreferrer"
                         >
