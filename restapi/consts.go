@@ -51,6 +51,8 @@ const (
 	PrometheusExtraLabels                        = "CONSOLE_PROMETHEUS_EXTRA_LABELS"
 	ConsoleLogQueryURL                           = "CONSOLE_LOG_QUERY_URL"
 	ConsoleLogQueryAuthToken                     = "CONSOLE_LOG_QUERY_AUTH_TOKEN"
+	ConsoleMaxConcurrentUploads                  = "CONSOLE_MAX_CONCURRENT_UPLOADS"
+	ConsoleMaxConcurrentDownloads                = "CONSOLE_MAX_CONCURRENT_DOWNLOADS"
 	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
 	SlashSeparator                               = "/"
 )

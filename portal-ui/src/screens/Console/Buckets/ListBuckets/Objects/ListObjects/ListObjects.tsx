@@ -99,7 +99,9 @@ import {
 
 import {
   makeid,
+  removeTrace,
   storeCallForObjectWithID,
+  storeFormDataWithID,
 } from "../../../../ObjectBrowser/transferManager";
 import {
   cancelObjectInList,
@@ -777,12 +779,15 @@ const ListObjects = () => {
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
 
+    const ID = makeid(8);
+
     const downloadCall = download(
       bucketName,
       encodeURLString(object.name),
       object.version_id,
       object.size,
       null,
+      ID,
       (progress) => {
         dispatch(
           updateProgress({
@@ -801,7 +806,6 @@ const ListObjects = () => {
         dispatch(cancelObjectInList(identityDownload));
       }
     );
-    const ID = makeid(8);
     storeCallForObjectWithID(ID, downloadCall);
     dispatch(
       setNewObject({
@@ -818,8 +822,6 @@ const ListObjects = () => {
         errorMessage: "",
       })
     );
-
-    downloadCall.send();
   };
 
   const openPath = (idElement: string) => {
@@ -865,6 +867,7 @@ const ListObjects = () => {
             const fileWebkitRelativePath = get(file, "webkitRelativePath", "");
 
             let relativeFolderPath = folderPath;
+            const ID = makeid(8);
 
             // File was uploaded via drag & drop
             if (filePath !== "") {
@@ -924,6 +927,8 @@ const ListObjects = () => {
               if (xhr.status >= 200 && xhr.status < 300) {
                 dispatch(completeObject(identity));
                 resolve({ status: xhr.status });
+
+                removeTrace(ID);
               } else {
                 // reject promise if there was a server error
                 if (errorMessages[xhr.status]) {
@@ -936,6 +941,7 @@ const ListObjects = () => {
                     errorMessage = "something went wrong";
                   }
                 }
+
                 dispatch(
                   failObject({
                     instanceID: identity,
@@ -943,6 +949,8 @@ const ListObjects = () => {
                   })
                 );
                 reject({ status: xhr.status, message: errorMessage });
+
+                removeTrace(ID);
               }
             };
 
@@ -990,7 +998,6 @@ const ListObjects = () => {
             const formData = new FormData();
             if (file.size !== undefined) {
               formData.append(file.size.toString(), blobFile, fileName);
-              const ID = makeid(8);
               storeCallForObjectWithID(ID, xhr);
               dispatch(
                 setNewObject({
@@ -1008,7 +1015,8 @@ const ListObjects = () => {
                 })
               );
 
-              xhr.send(formData);
+              storeFormDataWithID(ID, formData);
+              storeCallForObjectWithID(ID, xhr);
             }
           });
         };

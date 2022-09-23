@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 let objectCalls: { [key: string]: XMLHttpRequest } = {};
+let formDataElements: { [key: string]: FormData } = {};
 
 export const storeCallForObjectWithID = (id: string, call: XMLHttpRequest) => {
   objectCalls[id] = call;
@@ -22,6 +23,19 @@ export const storeCallForObjectWithID = (id: string, call: XMLHttpRequest) => {
 
 export const callForObjectID = (id: string): XMLHttpRequest => {
   return objectCalls[id];
+};
+
+export const storeFormDataWithID = (id: string, formData: FormData) => {
+  formDataElements[id] = formData;
+};
+
+export const formDataFromID = (id: string): FormData => {
+  return formDataElements[id];
+};
+
+export const removeTrace = (id: string) => {
+  delete objectCalls[id];
+  delete formDataElements[id];
 };
 
 export const makeid = (length: number) => {
