@@ -66,6 +66,6 @@ func TestGenerateLoginURL(t *testing.T) {
 		// a non-empty string
 		return state
 	}
-	url := oauth2Provider.GenerateLoginURL()
+	url := oauth2Provider.GenerateLoginURL(DefaultDerivedKey)
 	funcAssert.NotEqual("", url)
 }

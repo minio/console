@@ -111,7 +111,10 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDet
 			return nil, restapi.ErrorWithContext(ctx, err)
 		}
 		// Validate user against IDP
-		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
+		identityProvider := &auth.IdentityProvider{
+			KeyFunc: oauth2.DefaultDerivedKey,
+			Client:  oauth2Client,
+		}
 		redirectURL = append(redirectURL, identityProvider.GenerateLoginURL())
 	}
 
@@ -146,7 +149,10 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams) (*models.L
 			return nil, restapi.ErrorWithContext(ctx, err)
 		}
 		// initialize new identity provider
-		identityProvider := auth.IdentityProvider{Client: oauth2Client}
+		identityProvider := auth.IdentityProvider{
+			KeyFunc: oauth2.DefaultDerivedKey,
+			Client:  oauth2Client,
+		}
 		// Validate user against IDP
 		_, err = verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, *lr.State)
 		if err != nil {

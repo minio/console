@@ -490,8 +490,8 @@ const Login = () => {
   }
 
   const hyperLink = isOperator
-    ? "https://docs.min.io/minio/k8s/operator-console/operator-console.html?ref=con"
-    : "https://docs.min.io/minio/baremetal/console/minio-console.html?ref=con";
+    ? "https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/minio-operator-console.html?ref=con"
+    : "https://min.io/docs/minio/linux/administration/minio-console.html?ref=con";
 
   const theme = useTheme();
   return (
@@ -578,7 +578,7 @@ const Login = () => {
           <Grid item xs={12} className={classes.linkHolder}>
             <div className={classes.miniLinks}>
               <a
-                href="https://docs.min.io/?ref=con"
+                href="https://min.io/docs/minio/linux/index.html?ref=con"
                 target="_blank"
                 rel="noreferrer"
               >
