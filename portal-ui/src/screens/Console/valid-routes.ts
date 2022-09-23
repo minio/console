@@ -267,7 +267,10 @@ export const validRoutes = (
           | React.MouseEvent<HTMLDivElement>
       ) => {
         e.preventDefault();
-        window.open("https://docs.min.io/?ref=con", "_blank");
+        window.open(
+          "https://min.io/docs/minio/linux/index.html?ref=con",
+          "_blank"
+        );
       },
     },
   ];
@@ -319,7 +322,10 @@ export const validRoutes = (
           | React.MouseEvent<HTMLDivElement>
       ) => {
         e.preventDefault();
-        window.open("https://docs.min.io/?ref=op", "_blank");
+        window.open(
+          "https://min.io/docs/minio/linux/index.html?ref=op",
+          "_blank"
+        );
       },
     },
   ];
@@ -379,7 +385,10 @@ export const validRoutes = (
           | React.MouseEvent<HTMLDivElement>
       ) => {
         e.preventDefault();
-        window.open("https://docs.min.io/?ref=op", "_blank");
+        window.open(
+          "https://min.io/docs/minio/linux/index.html?ref=op",
+          "_blank"
+        );
       },
     },
   ];

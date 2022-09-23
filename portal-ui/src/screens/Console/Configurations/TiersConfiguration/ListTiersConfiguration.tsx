@@ -423,7 +423,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                             <br />
                             You can learn more at our{" "}
                             <a
-                              href="https://docs.min.io/minio/baremetal/lifecycle-management/lifecycle-management-overview.html?ref=con"
+                              href="https://min.io/docs/minio/linux/administration/object-management/object-lifecycle-management.html?ref=con"
                               target="_blank"
                               rel="noreferrer"
                             >
