@@ -47,6 +47,9 @@ type SessionResponse struct {
 	// distributed mode
 	DistributedMode bool `json:"distributedMode,omitempty"`
 
+	// env constants
+	EnvConstants *EnvironmentConstants `json:"envConstants,omitempty"`
+
 	// features
 	Features []string `json:"features"`
 
@@ -66,6 +69,10 @@ func (m *SessionResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAllowResources(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEnvConstants(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -100,6 +107,25 @@ func (m *SessionResponse) validateAllowResources(formats strfmt.Registry) error 
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *SessionResponse) validateEnvConstants(formats strfmt.Registry) error {
+	if swag.IsZero(m.EnvConstants) { // not required
+		return nil
+	}
+
+	if m.EnvConstants != nil {
+		if err := m.EnvConstants.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("envConstants")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("envConstants")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -152,6 +178,10 @@ func (m *SessionResponse) ContextValidate(ctx context.Context, formats strfmt.Re
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateEnvConstants(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -173,6 +203,22 @@ func (m *SessionResponse) contextValidateAllowResources(ctx context.Context, for
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *SessionResponse) contextValidateEnvConstants(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.EnvConstants != nil {
+		if err := m.EnvConstants.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("envConstants")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("envConstants")
+			}
+			return err
+		}
 	}
 
 	return nil

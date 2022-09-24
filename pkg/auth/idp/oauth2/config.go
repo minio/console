@@ -19,10 +19,12 @@
 package oauth2
 
 import (
+	"crypto/sha1"
 	"strings"
 
 	"github.com/minio/console/pkg/auth/utils"
 	"github.com/minio/pkg/env"
+	"golang.org/x/crypto/pbkdf2"
 )
 
 // ProviderConfig - OpenID IDP Configuration for console.
@@ -35,6 +37,14 @@ type ProviderConfig struct {
 	Userinfo                 bool
 	RedirectCallbackDynamic  bool
 	RedirectCallback         string
+}
+
+// GetStateKeyFunc - return the key function used to generate the authorization
+// code flow state parameter.
+func (pc ProviderConfig) GetStateKeyFunc() StateKeyFunc {
+	return func() []byte {
+		return pbkdf2.Key([]byte(pc.HMACPassphrase), []byte(pc.HMACSalt), 4096, 32, sha1.New)
+	}
 }
 
 type OpenIDPCfg map[string]ProviderConfig

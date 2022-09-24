@@ -238,6 +238,13 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
+
+	// environment constants
+	var envConstants models.EnvironmentConstants
+
+	envConstants.MaxConcurrentUploads = getMaxConcurrentUploadsLimit()
+	envConstants.MaxConcurrentDownloads = getMaxConcurrentDownloadsLimit()
+
 	sessionResp := &models.SessionResponse{
 		Features:        getListOfEnabledFeatures(session),
 		Status:          models.SessionResponseStatusOk,
@@ -246,6 +253,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		Permissions:     resourcePermissions,
 		AllowResources:  allowResources,
 		CustomStyles:    customStyles,
+		EnvConstants:    &envConstants,
 	}
 	return sessionResp, nil
 }

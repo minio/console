@@ -187,7 +187,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
       })
     );
     dispatch(getTenantAsync());
-    navigate(`/namespaces/${tenant.namespace}/tenants/${tenant.name}`);
+    navigate(`/namespaces/${tenant.namespace}/tenants/${tenant.name}/summary`);
   };
 
   return (

@@ -36,6 +36,9 @@ const initialState: ObjectBrowserState = {
     objectsToManage: [],
     managerOpen: false,
     newItems: false,
+    startedItems: [],
+    currentDownloads: [],
+    currentUploads: [],
   },
   searchObjects: "",
   versionedFile: "",
@@ -119,6 +122,18 @@ export const objectBrowserSlice = createSlice({
       state.objectManager.objectsToManage[objectToComplete].waitingForFile =
         false;
       state.objectManager.objectsToManage[objectToComplete].done = true;
+
+      // We cancel from in-progress lists
+      const type = state.objectManager.objectsToManage[objectToComplete].type;
+      const ID = state.objectManager.objectsToManage[objectToComplete].ID;
+
+      if (type === "download") {
+        state.objectManager.currentDownloads =
+          state.objectManager.currentDownloads.filter((item) => item !== ID);
+      } else if (type === "upload") {
+        state.objectManager.currentUploads =
+          state.objectManager.currentUploads.filter((item) => item !== ID);
+      }
     },
     failObject: (
       state,
@@ -133,6 +148,18 @@ export const objectBrowserSlice = createSlice({
       state.objectManager.objectsToManage[objectToFail].done = true;
       state.objectManager.objectsToManage[objectToFail].errorMessage =
         action.payload.msg;
+
+      // We cancel from in-progress lists
+      const type = state.objectManager.objectsToManage[objectToFail].type;
+      const ID = state.objectManager.objectsToManage[objectToFail].ID;
+
+      if (type === "download") {
+        state.objectManager.currentDownloads =
+          state.objectManager.currentDownloads.filter((item) => item !== ID);
+      } else if (type === "upload") {
+        state.objectManager.currentUploads =
+          state.objectManager.currentUploads.filter((item) => item !== ID);
+      }
     },
     cancelObjectInList: (state, action: PayloadAction<string>) => {
       const objectToCancel = state.objectManager.objectsToManage.findIndex(
@@ -146,6 +173,18 @@ export const objectBrowserSlice = createSlice({
       state.objectManager.objectsToManage[objectToCancel].cancelled = true;
       state.objectManager.objectsToManage[objectToCancel].done = true;
       state.objectManager.objectsToManage[objectToCancel].percentage = 0;
+
+      // We cancel from in-progress lists
+      const type = state.objectManager.objectsToManage[objectToCancel].type;
+      const ID = state.objectManager.objectsToManage[objectToCancel].ID;
+
+      if (type === "download") {
+        state.objectManager.currentDownloads =
+          state.objectManager.currentDownloads.filter((item) => item !== ID);
+      } else if (type === "upload") {
+        state.objectManager.currentUploads =
+          state.objectManager.currentUploads.filter((item) => item !== ID);
+      }
     },
     deleteFromList: (state, action: PayloadAction<string>) => {
       const notObject = state.objectManager.objectsToManage.filter(
@@ -208,6 +247,18 @@ export const objectBrowserSlice = createSlice({
     setSimplePathHandler: (state, action: PayloadAction<string>) => {
       state.simplePath = action.payload;
     },
+    newDownloadInit: (state, action: PayloadAction<string>) => {
+      state.objectManager.currentDownloads = [
+        ...state.objectManager.currentDownloads,
+        action.payload,
+      ];
+    },
+    newUploadInit: (state, action: PayloadAction<string>) => {
+      state.objectManager.currentUploads = [
+        ...state.objectManager.currentUploads,
+        action.payload,
+      ];
+    },
   },
 });
 export const {
@@ -234,6 +285,8 @@ export const {
   setObjectDetailsView,
   setSelectedObjectView,
   setSimplePathHandler,
+  newDownloadInit,
+  newUploadInit,
 } = objectBrowserSlice.actions;
 
 export default objectBrowserSlice.reducer;

@@ -31,6 +31,7 @@ const initialState: ConsoleState = {
     permissions: {},
     allowResources: null,
     customStyles: null,
+    envConstants: null,
   },
 };
 
