@@ -196,6 +196,10 @@ func buildConfig(configName *string, kvs []*models.ConfigurationKV) *string {
 	for _, kv := range kvs {
 		key := kv.Key
 		val := fmt.Sprintf("\"%s\"", kv.Value)
+		// fix #15736
+		// Filter out \n to prevent errors when parsing on the server
+		key = strings.Replace(key, "\n", "", -1)
+		val = strings.Replace(val, "\n", "", -1)
 		if key != "" {
 			configElements = append(configElements, fmt.Sprintf("%s=%s", key, val))
 		}
