@@ -254,3 +254,21 @@ func getPrometheusJobID() string {
 func getPrometheusExtraLabels() string {
 	return env.Get(PrometheusExtraLabels, "")
 }
+
+func getMaxConcurrentUploadsLimit() int64 {
+	cu, err := strconv.ParseInt(env.Get(ConsoleMaxConcurrentUploads, "10"), 10, 64)
+	if err != nil {
+		return 10
+	}
+
+	return cu
+}
+
+func getMaxConcurrentDownloadsLimit() int64 {
+	cu, err := strconv.ParseInt(env.Get(ConsoleMaxConcurrentDownloads, "20"), 10, 64)
+	if err != nil {
+		return 20
+	}
+
+	return cu
+}

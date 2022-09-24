@@ -5570,6 +5570,17 @@ func init() {
         }
       }
     },
+    "environmentConstants": {
+      "type": "object",
+      "properties": {
+        "maxConcurrentDownloads": {
+          "type": "integer"
+        },
+        "maxConcurrentUploads": {
+          "type": "integer"
+        }
+      }
+    },
     "error": {
       "type": "object",
       "required": [
@@ -5977,6 +5988,9 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "isDirectPV": {
+          "type": "boolean"
         },
         "loginStrategy": {
           "type": "string",
@@ -6887,6 +6901,9 @@ func init() {
         },
         "distributedMode": {
           "type": "boolean"
+        },
+        "envConstants": {
+          "$ref": "#/definitions/environmentConstants"
         },
         "features": {
           "type": "array",
@@ -13440,6 +13457,17 @@ func init() {
         }
       }
     },
+    "environmentConstants": {
+      "type": "object",
+      "properties": {
+        "maxConcurrentDownloads": {
+          "type": "integer"
+        },
+        "maxConcurrentUploads": {
+          "type": "integer"
+        }
+      }
+    },
     "error": {
       "type": "object",
       "required": [
@@ -13847,6 +13875,9 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "isDirectPV": {
+          "type": "boolean"
         },
         "loginStrategy": {
           "type": "string",
@@ -14757,6 +14788,9 @@ func init() {
         },
         "distributedMode": {
           "type": "boolean"
+        },
+        "envConstants": {
+          "$ref": "#/definitions/environmentConstants"
         },
         "features": {
           "type": "array",

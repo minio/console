@@ -78,14 +78,13 @@ export interface ObjectBrowserState {
   simplePath: string | null;
 }
 
-export interface ObjectBrowserReducer {
-  objectBrowser: ObjectBrowserState;
-}
-
 export interface ObjectManager {
   objectsToManage: IFileItem[];
   managerOpen: boolean;
   newItems: boolean;
+  startedItems: string[];
+  currentDownloads: string[];
+  currentUploads: string[];
 }
 
 export interface IFileItem {
