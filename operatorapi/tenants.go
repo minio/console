@@ -2861,7 +2861,6 @@ func subnetUploadReq(url string, filename string) (*http.Request, error) {
 
 	return r, nil
 }
-
 func subnetAPIKeyAuthHeaders(apiKey string) map[string]string {
 	return map[string]string{"x-subnet-api-key": apiKey}
 }
@@ -3016,7 +3015,7 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToGetTenantHealthReport)
 	}
 
-	var healthInfoV1 ClusterHealthV1
+	var healthInfoV1 madmin.HealthInfoV0
 	var healthInfoV2 madmin.HealthInfoV2
 	var healthInfoV3 madmin.HealthInfo
 
