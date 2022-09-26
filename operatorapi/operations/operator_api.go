@@ -235,6 +235,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPITenantEncryptionInfoHandler: operator_api.TenantEncryptionInfoHandlerFunc(func(params operator_api.TenantEncryptionInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.TenantEncryptionInfo has not yet been implemented")
 		}),
+		OperatorAPITenantHealthReportHandler: operator_api.TenantHealthReportHandlerFunc(func(params operator_api.TenantHealthReportParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.TenantHealthReport has not yet been implemented")
+		}),
 		OperatorAPITenantIdentityProviderHandler: operator_api.TenantIdentityProviderHandlerFunc(func(params operator_api.TenantIdentityProviderParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.TenantIdentityProvider has not yet been implemented")
 		}),
@@ -428,6 +431,8 @@ type OperatorAPI struct {
 	OperatorAPITenantDetailsHandler operator_api.TenantDetailsHandler
 	// OperatorAPITenantEncryptionInfoHandler sets the operation handler for the tenant encryption info operation
 	OperatorAPITenantEncryptionInfoHandler operator_api.TenantEncryptionInfoHandler
+	// OperatorAPITenantHealthReportHandler sets the operation handler for the tenant health report operation
+	OperatorAPITenantHealthReportHandler operator_api.TenantHealthReportHandler
 	// OperatorAPITenantIdentityProviderHandler sets the operation handler for the tenant identity provider operation
 	OperatorAPITenantIdentityProviderHandler operator_api.TenantIdentityProviderHandler
 	// OperatorAPITenantSecurityHandler sets the operation handler for the tenant security operation
@@ -699,6 +704,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPITenantEncryptionInfoHandler == nil {
 		unregistered = append(unregistered, "operator_api.TenantEncryptionInfoHandler")
+	}
+	if o.OperatorAPITenantHealthReportHandler == nil {
+		unregistered = append(unregistered, "operator_api.TenantHealthReportHandler")
 	}
 	if o.OperatorAPITenantIdentityProviderHandler == nil {
 		unregistered = append(unregistered, "operator_api.TenantIdentityProviderHandler")
@@ -1056,6 +1064,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/encryption"] = operator_api.NewTenantEncryptionInfo(o.context, o.OperatorAPITenantEncryptionInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/health"] = operator_api.NewTenantHealthReport(o.context, o.OperatorAPITenantHealthReportHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

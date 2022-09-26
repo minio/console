@@ -18,21 +18,33 @@ package operatorapi
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
+	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
+	gojson "encoding/json"
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"mime/multipart"
 	"net"
 	"net/http"
+	"net/url"
+	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/mattn/go-ieproxy"
 	utils2 "github.com/minio/console/pkg/http"
+	xhttp "github.com/minio/console/pkg/http"
+	"github.com/minio/console/pkg/subnet"
 
 	"github.com/minio/madmin-go/v2"
 
@@ -343,6 +355,14 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			operator_api.NewUpdateTenantDomainsDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewUpdateTenantDomainsNoContent()
+	})
+	// Get Tenant Health Report
+	api.OperatorAPITenantHealthReportHandler = operator_api.TenantHealthReportHandlerFunc(func(params operator_api.TenantHealthReportParams, principal *models.Principal) middleware.Responder {
+		payload, err := getTenantHealthReport(principal, params)
+		if err != nil {
+			operator_api.NewTenantHealthReportDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewTenantHealthReportOK().WithPayload(payload)
 	})
 }
 
@@ -2750,6 +2770,356 @@ func getUpdateDomainsResponse(session *models.Principal, params operator_api.Upd
 	}
 
 	return nil
+}
+
+// HealthDataType - Typed Health data types
+type HealthDataType string
+
+// HealthDataTypeSlice is a typed list of health tests
+type HealthDataTypeSlice []madmin.HealthDataType
+
+// GetHealthDataTypeSlice - returns the list of set health tests
+func GetHealthDataTypeSlice() []madmin.HealthDataType {
+	healthTypes := []madmin.HealthDataType{"minioinfo", "minioconfig", "syscpu", "sysdrivehw", "sysosinfo", "sysmem", "sysnet", "sysprocess", "syserrors", "sysservices", "sysconfig"}
+
+	return healthTypes
+}
+
+// compress and tar MinIO diagnostics output
+func tarGZ(healthInfo interface{}, version string, filename string) error {
+	f, e := os.OpenFile(filename, os.O_CREATE|os.O_RDWR, 0o666)
+	if e != nil {
+		return e
+	}
+	defer f.Close()
+	gzWriter := gzip.NewWriter(f)
+	defer gzWriter.Close()
+	enc := gojson.NewEncoder(gzWriter)
+
+	header := struct {
+		Version string `json:"version"`
+	}{Version: version}
+	if e := enc.Encode(header); e != nil {
+		return e
+	}
+
+	return nil
+}
+
+var globalSubnetProxyURL *url.URL
+
+func httpClient(timeout time.Duration) *http.Client {
+	return &http.Client{
+		Timeout: timeout,
+		Transport: &http.Transport{
+			Proxy: ieproxy.GetProxyFunc(),
+			TLSClientConfig: &tls.Config{
+				// RootCAs: globalRootCAs,
+				// Can't use SSLv3 because of POODLE and BEAST
+				// Can't use TLSv1.0 because of POODLE and BEAST using CBC cipher
+				// Can't use TLSv1.1 because of RC4 cipher usage
+				MinVersion: tls.VersionTLS12,
+			},
+		},
+	}
+}
+
+func getSubnetClient() *http.Client {
+	fmt.Println("in getSubnetClient")
+	client := httpClient(10 * time.Second)
+	if globalSubnetProxyURL != nil {
+		client.Transport.(*http.Transport).Proxy = http.ProxyURL(globalSubnetProxyURL)
+	}
+	return client
+}
+
+func subnetUploadReq(url string, filename string) (*http.Request, error) {
+	file, e := os.Open(filename)
+	if e != nil {
+		return nil, e
+	}
+	defer file.Close()
+
+	var body bytes.Buffer
+	writer := multipart.NewWriter(&body)
+	part, e := writer.CreateFormFile("file", filepath.Base(file.Name()))
+	if e != nil {
+		return nil, e
+	}
+	if _, e = io.Copy(part, file); e != nil {
+		return nil, e
+	}
+	writer.Close()
+
+	r, e := http.NewRequest(http.MethodPost, url, &body)
+	if e != nil {
+		return nil, e
+	}
+	r.Header.Add("Content-Type", writer.FormDataContentType())
+
+	return r, nil
+}
+func subnetAPIKeyAuthHeaders(apiKey string) map[string]string {
+	return map[string]string{"x-subnet-api-key": apiKey}
+}
+
+func subnetURLWithAuth(reqURL string, apiKey string) (string, map[string]string, error) {
+	if len(apiKey) == 0 {
+		// API key not available in minio/mc config.
+		// Ask the user to log in to get auth token
+		subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
+		token, _, e := restapi.SubnetLogin(subnetHTTPClient, "jill@min.io", "testPassword1!")
+		if e != nil {
+			return "", nil, e
+		}
+		apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
+		if err != nil {
+			return "nil", nil, e
+		}
+		return reqURL, subnetAPIKeyAuthHeaders(apiKey), nil
+	}
+	return reqURL, subnetAPIKeyAuthHeaders(apiKey), nil
+}
+
+func prepareSubnetUploadURL(uploadURL string, filename string, apiKey string) (string, map[string]string) {
+	var e error
+	if len(apiKey) == 0 {
+		// api key not passed as flag. check if it's available in the config
+		// apiKey, e = getSubnetAPIKey(alias)
+		apiKey = "cec35b03-4f02-130c-8256-a6577102f081"
+	}
+	reqURL, headers, e := subnetURLWithAuth(uploadURL, apiKey)
+	if e != nil {
+		return "there was an error here", nil
+	}
+	return reqURL, headers
+}
+
+func subnetUploadURL(uploadType string, filename string) string {
+	return fmt.Sprintf("%s/api/%s/upload?filename=%s",
+		"https://subnet.min.io", uploadType, filename)
+}
+
+func subnetHTTPDo(req *http.Request) (*http.Response, error) {
+	return getSubnetClient().Do(req)
+}
+
+func subnetReqDo(r *http.Request, headers map[string]string) (int, string, error) {
+	for k, v := range headers {
+		r.Header.Add(k, v)
+	}
+
+	ct := r.Header.Get("Content-Type")
+	if len(ct) == 0 {
+		r.Header.Add("Content-Type", "application/json")
+	}
+	resp, e := subnetHTTPDo(r)
+	if e != nil {
+		return 400, "", e
+	}
+
+	const subnetRespBodyLimit int64 = 1 << 20
+	defer resp.Body.Close()
+
+	respBytes, e := ioutil.ReadAll(io.LimitReader(resp.Body, subnetRespBodyLimit))
+	if e != nil {
+		return 400, "", e
+	}
+	respStr := string(respBytes)
+
+	if resp.StatusCode == http.StatusOK {
+		return resp.StatusCode, respStr, nil
+	}
+	return resp.StatusCode, respStr, fmt.Errorf("Request failed with code %d and error: %s", resp.StatusCode, respStr)
+}
+
+func uploadFileToSubnet(filename string, reqURL string, headers map[string]string) (int, error) {
+	req, e := subnetUploadReq(subnetUploadURL("health", filename), filename)
+	if e != nil {
+		return 400, e
+	}
+	respStatus, _, e := subnetReqDo(req, headers)
+	if e != nil {
+		return 400, e
+	}
+	// Delete the file after successful upload
+	os.Remove(filename)
+	// ensure that both api-key and license from
+	// SUBNET response are saved in the config
+	// extractAndSaveSubnetCreds(alias, resp)
+
+	return respStatus, e
+}
+
+func getTenantHealthReport(session *models.Principal, params operator_api.TenantHealthReportParams) (*models.HealthReport, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+	}
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	k8sClient := &k8sClient{
+		client: clientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+	}
+	minTenant.EnsureDefaults()
+	svcURL := "http://127.0.0.1:9001" // GetTenantServiceURL(minTenant)
+	// getTenantAdminClient will use all certificates under ~/.console/certs/CAs to trust the TLS connections with MinIO tenants
+	mAdmin, _ := getTenantAdminClient(
+		ctx,
+		k8sClient,
+		minTenant,
+		svcURL,
+	)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+	}
+
+	opts := GetHealthDataTypeSlice()
+	optsMap := make(map[madmin.HealthDataType]struct{})
+	for _, opt := range opts {
+		optsMap[opt] = struct{}{}
+	}
+
+	cont, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	const timeout time.Duration = 5000000000
+
+	resp, version, e := mAdmin.ServerHealthInfo(cont, opts, timeout)
+	if e != nil {
+		cancel()
+		return nil, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToGetTenantHealthReport)
+	}
+
+	var healthInfoV1 ClusterHealthV1
+	var healthInfoV2 madmin.HealthInfoV2
+	var healthInfoV3 madmin.HealthInfo
+
+	t := time.Now()
+	timestamp := t.Format(time.RFC3339)
+
+	var filename string = params.Namespace + "_" + params.Tenant + "_" + timestamp + "_HealthReport.tar"
+	healthInfo := models.HealthReport{}
+	decoder := json.NewDecoder(resp.Body)
+	switch version {
+	case madmin.HealthInfoVersion0:
+		info := madmin.HealthInfoV0{}
+		for {
+			if err = decoder.Decode(&info); err != nil {
+				if errors.Is(err, io.EOF) {
+					err = nil
+				}
+				break
+			}
+		}
+		if err != nil {
+			return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+		}
+		// Old minio versions don't return the MinIO info in
+		// response of the healthinfo api. So fetch it separately
+		minioInfo, e := mAdmin.ServerInfo(context.Background())
+		if e != nil {
+			info.Minio.Error = e.Error()
+		} else {
+			info.Minio.Info = minioInfo
+		}
+
+		healthInfoV1 = MapHealthInfoToV1(info, nil)
+		version = madmin.HealthInfoVersion1
+		saveErr := tarGZ(healthInfoV1, version, filename)
+		if saveErr != nil {
+			return nil, restapi.ErrorWithContext(ctx, saveErr, restapi.ErrUnableToSaveTenantHealthReport)
+		}
+		healthInfo.Version = "1"
+		healthInfo.Error = healthInfoV1.Error
+	case madmin.HealthInfoVersion2:
+		info := madmin.HealthInfoV2{}
+		for {
+			if err = decoder.Decode(&info); err != nil {
+				if errors.Is(err, io.EOF) {
+					err = nil
+				}
+
+				break
+			}
+		}
+		if err != nil {
+			return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+		}
+		healthInfoV2 = info
+		saveError := tarGZ(healthInfoV2, healthInfoV2.Version, filename)
+		if saveError != nil {
+			return nil, restapi.ErrorWithContext(ctx, saveError, restapi.ErrUnableToSaveTenantHealthReport)
+		}
+		healthInfo.Version = healthInfoV2.Version
+		healthInfo.Error = healthInfoV2.Error
+	case madmin.HealthInfoVersion:
+		info := madmin.HealthInfo{}
+		for {
+			if err = decoder.Decode(&info); err != nil {
+				if errors.Is(err, io.EOF) {
+					err = nil
+				}
+
+				break
+			}
+		}
+		if err != nil {
+			return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+		}
+		healthInfoV3 = info
+		saveError := tarGZ(healthInfoV3, healthInfoV3.Version, filename)
+		if saveError != nil {
+			return nil, restapi.ErrorWithContext(ctx, saveError, restapi.ErrUnableToSaveTenantHealthReport)
+		}
+		healthInfo.Version = healthInfoV3.Version
+		healthInfo.Error = healthInfoV3.Error
+	}
+
+	// cancel the context if supportDiagChan has returned.
+	cancel()
+
+	subnetURL := "https://subnet.min.io"
+	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
+
+	token, _, _ := restapi.SubnetLogin(subnetHTTPClient, "jill@min.io", "testPassword1!")
+
+	apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
+	if err != nil {
+		return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToUploadTenantHealthReport)
+	}
+
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToUploadTenantHealthReport)
+	}
+
+	reqURL, headers := prepareSubnetUploadURL(subnetURL, filename, apiKey)
+
+	respStatus, e := uploadFileToSubnet(filename, reqURL, headers)
+	if e != nil {
+		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToSaveTenantHealthReport)
+	}
+	fmt.Println("respStatus: ", respStatus)
+	healthInfo.Error = e.Error()
+	if e != nil {
+		return nil, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToSaveTenantHealthReport)
+	}
+	//fmt.Println("uploadReq, subnetResponse: ", uploadReq, subnetResponse)
+	return &healthInfo, nil
 }
 
 func updateTenantDomains(ctx context.Context, operatorClient OperatorClientI, namespace string, tenantName string, domainConfig *models.DomainsConfiguration) error {

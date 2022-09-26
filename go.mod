@@ -49,6 +49,11 @@ require (
 )
 
 require (
+	github.com/mattn/go-ieproxy v0.0.1
+	github.com/shirou/gopsutil/v3 v3.22.9
+)
+
+require (
 	aead.dev/mem v0.2.0 // indirect
 	cloud.google.com/go/compute v1.7.0 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
@@ -113,7 +118,6 @@ require (
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-ieproxy v0.0.1 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
@@ -152,7 +156,6 @@ require (
 	github.com/rivo/tview v0.0.0-20220916081518-2e69b7385a37 // indirect
 	github.com/rivo/uniseg v0.4.2 // indirect
 	github.com/rjeczalik/notify v0.9.2 // indirect
-	github.com/shirou/gopsutil/v3 v3.22.9 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect

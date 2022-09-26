@@ -1,4 +1,5 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
+import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import { LinearProgress, Stack } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
@@ -15,6 +16,11 @@ import Loader from "../Loader/Loader";
 import TenantCapacity from "../../Tenants/ListTenants/TenantCapacity";
 import ErrorBlock from "../../../shared/ErrorBlock";
 import LabelValuePair from "./LabelValuePair";
+import { HealthMenuIcon } from "../../../../icons/SidebarMenus";
+import api from "../../../../common/api";
+import { ErrorResponseHandler } from "../../../../common/types";
+import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 interface ISummaryUsageBar {
   tenant: ITenant;
@@ -57,6 +63,7 @@ const SummaryUsageBar = ({
   loading,
   error,
 }: ISummaryUsageBar) => {
+  const [healthLoading, setHealthLoading] = useState<boolean>(false);
   let raw: ValueUnit = { value: "n/a", unit: "" };
   let capacity: ValueUnit = { value: "n/a", unit: "" };
   let used: ValueUnit = { value: "n/a", unit: "" };
@@ -113,6 +120,24 @@ const SummaryUsageBar = ({
     localUse.unit = partsInternal[1];
   }
 
+  const dispatch = useAppDispatch();
+  const fetchHealthReport = () => {
+    console.log("Let's call the API");
+    api
+      .invoke(
+        "GET",
+        `/api/v1/namespaces/${tenant.namespace}/tenants/${tenant.name}/health`
+      )
+      .then((res: any) => {
+        console.log("this is the result:", res);
+        setHealthLoading(false);
+      })
+      .catch((err: ErrorResponseHandler) => {
+        dispatch(setErrorSnackMessage(err));
+        setHealthLoading(false);
+      });
+  };
+
   const renderComponent = () => {
     if (!loading) {
       return error !== "" ? (
@@ -166,6 +191,26 @@ const SummaryUsageBar = ({
               />
             )}
           </Stack>
+          <Button
+            id={"delete-tenant"}
+            variant="secondary"
+            onClick={() => {
+              setHealthLoading(true);
+              fetchHealthReport();
+              console.log("Go get the health report");
+            }}
+            color="secondary"
+            label={"Health check"}
+            icon={<HealthMenuIcon />}
+          />
+          {healthLoading ? (
+            <Fragment>
+              Generating Tenant Health Report
+              <LinearProgress className={classes.progress} />
+            </Fragment>
+          ) : (
+            <Fragment></Fragment>
+          )}
         </Grid>
       );
     }

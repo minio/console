@@ -1118,6 +1118,43 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/health": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Tenant Health Report",
+        "operationId": "TenantHealthReport",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/healthReport"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/identity-provider": {
       "get": {
         "tags": [
@@ -3394,6 +3431,17 @@ func init() {
           "items": {
             "$ref": "#/definitions/directPVVolumeInfo"
           }
+        }
+      }
+    },
+    "healthReport": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
         }
       }
     },
@@ -6309,6 +6357,43 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/eventListWrapper"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/health": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Tenant Health Report",
+        "operationId": "TenantHealthReport",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/healthReport"
             }
           },
           "default": {
@@ -9405,6 +9490,17 @@ func init() {
           "items": {
             "$ref": "#/definitions/directPVVolumeInfo"
           }
+        }
+      }
+    },
+    "healthReport": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
         }
       }
     },
