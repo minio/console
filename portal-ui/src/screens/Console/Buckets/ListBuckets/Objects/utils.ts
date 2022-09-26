@@ -17,6 +17,7 @@
 import { BucketObjectItem } from "./ListObjects/types";
 import { IAllowResources } from "../../../types";
 import { encodeURLString } from "../../../../../common/utils";
+import { removeTrace } from "../../../ObjectBrowser/transferManager";
 
 export const download = (
   bucketName: string,
@@ -24,6 +25,7 @@ export const download = (
   versionID: any,
   fileSize: number,
   overrideFileName: string | null = null,
+  id: string,
   progressCallback: (progress: number) => void,
   completeCallback: () => void,
   errorCallback: (msg: string) => void,
@@ -74,6 +76,8 @@ export const download = (
           completeCallback();
         }
 
+        removeTrace(id);
+
         var link = document.createElement("a");
         link.href = window.URL.createObjectURL(req.response);
         link.download = filename;
@@ -104,7 +108,6 @@ export const download = (
       abortCallback();
     }
   };
-  //req.send();
 
   return req;
 };

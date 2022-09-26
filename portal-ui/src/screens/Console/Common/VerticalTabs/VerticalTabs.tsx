@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Tab, TabProps } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import withStyles from "@mui/styles/withStyles";
 import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useLocation } from "react-router-dom";
 
 export type TabItemProps = {
   tabConfig: TabProps | any;
@@ -91,17 +92,27 @@ const VerticalTabs = ({
   routes,
   isRouteTabs,
 }: VerticalTabsProps) => {
-  const [value, setValue] = React.useState(selectedTab);
-
   const theme = useTheme();
+  const { pathname = "" } = useLocation();
+
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
-  };
+  const [value, setValue] = useState(selectedTab);
 
   const headerList: TabProps[] = [];
   const contentList: React.ReactNode[] = [];
+
+  useEffect(() => {
+    if (isRouteTabs) {
+      const tabConfigElement = children.find(
+        (item) => item.tabConfig.to === pathname
+      );
+
+      if (tabConfigElement) {
+        setValue(tabConfigElement.tabConfig.value);
+      }
+    }
+  }, [isRouteTabs, children, pathname]);
 
   if (!children) return null;
 
@@ -109,6 +120,10 @@ const VerticalTabs = ({
     headerList.push(child.tabConfig);
     contentList.push(child.content);
   });
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
 
   return (
     <TabContext value={`${value}`}>

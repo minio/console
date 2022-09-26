@@ -302,12 +302,15 @@ const ObjectDetailPanel = ({
       return;
     }
 
+    const ID = makeid(8);
+
     const downloadCall = download(
       bucketName,
       internalPaths,
       object.version_id,
       parseInt(object.size || "0"),
       null,
+      ID,
       (progress) => {
         dispatch(
           updateProgress({
@@ -326,7 +329,7 @@ const ObjectDetailPanel = ({
         dispatch(cancelObjectInList(identityDownload));
       }
     );
-    const ID = makeid(8);
+
     storeCallForObjectWithID(ID, downloadCall);
     dispatch(
       setNewObject({
@@ -343,8 +346,6 @@ const ObjectDetailPanel = ({
         errorMessage: "",
       })
     );
-
-    downloadCall.send();
   };
 
   const closeDeleteModal = (closeAndReload: boolean) => {

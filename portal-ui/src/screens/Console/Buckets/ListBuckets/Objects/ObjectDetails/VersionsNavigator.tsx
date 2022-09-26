@@ -256,12 +256,15 @@ const VersionsNavigator = ({
       `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
     );
 
+    const ID = makeid(8);
+
     const downloadCall = download(
       bucketName,
       internalPaths,
       object.version_id,
       parseInt(object.size || "0"),
       null,
+      ID,
       (progress) => {
         dispatch(
           updateProgress({
@@ -280,7 +283,7 @@ const VersionsNavigator = ({
         dispatch(cancelObjectInList(identityDownload));
       }
     );
-    const ID = makeid(8);
+
     storeCallForObjectWithID(ID, downloadCall);
     dispatch(
       setNewObject({
@@ -297,8 +300,6 @@ const VersionsNavigator = ({
         errorMessage: "",
       })
     );
-
-    downloadCall.send();
   };
 
   const onShareItem = (item: IFileInfo) => {

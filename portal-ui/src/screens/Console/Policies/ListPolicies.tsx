@@ -245,7 +245,7 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
                   <br />
                   You can learn more at our{" "}
                   <a
-                    href="https://docs.min.io/minio/baremetal/security/minio-identity-management/policy-based-access-control.html?ref=con"
+                    href="https://min.io/docs/minio/linux/administration/identity-access-management.html?ref=con#access-management"
                     target="_blank"
                     rel="noreferrer"
                   >

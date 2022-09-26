@@ -1,6 +1,6 @@
 [Unit]
 Description=MinIO Console
-Documentation=https://docs.min.io
+Documentation=https://min.io/docs/minio/linux/index.html
 Wants=network-online.target
 After=network-online.target
 AssertFileIsExecutable=/usr/local/bin/console

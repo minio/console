@@ -114,9 +114,9 @@ type Provider struct {
 	provHTTPClient *http.Client
 }
 
-// derivedKey is the key used to compute the HMAC for signing the oauth state parameter
+// DefaultDerivedKey is the key used to compute the HMAC for signing the oauth state parameter
 // its derived using pbkdf on CONSOLE_IDP_HMAC_PASSPHRASE with CONSOLE_IDP_HMAC_SALT
-var derivedKey = func() []byte {
+var DefaultDerivedKey = func() []byte {
 	return pbkdf2.Key([]byte(getPassphraseForIDPHmac()), []byte(getSaltForIDPHmac()), 4096, 32, sha1.New)
 }
 
@@ -304,11 +304,15 @@ type User struct {
 	Username          string                 `json:"username"`
 }
 
+// StateKeyFunc - is a function that returns a key used in OAuth Authorization
+// flow state generation and verification.
+type StateKeyFunc func() []byte
+
 // VerifyIdentity will contact the configured IDP to the user identity based on the authorization code and state
 // if the user is valid, then it will contact MinIO to get valid sts credentials based on the identity provided by the IDP
-func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
+func (client *Provider) VerifyIdentity(ctx context.Context, code, state string, keyFunc StateKeyFunc) (*credentials.Credentials, error) {
 	// verify the provided state is valid (prevents CSRF attacks)
-	if err := validateOauth2State(state); err != nil {
+	if err := validateOauth2State(state, keyFunc); err != nil {
 		return nil, err
 	}
 	getWebTokenExpiry := func() (*credentials.WebIdentityToken, error) {
@@ -357,9 +361,9 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) 
 }
 
 // VerifyIdentityForOperator will contact the configured IDP and validate the user identity based on the authorization code and state
-func (client *Provider) VerifyIdentityForOperator(ctx context.Context, code, state string) (*xoauth2.Token, error) {
+func (client *Provider) VerifyIdentityForOperator(ctx context.Context, code, state string, keyFunc StateKeyFunc) (*xoauth2.Token, error) {
 	// verify the provided state is valid (prevents CSRF attacks)
-	if err := validateOauth2State(state); err != nil {
+	if err := validateOauth2State(state, keyFunc); err != nil {
 		return nil, err
 	}
 	customCtx := context.WithValue(ctx, oauth2.HTTPClient, client.provHTTPClient)
@@ -376,7 +380,7 @@ func (client *Provider) VerifyIdentityForOperator(ctx context.Context, code, sta
 // validateOauth2State validates the provided state was originated using the same
 // instance (or one configured using the same secrets) of Console, this is basically used to prevent CSRF attacks
 // https://security.stackexchange.com/questions/20187/oauth2-cross-site-request-forgery-and-state-parameter
-func validateOauth2State(state string) error {
+func validateOauth2State(state string, keyFunc StateKeyFunc) error {
 	// state contains a base64 encoded string that may ends with "==", the browser encodes that to "%3D%3D"
 	// query unescape is need it before trying to decode the base64 string
 	encodedMessage, err := url.QueryUnescape(state)
@@ -396,7 +400,7 @@ func validateOauth2State(state string) error {
 	// extract the state and hmac
 	incomingState, incomingHmac := s[0], s[1]
 	// validate that hmac(incomingState + pbkdf2(secret, salt)) == incomingHmac
-	if calculatedHmac := utils.ComputeHmac256(incomingState, derivedKey()); calculatedHmac != incomingHmac {
+	if calculatedHmac := utils.ComputeHmac256(incomingState, keyFunc()); calculatedHmac != incomingHmac {
 		return fmt.Errorf("oauth2 state is invalid, expected %s, got %s", calculatedHmac, incomingHmac)
 	}
 	return nil
@@ -429,16 +433,16 @@ func parseDiscoveryDoc(ustr string, httpClient *http.Client) (DiscoveryDoc, erro
 }
 
 // GetRandomStateWithHMAC computes message + hmac(message, pbkdf2(key, salt)) to be used as state during the oauth authorization
-func GetRandomStateWithHMAC(length int) string {
+func GetRandomStateWithHMAC(length int, keyFunc StateKeyFunc) string {
 	state := utils.RandomCharString(length)
-	hmac := utils.ComputeHmac256(state, derivedKey())
+	hmac := utils.ComputeHmac256(state, keyFunc())
 	return base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", state, hmac)))
 }
 
 // GenerateLoginURL returns a new login URL based on the configured IDP
-func (client *Provider) GenerateLoginURL() string {
+func (client *Provider) GenerateLoginURL(keyFunc StateKeyFunc) string {
 	// generates random state and sign it using HMAC256
-	state := GetRandomStateWithHMAC(25)
+	state := GetRandomStateWithHMAC(25, keyFunc)
 	loginURL := client.oauth2Config.AuthCodeURL(state)
 	return strings.TrimSpace(loginURL)
 }

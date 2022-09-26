@@ -170,7 +170,6 @@ const ObjectHandled = ({
           <button
             onClick={() => {
               if (!objectToDisplay.done) {
-                console.log("//abort");
                 const call = callForObjectID(objectToDisplay.ID);
                 if (call) {
                   call.abort();
