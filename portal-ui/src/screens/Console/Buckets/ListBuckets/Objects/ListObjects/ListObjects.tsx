@@ -1065,11 +1065,11 @@ const ListObjects = () => {
       if (!canUpload) {
         dispatch(
           setErrorSnackMessage({
-            errorMessage: permissionTooltipHelper(
+            errorMessage: "Upload not allowed",
+            detailedError: permissionTooltipHelper(
               [IAM_SCOPES.S3_PUT_OBJECT],
               "upload objects to this location"
             ),
-            detailedError: "",
           })
         );
       }
