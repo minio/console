@@ -58,6 +58,7 @@ import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
   IAM_SCOPES,
+  permissionTooltipHelper,
 } from "../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../common/SecureComponent";
 import { useAppDispatch } from "../../../store";
@@ -111,6 +112,11 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [hasPolicy, setHasPolicy] = useState<boolean>(false);
 
+  const enableEnabled =
+    hasPermission("console", [IAM_SCOPES.ADMIN_ENABLE_USER]) && !enabled;
+  const disableEnabled =
+    hasPermission("console", [IAM_SCOPES.ADMIN_DISABLE_USER]) && enabled;
+
   const userName = decodeURLString(params.userName || "");
 
   const changeUserPassword = () => {
@@ -120,6 +126,27 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
   const deleteUser = () => {
     setDeleteOpen(true);
   };
+
+  const userLoggedIn = localStorage.getItem("userLoggedIn") || "";
+  const canAssignPolicy = hasPermission(
+    "console",
+    [
+      IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+      IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+      IAM_SCOPES.ADMIN_GET_POLICY,
+    ],
+    true
+  );
+  const canAssignGroup = hasPermission(
+    "console",
+    [
+      IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+      IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
+      IAM_SCOPES.ADMIN_LIST_GROUPS,
+      IAM_SCOPES.ADMIN_ENABLE_USER,
+    ],
+    true
+  );
 
   const viewGroup = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.ADMIN_GET_GROUP,
@@ -270,25 +297,67 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                 <span className={classes.statusValue}>
                   {enabled ? "Enabled" : "Disabled"}
                 </span>
-                <FormSwitchWrapper
-                  indicatorLabels={["Enabled", "Disabled"]}
-                  checked={enabled}
-                  value={"group_enabled"}
-                  id="group-status"
-                  name="group-status"
-                  onChange={() => {
-                    setEnabled(!enabled);
-                    saveRecord(!enabled);
-                  }}
-                  switchOnly
-                />
-
-                <TooltipWrapper tooltip={"Delete User"}>
+                <TooltipWrapper
+                  tooltip={
+                    enableEnabled || disableEnabled
+                      ? ""
+                      : hasPermission("console", [IAM_SCOPES.ADMIN_ENABLE_USER])
+                      ? permissionTooltipHelper(
+                          [IAM_SCOPES.ADMIN_DISABLE_USER],
+                          "disable users"
+                        )
+                      : hasPermission("console", [
+                          IAM_SCOPES.ADMIN_DISABLE_USER,
+                        ])
+                      ? permissionTooltipHelper(
+                          [IAM_SCOPES.ADMIN_ENABLE_USER],
+                          "enable users"
+                        )
+                      : permissionTooltipHelper(
+                          [
+                            IAM_SCOPES.ADMIN_ENABLE_USER,
+                            IAM_SCOPES.ADMIN_DISABLE_USER,
+                          ],
+                          "enable or disable users"
+                        )
+                  }
+                >
+                  <FormSwitchWrapper
+                    indicatorLabels={["Enabled", "Disabled"]}
+                    checked={enabled}
+                    value={"group_enabled"}
+                    id="group-status"
+                    name="group-status"
+                    onChange={() => {
+                      setEnabled(!enabled);
+                      saveRecord(!enabled);
+                    }}
+                    switchOnly
+                    disabled={!enableEnabled && !disableEnabled}
+                  />
+                </TooltipWrapper>
+                <TooltipWrapper
+                  tooltip={
+                    hasPermission("console", [IAM_SCOPES.ADMIN_DELETE_USER])
+                      ? userLoggedIn === userName
+                        ? "You cannot delete the currently logged in User"
+                        : "Delete User"
+                      : permissionTooltipHelper(
+                          [IAM_SCOPES.ADMIN_DELETE_USER],
+                          "delete user"
+                        )
+                  }
+                >
                   <Button
                     id={"delete-user"}
                     onClick={deleteUser}
                     icon={<TrashIcon />}
                     variant={"secondary"}
+                    disabled={
+                      !hasPermission("console", [
+                        IAM_SCOPES.ADMIN_DELETE_USER,
+                      ]) || userLoggedIn === userName
+                    }
                   />
                 </TooltipWrapper>
 
@@ -310,12 +379,27 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             {{
               tabConfig: {
                 label: "Groups",
+                disabled: !canAssignGroup,
               },
               content: (
                 <React.Fragment>
                   <div className={classes.actionsTray}>
                     <PanelTitle>Groups</PanelTitle>
-                    <TooltipWrapper tooltip={"Add to Groups"}>
+                    <TooltipWrapper
+                      tooltip={
+                        canAssignGroup
+                          ? "Assign groups"
+                          : permissionTooltipHelper(
+                              [
+                                IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+                                IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
+                                IAM_SCOPES.ADMIN_LIST_GROUPS,
+                                IAM_SCOPES.ADMIN_ENABLE_USER,
+                              ],
+                              "add users to groups"
+                            )
+                      }
+                    >
                       <Button
                         id={"add-groups"}
                         label={"Add to Groups"}
@@ -324,6 +408,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                         }}
                         icon={<AddIcon />}
                         variant={"callAction"}
+                        disabled={!canAssignGroup}
                       />
                     </TooltipWrapper>
                   </div>
@@ -343,6 +428,11 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             {{
               tabConfig: {
                 label: "Service Accounts",
+                disabled: !hasPermission("console", [
+                  IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS,
+                  IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
+                  IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,
+                ]),
               },
               content: (
                 <UserServiceAccountsPanel
@@ -354,13 +444,27 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             {{
               tabConfig: {
                 label: "Policies",
+                disabled: !canAssignPolicy,
               },
               content: (
                 <Fragment>
                   <div className={classes.actionsTray}>
                     <PanelTitle>Policies</PanelTitle>
 
-                    <TooltipWrapper tooltip={"Assign Policies"}>
+                    <TooltipWrapper
+                      tooltip={
+                        canAssignPolicy
+                          ? "Assign Policies"
+                          : permissionTooltipHelper(
+                              [
+                                IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+                                IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+                                IAM_SCOPES.ADMIN_GET_POLICY,
+                              ],
+                              "assign policies"
+                            )
+                      }
+                    >
                       <Button
                         id={"assign-policies"}
                         label={"Assign Policies"}
@@ -369,6 +473,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                         }}
                         icon={<IAMPoliciesIcon />}
                         variant={"callAction"}
+                        disabled={!canAssignPolicy}
                       />
                     </TooltipWrapper>
                   </div>
