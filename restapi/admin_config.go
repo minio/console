@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -132,7 +131,7 @@ func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.C
 			confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value})
 		}
 		if len(confkv) == 0 {
-			return nil, errors.New("Invalid SubSystem - check config format")
+			continue
 		}
 		var fullConfigName string
 		if scfg.Target == "" {
@@ -192,15 +191,20 @@ func setConfigWithARNAccountID(ctx context.Context, client MinioAdmin, configNam
 // buildConfig builds a concatenated string including name and keyvalues
 // e.g. `region name=us-west-1`
 func buildConfig(configName *string, kvs []*models.ConfigurationKV) *string {
-	configElements := []string{*configName}
+	var builder strings.Builder
+	builder.WriteString(*configName)
 	for _, kv := range kvs {
-		key := kv.Key
-		val := fmt.Sprintf("\"%s\"", kv.Value)
-		if key != "" {
-			configElements = append(configElements, fmt.Sprintf("%s=%s", key, val))
+		key := strings.TrimSpace(kv.Key)
+		if key == "" {
+			continue
 		}
+		builder.WriteString(" ")
+		builder.WriteString(key)
+		builder.WriteString("=")
+		// All newlines must be converted to ','
+		builder.WriteString(strings.ReplaceAll(strings.TrimSpace(fmt.Sprintf("\"%s\"", kv.Value)), "\n", ","))
 	}
-	config := strings.Join(configElements, " ")
+	config := builder.String()
 	return &config
 }
 
