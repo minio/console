@@ -30,7 +30,8 @@ import get from "lodash/get";
 import api from "../../../../../common/api";
 import Loader from "../../../Common/Loader/Loader";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
+import { useSelector } from "react-redux";
 
 interface IPieChartWidget {
   classes: any;
@@ -79,16 +80,17 @@ const PieChartWidget = ({
   apiPrefix,
 }: IPieChartWidget) => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [dataInner, setDataInner] = useState<object[]>([]);
   const [dataOuter, setDataOuter] = useState<object[]>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
+  const widgetVersion = useSelector(
+    (state: AppState) => state.dashboard.widgetLoadVersion
+  );
 
   useEffect(() => {
-    if (propLoading) {
-      setLoading(true);
-    }
-  }, [propLoading]);
+    setLoading(true);
+  }, [widgetVersion]);
 
   useEffect(() => {
     if (loading) {

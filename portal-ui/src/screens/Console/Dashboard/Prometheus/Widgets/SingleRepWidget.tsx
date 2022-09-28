@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
@@ -25,7 +25,7 @@ import DashboardItemBox from "../../DashboardItemBox";
 import BucketsCountItem from "./BucketsCountItem";
 import ObjectsCountItem from "./ObjectsCountItem";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
 
 interface ISingleRepWidget {
   title: string;
@@ -49,14 +49,15 @@ const SingleRepWidget = ({
   apiPrefix,
 }: ISingleRepWidget) => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
+  const widgetVersion = useSelector(
+    (state: AppState) => state.dashboard.widgetLoadVersion
+  );
 
   useEffect(() => {
-    if (propLoading) {
-      setLoading(true);
-    }
-  }, [propLoading]);
+    setLoading(true);
+  }, [widgetVersion]);
 
   useEffect(() => {
     if (loading) {

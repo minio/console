@@ -39,8 +39,9 @@ import { useTheme } from "@mui/styles";
 import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
 import DownloadWidgetDataButton from "../../DownloadWidgetDataButton";
+import { useSelector } from "react-redux";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -106,20 +107,21 @@ const LinearGraphWidget = ({
   zoomActivated = false,
 }: ILinearGraphWidget) => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [hover, setHover] = useState<boolean>(false);
   const [data, setData] = useState<object[]>([]);
   const [csvData, setCsvData] = useState<object[]>([]);
   const [dataMax, setDataMax] = useState<number>(0);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
+  const widgetVersion = useSelector(
+    (state: AppState) => state.dashboard.widgetLoadVersion
+  );
 
   const componentRef = useRef<HTMLElement>();
 
   useEffect(() => {
-    if (propLoading) {
-      setLoading(true);
-    }
-  }, [propLoading]);
+    setLoading(true);
+  }, [widgetVersion]);
 
   useEffect(() => {
     if (loading) {

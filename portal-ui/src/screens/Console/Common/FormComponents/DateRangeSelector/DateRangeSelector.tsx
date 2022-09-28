@@ -264,7 +264,6 @@ const DateRangeSelector = ({
               alignItems: "flex-end",
               display: "flex",
               justifyContent: "flex-end",
-              marginRight: "35px",
             }}
           >
             <Button

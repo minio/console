@@ -15,11 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { zoomState } from "./types";
+import { Usage, zoomState } from "./types";
 import { IDashboardPanel } from "./Prometheus/types";
+import { getUsageAsync } from "./dashboardThunks";
 
 export interface DashboardState {
   zoom: zoomState;
+  usage: Usage | null;
+  loadingUsage: boolean;
+  widgetLoadVersion: number;
 }
 
 const initialState: DashboardState = {
@@ -27,6 +31,9 @@ const initialState: DashboardState = {
     openZoom: false,
     widgetRender: null,
   },
+  usage: null,
+  loadingUsage: true,
+  widgetLoadVersion: 0,
 };
 export const dashboardSlice = createSlice({
   name: "dashboard",
@@ -40,8 +47,25 @@ export const dashboardSlice = createSlice({
       state.zoom.openZoom = false;
       state.zoom.widgetRender = null;
     },
+    reloadWidgets: (state) => {
+      state.widgetLoadVersion++;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getUsageAsync.pending, (state) => {
+        state.loadingUsage = true;
+      })
+      .addCase(getUsageAsync.rejected, (state) => {
+        state.loadingUsage = false;
+      })
+      .addCase(getUsageAsync.fulfilled, (state, action) => {
+        state.loadingUsage = false;
+        state.usage = action.payload;
+      });
   },
 });
-export const { openZoomPage, closeZoomPage } = dashboardSlice.actions;
+export const { openZoomPage, closeZoomPage, reloadWidgets } =
+  dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

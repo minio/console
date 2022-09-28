@@ -20,7 +20,7 @@ export interface Usage {
   usage: number;
   buckets: number;
   objects: number;
-  prometheusNotReady?: boolean;
+  advancedMetricsStatus: "available" | "unavailable" | "not configured";
   widgets?: any;
   servers: ServerInfo[];
   //TODO

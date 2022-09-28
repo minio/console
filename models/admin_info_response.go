@@ -24,11 +24,13 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // AdminInfoResponse admin info response
@@ -36,14 +38,15 @@ import (
 // swagger:model adminInfoResponse
 type AdminInfoResponse struct {
 
+	// advanced metrics status
+	// Enum: [not configured available unavailable]
+	AdvancedMetricsStatus string `json:"advancedMetricsStatus,omitempty"`
+
 	// buckets
 	Buckets int64 `json:"buckets,omitempty"`
 
 	// objects
 	Objects int64 `json:"objects,omitempty"`
-
-	// prometheus not ready
-	PrometheusNotReady bool `json:"prometheusNotReady,omitempty"`
 
 	// servers
 	Servers []*ServerProperties `json:"servers"`
@@ -59,6 +62,10 @@ type AdminInfoResponse struct {
 func (m *AdminInfoResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAdvancedMetricsStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateServers(formats); err != nil {
 		res = append(res, err)
 	}
@@ -70,6 +77,51 @@ func (m *AdminInfoResponse) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+var adminInfoResponseTypeAdvancedMetricsStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["not configured","available","unavailable"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		adminInfoResponseTypeAdvancedMetricsStatusPropEnum = append(adminInfoResponseTypeAdvancedMetricsStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// AdminInfoResponseAdvancedMetricsStatusNotConfigured captures enum value "not configured"
+	AdminInfoResponseAdvancedMetricsStatusNotConfigured string = "not configured"
+
+	// AdminInfoResponseAdvancedMetricsStatusAvailable captures enum value "available"
+	AdminInfoResponseAdvancedMetricsStatusAvailable string = "available"
+
+	// AdminInfoResponseAdvancedMetricsStatusUnavailable captures enum value "unavailable"
+	AdminInfoResponseAdvancedMetricsStatusUnavailable string = "unavailable"
+)
+
+// prop value enum
+func (m *AdminInfoResponse) validateAdvancedMetricsStatusEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, adminInfoResponseTypeAdvancedMetricsStatusPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *AdminInfoResponse) validateAdvancedMetricsStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.AdvancedMetricsStatus) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateAdvancedMetricsStatusEnum("advancedMetricsStatus", "body", m.AdvancedMetricsStatus); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -30,7 +30,8 @@ import { Cell, Pie, PieChart } from "recharts";
 import { ReportedUsageIcon } from "../../../../../icons";
 import Loader from "../../../Common/Loader/Loader";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
+import { useSelector } from "react-redux";
 
 const CapacityItem = ({
   value,
@@ -46,18 +47,19 @@ const CapacityItem = ({
   apiPrefix: string;
 }) => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [totalUsableFree, setTotalUsableFree] = useState<number>(0);
   const [totalUsableFreeRatio, setTotalUsableFreeRatio] = useState<number>(0);
   const [totalUsed, setTotalUsed] = useState<number>(0);
   const [totalUsable, setTotalUsable] = useState<number>(0);
+  const widgetVersion = useSelector(
+    (state: AppState) => state.dashboard.widgetLoadVersion
+  );
 
   useEffect(() => {
-    if (propLoading) {
-      setLoading(true);
-    }
-  }, [propLoading]);
+    setLoading(true);
+  }, [widgetVersion]);
 
   useEffect(() => {
     if (loading) {

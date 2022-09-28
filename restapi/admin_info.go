@@ -886,53 +886,62 @@ func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoP
 }
 
 func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAdmin *madmin.AdminClient) (*models.AdminInfoResponse, error) {
-	prometheusNotReady := false
-	if prometheusURL != "" && !testPrometheusURL(ctx, prometheusURL) {
-		prometheusNotReady = true
+	prometheusStatus := models.AdminInfoResponseAdvancedMetricsStatusAvailable
+	if prometheusURL == "" {
+		prometheusStatus = models.AdminInfoResponseAdvancedMetricsStatusNotConfigured
 	}
-	if prometheusURL == "" || prometheusNotReady {
+	if prometheusURL != "" && !testPrometheusURL(ctx, prometheusURL) {
+		prometheusStatus = models.AdminInfoResponseAdvancedMetricsStatusUnavailable
+	}
+
+	sessionResp := &models.AdminInfoResponse{
+		AdvancedMetricsStatus: prometheusStatus,
+	}
+	doneCh := make(chan error)
+	go func() {
+		defer close(doneCh)
 		// create a minioClient interface implementation
 		// defining the client to be used
 		adminClient := AdminClient{Client: mAdmin}
 		// serialize output
 		usage, err := GetAdminInfo(ctx, adminClient)
 		if err != nil {
-			return nil, err
+			doneCh <- err
 		}
-		sessionResp := &models.AdminInfoResponse{
-			Buckets:            usage.Buckets,
-			Objects:            usage.Objects,
-			Usage:              usage.Usage,
-			Servers:            usage.Servers,
-			PrometheusNotReady: prometheusNotReady,
-		}
-		return sessionResp, nil
-	}
+		sessionResp.Buckets = usage.Buckets
+		sessionResp.Objects = usage.Objects
+		sessionResp.Usage = usage.Usage
+		sessionResp.Servers = usage.Servers
+	}()
 
 	var wdgts []*models.Widget
-
-	for _, m := range widgets {
-		// for each target we will launch another goroutine to fetch the values
-		wdgtResult := models.Widget{
-			ID:    m.ID,
-			Title: m.Title,
-			Type:  m.Type,
-		}
-		if len(m.Options.ReduceOptions.Calcs) > 0 {
-			wdgtResult.Options = &models.WidgetOptions{
-				ReduceOptions: &models.WidgetOptionsReduceOptions{
-					Calcs: m.Options.ReduceOptions.Calcs,
-				},
+	if prometheusStatus == models.AdminInfoResponseAdvancedMetricsStatusAvailable {
+		// We will tell the frontend about a list of widgets so it can fetch the ones it wants
+		for _, m := range widgets {
+			wdgtResult := models.Widget{
+				ID:    m.ID,
+				Title: m.Title,
+				Type:  m.Type,
 			}
-		}
+			if len(m.Options.ReduceOptions.Calcs) > 0 {
+				wdgtResult.Options = &models.WidgetOptions{
+					ReduceOptions: &models.WidgetOptionsReduceOptions{
+						Calcs: m.Options.ReduceOptions.Calcs,
+					},
+				}
+			}
 
-		wdgts = append(wdgts, &wdgtResult)
+			wdgts = append(wdgts, &wdgtResult)
+		}
+		sessionResp.Widgets = wdgts
 	}
 
-	// count the number of widgets that have completed calculating
-	sessionResp := &models.AdminInfoResponse{}
+	// wait for mc admin info
+	err := <-doneCh
+	if err != nil {
+		return nil, err
+	}
 
-	sessionResp.Widgets = wdgts
 	return sessionResp, nil
 }
 

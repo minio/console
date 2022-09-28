@@ -14,22 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box } from "@mui/material";
+import { Box, LinearProgress } from "@mui/material";
 import {
   actionsTray,
   widgetContainerCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IDashboardPanel } from "./types";
-import { getWidgetsWithValue, panelsConfiguration } from "./utils";
+import { panelsConfiguration } from "./utils";
 import { TabPanel } from "../../../shared/tabs";
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
 
 import TabSelector from "../../Common/TabSelector/TabSelector";
 import { componentToUse } from "./widgetUtils";
@@ -47,11 +45,20 @@ import {
 } from "./Widgets/LayoutUtil";
 import MergedWidgetsRenderer from "./Widgets/MergedWidgetsRenderer";
 import PageLayout from "../../Common/Layout/PageLayout";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import { Usage } from "../types";
+import BasicDashboard from "../BasicDashboard/BasicDashboard";
+import SyncIcon from "../../../../icons/SyncIcon";
+import { Button } from "mds";
+import { ITabOption } from "../../Common/TabSelector/types";
+import { getUsageAsync } from "../dashboardThunks";
+import { reloadWidgets } from "../dashboardSlice";
+import HelpBox from "../../../../common/HelpBox";
+import { PrometheusErrorIcon } from "../../../../icons";
 
 interface IPrDashboard {
   classes?: any;
   apiPrefix?: string;
+  usage: Usage | null;
 }
 
 const styles = (theme: Theme) =>
@@ -66,7 +73,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
+const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
   const dispatch = useAppDispatch();
   const zoomOpen = useSelector(
     (state: AppState) => state.dashboard.zoom.openZoom
@@ -77,65 +84,16 @@ const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
 
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [panelInformation, setPanelInformation] =
-    useState<IDashboardPanel[]>(panelsConfiguration);
+  const panelInformation = panelsConfiguration;
   const [curTab, setCurTab] = useState<number>(0);
 
   const getPanelDetails = (id: number) => {
     return panelInformation.find((panel) => panel.id === id);
   };
 
-  const fetchUsage = useCallback(() => {
-    let stepCalc = 0;
-
-    if (timeStart !== null && timeEnd !== null) {
-      const secondsInPeriod = timeEnd.unix() - timeStart.unix();
-      const periods = Math.floor(secondsInPeriod / 60);
-
-      stepCalc = periods < 1 ? 15 : periods;
-    }
-
-    api
-      .invoke(
-        "GET",
-        `/api/v1/${apiPrefix}/info?step=${stepCalc}&${
-          timeStart !== null ? `&start=${timeStart.unix()}` : ""
-        }${timeStart !== null && timeEnd !== null ? "&" : ""}${
-          timeEnd !== null ? `end=${timeEnd.unix()}` : ""
-        }`
-      )
-      .then((res: any) => {
-        if (res.widgets) {
-          const widgetsWithValue = getWidgetsWithValue(res.widgets);
-          setPanelInformation(widgetsWithValue);
-        } else {
-          dispatch(
-            setErrorSnackMessage({
-              errorMessage:
-                "Widget information could not be retrieved at this time. Please try again",
-              detailedError: "",
-            })
-          );
-        }
-
-        setLoading(false);
-      })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
-        setLoading(false);
-      });
-  }, [timeStart, timeEnd, dispatch, apiPrefix]);
-
   const triggerLoad = () => {
-    setLoading(true);
+    dispatch(reloadWidgets());
   };
-
-  useEffect(() => {
-    if (loading) {
-      fetchUsage();
-    }
-  }, [loading, fetchUsage]);
 
   const renderCmpByConfig = (
     panelInfo: IDashboardPanel | undefined,
@@ -151,7 +109,7 @@ const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
                   info={panelInfo}
                   timeStart={timeStart}
                   timeEnd={timeEnd}
-                  loading={loading}
+                  loading={true}
                   apiPrefix={apiPrefix}
                 />
               ) : (
@@ -159,7 +117,7 @@ const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
                   panelInfo,
                   timeStart,
                   timeEnd,
-                  loading,
+                  true,
                   apiPrefix,
                   zoomOpen
                 )
@@ -205,6 +163,23 @@ const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
     return renderPanelItems(resourcesPanelsLayoutAdvanced);
   };
 
+  let tabs: ITabOption[];
+  if (usage?.advancedMetricsStatus !== "not configured") {
+    tabs = [
+      { label: "Usage" },
+      { label: "Traffic" },
+      { label: "Resources" },
+      { label: "Info" },
+    ];
+  } else {
+    tabs = [
+      { label: "Info" },
+      { label: "Usage", disabled: true },
+      { label: "Traffic", disabled: true },
+      { label: "Resources", disabled: true },
+    ];
+  }
+
   return (
     <PageLayout>
       {zoomOpen && (
@@ -224,11 +199,7 @@ const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
           onChange={(newValue: number) => {
             setCurTab(newValue);
           }}
-          tabOptions={[
-            { label: "Usage" },
-            { label: "Traffic" },
-            { label: "Resources" },
-          ]}
+          tabOptions={tabs}
         />
       </Grid>
       <Grid
@@ -243,32 +214,126 @@ const PrDashboard = ({ apiPrefix = "admin" }: IPrDashboard) => {
             marginBottom: "20px",
           }}
         >
-          <DateRangeSelector
-            timeStart={timeStart}
-            setTimeStart={setTimeStart}
-            timeEnd={timeEnd}
-            setTimeEnd={setTimeEnd}
-            triggerSync={triggerLoad}
-          />
+          {curTab ===
+          (usage?.advancedMetricsStatus === "not configured" ? 0 : 3) ? (
+            <Grid container>
+              <Grid item>
+                <Box
+                  sx={{
+                    color: "#000",
+                    fontSize: 18,
+                    lineHeight: 2,
+                    fontWeight: 700,
+                    marginLeft: "21px",
+                    display: "flex",
+                  }}
+                >
+                  Server Information
+                </Box>
+              </Grid>
+              <Grid item xs>
+                <Grid container direction="row-reverse">
+                  <Grid item>
+                    <Button
+                      id={"sync"}
+                      type="button"
+                      variant="callAction"
+                      onClick={() => {
+                        dispatch(getUsageAsync());
+                      }}
+                      icon={<SyncIcon />}
+                      label={"Sync"}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          ) : (
+            <DateRangeSelector
+              timeStart={timeStart}
+              setTimeStart={setTimeStart}
+              timeEnd={timeEnd}
+              setTimeEnd={setTimeEnd}
+              triggerSync={triggerLoad}
+            />
+          )}
         </Box>
-        <TabPanel index={0} value={curTab}>
+        <TabPanel
+          index={usage?.advancedMetricsStatus === "not configured" ? 3 : 0}
+          value={curTab}
+        >
           <RowPanelLayout>
+            {usage?.advancedMetricsStatus === "unavailable" && (
+              <HelpBox
+                iconComponent={<PrometheusErrorIcon />}
+                title={"We can’t retrieve advanced metrics at this time."}
+                help={
+                  <Box
+                    sx={{
+                      fontSize: "14px",
+                    }}
+                  >
+                    It looks like Prometheus is not available or reachable at
+                    the moment.
+                  </Box>
+                }
+              />
+            )}
             {panelInformation.length ? renderSummaryPanels() : null}
           </RowPanelLayout>
         </TabPanel>
         <TabPanel index={1} value={curTab}>
           <RowPanelLayout>
+            {usage?.advancedMetricsStatus === "unavailable" && (
+              <HelpBox
+                iconComponent={<PrometheusErrorIcon />}
+                title={"We can’t retrieve advanced metrics at this time."}
+                help={
+                  <Box
+                    sx={{
+                      fontSize: "14px",
+                    }}
+                  >
+                    It looks like Prometheus is not available or reachable at
+                    the moment.
+                  </Box>
+                }
+              />
+            )}
             {panelInformation.length ? renderTrafficPanels() : null}
           </RowPanelLayout>
         </TabPanel>
         <TabPanel index={2} value={curTab}>
           <RowPanelLayout>
+            {usage?.advancedMetricsStatus === "unavailable" && (
+              <HelpBox
+                iconComponent={<PrometheusErrorIcon />}
+                title={"We can’t retrieve advanced metrics at this time."}
+                help={
+                  <Box
+                    sx={{
+                      fontSize: "14px",
+                    }}
+                  >
+                    It looks like Prometheus is not available or reachable at
+                    the moment.
+                  </Box>
+                }
+              />
+            )}
             {panelInformation.length ? renderResourcesPanels() : null}
             <h2 style={{ margin: 0, borderBottom: "1px solid #dedede" }}>
               Advanced
             </h2>
             {panelInformation.length ? renderAdvancedResourcesPanels() : null}
           </RowPanelLayout>
+        </TabPanel>
+        <TabPanel
+          index={usage?.advancedMetricsStatus === "not configured" ? 0 : 3}
+          value={curTab}
+        >
+          {!usage && <LinearProgress />}
+          {usage && <BasicDashboard usage={usage} />}
         </TabPanel>
       </Grid>
     </PageLayout>
