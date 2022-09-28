@@ -27,7 +27,7 @@ import {
   formFieldStyles,
   modalStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { encodeURLString } from "../../../../../../common/utils";
 
 import { BucketObjectItem } from "./types";
@@ -41,7 +41,6 @@ interface ICreatePath {
   bucketName: string;
   folderName: string;
   onClose: () => any;
-  existingFiles: BucketObjectItem[];
   simplePath: string | null;
 }
 
@@ -57,7 +56,6 @@ const CreatePathModal = ({
   bucketName,
   onClose,
   classes,
-  existingFiles,
   simplePath,
 }: ICreatePath) => {
   const dispatch = useAppDispatch();
@@ -66,6 +64,8 @@ const CreatePathModal = ({
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [currentPath, setCurrentPath] = useState(bucketName);
+
+  const records = useSelector((state: AppState) => state.objectBrowser.records);
 
   useEffect(() => {
     if (simplePath) {
@@ -91,7 +91,7 @@ const CreatePathModal = ({
     const sharesName = (record: BucketObjectItem) =>
       record.name === folderPath + pathUrl;
 
-    if (existingFiles.findIndex(sharesName) !== -1) {
+    if (records.findIndex(sharesName) !== -1) {
       dispatch(
         setModalErrorSnackMessage({
           errorMessage: "Folder cannot have the same name as an existing file",

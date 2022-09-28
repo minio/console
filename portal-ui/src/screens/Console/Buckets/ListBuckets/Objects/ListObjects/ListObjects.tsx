@@ -30,15 +30,10 @@ import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import Grid from "@mui/material/Grid";
 import get from "lodash/get";
-import { BucketObjectItem, BucketObjectItemsList } from "./types";
 import api from "../../../../../../common/api";
-import TableWrapper, {
-  ItemActions,
-} from "../../../../Common/TableWrapper/TableWrapper";
 import {
   decodeURLString,
   encodeURLString,
-  getClientOS,
   niceBytesInt,
 } from "../../../../../../common/utils";
 
@@ -50,27 +45,16 @@ import {
   searchField,
   tableStyles,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { Badge, Typography } from "@mui/material";
+import { Badge } from "@mui/material";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
-import {
-  download,
-  extensionPreview,
-  permissionItems,
-  sortListObjects,
-} from "../utils";
-import {
-  BucketInfo,
-  BucketObjectLocking,
-  BucketQuota,
-  BucketVersioning,
-} from "../../../types";
+import { extensionPreview } from "../utils";
+import { BucketInfo, BucketQuota } from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
-
 import {
   IAM_SCOPES,
   permissionTooltipHelper,
@@ -79,7 +63,6 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../../../../common/SecureComponent";
-
 import withSuspense from "../../../../Common/Components/withSuspense";
 import {
   BucketsIcon,
@@ -91,7 +74,6 @@ import UploadFilesButton from "../../UploadFilesButton";
 import DetailsListPanel from "./DetailsListPanel";
 import ObjectDetailPanel from "./ObjectDetailPanel";
 import ActionsListSection from "./ActionsListSection";
-import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
 import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
 import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
@@ -111,16 +93,21 @@ import {
   completeObject,
   failObject,
   openList,
+  resetMessages,
   resetRewind,
-  setLoadingObjectInfo,
+  setDownloadRenameModal,
   setLoadingObjectsList,
+  setLoadingRecords,
   setLoadingVersions,
   setNewObject,
   setObjectDetailsView,
+  setPreviewOpen,
   setSearchObjects,
+  setSelectedObjects,
   setSelectedObjectView,
+  setSelectedPreview,
+  setShareFileModalOpen,
   setShowDeletedObjects,
-  setSimplePathHandler,
   setVersionsModeEnabled,
   updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
@@ -132,8 +119,13 @@ import {
   setBucketInfo,
 } from "../../../BucketDetails/bucketDetailsSlice";
 import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
-import { selFeatures } from "../../../../consoleSlice";
 import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
+import ListObjectsTable from "./ListObjectsTable";
+import {
+  downloadSelected,
+  openPreview,
+  openShare,
+} from "../../../../ObjectBrowser/objectBrowserThunks";
 
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
@@ -159,28 +151,6 @@ const PreviewFileModal = withSuspense(
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    browsePaper: {
-      border: 0,
-      height: "calc(100vh - 210px)",
-      "&.isEmbedded": {
-        height: "calc(100vh - 315px)",
-      },
-      "&.actionsPanelOpen": {
-        minHeight: "100%",
-      },
-      "@media (max-width: 800px)": {
-        width: 800,
-      },
-    },
-    "@global": {
-      ".rowLine:hover  .iconFileElm": {
-        backgroundImage: "url(/images/ob_file_filled.svg)",
-      },
-      ".rowLine:hover  .iconFolderElm": {
-        backgroundImage: "url(/images/ob_folder_filled.svg)",
-      },
-    },
-
     badgeOverlap: {
       "& .MuiBadge-badge": {
         top: 10,
@@ -215,12 +185,8 @@ const useStyles = makeStyles((theme: Theme) =>
     breadcrumbsContainer: {
       padding: "12px 14px 5px",
     },
-    parentWrapper: {
-      "@media (max-width: 800px)": {
-        overflowX: "auto",
-      },
-    },
     fullContainer: {
+      position: "relative",
       "@media (max-width: 799px)": {
         width: 0,
       },
@@ -255,31 +221,6 @@ const acceptDnDStyle = {
   borderColor: "#00e676",
 };
 
-function useInterval(callback: any, delay: number) {
-  const savedCallback = useRef<Function | null>(null);
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      if (savedCallback !== undefined && savedCallback.current) {
-        savedCallback.current();
-      }
-    }
-
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
-
-const defLoading = <Typography component="h3">Loading...</Typography>;
-
 const ListObjects = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
@@ -290,9 +231,6 @@ const ListObjects = () => {
   const rewindEnabled = useSelector(
     (state: AppState) => state.objectBrowser.rewind.rewindEnabled
   );
-  const rewindDate = useSelector(
-    (state: AppState) => state.objectBrowser.rewind.dateToRewind
-  );
   const bucketToRewind = useSelector(
     (state: AppState) => state.objectBrowser.rewind.bucketToRewind
   );
@@ -300,9 +238,6 @@ const ListObjects = () => {
     (state: AppState) => state.objectBrowser.versionsMode
   );
 
-  const searchObjects = useSelector(
-    (state: AppState) => state.objectBrowser.searchObjects
-  );
   const showDeleted = useSelector(
     (state: AppState) => state.objectBrowser.showDeleted
   );
@@ -312,47 +247,41 @@ const ListObjects = () => {
   const selectedInternalPaths = useSelector(
     (state: AppState) => state.objectBrowser.selectedInternalPaths
   );
-  const loading = useSelector(
+  const loadingObjects = useSelector(
     (state: AppState) => state.objectBrowser.loadingObjects
   );
   const simplePath = useSelector(
     (state: AppState) => state.objectBrowser.simplePath
   );
 
-  const loadingBucket = useSelector(selBucketDetailsLoading);
-  const bucketInfo = useSelector(selBucketDetailsInfo);
-  const allowResources = useSelector(
-    (state: AppState) => state.console.session.allowResources
+  const isVersioned = useSelector(
+    (state: AppState) => state.objectBrowser.isVersioned
+  );
+  const lockingEnabled = useSelector(
+    (state: AppState) => state.objectBrowser.lockingEnabled
+  );
+  const downloadRenameModal = useSelector(
+    (state: AppState) => state.objectBrowser.downloadRenameModal
+  );
+  const selectedPreview = useSelector(
+    (state: AppState) => state.objectBrowser.selectedPreview
+  );
+  const shareFileModalOpen = useSelector(
+    (state: AppState) => state.objectBrowser.shareFileModalOpen
+  );
+  const previewOpen = useSelector(
+    (state: AppState) => state.objectBrowser.previewOpen
   );
 
-  const features = useSelector(selFeatures);
-  const obOnly = !!features?.includes("object-browser-only");
+  const loadingBucket = useSelector(selBucketDetailsLoading);
+  const bucketInfo = useSelector(selBucketDetailsInfo);
 
-  const [records, setRecords] = useState<BucketObjectItem[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
-  const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
-  const [loadingMessage, setLoadingMessage] =
-    useState<React.ReactNode>(defLoading);
-  const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
-  const [isVersioned, setIsVersioned] = useState<boolean>(false);
-  const [loadingLocking, setLoadingLocking] = useState<boolean>(true);
-  const [lockingEnabled, setLockingEnabled] = useState<boolean>(false);
   const [rewindSelect, setRewindSelect] = useState<boolean>(false);
-  const [selectedObjects, setSelectedObjects] = useState<string[]>([]);
-  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
-  const [selectedPreview, setSelectedPreview] =
-    useState<BucketObjectItem | null>(null);
-  const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
-  const [sortDirection, setSortDirection] = useState<
-    "ASC" | "DESC" | undefined
-  >("ASC");
-  const [currentSortField, setCurrentSortField] = useState<string>("name");
   const [iniLoad, setIniLoad] = useState<boolean>(false);
   const [canShareFile, setCanShareFile] = useState<boolean>(false);
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
-  const [downloadRenameModal, setDownloadRenameModal] =
-    useState<BucketObjectItem | null>(null);
 
   const pathSegment = location.pathname.split("/browse/");
 
@@ -378,6 +307,30 @@ const ListObjects = () => {
     true,
     true
   );
+
+  const displayDeleteObject = hasPermission(bucketName, [
+    IAM_SCOPES.S3_DELETE_OBJECT,
+  ]);
+  const selectedObjects = useSelector(
+    (state: AppState) => state.objectBrowser.selectedObjects
+  );
+
+  useEffect(() => {
+    dispatch(setSearchObjects(""));
+    dispatch(setLoadingObjectsList(true));
+    dispatch(setSelectedObjects([]));
+  }, [simplePath, dispatch]);
+
+  useEffect(() => {
+    if (rewindEnabled) {
+      if (bucketToRewind !== bucketName) {
+        dispatch(resetRewind());
+        return;
+      }
+    }
+  }, [rewindEnabled, bucketToRewind, bucketName, dispatch]);
+
+  // END OF WS HANDLERS
 
   useEffect(() => {
     if (folderUpload.current !== null) {
@@ -433,39 +386,14 @@ const ListObjects = () => {
       return;
     }
 
-    if (selectedObjects.length === 0 && selectedInternalPaths === null) {
+    if (
+      selectedObjects.length === 0 &&
+      selectedInternalPaths === null &&
+      !loadingObjects
+    ) {
       dispatch(setObjectDetailsView(false));
     }
-  }, [selectedObjects, selectedInternalPaths, dispatch]);
-
-  const displayDeleteObject = hasPermission(bucketName, [
-    IAM_SCOPES.S3_DELETE_OBJECT,
-  ]);
-
-  const displayListObjects = hasPermission(bucketName, [
-    IAM_SCOPES.S3_LIST_BUCKET,
-  ]);
-
-  const updateMessage = () => {
-    let timeDelta = Date.now() - loadingStartTime;
-
-    if (timeDelta / 1000 >= 6) {
-      setLoadingMessage(
-        <Fragment>
-          <Typography component="h3">
-            This operation is taking longer than expected... (
-            {Math.ceil(timeDelta / 1000)}s)
-          </Typography>
-        </Fragment>
-      );
-    } else if (timeDelta / 1000 >= 3) {
-      setLoadingMessage(
-        <Typography component="h3">
-          This operation is taking longer than expected...
-        </Typography>
-      );
-    }
-  };
+  }, [selectedObjects, selectedInternalPaths, dispatch, loadingObjects]);
 
   useEffect(() => {
     if (!iniLoad) {
@@ -473,280 +401,6 @@ const ListObjects = () => {
       setIniLoad(true);
     }
   }, [iniLoad, dispatch, setIniLoad]);
-
-  useInterval(() => {
-    // Your custom logic here
-    if (loading) {
-      updateMessage();
-    }
-  }, 1000);
-
-  useEffect(() => {
-    if (loadingVersioning) {
-      if (displayListObjects) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-          .then((res: BucketVersioning) => {
-            setIsVersioned(res.is_versioned);
-            setLoadingVersioning(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            console.error(
-              "Error Getting Object Versioning Status: ",
-              err.detailedError
-            );
-            setLoadingVersioning(false);
-          });
-      } else {
-        setLoadingVersioning(false);
-        setRecords([]);
-      }
-    }
-  }, [bucketName, loadingVersioning, dispatch, displayListObjects]);
-
-  useEffect(() => {
-    if (loadingLocking) {
-      if (displayListObjects) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
-          .then((res: BucketObjectLocking) => {
-            setLockingEnabled(res.object_locking_enabled);
-            setLoadingLocking(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            console.error(
-              "Error Getting Object Locking Status: ",
-              err.detailedError
-            );
-            setLoadingLocking(false);
-          });
-      } else {
-        setRecords([]);
-        setLoadingLocking(false);
-      }
-    }
-  }, [bucketName, loadingLocking, dispatch, displayListObjects]);
-
-  useEffect(() => {
-    const decodedIPaths = decodeURLString(internalPaths);
-
-    if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
-      dispatch(setObjectDetailsView(false));
-      dispatch(setSelectedObjectView(null));
-      dispatch(
-        setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths)
-      );
-    } else {
-      dispatch(setLoadingObjectInfo(true));
-      dispatch(setObjectDetailsView(true));
-      dispatch(setLoadingVersions(true));
-      dispatch(
-        setSelectedObjectView(
-          `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`
-        )
-      );
-      dispatch(
-        setSimplePathHandler(
-          `${decodedIPaths.split("/").slice(0, -1).join("/")}/`
-        )
-      );
-    }
-  }, [internalPaths, rewindDate, rewindEnabled, dispatch]);
-
-  useEffect(() => {
-    dispatch(setSearchObjects(""));
-    dispatch(setLoadingObjectsList(true));
-    setSelectedObjects([]);
-  }, [simplePath, dispatch, setSelectedObjects]);
-
-  useEffect(() => {
-    if (loading) {
-      if (displayListObjects) {
-        let pathPrefix = "";
-        if (internalPaths) {
-          const decodedPath = decodeURLString(internalPaths);
-          pathPrefix = decodedPath.endsWith("/")
-            ? decodedPath
-            : decodedPath + "/";
-        }
-
-        let currentTimestamp = Date.now();
-        setLoadingStartTime(currentTimestamp);
-        setLoadingMessage(defLoading);
-
-        // We get URL to look into
-        let urlTake = `/api/v1/buckets/${bucketName}/objects`;
-
-        // Is rewind enabled?, we use Rewind API
-        if (rewindEnabled) {
-          if (bucketToRewind !== bucketName) {
-            dispatch(resetRewind());
-            return;
-          }
-
-          if (rewindDate) {
-            const rewindParsed = rewindDate.toISOString();
-
-            urlTake = `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}`;
-          }
-        } else if (showDeleted) {
-          // Do we want to display deleted items too?, we use rewind to current time to show everything
-          const currDate = new Date();
-          const currDateISO = currDate.toISOString();
-
-          urlTake = `/api/v1/buckets/${bucketName}/rewind/${currDateISO}`;
-        }
-
-        api
-          .invoke(
-            "GET",
-            `${urlTake}${
-              pathPrefix ? `?prefix=${encodeURLString(pathPrefix)}` : ``
-            }`
-          )
-          .then((res: BucketObjectItemsList) => {
-            const records: BucketObjectItem[] = res.objects || [];
-            const folders: BucketObjectItem[] = [];
-            const files: BucketObjectItem[] = [];
-
-            // We separate items between folders or files to display folders at the beginning always.
-            records.forEach((record) => {
-              // We omit files from the same path
-              if (record.name !== decodeURLString(internalPaths)) {
-                // this is a folder
-                if (record.name.endsWith("/")) {
-                  folders.push(record);
-                } else {
-                  // this is a file
-                  files.push(record);
-                }
-              }
-            });
-
-            const recordsInElement = [...folders, ...files];
-
-            if (recordsInElement.length === 0 && pathPrefix !== "") {
-              let pathTest = `/api/v1/buckets/${bucketName}/objects${
-                internalPaths ? `?prefix=${internalPaths}` : ""
-              }`;
-
-              if (rewindEnabled) {
-                const rewindParsed = rewindDate.toISOString();
-
-                let pathPrefix = "";
-                if (internalPaths) {
-                  const decodedPath = decodeURLString(internalPaths);
-                  pathPrefix = decodedPath.endsWith("/")
-                    ? decodedPath
-                    : decodedPath + "/";
-                }
-
-                pathTest = `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
-                  pathPrefix ? `?prefix=${encodeURLString(pathPrefix)}` : ``
-                }`;
-              }
-
-              api
-                .invoke("GET", pathTest)
-                .then((res: BucketObjectItemsList) => {
-                  //It is a file since it has elements in the object, setting file flag and waiting for component mount
-                  if (!res.objects) {
-                    // It is a folder, we remove loader & set original results list
-                    dispatch(setLoadingObjectsList(false));
-                    setRecords(recordsInElement);
-                  } else {
-                    // This code prevents the program from opening a file when a substring of that file is entered as a new folder.
-                    // Previously, if there was a file test1.txt and the folder test was created with the same prefix, the program
-                    // would open test1.txt instead
-                    let found = false;
-                    let pathPrefixChopped = pathPrefix.slice(
-                      0,
-                      pathPrefix.length - 1
-                    );
-                    for (let i = 0; i < res.objects.length; i++) {
-                      if (res.objects[i].name === pathPrefixChopped) {
-                        found = true;
-                      }
-                    }
-                    if (
-                      (res.objects.length === 1 &&
-                        res.objects[0].name.endsWith("/")) ||
-                      !found
-                    ) {
-                      // This is a folder, we set the original results list
-                      setRecords(recordsInElement);
-                    } else {
-                      // This is a file. We change URL & Open file details view.
-                      dispatch(setObjectDetailsView(true));
-                      dispatch(setSelectedObjectView(internalPaths));
-
-                      // We split the selected object URL & remove the last item to fetch the files list for the parent folder
-                      const parentPath = `${decodeURLString(internalPaths)
-                        .split("/")
-                        .slice(0, -1)
-                        .join("/")}/`;
-
-                      api
-                        .invoke(
-                          "GET",
-                          `${urlTake}${
-                            pathPrefix
-                              ? `?prefix=${encodeURLString(parentPath)}`
-                              : ``
-                          }`
-                        )
-                        .then((res: BucketObjectItemsList) => {
-                          const records: BucketObjectItem[] = res.objects || [];
-
-                          setRecords(records);
-                        })
-                        .catch(() => {});
-                    }
-
-                    dispatch(setLoadingObjectsList(false));
-                  }
-                })
-                .catch((err: ErrorResponseHandler) => {
-                  dispatch(setLoadingObjectsList(false));
-                  dispatch(setErrorSnackMessage(err));
-                });
-            } else {
-              setRecords(recordsInElement);
-              dispatch(setLoadingObjectsList(false));
-            }
-          })
-          .catch((err: ErrorResponseHandler) => {
-            const permitItems = permissionItems(
-              bucketName,
-              pathPrefix,
-              allowResources || []
-            );
-
-            if (!permitItems || permitItems.length === 0) {
-              dispatch(setErrorSnackMessage(err));
-            } else {
-              setRecords(permitItems);
-            }
-
-            dispatch(setLoadingObjectsList(false));
-          });
-      } else {
-        dispatch(setLoadingObjectsList(false));
-      }
-    }
-  }, [
-    loading,
-    dispatch,
-    bucketName,
-    rewindEnabled,
-    rewindDate,
-    internalPaths,
-    bucketInfo,
-    showDeleted,
-    displayListObjects,
-    bucketToRewind,
-    allowResources,
-  ]);
 
   // bucket info
   useEffect(() => {
@@ -769,7 +423,7 @@ const ListObjects = () => {
 
     if (refresh) {
       dispatch(setSnackBarMessage(`Objects deleted successfully.`));
-      setSelectedObjects([]);
+      dispatch(setSelectedObjects([]));
       dispatch(setLoadingObjectsList(true));
     }
   };
@@ -792,73 +446,6 @@ const ListObjects = () => {
     uploadObject(newFiles, "");
 
     e.target.value = "";
-  };
-
-  const downloadObject = (object: BucketObjectItem) => {
-    const identityDownload = encodeURLString(
-      `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
-    );
-
-    const ID = makeid(8);
-
-    const downloadCall = download(
-      bucketName,
-      encodeURLString(object.name),
-      object.version_id,
-      object.size,
-      null,
-      ID,
-      (progress) => {
-        dispatch(
-          updateProgress({
-            instanceID: identityDownload,
-            progress: progress,
-          })
-        );
-      },
-      () => {
-        dispatch(completeObject(identityDownload));
-      },
-      (msg: string) => {
-        dispatch(failObject({ instanceID: identityDownload, msg }));
-      },
-      () => {
-        dispatch(cancelObjectInList(identityDownload));
-      }
-    );
-    storeCallForObjectWithID(ID, downloadCall);
-    dispatch(
-      setNewObject({
-        ID,
-        bucketName,
-        done: false,
-        instanceID: identityDownload,
-        percentage: 0,
-        prefix: object.name,
-        type: "download",
-        waitingForFile: true,
-        failed: false,
-        cancelled: false,
-        errorMessage: "",
-      })
-    );
-  };
-
-  const openPath = (idElement: string) => {
-    setSelectedObjects([]);
-
-    const newPath = `/buckets/${bucketName}/browse${
-      idElement ? `/${encodeURLString(idElement)}` : ``
-    }`;
-    navigate(newPath);
-
-    dispatch(setObjectDetailsView(true));
-    dispatch(setLoadingVersions(true));
-    dispatch(
-      setSelectedObjectView(
-        `${idElement ? `${encodeURLString(idElement)}` : ``}`
-      )
-    );
   };
 
   const uploadObject = useCallback(
@@ -1064,7 +651,7 @@ const ListObjects = () => {
           }
           // We force objects list reload after all promises were handled
           dispatch(setLoadingObjectsList(true));
-          setSelectedObjects([]);
+          dispatch(setSelectedObjects([]));
         });
       };
 
@@ -1110,140 +697,18 @@ const ListObjects = () => {
     [isDragActive, isDragAccept]
   );
 
-  const openPreview = () => {
-    if (selectedObjects.length === 1) {
-      let fileObject: BucketObjectItem | undefined;
-
-      const findFunction = (currValue: BucketObjectItem) =>
-        selectedObjects.includes(currValue.name);
-
-      fileObject = filteredRecords.find(findFunction);
-
-      if (fileObject) {
-        setSelectedPreview(fileObject);
-        setPreviewOpen(true);
-      }
-    }
-  };
-
-  const openShare = () => {
-    if (selectedObjects.length === 1) {
-      let fileObject: BucketObjectItem | undefined;
-
-      const findFunction = (currValue: BucketObjectItem) =>
-        selectedObjects.includes(currValue.name);
-
-      fileObject = filteredRecords.find(findFunction);
-
-      if (fileObject) {
-        setSelectedPreview(fileObject);
-        setShareFileModalOpen(true);
-      }
-    }
-  };
-
   const closeShareModal = () => {
-    setShareFileModalOpen(false);
-    setSelectedPreview(null);
+    dispatch(setShareFileModalOpen(false));
+    dispatch(setSelectedPreview(null));
   };
-
-  const filteredRecords = records.filter((b: BucketObjectItem) => {
-    if (searchObjects === "") {
-      return true;
-    } else {
-      const objectName = b.name.toLowerCase();
-      if (objectName.indexOf(searchObjects.toLowerCase()) >= 0) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  });
 
   const rewindCloseModal = () => {
     setRewindSelect(false);
   };
 
   const closePreviewWindow = () => {
-    setPreviewOpen(false);
-    setSelectedPreview(null);
-  };
-
-  const selectListObjects = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const targetD = e.target;
-    const value = targetD.value;
-    const checked = targetD.checked;
-
-    let elements: string[] = [...selectedObjects]; // We clone the selectedBuckets array
-
-    if (checked) {
-      // If the user has checked this field we need to push this to selectedBucketsList
-      elements.push(value);
-    } else {
-      // User has unchecked this field, we need to remove it from the list
-      elements = elements.filter((element) => element !== value);
-    }
-    setSelectedObjects(elements);
-    dispatch(setSelectedObjectView(null));
-
-    return elements;
-  };
-
-  const sortChange = (sortData: any) => {
-    const newSortDirection = get(sortData, "sortDirection", "DESC");
-    setCurrentSortField(sortData.sortBy);
-    setSortDirection(newSortDirection);
-    dispatch(setLoadingObjectsList(true));
-  };
-
-  const plSelect = filteredRecords;
-  const sortASC = plSelect.sort(sortListObjects(currentSortField));
-
-  let payload: BucketObjectItem[] = [];
-
-  if (sortDirection === "ASC") {
-    payload = sortASC;
-  } else {
-    payload = sortASC.reverse();
-  }
-
-  const selectAllItems = () => {
-    dispatch(setSelectedObjectView(null));
-
-    if (selectedObjects.length === payload.length) {
-      setSelectedObjects([]);
-      return;
-    }
-
-    const elements = payload.map((item) => item.name);
-    setSelectedObjects(elements);
-  };
-
-  const downloadSelected = () => {
-    if (selectedObjects.length !== 0) {
-      let itemsToDownload: BucketObjectItem[] = [];
-
-      const filterFunction = (currValue: BucketObjectItem) =>
-        selectedObjects.includes(currValue.name);
-
-      itemsToDownload = filteredRecords.filter(filterFunction);
-
-      // I case just one element is selected, then we trigger download modal validation.
-      // We are going to enforce zip download when multiple files are selected
-      if (itemsToDownload.length === 1) {
-        if (
-          itemsToDownload[0].name.length > 200 &&
-          getClientOS().toLowerCase().includes("win")
-        ) {
-          setDownloadRenameModal(itemsToDownload[0]);
-          return;
-        }
-      }
-
-      itemsToDownload.forEach((filteredItem) => {
-        downloadObject(filteredItem);
-      });
-    }
+    dispatch(setPreviewOpen(false));
+    dispatch(setSelectedPreview(null));
   };
 
   const onClosePanel = (forceRefresh: boolean) => {
@@ -1268,7 +733,7 @@ const ListObjects = () => {
     }
 
     dispatch(setObjectDetailsView(false));
-    setSelectedObjects([]);
+    dispatch(setSelectedObjects([]));
 
     if (forceRefresh) {
       dispatch(setLoadingObjectsList(true));
@@ -1276,28 +741,22 @@ const ListObjects = () => {
   };
 
   const setDeletedAction = () => {
+    dispatch(resetMessages());
     dispatch(setShowDeletedObjects(!showDeleted));
     onClosePanel(true);
   };
 
   const closeRenameModal = () => {
-    setDownloadRenameModal(null);
+    dispatch(setDownloadRenameModal(null));
   };
-
-  const tableActions: ItemActions[] = [
-    {
-      type: "view",
-      label: "View",
-      onClick: openPath,
-      sendOnlyId: true,
-    },
-  ];
 
   const multiActionButtons = [
     {
-      action: downloadSelected,
+      action: () => {
+        dispatch(downloadSelected(bucketName));
+      },
       label: "Download",
-      disabled: !canDownload || selectedObjects.length === 0,
+      disabled: !canDownload || selectedObjects?.length === 0,
       icon: <DownloadIcon />,
       tooltip: canDownload
         ? "Download Selected"
@@ -1307,14 +766,18 @@ const ListObjects = () => {
           ),
     },
     {
-      action: openShare,
+      action: () => {
+        dispatch(openShare());
+      },
       label: "Share",
       disabled: selectedObjects.length !== 1 || !canShareFile,
       icon: <ShareIcon />,
       tooltip: canShareFile ? "Share Selected File" : "Sharing unavailable",
     },
     {
-      action: openPreview,
+      action: () => {
+        dispatch(openPreview());
+      },
       label: "Preview",
       disabled: selectedObjects.length !== 1 || !canPreviewFile,
       icon: <PreviewIcon />,
@@ -1484,6 +947,8 @@ const ListObjects = () => {
                         if (versionsMode) {
                           dispatch(setLoadingVersions(true));
                         } else {
+                          dispatch(resetMessages());
+                          dispatch(setLoadingRecords(true));
                           dispatch(setLoadingObjectsList(true));
                         }
                       }}
@@ -1560,7 +1025,6 @@ const ListObjects = () => {
                     <BrowserBreadcrumbs
                       bucketName={bucketName}
                       internalPaths={pageTitle}
-                      existingFiles={records || []}
                       additionalOptions={
                         !isVersioned || rewindEnabled ? null : (
                           <div>
@@ -1581,48 +1045,7 @@ const ListObjects = () => {
                       hidePathButton={false}
                     />
                   </Grid>
-                  <TableWrapper
-                    itemActions={tableActions}
-                    columns={
-                      rewindEnabled ? rewindModeColumns : listModeColumns
-                    }
-                    isLoading={loading}
-                    loadingMessage={loadingMessage}
-                    entityName="Objects"
-                    idField="name"
-                    records={payload}
-                    customPaperHeight={`${classes.browsePaper} ${
-                      obOnly ? "isEmbedded" : ""
-                    } ${detailsOpen ? "actionsPanelOpen" : ""}`}
-                    selectedItems={selectedObjects}
-                    onSelect={selectListObjects}
-                    customEmptyMessage={
-                      !displayListObjects
-                        ? permissionTooltipHelper(
-                            [IAM_SCOPES.S3_LIST_BUCKET],
-                            "view Objects in this bucket"
-                          )
-                        : `This location is empty${
-                            !rewindEnabled
-                              ? ", please try uploading a new file"
-                              : ""
-                          }`
-                    }
-                    sortConfig={{
-                      currentSort: currentSortField,
-                      currentDirection: sortDirection,
-                      triggerSort: sortChange,
-                    }}
-                    onSelectAll={selectAllItems}
-                    rowStyle={({ index }) => {
-                      if (payload[index]?.delete_flag) {
-                        return "deleted";
-                      }
-
-                      return "";
-                    }}
-                    parentClassName={classes.parentWrapper}
-                  />
+                  <ListObjectsTable />
                 </Grid>
               </SecureComponent>
             )}

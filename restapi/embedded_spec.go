@@ -7156,6 +7156,9 @@ func init() {
         "delete_flag": {
           "type": "boolean"
         },
+        "is_latest": {
+          "type": "boolean"
+        },
         "last_modified": {
           "type": "string"
         },
@@ -15456,6 +15459,9 @@ func init() {
           "type": "string"
         },
         "delete_flag": {
+          "type": "boolean"
+        },
+        "is_latest": {
           "type": "boolean"
         },
         "last_modified": {

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
@@ -37,8 +37,22 @@ import {
 } from "../../../../common/SecureComponent/permissions";
 import BackLink from "../../../../common/BackLink";
 import {
+  newMessage,
+  resetMessages,
+  setIsVersioned,
+  setLoadingLocking,
+  setLoadingObjectInfo,
+  setLoadingObjectsList,
+  setLoadingRecords,
+  setLoadingVersioning,
+  setLoadingVersions,
+  setLockingEnabled,
+  setObjectDetailsView,
+  setRecords,
   setSearchObjects,
   setSearchVersions,
+  setSelectedObjectView,
+  setSimplePathHandler,
   setVersionsModeEnabled,
 } from "../../ObjectBrowser/objectBrowserSlice";
 import SearchBox from "../../Common/SearchBox";
@@ -47,17 +61,92 @@ import AutoColorIcon from "../../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import { Button } from "mds";
 import hasPermission from "../../../../common/SecureComponent/accessControl";
+import { IMessageEvent } from "websocket";
+import { wsProtocol } from "../../../../utils/wsUtils";
+import {
+  WebsocketRequest,
+  WebsocketResponse,
+} from "../ListBuckets/Objects/ListObjects/types";
+import { decodeURLString, encodeURLString } from "../../../../common/utils";
+import { permissionItems } from "../ListBuckets/Objects/utils";
+import { setErrorSnackMessage } from "../../../../systemSlice";
+import api from "../../../../common/api";
+import { BucketObjectLocking, BucketVersioning } from "../types";
+import { ErrorResponseHandler } from "../../../../common/types";
 
 const styles = (theme: Theme) =>
   createStyles({
     ...containerForHeader(theme.spacing(4)),
   });
 
+let objectsWS: WebSocket;
+let currentRequestID: number = 0;
+let errorCounter: number = 0;
+
+const initWSConnection = (
+  onMessageCallback: (message: IMessageEvent) => void,
+  openCallback?: () => void,
+  notAvailableCallback?: () => void
+) => {
+  const url = new URL(window.location.toString());
+  const isDev = process.env.NODE_ENV === "development";
+  const port = isDev ? "9090" : url.port;
+
+  // check if we are using base path, if not this always is `/`
+  const baseLocation = new URL(document.baseURI);
+  const baseUrl = baseLocation.pathname;
+
+  const wsProt = wsProtocol(url.protocol);
+
+  objectsWS = new WebSocket(
+    `${wsProt}://${url.hostname}:${port}${baseUrl}ws/objectManager`
+  );
+
+  objectsWS.onopen = () => {
+    if (openCallback) {
+      openCallback();
+    }
+    errorCounter = 0;
+  };
+
+  const reconnectFn = () => {
+    if (errorCounter <= 5) {
+      initWSConnection(onMessageCallback, openCallback);
+      errorCounter += 1;
+    } else {
+      console.error("Websocket not available.");
+      if (notAvailableCallback) {
+        notAvailableCallback();
+      }
+    }
+  };
+
+  objectsWS.onclose = () => {
+    console.warn("Websocket Disconnected. Attempting Reconnection...");
+
+    // We reconnect after 3 seconds
+    setTimeout(reconnectFn, 3000);
+  };
+
+  objectsWS.onerror = () => {
+    console.error("Error in websocket connection. Attempting reconnection...");
+
+    // We reconnect after 3 seconds
+    setTimeout(reconnectFn, 3000);
+  };
+};
+
+initWSConnection(() => {});
+
 const BrowserHandler = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
+
+  const loadingVersioning = useSelector(
+    (state: AppState) => state.objectBrowser.loadingVersioning
+  );
 
   const versionsMode = useSelector(
     (state: AppState) => state.objectBrowser.versionsMode
@@ -71,6 +160,36 @@ const BrowserHandler = () => {
   const searchVersions = useSelector(
     (state: AppState) => state.objectBrowser.searchVersions
   );
+  const rewindEnabled = useSelector(
+    (state: AppState) => state.objectBrowser.rewind.rewindEnabled
+  );
+  const rewindDate = useSelector(
+    (state: AppState) => state.objectBrowser.rewind.dateToRewind
+  );
+  const showDeleted = useSelector(
+    (state: AppState) => state.objectBrowser.showDeleted
+  );
+  const allowResources = useSelector(
+    (state: AppState) => state.console.session.allowResources
+  );
+  const loadingObjects = useSelector(
+    (state: AppState) => state.objectBrowser.loadingObjects
+  );
+  const loadingLocking = useSelector(
+    (state: AppState) => state.objectBrowser.loadingLocking
+  );
+  const bucketToRewind = useSelector(
+    (state: AppState) => state.objectBrowser.rewind.bucketToRewind
+  );
+  const loadRecords = useSelector(
+    (state: AppState) => state.objectBrowser.loadRecords
+  );
+  const detailsOpen = useSelector(
+    (state: AppState) => state.objectBrowser.objectDetailsOpen
+  );
+  const selectedInternalPaths = useSelector(
+    (state: AppState) => state.objectBrowser.selectedInternalPaths
+  );
 
   const features = useSelector(selFeatures);
 
@@ -81,9 +200,285 @@ const BrowserHandler = () => {
 
   const obOnly = !!features?.includes("object-browser-only");
 
+  /*WS Request Handlers*/
+  objectsWS.onmessage = useCallback(
+    (message: IMessageEvent) => {
+      // reset start status
+      dispatch(setLoadingObjectsList(false));
+
+      const response: WebsocketResponse = JSON.parse(message.data.toString());
+      if (currentRequestID === response.request_id) {
+        // If response is not from current request, we can omit
+        if (response.request_id !== currentRequestID) {
+          return;
+        }
+
+        if (
+          response.error ===
+          "The Access Key Id you provided does not exist in our records."
+        ) {
+          // Session expired.
+          window.location.reload();
+        } else if (response.error === "Access Denied.") {
+          let pathPrefix = "";
+          if (internalPaths) {
+            const decodedPath = decodeURLString(internalPaths);
+            pathPrefix = decodedPath.endsWith("/")
+              ? decodedPath
+              : decodedPath + "/";
+          }
+
+          const permitItems = permissionItems(
+            bucketName,
+            pathPrefix,
+            allowResources || []
+          );
+
+          if (!permitItems || permitItems.length === 0) {
+            dispatch(
+              setErrorSnackMessage({
+                errorMessage: response.error,
+                detailedError: response.error,
+              })
+            );
+          } else {
+            dispatch(setRecords(permitItems));
+          }
+
+          return;
+        }
+
+        // This indicates final messages is received.
+        if (response.request_end) {
+          dispatch(setLoadingObjectsList(false));
+          dispatch(setLoadingRecords(false));
+          return;
+        }
+
+        if (response.data) {
+          dispatch(newMessage(response.data));
+        }
+      }
+    },
+    [dispatch, internalPaths, allowResources, bucketName]
+  );
+
+  const initWSRequest = useCallback(
+    (path: string, date: Date) => {
+      if (objectsWS && objectsWS.readyState === 1) {
+        try {
+          const newRequestID = currentRequestID + 1;
+          dispatch(resetMessages());
+
+          const request: WebsocketRequest = {
+            bucket_name: bucketName,
+            prefix: encodeURLString(path),
+            mode: rewindEnabled || showDeleted ? "rewind" : "objects",
+            date: date.toISOString(),
+            request_id: newRequestID,
+          };
+
+          objectsWS.send(JSON.stringify(request));
+
+          // We store the new ID for the requestID
+          currentRequestID = newRequestID;
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        // Socket is disconnected, we request reconnection but will need to recreate call
+        const dupRequest = () => {
+          initWSRequest(path, date);
+        };
+
+        initWSConnection(dupRequest);
+      }
+    },
+    [bucketName, rewindEnabled, showDeleted, dispatch]
+  );
+
+  useEffect(() => {
+    return () => {
+      const request: WebsocketRequest = {
+        mode: "cancel",
+        request_id: currentRequestID,
+      };
+
+      if (objectsWS && objectsWS.readyState === 1) {
+        objectsWS.send(JSON.stringify(request));
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (objectsWS?.readyState === 1) {
+      const decodedIPaths = decodeURLString(internalPaths);
+
+      if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
+        dispatch(setObjectDetailsView(false));
+        dispatch(setSelectedObjectView(null));
+        dispatch(
+          setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths)
+        );
+      } else {
+        dispatch(setLoadingObjectInfo(true));
+        dispatch(setObjectDetailsView(true));
+        dispatch(setLoadingVersions(true));
+        dispatch(
+          setSelectedObjectView(
+            `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`
+          )
+        );
+        dispatch(
+          setSimplePathHandler(
+            `${decodedIPaths.split("/").slice(0, -1).join("/")}/`
+          )
+        );
+      }
+    }
+  }, [internalPaths, rewindDate, rewindEnabled, dispatch]);
+
+  // Direct file access effect / prefix
+  useEffect(() => {
+    if (!loadingObjects && loadRecords && !rewindEnabled) {
+      const parentPath = `${decodeURLString(internalPaths)
+        .split("/")
+        .slice(0, -1)
+        .join("/")}/`;
+
+      initWSRequest(parentPath, new Date());
+    }
+  }, [
+    loadingObjects,
+    loadRecords,
+    bucketName,
+    bucketToRewind,
+    dispatch,
+    internalPaths,
+    rewindDate,
+    rewindEnabled,
+    initWSRequest,
+    detailsOpen,
+  ]);
+
+  const displayListObjects = hasPermission(bucketName, [
+    IAM_SCOPES.S3_LIST_BUCKET,
+  ]);
+
+  // Common objects list
+  useEffect(() => {
+    // begin watch if bucketName in bucketList and start pressed
+    if (loadingObjects && displayListObjects) {
+      let pathPrefix = "";
+      if (internalPaths) {
+        const decodedPath = decodeURLString(internalPaths);
+
+        // internalPaths are selected (file details), we split and get parent folder
+        if (selectedInternalPaths === internalPaths) {
+          pathPrefix = `${decodeURLString(internalPaths)
+            .split("/")
+            .slice(0, -1)
+            .join("/")}/`;
+        } else {
+          pathPrefix = decodedPath.endsWith("/")
+            ? decodedPath
+            : decodedPath + "/";
+        }
+      }
+
+      let requestDate = new Date();
+
+      if (rewindEnabled && rewindDate) {
+        requestDate = rewindDate;
+      }
+
+      initWSRequest(pathPrefix, requestDate);
+    } else {
+      dispatch(setLoadingObjectsList(false));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    loadingObjects,
+    internalPaths,
+    dispatch,
+    rewindDate,
+    rewindEnabled,
+    displayListObjects,
+    initWSRequest,
+  ]);
+
   useEffect(() => {
     dispatch(setVersionsModeEnabled({ status: false }));
   }, [internalPaths, dispatch]);
+
+  useEffect(() => {
+    if (loadingVersioning) {
+      if (displayListObjects) {
+        api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
+          .then((res: BucketVersioning) => {
+            dispatch(setIsVersioned(res.is_versioned));
+            dispatch(setLoadingVersioning(false));
+          })
+          .catch((err: ErrorResponseHandler) => {
+            console.error(
+              "Error Getting Object Versioning Status: ",
+              err.detailedError
+            );
+            dispatch(setLoadingVersioning(false));
+          });
+      } else {
+        dispatch(setLoadingVersioning(false));
+        dispatch(resetMessages());
+      }
+    }
+  }, [bucketName, loadingVersioning, dispatch, displayListObjects]);
+
+  useEffect(() => {
+    if (loadingLocking) {
+      if (displayListObjects) {
+        api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
+          .then((res: BucketObjectLocking) => {
+            dispatch(setLockingEnabled(res.object_locking_enabled));
+            dispatch(setLoadingLocking(false));
+          })
+          .catch((err: ErrorResponseHandler) => {
+            console.error(
+              "Error Getting Object Locking Status: ",
+              err.detailedError
+            );
+            dispatch(setLoadingLocking(false));
+          });
+      } else {
+        dispatch(resetMessages());
+        dispatch(setLoadingLocking(false));
+      }
+    }
+  }, [bucketName, loadingLocking, dispatch, displayListObjects]);
+
+  useEffect(() => {
+    if (loadingLocking) {
+      if (displayListObjects) {
+        api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
+          .then((res: BucketObjectLocking) => {
+            dispatch(setLockingEnabled(res.object_locking_enabled));
+            setLoadingLocking(false);
+          })
+          .catch((err: ErrorResponseHandler) => {
+            console.error(
+              "Error Getting Object Locking Status: ",
+              err.detailedError
+            );
+            setLoadingLocking(false);
+          });
+      } else {
+        dispatch(resetMessages());
+        setLoadingLocking(false);
+      }
+    }
+  }, [bucketName, loadingLocking, dispatch, displayListObjects]);
 
   const openBucketConfiguration = () => {
     navigate(`/buckets/${bucketName}/admin`);
