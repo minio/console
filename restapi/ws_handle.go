@@ -61,6 +61,7 @@ type wsAdminClient struct {
 type ConsoleWebsocket interface {
 	watch(options watchOptions)
 	heal(opts healOptions)
+	rewind(opts rewindListOpts)
 }
 
 type wsS3Client struct {
@@ -68,6 +69,18 @@ type wsS3Client struct {
 	conn wsConn
 	// mcClient
 	client MCClient
+}
+
+// ConsoleWebSocketMClient interface of a Websocket Client
+type ConsoleWebsocketMClient interface {
+	objects(options objectsListOpts)
+}
+
+type wsMinioClient struct {
+	// websocket connection.
+	conn wsConn
+	// MinIO admin Client
+	client minioClient
 }
 
 // WSConn interface with all functions to be implemented
@@ -136,8 +149,8 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 
 	// Un-comment for development so websockets work on port 5005
 	// upgrader.CheckOrigin = func(r *http.Request) bool {
-	// 	return true
-	// }
+	//	return true
+	//}
 
 	// upgrades the HTTP server connection to the WebSocket protocol.
 	conn, err := upgrader.Upgrade(w, req, nil)
@@ -236,7 +249,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.BucketName)
+		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.BucketName, "")
 		if err != nil {
 			ErrorWithContext(ctx, err)
 			closeWsConn(conn)
@@ -271,6 +284,38 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		go wsAdminClient.profile(ctx, pOptions)
+	case strings.HasPrefix(wsPath, `/objects`):
+		objectsOptions, err := getObjectsOptionsFromReq(req)
+		if err != nil {
+			ErrorWithContext(ctx, fmt.Errorf("error getting objects options: %v", err))
+			closeWsConn(conn)
+			return
+		}
+
+		wsMinioClient, err := newWebSocketMinioClient(conn, session)
+		if err != nil {
+			ErrorWithContext(ctx, err)
+			closeWsConn(conn)
+			return
+		}
+
+		go wsMinioClient.objects(ctx, objectsOptions)
+
+	case strings.HasPrefix(wsPath, `/rewind`):
+		rewindOptions, err := getRewindOptionsFromReq(req)
+		if err != nil {
+			ErrorWithContext(ctx, fmt.Errorf("error getting objects options: %v", err))
+			closeWsConn(conn)
+			return
+		}
+
+		wsS3Client, err := newWebSocketS3Client(conn, session, rewindOptions.BucketName, rewindOptions.Prefix)
+		if err != nil {
+			ErrorWithContext(ctx, err)
+			closeWsConn(conn)
+			return
+		}
+		go wsS3Client.rewind(ctx, rewindOptions)
 
 	default:
 		// path not found
@@ -299,10 +344,10 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) 
 }
 
 // newWebSocketS3Client returns a wsAdminClient authenticated as Console admin
-func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName string) (*wsS3Client, error) {
+func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName, prefix string) (*wsS3Client, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
-	s3Client, err := newS3BucketClient(claims, bucketName, "")
+	s3Client, err := newS3BucketClient(claims, bucketName, prefix)
 	if err != nil {
 		LogError("error creating S3Client:", err)
 		return nil, err
@@ -316,6 +361,28 @@ func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucket
 	// create websocket client and handle request
 	wsS3Client := &wsS3Client{conn: wsConnection, client: mcS3C}
 	return wsS3Client, nil
+}
+
+func newWebSocketMinioClient(conn *websocket.Conn, claims *models.Principal) (*wsMinioClient, error) {
+	// Only start Websocket Interaction after user has been
+	// authenticated with MinIO
+
+	mClient, err := newMinioClient(claims)
+	if err != nil {
+		LogError("error creating MinioClient:", err)
+		return nil, err
+	}
+
+	// create a websocket connection interface implementation
+	// defining the connection to be used
+	wsConnection := wsConn{conn: conn}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	// create websocket client and handle request
+	wsMinioClient := &wsMinioClient{conn: wsConnection, client: minioClient}
+	return wsMinioClient, nil
 }
 
 // wsReadClientCtx reads the messages that come from the client
@@ -492,6 +559,34 @@ func (wsc *wsAdminClient) profile(ctx context.Context, opts *profileOptions) {
 	sendWsCloseMessage(wsc.conn, err)
 }
 
+func (wsc *wsMinioClient) objects(ctx context.Context, opts *objectsListOpts) {
+	defer func() {
+		// close connection after return
+		wsc.conn.close()
+	}()
+
+	ctx = wsReadClientCtx(ctx, wsc.conn)
+
+	err := startObjectsListing(ctx, wsc.conn, wsc.client, opts)
+
+	sendWsCloseMessage(wsc.conn, err)
+}
+
+func (wsc *wsS3Client) rewind(ctx context.Context, opts *rewindListOpts) {
+	defer func() {
+		LogInfo("rewind list stopped")
+		// close connection after return
+		wsc.conn.close()
+	}()
+	LogInfo("rewind list request")
+
+	ctx = wsReadClientCtx(ctx, wsc.conn)
+
+	err := startRewindListing(ctx, wsc.conn, wsc.client, opts)
+
+	sendWsCloseMessage(wsc.conn, err)
+}
+
 // sendWsCloseMessage sends Websocket Connection Close Message indicating the Status Code
 // see https://tools.ietf.org/html/rfc6455#page-45
 func sendWsCloseMessage(conn WSConn, err error) {
@@ -507,7 +602,7 @@ func sendWsCloseMessage(conn WSConn, err error) {
 			return
 		}
 		// else, internal server error
-		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, ErrDefault.Error()))
+		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
 		return
 	}
 	// normal closure
