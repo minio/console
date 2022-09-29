@@ -22,7 +22,7 @@ import (
 	"crypto/sha1"
 	"strings"
 
-	"github.com/minio/console/pkg/auth/utils"
+	"github.com/minio/console/pkg/auth/token"
 	"github.com/minio/pkg/env"
 	"golang.org/x/crypto/pbkdf2"
 )
@@ -86,18 +86,14 @@ func IsIDPEnabled() bool {
 		GetIDPClientID() != ""
 }
 
-var defaultPassphraseForIDPHmac = utils.RandomCharString(64)
-
 // GetPassphraseForIDPHmac returns passphrase for the pbkdf2 function used to sign the oauth2 state parameter
 func getPassphraseForIDPHmac() string {
-	return env.Get(ConsoleIDPHmacPassphrase, defaultPassphraseForIDPHmac)
+	return env.Get(ConsoleIDPHmacPassphrase, token.GetPBKDFPassphrase())
 }
-
-var defaultSaltForIDPHmac = utils.RandomCharString(64)
 
 // GetSaltForIDPHmac returns salt for the pbkdf2 function used to sign the oauth2 state parameter
 func getSaltForIDPHmac() string {
-	return env.Get(ConsoleIDPHmacSalt, defaultSaltForIDPHmac)
+	return env.Get(ConsoleIDPHmacSalt, token.GetPBKDFSalt())
 }
 
 // getIDPScopes return default scopes during the IDP login request
