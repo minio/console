@@ -63,8 +63,6 @@ const Profile = ({ classes }: IProfileProps) => {
     "mem",
     "block",
     "mutex",
-    "trace",
-    "threads",
     "goroutines",
   ]);
 
@@ -73,8 +71,6 @@ const Profile = ({ classes }: IProfileProps) => {
     { label: "mem", value: "mem" },
     { label: "block", value: "block" },
     { label: "mutex", value: "mutex" },
-    { label: "trace", value: "trace" },
-    { label: "threads", value: "threads" },
     { label: "goroutines", value: "goroutines" },
   ];
 
