@@ -107,14 +107,14 @@ export const validRoutes = (
           icon: AccountsMenuIcon,
           forceDisplay: true,
         },
+        {
+          name: "Policies",
+          component: NavLink,
+          id: "policies",
+          to: IAM_PAGES.POLICIES,
+          icon: AccessMenuIcon,
+        },
       ],
-    },
-    {
-      name: "Access",
-      component: NavLink,
-      id: "access",
-      to: IAM_PAGES.POLICIES,
-      icon: AccessMenuIcon,
     },
 
     {

@@ -18,7 +18,11 @@ import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as constants from "../utils/constants";
 import { Selector } from "testcafe";
-import { iamPoliciesElement } from "../utils/elements-menu";
+import {
+  iamPoliciesElement,
+  identityElement,
+  usersElement,
+} from "../utils/elements-menu";
 
 const iamPolicyListItem = Selector(
   ".ReactVirtualized__Table__rowColumn"
@@ -37,7 +41,12 @@ fixture("For user with IAM Policies permissions")
 
 test("IAM Policies sidebar item exists", async (t) => {
   const iamPoliciesExist = iamPoliciesElement.exists;
-  await t.expect(iamPoliciesExist).ok();
+  await t
+    .expect(identityElement.exists)
+    .ok()
+    .click(identityElement)
+    .expect(iamPoliciesExist)
+    .ok();
 });
 
 test("Create Policy button exists", async (t) => {
