@@ -217,7 +217,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
               <CounterCard
                 label={"Buckets"}
                 icon={<BucketsIcon />}
-                counterValue={usage ? representationNumber(usage.buckets) : 0}
+                counterValue={usage ? 999999 : 0} // representationNumber(usage.buckets)
                 actions={
                   <Link
                     to={IAM_PAGES.BUCKETS}
@@ -240,6 +240,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                           padding: 5,
                           height: 30,
                           fontSize: 14,
+                          marginTop: 20,
                         }}
                       />
                     </TooltipWrapper>
