@@ -217,7 +217,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
               <CounterCard
                 label={"Buckets"}
                 icon={<BucketsIcon />}
-                counterValue={usage ? representationNumber(usage.buckets) : 0} 
+                counterValue={usage ? representationNumber(usage.buckets) : 0}
                 actions={
                   <Link
                     to={IAM_PAGES.BUCKETS}
