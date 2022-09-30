@@ -52,7 +52,7 @@ test("IAM Policies sidebar item exists", async (t) => {
 test("Create Policy button exists", async (t) => {
   const createPolicyButtonExists = elements.createPolicyButton.exists;
   await t
-    .navigateTo("http://localhost:9090/access/policies")
+    .navigateTo("http://localhost:9090/identity/policies")
     .expect(createPolicyButtonExists)
     .ok();
 });
