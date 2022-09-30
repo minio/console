@@ -129,7 +129,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		mockGetService func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error)
 	}{
 		{
-			name: "Return Tenant Admin, no errors",
+			name: "Return Tenant Admin, no errors using legacy credentials",
 			args: args{
 				ctx:    ctx,
 				client: kClient,
@@ -138,7 +138,11 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 						Namespace: "default",
 						Name:      "tenant-1",
 					},
-					Spec: miniov2.TenantSpec{CredsSecret: &corev1.LocalObjectReference{Name: "secret-name"}},
+					Spec: miniov2.TenantSpec{
+						CredsSecret: &corev1.LocalObjectReference{
+							Name: "secret-name",
+						},
+					},
 				},
 				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
@@ -146,6 +150,90 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 				vals := make(map[string][]byte)
 				vals["secretkey"] = []byte("secret")
 				vals["accesskey"] = []byte("access")
+				sec := &corev1.Secret{
+					Data: vals,
+				}
+				return sec, nil
+			},
+			mockGetService: func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error) {
+				serv := &corev1.Service{
+					Spec: corev1.ServiceSpec{
+						ClusterIP: "10.1.1.2",
+					},
+				}
+				return serv, nil
+			},
+			wantErr: false,
+		},
+		{
+			name: "Return Tenant Admin, no errors using credentials from configuration file",
+			args: args{
+				ctx:    ctx,
+				client: kClient,
+				tenant: miniov2.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Namespace: "default",
+						Name:      "tenant-1",
+					},
+					Spec: miniov2.TenantSpec{
+						CredsSecret: &corev1.LocalObjectReference{
+							Name: "secret-name",
+						},
+						Configuration: &corev1.LocalObjectReference{
+							Name: "tenant-configuration",
+						},
+					},
+				},
+				serviceURL: "http://service-1.default.svc.cluster.local:80",
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				vals := make(map[string][]byte)
+				vals["config.env"] = []byte(`
+export MINIO_ROOT_USER=minio
+export MINIO_ROOT_PASSWORD=minio123
+`)
+				sec := &corev1.Secret{
+					Data: vals,
+				}
+				return sec, nil
+			},
+			mockGetService: func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error) {
+				serv := &corev1.Service{
+					Spec: corev1.ServiceSpec{
+						ClusterIP: "10.1.1.2",
+					},
+				}
+				return serv, nil
+			},
+			wantErr: false,
+		},
+		{
+			name: "Return Tenant Admin, no errors using credentials from configuration file 2",
+			args: args{
+				ctx:    ctx,
+				client: kClient,
+				tenant: miniov2.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Namespace: "default",
+						Name:      "tenant-1",
+					},
+					Spec: miniov2.TenantSpec{
+						CredsSecret: &corev1.LocalObjectReference{
+							Name: "secret-name",
+						},
+						Configuration: &corev1.LocalObjectReference{
+							Name: "tenant-configuration",
+						},
+					},
+				},
+				serviceURL: "http://service-1.default.svc.cluster.local:80",
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				vals := make(map[string][]byte)
+				vals["config.env"] = []byte(`
+export MINIO_ACCESS_KEY=minio
+export MINIO_SECRET_KEY=minio123
+`)
 				sec := &corev1.Secret{
 					Data: vals,
 				}
@@ -1351,6 +1439,408 @@ ZrJuAw==
 				t.Errorf("parseTenantCertificates(%v, %v, %v, %v)error = %v, wantErr %v", tt.args.ctx, tt.args.clientSet, tt.args.namespace, tt.args.secrets, err, tt.wantErr)
 			}
 			assert.Equalf(t, tt.want, got, "parseTenantCertificates(%v, %v, %v, %v)", tt.args.ctx, tt.args.clientSet, tt.args.namespace, tt.args.secrets)
+		})
+	}
+}
+
+func Test_getTenant(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	opClient := opClientMock{}
+	type args struct {
+		ctx            context.Context
+		operatorClient OperatorClientI
+		namespace      string
+		tenantName     string
+		mockTenantGet  func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *miniov2.Tenant
+		wantErr bool
+	}{
+		{
+			name: "error getting tenant information",
+			args: args{
+				ctx:            ctx,
+				operatorClient: opClient,
+				namespace:      "default",
+				tenantName:     "test",
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return nil, errors.New("error getting tenant information")
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "success getting tenant information",
+			args: args{
+				ctx:            ctx,
+				operatorClient: opClient,
+				namespace:      "default",
+				tenantName:     "test",
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						ObjectMeta: metav1.ObjectMeta{
+							Name:      "test",
+							Namespace: "default",
+						},
+					}, nil
+				},
+			},
+			want: &miniov2.Tenant{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "test",
+					Namespace: "default",
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		opClientTenantGetMock = tt.args.mockTenantGet
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := getTenant(tt.args.ctx, tt.args.operatorClient, tt.args.namespace, tt.args.tenantName)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getTenant(%v, %v, %v, %v)", tt.args.ctx, tt.args.operatorClient, tt.args.namespace, tt.args.tenantName)
+			}
+			assert.Equalf(t, tt.want, got, "getTenant(%v, %v, %v, %v)", tt.args.ctx, tt.args.operatorClient, tt.args.namespace, tt.args.tenantName)
+		})
+	}
+}
+
+func Test_updateTenantConfigurationFile(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	opClient := opClientMock{}
+	kClient := k8sClientMock{}
+	type args struct {
+		ctx                     context.Context
+		operatorClient          OperatorClientI
+		client                  K8sClientI
+		namespace               string
+		params                  operator_api.UpdateTenantConfigurationParams
+		mockTenantGet           func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
+		mockGetSecret           func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
+		mockUpdateSecret        func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error)
+		mockDeletePodCollection func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name:    "error getting tenant information",
+			wantErr: true,
+			args: args{
+				ctx:            ctx,
+				operatorClient: opClient,
+				client:         kClient,
+				namespace:      "default",
+				params: operator_api.UpdateTenantConfigurationParams{
+					Namespace: "default",
+					Tenant:    "test",
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return nil, errors.New("error getting tenant")
+				},
+				mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+					return nil, nil
+				},
+				mockUpdateSecret: func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
+					return nil, nil
+				},
+				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+					return nil
+				},
+			},
+		},
+		{
+			name:    "error during getting tenant configuration",
+			wantErr: true,
+			args: args{
+				ctx:            ctx,
+				operatorClient: opClient,
+				client:         kClient,
+				namespace:      "default",
+				params: operator_api.UpdateTenantConfigurationParams{
+					Namespace: "default",
+					Tenant:    "test",
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						ObjectMeta: metav1.ObjectMeta{
+							Namespace: "default",
+							Name:      "test",
+						},
+						Spec: miniov2.TenantSpec{
+							Configuration: &corev1.LocalObjectReference{
+								Name: "tenant-configuration-secret",
+							},
+						},
+					}, nil
+				},
+				mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+					return nil, errors.New("error getting tenant configuration")
+				},
+				mockUpdateSecret: func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
+					return nil, nil
+				},
+				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+					return nil
+				},
+			},
+		},
+		{
+			name:    "error updating tenant configuration because of missing configuration secret",
+			wantErr: true,
+			args: args{
+				ctx:            ctx,
+				operatorClient: opClient,
+				client:         kClient,
+				namespace:      "default",
+				params: operator_api.UpdateTenantConfigurationParams{
+					Namespace: "default",
+					Tenant:    "test",
+					Body:      &models.UpdateTenantConfigurationRequest{},
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						ObjectMeta: metav1.ObjectMeta{
+							Namespace: "default",
+							Name:      "test",
+						},
+					}, nil
+				},
+				mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+					return &corev1.Secret{Data: map[string][]byte{
+						"config.env": []byte(`
+		export MINIO_ROOT_USER=minio
+		export MINIO_ROOT_PASSWORD=minio123
+		export MINIO_CONSOLE_ADDRESS=:8080
+		export MINIO_IDENTITY_LDAP_SERVER_ADDR=localhost:389
+		export MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN="cn=admin,dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD="admin"
+		export MINIO_IDENTITY_LDAP_USER_DN_SEARCH_BASE_DN="dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER="(uid=%s)"
+		export MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN="ou=swengg,dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER="(&(objectclass=groupOfNames)(member=%d))"
+		export MINIO_IDENTITY_LDAP_SERVER_INSECURE="on"
+		`),
+					}}, nil
+				},
+				mockUpdateSecret: func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
+					return nil, nil
+				},
+				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+					return nil
+				},
+			},
+		},
+		{
+			name:    "error because tenant configuration secret is nil",
+			wantErr: true,
+			args: args{
+				ctx:            ctx,
+				operatorClient: opClient,
+				client:         kClient,
+				namespace:      "default",
+				params: operator_api.UpdateTenantConfigurationParams{
+					Namespace: "default",
+					Tenant:    "test",
+					Body:      &models.UpdateTenantConfigurationRequest{},
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						ObjectMeta: metav1.ObjectMeta{
+							Namespace: "default",
+							Name:      "test",
+						},
+						Spec: miniov2.TenantSpec{
+							Configuration: &corev1.LocalObjectReference{
+								Name: "tenant-configuration-secret",
+							},
+						},
+					}, nil
+				},
+				mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+					return nil, nil
+				},
+				mockUpdateSecret: func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
+					return nil, nil
+				},
+				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+					return nil
+				},
+			},
+		},
+		{
+			name:    "error updating tenant configuration because of k8s issue",
+			wantErr: true,
+			args: args{
+				ctx:            ctx,
+				operatorClient: opClient,
+				client:         kClient,
+				namespace:      "default",
+				params: operator_api.UpdateTenantConfigurationParams{
+					Namespace: "default",
+					Tenant:    "test",
+					Body:      &models.UpdateTenantConfigurationRequest{},
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						ObjectMeta: metav1.ObjectMeta{
+							Namespace: "default",
+							Name:      "test",
+						},
+						Spec: miniov2.TenantSpec{
+							Configuration: &corev1.LocalObjectReference{
+								Name: "tenant-configuration-secret",
+							},
+						},
+					}, nil
+				},
+				mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+					return &corev1.Secret{Data: map[string][]byte{
+						"config.env": []byte(`
+		export MINIO_ROOT_USER=minio
+		export MINIO_ROOT_PASSWORD=minio123
+		export MINIO_CONSOLE_ADDRESS=:8080
+		export MINIO_IDENTITY_LDAP_SERVER_ADDR=localhost:389
+		export MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN="cn=admin,dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD="admin"
+		export MINIO_IDENTITY_LDAP_USER_DN_SEARCH_BASE_DN="dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER="(uid=%s)"
+		export MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN="ou=swengg,dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER="(&(objectclass=groupOfNames)(member=%d))"
+		export MINIO_IDENTITY_LDAP_SERVER_INSECURE="on"
+		`),
+					}}, nil
+				},
+				mockUpdateSecret: func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
+					return nil, errors.New("error updating configuration secret")
+				},
+				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+					return nil
+				},
+			},
+		},
+		{
+			name:    "error during deleting pod collection",
+			wantErr: true,
+			args: args{
+				ctx:            ctx,
+				operatorClient: opClient,
+				client:         kClient,
+				namespace:      "default",
+				params: operator_api.UpdateTenantConfigurationParams{
+					Namespace: "default",
+					Tenant:    "test",
+					Body:      &models.UpdateTenantConfigurationRequest{},
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						ObjectMeta: metav1.ObjectMeta{
+							Namespace: "default",
+							Name:      "test",
+						},
+						Spec: miniov2.TenantSpec{
+							Configuration: &corev1.LocalObjectReference{
+								Name: "tenant-configuration-secret",
+							},
+						},
+					}, nil
+				},
+				mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+					return &corev1.Secret{Data: map[string][]byte{
+						"config.env": []byte(`
+		export MINIO_ROOT_USER=minio
+		export MINIO_ROOT_PASSWORD=minio123
+		export MINIO_CONSOLE_ADDRESS=:8080
+		export MINIO_IDENTITY_LDAP_SERVER_ADDR=localhost:389
+		export MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN="cn=admin,dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD="admin"
+		export MINIO_IDENTITY_LDAP_USER_DN_SEARCH_BASE_DN="dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER="(uid=%s)"
+		export MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN="ou=swengg,dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER="(&(objectclass=groupOfNames)(member=%d))"
+		export MINIO_IDENTITY_LDAP_SERVER_INSECURE="on"
+		`),
+					}}, nil
+				},
+				mockUpdateSecret: func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
+					return nil, nil
+				},
+				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+					return errors.New("error deleting minio pods")
+				},
+			},
+		},
+		{
+			name:    "success updating tenant configuration secret",
+			wantErr: false,
+			args: args{
+				ctx:            ctx,
+				operatorClient: opClient,
+				client:         kClient,
+				namespace:      "default",
+				params: operator_api.UpdateTenantConfigurationParams{
+					Namespace: "default",
+					Tenant:    "test",
+					Body:      &models.UpdateTenantConfigurationRequest{},
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						ObjectMeta: metav1.ObjectMeta{
+							Namespace: "default",
+							Name:      "test",
+						},
+						Spec: miniov2.TenantSpec{
+							Configuration: &corev1.LocalObjectReference{
+								Name: "tenant-configuration-secret",
+							},
+						},
+					}, nil
+				},
+				mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+					return &corev1.Secret{Data: map[string][]byte{
+						"config.env": []byte(`
+		export MINIO_ROOT_USER=minio
+		export MINIO_ROOT_PASSWORD=minio123
+		export MINIO_CONSOLE_ADDRESS=:8080
+		export MINIO_IDENTITY_LDAP_SERVER_ADDR=localhost:389
+		export MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN="cn=admin,dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD="admin"
+		export MINIO_IDENTITY_LDAP_USER_DN_SEARCH_BASE_DN="dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER="(uid=%s)"
+		export MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN="ou=swengg,dc=min,dc=io"
+		export MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER="(&(objectclass=groupOfNames)(member=%d))"
+		export MINIO_IDENTITY_LDAP_SERVER_INSECURE="on"
+		`),
+					}}, nil
+				},
+				mockUpdateSecret: func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
+					return nil, nil
+				},
+				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+					return nil
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		k8sclientGetSecretMock = tt.args.mockGetSecret
+		opClientTenantGetMock = tt.args.mockTenantGet
+		UpdateSecretMock = tt.args.mockUpdateSecret
+		DeletePodCollectionMock = tt.args.mockDeletePodCollection
+		t.Run(tt.name, func(t *testing.T) {
+			err := updateTenantConfigurationFile(tt.args.ctx, tt.args.operatorClient, tt.args.client, tt.args.namespace, tt.args.params)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("updateTenantConfigurationFile(%v, %v, %v, %v, %v)", tt.args.ctx, tt.args.operatorClient, tt.args.client, tt.args.namespace, tt.args.params)
+			}
 		})
 	}
 }

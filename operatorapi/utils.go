@@ -46,11 +46,15 @@ func GetTenantConfiguration(ctx context.Context, clientSet K8sClientI, tenant *m
 	}
 	if tenant.HasConfigurationSecret() {
 		minioConfigurationSecret, err := clientSet.getSecret(ctx, tenant.Namespace, tenant.Spec.Configuration.Name, metav1.GetOptions{})
-		if err == nil {
-			configFromFile := miniov2.ParseRawConfiguration(minioConfigurationSecret.Data["config.env"])
-			for key, val := range configFromFile {
-				tenantConfiguration[key] = string(val)
-			}
+		if err != nil {
+			return tenantConfiguration, err
+		}
+		if minioConfigurationSecret == nil {
+			return tenantConfiguration, errors.New("tenant configuration secret is empty")
+		}
+		configFromFile := miniov2.ParseRawConfiguration(minioConfigurationSecret.Data["config.env"])
+		for key, val := range configFromFile {
+			tenantConfiguration[key] = string(val)
 		}
 	}
 	return tenantConfiguration, nil

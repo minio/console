@@ -22,18 +22,22 @@ import withStyles from "@mui/styles/withStyles";
 import createStyles from "@mui/styles/createStyles";
 import { Theme } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
 import { BackCaretIcon, CopyIcon, NewPathIcon } from "../../../icons";
 import { hasPermission } from "../../../common/SecureComponent";
-import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
+import {
+  IAM_SCOPES,
+  permissionTooltipHelper,
+} from "../../../common/SecureComponent/permissions";
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { setVersionsModeEnabled } from "./objectBrowserSlice";
 import { Button } from "mds";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 const CreatePathModal = withSuspense(
   React.lazy(
@@ -80,6 +84,8 @@ const BrowserBreadcrumbs = ({
   );
 
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
+
+  const canCreatePath = hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT]);
 
   let paths = internalPaths;
 
@@ -220,16 +226,22 @@ const BrowserBreadcrumbs = ({
           <div className={classes.additionalOptions}>{additionalOptions}</div>
         </Grid>
         {!hidePathButton && (
-          <Tooltip title={"Choose or create a new path"}>
+          <TooltipWrapper
+            tooltip={
+              canCreatePath
+                ? "Choose or create a new path"
+                : permissionTooltipHelper(
+                    [IAM_SCOPES.S3_PUT_OBJECT],
+                    "create a new path"
+                  )
+            }
+          >
             <Button
               id={"new-path"}
               onClick={() => {
                 setCreateFolderOpen(true);
               }}
-              disabled={
-                rewindEnabled ||
-                !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT])
-              }
+              disabled={rewindEnabled || !canCreatePath}
               icon={<NewPathIcon style={{ fill: "#969FA8" }} />}
               style={{
                 whiteSpace: "nowrap",
@@ -237,7 +249,7 @@ const BrowserBreadcrumbs = ({
               variant={"regular"}
               label={"Create new path"}
             />
-          </Tooltip>
+          </TooltipWrapper>
         )}
       </div>
       <div className={classes.breadcrumbsSecond}>{additionalOptions}</div>

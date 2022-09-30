@@ -733,6 +733,26 @@ export const getClientOS = (): string => {
   return getPlatform;
 };
 
+export const MinIOEnvVarsSettings: any = {
+  MINIO_ACCESS_KEY: { secret: true },
+  MINIO_ACCESS_KEY_OLD: { secret: true },
+  MINIO_AUDIT_WEBHOOK_AUTH_TOKEN: { secret: true },
+  MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD: { secret: true },
+  MINIO_IDENTITY_OPENID_CLIENT_SECRET: { secret: true },
+  MINIO_KMS_SECRET_KEY: { secret: true },
+  MINIO_LOGGER_WEBHOOK_AUTH_TOKEN: { secret: true },
+  MINIO_NOTIFY_ELASTICSEARCH_PASSWORD: { secret: true },
+  MINIO_NOTIFY_KAFKA_SASL_PASSWORD: { secret: true },
+  MINIO_NOTIFY_MQTT_PASSWORD: { secret: true },
+  MINIO_NOTIFY_NATS_PASSWORD: { secret: true },
+  MINIO_NOTIFY_NATS_TOKEN: { secret: true },
+  MINIO_NOTIFY_REDIS_PASSWORD: { secret: true },
+  MINIO_NOTIFY_WEBHOOK_AUTH_TOKEN: { secret: true },
+  MINIO_ROOT_PASSWORD: { secret: true },
+  MINIO_SECRET_KEY: { secret: true },
+  MINIO_SECRET_KEY_OLD: { secret: true },
+};
+
 export const MinIOEnvironmentVariables = [
   "MINIO_ACCESS_KEY",
   "MINIO_ACCESS_KEY_OLD",

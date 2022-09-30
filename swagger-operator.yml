@@ -414,6 +414,57 @@ paths:
       tags:
         - OperatorAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/configuration:
+    get:
+      summary: Tenant Configuration
+      operationId: TenantConfiguration
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tenantConfigurationResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+    patch:
+      summary: Update Tenant Configuration
+      operationId: UpdateTenantConfiguration
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateTenantConfigurationRequest"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
   /namespaces/{namespace}/tenants/{tenant}/security:
     get:
       summary: Tenant Security
@@ -1682,6 +1733,26 @@ definitions:
           capacity_usage:
             type: integer
             format: int64
+
+  tenantConfigurationResponse:
+    type: object
+    properties:
+      environmentVariables:
+        type: array
+        items:
+          $ref: "#/definitions/environmentVariable"
+
+  updateTenantConfigurationRequest:
+    type: object
+    properties:
+      keysToBeDeleted:
+        type: array
+        items:
+          type: string
+      environmentVariables:
+        type: array
+        items:
+          $ref: "#/definitions/environmentVariable"
 
   tenantSecurityResponse:
     type: object

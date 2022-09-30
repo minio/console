@@ -41,7 +41,10 @@ import {
   niceBytesInt,
   niceDaysInt,
 } from "../../../../../../common/utils";
-import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import {
+  IAM_SCOPES,
+  permissionTooltipHelper,
+} from "../../../../../../common/SecureComponent/permissions";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
@@ -90,6 +93,7 @@ import {
   updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
 import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
+import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 
 const styles = () =>
   createStyles({
@@ -405,6 +409,33 @@ const ObjectDetailPanel = ({
     currentItem,
     [bucketName, actualInfo.name].join("/"),
   ];
+  const canSetLegalHold = hasPermission(bucketName, [
+    IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD,
+  ]);
+  const canSetTags = hasPermission(objectResources, [
+    IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
+  ]);
+
+  const canChangeRetention = hasPermission(
+    objectResources,
+    [IAM_SCOPES.S3_GET_OBJECT_RETENTION, IAM_SCOPES.S3_PUT_OBJECT_RETENTION],
+    true
+  );
+  const canInspect = hasPermission(objectResources, [
+    IAM_SCOPES.ADMIN_INSPECT_DATA,
+  ]);
+  const canChangeVersioning = hasPermission(objectResources, [
+    IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
+    IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+    IAM_SCOPES.S3_GET_OBJECT_VERSION,
+  ]);
+  const canGetObject = hasPermission(objectResources, [
+    IAM_SCOPES.S3_GET_OBJECT,
+  ]);
+  const canDelete = hasPermission(
+    [bucketName, currentItem, [bucketName, actualInfo.name].join("/")],
+    [IAM_SCOPES.S3_DELETE_OBJECT]
+  );
 
   const multiActionButtons = [
     {
@@ -412,22 +443,28 @@ const ObjectDetailPanel = ({
         downloadObject(actualInfo);
       },
       label: "Download",
-      disabled:
-        !!actualInfo.is_delete_marker ||
-        !hasPermission(objectResources, [IAM_SCOPES.S3_GET_OBJECT]),
+      disabled: !!actualInfo.is_delete_marker || !canGetObject,
       icon: <DownloadIcon />,
-      tooltip: "Download this Object",
+      tooltip: canGetObject
+        ? "Download this Object"
+        : permissionTooltipHelper(
+            [IAM_SCOPES.S3_GET_OBJECT],
+            "download this object"
+          ),
     },
     {
       action: () => {
         shareObject();
       },
       label: "Share",
-      disabled:
-        !!actualInfo.is_delete_marker ||
-        !hasPermission(objectResources, [IAM_SCOPES.S3_GET_OBJECT]),
+      disabled: !!actualInfo.is_delete_marker || !canGetObject,
       icon: <ShareIcon />,
-      tooltip: "Share this File",
+      tooltip: canGetObject
+        ? "Share this File"
+        : permissionTooltipHelper(
+            [IAM_SCOPES.S3_GET_OBJECT],
+            "share this object"
+          ),
     },
     {
       action: () => {
@@ -437,9 +474,14 @@ const ObjectDetailPanel = ({
       disabled:
         !!actualInfo.is_delete_marker ||
         extensionPreview(currentItem) === "none" ||
-        !hasPermission(objectResources, [IAM_SCOPES.S3_GET_OBJECT]),
+        !canGetObject,
       icon: <PreviewIcon />,
-      tooltip: "Preview this File",
+      tooltip: canGetObject
+        ? "Preview this File"
+        : permissionTooltipHelper(
+            [IAM_SCOPES.S3_GET_OBJECT],
+            "preview this object"
+          ),
     },
     {
       action: () => {
@@ -450,10 +492,17 @@ const ObjectDetailPanel = ({
         !locking ||
         !distributedSetup ||
         !!actualInfo.is_delete_marker ||
-        !hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD]) ||
+        !canSetLegalHold ||
         selectedVersion !== "",
       icon: <LegalHoldIcon />,
-      tooltip: "Change Legal Hold rules for this File",
+      tooltip: canSetLegalHold
+        ? locking
+          ? "Change Legal Hold rules for this File"
+          : "Object Locking must be enabled on this bucket in order to set Legal Hold"
+        : permissionTooltipHelper(
+            [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD],
+            "change legal hold settings for this object"
+          ),
     },
     {
       action: openRetentionModal,
@@ -461,10 +510,21 @@ const ObjectDetailPanel = ({
       disabled:
         !distributedSetup ||
         !!actualInfo.is_delete_marker ||
-        !hasPermission(objectResources, [IAM_SCOPES.S3_GET_OBJECT_RETENTION]) ||
-        selectedVersion !== "",
+        !canChangeRetention ||
+        selectedVersion !== "" ||
+        !locking,
       icon: <RetentionIcon />,
-      tooltip: "Change Retention rules for this File",
+      tooltip: canChangeRetention
+        ? locking
+          ? "Change Retention rules for this File"
+          : "Object Locking must be enabled on this bucket in order to set Retention Rules"
+        : permissionTooltipHelper(
+            [
+              IAM_SCOPES.S3_GET_OBJECT_RETENTION,
+              IAM_SCOPES.S3_PUT_OBJECT_RETENTION,
+            ],
+            "change Retention Rules for this object"
+          ),
     },
     {
       action: () => {
@@ -472,11 +532,17 @@ const ObjectDetailPanel = ({
       },
       label: "Tags",
       disabled:
-        !!actualInfo.is_delete_marker ||
-        selectedVersion !== "" ||
-        !hasPermission(objectResources, [IAM_SCOPES.S3_PUT_OBJECT_TAGGING]),
+        !!actualInfo.is_delete_marker || selectedVersion !== "" || !canSetTags,
       icon: <TagsIcon />,
-      tooltip: "Change Tags for this File",
+      tooltip: canSetTags
+        ? "Change Tags for this File"
+        : permissionTooltipHelper(
+            [
+              IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
+              IAM_SCOPES.S3_GET_OBJECT_TAGGING,
+            ],
+            "set Tags on this object"
+          ),
     },
     {
       action: () => {
@@ -487,9 +553,14 @@ const ObjectDetailPanel = ({
         !distributedSetup ||
         !!actualInfo.is_delete_marker ||
         selectedVersion !== "" ||
-        !hasPermission(objectResources, [IAM_SCOPES.ADMIN_INSPECT_DATA]),
+        !canInspect,
       icon: <InspectMenuIcon />,
-      tooltip: "Inspect this file",
+      tooltip: canInspect
+        ? "Inspect this file"
+        : permissionTooltipHelper(
+            [IAM_SCOPES.ADMIN_INSPECT_DATA],
+            "inspect this file"
+          ),
     },
     {
       action: () => {
@@ -505,12 +576,19 @@ const ObjectDetailPanel = ({
       disabled:
         !distributedSetup ||
         !(actualInfo.version_id && actualInfo.version_id !== "null") ||
-        !hasPermission(objectResources, [
-          IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
-          IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
-          IAM_SCOPES.S3_GET_OBJECT_VERSION,
-        ]),
-      tooltip: "Display Versions for this file",
+        !canChangeVersioning,
+      tooltip: canChangeVersioning
+        ? actualInfo.version_id && actualInfo.version_id !== "null"
+          ? "Display Versions for this file"
+          : ""
+        : permissionTooltipHelper(
+            [
+              IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
+              IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+              IAM_SCOPES.S3_GET_OBJECT_VERSION,
+            ],
+            "display all versions of this object"
+          ),
     },
   ];
 
@@ -621,35 +699,51 @@ const ObjectDetailPanel = ({
             }
             items={multiActionButtons}
           />
-
-          <Grid item xs={12} sx={{ justifyContent: "center", display: "flex" }}>
-            <SecureComponent
-              resource={[
-                bucketName,
-                currentItem,
-                [bucketName, actualInfo.name].join("/"),
-              ]}
-              scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
-              errorProps={{ disabled: true }}
+          <TooltipWrapper
+            tooltip={
+              canDelete
+                ? ""
+                : permissionTooltipHelper(
+                    [IAM_SCOPES.S3_DELETE_OBJECT],
+                    "delete this object"
+                  )
+            }
+          >
+            <Grid
+              item
+              xs={12}
+              sx={{ justifyContent: "center", display: "flex" }}
             >
-              <Button
-                id={"delete-element-click"}
-                icon={<DeleteIcon />}
-                iconLocation={"start"}
-                fullWidth
-                variant={"secondary"}
-                onClick={() => {
-                  setDeleteOpen(true);
-                }}
-                disabled={selectedVersion === "" && actualInfo.is_delete_marker}
-                style={{
-                  width: "calc(100% - 44px)",
-                  margin: "8px 0",
-                }}
-                label={`Delete${selectedVersion !== "" ? " version" : ""}`}
-              />
-            </SecureComponent>
-          </Grid>
+              <SecureComponent
+                resource={[
+                  bucketName,
+                  currentItem,
+                  [bucketName, actualInfo.name].join("/"),
+                ]}
+                scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
+                errorProps={{ disabled: true }}
+              >
+                <Button
+                  id={"delete-element-click"}
+                  icon={<DeleteIcon />}
+                  iconLocation={"start"}
+                  fullWidth
+                  variant={"secondary"}
+                  onClick={() => {
+                    setDeleteOpen(true);
+                  }}
+                  disabled={
+                    selectedVersion === "" && actualInfo.is_delete_marker
+                  }
+                  style={{
+                    width: "calc(100% - 44px)",
+                    margin: "8px 0",
+                  }}
+                  label={`Delete${selectedVersion !== "" ? " version" : ""}`}
+                />
+              </SecureComponent>
+            </Grid>
+          </TooltipWrapper>
           <Grid item xs={12} className={classes.headerForSection}>
             <span>Object Info</span>
             <ObjectInfoIcon />

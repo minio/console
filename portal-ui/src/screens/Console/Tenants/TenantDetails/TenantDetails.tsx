@@ -89,6 +89,9 @@ const PodDetails = withSuspense(React.lazy(() => import("./pods/PodDetails")));
 const EditTenantMonitoringScreen = withSuspense(
   React.lazy(() => import("./EditTenantMonitoringScreen"))
 );
+const TenantConfiguration = withSuspense(
+  React.lazy(() => import("./TenantConfiguration"))
+);
 
 interface ITenantDetailsProps {
   classes: any;
@@ -366,6 +369,10 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
             <div className={classes.contentSpacer}>
               <Routes>
                 <Route path={"summary"} element={<TenantSummary />} />
+                <Route
+                  path={"configuration"}
+                  element={<TenantConfiguration />}
+                />
                 <Route path={`summary/yaml`} element={<TenantYAML />} />
                 <Route path={"metrics"} element={<TenantMetrics />} />
                 <Route path={"trace"} element={<TenantTrace />} />
@@ -406,6 +413,14 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
               value: "summary",
               component: Link,
               to: getRoutePath("summary"),
+            },
+          }}
+          {{
+            tabConfig: {
+              label: "Configuration",
+              value: "configuration",
+              component: Link,
+              to: getRoutePath("configuration"),
             },
           }}
           {{
