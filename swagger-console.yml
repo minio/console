@@ -4098,6 +4098,8 @@ definitions:
         type: boolean
       distributedMode:
         type: boolean
+      serverEndPoint:
+        type: string
       permissions:
         type: object
         additionalProperties:

@@ -254,6 +254,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		AllowResources:  allowResources,
 		CustomStyles:    customStyles,
 		EnvConstants:    &envConstants,
+		ServerEndPoint:  getMinIOServer(),
 	}
 	return sessionResp, nil
 }

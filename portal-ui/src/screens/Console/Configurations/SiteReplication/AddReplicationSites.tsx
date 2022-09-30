@@ -20,8 +20,7 @@ import { Box, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Button } from "mds";
 import useApi from "../../Common/Hooks/useApi";
-import { AddIcon, ClustersIcon, RemoveIcon } from "../../../../icons";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { ClustersIcon } from "../../../../icons";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
@@ -33,11 +32,17 @@ import {
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import { useSelector } from "react-redux";
+import { selSession } from "../../consoleSlice";
+import SRSiteInputRow from "./SRSiteInputRow";
 
-type SiteInputRow = {
+export type SiteInputRow = {
   name: string;
   endpoint: string;
+  accessKey: string;
+  secretKey: string;
+  isCurrent?: boolean;
+  isSaved?: boolean;
 };
 
 const isValidEndPoint = (ep: string) => {
@@ -55,24 +60,64 @@ const isValidEndPoint = (ep: string) => {
     return "Invalid Endpoint";
   }
 };
+
+const TableHeader = () => {
+  return (
+    <React.Fragment>
+      <Box
+        sx={{
+          fontSize: "14px",
+          marginLeft: "5px",
+        }}
+      >
+        Site Name
+      </Box>
+      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>Endpoint {"*"}</Box>
+      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>Access Key {"*"}</Box>
+      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>Secret Key {"*"}</Box>
+      <Box> </Box>
+    </React.Fragment>
+  );
+};
+
+const SiteTypeHeader = ({ title }: { title: string }) => {
+  return (
+    <Grid item xs={12}>
+      <Box
+        sx={{
+          marginBottom: "15px",
+          fontSize: "14px",
+          fontWeight: 600,
+        }}
+      >
+        {title}
+      </Box>
+    </Grid>
+  );
+};
+
 const AddReplicationSites = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const { serverEndPoint = "" } = useSelector(selSession);
+
+  const [currentSite, setCurrentSite] = useState<SiteInputRow[]>([
+    {
+      endpoint: serverEndPoint,
+      name: "",
+      accessKey: "",
+      secretKey: "",
+    },
+  ]);
+
   const [existingSites, setExistingSites] = useState<SiteInputRow[]>([]);
 
-  const [accessKey, setAccessKey] = useState<string>("");
-  const [secretKey, setSecretKey] = useState<string>("");
-  const [siteConfig, setSiteConfig] = useState<SiteInputRow[]>([]);
-
   const setDefaultNewRows = () => {
-    const defaultNewSites = existingSites?.length
-      ? [{ endpoint: "", name: "" }]
-      : [
-          { endpoint: "", name: "" },
-          { endpoint: "", name: "" },
-        ];
-    setSiteConfig(defaultNewSites);
+    const defaultNewSites = [
+      { endpoint: "", name: "", accessKey: "", secretKey: "" },
+    ];
+    setExistingSites(defaultNewSites);
   };
 
   const [isSiteInfoLoading, invokeSiteInfoApi] = useApi(
@@ -85,17 +130,34 @@ const AddReplicationSites = () => {
         curSite = {
           ...curSite,
           isCurrent: true,
+          isSaved: true,
         };
-        siteList.splice(foundIdx, 1, curSite);
+
+        setCurrentSite([curSite]);
+        siteList.splice(foundIdx, 1);
       }
 
       siteList.sort((x: any, y: any) => {
         return x.name === curSiteName ? -1 : y.name === curSiteName ? 1 : 0;
       });
-      setExistingSites(siteList);
+
+      let existingSiteList = siteList.map((si: any) => {
+        return {
+          ...si,
+          accessKey: "",
+          secretKey: "",
+          isSaved: true,
+        };
+      });
+
+      if (existingSiteList.length) {
+        setExistingSites(existingSiteList);
+      } else {
+        setDefaultNewRows();
+      }
     },
     (err: any) => {
-      setExistingSites([]);
+      setDefaultNewRows();
     }
   );
 
@@ -108,21 +170,16 @@ const AddReplicationSites = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    setDefaultNewRows();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [existingSites]);
-
   const isAllEndpointsValid =
-    siteConfig.reduce((acc: string[], cv, i) => {
-      const epValue = siteConfig[i].endpoint;
+    existingSites.reduce((acc: string[], cv, i) => {
+      const epValue = existingSites[i].endpoint;
       const isEpValid = isValidEndPoint(epValue);
 
       if (isEpValid === "" && epValue !== "") {
         acc.push(isEpValid);
       }
       return acc;
-    }, []).length === siteConfig.length;
+    }, []).length === existingSites.length;
 
   const [isAdding, invokeSiteAddApi] = useApi(
     (res: any) => {
@@ -146,37 +203,160 @@ const AddReplicationSites = () => {
   );
 
   const resetForm = () => {
-    setAccessKey("");
-    setSecretKey("");
     setDefaultNewRows();
+    setCurrentSite((prevItems) => {
+      return prevItems.map((item, ix) => ({
+        ...item,
+        accessKey: "",
+        secretKey: "",
+        name: "",
+      }));
+    });
   };
 
   const addSiteReplication = () => {
-    const existingSitesToAdd = existingSites?.map((es, idx) => {
+    const curSite: any[] = currentSite?.map((es, idx) => {
       return {
-        accessKey: accessKey,
-        secretKey: secretKey,
+        accessKey: es.accessKey,
+        secretKey: es.secretKey,
         name: es.name,
         endpoint: es.endpoint,
       };
     });
 
-    const newSitesToAdd = siteConfig.reduce((acc: any, ns, idx) => {
-      if (ns.endpoint) {
-        acc.push({
-          accessKey: accessKey,
-          secretKey: secretKey,
-          name: ns.name || `dr-site-${idx}`,
-          endpoint: ns.endpoint,
-        });
-      }
-      return acc;
-    }, []);
+    const newOrExistingSitesToAdd = existingSites.reduce(
+      (acc: any, ns, idx) => {
+        if (ns.endpoint) {
+          acc.push({
+            accessKey: ns.accessKey,
+            secretKey: ns.secretKey,
+            name: ns.name || `dr-site-${idx}`,
+            endpoint: ns.endpoint,
+          });
+        }
+        return acc;
+      },
+      []
+    );
 
-    invokeSiteAddApi("POST", `api/v1/admin/site-replication`, [
-      ...(existingSitesToAdd || []),
-      ...(newSitesToAdd || []),
-    ]);
+    const sitesToAdd = curSite.concat(newOrExistingSitesToAdd);
+
+    invokeSiteAddApi("POST", `api/v1/admin/site-replication`, sitesToAdd);
+  };
+
+  const renderCurrentSite = () => {
+    return (
+      <Box
+        sx={{
+          marginTop: "15px",
+        }}
+      >
+        <SiteTypeHeader title={"This Site"} />
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: ".8fr 1.2fr .8fr .8fr .2fr",
+            border: "1px solid #eaeaea",
+            padding: "15px",
+            gap: "10px",
+            maxHeight: "430px",
+            overflowY: "auto",
+          }}
+        >
+          <TableHeader />
+
+          {currentSite.map((cs, index) => {
+            return (
+              <SRSiteInputRow
+                key={`current-${index}`}
+                disabledFields={["endpoint"].concat(cs.isSaved ? "name" : "")}
+                rowData={cs}
+                rowId={index}
+                fieldErrors={{
+                  endpoint: isValidEndPoint(cs.endpoint),
+                }}
+                onFieldChange={(e, fieldName, index) => {
+                  const filedValue = e.target.value;
+                  if (fieldName !== "") {
+                    setCurrentSite((prevItems) => {
+                      return prevItems.map((item, ix) =>
+                        ix === index
+                          ? { ...item, [fieldName]: filedValue }
+                          : item
+                      );
+                    });
+                  }
+                }}
+                showRowActions={false}
+              />
+            );
+          })}
+        </Box>
+      </Box>
+    );
+  };
+
+  const renderPeerSites = () => {
+    return (
+      <Box
+        sx={{
+          marginTop: "25px",
+        }}
+      >
+        <SiteTypeHeader title={"Peer Sites"} />
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: ".8fr 1.2fr .8fr .8fr .2fr",
+            border: "1px solid #eaeaea",
+            padding: "15px",
+            gap: "10px",
+            maxHeight: "430px",
+            overflowY: "auto",
+          }}
+        >
+          <TableHeader />
+
+          {existingSites.map((ps, index) => {
+            return (
+              <SRSiteInputRow
+                key={`exiting-${index}`}
+                rowData={ps}
+                rowId={index}
+                disabledFields={ps.isSaved ? ["endpoint", "name"] : []}
+                onFieldChange={(e, fieldName, index) => {
+                  const filedValue = e.target.value;
+                  setExistingSites((prevItems) => {
+                    return prevItems.map((item, ix) =>
+                      ix === index ? { ...item, [fieldName]: filedValue } : item
+                    );
+                  });
+                }}
+                canAdd={true}
+                canRemove={index > 0}
+                onAddClick={() => {
+                  const newRows = [...existingSites];
+                  //add at the next index
+                  newRows.splice(index + 1, 0, {
+                    name: "",
+                    endpoint: "",
+                    accessKey: "",
+                    secretKey: "",
+                  });
+
+                  setExistingSites(newRows);
+                }}
+                onRemoveClick={(index) => {
+                  setExistingSites(
+                    existingSites.filter((_, idx) => idx !== index)
+                  );
+                }}
+              />
+            );
+          })}
+        </Box>
+      </Box>
+    );
   };
 
   return (
@@ -195,10 +375,7 @@ const AddReplicationSites = () => {
             display: "grid",
             padding: "25px",
             gap: "25px",
-            gridTemplateColumns: {
-              md: "2fr 1.2fr",
-              xs: "1fr",
-            },
+            gridTemplateColumns: "1fr",
             border: "1px solid #eaeaea",
           }}
         >
@@ -216,254 +393,9 @@ const AddReplicationSites = () => {
                 return addSiteReplication();
               }}
             >
-              <Grid item xs={12} marginBottom={"15px"}>
-                <Box
-                  sx={{
-                    fontStyle: "italic",
-                    display: "flex",
-                    alignItems: "center",
-                    fontSize: "12px",
-                    marginTop: 2,
-                  }}
-                >
-                  <Box sx={{ fontWeight: 600 }}>Note:</Box>{" "}
-                  <Box sx={{ marginLeft: 1 }}>
-                    Access Key and Secret Key should be same on all sites.
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                marginBottom={"15px"}
-                sx={{
-                  "& label span": {
-                    fontWeight: "normal",
-                  },
-                }}
-              >
-                <InputBoxWrapper
-                  id="add-rep-peer-accKey"
-                  name="add-rep-peer-accKey"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setAccessKey(event.target.value);
-                  }}
-                  label="Access Key"
-                  required={true}
-                  value={accessKey}
-                  error={accessKey === "" ? "Access Key is required." : ""}
-                  data-test-id={"add-site-rep-acc-key"}
-                />
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                marginBottom={"30px"}
-                sx={{
-                  "& label span": {
-                    fontWeight: "normal",
-                  },
-                }}
-              >
-                <InputBoxWrapper
-                  id="add-rep-peer-secKey"
-                  name="add-rep-peer-secKey"
-                  type={"password"}
-                  required={true}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setSecretKey(event.target.value);
-                  }}
-                  error={secretKey === "" ? "Secret Key is required." : ""}
-                  label="Secret Key"
-                  value={secretKey}
-                  data-test-id={"add-site-rep-sec-key"}
-                />
-              </Grid>
+              {renderCurrentSite()}
 
-              <Grid item xs={12}>
-                <Box
-                  sx={{
-                    marginBottom: "15px",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                  }}
-                >
-                  Peer Sites
-                </Box>
-              </Grid>
-
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: ".8fr 1.2fr .2fr",
-                  border: "1px solid #eaeaea",
-                  padding: "15px",
-                  gap: "10px",
-                  maxHeight: "430px",
-                  overflowY: "auto",
-                }}
-              >
-                <Box
-                  sx={{
-                    fontSize: "14px",
-                    marginLeft: "5px",
-                  }}
-                >
-                  Site Name
-                </Box>
-                <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>
-                  Endpoint {"*"}
-                </Box>
-                <Box> </Box>
-                {existingSites?.map((si, index) => {
-                  return (
-                    <Fragment key={si.name}>
-                      <Box>
-                        <InputBoxWrapper
-                          id={`add-rep-ex-peer-site-${index}`}
-                          name={`add-rep-ex-peer-site-${index}`}
-                          extraInputProps={{
-                            readOnly: true,
-                          }}
-                          label=""
-                          value={si.name}
-                          onChange={() => {}}
-                        />
-                      </Box>
-                      <Box>
-                        <InputBoxWrapper
-                          id={`add-rep-ex-peer-site-ep-${index}`}
-                          name={`add-rep-ex-peer-site-ep-${index}`}
-                          extraInputProps={{
-                            readOnly: true,
-                          }}
-                          label=""
-                          value={si.endpoint}
-                          onChange={() => {}}
-                        />
-                      </Box>
-                      <Grid item xs={12}>
-                        {" "}
-                      </Grid>
-                    </Fragment>
-                  );
-                })}
-
-                {siteConfig.map((sci, index) => {
-                  let isDelDisabled = false;
-
-                  if (existingSites?.length && index === 0) {
-                    isDelDisabled = true;
-                  } else if (!existingSites?.length && index < 2) {
-                    isDelDisabled = true;
-                  }
-
-                  return (
-                    <Fragment key={`${index}`}>
-                      <Box>
-                        <InputBoxWrapper
-                          id={`add-rep-peer-site-${index}`}
-                          name={`add-rep-peer-site-${index}`}
-                          placeholder={`dr-site-${index}`}
-                          label=""
-                          value={`${sci.name}`}
-                          onChange={(e) => {
-                            const nameTxt = e.target.value;
-                            setSiteConfig((prevItems) => {
-                              return prevItems.map((item, ix) =>
-                                ix === index ? { ...item, name: nameTxt } : item
-                              );
-                            });
-                          }}
-                          data-test-id={`add-site-rep-peer-site-${index}`}
-                        />
-                      </Box>
-                      <Box>
-                        <InputBoxWrapper
-                          id={`add-rep-peer-site-ep-${index}`}
-                          name={`add-rep-peer-site-ep-${index}`}
-                          placeholder={`https://dr.minio-storage:900${index}`}
-                          label=""
-                          error={isValidEndPoint(siteConfig[index].endpoint)}
-                          value={`${sci.endpoint}`}
-                          onChange={(e) => {
-                            const epTxt = e.target.value;
-                            setSiteConfig((prevItems) => {
-                              return prevItems.map((item, ix) =>
-                                ix === index
-                                  ? { ...item, endpoint: epTxt }
-                                  : item
-                              );
-                            });
-                          }}
-                          data-test-id={`add-site-rep-peer-ep-${index}`}
-                        />
-                      </Box>
-                      <Grid item xs={12} alignItems={"center"} display={"flex"}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            alignSelf: "baseline",
-                            marginTop: "4px",
-
-                            "& button": {
-                              borderColor: "#696969",
-                              color: "#696969",
-                              borderRadius: "50%",
-                            },
-                          }}
-                        >
-                          <TooltipWrapper tooltip={"Add a Row"}>
-                            <Button
-                              id={`add-row-${index}`}
-                              variant="regular"
-                              icon={<AddIcon />}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                const newRows = [...siteConfig];
-                                //add at the next index
-                                newRows.splice(index + 1, 0, {
-                                  name: "",
-                                  endpoint: "",
-                                });
-
-                                setSiteConfig(newRows);
-                              }}
-                              style={{
-                                width: 25,
-                                height: 25,
-                                padding: 0,
-                              }}
-                            />
-                          </TooltipWrapper>
-                          <TooltipWrapper tooltip={"Remove Row"}>
-                            <Button
-                              id={`remove-row-${index}`}
-                              variant="regular"
-                              disabled={isDelDisabled}
-                              icon={<RemoveIcon />}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setSiteConfig(
-                                  siteConfig.filter((_, idx) => idx !== index)
-                                );
-                              }}
-                              style={{
-                                width: 25,
-                                height: 25,
-                                padding: 0,
-                                marginLeft: 8,
-                              }}
-                            />
-                          </TooltipWrapper>
-                        </Box>
-                      </Grid>
-                    </Fragment>
-                  );
-                })}
-              </Box>
+              {renderPeerSites()}
 
               <Grid item xs={12}>
                 <Box
@@ -488,12 +420,7 @@ const AddReplicationSites = () => {
                     id={"save"}
                     type="submit"
                     variant="callAction"
-                    disabled={
-                      isAdding ||
-                      !accessKey ||
-                      !secretKey ||
-                      !isAllEndpointsValid
-                    }
+                    disabled={isAdding || !isAllEndpointsValid}
                     label={"Save"}
                   />
                 </Box>
