@@ -55,18 +55,16 @@ export const identityChildren = Selector("#identity-children");
 
 export const usersElement = identityChildren
   .find("a")
-  .withAttribute("href", "/identity/users");
+  .withAttribute("href", IAM_PAGES.USERS);
 export const groupsElement = identityChildren
   .find("a")
-  .withAttribute("href", "/identity/groups");
+  .withAttribute("href", IAM_PAGES.GROUPS);
 export const serviceAcctsElement = identityChildren
   .find("a")
-  .withAttribute("href", "/identity/account");
-
-export const iamPoliciesElement = sidebarItem.withAttribute(
-  "href",
-  "/access/policies"
-);
+  .withAttribute("href", IAM_PAGES.ACCOUNT);
+export const iamPoliciesElement = identityChildren
+  .find("a")
+  .withAttribute("href", IAM_PAGES.POLICIES);
 
 export const configurationsElement = Selector(".MuiPaper-root")
   .find("ul")

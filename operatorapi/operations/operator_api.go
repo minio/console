@@ -223,6 +223,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPITenantAddPoolHandler: operator_api.TenantAddPoolHandlerFunc(func(params operator_api.TenantAddPoolParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.TenantAddPool has not yet been implemented")
 		}),
+		OperatorAPITenantConfigurationHandler: operator_api.TenantConfigurationHandlerFunc(func(params operator_api.TenantConfigurationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.TenantConfiguration has not yet been implemented")
+		}),
 		OperatorAPITenantDeleteEncryptionHandler: operator_api.TenantDeleteEncryptionHandlerFunc(func(params operator_api.TenantDeleteEncryptionParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.TenantDeleteEncryption has not yet been implemented")
 		}),
@@ -249,6 +252,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		}),
 		OperatorAPIUpdateTenantHandler: operator_api.UpdateTenantHandlerFunc(func(params operator_api.UpdateTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.UpdateTenant has not yet been implemented")
+		}),
+		OperatorAPIUpdateTenantConfigurationHandler: operator_api.UpdateTenantConfigurationHandlerFunc(func(params operator_api.UpdateTenantConfigurationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.UpdateTenantConfiguration has not yet been implemented")
 		}),
 		OperatorAPIUpdateTenantDomainsHandler: operator_api.UpdateTenantDomainsHandlerFunc(func(params operator_api.UpdateTenantDomainsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.UpdateTenantDomains has not yet been implemented")
@@ -414,6 +420,8 @@ type OperatorAPI struct {
 	OperatorAPISubscriptionValidateHandler operator_api.SubscriptionValidateHandler
 	// OperatorAPITenantAddPoolHandler sets the operation handler for the tenant add pool operation
 	OperatorAPITenantAddPoolHandler operator_api.TenantAddPoolHandler
+	// OperatorAPITenantConfigurationHandler sets the operation handler for the tenant configuration operation
+	OperatorAPITenantConfigurationHandler operator_api.TenantConfigurationHandler
 	// OperatorAPITenantDeleteEncryptionHandler sets the operation handler for the tenant delete encryption operation
 	OperatorAPITenantDeleteEncryptionHandler operator_api.TenantDeleteEncryptionHandler
 	// OperatorAPITenantDetailsHandler sets the operation handler for the tenant details operation
@@ -432,6 +440,8 @@ type OperatorAPI struct {
 	OperatorAPITenantUpdatePoolsHandler operator_api.TenantUpdatePoolsHandler
 	// OperatorAPIUpdateTenantHandler sets the operation handler for the update tenant operation
 	OperatorAPIUpdateTenantHandler operator_api.UpdateTenantHandler
+	// OperatorAPIUpdateTenantConfigurationHandler sets the operation handler for the update tenant configuration operation
+	OperatorAPIUpdateTenantConfigurationHandler operator_api.UpdateTenantConfigurationHandler
 	// OperatorAPIUpdateTenantDomainsHandler sets the operation handler for the update tenant domains operation
 	OperatorAPIUpdateTenantDomainsHandler operator_api.UpdateTenantDomainsHandler
 	// OperatorAPIUpdateTenantIdentityProviderHandler sets the operation handler for the update tenant identity provider operation
@@ -678,6 +688,9 @@ func (o *OperatorAPI) Validate() error {
 	if o.OperatorAPITenantAddPoolHandler == nil {
 		unregistered = append(unregistered, "operator_api.TenantAddPoolHandler")
 	}
+	if o.OperatorAPITenantConfigurationHandler == nil {
+		unregistered = append(unregistered, "operator_api.TenantConfigurationHandler")
+	}
 	if o.OperatorAPITenantDeleteEncryptionHandler == nil {
 		unregistered = append(unregistered, "operator_api.TenantDeleteEncryptionHandler")
 	}
@@ -704,6 +717,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIUpdateTenantHandler == nil {
 		unregistered = append(unregistered, "operator_api.UpdateTenantHandler")
+	}
+	if o.OperatorAPIUpdateTenantConfigurationHandler == nil {
+		unregistered = append(unregistered, "operator_api.UpdateTenantConfigurationHandler")
 	}
 	if o.OperatorAPIUpdateTenantDomainsHandler == nil {
 		unregistered = append(unregistered, "operator_api.UpdateTenantDomainsHandler")
@@ -1024,6 +1040,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/pools"] = operator_api.NewTenantAddPool(o.context, o.OperatorAPITenantAddPoolHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/configuration"] = operator_api.NewTenantConfiguration(o.context, o.OperatorAPITenantConfigurationHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
@@ -1060,6 +1080,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}"] = operator_api.NewUpdateTenant(o.context, o.OperatorAPIUpdateTenantHandler)
+	if o.handlers["PATCH"] == nil {
+		o.handlers["PATCH"] = make(map[string]http.Handler)
+	}
+	o.handlers["PATCH"]["/namespaces/{namespace}/tenants/{tenant}/configuration"] = operator_api.NewUpdateTenantConfiguration(o.context, o.OperatorAPIUpdateTenantConfigurationHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

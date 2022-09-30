@@ -40,6 +40,15 @@ export interface ICustomCertificates {
   consoleCAs: ICertificateInfo[];
 }
 
+export interface ITenantConfigurationResponse {
+  environmentVariables: LabelKeyPair[];
+}
+
+export interface ITenantConfigurationRequest {
+  environmentVariables: LabelKeyPair[];
+  keysToBeDeleted: string[];
+}
+
 export interface ITenantSecurityResponse {
   autoCert: boolean;
   customCertificates: ICustomCertificates;
