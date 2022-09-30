@@ -435,13 +435,13 @@ export const CONSOLE_UI_RESOURCE = "console-ui";
 
 export const permissionTooltipHelper = (scopes: string[], name: string) => {
   return (
-    "You require additional permissions in order to enable " +
+    "You require additional permissions in order to " +
     name +
     ". Please ask your MinIO administrator to grant you " +
     scopes +
     " permission" +
     (scopes.length > 1 ? "s" : "") +
-    " in order to enable " +
+    " in order to " +
     name +
     "."
   );

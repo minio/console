@@ -19,6 +19,7 @@ import ObjectActionButton from "./ObjectActionButton";
 import { withStyles } from "@mui/styles";
 import createStyles from "@mui/styles/createStyles";
 import { detailsPanel } from "../../../../Common/FormComponents/common/styleLibrary";
+import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 
 const styles = () =>
   createStyles({
@@ -52,12 +53,14 @@ const ActionsListSection = ({
         {items.map((actionItem, index) => {
           return (
             <li key={`action-element-${index.toString()}`}>
-              <ObjectActionButton
-                label={actionItem.label}
-                icon={actionItem.icon}
-                onClick={actionItem.action}
-                disabled={actionItem.disabled}
-              />
+              <TooltipWrapper tooltip={actionItem.tooltip || ""}>
+                <ObjectActionButton
+                  label={actionItem.label}
+                  icon={actionItem.icon}
+                  onClick={actionItem.action}
+                  disabled={actionItem.disabled}
+                />
+              </TooltipWrapper>
             </li>
           );
         })}

@@ -22,7 +22,10 @@ import withStyles from "@mui/styles/withStyles";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import { UploadFolderIcon, UploadIcon } from "../../../../icons";
-import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
+import {
+  IAM_SCOPES,
+  permissionTooltipHelper,
+} from "../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../common/SecureComponent";
 import { Button } from "mds";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
@@ -78,7 +81,16 @@ const UploadFilesButton = ({
 
   return (
     <Fragment>
-      <TooltipWrapper tooltip={"Upload Files"}>
+      <TooltipWrapper
+        tooltip={
+          uploadEnabled
+            ? "Upload Files"
+            : permissionTooltipHelper(
+                [IAM_SCOPES.S3_PUT_OBJECT],
+                "upload files to this bucket"
+              )
+        }
+      >
         <Button
           id={"upload-main"}
           aria-controls={`upload-main-menu`}

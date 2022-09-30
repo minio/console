@@ -71,7 +71,10 @@ import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 
-import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import {
+  IAM_SCOPES,
+  permissionTooltipHelper,
+} from "../../../../../../common/SecureComponent/permissions";
 import {
   hasPermission,
   SecureComponent,
@@ -1055,11 +1058,23 @@ const ListObjects = () => {
 
   const onDrop = useCallback(
     (acceptedFiles: any[]) => {
-      if (acceptedFiles && acceptedFiles.length > 0) {
+      if (acceptedFiles && acceptedFiles.length > 0 && canUpload) {
         let newFolderPath: string = acceptedFiles[0].path;
         uploadObject(acceptedFiles, newFolderPath);
       }
+      if (!canUpload) {
+        dispatch(
+          setErrorSnackMessage({
+            errorMessage: "Upload not allowed",
+            detailedError: permissionTooltipHelper(
+              [IAM_SCOPES.S3_PUT_OBJECT],
+              "upload objects to this location"
+            ),
+          })
+        );
+      }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [uploadObject]
   );
 
@@ -1221,6 +1236,10 @@ const ListObjects = () => {
     uploadPath = uploadPath.concat(currentPath);
   }
 
+  const canDownload = hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT]);
+  const canDelete = hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]);
+  const canUpload = hasPermission(uploadPath, [IAM_SCOPES.S3_PUT_OBJECT]);
+
   const onClosePanel = (forceRefresh: boolean) => {
     dispatch(setSelectedObjectView(null));
     dispatch(setVersionsModeEnabled({ status: false }));
@@ -1272,23 +1291,28 @@ const ListObjects = () => {
     {
       action: downloadSelected,
       label: "Download",
-      disabled: selectedObjects.length === 0,
+      disabled: !canDownload || selectedObjects.length === 0,
       icon: <DownloadIcon />,
-      tooltip: "Download Selected",
+      tooltip: canDownload
+        ? "Download Selected"
+        : permissionTooltipHelper(
+            [IAM_SCOPES.S3_GET_OBJECT],
+            "download objects from this bucket"
+          ),
     },
     {
       action: openShare,
       label: "Share",
       disabled: selectedObjects.length !== 1 || !canShareFile,
       icon: <ShareIcon />,
-      tooltip: "Share Selected File",
+      tooltip: canShareFile ? "Share Selected File" : "Sharing unavailable",
     },
     {
       action: openPreview,
       label: "Preview",
       disabled: selectedObjects.length !== 1 || !canPreviewFile,
       icon: <PreviewIcon />,
-      tooltip: "Preview Selected File",
+      tooltip: canPreviewFile ? "Preview Selected File" : "Preview unavailable",
     },
     {
       action: () => {
@@ -1297,10 +1321,13 @@ const ListObjects = () => {
       label: "Delete",
       icon: <DeleteIcon />,
       disabled:
-        !hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]) ||
-        selectedObjects.length === 0 ||
-        !displayDeleteObject,
-      tooltip: "Delete Selected Files",
+        !canDelete || selectedObjects.length === 0 || !displayDeleteObject,
+      tooltip: canDelete
+        ? "Delete Selected Files"
+        : permissionTooltipHelper(
+            [IAM_SCOPES.S3_DELETE_OBJECT],
+            "delete objects in this bucket"
+          ),
     },
   ];
 
