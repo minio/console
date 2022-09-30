@@ -118,7 +118,13 @@ const CounterCard = ({
         >
           {icon}
 
-          <Box>{actions}</Box>
+          <Box
+            sx={{
+              display: "flex",
+            }}
+          >
+            {actions}
+          </Box>
         </Box>
       </Box>
     </Box>
