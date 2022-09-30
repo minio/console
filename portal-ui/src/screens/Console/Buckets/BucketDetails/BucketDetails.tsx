@@ -147,7 +147,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
   ]);
   const canBrowse = hasPermission(
     bucketName,
-    IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER]
+    [IAM_SCOPES.S3_LIST_BUCKET]
   );
 
   useEffect(() => {
