@@ -7,7 +7,8 @@
         "s3:CreateBucket",
         "s3:PutObject",
         "s3:DeleteObject",
-        "s3:DeleteBucket"
+        "s3:DeleteBucket",
+        "s3:ListBucket"
       ],
       "Effect": "Allow",
       "Resource": ["arn:aws:s3:::*"],
