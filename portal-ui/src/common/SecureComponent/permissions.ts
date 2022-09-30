@@ -449,11 +449,15 @@ export const permissionTooltipHelper = (scopes: string[], name: string) => {
 };
 
 export const listUsersPermissions = [IAM_SCOPES.ADMIN_LIST_USERS];
-export const viewUserPermissions = [IAM_SCOPES.ADMIN_GET_USER];
+
 export const addUserToGroupPermissions = [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP];
+
 export const deleteUserPermissions = [IAM_SCOPES.ADMIN_DELETE_USER];
+
 export const enableUserPermissions = [IAM_SCOPES.ADMIN_ENABLE_USER];
+
 export const disableUserPermissions = [IAM_SCOPES.ADMIN_DISABLE_USER];
+
 export const assignIAMPolicyPermissions = [
   IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
   IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
@@ -478,4 +482,46 @@ export const editServiceAccountPermissions = [
   IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS,
   IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
   IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,
+];
+
+export const applyPolicyPermissions = [
+  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+];
+
+export const deleteGroupPermissions = [IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP];
+
+export const displayGroupsPermissions = [IAM_SCOPES.ADMIN_LIST_GROUPS];
+
+export const createGroupPermissions = [
+  IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+];
+
+export const viewUserPermissions = [
+  IAM_SCOPES.ADMIN_GET_USER,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+];
+export const editGroupMembersPermissions = [
+  IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+];
+export const setGroupPoliciesPermissions = [
+  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+];
+export const viewPolicyPermissions = [IAM_SCOPES.ADMIN_GET_POLICY];
+export const enableDisableGroupPermissions = [
+  IAM_SCOPES.ADMIN_ENABLE_GROUP,
+  IAM_SCOPES.ADMIN_DISABLE_GROUP,
+];
+export const createPolicyPermissions = [IAM_SCOPES.ADMIN_CREATE_POLICY];
+
+export const deletePolicyPermissions = [IAM_SCOPES.ADMIN_DELETE_POLICY];
+
+export const listPolicyPermissions = [IAM_SCOPES.ADMIN_LIST_USER_POLICIES];
+
+export const listGroupPermissions = [
+  IAM_SCOPES.ADMIN_LIST_GROUPS,
+  IAM_SCOPES.ADMIN_GET_GROUP,
 ];
