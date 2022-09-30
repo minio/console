@@ -742,6 +742,83 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/configuration": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Tenant Configuration",
+        "operationId": "TenantConfiguration",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantConfigurationResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Update Tenant Configuration",
+        "operationId": "UpdateTenantConfiguration",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateTenantConfigurationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/csr": {
       "get": {
         "tags": [
@@ -4514,6 +4591,17 @@ func init() {
         }
       }
     },
+    "tenantConfigurationResponse": {
+      "type": "object",
+      "properties": {
+        "environmentVariables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/environmentVariable"
+          }
+        }
+      }
+    },
     "tenantList": {
       "type": "object",
       "properties": {
@@ -4918,6 +5006,23 @@ func init() {
       "properties": {
         "domains": {
           "$ref": "#/definitions/domainsConfiguration"
+        }
+      }
+    },
+    "updateTenantConfigurationRequest": {
+      "type": "object",
+      "properties": {
+        "environmentVariables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/environmentVariable"
+          }
+        },
+        "keysToBeDeleted": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -5837,6 +5942,83 @@ func init() {
         ],
         "responses": {
           "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/configuration": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Tenant Configuration",
+        "operationId": "TenantConfiguration",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantConfigurationResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Update Tenant Configuration",
+        "operationId": "UpdateTenantConfiguration",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateTenantConfigurationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -10328,6 +10510,17 @@ func init() {
         }
       }
     },
+    "tenantConfigurationResponse": {
+      "type": "object",
+      "properties": {
+        "environmentVariables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/environmentVariable"
+          }
+        }
+      }
+    },
     "tenantList": {
       "type": "object",
       "properties": {
@@ -10732,6 +10925,23 @@ func init() {
       "properties": {
         "domains": {
           "$ref": "#/definitions/domainsConfiguration"
+        }
+      }
+    },
+    "updateTenantConfigurationRequest": {
+      "type": "object",
+      "properties": {
+        "environmentVariables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/environmentVariable"
+          }
+        },
+        "keysToBeDeleted": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
