@@ -21,7 +21,7 @@ import Grid from "@mui/material/Grid";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import { Button } from "mds";
 import { AddIcon, RemoveIcon } from "../../../../icons";
-import { SiteInputRow } from "./AddReplicationSites";
+import { SiteInputRow } from "./Types";
 
 const SRSiteInputRow = ({
   rowData,
@@ -104,6 +104,7 @@ const SRSiteInputRow = ({
           name={`add-rep-peer-site-sk-${index}`}
           label=""
           required={true}
+          type={"password"}
           value={secretKey}
           error={fieldErrors["secretKey"]}
           disabled={disabledFields.includes("secretKey")}
