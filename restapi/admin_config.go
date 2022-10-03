@@ -124,6 +124,9 @@ func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.C
 	}
 	var configSubSysList []*models.Configuration
 	for _, scfg := range subSysConfigs {
+		if !madmin.SubSystems.Contains(scfg.SubSystem) {
+			return nil, fmt.Errorf("no sub-systems found")
+		}
 		var confkv []*models.ConfigurationKV
 		for _, kv := range scfg.KV {
 			// FIXME: Ignoring env-overrides for now as support for this

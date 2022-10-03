@@ -40,8 +40,6 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 
 	// Fetch info of all servers (cluster or single server)
 	healthDataTypes := []madmin.HealthDataType{
-		madmin.HealthDataTypePerfDrive,
-		madmin.HealthDataTypePerfNet,
 		madmin.HealthDataTypeMinioInfo,
 		madmin.HealthDataTypeMinioConfig,
 		madmin.HealthDataTypeSysCPU,
