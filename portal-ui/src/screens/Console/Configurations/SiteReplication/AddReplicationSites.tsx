@@ -333,7 +333,7 @@ const AddReplicationSites = () => {
                   });
                 }}
                 canAdd={true}
-                canRemove={index > 0}
+                canRemove={index > 0 && !ps.isSaved}
                 onAddClick={() => {
                   const newRows = [...existingSites];
                   //add at the next index
@@ -484,11 +484,12 @@ const AddReplicationSites = () => {
                       borderRadius: "50%",
                     },
 
-                    "& .step-row": {
+                    "& li": {
                       fontSize: "14px",
                       display: "flex",
                       marginTop: "15px",
                       marginBottom: "15px",
+                      width:"100%",
 
                       "&.step-text": {
                         fontWeight: 400,
@@ -508,8 +509,8 @@ const AddReplicationSites = () => {
                   <Box>
                     The following changes are replicated to all other sites
                   </Box>
-                  <ul>
-                    <li>Creation and deletion of buckets and objects</li>
+                  <ul >
+                    <li >Creation and deletion of buckets and objects</li>
                     <li>
                       Creation and deletion of all IAM users, groups, policies
                       and their mappings to users or groups
@@ -520,21 +521,42 @@ const AddReplicationSites = () => {
                       owned by the root user)
                     </li>
                     <li>
-                      Changes to Bucket features such as
+                        <Box  style={{
+                            display:"flex",
+                            flexFlow:"column",
+
+                            justifyContent:"flex-start",
+                        }}>
+                            <div style={{
+                                paddingTop:"1px",
+                            }}>Changes to Bucket features such as</div>
                       <ul>
+
                         <li>Bucket Policies</li>
                         <li>Bucket Tags</li>
                         <li>Bucket Object-Lock configurations</li>
                         <li>Bucket Encryption configuration</li>
                       </ul>
+                        </Box>
                     </li>
 
                     <li>
-                      The following Bucket features will NOT be replicated
+                        <Box  style={{
+                            display:"flex",
+                            flexFlow:"column",
+
+                            justifyContent:"flex-start",
+                        }}>
+                            <div style={{
+                                paddingTop:"1px",
+                            }}>The following Bucket features will NOT be replicated</div>
+
+
                       <ul>
                         <li>Bucket notification configuration</li>
                         <li>Bucket lifecycle (ILM) configuration</li>
                       </ul>
+                        </Box>
                     </li>
                   </ul>
                 </Box>
