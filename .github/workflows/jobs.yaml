@@ -54,14 +54,6 @@ jobs:
           # To have two repositories under the same test
           path: 'minio_repository'
 
-      - uses: actions/cache@v2
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
       - name: Build on ${{ matrix.os }}
         run: |
           echo "The idea is to build minio image from downloaded repository";
