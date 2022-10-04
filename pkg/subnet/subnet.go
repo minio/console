@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/minio/console/pkg/http"
 
@@ -150,7 +149,6 @@ func ParseLicense(client http.ClientI, license string) (*licverifier.LicenseInfo
 
 	subnetPubKey, err := downloadSubnetPublicKey(client)
 	if err != nil {
-		log.Print(err)
 		// there was an issue getting the subnet public key
 		// use hardcoded public keys instead
 		publicKeys = OfflinePublicKeys
