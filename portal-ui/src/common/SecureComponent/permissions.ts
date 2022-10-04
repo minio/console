@@ -129,7 +129,6 @@ export const IAM_PAGES = {
   ACCOUNT_ADD: "/identity/account/new-account",
   USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
 
-  /* Access */
   POLICIES: "/identity/policies",
   POLICY_ADD: "/identity/add-policy",
   POLICIES_VIEW: "/identity/policies/*",

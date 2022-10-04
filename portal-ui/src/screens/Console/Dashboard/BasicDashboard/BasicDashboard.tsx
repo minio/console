@@ -240,6 +240,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                           padding: 5,
                           height: 30,
                           fontSize: 14,
+                          marginTop: 20,
                         }}
                       />
                     </TooltipWrapper>
