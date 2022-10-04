@@ -14,24 +14,19 @@ linters-settings:
 linters:
   disable-all: true
   enable:
-    - typecheck
     - goimports
     - misspell
     - govet
     - revive
     - ineffassign
     - gosimple
-    - deadcode
-    - structcheck
     - gomodguard
     - gofmt
     - unused
-    - structcheck
     - unconvert
     - varcheck
     - gocritic
     - gofumpt
-    - tenv
     - durationcheck
 
 service:
