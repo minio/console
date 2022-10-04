@@ -24,7 +24,7 @@ import { SubnetInfo } from "./types";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
-import { ArrowRightLink, HelpIconFilled, LoginMinIOLogo } from "../../../icons";
+import { ArrowRightLink, LoginMinIOLogo } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import LicensePlans from "./LicensePlans";
 import { Link } from "react-router-dom";
@@ -216,11 +216,7 @@ const License = () => {
                 border: "1px solid #eaeaea",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                flexFlow: {
-                  sm: "row",
-                  xs: "column",
-                },
+                justifyContent: "flex-end",
               }}
             >
               <Box
@@ -261,71 +257,6 @@ const License = () => {
                 />
               </Link>
             </Box>
-
-            <div className={classes.pageTitle}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  "& .min-icon": {
-                    height: "18px",
-                    width: "18px",
-                  },
-                }}
-              >
-                <HelpIconFilled />
-                <Box
-                  sx={{
-                    fontSize: "16px",
-                    marginLeft: "15px",
-                  }}
-                >
-                  Choosing between GNU AGPL v3 and Commercial License
-                </Box>
-              </Box>
-              <br />
-              <Box
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: "normal",
-                  lineHeight: "17px",
-                }}
-              >
-                If you are building proprietary applications, you may want to
-                choose the commercial license included as part of the Standard
-                and Enterprise subscription plans. Applications must otherwise
-                comply with all the GNU AGPLv3 License & Trademark obligations.
-                Follow the links below to learn more about the compliance
-                policy.
-              </Box>
-              <Box component="ul">
-                <li>
-                  <a
-                    href={`https://min.io/compliance?ref=${
-                      operatorMode ? "op" : "con"
-                    }`}
-                    className={classes.openSourcePolicy}
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
-                  >
-                    Learn more about GNU AGPL v3
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href={`https://min.io/logo?ref=${
-                      operatorMode ? "op" : "con"
-                    }`}
-                    className={classes.openSourcePolicy}
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
-                  >
-                    MinIO Trademark Compliance
-                  </a>
-                </li>
-              </Box>
-              <div style={{ clear: "both" }} />
-            </div>
 
             <Box
               sx={{
