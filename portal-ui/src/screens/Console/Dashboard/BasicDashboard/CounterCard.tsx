@@ -78,13 +78,23 @@ const CounterCard = ({
           <Tooltip title={counterValue} placement="bottom" enterDelay={500}>
             <Box
               sx={{
-                fontSize: {
-                  xl: "55px",
-                  lg: "50px",
-                  md: "36px",
-                  sm: "35px",
-                  xs: "35px",
-                },
+                fontSize:
+                  counterValue.toString().length >= 5
+                    ? {
+                        xl: "50px",
+                        lg: "45px",
+                        md: "28px",
+                        sm: "28px",
+                        xs: "20px",
+                      }
+                    : {
+                        xl: "55px",
+                        lg: "50px",
+                        md: "36px",
+                        sm: "35px",
+                        xs: "35px",
+                      },
+
                 fontWeight: 600,
                 overflow: "hidden",
                 textOverflow: "ellipsis",

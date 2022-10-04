@@ -145,10 +145,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
     IAM_SCOPES.S3_DELETE_BUCKET,
     IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
   ]);
-  const canBrowse = hasPermission(
-    bucketName,
-    IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER]
-  );
+  const canBrowse = hasPermission(bucketName, [IAM_SCOPES.S3_LIST_BUCKET]);
 
   useEffect(() => {
     setActiveTab(selTab);
