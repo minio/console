@@ -197,7 +197,9 @@ const PricingFeatureItem = (props: {
   return (
     <Box className="feature-item" style={props.style}>
       <Box className="feature-item-info">
-        <div className="xs-only">{props.featureLabel} </div>
+        <div className="xs-only">
+          {getRenderValue(props.featureLabel || "")}
+        </div>
         <Box className="plan-feature">
           <div>{getRenderValue(props.label || "")}</div>
           {getRenderValue(props.detail)}
@@ -232,6 +234,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
   const getCommunityPlanHeader = () => {
     return (
       <PlanHeader
+        key={"community-header"}
         isActive={isCommunityPlan}
         isXsViewActive={isXsViewCommunity}
         title={"community"}
@@ -251,6 +254,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
   const getStandardPlanHeader = () => {
     return (
       <PlanHeader
+        key={"standard-header"}
         isActive={isStandardPlan}
         isXsViewActive={isXsViewStandard}
         title={"Standard"}
@@ -270,6 +274,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
   const getEnterpriseHeader = () => {
     return (
       <PlanHeader
+        key={"enterprise-header"}
         isActive={isEnterprisePlan}
         isXsViewActive={isXsViewEnterprise}
         title={"Enterprise"}
@@ -457,17 +462,12 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
               textAlign: "center",
 
               "@media (max-width: 600px)": {
-                display: "flex",
-                flexFlow: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
+                justifyContent: "space-evenly",
                 width: "100%",
                 "& .xs-only": {
                   display: "block",
-                  flex: 1,
                 },
                 "& .plan-feature": {
-                  flex: 1,
                   textAlign: "center",
                   paddingRight: "10px",
                 },
@@ -680,7 +680,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
 
               if (yesIcon) {
                 return (
-                  <Box className="feature-item">
+                  <Box className="feature-item" key={`ent-feature-yes${fi.id}`}>
                     <Box className="feature-item-info">
                       <div className="xs-only"></div>
                       <Box className="plan-feature">

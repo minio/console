@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Box } from "@mui/material";
+import LicenseLink from "./LicenseLink";
 
 export const LICENSE_PLANS = {
   COMMUNITY: "community",
@@ -130,13 +131,13 @@ export const COMMUNITY_PLAN_FEATURES = [
         >
           <span>
             Designed for developers who are building open source applications in
-            compliance with the GNU AGPL v3 license and are able to support
-            themselves. It is fully featured. If you distribute, host or create
-            derivative works of the MinIO software over the network, the GNU
-            AGPL v3 license requires that you also distribute the complete,
-            corresponding source code of the combined work under the same GNU
-            AGPL v3 license. This requirement applies whether or not you
-            modified MinIO.
+            compliance with the <LicenseLink /> license, MinIO Trademarks and
+            are able to self support themselves. It is fully featured. If you
+            distribute, host or create derivative works of the MinIO software
+            over the network, the <LicenseLink /> license requires that you also
+            distribute the complete, corresponding source code of the combined
+            work under the same <LicenseLink /> license. This requirement
+            applies whether or not you modified MinIO.
           </span>
         </Box>
       );
