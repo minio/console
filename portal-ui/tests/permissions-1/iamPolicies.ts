@@ -57,21 +57,10 @@ test("Create Policy button exists", async (t) => {
     .ok();
 });
 
-test("Policy textfield exists in the Create Policy modal", async (t) => {
-  const policyTextfieldExists = elements.createPolicyTextfield.exists;
-  await t
-    .navigateTo("http://localhost:9090/identity/policies")
-    .click(elements.createPolicyButton)
-    .expect(policyTextfieldExists)
-    .ok();
-});
-
 test("Create Policy button is clickable", async (t) => {
   await t
     .navigateTo("http://localhost:9090/identity/policies")
-    .click(elements.createPolicyButton)
-    .expect(true)
-    .ok();
+    .click(elements.createPolicyButton);
 });
 
 test("Policy Name input exists in the Create Policy modal", async (t) => {
@@ -80,6 +69,15 @@ test("Policy Name input exists in the Create Policy modal", async (t) => {
     .navigateTo("http://localhost:9090/identity/policies")
     .click(elements.createPolicyButton)
     .expect(policyNameInputExists)
+    .ok();
+});
+
+test("Policy textfield exists in the Create Policy modal", async (t) => {
+  const policyTextfieldExists = elements.createPolicyTextfield.exists;
+  await t
+    .navigateTo("http://localhost:9090/identity/policies")
+    .click(elements.createPolicyButton)
+    .expect(policyTextfieldExists)
     .ok();
 });
 
