@@ -20,6 +20,7 @@ import { Box } from "@mui/material";
 import { Button } from "mds";
 import { AGPLV3DarkLogo } from "../../../icons";
 import { setLicenseConsent } from "./utils";
+import LicenseLink from "./LicenseLink";
 
 const LicenseConsentModal = ({
   isOpen,
@@ -73,8 +74,8 @@ const LicenseConsentModal = ({
           }}
         >
           By using this software, you acknowledge that MinIO software is
-          licensed under the GNU AGPL v3, for which, the full text can be found
-          here:{" "}
+          licensed under the <LicenseLink />, for which, the full text can be
+          found here:{" "}
           <a
             href={`https://www.gnu.org/licenses/agpl-3.0.html`}
             rel="noreferrer noopener"

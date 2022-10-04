@@ -52,21 +52,21 @@ test("IAM Policies sidebar item exists", async (t) => {
 test("Create Policy button exists", async (t) => {
   const createPolicyButtonExists = elements.createPolicyButton.exists;
   await t
-    .navigateTo("http://localhost:9090/access/policies")
+    .navigateTo("http://localhost:9090/identity/policies")
     .expect(createPolicyButtonExists)
     .ok();
 });
 
 test("Create Policy button is clickable", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/access/policies")
+    .navigateTo("http://localhost:9090/identity/policies")
     .click(elements.createPolicyButton);
 });
 
 test("Policy Name input exists in the Create Policy modal", async (t) => {
   const policyNameInputExists = elements.createPolicyName.exists;
   await t
-    .navigateTo("http://localhost:9090/access/policies")
+    .navigateTo("http://localhost:9090/identity/policies")
     .click(elements.createPolicyButton)
     .expect(policyNameInputExists)
     .ok();
@@ -75,7 +75,7 @@ test("Policy Name input exists in the Create Policy modal", async (t) => {
 test("Policy textfield exists in the Create Policy modal", async (t) => {
   const policyTextfieldExists = elements.createPolicyTextfield.exists;
   await t
-    .navigateTo("http://localhost:9090/access/policies")
+    .navigateTo("http://localhost:9090/identity/policies")
     .click(elements.createPolicyButton)
     .expect(policyTextfieldExists)
     .ok();
@@ -83,7 +83,7 @@ test("Policy textfield exists in the Create Policy modal", async (t) => {
 
 test("Create Policy modal can be submitted after inputs are entered", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/access/policies")
+    .navigateTo("http://localhost:9090/identity/policies")
     .click(elements.createPolicyButton)
     .typeText(elements.createPolicyName, constants.TEST_IAM_POLICY_NAME)
     .typeText(elements.createPolicyTextfield, constants.TEST_IAM_POLICY, {
@@ -94,7 +94,7 @@ test("Create Policy modal can be submitted after inputs are entered", async (t) 
 }).after(async (t) => {
   // Clean up created policy
   await t
-    .navigateTo("http://localhost:9090/access/policies")
+    .navigateTo("http://localhost:9090/identity/policies")
     .typeText(elements.searchResourceInput, constants.TEST_IAM_POLICY_NAME)
     .click(iamPolicyDelete)
     .click(elements.deleteButton);
@@ -103,7 +103,7 @@ test("Create Policy modal can be submitted after inputs are entered", async (t) 
 test("Created Policy can be viewed and deleted", async (t) => {
   const iamPolicyListItemExists = iamPolicyListItem.exists;
   await t
-    .navigateTo("http://localhost:9090/access/policies")
+    .navigateTo("http://localhost:9090/identity/policies")
     .click(elements.createPolicyButton)
     .typeText(elements.createPolicyName, constants.TEST_IAM_POLICY_NAME)
     .typeText(elements.createPolicyTextfield, constants.TEST_IAM_POLICY, {

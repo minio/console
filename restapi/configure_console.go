@@ -372,20 +372,23 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 		sf.ObjectBrowser = true
 
 		err := ValidateEncodedStyles(overridenStyles)
-
 		if err != nil {
-			log.Println(err)
-		} else {
-			sf.CustomStyleOB = overridenStyles
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
+
+		sf.CustomStyleOB = overridenStyles
 
 		sessionID, err := login(consoleCreds, sf)
 		if err != nil {
-			log.Println(err)
-		} else {
-			cookie := NewSessionCookieForConsole(*sessionID)
-			http.SetCookie(w, &cookie)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
+
+		cookie := NewSessionCookieForConsole(*sessionID)
+
+		http.SetCookie(w, &cookie)
+
 		// Allow us to be iframed
 		w.Header().Del("X-Frame-Options")
 	}

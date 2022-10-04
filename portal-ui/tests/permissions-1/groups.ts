@@ -50,22 +50,32 @@ fixture("For user with Groups permissions")
     await t.useRole(roles.groups);
   });
 
+test("Create Group button exists", async (t) => {
+  const createGroupButtonExists = elements.createGroupButton.exists;
+  await t
+    .navigateTo(groupsPageUrl)
+    .expect(createGroupButtonExists)
+    .ok()
+    .wait(2000);
+});
+
 test("Groups sidebar item exists", async (t) => {
   await t
     .expect(identityElement.exists)
     .ok()
     .click(identityElement)
     .expect(groupsElement.exists)
-    .ok();
-});
-
-test("Create Group button exists", async (t) => {
-  const createGroupButtonExists = elements.createGroupButton.exists;
-  await t.navigateTo(groupsPageUrl).expect(createGroupButtonExists).ok();
+    .ok()
+    .wait(2000);
 });
 
 test("Create Group button is clickable", async (t) => {
-  await t.navigateTo(groupsPageUrl).click(elements.createGroupButton);
+  await t
+    .navigateTo(groupsPageUrl)
+    .click(elements.createGroupButton)
+    .expect(true)
+    .ok()
+    .wait(2000);
 });
 
 test("Group Name input exists in the Create Group page", async (t) => {
@@ -73,7 +83,8 @@ test("Group Name input exists in the Create Group page", async (t) => {
     .navigateTo(groupsPageUrl)
     .click(elements.createGroupButton)
     .expect(elements.groupNameInput.exists)
-    .ok();
+    .ok()
+    .wait(2000);
 });
 
 test("Users table exists in the Create Groups page", async (t) => {
@@ -82,7 +93,8 @@ test("Users table exists in the Create Groups page", async (t) => {
     .navigateTo(groupsPageUrl)
     .click(elements.createGroupButton)
     .expect(createGroupUserTableExists)
-    .ok();
+    .ok()
+    .wait(2000);
 });
 
 test.before(async (t) => {
@@ -97,7 +109,8 @@ test.before(async (t) => {
     .typeText(elements.groupNameInput, constants.TEST_GROUP_NAME)
     .typeText(elements.filterUserInput, constants.TEST_USER_NAME)
     .click(elements.groupUserCheckbox)
-    .click(elements.saveButton);
+    .click(elements.saveButton)
+    .wait(2000);
 });
 
 test.before(async (t) => {
@@ -105,7 +118,11 @@ test.before(async (t) => {
   await functions.createUser(t);
   await createGroup(t, "groups-table");
 })("Groups table exists", async (t) => {
-  await t.navigateTo(groupsPageUrl).expect(elements.table.exists).ok();
+  await t
+    .navigateTo(groupsPageUrl)
+    .expect(elements.table.exists)
+    .ok()
+    .wait(2000);
 });
 
 test.before(async (t) => {
