@@ -83,8 +83,6 @@ test("Policy Name input exists in the Create Policy modal", async (t) => {
     .ok();
 });
 
-
-
 test("Create Policy modal can be submitted after inputs are entered", async (t) => {
   await t
     .navigateTo("http://localhost:9090/identity/policies")
