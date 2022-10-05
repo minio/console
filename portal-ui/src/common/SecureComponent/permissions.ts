@@ -499,3 +499,23 @@ export const createGroupPermissions = [
   IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
   IAM_SCOPES.ADMIN_LIST_USERS,
 ];
+
+export const viewUserPermissions = [
+  IAM_SCOPES.ADMIN_GET_USER,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+];
+export const editGroupMembersPermissions = [
+  IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+];
+export const setGroupPoliciesPermissions = [
+  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+];
+export const addUserToGroupPermissions = [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP];
+export const listUsersPermissions = [IAM_SCOPES.ADMIN_LIST_USERS];
+export const viewPolicyPermissions = [IAM_SCOPES.ADMIN_GET_POLICY];
+export const enableDisableGroupPermissions = [
+  IAM_SCOPES.ADMIN_ENABLE_GROUP,
+  IAM_SCOPES.ADMIN_DISABLE_GROUP,
+];

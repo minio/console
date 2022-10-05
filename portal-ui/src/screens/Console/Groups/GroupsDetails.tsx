@@ -32,10 +32,18 @@ import PageLayout from "../Common/Layout/PageLayout";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import SearchBox from "../Common/SearchBox";
 import {
+  addUserToGroupPermissions,
   CONSOLE_UI_RESOURCE,
+  createGroupPermissions,
+  editGroupMembersPermissions,
+  enableDisableGroupPermissions,
+  getGroupPermissions,
   IAM_PAGES,
-  IAM_SCOPES,
+  listUsersPermissions,
   permissionTooltipHelper,
+  setGroupPoliciesPermissions,
+  viewPolicyPermissions,
+  viewUserPermissions,
 } from "../../../common/SecureComponent/permissions";
 import {
   hasPermission,
@@ -133,7 +141,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
 
   const viewUser = hasPermission(
     CONSOLE_UI_RESOURCE,
-    [IAM_SCOPES.ADMIN_GET_USER, IAM_SCOPES.ADMIN_LIST_USERS],
+    viewUserPermissions,
     true
   );
 
@@ -148,28 +156,26 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   const isGroupEnabled = groupEnabled === "enabled";
   const memberActionText = members.length > 0 ? "Edit Members" : "Add Members";
 
-  const getGroupDetails = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_GET_GROUP,
-  ]);
+  const getGroupDetails = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    getGroupPermissions
+  );
 
   const canEditGroupMembers = hasPermission(
     CONSOLE_UI_RESOURCE,
-    [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP, IAM_SCOPES.ADMIN_LIST_USERS],
+    editGroupMembersPermissions,
     true
   );
 
   const canSetPolicies = hasPermission(
     CONSOLE_UI_RESOURCE,
-    [
-      IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-      IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-    ],
+    setGroupPoliciesPermissions,
     true
   );
 
   const canViewPolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
-    [IAM_SCOPES.ADMIN_GET_POLICY],
+    viewPolicyPermissions,
     true
   );
 
@@ -216,7 +222,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
         />
         <SecureComponent
           resource={CONSOLE_UI_RESOURCE}
-          scopes={[IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP]}
+          scopes={addUserToGroupPermissions}
           errorProps={{ disabled: true }}
         >
           <TooltipWrapper
@@ -224,10 +230,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
               canEditGroupMembers
                 ? memberActionText
                 : permissionTooltipHelper(
-                    [
-                      IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-                      IAM_SCOPES.ADMIN_LIST_USERS,
-                    ],
+                    createGroupPermissions,
                     "edit Group membership"
                   )
             }
@@ -249,7 +252,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
       <div className={classes.tableBlock}>
         <SecureComponent
           resource={CONSOLE_UI_RESOURCE}
-          scopes={[IAM_SCOPES.ADMIN_LIST_USERS]}
+          scopes={listUsersPermissions}
           errorProps={{ disabled: true }}
         >
           <TableWrapper
@@ -272,7 +275,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
               viewUser
                 ? ""
                 : permissionTooltipHelper(
-                    [IAM_SCOPES.ADMIN_GET_USER, IAM_SCOPES.ADMIN_LIST_USERS],
+                    viewUserPermissions,
                     "view User details"
                   )
             }
@@ -291,10 +294,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             canSetPolicies
               ? "Set Policies"
               : permissionTooltipHelper(
-                  [
-                    IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-                    IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-                  ],
+                  setGroupPoliciesPermissions,
                   "assign Policies"
                 )
           }
@@ -331,7 +331,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             canViewPolicy
               ? ""
               : permissionTooltipHelper(
-                  [IAM_SCOPES.ADMIN_GET_POLICY],
+                  viewPolicyPermissions,
                   "view Policy details"
                 )
           }
@@ -363,28 +363,19 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                   tooltip={
                     hasPermission(
                       CONSOLE_UI_RESOURCE,
-                      [
-                        IAM_SCOPES.ADMIN_ENABLE_GROUP,
-                        IAM_SCOPES.ADMIN_DISABLE_GROUP,
-                      ],
+                      enableDisableGroupPermissions,
                       true
                     )
                       ? ""
                       : permissionTooltipHelper(
-                          [
-                            IAM_SCOPES.ADMIN_DISABLE_GROUP,
-                            IAM_SCOPES.ADMIN_ENABLE_GROUP,
-                          ],
+                          enableDisableGroupPermissions,
                           "enable or disable Groups"
                         )
                   }
                 >
                   <SecureComponent
                     resource={CONSOLE_UI_RESOURCE}
-                    scopes={[
-                      IAM_SCOPES.ADMIN_ENABLE_GROUP,
-                      IAM_SCOPES.ADMIN_DISABLE_GROUP,
-                    ]}
+                    scopes={enableDisableGroupPermissions}
                     errorProps={{ disabled: true }}
                     matchAll
                   >
