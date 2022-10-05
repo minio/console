@@ -55,9 +55,16 @@ import BackLink from "../../../common/BackLink";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import {
+  assignGroupPermissions,
+  assignIAMPolicyPermissions,
   CONSOLE_UI_RESOURCE,
+  deleteUserPermissions,
+  disableUserPermissions,
+  editServiceAccountPermissions,
+  enableDisableUserPermissions,
+  enableUserPermissions,
+  getGroupPermissions,
   IAM_PAGES,
-  IAM_SCOPES,
   permissionTooltipHelper,
 } from "../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../common/SecureComponent";
@@ -113,9 +120,9 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
   const [hasPolicy, setHasPolicy] = useState<boolean>(false);
 
   const enableEnabled =
-    hasPermission("console", [IAM_SCOPES.ADMIN_ENABLE_USER]) && !enabled;
+    hasPermission(CONSOLE_UI_RESOURCE, enableUserPermissions) && !enabled;
   const disableEnabled =
-    hasPermission("console", [IAM_SCOPES.ADMIN_DISABLE_USER]) && enabled;
+    hasPermission(CONSOLE_UI_RESOURCE, disableUserPermissions) && enabled;
 
   const userName = decodeURLString(params.userName || "");
 
@@ -129,28 +136,17 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
 
   const userLoggedIn = localStorage.getItem("userLoggedIn") || "";
   const canAssignPolicy = hasPermission(
-    "console",
-    [
-      IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-      IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-      IAM_SCOPES.ADMIN_GET_POLICY,
-    ],
+    CONSOLE_UI_RESOURCE,
+    assignIAMPolicyPermissions,
     true
   );
   const canAssignGroup = hasPermission(
-    "console",
-    [
-      IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-      IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
-      IAM_SCOPES.ADMIN_LIST_GROUPS,
-      IAM_SCOPES.ADMIN_ENABLE_USER,
-    ],
+    CONSOLE_UI_RESOURCE,
+    assignGroupPermissions,
     true
   );
 
-  const viewGroup = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_GET_GROUP,
-  ]);
+  const viewGroup = hasPermission(CONSOLE_UI_RESOURCE, getGroupPermissions);
 
   const getUserInformation = useCallback(() => {
     if (userName === "") {
@@ -301,23 +297,24 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                   tooltip={
                     enableEnabled || disableEnabled
                       ? ""
-                      : hasPermission("console", [IAM_SCOPES.ADMIN_ENABLE_USER])
+                      : hasPermission(
+                          CONSOLE_UI_RESOURCE,
+                          enableUserPermissions
+                        )
                       ? permissionTooltipHelper(
-                          [IAM_SCOPES.ADMIN_DISABLE_USER],
+                          disableUserPermissions,
                           "disable users"
                         )
-                      : hasPermission("console", [
-                          IAM_SCOPES.ADMIN_DISABLE_USER,
-                        ])
+                      : hasPermission(
+                          CONSOLE_UI_RESOURCE,
+                          disableUserPermissions
+                        )
                       ? permissionTooltipHelper(
-                          [IAM_SCOPES.ADMIN_ENABLE_USER],
+                          enableUserPermissions,
                           "enable users"
                         )
                       : permissionTooltipHelper(
-                          [
-                            IAM_SCOPES.ADMIN_ENABLE_USER,
-                            IAM_SCOPES.ADMIN_DISABLE_USER,
-                          ],
+                          enableDisableUserPermissions,
                           "enable or disable users"
                         )
                   }
@@ -338,12 +335,12 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                 </TooltipWrapper>
                 <TooltipWrapper
                   tooltip={
-                    hasPermission("console", [IAM_SCOPES.ADMIN_DELETE_USER])
+                    hasPermission(CONSOLE_UI_RESOURCE, deleteUserPermissions)
                       ? userLoggedIn === userName
                         ? "You cannot delete the currently logged in User"
                         : "Delete User"
                       : permissionTooltipHelper(
-                          [IAM_SCOPES.ADMIN_DELETE_USER],
+                          deleteUserPermissions,
                           "delete user"
                         )
                   }
@@ -354,9 +351,10 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                     icon={<TrashIcon />}
                     variant={"secondary"}
                     disabled={
-                      !hasPermission("console", [
-                        IAM_SCOPES.ADMIN_DELETE_USER,
-                      ]) || userLoggedIn === userName
+                      !hasPermission(
+                        CONSOLE_UI_RESOURCE,
+                        deleteUserPermissions
+                      ) || userLoggedIn === userName
                     }
                   />
                 </TooltipWrapper>
@@ -390,12 +388,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                         canAssignGroup
                           ? "Assign groups"
                           : permissionTooltipHelper(
-                              [
-                                IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-                                IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
-                                IAM_SCOPES.ADMIN_LIST_GROUPS,
-                                IAM_SCOPES.ADMIN_ENABLE_USER,
-                              ],
+                              assignGroupPermissions,
                               "add users to groups"
                             )
                       }
@@ -428,11 +421,10 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             {{
               tabConfig: {
                 label: "Service Accounts",
-                disabled: !hasPermission("console", [
-                  IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS,
-                  IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
-                  IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,
-                ]),
+                disabled: !hasPermission(
+                  CONSOLE_UI_RESOURCE,
+                  editServiceAccountPermissions
+                ),
               },
               content: (
                 <UserServiceAccountsPanel
@@ -456,11 +448,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                         canAssignPolicy
                           ? "Assign Policies"
                           : permissionTooltipHelper(
-                              [
-                                IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-                                IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-                                IAM_SCOPES.ADMIN_GET_POLICY,
-                              ],
+                              assignIAMPolicyPermissions,
                               "assign policies"
                             )
                       }
