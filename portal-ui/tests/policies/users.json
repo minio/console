@@ -13,7 +13,8 @@
         "admin:ListGroups",
         "admin:AttachUserOrGroupPolicy",
         "admin:RemoveUserFromGroup",
-        "admin:AddUserToGroup"
+        "admin:AddUserToGroup",
+        "admin:GetPolicy"
       ],
       "Effect": "Allow",
       "Resource": ["arn:aws:s3:::*"],
