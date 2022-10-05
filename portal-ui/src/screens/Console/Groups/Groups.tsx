@@ -49,8 +49,12 @@ import SearchBox from "../Common/SearchBox";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
-  IAM_SCOPES,
   permissionTooltipHelper,
+  applyPolicyPermissions,
+  displayGroupsPermissions,
+  deleteGroupPermissions,
+  getGroupPermissions,
+  createGroupPermissions,
 } from "../../../common/SecureComponent/permissions";
 import {
   hasPermission,
@@ -108,24 +112,15 @@ const Groups = ({ classes }: IGroupsProps) => {
     isLoading(true);
   }, []);
 
-  const displayGroups = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_LIST_GROUPS,
-  ]);
+  const displayGroups = hasPermission(CONSOLE_UI_RESOURCE, displayGroupsPermissions);
 
-  const deleteGroup = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
-  ]);
+  const deleteGroup = hasPermission(CONSOLE_UI_RESOURCE, deleteGroupPermissions);
 
-  const getGroup = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_GET_GROUP,
-  ]);
+  const getGroup = hasPermission(CONSOLE_UI_RESOURCE, getGroupPermissions);
 
   const applyPolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
-    [
-      IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-      IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-    ],
+    applyPolicyPermissions,
     true
   );
 
@@ -227,7 +222,7 @@ const Groups = ({ classes }: IGroupsProps) => {
         <Grid item xs={12} className={classes.actionsTray}>
           <SecureComponent
             resource={CONSOLE_UI_RESOURCE}
-            scopes={[IAM_SCOPES.ADMIN_LIST_GROUPS]}
+            scopes={displayGroupsPermissions}
             errorProps={{ disabled: true }}
           >
             <SearchBox
@@ -244,7 +239,7 @@ const Groups = ({ classes }: IGroupsProps) => {
           >
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
-              scopes={[IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY]}
+              scopes={applyPolicyPermissions}
               matchAll
               errorProps={{ disabled: true }}
             >
@@ -255,10 +250,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                     : applyPolicy
                     ? "Select Policy"
                     : permissionTooltipHelper(
-                        [
-                          IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-                          IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-                        ],
+                        applyPolicyPermissions,
                         "apply policies to Groups"
                       )
                 }
@@ -277,7 +269,7 @@ const Groups = ({ classes }: IGroupsProps) => {
             </SecureComponent>
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
-              scopes={[IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP]}
+              scopes={deleteGroupPermissions}
               matchAll
               errorProps={{ disabled: true }}
             >
@@ -288,7 +280,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                     : getGroup
                     ? "Delete Selected"
                     : permissionTooltipHelper(
-                        [IAM_SCOPES.ADMIN_GET_GROUP],
+                        getGroupPermissions,
                         "delete Groups"
                       )
                 }
@@ -307,10 +299,7 @@ const Groups = ({ classes }: IGroupsProps) => {
             </SecureComponent>
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
-              scopes={[
-                IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-                IAM_SCOPES.ADMIN_LIST_USERS,
-              ]}
+              scopes={createGroupPermissions}
               matchAll
               errorProps={{ disabled: true }}
             >
@@ -338,7 +327,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                     getGroup
                       ? ""
                       : permissionTooltipHelper(
-                          [IAM_SCOPES.ADMIN_GET_GROUP],
+                          getGroupPermissions,
                           "view Group details"
                         )
                   }
@@ -346,7 +335,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                   <Grid item xs={12} className={classes.tableBlock}>
                     <SecureComponent
                       resource={CONSOLE_UI_RESOURCE}
-                      scopes={[IAM_SCOPES.ADMIN_LIST_GROUPS]}
+                      scopes={displayGroupsPermissions}
                       errorProps={{ disabled: true }}
                     >
                       <TableWrapper
@@ -410,10 +399,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                         permissions on the MinIO Tenant.
                         <SecureComponent
                           resource={CONSOLE_UI_RESOURCE}
-                          scopes={[
-                            IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-                            IAM_SCOPES.ADMIN_LIST_USERS,
-                          ]}
+                          scopes={createGroupPermissions}
                           matchAll
                         >
                           <br />
