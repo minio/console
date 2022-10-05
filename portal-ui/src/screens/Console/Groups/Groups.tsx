@@ -112,9 +112,15 @@ const Groups = ({ classes }: IGroupsProps) => {
     isLoading(true);
   }, []);
 
-  const displayGroups = hasPermission(CONSOLE_UI_RESOURCE, displayGroupsPermissions);
+  const displayGroups = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    displayGroupsPermissions
+  );
 
-  const deleteGroup = hasPermission(CONSOLE_UI_RESOURCE, deleteGroupPermissions);
+  const deleteGroup = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    deleteGroupPermissions
+  );
 
   const getGroup = hasPermission(CONSOLE_UI_RESOURCE, getGroupPermissions);
 

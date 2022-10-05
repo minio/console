@@ -491,13 +491,9 @@ export const applyPolicyPermissions = [
   IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
 ];
 
-export const deleteGroupPermissions = [
-  IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
-];
+export const deleteGroupPermissions = [IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP];
 
-export const displayGroupsPermissions = [
-  IAM_SCOPES.ADMIN_LIST_GROUPS,
-];
+export const displayGroupsPermissions = [IAM_SCOPES.ADMIN_LIST_GROUPS];
 
 export const createGroupPermissions = [
   IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
