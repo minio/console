@@ -28,29 +28,9 @@ import {
   goToMonitoringSection,
   goToLoggingSection,
   goToLoggingDBSection,
-} from "./utils";
+} from "../../utils";
 
 fixture("For user with default permissions").page("http://localhost:9090");
-
-test("Create Tenant and List Tenants", async (t) => {
-  const tenantName = `tenant-${Math.floor(Math.random() * 10000)}`;
-  await loginToOperator();
-  await createTenant(tenantName);
-  await deleteTenant(tenantName);
-});
-
-test("Create Tenant Without Audit Log", async (t) => {
-  const tenantName = `tenant-${Math.floor(Math.random() * 10000)}`;
-  await loginToOperator();
-  await createTenantWithoutAuditLog(tenantName);
-  await deleteTenant(tenantName);
-});
-
-test("Test describe section for PODs in new tenant", async (t) => {
-  const tenantName = "storage-lite";
-  await loginToOperator();
-  await testPODDescribe(tenantName);
-});
 
 const testPODDescribe = async (tenantName: string) => {
   await goToPodInTenant(tenantName);
@@ -75,12 +55,6 @@ const checkPodDescribeHasSections = async () => {
     .expect(Selector("#pod-describe-containers").exists)
     .ok();
 };
-
-test("Test describe section for PVCs in new tenant", async (t) => {
-  const tenantName = `storage-lite`;
-  await loginToOperator();
-  await testPvcDescribe(tenantName);
-});
 
 const testPvcDescribe = async (tenantName: string) => {
   await goToPvcInTenant(tenantName);
@@ -302,6 +276,10 @@ const checkLoggingFieldsAcceptValues = async (tenantName: string) => {
     .typeText("#securityContext_runAsUser", "1111", { replace: true })
     .typeText("#securityContext_runAsGroup", "2222", { replace: true })
     .typeText("#securityContext_fsGroup", "3333", { replace: true })
+    .expect(Selector("#securityContext_runAsNonRoot").exists)
+    .ok();
+  await t.wait(3000);
+  await t
     .expect(Selector("#securityContext_runAsNonRoot").checked)
     .notOk()
     .click("#securityContext_runAsNonRoot")
@@ -487,27 +465,9 @@ const checkLoggingDBFieldsAcceptValues = async (tenantName: string) => {
     .ok();
 };
 
-test("Test Prometheus monitoring can be disabled and enabled", async (t) => {
-  const tenantName = `storage-lite`;
-  await loginToOperator();
-  await checkMonitoringToggle(tenantName);
-});
-
-test("Test Prometheus config fields can be edited and submitted", async (t) => {
-  const tenantName = `storage-lite`;
-  await loginToOperator();
-  await checkMonitoringFieldsAcceptValues(tenantName);
-});
-
+// Test 1
 test("Test Audit Logging can be disabled and enabled", async (t) => {
   const tenantName = `storage-lite`;
   await loginToOperator();
   await checkLoggingToggle(tenantName);
-});
-
-test("Test Audit Log config fields can be edited and submitted", async (t) => {
-  const tenantName = `storage-lite`;
-  await loginToOperator();
-  await checkLoggingFieldsAcceptValues(tenantName);
-  await checkLoggingDBFieldsAcceptValues(tenantName);
 });
