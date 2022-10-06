@@ -45,7 +45,6 @@ import NamespaceSelector from "./NamespaceSelector";
 const styles = (theme: Theme) =>
   createStyles({
     sizePreview: {
-      position: "fixed",
       marginLeft: 10,
       background: "#FFFFFF",
       border: "1px solid #EAEAEA",
