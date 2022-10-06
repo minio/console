@@ -167,12 +167,6 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
     true
   );
 
-  const editPolicy = hasPermission(
-    CONSOLE_UI_RESOURCE,
-    createPolicyPermissions,
-    true
-  );
-
   const canDeletePolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
     deletePolicyPermissions,
@@ -191,7 +185,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
       return;
     }
     setAddLoading(true);
-    if (editPolicy) {
+    if (canEditPolicy) {
       api
         .invoke("POST", "/api/v1/policies", {
           name: policyName,
@@ -537,7 +531,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                   <Grid container>
                     <Grid item xs={12}>
                       <CodeMirrorWrapper
-                        readOnly={!editPolicy}
+                        readOnly={!canEditPolicy}
                         value={policyDefinition}
                         onBeforeChange={(editor, data, value) => {
                           setPolicyDefinition(value);
@@ -579,12 +573,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                             variant="callAction"
                             color="primary"
                             disabled={
-                              addLoading ||
-                              !validSave ||
-                              !hasPermission(
-                                CONSOLE_UI_RESOURCE,
-                                createPolicyPermissions
-                              )
+                              addLoading || !validSave || !canEditPolicy
                             }
                             label={"Save"}
                           />
