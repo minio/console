@@ -443,8 +443,7 @@ export const permissionTooltipHelper = (scopes: string[], name: string) => {
     " permission" +
     (scopes.length > 1 ? "s" : "") +
     " in order to " +
-    name +
-    "."
+    name
   );
 };
 
@@ -457,6 +456,13 @@ export const deleteUserPermissions = [IAM_SCOPES.ADMIN_DELETE_USER];
 export const enableUserPermissions = [IAM_SCOPES.ADMIN_ENABLE_USER];
 
 export const disableUserPermissions = [IAM_SCOPES.ADMIN_DISABLE_USER];
+
+export const createUserPermissions = [
+  IAM_SCOPES.ADMIN_CREATE_USER,
+  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+  IAM_SCOPES.ADMIN_LIST_GROUPS,
+  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+];
 
 export const assignIAMPolicyPermissions = [
   IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
@@ -502,6 +508,7 @@ export const viewUserPermissions = [
   IAM_SCOPES.ADMIN_GET_USER,
   IAM_SCOPES.ADMIN_LIST_USERS,
 ];
+export const getUserPermissions = [IAM_SCOPES.ADMIN_GET_USER];
 export const editGroupMembersPermissions = [
   IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
   IAM_SCOPES.ADMIN_LIST_USERS,
