@@ -43,7 +43,7 @@ type KMSListPoliciesOK struct {
 	/*
 	  In: Body
 	*/
-	Payload models.KmsListPoliciesResponse `json:"body,omitempty"`
+	Payload *models.KmsListPoliciesResponse `json:"body,omitempty"`
 }
 
 // NewKMSListPoliciesOK creates KMSListPoliciesOK with default headers values
@@ -53,13 +53,13 @@ func NewKMSListPoliciesOK() *KMSListPoliciesOK {
 }
 
 // WithPayload adds the payload to the k m s list policies o k response
-func (o *KMSListPoliciesOK) WithPayload(payload models.KmsListPoliciesResponse) *KMSListPoliciesOK {
+func (o *KMSListPoliciesOK) WithPayload(payload *models.KmsListPoliciesResponse) *KMSListPoliciesOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s list policies o k response
-func (o *KMSListPoliciesOK) SetPayload(payload models.KmsListPoliciesResponse) {
+func (o *KMSListPoliciesOK) SetPayload(payload *models.KmsListPoliciesResponse) {
 	o.Payload = payload
 }
 
@@ -67,9 +67,11 @@ func (o *KMSListPoliciesOK) SetPayload(payload models.KmsListPoliciesResponse) {
 func (o *KMSListPoliciesOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	payload := o.Payload
-	if err := producer.Produce(rw, payload); err != nil {
-		panic(err) // let the recovery middleware deal with this
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
 	}
 }
 

@@ -57,7 +57,7 @@ func (o *KMSGetPolicyURL) SetBasePath(bp string) {
 func (o *KMSGetPolicyURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/kms/policy/{name}"
+	var _path = "/kms/policies/{name}"
 
 	name := o.Name
 	if name != "" {

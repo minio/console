@@ -49,7 +49,7 @@ func NewKMSListPolicies(ctx *middleware.Context, handler KMSListPoliciesHandler)
 }
 
 /*
-	KMSListPolicies swagger:route GET /kms/policy KMS kMSListPolicies
+	KMSListPolicies swagger:route GET /kms/policies KMS kMSListPolicies
 
 KMS list policies
 */

@@ -29,7 +29,6 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/validate"
 )
 
 // NewKMSListKeysParams creates a new KMSListKeysParams object
@@ -50,10 +49,9 @@ type KMSListKeysParams struct {
 	HTTPRequest *http.Request `json:"-"`
 
 	/*pattern to retrieve keys
-	  Required: true
 	  In: query
 	*/
-	Pattern string
+	Pattern *string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -79,21 +77,18 @@ func (o *KMSListKeysParams) BindRequest(r *http.Request, route *middleware.Match
 
 // bindPattern binds and validates parameter Pattern from query.
 func (o *KMSListKeysParams) bindPattern(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("pattern", "query", rawData)
-	}
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
 
-	// Required: true
+	// Required: false
 	// AllowEmptyValue: false
 
-	if err := validate.RequiredString("pattern", "query", raw); err != nil {
-		return err
+	if raw == "" { // empty values pass all other validations
+		return nil
 	}
-	o.Pattern = raw
+	o.Pattern = &raw
 
 	return nil
 }

@@ -49,7 +49,7 @@ func NewKMSCreateKey(ctx *middleware.Context, handler KMSCreateKeyHandler) *KMSC
 }
 
 /*
-	KMSCreateKey swagger:route POST /kms/key KMS kMSCreateKey
+	KMSCreateKey swagger:route POST /kms/keys KMS kMSCreateKey
 
 KMS create key
 */

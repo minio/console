@@ -25,52 +25,37 @@ package models
 import (
 	"context"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
-// KmsCreateKeyRequest kms create key request
+// KmsPolicyInfo kms policy info
 //
-// swagger:model kmsCreateKeyRequest
-type KmsCreateKeyRequest struct {
+// swagger:model kmsPolicyInfo
+type KmsPolicyInfo struct {
 
-	// key
-	// Required: true
-	Key *string `json:"key"`
+	// created at
+	CreatedAt string `json:"createdAt,omitempty"`
+
+	// created by
+	CreatedBy string `json:"createdBy,omitempty"`
+
+	// name
+	Name string `json:"name,omitempty"`
 }
 
-// Validate validates this kms create key request
-func (m *KmsCreateKeyRequest) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateKey(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
+// Validate validates this kms policy info
+func (m *KmsPolicyInfo) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *KmsCreateKeyRequest) validateKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("key", "body", m.Key); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validates this kms create key request based on context it is used
-func (m *KmsCreateKeyRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this kms policy info based on context it is used
+func (m *KmsPolicyInfo) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *KmsCreateKeyRequest) MarshalBinary() ([]byte, error) {
+func (m *KmsPolicyInfo) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -78,8 +63,8 @@ func (m *KmsCreateKeyRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *KmsCreateKeyRequest) UnmarshalBinary(b []byte) error {
-	var res KmsCreateKeyRequest
+func (m *KmsPolicyInfo) UnmarshalBinary(b []byte) error {
+	var res KmsPolicyInfo
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -29,6 +29,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/validate"
 
 	"github.com/minio/console/models"
 )
@@ -54,7 +55,7 @@ type KMSSetPolicyParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body models.KmsSetPolicyRequest
+	Body *models.KmsSetPolicyRequest
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -76,8 +77,19 @@ func (o *KMSSetPolicyParams) BindRequest(r *http.Request, route *middleware.Matc
 				res = append(res, errors.NewParseError("body", "body", "", err))
 			}
 		} else {
-			// no validation on generic interface
-			o.Body = body
+			// validate body object
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			ctx := validate.WithOperationRequest(r.Context())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			if len(res) == 0 {
+				o.Body = &body
+			}
 		}
 	} else {
 		res = append(res, errors.Required("body", "body", ""))

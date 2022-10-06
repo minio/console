@@ -1708,31 +1708,31 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/kms/policy/{name}/assign"] = k_m_s.NewKMSAssignPolicy(o.context, o.KmsKMSAssignPolicyHandler)
+	o.handlers["POST"]["/kms/policies/{name}/assign"] = k_m_s.NewKMSAssignPolicy(o.context, o.KmsKMSAssignPolicyHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/kms/key"] = k_m_s.NewKMSCreateKey(o.context, o.KmsKMSCreateKeyHandler)
+	o.handlers["POST"]["/kms/keys"] = k_m_s.NewKMSCreateKey(o.context, o.KmsKMSCreateKeyHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/kms/identity/{name}"] = k_m_s.NewKMSDeleteIdentity(o.context, o.KmsKMSDeleteIdentityHandler)
+	o.handlers["DELETE"]["/kms/identities/{name}"] = k_m_s.NewKMSDeleteIdentity(o.context, o.KmsKMSDeleteIdentityHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/kms/key/{name}"] = k_m_s.NewKMSDeleteKey(o.context, o.KmsKMSDeleteKeyHandler)
+	o.handlers["DELETE"]["/kms/keys/{name}"] = k_m_s.NewKMSDeleteKey(o.context, o.KmsKMSDeleteKeyHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/kms/policy/{name}"] = k_m_s.NewKMSDeletePolicy(o.context, o.KmsKMSDeletePolicyHandler)
+	o.handlers["DELETE"]["/kms/policies/{name}"] = k_m_s.NewKMSDeletePolicy(o.context, o.KmsKMSDeletePolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/kms/identity/{name}/describe"] = k_m_s.NewKMSDescribeIdentity(o.context, o.KmsKMSDescribeIdentityHandler)
+	o.handlers["GET"]["/kms/identities/{name}/describe"] = k_m_s.NewKMSDescribeIdentity(o.context, o.KmsKMSDescribeIdentityHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/kms/policy/{name}/describe"] = k_m_s.NewKMSDescribePolicy(o.context, o.KmsKMSDescribePolicyHandler)
+	o.handlers["GET"]["/kms/policies/{name}/describe"] = k_m_s.NewKMSDescribePolicy(o.context, o.KmsKMSDescribePolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1740,31 +1740,31 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/kms/policy/{name}"] = k_m_s.NewKMSGetPolicy(o.context, o.KmsKMSGetPolicyHandler)
+	o.handlers["GET"]["/kms/policies/{name}"] = k_m_s.NewKMSGetPolicy(o.context, o.KmsKMSGetPolicyHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/kms/key/{name}/import"] = k_m_s.NewKMSImportKey(o.context, o.KmsKMSImportKeyHandler)
+	o.handlers["POST"]["/kms/keys/{name}/import"] = k_m_s.NewKMSImportKey(o.context, o.KmsKMSImportKeyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/kms/key/{name}"] = k_m_s.NewKMSKeyStatus(o.context, o.KmsKMSKeyStatusHandler)
+	o.handlers["GET"]["/kms/keys/{name}"] = k_m_s.NewKMSKeyStatus(o.context, o.KmsKMSKeyStatusHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/kms/identity"] = k_m_s.NewKMSListIdentities(o.context, o.KmsKMSListIdentitiesHandler)
+	o.handlers["GET"]["/kms/identities"] = k_m_s.NewKMSListIdentities(o.context, o.KmsKMSListIdentitiesHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/kms/key"] = k_m_s.NewKMSListKeys(o.context, o.KmsKMSListKeysHandler)
+	o.handlers["GET"]["/kms/keys"] = k_m_s.NewKMSListKeys(o.context, o.KmsKMSListKeysHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/kms/policy"] = k_m_s.NewKMSListPolicies(o.context, o.KmsKMSListPoliciesHandler)
+	o.handlers["GET"]["/kms/policies"] = k_m_s.NewKMSListPolicies(o.context, o.KmsKMSListPoliciesHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/kms/policy"] = k_m_s.NewKMSSetPolicy(o.context, o.KmsKMSSetPolicyHandler)
+	o.handlers["POST"]["/kms/policies"] = k_m_s.NewKMSSetPolicy(o.context, o.KmsKMSSetPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

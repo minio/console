@@ -57,7 +57,7 @@ func (o *KMSDescribeIdentityURL) SetBasePath(bp string) {
 func (o *KMSDescribeIdentityURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/kms/identity/{name}/describe"
+	var _path = "/kms/identities/{name}/describe"
 
 	name := o.Name
 	if name != "" {

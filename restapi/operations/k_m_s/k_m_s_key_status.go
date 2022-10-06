@@ -49,7 +49,7 @@ func NewKMSKeyStatus(ctx *middleware.Context, handler KMSKeyStatusHandler) *KMSK
 }
 
 /*
-	KMSKeyStatus swagger:route GET /kms/key/{name} KMS kMSKeyStatus
+	KMSKeyStatus swagger:route GET /kms/keys/{name} KMS kMSKeyStatus
 
 KMS key status
 */

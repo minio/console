@@ -49,7 +49,7 @@ func NewKMSDescribeIdentity(ctx *middleware.Context, handler KMSDescribeIdentity
 }
 
 /*
-	KMSDescribeIdentity swagger:route GET /kms/identity/{name}/describe KMS kMSDescribeIdentity
+	KMSDescribeIdentity swagger:route GET /kms/identities/{name}/describe KMS kMSDescribeIdentity
 
 KMS describe identity
 */

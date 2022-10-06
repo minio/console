@@ -19,11 +19,13 @@ package restapi
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	kmsAPI "github.com/minio/console/restapi/operations/k_m_s"
+	"github.com/minio/madmin-go"
 )
 
 func registerKMSHandlers(api *operations.ConsoleAPI) {
@@ -84,37 +86,140 @@ func registerKMSKeyHandlers(api *operations.ConsoleAPI) {
 func GetKMSStatusResponse(session *models.Principal, params kmsAPI.KMSStatusParams) (*models.KmsStatusResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return nil, ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return kmsStatus(ctx, AdminClient{Client: mAdmin})
+}
+
+func kmsStatus(ctx context.Context, minioClient MinioAdmin) (*models.KmsStatusResponse, *models.Error) {
+	st, err := minioClient.kmsStatus(ctx)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsStatusResponse{
+		DefaultKeyID: st.DefaultKeyID,
+		Name:         st.Name,
+		Endpoints:    parseStatusEndpoints(st.Endpoints),
+	}, nil
+}
+
+func parseStatusEndpoints(endpoints map[string]madmin.ItemState) (kmsEndpoints []*models.KmsEndpoint) {
+	for key, value := range endpoints {
+		kmsEndpoints = append(kmsEndpoints, &models.KmsEndpoint{URL: key, Status: string(value)})
+	}
+	return kmsEndpoints
 }
 
 func GetKMSCreateKeyResponse(session *models.Principal, params kmsAPI.KMSCreateKeyParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return createKey(ctx, *params.Body.Key, AdminClient{Client: mAdmin})
+}
+
+func createKey(ctx context.Context, key string, minioClient MinioAdmin) *models.Error {
+	if err := minioClient.createKey(ctx, key); err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return nil
 }
 
 func GetKMSImportKeyResponse(session *models.Principal, params kmsAPI.KMSImportKeyParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	bytes, err := json.Marshal(params.Body)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return importKey(ctx, params.Name, bytes, AdminClient{Client: mAdmin})
+}
+
+func importKey(ctx context.Context, key string, bytes []byte, minioClient MinioAdmin) *models.Error {
+	if err := minioClient.importKey(ctx, key, bytes); err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return nil
 }
 
 func GetKMSListKeysResponse(session *models.Principal, params kmsAPI.KMSListKeysParams) (*models.KmsListKeysResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return nil, ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	pattern := ""
+	if params.Pattern != nil {
+		pattern = *params.Pattern
+	}
+	return listKeys(ctx, pattern, AdminClient{Client: mAdmin})
+}
+
+func listKeys(ctx context.Context, pattern string, minioClient MinioAdmin) (*models.KmsListKeysResponse, *models.Error) {
+	results, err := minioClient.listKeys(ctx, pattern)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsListKeysResponse{Results: parseKeys(results)}, nil
+}
+
+func parseKeys(results []madmin.KMSKeyInfo) (data []*models.KmsKeyInfo) {
+	for _, key := range results {
+		data = append(data, &models.KmsKeyInfo{
+			CreatedAt: key.CreatedAt,
+			CreatedBy: key.CreatedBy,
+			Name:      key.Name,
+		})
+	}
+	return data
 }
 
 func GetKMSKeyStatusResponse(session *models.Principal, params kmsAPI.KMSKeyStatusParams) (*models.KmsKeyStatusResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return nil, ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return keyStatus(ctx, params.Name, AdminClient{Client: mAdmin})
+}
+
+func keyStatus(ctx context.Context, key string, minioClient MinioAdmin) (*models.KmsKeyStatusResponse, *models.Error) {
+	ks, err := minioClient.keyStatus(ctx, key)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsKeyStatusResponse{
+		KeyID:         ks.KeyID,
+		EncryptionErr: ks.EncryptionErr,
+		DecryptionErr: ks.DecryptionErr,
+	}, nil
 }
 
 func GetKMSDeleteKeyResponse(session *models.Principal, params kmsAPI.KMSDeleteKeyParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return deleteKey(ctx, params.Name, AdminClient{Client: mAdmin})
+}
+
+func deleteKey(ctx context.Context, key string, minioClient MinioAdmin) *models.Error {
+	if err := minioClient.deleteKey(ctx, key); err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return nil
 }
 
 func registerKMSPolicyHandlers(api *operations.ConsoleAPI) {
@@ -157,6 +262,7 @@ func registerKMSPolicyHandlers(api *operations.ConsoleAPI) {
 		}
 		return kmsAPI.NewKMSListPoliciesOK().WithPayload(resp)
 	})
+
 	api.KmsKMSDeletePolicyHandler = kmsAPI.KMSDeletePolicyHandlerFunc(func(params kmsAPI.KMSDeletePolicyParams, session *models.Principal) middleware.Responder {
 		err := GetKMSDeletePolicyResponse(session, params)
 		if err != nil {
@@ -169,37 +275,136 @@ func registerKMSPolicyHandlers(api *operations.ConsoleAPI) {
 func GetKMSSetPolicyResponse(session *models.Principal, params kmsAPI.KMSSetPolicyParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	bytes, err := json.Marshal(params.Body)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return setPolicy(ctx, *params.Body.Policy, bytes, AdminClient{Client: mAdmin})
+}
+
+func setPolicy(ctx context.Context, policy string, content []byte, minioClient MinioAdmin) *models.Error {
+	if err := minioClient.setKMSPolicy(ctx, policy, content); err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return nil
 }
 
 func GetKMSAssignPolicyResponse(session *models.Principal, params kmsAPI.KMSAssignPolicyParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	bytes, err := json.Marshal(params.Body)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return assignPolicy(ctx, params.Name, bytes, AdminClient{Client: mAdmin})
+}
+
+func assignPolicy(ctx context.Context, policy string, content []byte, minioClient MinioAdmin) *models.Error {
+	if err := minioClient.assignPolicy(ctx, policy, content); err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return nil
 }
 
 func GetKMSDescribePolicyResponse(session *models.Principal, params kmsAPI.KMSDescribePolicyParams) (*models.KmsDescribePolicyResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return nil, ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return describePolicy(ctx, params.Name, AdminClient{Client: mAdmin})
+}
+
+func describePolicy(ctx context.Context, policy string, minioClient MinioAdmin) (*models.KmsDescribePolicyResponse, *models.Error) {
+	dp, err := minioClient.describePolicy(ctx, policy)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsDescribePolicyResponse{
+		Name:      dp.Name,
+		CreatedAt: dp.CreatedAt,
+		CreatedBy: dp.CreatedBy,
+	}, nil
 }
 
 func GetKMSGetPolicyResponse(session *models.Principal, params kmsAPI.KMSGetPolicyParams) (*models.KmsGetPolicyResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return nil, ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return getPolicy(ctx, params.Name, AdminClient{Client: mAdmin})
+}
+
+func getPolicy(ctx context.Context, policy string, minioClient MinioAdmin) (*models.KmsGetPolicyResponse, *models.Error) {
+	p, err := minioClient.getKMSPolicy(ctx, policy)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsGetPolicyResponse{
+		Allow: p.Allow,
+		Deny:  p.Deny,
+	}, nil
 }
 
 func GetKMSListPoliciesResponse(session *models.Principal, params kmsAPI.KMSListPoliciesParams) (*models.KmsListPoliciesResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return nil, ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	pattern := ""
+	if params.Pattern != nil {
+		pattern = *params.Pattern
+	}
+	return listKMSPolicies(ctx, pattern, AdminClient{Client: mAdmin})
+}
+
+func listKMSPolicies(ctx context.Context, pattern string, minioClient MinioAdmin) (*models.KmsListPoliciesResponse, *models.Error) {
+	results, err := minioClient.listKMSPolicies(ctx, pattern)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsListPoliciesResponse{Results: parsePolicies(results)}, nil
+}
+
+func parsePolicies(results []madmin.KMSPolicyInfo) (data []*models.KmsPolicyInfo) {
+	for _, policy := range results {
+		data = append(data, &models.KmsPolicyInfo{
+			CreatedAt: policy.CreatedAt,
+			CreatedBy: policy.CreatedBy,
+			Name:      policy.Name,
+		})
+	}
+	return data
 }
 
 func GetKMSDeletePolicyResponse(session *models.Principal, params kmsAPI.KMSDeletePolicyParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return deletePolicy(ctx, params.Name, AdminClient{Client: mAdmin})
+}
+
+func deletePolicy(ctx context.Context, policy string, minioClient MinioAdmin) *models.Error {
+	if err := minioClient.deletePolicy(ctx, policy); err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return nil
 }
 
 func registerKMSIdentityHandlers(api *operations.ConsoleAPI) {
@@ -238,23 +443,102 @@ func registerKMSIdentityHandlers(api *operations.ConsoleAPI) {
 func GetKMSDescribeIdentityResponse(session *models.Principal, params kmsAPI.KMSDescribeIdentityParams) (*models.KmsDescribeIdentityResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return nil, ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return describeIdentity(ctx, params.Name, AdminClient{Client: mAdmin})
+}
+
+func describeIdentity(ctx context.Context, identity string, minioClient MinioAdmin) (*models.KmsDescribeIdentityResponse, *models.Error) {
+	i, err := minioClient.describeIdentity(ctx, identity)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsDescribeIdentityResponse{
+		Policy:    i.Policy,
+		Admin:     i.IsAdmin,
+		Identity:  i.Identity,
+		CreatedAt: i.CreatedAt,
+		CreatedBy: i.CreatedBy,
+	}, nil
 }
 
 func GetKMSDescribeSelfIdentityResponse(session *models.Principal, params kmsAPI.KMSDescribeSelfIdentityParams) (*models.KmsDescribeSelfIdentityResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return nil, ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return describeSelfIdentity(ctx, AdminClient{Client: mAdmin})
+}
+
+func describeSelfIdentity(ctx context.Context, minioClient MinioAdmin) (*models.KmsDescribeSelfIdentityResponse, *models.Error) {
+	i, err := minioClient.describeSelfIdentity(ctx)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsDescribeSelfIdentityResponse{
+		Policy: &models.KmsGetPolicyResponse{
+			Allow: i.Policy.Allow,
+			Deny:  i.Policy.Deny,
+		},
+		Identity:  i.Identity,
+		Admin:     i.IsAdmin,
+		CreatedAt: i.CreatedAt,
+		CreatedBy: i.CreatedBy,
+	}, nil
 }
 
 func GetKMSListIdentitiesResponse(session *models.Principal, params kmsAPI.KMSListIdentitiesParams) (*models.KmsListIdentitiesResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return nil, ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	pattern := ""
+	if params.Pattern != nil {
+		pattern = *params.Pattern
+	}
+	return listIdentities(ctx, pattern, AdminClient{Client: mAdmin})
+}
+
+func listIdentities(ctx context.Context, pattern string, minioClient MinioAdmin) (*models.KmsListIdentitiesResponse, *models.Error) {
+	results, err := minioClient.listIdentities(ctx, pattern)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsListIdentitiesResponse{Results: parseIdentities(results)}, nil
+}
+
+func parseIdentities(results []madmin.KMSIdentityInfo) (data []*models.KmsIdentityInfo) {
+	for _, policy := range results {
+		data = append(data, &models.KmsIdentityInfo{
+			CreatedAt: policy.CreatedAt,
+			CreatedBy: policy.CreatedBy,
+			Identity:  policy.Identity,
+			Error:     policy.Error,
+			Policy:    policy.Policy,
+		})
+	}
+	return data
 }
 
 func GetKMSDeleteIdentityResponse(session *models.Principal, params kmsAPI.KMSDeleteIdentityParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	return ErrorWithContext(ctx, ErrDefault)
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return deleteIdentity(ctx, params.Name, AdminClient{Client: mAdmin})
+}
+
+func deleteIdentity(ctx context.Context, identity string, minioClient MinioAdmin) *models.Error {
+	if err := minioClient.deleteIdentity(ctx, identity); err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return nil
 }

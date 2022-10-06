@@ -49,7 +49,7 @@ func NewKMSSetPolicy(ctx *middleware.Context, handler KMSSetPolicyHandler) *KMSS
 }
 
 /*
-	KMSSetPolicy swagger:route POST /kms/policy KMS kMSSetPolicy
+	KMSSetPolicy swagger:route POST /kms/policies KMS kMSSetPolicy
 
 KMS set policy
 */

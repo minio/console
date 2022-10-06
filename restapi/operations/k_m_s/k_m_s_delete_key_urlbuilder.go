@@ -57,7 +57,7 @@ func (o *KMSDeleteKeyURL) SetBasePath(bp string) {
 func (o *KMSDeleteKeyURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/kms/key/{name}"
+	var _path = "/kms/keys/{name}"
 
 	name := o.Name
 	if name != "" {

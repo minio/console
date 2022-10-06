@@ -49,7 +49,7 @@ func NewKMSListKeys(ctx *middleware.Context, handler KMSListKeysHandler) *KMSLis
 }
 
 /*
-	KMSListKeys swagger:route GET /kms/key KMS kMSListKeys
+	KMSListKeys swagger:route GET /kms/keys KMS kMSListKeys
 
 KMS list keys
 */
