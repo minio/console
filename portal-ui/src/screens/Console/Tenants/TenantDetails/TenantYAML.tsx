@@ -152,7 +152,15 @@ const TenantYAML = ({ classes }: ITenantYAMLProps) => {
                 editorHeight={"550px"}
               />
             </Grid>
-            <Grid item xs={12} style={{ display: "flex", justifyContent: "flex-end", paddingTop: 16 }}>
+            <Grid
+              item
+              xs={12}
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                paddingTop: 16,
+              }}
+            >
               <Button
                 id={"cancel-tenant-yaml"}
                 type="button"
