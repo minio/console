@@ -50,8 +50,8 @@ import {
   IAM_PERMISSIONS,
   IAM_ROLES,
   IAM_SCOPES,
-  permissionTooltipHelper,
 } from "../../../../common/SecureComponent/permissions";
+import PermissionTooltipHelper from "../../Common/PermissionTooltipHelper";
 import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
@@ -304,10 +304,10 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                         : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
                       : canPutLifecycle
                       ? "Set Lifecycle"
-                      : permissionTooltipHelper(
-                          IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
-                          "configuring lifecycle for the selected buckets"
-                        )
+                      : PermissionTooltipHelper({
+                          scopes: IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
+                          text: "configuring lifecycle for the selected buckets",
+                        })
                   }
                 >
                   <Button
@@ -351,10 +351,10 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                 tooltip={
                   canCreateBucket
                     ? ""
-                    : permissionTooltipHelper(
-                        [IAM_SCOPES.S3_CREATE_BUCKET],
-                        "creating a bucket"
-                      )
+                    : PermissionTooltipHelper({
+                        scopes: [IAM_SCOPES.S3_CREATE_BUCKET],
+                        text: "creating a bucket",
+                      })
                 }
               >
                 <Button

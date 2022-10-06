@@ -38,8 +38,8 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   IAM_PERMISSIONS,
   IAM_ROLES,
-  permissionTooltipHelper,
 } from "../../../../common/SecureComponent/permissions";
+import PermissionTooltipHelper from "../../Common/PermissionTooltipHelper";
 import { SecureComponent } from "../../../../common/SecureComponent";
 import clsx from "clsx";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
@@ -260,10 +260,10 @@ const BucketListItem = ({
                   tooltip={
                     manageAllowed
                       ? "Manage Bucket"
-                      : permissionTooltipHelper(
-                          IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN],
-                          "managing this bucket"
-                        )
+                      : PermissionTooltipHelper({
+                          scopes: IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN],
+                          text: "managing this bucket",
+                        })
                   }
                 >
                   <Button

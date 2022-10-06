@@ -65,8 +65,8 @@ import {
   enableUserPermissions,
   getGroupPermissions,
   IAM_PAGES,
-  permissionTooltipHelper,
 } from "../../../common/SecureComponent/permissions";
+import PermissionTooltipHelper from "../Common/PermissionTooltipHelper";
 import { hasPermission } from "../../../common/SecureComponent";
 import { useAppDispatch } from "../../../store";
 import { policyDetailsSort } from "../../../utils/sortFunctions";
@@ -301,22 +301,22 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                           CONSOLE_UI_RESOURCE,
                           enableUserPermissions
                         )
-                      ? permissionTooltipHelper(
-                          disableUserPermissions,
-                          "disable users"
-                        )
+                      ? PermissionTooltipHelper({
+                          scopes: disableUserPermissions,
+                          text: "disable users",
+                        })
                       : hasPermission(
                           CONSOLE_UI_RESOURCE,
                           disableUserPermissions
                         )
-                      ? permissionTooltipHelper(
-                          enableUserPermissions,
-                          "enable users"
-                        )
-                      : permissionTooltipHelper(
-                          enableDisableUserPermissions,
-                          "enable or disable users"
-                        )
+                      ? PermissionTooltipHelper({
+                          scopes: enableUserPermissions,
+                          text: "enable users",
+                        })
+                      : PermissionTooltipHelper({
+                          scopes: enableDisableUserPermissions,
+                          text: "enable or disable users",
+                        })
                   }
                 >
                   <FormSwitchWrapper
@@ -339,10 +339,10 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                       ? userLoggedIn === userName
                         ? "You cannot delete the currently logged in User"
                         : "Delete User"
-                      : permissionTooltipHelper(
-                          deleteUserPermissions,
-                          "delete user"
-                        )
+                      : PermissionTooltipHelper({
+                          scopes: deleteUserPermissions,
+                          text: "delete user",
+                        })
                   }
                 >
                   <Button
@@ -387,10 +387,10 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                       tooltip={
                         canAssignGroup
                           ? "Assign groups"
-                          : permissionTooltipHelper(
-                              assignGroupPermissions,
-                              "add users to groups"
-                            )
+                          : PermissionTooltipHelper({
+                              scopes: assignGroupPermissions,
+                              text: "add users to groups",
+                            })
                       }
                     >
                       <Button
@@ -447,10 +447,10 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                       tooltip={
                         canAssignPolicy
                           ? "Assign Policies"
-                          : permissionTooltipHelper(
-                              assignIAMPolicyPermissions,
-                              "assign policies"
-                            )
+                          : PermissionTooltipHelper({
+                              scopes: assignIAMPolicyPermissions,
+                              text: "assign policies",
+                            })
                       }
                     >
                       <Button

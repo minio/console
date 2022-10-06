@@ -41,11 +41,8 @@ import {
   niceBytesInt,
   niceDaysInt,
 } from "../../../../../../common/utils";
-import {
-  IAM_SCOPES,
-  permissionTooltipHelper,
-} from "../../../../../../common/SecureComponent/permissions";
-
+import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import PermissionTooltipHelper from "../../../../Common/PermissionTooltipHelper";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   DeleteIcon,
@@ -447,10 +444,10 @@ const ObjectDetailPanel = ({
       icon: <DownloadIcon />,
       tooltip: canGetObject
         ? "Download this Object"
-        : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
-            "download this object"
-          ),
+        : PermissionTooltipHelper({
+            scopes: [IAM_SCOPES.S3_GET_OBJECT],
+            text: "download this object",
+          }),
     },
     {
       action: () => {
@@ -461,10 +458,10 @@ const ObjectDetailPanel = ({
       icon: <ShareIcon />,
       tooltip: canGetObject
         ? "Share this File"
-        : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
-            "share this object"
-          ),
+        : PermissionTooltipHelper({
+            scopes: [IAM_SCOPES.S3_GET_OBJECT],
+            text: "share this object",
+          }),
     },
     {
       action: () => {
@@ -478,10 +475,10 @@ const ObjectDetailPanel = ({
       icon: <PreviewIcon />,
       tooltip: canGetObject
         ? "Preview this File"
-        : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
-            "preview this object"
-          ),
+        : PermissionTooltipHelper({
+            scopes: [IAM_SCOPES.S3_GET_OBJECT],
+            text: "preview this object",
+          }),
     },
     {
       action: () => {
@@ -499,10 +496,10 @@ const ObjectDetailPanel = ({
         ? locking
           ? "Change Legal Hold rules for this File"
           : "Object Locking must be enabled on this bucket in order to set Legal Hold"
-        : permissionTooltipHelper(
-            [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD],
-            "change legal hold settings for this object"
-          ),
+        : PermissionTooltipHelper({
+            scopes: [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD],
+            text: "change legal hold settings for this object",
+          }),
     },
     {
       action: openRetentionModal,
@@ -518,13 +515,13 @@ const ObjectDetailPanel = ({
         ? locking
           ? "Change Retention rules for this File"
           : "Object Locking must be enabled on this bucket in order to set Retention Rules"
-        : permissionTooltipHelper(
-            [
+        : PermissionTooltipHelper({
+            scopes: [
               IAM_SCOPES.S3_GET_OBJECT_RETENTION,
               IAM_SCOPES.S3_PUT_OBJECT_RETENTION,
             ],
-            "change Retention Rules for this object"
-          ),
+            text: "change Retention Rules for this object",
+          }),
     },
     {
       action: () => {
@@ -536,13 +533,13 @@ const ObjectDetailPanel = ({
       icon: <TagsIcon />,
       tooltip: canSetTags
         ? "Change Tags for this File"
-        : permissionTooltipHelper(
-            [
+        : PermissionTooltipHelper({
+            scopes: [
               IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
               IAM_SCOPES.S3_GET_OBJECT_TAGGING,
             ],
-            "set Tags on this object"
-          ),
+            text: "set Tags on this object",
+          }),
     },
     {
       action: () => {
@@ -557,10 +554,10 @@ const ObjectDetailPanel = ({
       icon: <InspectMenuIcon />,
       tooltip: canInspect
         ? "Inspect this file"
-        : permissionTooltipHelper(
-            [IAM_SCOPES.ADMIN_INSPECT_DATA],
-            "inspect this file"
-          ),
+        : PermissionTooltipHelper({
+            scopes: [IAM_SCOPES.ADMIN_INSPECT_DATA],
+            text: "inspect this file",
+          }),
     },
     {
       action: () => {
@@ -581,14 +578,14 @@ const ObjectDetailPanel = ({
         ? actualInfo.version_id && actualInfo.version_id !== "null"
           ? "Display Versions for this file"
           : ""
-        : permissionTooltipHelper(
-            [
+        : PermissionTooltipHelper({
+            scopes: [
               IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
               IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
               IAM_SCOPES.S3_GET_OBJECT_VERSION,
             ],
-            "display all versions of this object"
-          ),
+            text: "display all versions of this object",
+          }),
     },
   ];
 
@@ -703,10 +700,10 @@ const ObjectDetailPanel = ({
             tooltip={
               canDelete
                 ? ""
-                : permissionTooltipHelper(
-                    [IAM_SCOPES.S3_DELETE_OBJECT],
-                    "delete this object"
-                  )
+                : PermissionTooltipHelper({
+                    scopes: [IAM_SCOPES.S3_DELETE_OBJECT],
+                    text: "delete this object",
+                  })
             }
           >
             <Grid

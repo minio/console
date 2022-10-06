@@ -49,8 +49,8 @@ import {
   IAM_SCOPES,
   IAM_PERMISSIONS,
   IAM_ROLES,
-  permissionTooltipHelper,
 } from "../../../../common/SecureComponent/permissions";
+import PermissionTooltipHelper from "../../Common/PermissionTooltipHelper";
 import PageLayout from "../../Common/Layout/PageLayout";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import BackLink from "../../../../common/BackLink";
@@ -223,10 +223,10 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             tooltip={
               canBrowse
                 ? "Browse Bucket"
-                : permissionTooltipHelper(
-                    IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER],
-                    "browsing this bucket"
-                  )
+                : PermissionTooltipHelper({
+                    scopes: IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER],
+                    text: "browsing this bucket",
+                  })
             }
           >
             <Button
@@ -284,13 +284,13 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                     tooltip={
                       canDelete
                         ? ""
-                        : permissionTooltipHelper(
-                            [
+                        : PermissionTooltipHelper({
+                            scopes: [
                               IAM_SCOPES.S3_DELETE_BUCKET,
                               IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
                             ],
-                            "deleting this bucket"
-                          )
+                            text: "delete bucket",
+                          })
                     }
                   >
                     <Button

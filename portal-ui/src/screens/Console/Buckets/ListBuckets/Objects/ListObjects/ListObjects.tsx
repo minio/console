@@ -71,10 +71,8 @@ import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 
-import {
-  IAM_SCOPES,
-  permissionTooltipHelper,
-} from "../../../../../../common/SecureComponent/permissions";
+import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import PermissionTooltipHelper from "../../../../Common/PermissionTooltipHelper";
 import {
   hasPermission,
   SecureComponent,
@@ -1066,10 +1064,10 @@ const ListObjects = () => {
         dispatch(
           setErrorSnackMessage({
             errorMessage: "Upload not allowed",
-            detailedError: permissionTooltipHelper(
-              [IAM_SCOPES.S3_PUT_OBJECT],
-              "upload objects to this location"
-            ),
+            detailedError: PermissionTooltipHelper({
+              scopes: [IAM_SCOPES.S3_PUT_OBJECT],
+              text: "upload objects to this location",
+            }),
           })
         );
       }
@@ -1295,10 +1293,10 @@ const ListObjects = () => {
       icon: <DownloadIcon />,
       tooltip: canDownload
         ? "Download Selected"
-        : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
-            "download objects from this bucket"
-          ),
+        : PermissionTooltipHelper({
+            scopes: [IAM_SCOPES.S3_GET_OBJECT],
+            text: "download objects from this bucket",
+          }),
     },
     {
       action: openShare,
@@ -1324,10 +1322,10 @@ const ListObjects = () => {
         !canDelete || selectedObjects.length === 0 || !displayDeleteObject,
       tooltip: canDelete
         ? "Delete Selected Files"
-        : permissionTooltipHelper(
-            [IAM_SCOPES.S3_DELETE_OBJECT],
-            "delete objects in this bucket"
-          ),
+        : PermissionTooltipHelper({
+            scopes: [IAM_SCOPES.S3_DELETE_OBJECT],
+            text: "delete objects in this bucket",
+          }),
     },
   ];
 

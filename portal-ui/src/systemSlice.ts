@@ -31,6 +31,7 @@ export interface SystemState {
   operatorMode: boolean;
   directPVMode: boolean;
   sidebarOpen: boolean;
+  tooltipsMute: boolean;
   session: string;
   userName: string;
   serverNeedsRestart: boolean;
@@ -54,6 +55,7 @@ const initialState: SystemState = {
   session: "",
   userName: "",
   sidebarOpen: initSideBarOpen,
+  tooltipsMute: false,
   siteReplicationInfo: { siteName: "", curSite: false, enabled: false },
   serverNeedsRestart: false,
   serverIsLoading: false,
@@ -100,6 +102,9 @@ export const systemSlice = createSlice({
     },
     setServerNeedsRestart: (state, action: PayloadAction<boolean>) => {
       state.serverNeedsRestart = action.payload;
+    },
+    setTooltipsMute: (state, action: PayloadAction<boolean>) => {
+      state.tooltipsMute = action.payload;
     },
     serverIsLoading: (state, action: PayloadAction<boolean>) => {
       state.serverIsLoading = action.payload;
@@ -174,6 +179,7 @@ export const {
   setLoadingProgress,
   setSnackBarMessage,
   setErrorSnackMessage,
+  setTooltipsMute,
   setModalErrorSnackMessage,
   setModalSnackMessage,
   setServerDiagStat,

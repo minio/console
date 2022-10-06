@@ -59,10 +59,8 @@ import {
 } from "./addBucketsSlice";
 import { addBucketAsync } from "./addBucketThunks";
 import AddBucketName from "./AddBucketName";
-import {
-  IAM_SCOPES,
-  permissionTooltipHelper,
-} from "../../../../../common/SecureComponent/permissions";
+import { IAM_SCOPES } from "../../../../../common/SecureComponent/permissions";
+import PermissionTooltipHelper from "../../../Common/PermissionTooltipHelper";
 import { hasPermission } from "../../../../../common/SecureComponent";
 import BucketNamingRules from "./BucketNamingRules";
 
@@ -329,10 +327,10 @@ const AddBucket = ({ classes }: IsetProps) => {
                       ? lockingEnabled && versioningEnabled
                         ? "You must disable Locking before Versioning can be disabled"
                         : ""
-                      : permissionTooltipHelper(
-                          [IAM_SCOPES.S3_PUT_BUCKET_VERSIONING],
-                          "Versioning"
-                        )
+                      : PermissionTooltipHelper({
+                          scopes: [IAM_SCOPES.S3_PUT_BUCKET_VERSIONING],
+                          text: "Versioning",
+                        })
                   }
                 >
                   <FormSwitchWrapper
@@ -358,13 +356,13 @@ const AddBucket = ({ classes }: IsetProps) => {
                   tooltip={
                     lockingAllowed
                       ? ""
-                      : permissionTooltipHelper(
-                          [
+                      : PermissionTooltipHelper({
+                          scopes: [
                             IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
                             IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
                           ],
-                          "Locking"
-                        )
+                          text: "Locking",
+                        })
                   }
                 >
                   <FormSwitchWrapper

@@ -27,10 +27,8 @@ import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrar
 import { encodeURLString } from "../../../common/utils";
 import { BackCaretIcon, CopyIcon, NewPathIcon } from "../../../icons";
 import { hasPermission } from "../../../common/SecureComponent";
-import {
-  IAM_SCOPES,
-  permissionTooltipHelper,
-} from "../../../common/SecureComponent/permissions";
+import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
+import PermissionTooltipHelper from "../Common/PermissionTooltipHelper";
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
@@ -230,10 +228,10 @@ const BrowserBreadcrumbs = ({
             tooltip={
               canCreatePath
                 ? "Choose or create a new path"
-                : permissionTooltipHelper(
-                    [IAM_SCOPES.S3_PUT_OBJECT],
-                    "create a new path"
-                  )
+                : PermissionTooltipHelper({
+                    scopes: [IAM_SCOPES.S3_PUT_OBJECT],
+                    text: "create a new path",
+                  })
             }
           >
             <Button

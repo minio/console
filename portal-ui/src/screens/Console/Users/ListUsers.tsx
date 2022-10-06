@@ -49,11 +49,10 @@ import {
   IAM_PAGES,
   IAM_SCOPES,
   listUsersPermissions,
-  permissionTooltipHelper,
   S3_ALL_RESOURCES,
   viewUserPermissions,
 } from "../../../common/SecureComponent/permissions";
-
+import PermissionTooltipHelper from "../Common/PermissionTooltipHelper";
 import {
   hasPermission,
   SecureComponent,
@@ -225,10 +224,10 @@ const ListUsers = ({ classes }: IUsersProps) => {
                   ? checkedUsers.length === 0
                     ? "Select Users to delete"
                     : "Delete Selected"
-                  : permissionTooltipHelper(
-                      [IAM_SCOPES.ADMIN_DELETE_USER],
-                      "delete users"
-                    )
+                  : PermissionTooltipHelper({
+                      scopes: [IAM_SCOPES.ADMIN_DELETE_USER],
+                      text: "delete users",
+                    })
               }
             >
               <Button
@@ -255,10 +254,10 @@ const ListUsers = ({ classes }: IUsersProps) => {
                   ? checkedUsers.length === 0
                     ? "Select Users to group"
                     : "Add to Group"
-                  : permissionTooltipHelper(
-                      [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP],
-                      "add users to groups"
-                    )
+                  : PermissionTooltipHelper({
+                      scopes: [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP],
+                      text: "add users to groups",
+                    })
               }
             >
               <Button
@@ -298,15 +297,15 @@ const ListUsers = ({ classes }: IUsersProps) => {
                   true
                 )
                   ? "Create User"
-                  : permissionTooltipHelper(
-                      [
+                  : PermissionTooltipHelper({
+                      scopes: [
                         IAM_SCOPES.ADMIN_CREATE_USER,
                         IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
                         IAM_SCOPES.ADMIN_LIST_GROUPS,
                         IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
                       ],
-                      "create users"
-                    )
+                      text: "create users",
+                    })
               }
             >
               <Button
@@ -343,10 +342,10 @@ const ListUsers = ({ classes }: IUsersProps) => {
                   tooltip={
                     viewUser
                       ? ""
-                      : permissionTooltipHelper(
-                          [IAM_SCOPES.ADMIN_GET_USER],
-                          "view user details"
-                        )
+                      : PermissionTooltipHelper({
+                          scopes: [IAM_SCOPES.ADMIN_GET_USER],
+                          text: "view user details",
+                        })
                   }
                 >
                   <Grid
