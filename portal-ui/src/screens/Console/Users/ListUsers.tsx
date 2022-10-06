@@ -43,10 +43,15 @@ import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import {
+  addUserToGroupPermissions,
   CONSOLE_UI_RESOURCE,
+  deleteUserPermissions,
   IAM_PAGES,
   IAM_SCOPES,
+  listUsersPermissions,
+  permissionTooltipHelper,
   S3_ALL_RESOURCES,
+  viewUserPermissions,
 } from "../../../common/SecureComponent/permissions";
 
 import {
@@ -88,21 +93,19 @@ const ListUsers = ({ classes }: IUsersProps) => {
   const [filter, setFilter] = useState<string>("");
   const [checkedUsers, setCheckedUsers] = useState<string[]>([]);
 
-  const displayListUsers = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_LIST_USERS,
-  ]);
+  const displayListUsers = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    listUsersPermissions
+  );
 
-  const viewUser = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_GET_USER,
-  ]);
+  const viewUser = hasPermission(CONSOLE_UI_RESOURCE, viewUserPermissions);
 
-  const addUserToGroup = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-  ]);
+  const addUserToGroup = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    addUserToGroupPermissions
+  );
 
-  const deleteUser = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_DELETE_USER,
-  ]);
+  const deleteUser = hasPermission(CONSOLE_UI_RESOURCE, deleteUserPermissions);
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
@@ -216,7 +219,18 @@ const ListUsers = ({ classes }: IUsersProps) => {
             matchAll
             errorProps={{ disabled: true }}
           >
-            <TooltipWrapper tooltip={"Delete Selected"}>
+            <TooltipWrapper
+              tooltip={
+                hasPermission("console", [IAM_SCOPES.ADMIN_DELETE_USER])
+                  ? checkedUsers.length === 0
+                    ? "Select Users to delete"
+                    : "Delete Selected"
+                  : permissionTooltipHelper(
+                      [IAM_SCOPES.ADMIN_DELETE_USER],
+                      "delete users"
+                    )
+              }
+            >
               <Button
                 id={"delete-selected-users"}
                 onClick={() => {
@@ -235,7 +249,18 @@ const ListUsers = ({ classes }: IUsersProps) => {
             resource={CONSOLE_UI_RESOURCE}
             errorProps={{ disabled: true }}
           >
-            <TooltipWrapper tooltip={"Add to Group"}>
+            <TooltipWrapper
+              tooltip={
+                hasPermission("console", [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP])
+                  ? checkedUsers.length === 0
+                    ? "Select Users to group"
+                    : "Add to Group"
+                  : permissionTooltipHelper(
+                      [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP],
+                      "add users to groups"
+                    )
+              }
+            >
               <Button
                 id={"add-to-group"}
                 label={"Add to Group"}
@@ -260,7 +285,30 @@ const ListUsers = ({ classes }: IUsersProps) => {
             matchAll
             errorProps={{ disabled: true }}
           >
-            <TooltipWrapper tooltip={"Create User"}>
+            <TooltipWrapper
+              tooltip={
+                hasPermission(
+                  "console",
+                  [
+                    IAM_SCOPES.ADMIN_CREATE_USER,
+                    IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+                    IAM_SCOPES.ADMIN_LIST_GROUPS,
+                    IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+                  ],
+                  true
+                )
+                  ? "Create User"
+                  : permissionTooltipHelper(
+                      [
+                        IAM_SCOPES.ADMIN_CREATE_USER,
+                        IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+                        IAM_SCOPES.ADMIN_LIST_GROUPS,
+                        IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+                      ],
+                      "create users"
+                    )
+              }
+            >
               <Button
                 id={"create-user"}
                 label={"Create User"}
@@ -269,6 +317,18 @@ const ListUsers = ({ classes }: IUsersProps) => {
                   navigate(`${IAM_PAGES.USER_ADD}`);
                 }}
                 variant={"callAction"}
+                disabled={
+                  !hasPermission(
+                    "console",
+                    [
+                      IAM_SCOPES.ADMIN_CREATE_USER,
+                      IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+                      IAM_SCOPES.ADMIN_LIST_GROUPS,
+                      IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+                    ],
+                    true
+                  )
+                }
               />
             </TooltipWrapper>
           </SecureComponent>
@@ -279,35 +339,46 @@ const ListUsers = ({ classes }: IUsersProps) => {
           <Fragment>
             {records.length > 0 && (
               <Fragment>
-                <Grid
-                  item
-                  xs={12}
-                  className={classes.tableBlock}
-                  marginBottom={"15px"}
+                <TooltipWrapper
+                  tooltip={
+                    viewUser
+                      ? ""
+                      : permissionTooltipHelper(
+                          [IAM_SCOPES.ADMIN_GET_USER],
+                          "view user details"
+                        )
+                  }
                 >
-                  <SecureComponent
-                    scopes={[IAM_SCOPES.ADMIN_LIST_USERS]}
-                    resource={CONSOLE_UI_RESOURCE}
-                    errorProps={{ disabled: true }}
+                  <Grid
+                    item
+                    xs={12}
+                    className={classes.tableBlock}
+                    marginBottom={"15px"}
                   >
-                    <TableWrapper
-                      itemActions={tableActions}
-                      columns={[
-                        { label: "Access Key", elementKey: "accessKey" },
-                      ]}
-                      onSelect={
-                        addUserToGroup || deleteUser
-                          ? selectionChanged
-                          : undefined
-                      }
-                      selectedItems={checkedUsers}
-                      isLoading={loading}
-                      records={filteredRecords}
-                      entityName="Users"
-                      idField="accessKey"
-                    />
-                  </SecureComponent>
-                </Grid>
+                    <SecureComponent
+                      scopes={[IAM_SCOPES.ADMIN_LIST_USERS]}
+                      resource={CONSOLE_UI_RESOURCE}
+                      errorProps={{ disabled: true }}
+                    >
+                      <TableWrapper
+                        itemActions={tableActions}
+                        columns={[
+                          { label: "Access Key", elementKey: "accessKey" },
+                        ]}
+                        onSelect={
+                          addUserToGroup || deleteUser
+                            ? selectionChanged
+                            : undefined
+                        }
+                        selectedItems={checkedUsers}
+                        isLoading={loading}
+                        records={filteredRecords}
+                        entityName="Users"
+                        idField="accessKey"
+                      />
+                    </SecureComponent>
+                  </Grid>
+                </TooltipWrapper>
                 <HelpBox
                   title={"Users"}
                   iconComponent={<UsersIcon />}

@@ -55,9 +55,17 @@ import BackLink from "../../../common/BackLink";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import {
+  assignGroupPermissions,
+  assignIAMPolicyPermissions,
   CONSOLE_UI_RESOURCE,
+  deleteUserPermissions,
+  disableUserPermissions,
+  editServiceAccountPermissions,
+  enableDisableUserPermissions,
+  enableUserPermissions,
+  getGroupPermissions,
   IAM_PAGES,
-  IAM_SCOPES,
+  permissionTooltipHelper,
 } from "../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../common/SecureComponent";
 import { useAppDispatch } from "../../../store";
@@ -111,6 +119,11 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [hasPolicy, setHasPolicy] = useState<boolean>(false);
 
+  const enableEnabled =
+    hasPermission(CONSOLE_UI_RESOURCE, enableUserPermissions) && !enabled;
+  const disableEnabled =
+    hasPermission(CONSOLE_UI_RESOURCE, disableUserPermissions) && enabled;
+
   const userName = decodeURLString(params.userName || "");
 
   const changeUserPassword = () => {
@@ -121,9 +134,19 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
     setDeleteOpen(true);
   };
 
-  const viewGroup = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_GET_GROUP,
-  ]);
+  const userLoggedIn = localStorage.getItem("userLoggedIn") || "";
+  const canAssignPolicy = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    assignIAMPolicyPermissions,
+    true
+  );
+  const canAssignGroup = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    assignGroupPermissions,
+    true
+  );
+
+  const viewGroup = hasPermission(CONSOLE_UI_RESOURCE, getGroupPermissions);
 
   const getUserInformation = useCallback(() => {
     if (userName === "") {
@@ -270,25 +293,69 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                 <span className={classes.statusValue}>
                   {enabled ? "Enabled" : "Disabled"}
                 </span>
-                <FormSwitchWrapper
-                  indicatorLabels={["Enabled", "Disabled"]}
-                  checked={enabled}
-                  value={"group_enabled"}
-                  id="group-status"
-                  name="group-status"
-                  onChange={() => {
-                    setEnabled(!enabled);
-                    saveRecord(!enabled);
-                  }}
-                  switchOnly
-                />
-
-                <TooltipWrapper tooltip={"Delete User"}>
+                <TooltipWrapper
+                  tooltip={
+                    enableEnabled || disableEnabled
+                      ? ""
+                      : hasPermission(
+                          CONSOLE_UI_RESOURCE,
+                          enableUserPermissions
+                        )
+                      ? permissionTooltipHelper(
+                          disableUserPermissions,
+                          "disable users"
+                        )
+                      : hasPermission(
+                          CONSOLE_UI_RESOURCE,
+                          disableUserPermissions
+                        )
+                      ? permissionTooltipHelper(
+                          enableUserPermissions,
+                          "enable users"
+                        )
+                      : permissionTooltipHelper(
+                          enableDisableUserPermissions,
+                          "enable or disable users"
+                        )
+                  }
+                >
+                  <FormSwitchWrapper
+                    indicatorLabels={["Enabled", "Disabled"]}
+                    checked={enabled}
+                    value={"group_enabled"}
+                    id="group-status"
+                    name="group-status"
+                    onChange={() => {
+                      setEnabled(!enabled);
+                      saveRecord(!enabled);
+                    }}
+                    switchOnly
+                    disabled={!enableEnabled && !disableEnabled}
+                  />
+                </TooltipWrapper>
+                <TooltipWrapper
+                  tooltip={
+                    hasPermission(CONSOLE_UI_RESOURCE, deleteUserPermissions)
+                      ? userLoggedIn === userName
+                        ? "You cannot delete the currently logged in User"
+                        : "Delete User"
+                      : permissionTooltipHelper(
+                          deleteUserPermissions,
+                          "delete user"
+                        )
+                  }
+                >
                   <Button
                     id={"delete-user"}
                     onClick={deleteUser}
                     icon={<TrashIcon />}
                     variant={"secondary"}
+                    disabled={
+                      !hasPermission(
+                        CONSOLE_UI_RESOURCE,
+                        deleteUserPermissions
+                      ) || userLoggedIn === userName
+                    }
                   />
                 </TooltipWrapper>
 
@@ -310,12 +377,22 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             {{
               tabConfig: {
                 label: "Groups",
+                disabled: !canAssignGroup,
               },
               content: (
                 <React.Fragment>
                   <div className={classes.actionsTray}>
                     <PanelTitle>Groups</PanelTitle>
-                    <TooltipWrapper tooltip={"Add to Groups"}>
+                    <TooltipWrapper
+                      tooltip={
+                        canAssignGroup
+                          ? "Assign groups"
+                          : permissionTooltipHelper(
+                              assignGroupPermissions,
+                              "add users to groups"
+                            )
+                      }
+                    >
                       <Button
                         id={"add-groups"}
                         label={"Add to Groups"}
@@ -324,6 +401,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                         }}
                         icon={<AddIcon />}
                         variant={"callAction"}
+                        disabled={!canAssignGroup}
                       />
                     </TooltipWrapper>
                   </div>
@@ -343,6 +421,10 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             {{
               tabConfig: {
                 label: "Service Accounts",
+                disabled: !hasPermission(
+                  CONSOLE_UI_RESOURCE,
+                  editServiceAccountPermissions
+                ),
               },
               content: (
                 <UserServiceAccountsPanel
@@ -354,13 +436,23 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             {{
               tabConfig: {
                 label: "Policies",
+                disabled: !canAssignPolicy,
               },
               content: (
                 <Fragment>
                   <div className={classes.actionsTray}>
                     <PanelTitle>Policies</PanelTitle>
 
-                    <TooltipWrapper tooltip={"Assign Policies"}>
+                    <TooltipWrapper
+                      tooltip={
+                        canAssignPolicy
+                          ? "Assign Policies"
+                          : permissionTooltipHelper(
+                              assignIAMPolicyPermissions,
+                              "assign policies"
+                            )
+                      }
+                    >
                       <Button
                         id={"assign-policies"}
                         label={"Assign Policies"}
@@ -369,6 +461,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                         }}
                         icon={<IAMPoliciesIcon />}
                         variant={"callAction"}
+                        disabled={!canAssignPolicy}
                       />
                     </TooltipWrapper>
                   </div>
