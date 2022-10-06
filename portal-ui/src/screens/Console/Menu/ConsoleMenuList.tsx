@@ -57,6 +57,8 @@ const ConsoleMenuList = ({
     setSelectedMenuItem(groupToSelect);
   }, [groupToSelect]);
 
+  let basename = document.baseURI.replace(window.location.origin, "");
+
   return (
     <Box
       className={`${stateClsName} wrapper`}
@@ -135,7 +137,7 @@ const ConsoleMenuList = ({
         <ListItem
           button
           component="a"
-          href="/logout"
+          href={`${window.location.origin}${basename}logout`}
           disableRipple
           sx={{
             ...menuItemContainerStyles,
