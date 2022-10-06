@@ -121,7 +121,6 @@ func (suite *KMSTestSuite) SetupTest() {
 	suite.server = httptest.NewServer(http.HandlerFunc(suite.serverHandler))
 	suite.currentServer, suite.isServerSet = os.LookupEnv(ConsoleMinIOServer)
 	os.Setenv(ConsoleMinIOServer, suite.server.URL)
-	v, s := os.LookupEnv(ConsoleMinIOServer)
 }
 
 func (suite *KMSTestSuite) serverHandler(w http.ResponseWriter, r *http.Request) {
