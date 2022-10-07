@@ -11,10 +11,11 @@
         "admin:DisableUser",
         "admin:ListUserPolicies",
         "admin:ListGroups",
+        "admin:GetPolicy",
         "admin:AttachUserOrGroupPolicy",
-        "admin:RemoveUserFromGroup",
         "admin:AddUserToGroup",
-        "admin:GetPolicy"
+        "admin:RemoveUserFromGroup",
+        "admin:GetGroup"
       ],
       "Effect": "Allow",
       "Resource": ["arn:aws:s3:::*"],
