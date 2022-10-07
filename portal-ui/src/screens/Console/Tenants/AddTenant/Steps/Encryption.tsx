@@ -51,6 +51,9 @@ import GCPKMSAdd from "./Encryption/GCPKMSAdd";
 import GemaltoKMSAdd from "./Encryption/GemaltoKMSAdd";
 import AWSKMSAdd from "./Encryption/AWSKMSAdd";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import CodeMirrorWrapper from "../../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
 interface IEncryptionProps {
   classes: any;
@@ -87,6 +90,12 @@ const Encryption = ({ classes }: IEncryptionProps) => {
 
   const replicas = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.replicas
+  );
+  const rawConfiguration = useSelector(
+    (state: AppState) => state.createTenant.fields.encryption.rawConfiguration
+  );
+  const encryptionTab = useSelector(
+    (state: AppState) => state.createTenant.fields.encryption.encryptionTab
   );
   const enableEncryption = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.enableEncryption
@@ -176,6 +185,11 @@ const Encryption = ({ classes }: IEncryptionProps) => {
       encryptionValidation = [
         ...encryptionValidation,
         {
+          fieldKey: "rawConfiguration",
+          required: encryptionTab > 0,
+          value: rawConfiguration,
+        },
+        {
           fieldKey: "replicas",
           required: true,
           value: replicas,
@@ -239,7 +253,6 @@ const Encryption = ({ classes }: IEncryptionProps) => {
     }
 
     const commonVal = commonFormValidation(encryptionValidation);
-
     dispatch(
       isPageValid({
         pageName: "encryption",
@@ -249,6 +262,8 @@ const Encryption = ({ classes }: IEncryptionProps) => {
 
     setValidationErrors(commonVal);
   }, [
+    rawConfiguration,
+    encryptionTab,
     enableEncryption,
     encryptionType,
     gcpProjectID,
@@ -309,29 +324,64 @@ const Encryption = ({ classes }: IEncryptionProps) => {
 
         {enableEncryption && (
           <Fragment>
-            <Grid item xs={12} className={classes.encryptionTypeOptions}>
-              <RadioGroupSelector
-                currentSelection={encryptionType}
-                id="encryptionType"
-                name="encryptionType"
-                label="Encryption Options"
-                onChange={(e) => {
-                  updateField("encryptionType", e.target.value);
+            <Grid item xs={12}>
+              <Tabs
+                value={encryptionTab}
+                onChange={(e: React.ChangeEvent<{}>, value: number) => {
+                  updateField("encryptionTab", value);
                 }}
-                selectorOptions={[
-                  { label: "Vault", value: "vault" },
-                  { label: "AWS", value: "aws" },
-                  { label: "Gemalto", value: "gemalto" },
-                  { label: "GCP", value: "gcp" },
-                  { label: "Azure", value: "azure" },
-                ]}
-              />
+                indicatorColor="primary"
+                textColor="primary"
+                aria-label="cluster-tabs"
+                variant="scrollable"
+                scrollButtons="auto"
+              >
+                <Tab id="kms-options" label="Options" />
+                <Tab id="kms-raw-configuration" label="Raw Edit" />
+              </Tabs>
             </Grid>
-            {encryptionType === "vault" && <VaultKMSAdd />}
-            {encryptionType === "azure" && <AzureKMSAdd />}
-            {encryptionType === "gcp" && <GCPKMSAdd />}
-            {encryptionType === "aws" && <AWSKMSAdd />}
-            {encryptionType === "gemalto" && <GemaltoKMSAdd />}
+
+            {encryptionTab ? (
+              <Fragment>
+                <Grid item xs={12}>
+                  <CodeMirrorWrapper
+                    value={rawConfiguration}
+                    mode={"yaml"}
+                    onBeforeChange={(editor, data, value) => {
+                      updateField("rawConfiguration", value);
+                    }}
+                    editorHeight={"550px"}
+                  />
+                </Grid>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <Grid item xs={12} className={classes.encryptionTypeOptions}>
+                  <RadioGroupSelector
+                    currentSelection={encryptionType}
+                    id="encryptionType"
+                    name="encryptionType"
+                    label="KMS"
+                    onChange={(e) => {
+                      updateField("encryptionType", e.target.value);
+                    }}
+                    selectorOptions={[
+                      { label: "Vault", value: "vault" },
+                      { label: "AWS", value: "aws" },
+                      { label: "Gemalto", value: "gemalto" },
+                      { label: "GCP", value: "gcp" },
+                      { label: "Azure", value: "azure" },
+                    ]}
+                  />
+                </Grid>
+                {encryptionType === "vault" && <VaultKMSAdd />}
+                {encryptionType === "azure" && <AzureKMSAdd />}
+                {encryptionType === "gcp" && <GCPKMSAdd />}
+                {encryptionType === "aws" && <AWSKMSAdd />}
+                {encryptionType === "gemalto" && <GemaltoKMSAdd />}
+              </Fragment>
+            )}
+
             <div className={classes.headerElement}>
               <h4 className={classes.h3Section}>Additional Configurations</h4>
             </div>

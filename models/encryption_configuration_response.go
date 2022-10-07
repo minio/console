@@ -54,6 +54,9 @@ type EncryptionConfigurationResponse struct {
 	// mtls client
 	MtlsClient *CertificateInfo `json:"mtls_client,omitempty"`
 
+	// raw
+	Raw string `json:"raw,omitempty"`
+
 	// replicas
 	Replicas string `json:"replicas,omitempty"`
 
@@ -90,6 +93,8 @@ func (m *EncryptionConfigurationResponse) UnmarshalJSON(raw []byte) error {
 
 		MtlsClient *CertificateInfo `json:"mtls_client,omitempty"`
 
+		Raw string `json:"raw,omitempty"`
+
 		Replicas string `json:"replicas,omitempty"`
 
 		SecurityContext *SecurityContext `json:"securityContext,omitempty"`
@@ -113,6 +118,8 @@ func (m *EncryptionConfigurationResponse) UnmarshalJSON(raw []byte) error {
 	m.Image = dataAO1.Image
 
 	m.MtlsClient = dataAO1.MtlsClient
+
+	m.Raw = dataAO1.Raw
 
 	m.Replicas = dataAO1.Replicas
 
@@ -147,6 +154,8 @@ func (m EncryptionConfigurationResponse) MarshalJSON() ([]byte, error) {
 
 		MtlsClient *CertificateInfo `json:"mtls_client,omitempty"`
 
+		Raw string `json:"raw,omitempty"`
+
 		Replicas string `json:"replicas,omitempty"`
 
 		SecurityContext *SecurityContext `json:"securityContext,omitempty"`
@@ -167,6 +176,8 @@ func (m EncryptionConfigurationResponse) MarshalJSON() ([]byte, error) {
 	dataAO1.Image = m.Image
 
 	dataAO1.MtlsClient = m.MtlsClient
+
+	dataAO1.Raw = m.Raw
 
 	dataAO1.Replicas = m.Replicas
 

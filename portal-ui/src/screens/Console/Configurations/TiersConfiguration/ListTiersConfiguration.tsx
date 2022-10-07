@@ -31,7 +31,12 @@ import {
   tableStyles,
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { AddIcon, TiersIcon, TiersNotAvailableIcon } from "../../../../icons";
+import {
+  AddIcon,
+  CircleIcon,
+  TiersIcon,
+  TiersNotAvailableIcon,
+} from "../../../../icons";
 
 import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -105,15 +110,56 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const [records, setRecords] = useState<ITierElement[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [checkTierStatus, setcheckTierStatus] = useState<boolean>(false);
   const [updateCredentialsOpen, setUpdateCredentialsOpen] =
     useState<boolean>(false);
   const [selectedTier, setSelectedTier] = useState<ITierElement>({
     type: "unsupported",
+    status: false,
   });
-
   const hasSetTier = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.ADMIN_SET_TIER,
   ]);
+
+  useEffect(() => {
+    if (checkTierStatus) {
+      records.forEach((tier: ITierElement) => {
+        var endpoint: string;
+        switch (tier.type) {
+          case "minio":
+            endpoint = tier.minio?.endpoint + "/" + tier.minio?.bucket || "";
+            break;
+          case "s3":
+            endpoint = tier.s3?.endpoint + "/" + tier.s3?.bucket || "";
+            break;
+          case "gcs":
+            endpoint = tier.gcs?.endpoint + "/" + tier.gcs?.bucket || "";
+            break;
+          case "azure":
+            endpoint = tier.azure?.endpoint + "/" + tier.azure?.bucket || "";
+            break;
+          default:
+            endpoint = "";
+        }
+        const xhr = new XMLHttpRequest();
+        xhr.open("HEAD", endpoint);
+        xhr.send();
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4 || xhr.readyState === 2) {
+            tier.status = true;
+          } else {
+            tier.status = false;
+          }
+        };
+        xhr.onerror = () => {
+          tier.status = false;
+        };
+      });
+      setRecords(records);
+      setcheckTierStatus(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkTierStatus]);
 
   useEffect(() => {
     if (isLoading) {
@@ -124,6 +170,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
             .then((res: ITierResponse) => {
               setRecords(res.items || []);
               setIsLoading(false);
+              setcheckTierStatus(true);
             })
             .catch((err: ErrorResponseHandler) => {
               dispatch(setErrorSnackMessage(err));
@@ -181,6 +228,41 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
       );
     }
     return "";
+  };
+
+  const renderTierStatus = (item: boolean) => {
+    if (item) {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            "& .min-icon": {
+              width: "18px",
+              height: "22px",
+              fill: "#4CCB92",
+            },
+          }}
+        >
+          <CircleIcon />
+        </Box>
+      );
+    }
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          "& .min-icon": {
+            width: "18px",
+            height: "22px",
+            fill: "#C83B51",
+          },
+        }}
+      >
+        <CircleIcon />
+      </Box>
+    );
   };
 
   const renderTierPrefix = (item: ITierElement) => {
@@ -343,6 +425,12 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                               elementKey: "type",
                               renderFunction: renderTierName,
                               renderFullObject: true,
+                            },
+                            {
+                              label: "Status",
+                              elementKey: "status",
+                              renderFunction: renderTierStatus,
+                              width: 50,
                             },
                             {
                               label: "Type",

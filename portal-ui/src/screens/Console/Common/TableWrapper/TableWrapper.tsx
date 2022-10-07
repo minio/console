@@ -40,6 +40,7 @@ import {
   TableRowPredefStyles,
 } from "../FormComponents/common/styleLibrary";
 import Loader from "../Loader/Loader";
+import TooltipWrapper from "../TooltipWrapper/TooltipWrapper";
 
 //Interfaces for table Items
 
@@ -111,6 +112,7 @@ interface TableWrapperProps {
     index: number;
   }) => "deleted" | "" | React.CSSProperties;
   parentClassName?: string;
+  tooltip?: any;
 }
 
 const borderColor = "#9c9c9c80";
@@ -465,6 +467,7 @@ const TableWrapper = ({
   onSelectAll,
   rowStyle,
   parentClassName = "",
+  tooltip,
 }: TableWrapperProps) => {
   const navigate = useNavigate();
 
@@ -558,235 +561,249 @@ const TableWrapper = ({
 
   return (
     <Grid item xs={12} className={parentClassName}>
-      <Paper
-        className={`${classes.paper} ${noBackground ? classes.noBackground : ""}
+      <TooltipWrapper tooltip={tooltip ? tooltip : ""}>
+        <Paper
+          className={`${classes.paper} ${
+            noBackground ? classes.noBackground : ""
+          }
         ${disabled ? classes.disabled : ""} 
         ${
           customPaperHeight !== ""
             ? customPaperHeight
             : classes.defaultPaperHeight
         }`}
-      >
-        {isLoading && (
-          <Grid container className={classes.loadingBox}>
-            <Grid item xs={12} style={{ textAlign: "center" }}>
-              {loadingMessage}
+        >
+          {isLoading && (
+            <Grid container className={classes.loadingBox}>
+              <Grid item xs={12} style={{ textAlign: "center" }}>
+                {loadingMessage}
+              </Grid>
+              <Grid item xs={12}>
+                <LinearProgress />
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          </Grid>
-        )}
-        {columnsSelector && !isLoading && records.length > 0 && (
-          <div className={classes.overlayColumnSelection}>
-            {columnsSelection(columns)}
-          </div>
-        )}
-        {records && !isLoading && records.length > 0 ? (
-          // @ts-ignore
-          <InfiniteLoader
-            isRowLoaded={({ index }) => !!records[index]}
-            loadMoreRows={
-              infiniteScrollConfig
-                ? infiniteScrollConfig.loadMoreRecords
-                : () => new Promise(() => true)
-            }
-            rowCount={
-              infiniteScrollConfig
-                ? infiniteScrollConfig.recordsCount
-                : records.length
-            }
-          >
-            {({ onRowsRendered, registerChild }) => (
-              // @ts-ignore
-              <AutoSizer>
-                {({ width, height }: any) => {
-                  const optionsWidth = calculateOptionsSize(
-                    width,
-                    itemActions
-                      ? itemActions.filter((el) => el.type !== "view").length
-                      : 0
-                  );
-                  const hasSelect: boolean = !!(onSelect && selectedItems);
-                  const hasOptions: boolean = !!(
-                    (itemActions && itemActions.length > 1) ||
-                    (itemActions &&
-                      itemActions.length === 1 &&
-                      itemActions[0].type !== "view")
-                  );
-                  return (
-                    // @ts-ignore
-                    <Table
-                      ref={registerChild}
-                      disableHeader={false}
-                      headerClassName={"headerItem"}
-                      headerHeight={40}
-                      height={height}
-                      noRowsRenderer={() => (
-                        <Fragment>
-                          {customEmptyMessage !== ""
-                            ? customEmptyMessage
-                            : `There are no ${entityName} yet.`}
-                        </Fragment>
-                      )}
-                      overscanRowCount={10}
-                      rowHeight={40}
-                      width={width}
-                      rowCount={records.length}
-                      rowGetter={({ index }) => records[index]}
-                      onRowClick={({ rowData }) => {
-                        clickAction(rowData);
-                      }}
-                      rowClassName={`rowLine ${findView ? "canClick" : ""} ${
-                        !findView && textSelectable ? "canSelectText" : ""
-                      }`}
-                      onRowsRendered={onRowsRendered}
-                      sort={sortConfig ? sortConfig.triggerSort : undefined}
-                      sortBy={sortConfig ? sortConfig.currentSort : undefined}
-                      sortDirection={
-                        sortConfig ? sortConfig.currentDirection : undefined
-                      }
-                      scrollToIndex={
-                        autoScrollToBottom ? records.length - 1 : -1
-                      }
-                      rowStyle={(r) => {
-                        if (rowStyle) {
-                          const returnElement = rowStyle(r);
+          )}
+          {columnsSelector && !isLoading && records.length > 0 && (
+            <div className={classes.overlayColumnSelection}>
+              {columnsSelection(columns)}
+            </div>
+          )}
+          {records && !isLoading && records.length > 0 ? (
+            // @ts-ignore
+            <InfiniteLoader
+              isRowLoaded={({ index }) => !!records[index]}
+              loadMoreRows={
+                infiniteScrollConfig
+                  ? infiniteScrollConfig.loadMoreRecords
+                  : () => new Promise(() => true)
+              }
+              rowCount={
+                infiniteScrollConfig
+                  ? infiniteScrollConfig.recordsCount
+                  : records.length
+              }
+            >
+              {({ onRowsRendered, registerChild }) => (
+                // @ts-ignore
+                <AutoSizer>
+                  {({ width, height }: any) => {
+                    const optionsWidth = calculateOptionsSize(
+                      width,
+                      itemActions
+                        ? itemActions.filter((el) => el.type !== "view").length
+                        : 0
+                    );
+                    const hasSelect: boolean = !!(onSelect && selectedItems);
+                    const hasOptions: boolean = !!(
+                      (itemActions && itemActions.length > 1) ||
+                      (itemActions &&
+                        itemActions.length === 1 &&
+                        itemActions[0].type !== "view")
+                    );
+                    return (
+                      // @ts-ignore
+                      <Table
+                        ref={registerChild}
+                        disableHeader={false}
+                        headerClassName={"headerItem"}
+                        headerHeight={40}
+                        height={height}
+                        noRowsRenderer={() => (
+                          <Fragment>
+                            {customEmptyMessage !== ""
+                              ? customEmptyMessage
+                              : `There are no ${entityName} yet.`}
+                          </Fragment>
+                        )}
+                        overscanRowCount={10}
+                        rowHeight={40}
+                        width={width}
+                        rowCount={records.length}
+                        rowGetter={({ index }) => records[index]}
+                        onRowClick={({ rowData }) => {
+                          clickAction(rowData);
+                        }}
+                        rowClassName={`rowLine ${findView ? "canClick" : ""} ${
+                          !findView && textSelectable ? "canSelectText" : ""
+                        }`}
+                        onRowsRendered={onRowsRendered}
+                        sort={sortConfig ? sortConfig.triggerSort : undefined}
+                        sortBy={sortConfig ? sortConfig.currentSort : undefined}
+                        sortDirection={
+                          sortConfig ? sortConfig.currentDirection : undefined
+                        }
+                        scrollToIndex={
+                          autoScrollToBottom ? records.length - 1 : -1
+                        }
+                        rowStyle={(r) => {
+                          if (rowStyle) {
+                            const returnElement = rowStyle(r);
 
-                          if (typeof returnElement === "string") {
-                            return get(TableRowPredefStyles, returnElement, {});
+                            if (typeof returnElement === "string") {
+                              return get(
+                                TableRowPredefStyles,
+                                returnElement,
+                                {}
+                              );
+                            }
+
+                            return returnElement;
                           }
 
-                          return returnElement;
-                        }
+                          return {};
+                        }}
+                      >
+                        {hasSelect && (
+                          // @ts-ignore
+                          <Column
+                            headerRenderer={() => (
+                              <Fragment>
+                                {onSelectAll ? (
+                                  <div className={classes.checkAllWrapper}>
+                                    <CheckboxWrapper
+                                      label={""}
+                                      onChange={onSelectAll}
+                                      value="all"
+                                      id={"selectAll"}
+                                      name={"selectAll"}
+                                      checked={
+                                        selectedItems?.length === records.length
+                                      }
+                                    />
+                                  </div>
+                                ) : (
+                                  <Fragment>Select</Fragment>
+                                )}
+                              </Fragment>
+                            )}
+                            dataKey={`select-${idField}`}
+                            width={selectWidth}
+                            disableSort
+                            cellRenderer={({ rowData }) => {
+                              const isSelected = selectedItems
+                                ? selectedItems.includes(
+                                    isString(rowData)
+                                      ? rowData
+                                      : rowData[idField]
+                                  )
+                                : false;
 
-                        return {};
-                      }}
-                    >
-                      {hasSelect && (
-                        // @ts-ignore
-                        <Column
-                          headerRenderer={() => (
-                            <Fragment>
-                              {onSelectAll ? (
-                                <div className={classes.checkAllWrapper}>
-                                  <CheckboxWrapper
-                                    label={""}
-                                    onChange={onSelectAll}
-                                    value="all"
-                                    id={"selectAll"}
-                                    name={"selectAll"}
-                                    checked={
-                                      selectedItems?.length === records.length
-                                    }
-                                  />
-                                </div>
-                              ) : (
-                                <Fragment>Select</Fragment>
-                              )}
-                            </Fragment>
-                          )}
-                          dataKey={`select-${idField}`}
-                          width={selectWidth}
-                          disableSort
-                          cellRenderer={({ rowData }) => {
-                            const isSelected = selectedItems
-                              ? selectedItems.includes(
-                                  isString(rowData) ? rowData : rowData[idField]
-                                )
-                              : false;
-
-                            return (
-                              <Checkbox
-                                value={
-                                  isString(rowData) ? rowData : rowData[idField]
-                                }
-                                color="primary"
-                                inputProps={{
-                                  "aria-label": "secondary checkbox",
-                                }}
-                                className="TableCheckbox"
-                                checked={isSelected}
-                                onChange={onSelect}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                }}
-                                checkedIcon={
-                                  <span
-                                    className={
-                                      radioSelection
-                                        ? classes.radioSelectedIcon
-                                        : classes.checkedIcon
-                                    }
-                                  />
-                                }
-                                icon={
-                                  <span
-                                    className={
-                                      radioSelection
-                                        ? classes.radioUnselectedIcon
-                                        : classes.unCheckedIcon
-                                    }
-                                  />
-                                }
-                              />
-                            );
-                          }}
-                        />
-                      )}
-                      {generateColumnsMap(
-                        columns,
-                        width,
-                        optionsWidth,
-                        hasSelect,
-                        hasOptions,
-                        selectedItems || [],
-                        idField,
-                        columnsSelector,
-                        columnsShown,
-                        sortConfig ? sortConfig.currentSort : "",
-                        sortConfig ? sortConfig.currentDirection : undefined
-                      )}
-                      {hasOptions && (
-                        // @ts-ignore
-                        <Column
-                          dataKey={idField}
-                          width={optionsWidth}
-                          headerClassName="optionsAlignment"
-                          className="optionsAlignment"
-                          cellRenderer={({ rowData }) => {
-                            const isSelected = selectedItems
-                              ? selectedItems.includes(
-                                  isString(rowData) ? rowData : rowData[idField]
-                                )
-                              : false;
-                            return elementActions(
-                              itemActions || [],
-                              rowData,
-                              isSelected,
-                              idField
-                            );
-                          }}
-                        />
-                      )}
-                    </Table>
-                  );
-                }}
-              </AutoSizer>
-            )}
-          </InfiniteLoader>
-        ) : (
-          <Fragment>
-            {!isLoading && (
-              <div id={"empty-results"}>
-                {customEmptyMessage !== ""
-                  ? customEmptyMessage
-                  : `There are no ${entityName} yet.`}
-              </div>
-            )}
-          </Fragment>
-        )}
-      </Paper>
+                              return (
+                                <Checkbox
+                                  value={
+                                    isString(rowData)
+                                      ? rowData
+                                      : rowData[idField]
+                                  }
+                                  color="primary"
+                                  inputProps={{
+                                    "aria-label": "secondary checkbox",
+                                  }}
+                                  className="TableCheckbox"
+                                  checked={isSelected}
+                                  onChange={onSelect}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                  checkedIcon={
+                                    <span
+                                      className={
+                                        radioSelection
+                                          ? classes.radioSelectedIcon
+                                          : classes.checkedIcon
+                                      }
+                                    />
+                                  }
+                                  icon={
+                                    <span
+                                      className={
+                                        radioSelection
+                                          ? classes.radioUnselectedIcon
+                                          : classes.unCheckedIcon
+                                      }
+                                    />
+                                  }
+                                />
+                              );
+                            }}
+                          />
+                        )}
+                        {generateColumnsMap(
+                          columns,
+                          width,
+                          optionsWidth,
+                          hasSelect,
+                          hasOptions,
+                          selectedItems || [],
+                          idField,
+                          columnsSelector,
+                          columnsShown,
+                          sortConfig ? sortConfig.currentSort : "",
+                          sortConfig ? sortConfig.currentDirection : undefined
+                        )}
+                        {hasOptions && (
+                          // @ts-ignore
+                          <Column
+                            dataKey={idField}
+                            width={optionsWidth}
+                            headerClassName="optionsAlignment"
+                            className="optionsAlignment"
+                            cellRenderer={({ rowData }) => {
+                              const isSelected = selectedItems
+                                ? selectedItems.includes(
+                                    isString(rowData)
+                                      ? rowData
+                                      : rowData[idField]
+                                  )
+                                : false;
+                              return elementActions(
+                                itemActions || [],
+                                rowData,
+                                isSelected,
+                                idField
+                              );
+                            }}
+                          />
+                        )}
+                      </Table>
+                    );
+                  }}
+                </AutoSizer>
+              )}
+            </InfiniteLoader>
+          ) : (
+            <Fragment>
+              {!isLoading && (
+                <div id={"empty-results"}>
+                  {customEmptyMessage !== ""
+                    ? customEmptyMessage
+                    : `There are no ${entityName} yet.`}
+                </div>
+              )}
+            </Fragment>
+          )}
+        </Paper>
+      </TooltipWrapper>
     </Grid>
   );
 };

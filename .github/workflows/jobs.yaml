@@ -401,6 +401,7 @@ jobs:
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
     runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    timeout-minutes: 10
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -498,6 +499,7 @@ jobs:
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
     runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    timeout-minutes: 10
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -588,6 +590,7 @@ jobs:
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
     runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    timeout-minutes: 10
     strategy:
       matrix:
         go-version: [ 1.18.x ]

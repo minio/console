@@ -3060,6 +3060,9 @@ func init() {
             "image": {
               "type": "string"
             },
+            "raw": {
+              "type": "string"
+            },
             "replicas": {
               "type": "string"
             },
@@ -3115,6 +3118,9 @@ func init() {
             "mtls_client": {
               "type": "object",
               "$ref": "#/definitions/certificateInfo"
+            },
+            "raw": {
+              "type": "string"
             },
             "replicas": {
               "type": "string"
@@ -9126,6 +9132,9 @@ func init() {
             "image": {
               "type": "string"
             },
+            "raw": {
+              "type": "string"
+            },
             "replicas": {
               "type": "string"
             },
@@ -9181,6 +9190,9 @@ func init() {
             "mtls_client": {
               "type": "object",
               "$ref": "#/definitions/certificateInfo"
+            },
+            "raw": {
+              "type": "string"
             },
             "replicas": {
               "type": "string"
