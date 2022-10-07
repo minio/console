@@ -49,7 +49,12 @@ import SearchBox from "../Common/SearchBox";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
-  IAM_SCOPES,
+  permissionTooltipHelper,
+  applyPolicyPermissions,
+  displayGroupsPermissions,
+  deleteGroupPermissions,
+  getGroupPermissions,
+  createGroupPermissions,
 } from "../../../common/SecureComponent/permissions";
 import {
   hasPermission,
@@ -107,17 +112,23 @@ const Groups = ({ classes }: IGroupsProps) => {
     isLoading(true);
   }, []);
 
-  const displayGroups = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_LIST_GROUPS,
-  ]);
+  const displayGroups = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    displayGroupsPermissions
+  );
 
-  const deleteGroup = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
-  ]);
+  const deleteGroup = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    deleteGroupPermissions
+  );
 
-  const getGroup = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_GET_GROUP,
-  ]);
+  const getGroup = hasPermission(CONSOLE_UI_RESOURCE, getGroupPermissions);
+
+  const applyPolicy = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    applyPolicyPermissions,
+    true
+  );
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value = "", checked = false } = {} } = e;
@@ -217,7 +228,7 @@ const Groups = ({ classes }: IGroupsProps) => {
         <Grid item xs={12} className={classes.actionsTray}>
           <SecureComponent
             resource={CONSOLE_UI_RESOURCE}
-            scopes={[IAM_SCOPES.ADMIN_LIST_GROUPS]}
+            scopes={displayGroupsPermissions}
             errorProps={{ disabled: true }}
           >
             <SearchBox
@@ -234,11 +245,22 @@ const Groups = ({ classes }: IGroupsProps) => {
           >
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
-              scopes={[IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY]}
+              scopes={applyPolicyPermissions}
               matchAll
               errorProps={{ disabled: true }}
             >
-              <TooltipWrapper tooltip={"Select Policy"}>
+              <TooltipWrapper
+                tooltip={
+                  checkedGroups.length < 1
+                    ? "Please select Groups on which you want to apply Policies"
+                    : applyPolicy
+                    ? "Select Policy"
+                    : permissionTooltipHelper(
+                        applyPolicyPermissions,
+                        "apply policies to Groups"
+                      )
+                }
+              >
                 <Button
                   id={"assign-policy"}
                   onClick={() => {
@@ -246,18 +268,29 @@ const Groups = ({ classes }: IGroupsProps) => {
                   }}
                   label={"Assign Policy"}
                   icon={<IAMPoliciesIcon />}
-                  disabled={checkedGroups.length < 1}
+                  disabled={checkedGroups.length < 1 || !applyPolicy}
                   variant={"regular"}
                 />
               </TooltipWrapper>
             </SecureComponent>
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
-              scopes={[IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP]}
+              scopes={deleteGroupPermissions}
               matchAll
               errorProps={{ disabled: true }}
             >
-              <TooltipWrapper tooltip={"Delete Selected"}>
+              <TooltipWrapper
+                tooltip={
+                  checkedGroups.length === 0
+                    ? "Select Groups to delete"
+                    : getGroup
+                    ? "Delete Selected"
+                    : permissionTooltipHelper(
+                        getGroupPermissions,
+                        "delete Groups"
+                      )
+                }
+              >
                 <Button
                   id="delete-selected-groups"
                   onClick={() => {
@@ -266,16 +299,13 @@ const Groups = ({ classes }: IGroupsProps) => {
                   label={"Delete Selected"}
                   icon={<DeleteIcon />}
                   variant="secondary"
-                  disabled={checkedGroups.length === 0}
+                  disabled={checkedGroups.length === 0 || !getGroup}
                 />
               </TooltipWrapper>
             </SecureComponent>
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
-              scopes={[
-                IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-                IAM_SCOPES.ADMIN_LIST_USERS,
-              ]}
+              scopes={createGroupPermissions}
               matchAll
               errorProps={{ disabled: true }}
             >
@@ -298,24 +328,37 @@ const Groups = ({ classes }: IGroupsProps) => {
           <Fragment>
             {records.length > 0 && (
               <Fragment>
-                <Grid item xs={12} className={classes.tableBlock}>
-                  <SecureComponent
-                    resource={CONSOLE_UI_RESOURCE}
-                    scopes={[IAM_SCOPES.ADMIN_LIST_GROUPS]}
-                    errorProps={{ disabled: true }}
-                  >
-                    <TableWrapper
-                      itemActions={tableActions}
-                      columns={[{ label: "Name", elementKey: "" }]}
-                      isLoading={loading}
-                      selectedItems={checkedGroups}
-                      onSelect={deleteGroup ? selectionChanged : undefined}
-                      records={filteredRecords}
-                      entityName="Groups"
-                      idField=""
-                    />
-                  </SecureComponent>
-                </Grid>
+                <TooltipWrapper
+                  tooltip={
+                    getGroup
+                      ? ""
+                      : permissionTooltipHelper(
+                          getGroupPermissions,
+                          "view Group details"
+                        )
+                  }
+                >
+                  <Grid item xs={12} className={classes.tableBlock}>
+                    <SecureComponent
+                      resource={CONSOLE_UI_RESOURCE}
+                      scopes={displayGroupsPermissions}
+                      errorProps={{ disabled: true }}
+                    >
+                      <TableWrapper
+                        itemActions={tableActions}
+                        columns={[{ label: "Name", elementKey: "" }]}
+                        isLoading={loading}
+                        selectedItems={checkedGroups}
+                        onSelect={
+                          deleteGroup || getGroup ? selectionChanged : undefined
+                        }
+                        records={filteredRecords}
+                        entityName="Groups"
+                        idField=""
+                      />
+                    </SecureComponent>
+                  </Grid>
+                </TooltipWrapper>
                 <Grid item xs={12} marginTop={"25px"}>
                   <HelpBox
                     title={"Groups"}
@@ -362,10 +405,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                         permissions on the MinIO Tenant.
                         <SecureComponent
                           resource={CONSOLE_UI_RESOURCE}
-                          scopes={[
-                            IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-                            IAM_SCOPES.ADMIN_LIST_USERS,
-                          ]}
+                          scopes={createGroupPermissions}
                           matchAll
                         >
                           <br />
