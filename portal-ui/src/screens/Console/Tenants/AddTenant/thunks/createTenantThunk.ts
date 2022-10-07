@@ -70,6 +70,8 @@ export const createTenantAsync = createAsyncThunk(
     const vaultCertificate = certificates.vaultCertificate;
     const vaultCA = certificates.vaultCA;
     const gemaltoCA = certificates.gemaltoCA;
+    const rawConfiguration = fields.encryption.rawConfiguration;
+    const encryptionTab = fields.encryption.encryptionTab;
     const enableEncryption = fields.encryption.enableEncryption;
     const encryptionType = fields.encryption.encryptionType;
     const gemaltoEndpoint = fields.encryption.gemaltoEndpoint;
@@ -490,6 +492,7 @@ export const createTenantAsync = createAsyncThunk(
       dataSend = {
         ...dataSend,
         encryption: {
+          raw: encryptionTab ? rawConfiguration : "",
           replicas: kesReplicas,
           securityContext: kesSecurityContext,
           image: kesImage,

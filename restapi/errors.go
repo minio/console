@@ -162,6 +162,10 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 				errorCode = 404
 				errorMessage = ErrSSENotConfigured.Error()
 			}
+			if errors.Is(err1, ErrEncryptionConfigNotFound) {
+				errorCode = 404
+				errorMessage = err1.Error()
+			}
 			// account change password
 			if errors.Is(err1, ErrChangePassword) {
 				errorCode = 403

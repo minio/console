@@ -329,6 +329,8 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 			}
 			if rawConfiguration, ok := configSecret.Data["server-config.yaml"]; ok {
 				kesConfiguration := &kes.ServerConfig{}
+				// return raw configuration in case the user wants to edit KES configuration manually
+				encryptConfig.Raw = string(rawConfiguration)
 				err := yaml.Unmarshal(rawConfiguration, kesConfiguration)
 				if err != nil {
 					return nil, err
@@ -452,7 +454,7 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 		}
 		return encryptConfig, nil
 	}
-	return nil, errors.New("encryption configuration not found")
+	return nil, xerrors.ErrEncryptionConfigNotFound
 }
 
 // getTenantEncryptionResponse is a wrapper for tenantEncryptionInfo
@@ -476,7 +478,7 @@ func getTenantEncryptionInfoResponse(session *models.Principal, params operator_
 	}
 	configuration, err := tenantEncryptionInfo(ctx, &opClient, &k8sClient, params.Namespace, params)
 	if err != nil {
-		return nil, xerrors.ErrorWithContext(ctx, err, xerrors.ErrEncryptionConfigNotFound)
+		return nil, xerrors.ErrorWithContext(ctx, err)
 	}
 	return configuration, nil
 }
@@ -627,16 +629,6 @@ func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClient
 }
 
 func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sClientI, ns string, encryptionCfg *models.EncryptionConfiguration, kesConfigurationSecretName, kesClientCertSecretName, tenantName string) (*corev1.LocalObjectReference, *miniov2.LocalCertificateReference, error) {
-	// delete KES configuration secret if exists
-	if err := clientSet.deleteSecret(ctx, ns, kesConfigurationSecretName, metav1.DeleteOptions{}); err != nil {
-		// log the errors if any and continue
-		xerrors.LogError("deleting secret name %s failed: %v, continuing..", kesConfigurationSecretName, err)
-	}
-	// delete KES client cert secret if exists
-	if err := clientSet.deleteSecret(ctx, ns, kesClientCertSecretName, metav1.DeleteOptions{}); err != nil {
-		// log the errors if any and continue
-		xerrors.LogError("deleting secret name %s failed: %v, continuing..", kesClientCertSecretName, err)
-	}
 	// if autoCert is enabled then Operator will generate the client certificates, calculate the client cert identity
 	// and pass it to KES via the ${MINIO_KES_IDENTITY} variable
 	clientCrtIdentity := "${MINIO_KES_IDENTITY}"
@@ -841,6 +833,11 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 	// if mTLSCertificates contains elements we create the kubernetes secret
 	var clientCertSecretReference *miniov2.LocalCertificateReference
 	if len(mTLSCertificates) > 0 {
+		// delete KES client cert secret only if new client certificates are provided
+		if err := clientSet.deleteSecret(ctx, ns, kesClientCertSecretName, metav1.DeleteOptions{}); err != nil {
+			// log the errors if any and continue
+			xerrors.LogError("deleting secret name %s failed: %v, continuing..", kesClientCertSecretName, err)
+		}
 		// Secret to store KES mTLS kesConfiguration to authenticate against a KMS
 		kesClientCertSecret := corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
@@ -861,11 +858,32 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 			Name: kesClientCertSecretName,
 		}
 	}
-	// Generate Yaml kesConfiguration for KES
-	serverConfigYaml, err := yaml.Marshal(kesConfig)
-	if err != nil {
-		return nil, nil, err
+
+	var serverRawConfig []byte
+	var err error
+
+	if encryptionCfg.Raw != "" {
+		serverRawConfig = []byte(encryptionCfg.Raw)
+		// verify provided configuration is in valid YAML format
+		var configTest kes.ServerConfig
+		err = yaml.Unmarshal(serverRawConfig, &configTest)
+		if err != nil {
+			return nil, nil, err
+		}
+	} else {
+		// Generate Yaml kesConfiguration for KES
+		serverRawConfig, err = yaml.Marshal(kesConfig)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
+
+	// delete KES configuration secret if exists
+	if err := clientSet.deleteSecret(ctx, ns, kesConfigurationSecretName, metav1.DeleteOptions{}); err != nil {
+		// log the errors if any and continue
+		xerrors.LogError("deleting secret name %s failed: %v, continuing..", kesConfigurationSecretName, err)
+	}
+
 	// Secret to store KES server kesConfiguration
 	kesConfigurationSecret := corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
@@ -876,7 +894,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		},
 		Immutable: &imm,
 		Data: map[string][]byte{
-			"server-config.yaml": serverConfigYaml,
+			"server-config.yaml": serverRawConfig,
 		},
 	}
 	_, err = clientSet.createSecret(ctx, ns, &kesConfigurationSecret, metav1.CreateOptions{})

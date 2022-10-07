@@ -180,6 +180,8 @@ const initialState: ICreateTenant = {
       enableTLS: true,
     },
     encryption: {
+      rawConfiguration: "",
+      encryptionTab: 0,
       enableEncryption: false,
       encryptionType: "vault",
       gemaltoEndpoint: "",

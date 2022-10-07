@@ -53,6 +53,9 @@ const GemaltoKMSAdd = () => {
   const dispatch = useAppDispatch();
   const classes = useStyles();
 
+  const encryptionTab = useSelector(
+    (state: AppState) => state.createTenant.fields.encryption.encryptionTab
+  );
   const gemaltoCA = useSelector(
     (state: AppState) => state.createTenant.certificates.gemaltoCA
   );
@@ -75,31 +78,33 @@ const GemaltoKMSAdd = () => {
   useEffect(() => {
     let encryptionValidation: IValidation[] = [];
 
-    encryptionValidation = [
-      ...encryptionValidation,
-      {
-        fieldKey: "gemalto_endpoint",
-        required: true,
-        value: gemaltoEndpoint,
-      },
-      {
-        fieldKey: "gemalto_token",
-        required: true,
-        value: gemaltoToken,
-      },
-      {
-        fieldKey: "gemalto_domain",
-        required: true,
-        value: gemaltoDomain,
-      },
-      {
-        fieldKey: "gemalto_retry",
-        required: false,
-        value: gemaltoRetry,
-        customValidation: parseInt(gemaltoRetry) < 0,
-        customValidationMessage: "Value needs to be 0 or greater",
-      },
-    ];
+    if (!encryptionTab) {
+      encryptionValidation = [
+        ...encryptionValidation,
+        {
+          fieldKey: "gemalto_endpoint",
+          required: true,
+          value: gemaltoEndpoint,
+        },
+        {
+          fieldKey: "gemalto_token",
+          required: true,
+          value: gemaltoToken,
+        },
+        {
+          fieldKey: "gemalto_domain",
+          required: true,
+          value: gemaltoDomain,
+        },
+        {
+          fieldKey: "gemalto_retry",
+          required: false,
+          value: gemaltoRetry,
+          customValidation: parseInt(gemaltoRetry) < 0,
+          customValidationMessage: "Value needs to be 0 or greater",
+        },
+      ];
+    }
 
     const commonVal = commonFormValidation(encryptionValidation);
 
@@ -111,7 +116,14 @@ const GemaltoKMSAdd = () => {
     );
 
     setValidationErrors(commonVal);
-  }, [gemaltoEndpoint, gemaltoToken, gemaltoDomain, gemaltoRetry, dispatch]);
+  }, [
+    encryptionTab,
+    gemaltoEndpoint,
+    gemaltoToken,
+    gemaltoDomain,
+    gemaltoRetry,
+    dispatch,
+  ]);
 
   // Common
   const updateField = useCallback(

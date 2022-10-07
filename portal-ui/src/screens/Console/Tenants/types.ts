@@ -96,6 +96,7 @@ export interface IGemaltoConfiguration {
 }
 
 export interface ITenantEncryptionResponse {
+  raw: string;
   image: string;
   replicas: string;
   securityContext: ISecurityContext;
@@ -219,6 +220,8 @@ export interface ISecurityFields {
 }
 
 export interface IEncryptionFields {
+  rawConfiguration: string;
+  encryptionTab: number;
   enableEncryption: boolean;
   encryptionType: string;
   gemaltoEndpoint: string;

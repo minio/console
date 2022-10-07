@@ -48,6 +48,9 @@ const AzureKMSAdd = () => {
   const dispatch = useAppDispatch();
   const classes = useStyles();
 
+  const encryptionTab = useSelector(
+    (state: AppState) => state.createTenant.fields.encryption.encryptionTab
+  );
   const azureEndpoint = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.azureEndpoint
   );
@@ -67,29 +70,31 @@ const AzureKMSAdd = () => {
   useEffect(() => {
     let encryptionValidation: IValidation[] = [];
 
-    encryptionValidation = [
-      ...encryptionValidation,
-      {
-        fieldKey: "azure_endpoint",
-        required: true,
-        value: azureEndpoint,
-      },
-      {
-        fieldKey: "azure_tenant_id",
-        required: true,
-        value: azureTenantID,
-      },
-      {
-        fieldKey: "azure_client_id",
-        required: true,
-        value: azureClientID,
-      },
-      {
-        fieldKey: "azure_client_secret",
-        required: true,
-        value: azureClientSecret,
-      },
-    ];
+    if (!encryptionTab) {
+      encryptionValidation = [
+        ...encryptionValidation,
+        {
+          fieldKey: "azure_endpoint",
+          required: true,
+          value: azureEndpoint,
+        },
+        {
+          fieldKey: "azure_tenant_id",
+          required: true,
+          value: azureTenantID,
+        },
+        {
+          fieldKey: "azure_client_id",
+          required: true,
+          value: azureClientID,
+        },
+        {
+          fieldKey: "azure_client_secret",
+          required: true,
+          value: azureClientSecret,
+        },
+      ];
+    }
 
     const commonVal = commonFormValidation(encryptionValidation);
 
@@ -102,6 +107,7 @@ const AzureKMSAdd = () => {
 
     setValidationErrors(commonVal);
   }, [
+    encryptionTab,
     azureEndpoint,
     azureTenantID,
     azureClientID,

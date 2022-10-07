@@ -48,6 +48,9 @@ const AWSKMSAdd = () => {
   const dispatch = useAppDispatch();
   const classes = useStyles();
 
+  const encryptionTab = useSelector(
+    (state: AppState) => state.createTenant.fields.encryption.encryptionTab
+  );
   const awsEndpoint = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.awsEndpoint
   );
@@ -72,29 +75,31 @@ const AWSKMSAdd = () => {
   useEffect(() => {
     let encryptionValidation: IValidation[] = [];
 
-    encryptionValidation = [
-      ...encryptionValidation,
-      {
-        fieldKey: "aws_endpoint",
-        required: true,
-        value: awsEndpoint,
-      },
-      {
-        fieldKey: "aws_region",
-        required: true,
-        value: awsRegion,
-      },
-      {
-        fieldKey: "aws_accessKey",
-        required: true,
-        value: awsAccessKey,
-      },
-      {
-        fieldKey: "aws_secretKey",
-        required: true,
-        value: awsSecretKey,
-      },
-    ];
+    if (!encryptionTab) {
+      encryptionValidation = [
+        ...encryptionValidation,
+        {
+          fieldKey: "aws_endpoint",
+          required: true,
+          value: awsEndpoint,
+        },
+        {
+          fieldKey: "aws_region",
+          required: true,
+          value: awsRegion,
+        },
+        {
+          fieldKey: "aws_accessKey",
+          required: true,
+          value: awsAccessKey,
+        },
+        {
+          fieldKey: "aws_secretKey",
+          required: true,
+          value: awsSecretKey,
+        },
+      ];
+    }
 
     const commonVal = commonFormValidation(encryptionValidation);
 
@@ -106,7 +111,14 @@ const AWSKMSAdd = () => {
     );
 
     setValidationErrors(commonVal);
-  }, [awsEndpoint, awsRegion, awsSecretKey, awsAccessKey, dispatch]);
+  }, [
+    encryptionTab,
+    awsEndpoint,
+    awsRegion,
+    awsSecretKey,
+    awsAccessKey,
+    dispatch,
+  ]);
 
   // Common
   const updateField = useCallback(
