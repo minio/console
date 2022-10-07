@@ -32,9 +32,18 @@ import PageLayout from "../Common/Layout/PageLayout";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import SearchBox from "../Common/SearchBox";
 import {
+  addUserToGroupPermissions,
   CONSOLE_UI_RESOURCE,
+  createGroupPermissions,
+  editGroupMembersPermissions,
+  enableDisableGroupPermissions,
+  getGroupPermissions,
   IAM_PAGES,
-  IAM_SCOPES,
+  listUsersPermissions,
+  permissionTooltipHelper,
+  setGroupPoliciesPermissions,
+  viewPolicyPermissions,
+  viewUserPermissions,
 } from "../../../common/SecureComponent/permissions";
 import {
   hasPermission,
@@ -130,6 +139,12 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
     elementItem.includes(memberFilter)
   );
 
+  const viewUser = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    viewUserPermissions,
+    true
+  );
+
   useEffect(() => {
     if (groupName) {
       fetchGroupInfo();
@@ -141,9 +156,28 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   const isGroupEnabled = groupEnabled === "enabled";
   const memberActionText = members.length > 0 ? "Edit Members" : "Add Members";
 
-  const getGroupDetails = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_GET_GROUP,
-  ]);
+  const getGroupDetails = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    getGroupPermissions
+  );
+
+  const canEditGroupMembers = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    editGroupMembersPermissions,
+    true
+  );
+
+  const canSetPolicies = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    setGroupPoliciesPermissions,
+    true
+  );
+
+  const canViewPolicy = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    viewPolicyPermissions,
+    true
+  );
 
   function fetchGroupInfo() {
     if (getGroupDetails) {
@@ -188,10 +222,19 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
         />
         <SecureComponent
           resource={CONSOLE_UI_RESOURCE}
-          scopes={[IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP]}
+          scopes={addUserToGroupPermissions}
           errorProps={{ disabled: true }}
         >
-          <TooltipWrapper tooltip={memberActionText}>
+          <TooltipWrapper
+            tooltip={
+              canEditGroupMembers
+                ? memberActionText
+                : permissionTooltipHelper(
+                    createGroupPermissions,
+                    "edit Group membership"
+                  )
+            }
+          >
             <Button
               id={"add-user-group"}
               label={memberActionText}
@@ -200,6 +243,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
               onClick={() => {
                 setUsersOpen(true);
               }}
+              disabled={!canEditGroupMembers}
             />
           </TooltipWrapper>
         </SecureComponent>
@@ -208,7 +252,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
       <div className={classes.tableBlock}>
         <SecureComponent
           resource={CONSOLE_UI_RESOURCE}
-          scopes={[IAM_SCOPES.ADMIN_LIST_USERS]}
+          scopes={listUsersPermissions}
           errorProps={{ disabled: true }}
         >
           <TableWrapper
@@ -218,6 +262,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                 onClick: (userName) => {
                   navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
                 },
+                disableButtonFunction: () => !viewUser,
               },
             ]}
             columns={[{ label: "Access Key", elementKey: "" }]}
@@ -226,6 +271,14 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             records={filteredMembers}
             entityName="Users"
             idField=""
+            tooltip={
+              viewUser
+                ? ""
+                : permissionTooltipHelper(
+                    viewUserPermissions,
+                    "view User details"
+                  )
+            }
           />
         </SecureComponent>
       </div>
@@ -236,7 +289,16 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
     <React.Fragment>
       <div className={classes.actionsTray}>
         <PanelTitle>Policies</PanelTitle>
-        <TooltipWrapper tooltip={"Set Policies"}>
+        <TooltipWrapper
+          tooltip={
+            canSetPolicies
+              ? "Set Policies"
+              : permissionTooltipHelper(
+                  setGroupPoliciesPermissions,
+                  "assign Policies"
+                )
+          }
+        >
           <Button
             id={"set-policies"}
             label={`Set Policies`}
@@ -245,6 +307,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             onClick={() => {
               setPolicyOpen(true);
             }}
+            disabled={!canSetPolicies}
           />
         </TooltipWrapper>
       </div>
@@ -256,6 +319,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
               onClick: (policy) => {
                 navigate(`${IAM_PAGES.POLICIES}/${encodeURLString(policy)}`);
               },
+              disableButtonFunction: () => !canViewPolicy,
             },
           ]}
           columns={[{ label: "Policy", elementKey: "" }]}
@@ -263,6 +327,14 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           records={groupPolicies}
           entityName="Policies"
           idField=""
+          tooltip={
+            canViewPolicy
+              ? ""
+              : permissionTooltipHelper(
+                  viewPolicyPermissions,
+                  "view Policy details"
+                )
+          }
         />
       </div>
     </React.Fragment>
@@ -287,46 +359,52 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                 <span id="group-status" className={classes.statusValue}>
                   {isGroupEnabled ? "Enabled" : "Disabled"}
                 </span>
-                <SecureComponent
-                  resource={CONSOLE_UI_RESOURCE}
-                  scopes={[
-                    IAM_SCOPES.ADMIN_ENABLE_GROUP,
-                    IAM_SCOPES.ADMIN_DISABLE_GROUP,
-                  ]}
-                  errorProps={{ disabled: true }}
-                  matchAll
+                <TooltipWrapper
+                  tooltip={
+                    hasPermission(
+                      CONSOLE_UI_RESOURCE,
+                      enableDisableGroupPermissions,
+                      true
+                    )
+                      ? ""
+                      : permissionTooltipHelper(
+                          enableDisableGroupPermissions,
+                          "enable or disable Groups"
+                        )
+                  }
                 >
-                  <FormSwitchWrapper
-                    indicatorLabels={["Enabled", "Disabled"]}
-                    checked={isGroupEnabled}
-                    value={"group_enabled"}
-                    id="group-status"
-                    name="group-status"
-                    onChange={() => {
-                      toggleGroupStatus(!isGroupEnabled);
-                    }}
-                    switchOnly
-                  />
-                </SecureComponent>
+                  <SecureComponent
+                    resource={CONSOLE_UI_RESOURCE}
+                    scopes={enableDisableGroupPermissions}
+                    errorProps={{ disabled: true }}
+                    matchAll
+                  >
+                    <FormSwitchWrapper
+                      indicatorLabels={["Enabled", "Disabled"]}
+                      checked={isGroupEnabled}
+                      value={"group_enabled"}
+                      id="group-status"
+                      name="group-status"
+                      onChange={() => {
+                        toggleGroupStatus(!isGroupEnabled);
+                      }}
+                      switchOnly
+                    />
+                  </SecureComponent>
+                </TooltipWrapper>
 
-                <SecureComponent
-                  resource={CONSOLE_UI_RESOURCE}
-                  scopes={[IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP]}
-                  errorProps={{ disabled: true }}
-                >
-                  <div className={classes.spacerLeft}>
-                    <TooltipWrapper tooltip={"Delete Group"}>
-                      <Button
-                        id={"delete-user-group"}
-                        variant="secondary"
-                        icon={<TrashIcon />}
-                        onClick={() => {
-                          setDeleteOpen(true);
-                        }}
-                      />
-                    </TooltipWrapper>
-                  </div>
-                </SecureComponent>
+                <div className={classes.spacerLeft}>
+                  <TooltipWrapper tooltip={"Delete Group"}>
+                    <Button
+                      id={"delete-user-group"}
+                      variant="secondary"
+                      icon={<TrashIcon />}
+                      onClick={() => {
+                        setDeleteOpen(true);
+                      }}
+                    />
+                  </TooltipWrapper>
+                </div>
               </Fragment>
             }
           />
