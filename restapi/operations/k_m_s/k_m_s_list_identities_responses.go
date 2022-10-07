@@ -43,7 +43,7 @@ type KMSListIdentitiesOK struct {
 	/*
 	  In: Body
 	*/
-	Payload models.KmsListIdentitiesResponse `json:"body,omitempty"`
+	Payload *models.KmsListIdentitiesResponse `json:"body,omitempty"`
 }
 
 // NewKMSListIdentitiesOK creates KMSListIdentitiesOK with default headers values
@@ -53,13 +53,13 @@ func NewKMSListIdentitiesOK() *KMSListIdentitiesOK {
 }
 
 // WithPayload adds the payload to the k m s list identities o k response
-func (o *KMSListIdentitiesOK) WithPayload(payload models.KmsListIdentitiesResponse) *KMSListIdentitiesOK {
+func (o *KMSListIdentitiesOK) WithPayload(payload *models.KmsListIdentitiesResponse) *KMSListIdentitiesOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s list identities o k response
-func (o *KMSListIdentitiesOK) SetPayload(payload models.KmsListIdentitiesResponse) {
+func (o *KMSListIdentitiesOK) SetPayload(payload *models.KmsListIdentitiesResponse) {
 	o.Payload = payload
 }
 
@@ -67,9 +67,11 @@ func (o *KMSListIdentitiesOK) SetPayload(payload models.KmsListIdentitiesRespons
 func (o *KMSListIdentitiesOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	payload := o.Payload
-	if err := producer.Produce(rw, payload); err != nil {
-		panic(err) // let the recovery middleware deal with this
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
 	}
 }
 

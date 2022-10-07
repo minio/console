@@ -57,7 +57,7 @@ func (o *KMSImportKeyURL) SetBasePath(bp string) {
 func (o *KMSImportKeyURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/kms/key/{name}/import"
+	var _path = "/kms/keys/{name}/import"
 
 	name := o.Name
 	if name != "" {

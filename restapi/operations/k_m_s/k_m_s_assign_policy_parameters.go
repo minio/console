@@ -30,6 +30,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
 
 	"github.com/minio/console/models"
 )
@@ -55,7 +56,7 @@ type KMSAssignPolicyParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body models.KmsAssignPolicyRequest
+	Body *models.KmsAssignPolicyRequest
 	/*KMS policy name
 	  Required: true
 	  In: path
@@ -82,8 +83,19 @@ func (o *KMSAssignPolicyParams) BindRequest(r *http.Request, route *middleware.M
 				res = append(res, errors.NewParseError("body", "body", "", err))
 			}
 		} else {
-			// no validation on generic interface
-			o.Body = body
+			// validate body object
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			ctx := validate.WithOperationRequest(r.Context())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			if len(res) == 0 {
+				o.Body = &body
+			}
 		}
 	} else {
 		res = append(res, errors.Required("body", "body", ""))

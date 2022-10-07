@@ -49,7 +49,7 @@ func NewKMSImportKey(ctx *middleware.Context, handler KMSImportKeyHandler) *KMSI
 }
 
 /*
-	KMSImportKey swagger:route POST /kms/key/{name}/import KMS kMSImportKey
+	KMSImportKey swagger:route POST /kms/keys/{name}/import KMS kMSImportKey
 
 KMS import key
 */

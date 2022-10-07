@@ -2810,7 +2810,7 @@ func init() {
         }
       }
     },
-    "/kms/identity": {
+    "/kms/identities": {
       "get": {
         "tags": [
           "KMS"
@@ -2841,7 +2841,7 @@ func init() {
         }
       }
     },
-    "/kms/identity/{name}": {
+    "/kms/identities/{name}": {
       "delete": {
         "tags": [
           "KMS"
@@ -2870,7 +2870,7 @@ func init() {
         }
       }
     },
-    "/kms/identity/{name}/describe": {
+    "/kms/identities/{name}/describe": {
       "get": {
         "tags": [
           "KMS"
@@ -2902,7 +2902,7 @@ func init() {
         }
       }
     },
-    "/kms/key": {
+    "/kms/keys": {
       "get": {
         "tags": [
           "KMS"
@@ -2914,8 +2914,7 @@ func init() {
             "type": "string",
             "description": "pattern to retrieve keys",
             "name": "pattern",
-            "in": "query",
-            "required": true
+            "in": "query"
           }
         ],
         "responses": {
@@ -2962,7 +2961,7 @@ func init() {
         }
       }
     },
-    "/kms/key/{name}": {
+    "/kms/keys/{name}": {
       "get": {
         "tags": [
           "KMS"
@@ -3021,7 +3020,7 @@ func init() {
         }
       }
     },
-    "/kms/key/{name}/import": {
+    "/kms/keys/{name}/import": {
       "post": {
         "tags": [
           "KMS"
@@ -3058,7 +3057,7 @@ func init() {
         }
       }
     },
-    "/kms/policy": {
+    "/kms/policies": {
       "get": {
         "tags": [
           "KMS"
@@ -3117,7 +3116,7 @@ func init() {
         }
       }
     },
-    "/kms/policy/{name}": {
+    "/kms/policies/{name}": {
       "get": {
         "tags": [
           "KMS"
@@ -3176,7 +3175,7 @@ func init() {
         }
       }
     },
-    "/kms/policy/{name}/assign": {
+    "/kms/policies/{name}/assign": {
       "post": {
         "tags": [
           "KMS"
@@ -3213,7 +3212,7 @@ func init() {
         }
       }
     },
-    "/kms/policy/{name}/describe": {
+    "/kms/policies/{name}/describe": {
       "get": {
         "tags": [
           "KMS"
@@ -5701,68 +5700,255 @@ func init() {
     "kmDeleteKeyRequest": {
       "type": "object"
     },
-    "kmListKeysRequest": {
-      "type": "object"
-    },
     "kmsAssignPolicyRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "identity": {
+          "type": "string"
+        }
+      }
     },
     "kmsCreateKeyRequest": {
-      "type": "object"
-    },
-    "kmsDescribeIdentityRequest": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        }
+      }
     },
     "kmsDescribeIdentityResponse": {
-      "type": "object"
-    },
-    "kmsDescribePolicyRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "admin": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "identity": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        }
+      }
     },
     "kmsDescribePolicyResponse": {
-      "type": "object"
-    },
-    "kmsDescribeSelfIdentityRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "kmsDescribeSelfIdentityResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "admin": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "identity": {
+          "type": "string"
+        },
+        "policy": {
+          "$ref": "#/definitions/kmsGetPolicyResponse"
+        },
+        "policyName": {
+          "type": "string"
+        }
+      }
     },
-    "kmsGetPolicyRequest": {
-      "type": "object"
+    "kmsEndpoint": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
     },
     "kmsGetPolicyResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "allow": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deny": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "kmsIdentityInfo": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "identity": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        }
+      }
     },
     "kmsImportKeyRequest": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "bytes"
+      ],
+      "properties": {
+        "bytes": {
+          "type": "string"
+        }
+      }
     },
-    "kmsKeyStatusRequest": {
-      "type": "object"
+    "kmsKeyInfo": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "kmsKeyStatusResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "decryptionErr": {
+          "type": "string"
+        },
+        "encryptionErr": {
+          "type": "string"
+        },
+        "keyID": {
+          "type": "string"
+        }
+      }
     },
     "kmsListIdentitiesResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsIdentityInfo"
+          }
+        }
+      }
     },
     "kmsListKeysResponse": {
-      "type": "object"
-    },
-    "kmsListPoliciesRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsKeyInfo"
+          }
+        }
+      }
     },
     "kmsListPoliciesResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsPolicyInfo"
+          }
+        }
+      }
+    },
+    "kmsPolicyInfo": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "kmsSetPolicyRequest": {
-      "type": "object"
-    },
-    "kmsStatusRequest": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "policy"
+      ],
+      "properties": {
+        "allow": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deny": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "policy": {
+          "type": "string"
+        }
+      }
     },
     "kmsStatusResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "defaultKeyID": {
+          "type": "string"
+        },
+        "endpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsEndpoint"
+          }
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "license": {
       "type": "object",
@@ -10571,7 +10757,7 @@ func init() {
         }
       }
     },
-    "/kms/identity": {
+    "/kms/identities": {
       "get": {
         "tags": [
           "KMS"
@@ -10602,7 +10788,7 @@ func init() {
         }
       }
     },
-    "/kms/identity/{name}": {
+    "/kms/identities/{name}": {
       "delete": {
         "tags": [
           "KMS"
@@ -10631,7 +10817,7 @@ func init() {
         }
       }
     },
-    "/kms/identity/{name}/describe": {
+    "/kms/identities/{name}/describe": {
       "get": {
         "tags": [
           "KMS"
@@ -10663,7 +10849,7 @@ func init() {
         }
       }
     },
-    "/kms/key": {
+    "/kms/keys": {
       "get": {
         "tags": [
           "KMS"
@@ -10675,8 +10861,7 @@ func init() {
             "type": "string",
             "description": "pattern to retrieve keys",
             "name": "pattern",
-            "in": "query",
-            "required": true
+            "in": "query"
           }
         ],
         "responses": {
@@ -10723,7 +10908,7 @@ func init() {
         }
       }
     },
-    "/kms/key/{name}": {
+    "/kms/keys/{name}": {
       "get": {
         "tags": [
           "KMS"
@@ -10782,7 +10967,7 @@ func init() {
         }
       }
     },
-    "/kms/key/{name}/import": {
+    "/kms/keys/{name}/import": {
       "post": {
         "tags": [
           "KMS"
@@ -10819,7 +11004,7 @@ func init() {
         }
       }
     },
-    "/kms/policy": {
+    "/kms/policies": {
       "get": {
         "tags": [
           "KMS"
@@ -10878,7 +11063,7 @@ func init() {
         }
       }
     },
-    "/kms/policy/{name}": {
+    "/kms/policies/{name}": {
       "get": {
         "tags": [
           "KMS"
@@ -10937,7 +11122,7 @@ func init() {
         }
       }
     },
-    "/kms/policy/{name}/assign": {
+    "/kms/policies/{name}/assign": {
       "post": {
         "tags": [
           "KMS"
@@ -10974,7 +11159,7 @@ func init() {
         }
       }
     },
-    "/kms/policy/{name}/describe": {
+    "/kms/policies/{name}/describe": {
       "get": {
         "tags": [
           "KMS"
@@ -13588,68 +13773,255 @@ func init() {
     "kmDeleteKeyRequest": {
       "type": "object"
     },
-    "kmListKeysRequest": {
-      "type": "object"
-    },
     "kmsAssignPolicyRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "identity": {
+          "type": "string"
+        }
+      }
     },
     "kmsCreateKeyRequest": {
-      "type": "object"
-    },
-    "kmsDescribeIdentityRequest": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        }
+      }
     },
     "kmsDescribeIdentityResponse": {
-      "type": "object"
-    },
-    "kmsDescribePolicyRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "admin": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "identity": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        }
+      }
     },
     "kmsDescribePolicyResponse": {
-      "type": "object"
-    },
-    "kmsDescribeSelfIdentityRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "kmsDescribeSelfIdentityResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "admin": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "identity": {
+          "type": "string"
+        },
+        "policy": {
+          "$ref": "#/definitions/kmsGetPolicyResponse"
+        },
+        "policyName": {
+          "type": "string"
+        }
+      }
     },
-    "kmsGetPolicyRequest": {
-      "type": "object"
+    "kmsEndpoint": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
     },
     "kmsGetPolicyResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "allow": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deny": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "kmsIdentityInfo": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "identity": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        }
+      }
     },
     "kmsImportKeyRequest": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "bytes"
+      ],
+      "properties": {
+        "bytes": {
+          "type": "string"
+        }
+      }
     },
-    "kmsKeyStatusRequest": {
-      "type": "object"
+    "kmsKeyInfo": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "kmsKeyStatusResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "decryptionErr": {
+          "type": "string"
+        },
+        "encryptionErr": {
+          "type": "string"
+        },
+        "keyID": {
+          "type": "string"
+        }
+      }
     },
     "kmsListIdentitiesResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsIdentityInfo"
+          }
+        }
+      }
     },
     "kmsListKeysResponse": {
-      "type": "object"
-    },
-    "kmsListPoliciesRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsKeyInfo"
+          }
+        }
+      }
     },
     "kmsListPoliciesResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsPolicyInfo"
+          }
+        }
+      }
+    },
+    "kmsPolicyInfo": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "kmsSetPolicyRequest": {
-      "type": "object"
-    },
-    "kmsStatusRequest": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "policy"
+      ],
+      "properties": {
+        "allow": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deny": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "policy": {
+          "type": "string"
+        }
+      }
     },
     "kmsStatusResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "defaultKeyID": {
+          "type": "string"
+        },
+        "endpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsEndpoint"
+          }
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "license": {
       "type": "object",

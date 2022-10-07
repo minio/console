@@ -43,7 +43,7 @@ type KMSKeyStatusOK struct {
 	/*
 	  In: Body
 	*/
-	Payload models.KmsKeyStatusResponse `json:"body,omitempty"`
+	Payload *models.KmsKeyStatusResponse `json:"body,omitempty"`
 }
 
 // NewKMSKeyStatusOK creates KMSKeyStatusOK with default headers values
@@ -53,13 +53,13 @@ func NewKMSKeyStatusOK() *KMSKeyStatusOK {
 }
 
 // WithPayload adds the payload to the k m s key status o k response
-func (o *KMSKeyStatusOK) WithPayload(payload models.KmsKeyStatusResponse) *KMSKeyStatusOK {
+func (o *KMSKeyStatusOK) WithPayload(payload *models.KmsKeyStatusResponse) *KMSKeyStatusOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s key status o k response
-func (o *KMSKeyStatusOK) SetPayload(payload models.KmsKeyStatusResponse) {
+func (o *KMSKeyStatusOK) SetPayload(payload *models.KmsKeyStatusResponse) {
 	o.Payload = payload
 }
 
@@ -67,9 +67,11 @@ func (o *KMSKeyStatusOK) SetPayload(payload models.KmsKeyStatusResponse) {
 func (o *KMSKeyStatusOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	payload := o.Payload
-	if err := producer.Produce(rw, payload); err != nil {
-		panic(err) // let the recovery middleware deal with this
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
 	}
 }
 

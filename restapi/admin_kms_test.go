@@ -17,26 +17,125 @@
 package restapi
 
 import (
+	"context"
 	"net/http"
+	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	kmsAPI "github.com/minio/console/restapi/operations/k_m_s"
+	"github.com/minio/madmin-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
+func (ac adminClientMock) kmsStatus(ctx context.Context) (madmin.KMSStatus, error) {
+	return madmin.KMSStatus{Name: "name", DefaultKeyID: "key", Endpoints: map[string]madmin.ItemState{"localhost": madmin.ItemState("online")}}, nil
+}
+
+func (ac adminClientMock) createKey(ctx context.Context, key string) error {
+	return nil
+}
+
+func (ac adminClientMock) importKey(ctx context.Context, key string, content []byte) error {
+	return nil
+}
+
+func (ac adminClientMock) listKeys(ctx context.Context, pattern string) ([]madmin.KMSKeyInfo, error) {
+	return []madmin.KMSKeyInfo{{
+		Name:      "name",
+		CreatedBy: "by",
+	}}, nil
+}
+
+func (ac adminClientMock) keyStatus(ctx context.Context, key string) (*madmin.KMSKeyStatus, error) {
+	return &madmin.KMSKeyStatus{KeyID: "key"}, nil
+}
+
+func (ac adminClientMock) deleteKey(ctx context.Context, key string) error {
+	return nil
+}
+
+func (ac adminClientMock) setKMSPolicy(ctx context.Context, policy string, content []byte) error {
+	return nil
+}
+
+func (ac adminClientMock) assignPolicy(ctx context.Context, policy string, content []byte) error {
+	return nil
+}
+
+func (ac adminClientMock) describePolicy(ctx context.Context, policy string) (*madmin.KMSDescribePolicy, error) {
+	return &madmin.KMSDescribePolicy{Name: "name"}, nil
+}
+
+func (ac adminClientMock) getKMSPolicy(ctx context.Context, policy string) (*madmin.KMSPolicy, error) {
+	return &madmin.KMSPolicy{Allow: []string{""}, Deny: []string{""}}, nil
+}
+
+func (ac adminClientMock) listKMSPolicies(ctx context.Context, pattern string) ([]madmin.KMSPolicyInfo, error) {
+	return []madmin.KMSPolicyInfo{{
+		Name:      "name",
+		CreatedBy: "by",
+	}}, nil
+}
+
+func (ac adminClientMock) deletePolicy(ctx context.Context, policy string) error {
+	return nil
+}
+
+func (ac adminClientMock) describeIdentity(ctx context.Context, identity string) (*madmin.KMSDescribeIdentity, error) {
+	return &madmin.KMSDescribeIdentity{}, nil
+}
+
+func (ac adminClientMock) describeSelfIdentity(ctx context.Context) (*madmin.KMSDescribeSelfIdentity, error) {
+	return &madmin.KMSDescribeSelfIdentity{
+		Policy: &madmin.KMSPolicy{Allow: []string{}, Deny: []string{}},
+	}, nil
+}
+
+func (ac adminClientMock) deleteIdentity(ctx context.Context, identity string) error {
+	return nil
+}
+
+func (ac adminClientMock) listIdentities(ctx context.Context, pattern string) ([]madmin.KMSIdentityInfo, error) {
+	return []madmin.KMSIdentityInfo{{Identity: "identity"}}, nil
+}
+
 type KMSTestSuite struct {
 	suite.Suite
-	assert *assert.Assertions
+	assert        *assert.Assertions
+	currentServer string
+	isServerSet   bool
+	server        *httptest.Server
+	adminClient   adminClientMock
 }
 
 func (suite *KMSTestSuite) SetupSuite() {
 	suite.assert = assert.New(suite.T())
+	suite.adminClient = adminClientMock{}
+}
+
+func (suite *KMSTestSuite) SetupTest() {
+	suite.server = httptest.NewServer(http.HandlerFunc(suite.serverHandler))
+	suite.currentServer, suite.isServerSet = os.LookupEnv(ConsoleMinIOServer)
+	os.Setenv(ConsoleMinIOServer, suite.server.URL)
+}
+
+func (suite *KMSTestSuite) serverHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(400)
 }
 
 func (suite *KMSTestSuite) TearDownSuite() {
+}
+
+func (suite *KMSTestSuite) TearDownTest() {
+	if suite.isServerSet {
+		os.Setenv(ConsoleMinIOServer, suite.currentServer)
+	} else {
+		os.Unsetenv(ConsoleMinIOServer)
+	}
 }
 
 func (suite *KMSTestSuite) TestRegisterKMSHandlers() {
@@ -97,6 +196,13 @@ func (suite *KMSTestSuite) initKMSStatusRequest() (params kmsAPI.KMSStatusParams
 	return params, api
 }
 
+func (suite *KMSTestSuite) TestKMSStatusWithoutError() {
+	ctx := context.Background()
+	res, err := kmsStatus(ctx, suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
+}
+
 func (suite *KMSTestSuite) TestKMSCreateKeyHandlerWithError() {
 	params, api := suite.initKMSCreateKeyRequest()
 	response := api.KmsKMSCreateKeyHandler.Handle(params, &models.Principal{})
@@ -107,7 +213,15 @@ func (suite *KMSTestSuite) TestKMSCreateKeyHandlerWithError() {
 func (suite *KMSTestSuite) initKMSCreateKeyRequest() (params kmsAPI.KMSCreateKeyParams, api operations.ConsoleAPI) {
 	registerKMSHandlers(&api)
 	params.HTTPRequest = &http.Request{}
+	key := "key"
+	params.Body = &models.KmsCreateKeyRequest{Key: &key}
 	return params, api
+}
+
+func (suite *KMSTestSuite) TestKMSCreateKeyWithoutError() {
+	ctx := context.Background()
+	err := createKey(ctx, "key", suite.adminClient)
+	suite.assert.Nil(err)
 }
 
 func (suite *KMSTestSuite) TestKMSImportKeyHandlerWithError() {
@@ -123,6 +237,12 @@ func (suite *KMSTestSuite) initKMSImportKeyRequest() (params kmsAPI.KMSImportKey
 	return params, api
 }
 
+func (suite *KMSTestSuite) TestKMSImportKeyWithoutError() {
+	ctx := context.Background()
+	err := importKey(ctx, "key", []byte(""), suite.adminClient)
+	suite.assert.Nil(err)
+}
+
 func (suite *KMSTestSuite) TestKMSListKeysHandlerWithError() {
 	params, api := suite.initKMSListKeysRequest()
 	response := api.KmsKMSListKeysHandler.Handle(params, &models.Principal{})
@@ -134,6 +254,13 @@ func (suite *KMSTestSuite) initKMSListKeysRequest() (params kmsAPI.KMSListKeysPa
 	registerKMSHandlers(&api)
 	params.HTTPRequest = &http.Request{}
 	return params, api
+}
+
+func (suite *KMSTestSuite) TestKMSListKeysWithoutError() {
+	ctx := context.Background()
+	res, err := listKeys(ctx, "", suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
 }
 
 func (suite *KMSTestSuite) TestKMSKeyStatusHandlerWithError() {
@@ -149,6 +276,13 @@ func (suite *KMSTestSuite) initKMSKeyStatusRequest() (params kmsAPI.KMSKeyStatus
 	return params, api
 }
 
+func (suite *KMSTestSuite) TestKMSKeyStatusWithoutError() {
+	ctx := context.Background()
+	res, err := keyStatus(ctx, "key", suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
+}
+
 func (suite *KMSTestSuite) TestKMSDeleteKeyHandlerWithError() {
 	params, api := suite.initKMSDeleteKeyRequest()
 	response := api.KmsKMSDeleteKeyHandler.Handle(params, &models.Principal{})
@@ -162,6 +296,12 @@ func (suite *KMSTestSuite) initKMSDeleteKeyRequest() (params kmsAPI.KMSDeleteKey
 	return params, api
 }
 
+func (suite *KMSTestSuite) TestKMSDeleteKeyWithoutError() {
+	ctx := context.Background()
+	err := deleteKey(ctx, "key", suite.adminClient)
+	suite.assert.Nil(err)
+}
+
 func (suite *KMSTestSuite) TestKMSSetPolicyHandlerWithError() {
 	params, api := suite.initKMSSetPolicyRequest()
 	response := api.KmsKMSSetPolicyHandler.Handle(params, &models.Principal{})
@@ -172,7 +312,15 @@ func (suite *KMSTestSuite) TestKMSSetPolicyHandlerWithError() {
 func (suite *KMSTestSuite) initKMSSetPolicyRequest() (params kmsAPI.KMSSetPolicyParams, api operations.ConsoleAPI) {
 	registerKMSHandlers(&api)
 	params.HTTPRequest = &http.Request{}
+	policy := "policy"
+	params.Body = &models.KmsSetPolicyRequest{Policy: &policy}
 	return params, api
+}
+
+func (suite *KMSTestSuite) TestKMSSetPolicyWithoutError() {
+	ctx := context.Background()
+	err := setPolicy(ctx, "policy", []byte(""), suite.adminClient)
+	suite.assert.Nil(err)
 }
 
 func (suite *KMSTestSuite) TestKMSAssignPolicyHandlerWithError() {
@@ -188,6 +336,12 @@ func (suite *KMSTestSuite) initKMSAssignPolicyRequest() (params kmsAPI.KMSAssign
 	return params, api
 }
 
+func (suite *KMSTestSuite) TestKMSAssignPolicyWithoutError() {
+	ctx := context.Background()
+	err := assignPolicy(ctx, "policy", []byte(""), suite.adminClient)
+	suite.assert.Nil(err)
+}
+
 func (suite *KMSTestSuite) TestKMSDescribePolicyHandlerWithError() {
 	params, api := suite.initKMSDescribePolicyRequest()
 	response := api.KmsKMSDescribePolicyHandler.Handle(params, &models.Principal{})
@@ -199,6 +353,13 @@ func (suite *KMSTestSuite) initKMSDescribePolicyRequest() (params kmsAPI.KMSDesc
 	registerKMSHandlers(&api)
 	params.HTTPRequest = &http.Request{}
 	return params, api
+}
+
+func (suite *KMSTestSuite) TestKMSDescribePolicyWithoutError() {
+	ctx := context.Background()
+	res, err := describePolicy(ctx, "policy", suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
 }
 
 func (suite *KMSTestSuite) TestKMSGetPolicyHandlerWithError() {
@@ -214,6 +375,13 @@ func (suite *KMSTestSuite) initKMSGetPolicyRequest() (params kmsAPI.KMSGetPolicy
 	return params, api
 }
 
+func (suite *KMSTestSuite) TestKMSGetPolicyWithoutError() {
+	ctx := context.Background()
+	res, err := getPolicy(ctx, "policy", suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
+}
+
 func (suite *KMSTestSuite) TestKMSListPoliciesHandlerWithError() {
 	params, api := suite.initKMSListPoliciesRequest()
 	response := api.KmsKMSListPoliciesHandler.Handle(params, &models.Principal{})
@@ -225,6 +393,13 @@ func (suite *KMSTestSuite) initKMSListPoliciesRequest() (params kmsAPI.KMSListPo
 	registerKMSHandlers(&api)
 	params.HTTPRequest = &http.Request{}
 	return params, api
+}
+
+func (suite *KMSTestSuite) TestKMSListPoliciesWithoutError() {
+	ctx := context.Background()
+	res, err := listKMSPolicies(ctx, "", suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
 }
 
 func (suite *KMSTestSuite) TestKMSDeletePolicyHandlerWithError() {
@@ -240,6 +415,12 @@ func (suite *KMSTestSuite) initKMSDeletePolicyRequest() (params kmsAPI.KMSDelete
 	return params, api
 }
 
+func (suite *KMSTestSuite) TestKMSDeletePolicyWithoutError() {
+	ctx := context.Background()
+	err := deletePolicy(ctx, "policy", suite.adminClient)
+	suite.assert.Nil(err)
+}
+
 func (suite *KMSTestSuite) TestKMSDescribeIdentityHandlerWithError() {
 	params, api := suite.initKMSDescribeIdentityRequest()
 	response := api.KmsKMSDescribeIdentityHandler.Handle(params, &models.Principal{})
@@ -251,6 +432,13 @@ func (suite *KMSTestSuite) initKMSDescribeIdentityRequest() (params kmsAPI.KMSDe
 	registerKMSHandlers(&api)
 	params.HTTPRequest = &http.Request{}
 	return params, api
+}
+
+func (suite *KMSTestSuite) TestKMSDescribeIdentityWithoutError() {
+	ctx := context.Background()
+	res, err := describeIdentity(ctx, "identity", suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
 }
 
 func (suite *KMSTestSuite) TestKMSDescribeSelfIdentityHandlerWithError() {
@@ -266,6 +454,13 @@ func (suite *KMSTestSuite) initKMSDescribeSelfIdentityRequest() (params kmsAPI.K
 	return params, api
 }
 
+func (suite *KMSTestSuite) TestKMSDescribeSelfIdentityWithoutError() {
+	ctx := context.Background()
+	res, err := describeSelfIdentity(ctx, suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
+}
+
 func (suite *KMSTestSuite) TestKMSListIdentitiesHandlerWithError() {
 	params, api := suite.initKMSListIdentitiesRequest()
 	response := api.KmsKMSListIdentitiesHandler.Handle(params, &models.Principal{})
@@ -279,6 +474,13 @@ func (suite *KMSTestSuite) initKMSListIdentitiesRequest() (params kmsAPI.KMSList
 	return params, api
 }
 
+func (suite *KMSTestSuite) TestKMSListIdentitiesWithoutError() {
+	ctx := context.Background()
+	res, err := listIdentities(ctx, "", suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
+}
+
 func (suite *KMSTestSuite) TestKMSDeleteIdentityHandlerWithError() {
 	params, api := suite.initKMSDeleteIdentityRequest()
 	response := api.KmsKMSDeleteIdentityHandler.Handle(params, &models.Principal{})
@@ -290,6 +492,12 @@ func (suite *KMSTestSuite) initKMSDeleteIdentityRequest() (params kmsAPI.KMSDele
 	registerKMSHandlers(&api)
 	params.HTTPRequest = &http.Request{}
 	return params, api
+}
+
+func (suite *KMSTestSuite) TestKMSDeleteIdentityWithoutError() {
+	ctx := context.Background()
+	err := deleteIdentity(ctx, "identity", suite.adminClient)
+	suite.assert.Nil(err)
 }
 
 func TestKMS(t *testing.T) {

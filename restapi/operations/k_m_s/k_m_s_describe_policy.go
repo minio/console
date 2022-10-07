@@ -49,7 +49,7 @@ func NewKMSDescribePolicy(ctx *middleware.Context, handler KMSDescribePolicyHand
 }
 
 /*
-	KMSDescribePolicy swagger:route GET /kms/policy/{name}/describe KMS kMSDescribePolicy
+	KMSDescribePolicy swagger:route GET /kms/policies/{name}/describe KMS kMSDescribePolicy
 
 KMS describe policy
 */

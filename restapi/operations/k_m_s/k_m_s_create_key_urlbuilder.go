@@ -52,7 +52,7 @@ func (o *KMSCreateKeyURL) SetBasePath(bp string) {
 func (o *KMSCreateKeyURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/kms/key"
+	var _path = "/kms/keys"
 
 	_basePath := o._basePath
 	if _basePath == "" {
