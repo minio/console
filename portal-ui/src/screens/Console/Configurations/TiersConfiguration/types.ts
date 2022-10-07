@@ -75,6 +75,7 @@ export interface ITierElement {
   gcs?: ITierGCS;
   azure?: ITierAzure;
   minio?: ITierMinio;
+  status: boolean;
 }
 
 export interface ITierResponse {
