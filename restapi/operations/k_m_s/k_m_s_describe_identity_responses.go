@@ -43,7 +43,7 @@ type KMSDescribeIdentityOK struct {
 	/*
 	  In: Body
 	*/
-	Payload models.KmsDescribeIdentityResponse `json:"body,omitempty"`
+	Payload *models.KmsDescribeIdentityResponse `json:"body,omitempty"`
 }
 
 // NewKMSDescribeIdentityOK creates KMSDescribeIdentityOK with default headers values
@@ -53,13 +53,13 @@ func NewKMSDescribeIdentityOK() *KMSDescribeIdentityOK {
 }
 
 // WithPayload adds the payload to the k m s describe identity o k response
-func (o *KMSDescribeIdentityOK) WithPayload(payload models.KmsDescribeIdentityResponse) *KMSDescribeIdentityOK {
+func (o *KMSDescribeIdentityOK) WithPayload(payload *models.KmsDescribeIdentityResponse) *KMSDescribeIdentityOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s describe identity o k response
-func (o *KMSDescribeIdentityOK) SetPayload(payload models.KmsDescribeIdentityResponse) {
+func (o *KMSDescribeIdentityOK) SetPayload(payload *models.KmsDescribeIdentityResponse) {
 	o.Payload = payload
 }
 
@@ -67,9 +67,11 @@ func (o *KMSDescribeIdentityOK) SetPayload(payload models.KmsDescribeIdentityRes
 func (o *KMSDescribeIdentityOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	payload := o.Payload
-	if err := producer.Produce(rw, payload); err != nil {
-		panic(err) // let the recovery middleware deal with this
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
 	}
 }
 

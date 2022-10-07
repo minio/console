@@ -48,8 +48,16 @@ import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import BackLink from "../../../common/BackLink";
 import {
   CONSOLE_UI_RESOURCE,
+  createPolicyPermissions,
+  deletePolicyPermissions,
+  getGroupPermissions,
   IAM_PAGES,
   IAM_SCOPES,
+  listGroupPermissions,
+  listUsersPermissions,
+  permissionTooltipHelper,
+  viewPolicyPermissions,
+  viewUserPermissions,
 } from "../../../common/SecureComponent/permissions";
 import {
   hasPermission,
@@ -131,29 +139,45 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
 
   const displayGroups = hasPermission(
     CONSOLE_UI_RESOURCE,
-    [IAM_SCOPES.ADMIN_LIST_GROUPS, IAM_SCOPES.ADMIN_GET_GROUP],
+    listGroupPermissions,
     true
   );
 
-  const viewGroup = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_GET_GROUP,
-  ]);
+  const viewGroup = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    getGroupPermissions,
+    true
+  );
 
-  const displayUsers = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_LIST_GROUPS,
-  ]);
+  const displayUsers = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    listUsersPermissions,
+    true
+  );
 
-  const viewUser = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_GET_USER,
-  ]);
+  const viewUser = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    viewUserPermissions,
+    true
+  );
 
-  const displayPolicy = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_GET_POLICY,
-  ]);
+  const displayPolicy = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    viewPolicyPermissions,
+    true
+  );
 
-  const editPolicy = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_CREATE_POLICY,
-  ]);
+  const canDeletePolicy = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    deletePolicyPermissions,
+    true
+  );
+
+  const canEditPolicy = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    createPolicyPermissions,
+    true
+  );
 
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -161,7 +185,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
       return;
     }
     setAddLoading(true);
-    if (editPolicy) {
+    if (canEditPolicy) {
       api
         .invoke("POST", "/api/v1/policies", {
           name: policyName,
@@ -355,13 +379,23 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                   resource={CONSOLE_UI_RESOURCE}
                   errorProps={{ disabled: true }}
                 >
-                  <TooltipWrapper tooltip={"Delete Policy"}>
+                  <TooltipWrapper
+                    tooltip={
+                      canDeletePolicy
+                        ? ""
+                        : permissionTooltipHelper(
+                            deletePolicyPermissions,
+                            "delete Policies"
+                          )
+                    }
+                  >
                     <Button
                       id={"delete-policy"}
                       label={"Delete Policy"}
                       variant="secondary"
                       icon={<TrashIcon />}
                       onClick={deletePolicy}
+                      disabled={!canDeletePolicy}
                     />
                   </TooltipWrapper>
                 </SecureComponent>
@@ -405,33 +439,34 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
               <Fragment>
                 <div className={classes.sectionTitle}>Users</div>
                 <Grid container>
-                  <Grid item xs={12} className={classes.actionsTray}>
-                    <TextField
-                      placeholder="Search Users"
-                      className={classes.searchField}
-                      id="search-resource"
-                      label=""
-                      onChange={(val) => {
-                        setFilterUsers(val.target.value);
-                      }}
-                      InputProps={{
-                        disableUnderline: true,
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      variant="standard"
-                    />
-                  </Grid>
-
+                  {userList.length > 0 && (
+                    <Grid item xs={12} className={classes.actionsTray}>
+                      <TextField
+                        placeholder="Search Users"
+                        className={classes.searchField}
+                        id="search-resource"
+                        label=""
+                        onChange={(val) => {
+                          setFilterUsers(val.target.value);
+                        }}
+                        InputProps={{
+                          disableUnderline: true,
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                        variant="standard"
+                      />
+                    </Grid>
+                  )}
                   <TableWrapper
                     itemActions={userTableActions}
                     columns={[{ label: "Name", elementKey: "name" }]}
                     isLoading={loadingUsers}
                     records={filteredUsers}
-                    entityName="Users"
+                    entityName="Users with this Policy associated"
                     idField="name"
                   />
                 </Grid>
@@ -447,32 +482,34 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
               <Fragment>
                 <div className={classes.sectionTitle}>Groups</div>
                 <Grid container>
-                  <Grid item xs={12} className={classes.actionsTray}>
-                    <TextField
-                      placeholder="Search Groups"
-                      className={classes.searchField}
-                      id="search-resource"
-                      label=""
-                      onChange={(val) => {
-                        setFilterGroups(val.target.value);
-                      }}
-                      InputProps={{
-                        disableUnderline: true,
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      variant="standard"
-                    />
-                  </Grid>
+                  {groupList.length > 0 && (
+                    <Grid item xs={12} className={classes.actionsTray}>
+                      <TextField
+                        placeholder="Search Groups"
+                        className={classes.searchField}
+                        id="search-resource"
+                        label=""
+                        onChange={(val) => {
+                          setFilterGroups(val.target.value);
+                        }}
+                        InputProps={{
+                          disableUnderline: true,
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                        variant="standard"
+                      />
+                    </Grid>
+                  )}
                   <TableWrapper
                     itemActions={groupTableActions}
                     columns={[{ label: "Name", elementKey: "name" }]}
                     isLoading={loadingGroups}
                     records={filteredGroups}
-                    entityName="Groups"
+                    entityName="Groups with this Policy associated"
                     idField="name"
                   />
                 </Grid>
@@ -494,7 +531,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                   <Grid container>
                     <Grid item xs={12}>
                       <CodeMirrorWrapper
-                        readOnly={!editPolicy}
+                        readOnly={!canEditPolicy}
                         value={policyDefinition}
                         onBeforeChange={(editor, data, value) => {
                           setPolicyDefinition(value);
@@ -520,14 +557,27 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                         resource={CONSOLE_UI_RESOURCE}
                         errorProps={{ disabled: true }}
                       >
-                        <Button
-                          id={"save"}
-                          type="submit"
-                          variant="callAction"
-                          color="primary"
-                          disabled={addLoading || !validSave}
-                          label={"Save"}
-                        />
+                        <TooltipWrapper
+                          tooltip={
+                            canEditPolicy
+                              ? ""
+                              : permissionTooltipHelper(
+                                  createPolicyPermissions,
+                                  "edit a Policy"
+                                )
+                          }
+                        >
+                          <Button
+                            id={"save"}
+                            type="submit"
+                            variant="callAction"
+                            color="primary"
+                            disabled={
+                              addLoading || !validSave || !canEditPolicy
+                            }
+                            label={"Save"}
+                          />
+                        </TooltipWrapper>
                       </SecureComponent>
                     </Grid>
                     {addLoading && (

@@ -49,7 +49,7 @@ func NewKMSDeleteIdentity(ctx *middleware.Context, handler KMSDeleteIdentityHand
 }
 
 /*
-	KMSDeleteIdentity swagger:route DELETE /kms/identity/{name} KMS kMSDeleteIdentity
+	KMSDeleteIdentity swagger:route DELETE /kms/identities/{name} KMS kMSDeleteIdentity
 
 KMS delete identity
 */

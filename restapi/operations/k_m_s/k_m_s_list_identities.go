@@ -49,7 +49,7 @@ func NewKMSListIdentities(ctx *middleware.Context, handler KMSListIdentitiesHand
 }
 
 /*
-	KMSListIdentities swagger:route GET /kms/identity KMS kMSListIdentities
+	KMSListIdentities swagger:route GET /kms/identities KMS kMSListIdentities
 
 KMS list identities
 */

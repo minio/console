@@ -515,3 +515,13 @@ export const enableDisableGroupPermissions = [
   IAM_SCOPES.ADMIN_ENABLE_GROUP,
   IAM_SCOPES.ADMIN_DISABLE_GROUP,
 ];
+export const createPolicyPermissions = [IAM_SCOPES.ADMIN_CREATE_POLICY];
+
+export const deletePolicyPermissions = [IAM_SCOPES.ADMIN_DELETE_POLICY];
+
+export const listPolicyPermissions = [IAM_SCOPES.ADMIN_LIST_USER_POLICIES];
+
+export const listGroupPermissions = [
+  IAM_SCOPES.ADMIN_LIST_GROUPS,
+  IAM_SCOPES.ADMIN_GET_GROUP,
+];

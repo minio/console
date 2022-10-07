@@ -56,7 +56,7 @@ func (o *KMSListIdentitiesURL) SetBasePath(bp string) {
 func (o *KMSListIdentitiesURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/kms/identity"
+	var _path = "/kms/identities"
 
 	_basePath := o._basePath
 	if _basePath == "" {

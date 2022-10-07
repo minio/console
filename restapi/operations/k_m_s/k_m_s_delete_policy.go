@@ -49,7 +49,7 @@ func NewKMSDeletePolicy(ctx *middleware.Context, handler KMSDeletePolicyHandler)
 }
 
 /*
-	KMSDeletePolicy swagger:route DELETE /kms/policy/{name} KMS kMSDeletePolicy
+	KMSDeletePolicy swagger:route DELETE /kms/policies/{name} KMS kMSDeletePolicy
 
 KMS delete policy
 */

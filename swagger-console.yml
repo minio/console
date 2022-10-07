@@ -2884,7 +2884,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
-  /kms/key:
+  /kms/keys:
     post:
       summary: KMS create key
       operationId: KMSCreateKey
@@ -2910,7 +2910,6 @@ paths:
         - name: pattern
           description: pattern to retrieve keys
           in: query
-          required: true
           type: string
       responses:
         200:
@@ -2923,7 +2922,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
-  /kms/key/{name}:
+  /kms/keys/{name}:
     get:
       summary: KMS key status
       operationId: KMSKeyStatus
@@ -2962,7 +2961,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
-  /kms/key/{name}/import:
+  /kms/keys/{name}/import:
     post:
       summary: KMS import key
       operationId: KMSImportKey
@@ -2986,7 +2985,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
-  /kms/policy:
+  /kms/policies:
     post:
       summary: KMS set policy
       operationId: KMSSetPolicy
@@ -3024,7 +3023,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
-  /kms/policy/{name}:
+  /kms/policies/{name}:
     get:
       summary: KMS get policy
       operationId: KMSGetPolicy
@@ -3063,7 +3062,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
-  /kms/policy/{name}/assign:
+  /kms/policies/{name}/assign:
     post:
       summary: KMS assign policy
       operationId: KMSAssignPolicy
@@ -3087,7 +3086,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
-  /kms/policy/{name}/describe:
+  /kms/policies/{name}/describe:
     get:
       summary: KMS describe policy
       operationId: KMSDescribePolicy
@@ -3108,7 +3107,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
-  /kms/identity/{name}:
+  /kms/identities/{name}:
     delete:
       summary: KMS delete identity
       operationId: KMSDeleteIdentity
@@ -3127,7 +3126,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
-  /kms/identity/{name}/describe:
+  /kms/identities/{name}/describe:
     get:
       summary: KMS describe identity
       operationId: KMSDescribeIdentity
@@ -3163,7 +3162,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
-  /kms/identity:
+  /kms/identities:
     get:
       summary: KMS list identities
       operationId: KMSListIdentities
@@ -5270,53 +5269,172 @@ definitions:
       policy:
         type: string
 
-  kmsStatusRequest:
-    type: object
   kmsStatusResponse:
     type: object
-
-  kmsKeyStatusRequest:
+    properties:
+      name:
+        type: string
+      defaultKeyID:
+        type: string
+      endpoints:
+        type: array
+        items:
+          $ref: "#/definitions/kmsEndpoint"
+  kmsEndpoint:
     type: object
+    properties:
+      url:
+        type: string
+      status:
+        type: string
+
   kmsKeyStatusResponse:
     type: object
+    properties:
+      keyID:
+        type: string
+      encryptionErr:
+        type: string
+      decryptionErr:
+        type: string
   kmsCreateKeyRequest:
     type: object
+    required:
+      - key
+    properties:
+      key:
+        type: string
   kmsImportKeyRequest:
     type: object
+    required:
+      - bytes
+    properties:
+      bytes:
+        type: string
   kmDeleteKeyRequest:
-    type: object
-  kmListKeysRequest:
     type: object
   kmsListKeysResponse:
     type: object
-
-  kmsGetPolicyRequest:
+    properties:
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/kmsKeyInfo"
+  kmsKeyInfo:
     type: object
+    properties:
+      name:
+        type: string
+      createdAt:
+        type: string
+      createdBy:
+        type: string
+
   kmsGetPolicyResponse:
     type: object
+    properties:
+      allow:
+        type: array
+        items:
+          type: string
+      deny:
+        type: array
+        items:
+          type: string
   kmsSetPolicyRequest:
     type: object
-  kmsDescribePolicyRequest:
-    type: object
+    required:
+      - policy
+    properties:
+      policy:
+        type: string
+      allow:
+        type: array
+        items:
+          type: string
+      deny:
+        type: array
+        items:
+          type: string
   kmsDescribePolicyResponse:
     type: object
+    properties:
+      createdAt:
+        type: string
+      createdBy:
+        type: string
+      name:
+        type: string
   kmsAssignPolicyRequest:
     type: object
-  kmsListPoliciesRequest:
-    type: object
+    properties:
+      identity:
+        type: string
   kmsListPoliciesResponse:
     type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/kmsPolicyInfo"
+  kmsPolicyInfo:
+    type: object
+    properties:
+      name:
+        type: string
+      createdAt:
+        type: string
+      createdBy:
+        type: string
 
-  kmsDescribeIdentityRequest:
-      type: object
   kmsDescribeIdentityResponse:
       type: object
-  kmsDescribeSelfIdentityRequest:
-      type: object
+      properties:
+        policy:
+          type: string
+        identity:
+          type: string
+        admin:
+          type: boolean
+        createdAt:
+          type: string
+        createdBy:
+          type: string
   kmsDescribeSelfIdentityResponse:
       type: object
+      properties:
+        identity:
+          type: string
+        policyName:
+          type: string
+        admin:
+          type: boolean
+        createdAt:
+          type: string
+        createdBy:
+          type: string
+        policy:
+          $ref: "#/definitions/kmsGetPolicyResponse"
   kmsListIdentitiesResponse:
       type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/definitions/kmsIdentityInfo"
+  kmsIdentityInfo:
+    type: object
+    properties:
+      identity:
+        type: string
+      policy:
+        type: string
+      error:
+        type: string
+      createdAt:
+        type: string
+      createdBy:
+        type: string
 
   environmentConstants:
     type: object

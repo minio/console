@@ -23,11 +23,11 @@ require (
 	github.com/minio/directpv v1.4.4-0.20220805090942-948ca4731651
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.19.2
-	github.com/minio/madmin-go v1.5.3
+	github.com/minio/madmin-go v1.6.1
 	github.com/minio/mc v0.0.0-20221001175248-68ca2bf457e4
 	github.com/minio/minio-go/v7 v7.0.40-0.20220928095841-8848d8affe8a
 	github.com/minio/operator v0.0.0-20220902184351-21e4073132b0
-	github.com/minio/pkg v1.4.3
+	github.com/minio/pkg v1.4.5
 	github.com/minio/selfupdate v0.5.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.4.0

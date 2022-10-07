@@ -49,7 +49,7 @@ func NewKMSDeleteKey(ctx *middleware.Context, handler KMSDeleteKeyHandler) *KMSD
 }
 
 /*
-	KMSDeleteKey swagger:route DELETE /kms/key/{name} KMS kMSDeleteKey
+	KMSDeleteKey swagger:route DELETE /kms/keys/{name} KMS kMSDeleteKey
 
 KMS delete key
 */

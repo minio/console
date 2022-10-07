@@ -39,8 +39,13 @@ import HelpBox from "../../../common/HelpBox";
 import PageLayout from "../Common/Layout/PageLayout";
 import {
   CONSOLE_UI_RESOURCE,
+  createPolicyPermissions,
+  deletePolicyPermissions,
   IAM_PAGES,
   IAM_SCOPES,
+  listPolicyPermissions,
+  permissionTooltipHelper,
+  viewPolicyPermissions,
 } from "../../../common/SecureComponent/permissions";
 import {
   hasPermission,
@@ -85,13 +90,25 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
     IAM_SCOPES.ADMIN_GET_POLICY,
   ]);
 
-  const deletePolicy = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_DELETE_POLICY,
-  ]);
+  const canDeletePolicy = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    deletePolicyPermissions
+  );
 
-  const displayPolicies = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-  ]);
+  const canDisplayPolicies = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    listPolicyPermissions
+  );
+
+  const canCreatePolicy = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    createPolicyPermissions
+  );
+
+  const canViewPolicy = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    viewPolicyPermissions
+  );
 
   useEffect(() => {
     fetchRecords();
@@ -99,7 +116,7 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
 
   useEffect(() => {
     if (loading) {
-      if (displayPolicies) {
+      if (canDisplayPolicies) {
         api
           .invoke("GET", `/api/v1/policies`)
           .then((res: PolicyList) => {
@@ -128,7 +145,7 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
         setLoading(false);
       }
     }
-  }, [loading, setLoading, setRecords, dispatch, displayPolicies]);
+  }, [loading, setLoading, setRecords, dispatch, canDisplayPolicies]);
 
   const fetchRecords = () => {
     setLoading(true);
@@ -161,7 +178,7 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
       type: "delete",
       onClick: confirmDeletePolicy,
       sendOnlyId: true,
-      disableButtonFunction: () => !deletePolicy,
+      disableButtonFunction: () => !canDeletePolicy,
     },
   ];
 
@@ -194,7 +211,16 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
               resource={CONSOLE_UI_RESOURCE}
               errorProps={{ disabled: true }}
             >
-              <TooltipWrapper tooltip={"Create Policy"}>
+              <TooltipWrapper
+                tooltip={
+                  canCreatePolicy
+                    ? ""
+                    : permissionTooltipHelper(
+                        createPolicyPermissions,
+                        "create a Policy"
+                      )
+                }
+              >
                 <Button
                   id={"create-policy"}
                   label={"Create Policy"}
@@ -203,6 +229,7 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
                   onClick={() => {
                     navigate(`${IAM_PAGES.POLICY_ADD}`);
                   }}
+                  disabled={!canCreatePolicy}
                 />
               </TooltipWrapper>
             </SecureComponent>
@@ -220,6 +247,14 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
                 records={filteredRecords}
                 entityName="Policies"
                 idField="name"
+                tooltip={
+                  canViewPolicy
+                    ? ""
+                    : permissionTooltipHelper(
+                        viewPolicyPermissions,
+                        "view Policy details"
+                      )
+                }
               />
             </SecureComponent>
           </Grid>

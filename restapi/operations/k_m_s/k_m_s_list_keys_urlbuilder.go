@@ -30,7 +30,7 @@ import (
 
 // KMSListKeysURL generates an URL for the k m s list keys operation
 type KMSListKeysURL struct {
-	Pattern string
+	Pattern *string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -56,7 +56,7 @@ func (o *KMSListKeysURL) SetBasePath(bp string) {
 func (o *KMSListKeysURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/kms/key"
+	var _path = "/kms/keys"
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -66,7 +66,10 @@ func (o *KMSListKeysURL) Build() (*url.URL, error) {
 
 	qs := make(url.Values)
 
-	patternQ := o.Pattern
+	var patternQ string
+	if o.Pattern != nil {
+		patternQ = *o.Pattern
+	}
 	if patternQ != "" {
 		qs.Set("pattern", patternQ)
 	}
