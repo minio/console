@@ -82,7 +82,7 @@ func TestError(t *testing.T) {
 		"ErrUnableToUpdateTenantCertificates": {code: 500, err: ErrUnableToUpdateTenantCertificates},
 		"ErrUpdatingEncryptionConfig":         {code: 500, err: ErrUpdatingEncryptionConfig},
 		"ErrDeletingEncryptionConfig":         {code: 500, err: ErrDeletingEncryptionConfig},
-		"ErrEncryptionConfigNotFound":         {code: 500, err: ErrEncryptionConfigNotFound},
+		"ErrEncryptionConfigNotFound":         {code: 404, err: ErrEncryptionConfigNotFound},
 	}
 
 	for k, e := range appErrors {

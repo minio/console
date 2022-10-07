@@ -54,6 +54,9 @@ type EncryptionConfiguration struct {
 	// image
 	Image string `json:"image,omitempty"`
 
+	// raw
+	Raw string `json:"raw,omitempty"`
+
 	// replicas
 	Replicas string `json:"replicas,omitempty"`
 
@@ -93,6 +96,8 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 
 		Image string `json:"image,omitempty"`
 
+		Raw string `json:"raw,omitempty"`
+
 		Replicas string `json:"replicas,omitempty"`
 
 		SecretsToBeDeleted []string `json:"secretsToBeDeleted"`
@@ -118,6 +123,8 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 	m.Gemalto = dataAO1.Gemalto
 
 	m.Image = dataAO1.Image
+
+	m.Raw = dataAO1.Raw
 
 	m.Replicas = dataAO1.Replicas
 
@@ -154,6 +161,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 
 		Image string `json:"image,omitempty"`
 
+		Raw string `json:"raw,omitempty"`
+
 		Replicas string `json:"replicas,omitempty"`
 
 		SecretsToBeDeleted []string `json:"secretsToBeDeleted"`
@@ -176,6 +185,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 	dataAO1.Gemalto = m.Gemalto
 
 	dataAO1.Image = m.Image
+
+	dataAO1.Raw = m.Raw
 
 	dataAO1.Replicas = m.Replicas
 
