@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React from "react";
 import { Box } from "@mui/material";
 import {
   ArrowRightIcon,
@@ -67,7 +67,7 @@ interface IDashboardProps {
 
 const getServersList = (usage: Usage | null) => {
   if (usage !== null) {
-    return usage.servers.sort(function (a, b) {
+    return [...usage.servers].sort(function (a, b) {
       const nameA = a.endpoint.toLowerCase();
       const nameB = b.endpoint.toLowerCase();
       if (nameA < nameB) {
@@ -114,14 +114,8 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
     serversGroup;
   const drivesGroup = groupBy(allDrivesArray, "state");
   const { offline: offlineDrives = [], ok: onlineDrives = [] } = drivesGroup;
-
   return (
-    <Box
-      sx={{
-        maxWidth: "1536px",
-        margin: "auto",
-      }}
-    >
+    <Box>
       <Box
         sx={{
           display: "grid",
@@ -129,69 +123,8 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
           gridTemplateColumns: "1fr",
           gap: "27px",
           marginBottom: "40px",
-          marginTop: "40px",
-          marginLeft: "40px",
-          marginRight: "40px",
         }}
       >
-        <Box>
-          {usage?.prometheusNotReady && (
-            <HelpBox
-              iconComponent={<PrometheusErrorIcon />}
-              title={"We can't retrieve advanced metrics at this time"}
-              help={
-                <Fragment>
-                  MinIO Dashboard will display basic metrics as we couldn't
-                  connect to Prometheus successfully.
-                  <br /> <br />
-                  Please try again in a few minutes. If the problem persists,
-                  you can review your configuration and confirm that Prometheus
-                  server is up and running.
-                </Fragment>
-              }
-            />
-          )}
-
-          {!usage?.prometheusNotReady && (
-            <HelpBox
-              iconComponent={<PrometheusErrorIcon />}
-              title={"We can’t retrieve advanced metrics at this time."}
-              help={
-                <Box>
-                  <Box
-                    sx={{
-                      fontSize: "14px",
-                    }}
-                  >
-                    MinIO Dashboard will display basic metrics as we couldn’t
-                    connect to Prometheus successfully. Please try again in a
-                    few minutes. If the problem persists, you can review your
-                    configuration and confirm that Prometheus server is up and
-                    running.
-                  </Box>
-                  <Box
-                    sx={{
-                      paddingTop: "20px",
-                      fontSize: "14px",
-                      "& a": {
-                        color: (theme) => theme.colors.link,
-                      },
-                    }}
-                  >
-                    <a
-                      href="https://min.io/docs/minio/linux/operations/monitoring/collect-minio-metrics-using-prometheus.html"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Read more about Prometheus on our Docs site.
-                    </a>
-                  </Box>
-                </Box>
-              }
-            />
-          )}
-        </Box>
-
         <Box
           sx={{
             display: "grid",
@@ -355,6 +288,46 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             <ServersList data={serverList} />
           </Box>
         </Box>
+        {usage?.advancedMetricsStatus === "not configured" && (
+          <Box>
+            <HelpBox
+              iconComponent={<PrometheusErrorIcon />}
+              title={"We can’t retrieve advanced metrics at this time."}
+              help={
+                <Box>
+                  <Box
+                    sx={{
+                      fontSize: "14px",
+                    }}
+                  >
+                    MinIO Dashboard will display basic metrics as we couldn’t
+                    connect to Prometheus successfully. Please try again in a
+                    few minutes. If the problem persists, you can review your
+                    configuration and confirm that Prometheus server is up and
+                    running.
+                  </Box>
+                  <Box
+                    sx={{
+                      paddingTop: "20px",
+                      fontSize: "14px",
+                      "& a": {
+                        color: (theme) => theme.colors.link,
+                      },
+                    }}
+                  >
+                    <a
+                      href="https://min.io/docs/minio/linux/operations/monitoring/collect-minio-metrics-using-prometheus.html"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Read more about Prometheus on our Docs site.
+                    </a>
+                  </Box>
+                </Box>
+              }
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   );

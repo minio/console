@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -26,7 +26,7 @@ import { IDashboardPanel } from "../types";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import Loader from "../../../Common/Loader/Loader";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
 
 interface ISimpleWidget {
   classes: any;
@@ -76,14 +76,15 @@ const SimpleWidget = ({
   renderFn,
 }: ISimpleWidget) => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<string>("");
+  const widgetVersion = useSelector(
+    (state: AppState) => state.dashboard.widgetLoadVersion
+  );
 
   useEffect(() => {
-    if (propLoading) {
-      setLoading(true);
-    }
-  }, [propLoading]);
+    setLoading(true);
+  }, [widgetVersion]);
 
   useEffect(() => {
     if (loading) {

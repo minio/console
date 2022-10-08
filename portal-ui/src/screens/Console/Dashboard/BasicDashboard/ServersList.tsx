@@ -70,7 +70,10 @@ const ServersList = ({ data }: { data: ServerInfo[] }) => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  border: "1px solid #f1f1f1",
+                  borderTop: index === 0 ? "1px solid #f1f1f1" : "",
+                  borderBottom: "1px solid #f1f1f1",
+                  borderLeft: "1px solid #f1f1f1",
+                  borderRight: "1px solid #f1f1f1",
                   padding: "3px 10px 3px 10px",
 
                   "&:hover": {

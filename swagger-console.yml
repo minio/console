@@ -4191,8 +4191,12 @@ definitions:
         type: integer
       usage:
         type: integer
-      prometheusNotReady:
-        type: boolean
+      advancedMetricsStatus:
+        type: string
+        enum:
+          - not configured
+          - available
+          - unavailable
       widgets:
         type: array
         items:
@@ -5091,7 +5095,7 @@ definitions:
         $ref: "#/definitions/tier_azure"
       minio:
         type: object
-        $ref: "#/definitions/tier_minio"  
+        $ref: "#/definitions/tier_minio"
 
   tierListResponse:
     type: object

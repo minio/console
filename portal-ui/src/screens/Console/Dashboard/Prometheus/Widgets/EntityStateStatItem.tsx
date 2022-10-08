@@ -23,7 +23,8 @@ import { IDashboardPanel } from "../types";
 import Loader from "../../../Common/Loader/Loader";
 
 import { setErrorSnackMessage } from "../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
+import { useSelector } from "react-redux";
 
 const EntityStateStatItem = ({
   panelItem,
@@ -41,14 +42,15 @@ const EntityStateStatItem = ({
   statLabel: any;
 }) => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<string>("");
+  const widgetVersion = useSelector(
+    (state: AppState) => state.dashboard.widgetLoadVersion
+  );
 
   useEffect(() => {
-    if (propLoading) {
-      setLoading(true);
-    }
-  }, [propLoading]);
+    setLoading(true);
+  }, [widgetVersion]);
 
   useEffect(() => {
     if (loading) {

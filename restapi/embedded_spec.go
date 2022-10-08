@@ -5052,14 +5052,19 @@ func init() {
     "adminInfoResponse": {
       "type": "object",
       "properties": {
+        "advancedMetricsStatus": {
+          "type": "string",
+          "enum": [
+            "not configured",
+            "available",
+            "unavailable"
+          ]
+        },
         "buckets": {
           "type": "integer"
         },
         "objects": {
           "type": "integer"
-        },
-        "prometheusNotReady": {
-          "type": "boolean"
         },
         "servers": {
           "type": "array",
@@ -13125,14 +13130,19 @@ func init() {
     "adminInfoResponse": {
       "type": "object",
       "properties": {
+        "advancedMetricsStatus": {
+          "type": "string",
+          "enum": [
+            "not configured",
+            "available",
+            "unavailable"
+          ]
+        },
         "buckets": {
           "type": "integer"
         },
         "objects": {
           "type": "integer"
-        },
-        "prometheusNotReady": {
-          "type": "boolean"
         },
         "servers": {
           "type": "array",

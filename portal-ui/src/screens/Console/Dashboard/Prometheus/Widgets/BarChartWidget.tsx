@@ -40,8 +40,9 @@ import { useTheme } from "@mui/styles";
 import Loader from "../../../Common/Loader/Loader";
 import ExpandGraphLink from "./ExpandGraphLink";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../store";
 import DownloadWidgetDataButton from "../../DownloadWidgetDataButton";
+import { useSelector } from "react-redux";
 
 interface IBarChartWidget {
   classes: any;
@@ -92,12 +93,14 @@ const BarChartWidget = ({
   zoomActivated = false,
 }: IBarChartWidget) => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
   const [hover, setHover] = useState<boolean>(false);
   const componentRef = useRef<HTMLElement>();
-
+  const widgetVersion = useSelector(
+    (state: AppState) => state.dashboard.widgetLoadVersion
+  );
   const onHover = () => {
     setHover(true);
   };
@@ -106,10 +109,8 @@ const BarChartWidget = ({
   };
 
   useEffect(() => {
-    if (propLoading) {
-      setLoading(true);
-    }
-  }, [propLoading]);
+    setLoading(true);
+  }, [widgetVersion]);
 
   useEffect(() => {
     if (loading) {

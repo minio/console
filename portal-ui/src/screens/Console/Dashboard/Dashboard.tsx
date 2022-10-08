@@ -14,9 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
-
-import get from "lodash/get";
+import React, { Fragment, useEffect, useState } from "react";
 import PrDashboard from "./Prometheus/PrDashboard";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import Grid from "@mui/material/Grid";
@@ -25,13 +23,9 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
-import api from "../../../common/api";
-import { Usage } from "./types";
-
-import { ErrorResponseHandler } from "../../../common/types";
-import BasicDashboard from "./BasicDashboard/BasicDashboard";
-import { setErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
+import { getUsageAsync } from "./dashboardThunks";
+import { useSelector } from "react-redux";
 
 interface IDashboardSimple {
   classes: any;
@@ -45,28 +39,15 @@ const styles = (theme: Theme) =>
 const Dashboard = ({ classes }: IDashboardSimple) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
-  const [basicResult, setBasicResult] = useState<Usage | null>(null);
 
-  const fetchUsage = useCallback(() => {
-    api
-      .invoke("GET", `/api/v1/admin/info`)
-      .then((res: Usage) => {
-        setBasicResult(res);
-        setLoading(false);
-      })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
-        setLoading(false);
-      });
-  }, [setBasicResult, setLoading, dispatch]);
+  const usage = useSelector((state: AppState) => state.dashboard.usage);
 
   useEffect(() => {
     if (loading) {
-      fetchUsage();
+      setLoading(false);
+      dispatch(getUsageAsync());
     }
-  }, [loading, fetchUsage]);
-
-  const widgets = get(basicResult, "widgets", null);
+  }, [loading, dispatch]);
 
   return (
     <Fragment>
@@ -78,13 +59,7 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
           </Grid>
         </Grid>
       ) : (
-        <Fragment>
-          {widgets !== null ? (
-            <PrDashboard />
-          ) : (
-            <BasicDashboard usage={basicResult} />
-          )}
-        </Fragment>
+        <PrDashboard usage={usage} />
       )}
     </Fragment>
   );
