@@ -46,11 +46,15 @@ const isValidEndPoint = (ep: string) => {
   } catch (err) {
     isValidEndPointUrl = false;
   }
-  if (isValidEndPointUrl || ep === "") {
+  if (isValidEndPointUrl) {
     return "";
   } else {
     return "Invalid Endpoint";
   }
+};
+
+const isEmptyValue = (value: string): boolean => {
+  return value?.trim() === "";
 };
 
 const TableHeader = () => {
@@ -162,8 +166,8 @@ const AddReplicationSites = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const isAllEndpointsValid =
-    existingSites.reduce((acc: string[], cv, i) => {
+  const existingEndPointsValidity = existingSites.reduce(
+    (acc: string[], cv, i) => {
       const epValue = existingSites[i].endpoint;
       const isEpValid = isValidEndPoint(epValue);
 
@@ -171,7 +175,27 @@ const AddReplicationSites = () => {
         acc.push(isEpValid);
       }
       return acc;
-    }, []).length === existingSites.length;
+    },
+    []
+  );
+
+  const isExistingCredsValidity = existingSites
+    .map((site) => {
+      return !isEmptyValue(site.accessKey) && !isEmptyValue(site.secretKey);
+    })
+    .filter(Boolean);
+
+  const { accessKey: cAccessKey, secretKey: cSecretKey } = currentSite[0];
+
+  const isCurCredsValid =
+    !isEmptyValue(cAccessKey) && !isEmptyValue(cSecretKey);
+  const peerEndpointsValid =
+    existingEndPointsValidity.length === existingSites.length;
+  const peerCredsValid =
+    isExistingCredsValidity.length === existingSites.length;
+
+  let isAllFieldsValid =
+    isCurCredsValid && peerEndpointsValid && peerCredsValid;
 
   const [isAdding, invokeSiteAddApi] = useApi(
     (res: any) => {
@@ -258,6 +282,12 @@ const AddReplicationSites = () => {
           <TableHeader />
 
           {currentSite.map((cs, index) => {
+            const accessKeyError = isEmptyValue(cs.accessKey)
+              ? "AccessKey is required"
+              : "";
+            const secretKeyError = isEmptyValue(cs.secretKey)
+              ? "SecretKey is required"
+              : "";
             return (
               <SRSiteInputRow
                 key={`current-${index}`}
@@ -265,7 +295,8 @@ const AddReplicationSites = () => {
                 rowData={cs}
                 rowId={index}
                 fieldErrors={{
-                  endpoint: isValidEndPoint(cs.endpoint),
+                  accessKey: accessKeyError,
+                  secretKey: secretKeyError,
                 }}
                 onFieldChange={(e, fieldName, index) => {
                   const filedValue = e.target.value;
@@ -310,11 +341,25 @@ const AddReplicationSites = () => {
           <TableHeader />
 
           {existingSites.map((ps, index) => {
+            const endPointError = isValidEndPoint(ps.endpoint);
+
+            const accessKeyError = isEmptyValue(ps.accessKey)
+              ? "AccessKey is required"
+              : "";
+            const secretKeyError = isEmptyValue(ps.secretKey)
+              ? "SecretKey is required"
+              : "";
+
             return (
               <SRSiteInputRow
                 key={`exiting-${index}`}
                 rowData={ps}
                 rowId={index}
+                fieldErrors={{
+                  endpoint: endPointError,
+                  accessKey: accessKeyError,
+                  secretKey: secretKeyError,
+                }}
                 disabledFields={ps.isSaved ? ["endpoint", "name"] : []}
                 onFieldChange={(e, fieldName, index) => {
                   const filedValue = e.target.value;
@@ -377,6 +422,18 @@ const AddReplicationSites = () => {
             </SectionTitle>
 
             {isSiteInfoLoading || isAdding ? <LinearProgress /> : null}
+
+            <Box
+              sx={{
+                fontSize: "14px",
+                fontStyle: "italic",
+                marginTop: "10px",
+                marginBottom: "10px",
+              }}
+            >
+              Note: AccessKey and SecretKey values for every site is required
+              while adding or editing peer sites
+            </Box>
             <form
               noValidate
               autoComplete="off"
@@ -412,7 +469,7 @@ const AddReplicationSites = () => {
                     id={"save"}
                     type="submit"
                     variant="callAction"
-                    disabled={isAdding || !isAllEndpointsValid}
+                    disabled={isAdding || !isAllFieldsValid}
                     label={"Save"}
                   />
                 </Box>

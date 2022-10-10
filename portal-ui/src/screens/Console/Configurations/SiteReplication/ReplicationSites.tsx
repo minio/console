@@ -180,13 +180,7 @@ const ReplicationSites = ({
                     },
                   }}
                 >
-                  <TooltipWrapper
-                    tooltip={
-                      sites.length <= 2
-                        ? "Minimum two sites are required for replication"
-                        : "Delete Site"
-                    }
-                  >
+                  <TooltipWrapper tooltip="Delete Site">
                     <Button
                       id={`delete-site-${key}-${index}`}
                       variant="secondary"
