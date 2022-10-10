@@ -522,7 +522,7 @@ func isLocalIPAddress(ipAddr string) bool {
 		return false
 	}
 	ip := net.ParseIP(ipAddr)
-	return ip.IsLoopback()
+	return ip != nil && ip.IsLoopback()
 }
 
 // GetConsoleHTTPClient caches different http clients depending on the target endpoint while taking
