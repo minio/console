@@ -2787,6 +2787,29 @@ func init() {
         }
       }
     },
+    "/kms/apis": {
+      "get": {
+        "tags": [
+          "KMS"
+        ],
+        "summary": "KMS apis",
+        "operationId": "KMSAPIs",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kmsAPIsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/kms/describe-self/identity": {
       "get": {
         "tags": [
@@ -3057,6 +3080,29 @@ func init() {
         }
       }
     },
+    "/kms/metrics": {
+      "get": {
+        "tags": [
+          "KMS"
+        ],
+        "summary": "KMS metrics",
+        "operationId": "KMSMetrics",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kmsMetricsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/kms/policies": {
       "get": {
         "tags": [
@@ -3256,6 +3302,29 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/kmsStatusResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/kms/version": {
+      "get": {
+        "tags": [
+          "KMS"
+        ],
+        "summary": "KMS version",
+        "operationId": "KMSVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kmsVersionResponse"
             }
           },
           "default": {
@@ -5705,6 +5774,34 @@ func init() {
     "kmDeleteKeyRequest": {
       "type": "object"
     },
+    "kmsAPI": {
+      "type": "object",
+      "properties": {
+        "maxBody": {
+          "type": "integer"
+        },
+        "method": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer"
+        }
+      }
+    },
+    "kmsAPIsResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsAPI"
+          }
+        }
+      }
+    },
     "kmsAssignPolicyRequest": {
       "type": "object",
       "properties": {
@@ -5868,6 +5965,14 @@ func init() {
         }
       }
     },
+    "kmsLatencyHistogram": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "integer"
+        }
+      }
+    },
     "kmsListIdentitiesResponse": {
       "type": "object",
       "properties": {
@@ -5898,6 +6003,68 @@ func init() {
           "items": {
             "$ref": "#/definitions/kmsPolicyInfo"
           }
+        }
+      }
+    },
+    "kmsMetricsResponse": {
+      "type": "object",
+      "required": [
+        "requestOK",
+        "requestErr",
+        "requestFail",
+        "requestActive",
+        "auditEvents",
+        "errorEvents",
+        "latencyHistogram",
+        "uptime",
+        "cpus",
+        "usableCPUs",
+        "threads",
+        "heapAlloc",
+        "stackAlloc"
+      ],
+      "properties": {
+        "auditEvents": {
+          "type": "integer"
+        },
+        "cpus": {
+          "type": "integer"
+        },
+        "errorEvents": {
+          "type": "integer"
+        },
+        "heapAlloc": {
+          "type": "integer"
+        },
+        "heapObjects": {
+          "type": "integer"
+        },
+        "latencyHistogram": {
+          "$ref": "#/definitions/kmsLatencyHistogram"
+        },
+        "requestActive": {
+          "type": "integer"
+        },
+        "requestErr": {
+          "type": "integer"
+        },
+        "requestFail": {
+          "type": "integer"
+        },
+        "requestOK": {
+          "type": "integer"
+        },
+        "stackAlloc": {
+          "type": "integer"
+        },
+        "threads": {
+          "type": "integer"
+        },
+        "uptime": {
+          "type": "integer"
+        },
+        "usableCPUs": {
+          "type": "integer"
         }
       }
     },
@@ -5951,6 +6118,14 @@ func init() {
           }
         },
         "name": {
+          "type": "string"
+        }
+      }
+    },
+    "kmsVersionResponse": {
+      "type": "object",
+      "properties": {
+        "version": {
           "type": "string"
         }
       }
@@ -10739,6 +10914,29 @@ func init() {
         }
       }
     },
+    "/kms/apis": {
+      "get": {
+        "tags": [
+          "KMS"
+        ],
+        "summary": "KMS apis",
+        "operationId": "KMSAPIs",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kmsAPIsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/kms/describe-self/identity": {
       "get": {
         "tags": [
@@ -11009,6 +11207,29 @@ func init() {
         }
       }
     },
+    "/kms/metrics": {
+      "get": {
+        "tags": [
+          "KMS"
+        ],
+        "summary": "KMS metrics",
+        "operationId": "KMSMetrics",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kmsMetricsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/kms/policies": {
       "get": {
         "tags": [
@@ -11208,6 +11429,29 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/kmsStatusResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/kms/version": {
+      "get": {
+        "tags": [
+          "KMS"
+        ],
+        "summary": "KMS version",
+        "operationId": "KMSVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kmsVersionResponse"
             }
           },
           "default": {
@@ -13783,6 +14027,34 @@ func init() {
     "kmDeleteKeyRequest": {
       "type": "object"
     },
+    "kmsAPI": {
+      "type": "object",
+      "properties": {
+        "maxBody": {
+          "type": "integer"
+        },
+        "method": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer"
+        }
+      }
+    },
+    "kmsAPIsResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsAPI"
+          }
+        }
+      }
+    },
     "kmsAssignPolicyRequest": {
       "type": "object",
       "properties": {
@@ -13946,6 +14218,14 @@ func init() {
         }
       }
     },
+    "kmsLatencyHistogram": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "integer"
+        }
+      }
+    },
     "kmsListIdentitiesResponse": {
       "type": "object",
       "properties": {
@@ -13976,6 +14256,68 @@ func init() {
           "items": {
             "$ref": "#/definitions/kmsPolicyInfo"
           }
+        }
+      }
+    },
+    "kmsMetricsResponse": {
+      "type": "object",
+      "required": [
+        "requestOK",
+        "requestErr",
+        "requestFail",
+        "requestActive",
+        "auditEvents",
+        "errorEvents",
+        "latencyHistogram",
+        "uptime",
+        "cpus",
+        "usableCPUs",
+        "threads",
+        "heapAlloc",
+        "stackAlloc"
+      ],
+      "properties": {
+        "auditEvents": {
+          "type": "integer"
+        },
+        "cpus": {
+          "type": "integer"
+        },
+        "errorEvents": {
+          "type": "integer"
+        },
+        "heapAlloc": {
+          "type": "integer"
+        },
+        "heapObjects": {
+          "type": "integer"
+        },
+        "latencyHistogram": {
+          "$ref": "#/definitions/kmsLatencyHistogram"
+        },
+        "requestActive": {
+          "type": "integer"
+        },
+        "requestErr": {
+          "type": "integer"
+        },
+        "requestFail": {
+          "type": "integer"
+        },
+        "requestOK": {
+          "type": "integer"
+        },
+        "stackAlloc": {
+          "type": "integer"
+        },
+        "threads": {
+          "type": "integer"
+        },
+        "uptime": {
+          "type": "integer"
+        },
+        "usableCPUs": {
+          "type": "integer"
         }
       }
     },
@@ -14029,6 +14371,14 @@ func init() {
           }
         },
         "name": {
+          "type": "string"
+        }
+      }
+    },
+    "kmsVersionResponse": {
+      "type": "object",
+      "properties": {
+        "version": {
           "type": "string"
         }
       }
