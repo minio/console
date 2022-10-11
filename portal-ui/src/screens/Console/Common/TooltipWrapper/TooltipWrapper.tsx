@@ -29,7 +29,7 @@ const TooltipWrapper = ({
   errorProps = null,
 }: ITooltipWrapperProps) => {
   return (
-    <Tooltip title={tooltip}>
+    <Tooltip title={tooltip} enterTouchDelay={750} leaveTouchDelay={0}>
       <span>
         {errorProps ? cloneElement(children, { ...errorProps }) : children}
       </span>

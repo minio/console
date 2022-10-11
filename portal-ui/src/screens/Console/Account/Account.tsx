@@ -23,9 +23,6 @@ import createStyles from "@mui/styles/createStyles";
 import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
 import { Box } from "@mui/material";
-
-import { AppState } from "../../../store";
-import AButton from "../Common/AButton/AButton";
 import {
   AccountIcon,
   AddIcon,
@@ -58,11 +55,7 @@ import { SecureComponent } from "../../../common/SecureComponent";
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
-import {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-  setTooltipsMute,
-} from "../../../systemSlice";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
@@ -107,10 +100,6 @@ const Account = () => {
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
 
   const userIDP = (features && features.includes("external-idp")) || false;
-
-  const tooltipsMute = useSelector(
-    (state: AppState) => state.system.tooltipsMute
-  );
 
   useEffect(() => {
     fetchRecords();
@@ -308,18 +297,6 @@ const Account = () => {
                   documentation
                 </a>
                 .
-                <br />
-                <span>
-                  <AButton
-                    onClick={() => {
-                      dispatch(setTooltipsMute(!tooltipsMute));
-                    }}
-                  >
-                    {tooltipsMute
-                      ? "Need help discovering the required policies for disabled actions? Enable Permission Tooltips"
-                      : "Happy with your configured permissions? Disable Permission Tooltips"}
-                  </AButton>
-                </span>
               </Fragment>
             }
           />

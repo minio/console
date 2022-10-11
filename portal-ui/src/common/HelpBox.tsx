@@ -19,6 +19,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
+import MutePermissionTooltips from "./MutePermissionTooltips";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -66,6 +67,8 @@ const HelpBox = ({ classes, iconComponent, title, help }: IHelpBox) => {
         </Grid>
         <Grid item xs={12} className={classes.helpText}>
           {help}
+          <br />
+          <MutePermissionTooltips />
         </Grid>
       </Grid>
     </div>
