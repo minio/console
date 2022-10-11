@@ -25,7 +25,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker ]
+    runs-on: [ ubuntu-latest ]
 
     strategy:
       matrix:
@@ -223,7 +223,7 @@ jobs:
 
   lint-job:
     name: Checking Lint
-    runs-on: [ self-hosted ]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -247,7 +247,7 @@ jobs:
 
   vulnerable-dependencies-checks:
     name: "Check for vulnerable dependencies"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -278,7 +278,7 @@ jobs:
 
   semgrep-static-code-analysis:
     name: "semgrep checks"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         os: [ ubuntu-latest ]
@@ -296,7 +296,7 @@ jobs:
 
   no-warnings-and-make-assets:
     name: "React Code Has No Warnings & is Prettified, then Make Assets"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -362,7 +362,7 @@ jobs:
 
   reuse-golang-dependencies:
     name: reuse golang dependencies
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -400,7 +400,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
       matrix:
@@ -498,7 +498,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
       matrix:
@@ -589,7 +589,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
       matrix:
@@ -681,7 +681,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     timeout-minutes: 5
     strategy:
       matrix:
@@ -760,7 +760,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -838,7 +838,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -916,7 +916,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -994,7 +994,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -1072,7 +1072,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -1162,7 +1162,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -1259,7 +1259,7 @@ jobs:
       - reuse-golang-dependencies
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
-    runs-on: [ self-hosted, vm-docker, xvfb-run ]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
