@@ -13,7 +13,7 @@ release:
 before:
   hooks:
     # you may remove this if you don't use vgo
-    - go mod tidy -compat=1.17
+    - go mod tidy -compat=1.18
 
 builds:
   -

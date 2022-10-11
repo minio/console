@@ -137,7 +137,7 @@ jobs:
           echo "replace github.com/minio/console => ../" >> go.mod
 
           echo "updates to go.mod needed; to update it: go mod tidy"
-          go mod tidy
+          go mod tidy -compat=1.18
 
           echo "Get git version to build MinIO Image";
           VERSION=`git rev-parse HEAD`;
@@ -2392,7 +2392,7 @@ jobs:
           echo "download golang x tools"
           go mod download golang.org/x/tools
           echo "go mod tidy compat mode"
-          go mod tidy -compat=1.17
+          go mod tidy -compat=1.18
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
