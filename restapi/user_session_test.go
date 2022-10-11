@@ -130,7 +130,7 @@ func Test_getListOfEnabledFeatures(t *testing.T) {
 			if tt.preFunc != nil {
 				tt.preFunc()
 			}
-			assert.Equalf(t, tt.want, getListOfEnabledFeatures(tt.args.session), "getListOfEnabledFeatures(%v)", tt.args.session)
+			assert.Equalf(t, tt.want, getListOfEnabledFeatures(context.Background(), nil, tt.args.session), "getListOfEnabledFeatures(%v)", tt.args.session)
 			if tt.postFunc != nil {
 				tt.postFunc()
 			}

@@ -246,7 +246,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 	envConstants.MaxConcurrentDownloads = getMaxConcurrentDownloadsLimit()
 
 	sessionResp := &models.SessionResponse{
-		Features:        getListOfEnabledFeatures(session),
+		Features:        getListOfEnabledFeatures(ctx, userAdminClient, session),
 		Status:          models.SessionResponseStatusOk,
 		Operator:        false,
 		DistributedMode: erasure,
@@ -259,7 +259,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 }
 
 // getListOfEnabledFeatures returns a list of features
-func getListOfEnabledFeatures(session *models.Principal) []string {
+func getListOfEnabledFeatures(ctx context.Context, minioClient MinioAdmin, session *models.Principal) []string {
 	features := []string{}
 	logSearchURL := getLogSearchURL()
 	oidcEnabled := oauth2.IsIDPEnabled()
@@ -280,6 +280,12 @@ func getListOfEnabledFeatures(session *models.Principal) []string {
 	}
 	if session.Ob {
 		features = append(features, "object-browser-only")
+	}
+	if minioClient != nil {
+		_, err := minioClient.kmsStatus(ctx)
+		if err == nil {
+			features = append(features, "kms")
+		}
 	}
 
 	return features
