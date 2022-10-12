@@ -893,13 +893,10 @@ func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAd
 	if prometheusURL != "" && !testPrometheusURL(ctx, prometheusURL) {
 		prometheusStatus = models.AdminInfoResponseAdvancedMetricsStatusUnavailable
 	}
-
 	sessionResp := &models.AdminInfoResponse{
 		AdvancedMetricsStatus: prometheusStatus,
 	}
-
 	doneCh := make(chan error)
-
 	go func() {
 		defer close(doneCh)
 		// create a minioClient interface implementation
