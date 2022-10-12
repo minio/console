@@ -29,6 +29,13 @@ import (
 )
 
 func registerKMSHandlers(api *operations.ConsoleAPI) {
+	registerKMSStatusHandlers(api)
+	registerKMSKeyHandlers(api)
+	registerKMSPolicyHandlers(api)
+	registerKMSIdentityHandlers(api)
+}
+
+func registerKMSStatusHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSStatusHandler = kmsAPI.KMSStatusHandlerFunc(func(params kmsAPI.KMSStatusParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSStatusResponse(session, params)
 		if err != nil {
@@ -36,9 +43,144 @@ func registerKMSHandlers(api *operations.ConsoleAPI) {
 		}
 		return kmsAPI.NewKMSStatusOK().WithPayload(resp)
 	})
-	registerKMSKeyHandlers(api)
-	registerKMSPolicyHandlers(api)
-	registerKMSIdentityHandlers(api)
+
+	api.KmsKMSMetricsHandler = kmsAPI.KMSMetricsHandlerFunc(func(params kmsAPI.KMSMetricsParams, session *models.Principal) middleware.Responder {
+		resp, err := GetKMSMetricsResponse(session, params)
+		if err != nil {
+			return kmsAPI.NewKMSMetricsDefault(int(err.Code)).WithPayload(err)
+		}
+		return kmsAPI.NewKMSMetricsOK().WithPayload(resp)
+	})
+
+	api.KmsKMSAPIsHandler = kmsAPI.KMSAPIsHandlerFunc(func(params kmsAPI.KMSAPIsParams, session *models.Principal) middleware.Responder {
+		resp, err := GetKMSAPIsResponse(session, params)
+		if err != nil {
+			return kmsAPI.NewKMSAPIsDefault(int(err.Code)).WithPayload(err)
+		}
+		return kmsAPI.NewKMSAPIsOK().WithPayload(resp)
+	})
+
+	api.KmsKMSVersionHandler = kmsAPI.KMSVersionHandlerFunc(func(params kmsAPI.KMSVersionParams, session *models.Principal) middleware.Responder {
+		resp, err := GetKMSVersionResponse(session, params)
+		if err != nil {
+			return kmsAPI.NewKMSVersionDefault(int(err.Code)).WithPayload(err)
+		}
+		return kmsAPI.NewKMSVersionOK().WithPayload(resp)
+	})
+}
+
+func GetKMSStatusResponse(session *models.Principal, params kmsAPI.KMSStatusParams) (*models.KmsStatusResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return kmsStatus(ctx, AdminClient{Client: mAdmin})
+}
+
+func kmsStatus(ctx context.Context, minioClient MinioAdmin) (*models.KmsStatusResponse, *models.Error) {
+	st, err := minioClient.kmsStatus(ctx)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsStatusResponse{
+		DefaultKeyID: st.DefaultKeyID,
+		Name:         st.Name,
+		Endpoints:    parseStatusEndpoints(st.Endpoints),
+	}, nil
+}
+
+func parseStatusEndpoints(endpoints map[string]madmin.ItemState) (kmsEndpoints []*models.KmsEndpoint) {
+	for key, value := range endpoints {
+		kmsEndpoints = append(kmsEndpoints, &models.KmsEndpoint{URL: key, Status: string(value)})
+	}
+	return kmsEndpoints
+}
+
+func GetKMSMetricsResponse(session *models.Principal, params kmsAPI.KMSMetricsParams) (*models.KmsMetricsResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return kmsMetrics(ctx, AdminClient{Client: mAdmin})
+}
+
+func kmsMetrics(ctx context.Context, minioClient MinioAdmin) (*models.KmsMetricsResponse, *models.Error) {
+	metrics, err := minioClient.kmsMetrics(ctx)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsMetricsResponse{
+		RequestOK:        &metrics.RequestOK,
+		RequestErr:       &metrics.RequestErr,
+		RequestFail:      &metrics.RequestFail,
+		RequestActive:    &metrics.RequestActive,
+		AuditEvents:      &metrics.AuditEvents,
+		ErrorEvents:      &metrics.ErrorEvents,
+		LatencyHistogram: nil,
+		Uptime:           &metrics.UpTime,
+		Cpus:             &metrics.CPUs,
+		UsableCPUs:       &metrics.UsableCPUs,
+		Threads:          &metrics.Threads,
+		HeapAlloc:        &metrics.HeapAlloc,
+		HeapObjects:      metrics.HeapObjects,
+		StackAlloc:       &metrics.StackAlloc,
+	}, nil
+}
+
+func GetKMSAPIsResponse(session *models.Principal, params kmsAPI.KMSAPIsParams) (*models.KmsAPIsResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return kmsAPIs(ctx, AdminClient{Client: mAdmin})
+}
+
+func kmsAPIs(ctx context.Context, minioClient MinioAdmin) (*models.KmsAPIsResponse, *models.Error) {
+	apis, err := minioClient.kmsAPIs(ctx)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsAPIsResponse{
+		Results: parseApis(apis),
+	}, nil
+}
+
+func parseApis(apis []madmin.KMSAPI) (data []*models.KmsAPI) {
+	for _, api := range apis {
+		data = append(data, &models.KmsAPI{
+			Method:  api.Method,
+			Path:    api.Path,
+			MaxBody: api.MaxBody,
+			Timeout: api.Timeout,
+		})
+	}
+	return data
+}
+
+func GetKMSVersionResponse(session *models.Principal, params kmsAPI.KMSVersionParams) (*models.KmsVersionResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return kmsVersion(ctx, AdminClient{Client: mAdmin})
+}
+
+func kmsVersion(ctx context.Context, minioClient MinioAdmin) (*models.KmsVersionResponse, *models.Error) {
+	version, err := minioClient.kmsVersion(ctx)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.KmsVersionResponse{
+		Version: version.Version,
+	}, nil
 }
 
 func registerKMSKeyHandlers(api *operations.ConsoleAPI) {
@@ -81,35 +223,6 @@ func registerKMSKeyHandlers(api *operations.ConsoleAPI) {
 		}
 		return kmsAPI.NewKMSDeleteKeyOK()
 	})
-}
-
-func GetKMSStatusResponse(session *models.Principal, params kmsAPI.KMSStatusParams) (*models.KmsStatusResponse, *models.Error) {
-	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
-	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-	return kmsStatus(ctx, AdminClient{Client: mAdmin})
-}
-
-func kmsStatus(ctx context.Context, minioClient MinioAdmin) (*models.KmsStatusResponse, *models.Error) {
-	st, err := minioClient.kmsStatus(ctx)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-	return &models.KmsStatusResponse{
-		DefaultKeyID: st.DefaultKeyID,
-		Name:         st.Name,
-		Endpoints:    parseStatusEndpoints(st.Endpoints),
-	}, nil
-}
-
-func parseStatusEndpoints(endpoints map[string]madmin.ItemState) (kmsEndpoints []*models.KmsEndpoint) {
-	for key, value := range endpoints {
-		kmsEndpoints = append(kmsEndpoints, &models.KmsEndpoint{URL: key, Status: string(value)})
-	}
-	return kmsEndpoints
 }
 
 func GetKMSCreateKeyResponse(session *models.Principal, params kmsAPI.KMSCreateKeyParams) *models.Error {

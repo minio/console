@@ -126,6 +126,9 @@ type MinioAdmin interface {
 
 	// KMS
 	kmsStatus(ctx context.Context) (madmin.KMSStatus, error)
+	kmsMetrics(ctx context.Context) (*madmin.KMSMetrics, error)
+	kmsAPIs(ctx context.Context) ([]madmin.KMSAPI, error)
+	kmsVersion(ctx context.Context) (*madmin.KMSVersion, error)
 	createKey(ctx context.Context, key string) error
 	importKey(ctx context.Context, key string, content []byte) error
 	listKeys(ctx context.Context, pattern string) ([]madmin.KMSKeyInfo, error)
@@ -573,6 +576,18 @@ func (ac AdminClient) getSiteReplicationStatus(ctx context.Context, params madmi
 
 func (ac AdminClient) kmsStatus(ctx context.Context) (madmin.KMSStatus, error) {
 	return ac.Client.KMSStatus(ctx)
+}
+
+func (ac AdminClient) kmsMetrics(ctx context.Context) (*madmin.KMSMetrics, error) {
+	return ac.Client.KMSMetrics(ctx)
+}
+
+func (ac AdminClient) kmsAPIs(ctx context.Context) ([]madmin.KMSAPI, error) {
+	return ac.Client.KMSAPIs(ctx)
+}
+
+func (ac AdminClient) kmsVersion(ctx context.Context) (*madmin.KMSVersion, error) {
+	return ac.Client.KMSVersion(ctx)
 }
 
 func (ac AdminClient) createKey(ctx context.Context, key string) error {
