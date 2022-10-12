@@ -135,9 +135,6 @@ type GemaltoConfigurationResponseKeysecure struct {
 	// endpoint
 	// Required: true
 	Endpoint *string `json:"endpoint"`
-
-	// tls
-	TLS *GemaltoConfigurationResponseKeysecureTLS `json:"tls,omitempty"`
 }
 
 // Validate validates this gemalto configuration response keysecure
@@ -149,10 +146,6 @@ func (m *GemaltoConfigurationResponseKeysecure) Validate(formats strfmt.Registry
 	}
 
 	if err := m.validateEndpoint(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTLS(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -191,34 +184,11 @@ func (m *GemaltoConfigurationResponseKeysecure) validateEndpoint(formats strfmt.
 	return nil
 }
 
-func (m *GemaltoConfigurationResponseKeysecure) validateTLS(formats strfmt.Registry) error {
-	if swag.IsZero(m.TLS) { // not required
-		return nil
-	}
-
-	if m.TLS != nil {
-		if err := m.TLS.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("keysecure" + "." + "tls")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("keysecure" + "." + "tls")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
 // ContextValidate validate this gemalto configuration response keysecure based on the context it is used
 func (m *GemaltoConfigurationResponseKeysecure) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateCredentials(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateTLS(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -236,22 +206,6 @@ func (m *GemaltoConfigurationResponseKeysecure) contextValidateCredentials(ctx c
 				return ve.ValidateName("keysecure" + "." + "credentials")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("keysecure" + "." + "credentials")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *GemaltoConfigurationResponseKeysecure) contextValidateTLS(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.TLS != nil {
-		if err := m.TLS.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("keysecure" + "." + "tls")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("keysecure" + "." + "tls")
 			}
 			return err
 		}
@@ -347,98 +301,6 @@ func (m *GemaltoConfigurationResponseKeysecureCredentials) MarshalBinary() ([]by
 // UnmarshalBinary interface implementation
 func (m *GemaltoConfigurationResponseKeysecureCredentials) UnmarshalBinary(b []byte) error {
 	var res GemaltoConfigurationResponseKeysecureCredentials
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
-	return nil
-}
-
-// GemaltoConfigurationResponseKeysecureTLS gemalto configuration response keysecure TLS
-//
-// swagger:model GemaltoConfigurationResponseKeysecureTLS
-type GemaltoConfigurationResponseKeysecureTLS struct {
-
-	// ca
-	// Required: true
-	Ca *CertificateInfo `json:"ca"`
-}
-
-// Validate validates this gemalto configuration response keysecure TLS
-func (m *GemaltoConfigurationResponseKeysecureTLS) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateCa(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *GemaltoConfigurationResponseKeysecureTLS) validateCa(formats strfmt.Registry) error {
-
-	if err := validate.Required("keysecure"+"."+"tls"+"."+"ca", "body", m.Ca); err != nil {
-		return err
-	}
-
-	if m.Ca != nil {
-		if err := m.Ca.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("keysecure" + "." + "tls" + "." + "ca")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("keysecure" + "." + "tls" + "." + "ca")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this gemalto configuration response keysecure TLS based on the context it is used
-func (m *GemaltoConfigurationResponseKeysecureTLS) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateCa(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *GemaltoConfigurationResponseKeysecureTLS) contextValidateCa(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Ca != nil {
-		if err := m.Ca.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("keysecure" + "." + "tls" + "." + "ca")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("keysecure" + "." + "tls" + "." + "ca")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *GemaltoConfigurationResponseKeysecureTLS) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *GemaltoConfigurationResponseKeysecureTLS) UnmarshalBinary(b []byte) error {
-	var res GemaltoConfigurationResponseKeysecureTLS
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
