@@ -2884,6 +2884,51 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - KMS
+  /kms/metrics:
+    get:
+      summary: KMS metrics
+      operationId: KMSMetrics
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/kmsMetricsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - KMS
+  /kms/apis:
+    get:
+      summary: KMS apis
+      operationId: KMSAPIs
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/kmsAPIsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - KMS
+  /kms/version:
+    get:
+      summary: KMS version
+      operationId: KMSVersion
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/kmsVersionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - KMS
   /kms/keys:
     post:
       summary: KMS create key
@@ -5438,6 +5483,79 @@ definitions:
       createdAt:
         type: string
       createdBy:
+        type: string
+  kmsMetricsResponse:
+    type: object
+    required:
+      - requestOK
+      - requestErr
+      - requestFail
+      - requestActive
+      - auditEvents
+      - errorEvents
+      - latencyHistogram
+      - uptime
+      - cpus
+      - usableCPUs
+      - threads
+      - heapAlloc
+      - stackAlloc
+    properties:
+      requestOK:
+        type: integer
+      requestErr:
+        type: integer
+      requestFail:
+        type: integer
+      requestActive:
+        type: integer
+      auditEvents:
+        type: integer
+      errorEvents:
+        type: integer
+      latencyHistogram:
+        $ref:  "#/definitions/kmsLatencyHistogram"
+      uptime:
+        type: integer
+      cpus:
+        type: integer
+      usableCPUs:
+        type: integer
+      threads:
+        type: integer
+      heapAlloc:
+        type: integer
+      heapObjects:
+        type: integer
+      stackAlloc:
+        type: integer
+  kmsLatencyHistogram:
+    type: object
+    properties:
+      duration:
+        type: integer
+  kmsAPIsResponse:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/kmsAPI"
+  kmsAPI:
+    type: object
+    properties:
+      method:
+        type: string
+      path:
+        type: string
+      maxBody:
+        type: integer
+      timeout:
+        type: integer
+  kmsVersionResponse:
+    type: object
+    properties:
+      version:
         type: string
 
   environmentConstants:
