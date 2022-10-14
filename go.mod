@@ -190,3 +190,7 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
+
+replace github.com/minio/madmin-go => github.com/klauspost/madmin-go v1.0.15-0.20221012163854-fd15cf0ad215
+
+replace github.com/minio/mc => github.com/klauspost/mc v0.0.0-20221014120903-10af4c8890f4

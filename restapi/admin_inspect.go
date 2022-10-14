@@ -48,7 +48,7 @@ func registerInspectHandler(api *operations.ConsoleAPI) {
 	})
 }
 
-func getInspectResult(session *models.Principal, params *inspectApi.InspectParams) (*[32]byte, io.ReadCloser, *models.Error) {
+func getInspectResult(session *models.Principal, params *inspectApi.InspectParams) ([]byte, io.ReadCloser, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(session)
@@ -60,6 +60,11 @@ func getInspectResult(session *models.Principal, params *inspectApi.InspectParam
 	cfg.File = params.File
 	cfg.Volume = params.Volume
 
+	// TODO: Remove encryption option and always encrypt.
+	if params.Encrypt != nil && *params.Encrypt {
+		cfg.PublicKey = []byte("MIIBCgKCAQEAs/128UFS9A8YSJY1XqYKt06dLVQQCGDee69T+0Tip/1jGAB4z0/3QMpH0MiS8Wjs4BRWV51qvkfAHzwwdU7y6jxU05ctb/H/WzRj3FYdhhHKdzear9TLJftlTs+xwj2XaADjbLXCV1jGLS889A7f7z5DgABlVZMQd9BjVAR8ED3xRJ2/ZCNuQVJ+A8r7TYPGMY3wWvhhPgPk3Lx4WDZxDiDNlFs4GQSaESSsiVTb9vyGe/94CsCTM6Cw9QG6ifHKCa/rFszPYdKCabAfHcS3eTr0GM+TThSsxO7KfuscbmLJkfQev1srfL2Ii2RbnysqIJVWKEwdW05ID8ryPkuTuwIDAQAB")
+	}
+
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
@@ -68,11 +73,11 @@ func getInspectResult(session *models.Principal, params *inspectApi.InspectParam
 	if err != nil {
 		return nil, nil, ErrorWithContext(ctx, err)
 	}
-	return &k, r, nil
+	return k, r, nil
 }
 
 // borrowed from mc cli
-func decryptInspect(key [32]byte, r io.Reader) io.ReadCloser {
+func decryptInspectV1(key [32]byte, r io.Reader) io.ReadCloser {
 	stream, err := sio.AES_256_GCM.Stream(key[:])
 	if err != nil {
 		return nil
@@ -81,30 +86,33 @@ func decryptInspect(key [32]byte, r io.Reader) io.ReadCloser {
 	return ioutil.NopCloser(stream.DecryptReader(r, nonce, nil))
 }
 
-func processInspectResponse(isEnc bool, k *[32]byte, r io.ReadCloser) func(w http.ResponseWriter, _ runtime.Producer) {
+func processInspectResponse(isEnc bool, k []byte, r io.ReadCloser) func(w http.ResponseWriter, _ runtime.Producer) {
 	return func(w http.ResponseWriter, _ runtime.Producer) {
-		var id [4]byte
-		binary.LittleEndian.PutUint32(id[:], crc32.ChecksumIEEE(k[:]))
-		defer r.Close()
+		fileName := fmt.Sprintf("inspect.enc")
+		if len(k) == 32 {
+			var id [4]byte
+			binary.LittleEndian.PutUint32(id[:], crc32.ChecksumIEEE(k[:]))
+			defer r.Close()
 
-		ext := "enc"
-		if !isEnc {
-			ext = "zip"
-			r = decryptInspect(*k, r)
-		}
-
-		fileName := fmt.Sprintf("inspect.%s.%s", hex.EncodeToString(id[:]), ext)
-
-		if isEnc {
-			// use cookie to transmit the Decryption Key.
-			hexKey := hex.EncodeToString(id[:]) + hex.EncodeToString(k[:])
-			cookie := http.Cookie{
-				Name:   fileName,
-				Value:  hexKey,
-				Path:   "/",
-				MaxAge: 3000,
+			ext := "enc"
+			if !isEnc {
+				ext = "zip"
+				r = decryptInspectV1(*(*[32]byte)(k), r)
 			}
-			http.SetCookie(w, &cookie)
+
+			fileName = fmt.Sprintf("inspect.%s.%s", hex.EncodeToString(id[:]), ext)
+
+			if isEnc {
+				// use cookie to transmit the Decryption Key.
+				hexKey := hex.EncodeToString(id[:]) + hex.EncodeToString(k[:])
+				cookie := http.Cookie{
+					Name:   fileName,
+					Value:  hexKey,
+					Path:   "/",
+					MaxAge: 3000,
+				}
+				http.SetCookie(w, &cookie)
+			}
 		}
 
 		w.Header().Set("Content-Type", "application/octet-stream")
