@@ -35,6 +35,18 @@ func (ac adminClientMock) kmsStatus(ctx context.Context) (madmin.KMSStatus, erro
 	return madmin.KMSStatus{Name: "name", DefaultKeyID: "key", Endpoints: map[string]madmin.ItemState{"localhost": madmin.ItemState("online")}}, nil
 }
 
+func (ac adminClientMock) kmsAPIs(ctx context.Context) ([]madmin.KMSAPI, error) {
+	return []madmin.KMSAPI{{Method: "GET", Path: "/mock"}}, nil
+}
+
+func (ac adminClientMock) kmsMetrics(ctx context.Context) (*madmin.KMSMetrics, error) {
+	return &madmin.KMSMetrics{}, nil
+}
+
+func (ac adminClientMock) kmsVersion(ctx context.Context) (*madmin.KMSVersion, error) {
+	return &madmin.KMSVersion{Version: "test-version"}, nil
+}
+
 func (ac adminClientMock) createKey(ctx context.Context, key string) error {
 	return nil
 }
@@ -147,6 +159,9 @@ func (suite *KMSTestSuite) TestRegisterKMSHandlers() {
 
 func (suite *KMSTestSuite) assertHandlersAreNil(api *operations.ConsoleAPI) {
 	suite.assert.Nil(api.KmsKMSStatusHandler)
+	suite.assert.Nil(api.KmsKMSMetricsHandler)
+	suite.assert.Nil(api.KmsKMSAPIsHandler)
+	suite.assert.Nil(api.KmsKMSVersionHandler)
 	suite.assert.Nil(api.KmsKMSCreateKeyHandler)
 	suite.assert.Nil(api.KmsKMSImportKeyHandler)
 	suite.assert.Nil(api.KmsKMSListKeysHandler)
@@ -166,6 +181,9 @@ func (suite *KMSTestSuite) assertHandlersAreNil(api *operations.ConsoleAPI) {
 
 func (suite *KMSTestSuite) assertHandlersAreNotNil(api *operations.ConsoleAPI) {
 	suite.assert.NotNil(api.KmsKMSStatusHandler)
+	suite.assert.NotNil(api.KmsKMSMetricsHandler)
+	suite.assert.NotNil(api.KmsKMSAPIsHandler)
+	suite.assert.NotNil(api.KmsKMSVersionHandler)
 	suite.assert.NotNil(api.KmsKMSCreateKeyHandler)
 	suite.assert.NotNil(api.KmsKMSImportKeyHandler)
 	suite.assert.NotNil(api.KmsKMSListKeysHandler)
@@ -199,6 +217,66 @@ func (suite *KMSTestSuite) initKMSStatusRequest() (params kmsAPI.KMSStatusParams
 func (suite *KMSTestSuite) TestKMSStatusWithoutError() {
 	ctx := context.Background()
 	res, err := kmsStatus(ctx, suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
+}
+
+func (suite *KMSTestSuite) TestKMSMetricsHandlerWithError() {
+	params, api := suite.initKMSMetricsRequest()
+	response := api.KmsKMSMetricsHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*kmsAPI.KMSMetricsDefault)
+	suite.assert.True(ok)
+}
+
+func (suite *KMSTestSuite) initKMSMetricsRequest() (params kmsAPI.KMSMetricsParams, api operations.ConsoleAPI) {
+	registerKMSHandlers(&api)
+	params.HTTPRequest = &http.Request{}
+	return params, api
+}
+
+func (suite *KMSTestSuite) TestKMSMetricsWithoutError() {
+	ctx := context.Background()
+	res, err := kmsMetrics(ctx, suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
+}
+
+func (suite *KMSTestSuite) TestKMSAPIsHandlerWithError() {
+	params, api := suite.initKMSAPIsRequest()
+	response := api.KmsKMSAPIsHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*kmsAPI.KMSAPIsDefault)
+	suite.assert.True(ok)
+}
+
+func (suite *KMSTestSuite) initKMSAPIsRequest() (params kmsAPI.KMSAPIsParams, api operations.ConsoleAPI) {
+	registerKMSHandlers(&api)
+	params.HTTPRequest = &http.Request{}
+	return params, api
+}
+
+func (suite *KMSTestSuite) TestKMSAPIsWithoutError() {
+	ctx := context.Background()
+	res, err := kmsAPIs(ctx, suite.adminClient)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
+}
+
+func (suite *KMSTestSuite) TestKMSVersionHandlerWithError() {
+	params, api := suite.initKMSVersionRequest()
+	response := api.KmsKMSVersionHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*kmsAPI.KMSVersionDefault)
+	suite.assert.True(ok)
+}
+
+func (suite *KMSTestSuite) initKMSVersionRequest() (params kmsAPI.KMSVersionParams, api operations.ConsoleAPI) {
+	registerKMSHandlers(&api)
+	params.HTTPRequest = &http.Request{}
+	return params, api
+}
+
+func (suite *KMSTestSuite) TestKMSVersionWithoutError() {
+	ctx := context.Background()
+	res, err := kmsVersion(ctx, suite.adminClient)
 	suite.assert.NotNil(res)
 	suite.assert.Nil(err)
 }

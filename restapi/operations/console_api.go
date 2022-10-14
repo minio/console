@@ -265,6 +265,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		InspectInspectHandler: inspect.InspectHandlerFunc(func(params inspect.InspectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation inspect.Inspect has not yet been implemented")
 		}),
+		KmsKMSAPIsHandler: k_m_s.KMSAPIsHandlerFunc(func(params k_m_s.KMSAPIsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation k_m_s.KMSAPIs has not yet been implemented")
+		}),
 		KmsKMSAssignPolicyHandler: k_m_s.KMSAssignPolicyHandlerFunc(func(params k_m_s.KMSAssignPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation k_m_s.KMSAssignPolicy has not yet been implemented")
 		}),
@@ -307,11 +310,17 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		KmsKMSListPoliciesHandler: k_m_s.KMSListPoliciesHandlerFunc(func(params k_m_s.KMSListPoliciesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation k_m_s.KMSListPolicies has not yet been implemented")
 		}),
+		KmsKMSMetricsHandler: k_m_s.KMSMetricsHandlerFunc(func(params k_m_s.KMSMetricsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation k_m_s.KMSMetrics has not yet been implemented")
+		}),
 		KmsKMSSetPolicyHandler: k_m_s.KMSSetPolicyHandlerFunc(func(params k_m_s.KMSSetPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation k_m_s.KMSSetPolicy has not yet been implemented")
 		}),
 		KmsKMSStatusHandler: k_m_s.KMSStatusHandlerFunc(func(params k_m_s.KMSStatusParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation k_m_s.KMSStatus has not yet been implemented")
+		}),
+		KmsKMSVersionHandler: k_m_s.KMSVersionHandlerFunc(func(params k_m_s.KMSVersionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation k_m_s.KMSVersion has not yet been implemented")
 		}),
 		UserListAUserServiceAccountsHandler: user.ListAUserServiceAccountsHandlerFunc(func(params user.ListAUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user.ListAUserServiceAccounts has not yet been implemented")
@@ -686,6 +695,8 @@ type ConsoleAPI struct {
 	GroupGroupInfoHandler group.GroupInfoHandler
 	// InspectInspectHandler sets the operation handler for the inspect operation
 	InspectInspectHandler inspect.InspectHandler
+	// KmsKMSAPIsHandler sets the operation handler for the k m s a p is operation
+	KmsKMSAPIsHandler k_m_s.KMSAPIsHandler
 	// KmsKMSAssignPolicyHandler sets the operation handler for the k m s assign policy operation
 	KmsKMSAssignPolicyHandler k_m_s.KMSAssignPolicyHandler
 	// KmsKMSCreateKeyHandler sets the operation handler for the k m s create key operation
@@ -714,10 +725,14 @@ type ConsoleAPI struct {
 	KmsKMSListKeysHandler k_m_s.KMSListKeysHandler
 	// KmsKMSListPoliciesHandler sets the operation handler for the k m s list policies operation
 	KmsKMSListPoliciesHandler k_m_s.KMSListPoliciesHandler
+	// KmsKMSMetricsHandler sets the operation handler for the k m s metrics operation
+	KmsKMSMetricsHandler k_m_s.KMSMetricsHandler
 	// KmsKMSSetPolicyHandler sets the operation handler for the k m s set policy operation
 	KmsKMSSetPolicyHandler k_m_s.KMSSetPolicyHandler
 	// KmsKMSStatusHandler sets the operation handler for the k m s status operation
 	KmsKMSStatusHandler k_m_s.KMSStatusHandler
+	// KmsKMSVersionHandler sets the operation handler for the k m s version operation
+	KmsKMSVersionHandler k_m_s.KMSVersionHandler
 	// UserListAUserServiceAccountsHandler sets the operation handler for the list a user service accounts operation
 	UserListAUserServiceAccountsHandler user.ListAUserServiceAccountsHandler
 	// BucketListAccessRulesWithBucketHandler sets the operation handler for the list access rules with bucket operation
@@ -1118,6 +1133,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.InspectInspectHandler == nil {
 		unregistered = append(unregistered, "inspect.InspectHandler")
 	}
+	if o.KmsKMSAPIsHandler == nil {
+		unregistered = append(unregistered, "k_m_s.KMSAPIsHandler")
+	}
 	if o.KmsKMSAssignPolicyHandler == nil {
 		unregistered = append(unregistered, "k_m_s.KMSAssignPolicyHandler")
 	}
@@ -1160,11 +1178,17 @@ func (o *ConsoleAPI) Validate() error {
 	if o.KmsKMSListPoliciesHandler == nil {
 		unregistered = append(unregistered, "k_m_s.KMSListPoliciesHandler")
 	}
+	if o.KmsKMSMetricsHandler == nil {
+		unregistered = append(unregistered, "k_m_s.KMSMetricsHandler")
+	}
 	if o.KmsKMSSetPolicyHandler == nil {
 		unregistered = append(unregistered, "k_m_s.KMSSetPolicyHandler")
 	}
 	if o.KmsKMSStatusHandler == nil {
 		unregistered = append(unregistered, "k_m_s.KMSStatusHandler")
+	}
+	if o.KmsKMSVersionHandler == nil {
+		unregistered = append(unregistered, "k_m_s.KMSVersionHandler")
 	}
 	if o.UserListAUserServiceAccountsHandler == nil {
 		unregistered = append(unregistered, "user.ListAUserServiceAccountsHandler")
@@ -1705,6 +1729,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/admin/inspect"] = inspect.NewInspect(o.context, o.InspectInspectHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/kms/apis"] = k_m_s.NewKMSAPIs(o.context, o.KmsKMSAPIsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -1761,6 +1789,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/kms/policies"] = k_m_s.NewKMSListPolicies(o.context, o.KmsKMSListPoliciesHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/kms/metrics"] = k_m_s.NewKMSMetrics(o.context, o.KmsKMSMetricsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -1769,6 +1801,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/kms/status"] = k_m_s.NewKMSStatus(o.context, o.KmsKMSStatusHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/kms/version"] = k_m_s.NewKMSVersion(o.context, o.KmsKMSVersionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
