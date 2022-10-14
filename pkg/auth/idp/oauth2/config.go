@@ -48,9 +48,11 @@ func (pc ProviderConfig) GetStateKeyFunc() StateKeyFunc {
 	}
 }
 
-type OpenIDPCfg map[string]ProviderConfig
+func (pc ProviderConfig) GetARNInf() string {
+	return pc.RoleArn
+}
 
-var DefaultIDPConfig = "_"
+type OpenIDPCfg map[string]ProviderConfig
 
 func GetSTSEndpoint() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
