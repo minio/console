@@ -31,7 +31,13 @@ export interface MultiSelectionItem {
   label: string;
   disabled: boolean;
   icon: React.ReactNode;
-  tooltip: string;
+  tooltip:
+    | string
+    | number
+    | boolean
+    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+    | React.ReactFragment
+    | React.ReactPortal;
 }
 
 interface IActionsListSectionProps {

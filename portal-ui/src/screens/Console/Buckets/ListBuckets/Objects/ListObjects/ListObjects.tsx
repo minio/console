@@ -71,7 +71,10 @@ import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 
-import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import {
+  IAM_SCOPES,
+  permissionTooltipHelper,
+} from "../../../../../../common/SecureComponent/permissions";
 import PermissionTooltipHelper from "../../../../Common/PermissionTooltipHelper";
 import {
   hasPermission,
@@ -1064,10 +1067,10 @@ const ListObjects = () => {
         dispatch(
           setErrorSnackMessage({
             errorMessage: "Upload not allowed",
-            detailedError: PermissionTooltipHelper({
-              scopes: [IAM_SCOPES.S3_PUT_OBJECT],
-              text: "upload objects to this location",
-            }),
+            detailedError: permissionTooltipHelper(
+              [IAM_SCOPES.S3_PUT_OBJECT],
+              "upload objects to this location"
+            ),
           })
         );
       }

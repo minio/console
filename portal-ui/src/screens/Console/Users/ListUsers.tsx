@@ -49,6 +49,7 @@ import {
   IAM_PAGES,
   IAM_SCOPES,
   listUsersPermissions,
+  permissionTooltipHelper,
   S3_ALL_RESOURCES,
   viewUserPermissions,
 } from "../../../common/SecureComponent/permissions";
@@ -58,8 +59,9 @@ import {
   SecureComponent,
 } from "../../../common/SecureComponent";
 import { setErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import { useSelector } from "react-redux";
 
 const DeleteUser = withSuspense(React.lazy(() => import("./DeleteUser")));
 const AddToGroup = withSuspense(React.lazy(() => import("./BulkAddToGroup")));
@@ -92,12 +94,16 @@ const ListUsers = ({ classes }: IUsersProps) => {
   const [filter, setFilter] = useState<string>("");
   const [checkedUsers, setCheckedUsers] = useState<string[]>([]);
 
+  const tooltipsMute = useSelector(
+    (state: AppState) => state.system.tooltipsMute
+  );
+
   const displayListUsers = hasPermission(
     CONSOLE_UI_RESOURCE,
     listUsersPermissions
   );
 
-  const viewUser = hasPermission(CONSOLE_UI_RESOURCE, viewUserPermissions);
+  const viewUser = hasPermission(CONSOLE_UI_RESOURCE, viewUserPermissions, true);
 
   const addUserToGroup = hasPermission(
     CONSOLE_UI_RESOURCE,
@@ -342,10 +348,11 @@ const ListUsers = ({ classes }: IUsersProps) => {
                   tooltip={
                     viewUser
                       ? ""
-                      : PermissionTooltipHelper({
-                          scopes: [IAM_SCOPES.ADMIN_GET_USER],
-                          text: "view user details",
-                        })
+                      : !tooltipsMute ?
+                      permissionTooltipHelper([IAM_SCOPES.ADMIN_GET_USER],
+                          "view user details"
+                        ) :
+                        ""
                   }
                 >
                   <Grid

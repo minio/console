@@ -68,6 +68,7 @@ import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import PermissionTooltipHelper from "../Common/PermissionTooltipHelper";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const SetPolicy = withSuspense(
@@ -255,10 +256,10 @@ const Groups = ({ classes }: IGroupsProps) => {
                     ? "Please select Groups on which you want to apply Policies"
                     : applyPolicy
                     ? "Select Policy"
-                    : permissionTooltipHelper(
-                        applyPolicyPermissions,
-                        "apply policies to Groups"
-                      )
+                    : PermissionTooltipHelper({
+                        scopes: applyPolicyPermissions,
+                        text: "apply policies to Groups",
+                      })
                 }
               >
                 <Button

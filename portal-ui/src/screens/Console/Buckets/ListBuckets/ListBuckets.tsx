@@ -353,7 +353,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                     ? ""
                     : PermissionTooltipHelper({
                         scopes: [IAM_SCOPES.S3_CREATE_BUCKET],
-                        text: "creating a bucket",
+                        text: "create a bucket",
                       })
                 }
               >

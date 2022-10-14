@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import React, { Fragment } from "react";
 import { useSelector } from "react-redux";
+import MutePermissionTooltips from "../../../common/MutePermissionTooltips";
 import { AppState } from "../../../store";
 
 interface IPermissionTooltipHelper {
@@ -30,17 +32,27 @@ const PermissionTooltipHelper = ({
     (state: AppState) => state.system.tooltipsMute
   );
 
-  return tooltipsMuted
-    ? ""
-    : "You require additional permissions in order to " +
-        text +
-        ". Please ask your MinIO administrator to grant you " +
-        scopes +
-        " permission" +
-        (scopes.length > 1 ? "s" : "") +
-        " in order to " +
-        text +
-        ".";
-};
+  const permissionGuidance =
+    "You require additional permissions in order to " +
+    text +
+    ". Please ask your MinIO administrator to grant you " +
+    scopes +
+    " permission" +
+    (scopes.length > 1 ? "s" : "") +
+    " in order to " +
+    text +
+    ".";
 
+  if (!tooltipsMuted) {
+    return (
+      <Fragment>
+        <div>
+          <span>{permissionGuidance}</span> <br />
+          <MutePermissionTooltips />{" "}
+        </div>
+      </Fragment>
+    );
+  }
+  return "";
+};
 export default PermissionTooltipHelper;
