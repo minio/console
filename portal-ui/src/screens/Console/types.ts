@@ -41,6 +41,7 @@ export interface ISessionResponse {
   allowResources: IAllowResources[] | null;
   customStyles?: string | null;
   envConstants?: IEnvironmentContants | null;
+  serverEndPoint?: string | undefined;
 }
 
 export interface ButtonProps {

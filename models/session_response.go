@@ -59,6 +59,9 @@ type SessionResponse struct {
 	// permissions
 	Permissions map[string][]string `json:"permissions,omitempty"`
 
+	// server end point
+	ServerEndPoint string `json:"serverEndPoint,omitempty"`
+
 	// status
 	// Enum: [ok]
 	Status string `json:"status,omitempty"`

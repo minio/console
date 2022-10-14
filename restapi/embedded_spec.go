@@ -7289,6 +7289,9 @@ func init() {
             }
           }
         },
+        "serverEndPoint": {
+          "type": "string"
+        },
         "status": {
           "type": "string",
           "enum": [
@@ -15541,6 +15544,9 @@ func init() {
               "type": "string"
             }
           }
+        },
+        "serverEndPoint": {
+          "type": "string"
         },
         "status": {
           "type": "string",
