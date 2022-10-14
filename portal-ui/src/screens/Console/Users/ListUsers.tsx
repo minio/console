@@ -112,12 +112,16 @@ const ListUsers = ({ classes }: IUsersProps) => {
   };
 
   const onHover = async (scopes: string[], text: string) => {
-    const timeoutID = setTimeout(permissionsError, 1000, scopes, text);
+    const timeoutID = setTimeout(permissionsError, 2000, scopes, text);
     setDelayID(timeoutID);
   };
 
   const offHover = () => {
     clearTimeout(delayID);
+  };
+
+  const onPermissionClick = (scopes: string[], text: string) => {
+    permissionsError(scopes, text);
   };
 
   const viewUser = hasPermission(
@@ -351,7 +355,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
               <Fragment>
                 <div
                   onClick={() =>
-                    onHover(getUserPermissions, "view user details")
+                    onPermissionClick(getUserPermissions, "view user details")
                   }
                 >
                   <Grid
