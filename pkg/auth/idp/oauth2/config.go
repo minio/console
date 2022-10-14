@@ -37,6 +37,7 @@ type ProviderConfig struct {
 	Userinfo                 bool
 	RedirectCallbackDynamic  bool
 	RedirectCallback         string
+	RoleArn                  string // can be empty
 }
 
 // GetStateKeyFunc - return the key function used to generate the authorization
@@ -45,6 +46,10 @@ func (pc ProviderConfig) GetStateKeyFunc() StateKeyFunc {
 	return func() []byte {
 		return pbkdf2.Key([]byte(pc.HMACPassphrase), []byte(pc.HMACSalt), 4096, 32, sha1.New)
 	}
+}
+
+func (pc ProviderConfig) GetRoleARN() string {
+	return pc.RoleArn
 }
 
 type OpenIDPCfg map[string]ProviderConfig
