@@ -23,11 +23,6 @@ import { ReplicationSite } from "./SiteReplication";
 import TrashIcon from "../../../../icons/TrashIcon";
 import { CircleIcon, ConfirmDeleteIcon, EditIcon } from "../../../../icons";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import Grid from "@mui/material/Grid";
-import useApi from "../../Common/Hooks/useApi";
-
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -36,12 +31,8 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-} from "../../../../systemSlice";
-import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import EditSiteEndPoint from "./EditSiteEndPoint";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -54,54 +45,14 @@ const ReplicationSites = ({
   sites,
   onDeleteSite,
   onRefresh,
-  classes,
 }: {
   sites: ReplicationSite[];
   onDeleteSite: (isAll: boolean, sites: string[]) => void;
   onRefresh: () => void;
   classes: any;
 }) => {
-  const dispatch = useAppDispatch();
   const [deleteSiteKey, setIsDeleteSiteKey] = useState<string>("");
   const [editSite, setEditSite] = useState<any>(null);
-  const [editEndPointName, setEditEndPointName] = useState<string>("");
-
-  const [isEditing, invokeSiteEditApi] = useApi(
-    (res: any) => {
-      if (res.success) {
-        setEditSite(null);
-        dispatch(setSnackBarMessage(res.status));
-      } else {
-        dispatch(
-          setErrorSnackMessage({
-            errorMessage: "Error",
-            detailedError: res.status,
-          })
-        );
-      }
-      onRefresh();
-    },
-    (err: any) => {
-      dispatch(setErrorSnackMessage(err));
-      onRefresh();
-    }
-  );
-  const updatePeerSite = () => {
-    invokeSiteEditApi("PUT", `api/v1/admin/site-replication`, {
-      endpoint: editEndPointName,
-      name: editSite.name,
-      deploymentId: editSite.deploymentID, // readonly
-    });
-  };
-
-  let isValidEndPointUrl = false;
-
-  try {
-    new URL(editEndPointName);
-    isValidEndPointUrl = true;
-  } catch (err) {
-    isValidEndPointUrl = false;
-  }
 
   return (
     <Box>
@@ -229,17 +180,11 @@ const ReplicationSites = ({
                     },
                   }}
                 >
-                  <TooltipWrapper
-                    tooltip={
-                      sites.length <= 2
-                        ? "Minimum two sites are required for replication"
-                        : "Delete Site"
-                    }
-                  >
+                  <TooltipWrapper tooltip="Delete Site">
                     <Button
                       id={`delete-site-${key}-${index}`}
                       variant="secondary"
-                      disabled={sites.length <= 2}
+                      disabled={siteInfo.isCurrent}
                       icon={<TrashIcon />}
                       onClick={(e) => {
                         e.preventDefault();
@@ -256,6 +201,7 @@ const ReplicationSites = ({
                     <Button
                       id={`edit-icon-${key}-${index}`}
                       variant="regular"
+                      disabled={siteInfo.isCurrent}
                       icon={<EditIcon />}
                       onClick={(e) => {
                         e.preventDefault();
@@ -295,71 +241,16 @@ const ReplicationSites = ({
               ) : null}
 
               {editSite?.name === key ? (
-                <ModalWrapper
-                  title={`Edit Replication Endpoint `}
-                  modalOpen={true}
-                  titleIcon={<EditIcon />}
+                <EditSiteEndPoint
+                  onComplete={() => {
+                    setEditSite(null);
+                    onRefresh();
+                  }}
+                  editSite={editSite}
                   onClose={() => {
                     setEditSite(null);
                   }}
-                >
-                  <DialogContentText>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexFlow: "column",
-                        marginBottom: "15px",
-                      }}
-                    >
-                      <Box sx={{ marginBottom: "10px" }}>
-                        <strong>Site:</strong> {"  "}
-                        {editSite.name}
-                      </Box>
-                      <Box sx={{ marginBottom: "10px" }}>
-                        <strong>Current Endpoint:</strong> {"  "}
-                        {editSite.endpoint}
-                      </Box>
-                    </Box>
-
-                    <Grid item xs={12}>
-                      <Box sx={{ marginBottom: "5px" }}> New Endpoint:</Box>
-                      <InputBoxWrapper
-                        id="edit-rep-peer-endpoint"
-                        name="edit-rep-peer-endpoint"
-                        placeholder={"https://dr.minio-storage:9000"}
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>
-                        ) => {
-                          setEditEndPointName(event.target.value);
-                        }}
-                        label=""
-                        value={editEndPointName}
-                      />
-                    </Grid>
-                  </DialogContentText>
-
-                  <Grid item xs={12} className={classes.modalButtonBar}>
-                    <Button
-                      id={"close"}
-                      type="button"
-                      variant="regular"
-                      onClick={() => {
-                        setEditSite(null);
-                      }}
-                      label={"Close"}
-                    />
-                    <Button
-                      id={"update"}
-                      type="button"
-                      variant="callAction"
-                      disabled={isEditing || !isValidEndPointUrl}
-                      onClick={() => {
-                        updatePeerSite();
-                      }}
-                      label={"Update"}
-                    />
-                  </Grid>
-                </ModalWrapper>
+                />
               ) : null}
             </React.Fragment>
           );

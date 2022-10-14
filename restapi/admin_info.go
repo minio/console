@@ -893,7 +893,6 @@ func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAd
 	if prometheusURL != "" && !testPrometheusURL(ctx, prometheusURL) {
 		prometheusStatus = models.AdminInfoResponseAdvancedMetricsStatusUnavailable
 	}
-
 	sessionResp := &models.AdminInfoResponse{
 		AdvancedMetricsStatus: prometheusStatus,
 	}
@@ -903,15 +902,18 @@ func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAd
 		// create a minioClient interface implementation
 		// defining the client to be used
 		adminClient := AdminClient{Client: mAdmin}
+
 		// serialize output
 		usage, err := GetAdminInfo(ctx, adminClient)
 		if err != nil {
 			doneCh <- err
 		}
-		sessionResp.Buckets = usage.Buckets
-		sessionResp.Objects = usage.Objects
-		sessionResp.Usage = usage.Usage
-		sessionResp.Servers = usage.Servers
+		if usage != nil {
+			sessionResp.Buckets = usage.Buckets
+			sessionResp.Objects = usage.Objects
+			sessionResp.Usage = usage.Usage
+			sessionResp.Servers = usage.Servers
+		}
 	}()
 
 	var wdgts []*models.Widget
