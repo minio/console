@@ -350,7 +350,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
     setLoadingUsers(true);
     setLoadingGroups(true);
     setLoadingPolicy(true);
-  }
+  };
 
   return (
     <Fragment>
