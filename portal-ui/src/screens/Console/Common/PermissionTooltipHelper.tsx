@@ -47,7 +47,7 @@ const PermissionTooltipHelper = ({
     return (
       <Fragment>
         <div>
-          <span>{permissionGuidance}</span> <br />
+          <span>{permissionGuidance}</span> 
           <MutePermissionTooltips />{" "}
         </div>
       </Fragment>

@@ -19,6 +19,7 @@ import { AppState, useAppDispatch } from "../store";
 import { useSelector } from "react-redux";
 import AButton from "../screens/Console/Common/AButton/AButton";
 import { setTooltipsMute } from "../systemSlice";
+import { color } from "@mui/system";
 
 const MutePermissionTooltips = () => {
   const tooltipsMute = useSelector(
@@ -27,16 +28,18 @@ const MutePermissionTooltips = () => {
   const dispatch = useAppDispatch();
   return (
     <Fragment>
-      <span style={{ paddingTop: 10 }}>
-        <AButton
+      <span style={{ paddingTop: 10, color: "#081C42"}}
+       
           onClick={() => {
             dispatch(setTooltipsMute(!tooltipsMute));
           }}
         >
+          <br/>
+          <br/>
           {tooltipsMute
             ? "Need help discovering the required policies for disabled actions? Enable Permission Tooltips"
             : "Happy with your configured permissions? Disable Permission Tooltips"}
-        </AButton>
+        
       </span>
     </Fragment>
   );

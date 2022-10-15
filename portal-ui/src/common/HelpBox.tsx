@@ -55,9 +55,10 @@ interface IHelpBox {
   iconComponent: any;
   title: string;
   help: any;
+  tooltipsMute?: boolean;
 }
 
-const HelpBox = ({ classes, iconComponent, title, help }: IHelpBox) => {
+const HelpBox = ({ classes, iconComponent, title, help, tooltipsMute }: IHelpBox) => {
   return (
     <div className={classes.root}>
       <Grid container>
@@ -67,8 +68,9 @@ const HelpBox = ({ classes, iconComponent, title, help }: IHelpBox) => {
         </Grid>
         <Grid item xs={12} className={classes.helpText}>
           {help}
-          <br />
+          {!tooltipsMute && 
           <MutePermissionTooltips />
+        }
         </Grid>
       </Grid>
     </div>
