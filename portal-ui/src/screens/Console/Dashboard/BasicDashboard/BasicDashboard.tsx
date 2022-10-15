@@ -325,6 +325,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                   </Box>
                 </Box>
               }
+              tooltipsMute={false}
             />
           </Box>
         )}

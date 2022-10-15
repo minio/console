@@ -132,6 +132,7 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
                 .
               </Fragment>
             }
+            tooltipsMute={false}
           />
         </Grid>
       </PageLayout>

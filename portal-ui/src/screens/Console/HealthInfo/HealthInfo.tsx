@@ -311,6 +311,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
               }
               iconComponent={<WarnIcon />}
               help={<Fragment />}
+              tooltipsMute={false}
             />
           </Fragment>
         )}

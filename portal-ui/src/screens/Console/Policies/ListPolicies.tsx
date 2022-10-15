@@ -44,7 +44,6 @@ import {
   IAM_PAGES,
   IAM_SCOPES,
   listPolicyPermissions,
-  permissionTooltipHelper,
   viewPolicyPermissions,
 } from "../../../common/SecureComponent/permissions";
 import {
@@ -57,8 +56,10 @@ import withSuspense from "../Common/Components/withSuspense";
 
 import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import PermissionTooltipHelper from "../Common/PermissionTooltipHelper";
+import { useSelector } from "react-redux";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -108,6 +109,10 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
   const canViewPolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
     viewPolicyPermissions
+  );
+
+  const tooltipsMute = useSelector(
+    (state: AppState) => state.system.tooltipsMute
   );
 
   useEffect(() => {
@@ -215,10 +220,10 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
                 tooltip={
                   canCreatePolicy
                     ? ""
-                    : permissionTooltipHelper(
-                        createPolicyPermissions,
-                        "create a Policy"
-                      )
+                    : PermissionTooltipHelper({
+                        scopes: createPolicyPermissions,
+                        text: "create a Policy",
+                      })
                 }
               >
                 <Button
@@ -250,10 +255,10 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
                 tooltip={
                   canViewPolicy
                     ? ""
-                    : permissionTooltipHelper(
-                        viewPolicyPermissions,
-                        "view Policy details"
-                      )
+                    : PermissionTooltipHelper({
+                        scopes: viewPolicyPermissions,
+                        text: "view Policy details",
+                      })
                 }
               />
             </SecureComponent>
@@ -289,6 +294,7 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
                   .
                 </Fragment>
               }
+              tooltipsMute={tooltipsMute}
             />
           </Grid>
         </Grid>

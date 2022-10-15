@@ -28,18 +28,17 @@ const MutePermissionTooltips = () => {
   const dispatch = useAppDispatch();
   return (
     <Fragment>
-      <span style={{ paddingTop: 10, color: "#081C42"}}
-       
-          onClick={() => {
-            dispatch(setTooltipsMute(!tooltipsMute));
-          }}
-        >
-          <br/>
-          <br/>
-          {tooltipsMute
-            ? "Need help discovering the required policies for disabled actions? Enable Permission Tooltips"
-            : "Happy with your configured permissions? Disable Permission Tooltips"}
-        
+      <span
+        style={{ paddingTop: 10, color: "#081C42" }}
+        onClick={() => {
+          dispatch(setTooltipsMute(!tooltipsMute));
+        }}
+      >
+        <br />
+        <br />
+        {tooltipsMute
+          ? "Need help discovering the required policies for disabled actions? Enable Permission Tooltips"
+          : "Happy with your configured permissions? Disable Permission Tooltips"}
       </span>
     </Fragment>
   );

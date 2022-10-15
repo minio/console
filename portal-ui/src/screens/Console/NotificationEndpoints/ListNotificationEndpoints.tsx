@@ -264,6 +264,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                         .
                       </Fragment>
                     }
+                    tooltipsMute={false}
                   />
                 </Grid>
               </Fragment>
@@ -299,6 +300,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                         .
                       </Fragment>
                     }
+                    tooltipsMute={false}
                   />
                 </Grid>
               </Grid>

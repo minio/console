@@ -225,6 +225,7 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
                   .
                 </Fragment>
               }
+              tooltipsMute={false}
             />
           </Grid>
         )}

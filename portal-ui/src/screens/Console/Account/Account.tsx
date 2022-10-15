@@ -299,6 +299,7 @@ const Account = () => {
                 .
               </Fragment>
             }
+            tooltipsMute={false}
           />
         </Grid>
       </PageLayout>

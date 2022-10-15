@@ -277,6 +277,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
                     the moment.
                   </Box>
                 }
+                tooltipsMute={false}
               />
             )}
             {panelInformation.length ? renderSummaryPanels() : null}
@@ -298,6 +299,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
                     the moment.
                   </Box>
                 }
+                tooltipsMute={false}
               />
             )}
             {panelInformation.length ? renderTrafficPanels() : null}
@@ -319,6 +321,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
                     the moment.
                   </Box>
                 }
+                tooltipsMute={false}
               />
             )}
             {panelInformation.length ? renderResourcesPanels() : null}

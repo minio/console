@@ -621,6 +621,7 @@ const AddReplicationSites = () => {
                 </Box>
               </Fragment>
             }
+            tooltipsMute={false}
           />
         </Box>
       </PageLayout>

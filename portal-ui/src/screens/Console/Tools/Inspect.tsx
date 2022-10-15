@@ -352,6 +352,7 @@ const Inspect = ({ classes }: { classes: any }) => {
             >
               <HelpBox
                 title={""}
+                tooltipsMute={false}
                 iconComponent={null}
                 help={
                   <Fragment>

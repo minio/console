@@ -218,6 +218,7 @@ const AddTenant = () => {
                   250Mi/s.
                 </Fragment>
               }
+              tooltipsMute={false}
             />
           </Grid>
         )}

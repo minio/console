@@ -61,6 +61,7 @@ const DistributedOnly = ({ iconComponent, entity }: IDistributedOnly) => {
               </div>
             </Box>
           }
+          tooltipsMute={false}
         />
       </Grid>
     </Grid>

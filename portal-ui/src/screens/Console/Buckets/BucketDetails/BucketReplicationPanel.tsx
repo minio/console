@@ -359,6 +359,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
                 .
               </Fragment>
             }
+            tooltipsMute={false}
           />
         </Grid>
       </Grid>

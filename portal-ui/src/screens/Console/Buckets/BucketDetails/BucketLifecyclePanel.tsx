@@ -339,6 +339,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
                   .
                 </Fragment>
               }
+              tooltipsMute={false}
             />
           </Grid>
         )}

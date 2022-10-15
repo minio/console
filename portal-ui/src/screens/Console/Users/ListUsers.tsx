@@ -103,7 +103,11 @@ const ListUsers = ({ classes }: IUsersProps) => {
     listUsersPermissions
   );
 
-  const viewUser = hasPermission(CONSOLE_UI_RESOURCE, viewUserPermissions, true);
+  const viewUser = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    viewUserPermissions,
+    true
+  );
 
   const addUserToGroup = hasPermission(
     CONSOLE_UI_RESOURCE,
@@ -348,11 +352,12 @@ const ListUsers = ({ classes }: IUsersProps) => {
                   tooltip={
                     viewUser
                       ? ""
-                      : !tooltipsMute ?
-                      permissionTooltipHelper([IAM_SCOPES.ADMIN_GET_USER],
+                      : !tooltipsMute // keep this as string function - crashes if component used
+                      ? permissionTooltipHelper(
+                          viewUserPermissions,
                           "view user details"
-                        ) :
-                        ""
+                        )
+                      : ""
                   }
                 >
                   <Grid
@@ -427,6 +432,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
                       .
                     </Fragment>
                   }
+                  tooltipsMute={tooltipsMute}
                 />
               </Fragment>
             )}
@@ -491,6 +497,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
                         </SecureComponent>
                       </Fragment>
                     }
+                    tooltipsMute={tooltipsMute}
                   />
                 </Grid>
               </Grid>

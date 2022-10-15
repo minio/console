@@ -51,6 +51,7 @@ const MissingIntegration = ({
               first to use this feature.
             </Fragment>
           }
+          tooltipsMute={false}
         />
       </Grid>
     </Grid>

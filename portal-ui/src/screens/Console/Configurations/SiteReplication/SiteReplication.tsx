@@ -223,6 +223,7 @@ const SiteReplication = () => {
                     .
                   </Fragment>
                 }
+                tooltipsMute={false}
               />
             </Grid>
           </Grid>
@@ -268,6 +269,7 @@ const SiteReplication = () => {
                 .
               </Fragment>
             }
+            tooltipsMute={false}
           />
         ) : null}
 

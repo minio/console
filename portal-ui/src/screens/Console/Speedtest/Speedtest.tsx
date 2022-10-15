@@ -328,6 +328,7 @@ const Speedtest = () => {
                   }
                   iconComponent={<WarnIcon />}
                   help={<Fragment />}
+                  tooltipsMute={false}
                 />
               </Fragment>
             )}

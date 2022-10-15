@@ -293,6 +293,7 @@ const DirectPVMain = ({ classes }: IDirectPVMain) => {
                   </a>
                 </Fragment>
               }
+              tooltipsMute={false}
             />
           ) : (
             <TableWrapper

@@ -520,6 +520,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                             .
                           </Fragment>
                         }
+                        tooltipsMute={false}
                       />
                     </Grid>
                   </Fragment>
@@ -556,6 +557,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                             )}
                           </Fragment>
                         }
+                        tooltipsMute={false}
                       />
                     </Grid>
                   </Grid>

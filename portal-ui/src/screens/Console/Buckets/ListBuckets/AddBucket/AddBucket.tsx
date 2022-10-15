@@ -163,6 +163,9 @@ const AddBucket = ({ classes }: IsetProps) => {
   const navigateTo = useSelector(
     (state: AppState) => state.addBucket.navigateTo
   );
+  const tooltipsMute = useSelector(
+    (state: AppState) => state.system.tooltipsMute
+  );
 
   const lockingAllowed = hasPermission(
     "*",
@@ -270,6 +273,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                   <br />
                 </Fragment>
               }
+              tooltipsMute={tooltipsMute}
             />
           }
         >

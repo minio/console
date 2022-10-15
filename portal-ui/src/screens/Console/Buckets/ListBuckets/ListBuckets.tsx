@@ -58,7 +58,7 @@ import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
 import BulkLifecycleModal from "./BulkLifecycleModal";
 import hasPermission from "../../../../common/SecureComponent/accessControl";
 import { setErrorSnackMessage } from "../../../../systemSlice";
-import { useAppDispatch } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../../store";
 import { useSelector } from "react-redux";
 import { selFeatures } from "../../consoleSlice";
 import AutoColorIcon from "../../Common/Components/AutoColorIcon";
@@ -113,6 +113,10 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
 
   const features = useSelector(selFeatures);
   const obOnly = !!features?.includes("object-browser-only");
+
+  const tooltipsMute = useSelector(
+    (state: AppState) => state.system.tooltipsMute
+  );
 
   useEffect(() => {
     if (loading) {
@@ -432,8 +436,6 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                           scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
                           resource={CONSOLE_UI_RESOURCE}
                         >
-                          <br />
-                          <br />
                           To get started,&nbsp;
                           <AButton
                             onClick={() => {
@@ -445,6 +447,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                         </SecureComponent>
                       </Fragment>
                     }
+                    tooltipsMute={tooltipsMute}
                   />
                 </Grid>
               </Grid>

@@ -374,6 +374,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
                           </AButton>
                         </Fragment>
                       }
+                      tooltipsMute={false}
                     />
                   </Grid>
                 </Grid>
