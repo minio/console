@@ -17,9 +17,7 @@
 import React, { Fragment } from "react";
 import { AppState, useAppDispatch } from "../store";
 import { useSelector } from "react-redux";
-import AButton from "../screens/Console/Common/AButton/AButton";
 import { setTooltipsMute } from "../systemSlice";
-import { color } from "@mui/system";
 
 const MutePermissionTooltips = () => {
   const tooltipsMute = useSelector(
