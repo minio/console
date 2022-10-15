@@ -41,7 +41,10 @@ import {
   niceBytesInt,
   niceDaysInt,
 } from "../../../../../../common/utils";
-import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import {
+  IAM_SCOPES,
+  permissionTooltipHelper,
+} from "../../../../../../common/SecureComponent/permissions";
 import PermissionTooltipHelper from "../../../../Common/PermissionTooltipHelper";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
@@ -554,10 +557,10 @@ const ObjectDetailPanel = ({
       icon: <InspectMenuIcon />,
       tooltip: canInspect
         ? "Inspect this file"
-        : PermissionTooltipHelper({
-            scopes: [IAM_SCOPES.ADMIN_INSPECT_DATA],
-            text: "inspect this file",
-          }),
+        : permissionTooltipHelper(
+            [IAM_SCOPES.ADMIN_INSPECT_DATA],
+            "inspect this file"
+          ),
     },
     {
       action: () => {
