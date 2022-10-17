@@ -58,8 +58,16 @@ func getInspectResult(session *models.Principal, params *inspectApi.InspectParam
 	}
 
 	var cfg madmin.InspectOptions
-	cfg.File = params.File
-	cfg.Volume = params.Volume
+	v, err := base64.URLEncoding.DecodeString(params.File)
+	if err != nil {
+		return nil, nil, ErrorWithContext(ctx, err)
+	}
+	cfg.File = string(v)
+	v, err = base64.URLEncoding.DecodeString(params.Volume)
+	if err != nil {
+		return nil, nil, ErrorWithContext(ctx, err)
+	}
+	cfg.Volume = string(v)
 
 	// TODO: Remove encryption option and always encrypt.
 	if params.Encrypt != nil && *params.Encrypt {
