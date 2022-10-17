@@ -58,6 +58,11 @@ import {
 import SettingsIcon from "../../icons/SettingsIcon";
 import React from "react";
 import LicenseBadge from "./Menu/LicenseBadge";
+import EncryptionIcon from "../../icons/SidebarMenus/EncryptionIcon";
+import EncryptionStatusIcon from "../../icons/SidebarMenus/EncryptionStatusIcon";
+import EncryptionPoliciesIcon from "../../icons/SidebarMenus/EncryptionPoliciesIcon";
+import EncryptionKeysIcon from "../../icons/SidebarMenus/EncryptionKeysIcon";
+import EncryptionIdentitiesIcon from "../../icons/SidebarMenus/EncryptionIdentitiesIcon";
 
 export const validRoutes = (
   features: string[] | null | undefined,
@@ -65,6 +70,7 @@ export const validRoutes = (
   directPVMode: boolean
 ) => {
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
+  const kmsIsEnabled = (features && features.includes("kms")) || false;
   let consoleMenus: IMenuItem[] = [
     {
       name: "Buckets",
@@ -193,6 +199,45 @@ export const validRoutes = (
       name: "Configurations",
       id: "configurations",
       icon: SettingsIcon,
+    },
+    {
+      name: "Encryption",
+      id: "encryption",
+      icon: EncryptionIcon,
+      children: [
+        {
+          name: "Status",
+          id: "kmsStatus",
+          component: NavLink,
+          icon: EncryptionStatusIcon,
+          to: IAM_PAGES.KMS_STATUS,
+          fsHidden: !kmsIsEnabled,
+        },
+        {
+          name: "Keys",
+          id: "kmsKeys",
+          component: NavLink,
+          icon: EncryptionKeysIcon,
+          to: IAM_PAGES.KMS_KEYS,
+          fsHidden: !kmsIsEnabled,
+        },
+        {
+          name: "Policies",
+          id: "kmsPolicies",
+          component: NavLink,
+          icon: EncryptionPoliciesIcon,
+          to: IAM_PAGES.KMS_POLICIES,
+          fsHidden: !kmsIsEnabled,
+        },
+        {
+          name: "Identities",
+          id: "kmsIdentities",
+          component: NavLink,
+          icon: EncryptionIdentitiesIcon,
+          to: IAM_PAGES.KMS_IDENTITIES,
+          fsHidden: !kmsIsEnabled,
+        },
+      ],
     },
     {
       name: "Support",

@@ -36,6 +36,9 @@ type KmsLatencyHistogram struct {
 
 	// duration
 	Duration int64 `json:"duration,omitempty"`
+
+	// total
+	Total int64 `json:"total,omitempty"`
 }
 
 // Validate validates this kms latency histogram

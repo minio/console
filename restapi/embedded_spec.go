@@ -5970,6 +5970,9 @@ func init() {
       "properties": {
         "duration": {
           "type": "integer"
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },
@@ -6040,7 +6043,10 @@ func init() {
           "type": "integer"
         },
         "latencyHistogram": {
-          "$ref": "#/definitions/kmsLatencyHistogram"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsLatencyHistogram"
+          }
         },
         "requestActive": {
           "type": "integer"
@@ -14226,6 +14232,9 @@ func init() {
       "properties": {
         "duration": {
           "type": "integer"
+        },
+        "total": {
+          "type": "integer"
         }
       }
     },
@@ -14296,7 +14305,10 @@ func init() {
           "type": "integer"
         },
         "latencyHistogram": {
-          "$ref": "#/definitions/kmsLatencyHistogram"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kmsLatencyHistogram"
+          }
         },
         "requestActive": {
           "type": "integer"

@@ -109,6 +109,26 @@ export const IAM_SCOPES = {
   ADMIN_INSPECT_DATA: "admin:InspectData",
   S3_ALL_ACTIONS: "s3:*",
   ADMIN_ALL_ACTIONS: "admin:*",
+  KMS_ALL_ACTIONS: "kms:*",
+  KMS_STATUS: "kms:Status",
+  KMS_METRICS: "kms:Metrics",
+  KMS_APIS: "kms:API",
+  KMS_Version: "kms:Version",
+  KMS_CREATE_KEY: "kms:CreateKey",
+  KMS_DELETE_KEY: "kms:DeleteKey",
+  KMS_LIST_KEYS: "kms:ListKeys",
+  KMS_IMPORT_KEY: "kms:ImportKey",
+  KMS_KEY_STATUS: "kms:KeyStatus",
+  KMS_DESCRIBE_POLICY: "kms:DescribePolicy",
+  KMS_ASSIGN_POLICY: "kms:AssignPolicy",
+  KMS_DELETE_POLICY: "kms:DeletePolicy",
+  KMS_SET_POLICY: "kms:SetPolicy",
+  KMS_GET_POLICY: "kms:GetPolicy",
+  KMS_LIST_POLICIES: "kms:ListPolicies",
+  KMS_DESCRIBE_IDENTITY: "kms:DescribeIdentity",
+  KMS_DESCRIBE_SELF_IDENTITY: "kms:DescribeSelfIdentity",
+  KMS_DELETE_IDENTITY: "kms:DeleteIdentity",
+  KMS_LIST_IDENTITIES: "kms:ListIdentities",
 };
 
 export const IAM_PAGES = {
@@ -142,6 +162,17 @@ export const IAM_PAGES = {
 
   /* Health */
   HEALTH: "/health",
+
+  /* KMS */
+  KMS: "/kms",
+  KMS_STATUS: "/kms/status",
+  KMS_KEYS: "/kms/keys",
+  KMS_KEYS_ADD: "/kms/add-key/",
+  KMS_KEYS_IMPORT: "/kms/import-key/",
+  KMS_POLICIES: "/kms/policies",
+  KMS_POLICIES_ADD: "/kms/add-policy",
+  KMS_POLICY_DETAILS: "/kms/policies/:policyName",
+  KMS_IDENTITIES: "/kms/identities",
 
   /* Support */
   TOOLS: "/support",
@@ -428,6 +459,48 @@ export const IAM_PAGES_PERMISSIONS = {
   [IAM_PAGES.SITE_REPLICATION_ADD]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.KMS]: [IAM_SCOPES.KMS_ALL_ACTIONS],
+  [IAM_PAGES.KMS_STATUS]: [IAM_SCOPES.KMS_ALL_ACTIONS, IAM_SCOPES.KMS_STATUS],
+  [IAM_PAGES.KMS_KEYS]: [
+    IAM_SCOPES.KMS_ALL_ACTIONS,
+    IAM_SCOPES.KMS_CREATE_KEY,
+    IAM_SCOPES.KMS_DELETE_KEY,
+    IAM_SCOPES.KMS_LIST_KEYS,
+    IAM_SCOPES.KMS_IMPORT_KEY,
+    IAM_SCOPES.KMS_KEY_STATUS,
+  ],
+  [IAM_PAGES.KMS_KEYS_ADD]: [
+    IAM_SCOPES.KMS_ALL_ACTIONS,
+    IAM_SCOPES.KMS_CREATE_KEY,
+  ],
+  [IAM_PAGES.KMS_KEYS_IMPORT]: [
+    IAM_SCOPES.KMS_ALL_ACTIONS,
+    IAM_SCOPES.KMS_IMPORT_KEY,
+  ],
+  [IAM_PAGES.KMS_POLICIES]: [
+    IAM_SCOPES.KMS_ALL_ACTIONS,
+    IAM_SCOPES.KMS_DESCRIBE_POLICY,
+    IAM_SCOPES.KMS_ASSIGN_POLICY,
+    IAM_SCOPES.KMS_DELETE_POLICY,
+    IAM_SCOPES.KMS_SET_POLICY,
+    IAM_SCOPES.KMS_GET_POLICY,
+    IAM_SCOPES.KMS_LIST_POLICIES,
+  ],
+  [IAM_PAGES.KMS_POLICIES_ADD]: [
+    IAM_SCOPES.KMS_ALL_ACTIONS,
+    IAM_SCOPES.KMS_SET_POLICY,
+  ],
+  [IAM_PAGES.KMS_POLICY_DETAILS]: [
+    IAM_SCOPES.KMS_ALL_ACTIONS,
+    IAM_SCOPES.KMS_GET_POLICY,
+  ],
+  [IAM_PAGES.KMS_IDENTITIES]: [
+    IAM_SCOPES.KMS_ALL_ACTIONS,
+    IAM_SCOPES.KMS_DESCRIBE_IDENTITY,
+    IAM_SCOPES.KMS_DESCRIBE_SELF_IDENTITY,
+    IAM_SCOPES.KMS_DELETE_IDENTITY,
+    IAM_SCOPES.KMS_LIST_IDENTITIES,
   ],
 };
 

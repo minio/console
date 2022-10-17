@@ -152,6 +152,8 @@ const DirectPVDrives = React.lazy(() => import("./DirectPV/DirectPVDrives"));
 
 const DirectPVVolumes = React.lazy(() => import("./DirectPV/DirectPVVolumes"));
 
+const KMSRoutes = React.lazy(() => import("./KMS/KMSRoutes"));
+
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -216,6 +218,7 @@ const Console = ({ classes }: IConsoleProps) => {
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
+  const kmsIsEnabled = (features && features.includes("kms")) || false;
   const obOnly = !!features?.includes("object-browser-only");
 
   const restartServer = () => {
@@ -428,6 +431,11 @@ const Console = ({ classes }: IConsoleProps) => {
       component: License,
       path: IAM_PAGES.LICENSE,
       forceDisplay: true,
+    },
+    {
+      component: KMSRoutes,
+      path: IAM_PAGES.KMS,
+      fsHidden: !kmsIsEnabled,
     },
   ];
 

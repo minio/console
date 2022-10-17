@@ -24,6 +24,7 @@ package models
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -57,7 +58,7 @@ type KmsMetricsResponse struct {
 
 	// latency histogram
 	// Required: true
-	LatencyHistogram *KmsLatencyHistogram `json:"latencyHistogram"`
+	LatencyHistogram []*KmsLatencyHistogram `json:"latencyHistogram"`
 
 	// request active
 	// Required: true
@@ -196,15 +197,22 @@ func (m *KmsMetricsResponse) validateLatencyHistogram(formats strfmt.Registry) e
 		return err
 	}
 
-	if m.LatencyHistogram != nil {
-		if err := m.LatencyHistogram.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("latencyHistogram")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("latencyHistogram")
-			}
-			return err
+	for i := 0; i < len(m.LatencyHistogram); i++ {
+		if swag.IsZero(m.LatencyHistogram[i]) { // not required
+			continue
 		}
+
+		if m.LatencyHistogram[i] != nil {
+			if err := m.LatencyHistogram[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("latencyHistogram" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("latencyHistogram" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -298,15 +306,19 @@ func (m *KmsMetricsResponse) ContextValidate(ctx context.Context, formats strfmt
 
 func (m *KmsMetricsResponse) contextValidateLatencyHistogram(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.LatencyHistogram != nil {
-		if err := m.LatencyHistogram.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("latencyHistogram")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("latencyHistogram")
+	for i := 0; i < len(m.LatencyHistogram); i++ {
+
+		if m.LatencyHistogram[i] != nil {
+			if err := m.LatencyHistogram[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("latencyHistogram" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("latencyHistogram" + "." + strconv.Itoa(i))
+				}
+				return err
 			}
-			return err
 		}
+
 	}
 
 	return nil
