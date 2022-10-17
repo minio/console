@@ -22,8 +22,10 @@ import withStyles from "@mui/styles/withStyles";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import { UploadFolderIcon, UploadIcon } from "../../../../icons";
-import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import PermissionTooltipHelper from "../../Common/PermissionTooltipHelper";
+import {
+  IAM_SCOPES,
+  permissionTooltipHelper,
+} from "../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../common/SecureComponent";
 import { Button } from "mds";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
@@ -83,10 +85,10 @@ const UploadFilesButton = ({
         tooltip={
           uploadEnabled
             ? "Upload Files"
-            : PermissionTooltipHelper({
-                scopes: [IAM_SCOPES.S3_PUT_OBJECT],
-                text: "upload files to this bucket",
-              })
+            : permissionTooltipHelper(
+                [IAM_SCOPES.S3_PUT_OBJECT],
+                "upload files to this bucket"
+              )
         }
       >
         <Button

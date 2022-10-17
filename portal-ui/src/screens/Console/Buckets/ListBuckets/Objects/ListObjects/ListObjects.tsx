@@ -75,7 +75,6 @@ import {
   IAM_SCOPES,
   permissionTooltipHelper,
 } from "../../../../../../common/SecureComponent/permissions";
-import PermissionTooltipHelper from "../../../../Common/PermissionTooltipHelper";
 import {
   hasPermission,
   SecureComponent,
@@ -1296,10 +1295,10 @@ const ListObjects = () => {
       icon: <DownloadIcon />,
       tooltip: canDownload
         ? "Download Selected"
-        : PermissionTooltipHelper({
-            scopes: [IAM_SCOPES.S3_GET_OBJECT],
-            text: "download objects from this bucket",
-          }),
+        : permissionTooltipHelper(
+            [IAM_SCOPES.S3_GET_OBJECT],
+            "download objects from this bucket"
+          ),
     },
     {
       action: openShare,
@@ -1325,10 +1324,10 @@ const ListObjects = () => {
         !canDelete || selectedObjects.length === 0 || !displayDeleteObject,
       tooltip: canDelete
         ? "Delete Selected Files"
-        : PermissionTooltipHelper({
-            scopes: [IAM_SCOPES.S3_DELETE_OBJECT],
-            text: "delete objects in this bucket",
-          }),
+        : permissionTooltipHelper(
+            [IAM_SCOPES.S3_DELETE_OBJECT],
+            "delete objects in this bucket"
+          ),
     },
   ];
 
