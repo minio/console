@@ -35,7 +35,6 @@ import (
 func registerInspectHandler(api *operations.ConsoleAPI) {
 	api.InspectInspectHandler = inspectApi.InspectHandlerFunc(func(params inspectApi.InspectParams, principal *models.Principal) middleware.Responder {
 		k, r, err := getInspectResult(principal, &params)
-
 		if err != nil {
 			return inspectApi.NewInspectDefault(int(err.Code)).WithPayload(err)
 		}
