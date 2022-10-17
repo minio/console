@@ -194,6 +194,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
         .then((_) => {
           setAddLoading(false);
           dispatch(setSnackBarMessage("Policy successfully updated"));
+          refreshPolicyDetails();
         })
         .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
@@ -345,6 +346,12 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
     elementItem.includes(filterGroups)
   );
 
+  const refreshPolicyDetails = () => {
+    setLoadingUsers(true);
+    setLoadingGroups(true);
+    setLoadingPolicy(true);
+  };
+
   return (
     <Fragment>
       {deleteOpen && (
@@ -407,9 +414,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                     variant="regular"
                     icon={<RefreshIcon />}
                     onClick={() => {
-                      setLoadingUsers(true);
-                      setLoadingGroups(true);
-                      setLoadingPolicy(true);
+                      refreshPolicyDetails();
                     }}
                   />
                 </TooltipWrapper>

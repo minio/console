@@ -32,6 +32,7 @@ const initialState: ConsoleState = {
     allowResources: null,
     customStyles: null,
     envConstants: null,
+    serverEndPoint: "",
   },
 };
 

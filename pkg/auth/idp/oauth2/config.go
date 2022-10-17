@@ -37,6 +37,7 @@ type ProviderConfig struct {
 	Userinfo                 bool
 	RedirectCallbackDynamic  bool
 	RedirectCallback         string
+	RoleArn                  string // can be empty
 }
 
 // GetStateKeyFunc - return the key function used to generate the authorization
