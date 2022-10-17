@@ -19,10 +19,7 @@ package restapi
 import (
 	"context"
 	"encoding/base64"
-	"encoding/binary"
-	"encoding/hex"
 	"fmt"
-	"hash/crc32"
 	"io"
 	"net/http"
 
@@ -38,13 +35,12 @@ import (
 func registerInspectHandler(api *operations.ConsoleAPI) {
 	api.InspectInspectHandler = inspectApi.InspectHandlerFunc(func(params inspectApi.InspectParams, principal *models.Principal) middleware.Responder {
 		k, r, err := getInspectResult(principal, &params)
-		isEncryptOn := params.Encrypt != nil && *params.Encrypt
 
 		if err != nil {
 			return inspectApi.NewInspectDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return middleware.ResponderFunc(processInspectResponse(isEncryptOn, k, r))
+		return middleware.ResponderFunc(processInspectResponse(&params, k, r))
 	})
 }
 
@@ -94,34 +90,15 @@ func decryptInspectV1(key [32]byte, r io.Reader) io.ReadCloser {
 	return io.NopCloser(stream.DecryptReader(r, nonce, nil))
 }
 
-func processInspectResponse(isEnc bool, k []byte, r io.ReadCloser) func(w http.ResponseWriter, _ runtime.Producer) {
+func processInspectResponse(params *inspectApi.InspectParams, k []byte, r io.ReadCloser) func(w http.ResponseWriter, _ runtime.Producer) {
+	isEnc := params.Encrypt != nil && *params.Encrypt
 	return func(w http.ResponseWriter, _ runtime.Producer) {
-		fileName := "inspect-data.enc"
-		if len(k) == 32 {
-			var id [4]byte
-			binary.LittleEndian.PutUint32(id[:], crc32.ChecksumIEEE(k))
-			defer r.Close()
-
-			ext := "enc"
-			if !isEnc {
-				ext = "zip"
-				r = decryptInspectV1(*(*[32]byte)(k), r)
-			}
-
-			fileName = fmt.Sprintf("inspect.%s.%s", hex.EncodeToString(id[:]), ext)
-
-			if isEnc {
-				// use cookie to transmit the Decryption Key.
-				hexKey := hex.EncodeToString(id[:]) + hex.EncodeToString(k)
-				cookie := http.Cookie{
-					Name:   fileName,
-					Value:  hexKey,
-					Path:   "/",
-					MaxAge: 3000,
-				}
-				http.SetCookie(w, &cookie)
-			}
+		ext := ".enc"
+		if len(k) == 32 && !isEnc {
+			ext = ".zip"
+			r = decryptInspectV1(*(*[32]byte)(k), r)
 		}
+		fileName := fmt.Sprintf("inspect-%s-%s.%s", params.Volume, params.File, ext)
 
 		w.Header().Set("Content-Type", "application/octet-stream")
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
