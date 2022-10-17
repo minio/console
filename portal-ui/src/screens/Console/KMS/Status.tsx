@@ -329,24 +329,26 @@ const Status = () => {
             <Bar dataKey="errors" fill="black" />
           </BarChart>
           <h3>Latency Histogram</h3>
-          {metrics.latencyHistogram && <LineChart
-            width={730}
-            height={250}
-            data={getHistogramData()}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="duration" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="total"
-              stroke="#8884d8"
-              name={"Requests that took T ms or less"}
-            />
-          </LineChart>}
+          {metrics.latencyHistogram && (
+            <LineChart
+              width={730}
+              height={250}
+              data={getHistogramData()}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="duration" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="total"
+                stroke="#8884d8"
+                name={"Requests that took T ms or less"}
+              />
+            </LineChart>
+          )}
         </Fragment>
       )}
     </Fragment>
