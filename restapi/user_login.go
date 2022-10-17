@@ -157,7 +157,7 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		for name, provider := range openIDProviders {
 			// initialize new oauth2 client
-			oauth2Client, err := openIDProviders.NewOauth2ProviderClient(name, nil, r, GetConsoleHTTPClient())
+			oauth2Client, err := openIDProviders.NewOauth2ProviderClient(name, nil, r, GetConsoleHTTPClient(""))
 			if err != nil {
 				return nil, ErrorWithContext(ctx, err, ErrOauth2Provider)
 			}
@@ -199,7 +199,7 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProv
 	lr := params.Body
 	if openIDProviders != nil {
 		// initialize new oauth2 client
-		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(idpName, nil, r, GetConsoleHTTPClient())
+		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(idpName, nil, r, GetConsoleHTTPClient(""))
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
