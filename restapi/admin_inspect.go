@@ -60,7 +60,7 @@ func getInspectResult(session *models.Principal, params *inspectApi.InspectParam
 		return nil, nil, ErrorWithContext(ctx, err)
 	}
 
-	var cfg = madmin.InspectOptions{
+	cfg := madmin.InspectOptions{
 		File:   params.File,
 		Volume: params.Volume,
 	}
