@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"unicode/utf8"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -34,6 +35,14 @@ import (
 
 func registerInspectHandler(api *operations.ConsoleAPI) {
 	api.InspectInspectHandler = inspectApi.InspectHandlerFunc(func(params inspectApi.InspectParams, principal *models.Principal) middleware.Responder {
+		if v, err := base64.URLEncoding.DecodeString(params.File); err == nil && utf8.Valid(v) {
+			params.File = string(v)
+		}
+
+		if v, err := base64.URLEncoding.DecodeString(params.Volume); err == nil && utf8.Valid(v) {
+			params.Volume = string(v)
+		}
+
 		k, r, err := getInspectResult(principal, &params)
 		if err != nil {
 			return inspectApi.NewInspectDefault(int(err.Code)).WithPayload(err)
@@ -51,19 +60,13 @@ func getInspectResult(session *models.Principal, params *inspectApi.InspectParam
 		return nil, nil, ErrorWithContext(ctx, err)
 	}
 
-	var cfg madmin.InspectOptions
-	v, err := base64.URLEncoding.DecodeString(params.File)
-	if err != nil {
-		return nil, nil, ErrorWithContext(ctx, err)
+	var cfg = madmin.InspectOptions{
+		File:   params.File,
+		Volume: params.Volume,
 	}
-	cfg.File = string(v)
-	v, err = base64.URLEncoding.DecodeString(params.Volume)
-	if err != nil {
-		return nil, nil, ErrorWithContext(ctx, err)
-	}
-	cfg.Volume = string(v)
 
 	// TODO: Remove encryption option and always encrypt.
+	// Maybe also add public key field.
 	if params.Encrypt != nil && *params.Encrypt {
 		cfg.PublicKey, _ = base64.StdEncoding.DecodeString("MIIBCgKCAQEAs/128UFS9A8YSJY1XqYKt06dLVQQCGDee69T+0Tip/1jGAB4z0/3QMpH0MiS8Wjs4BRWV51qvkfAHzwwdU7y6jxU05ctb/H/WzRj3FYdhhHKdzear9TLJftlTs+xwj2XaADjbLXCV1jGLS889A7f7z5DgABlVZMQd9BjVAR8ED3xRJ2/ZCNuQVJ+A8r7TYPGMY3wWvhhPgPk3Lx4WDZxDiDNlFs4GQSaESSsiVTb9vyGe/94CsCTM6Cw9QG6ifHKCa/rFszPYdKCabAfHcS3eTr0GM+TThSsxO7KfuscbmLJkfQev1srfL2Ii2RbnysqIJVWKEwdW05ID8ryPkuTuwIDAQAB")
 	}
