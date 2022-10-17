@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"hash/crc32"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/go-openapi/runtime"
@@ -92,15 +91,15 @@ func decryptInspectV1(key [32]byte, r io.Reader) io.ReadCloser {
 		return nil
 	}
 	nonce := make([]byte, stream.NonceSize())
-	return ioutil.NopCloser(stream.DecryptReader(r, nonce, nil))
+	return io.NopCloser(stream.DecryptReader(r, nonce, nil))
 }
 
 func processInspectResponse(isEnc bool, k []byte, r io.ReadCloser) func(w http.ResponseWriter, _ runtime.Producer) {
 	return func(w http.ResponseWriter, _ runtime.Producer) {
-		fileName := fmt.Sprintf("inspect.enc")
+		fileName := "inspect-data.enc"
 		if len(k) == 32 {
 			var id [4]byte
-			binary.LittleEndian.PutUint32(id[:], crc32.ChecksumIEEE(k[:]))
+			binary.LittleEndian.PutUint32(id[:], crc32.ChecksumIEEE(k))
 			defer r.Close()
 
 			ext := "enc"
@@ -113,7 +112,7 @@ func processInspectResponse(isEnc bool, k []byte, r io.ReadCloser) func(w http.R
 
 			if isEnc {
 				// use cookie to transmit the Decryption Key.
-				hexKey := hex.EncodeToString(id[:]) + hex.EncodeToString(k[:])
+				hexKey := hex.EncodeToString(id[:]) + hex.EncodeToString(k)
 				cookie := http.Cookie{
 					Name:   fileName,
 					Value:  hexKey,
