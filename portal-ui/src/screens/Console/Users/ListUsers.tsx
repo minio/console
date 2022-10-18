@@ -18,7 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { Button } from "mds";
+import { Button } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../common/api";
@@ -44,6 +44,7 @@ import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import {
   addUserToGroupPermissions,
+  assignGroupPermissions,
   CONSOLE_UI_RESOURCE,
   deleteUserPermissions,
   IAM_PAGES,
@@ -106,6 +107,17 @@ const ListUsers = ({ classes }: IUsersProps) => {
   );
 
   const deleteUser = hasPermission(CONSOLE_UI_RESOURCE, deleteUserPermissions);
+
+  const canCreateUser = hasPermission(
+    CONSOLE_UI_RESOURCE,
+    [
+      IAM_SCOPES.ADMIN_CREATE_USER,
+      IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+      IAM_SCOPES.ADMIN_LIST_GROUPS,
+      IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+    ],
+    true
+  );
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
@@ -233,15 +245,16 @@ const ListUsers = ({ classes }: IUsersProps) => {
             >
               <Button
                 id={"delete-selected-users"}
+                variant={"outlined"}
                 onClick={() => {
                   setDeleteOpen(true);
                 }}
-                label={"Delete Selected"}
-                icon={<DeleteIcon />}
-                disabled={checkedUsers.length === 0}
-                variant={"secondary"}
+                endIcon={<DeleteIcon />}
+                disabled={checkedUsers.length === 0 || !deleteUser}
                 aria-label="delete-selected-users"
-              />
+              >
+                Delete Selected
+              </Button>
             </TooltipWrapper>
           </SecureComponent>
           <SecureComponent
@@ -251,28 +264,29 @@ const ListUsers = ({ classes }: IUsersProps) => {
           >
             <TooltipWrapper
               tooltip={
-                hasPermission("console", [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP])
-                  ? checkedUsers.length === 0
-                    ? "Select Users to group"
-                    : "Add to Group"
-                  : permissionTooltipHelper(
-                      [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP],
+                !addUserToGroup
+                  ? permissionTooltipHelper(
+                      assignGroupPermissions,
                       "add users to groups"
                     )
+                  : checkedUsers.length === 0
+                  ? "Select Users to group"
+                  : "Add to Group"
               }
             >
               <Button
                 id={"add-to-group"}
-                label={"Add to Group"}
-                icon={<GroupsIcon />}
-                disabled={checkedUsers.length <= 0}
+                variant={"outlined"}
+                endIcon={<GroupsIcon />}
+                disabled={checkedUsers.length <= 0 || !addUserToGroup}
                 onClick={() => {
                   if (checkedUsers.length > 0) {
                     setAddGroupOpen(true);
                   }
                 }}
-                variant={"regular"}
-              />
+              >
+                Add to Group
+              </Button>
             </TooltipWrapper>
           </SecureComponent>
           <SecureComponent
@@ -287,16 +301,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
           >
             <TooltipWrapper
               tooltip={
-                hasPermission(
-                  "console",
-                  [
-                    IAM_SCOPES.ADMIN_CREATE_USER,
-                    IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-                    IAM_SCOPES.ADMIN_LIST_GROUPS,
-                    IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-                  ],
-                  true
-                )
+                canCreateUser
                   ? "Create User"
                   : permissionTooltipHelper(
                       [
@@ -311,25 +316,15 @@ const ListUsers = ({ classes }: IUsersProps) => {
             >
               <Button
                 id={"create-user"}
-                label={"Create User"}
-                icon={<AddIcon />}
+                variant={"contained"}
+                endIcon={<AddIcon />}
                 onClick={() => {
                   navigate(`${IAM_PAGES.USER_ADD}`);
                 }}
-                variant={"callAction"}
-                disabled={
-                  !hasPermission(
-                    "console",
-                    [
-                      IAM_SCOPES.ADMIN_CREATE_USER,
-                      IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-                      IAM_SCOPES.ADMIN_LIST_GROUPS,
-                      IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-                    ],
-                    true
-                  )
-                }
-              />
+                disabled={!canCreateUser}
+              >
+                Create User
+              </Button>
             </TooltipWrapper>
           </SecureComponent>
         </Grid>

@@ -17,10 +17,9 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Grid } from "@mui/material";
+import { Grid, Button, IconButton } from "@mui/material";
 import {
   AddIcon,
   IAMPoliciesIcon,
@@ -345,27 +344,27 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                         )
                   }
                 >
-                  <Button
+                  <IconButton
                     id={"delete-user"}
                     onClick={deleteUser}
-                    icon={<TrashIcon />}
-                    variant={"secondary"}
                     disabled={
                       !hasPermission(
                         CONSOLE_UI_RESOURCE,
                         deleteUserPermissions
                       ) || userLoggedIn === userName
                     }
-                  />
+                  >
+                    <TrashIcon />
+                  </IconButton>
                 </TooltipWrapper>
 
-                <TooltipWrapper tooltip={"Change Password"}>
-                  <Button
+                <TooltipWrapper tooltip={"Change Password for selected user"}>
+                  <IconButton
                     id={"change-user-password"}
                     onClick={changeUserPassword}
-                    icon={<PasswordKeyIcon />}
-                    variant={"regular"}
-                  />
+                  >
+                    <PasswordKeyIcon />
+                  </IconButton>
                 </TooltipWrapper>
               </Fragment>
             }
@@ -395,14 +394,15 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                     >
                       <Button
                         id={"add-groups"}
-                        label={"Add to Groups"}
                         onClick={() => {
                           setAddGroupOpen(true);
                         }}
-                        icon={<AddIcon />}
-                        variant={"callAction"}
+                        endIcon={<AddIcon />}
+                        variant={"contained"}
                         disabled={!canAssignGroup}
-                      />
+                      >
+                        Add to Groups
+                      </Button>
                     </TooltipWrapper>
                   </div>
                   <div className={classes.tableBlock}>
@@ -455,14 +455,15 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                     >
                       <Button
                         id={"assign-policies"}
-                        label={"Assign Policies"}
                         onClick={() => {
                           setPolicyOpen(true);
                         }}
-                        icon={<IAMPoliciesIcon />}
-                        variant={"callAction"}
+                        endIcon={<IAMPoliciesIcon />}
+                        variant={"outlined"}
                         disabled={!canAssignPolicy}
-                      />
+                      >
+                        Assign Policies
+                      </Button>
                     </TooltipWrapper>
                   </div>
                   <div className={classes.tableBlock}>

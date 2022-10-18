@@ -18,10 +18,10 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { LinearProgress } from "@mui/material";
+import { LinearProgress, Tooltip } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Bucket, BucketList } from "../types";
 import {
@@ -274,8 +274,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                       setBulkSelect(!bulkSelect);
                       setSelectedBuckets([]);
                     }}
-                    icon={<SelectMultipleIcon />}
-                    variant={bulkSelect ? "callAction" : "regular"}
+                    endIcon={<SelectMultipleIcon />}
                   />
                 </TooltipWrapper>
 
@@ -290,24 +289,23 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                     <Button
                       id={"select-all-buckets"}
                       onClick={selectAllBuckets}
-                      icon={<SelectAllIcon />}
-                      variant={"regular"}
+                      endIcon={<SelectAllIcon />}
                     />
                   </TooltipWrapper>
                 )}
 
                 <TooltipWrapper
                   tooltip={
-                    selectedBuckets.length === 0
+                    !canPutLifecycle
+                      ? permissionTooltipHelper(
+                          IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
+                          "configure lifecycle for the selected buckets"
+                        )
+                      : selectedBuckets.length === 0
                       ? bulkSelect
                         ? "Please select at least one bucket on which to configure Lifecycle"
                         : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
-                      : canPutLifecycle
-                      ? "Set Lifecycle"
-                      : permissionTooltipHelper(
-                          IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
-                          "configuring lifecycle for the selected buckets"
-                        )
+                      : "Set Lifecycle"
                   }
                 >
                   <Button
@@ -315,21 +313,27 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                     onClick={() => {
                       setLifecycleModalOpen(true);
                     }}
-                    icon={<LifecycleConfigIcon />}
-                    variant={"regular"}
                     disabled={selectedBuckets.length === 0 || !canPutLifecycle}
+                    endIcon={<LifecycleConfigIcon />}
                   />
                 </TooltipWrapper>
 
-                <TooltipWrapper tooltip={"Set Replication"}>
+                <TooltipWrapper
+                  tooltip={
+                    selectedBuckets.length === 0
+                      ? bulkSelect
+                        ? "Please select at least one bucket on which to configure Replication"
+                        : "Use the Select Multiple Buckets button to choose buckets on which to configure Replication"
+                      : "Set Replication"
+                  }
+                >
                   <Button
                     id={"set-replication"}
                     onClick={() => {
                       setReplicationModalOpen(true);
                     }}
-                    icon={<MultipleBucketsIcon />}
-                    variant={"regular"}
                     disabled={selectedBuckets.length === 0}
+                    endIcon={<MultipleBucketsIcon />}
                   />
                 </TooltipWrapper>
               </Fragment>
@@ -341,8 +345,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                 onClick={() => {
                   setLoading(true);
                 }}
-                icon={<RefreshIcon />}
-                variant={"regular"}
+                endIcon={<RefreshIcon />}
               />
             </TooltipWrapper>
 
@@ -350,7 +353,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
               <TooltipWrapper
                 tooltip={
                   canCreateBucket
-                    ? ""
+                    ? "Create Bucket"
                     : permissionTooltipHelper(
                         [IAM_SCOPES.S3_CREATE_BUCKET],
                         "creating a bucket"
@@ -362,10 +365,8 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                   onClick={() => {
                     navigate(IAM_PAGES.ADD_BUCKETS);
                   }}
-                  icon={<AddIcon />}
-                  variant={"callAction"}
                   disabled={!canCreateBucket}
-                  label={"Create Bucket"}
+                  endIcon={<AddIcon />}
                 />
               </TooltipWrapper>
             )}

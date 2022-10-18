@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { Button } from "mds";
+import { Button } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
@@ -266,11 +266,12 @@ const Groups = ({ classes }: IGroupsProps) => {
                   onClick={() => {
                     setPolicyOpen(true);
                   }}
-                  label={"Assign Policy"}
-                  icon={<IAMPoliciesIcon />}
+                  endIcon={<IAMPoliciesIcon />}
                   disabled={checkedGroups.length < 1 || !applyPolicy}
-                  variant={"regular"}
-                />
+                  variant={"outlined"}
+                >
+                  Assign Policy
+                </Button>
               </TooltipWrapper>
             </SecureComponent>
             <SecureComponent
@@ -296,11 +297,12 @@ const Groups = ({ classes }: IGroupsProps) => {
                   onClick={() => {
                     setDeleteOpen(true);
                   }}
-                  label={"Delete Selected"}
-                  icon={<DeleteIcon />}
-                  variant="secondary"
+                  endIcon={<DeleteIcon />}
+                  variant="outlined"
                   disabled={checkedGroups.length === 0 || !getGroup}
-                />
+                >
+                  Delete Selected
+                </Button>
               </TooltipWrapper>
             </SecureComponent>
             <SecureComponent
@@ -312,13 +314,14 @@ const Groups = ({ classes }: IGroupsProps) => {
               <TooltipWrapper tooltip={"Create Group"}>
                 <Button
                   id={"create-group"}
-                  label={"Create Group"}
-                  variant="callAction"
-                  icon={<AddIcon />}
+                  variant={"contained"}
+                  endIcon={<AddIcon />}
                   onClick={() => {
                     navigate(`${IAM_PAGES.GROUPS_ADD}`);
                   }}
-                />
+                >
+                  Create Group
+                </Button>
               </TooltipWrapper>
             </SecureComponent>
           </Box>

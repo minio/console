@@ -12,7 +12,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 
 import withStyles from "@mui/styles/withStyles";
-import { Grid } from "@mui/material";
+import { Grid, IconButton } from "@mui/material";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import {
   AddIcon,
@@ -395,14 +395,14 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
 
                 <div className={classes.spacerLeft}>
                   <TooltipWrapper tooltip={"Delete Group"}>
-                    <Button
+                    <IconButton
                       id={"delete-user-group"}
-                      variant="secondary"
-                      icon={<TrashIcon />}
                       onClick={() => {
                         setDeleteOpen(true);
                       }}
-                    />
+                    >
+                      <TrashIcon />
+                    </IconButton>
                   </TooltipWrapper>
                 </div>
               </Fragment>

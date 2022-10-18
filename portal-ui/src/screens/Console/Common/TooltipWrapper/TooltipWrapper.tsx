@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { cloneElement } from "react";
-import { Tooltip } from "@mui/material";
+import { Box, Grid, Tooltip } from "@mui/material";
 
 interface ITooltipWrapperProps {
   tooltip: string;
@@ -30,9 +30,11 @@ const TooltipWrapper = ({
 }: ITooltipWrapperProps) => {
   return (
     <Tooltip title={tooltip}>
-      <span>
-        {errorProps ? cloneElement(children, { ...errorProps }) : children}
-      </span>
+      <Box>
+        <span>
+          {errorProps ? cloneElement(children, { ...errorProps }) : children}
+        </span>
+      </Box>
     </Tooltip>
   );
 };
