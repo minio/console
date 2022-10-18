@@ -1240,8 +1240,14 @@ const ListObjects = () => {
     IAM_SCOPES.S3_GET_OBJECT,
     IAM_SCOPES.S3_STAR_OBJECT,
   ]);
-  const canDelete = hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]);
-  const canUpload = hasPermission(uploadPath, [IAM_SCOPES.S3_PUT_OBJECT]);
+  const canDelete = hasPermission(bucketName, [
+    IAM_SCOPES.S3_DELETE_OBJECT,
+    IAM_SCOPES.S3_STAR_OBJECT,
+  ]);
+  const canUpload = hasPermission(uploadPath, [
+    IAM_SCOPES.S3_PUT_OBJECT,
+    IAM_SCOPES.S3_STAR_OBJECT,
+  ]);
 
   const onClosePanel = (forceRefresh: boolean) => {
     dispatch(setSelectedObjectView(null));
