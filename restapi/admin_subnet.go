@@ -91,7 +91,7 @@ func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKe
 	if err != nil {
 		return false, err
 	}
-	registerResult, err := subnet.Register(GetConsoleHTTPClient(), serverInfo, apiKey, "", "")
+	registerResult, err := subnet.Register(GetConsoleHTTPClient(""), serverInfo, apiKey, "", "")
 	if err != nil {
 		return false, err
 	}
@@ -213,7 +213,7 @@ func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*xhttp.Cl
 		}
 		subnetHTTPClient.Transport.(*http.Transport).Proxy = http.ProxyURL(subnetProxyURL)
 	} else {
-		subnetHTTPClient = GetConsoleHTTPClient()
+		subnetHTTPClient = GetConsoleHTTPClient("")
 	}
 	clientI := &xhttp.Client{
 		Client: subnetHTTPClient,
@@ -309,7 +309,7 @@ func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInf
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	client := &xhttp.Client{
-		Client: GetConsoleHTTPClient(),
+		Client: GetConsoleHTTPClient(""),
 	}
 
 	licenseInfo, err := subnet.ParseLicense(client, os.Getenv("CONSOLE_SUBNET_LICENSE"))
