@@ -700,7 +700,7 @@ jobs:
       - vulnerable-dependencies-checks
       - semgrep-static-code-analysis
     runs-on: [ ubuntu-latest ]
-    timeout-minutes: 5
+    timeout-minutes: 15
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -750,12 +750,6 @@ jobs:
           echo "There was no hit, hence we generate the assets"
           make assets
 
-      - name: Generate Assets
-        if: steps.assets-cache.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
-
       - uses: actions/cache@v3
         name: Go Mod Cache
         with:
@@ -779,7 +773,7 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
       - name: Run TestCafe Tests
-        timeout-minutes: 5
+        timeout-minutes: 10
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-4/ --skip-js-errors'
