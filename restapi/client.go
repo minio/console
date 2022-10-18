@@ -330,12 +330,14 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 }
 
 func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
+	minioURL := getMinIOServer()
+
 	// Future authentication methods can be added under this switch statement
 	switch {
 	// LDAP authentication for Console
 	case ldap.GetLDAPEnabled():
 		{
-			creds, err := auth.GetCredentialsFromLDAP(GetConsoleHTTPClient(), getMinIOServer(), accessKey, secretKey)
+			creds, err := auth.GetCredentialsFromLDAP(GetConsoleHTTPClient(minioURL), minioURL, accessKey, secretKey)
 			if err != nil {
 				return nil, err
 			}
@@ -354,8 +356,8 @@ func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 				DurationSeconds: int(xjwt.GetConsoleSTSDuration().Seconds()),
 			}
 			stsAssumeRole := &credentials.STSAssumeRole{
-				Client:      GetConsoleHTTPClient(),
-				STSEndpoint: getMinIOServer(),
+				Client:      GetConsoleHTTPClient(minioURL),
+				STSEndpoint: minioURL,
 				Options:     opts,
 			}
 			consoleSTSWrapper := consoleSTSAssumeRole{stsAssumeRole: stsAssumeRole}
@@ -374,10 +376,12 @@ func getConsoleCredentialsFromSession(claims *models.Principal) *credentials.Cre
 // from the provided session token
 func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	creds := getConsoleCredentialsFromSession(claims)
-	minioClient, err := minio.New(getMinIOEndpoint(), &minio.Options{
+	endpoint := getMinIOEndpoint()
+	secure := getMinIOEndpointIsSecure()
+	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:     creds,
-		Secure:    getMinIOEndpointIsSecure(),
-		Transport: GetConsoleHTTPClient().Transport,
+		Secure:    secure,
+		Transport: GetConsoleHTTPClient(getMinIOServer()).Transport,
 	})
 	if err != nil {
 		return nil, err
@@ -414,7 +418,7 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 	if err != nil {
 		return nil, fmt.Errorf("the provided endpoint is invalid")
 	}
-	s3Config := newS3Config(objectURL, claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
+	s3Config := newS3Config(objectURL, claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken)
 	client, pErr := mc.S3New(s3Config)
 	if pErr != nil {
 		return nil, pErr.Cause
@@ -438,7 +442,7 @@ func pathJoinFinalSlash(elem ...string) string {
 
 // newS3Config simply creates a new Config struct using the passed
 // parameters.
-func newS3Config(endpoint, accessKey, secretKey, sessionToken string, insecure bool) *mc.Config {
+func newS3Config(endpoint, accessKey, secretKey, sessionToken string) *mc.Config {
 	// We have a valid alias and hostConfig. We populate the/
 	// consoleCredentials from the match found in the config file.
 	s3Config := new(mc.Config)
@@ -446,13 +450,16 @@ func newS3Config(endpoint, accessKey, secretKey, sessionToken string, insecure b
 	s3Config.AppName = globalAppName
 	s3Config.AppVersion = pkg.Version
 	s3Config.Debug = false
-	s3Config.Insecure = insecure
 
 	s3Config.HostURL = endpoint
 	s3Config.AccessKey = accessKey
 	s3Config.SecretKey = secretKey
 	s3Config.SessionToken = sessionToken
 	s3Config.Signature = "S3v4"
+
+	insecure := isLocalIPEndpoint(endpoint)
+
+	s3Config.Insecure = insecure
 	s3Config.Transport = PrepareSTSClientTransport(insecure)
 
 	return s3Config
