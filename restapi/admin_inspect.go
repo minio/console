@@ -17,11 +17,11 @@
 package restapi
 
 import (
-	"context"
 	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/go-openapi/runtime"
@@ -53,8 +53,7 @@ func registerInspectHandler(api *operations.ConsoleAPI) {
 }
 
 func getInspectResult(session *models.Principal, params *inspectApi.InspectParams) ([]byte, io.ReadCloser, *models.Error) {
-	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
-	defer cancel()
+	ctx := params.HTTPRequest.Context()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, nil, ErrorWithContext(ctx, err)
@@ -95,13 +94,27 @@ func decryptInspectV1(key [32]byte, r io.Reader) io.ReadCloser {
 func processInspectResponse(params *inspectApi.InspectParams, k []byte, r io.ReadCloser) func(w http.ResponseWriter, _ runtime.Producer) {
 	isEnc := params.Encrypt != nil && *params.Encrypt
 	return func(w http.ResponseWriter, _ runtime.Producer) {
-		ext := ".enc"
+		ext := "enc"
 		if len(k) == 32 && !isEnc {
-			ext = ".zip"
+			ext = "zip"
 			r = decryptInspectV1(*(*[32]byte)(k), r)
 		}
 		fileName := fmt.Sprintf("inspect-%s-%s.%s", params.Volume, params.File, ext)
-
+		fileName = strings.Map(func(r rune) rune {
+			switch {
+			case r >= 'A' && r <= 'Z':
+				return r
+			case r >= 'a' && r <= 'z':
+				return r
+			case r >= '0' && r <= '9':
+				return r
+			default:
+				if strings.ContainsAny(string(r), "-+._") {
+					return r
+				}
+				return '_'
+			}
+		}, fileName)
 		w.Header().Set("Content-Type", "application/octet-stream")
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
 
