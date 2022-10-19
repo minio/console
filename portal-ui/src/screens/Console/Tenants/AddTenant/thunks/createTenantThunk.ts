@@ -65,11 +65,10 @@ export const createTenantAsync = createAsyncThunk(
     const minioServerCertificates = certificates.minioServerCertificates;
     const minioClientCertificates = certificates.minioClientCertificates;
     const minioCAsCertificates = certificates.minioCAsCertificates;
-    const serverCertificate = certificates.serverCertificate;
-    const clientCertificate = certificates.clientCertificate;
-    const vaultCertificate = certificates.vaultCertificate;
-    const vaultCA = certificates.vaultCA;
-    const gemaltoCA = certificates.gemaltoCA;
+    const kesServerCertificate = certificates.kesServerCertificate;
+    const minioMTLSCertificate = certificates.minioMTLSCertificate;
+    const kmsMTLSCertificate = certificates.kmsMTLSCertificate;
+    const kmsCA = certificates.kmsCA;
     const rawConfiguration = fields.encryption.rawConfiguration;
     const encryptionTab = fields.encryption.encryptionTab;
     const enableEncryption = fields.encryption.enableEncryption;
@@ -346,13 +345,6 @@ export const createTenantAsync = createAsyncThunk(
 
       switch (encryptionType) {
         case "gemalto":
-          let gemaltoCAIntroduce = {};
-
-          if (gemaltoCA.encoded_cert !== "") {
-            gemaltoCAIntroduce = {
-              ca: gemaltoCA.encoded_cert,
-            };
-          }
           insertEncrypt = {
             gemalto: {
               keysecure: {
@@ -361,9 +353,6 @@ export const createTenantAsync = createAsyncThunk(
                   token: gemaltoToken,
                   domain: gemaltoDomain,
                   retry: parseInt(gemaltoRetry),
-                },
-                tls: {
-                  ...gemaltoCAIntroduce,
                 },
               },
             },
@@ -416,31 +405,6 @@ export const createTenantAsync = createAsyncThunk(
           };
           break;
         case "vault":
-          let vaultKeyPair = null;
-          let vaultCAInsert = null;
-          if (
-            vaultCertificate.encoded_key !== "" &&
-            vaultCertificate.encoded_cert !== ""
-          ) {
-            vaultKeyPair = {
-              key: vaultCertificate.encoded_key,
-              crt: vaultCertificate.encoded_cert,
-            };
-          }
-          if (vaultCA.encoded_cert !== "") {
-            vaultCAInsert = {
-              ca: vaultCA.encoded_cert,
-            };
-          }
-          let vaultTLS = null;
-          if (vaultKeyPair || vaultCAInsert) {
-            vaultTLS = {
-              tls: {
-                ...vaultKeyPair,
-                ...vaultCAInsert,
-              },
-            };
-          }
           insertEncrypt = {
             vault: {
               endpoint: vaultEndpoint,
@@ -453,7 +417,6 @@ export const createTenantAsync = createAsyncThunk(
                 secret: vaultSecret,
                 retry: parseInt(vaultRetry),
               },
-              ...vaultTLS,
               status: {
                 ping: parseInt(vaultPing),
               },
@@ -464,27 +427,56 @@ export const createTenantAsync = createAsyncThunk(
 
       let encryptionServerKeyPair: any = {};
       let encryptionClientKeyPair: any = {};
+      let encryptionKMSCertificates: any = {};
 
+      // MinIO -> KES (mTLS certificates)
       if (
-        clientCertificate.encoded_key !== "" &&
-        clientCertificate.encoded_cert !== ""
+        minioMTLSCertificate.encoded_key !== "" &&
+        minioMTLSCertificate.encoded_cert !== ""
       ) {
         encryptionClientKeyPair = {
-          client: {
-            key: clientCertificate.encoded_key,
-            crt: clientCertificate.encoded_cert,
+          minio_mtls: {
+            key: minioMTLSCertificate.encoded_key,
+            crt: minioMTLSCertificate.encoded_cert,
           },
         };
       }
 
+      // KES server certificates
       if (
-        serverCertificate.encoded_key !== "" &&
-        serverCertificate.encoded_cert !== ""
+        kesServerCertificate.encoded_key !== "" &&
+        kesServerCertificate.encoded_cert !== ""
       ) {
         encryptionServerKeyPair = {
-          server: {
-            key: serverCertificate.encoded_key,
-            crt: serverCertificate.encoded_cert,
+          server_tls: {
+            key: kesServerCertificate.encoded_key,
+            crt: kesServerCertificate.encoded_cert,
+          },
+        };
+      }
+
+      // KES -> KMS (mTLS certificates)
+      let kmsMTLSKeyPair = null;
+      let kmsCAInsert = null;
+      if (
+        kmsMTLSCertificate.encoded_key !== "" &&
+        kmsMTLSCertificate.encoded_cert !== ""
+      ) {
+        kmsMTLSKeyPair = {
+          key: kmsMTLSCertificate.encoded_key,
+          crt: kmsMTLSCertificate.encoded_cert,
+        };
+      }
+      if (kmsCA.encoded_cert !== "") {
+        kmsCAInsert = {
+          ca: kmsCA.encoded_cert,
+        };
+      }
+      if (kmsMTLSKeyPair || kmsCAInsert) {
+        encryptionKMSCertificates = {
+          kms_mtls: {
+            ...kmsMTLSKeyPair,
+            ...kmsCAInsert,
           },
         };
       }
@@ -498,6 +490,7 @@ export const createTenantAsync = createAsyncThunk(
           image: kesImage,
           ...encryptionClientKeyPair,
           ...encryptionServerKeyPair,
+          ...encryptionKMSCertificates,
           ...insertEncrypt,
         },
       };
@@ -583,7 +576,7 @@ export const createTenantAsync = createAsyncThunk(
       idp: { ...dataIDP },
     };
 
-    const response = createTenantCall(dataSend)
+    return createTenantCall(dataSend)
       .then((resp) => {
         return resp;
       })
@@ -591,6 +584,5 @@ export const createTenantAsync = createAsyncThunk(
         dispatch(setErrorSnackMessage(err));
         return rejectWithValue(err);
       });
-    return response;
   }
 );
