@@ -257,6 +257,18 @@ const acceptDnDStyle = {
 
 const defLoading = <Typography component="h3">Loading...</Typography>;
 
+const url = new URL(window.location.toString());
+const isDev = process.env.NODE_ENV === "development";
+const port = isDev ? "9090" : url.port;
+
+// check if we are using base path, if not this always is `/`
+const baseLocation = new URL(document.baseURI);
+const baseUrl = baseLocation.pathname;
+
+const wsProt = wsProtocol(url.protocol);
+
+let objectsWS = new WebSocket(`${wsProt}://${url.hostname}:${port}${baseUrl}ws/objectManager`);
+
 const ListObjects = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
@@ -708,6 +720,22 @@ const ListObjects = () => {
     showDeleted,
     allowResources,
   ]);
+
+  useEffect(() => {
+    objectsWS.onopen = () => {
+      console.log("object handler connected");
+    };
+
+    objectsWS.onmessage = (evt) => {
+      const message = JSON.parse(evt.data);
+      console.log(message);
+    };
+
+    objectsWS.onclose = () => {
+      console.log("disconnected")
+    }
+
+    }, [objectsWS]);
 
   // bucket info
   useEffect(() => {
@@ -1492,6 +1520,15 @@ const ListObjects = () => {
                         folderUpload.current.click();
                       }
                       closeMenu();
+                    }}
+                  />
+                  <Button
+                    id={"test-ws-message"}
+                    label={"Test WS"}
+                    icon={<RefreshIcon />}
+                    variant={"secondary"}
+                    onClick={() => {
+                      objectsWS.send("random string")
                     }}
                   />
                 </div>

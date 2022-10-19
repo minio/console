@@ -148,9 +148,9 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Un-comment for development so websockets work on port 5005
-	// upgrader.CheckOrigin = func(r *http.Request) bool {
-	//	return true
-	//}
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
 
 	// upgrades the HTTP server connection to the WebSocket protocol.
 	conn, err := upgrader.Upgrade(w, req, nil)
@@ -317,6 +317,15 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		}
 		go wsS3Client.rewind(ctx, rewindOptions)
 
+	case strings.HasPrefix(wsPath, `/objectManager`):
+		wsMinioClient, err := newWebSocketMinioClient(conn, session)
+		if err != nil {
+			ErrorWithContext(ctx, err)
+			closeWsConn(conn)
+			return
+		}
+
+		go wsMinioClient.objectManager(ctx)
 	default:
 		// path not found
 		closeWsConn(conn)
@@ -585,6 +594,24 @@ func (wsc *wsS3Client) rewind(ctx context.Context, opts *rewindListOpts) {
 	err := startRewindListing(ctx, wsc.conn, wsc.client, opts)
 
 	sendWsCloseMessage(wsc.conn, err)
+}
+
+func (wsc *wsMinioClient) objectManager(ctx context.Context) {
+	ctx = wsReadClientCtx(ctx, wsc.conn)
+
+	mType, content, err := wsc.conn.readMessage()
+
+	if err != nil {
+		sendWsCloseMessage(wsc.conn, err)
+	}
+
+	fmt.Println("Type", mType, "Content", string(content))
+
+	if mType == websocket.TextMessage {
+		wsc.conn.writeMessage(websocket.TextMessage, []byte("lol funciona"))
+	}
+
+	//err = startObjectsListing(ctx, wsc.conn, wsc.client, opts)
 }
 
 // sendWsCloseMessage sends Websocket Connection Close Message indicating the Status Code
