@@ -323,52 +323,29 @@ const initialState: ICreateTenant = {
         encoded_cert: "",
       },
     ],
-    consoleCaCertificates: [
-      {
-        id: Date.now().toString(),
-        key: "",
-        cert: "",
-        encoded_key: "",
-        encoded_cert: "",
-      },
-    ],
-    consoleCertificate: {
-      id: "console_cert_pair",
-      key: "",
-      cert: "",
-      encoded_key: "",
-      encoded_cert: "",
-    },
-    serverCertificate: {
+    kesServerCertificate: {
       id: "encryptionServerCertificate",
       key: "",
       cert: "",
       encoded_key: "",
       encoded_cert: "",
     },
-    clientCertificate: {
+    minioMTLSCertificate: {
       id: "encryptionClientCertificate",
       key: "",
       cert: "",
       encoded_key: "",
       encoded_cert: "",
     },
-    vaultCertificate: {
-      id: "encryptionVaultCertificate",
+    kmsMTLSCertificate: {
+      id: "encryptionKMSMTLSCertificate",
       key: "",
       cert: "",
       encoded_key: "",
       encoded_cert: "",
     },
-    vaultCA: {
-      id: "encryptionVaultCA",
-      key: "",
-      cert: "",
-      encoded_key: "",
-      encoded_cert: "",
-    },
-    gemaltoCA: {
-      id: "encryptionGemaltoCA",
+    kmsCA: {
+      id: "encryptionKMSCA",
       key: "",
       cert: "",
       encoded_key: "",
@@ -656,91 +633,38 @@ export const createTenantSlice = createSlice({
         );
       }
     },
-    addConsoleCertificate: (state, action: PayloadAction<CertificateFile>) => {
-      const consoleCert = state.certificates.consoleCertificate;
-      state.certificates.consoleCertificate = {
-        ...consoleCert,
-        [action.payload.key]: action.payload.fileName,
-        [`encoded_${action.payload.key}`]: action.payload.value,
-      };
-    },
-    addConsoleCaCertificate: (state) => {
-      state.certificates.consoleCaCertificates.push({
-        id: Date.now().toString(),
-        key: "",
-        cert: "",
-        encoded_key: "",
-        encoded_cert: "",
-      });
-    },
-    addFileToConsoleCaCertificates: (
-      state,
-      action: PayloadAction<CertificateFile>
-    ) => {
-      const consoleCaCertificates = state.certificates.consoleCaCertificates;
+    addFileKESServerCert: (state, action: PayloadAction<KeyFileValue>) => {
+      const encServerCert = state.certificates.kesServerCertificate;
 
-      state.certificates.consoleCaCertificates = consoleCaCertificates.map(
-        (item: KeyPair) => {
-          if (item.id === action.payload.id) {
-            return {
-              ...item,
-              [action.payload.key]: action.payload.fileName,
-              [`encoded_${action.payload.key}`]: action.payload.value,
-            };
-          }
-          return item;
-        }
-      );
-    },
-    deleteConsoleCaCertificate: (state, action: PayloadAction<string>) => {
-      const consoleCACertsList = state.certificates.consoleCaCertificates;
-      if (consoleCACertsList.length > 1) {
-        state.certificates.consoleCaCertificates = consoleCACertsList.filter(
-          (item: KeyPair) => item.id !== action.payload
-        );
-      }
-    },
-    addFileServerCert: (state, action: PayloadAction<KeyFileValue>) => {
-      const encServerCert = state.certificates.serverCertificate;
-
-      state.certificates.serverCertificate = {
+      state.certificates.kesServerCertificate = {
         ...encServerCert,
         [action.payload.key]: action.payload.fileName,
         [`encoded_${action.payload.key}`]: action.payload.value,
       };
     },
-    addFileClientCert: (state, action: PayloadAction<KeyFileValue>) => {
-      const encClientCert = state.certificates.clientCertificate;
+    addFileMinIOMTLSCert: (state, action: PayloadAction<KeyFileValue>) => {
+      const encClientCert = state.certificates.minioMTLSCertificate;
 
-      state.certificates.clientCertificate = {
+      state.certificates.minioMTLSCertificate = {
         ...encClientCert,
         [action.payload.key]: action.payload.fileName,
         [`encoded_${action.payload.key}`]: action.payload.value,
       };
     },
-    addFileVaultCert: (state, action: PayloadAction<KeyFileValue>) => {
-      const encVaultCert = state.certificates.vaultCertificate;
+    addFileKMSMTLSCert: (state, action: PayloadAction<KeyFileValue>) => {
+      const encKMSTLSCert = state.certificates.kmsMTLSCertificate;
 
-      state.certificates.vaultCertificate = {
-        ...encVaultCert,
+      state.certificates.kmsMTLSCertificate = {
+        ...encKMSTLSCert,
         [action.payload.key]: action.payload.fileName,
         [`encoded_${action.payload.key}`]: action.payload.value,
       };
     },
-    addFileVaultCa: (state, action: PayloadAction<FileValue>) => {
-      const encVaultCA = state.certificates.vaultCA;
+    addFileKMSCa: (state, action: PayloadAction<FileValue>) => {
+      const encKMSCA = state.certificates.kmsCA;
 
-      state.certificates.vaultCA = {
-        ...encVaultCA,
-        cert: action.payload.fileName,
-        encoded_cert: action.payload.value,
-      };
-    },
-    addFileGemaltoCa: (state, action: PayloadAction<FileValue>) => {
-      const encGemaltoCA = state.certificates.gemaltoCA;
-
-      state.certificates.gemaltoCA = {
-        ...encGemaltoCA,
+      state.certificates.kmsCA = {
+        ...encKMSCA,
         cert: action.payload.fileName,
         encoded_cert: action.payload.value,
       };
@@ -1038,21 +962,16 @@ export const {
   addCaCertificate,
   deleteCaCertificate,
   addFileToCaCertificates,
-  addConsoleCaCertificate,
-  deleteConsoleCaCertificate,
-  addFileToConsoleCaCertificates,
   addKeyPair,
   deleteKeyPair,
   addFileToKeyPair,
   addClientKeyPair,
   deleteClientKeyPair,
   addFileToClientKeyPair,
-  addConsoleCertificate,
-  addFileServerCert,
-  addFileClientCert,
-  addFileVaultCert,
-  addFileVaultCa,
-  addFileGemaltoCa,
+  addFileKESServerCert,
+  addFileMinIOMTLSCert,
+  addFileKMSMTLSCert,
+  addFileKMSCa,
   resetAddTenantForm,
   setKeyValuePairs,
   setEnvVars,

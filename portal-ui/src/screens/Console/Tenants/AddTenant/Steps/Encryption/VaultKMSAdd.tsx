@@ -18,13 +18,7 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
-import FileSelector from "../../../../Common/FormComponents/FileSelector/FileSelector";
-import {
-  addFileVaultCa,
-  addFileVaultCert,
-  isPageValid,
-  updateAddField,
-} from "../../createTenantSlice";
+import { isPageValid, updateAddField } from "../../createTenantSlice";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { Theme } from "@mui/material/styles";
@@ -84,12 +78,6 @@ const VaultKMSAdd = () => {
   );
   const vaultPing = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.vaultPing
-  );
-  const vaultCertificate = useSelector(
-    (state: AppState) => state.createTenant.certificates.vaultCertificate
-  );
-  const vaultCA = useSelector(
-    (state: AppState) => state.createTenant.certificates.vaultCA
   );
 
   const [validationErrors, setValidationErrors] = useState<any>({});
@@ -276,64 +264,6 @@ const VaultKMSAdd = () => {
               error={validationErrors["vault_retry"] || ""}
             />
           </Grid>
-        </fieldset>
-      </Grid>
-
-      <Grid container className={classes.mutualTlsConfig}>
-        <fieldset className={classes.fieldGroup}>
-          <legend className={classes.descriptionText}>
-            Mutual TLS authentication (optional)
-          </legend>
-          <FileSelector
-            onChange={(encodedValue, fileName) => {
-              dispatch(
-                addFileVaultCert({
-                  key: "key",
-                  fileName: fileName,
-                  value: encodedValue,
-                })
-              );
-              cleanValidation("vault_key");
-            }}
-            accept=".key,.pem"
-            id="vault_key"
-            name="vault_key"
-            label="Key"
-            value={vaultCertificate.key}
-          />
-          <FileSelector
-            onChange={(encodedValue, fileName) => {
-              dispatch(
-                addFileVaultCert({
-                  key: "cert",
-                  fileName: fileName,
-                  value: encodedValue,
-                })
-              );
-              cleanValidation("vault_cert");
-            }}
-            accept=".cer,.crt,.cert,.pem"
-            id="vault_cert"
-            name="vault_cert"
-            label="Cert"
-            value={vaultCertificate.cert}
-          />
-          <FileSelector
-            onChange={(encodedValue, fileName) => {
-              dispatch(
-                addFileVaultCa({
-                  fileName: fileName,
-                  value: encodedValue,
-                })
-              );
-              cleanValidation("vault_ca");
-            }}
-            accept=".cer,.crt,.cert,.pem"
-            id="vault_ca"
-            name="vault_ca"
-            label="CA"
-            value={vaultCA.cert}
-          />
         </fieldset>
       </Grid>
       <Grid

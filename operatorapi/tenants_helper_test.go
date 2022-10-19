@@ -289,7 +289,7 @@ func Test_createOrReplaceKesConfigurationSecrets(t *testing.T) {
 				ctx:       context.Background(),
 				clientSet: k8sClient,
 				encryptionCfg: &models.EncryptionConfiguration{
-					Client: &models.KeyPairConfiguration{
+					MinioMtls: &models.KeyPairConfiguration{
 						Crt: &badCrt,
 						Key: &badKey,
 					},
@@ -312,7 +312,7 @@ func Test_createOrReplaceKesConfigurationSecrets(t *testing.T) {
 				ctx:       context.Background(),
 				clientSet: k8sClient,
 				encryptionCfg: &models.EncryptionConfiguration{
-					Client: &models.KeyPairConfiguration{
+					MinioMtls: &models.KeyPairConfiguration{
 						Crt: &key, // will cause an error because we are passing a private key as the public key
 						Key: &key,
 					},
@@ -335,9 +335,14 @@ func Test_createOrReplaceKesConfigurationSecrets(t *testing.T) {
 				ctx:       context.Background(),
 				clientSet: k8sClient,
 				encryptionCfg: &models.EncryptionConfiguration{
-					Client: &models.KeyPairConfiguration{
+					MinioMtls: &models.KeyPairConfiguration{
 						Crt: &crt,
 						Key: &key,
+					},
+					KmsMtls: &models.EncryptionConfigurationAO1KmsMtls{
+						Ca:  crt,
+						Crt: crt,
+						Key: key,
 					},
 					Vault: &models.VaultConfiguration{
 						Approle: &models.VaultConfigurationApprole{
@@ -351,11 +356,6 @@ func Test_createOrReplaceKesConfigurationSecrets(t *testing.T) {
 						Namespace: "",
 						Prefix:    "",
 						Status:    nil,
-						TLS: &models.VaultConfigurationTLS{
-							Ca:  crt,
-							Crt: crt,
-							Key: key,
-						},
 					},
 				},
 				ns:                         "default",

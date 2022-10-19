@@ -28,12 +28,7 @@ import {
   wizardCommon,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import makeStyles from "@mui/styles/makeStyles";
-import FileSelector from "../../../../Common/FormComponents/FileSelector/FileSelector";
-import {
-  addFileGemaltoCa,
-  isPageValid,
-  updateAddField,
-} from "../../createTenantSlice";
+import { isPageValid, updateAddField } from "../../createTenantSlice";
 import {
   commonFormValidation,
   IValidation,
@@ -55,9 +50,6 @@ const GemaltoKMSAdd = () => {
 
   const encryptionTab = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.encryptionTab
-  );
-  const gemaltoCA = useSelector(
-    (state: AppState) => state.createTenant.certificates.gemaltoCA
   );
   const gemaltoEndpoint = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gemaltoEndpoint
@@ -207,36 +199,6 @@ const GemaltoKMSAdd = () => {
               error={validationErrors["gemalto_retry"] || ""}
             />
           </Grid>
-        </fieldset>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        style={{
-          marginBottom: 15,
-        }}
-      >
-        <fieldset className={classes.fieldGroup}>
-          <legend className={classes.descriptionText}>
-            Custom CA Root certificate verification
-          </legend>
-
-          <FileSelector
-            onChange={(encodedValue, fileName) => {
-              dispatch(
-                addFileGemaltoCa({
-                  fileName: fileName,
-                  value: encodedValue,
-                })
-              );
-              cleanValidation("gemalto_ca");
-            }}
-            accept=".cer,.crt,.cert,.pem"
-            id="gemalto_ca"
-            name="gemalto_ca"
-            label="CA"
-            value={gemaltoCA.cert}
-          />
         </fieldset>
       </Grid>
     </Fragment>
