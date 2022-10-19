@@ -55,11 +55,6 @@ export interface ITenantSecurityResponse {
   securityContext: ISecurityContext;
 }
 
-export interface IVaultTLS {
-  crt: ICertificateInfo;
-  ca: ICertificateInfo;
-}
-
 export interface IVaultAppRole {
   engine: string;
   id: string;
@@ -78,17 +73,11 @@ export interface IVaultConfiguration {
   prefix: string;
   approle: IVaultAppRole;
   status: IVaultStatus;
-  tls: IVaultTLS;
-}
-
-export interface IGemaltoTLS {
-  ca: ICertificateInfo;
 }
 
 export interface IKeysecureConfiguration {
   endpoint: string;
   credentials: IGemaltoCredentials;
-  tls: IGemaltoTLS;
 }
 
 export interface IGemaltoConfiguration {
@@ -100,8 +89,12 @@ export interface ITenantEncryptionResponse {
   image: string;
   replicas: string;
   securityContext: ISecurityContext;
-  server: ICertificateInfo;
-  mtls_client: ICertificateInfo;
+  server_tls: ICertificateInfo;
+  minio_mtls: ICertificateInfo;
+  kms_mtls: {
+    crt: ICertificateInfo;
+    ca: ICertificateInfo;
+  };
   vault?: IVaultConfiguration;
   aws?: IAWSConfig;
   gemalto?: IGemaltoConfiguration;
@@ -113,13 +106,10 @@ export interface ICertificatesItems {
   minioServerCertificates: KeyPair[];
   minioClientCertificates: KeyPair[];
   minioCAsCertificates: KeyPair[];
-  consoleCaCertificates: KeyPair[];
-  consoleCertificate: KeyPair;
-  serverCertificate: KeyPair;
-  clientCertificate: KeyPair;
-  vaultCertificate: KeyPair;
-  vaultCA: KeyPair;
-  gemaltoCA: KeyPair;
+  kesServerCertificate: KeyPair;
+  minioMTLSCertificate: KeyPair;
+  kmsMTLSCertificate: KeyPair;
+  kmsCA: KeyPair;
 }
 
 export interface IFieldStore {

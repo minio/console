@@ -97,7 +97,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
     useState<string>("");
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
   const [encryptionType, setEncryptionType] = useState<string>("vault");
-  const [replicas, setReplicas] = useState<string>("2");
+  const [replicas, setReplicas] = useState<string>("1");
   const [image, setImage] = useState<string>("");
   const [refreshEncryptionInfo, setRefreshEncryptionInfo] =
     useState<boolean>(false);
@@ -116,11 +116,12 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
   const [enabledCustomCertificates, setEnabledCustomCertificates] =
     useState<boolean>(false);
   const [updatingEncryption, setUpdatingEncryption] = useState<boolean>(false);
-  const [serverTLSCertificateSecret, setServerTLSCertificateSecret] =
+  const [kesServerTLSCertificateSecret, setKesServerTLSCertificateSecret] =
     useState<ICertificateInfo | null>(null);
-  const [mTLSCertificateSecret, setMTLSCertificateSecret] =
+  const [minioMTLSCertificateSecret, setMinioMTLSCertificateSecret] =
     useState<ICertificateInfo | null>(null);
-  const [mTLSCertificate, setMTLSCertificate] = useState<KeyPair | null>(null);
+  const [minioMTLSCertificate, setMinioMTLSCertificate] =
+    useState<KeyPair | null>(null);
   const [certificatesToBeRemoved, setCertificatesToBeRemoved] = useState<
     string[]
   >([]);
@@ -128,22 +129,18 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [showVaultAppRoleSecret, setShowVaultAppRoleSecret] =
     useState<boolean>(false);
-  const [vaultClientCertificateSecret, setVaultClientCertificateSecret] =
+  const [kmsMTLSCertificateSecret, setKmsMTLSCertificateSecret] =
     useState<ICertificateInfo | null>(null);
-  const [vaultCACertificateSecret, setVaultCACertificateSecret] =
+  const [kmsCACertificateSecret, setKMSCACertificateSecret] =
     useState<ICertificateInfo | null>(null);
-  const [vaultClientCertificate, setVaultClientCertificate] =
-    useState<KeyPair | null>(null);
-  const [serverCertificate, setServerCertificate] = useState<KeyPair | null>(
+  const [kmsMTLSCertificate, setKmsMTLSCertificate] = useState<KeyPair | null>(
     null
   );
-  const [vaultCACertificate, setVaultCACertificate] = useState<KeyPair | null>(
+  const [kesServerCertificate, setKESServerCertificate] =
+    useState<KeyPair | null>(null);
+  const [kmsCACertificate, setKmsCACertificate] = useState<KeyPair | null>(
     null
   );
-  const [gemaltoCACertificateSecret, setGemaltoCACertificateSecret] =
-    useState<ICertificateInfo | null>(null);
-  const [gemaltoCACertificate, setGemaltotCACertificate] =
-    useState<KeyPair | null>(null);
   const [validationErrors, setValidationErrors] = useState<any>({});
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
@@ -199,22 +196,22 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
           {
             fieldKey: "serverKey",
             required: false,
-            value: serverCertificate?.encoded_key || "",
+            value: kesServerCertificate?.encoded_key || "",
           },
           {
             fieldKey: "serverCert",
             required: false,
-            value: serverCertificate?.encoded_cert || "",
+            value: kesServerCertificate?.encoded_cert || "",
           },
           {
             fieldKey: "clientKey",
             required: false,
-            value: mTLSCertificate?.encoded_key || "",
+            value: minioMTLSCertificate?.encoded_key || "",
           },
           {
             fieldKey: "clientCert",
             required: false,
-            value: mTLSCertificate?.encoded_cert || "",
+            value: minioMTLSCertificate?.encoded_cert || "",
           },
         ];
       }
@@ -345,14 +342,14 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
     enabledCustomCertificates,
     encryptionEnabled,
     encryptionType,
-    serverCertificate?.encoded_key,
-    serverCertificate?.encoded_cert,
-    mTLSCertificate?.encoded_key,
-    mTLSCertificate?.encoded_cert,
-    vaultClientCertificate?.encoded_key,
-    vaultClientCertificate?.encoded_cert,
-    vaultCACertificate?.encoded_key,
-    vaultCACertificate?.encoded_cert,
+    kesServerCertificate?.encoded_key,
+    kesServerCertificate?.encoded_cert,
+    minioMTLSCertificate?.encoded_key,
+    minioMTLSCertificate?.encoded_cert,
+    kmsMTLSCertificate?.encoded_key,
+    kmsMTLSCertificate?.encoded_cert,
+    kmsCACertificate?.encoded_key,
+    kmsCACertificate?.encoded_cert,
     securityContext,
     vaultConfiguration,
     awsConfiguration,
@@ -375,19 +372,12 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
           if (resp.vault) {
             setEncryptionType("vault");
             setVaultConfiguration(resp.vault);
-            if (resp.vault.tls) {
-              setVaultClientCertificateSecret(resp.vault.tls.crt);
-              setVaultCACertificateSecret(resp.vault.tls.ca);
-            }
           } else if (resp.aws) {
             setEncryptionType("aws");
             setAWSConfiguration(resp.aws);
           } else if (resp.gemalto) {
             setEncryptionType("gemalto");
             setGemaltoConfiguration(resp.gemalto);
-            if (resp.gemalto.keysecure.tls) {
-              setGemaltoCACertificateSecret(resp.gemalto.keysecure.tls.ca);
-            }
           } else if (resp.gcp) {
             setEncryptionType("gcp");
             setGCPConfiguration(resp.gcp);
@@ -402,14 +392,18 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
           if (resp.securityContext) {
             setSecurityContext(resp.securityContext);
           }
-          if (resp.server || resp.mtls_client) {
+          if (resp.server_tls || resp.minio_mtls || resp.kms_mtls) {
             setEnabledCustomCertificates(true);
           }
-          if (resp.server) {
-            setServerTLSCertificateSecret(resp.server);
+          if (resp.server_tls) {
+            setKesServerTLSCertificateSecret(resp.server_tls);
           }
-          if (resp.mtls_client) {
-            setMTLSCertificateSecret(resp.mtls_client);
+          if (resp.minio_mtls) {
+            setMinioMTLSCertificateSecret(resp.minio_mtls);
+          }
+          if (resp.kms_mtls) {
+            setKmsMTLSCertificateSecret(resp.kms_mtls.crt);
+            setKMSCACertificateSecret(resp.kms_mtls.ca);
           }
           setRefreshEncryptionInfo(false);
         })
@@ -430,20 +424,17 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
       ...certificatesToBeRemoved,
       certificateInfo.name,
     ]);
-    if (certificateInfo.name === serverTLSCertificateSecret?.name) {
-      setServerTLSCertificateSecret(null);
+    if (certificateInfo.name === kesServerTLSCertificateSecret?.name) {
+      setKesServerTLSCertificateSecret(null);
     }
-    if (certificateInfo.name === mTLSCertificateSecret?.name) {
-      setMTLSCertificateSecret(null);
+    if (certificateInfo.name === minioMTLSCertificateSecret?.name) {
+      setMinioMTLSCertificateSecret(null);
     }
-    if (certificateInfo.name === vaultClientCertificateSecret?.name) {
-      setVaultClientCertificateSecret(null);
+    if (certificateInfo.name === kmsMTLSCertificateSecret?.name) {
+      setKmsMTLSCertificateSecret(null);
     }
-    if (certificateInfo.name === vaultCACertificateSecret?.name) {
-      setVaultCACertificateSecret(null);
-    }
-    if (certificateInfo.name === gemaltoCACertificateSecret?.name) {
-      setGemaltoCACertificateSecret(null);
+    if (certificateInfo.name === kmsCACertificateSecret?.name) {
+      setKMSCACertificateSecret(null);
     }
   };
 
@@ -452,15 +443,6 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
       let insertEncrypt = {};
       switch (encryptionType) {
         case "gemalto":
-          let gemaltoCAIntroduce = {};
-
-          if (gemaltoCACertificate?.encoded_cert) {
-            gemaltoCAIntroduce = {
-              tls: {
-                ca: gemaltoCACertificate?.encoded_cert,
-              },
-            };
-          }
           insertEncrypt = {
             gemalto: {
               keysecure: {
@@ -474,7 +456,6 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                     gemaltoConfiguration?.keysecure?.credentials?.retry
                   ),
                 },
-                ...gemaltoCAIntroduce,
               },
             },
           };
@@ -543,31 +524,6 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
           };
           break;
         case "vault":
-          let vaultKeyPair = null;
-          let vaultCAInsert = null;
-          if (
-            vaultClientCertificate?.encoded_key &&
-            vaultClientCertificate?.encoded_cert
-          ) {
-            vaultKeyPair = {
-              key: vaultClientCertificate?.encoded_key,
-              crt: vaultClientCertificate?.encoded_cert,
-            };
-          }
-          if (vaultCACertificate?.encoded_cert) {
-            vaultCAInsert = {
-              ca: vaultCACertificate?.encoded_cert,
-            };
-          }
-          let vaultTLS = null;
-          if (vaultKeyPair || vaultCAInsert) {
-            vaultTLS = {
-              tls: {
-                ...vaultKeyPair,
-                ...vaultCAInsert,
-              },
-            };
-          }
           insertEncrypt = {
             vault: {
               endpoint: vaultConfiguration?.endpoint || "",
@@ -580,7 +536,6 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                 secret: vaultConfiguration?.approle?.secret || "",
                 retry: parseInt(vaultConfiguration?.approle?.retry),
               },
-              ...vaultTLS,
               status: {
                 ping: parseInt(vaultConfiguration?.status?.ping),
               },
@@ -591,24 +546,57 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
 
       let encryptionServerKeyPair: any = {};
       let encryptionClientKeyPair: any = {};
+      let encryptionKMSCertificates: any = {};
 
-      if (mTLSCertificate?.encoded_key && mTLSCertificate?.encoded_cert) {
+      // MinIO -> KES (mTLS certificates)
+      if (
+        minioMTLSCertificate?.encoded_key &&
+        minioMTLSCertificate?.encoded_cert
+      ) {
         encryptionClientKeyPair = {
-          client: {
-            key: mTLSCertificate?.encoded_key,
-            crt: mTLSCertificate?.encoded_cert,
+          minio_mtls: {
+            key: minioMTLSCertificate?.encoded_key,
+            crt: minioMTLSCertificate?.encoded_cert,
           },
         };
       }
 
-      if (serverCertificate?.encoded_key && serverCertificate?.encoded_cert) {
+      // KES server certificates
+      if (
+        kesServerCertificate?.encoded_key &&
+        kesServerCertificate?.encoded_cert
+      ) {
         encryptionServerKeyPair = {
-          server: {
-            key: serverCertificate?.encoded_key,
-            crt: serverCertificate?.encoded_cert,
+          server_tls: {
+            key: kesServerCertificate?.encoded_key,
+            crt: kesServerCertificate?.encoded_cert,
           },
         };
       }
+
+      // KES -> KMS (mTLS certificates)
+      let kmsMTLSKeyPair = null;
+      let kmsCAInsert = null;
+      if (kmsMTLSCertificate?.encoded_key && kmsMTLSCertificate?.encoded_cert) {
+        kmsMTLSKeyPair = {
+          key: kmsMTLSCertificate?.encoded_key,
+          crt: kmsMTLSCertificate?.encoded_cert,
+        };
+      }
+      if (kmsCACertificate?.encoded_cert) {
+        kmsCAInsert = {
+          ca: kmsCACertificate?.encoded_cert,
+        };
+      }
+      if (kmsMTLSKeyPair || kmsCAInsert) {
+        encryptionKMSCertificates = {
+          kms_mtls: {
+            ...kmsMTLSKeyPair,
+            ...kmsCAInsert,
+          },
+        };
+      }
+
       const dataSend = {
         raw: editRawConfiguration ? encryptionRawConfiguration : "",
         secretsToBeDeleted: certificatesToBeRemoved || [],
@@ -617,6 +605,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
         image: image,
         ...encryptionClientKeyPair,
         ...encryptionServerKeyPair,
+        ...encryptionKMSCertificates,
         ...insertEncrypt,
       };
       if (!updatingEncryption) {
@@ -647,9 +636,9 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
             {}
           )
           .then(() => {
-            fetchEncryptionInfo();
             setConfirmOpen(false);
             setUpdatingEncryption(false);
+            fetchEncryptionInfo();
           })
           .catch((err: ErrorResponseHandler) => {
             setUpdatingEncryption(false);
@@ -914,92 +903,6 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                         error={validationErrors["vault_retry"] || ""}
                         value={vaultConfiguration?.approle?.retry || ""}
                       />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <SectionTitle>Vault Certificates (optional)</SectionTitle>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <fieldset className={classes.fieldGroup}>
-                        <legend className={classes.descriptionText}>
-                          Mutual TLS authentication with Vault (optional)
-                        </legend>
-                        {vaultClientCertificateSecret ? (
-                          <TLSCertificate
-                            certificateInfo={vaultClientCertificateSecret}
-                            onDelete={() =>
-                              removeCertificate(vaultClientCertificateSecret)
-                            }
-                          />
-                        ) : (
-                          <Fragment>
-                            <FileSelector
-                              onChange={(encodedValue, fileName) =>
-                                setVaultClientCertificate({
-                                  encoded_key: encodedValue || "",
-                                  id: vaultClientCertificate?.id || "",
-                                  key: fileName || "",
-                                  cert: vaultClientCertificate?.cert || "",
-                                  encoded_cert:
-                                    vaultClientCertificate?.encoded_cert || "",
-                                })
-                              }
-                              accept=".key,.pem"
-                              id="vault_key"
-                              name="vault_key"
-                              label="Key"
-                              value={vaultClientCertificate?.key || ""}
-                            />
-                            <FileSelector
-                              onChange={(encodedValue, fileName) =>
-                                setVaultClientCertificate({
-                                  encoded_key:
-                                    vaultClientCertificate?.encoded_key || "",
-                                  id: vaultClientCertificate?.id || "",
-                                  key: vaultClientCertificate?.key || "",
-                                  cert: fileName || "",
-                                  encoded_cert: encodedValue || "",
-                                })
-                              }
-                              accept=".cer,.crt,.cert,.pem"
-                              id="vault_cert"
-                              name="vault_cert"
-                              label="Cert"
-                              value={vaultClientCertificate?.cert || ""}
-                            />
-                          </Fragment>
-                        )}
-                      </fieldset>
-                      <fieldset className={classes.fieldGroup}>
-                        <legend className={classes.descriptionText}>
-                          Vault CA certificate (optional)
-                        </legend>
-                        {vaultCACertificateSecret ? (
-                          <TLSCertificate
-                            certificateInfo={vaultCACertificateSecret}
-                            onDelete={() =>
-                              removeCertificate(vaultCACertificateSecret)
-                            }
-                          />
-                        ) : (
-                          <FileSelector
-                            onChange={(encodedValue, fileName) =>
-                              setVaultCACertificate({
-                                encoded_key:
-                                  vaultCACertificate?.encoded_key || "",
-                                id: vaultCACertificate?.id || "",
-                                key: vaultCACertificate?.key || "",
-                                cert: fileName || "",
-                                encoded_cert: encodedValue || "",
-                              })
-                            }
-                            accept=".cer,.crt,.cert,.pem"
-                            id="vault_ca"
-                            name="vault_ca"
-                            label="CA"
-                            value={vaultCACertificate?.cert || ""}
-                          />
-                        )}
-                      </fieldset>
                     </Grid>
                     <Grid item xs={12}>
                       <SectionTitle>Status</SectionTitle>
@@ -1494,45 +1397,6 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                         error={validationErrors["gemalto_retry"] || ""}
                       />
                     </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      style={{
-                        marginBottom: 15,
-                      }}
-                    >
-                      <fieldset className={classes.fieldGroup}>
-                        <legend className={classes.descriptionText}>
-                          Custom CA Root certificate verification
-                        </legend>
-                        {gemaltoCACertificateSecret ? (
-                          <TLSCertificate
-                            certificateInfo={gemaltoCACertificateSecret}
-                            onDelete={() =>
-                              removeCertificate(gemaltoCACertificateSecret)
-                            }
-                          />
-                        ) : (
-                          <FileSelector
-                            onChange={(encodedValue, fileName) =>
-                              setGemaltotCACertificate({
-                                encoded_key:
-                                  gemaltoCACertificate?.encoded_key || "",
-                                id: gemaltoCACertificate?.id || "",
-                                key: gemaltoCACertificate?.key || "",
-                                cert: fileName || "",
-                                encoded_cert: encodedValue || "",
-                              })
-                            }
-                            accept=".cer,.crt,.cert,.pem"
-                            id="gemalto_ca"
-                            name="gemalto_ca"
-                            label="CA"
-                            value={gemaltoCACertificate?.cert || ""}
-                          />
-                        )}
-                      </fieldset>
-                    </Grid>
                   </Fragment>
                 )}
               </Fragment>
@@ -1558,26 +1422,26 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                 <Grid item xs={12}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
-                      KES server TLS Certificates (optional)
+                      Encryption server certificates
                     </legend>
-                    {serverTLSCertificateSecret ? (
+                    {kesServerTLSCertificateSecret ? (
                       <TLSCertificate
-                        certificateInfo={serverTLSCertificateSecret}
+                        certificateInfo={kesServerTLSCertificateSecret}
                         onDelete={() =>
-                          removeCertificate(serverTLSCertificateSecret)
+                          removeCertificate(kesServerTLSCertificateSecret)
                         }
                       />
                     ) : (
                       <Fragment>
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
-                            setServerCertificate({
+                            setKESServerCertificate({
                               encoded_key: encodedValue || "",
-                              id: serverCertificate?.id || "",
+                              id: kesServerCertificate?.id || "",
                               key: fileName || "",
-                              cert: serverCertificate?.cert || "",
+                              cert: kesServerCertificate?.cert || "",
                               encoded_cert:
-                                serverCertificate?.encoded_cert || "",
+                                kesServerCertificate?.encoded_cert || "",
                             });
                             cleanValidation("serverKey");
                           }}
@@ -1585,14 +1449,15 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                           id="serverKey"
                           name="serverKey"
                           label="Key"
-                          value={serverCertificate?.key}
+                          value={kesServerCertificate?.key}
                         />
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
-                            setServerCertificate({
-                              encoded_key: serverCertificate?.encoded_key || "",
-                              id: serverCertificate?.id || "",
-                              key: serverCertificate?.key || "",
+                            setKESServerCertificate({
+                              encoded_key:
+                                kesServerCertificate?.encoded_key || "",
+                              id: kesServerCertificate?.id || "",
+                              key: kesServerCertificate?.key || "",
                               cert: fileName || "",
                               encoded_cert: encodedValue || "",
                             });
@@ -1602,7 +1467,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                           id="serverCert"
                           name="serverCert"
                           label="Cert"
-                          value={serverCertificate?.cert}
+                          value={kesServerCertificate?.cert}
                         />
                       </Fragment>
                     )}
@@ -1611,25 +1476,27 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                 <Grid item xs={12}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
-                      Mutual TLS authentication with MinIO (optional)
+                      MinIO mTLS certificates (connection between MinIO and the
+                      Encryption server)
                     </legend>
-                    {mTLSCertificateSecret ? (
+                    {minioMTLSCertificateSecret ? (
                       <TLSCertificate
-                        certificateInfo={mTLSCertificateSecret}
+                        certificateInfo={minioMTLSCertificateSecret}
                         onDelete={() =>
-                          removeCertificate(mTLSCertificateSecret)
+                          removeCertificate(minioMTLSCertificateSecret)
                         }
                       />
                     ) : (
                       <Fragment>
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
-                            setMTLSCertificate({
+                            setMinioMTLSCertificate({
                               encoded_key: encodedValue || "",
-                              id: mTLSCertificate?.id || "",
+                              id: minioMTLSCertificate?.id || "",
                               key: fileName || "",
-                              cert: mTLSCertificate?.cert || "",
-                              encoded_cert: mTLSCertificate?.encoded_cert || "",
+                              cert: minioMTLSCertificate?.cert || "",
+                              encoded_cert:
+                                minioMTLSCertificate?.encoded_cert || "",
                             });
                             cleanValidation("clientKey");
                           }}
@@ -1637,14 +1504,15 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                           id="clientKey"
                           name="clientKey"
                           label="Key"
-                          value={mTLSCertificate?.key}
+                          value={minioMTLSCertificate?.key}
                         />
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
-                            setMTLSCertificate({
-                              encoded_key: mTLSCertificate?.encoded_key || "",
-                              id: mTLSCertificate?.id || "",
-                              key: mTLSCertificate?.key || "",
+                            setMinioMTLSCertificate({
+                              encoded_key:
+                                minioMTLSCertificate?.encoded_key || "",
+                              id: minioMTLSCertificate?.id || "",
+                              key: minioMTLSCertificate?.key || "",
                               cert: fileName || "",
                               encoded_cert: encodedValue || "",
                             });
@@ -1654,9 +1522,87 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                           id="clientCert"
                           name="clientCert"
                           label="Cert"
-                          value={mTLSCertificate?.cert}
+                          value={minioMTLSCertificate?.cert}
                         />
                       </Fragment>
+                    )}
+                  </fieldset>
+                </Grid>
+                <Grid item xs={12}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      KMS mTLS certificates (connection between the Encryption
+                      server and the KMS)
+                    </legend>
+                    {kmsMTLSCertificateSecret ? (
+                      <TLSCertificate
+                        certificateInfo={kmsMTLSCertificateSecret}
+                        onDelete={() =>
+                          removeCertificate(kmsMTLSCertificateSecret)
+                        }
+                      />
+                    ) : (
+                      <Fragment>
+                        <FileSelector
+                          onChange={(encodedValue, fileName) => {
+                            setKmsMTLSCertificate({
+                              encoded_key: encodedValue || "",
+                              id: kmsMTLSCertificate?.id || "",
+                              key: fileName || "",
+                              cert: kmsMTLSCertificate?.cert || "",
+                              encoded_cert:
+                                kmsMTLSCertificate?.encoded_cert || "",
+                            });
+                          }}
+                          accept=".key,.pem"
+                          id="kms_mtls_key"
+                          name="kms_mtls_key"
+                          label="Key"
+                          value={kmsMTLSCertificate?.key}
+                        />
+                        <FileSelector
+                          onChange={(encodedValue, fileName) =>
+                            setKmsMTLSCertificate({
+                              encoded_key:
+                                kmsMTLSCertificate?.encoded_key || "",
+                              id: kmsMTLSCertificate?.id || "",
+                              key: kmsMTLSCertificate?.key || "",
+                              cert: fileName || "",
+                              encoded_cert: encodedValue || "",
+                            })
+                          }
+                          accept=".cer,.crt,.cert,.pem"
+                          id="kms_mtls_cert"
+                          name="kms_mtls_cert"
+                          label="Cert"
+                          value={kmsMTLSCertificate?.cert || ""}
+                        />
+                      </Fragment>
+                    )}
+                    {kmsCACertificateSecret ? (
+                      <TLSCertificate
+                        certificateInfo={kmsCACertificateSecret}
+                        onDelete={() =>
+                          removeCertificate(kmsCACertificateSecret)
+                        }
+                      />
+                    ) : (
+                      <FileSelector
+                        onChange={(encodedValue, fileName) =>
+                          setKmsCACertificate({
+                            encoded_key: kmsCACertificate?.encoded_key || "",
+                            id: kmsCACertificate?.id || "",
+                            key: kmsCACertificate?.key || "",
+                            cert: fileName || "",
+                            encoded_cert: encodedValue || "",
+                          })
+                        }
+                        accept=".cer,.crt,.cert,.pem"
+                        id="kms_mtls_ca"
+                        name="kms_mtls_ca"
+                        label="CA"
+                        value={kmsCACertificate?.cert || ""}
+                      />
                     )}
                   </fieldset>
                 </Grid>
