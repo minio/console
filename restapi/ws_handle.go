@@ -320,6 +320,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	case strings.HasPrefix(wsPath, `/objectManager`):
 		wsMinioClient, err := newWebSocketMinioClient(conn, session)
 		if err != nil {
+			fmt.Println("ECL")
 			ErrorWithContext(ctx, err)
 			closeWsConn(conn)
 			return
@@ -608,7 +609,7 @@ func (wsc *wsMinioClient) objectManager(ctx context.Context) {
 	fmt.Println("Type", mType, "Content", string(content))
 
 	if mType == websocket.TextMessage {
-		wsc.conn.writeMessage(websocket.TextMessage, []byte("lol funciona"))
+		wsc.conn.writeMessage(websocket.TextMessage, []byte("{\"message\": \"funciona!\"}"))
 	}
 
 	//err = startObjectsListing(ctx, wsc.conn, wsc.client, opts)

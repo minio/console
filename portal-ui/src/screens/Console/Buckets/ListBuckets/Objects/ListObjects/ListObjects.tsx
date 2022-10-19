@@ -267,7 +267,7 @@ const baseUrl = baseLocation.pathname;
 
 const wsProt = wsProtocol(url.protocol);
 
-let objectsWS = new WebSocket(`${wsProt}://${url.hostname}:${port}${baseUrl}ws/objectManager`);
+let objectsWS = new W3CWebSocket(`${wsProt}://${url.hostname}:${port}${baseUrl}ws/objectManager`);
 
 const ListObjects = () => {
   const classes = useStyles();
@@ -727,8 +727,7 @@ const ListObjects = () => {
     };
 
     objectsWS.onmessage = (evt) => {
-      const message = JSON.parse(evt.data);
-      console.log(message);
+      console.log(evt.data);
     };
 
     objectsWS.onclose = () => {
