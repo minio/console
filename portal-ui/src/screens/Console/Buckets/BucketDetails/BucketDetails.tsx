@@ -144,8 +144,12 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
   const canDelete = hasPermission(bucketName, [
     IAM_SCOPES.S3_DELETE_BUCKET,
     IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
+    IAM_SCOPES.S3_STAR_BUCKET,
   ]);
-  const canBrowse = hasPermission(bucketName, [IAM_SCOPES.S3_LIST_BUCKET]);
+  const canBrowse = hasPermission(bucketName, [
+    IAM_SCOPES.S3_LIST_BUCKET,
+    IAM_SCOPES.S3_STAR_BUCKET,
+  ]);
 
   useEffect(() => {
     setActiveTab(selTab);
@@ -276,6 +280,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   scopes={[
                     IAM_SCOPES.S3_DELETE_BUCKET,
                     IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
+                    IAM_SCOPES.S3_STAR_BUCKET,
                   ]}
                   resource={bucketName}
                   errorProps={{ disabled: true }}
