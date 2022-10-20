@@ -140,8 +140,11 @@ const TLSCertificate = ({
               <span className="label">{`${certificates.length} Domain (s):`}</span>
             </Box>
             <List className={classes.certificatesList}>
-              {certificates.map((dom) => (
-                <ListItem className={classes.certificatesListItem}>
+              {certificates.map((dom, index) => (
+                <ListItem
+                  key={`${dom}-${index}`}
+                  className={classes.certificatesListItem}
+                >
                   <ListItemAvatar>
                     <LanguageIcon />
                   </ListItemAvatar>

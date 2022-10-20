@@ -2243,12 +2243,21 @@ definitions:
             type: array
             items:
               type: string
-          server:
+          server_tls:
             type: object
             $ref: "#/definitions/keyPairConfiguration"
-          client:
+          minio_mtls:
             type: object
             $ref: "#/definitions/keyPairConfiguration"
+          kms_mtls:
+            type: object
+            properties:
+              key:
+                type: string
+              crt:
+                type: string
+              ca:
+                type: string
           gemalto:
             type: object
             $ref: "#/definitions/gemaltoConfiguration"
@@ -2279,12 +2288,21 @@ definitions:
             type: string
           replicas:
             type: string
-          server:
+          server_tls:
             type: object
             $ref: "#/definitions/certificateInfo"
-          mtls_client:
+          minio_mtls:
             type: object
             $ref: "#/definitions/certificateInfo"
+          kms_mtls:
+            type: object
+            properties:
+              crt:
+                type: object
+                $ref: "#/definitions/certificateInfo"
+              ca:
+                type: object
+                $ref: "#/definitions/certificateInfo"
           gemalto:
             type: object
             $ref: "#/definitions/gemaltoConfigurationResponse"
@@ -2339,15 +2357,6 @@ definitions:
           ping:
             type: integer
             format: int64
-      tls:
-        type: object
-        properties:
-          key:
-            type: string
-          crt:
-            type: string
-          ca:
-            type: string
 
   vaultConfigurationResponse:
     type: object
@@ -2384,15 +2393,6 @@ definitions:
           ping:
             type: integer
             format: int64
-      tls:
-        type: object
-        properties:
-          crt:
-            type: object
-            $ref: "#/definitions/certificateInfo"
-          ca:
-            type: object
-            $ref: "#/definitions/certificateInfo"
 
   awsConfiguration:
     type: object
@@ -2451,13 +2451,6 @@ definitions:
               retry:
                 type: integer
                 format: int64
-          tls:
-            type: object
-            required:
-              - ca
-            properties:
-              ca:
-                type: string
 
   gemaltoConfigurationResponse:
     type: object
@@ -2485,14 +2478,6 @@ definitions:
               retry:
                 type: integer
                 format: int64
-          tls:
-            type: object
-            required:
-              - ca
-            properties:
-              ca:
-                type: object
-                $ref: "#/definitions/certificateInfo"
 
   gcpConfiguration:
     type: object
