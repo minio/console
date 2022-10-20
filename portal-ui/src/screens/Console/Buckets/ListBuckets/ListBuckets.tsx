@@ -445,11 +445,18 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                         similar to a folder or directory in a filesystem, where
                         each bucket can hold an arbitrary number of objects.
                         <br />
-                        {canListBuckets
-                          ? ""
-                          : "In order to view the buckets on this server, you require " +
-                            IAM_SCOPES.S3_LIST_BUCKET +
-                            " permission. Please contact your MinIO administrator to establish this permission."}
+                        {canListBuckets ? (
+                          ""
+                        ) : (
+                          <Fragment>
+                            <br />
+                            {permissionTooltipHelper(
+                              [IAM_SCOPES.S3_LIST_BUCKET],
+                              "view the buckets on this server"
+                            )}
+                            <br />
+                          </Fragment>
+                        )}
                         <SecureComponent
                           scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
                           resource={CONSOLE_UI_RESOURCE}
