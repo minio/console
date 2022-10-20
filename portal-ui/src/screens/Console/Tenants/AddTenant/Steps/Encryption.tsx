@@ -40,8 +40,10 @@ import {
 } from "../../../../../utils/validationFunctions";
 import SectionH1 from "../../../Common/SectionH1";
 import {
-  addFileClientCert,
-  addFileServerCert,
+  addFileMinIOMTLSCert,
+  addFileKESServerCert,
+  addFileKMSCa,
+  addFileKMSMTLSCert,
   isPageValid,
   updateAddField,
 } from "../createTenantSlice";
@@ -135,13 +137,18 @@ const Encryption = ({ classes }: IEncryptionProps) => {
   const minioServerCertificates = useSelector(
     (state: AppState) => state.createTenant.certificates.minioServerCertificates
   );
-  const serverCertificate = useSelector(
-    (state: AppState) => state.createTenant.certificates.serverCertificate
+  const kesServerCertificate = useSelector(
+    (state: AppState) => state.createTenant.certificates.kesServerCertificate
   );
-  const clientCertificate = useSelector(
-    (state: AppState) => state.createTenant.certificates.clientCertificate
+  const minioMTLSCertificate = useSelector(
+    (state: AppState) => state.createTenant.certificates.minioMTLSCertificate
   );
-
+  const kmsMTLSCertificate = useSelector(
+    (state: AppState) => state.createTenant.certificates.kmsMTLSCertificate
+  );
+  const kmsCA = useSelector(
+    (state: AppState) => state.createTenant.certificates.kmsCA
+  );
   const enableCustomCerts = useSelector(
     (state: AppState) => state.createTenant.fields.security.enableCustomCerts
   );
@@ -231,22 +238,22 @@ const Encryption = ({ classes }: IEncryptionProps) => {
           {
             fieldKey: "serverKey",
             required: !enableAutoCert,
-            value: serverCertificate.encoded_key,
+            value: kesServerCertificate.encoded_key,
           },
           {
             fieldKey: "serverCert",
             required: !enableAutoCert,
-            value: serverCertificate.encoded_cert,
+            value: kesServerCertificate.encoded_cert,
           },
           {
             fieldKey: "clientKey",
             required: !enableAutoCert,
-            value: clientCertificate.encoded_key,
+            value: minioMTLSCertificate.encoded_key,
           },
           {
             fieldKey: "clientCert",
             required: !enableAutoCert,
-            value: clientCertificate.encoded_cert,
+            value: minioMTLSCertificate.encoded_cert,
           },
         ];
       }
@@ -275,10 +282,10 @@ const Encryption = ({ classes }: IEncryptionProps) => {
     dispatch,
     enableAutoCert,
     enableCustomCerts,
-    serverCertificate.encoded_key,
-    serverCertificate.encoded_cert,
-    clientCertificate.encoded_key,
-    clientCertificate.encoded_cert,
+    kesServerCertificate.encoded_key,
+    kesServerCertificate.encoded_cert,
+    minioMTLSCertificate.encoded_key,
+    minioMTLSCertificate.encoded_cert,
     kesSecurityContext,
     replicas,
   ]);
@@ -407,12 +414,12 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                   <Grid item xs={12} style={{ marginBottom: 15 }}>
                     <fieldset className={classes.fieldGroup}>
                       <legend className={classes.descriptionText}>
-                        Encryption Service Certificates
+                        Encryption server certificates
                       </legend>
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
                           dispatch(
-                            addFileServerCert({
+                            addFileKESServerCert({
                               key: "key",
                               fileName: fileName,
                               value: encodedValue,
@@ -425,13 +432,13 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                         name="serverKey"
                         label="Key"
                         error={validationErrors["serverKey"] || ""}
-                        value={serverCertificate.key}
+                        value={kesServerCertificate.key}
                         required={!enableAutoCert}
                       />
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
                           dispatch(
-                            addFileServerCert({
+                            addFileKESServerCert({
                               key: "cert",
                               fileName: fileName,
                               value: encodedValue,
@@ -444,7 +451,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                         name="serverCert"
                         label="Cert"
                         error={validationErrors["serverCert"] || ""}
-                        value={serverCertificate.cert}
+                        value={kesServerCertificate.cert}
                         required={!enableAutoCert}
                       />
                     </fieldset>
@@ -454,12 +461,13 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                   <Grid item xs={12}>
                     <fieldset className={classes.fieldGroup}>
                       <legend className={classes.descriptionText}>
-                        Mutual TLS authentication with MinIO
+                        MinIO mTLS certificates (connection between MinIO and
+                        the Encryption server)
                       </legend>
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
                           dispatch(
-                            addFileClientCert({
+                            addFileMinIOMTLSCert({
                               key: "key",
                               fileName: fileName,
                               value: encodedValue,
@@ -472,13 +480,13 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                         name="clientKey"
                         label="Key"
                         error={validationErrors["clientKey"] || ""}
-                        value={clientCertificate.key}
+                        value={minioMTLSCertificate.key}
                         required={!enableAutoCert}
                       />
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
                           dispatch(
-                            addFileClientCert({
+                            addFileMinIOMTLSCert({
                               key: "cert",
                               fileName: fileName,
                               value: encodedValue,
@@ -491,11 +499,69 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                         name="clientCert"
                         label="Cert"
                         error={validationErrors["clientCert"] || ""}
-                        value={clientCertificate.cert}
+                        value={minioMTLSCertificate.cert}
                         required={!enableAutoCert}
                       />
                     </fieldset>
                   </Grid>
+                </Grid>
+                <Grid container className={classes.mutualTlsConfig}>
+                  <fieldset className={classes.fieldGroup}>
+                    <legend className={classes.descriptionText}>
+                      KMS mTLS certificates (connection between the Encryption
+                      server and the KMS)
+                    </legend>
+                    <FileSelector
+                      onChange={(encodedValue, fileName) => {
+                        dispatch(
+                          addFileKMSMTLSCert({
+                            key: "key",
+                            fileName: fileName,
+                            value: encodedValue,
+                          })
+                        );
+                        cleanValidation("vault_key");
+                      }}
+                      accept=".key,.pem"
+                      id="vault_key"
+                      name="vault_key"
+                      label="Key"
+                      value={kmsMTLSCertificate.key}
+                    />
+                    <FileSelector
+                      onChange={(encodedValue, fileName) => {
+                        dispatch(
+                          addFileKMSMTLSCert({
+                            key: "cert",
+                            fileName: fileName,
+                            value: encodedValue,
+                          })
+                        );
+                        cleanValidation("vault_cert");
+                      }}
+                      accept=".cer,.crt,.cert,.pem"
+                      id="vault_cert"
+                      name="vault_cert"
+                      label="Cert"
+                      value={kmsMTLSCertificate.cert}
+                    />
+                    <FileSelector
+                      onChange={(encodedValue, fileName) => {
+                        dispatch(
+                          addFileKMSCa({
+                            fileName: fileName,
+                            value: encodedValue,
+                          })
+                        );
+                        cleanValidation("vault_ca");
+                      }}
+                      accept=".cer,.crt,.cert,.pem"
+                      id="vault_ca"
+                      name="vault_ca"
+                      label="CA"
+                      value={kmsCA.cert}
+                    />
+                  </fieldset>
                 </Grid>
               </Fragment>
             )}
