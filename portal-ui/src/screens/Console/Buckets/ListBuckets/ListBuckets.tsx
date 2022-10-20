@@ -141,6 +141,8 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
     }
   });
 
+  const hasBuckets = records.length > 0;
+
   const selectListBuckets = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetD = e.target;
     const value = targetD.value;
@@ -242,12 +244,14 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
               <AutoColorIcon marginRight={15} marginTop={10} />
             </Grid>
           )}
-          <SearchBox
-            onChange={setFilterBuckets}
-            placeholder="Search Buckets"
-            overrideClass={classes.searchField}
-            value={filterBuckets}
-          />
+          {hasBuckets && (
+            <SearchBox
+              onChange={setFilterBuckets}
+              placeholder="Search Buckets"
+              overrideClass={classes.searchField}
+              value={filterBuckets}
+            />
+          )}
 
           <Grid
             item
@@ -265,7 +269,11 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
               <Fragment>
                 <TooltipWrapper
                   tooltip={
-                    bulkSelect ? "Unselect Buckets" : "Select Multiple Buckets"
+                    !hasBuckets
+                      ? ""
+                      : bulkSelect
+                      ? "Unselect Buckets"
+                      : "Select Multiple Buckets"
                   }
                 >
                   <Button
@@ -276,13 +284,16 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                     }}
                     icon={<SelectMultipleIcon />}
                     variant={bulkSelect ? "callAction" : "regular"}
+                    disabled={!hasBuckets}
                   />
                 </TooltipWrapper>
 
                 {bulkSelect && (
                   <TooltipWrapper
                     tooltip={
-                      selectedBuckets.length === filteredRecords.length
+                      !hasBuckets
+                        ? ""
+                        : selectedBuckets.length === filteredRecords.length
                         ? "Unselect All Buckets"
                         : "Select All Buckets"
                     }
@@ -298,16 +309,18 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
 
                 <TooltipWrapper
                   tooltip={
-                    selectedBuckets.length === 0
+                    !hasBuckets
+                      ? ""
+                      : !canPutLifecycle
+                      ? permissionTooltipHelper(
+                          IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
+                          "configure lifecycle for the selected buckets"
+                        )
+                      : selectedBuckets.length === 0
                       ? bulkSelect
                         ? "Please select at least one bucket on which to configure Lifecycle"
                         : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
-                      : canPutLifecycle
-                      ? "Set Lifecycle"
-                      : permissionTooltipHelper(
-                          IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
-                          "configuring lifecycle for the selected buckets"
-                        )
+                      : "Set Lifecycle"
                   }
                 >
                   <Button
@@ -321,7 +334,17 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                   />
                 </TooltipWrapper>
 
-                <TooltipWrapper tooltip={"Set Replication"}>
+                <TooltipWrapper
+                  tooltip={
+                    !hasBuckets
+                      ? ""
+                      : selectedBuckets.length === 0
+                      ? bulkSelect
+                        ? "Please select at least one bucket on which to configure Replication"
+                        : "Use the Select Multiple Buckets button to choose buckets on which to configure Replication"
+                      : "Set Replication"
+                  }
+                >
                   <Button
                     id={"set-replication"}
                     onClick={() => {
@@ -353,7 +376,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                     ? ""
                     : permissionTooltipHelper(
                         [IAM_SCOPES.S3_CREATE_BUCKET],
-                        "creating a bucket"
+                        "create a bucket"
                       )
                 }
               >
@@ -405,7 +428,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                 </Grid>
               </Grid>
             )}
-            {filteredRecords.length === 0 && filterBuckets === "" && (
+            {!hasBuckets && (
               <Grid
                 container
                 justifyContent={"center"}
@@ -421,8 +444,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                         MinIO uses buckets to organize objects. A bucket is
                         similar to a folder or directory in a filesystem, where
                         each bucket can hold an arbitrary number of objects.
-                        <br></br>
-                        <br></br>
+                        <br />
                         {canListBuckets
                           ? ""
                           : "In order to view the buckets on this server, you require " +
@@ -432,7 +454,6 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                           scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
                           resource={CONSOLE_UI_RESOURCE}
                         >
-                          <br />
                           <br />
                           To get started,&nbsp;
                           <AButton
