@@ -584,11 +584,9 @@ func (wsc *wsMinioClient) objects(ctx context.Context, opts *objectsListOpts) {
 
 func (wsc *wsS3Client) rewind(ctx context.Context, opts *rewindListOpts) {
 	defer func() {
-		LogInfo("rewind list stopped")
 		// close connection after return
 		wsc.conn.close()
 	}()
-	LogInfo("rewind list request")
 
 	ctx = wsReadClientCtx(ctx, wsc.conn)
 
