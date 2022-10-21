@@ -18,6 +18,7 @@ package ssointegration
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -44,7 +45,7 @@ var token string
 func initConsoleServer(consoleIDPURL string) (*restapi.Server, error) {
 	// Configure Console Server with vars to get the idp config from the container
 	pcfg := map[string]consoleoauth2.ProviderConfig{
-		consoleoauth2.DefaultIDPConfig: {
+		"_": {
 			URL:              consoleIDPURL,
 			ClientID:         "minio-client-app",
 			ClientSecret:     "minio-client-app-secret",
@@ -130,11 +131,18 @@ func TestMain(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var jsonMap map[string][]interface{}
-	json.Unmarshal(body, &jsonMap)
-	fmt.Println(jsonMap["redirect"][0])
-	redirect := jsonMap["redirect"][0]
-	redirectAsString := fmt.Sprint(redirect)
+	var jsonMap models.LoginDetails
+
+	fmt.Println(body)
+
+	err = json.Unmarshal(body, &jsonMap)
+
+	if err != nil {
+		fmt.Printf("error JSON Unmarshal %s\n", err)
+	}
+
+	redirectRule := jsonMap.RedirectRules[0]
+	redirectAsString := fmt.Sprint(redirectRule.Redirect)
 	fmt.Println(redirectAsString)
 
 	// execute script to get the code and state
@@ -238,12 +246,25 @@ func TestBadLogin(t *testing.T) {
 		Timeout: 2 * time.Second,
 	}
 
+	encodeItem := consoleoauth2.LoginURLParams{
+		State:   "invalidState",
+		IDPName: "_",
+	}
+
+	jsonState, err := json.Marshal(encodeItem)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+
 	// get login credentials
+	stateVarIable := base64.StdEncoding.EncodeToString(jsonState)
+
 	codeVarIable := "invalidCode"
-	stateVarIabl := "invalidState"
+
 	requestData := map[string]string{
 		"code":  codeVarIable,
-		"state": stateVarIabl,
+		"state": stateVarIable,
 	}
 	requestDataJSON, _ := json.Marshal(requestData)
 
