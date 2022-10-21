@@ -88,7 +88,7 @@ func getOperatorSubnetLoginResponse(session *models.Principal, params operator_a
 	if username == "" || password == "" {
 		return nil, restapi.ErrorWithContext(ctx, errors.New("empty credentials"))
 	}
-	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient()}
+	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
 	token, mfa, err := restapi.SubnetLogin(subnetHTTPClient, username, password)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
@@ -102,7 +102,7 @@ func getOperatorSubnetLoginResponse(session *models.Principal, params operator_a
 func getOperatorSubnetLoginMFAResponse(session *models.Principal, params operator_api.OperatorSubnetLoginMFAParams) (*models.OperatorSubnetLoginResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient()}
+	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
 	res, err := subnet.LoginWithMFA(subnetHTTPClient, *params.Body.Username, *params.Body.MfaToken, *params.Body.Otp)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
@@ -115,7 +115,7 @@ func getOperatorSubnetLoginMFAResponse(session *models.Principal, params operato
 func getOperatorSubnetAPIKeyResponse(session *models.Principal, params operator_api.OperatorSubnetAPIKeyParams) (*models.OperatorSubnetAPIKey, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient()}
+	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
 	token := params.HTTPRequest.URL.Query().Get("token")
 	apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
 	if err != nil {

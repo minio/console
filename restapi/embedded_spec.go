@@ -6349,12 +6349,6 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
-        "displayNames": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "isDirectPV": {
           "type": "boolean"
         },
@@ -6367,10 +6361,10 @@ func init() {
             "redirect-service-account"
           ]
         },
-        "redirect": {
+        "redirectRules": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/redirectRule"
           }
         }
       }
@@ -7035,6 +7029,17 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
+        }
+      }
+    },
+    "redirectRule": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "redirect": {
+          "type": "string"
         }
       }
     },
@@ -14605,12 +14610,6 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
-        "displayNames": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "isDirectPV": {
           "type": "boolean"
         },
@@ -14623,10 +14622,10 @@ func init() {
             "redirect-service-account"
           ]
         },
-        "redirect": {
+        "redirectRules": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/redirectRule"
           }
         }
       }
@@ -15291,6 +15290,17 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
+        }
+      }
+    },
+    "redirectRule": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "redirect": {
+          "type": "string"
         }
       }
     },

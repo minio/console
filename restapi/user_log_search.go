@@ -91,7 +91,7 @@ func getLogSearchResponse(session *models.Principal, params logApi.LogSearchPara
 }
 
 func logSearch(endpoint string) (*models.LogSearchResponse, error) {
-	httpClnt := GetConsoleHTTPClient()
+	httpClnt := GetConsoleHTTPClient(endpoint)
 	resp, err := httpClnt.Get(endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("the Log Search API cannot be reached. Please review the URL and try again %v", err)

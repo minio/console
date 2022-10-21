@@ -3045,10 +3045,6 @@ func init() {
               "type": "object",
               "$ref": "#/definitions/azureConfiguration"
             },
-            "client": {
-              "type": "object",
-              "$ref": "#/definitions/keyPairConfiguration"
-            },
             "gcp": {
               "type": "object",
               "$ref": "#/definitions/gcpConfiguration"
@@ -3059,6 +3055,24 @@ func init() {
             },
             "image": {
               "type": "string"
+            },
+            "kms_mtls": {
+              "type": "object",
+              "properties": {
+                "ca": {
+                  "type": "string"
+                },
+                "crt": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                }
+              }
+            },
+            "minio_mtls": {
+              "type": "object",
+              "$ref": "#/definitions/keyPairConfiguration"
             },
             "raw": {
               "type": "string"
@@ -3076,7 +3090,7 @@ func init() {
               "type": "object",
               "$ref": "#/definitions/securityContext"
             },
-            "server": {
+            "server_tls": {
               "type": "object",
               "$ref": "#/definitions/keyPairConfiguration"
             },
@@ -3115,7 +3129,20 @@ func init() {
             "image": {
               "type": "string"
             },
-            "mtls_client": {
+            "kms_mtls": {
+              "type": "object",
+              "properties": {
+                "ca": {
+                  "type": "object",
+                  "$ref": "#/definitions/certificateInfo"
+                },
+                "crt": {
+                  "type": "object",
+                  "$ref": "#/definitions/certificateInfo"
+                }
+              }
+            },
+            "minio_mtls": {
               "type": "object",
               "$ref": "#/definitions/certificateInfo"
             },
@@ -3129,7 +3156,7 @@ func init() {
               "type": "object",
               "$ref": "#/definitions/securityContext"
             },
-            "server": {
+            "server_tls": {
               "type": "object",
               "$ref": "#/definitions/certificateInfo"
             },
@@ -3304,17 +3331,6 @@ func init() {
             },
             "endpoint": {
               "type": "string"
-            },
-            "tls": {
-              "type": "object",
-              "required": [
-                "ca"
-              ],
-              "properties": {
-                "ca": {
-                  "type": "string"
-                }
-              }
             }
           }
         }
@@ -3354,18 +3370,6 @@ func init() {
             },
             "endpoint": {
               "type": "string"
-            },
-            "tls": {
-              "type": "object",
-              "required": [
-                "ca"
-              ],
-              "properties": {
-                "ca": {
-                  "type": "object",
-                  "$ref": "#/definitions/certificateInfo"
-                }
-              }
             }
           }
         }
@@ -3619,12 +3623,6 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
-        "displayNames": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "isDirectPV": {
           "type": "boolean"
         },
@@ -3637,10 +3635,10 @@ func init() {
             "redirect-service-account"
           ]
         },
-        "redirect": {
+        "redirectRules": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/redirectRule"
           }
         }
       }
@@ -4388,6 +4386,17 @@ func init() {
           "type": "string"
         },
         "volume": {
+          "type": "string"
+        }
+      }
+    },
+    "redirectRule": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "redirect": {
           "type": "string"
         }
       }
@@ -5140,20 +5149,6 @@ func init() {
               "format": "int64"
             }
           }
-        },
-        "tls": {
-          "type": "object",
-          "properties": {
-            "ca": {
-              "type": "string"
-            },
-            "crt": {
-              "type": "string"
-            },
-            "key": {
-              "type": "string"
-            }
-          }
         }
       }
     },
@@ -5204,19 +5199,6 @@ func init() {
             "ping": {
               "type": "integer",
               "format": "int64"
-            }
-          }
-        },
-        "tls": {
-          "type": "object",
-          "properties": {
-            "ca": {
-              "type": "object",
-              "$ref": "#/definitions/certificateInfo"
-            },
-            "crt": {
-              "type": "object",
-              "$ref": "#/definitions/certificateInfo"
             }
           }
         }
@@ -7748,6 +7730,33 @@ func init() {
         }
       }
     },
+    "EncryptionConfigurationAO1KmsMtls": {
+      "type": "object",
+      "properties": {
+        "ca": {
+          "type": "string"
+        },
+        "crt": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        }
+      }
+    },
+    "EncryptionConfigurationResponseAO1KmsMtls": {
+      "type": "object",
+      "properties": {
+        "ca": {
+          "type": "object",
+          "$ref": "#/definitions/certificateInfo"
+        },
+        "crt": {
+          "type": "object",
+          "$ref": "#/definitions/certificateInfo"
+        }
+      }
+    },
     "GcpConfigurationSecretmanager": {
       "type": "object",
       "required": [
@@ -7824,17 +7833,6 @@ func init() {
         },
         "endpoint": {
           "type": "string"
-        },
-        "tls": {
-          "type": "object",
-          "required": [
-            "ca"
-          ],
-          "properties": {
-            "ca": {
-              "type": "string"
-            }
-          }
         }
       }
     },
@@ -7853,17 +7851,6 @@ func init() {
           "format": "int64"
         },
         "token": {
-          "type": "string"
-        }
-      }
-    },
-    "GemaltoConfigurationKeysecureTLS": {
-      "type": "object",
-      "required": [
-        "ca"
-      ],
-      "properties": {
-        "ca": {
           "type": "string"
         }
       }
@@ -7896,18 +7883,6 @@ func init() {
         },
         "endpoint": {
           "type": "string"
-        },
-        "tls": {
-          "type": "object",
-          "required": [
-            "ca"
-          ],
-          "properties": {
-            "ca": {
-              "type": "object",
-              "$ref": "#/definitions/certificateInfo"
-            }
-          }
         }
       }
     },
@@ -7927,18 +7902,6 @@ func init() {
         },
         "token": {
           "type": "string"
-        }
-      }
-    },
-    "GemaltoConfigurationResponseKeysecureTLS": {
-      "type": "object",
-      "required": [
-        "ca"
-      ],
-      "properties": {
-        "ca": {
-          "type": "object",
-          "$ref": "#/definitions/certificateInfo"
         }
       }
     },
@@ -8463,39 +8426,12 @@ func init() {
         }
       }
     },
-    "VaultConfigurationResponseTLS": {
-      "type": "object",
-      "properties": {
-        "ca": {
-          "type": "object",
-          "$ref": "#/definitions/certificateInfo"
-        },
-        "crt": {
-          "type": "object",
-          "$ref": "#/definitions/certificateInfo"
-        }
-      }
-    },
     "VaultConfigurationStatus": {
       "type": "object",
       "properties": {
         "ping": {
           "type": "integer",
           "format": "int64"
-        }
-      }
-    },
-    "VaultConfigurationTLS": {
-      "type": "object",
-      "properties": {
-        "ca": {
-          "type": "string"
-        },
-        "crt": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
         }
       }
     },
@@ -9117,10 +9053,6 @@ func init() {
               "type": "object",
               "$ref": "#/definitions/azureConfiguration"
             },
-            "client": {
-              "type": "object",
-              "$ref": "#/definitions/keyPairConfiguration"
-            },
             "gcp": {
               "type": "object",
               "$ref": "#/definitions/gcpConfiguration"
@@ -9131,6 +9063,24 @@ func init() {
             },
             "image": {
               "type": "string"
+            },
+            "kms_mtls": {
+              "type": "object",
+              "properties": {
+                "ca": {
+                  "type": "string"
+                },
+                "crt": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                }
+              }
+            },
+            "minio_mtls": {
+              "type": "object",
+              "$ref": "#/definitions/keyPairConfiguration"
             },
             "raw": {
               "type": "string"
@@ -9148,7 +9098,7 @@ func init() {
               "type": "object",
               "$ref": "#/definitions/securityContext"
             },
-            "server": {
+            "server_tls": {
               "type": "object",
               "$ref": "#/definitions/keyPairConfiguration"
             },
@@ -9187,7 +9137,20 @@ func init() {
             "image": {
               "type": "string"
             },
-            "mtls_client": {
+            "kms_mtls": {
+              "type": "object",
+              "properties": {
+                "ca": {
+                  "type": "object",
+                  "$ref": "#/definitions/certificateInfo"
+                },
+                "crt": {
+                  "type": "object",
+                  "$ref": "#/definitions/certificateInfo"
+                }
+              }
+            },
+            "minio_mtls": {
               "type": "object",
               "$ref": "#/definitions/certificateInfo"
             },
@@ -9201,7 +9164,7 @@ func init() {
               "type": "object",
               "$ref": "#/definitions/securityContext"
             },
-            "server": {
+            "server_tls": {
               "type": "object",
               "$ref": "#/definitions/certificateInfo"
             },
@@ -9376,17 +9339,6 @@ func init() {
             },
             "endpoint": {
               "type": "string"
-            },
-            "tls": {
-              "type": "object",
-              "required": [
-                "ca"
-              ],
-              "properties": {
-                "ca": {
-                  "type": "string"
-                }
-              }
             }
           }
         }
@@ -9426,18 +9378,6 @@ func init() {
             },
             "endpoint": {
               "type": "string"
-            },
-            "tls": {
-              "type": "object",
-              "required": [
-                "ca"
-              ],
-              "properties": {
-                "ca": {
-                  "type": "object",
-                  "$ref": "#/definitions/certificateInfo"
-                }
-              }
             }
           }
         }
@@ -9679,12 +9619,6 @@ func init() {
     "loginDetails": {
       "type": "object",
       "properties": {
-        "displayNames": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "isDirectPV": {
           "type": "boolean"
         },
@@ -9697,10 +9631,10 @@ func init() {
             "redirect-service-account"
           ]
         },
-        "redirect": {
+        "redirectRules": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/redirectRule"
           }
         }
       }
@@ -10313,6 +10247,17 @@ func init() {
           "type": "string"
         },
         "volume": {
+          "type": "string"
+        }
+      }
+    },
+    "redirectRule": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "redirect": {
           "type": "string"
         }
       }
@@ -11065,20 +11010,6 @@ func init() {
               "format": "int64"
             }
           }
-        },
-        "tls": {
-          "type": "object",
-          "properties": {
-            "ca": {
-              "type": "string"
-            },
-            "crt": {
-              "type": "string"
-            },
-            "key": {
-              "type": "string"
-            }
-          }
         }
       }
     },
@@ -11129,19 +11060,6 @@ func init() {
             "ping": {
               "type": "integer",
               "format": "int64"
-            }
-          }
-        },
-        "tls": {
-          "type": "object",
-          "properties": {
-            "ca": {
-              "type": "object",
-              "$ref": "#/definitions/certificateInfo"
-            },
-            "crt": {
-              "type": "object",
-              "$ref": "#/definitions/certificateInfo"
             }
           }
         }

@@ -948,7 +948,7 @@ func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAd
 }
 
 func unmarshalPrometheus(ctx context.Context, endpoint string, data interface{}) bool {
-	httpClnt := GetConsoleHTTPClient()
+	httpClnt := GetConsoleHTTPClient(endpoint)
 	resp, err := httpClnt.Get(endpoint)
 	if err != nil {
 		ErrorWithContext(ctx, fmt.Errorf("Unable to fetch labels from prometheus (%s)", resp.Status))
@@ -975,7 +975,7 @@ func testPrometheusURL(ctx context.Context, url string) bool {
 		ErrorWithContext(ctx, fmt.Errorf("error Building Request: (%v)", err))
 		return false
 	}
-	response, err := GetConsoleHTTPClient().Do(req)
+	response, err := GetConsoleHTTPClient(url).Do(req)
 	if err != nil {
 		ErrorWithContext(ctx, fmt.Errorf("default Prometheus URL not reachable, trying root testing: (%v)", err))
 		newTestURL := req.URL.Scheme + "://" + req.URL.Host + "/-/healthy"
@@ -984,7 +984,7 @@ func testPrometheusURL(ctx context.Context, url string) bool {
 			ErrorWithContext(ctx, fmt.Errorf("error Building Root Request: (%v)", err))
 			return false
 		}
-		rootResponse, err := GetConsoleHTTPClient().Do(req2)
+		rootResponse, err := GetConsoleHTTPClient(newTestURL).Do(req2)
 		if err != nil {
 			// URL & Root tests didn't work. Prometheus not reachable
 			ErrorWithContext(ctx, fmt.Errorf("root Prometheus URL not reachable: (%v)", err))
