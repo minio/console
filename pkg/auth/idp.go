@@ -40,11 +40,12 @@ type IdentityProviderI interface {
 type IdentityProvider struct {
 	KeyFunc oauth2.StateKeyFunc
 	Client  *oauth2.Provider
+	RoleARN string
 }
 
 // VerifyIdentity will verify the user identity against the idp using the authorization code flow
 func (c IdentityProvider) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
-	return c.Client.VerifyIdentity(ctx, code, state, c.KeyFunc)
+	return c.Client.VerifyIdentity(ctx, code, state, c.RoleARN, c.KeyFunc)
 }
 
 // VerifyIdentityForOperator will verify the user identity against the idp using the authorization code flow
@@ -54,5 +55,5 @@ func (c IdentityProvider) VerifyIdentityForOperator(ctx context.Context, code, s
 
 // GenerateLoginURL returns a new URL used by the user to login against the idp
 func (c IdentityProvider) GenerateLoginURL() string {
-	return c.Client.GenerateLoginURL(c.KeyFunc)
+	return c.Client.GenerateLoginURL(c.KeyFunc, c.Client.IDPName)
 }
