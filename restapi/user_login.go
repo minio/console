@@ -18,10 +18,9 @@ package restapi
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"net/http"
-
-	"github.com/minio/madmin-go"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -30,12 +29,14 @@ import (
 	"github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/console/restapi/operations"
 	authApi "github.com/minio/console/restapi/operations/auth"
+	"github.com/minio/madmin-go"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 func registerLoginHandlers(api *operations.ConsoleAPI) {
 	// GET login strategy
 	api.AuthLoginDetailHandler = authApi.LoginDetailHandlerFunc(func(params authApi.LoginDetailParams) middleware.Responder {
-		loginDetails, err := getLoginDetailsResponse(params, GlobalMinIOConfig.OpenIDProviders, oauth2.DefaultIDPConfig)
+		loginDetails, err := getLoginDetailsResponse(params, GlobalMinIOConfig.OpenIDProviders)
 		if err != nil {
 			return authApi.NewLoginDetailDefault(int(err.Code)).WithPayload(err)
 		}
@@ -56,7 +57,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	})
 	// POST login using external IDP
 	api.AuthLoginOauth2AuthHandler = authApi.LoginOauth2AuthHandlerFunc(func(params authApi.LoginOauth2AuthParams) middleware.Responder {
-		loginResponse, err := getLoginOauth2AuthResponse(params, GlobalMinIOConfig.OpenIDProviders, oauth2.DefaultIDPConfig)
+		loginResponse, err := getLoginOauth2AuthResponse(params, GlobalMinIOConfig.OpenIDProviders)
 		if err != nil {
 			return authApi.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
 		}
@@ -145,12 +146,12 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *model
 }
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
-func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders oauth2.OpenIDPCfg, idpName string) (*models.LoginDetails, *models.Error) {
+func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders oauth2.OpenIDPCfg) (*models.LoginDetails, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
-	redirectURL := []string{}
-	displayNames := []string{}
+	var redirectRules []*models.RedirectRule
+
 	r := params.HTTPRequest
 	var loginDetails *models.LoginDetails
 	if len(openIDProviders) >= 1 {
@@ -166,18 +167,24 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 				KeyFunc: provider.GetStateKeyFunc(),
 				Client:  oauth2Client,
 			}
-			redirectURL = append(redirectURL, identityProvider.GenerateLoginURL())
+
+			displayName := "Login with SSO"
+
 			if provider.DisplayName != "" {
-				displayNames = append(displayNames, provider.DisplayName)
-			} else {
-				displayNames = append(displayNames, "Login with SSO")
+				displayName = provider.DisplayName
 			}
+
+			redirectRule := models.RedirectRule{
+				Redirect:    identityProvider.GenerateLoginURL(),
+				DisplayName: displayName,
+			}
+
+			redirectRules = append(redirectRules, &redirectRule)
 		}
 	}
 	loginDetails = &models.LoginDetails{
 		LoginStrategy: loginStrategy,
-		Redirect:      redirectURL,
-		DisplayNames:  displayNames,
+		RedirectRules: redirectRules,
 	}
 	return loginDetails, nil
 }
@@ -187,29 +194,50 @@ func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, 
 	userCredentials, err := provider.VerifyIdentity(ctx, code, state)
 	if err != nil {
 		LogError("error validating user identity against idp: %v", err)
-		return nil, ErrInvalidLogin
+		return nil, err
 	}
 	return userCredentials, nil
 }
 
-func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProviders oauth2.OpenIDPCfg, idpName string) (*models.LoginResponse, *models.Error) {
+func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProviders oauth2.OpenIDPCfg) (*models.LoginResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	r := params.HTTPRequest
 	lr := params.Body
+
 	if openIDProviders != nil {
-		// initialize new oauth2 client
-		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(idpName, nil, r, GetConsoleHTTPClient(""))
+		// we read state
+		rState := *lr.State
+
+		decodedRState, err := base64.StdEncoding.DecodeString(rState)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+
+		var requestItems oauth2.LoginURLParams
+
+		err = json.Unmarshal(decodedRState, &requestItems)
+
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+
+		IDPName := requestItems.IDPName
+		state := requestItems.State
+		providerCfg := openIDProviders[IDPName]
+		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(IDPName, nil, r, GetConsoleHTTPClient(""))
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
 		// initialize new identity provider
+
 		identityProvider := auth.IdentityProvider{
-			KeyFunc: openIDProviders[idpName].GetStateKeyFunc(),
+			KeyFunc: providerCfg.GetStateKeyFunc(),
 			Client:  oauth2Client,
+			RoleARN: providerCfg.RoleArn,
 		}
 		// Validate user against IDP
-		userCredentials, err := verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, *lr.State)
+		userCredentials, err := verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, state)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}

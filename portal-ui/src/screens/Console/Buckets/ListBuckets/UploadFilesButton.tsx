@@ -69,10 +69,11 @@ const UploadFilesButton = ({
 
   const uploadObjectAllowed = hasPermission(uploadPath, [
     IAM_SCOPES.S3_PUT_OBJECT,
+    IAM_SCOPES.S3_STAR_OBJECT,
   ]);
   const uploadFolderAllowed = hasPermission(
     bucketName,
-    [IAM_SCOPES.S3_PUT_OBJECT],
+    [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_STAR_OBJECT],
     false,
     true
   );

@@ -66,7 +66,6 @@ func replaceJwtVariables(rawPolicy []byte, claims map[string]interface{}) json.R
 	for _, field := range jwtFields {
 		if val, ok := claims[field]; ok {
 			variable := fmt.Sprintf("${jwt:%s}", field)
-			fmt.Println("found", variable)
 			rawPolicy = bytes.ReplaceAll(rawPolicy, []byte(variable), []byte(fmt.Sprintf("%v", val)))
 		}
 	}
