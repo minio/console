@@ -1257,7 +1257,7 @@ export const fileInputStyles = {
   },
 };
 
-export const deleteDialogStyles = {
+export const deleteDialogStyles: any = {
   root: {
     "& .MuiPaper-root": {
       padding: "1rem 2rem 2rem 1rem",
@@ -1276,6 +1276,8 @@ export const deleteDialogStyles = {
     "& svg": {
       marginRight: 10,
     },
+    wordBreak: "break-all",
+    whiteSpace: "normal",
   },
   closeContainer: {
     "& .MuiIconButton-root": {
