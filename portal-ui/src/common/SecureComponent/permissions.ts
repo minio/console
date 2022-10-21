@@ -26,6 +26,7 @@ export const IAM_SCOPES = {
   S3_GET_BUCKET_POLICY: "s3:GetBucketPolicy",
   S3_PUT_BUCKET_POLICY: "s3:PutBucketPolicy",
   S3_GET_OBJECT: "s3:GetObject",
+  S3_STAR_OBJECT: "s3:*Object",
   S3_PUT_OBJECT: "s3:PutObject",
   S3_GET_OBJECT_LEGAL_HOLD: "s3:GetObjectLegalHold",
   S3_PUT_OBJECT_LEGAL_HOLD: "s3:PutObjectLegalHold",
