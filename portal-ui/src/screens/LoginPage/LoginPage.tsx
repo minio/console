@@ -15,21 +15,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect } from "react";
-
 import { useNavigate } from "react-router-dom";
 import {
   Box,
   InputAdornment,
   LinearProgress,
-  Select,
   MenuItem,
+  Select,
 } from "@mui/material";
 import { Button } from "mds";
 import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import Grid from "@mui/material/Grid";
-import { loginStrategyType } from "./types";
+import { loginStrategyType, redirectRule } from "./types";
 import LogoutIcon from "../../icons/LogoutIcon";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
@@ -58,6 +57,7 @@ import { resetForm, setJwt } from "./loginSlice";
 import StrategyForm from "./StrategyForm";
 import { LoginField } from "./LoginField";
 import DirectPVLogo from "../../icons/DirectPVLogo";
+import { redirectRules } from "../../utils/sortFunctions";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -344,7 +344,19 @@ const Login = () => {
     }
     case loginStrategyType.redirect:
     case loginStrategyType.redirectServiceAccount: {
-      if (loginStrategy.redirect.length > 1) {
+      let redirectItems: redirectRule[] = [];
+
+      if (
+        loginStrategy.redirectRules &&
+        loginStrategy.redirectRules.length > 0
+      ) {
+        redirectItems = [...loginStrategy.redirectRules].sort(redirectRules);
+      }
+
+      if (
+        loginStrategy.redirectRules &&
+        loginStrategy.redirectRules.length > 1
+      ) {
         loginComponent = (
           <React.Fragment>
             <div className={classes.loginSsoText}>Login with SSO:</div>
@@ -361,21 +373,21 @@ const Login = () => {
               className={classes.ssoSelect}
               renderValue={() => "Select Provider"}
             >
-              {loginStrategy.redirect.map((r, idx) => (
+              {redirectItems.map((r, idx) => (
                 <MenuItem
-                  value={r}
+                  value={r.redirect}
                   key={`sso-login-option-${idx}`}
                   className={classes.ssoMenuItem}
                   divider={true}
                 >
                   <LogoutIcon className={classes.ssoLoginIcon} />
-                  {loginStrategy.displayNames[idx]}
+                  {r.displayName}
                 </MenuItem>
               ))}
             </Select>
           </React.Fragment>
         );
-      } else if (loginStrategy.redirect.length === 1) {
+      } else if (redirectItems.length === 1) {
         loginComponent = (
           <div className={clsx(classes.submit, classes.ssoSubmit)}>
             <Button
@@ -383,12 +395,11 @@ const Login = () => {
               variant="callAction"
               id="sso-login"
               label={
-                loginStrategy.displayNames &&
-                loginStrategy.displayNames.length > 0
-                  ? loginStrategy.displayNames[0]
-                  : "Login with SSO"
+                redirectItems[0].displayName === ""
+                  ? "Login with SSO"
+                  : redirectItems[0].displayName
               }
-              onClick={() => (window.location.href = loginStrategy.redirect[0])}
+              onClick={() => (window.location.href = redirectItems[0].redirect)}
               fullWidth
             />
           </div>

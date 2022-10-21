@@ -92,13 +92,13 @@ func (ac Config) TokenSource(ctx context.Context, t *xoauth2.Token) xoauth2.Toke
 type Provider struct {
 	// oauth2Config is an interface configuration that contains the following fields
 	// Config{
-	// 	 ClientID string
+	// 	 IDPName string
 	//	 ClientSecret string
 	//	 RedirectURL string
 	//	 Endpoint oauth2.Endpoint
 	//	 Scopes []string
 	// }
-	// - ClientID is the public identifier for this application
+	// - IDPName is the public identifier for this application
 	// - ClientSecret is a shared secret between this application and the authorization server
 	// - RedirectURL is the URL to redirect users going through
 	//   the OAuth flow, after the resource owner's URLs.
@@ -107,7 +107,7 @@ type Provider struct {
 	//   often available via site-specific packages, such as
 	//   google.Endpoint or github.Endpoint.
 	// - Scopes specifies optional requested permissions.
-	ClientID string
+	IDPName string
 	// if enabled means that we need extrace access_token as well
 	UserInfo       bool
 	oauth2Config   Configuration
@@ -178,6 +178,7 @@ func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.
 	}
 
 	redirectURL := GetIDPCallbackURL()
+
 	if GetIDPCallbackURLDynamic() {
 		// dynamic redirect if set, will generate redirect URLs
 		// dynamically based on incoming requests.
@@ -199,7 +200,7 @@ func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.
 		Scopes: scopes,
 	}
 
-	client.ClientID = GetIDPClientID()
+	client.IDPName = GetIDPClientID()
 	client.UserInfo = GetIDPUserInfo()
 	client.provHTTPClient = httpClient
 
@@ -273,7 +274,7 @@ func (o OpenIDPCfg) NewOauth2ProviderClient(name string, scopes []string, r *htt
 		Scopes: scopes,
 	}
 
-	client.ClientID = o[name].ClientID
+	client.IDPName = name
 	client.UserInfo = o[name].Userinfo
 	client.provHTTPClient = httpClient
 	return client, nil
@@ -310,9 +311,10 @@ type StateKeyFunc func() []byte
 
 // VerifyIdentity will contact the configured IDP to the user identity based on the authorization code and state
 // if the user is valid, then it will contact MinIO to get valid sts credentials based on the identity provided by the IDP
-func (client *Provider) VerifyIdentity(ctx context.Context, code, state string, keyFunc StateKeyFunc) (*credentials.Credentials, error) {
+func (client *Provider) VerifyIdentity(ctx context.Context, code, state, roleARN string, keyFunc StateKeyFunc) (*credentials.Credentials, error) {
 	// verify the provided state is valid (prevents CSRF attacks)
 	if err := validateOauth2State(state, keyFunc); err != nil {
+		fmt.Println("err1", err)
 		return nil, err
 	}
 	getWebTokenExpiry := func() (*credentials.WebIdentityToken, error) {
@@ -352,10 +354,12 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state string, 
 		return token, nil
 	}
 	stsEndpoint := GetSTSEndpoint()
+
 	sts := credentials.New(&credentials.STSWebIdentity{
 		Client:              client.provHTTPClient,
 		STSEndpoint:         stsEndpoint,
 		GetWebIDTokenExpiry: getWebTokenExpiry,
+		RoleARN:             roleARN,
 	})
 	return sts, nil
 }
@@ -439,10 +443,34 @@ func GetRandomStateWithHMAC(length int, keyFunc StateKeyFunc) string {
 	return base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", state, hmac)))
 }
 
+type LoginURLParams struct {
+	State   string `json:"state"`
+	IDPName string `json:"idp_name"`
+}
+
 // GenerateLoginURL returns a new login URL based on the configured IDP
-func (client *Provider) GenerateLoginURL(keyFunc StateKeyFunc) string {
+func (client *Provider) GenerateLoginURL(keyFunc StateKeyFunc, iDPName string) string {
 	// generates random state and sign it using HMAC256
 	state := GetRandomStateWithHMAC(25, keyFunc)
-	loginURL := client.oauth2Config.AuthCodeURL(state)
+
+	configureID := "_"
+
+	if iDPName != "" {
+		configureID = iDPName
+	}
+
+	lgParams := LoginURLParams{
+		State:   state,
+		IDPName: configureID,
+	}
+
+	jsonEnc, err := json.Marshal(lgParams)
+	if err != nil {
+		return ""
+	}
+
+	stEncode := base64.StdEncoding.EncodeToString(jsonEnc)
+	loginURL := client.oauth2Config.AuthCodeURL(stEncode)
+
 	return strings.TrimSpace(loginURL)
 }
