@@ -29,4 +29,5 @@ const (
 	ConsoleIDPScopes             = "CONSOLE_IDP_SCOPES"
 	ConsoleIDPUserInfo           = "CONSOLE_IDP_USERINFO"
 	ConsoleIDPTokenExpiration    = "CONSOLE_IDP_TOKEN_EXPIRATION"
+	ConsoleIDPRoleARN            = "CONSOLE_IDP_ROLE_ARN"
 )

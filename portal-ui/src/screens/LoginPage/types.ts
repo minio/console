@@ -16,9 +16,13 @@
 
 export interface ILoginDetails {
   loginStrategy: loginStrategyType;
-  redirect: string[];
-  displayNames: string[];
+  redirectRules: redirectRule[];
   isDirectPV?: boolean;
+}
+
+export interface redirectRule {
+  redirect: string;
+  displayName: string;
 }
 
 export enum loginStrategyType {

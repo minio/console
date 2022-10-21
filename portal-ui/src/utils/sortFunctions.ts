@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { redirectRule } from "../screens/LoginPage/types";
+
 interface userInterface {
   accessKey: string;
 }
@@ -70,5 +72,15 @@ export const policyDetailsSort = (
     return -1;
   }
   // a must be equal to b
+  return 0;
+};
+
+export const redirectRules = (a: redirectRule, b: redirectRule) => {
+  if (a.displayName > b.displayName) {
+    return 1;
+  }
+  if (a.displayName < b.displayName) {
+    return -1;
+  }
   return 0;
 };
