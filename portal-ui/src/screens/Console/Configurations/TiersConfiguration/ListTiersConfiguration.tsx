@@ -376,9 +376,9 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                   },
                 }}
                 style={{
-                  border: "1px solid #E2E2E2",
-                  borderRadius: 2,
-                  backgroundColor: "#FBFAFA",
+                  // border: "1px solid #E2E2E2",
+                  //borderRadius: 2,
+                  //backgroundColor: "#FBFAFA",
                   width: 300,
                   height: 40,
                 }}
@@ -389,7 +389,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                     item
                     xs={5}
                     display={"flex"}
-                    justifyContent={"start"}
+                    justifyContent={"center"}
                     paddingLeft={2}
                   >
                     <span style={{ fontWeight: "bold", fontSize: 16 }}>
