@@ -1639,14 +1639,10 @@ definitions:
       loginStrategy:
         type: string
         enum: [form, redirect, service-account, redirect-service-account]
-      redirect:
+      redirectRules:
         type: array
         items:
-          type: string
-      displayNames:
-        type: array
-        items:
-          type: string
+          $ref: "#/definitions/redirectRule"
       isDirectPV:
         type: boolean
   loginRequest:
@@ -3745,3 +3741,11 @@ definitions:
     properties:
       registered:
         type: boolean
+
+  redirectRule:
+    type: object
+    properties:
+      redirect:
+        type: string
+      displayName:
+        type: string

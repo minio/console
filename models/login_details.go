@@ -25,6 +25,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -37,9 +38,6 @@ import (
 // swagger:model loginDetails
 type LoginDetails struct {
 
-	// display names
-	DisplayNames []string `json:"displayNames"`
-
 	// is direct p v
 	IsDirectPV bool `json:"isDirectPV,omitempty"`
 
@@ -47,8 +45,8 @@ type LoginDetails struct {
 	// Enum: [form redirect service-account redirect-service-account]
 	LoginStrategy string `json:"loginStrategy,omitempty"`
 
-	// redirect
-	Redirect []string `json:"redirect"`
+	// redirect rules
+	RedirectRules []*RedirectRule `json:"redirectRules"`
 }
 
 // Validate validates this login details
@@ -56,6 +54,10 @@ func (m *LoginDetails) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateLoginStrategy(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRedirectRules(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -113,8 +115,63 @@ func (m *LoginDetails) validateLoginStrategy(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this login details based on context it is used
+func (m *LoginDetails) validateRedirectRules(formats strfmt.Registry) error {
+	if swag.IsZero(m.RedirectRules) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.RedirectRules); i++ {
+		if swag.IsZero(m.RedirectRules[i]) { // not required
+			continue
+		}
+
+		if m.RedirectRules[i] != nil {
+			if err := m.RedirectRules[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("redirectRules" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("redirectRules" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this login details based on the context it is used
 func (m *LoginDetails) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateRedirectRules(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *LoginDetails) contextValidateRedirectRules(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.RedirectRules); i++ {
+
+		if m.RedirectRules[i] != nil {
+			if err := m.RedirectRules[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("redirectRules" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("redirectRules" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
