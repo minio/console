@@ -33,7 +33,6 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import {
   AddIcon,
-  CircleIcon,
   ConfirmDeleteIcon,
   ConfirmModalIcon,
   TiersIcon,
@@ -67,6 +66,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
 import { hasPermission } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import { height } from "@mui/system";
 
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
@@ -366,6 +366,65 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                 overrideClass={classes.searchField}
                 value={filter}
               />
+              <Box
+                sx={{
+                  width: "600",
+                  display: "flex",
+                  alignItems: "center",
+                  "& .min-icon": {
+                    width: "18px",
+                    height: "22px",
+                    fill: "#4CCB92",
+                  },
+                }}
+                style={{
+                  border: "1px solid #E2E2E2",
+                  borderRadius: 2,
+                  backgroundColor: "#FBFAFA",
+                  width: 300,
+                  height: 40,
+                }}
+                display="flex"
+              >
+                <Grid container display="flex">
+                  <Grid
+                    item
+                    xs={5}
+                    display={"flex"}
+                    justifyContent={"start"}
+                    paddingLeft={2}
+                  >
+                    <span style={{ fontWeight: "bold", fontSize: 16 }}>
+                      {" "}
+                      Status{" "}
+                    </span>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={7}
+                    display={"flex"}
+                    justifyContent={"end"}
+                    paddingRight={2}
+                  >
+                    <Grid container alignContent={"center"}>
+                      
+                      <Grid item xs={2}>
+                        <ConfirmModalIcon />
+                      </Grid>
+                      <Grid item xs={4}>
+                        Online
+                      </Grid>
+                     
+                      <Grid item xs={2}>
+                        <ConfirmDeleteIcon />
+                      </Grid>
+                      <Grid item xs={4}>
+                        Offline
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Box>
               <div className={classes.rightActionButtons}>
                 <Button
                   id={"refresh-list"}
