@@ -528,3 +528,14 @@ export const listGroupPermissions = [
   IAM_SCOPES.ADMIN_LIST_GROUPS,
   IAM_SCOPES.ADMIN_GET_GROUP,
 ];
+
+export const deleteBucketPermissions = [
+  IAM_SCOPES.S3_DELETE_BUCKET,
+  IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
+  IAM_SCOPES.S3_STAR_BUCKET,
+];
+
+export const browseBucketPermissions = [
+  IAM_SCOPES.S3_LIST_BUCKET,
+  IAM_SCOPES.S3_STAR_BUCKET,
+];
