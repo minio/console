@@ -34,6 +34,8 @@ import {
 import {
   AddIcon,
   CircleIcon,
+  ConfirmDeleteIcon,
+  ConfirmModalIcon,
   TiersIcon,
   TiersNotAvailableIcon,
 } from "../../../../icons";
@@ -244,7 +246,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
             },
           }}
         >
-          <CircleIcon />
+          <ConfirmModalIcon />
         </Box>
       );
     }
@@ -260,7 +262,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
           },
         }}
       >
-        <CircleIcon />
+        <ConfirmDeleteIcon />
       </Box>
     );
   };
