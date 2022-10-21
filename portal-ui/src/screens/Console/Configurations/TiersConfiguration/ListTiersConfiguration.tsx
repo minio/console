@@ -66,8 +66,6 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
 import { hasPermission } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import { height } from "@mui/system";
-
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );
@@ -407,14 +405,13 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                     paddingRight={2}
                   >
                     <Grid container alignContent={"center"}>
-                      
                       <Grid item xs={2}>
                         <ConfirmModalIcon />
                       </Grid>
                       <Grid item xs={4}>
                         Online
                       </Grid>
-                     
+
                       <Grid item xs={2}>
                         <ConfirmDeleteIcon />
                       </Grid>
