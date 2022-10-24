@@ -314,7 +314,6 @@ type StateKeyFunc func() []byte
 func (client *Provider) VerifyIdentity(ctx context.Context, code, state, roleARN string, keyFunc StateKeyFunc) (*credentials.Credentials, error) {
 	// verify the provided state is valid (prevents CSRF attacks)
 	if err := validateOauth2State(state, keyFunc); err != nil {
-		fmt.Println("err1", err)
 		return nil, err
 	}
 	getWebTokenExpiry := func() (*credentials.WebIdentityToken, error) {
