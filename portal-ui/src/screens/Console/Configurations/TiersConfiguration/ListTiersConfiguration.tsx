@@ -31,13 +31,7 @@ import {
   tableStyles,
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
-import {
-  AddIcon,
-  ConfirmDeleteIcon,
-  ConfirmModalIcon,
-  TiersIcon,
-  TiersNotAvailableIcon,
-} from "../../../../icons";
+import { AddIcon, TiersIcon, TiersNotAvailableIcon } from "../../../../icons";
 
 import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -66,6 +60,8 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
 import { hasPermission } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import TierOnlineIcon from "../../../../icons/TierOnlineIcon";
+import TierOfflineIcon from "../../../../icons/TierOfflineIcon";
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );
@@ -120,63 +116,6 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const hasSetTier = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.ADMIN_SET_TIER,
   ]);
-
-  const tierStatusLegend = (
-    <Box
-      sx={{
-        width: "600",
-        display: "flex",
-        alignItems: "center",
-        "& .min-icon": {
-          width: "18px",
-          height: "22px",
-          fill: "#4CCB92",
-        },
-      }}
-      style={{
-        width: 300,
-        height: 40,
-      }}
-      display="flex"
-    >
-      <Grid container display="flex">
-        <Grid
-          item
-          xs={5}
-          display={"flex"}
-          justifyContent={"start"}
-          paddingLeft={0}
-        >
-          <span style={{ fontWeight: "bold", fontSize: 16 }}>
-            Status Legend
-          </span>
-        </Grid>
-        <Grid
-          item
-          xs={7}
-          display={"flex"}
-          justifyContent={"end"}
-          paddingRight={0}
-        >
-          <Grid container alignContent={"center"}>
-            <Grid item xs={2}>
-              <ConfirmModalIcon />
-            </Grid>
-            <Grid item xs={4}>
-              Online
-            </Grid>
-
-            <Grid item xs={2}>
-              <ConfirmDeleteIcon />
-            </Grid>
-            <Grid item xs={4}>
-              Offline
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Box>
-  );
 
   useEffect(() => {
     if (checkTierStatus) {
@@ -290,29 +229,51 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const renderTierStatus = (item: boolean) => {
     if (item) {
       return (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            color: "#4CCB92",
-            fontSize: "8px",
-          }}
-        >
-          ONLINE
-        </Box>
+        <Fragment>
+          <Grid
+            container
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              color: "#4CCB92",
+              fontSize: "8px",
+            }}
+            spacing={1}
+            flexDirection={"row"}
+            display={"flex"}
+          >
+            <Grid item xs={4}>
+              <TierOnlineIcon />
+            </Grid>
+            <Grid item xs={8}>
+              ONLINE
+            </Grid>
+          </Grid>
+        </Fragment>
       );
     }
     return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          color: "#C83B51",
-          fontSize: "8px",
-        }}
-      >
-        OFFLINE
-      </Box>
+      <Fragment>
+        <Grid
+          container
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            color: "#C83B51",
+            fontSize: "8px",
+          }}
+          spacing={1}
+          flexDirection={"row"}
+          display={"flex"}
+        >
+          <Grid item xs={4}>
+            <TierOfflineIcon />
+          </Grid>
+          <Grid item xs={8}>
+            OFFLINE
+          </Grid>
+        </Grid>
+      </Fragment>
     );
   };
 
@@ -450,10 +411,6 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                 </TooltipWrapper>
               </div>
             </Grid>
-            {/*   <Grid display={"flex"} justifyContent={"end"}>
-              {tierStatusLegend}
-            </Grid>
-                */}
             {isLoading && <LinearProgress />}
             {!isLoading && (
               <Fragment>
