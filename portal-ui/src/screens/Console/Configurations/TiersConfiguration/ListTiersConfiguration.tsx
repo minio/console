@@ -294,14 +294,11 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
           sx={{
             display: "flex",
             alignItems: "center",
-            "& .min-icon": {
-              width: "18px",
-              height: "22px",
-              fill: "#4CCB92",
-            },
+            color: "#4CCB92",
+            fontSize: "8px",
           }}
         >
-          <ConfirmModalIcon />
+          ONLINE
         </Box>
       );
     }
@@ -310,14 +307,11 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
         sx={{
           display: "flex",
           alignItems: "center",
-          "& .min-icon": {
-            width: "18px",
-            height: "22px",
-            fill: "#C83B51",
-          },
+          color: "#C83B51",
+          fontSize: "8px",
         }}
       >
-        <ConfirmDeleteIcon />
+        OFFLINE
       </Box>
     );
   };
@@ -456,9 +450,10 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                 </TooltipWrapper>
               </div>
             </Grid>
-            <Grid display={"flex"} justifyContent={"end"}>
+            {/*   <Grid display={"flex"} justifyContent={"end"}>
               {tierStatusLegend}
             </Grid>
+                */}
             {isLoading && <LinearProgress />}
             {!isLoading && (
               <Fragment>
