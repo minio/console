@@ -38,7 +38,6 @@ test("Settings window exists in Settings page", async (t) => {
 
 test("All vertical tab items exist", async (t) => {
   const settingsRegionTabExists = elements.settingsRegionTab.exists;
-  const settingsCacheTabExists = elements.settingsCacheTab.exists;
   const settingsCompressionTabExists = elements.settingsCompressionTab.exists;
   const settingsApiTabExists = elements.settingsApiTab.exists;
   const settingsHealTabExists = elements.settingsHealTab.exists;
@@ -52,8 +51,6 @@ test("All vertical tab items exist", async (t) => {
   await t
     .navigateTo("http://localhost:9090/settings/configurations")
     .expect(settingsRegionTabExists)
-    .ok()
-    .expect(settingsCacheTabExists)
     .ok()
     .expect(settingsCompressionTabExists)
     .ok()
