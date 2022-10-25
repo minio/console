@@ -150,7 +150,7 @@ const PageHeader = ({
         item
         xs={12}
         sm={12}
-        md={middleComponent ? 3 : 6}
+        md={middleComponent ? 4 : 6}
         className={classes.label}
         sx={{
           paddingTop: ["15px", "15px", "0", "0"],
@@ -184,7 +184,7 @@ const PageHeader = ({
           item
           xs={12}
           sm={12}
-          md={6}
+          md={5}
           className={classes.middleComponent}
           sx={{ marginTop: ["10px", "10px", "0", "0"] }}
         >
