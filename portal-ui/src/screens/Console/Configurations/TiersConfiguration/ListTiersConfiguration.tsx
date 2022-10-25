@@ -229,51 +229,38 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const renderTierStatus = (item: boolean) => {
     if (item) {
       return (
-        <Fragment>
-          <Grid
-            container
-            sx={{
-              display: "flex",
-            //  alignItems: "center",
-              color: "#4CCB92",
-              fontSize: "8px",
-            }}
-            spacing={0}
-            //flexDirection={"row"}
-            //display={"flex"}
-          >
-            <Grid item xs={0} sm={1} m={1} lg={1} xl={1}>
-              <TierOnlineIcon />
-            </Grid>
-            <Grid item xs={8} sm={1} m={1} lg={1} xl={1}>
-              ONLINE
-            </Grid>
-          </Grid>
-        </Fragment>
-      );
-    }
-    return (
-      <Fragment>
         <Grid
           container
           sx={{
             display: "flex",
             alignItems: "center",
-            color: "#C83B51",
+            justifyItems: "start",
+            color: "#4CCB92",
             fontSize: "8px",
           }}
-          spacing={1}
-          flexDirection={"row"}
+          flexDirection={"column"}
           display={"flex"}
         >
-          <Grid item xs={4}>
-            <TierOfflineIcon />
-          </Grid>
-          <Grid item xs={8}>
-            OFFLINE
-          </Grid>
+          <TierOnlineIcon />
+          ONLINE
         </Grid>
-      </Fragment>
+      );
+    }
+    return (
+      <Grid
+        container
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          color: "#C83B51",
+          fontSize: "8px",
+        }}
+        flexDirection={"column"}
+        display={"flex"}
+      >
+        <TierOfflineIcon />
+        OFFLINE
+      </Grid>
     );
   };
 
