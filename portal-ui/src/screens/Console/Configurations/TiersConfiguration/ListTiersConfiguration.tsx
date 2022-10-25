@@ -234,18 +234,18 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
             container
             sx={{
               display: "flex",
-              alignItems: "center",
+            //  alignItems: "center",
               color: "#4CCB92",
               fontSize: "8px",
             }}
-            spacing={1}
-            flexDirection={"row"}
-            display={"flex"}
+            spacing={0}
+            //flexDirection={"row"}
+            //display={"flex"}
           >
-            <Grid item xs={4}>
+            <Grid item xs={0} sm={1} m={1} lg={1} xl={1}>
               <TierOnlineIcon />
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={8} sm={1} m={1} lg={1} xl={1}>
               ONLINE
             </Grid>
           </Grid>
