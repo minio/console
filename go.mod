@@ -23,7 +23,7 @@ require (
 	github.com/minio/directpv v1.4.4-0.20220805090942-948ca4731651
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.21.1
-	github.com/minio/madmin-go v1.6.6
+	github.com/minio/madmin-go v1.7.0
 	github.com/minio/mc v0.0.0-20221019004256-8493f97e042f
 	github.com/minio/minio-go/v7 v7.0.41
 	github.com/minio/operator v0.0.0-20220902184351-21e4073132b0
@@ -192,7 +192,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
-
-replace github.com/minio/madmin-go => github.com/klauspost/madmin-go v1.0.15-0.20221012163854-fd15cf0ad215
 
 replace github.com/minio/mc => github.com/klauspost/mc v0.0.0-20221014120903-10af4c8890f4
