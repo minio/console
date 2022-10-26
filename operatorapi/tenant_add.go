@@ -291,9 +291,9 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	// If encryption configuration is present and TLS will be enabled (using AutoCert or External certificates)
 	if tenantReq.Encryption != nil && canEncryptionBeEnabled {
 		// KES client mTLSCertificates used by MinIO instance
-		if tenantReq.Encryption.Client != nil {
+		if tenantReq.Encryption.MinioMtls != nil {
 			tenantExternalClientCertSecretName := fmt.Sprintf("%s-external-client-certificate-kes", tenantName)
-			certificates := []*models.KeyPairConfiguration{tenantReq.Encryption.Client}
+			certificates := []*models.KeyPairConfiguration{tenantReq.Encryption.MinioMtls}
 			certificateSecrets, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, certificates, tenantExternalClientCertSecretName, tenantName)
 			if err != nil {
 				return nil, restapi.ErrorWithContext(ctx, restapi.ErrDefault)

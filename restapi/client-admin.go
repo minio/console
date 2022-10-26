@@ -21,7 +21,10 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"net"
 	"net/http"
+	"net/url"
+	"sync"
 	"time"
 
 	"github.com/minio/console/models"
@@ -479,7 +482,7 @@ func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	adminClient.SetCustomTransport(GetConsoleHTTPClient().Transport)
+	adminClient.SetCustomTransport(GetConsoleHTTPClient(getMinIOServer()).Transport)
 	return adminClient, nil
 }
 
@@ -498,17 +501,54 @@ func newAdminFromCreds(accessKey, secretKey, endpoint string, tlsEnabled bool) (
 
 // httpClient is a custom http client, this client should not be called directly and instead be
 // called using GetConsoleHTTPClient() to ensure is initialized and the certificates are loaded correctly
-var httpClient *http.Client
+var httpClients = struct {
+	sync.Mutex
+	m map[string]*http.Client
+}{
+	m: make(map[string]*http.Client),
+}
 
-// GetConsoleHTTPClient will initialize the console HTTP Client with fully populated custom TLS
-// Transport that with loads certs at
-// - ${HOME}/.console/certs/CAs
-// - ${HOME}/.minio/certs/CAs
-func GetConsoleHTTPClient() *http.Client {
-	if httpClient == nil {
-		httpClient = PrepareConsoleHTTPClient(false)
+// isLocalAddress returns true if the url contains an IPv4/IPv6 hostname
+// that points to the local machine - FQDN are not supported
+func isLocalIPEndpoint(addr string) bool {
+	u, err := url.Parse(addr)
+	if err != nil {
+		return false
 	}
-	return httpClient
+	return isLocalIPAddress(u.Hostname())
+}
+
+// isLocalAddress returns true if the url contains an IPv4/IPv6 hostname
+// that points to the local machine - FQDN are not supported
+func isLocalIPAddress(ipAddr string) bool {
+	if ipAddr == "" {
+		return false
+	}
+	ip := net.ParseIP(ipAddr)
+	return ip != nil && ip.IsLoopback()
+}
+
+// GetConsoleHTTPClient caches different http clients depending on the target endpoint while taking
+// in consideration CA certs stored in ${HOME}/.console/certs/CAs and ${HOME}/.minio/certs/CAs
+// If the target endpoint points to a loopback device, skip the TLS verification.
+func GetConsoleHTTPClient(address string) *http.Client {
+	u, err := url.Parse(address)
+	if err == nil {
+		address = u.Hostname()
+	}
+
+	httpClients.Lock()
+	client, ok := httpClients.m[address]
+	httpClients.Unlock()
+	if ok {
+		return client
+	}
+
+	client = PrepareConsoleHTTPClient(isLocalIPAddress(address))
+	httpClients.Lock()
+	httpClients.m[address] = client
+	httpClients.Unlock()
+	return client
 }
 
 func (ac AdminClient) speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error) {
