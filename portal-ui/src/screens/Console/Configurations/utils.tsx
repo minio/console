@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
 import PublicIcon from "@mui/icons-material/Public";
-import SdStorageIcon from "@mui/icons-material/SdStorage";
 import CompressIcon from "@mui/icons-material/Compress";
 import CodeIcon from "@mui/icons-material/Code";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
@@ -32,11 +31,6 @@ export const configurationElements: IElement[] = [
     icon: <PublicIcon />,
     configuration_id: "region",
     configuration_label: "Region",
-  },
-  {
-    icon: <SdStorageIcon />,
-    configuration_id: "cache",
-    configuration_label: "Cache",
   },
   {
     icon: <CompressIcon />,
@@ -101,75 +95,6 @@ export const fieldsConfigurations: any = {
       label: "Comment",
       tooltip: "You can add a comment to this setting",
       type: "comment",
-      placeholder: "Enter custom notes if any",
-    },
-  ],
-  cache: [
-    {
-      name: "drives",
-      required: true,
-      label: "Drives",
-      tooltip:
-        'Mountpoints e.g. "/optane1" or "/optane2", you can write one per field',
-      type: "csv",
-      placeholder: "Enter Mount Point",
-    },
-    {
-      name: "expiry",
-      required: false,
-      label: "Expiry",
-      tooltip: 'Cache expiry duration in days e.g. "90"',
-      type: "number",
-      placeholder: "Enter Number of Days",
-    },
-    {
-      name: "quota",
-      required: false,
-      label: "Quota",
-      tooltip: 'Limit cache drive usage in percentage e.g. "90"',
-      type: "number",
-      placeholder: "Enter in %",
-    },
-    {
-      name: "exclude",
-      required: false,
-      label: "Exclude",
-      tooltip:
-        'Wildcard exclusion patterns e.g. "bucket/*.tmp" or "*.exe", you can write one per field',
-      type: "csv",
-      placeholder: "Enter Wildcard Exclusion Patterns",
-    },
-    {
-      name: "after",
-      required: false,
-      label: "After",
-      tooltip: "Minimum number of access before caching an object",
-      type: "number",
-      placeholder: "Enter Number of Attempts",
-    },
-    {
-      name: "watermark_low",
-      required: false,
-      label: "Watermark Low",
-      tooltip: "Watermark Low",
-      type: "number",
-      placeholder: "Enter Watermark Low",
-    },
-    {
-      name: "watermark_high",
-      required: false,
-      label: "Watermark High",
-      tooltip: "Watermark High",
-      type: "number",
-      placeholder: "Enter Watermark High",
-    },
-    {
-      name: "comment",
-      required: false,
-      label: "Comment",
-      tooltip: "You can add a comment to this setting",
-      type: "comment",
-      multiline: true,
       placeholder: "Enter custom notes if any",
     },
   ],
