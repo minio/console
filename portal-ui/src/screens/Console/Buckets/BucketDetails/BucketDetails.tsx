@@ -49,6 +49,8 @@ import {
   IAM_SCOPES,
   IAM_PERMISSIONS,
   IAM_ROLES,
+  deleteBucketPermissions,
+  browseBucketPermissions,
 } from "../../../../common/SecureComponent/permissions";
 import PermissionTooltipHelper from "../../Common/PermissionTooltipHelper";
 import PageLayout from "../../Common/Layout/PageLayout";
