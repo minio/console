@@ -323,7 +323,6 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                       ? bulkSelect
                         ? "Please select at least one bucket on which to configure Lifecycle"
                         : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
-
                       : "Set Lifecycle"
                   }
                 >
