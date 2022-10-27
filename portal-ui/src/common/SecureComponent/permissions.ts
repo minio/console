@@ -22,6 +22,7 @@ export const IAM_ROLES = {
 };
 
 export const IAM_SCOPES = {
+  S3_STAR_BUCKET: "s3:*Bucket",
   S3_LIST_BUCKET: "s3:ListBucket",
   S3_GET_BUCKET_POLICY: "s3:GetBucketPolicy",
   S3_PUT_BUCKET_POLICY: "s3:PutBucketPolicy",
@@ -281,6 +282,7 @@ export const IAM_PERMISSIONS = {
     IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
     IAM_SCOPES.ADMIN_LIST_USERS,
     IAM_SCOPES.ADMIN_HEAL,
+    IAM_SCOPES.S3_STAR_BUCKET,
   ],
   [IAM_ROLES.BUCKET_LIFECYCLE]: [
     IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
@@ -525,4 +527,15 @@ export const listPolicyPermissions = [IAM_SCOPES.ADMIN_LIST_USER_POLICIES];
 export const listGroupPermissions = [
   IAM_SCOPES.ADMIN_LIST_GROUPS,
   IAM_SCOPES.ADMIN_GET_GROUP,
+];
+
+export const deleteBucketPermissions = [
+  IAM_SCOPES.S3_DELETE_BUCKET,
+  IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
+  IAM_SCOPES.S3_STAR_BUCKET,
+];
+
+export const browseBucketPermissions = [
+  IAM_SCOPES.S3_LIST_BUCKET,
+  IAM_SCOPES.S3_STAR_BUCKET,
 ];

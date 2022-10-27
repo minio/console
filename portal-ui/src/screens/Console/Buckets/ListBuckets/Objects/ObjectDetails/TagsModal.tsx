@@ -269,7 +269,6 @@ const AddTagModal = ({
                             key={`chip-${index}`}
                             scopes={[IAM_SCOPES.S3_DELETE_OBJECT_TAGGING]}
                             resource={bucketName}
-                            matchAll
                             errorProps={{
                               deleteIcon: null,
                               onDelete: null,

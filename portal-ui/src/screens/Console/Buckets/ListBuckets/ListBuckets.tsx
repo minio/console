@@ -217,7 +217,10 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
     setSelectedBuckets(selectAllBuckets);
   };
 
-  const canCreateBucket = hasPermission("*", [IAM_SCOPES.S3_CREATE_BUCKET]);
+  const canCreateBucket = hasPermission("*", [
+    IAM_SCOPES.S3_CREATE_BUCKET,
+    IAM_SCOPES.S3_STAR_BUCKET,
+  ]);
   const canListBuckets = hasPermission("*", [IAM_SCOPES.S3_LIST_BUCKET]);
 
   return (
@@ -320,6 +323,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                       ? bulkSelect
                         ? "Please select at least one bucket on which to configure Lifecycle"
                         : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
+
                       : "Set Lifecycle"
                   }
                 >
@@ -458,7 +462,10 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                           </Fragment>
                         )}
                         <SecureComponent
-                          scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
+                          scopes={[
+                            IAM_SCOPES.S3_CREATE_BUCKET,
+                            IAM_SCOPES.S3_STAR_BUCKET,
+                          ]}
                           resource={CONSOLE_UI_RESOURCE}
                         >
                           <br />
