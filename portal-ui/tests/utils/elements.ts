@@ -163,10 +163,6 @@ export const settingsRegionTab = Selector(".MuiTab-root").withAttribute(
   "href",
   "/settings/configurations/region"
 );
-export const settingsCacheTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/cache"
-);
 export const settingsCompressionTab = Selector(".MuiTab-root").withAttribute(
   "href",
   "/settings/configurations/compression"

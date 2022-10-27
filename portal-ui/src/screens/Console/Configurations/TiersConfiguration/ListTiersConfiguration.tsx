@@ -31,12 +31,7 @@ import {
   tableStyles,
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
-import {
-  AddIcon,
-  CircleIcon,
-  TiersIcon,
-  TiersNotAvailableIcon,
-} from "../../../../icons";
+import { AddIcon, TiersIcon, TiersNotAvailableIcon } from "../../../../icons";
 
 import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -65,7 +60,8 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
 import { hasPermission } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-
+import TierOnlineIcon from "../../../../icons/TierOnlineIcon";
+import TierOfflineIcon from "../../../../icons/TierOfflineIcon";
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );
@@ -233,35 +229,38 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const renderTierStatus = (item: boolean) => {
     if (item) {
       return (
-        <Box
+        <Grid
+          container
           sx={{
             display: "flex",
             alignItems: "center",
-            "& .min-icon": {
-              width: "18px",
-              height: "22px",
-              fill: "#4CCB92",
-            },
+            justifyItems: "start",
+            color: "#4CCB92",
+            fontSize: "8px",
           }}
+          flexDirection={"column"}
+          display={"flex"}
         >
-          <CircleIcon />
-        </Box>
+          <TierOnlineIcon />
+          ONLINE
+        </Grid>
       );
     }
     return (
-      <Box
+      <Grid
+        container
         sx={{
           display: "flex",
           alignItems: "center",
-          "& .min-icon": {
-            width: "18px",
-            height: "22px",
-            fill: "#C83B51",
-          },
+          color: "#C83B51",
+          fontSize: "8px",
         }}
+        flexDirection={"column"}
+        display={"flex"}
       >
-        <CircleIcon />
-      </Box>
+        <TierOfflineIcon />
+        OFFLINE
+      </Grid>
     );
   };
 
@@ -364,6 +363,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                 overrideClass={classes.searchField}
                 value={filter}
               />
+
               <div className={classes.rightActionButtons}>
                 <Button
                   id={"refresh-list"}

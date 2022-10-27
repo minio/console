@@ -141,11 +141,8 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
   selTab = selTab ? selTab : "summary";
 
   const [activeTab, setActiveTab] = useState(selTab);
-  const canDelete = hasPermission(bucketName, [
-    IAM_SCOPES.S3_DELETE_BUCKET,
-    IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
-  ]);
-  const canBrowse = hasPermission(bucketName, [IAM_SCOPES.S3_LIST_BUCKET]);
+  const canDelete = hasPermission(bucketName, deleteBucketPermissions);
+  const canBrowse = hasPermission(bucketName, browseBucketPermissions);
 
   useEffect(() => {
     setActiveTab(selTab);
@@ -273,10 +270,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             actions={
               <Fragment>
                 <SecureComponent
-                  scopes={[
-                    IAM_SCOPES.S3_DELETE_BUCKET,
-                    IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
-                  ]}
+                  scopes={deleteBucketPermissions}
                   resource={bucketName}
                   errorProps={{ disabled: true }}
                 >
