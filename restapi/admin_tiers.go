@@ -109,6 +109,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:      strconv.Itoa(stats.NumObjects),
 					Versions:     strconv.Itoa(stats.NumVersions),
 				},
+				Status: false,
 			})
 		case madmin.MinIO:
 			tiersList = append(tiersList, &models.Tier{
@@ -125,6 +126,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:   strconv.Itoa(stats.NumObjects),
 					Versions:  strconv.Itoa(stats.NumVersions),
 				},
+				Status: true,
 			})
 		case madmin.GCS:
 			tiersList = append(tiersList, &models.Tier{
@@ -140,6 +142,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:  strconv.Itoa(stats.NumObjects),
 					Versions: strconv.Itoa(stats.NumVersions),
 				},
+				Status: false,
 			})
 		case madmin.Azure:
 			tiersList = append(tiersList, &models.Tier{
@@ -156,10 +159,12 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:     strconv.Itoa(stats.NumObjects),
 					Versions:    strconv.Itoa(stats.NumVersions),
 				},
+				Status: false,
 			})
 		case madmin.Unsupported:
 			tiersList = append(tiersList, &models.Tier{
-				Type: models.TierTypeUnsupported,
+				Type:   models.TierTypeUnsupported,
+				Status: false,
 			})
 
 		}
