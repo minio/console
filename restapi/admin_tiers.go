@@ -19,6 +19,9 @@ package restapi
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
+	"log"
+	"regexp"
 	"strconv"
 
 	"github.com/dustin/go-humanize"
@@ -27,6 +30,9 @@ import (
 	"github.com/minio/console/restapi/operations"
 	tieringApi "github.com/minio/console/restapi/operations/tiering"
 	"github.com/minio/madmin-go"
+
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
@@ -126,7 +132,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:   strconv.Itoa(stats.NumObjects),
 					Versions:  strconv.Itoa(stats.NumVersions),
 				},
-				Status: true,
+				Status: checkTierStatus(tierData.MinIO.Endpoint, tierData.MinIO.AccessKey, tierData.MinIO.SecretKey, tierData.MinIO.Bucket),
 			})
 		case madmin.GCS:
 			tiersList = append(tiersList, &models.Tier{
@@ -169,7 +175,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 
 		}
 	}
-
+	fmt.Println("tierlist[0].Minio.Secretkey: ", tiersList[0].Minio.Secretkey)
 	// build response
 	return &models.TierListResponse{
 		Items: tiersList,
@@ -411,4 +417,24 @@ func getEditTierCredentialsResponse(session *models.Principal, params tieringApi
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
+}
+
+func checkTierStatus(endpoint string, accessKey string, secretKey string, bucketName string) bool {
+	// Initialize minio client object.
+	re := regexp.MustCompile(`(^\w+:|^)\/\/`)
+	s := re.ReplaceAllString(endpoint, "")
+	minioClient, err := minio.New(s, &minio.Options{
+		Creds:  credentials.NewStaticV4("minioadmin", "minioadmin", ""),
+		Secure: false,
+	})
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	bucketTest, err := minioClient.BucketExists(context.Background(), bucketName)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	return bucketTest
 }
