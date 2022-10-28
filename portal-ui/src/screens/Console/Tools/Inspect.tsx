@@ -17,6 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, DialogContentText } from "@mui/material";
 import { Button } from "mds";
+import { useNavigate } from "react-router-dom";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -42,7 +43,8 @@ import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 import { InspectMenuIcon } from "../../../icons/SidebarMenus";
 import KeyRevealer from "./KeyRevealer";
 import { selDistSet, setErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
+import RegisterCluster from "../Support/RegisterCluster";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -94,7 +96,15 @@ const ExampleBlock = ({
 
 const Inspect = ({ classes }: { classes: any }) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const distributedSetup = useSelector(selDistSet);
+  const licenseInfo = useSelector(
+    (state: AppState) => state?.system?.licenseInfo
+  );
+
+  const { plan = "" } = licenseInfo || {};
+  const registeredCluster = plan === "STANDARD" || plan === "ENTERPRISE";
+
   const [volumeName, setVolumeName] = useState<string>("");
   const [inspectPath, setInspectPath] = useState<string>("");
   const [isEncrypt, setIsEncrypt] = useState<boolean>(true);
@@ -193,6 +203,7 @@ const Inspect = ({ classes }: { classes: any }) => {
     <Fragment>
       <PageHeader label={"Inspect"} />
       <PageLayout>
+        {!registeredCluster && <RegisterCluster compactMode />}
         {!distributedSetup ? (
           <DistributedOnly
             iconComponent={<InspectMenuIcon />}
@@ -246,6 +257,10 @@ const Inspect = ({ classes }: { classes: any }) => {
                 autoComplete="off"
                 onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                   e.preventDefault();
+                  if (plan !== "STANDARD" && plan !== "ENTERPRISE") {
+                    navigate("/support/register");
+                    return;
+                  }
                   performInspect();
                 }}
               >
@@ -332,7 +347,7 @@ const Inspect = ({ classes }: { classes: any }) => {
                   <Button
                     id={"inspect-start"}
                     type="submit"
-                    variant="callAction"
+                    variant={!registeredCluster ? "regular" : "callAction"}
                     data-test-id="inspect-submit-button"
                     disabled={!isFormValid}
                     label={"Inspect"}
