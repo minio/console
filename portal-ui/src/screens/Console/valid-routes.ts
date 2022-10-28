@@ -38,13 +38,13 @@ import {
   MonitoringMenuIcon,
   PerformanceMenuIcon,
   ProfileMenuIcon,
+  RegisterMenuIcon,
   SupportMenuIcon,
   TraceMenuIcon,
   UsersMenuIcon,
 } from "../../icons/SidebarMenus";
 import { hasPermission } from "../../common/SecureComponent";
 import WatchIcon from "../../icons/WatchIcon";
-import RegisterMenuIcon from "../../icons/SidebarMenus/RegisterMenuIcon";
 import {
   ClustersIcon,
   DocumentationIcon,
@@ -195,17 +195,19 @@ export const validRoutes = (
       icon: SettingsIcon,
     },
     {
+      component: NavLink,
+      to: IAM_PAGES.LICENSE,
+      name: "License",
+      id: "license",
+      icon: LicenseIcon,
+      badge: LicenseBadge,
+      forceDisplay: true,
+    },
+    {
       name: "Support",
       id: "support",
       icon: SupportMenuIcon,
       children: [
-        {
-          name: "Register",
-          id: "register",
-          component: NavLink,
-          icon: RegisterMenuIcon,
-          to: IAM_PAGES.REGISTER_SUPPORT,
-        },
         {
           name: "Health",
           id: "diagnostics",
@@ -243,15 +245,6 @@ export const validRoutes = (
           component: NavLink,
         },
       ],
-    },
-    {
-      component: NavLink,
-      to: IAM_PAGES.LICENSE,
-      name: "License",
-      id: "license",
-      icon: LicenseIcon,
-      badge: LicenseBadge,
-      forceDisplay: true,
     },
     {
       type: "item",

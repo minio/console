@@ -13,3 +13,5 @@ test-prettier:
 
 prettify:
 	yarn prettier --write . --loglevel warn
+
+pretty: prettify
