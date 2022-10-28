@@ -433,10 +433,7 @@ func checkTierStatus(endpoint string, accessKey string, secretKey string, bucket
 	bucketTest, err := minioClient.BucketExists(context.Background(), bucketName)
 	if err != nil {
 		log.Println(err)
-		if strings.Contains(err.Error(), "The request signature we calculated does not match the signature you provided. Check your key and signing method.") {
-			return true
-		}
-		return false
+		return strings.Contains(err.Error(), "The request signature we calculated does not match the signature you provided. Check your key and signing method.")
 	}
 	return bucketTest
 }
