@@ -19,6 +19,8 @@ import { useSelector } from "react-redux";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { AppState } from "../../../store";
 import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import moment from "moment/moment";
@@ -49,6 +51,7 @@ import WarnIcon from "../../../icons/WarnIcon";
 import Loader from "../Common/Loader/Loader";
 import { selDistSet } from "../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
+import RegisterCluster from "../Support/RegisterCluster";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -80,6 +83,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Speedtest = () => {
   const distributedSetup = useSelector(selDistSet);
+  const licenseInfo = useSelector(
+    (state: AppState) => state?.system?.licenseInfo
+  );
+  const navigate = useNavigate();
+
+  const { plan = "" } = licenseInfo || {};
+  const registeredCluster = plan === "STANDARD" || plan === "ENTERPRISE";
+
   const classes = useStyles();
   const [start, setStart] = useState<boolean>(false);
 
@@ -187,10 +198,21 @@ const Speedtest = () => {
 
   const buttonLabel = start ? "Start" : stoppedLabel;
 
+  const startSpeedtestButton = () => {
+    if (plan !== "STANDARD" && plan !== "ENTERPRISE") {
+      navigate("/support/register");
+      return;
+    }
+
+    setCurrStatus(null);
+    setStart(true);
+  };
+
   return (
     <Fragment>
       <PageHeader label="Performance" />
       <PageLayout>
+        {!registeredCluster && <RegisterCluster compactMode />}
         {!distributedSetup ? (
           <DistributedOnly
             iconComponent={<SpeedtestIcon />}
@@ -286,15 +308,14 @@ const Speedtest = () => {
                 </Grid>
                 <Grid item md={1} sm={12} textAlign={"right"}>
                   <Button
-                    onClick={() => {
-                      setCurrStatus(null);
-                      setStart(true);
-                    }}
+                    onClick={startSpeedtestButton}
                     color="primary"
                     type="button"
                     id={"start-speed-test"}
                     variant={
-                      currStatus !== null && !start ? "callAction" : "regular"
+                      registeredCluster && currStatus !== null && !start
+                        ? "callAction"
+                        : "regular"
                     }
                     className={`${classes.buttonBackground} ${classes.speedStart}`}
                     disabled={
@@ -319,7 +340,7 @@ const Speedtest = () => {
               </Grid>
             </Grid>
 
-            {!start && !currStatus && (
+            {!start && !currStatus && registeredCluster && (
               <Fragment>
                 <br />
                 <HelpBox

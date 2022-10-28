@@ -241,6 +241,7 @@ const MenuItem = ({
                         <Suspense fallback={<div>...</div>}>
                           <item.icon />
                         </Suspense>
+                        {item.badge ? <item.badge /> : null}
                       </ListItemIcon>
                     </Tooltip>
                   )}
