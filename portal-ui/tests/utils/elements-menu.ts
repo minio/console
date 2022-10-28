@@ -83,9 +83,6 @@ export const supportElement = Selector(".MuiPaper-root")
   .child("#support");
 export const supportChildren = Selector("#support-children");
 
-export const registerElement = supportChildren
-  .find("a")
-  .withAttribute("href", "/support/register");
 export const diagnosticsElement = supportChildren
   .find("a")
   .withAttribute("href", "/support/diagnostics");

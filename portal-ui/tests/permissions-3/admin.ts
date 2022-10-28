@@ -64,8 +64,6 @@ test("All sidebar items exist", async (t) => {
     .expect(supportElement.exists)
     .ok()
     .click(supportElement)
-    .expect(elements.registerElement.exists)
-    .ok()
     .expect(elements.diagnosticsElement.exists)
     .ok()
     .expect(elements.performanceElement.exists)
