@@ -19,10 +19,10 @@ package restapi
 import (
 	"context"
 	"encoding/base64"
-	"fmt"
 	"log"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/dustin/go-humanize"
 	"github.com/go-openapi/runtime/middleware"
@@ -175,7 +175,6 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 
 		}
 	}
-	fmt.Println("tierlist[0].Minio.Secretkey: ", tiersList[0].Minio.Secretkey)
 	// build response
 	return &models.TierListResponse{
 		Items: tiersList,
@@ -424,7 +423,7 @@ func checkTierStatus(endpoint string, accessKey string, secretKey string, bucket
 	re := regexp.MustCompile(`(^\w+:|^)\/\/`)
 	s := re.ReplaceAllString(endpoint, "")
 	minioClient, err := minio.New(s, &minio.Options{
-		Creds:  credentials.NewStaticV4("minioadmin", "minioadmin", ""),
+		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
 		Secure: false,
 	})
 	if err != nil {
@@ -434,6 +433,9 @@ func checkTierStatus(endpoint string, accessKey string, secretKey string, bucket
 	bucketTest, err := minioClient.BucketExists(context.Background(), bucketName)
 	if err != nil {
 		log.Println(err)
+		if strings.Contains(err.Error(), "The request signature we calculated does not match the signature you provided. Check your key and signing method.") {
+			return true
+		}
 		return false
 	}
 	return bucketTest
