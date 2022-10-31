@@ -97,16 +97,16 @@ export const servicesList = [
 
 const commonFields = [
   {
-    name: "queue-dir",
+    name: "queue_dir",
     label: "Queue Directory",
-    required: true,
+    required: false,
 
     tooltip: "staging dir for undelivered messages e.g. '/home/events'",
     type: "string",
     placeholder: "Enter Queue Directory",
   },
   {
-    name: "queue-limit",
+    name: "queue_limit",
     label: "Queue Limit",
     required: false,
 

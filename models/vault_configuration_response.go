@@ -55,9 +55,6 @@ type VaultConfigurationResponse struct {
 
 	// status
 	Status *VaultConfigurationResponseStatus `json:"status,omitempty"`
-
-	// tls
-	TLS *VaultConfigurationResponseTLS `json:"tls,omitempty"`
 }
 
 // Validate validates this vault configuration response
@@ -73,10 +70,6 @@ func (m *VaultConfigurationResponse) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStatus(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTLS(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -134,25 +127,6 @@ func (m *VaultConfigurationResponse) validateStatus(formats strfmt.Registry) err
 	return nil
 }
 
-func (m *VaultConfigurationResponse) validateTLS(formats strfmt.Registry) error {
-	if swag.IsZero(m.TLS) { // not required
-		return nil
-	}
-
-	if m.TLS != nil {
-		if err := m.TLS.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("tls")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("tls")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
 // ContextValidate validate this vault configuration response based on the context it is used
 func (m *VaultConfigurationResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -162,10 +136,6 @@ func (m *VaultConfigurationResponse) ContextValidate(ctx context.Context, format
 	}
 
 	if err := m.contextValidateStatus(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateTLS(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -199,22 +169,6 @@ func (m *VaultConfigurationResponse) contextValidateStatus(ctx context.Context, 
 				return ve.ValidateName("status")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("status")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *VaultConfigurationResponse) contextValidateTLS(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.TLS != nil {
-		if err := m.TLS.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("tls")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("tls")
 			}
 			return err
 		}
@@ -350,142 +304,6 @@ func (m *VaultConfigurationResponseStatus) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *VaultConfigurationResponseStatus) UnmarshalBinary(b []byte) error {
 	var res VaultConfigurationResponseStatus
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
-	return nil
-}
-
-// VaultConfigurationResponseTLS vault configuration response TLS
-//
-// swagger:model VaultConfigurationResponseTLS
-type VaultConfigurationResponseTLS struct {
-
-	// ca
-	Ca *CertificateInfo `json:"ca,omitempty"`
-
-	// crt
-	Crt *CertificateInfo `json:"crt,omitempty"`
-}
-
-// Validate validates this vault configuration response TLS
-func (m *VaultConfigurationResponseTLS) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateCa(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateCrt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *VaultConfigurationResponseTLS) validateCa(formats strfmt.Registry) error {
-	if swag.IsZero(m.Ca) { // not required
-		return nil
-	}
-
-	if m.Ca != nil {
-		if err := m.Ca.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("tls" + "." + "ca")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("tls" + "." + "ca")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *VaultConfigurationResponseTLS) validateCrt(formats strfmt.Registry) error {
-	if swag.IsZero(m.Crt) { // not required
-		return nil
-	}
-
-	if m.Crt != nil {
-		if err := m.Crt.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("tls" + "." + "crt")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("tls" + "." + "crt")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this vault configuration response TLS based on the context it is used
-func (m *VaultConfigurationResponseTLS) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateCa(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateCrt(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *VaultConfigurationResponseTLS) contextValidateCa(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Ca != nil {
-		if err := m.Ca.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("tls" + "." + "ca")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("tls" + "." + "ca")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *VaultConfigurationResponseTLS) contextValidateCrt(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Crt != nil {
-		if err := m.Crt.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("tls" + "." + "crt")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("tls" + "." + "crt")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *VaultConfigurationResponseTLS) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *VaultConfigurationResponseTLS) UnmarshalBinary(b []byte) error {
-	var res VaultConfigurationResponseTLS
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

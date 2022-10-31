@@ -101,7 +101,8 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDet
 	r := params.HTTPRequest
 
 	loginStrategy := models.LoginDetailsLoginStrategyServiceDashAccount
-	redirectURL := []string{}
+
+	var redirectRules []*models.RedirectRule
 
 	if oauth2.IsIDPEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirectDashServiceDashAccount
@@ -115,12 +116,18 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDet
 			KeyFunc: oauth2.DefaultDerivedKey,
 			Client:  oauth2Client,
 		}
-		redirectURL = append(redirectURL, identityProvider.GenerateLoginURL())
+
+		newRedirectRule := &models.RedirectRule{
+			Redirect:    identityProvider.GenerateLoginURL(),
+			DisplayName: "Login with SSO",
+		}
+
+		redirectRules = append(redirectRules, newRedirectRule)
 	}
 
 	loginDetails := &models.LoginDetails{
 		LoginStrategy: loginStrategy,
-		Redirect:      redirectURL,
+		RedirectRules: redirectRules,
 		IsDirectPV:    getDirectPVEnabled(),
 	}
 	return loginDetails, nil

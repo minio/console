@@ -52,7 +52,7 @@ const styles = (theme: Theme) =>
 interface IHelpBox {
   classes: any;
   iconComponent: any;
-  title: string;
+  title: string | React.ReactNode;
   help: any;
 }
 

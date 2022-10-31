@@ -182,13 +182,13 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 			}
 		}
 	}
-	if body.Server != nil {
+	if body.ServerTLS != nil {
 		kesExternalCertSecretName := fmt.Sprintf("%s-kes-external-cert", secretName)
 		if tenant.KESExternalCert() {
 			kesExternalCertSecretName = tenant.Spec.KES.ExternalCertSecret.Name
 		}
 		// update certificates
-		certificates := []*models.KeyPairConfiguration{body.Server}
+		certificates := []*models.KeyPairConfiguration{body.ServerTLS}
 		createdCertificates, err := createOrReplaceExternalCertSecrets(ctx, clientSet, namespace, certificates, kesExternalCertSecretName, tenantName)
 		if err != nil {
 			return err
@@ -197,13 +197,13 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 			tenant.Spec.KES.ExternalCertSecret = createdCertificates[0]
 		}
 	}
-	if body.Client != nil {
+	if body.MinioMtls != nil {
 		tenantExternalClientCertSecretName := fmt.Sprintf("%s-tenant-external-client-cert", secretName)
 		if tenant.ExternalClientCert() {
 			tenantExternalClientCertSecretName = tenant.Spec.ExternalClientCertSecret.Name
 		}
 		// Update certificates
-		certificates := []*models.KeyPairConfiguration{body.Client}
+		certificates := []*models.KeyPairConfiguration{body.MinioMtls}
 		createdCertificates, err := createOrReplaceExternalCertSecrets(ctx, clientSet, namespace, certificates, tenantExternalClientCertSecretName, tenantName)
 		if err != nil {
 			return err
@@ -309,7 +309,7 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 				return nil, err
 			}
 			if len(kesExternalCerts) > 0 {
-				encryptConfig.Server = kesExternalCerts[0]
+				encryptConfig.ServerTLS = kesExternalCerts[0]
 			}
 		}
 		if tenant.ExternalClientCert() {
@@ -318,7 +318,7 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 				return nil, err
 			}
 			if len(clientCerts) > 0 {
-				encryptConfig.MtlsClient = clientCerts[0]
+				encryptConfig.MinioMtls = clientCerts[0]
 			}
 		}
 
@@ -357,7 +357,7 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 						}
 					}
 					if tenant.KESClientCert() {
-						vaultConfig.TLS = &models.VaultConfigurationResponseTLS{}
+						encryptConfig.KmsMtls = &models.EncryptionConfigurationResponseAO1KmsMtls{}
 						clientSecretName := tenant.Spec.KES.ClientCertSecret.Name
 						keyPair, err := clientSet.getSecret(ctx, namespace, clientSecretName, metav1.GetOptions{})
 						if err != nil {
@@ -365,14 +365,14 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 						}
 						// Extract client public certificate
 						if rawCert, ok := keyPair.Data["client.crt"]; ok {
-							vaultConfig.TLS.Crt, err = parseCertificate(clientSecretName, rawCert)
+							encryptConfig.KmsMtls.Crt, err = parseCertificate(clientSecretName, rawCert)
 							if err != nil {
 								return nil, err
 							}
 						}
 						// Extract client ca certificate
 						if rawCert, ok := keyPair.Data["ca.crt"]; ok {
-							vaultConfig.TLS.Ca, err = parseCertificate(clientSecretName, rawCert)
+							encryptConfig.KmsMtls.Ca, err = parseCertificate(clientSecretName, rawCert)
 							if err != nil {
 								return nil, err
 							}
@@ -420,7 +420,7 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 						}
 						if gemalto.KeySecure.TLS != nil {
 							if tenant.KESClientCert() {
-								gemaltoConfig.Keysecure.TLS = &models.GemaltoConfigurationResponseKeysecureTLS{}
+								encryptConfig.KmsMtls = &models.EncryptionConfigurationResponseAO1KmsMtls{}
 								clientSecretName := tenant.Spec.KES.ClientCertSecret.Name
 								keyPair, err := clientSet.getSecret(ctx, namespace, clientSecretName, metav1.GetOptions{})
 								if err != nil {
@@ -428,7 +428,7 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 								}
 								// Extract client ca certificate
 								if rawCert, ok := keyPair.Data["ca.crt"]; ok {
-									gemaltoConfig.Keysecure.TLS.Ca, err = parseCertificate(clientSecretName, rawCert)
+									encryptConfig.KmsMtls.Ca, err = parseCertificate(clientSecretName, rawCert)
 									if err != nil {
 										return nil, err
 									}
@@ -511,8 +511,8 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 		}
 	}
 	// Generate server certificates for KES
-	if encryptionCfg.Server != nil {
-		certificates := []*models.KeyPairConfiguration{encryptionCfg.Server}
+	if encryptionCfg.ServerTLS != nil {
+		certificates := []*models.KeyPairConfiguration{encryptionCfg.ServerTLS}
 		certificateSecrets, err := createOrReplaceExternalCertSecrets(ctx, clientSet, ns, certificates, kesExternalCertSecretName, tenantName)
 		if err != nil {
 			return nil, err
@@ -633,9 +633,9 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 	// and pass it to KES via the ${MINIO_KES_IDENTITY} variable
 	clientCrtIdentity := "${MINIO_KES_IDENTITY}"
 	// If a client certificate is provided proceed to calculate the identity
-	if encryptionCfg.Client != nil {
+	if encryptionCfg.MinioMtls != nil {
 		// Client certificate for KES used by Minio to mTLS
-		clientTLSCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.Client.Crt)
+		clientTLSCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.MinioMtls.Crt)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -717,8 +717,8 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 			return nil, nil, errors.New("approle credentials missing for kes")
 		}
 		// Vault mTLS kesConfiguration
-		if encryptionCfg.Vault.TLS != nil {
-			vaultTLSConfig := encryptionCfg.Vault.TLS
+		if encryptionCfg.KmsMtls != nil {
+			vaultTLSConfig := encryptionCfg.KmsMtls
 			kesConfig.Keys.Vault.TLS = &kes.VaultTLS{}
 			if vaultTLSConfig.Crt != "" {
 				clientCrt, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Crt)
@@ -773,9 +773,9 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		if encryptionCfg.Gemalto.Keysecure != nil {
 			kesConfig.Keys.Gemalto.KeySecure.Endpoint = *encryptionCfg.Gemalto.Keysecure.Endpoint
 			// Gemalto TLS kesConfiguration
-			if encryptionCfg.Gemalto.Keysecure.TLS != nil {
-				if encryptionCfg.Gemalto.Keysecure.TLS.Ca != nil {
-					caCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.Gemalto.Keysecure.TLS.Ca)
+			if encryptionCfg.KmsMtls != nil {
+				if encryptionCfg.KmsMtls.Ca != "" {
+					caCrt, err := base64.StdEncoding.DecodeString(encryptionCfg.KmsMtls.Ca)
 					if err != nil {
 						return nil, nil, err
 					}

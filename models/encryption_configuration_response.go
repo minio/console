@@ -51,8 +51,11 @@ type EncryptionConfigurationResponse struct {
 	// image
 	Image string `json:"image,omitempty"`
 
-	// mtls client
-	MtlsClient *CertificateInfo `json:"mtls_client,omitempty"`
+	// kms mtls
+	KmsMtls *EncryptionConfigurationResponseAO1KmsMtls `json:"kms_mtls,omitempty"`
+
+	// minio mtls
+	MinioMtls *CertificateInfo `json:"minio_mtls,omitempty"`
 
 	// raw
 	Raw string `json:"raw,omitempty"`
@@ -63,8 +66,8 @@ type EncryptionConfigurationResponse struct {
 	// security context
 	SecurityContext *SecurityContext `json:"securityContext,omitempty"`
 
-	// server
-	Server *CertificateInfo `json:"server,omitempty"`
+	// server tls
+	ServerTLS *CertificateInfo `json:"server_tls,omitempty"`
 
 	// vault
 	Vault *VaultConfigurationResponse `json:"vault,omitempty"`
@@ -91,7 +94,9 @@ func (m *EncryptionConfigurationResponse) UnmarshalJSON(raw []byte) error {
 
 		Image string `json:"image,omitempty"`
 
-		MtlsClient *CertificateInfo `json:"mtls_client,omitempty"`
+		KmsMtls *EncryptionConfigurationResponseAO1KmsMtls `json:"kms_mtls,omitempty"`
+
+		MinioMtls *CertificateInfo `json:"minio_mtls,omitempty"`
 
 		Raw string `json:"raw,omitempty"`
 
@@ -99,7 +104,7 @@ func (m *EncryptionConfigurationResponse) UnmarshalJSON(raw []byte) error {
 
 		SecurityContext *SecurityContext `json:"securityContext,omitempty"`
 
-		Server *CertificateInfo `json:"server,omitempty"`
+		ServerTLS *CertificateInfo `json:"server_tls,omitempty"`
 
 		Vault *VaultConfigurationResponse `json:"vault,omitempty"`
 	}
@@ -117,7 +122,9 @@ func (m *EncryptionConfigurationResponse) UnmarshalJSON(raw []byte) error {
 
 	m.Image = dataAO1.Image
 
-	m.MtlsClient = dataAO1.MtlsClient
+	m.KmsMtls = dataAO1.KmsMtls
+
+	m.MinioMtls = dataAO1.MinioMtls
 
 	m.Raw = dataAO1.Raw
 
@@ -125,7 +132,7 @@ func (m *EncryptionConfigurationResponse) UnmarshalJSON(raw []byte) error {
 
 	m.SecurityContext = dataAO1.SecurityContext
 
-	m.Server = dataAO1.Server
+	m.ServerTLS = dataAO1.ServerTLS
 
 	m.Vault = dataAO1.Vault
 
@@ -152,7 +159,9 @@ func (m EncryptionConfigurationResponse) MarshalJSON() ([]byte, error) {
 
 		Image string `json:"image,omitempty"`
 
-		MtlsClient *CertificateInfo `json:"mtls_client,omitempty"`
+		KmsMtls *EncryptionConfigurationResponseAO1KmsMtls `json:"kms_mtls,omitempty"`
+
+		MinioMtls *CertificateInfo `json:"minio_mtls,omitempty"`
 
 		Raw string `json:"raw,omitempty"`
 
@@ -160,7 +169,7 @@ func (m EncryptionConfigurationResponse) MarshalJSON() ([]byte, error) {
 
 		SecurityContext *SecurityContext `json:"securityContext,omitempty"`
 
-		Server *CertificateInfo `json:"server,omitempty"`
+		ServerTLS *CertificateInfo `json:"server_tls,omitempty"`
 
 		Vault *VaultConfigurationResponse `json:"vault,omitempty"`
 	}
@@ -175,7 +184,9 @@ func (m EncryptionConfigurationResponse) MarshalJSON() ([]byte, error) {
 
 	dataAO1.Image = m.Image
 
-	dataAO1.MtlsClient = m.MtlsClient
+	dataAO1.KmsMtls = m.KmsMtls
+
+	dataAO1.MinioMtls = m.MinioMtls
 
 	dataAO1.Raw = m.Raw
 
@@ -183,7 +194,7 @@ func (m EncryptionConfigurationResponse) MarshalJSON() ([]byte, error) {
 
 	dataAO1.SecurityContext = m.SecurityContext
 
-	dataAO1.Server = m.Server
+	dataAO1.ServerTLS = m.ServerTLS
 
 	dataAO1.Vault = m.Vault
 
@@ -220,7 +231,11 @@ func (m *EncryptionConfigurationResponse) Validate(formats strfmt.Registry) erro
 		res = append(res, err)
 	}
 
-	if err := m.validateMtlsClient(formats); err != nil {
+	if err := m.validateKmsMtls(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMinioMtls(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -228,7 +243,7 @@ func (m *EncryptionConfigurationResponse) Validate(formats strfmt.Registry) erro
 		res = append(res, err)
 	}
 
-	if err := m.validateServer(formats); err != nil {
+	if err := m.validateServerTLS(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -322,18 +337,38 @@ func (m *EncryptionConfigurationResponse) validateGemalto(formats strfmt.Registr
 	return nil
 }
 
-func (m *EncryptionConfigurationResponse) validateMtlsClient(formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) validateKmsMtls(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.MtlsClient) { // not required
+	if swag.IsZero(m.KmsMtls) { // not required
 		return nil
 	}
 
-	if m.MtlsClient != nil {
-		if err := m.MtlsClient.Validate(formats); err != nil {
+	if m.KmsMtls != nil {
+		if err := m.KmsMtls.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("mtls_client")
+				return ve.ValidateName("kms_mtls")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("mtls_client")
+				return ce.ValidateName("kms_mtls")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfigurationResponse) validateMinioMtls(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.MinioMtls) { // not required
+		return nil
+	}
+
+	if m.MinioMtls != nil {
+		if err := m.MinioMtls.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("minio_mtls")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("minio_mtls")
 			}
 			return err
 		}
@@ -362,18 +397,18 @@ func (m *EncryptionConfigurationResponse) validateSecurityContext(formats strfmt
 	return nil
 }
 
-func (m *EncryptionConfigurationResponse) validateServer(formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) validateServerTLS(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Server) { // not required
+	if swag.IsZero(m.ServerTLS) { // not required
 		return nil
 	}
 
-	if m.Server != nil {
-		if err := m.Server.Validate(formats); err != nil {
+	if m.ServerTLS != nil {
+		if err := m.ServerTLS.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("server")
+				return ve.ValidateName("server_tls")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("server")
+				return ce.ValidateName("server_tls")
 			}
 			return err
 		}
@@ -427,7 +462,11 @@ func (m *EncryptionConfigurationResponse) ContextValidate(ctx context.Context, f
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateMtlsClient(ctx, formats); err != nil {
+	if err := m.contextValidateKmsMtls(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMinioMtls(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -435,7 +474,7 @@ func (m *EncryptionConfigurationResponse) ContextValidate(ctx context.Context, f
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateServer(ctx, formats); err != nil {
+	if err := m.contextValidateServerTLS(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -513,14 +552,30 @@ func (m *EncryptionConfigurationResponse) contextValidateGemalto(ctx context.Con
 	return nil
 }
 
-func (m *EncryptionConfigurationResponse) contextValidateMtlsClient(ctx context.Context, formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) contextValidateKmsMtls(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.MtlsClient != nil {
-		if err := m.MtlsClient.ContextValidate(ctx, formats); err != nil {
+	if m.KmsMtls != nil {
+		if err := m.KmsMtls.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("mtls_client")
+				return ve.ValidateName("kms_mtls")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("mtls_client")
+				return ce.ValidateName("kms_mtls")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfigurationResponse) contextValidateMinioMtls(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.MinioMtls != nil {
+		if err := m.MinioMtls.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("minio_mtls")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("minio_mtls")
 			}
 			return err
 		}
@@ -545,14 +600,14 @@ func (m *EncryptionConfigurationResponse) contextValidateSecurityContext(ctx con
 	return nil
 }
 
-func (m *EncryptionConfigurationResponse) contextValidateServer(ctx context.Context, formats strfmt.Registry) error {
+func (m *EncryptionConfigurationResponse) contextValidateServerTLS(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.Server != nil {
-		if err := m.Server.ContextValidate(ctx, formats); err != nil {
+	if m.ServerTLS != nil {
+		if err := m.ServerTLS.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("server")
+				return ve.ValidateName("server_tls")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("server")
+				return ce.ValidateName("server_tls")
 			}
 			return err
 		}
@@ -588,6 +643,142 @@ func (m *EncryptionConfigurationResponse) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *EncryptionConfigurationResponse) UnmarshalBinary(b []byte) error {
 	var res EncryptionConfigurationResponse
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// EncryptionConfigurationResponseAO1KmsMtls encryption configuration response a o1 kms mtls
+//
+// swagger:model EncryptionConfigurationResponseAO1KmsMtls
+type EncryptionConfigurationResponseAO1KmsMtls struct {
+
+	// ca
+	Ca *CertificateInfo `json:"ca,omitempty"`
+
+	// crt
+	Crt *CertificateInfo `json:"crt,omitempty"`
+}
+
+// Validate validates this encryption configuration response a o1 kms mtls
+func (m *EncryptionConfigurationResponseAO1KmsMtls) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateCa(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCrt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *EncryptionConfigurationResponseAO1KmsMtls) validateCa(formats strfmt.Registry) error {
+	if swag.IsZero(m.Ca) { // not required
+		return nil
+	}
+
+	if m.Ca != nil {
+		if err := m.Ca.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("kms_mtls" + "." + "ca")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("kms_mtls" + "." + "ca")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfigurationResponseAO1KmsMtls) validateCrt(formats strfmt.Registry) error {
+	if swag.IsZero(m.Crt) { // not required
+		return nil
+	}
+
+	if m.Crt != nil {
+		if err := m.Crt.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("kms_mtls" + "." + "crt")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("kms_mtls" + "." + "crt")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this encryption configuration response a o1 kms mtls based on the context it is used
+func (m *EncryptionConfigurationResponseAO1KmsMtls) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCa(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateCrt(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *EncryptionConfigurationResponseAO1KmsMtls) contextValidateCa(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Ca != nil {
+		if err := m.Ca.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("kms_mtls" + "." + "ca")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("kms_mtls" + "." + "ca")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfigurationResponseAO1KmsMtls) contextValidateCrt(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Crt != nil {
+		if err := m.Crt.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("kms_mtls" + "." + "crt")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("kms_mtls" + "." + "crt")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *EncryptionConfigurationResponseAO1KmsMtls) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *EncryptionConfigurationResponseAO1KmsMtls) UnmarshalBinary(b []byte) error {
+	var res EncryptionConfigurationResponseAO1KmsMtls
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
