@@ -106,7 +106,6 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const [records, setRecords] = useState<ITierElement[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [checkTierStatus, setcheckTierStatus] = useState<boolean>(false);
   const [updateCredentialsOpen, setUpdateCredentialsOpen] =
     useState<boolean>(false);
   const [selectedTier, setSelectedTier] = useState<ITierElement>({
@@ -118,46 +117,6 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   ]);
 
   useEffect(() => {
-    if (checkTierStatus) {
-      records.forEach((tier: ITierElement) => {
-        var endpoint: string;
-        switch (tier.type) {
-          case "minio":
-            endpoint = tier.minio?.endpoint + "/" + tier.minio?.bucket || "";
-            break;
-          case "s3":
-            endpoint = tier.s3?.endpoint + "/" + tier.s3?.bucket || "";
-            break;
-          case "gcs":
-            endpoint = tier.gcs?.endpoint + "/" + tier.gcs?.bucket || "";
-            break;
-          case "azure":
-            endpoint = tier.azure?.endpoint + "/" + tier.azure?.bucket || "";
-            break;
-          default:
-            endpoint = "";
-        }
-        const xhr = new XMLHttpRequest();
-        xhr.open("HEAD", endpoint);
-        xhr.send();
-        xhr.onreadystatechange = () => {
-          if (xhr.readyState === 4 || xhr.readyState === 2) {
-            tier.status = true;
-          } else {
-            tier.status = false;
-          }
-        };
-        xhr.onerror = () => {
-          tier.status = false;
-        };
-      });
-      setRecords(records);
-      setcheckTierStatus(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkTierStatus]);
-
-  useEffect(() => {
     if (isLoading) {
       if (distributedSetup) {
         const fetchRecords = () => {
@@ -166,7 +125,6 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
             .then((res: ITierResponse) => {
               setRecords(res.items || []);
               setIsLoading(false);
-              setcheckTierStatus(true);
             })
             .catch((err: ErrorResponseHandler) => {
               dispatch(setErrorSnackMessage(err));
