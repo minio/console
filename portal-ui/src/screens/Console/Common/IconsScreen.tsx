@@ -458,6 +458,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
+          <cicons.ExtraFeaturesIcon />
+          <br />
+          ExtraFeaturesIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
           <cicons.FileBookIcon />
           <br />
           FileBookIcon
@@ -977,6 +983,12 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
           <cicons.SpeedtestIcon />
           <br />
           SpeedtestIcon
+        </Grid>
+
+        <Grid item xs={3} sm={2} md={1}>
+          <cicons.StarIcon />
+          <br />
+          StarIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>

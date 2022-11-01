@@ -14,6 +14,10 @@ import {
   containerForHeader,
   inlineCheckboxes,
 } from "../Common/FormComponents/common/styleLibrary";
+import { useSelector } from "react-redux";
+import { AppState } from "../../../store";
+import { useNavigate } from "react-router-dom";
+import RegisterCluster from "./RegisterCluster";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -57,6 +61,14 @@ interface IProfileProps {
 var c: any = null;
 
 const Profile = ({ classes }: IProfileProps) => {
+  const licenseInfo = useSelector(
+    (state: AppState) => state?.system?.licenseInfo
+  );
+  const navigate = useNavigate();
+
+  const { plan = "" } = licenseInfo || {};
+  const registeredCluster = plan === "STANDARD" || plan === "ENTERPRISE";
+
   const [profilingStarted, setProfilingStarted] = useState<boolean>(false);
   const [types, setTypes] = useState<string[]>([
     "cpu",
@@ -138,6 +150,7 @@ const Profile = ({ classes }: IProfileProps) => {
     <Fragment>
       <PageHeader label="Profile" />
       <PageLayout>
+        {!registeredCluster && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>
           <Grid item xs={12} className={classes.dropdown}>
             <Grid
@@ -166,9 +179,13 @@ const Profile = ({ classes }: IProfileProps) => {
             <Button
               id={"start-profiling"}
               type="submit"
-              variant="callAction"
+              variant={registeredCluster ? "callAction" : "regular"}
               disabled={profilingStarted || types.length < 1}
               onClick={() => {
+                if (!registeredCluster) {
+                  navigate("/support/register");
+                  return;
+                }
                 startProfiling();
               }}
               label={"Start Profiling"}
