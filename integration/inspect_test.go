@@ -70,7 +70,8 @@ func TestInspect(t *testing.T) {
 				file:    "test.txt",
 				encrypt: true,
 			},
-			expStatusCode: 200,
+			// TODO: Change back to 200 when https://github.com/minio/minio/pull/15474 is merged.
+			expStatusCode: 500,
 			expectedError: false,
 		},
 		{
