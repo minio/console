@@ -65,11 +65,9 @@ const hasPermission = (
       });
       return items.filter((itm) => itm !== null);
     };
-
     resources.forEach((rsItem) => {
       // Validation against inner paths & wildcards
-      let wildcardRules = getMatchingWildcards(rsItem);
-
+      let wildcardRules = getMatchingWildcards(rsItem)
       let wildcardGrants: string[] = [];
 
       wildcardRules.forEach((rule) => {
@@ -93,6 +91,7 @@ const hasPermission = (
         ...bckOnlyNoSlash,
       ];
 
+      console.log("resource grants:", resourceGrants)
       if (containsResource) {
         const matchResource = `arn:aws:s3:::${rsItem}`;
 
