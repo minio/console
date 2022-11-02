@@ -21,7 +21,6 @@ import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
   IAM_PAGES_PERMISSIONS,
-  IAM_ROLES,
   IAM_SCOPES,
   S3_ALL_RESOURCES,
 } from "../../common/SecureComponent/permissions";
@@ -88,7 +87,7 @@ export const validRoutes = (
           to: IAM_PAGES.USERS,
           customPermissionFnc: () =>
             hasPermission(CONSOLE_UI_RESOURCE, adminUserPermissions) ||
-            hasPermission(S3_ALL_RESOURCES, adminUserPermissions) || 
+            hasPermission(S3_ALL_RESOURCES, adminUserPermissions) ||
             hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_ALL_ACTIONS]),
           name: "Users",
           icon: UsersMenuIcon,
