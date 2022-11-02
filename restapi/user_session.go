@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -98,13 +97,12 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 	}
 	erasure := accountInfo.Server.Type == madmin.Erasure
 	rawPolicy := policies.ReplacePolicyVariables(tokenClaims, accountInfo)
-
 	policy, err := minioIAMPolicy.ParseConfig(bytes.NewReader(rawPolicy))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
 	}
 	currTime := time.Now().UTC()
-	fmt.Println("policy=========", policy)
+
 	customStyles := session.CustomStyleOb
 	// This actions will be global, meaning has to be attached to all resources
 	conditionValues := map[string][]string{
@@ -138,14 +136,14 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		// store all claims from sessionToken
 		conditionValues[k] = []string{vstr}
 	}
-	fmt.Println("conditionValues=========", conditionValues)
+
 	defaultActions := policy.IsAllowedActions("", "", conditionValues)
-	fmt.Println("defaultActions=========", defaultActions)
+
 	permissions := map[string]minioIAMPolicy.ActionSet{
 		ConsoleResourceName: defaultActions,
 	}
-
 	deniedActions := map[string]minioIAMPolicy.ActionSet{}
+
 	var allowResources []*models.PermissionResource
 
 	for _, statement := range policy.Statements {
@@ -222,9 +220,6 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 			}
 		}
 	}
-	fmt.Println("permissions=================", permissions)
-
-	fmt.Println("deniedActions================", deniedActions)
 	resourcePermissions := map[string][]string{}
 	for key, val := range permissions {
 		var resourceActions []string
