@@ -17,9 +17,11 @@
 import { IMenuItem } from "./Menu/types";
 import { NavLink } from "react-router-dom";
 import {
+  adminUserPermissions,
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
   IAM_PAGES_PERMISSIONS,
+  IAM_ROLES,
   IAM_SCOPES,
   S3_ALL_RESOURCES,
 } from "../../common/SecureComponent/permissions";
@@ -85,8 +87,9 @@ export const validRoutes = (
           id: "users",
           to: IAM_PAGES.USERS,
           customPermissionFnc: () =>
-            hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_LIST_USERS]) ||
-            hasPermission(S3_ALL_RESOURCES, [IAM_SCOPES.ADMIN_CREATE_USER]),
+            hasPermission(CONSOLE_UI_RESOURCE, adminUserPermissions) ||
+            hasPermission(S3_ALL_RESOURCES, adminUserPermissions) || 
+            hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_ALL_ACTIONS]),
           name: "Users",
           icon: UsersMenuIcon,
           fsHidden: ldapIsEnabled,
