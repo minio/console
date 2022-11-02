@@ -63,11 +63,12 @@ const hasPermission = (
         }
         return null;
       });
+
       return items.filter((itm) => itm !== null);
     };
     resources.forEach((rsItem) => {
       // Validation against inner paths & wildcards
-      let wildcardRules = getMatchingWildcards(rsItem)
+      let wildcardRules = getMatchingWildcards(rsItem);
       let wildcardGrants: string[] = [];
 
       wildcardRules.forEach((rule) => {
@@ -76,7 +77,6 @@ const hasPermission = (
           wildcardGrants = [...wildcardGrants, ...wcResources];
         }
       });
-
       let simpleResources = get(sessionGrants, rsItem, []);
       simpleResources = simpleResources || [];
       const s3Resources = get(sessionGrants, `arn:aws:s3:::${rsItem}/*`, []);
@@ -91,7 +91,6 @@ const hasPermission = (
         ...bckOnlyNoSlash,
       ];
 
-      console.log("resource grants:", resourceGrants)
       if (containsResource) {
         const matchResource = `arn:aws:s3:::${rsItem}`;
 
@@ -118,7 +117,6 @@ const hasPermission = (
       });
     });
   }
-
   return hasAccessToResource(
     [
       ...resourceGrants,

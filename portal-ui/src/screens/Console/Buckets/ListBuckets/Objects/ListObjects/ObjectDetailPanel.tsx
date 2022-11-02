@@ -430,7 +430,6 @@ const ObjectDetailPanel = ({
   ]);
   const canGetObject = hasPermission(objectResources, [
     IAM_SCOPES.S3_GET_OBJECT,
-    IAM_SCOPES.S3_STAR_OBJECT,
   ]);
   const canDelete = hasPermission(
     [bucketName, currentItem, [bucketName, actualInfo.name].join("/")],

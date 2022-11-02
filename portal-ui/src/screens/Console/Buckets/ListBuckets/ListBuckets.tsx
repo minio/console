@@ -215,10 +215,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
     setSelectedBuckets(selectAllBuckets);
   };
 
-  const canCreateBucket = hasPermission("*", [
-    IAM_SCOPES.S3_CREATE_BUCKET,
-    IAM_SCOPES.S3_STAR_BUCKET,
-  ]);
+  const canCreateBucket = hasPermission("*", [IAM_SCOPES.S3_CREATE_BUCKET]);
   const canListBuckets = hasPermission("*", [IAM_SCOPES.S3_LIST_BUCKET]);
 
   return (
@@ -432,10 +429,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                             IAM_SCOPES.S3_LIST_BUCKET +
                             " permission. Please contact your MinIO administrator to establish this permission."}
                         <SecureComponent
-                          scopes={[
-                            IAM_SCOPES.S3_CREATE_BUCKET,
-                            IAM_SCOPES.S3_STAR_BUCKET,
-                          ]}
+                          scopes={[IAM_SCOPES.S3_CREATE_BUCKET]}
                           resource={CONSOLE_UI_RESOURCE}
                         >
                           <br />
