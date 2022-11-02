@@ -161,7 +161,7 @@ type Azure struct {
 	KeyVault *AzureKeyVault `yaml:"keyvault,omitempty" json:"keyvault,omitempty"`
 }
 
-type Keys struct {
+type Keystore struct {
 	Fs      *Fs      `yaml:"fs,omitempty" json:"fs,omitempty"`
 	Vault   *Vault   `yaml:"vault,omitempty" json:"vault,omitempty"`
 	Aws     *Aws     `yaml:"aws,omitempty" json:"aws,omitempty"`
@@ -170,14 +170,18 @@ type Keys struct {
 	Azure   *Azure   `yaml:"azure,omitempty" json:"azure,omitempty"`
 }
 
+type Admin struct {
+	Identity Identity `yaml:"identity,omitempty" json:"identity,omitempty"`
+}
+
 type ServerConfig struct {
 	Addr     string            `yaml:"address,omitempty" json:"address,omitempty"`
-	Root     Identity          `yaml:"root,omitempty" json:"root,omitempty"`
+	Admin    Admin             `yaml:"admin,omitempty" json:"admin,omitempty"`
 	TLS      TLS               `yaml:"tls,omitempty" json:"tls,omitempty"`
 	Policies map[string]Policy `yaml:"policy,omitempty" json:"policy,omitempty"`
 	Cache    Cache             `yaml:"cache,omitempty" json:"cache,omitempty"`
 	Log      Log               `yaml:"log,omitempty" json:"log,omitempty"`
-	Keys     Keys              `yaml:"keys,omitempty" json:"keys,omitempty"`
+	Keystore Keystore          `yaml:"keystore,omitempty" json:"keystore,omitempty"`
 }
 
 func ParseCertificate(cert []byte) (*x509.Certificate, error) {

@@ -335,8 +335,8 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 				if err != nil {
 					return nil, err
 				}
-				if kesConfiguration.Keys.Vault != nil {
-					vault := kesConfiguration.Keys.Vault
+				if kesConfiguration.Keystore.Vault != nil {
+					vault := kesConfiguration.Keystore.Vault
 					vaultConfig := &models.VaultConfigurationResponse{
 						Prefix:    vault.Prefix,
 						Namespace: vault.Namespace,
@@ -380,8 +380,8 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 					}
 					encryptConfig.Vault = vaultConfig
 				}
-				if kesConfiguration.Keys.Aws != nil {
-					awsJSON, err := json.Marshal(kesConfiguration.Keys.Aws)
+				if kesConfiguration.Keystore.Aws != nil {
+					awsJSON, err := json.Marshal(kesConfiguration.Keystore.Aws)
 					if err != nil {
 						return nil, err
 					}
@@ -392,8 +392,8 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 					}
 					encryptConfig.Aws = awsConfig
 				}
-				if kesConfiguration.Keys.Gcp != nil {
-					gcpJSON, err := json.Marshal(kesConfiguration.Keys.Gcp)
+				if kesConfiguration.Keystore.Gcp != nil {
+					gcpJSON, err := json.Marshal(kesConfiguration.Keystore.Gcp)
 					if err != nil {
 						return nil, err
 					}
@@ -404,8 +404,8 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 					}
 					encryptConfig.Gcp = gcpConfig
 				}
-				if kesConfiguration.Keys.Gemalto != nil {
-					gemalto := kesConfiguration.Keys.Gemalto
+				if kesConfiguration.Keystore.Gemalto != nil {
+					gemalto := kesConfiguration.Keystore.Gemalto
 					gemaltoConfig := &models.GemaltoConfigurationResponse{
 						Keysecure: &models.GemaltoConfigurationResponseKeysecure{},
 					}
@@ -438,8 +438,8 @@ func tenantEncryptionInfo(ctx context.Context, operatorClient OperatorClientI, c
 					}
 					encryptConfig.Gemalto = gemaltoConfig
 				}
-				if kesConfiguration.Keys.Azure != nil {
-					azureJSON, err := json.Marshal(kesConfiguration.Keys.Azure)
+				if kesConfiguration.Keystore.Azure != nil {
+					azureJSON, err := json.Marshal(kesConfiguration.Keystore.Azure)
 					if err != nil {
 						return nil, err
 					}
@@ -651,7 +651,9 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 	// Default kesConfiguration for KES
 	kesConfig := &kes.ServerConfig{
 		Addr: "0.0.0.0:7373",
-		Root: "disabled",
+		Admin: kes.Admin{
+			Identity: "disabled",
+		},
 		TLS: kes.TLS{
 			KeyPath:  "/tmp/kes/server.key",
 			CertPath: "/tmp/kes/server.crt",
@@ -678,7 +680,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 			Error: "on",
 			Audit: "off",
 		},
-		Keys: kes.Keys{},
+		Keystore: kes.Keystore{},
 	}
 	// miniov2 will mount the mTLSCertificates in the following paths
 	// therefore we set these values in the KES yaml kesConfiguration
@@ -695,7 +697,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 			ping = int(encryptionCfg.Vault.Status.Ping)
 		}
 		// Initialize Vault Config
-		kesConfig.Keys.Vault = &kes.Vault{
+		kesConfig.Keystore.Vault = &kes.Vault{
 			Endpoint:   *encryptionCfg.Vault.Endpoint,
 			EnginePath: encryptionCfg.Vault.Engine,
 			Namespace:  encryptionCfg.Vault.Namespace,
@@ -707,7 +709,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		// Vault AppRole credentials
 		if encryptionCfg.Vault.Approle != nil {
 			retry := encryptionCfg.Vault.Approle.Retry
-			kesConfig.Keys.Vault.AppRole = &kes.AppRole{
+			kesConfig.Keystore.Vault.AppRole = &kes.AppRole{
 				EnginePath: encryptionCfg.Vault.Approle.Engine,
 				ID:         *encryptionCfg.Vault.Approle.ID,
 				Secret:     *encryptionCfg.Vault.Approle.Secret,
@@ -719,14 +721,14 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		// Vault mTLS kesConfiguration
 		if encryptionCfg.KmsMtls != nil {
 			vaultTLSConfig := encryptionCfg.KmsMtls
-			kesConfig.Keys.Vault.TLS = &kes.VaultTLS{}
+			kesConfig.Keystore.Vault.TLS = &kes.VaultTLS{}
 			if vaultTLSConfig.Crt != "" {
 				clientCrt, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Crt)
 				if err != nil {
 					return nil, nil, err
 				}
 				mTLSCertificates["client.crt"] = clientCrt
-				kesConfig.Keys.Vault.TLS.CertPath = mTLSClientCrtPath
+				kesConfig.Keystore.Vault.TLS.CertPath = mTLSClientCrtPath
 			}
 			if vaultTLSConfig.Key != "" {
 				clientKey, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Key)
@@ -734,7 +736,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 					return nil, nil, err
 				}
 				mTLSCertificates["client.key"] = clientKey
-				kesConfig.Keys.Vault.TLS.KeyPath = mTLSClientKeyPath
+				kesConfig.Keystore.Vault.TLS.KeyPath = mTLSClientKeyPath
 			}
 			if vaultTLSConfig.Ca != "" {
 				caCrt, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Ca)
@@ -742,22 +744,22 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 					return nil, nil, err
 				}
 				mTLSCertificates["ca.crt"] = caCrt
-				kesConfig.Keys.Vault.TLS.CAPath = mTLSClientCaPath
+				kesConfig.Keystore.Vault.TLS.CAPath = mTLSClientCaPath
 			}
 		}
 	case encryptionCfg.Aws != nil:
 		// Initialize AWS
-		kesConfig.Keys.Aws = &kes.Aws{
+		kesConfig.Keystore.Aws = &kes.Aws{
 			SecretsManager: &kes.AwsSecretManager{},
 		}
 		// AWS basic kesConfiguration
 		if encryptionCfg.Aws.Secretsmanager != nil {
-			kesConfig.Keys.Aws.SecretsManager.Endpoint = *encryptionCfg.Aws.Secretsmanager.Endpoint
-			kesConfig.Keys.Aws.SecretsManager.Region = *encryptionCfg.Aws.Secretsmanager.Region
-			kesConfig.Keys.Aws.SecretsManager.KmsKey = encryptionCfg.Aws.Secretsmanager.Kmskey
+			kesConfig.Keystore.Aws.SecretsManager.Endpoint = *encryptionCfg.Aws.Secretsmanager.Endpoint
+			kesConfig.Keystore.Aws.SecretsManager.Region = *encryptionCfg.Aws.Secretsmanager.Region
+			kesConfig.Keystore.Aws.SecretsManager.KmsKey = encryptionCfg.Aws.Secretsmanager.Kmskey
 			// AWS credentials
 			if encryptionCfg.Aws.Secretsmanager.Credentials != nil {
-				kesConfig.Keys.Aws.SecretsManager.Login = &kes.AwsSecretManagerLogin{
+				kesConfig.Keystore.Aws.SecretsManager.Login = &kes.AwsSecretManagerLogin{
 					AccessKey:    *encryptionCfg.Aws.Secretsmanager.Credentials.Accesskey,
 					SecretKey:    *encryptionCfg.Aws.Secretsmanager.Credentials.Secretkey,
 					SessionToken: encryptionCfg.Aws.Secretsmanager.Credentials.Token,
@@ -766,12 +768,12 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		}
 	case encryptionCfg.Gemalto != nil:
 		// Initialize Gemalto
-		kesConfig.Keys.Gemalto = &kes.Gemalto{
+		kesConfig.Keystore.Gemalto = &kes.Gemalto{
 			KeySecure: &kes.GemaltoKeySecure{},
 		}
 		// Gemalto Configuration
 		if encryptionCfg.Gemalto.Keysecure != nil {
-			kesConfig.Keys.Gemalto.KeySecure.Endpoint = *encryptionCfg.Gemalto.Keysecure.Endpoint
+			kesConfig.Keystore.Gemalto.KeySecure.Endpoint = *encryptionCfg.Gemalto.Keysecure.Endpoint
 			// Gemalto TLS kesConfiguration
 			if encryptionCfg.KmsMtls != nil {
 				if encryptionCfg.KmsMtls.Ca != "" {
@@ -780,14 +782,14 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 						return nil, nil, err
 					}
 					mTLSCertificates["ca.crt"] = caCrt
-					kesConfig.Keys.Gemalto.KeySecure.TLS = &kes.GemaltoTLS{
+					kesConfig.Keystore.Gemalto.KeySecure.TLS = &kes.GemaltoTLS{
 						CAPath: mTLSClientCaPath,
 					}
 				}
 			}
 			// Gemalto Login
 			if encryptionCfg.Gemalto.Keysecure.Credentials != nil {
-				kesConfig.Keys.Gemalto.KeySecure.Credentials = &kes.GemaltoCredentials{
+				kesConfig.Keystore.Gemalto.KeySecure.Credentials = &kes.GemaltoCredentials{
 					Token:  *encryptionCfg.Gemalto.Keysecure.Credentials.Token,
 					Domain: *encryptionCfg.Gemalto.Keysecure.Credentials.Domain,
 					Retry:  15 * time.Second,
@@ -796,16 +798,16 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		}
 	case encryptionCfg.Gcp != nil:
 		// Initialize GCP
-		kesConfig.Keys.Gcp = &kes.Gcp{
+		kesConfig.Keystore.Gcp = &kes.Gcp{
 			SecretManager: &kes.GcpSecretManager{},
 		}
 		// GCP basic kesConfiguration
 		if encryptionCfg.Gcp.Secretmanager != nil {
-			kesConfig.Keys.Gcp.SecretManager.ProjectID = *encryptionCfg.Gcp.Secretmanager.ProjectID
-			kesConfig.Keys.Gcp.SecretManager.Endpoint = encryptionCfg.Gcp.Secretmanager.Endpoint
+			kesConfig.Keystore.Gcp.SecretManager.ProjectID = *encryptionCfg.Gcp.Secretmanager.ProjectID
+			kesConfig.Keystore.Gcp.SecretManager.Endpoint = encryptionCfg.Gcp.Secretmanager.Endpoint
 			// GCP credentials
 			if encryptionCfg.Gcp.Secretmanager.Credentials != nil {
-				kesConfig.Keys.Gcp.SecretManager.Credentials = &kes.GcpCredentials{
+				kesConfig.Keystore.Gcp.SecretManager.Credentials = &kes.GcpCredentials{
 					ClientEmail:  encryptionCfg.Gcp.Secretmanager.Credentials.ClientEmail,
 					ClientID:     encryptionCfg.Gcp.Secretmanager.Credentials.ClientID,
 					PrivateKeyID: encryptionCfg.Gcp.Secretmanager.Credentials.PrivateKeyID,
@@ -815,13 +817,13 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		}
 	case encryptionCfg.Azure != nil:
 		// Initialize Azure
-		kesConfig.Keys.Azure = &kes.Azure{
+		kesConfig.Keystore.Azure = &kes.Azure{
 			KeyVault: &kes.AzureKeyVault{},
 		}
 		if encryptionCfg.Azure.Keyvault != nil {
-			kesConfig.Keys.Azure.KeyVault.Endpoint = *encryptionCfg.Azure.Keyvault.Endpoint
+			kesConfig.Keystore.Azure.KeyVault.Endpoint = *encryptionCfg.Azure.Keyvault.Endpoint
 			if encryptionCfg.Azure.Keyvault.Credentials != nil {
-				kesConfig.Keys.Azure.KeyVault.Credentials = &kes.AzureCredentials{
+				kesConfig.Keystore.Azure.KeyVault.Credentials = &kes.AzureCredentials{
 					TenantID:     *encryptionCfg.Azure.Keyvault.Credentials.TenantID,
 					ClientID:     *encryptionCfg.Azure.Keyvault.Credentials.ClientID,
 					ClientSecret: *encryptionCfg.Azure.Keyvault.Credentials.ClientSecret,
