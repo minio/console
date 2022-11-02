@@ -5119,6 +5119,8 @@ definitions:
   tier:
     type: object
     properties:
+      status:
+        type: boolean
       type:
         type: string
         enum:

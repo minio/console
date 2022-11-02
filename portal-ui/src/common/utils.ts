@@ -471,7 +471,7 @@ export const erasureCodeCalc = (
 
   const fourVar = parityValidValues.find((element) => element === "EC:4");
 
-  if (totalDisks >= 8 && totalNodes > 16 && fourVar) {
+  if (fourVar) {
     defaultEC = "EC:4";
   }
 

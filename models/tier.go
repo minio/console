@@ -49,6 +49,9 @@ type Tier struct {
 	// s3
 	S3 *TierS3 `json:"s3,omitempty"`
 
+	// status
+	Status bool `json:"status,omitempty"`
+
 	// type
 	// Enum: [s3 gcs azure minio unsupported]
 	Type string `json:"type,omitempty"`
