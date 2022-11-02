@@ -17,14 +17,12 @@
 package restapi
 
 import (
-	"context"
-	"encoding/binary"
-	"encoding/hex"
+	"encoding/base64"
 	"fmt"
-	"hash/crc32"
 	"io"
-	"io/ioutil"
 	"net/http"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -37,28 +35,40 @@ import (
 
 func registerInspectHandler(api *operations.ConsoleAPI) {
 	api.InspectInspectHandler = inspectApi.InspectHandlerFunc(func(params inspectApi.InspectParams, principal *models.Principal) middleware.Responder {
-		k, r, err := getInspectResult(principal, &params)
-		isEncryptOn := params.Encrypt != nil && *params.Encrypt
+		if v, err := base64.URLEncoding.DecodeString(params.File); err == nil && utf8.Valid(v) {
+			params.File = string(v)
+		}
 
+		if v, err := base64.URLEncoding.DecodeString(params.Volume); err == nil && utf8.Valid(v) {
+			params.Volume = string(v)
+		}
+
+		k, r, err := getInspectResult(principal, &params)
 		if err != nil {
 			return inspectApi.NewInspectDefault(int(err.Code)).WithPayload(err)
 		}
 
-		return middleware.ResponderFunc(processInspectResponse(isEncryptOn, k, r))
+		return middleware.ResponderFunc(processInspectResponse(&params, k, r))
 	})
 }
 
-func getInspectResult(session *models.Principal, params *inspectApi.InspectParams) (*[32]byte, io.ReadCloser, *models.Error) {
-	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
-	defer cancel()
+func getInspectResult(session *models.Principal, params *inspectApi.InspectParams) ([]byte, io.ReadCloser, *models.Error) {
+	ctx := params.HTTPRequest.Context()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return nil, nil, ErrorWithContext(ctx, err)
 	}
 
-	var cfg madmin.InspectOptions
-	cfg.File = params.File
-	cfg.Volume = params.Volume
+	cfg := madmin.InspectOptions{
+		File:   params.File,
+		Volume: params.Volume,
+	}
+
+	// TODO: Remove encryption option and always encrypt.
+	// Maybe also add public key field.
+	if params.Encrypt != nil && *params.Encrypt {
+		cfg.PublicKey, _ = base64.StdEncoding.DecodeString("MIIBCgKCAQEAs/128UFS9A8YSJY1XqYKt06dLVQQCGDee69T+0Tip/1jGAB4z0/3QMpH0MiS8Wjs4BRWV51qvkfAHzwwdU7y6jxU05ctb/H/WzRj3FYdhhHKdzear9TLJftlTs+xwj2XaADjbLXCV1jGLS889A7f7z5DgABlVZMQd9BjVAR8ED3xRJ2/ZCNuQVJ+A8r7TYPGMY3wWvhhPgPk3Lx4WDZxDiDNlFs4GQSaESSsiVTb9vyGe/94CsCTM6Cw9QG6ifHKCa/rFszPYdKCabAfHcS3eTr0GM+TThSsxO7KfuscbmLJkfQev1srfL2Ii2RbnysqIJVWKEwdW05ID8ryPkuTuwIDAQAB")
+	}
 
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -68,45 +78,43 @@ func getInspectResult(session *models.Principal, params *inspectApi.InspectParam
 	if err != nil {
 		return nil, nil, ErrorWithContext(ctx, err)
 	}
-	return &k, r, nil
+	return k, r, nil
 }
 
 // borrowed from mc cli
-func decryptInspect(key [32]byte, r io.Reader) io.ReadCloser {
+func decryptInspectV1(key [32]byte, r io.Reader) io.ReadCloser {
 	stream, err := sio.AES_256_GCM.Stream(key[:])
 	if err != nil {
 		return nil
 	}
 	nonce := make([]byte, stream.NonceSize())
-	return ioutil.NopCloser(stream.DecryptReader(r, nonce, nil))
+	return io.NopCloser(stream.DecryptReader(r, nonce, nil))
 }
 
-func processInspectResponse(isEnc bool, k *[32]byte, r io.ReadCloser) func(w http.ResponseWriter, _ runtime.Producer) {
+func processInspectResponse(params *inspectApi.InspectParams, k []byte, r io.ReadCloser) func(w http.ResponseWriter, _ runtime.Producer) {
+	isEnc := params.Encrypt != nil && *params.Encrypt
 	return func(w http.ResponseWriter, _ runtime.Producer) {
-		var id [4]byte
-		binary.LittleEndian.PutUint32(id[:], crc32.ChecksumIEEE(k[:]))
-		defer r.Close()
-
 		ext := "enc"
-		if !isEnc {
+		if len(k) == 32 && !isEnc {
 			ext = "zip"
-			r = decryptInspect(*k, r)
+			r = decryptInspectV1(*(*[32]byte)(k), r)
 		}
-
-		fileName := fmt.Sprintf("inspect.%s.%s", hex.EncodeToString(id[:]), ext)
-
-		if isEnc {
-			// use cookie to transmit the Decryption Key.
-			hexKey := hex.EncodeToString(id[:]) + hex.EncodeToString(k[:])
-			cookie := http.Cookie{
-				Name:   fileName,
-				Value:  hexKey,
-				Path:   "/",
-				MaxAge: 3000,
+		fileName := fmt.Sprintf("inspect-%s-%s.%s", params.Volume, params.File, ext)
+		fileName = strings.Map(func(r rune) rune {
+			switch {
+			case r >= 'A' && r <= 'Z':
+				return r
+			case r >= 'a' && r <= 'z':
+				return r
+			case r >= '0' && r <= '9':
+				return r
+			default:
+				if strings.ContainsAny(string(r), "-+._") {
+					return r
+				}
+				return '_'
 			}
-			http.SetCookie(w, &cookie)
-		}
-
+		}, fileName)
 		w.Header().Set("Content-Type", "application/octet-stream")
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
 
