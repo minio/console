@@ -453,7 +453,7 @@ func (ac AdminClient) addTier(ctx context.Context, cfg *madmin.TierConfig) error
 }
 
 // implements madmin.Inspect()
-func (ac AdminClient) inspect(ctx context.Context, insOpts madmin.InspectOptions) ([32]byte, io.ReadCloser, error) {
+func (ac AdminClient) inspect(ctx context.Context, insOpts madmin.InspectOptions) ([]byte, io.ReadCloser, error) {
 	return ac.Client.Inspect(ctx, insOpts)
 }
 
