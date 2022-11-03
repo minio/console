@@ -461,6 +461,21 @@ export const enableUserPermissions = [IAM_SCOPES.ADMIN_ENABLE_USER];
 
 export const disableUserPermissions = [IAM_SCOPES.ADMIN_DISABLE_USER];
 
+//note that adminUserPermissions does NOT include ADMIN_CREATE_USER to allow hiding the Users tab for users wtih only this permission as it is being applied by default
+export const adminUserPermissions = [
+  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+  IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+  IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
+  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+  IAM_SCOPES.ADMIN_DELETE_USER,
+  IAM_SCOPES.ADMIN_ENABLE_USER,
+  IAM_SCOPES.ADMIN_DISABLE_USER,
+  IAM_SCOPES.ADMIN_GET_USER,
+  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+];
+
 export const assignIAMPolicyPermissions = [
   IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
   IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
