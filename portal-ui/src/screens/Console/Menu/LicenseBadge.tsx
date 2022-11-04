@@ -38,31 +38,24 @@ const LicenseBadge = () => {
     <Box
       sx={{
         position: "absolute",
+        top: 1,
+        transform: "translateX(5px)",
+        zIndex: 400,
+        border: 0,
+      }}
+      style={{
         border: 0,
       }}
     >
-      <Box
-        sx={{
-          position: "absolute",
-          right: -19,
-          top: -29,
-          zIndex: 400,
-          border: 0,
-        }}
+      <CircleIcon
         style={{
-          border: 0,
+          fill: "#FF3958",
+          border: "1px solid #FF3958",
+          borderRadius: "100%",
+          width: 8,
+          height: 8,
         }}
-      >
-        <CircleIcon
-          style={{
-            fill: "#c83b51",
-            border: "1px solid #002148",
-            borderRadius: "100%",
-            width: 12,
-            height: 12,
-          }}
-        />
-      </Box>
+      />
     </Box>
   );
 };

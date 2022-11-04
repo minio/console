@@ -71,7 +71,14 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
     <Box
       sx={{
         width: "100%",
-        boxShadow: "0 3px 10px -6px #426198",
+        "&::after": {
+          width: "80%",
+          height: "1px",
+          display: "block",
+          content: "' '",
+          backgroundColor: "#0F446C",
+          margin: "0px auto",
+        },
       }}
     >
       <Box

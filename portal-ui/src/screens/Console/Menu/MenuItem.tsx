@@ -150,7 +150,6 @@ const MenuItem = ({
               <Suspense fallback={<div>...</div>}>
                 <page.icon />
               </Suspense>
-              {page.badge ? <page.badge /> : null}
             </ListItemIcon>
           </Tooltip>
         )}
@@ -159,23 +158,24 @@ const MenuItem = ({
             className={stateClsName}
             sx={{ ...menuItemTextStyles }}
             primary={page.name}
+            secondary={page.badge ? <page.badge /> : null}
           />
         )}
 
         {hasChildren ? (
           isActiveGroup || previewMenuGroup === page.id ? (
-            <MenuCollapsedIcon
-              height={15}
-              width={15}
-              className="group-icon"
-              style={{ color: "white" }}
-            />
-          ) : (
             <MenuExpandedIcon
               height={15}
               width={15}
               className="group-icon"
-              style={{ color: "white" }}
+              style={{ color: "#8399AB" }}
+            />
+          ) : (
+            <MenuCollapsedIcon
+              height={15}
+              width={15}
+              className="group-icon"
+              style={{ color: "#8399AB" }}
             />
           )
         ) : null}

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import ListItem from "@mui/material/ListItem";
@@ -23,21 +23,24 @@ import LogoutIcon from "../../../icons/LogoutIcon";
 import ListItemText from "@mui/material/ListItemText";
 import List from "@mui/material/List";
 import {
+  LogoutItemIconStyle,
   menuItemContainerStyles,
-  menuItemIconStyles,
   menuItemMiniStyles,
   menuItemTextStyles,
 } from "./MenuStyleUtils";
 import MenuItem from "./MenuItem";
 
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import MenuSectionHeader from "./MenuSectionHeader";
 
 const ConsoleMenuList = ({
   menuItems,
   isOpen,
+  displayHeaders = false,
 }: {
   menuItems: any[];
   isOpen: boolean;
+  displayHeaders?: boolean;
 }) => {
   const stateClsName = isOpen ? "wide" : "mini";
   const { pathname = "" } = useLocation();
@@ -58,6 +61,7 @@ const ConsoleMenuList = ({
   }, [groupToSelect]);
 
   let basename = document.baseURI.replace(window.location.origin, "");
+  let header = "";
 
   return (
     <Box
@@ -76,6 +80,9 @@ const ConsoleMenuList = ({
 
         "&.mini": {
           marginLeft: "10px",
+          "& .menuHeader": {
+            display: "none",
+          },
         },
       }}
     >
@@ -100,20 +107,30 @@ const ConsoleMenuList = ({
         <React.Fragment>
           {(menuItems || []).map((menuGroup: any, index) => {
             if (menuGroup) {
+              let grHeader = null;
+
+              if (menuGroup.group !== header && displayHeaders) {
+                grHeader = <MenuSectionHeader label={menuGroup.group} />;
+                header = menuGroup.group;
+              }
+
               return (
-                <MenuItem
-                  stateClsName={stateClsName}
-                  page={menuGroup}
-                  key={`${menuGroup.id}-${index.toString()}`}
-                  id={menuGroup.id}
-                  selectedMenuItem={selectedMenuItem}
-                  setSelectedMenuItem={setSelectedMenuItem}
-                  pathValue={pathname}
-                  onExpand={setExpandGroup}
-                  expandedGroup={expandGroup}
-                  previewMenuGroup={previewMenuGroup}
-                  setPreviewMenuGroup={setPreviewMenuGroup}
-                />
+                <Fragment>
+                  {grHeader}
+                  <MenuItem
+                    stateClsName={stateClsName}
+                    page={menuGroup}
+                    key={`${menuGroup.id}-${index.toString()}`}
+                    id={menuGroup.id}
+                    selectedMenuItem={selectedMenuItem}
+                    setSelectedMenuItem={setSelectedMenuItem}
+                    pathValue={pathname}
+                    onExpand={setExpandGroup}
+                    expandedGroup={expandGroup}
+                    previewMenuGroup={previewMenuGroup}
+                    setPreviewMenuGroup={setPreviewMenuGroup}
+                  />
+                </Fragment>
               );
             }
             return null;
@@ -148,13 +165,13 @@ const ConsoleMenuList = ({
         >
           <ListItemIcon
             sx={{
-              ...menuItemIconStyles,
+              ...LogoutItemIconStyle,
             }}
           >
             <LogoutIcon />
           </ListItemIcon>
           <ListItemText
-            primary="Logout"
+            primary="Sign Out"
             id={"logout"}
             sx={{ ...menuItemTextStyles }}
             className={stateClsName}

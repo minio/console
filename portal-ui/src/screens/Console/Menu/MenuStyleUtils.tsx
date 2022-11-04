@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,43 +15,95 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export const menuItemContainerStyles: any = {
-  paddingLeft: 0,
-  paddingBottom: "18px",
-  "&.active div:nth-of-type(1)": {
-    border: "2px solid #ffffff",
+  padding: "12px 0",
+  "div:nth-of-type(2)": {
+    flexGrow: 0,
+    marginRight: "15px",
   },
-  "&:hover, &:focus": {
-    background: "none",
+
+  "&.active": {
+    background:
+      "transparent linear-gradient(270deg, #00000000 0%, #051d39 53%, #54545400 100%) 0% 0% no-repeat padding-box",
+    backgroundBlendMode: "multiply",
+
+    "& span": {
+      color: "#fff",
+    },
+    "& svg": {
+      fill: "#fff",
+    },
+
     "& div:nth-of-type(1)": {
-      background: "none",
-      "& svg": {
-        fill: "#ffffff",
+      border: "1px solid #fff",
+    },
+
+    "&:hover, &:focus": {
+      "& div:nth-of-type(1)": {
+        background: "none",
+        "& svg": {
+          fill: "#fff",
+        },
       },
     },
   },
 };
 export const menuItemIconStyles: any = {
-  width: 37,
-  minWidth: 37,
-  height: 37,
+  width: 30,
+  minWidth: 30,
+  height: 30,
+  background: "#00274D",
+  border: "1px solid #002148",
+  display: "flex",
+  alignItems: "center",
+  borderRadius: "50%",
+  justifyContent: "center",
+  "& svg": {
+    width: 12,
+    height: 12,
+    fill: "#8399AB",
+  },
+  "&.active": {
+    "& span": {
+      color: "#fff",
+    },
+    "& svg": {
+      fill: "#fff",
+    },
+  },
+};
+
+export const LogoutItemIconStyle: any = {
+  width: 40,
+  minWidth: 40,
+  height: 40,
   background: "#00274D",
   border: "2px solid #002148",
   display: "flex",
   alignItems: "center",
   borderRadius: "50%",
   justifyContent: "center",
-
   "& svg": {
     width: 16,
     height: 16,
     fill: "#8399AB",
   },
+  "&.active": {
+    "& span": {
+      color: "#fff",
+    },
+    "& svg": {
+      fill: "#fff",
+    },
+  },
 };
 
 export const menuItemTextStyles: any = {
-  color: "#BCC7D1",
+  color: "#8399AB",
   fontSize: "14px",
-  marginLeft: "11px",
+  marginLeft: "18px",
+  display: "flex",
+  position: "relative",
+
   "& span": {
     fontSize: "14px",
   },
@@ -90,11 +142,16 @@ export const menuItemStyle: any = {
   borderRadius: "2px",
   marginTop: "2px",
   "&.active": {
-    backgroundColor: "hsla(0,0%,100%,.1)",
     ".menu-icon": {
-      border: "1px solid hsla(0,0%,100%,.1)",
+      border: "1px solid #fff",
       borderRadius: "50%",
       background: "#072549",
+      "& svg": {
+        fill: "#fff",
+      },
+    },
+    "& span": {
+      color: "#fff",
     },
   },
   "& .menu-icon": {
@@ -103,9 +160,13 @@ export const menuItemStyle: any = {
     minWidth: "28px",
     height: "28px",
     background: "none",
+    "& svg": {
+      width: "12px",
+      height: "12px",
+      fill: "#8399AB",
+    },
   },
   "&:hover, &:focus": {
-    background: "hsla(0,0%,100%,.25)",
     "& .menu-icon": {
       background: "#072549",
       borderRadius: "50%",
