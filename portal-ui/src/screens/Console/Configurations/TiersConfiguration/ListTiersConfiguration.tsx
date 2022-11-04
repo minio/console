@@ -23,6 +23,7 @@ import withStyles from "@mui/styles/withStyles";
 import { Box, LinearProgress } from "@mui/material";
 import { Button } from "mds";
 import Grid from "@mui/material/Grid";
+import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import {
   actionsTray,
   containerForHeader,
@@ -62,6 +63,7 @@ import { hasPermission } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import TierOnlineIcon from "../../../../icons/TierOnlineIcon";
 import TierOfflineIcon from "../../../../icons/TierOfflineIcon";
+import { wsProtocol } from "../../../../utils/wsUtils";
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );
@@ -115,6 +117,43 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const hasSetTier = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.ADMIN_SET_TIER,
   ]);
+
+  const checkTierStatus = (tierName: string) => {
+
+    const url = new URL(window.location.toString());
+
+    // check if we are using base path, if not this always is `/`
+    const baseLocation = new URL(document.baseURI);
+    const baseUrl = baseLocation.pathname;
+    const port = url.port;
+
+    const wsProt = wsProtocol(url.protocol);
+    const c = new W3CWebSocket(
+      `${wsProt}://${url.hostname}:${port}${baseUrl}ws/tier/${tierName}`
+    );
+
+    if (c !== null) {
+      c.onopen = () => {
+        checkTierStatus(tierName);
+        c.send("ok");
+      };
+      c.onerror = (error: Error) => {
+        console.log(tierName + "not online:", error.message);
+        c.close(1000);
+        
+      };
+      c.onmessage = (message: IMessageEvent) => {
+        console.log("there was a message", message);
+      };
+      c.onclose = () => {
+        console.log("connection closed by server");
+      };
+      return () => {
+        c.close(1000);
+        console.log("closing websockets");
+      };
+    }
+  };
 
   useEffect(() => {
     if (isLoading) {

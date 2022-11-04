@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -116,6 +117,11 @@ func (c wsConn) close() error {
 
 func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 	return c.conn.ReadMessage()
+}
+
+func getTierNameOptionsFromReq(req *http.Request) (*string, error) {
+	tierName := req.FormValue("types")
+	return &tierName, nil
 }
 
 // serveWS validates the incoming request and
@@ -271,7 +277,20 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		go wsAdminClient.profile(ctx, pOptions)
-
+	case strings.HasPrefix(wsPath, `/tier`):
+		tierName, err := getTierNameOptionsFromReq(req)
+		if err != nil {
+			ErrorWithContext(ctx, fmt.Errorf("error getting tier name: %v", err))
+			closeWsConn(conn)
+			return
+		}
+		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+		if err != nil {
+			ErrorWithContext(ctx, err)
+			closeWsConn(conn)
+			return
+		}
+		go wsAdminClient.client.verifyTierStatus(ctx, *tierName)
 	default:
 		// path not found
 		closeWsConn(conn)
@@ -376,6 +395,128 @@ func wsReadClientCtx(parentContext context.Context, conn WSConn) context.Context
 	}()
 	return ctx
 }
+
+var (
+	// ErrTierNameEmpty "remote tier name empty"
+	ErrTierNameEmpty = errors.New(555, "remote tier name empty")
+	// ErrTierInvalidConfig "invalid tier config"
+	ErrTierInvalidConfig = errors.New(555, "invalid tier config")
+	// ErrTierInvalidConfigVersion "invalid tier config version"
+	ErrTierInvalidConfigVersion = errors.New(555, "invalid tier config version")
+	// ErrTierTypeUnsupported "unsupported tier type"
+	ErrTierTypeUnsupported = errors.New(555, "unsupported tier type")
+)
+
+func checkTierStatus(ctx context.Context, conn WSConn, client MinioAdmin, tierName string) error {
+	err := client.verifyTierStatus(ctx, tierName)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+type requestData struct {
+	customHeaders http.Header
+	queryValues   url.Values
+	relPath       string // URL path relative to admin API base endpoint
+	content       []byte
+	// endpointOverride overrides target URL with anonymousClient
+	endpointOverride *url.URL
+	// isKMS replaces URL prefix with /kms
+	isKMS bool
+}
+
+/*
+func (adm AdminClient) executeMethod(ctx context.Context, method string, reqData requestData) (res *http.Response, err error) {
+	reqRetry := 10 // Indicates how many times we can retry the request
+	defer func() {
+		if err != nil {
+			// close idle connections before returning, upon error.
+			adm.httpClient.CloseIdleConnections()
+		}
+	}()
+
+	// Create cancel context to control 'newRetryTimer' go routine.
+	retryCtx, cancel := context.WithCancel(ctx)
+
+	// Indicate to our routine to exit cleanly upon return.
+	defer cancel()
+
+	for range adm.newRetryTimer(retryCtx, reqRetry, DefaultRetryUnit, DefaultRetryCap, MaxJitter) {
+		// Instantiate a new request.
+		var req *http.Request
+		req, err = adm.newRequest(ctx, method, reqData)
+		if err != nil {
+			return nil, err
+		}
+
+		// Initiate the request.
+		res, err = adm.do(req)
+		if err != nil {
+			// Give up right away if it is a connection refused problem
+			if errors.Is(err, syscall.ECONNREFUSED) {
+				return nil, err
+			}
+			if err == context.Canceled || err == context.DeadlineExceeded {
+				return nil, err
+			}
+			// retry all network errors.
+			continue
+		}
+
+		// For any known successful http status, return quickly.
+		for _, httpStatus := range successStatus {
+			if httpStatus == res.StatusCode {
+				return res, nil
+			}
+		}
+
+		// Read the body to be saved later.
+		errBodyBytes, err := ioutil.ReadAll(res.Body)
+		// res.Body should be closed
+		closeResponse(res)
+		if err != nil {
+			return nil, err
+		}
+
+		// Save the body.
+		errBodySeeker := bytes.NewReader(errBodyBytes)
+		res.Body = ioutil.NopCloser(errBodySeeker)
+
+		// For errors verify if its retryable otherwise fail quickly.
+		errResponse := ToErrorResponse(httpRespToErrorResponse(res))
+
+		// Save the body back again.
+		errBodySeeker.Seek(0, 0) // Seek back to starting point.
+		res.Body = ioutil.NopCloser(errBodySeeker)
+
+		// Verify if error response code is retryable.
+		if isAdminErrCodeRetryable(errResponse.Code) {
+			continue // Retry.
+		}
+
+		// Verify if http status code is retryable.
+		if isHTTPStatusRetryable(res.StatusCode) {
+			continue // Retry.
+		}
+
+		break
+	}
+
+}
+*/
+// AdminAPIVersion - admin api version used in the request.
+const (
+	AdminAPIVersion   = "v3"
+	AdminAPIVersionV2 = "v2"
+	adminAPIPrefix    = "/" + AdminAPIVersion
+	kmsAPIVersion     = "v1"
+	kmsAPIPrefix      = "/" + kmsAPIVersion
+)
+
+// tierAPI is API path prefix for tier related admin APIs
+const tierAPI = "tier"
 
 // closeWsConn sends Close Message and closes the websocket connection
 func closeWsConn(conn *websocket.Conn) {
@@ -488,6 +629,21 @@ func (wsc *wsAdminClient) profile(ctx context.Context, opts *profileOptions) {
 	ctx = wsReadClientCtx(ctx, wsc.conn)
 
 	err := startProfiling(ctx, wsc.conn, wsc.client, opts)
+
+	sendWsCloseMessage(wsc.conn, err)
+}
+
+func (wsc *wsAdminClient) tierStatus(ctx context.Context, tierName string) {
+	defer func() {
+		LogInfo("tier checking complete for " + tierName)
+		// close connection after return
+		wsc.conn.close()
+	}()
+	LogInfo("checking status for tier " + tierName)
+
+	ctx = wsReadClientCtx(ctx, wsc.conn)
+
+	err := checkTierStatus(ctx, wsc.conn, wsc.client, tierName)
 
 	sendWsCloseMessage(wsc.conn, err)
 }
