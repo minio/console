@@ -204,6 +204,9 @@ const styles = () =>
         alignItems: "center",
         outline: "none",
       },
+      ".ReactVirtualized__Table__row": {
+        width: "100% !important",
+      },
       ".ReactVirtualized__Table__headerRow": {
         fontWeight: 700,
         fontSize: 14,
