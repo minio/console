@@ -48,6 +48,11 @@ export const watchElement = monitoringChildren
 
 export const bucketsElement = sidebarItem.withAttribute("href", "/buckets");
 
+export const serviceAcctsElement = sidebarItem.withAttribute(
+  "href",
+  IAM_PAGES.ACCOUNT
+);
+
 export const identityElement = Selector(".MuiPaper-root")
   .find("ul")
   .child("#identity");
@@ -59,9 +64,7 @@ export const usersElement = identityChildren
 export const groupsElement = identityChildren
   .find("a")
   .withAttribute("href", IAM_PAGES.GROUPS);
-export const serviceAcctsElement = identityChildren
-  .find("a")
-  .withAttribute("href", IAM_PAGES.ACCOUNT);
+
 export const iamPoliciesElement = identityChildren
   .find("a")
   .withAttribute("href", IAM_PAGES.POLICIES);

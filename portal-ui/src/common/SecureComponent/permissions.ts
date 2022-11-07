@@ -126,8 +126,8 @@ export const IAM_PAGES = {
   GROUPS: "/identity/groups",
   GROUPS_ADD: "/identity/groups/create-group",
   GROUPS_VIEW: "/identity/groups/:groupName",
-  ACCOUNT: "/identity/account",
-  ACCOUNT_ADD: "/identity/account/new-account",
+  ACCOUNT: "/access-keys",
+  ACCOUNT_ADD: "/access-keys/new-account",
   USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
 
   POLICIES: "/identity/policies",
