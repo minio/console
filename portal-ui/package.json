@@ -90,6 +90,7 @@
     "react-scripts/workbox-webpack-plugin/workbox-build/@surma/rollup-plugin-off-main-thread/ejs/jake/async": "^2.6.4",
     "react-scripts/webpack-dev-server/portfinder/async": "^2.6.4",
     "react-scripts/**/glob-parent": "^6.0.1",
-    "react-scripts/**/minimatch": "^3.0.5"
+    "react-scripts/**/minimatch": "^3.0.5",
+    "react-scripts/**/loader-utils": "^2.0.3"
   }
 }
