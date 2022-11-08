@@ -111,7 +111,7 @@ func TestNewSessionCookieForConsole(t *testing.T) {
 				HttpOnly: true,
 				SameSite: http.SameSiteLaxMode,
 				Name:     "token",
-				MaxAge:   3600,
+				MaxAge:   43200,
 				Expires:  time.Now().Add(1 * time.Hour),
 			},
 		},

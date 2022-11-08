@@ -62,7 +62,6 @@ export const listModeColumns = [
     renderFunction: displayNiceBytes,
     renderFullObject: true,
     width: 100,
-    contentTextAlign: "center",
     enableSort: true,
   },
 ];
@@ -87,7 +86,6 @@ export const rewindModeColumns = [
     renderFunction: displayNiceBytes,
     renderFullObject: true,
     width: 100,
-    contentTextAlign: "center",
     enableSort: true,
   },
   {
@@ -95,6 +93,5 @@ export const rewindModeColumns = [
     elementKey: "delete_flag",
     renderFunction: displayDeleteFlag,
     width: 60,
-    contentTextAlign: "center",
   },
 ];

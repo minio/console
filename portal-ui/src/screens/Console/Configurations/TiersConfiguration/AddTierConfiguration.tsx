@@ -280,7 +280,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
   useEffect(() => {
     switch (type) {
       case "gcs":
-        setEndpoint("https://storage.googleapis.com/");
+        setEndpoint("https://storage.googleapis.com");
         setTitleSelection("Google Cloud");
         break;
       case "s3":

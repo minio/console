@@ -27,7 +27,6 @@ export const IAM_SCOPES = {
   S3_GET_BUCKET_POLICY: "s3:GetBucketPolicy",
   S3_PUT_BUCKET_POLICY: "s3:PutBucketPolicy",
   S3_GET_OBJECT: "s3:GetObject",
-  S3_STAR_OBJECT: "s3:*Object",
   S3_PUT_OBJECT: "s3:PutObject",
   S3_GET_OBJECT_LEGAL_HOLD: "s3:GetObjectLegalHold",
   S3_PUT_OBJECT_LEGAL_HOLD: "s3:PutObjectLegalHold",
@@ -147,8 +146,8 @@ export const IAM_PAGES = {
   GROUPS: "/identity/groups",
   GROUPS_ADD: "/identity/groups/create-group",
   GROUPS_VIEW: "/identity/groups/:groupName",
-  ACCOUNT: "/identity/account",
-  ACCOUNT_ADD: "/identity/account/new-account",
+  ACCOUNT: "/access-keys",
+  ACCOUNT_ADD: "/access-keys/new-account",
   USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
 
   POLICIES: "/identity/policies",
@@ -171,10 +170,6 @@ export const IAM_PAGES = {
   KMS_KEYS: "/kms/keys",
   KMS_KEYS_ADD: "/kms/add-key/",
   KMS_KEYS_IMPORT: "/kms/import-key/",
-  KMS_POLICIES: "/kms/policies",
-  KMS_POLICIES_ADD: "/kms/add-policy",
-  KMS_POLICY_DETAILS: "/kms/policies/:policyName",
-  KMS_IDENTITIES: "/kms/identities",
 
   /* Support */
   TOOLS: "/support",
@@ -313,7 +308,6 @@ export const IAM_PERMISSIONS = {
     IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
     IAM_SCOPES.ADMIN_LIST_USERS,
     IAM_SCOPES.ADMIN_HEAL,
-    IAM_SCOPES.S3_STAR_BUCKET,
   ],
   [IAM_ROLES.BUCKET_LIFECYCLE]: [
     IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
@@ -481,30 +475,6 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.KMS_ALL_ACTIONS,
     IAM_SCOPES.KMS_IMPORT_KEY,
   ],
-  [IAM_PAGES.KMS_POLICIES]: [
-    IAM_SCOPES.KMS_ALL_ACTIONS,
-    IAM_SCOPES.KMS_DESCRIBE_POLICY,
-    IAM_SCOPES.KMS_ASSIGN_POLICY,
-    IAM_SCOPES.KMS_DELETE_POLICY,
-    IAM_SCOPES.KMS_SET_POLICY,
-    IAM_SCOPES.KMS_GET_POLICY,
-    IAM_SCOPES.KMS_LIST_POLICIES,
-  ],
-  [IAM_PAGES.KMS_POLICIES_ADD]: [
-    IAM_SCOPES.KMS_ALL_ACTIONS,
-    IAM_SCOPES.KMS_SET_POLICY,
-  ],
-  [IAM_PAGES.KMS_POLICY_DETAILS]: [
-    IAM_SCOPES.KMS_ALL_ACTIONS,
-    IAM_SCOPES.KMS_GET_POLICY,
-  ],
-  [IAM_PAGES.KMS_IDENTITIES]: [
-    IAM_SCOPES.KMS_ALL_ACTIONS,
-    IAM_SCOPES.KMS_DESCRIBE_IDENTITY,
-    IAM_SCOPES.KMS_DESCRIBE_SELF_IDENTITY,
-    IAM_SCOPES.KMS_DELETE_IDENTITY,
-    IAM_SCOPES.KMS_LIST_IDENTITIES,
-  ],
 };
 
 export const S3_ALL_RESOURCES = "arn:aws:s3:::*";
@@ -533,6 +503,21 @@ export const deleteUserPermissions = [IAM_SCOPES.ADMIN_DELETE_USER];
 export const enableUserPermissions = [IAM_SCOPES.ADMIN_ENABLE_USER];
 
 export const disableUserPermissions = [IAM_SCOPES.ADMIN_DISABLE_USER];
+
+//note that adminUserPermissions does NOT include ADMIN_CREATE_USER to allow hiding the Users tab for users wtih only this permission as it is being applied by default
+export const adminUserPermissions = [
+  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+  IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+  IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
+  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+  IAM_SCOPES.ADMIN_DELETE_USER,
+  IAM_SCOPES.ADMIN_ENABLE_USER,
+  IAM_SCOPES.ADMIN_DISABLE_USER,
+  IAM_SCOPES.ADMIN_GET_USER,
+  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+];
 
 export const assignIAMPolicyPermissions = [
   IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
@@ -605,10 +590,6 @@ export const listGroupPermissions = [
 export const deleteBucketPermissions = [
   IAM_SCOPES.S3_DELETE_BUCKET,
   IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
-  IAM_SCOPES.S3_STAR_BUCKET,
 ];
 
-export const browseBucketPermissions = [
-  IAM_SCOPES.S3_LIST_BUCKET,
-  IAM_SCOPES.S3_STAR_BUCKET,
-];
+export const browseBucketPermissions = [IAM_SCOPES.S3_LIST_BUCKET];

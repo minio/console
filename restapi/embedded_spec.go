@@ -7687,6 +7687,9 @@ func init() {
           "type": "object",
           "$ref": "#/definitions/tier_s3"
         },
+        "status": {
+          "type": "boolean"
+        },
         "type": {
           "type": "string",
           "enum": [
@@ -15953,6 +15956,9 @@ func init() {
         "s3": {
           "type": "object",
           "$ref": "#/definitions/tier_s3"
+        },
+        "status": {
+          "type": "boolean"
         },
         "type": {
           "type": "string",

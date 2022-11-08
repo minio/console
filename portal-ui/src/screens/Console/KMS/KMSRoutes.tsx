@@ -24,12 +24,6 @@ const Status = withSuspense(React.lazy(() => import("./Status")));
 const ListKeys = withSuspense(React.lazy(() => import("./ListKeys")));
 const AddKey = withSuspense(React.lazy(() => import("./AddKey")));
 const ImportKey = withSuspense(React.lazy(() => import("./ImportKey")));
-const ListPolicies = withSuspense(React.lazy(() => import("./ListPolicies")));
-const AddPolicy = withSuspense(React.lazy(() => import("./AddPolicy")));
-const PolicyDetails = withSuspense(React.lazy(() => import("./PolicyDetails")));
-const ListIdentities = withSuspense(
-  React.lazy(() => import("./ListIdentities"))
-);
 
 const KMSRoutes = () => {
   return (
@@ -38,11 +32,6 @@ const KMSRoutes = () => {
       <Route path={"keys"} element={<ListKeys />} />
       <Route path={"add-key"} element={<AddKey />} />
       <Route path={"import-key"} element={<ImportKey />} />
-      <Route path={"policies"} element={<ListPolicies />} />
-      <Route path={"add-policy"} element={<AddPolicy />} />
-      <Route path={`policies/:policyName`} element={<PolicyDetails />} />
-      <Route path={"assign-policy"} element={<ListPolicies />} />
-      <Route path={"identities"} element={<ListIdentities />} />
       <Route path={"*"} element={<NotFoundPage />} />
     </Routes>
   );

@@ -17,6 +17,7 @@
 import { IMenuItem } from "./Menu/types";
 import { NavLink } from "react-router-dom";
 import {
+  adminUserPermissions,
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
   IAM_PAGES_PERMISSIONS,
@@ -60,9 +61,6 @@ import React from "react";
 import LicenseBadge from "./Menu/LicenseBadge";
 import EncryptionIcon from "../../icons/SidebarMenus/EncryptionIcon";
 import EncryptionStatusIcon from "../../icons/SidebarMenus/EncryptionStatusIcon";
-import EncryptionPoliciesIcon from "../../icons/SidebarMenus/EncryptionPoliciesIcon";
-import EncryptionKeysIcon from "../../icons/SidebarMenus/EncryptionKeysIcon";
-import EncryptionIdentitiesIcon from "../../icons/SidebarMenus/EncryptionIdentitiesIcon";
 
 export const validRoutes = (
   features: string[] | null | undefined,
@@ -73,6 +71,7 @@ export const validRoutes = (
   const kmsIsEnabled = (features && features.includes("kms")) || false;
   let consoleMenus: IMenuItem[] = [
     {
+      group: "User",
       name: "Buckets",
       id: "buckets",
       component: NavLink,
@@ -82,6 +81,38 @@ export const validRoutes = (
       children: [],
     },
     {
+      group: "User",
+      component: NavLink,
+      id: "nav-accesskeys",
+      to: IAM_PAGES.ACCOUNT,
+      name: "Access Keys",
+      icon: AccountsMenuIcon,
+      forceDisplay: true,
+    },
+    {
+      group: "User",
+      type: "item",
+      component: NavLink,
+      to: IAM_PAGES.DOCUMENTATION,
+      name: "Documentation",
+      icon: DocumentationIcon,
+      forceDisplay: true,
+      onClick: (
+        e:
+          | React.MouseEvent<HTMLLIElement>
+          | React.MouseEvent<HTMLAnchorElement>
+          | React.MouseEvent<HTMLDivElement>
+      ) => {
+        e.preventDefault();
+        window.open(
+          "https://min.io/docs/minio/linux/index.html?ref=con",
+          "_blank"
+        );
+      },
+    },
+
+    {
+      group: "Administrator",
       name: "Identity",
       id: "identity",
       icon: IdentityMenuIcon,
@@ -91,8 +122,9 @@ export const validRoutes = (
           id: "users",
           to: IAM_PAGES.USERS,
           customPermissionFnc: () =>
-            hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_LIST_USERS]) ||
-            hasPermission(S3_ALL_RESOURCES, [IAM_SCOPES.ADMIN_CREATE_USER]),
+            hasPermission(CONSOLE_UI_RESOURCE, adminUserPermissions) ||
+            hasPermission(S3_ALL_RESOURCES, adminUserPermissions) ||
+            hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_ALL_ACTIONS]),
           name: "Users",
           icon: UsersMenuIcon,
           fsHidden: ldapIsEnabled,
@@ -106,14 +138,6 @@ export const validRoutes = (
           fsHidden: ldapIsEnabled,
         },
         {
-          component: NavLink,
-          id: "serviceaccounts",
-          to: IAM_PAGES.ACCOUNT,
-          name: "Service Accounts",
-          icon: AccountsMenuIcon,
-          forceDisplay: true,
-        },
-        {
           name: "Policies",
           component: NavLink,
           id: "policies",
@@ -124,6 +148,7 @@ export const validRoutes = (
     },
 
     {
+      group: "Administrator",
       name: "Monitoring",
       id: "tools",
       icon: MonitoringMenuIcon,
@@ -170,9 +195,18 @@ export const validRoutes = (
           icon: DrivesMenuIcon,
           component: NavLink,
         },
+        {
+          name: "Encryption",
+          id: "monitorEncryption",
+          to: IAM_PAGES.KMS_STATUS,
+          icon: EncryptionStatusIcon,
+          component: NavLink,
+          fsHidden: !kmsIsEnabled,
+        },
       ],
     },
     {
+      group: "Administrator",
       component: NavLink,
       to: IAM_PAGES.NOTIFICATIONS_ENDPOINTS,
       name: "Notifications",
@@ -180,6 +214,7 @@ export const validRoutes = (
       id: "lambda",
     },
     {
+      group: "Administrator",
       component: NavLink,
       to: IAM_PAGES.TIERS,
       name: "Tiers",
@@ -187,6 +222,7 @@ export const validRoutes = (
       id: "tiers",
     },
     {
+      group: "Administrator",
       component: NavLink,
       to: IAM_PAGES.SITE_REPLICATION,
       name: "Site Replication",
@@ -194,13 +230,24 @@ export const validRoutes = (
       id: "sitereplication",
     },
     {
+      group: "Administrator",
+      component: NavLink,
+      to: IAM_PAGES.KMS_KEYS,
+      name: "Encryption",
+      icon: EncryptionIcon,
+      id: "encryption",
+      fsHidden: !kmsIsEnabled,
+    },
+    {
+      group: "Administrator",
       component: NavLink,
       to: IAM_PAGES.SETTINGS,
-      name: "Configurations",
+      name: "Settings",
       id: "configurations",
       icon: SettingsIcon,
     },
     {
+      group: "Subscription",
       component: NavLink,
       to: IAM_PAGES.LICENSE,
       name: "License",
@@ -210,45 +257,7 @@ export const validRoutes = (
       forceDisplay: true,
     },
     {
-      name: "Encryption",
-      id: "encryption",
-      icon: EncryptionIcon,
-      children: [
-        {
-          name: "Status",
-          id: "kmsStatus",
-          component: NavLink,
-          icon: EncryptionStatusIcon,
-          to: IAM_PAGES.KMS_STATUS,
-          fsHidden: !kmsIsEnabled,
-        },
-        {
-          name: "Keys",
-          id: "kmsKeys",
-          component: NavLink,
-          icon: EncryptionKeysIcon,
-          to: IAM_PAGES.KMS_KEYS,
-          fsHidden: !kmsIsEnabled,
-        },
-        {
-          name: "Policies",
-          id: "kmsPolicies",
-          component: NavLink,
-          icon: EncryptionPoliciesIcon,
-          to: IAM_PAGES.KMS_POLICIES,
-          fsHidden: !kmsIsEnabled,
-        },
-        {
-          name: "Identities",
-          id: "kmsIdentities",
-          component: NavLink,
-          icon: EncryptionIdentitiesIcon,
-          to: IAM_PAGES.KMS_IDENTITIES,
-          fsHidden: !kmsIsEnabled,
-        },
-      ],
-    },
-    {
+      group: "Subscription",
       name: "Support",
       id: "support",
       icon: SupportMenuIcon,
@@ -290,26 +299,6 @@ export const validRoutes = (
           component: NavLink,
         },
       ],
-    },
-    {
-      type: "item",
-      component: NavLink,
-      to: IAM_PAGES.DOCUMENTATION,
-      name: "Documentation",
-      icon: DocumentationIcon,
-      forceDisplay: true,
-      onClick: (
-        e:
-          | React.MouseEvent<HTMLLIElement>
-          | React.MouseEvent<HTMLAnchorElement>
-          | React.MouseEvent<HTMLDivElement>
-      ) => {
-        e.preventDefault();
-        window.open(
-          "https://min.io/docs/minio/linux/index.html?ref=con",
-          "_blank"
-        );
-      },
     },
   ];
 
