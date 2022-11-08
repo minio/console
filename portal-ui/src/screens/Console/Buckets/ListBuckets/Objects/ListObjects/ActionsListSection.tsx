@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import ObjectActionButton from "./ObjectActionButton";
 import { withStyles } from "@mui/styles";
@@ -49,7 +49,7 @@ const ActionsListSection = ({
     <Fragment>
       <div className={classes.titleLabel}>{title}</div>
       <ul className={classes.objectActions}>
-        <li>Actions:</li>
+        <li>{t("Actions:")}</li>
         {items.map((actionItem, index) => {
           return (
             <li key={`action-element-${index.toString()}`}>

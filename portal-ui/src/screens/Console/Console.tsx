@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, {
   Fragment,
   Suspense,
@@ -72,9 +72,11 @@ const AddTenant = React.lazy(() => import("./Tenants/AddTenant/AddTenant"));
 const NotificationEndpoints = React.lazy(
   () => import("./NotificationEndpoints/NotificationEndpoints")
 );
+
 const AddNotificationEndpoint = React.lazy(
   () => import("./NotificationEndpoints/AddNotificationEndpoint")
 );
+
 const NotificationTypeSelector = React.lazy(
   () => import("./NotificationEndpoints/NotificationTypeSelector")
 );
@@ -82,12 +84,15 @@ const NotificationTypeSelector = React.lazy(
 const ListTiersConfiguration = React.lazy(
   () => import("./Configurations/TiersConfiguration/ListTiersConfiguration")
 );
+
 const TierTypeSelector = React.lazy(
   () => import("./Configurations/TiersConfiguration/TierTypeSelector")
 );
+
 const AddTierConfiguration = React.lazy(
   () => import("./Configurations/TiersConfiguration/AddTierConfiguration")
 );
+
 const ListTenants = React.lazy(
   () => import("./Tenants/ListTenants/ListTenants")
 );
@@ -96,6 +101,7 @@ const ErrorLogs = React.lazy(() => import("./Logs/ErrorLogs/ErrorLogs"));
 const LogsSearchMain = React.lazy(
   () => import("./Logs/LogSearch/LogsSearchMain")
 );
+
 const GroupsDetails = React.lazy(() => import("./Groups/GroupsDetails"));
 
 const Tools = React.lazy(() => import("./Tools/Tools"));
@@ -126,18 +132,22 @@ const Groups = React.lazy(() => import("./Groups/Groups"));
 const TenantDetails = React.lazy(
   () => import("./Tenants/TenantDetails/TenantDetails")
 );
+
 const License = React.lazy(() => import("./License/License"));
 const Marketplace = React.lazy(() => import("./Marketplace/Marketplace"));
 const ConfigurationOptions = React.lazy(
   () => import("./Configurations/ConfigurationPanels/ConfigurationOptions")
 );
+
 const AddPool = React.lazy(
   () => import("./Tenants/TenantDetails/Pools/AddPool/AddPool")
 );
+
 const AddGroupScreen = React.lazy(() => import("./Groups/AddGroupScreen"));
 const SiteReplication = React.lazy(
   () => import("./Configurations/SiteReplication/SiteReplication")
 );
+
 const SiteReplicationStatus = React.lazy(
   () => import("./Configurations/SiteReplication/SiteReplicationStatus")
 );
@@ -203,12 +213,15 @@ const Console = ({ classes }: IConsoleProps) => {
   const snackBarMessage = useSelector(
     (state: AppState) => state.system.snackBar
   );
+
   const needsRestart = useSelector(
     (state: AppState) => state.system.serverNeedsRestart
   );
+
   const isServerLoading = useSelector(
     (state: AppState) => state.system.serverIsLoading
   );
+
   const loadingProgress = useSelector(
     (state: AppState) => state.system.loadingProgress
   );
@@ -560,25 +573,28 @@ const Console = ({ classes }: IConsoleProps) => {
               <div className={classes.warningBar}>
                 {isServerLoading ? (
                   <Fragment>
-                    The server is restarting.
+                    {t("The server is restarting.")}
+
                     <LinearProgress className={classes.progress} />
                   </Fragment>
                 ) : (
                   <Fragment>
-                    The instance needs to be restarted for configuration changes
-                    to take effect.{" "}
+                    {t(
+                      "The instance needs to be restarted for configuration changes to take effect."
+                    )}{" "}
                     <Button
                       id={"restart-server"}
                       variant="secondary"
                       onClick={() => {
                         restartServer();
                       }}
-                      label={"Restart"}
+                      label={t("Restart")}
                     />
                   </Fragment>
                 )}
               </div>
             )}
+
             {loadingProgress < 100 && (
               <LinearProgress
                 className={classes.progress}
@@ -586,6 +602,7 @@ const Console = ({ classes }: IConsoleProps) => {
                 value={loadingProgress}
               />
             )}
+
             <MainError />
             <div className={classes.snackDiv}>
               <Snackbar
@@ -622,6 +639,7 @@ const Console = ({ classes }: IConsoleProps) => {
                   }
                 />
               ))}
+
               <Route
                 key={"icons"}
                 path={"icons"}
@@ -631,6 +649,7 @@ const Console = ({ classes }: IConsoleProps) => {
                   </Suspense>
                 }
               />
+
               <Route
                 key={"components"}
                 path={"components"}
@@ -640,6 +659,7 @@ const Console = ({ classes }: IConsoleProps) => {
                   </Suspense>
                 }
               />
+
               <Route
                 path={"*"}
                 element={

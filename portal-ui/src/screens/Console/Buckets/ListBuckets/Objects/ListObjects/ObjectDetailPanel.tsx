@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
@@ -169,9 +169,11 @@ const ObjectDetailPanel = ({
   const versionsMode = useSelector(
     (state: AppState) => state.objectBrowser.versionsMode
   );
+
   const selectedVersion = useSelector(
     (state: AppState) => state.objectBrowser.selectedVersion
   );
+
   const loadingObjectInfo = useSelector(
     (state: AppState) => state.objectBrowser.loadingObjectInfo
   );
@@ -408,9 +410,11 @@ const ObjectDetailPanel = ({
     currentItem,
     [bucketName, actualInfo.name].join("/"),
   ];
+
   const canSetLegalHold = hasPermission(bucketName, [
     IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD,
   ]);
+
   const canSetTags = hasPermission(objectResources, [
     IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
   ]);
@@ -420,17 +424,21 @@ const ObjectDetailPanel = ({
     [IAM_SCOPES.S3_GET_OBJECT_RETENTION, IAM_SCOPES.S3_PUT_OBJECT_RETENTION],
     true
   );
+
   const canInspect = hasPermission(objectResources, [
     IAM_SCOPES.ADMIN_INSPECT_DATA,
   ]);
+
   const canChangeVersioning = hasPermission(objectResources, [
     IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
     IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
     IAM_SCOPES.S3_GET_OBJECT_VERSION,
   ]);
+
   const canGetObject = hasPermission(objectResources, [
     IAM_SCOPES.S3_GET_OBJECT,
   ]);
+
   const canDelete = hasPermission(
     [bucketName, currentItem, [bucketName, actualInfo.name].join("/")],
     [IAM_SCOPES.S3_DELETE_OBJECT]
@@ -441,52 +449,52 @@ const ObjectDetailPanel = ({
       action: () => {
         downloadObject(actualInfo);
       },
-      label: "Download",
+      label: t("Download"),
       disabled: !!actualInfo.is_delete_marker || !canGetObject,
       icon: <DownloadIcon />,
       tooltip: canGetObject
-        ? "Download this Object"
+        ? t("Download this Object")
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_GET_OBJECT],
-            "download this object"
+            t("download this object")
           ),
     },
     {
       action: () => {
         shareObject();
       },
-      label: "Share",
+      label: t("Share"),
       disabled: !!actualInfo.is_delete_marker || !canGetObject,
       icon: <ShareIcon />,
       tooltip: canGetObject
-        ? "Share this File"
+        ? t("Share this File")
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_GET_OBJECT],
-            "share this object"
+            t("share this object")
           ),
     },
     {
       action: () => {
         setPreviewOpen(true);
       },
-      label: "Preview",
+      label: t("Preview"),
       disabled:
         !!actualInfo.is_delete_marker ||
         extensionPreview(currentItem) === "none" ||
         !canGetObject,
       icon: <PreviewIcon />,
       tooltip: canGetObject
-        ? "Preview this File"
+        ? t("Preview this File")
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_GET_OBJECT],
-            "preview this object"
+            t("preview this object")
           ),
     },
     {
       action: () => {
         setLegalholdOpen(true);
       },
-      label: "Legal Hold",
+      label: t("Legal Hold"),
       disabled:
         !locking ||
         !distributedSetup ||
@@ -496,16 +504,18 @@ const ObjectDetailPanel = ({
       icon: <LegalHoldIcon />,
       tooltip: canSetLegalHold
         ? locking
-          ? "Change Legal Hold rules for this File"
-          : "Object Locking must be enabled on this bucket in order to set Legal Hold"
+          ? t("Change Legal Hold rules for this File")
+          : t(
+              "Object Locking must be enabled on this bucket in order to set Legal Hold"
+            )
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD],
-            "change legal hold settings for this object"
+            t("change legal hold settings for this object")
           ),
     },
     {
       action: openRetentionModal,
-      label: "Retention",
+      label: t("Retention"),
       disabled:
         !distributedSetup ||
         !!actualInfo.is_delete_marker ||
@@ -515,39 +525,41 @@ const ObjectDetailPanel = ({
       icon: <RetentionIcon />,
       tooltip: canChangeRetention
         ? locking
-          ? "Change Retention rules for this File"
-          : "Object Locking must be enabled on this bucket in order to set Retention Rules"
+          ? t("Change Retention rules for this File")
+          : t(
+              "Object Locking must be enabled on this bucket in order to set Retention Rules"
+            )
         : permissionTooltipHelper(
             [
               IAM_SCOPES.S3_GET_OBJECT_RETENTION,
               IAM_SCOPES.S3_PUT_OBJECT_RETENTION,
             ],
-            "change Retention Rules for this object"
+            t("change Retention Rules for this object")
           ),
     },
     {
       action: () => {
         setTagModalOpen(true);
       },
-      label: "Tags",
+      label: t("Tags"),
       disabled:
         !!actualInfo.is_delete_marker || selectedVersion !== "" || !canSetTags,
       icon: <TagsIcon />,
       tooltip: canSetTags
-        ? "Change Tags for this File"
+        ? t("Change Tags for this File")
         : permissionTooltipHelper(
             [
               IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
               IAM_SCOPES.S3_GET_OBJECT_TAGGING,
             ],
-            "set Tags on this object"
+            t("set Tags on this object")
           ),
     },
     {
       action: () => {
         setInspectModalOpen(true);
       },
-      label: "Inspect",
+      label: t("Inspect"),
       disabled:
         !distributedSetup ||
         !!actualInfo.is_delete_marker ||
@@ -555,10 +567,10 @@ const ObjectDetailPanel = ({
         !canInspect,
       icon: <InspectMenuIcon />,
       tooltip: canInspect
-        ? "Inspect this file"
+        ? t("Inspect this file")
         : permissionTooltipHelper(
             [IAM_SCOPES.ADMIN_INSPECT_DATA],
-            "inspect this file"
+            t("inspect this file")
           ),
     },
     {
@@ -570,7 +582,9 @@ const ObjectDetailPanel = ({
           })
         );
       },
-      label: versionsMode ? "Hide Object Versions" : "Display Object Versions",
+      label: versionsMode
+        ? t("Hide Object Versions")
+        : t("Display Object Versions"),
       icon: <VersionsIcon />,
       disabled:
         !distributedSetup ||
@@ -578,7 +592,7 @@ const ObjectDetailPanel = ({
         !canChangeVersioning,
       tooltip: canChangeVersioning
         ? actualInfo.version_id && actualInfo.version_id !== "null"
-          ? "Display Versions for this file"
+          ? t("Display Versions for this file")
           : ""
         : permissionTooltipHelper(
             [
@@ -586,7 +600,7 @@ const ObjectDetailPanel = ({
               IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
               IAM_SCOPES.S3_GET_OBJECT_VERSION,
             ],
-            "display all versions of this object"
+            t("display all versions of this object")
           ),
     },
   ];
@@ -599,7 +613,7 @@ const ObjectDetailPanel = ({
 
     const formatTime = niceDaysInt(difTime, "ms");
 
-    return formatTime.trim() !== "" ? `${formatTime} ago` : "Just now";
+    return formatTime.trim() !== "" ? `${formatTime} ago` : t("Just now");
   };
 
   return (
@@ -612,6 +626,7 @@ const ObjectDetailPanel = ({
           dataObject={objectToShare || actualInfo}
         />
       )}
+
       {retentionModalOpen && actualInfo && (
         <SetRetention
           open={retentionModalOpen}
@@ -621,6 +636,7 @@ const ObjectDetailPanel = ({
           bucketName={bucketName}
         />
       )}
+
       {deleteOpen && (
         <DeleteObject
           deleteOpen={deleteOpen}
@@ -631,6 +647,7 @@ const ObjectDetailPanel = ({
           selectedVersion={selectedVersion}
         />
       )}
+
       {legalholdOpen && actualInfo && (
         <SetLegalHoldModal
           open={legalholdOpen}
@@ -640,6 +657,7 @@ const ObjectDetailPanel = ({
           actualInfo={actualInfo}
         />
       )}
+
       {previewOpen && actualInfo && (
         <PreviewFileModal
           open={previewOpen}
@@ -656,6 +674,7 @@ const ObjectDetailPanel = ({
           }}
         />
       )}
+
       {tagModalOpen && actualInfo && (
         <TagsModal
           modalOpen={tagModalOpen}
@@ -664,6 +683,7 @@ const ObjectDetailPanel = ({
           onCloseAndUpdate={closeAddTagModal}
         />
       )}
+
       {inspectModalOpen && actualInfo && (
         <InspectObject
           inspectOpen={inspectModalOpen}
@@ -672,6 +692,7 @@ const ObjectDetailPanel = ({
           closeInspectModalAndRefresh={closeInspectModal}
         />
       )}
+
       {longFileOpen && actualInfo && (
         <RenameLongFileName
           open={longFileOpen}
@@ -698,13 +719,14 @@ const ObjectDetailPanel = ({
             }
             items={multiActionButtons}
           />
+
           <TooltipWrapper
             tooltip={
               canDelete
                 ? ""
                 : permissionTooltipHelper(
                     [IAM_SCOPES.S3_DELETE_OBJECT],
-                    "delete this object"
+                    t("delete this object")
                   )
             }
           >
@@ -738,29 +760,30 @@ const ObjectDetailPanel = ({
                     width: "calc(100% - 44px)",
                     margin: "8px 0",
                   }}
-                  label={`Delete${selectedVersion !== "" ? " version" : ""}`}
+                  label={`Delete${selectedVersion !== "" ? t("version") : ""}`}
                 />
               </SecureComponent>
             </Grid>
           </TooltipWrapper>
           <Grid item xs={12} className={classes.headerForSection}>
-            <span>Object Info</span>
+            <span>{t("Object Info")}</span>
             <ObjectInfoIcon />
           </Grid>
           <Box className={classes.detailContainer}>
-            <strong>Name:</strong>
+            <strong>{t("Name:")}</strong>
             <br />
             <div style={{ overflowWrap: "break-word" }}>{objectName}</div>
           </Box>
           {selectedVersion !== "" && (
             <Box className={classes.detailContainer}>
-              <strong>Version ID:</strong>
+              <strong>{t("Version ID:")}</strong>
               <br />
               {selectedVersion}
             </Box>
           )}
+
           <Box className={classes.detailContainer}>
-            <strong>Size:</strong>
+            <strong>{t("Size:")}</strong>
             <br />
             {niceBytes(actualInfo.size || "0")}
           </Box>
@@ -768,26 +791,30 @@ const ObjectDetailPanel = ({
             actualInfo.version_id !== "null" &&
             selectedVersion === "" && (
               <Box className={classes.detailContainer}>
-                <strong>Versions:</strong>
+                <strong>{t("Versions:")}</strong>
                 <br />
-                {versions.length} version{versions.length !== 1 ? "s" : ""},{" "}
+                {versions.length}
+                {t("version")}
+                {versions.length !== 1 ? "s" : ""},{" "}
                 {niceBytesInt(totalVersionsSize)}
               </Box>
             )}
+
           {selectedVersion === "" && (
             <Box className={classes.detailContainer}>
-              <strong>Last Modified:</strong>
+              <strong>{t("Last Modified:")}</strong>
               <br />
               {calculateLastModifyTime(actualInfo.last_modified)}
             </Box>
           )}
+
           <Box className={classes.detailContainer}>
-            <strong>ETAG:</strong>
+            <strong>{t("ETAG:")}</strong>
             <br />
             {actualInfo.etag || "N/A"}
           </Box>
           <Box className={classes.detailContainer}>
-            <strong>Tags:</strong>
+            <strong>{t("Tags:")}</strong>
             <br />
             {tagKeys.length === 0
               ? "N/A"
@@ -806,9 +833,9 @@ const ObjectDetailPanel = ({
               resource={bucketName}
             >
               <Fragment>
-                <strong>Legal Hold:</strong>
+                <strong>{t("Legal Hold:")}</strong>
                 <br />
-                {actualInfo.legal_hold_status ? "On" : "Off"}
+                {actualInfo.legal_hold_status ? t("On") : t("Off")}
               </Fragment>
             </SecureComponent>
           </Box>
@@ -818,20 +845,20 @@ const ObjectDetailPanel = ({
               resource={bucketName}
             >
               <Fragment>
-                <strong>Retention Policy:</strong>
+                <strong>{t("Retention Policy:")}</strong>
                 <br />
                 <span className={classes.capitalizeFirst}>
                   {actualInfo.version_id && actualInfo.version_id !== "null" ? (
                     <Fragment>
                       {actualInfo.retention_mode
                         ? actualInfo.retention_mode.toLowerCase()
-                        : "None"}
+                        : t("None")}
                     </Fragment>
                   ) : (
                     <Fragment>
                       {actualInfo.retention_mode
                         ? actualInfo.retention_mode.toLowerCase()
-                        : "None"}
+                        : t("None")}
                     </Fragment>
                   )}
                 </span>
@@ -839,7 +866,7 @@ const ObjectDetailPanel = ({
             </SecureComponent>
           </Box>
           <Grid item xs={12} className={classes.headerForSection}>
-            <span>Metadata</span>
+            <span>{t("Metadata")}</span>
             <MetadataIcon />
           </Grid>
           <Box className={classes.detailContainer}>

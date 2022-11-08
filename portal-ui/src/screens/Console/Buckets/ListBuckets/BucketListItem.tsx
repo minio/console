@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -232,18 +233,21 @@ const BucketListItem = ({
                     />
                   </div>
                 )}
+
                 <h1 className={classes.bucketName}>{bucket.name}</h1>
               </Grid>
               <Grid item xs={12}>
                 <Grid container className={classes.bucketInfo}>
                   <Grid item xs={12} sm>
                     <Typography variant="body2">
-                      Created: {bucket.creation_date}
+                      {t("Created:")}
+                      {bucket.creation_date}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm>
                     <Typography variant="body2">
-                      Access: {accessToStr(bucket)}
+                      {t("Access:")}
+                      {accessToStr(bucket)}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -259,16 +263,16 @@ const BucketListItem = ({
                 <TooltipWrapper
                   tooltip={
                     manageAllowed
-                      ? "Manage Bucket"
+                      ? t("Manage Bucket")
                       : permissionTooltipHelper(
                           IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN],
-                          "managing this bucket"
+                          t("managing this bucket")
                         )
                   }
                 >
                   <Button
                     onClick={() => navigate(`/buckets/${bucket.name}/admin`)}
-                    label={"Manage"}
+                    label={t("Manage")}
                     icon={<SettingsIcon />}
                     color={"primary"}
                     variant={"regular"}
@@ -278,10 +282,11 @@ const BucketListItem = ({
                 </TooltipWrapper>
               </SecureComponent>
             )}
-            <TooltipWrapper tooltip={"Browse"}>
+
+            <TooltipWrapper tooltip={t("Browse")}>
               <Button
                 onClick={() => navigate(`/buckets/${bucket.name}/browse`)}
-                label={"Browse"}
+                label={t("Browse")}
                 icon={<ArrowRightIcon />}
                 color={"primary"}
                 variant={"callAction"}
@@ -304,7 +309,7 @@ const BucketListItem = ({
           </Grid>
           <Grid item textAlign={"left"} className={classes.metric}>
             <ReportedUsageIcon />
-            <span className={classes.metricLabel}>Usage</span>
+            <span className={classes.metricLabel}>{t("Usage")}</span>
             <div className={classes.metricText}>
               {usageScalar}
               <span className={classes.unit}>{usageUnit}</span>
@@ -319,7 +324,7 @@ const BucketListItem = ({
           </Grid>
           <Grid item textAlign={"left"} className={classes.metric}>
             <TotalObjectsIcon />
-            <span className={classes.metricLabel}>Objects</span>
+            <span className={classes.metricLabel}>{t("Objects")}</span>
             <div className={classes.metricText}>
               {bucket.objects ? prettyNumber(bucket.objects) : 0}
             </div>

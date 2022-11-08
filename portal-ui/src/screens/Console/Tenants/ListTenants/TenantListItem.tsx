@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment } from "react";
 
 import { useNavigate } from "react-router-dom";
@@ -186,6 +186,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
         namespace: tenant.namespace,
       })
     );
+
     dispatch(getTenantAsync());
     navigate(`/namespaces/${tenant.namespace}/tenants/${tenant.name}/summary`);
   };
@@ -204,7 +205,8 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
             </div>
             <div>
               <span className={classes.namespaceLabel}>
-                Namespace:&nbsp;{tenant.namespace}
+                {t("Namespace:")}
+                {tenant.namespace}
               </span>
             </div>
           </Grid>
@@ -229,17 +231,19 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                   }}
                 >
                   <InformationItem
-                    label={"Raw Capacity"}
+                    label={t("Raw Capacity")}
                     value={raw.value}
                     unit={raw.unit}
                   />
+
                   <InformationItem
-                    label={"Usable Capacity"}
+                    label={t("Usable Capacity")}
                     value={capacity.value}
                     unit={capacity.unit}
                   />
+
                   <InformationItem
-                    label={"Pools"}
+                    label={t("Pools")}
                     value={tenant.pool_count.toString()}
                     variant={"faded"}
                   />
@@ -250,7 +254,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                   sx={{ paddingLeft: "20px", marginTop: "15px" }}
                 >
                   <span className={classes.status}>
-                    <strong>State:</strong> {tenant.currentState}
+                    <strong>{t("State:")}</strong> {tenant.currentState}
                   </span>
                 </Grid>
               </Grid>
@@ -267,6 +271,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                       <DrivesIcon
                         style={{ width: 25, color: "rgb(91,91,91)" }}
                       />
+
                       <div
                         style={{
                           color: "rgb(118, 118, 118)",
@@ -274,7 +279,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                           fontWeight: "400",
                         }}
                       >
-                        Usage
+                        {t("Usage")}
                       </div>
                     </Grid>
                     <Grid item xs={1} />
@@ -291,7 +296,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                               color: "rgb(62,62,62)",
                             }}
                           >
-                            Internal:{" "}
+                            {t("Internal:")}{" "}
                           </span>{" "}
                           {`${used.value} ${used.unit}`}
                         </div>
@@ -310,7 +315,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                                 color: "rgb(62,62,62)",
                               }}
                             >
-                              Internal:{" "}
+                              {t("Internal:")}{" "}
                             </span>{" "}
                             {`${localUse.value} ${localUse.unit}`}
                           </div>
@@ -325,7 +330,7 @@ const TenantListItem = ({ tenant, classes }: ITenantListItem) => {
                                 color: "rgb(62,62,62)",
                               }}
                             >
-                              Tiered:{" "}
+                              {t("Tiered:")}{" "}
                             </span>{" "}
                             {`${tieredUse.value} ${tieredUse.unit}`}
                           </div>

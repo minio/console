@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState, Fragment } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -82,6 +82,7 @@ const SetPolicy = ({
   const currentPolicies = useSelector(
     (state: AppState) => state.createUser.selectedPolicies
   );
+
   const setPolicyAction = () => {
     let users = null;
     let groups = null;
@@ -156,31 +157,35 @@ const SetPolicy = ({
         closeModalAndRefresh();
       }}
       modalOpen={open}
-      title="Set Policies"
+      title={t("Set Policies")}
     >
       <Grid container>
         {(selectedGroups?.length === 1 || selectedUser != null) && (
           <Fragment>
             <Grid item xs={12}>
               <PredefinedList
-                label={`Selected ${selectedGroups !== null ? "Group" : "User"}`}
+                label={`Selected ${
+                  selectedGroups !== null ? t("Group") : t("User")
+                }`}
                 content={selectedGroups !== null ? selectedGroups[0] : userName}
               />
             </Grid>
             <Grid item xs={12}>
               <PredefinedList
-                label={"Current Policy"}
+                label={t("Current Policy")}
                 content={actualPolicy.join(", ")}
               />
             </Grid>
           </Fragment>
         )}
+
         {selectedGroups && selectedGroups?.length > 1 && (
           <PredefinedList
-            label={"Selected Groups"}
+            label={t("Selected Groups")}
             content={selectedGroups.join(", ")}
           />
         )}
+
         <Grid item xs={12}>
           <div className={classes.tableBlock}>
             <PolicySelectors selectedPolicy={selectedPolicy} />
@@ -194,8 +199,9 @@ const SetPolicy = ({
           variant="regular"
           className={classes.spacerRight}
           onClick={resetSelection}
-          label={"Reset"}
+          label={t("Reset")}
         />
+
         <Button
           id={"save"}
           type="button"
@@ -203,7 +209,7 @@ const SetPolicy = ({
           color="primary"
           disabled={loading}
           onClick={setPolicyAction}
-          label={"Save"}
+          label={t("Save")}
         />
       </Grid>
       {loading && (

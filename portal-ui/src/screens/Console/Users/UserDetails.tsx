@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
@@ -140,6 +140,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
     assignIAMPolicyPermissions,
     true
   );
+
   const canAssignGroup = hasPermission(
     CONSOLE_UI_RESOURCE,
     assignGroupPermissions,
@@ -236,11 +237,12 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
       <PageHeader
         label={
           <Fragment>
-            <BackLink label={"Users"} to={IAM_PAGES.USERS} />
+            <BackLink label={t("Users")} to={IAM_PAGES.USERS} />
           </Fragment>
         }
         actions={<React.Fragment></React.Fragment>}
       />
+
       {addGroupOpen && (
         <ChangeUserGroups
           open={addGroupOpen}
@@ -251,6 +253,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
           }}
         />
       )}
+
       {policyOpen && (
         <SetUserPolicies
           open={policyOpen}
@@ -262,6 +265,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
           }}
         />
       )}
+
       {deleteOpen && (
         <DeleteUser
           deleteOpen={deleteOpen}
@@ -271,6 +275,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
           }}
         />
       )}
+
       {changeUserPasswordModalOpen && (
         <ChangeUserPasswordModal
           open={changeUserPasswordModalOpen}
@@ -278,6 +283,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
           closeModal={() => setChangeUserPasswordModalOpen(false)}
         />
       )}
+
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle
@@ -289,9 +295,9 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             title={userName}
             actions={
               <Fragment>
-                <span className={classes.statusLabel}>User Status:</span>
+                <span className={classes.statusLabel}>{t("User Status:")}</span>
                 <span className={classes.statusValue}>
-                  {enabled ? "Enabled" : "Disabled"}
+                  {enabled ? t("Enabled") : t("Disabled")}
                 </span>
                 <TooltipWrapper
                   tooltip={
@@ -303,7 +309,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                         )
                       ? permissionTooltipHelper(
                           disableUserPermissions,
-                          "disable users"
+                          t("disable users")
                         )
                       : hasPermission(
                           CONSOLE_UI_RESOURCE,
@@ -311,11 +317,11 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                         )
                       ? permissionTooltipHelper(
                           enableUserPermissions,
-                          "enable users"
+                          t("enable users")
                         )
                       : permissionTooltipHelper(
                           enableDisableUserPermissions,
-                          "enable or disable users"
+                          t("enable or disable users")
                         )
                   }
                 >
@@ -337,11 +343,11 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                   tooltip={
                     hasPermission(CONSOLE_UI_RESOURCE, deleteUserPermissions)
                       ? userLoggedIn === userName
-                        ? "You cannot delete the currently logged in User"
-                        : "Delete User"
+                        ? t("You cannot delete the currently logged in User")
+                        : t("Delete User")
                       : permissionTooltipHelper(
                           deleteUserPermissions,
-                          "delete user"
+                          t("delete user")
                         )
                   }
                 >
@@ -359,7 +365,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                   />
                 </TooltipWrapper>
 
-                <TooltipWrapper tooltip={"Change Password"}>
+                <TooltipWrapper tooltip={t("Change Password")}>
                   <Button
                     id={"change-user-password"}
                     onClick={changeUserPassword}
@@ -376,26 +382,26 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
           <VerticalTabs>
             {{
               tabConfig: {
-                label: "Groups",
+                label: t("Groups"),
                 disabled: !canAssignGroup,
               },
               content: (
                 <React.Fragment>
                   <div className={classes.actionsTray}>
-                    <PanelTitle>Groups</PanelTitle>
+                    <PanelTitle>{t("Groups")}</PanelTitle>
                     <TooltipWrapper
                       tooltip={
                         canAssignGroup
-                          ? "Assign groups"
+                          ? t("Assign groups")
                           : permissionTooltipHelper(
                               assignGroupPermissions,
-                              "add users to groups"
+                              t("add users to groups")
                             )
                       }
                     >
                       <Button
                         id={"add-groups"}
-                        label={"Add to Groups"}
+                        label={t("Add to Groups")}
                         onClick={() => {
                           setAddGroupOpen(true);
                         }}
@@ -408,7 +414,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                   <div className={classes.tableBlock}>
                     <TableWrapper
                       itemActions={groupTableActions}
-                      columns={[{ label: "Name", elementKey: "group" }]}
+                      columns={[{ label: t("Name"), elementKey: "group" }]}
                       isLoading={loading}
                       records={currentGroups}
                       entityName="Groups"
@@ -420,7 +426,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Service Accounts",
+                label: t("Service Accounts"),
                 disabled: !hasPermission(
                   CONSOLE_UI_RESOURCE,
                   editServiceAccountPermissions
@@ -435,27 +441,27 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Policies",
+                label: t("Policies"),
                 disabled: !canAssignPolicy,
               },
               content: (
                 <Fragment>
                   <div className={classes.actionsTray}>
-                    <PanelTitle>Policies</PanelTitle>
+                    <PanelTitle>{t("Policies")}</PanelTitle>
 
                     <TooltipWrapper
                       tooltip={
                         canAssignPolicy
-                          ? "Assign Policies"
+                          ? t("Assign Policies")
                           : permissionTooltipHelper(
                               assignIAMPolicyPermissions,
-                              "assign policies"
+                              t("assign policies")
                             )
                       }
                     >
                       <Button
                         id={"assign-policies"}
-                        label={"Assign Policies"}
+                        label={t("Assign Policies")}
                         onClick={() => {
                           setPolicyOpen(true);
                         }}
@@ -479,7 +485,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                           },
                         },
                       ]}
-                      columns={[{ label: "Name", elementKey: "policy" }]}
+                      columns={[{ label: t("Name"), elementKey: "policy" }]}
                       isLoading={loading}
                       records={currentPolicies}
                       entityName="Policies"

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import Grid from "@mui/material/Grid";
 import React, { Fragment } from "react";
 import { Button } from "mds";
@@ -94,7 +94,7 @@ const StrategyForm = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 dispatch(setAccessKey(e.target.value))
               }
-              placeholder={useSTS ? "STS Username" : "Username"}
+              placeholder={useSTS ? t("STS Username") : t("Username")}
               name="accessKey"
               autoComplete="username"
               disabled={loginSending}
@@ -124,7 +124,7 @@ const StrategyForm = () => {
               id="secretKey"
               autoComplete="current-password"
               disabled={loginSending}
-              placeholder={useSTS ? "STS Secret" : "Password"}
+              placeholder={useSTS ? t("STS Secret") : t("Password")}
               variant={"outlined"}
               InputProps={{
                 startAdornment: (
@@ -148,7 +148,7 @@ const StrategyForm = () => {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   dispatch(setSTS(e.target.value))
                 }
-                placeholder={"STS Token"}
+                placeholder={t("STS Token")}
                 name="STS"
                 autoComplete="sts"
                 disabled={loginSending}
@@ -180,7 +180,7 @@ const StrategyForm = () => {
               (useSTS && sts === "") ||
               loginSending
             }
-            label={"Login"}
+            label={t("Login")}
             fullWidth
           />
         </Grid>
@@ -205,8 +205,8 @@ const StrategyForm = () => {
                 cursor: "pointer",
               }}
             >
-              {!useSTS && <Fragment>Use STS</Fragment>}
-              {useSTS && <Fragment>Use Credentials</Fragment>}
+              {!useSTS && <Fragment>{t("Use STS")}</Fragment>}
+              {useSTS && <Fragment>{t("Use Credentials")}</Fragment>}
             </span>
             <span
               onClick={() => {

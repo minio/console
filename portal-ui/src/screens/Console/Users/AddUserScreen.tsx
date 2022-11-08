@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
@@ -78,18 +78,23 @@ const AddUser = ({ classes }: IAddUserProps) => {
   const selectedPolicies = useSelector(
     (state: AppState) => state.createUser.selectedPolicies
   );
+
   const selectedGroups = useSelector(
     (state: AppState) => state.createUser.selectedGroups
   );
+
   const addLoading = useSelector(
     (state: AppState) => state.createUser.addLoading
   );
+
   const sendEnabled = useSelector(
     (state: AppState) => state.createUser.sendEnabled
   );
+
   const secretKeylength = useSelector(
     (state: AppState) => state.createUser.secretKeylength
   );
+
   const navigate = useNavigate();
   dispatch(setSendEnabled());
 
@@ -102,6 +107,7 @@ const AddUser = ({ classes }: IAddUserProps) => {
           detailedError: "",
         })
       );
+
       dispatch(setAddLoading(false));
       return;
     }
@@ -117,10 +123,12 @@ const AddUser = ({ classes }: IAddUserProps) => {
   return (
     <Fragment>
       <Grid item xs={12}>
-        <PageHeader label={<BackLink to={IAM_PAGES.USERS} label={"Users"} />} />
+        <PageHeader
+          label={<BackLink to={IAM_PAGES.USERS} label={t("Users")} />}
+        />
         <PageLayout>
           <FormLayout
-            title={"Create User"}
+            title={t("Create User")}
             icon={<CreateUserIcon />}
             helpbox={<AddUserHelpBox />}
           >
@@ -168,7 +176,7 @@ const AddUser = ({ classes }: IAddUserProps) => {
                     onClick={(e) => {
                       dispatch(resetFormAsync());
                     }}
-                    label={"Clear"}
+                    label={t("Clear")}
                   />
 
                   <Button
@@ -177,7 +185,7 @@ const AddUser = ({ classes }: IAddUserProps) => {
                     variant="callAction"
                     color="primary"
                     disabled={addLoading || !sendEnabled}
-                    label={"Save"}
+                    label={t("Save")}
                   />
                 </Grid>
               </Grid>

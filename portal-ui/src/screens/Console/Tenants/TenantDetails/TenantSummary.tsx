@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import get from "lodash/get";
@@ -131,7 +131,7 @@ const StorageSummary = ({
   return (
     <SummaryUsageBar
       tenant={tenant!}
-      label={"Storage"}
+      label={t("Storage")}
       error={""}
       loading={false}
       healthStatus={healthStatusToClass(tenant?.status?.health_status, classes)}
@@ -189,18 +189,23 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
   const logEnabled = useSelector((state: AppState) =>
     get(state.tenants.tenantInfo, "logEnabled", false)
   );
+
   const monitoringEnabled = useSelector((state: AppState) =>
     get(state.tenants.tenantInfo, "monitoringEnabled", false)
   );
+
   const encryptionEnabled = useSelector((state: AppState) =>
     get(state.tenants.tenantInfo, "encryptionEnabled", false)
   );
+
   const minioTLS = useSelector((state: AppState) =>
     get(state.tenants.tenantInfo, "minioTLS", false)
   );
+
   const adEnabled = useSelector((state: AppState) =>
     get(state.tenants.tenantInfo, "idpAdEnabled", false)
   );
+
   const oidcEnabled = useSelector((state: AppState) =>
     get(state.tenants.tenantInfo, "idpOidcEnabled", false)
   );
@@ -252,18 +257,18 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
         />
       )}
 
-      <SectionTitle separator={false}>Details</SectionTitle>
+      <SectionTitle separator={false}>{t("Details")}</SectionTitle>
 
       <StorageSummary tenant={tenant} classes={classes} />
 
       <Grid container>
         <Grid item xs={12} sm={12} md={8}>
           <Grid item xs={12}>
-            <LabelValuePair label={"State:"} value={tenant?.currentState} />
+            <LabelValuePair label={t("State:")} value={tenant?.currentState} />
           </Grid>
           <Grid item xs={12}>
             <LabelValuePair
-              label="MinIO:"
+              label={t("MinIO:")}
               value={
                 <AButton
                   style={{
@@ -283,7 +288,8 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
           </Grid>
           <Grid item xs={12}>
             <h3>
-              Domains
+              {t("Domains")}
+
               <Button
                 id={"edit-domains"}
                 icon={<EditIcon />}
@@ -295,7 +301,7 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
           </Grid>
           <Grid item xs={12}>
             <LabelValuePair
-              label={"Console:"}
+              label={t("Console:")}
               value={
                 <Fragment>
                   {(!tenant?.domains?.console ||
@@ -382,11 +388,11 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
         </Grid>
         <Grid item xs={12} sm={12} md={4}>
           <Grid item xs={12}>
-            <LabelValuePair label={"Instances:"} value={instances} />
+            <LabelValuePair label={t("Instances:")} value={instances} />
           </Grid>
           <Grid item xs={12}>
             <LabelValuePair
-              label={"Clusters:"}
+              label={t("Clusters:")}
               value={poolCount}
               stkProps={{
                 style: {
@@ -397,7 +403,7 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
           </Grid>
           <Grid item xs={12}>
             <LabelValuePair
-              label="Total Drives:"
+              label={t("Total Drives:")}
               value={volumes}
               stkProps={{
                 style: {
@@ -408,7 +414,7 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
           </Grid>
           <Grid item xs={12}>
             <LabelValuePair
-              label={"Write Quorum:"}
+              label={t("Write Quorum:")}
               value={
                 tenant?.status?.write_quorum ? tenant?.status?.write_quorum : 0
               }
@@ -416,7 +422,7 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
           </Grid>
           <Grid item xs={12}>
             <LabelValuePair
-              label={"Drives Online:"}
+              label={t("Drives Online:")}
               value={
                 tenant?.status?.drives_online
                   ? tenant?.status?.drives_online
@@ -431,7 +437,7 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
           </Grid>
           <Grid item xs={12}>
             <LabelValuePair
-              label={"Drives Offline:"}
+              label={t("Drives Offline:")}
               value={
                 tenant?.status?.drives_offline
                   ? tenant?.status?.drives_offline
@@ -447,24 +453,25 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
         </Grid>
       </Grid>
 
-      <SectionTitle>Features</SectionTitle>
+      <SectionTitle>{t("Features")}</SectionTitle>
       <Box sx={{ ...featureRowStyle }}>
         <LabelValuePair
           orientation="row"
-          label="Logs:"
+          label={t("Logs:")}
           value={getToggle(logEnabled, "tenant-log")}
           {...featureItemStyleProps}
         />
 
         <LabelValuePair
           orientation="row"
-          label={"AD/LDAP:"}
+          label={t("AD/LDAP:")}
           value={getToggle(adEnabled, "tenant-sts")}
           {...featureItemStyleProps}
         />
+
         <LabelValuePair
           orientation="row"
-          label={"Encryption:"}
+          label={t("Encryption:")}
           value={getToggle(encryptionEnabled, "tenant-enc")}
           {...featureItemStyleProps}
         />
@@ -472,20 +479,21 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
       <Box sx={{ ...featureRowStyle }}>
         <LabelValuePair
           orientation="row"
-          label="MinIO TLS:"
+          label={t("MinIO TLS:")}
           value={getToggle(minioTLS, "tenant-tls")}
           {...featureItemStyleProps}
         />
 
         <LabelValuePair
           orientation="row"
-          label={"Monitoring:"}
+          label={t("Monitoring:")}
           value={getToggle(monitoringEnabled, "tenant-monitor")}
           {...featureItemStyleProps}
         />
+
         <LabelValuePair
           orientation="row"
-          label={"OpenID:"}
+          label={t("OpenID:")}
           value={getToggle(oidcEnabled, "tenant-oidc")}
           {...featureItemStyleProps}
         />

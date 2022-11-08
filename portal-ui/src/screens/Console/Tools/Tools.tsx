@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import FeatureNotAvailablePage from "../Common/Components/FeatureNotAvailablePage";
@@ -38,10 +38,11 @@ const Tools = () => {
             icon={<SupportMenuIcon />}
             pageHeaderText={"Support"}
             title={"Call Home"}
-            message={<div>This feature is currently not available.</div>}
+            message={<div>{t("This feature is currently not available.")}</div>}
           />
         }
       />
+
       <Route path={"inspect"} element={<Inspect />} />
       <Route path={"*"} element={<NotFoundPage />} />
     </Routes>

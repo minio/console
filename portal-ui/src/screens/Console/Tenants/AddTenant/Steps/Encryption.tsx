@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -93,15 +93,19 @@ const Encryption = ({ classes }: IEncryptionProps) => {
   const replicas = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.replicas
   );
+
   const rawConfiguration = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.rawConfiguration
   );
+
   const encryptionTab = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.encryptionTab
   );
+
   const enableEncryption = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.enableEncryption
   );
+
   const encryptionType = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.encryptionType
   );
@@ -109,49 +113,64 @@ const Encryption = ({ classes }: IEncryptionProps) => {
   const gcpProjectID = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gcpProjectID
   );
+
   const gcpEndpoint = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gcpEndpoint
   );
+
   const gcpClientEmail = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gcpClientEmail
   );
+
   const gcpClientID = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gcpClientID
   );
+
   const gcpPrivateKeyID = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gcpPrivateKeyID
   );
+
   const gcpPrivateKey = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gcpPrivateKey
   );
+
   const enableCustomCertsForKES = useSelector(
     (state: AppState) =>
       state.createTenant.fields.encryption.enableCustomCertsForKES
   );
+
   const enableAutoCert = useSelector(
     (state: AppState) => state.createTenant.fields.security.enableAutoCert
   );
+
   const enableTLS = useSelector(
     (state: AppState) => state.createTenant.fields.security.enableTLS
   );
+
   const minioServerCertificates = useSelector(
     (state: AppState) => state.createTenant.certificates.minioServerCertificates
   );
+
   const kesServerCertificate = useSelector(
     (state: AppState) => state.createTenant.certificates.kesServerCertificate
   );
+
   const minioMTLSCertificate = useSelector(
     (state: AppState) => state.createTenant.certificates.minioMTLSCertificate
   );
+
   const kmsMTLSCertificate = useSelector(
     (state: AppState) => state.createTenant.certificates.kmsMTLSCertificate
   );
+
   const kmsCA = useSelector(
     (state: AppState) => state.createTenant.certificates.kmsCA
   );
+
   const enableCustomCerts = useSelector(
     (state: AppState) => state.createTenant.fields.security.enableCustomCerts
   );
+
   const kesSecurityContext = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.kesSecurityContext
   );
@@ -294,7 +313,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
     <Paper className={classes.paperWrapper}>
       <Grid container alignItems={"center"}>
         <Grid item xs>
-          <SectionH1>Encryption</SectionH1>
+          <SectionH1>{t("Encryption")}</SectionH1>
         </Grid>
         <Grid item xs={4} justifyContent={"end"} textAlign={"right"}>
           <FormSwitchWrapper
@@ -318,11 +337,9 @@ const Encryption = ({ classes }: IEncryptionProps) => {
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <span className={classes.descriptionText}>
-            MinIO Server-Side Encryption (SSE) protects objects as part of write
-            operations, allowing clients to take advantage of server processing
-            power to secure objects at the storage layer (encryption-at-rest).
-            SSE also provides key functionality to regulatory and compliance
-            requirements around secure locking and erasure.
+            {t(
+              "MinIO Server-Side Encryption (SSE) protects objects as part of write operations, allowing clients to take advantage of server processing power to secure objects at the storage layer (encryption-at-rest). SSE also provides key functionality to regulatory and compliance requirements around secure locking and erasure."
+            )}
           </span>
         </Grid>
         <Grid xs={12}>
@@ -343,8 +360,8 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                 variant="scrollable"
                 scrollButtons="auto"
               >
-                <Tab id="kms-options" label="Options" />
-                <Tab id="kms-raw-configuration" label="Raw Edit" />
+                <Tab id="kms-options" label={t("Options")} />
+                <Tab id="kms-raw-configuration" label={t("Raw Edit")} />
               </Tabs>
             </Grid>
 
@@ -368,16 +385,16 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                     currentSelection={encryptionType}
                     id="encryptionType"
                     name="encryptionType"
-                    label="KMS"
+                    label={t("KMS")}
                     onChange={(e) => {
                       updateField("encryptionType", e.target.value);
                     }}
                     selectorOptions={[
-                      { label: "Vault", value: "vault" },
-                      { label: "AWS", value: "aws" },
-                      { label: "Gemalto", value: "gemalto" },
-                      { label: "GCP", value: "gcp" },
-                      { label: "Azure", value: "azure" },
+                      { label: t("Vault"), value: "vault" },
+                      { label: t("AWS"), value: "aws" },
+                      { label: t("Gemalto"), value: "gemalto" },
+                      { label: t("GCP"), value: "gcp" },
+                      { label: t("Azure"), value: "azure" },
                     ]}
                   />
                 </Grid>
@@ -390,7 +407,9 @@ const Encryption = ({ classes }: IEncryptionProps) => {
             )}
 
             <div className={classes.headerElement}>
-              <h4 className={classes.h3Section}>Additional Configurations</h4>
+              <h4 className={classes.h3Section}>
+                {t("Additional Configurations")}
+              </h4>
             </div>
             <Grid item xs={12}>
               <FormSwitchWrapper
@@ -404,7 +423,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
 
                   updateField("enableCustomCertsForKES", checked);
                 }}
-                label={"Custom Certificates"}
+                label={t("Custom Certificates")}
                 disabled={!enableAutoCert}
               />
             </Grid>
@@ -414,7 +433,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                   <Grid item xs={12} style={{ marginBottom: 15 }}>
                     <fieldset className={classes.fieldGroup}>
                       <legend className={classes.descriptionText}>
-                        Encryption server certificates
+                        {t("Encryption server certificates")}
                       </legend>
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
@@ -425,16 +444,18 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                               value: encodedValue,
                             })
                           );
+
                           cleanValidation("serverKey");
                         }}
                         accept=".key,.pem"
                         id="serverKey"
                         name="serverKey"
-                        label="Key"
+                        label={t("Key")}
                         error={validationErrors["serverKey"] || ""}
                         value={kesServerCertificate.key}
                         required={!enableAutoCert}
                       />
+
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
                           dispatch(
@@ -444,12 +465,13 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                               value: encodedValue,
                             })
                           );
+
                           cleanValidation("serverCert");
                         }}
                         accept=".cer,.crt,.cert,.pem"
                         id="serverCert"
                         name="serverCert"
-                        label="Cert"
+                        label={t("Cert")}
                         error={validationErrors["serverCert"] || ""}
                         value={kesServerCertificate.cert}
                         required={!enableAutoCert}
@@ -461,8 +483,9 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                   <Grid item xs={12}>
                     <fieldset className={classes.fieldGroup}>
                       <legend className={classes.descriptionText}>
-                        MinIO mTLS certificates (connection between MinIO and
-                        the Encryption server)
+                        {t(
+                          "MinIO mTLS certificates (connection between MinIO and the Encryption server)"
+                        )}
                       </legend>
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
@@ -473,16 +496,18 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                               value: encodedValue,
                             })
                           );
+
                           cleanValidation("clientKey");
                         }}
                         accept=".key,.pem"
                         id="clientKey"
                         name="clientKey"
-                        label="Key"
+                        label={t("Key")}
                         error={validationErrors["clientKey"] || ""}
                         value={minioMTLSCertificate.key}
                         required={!enableAutoCert}
                       />
+
                       <FileSelector
                         onChange={(encodedValue, fileName) => {
                           dispatch(
@@ -492,12 +517,13 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                               value: encodedValue,
                             })
                           );
+
                           cleanValidation("clientCert");
                         }}
                         accept=".cer,.crt,.cert,.pem"
                         id="clientCert"
                         name="clientCert"
-                        label="Cert"
+                        label={t("Cert")}
                         error={validationErrors["clientCert"] || ""}
                         value={minioMTLSCertificate.cert}
                         required={!enableAutoCert}
@@ -508,8 +534,9 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                 <Grid container className={classes.mutualTlsConfig}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
-                      KMS mTLS certificates (connection between the Encryption
-                      server and the KMS)
+                      {t(
+                        "KMS mTLS certificates (connection between the Encryption server and the KMS)"
+                      )}
                     </legend>
                     <FileSelector
                       onChange={(encodedValue, fileName) => {
@@ -520,14 +547,16 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                             value: encodedValue,
                           })
                         );
+
                         cleanValidation("vault_key");
                       }}
                       accept=".key,.pem"
                       id="vault_key"
                       name="vault_key"
-                      label="Key"
+                      label={t("Key")}
                       value={kmsMTLSCertificate.key}
                     />
+
                     <FileSelector
                       onChange={(encodedValue, fileName) => {
                         dispatch(
@@ -537,14 +566,16 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                             value: encodedValue,
                           })
                         );
+
                         cleanValidation("vault_cert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
                       id="vault_cert"
                       name="vault_cert"
-                      label="Cert"
+                      label={t("Cert")}
                       value={kmsMTLSCertificate.cert}
                     />
+
                     <FileSelector
                       onChange={(encodedValue, fileName) => {
                         dispatch(
@@ -553,18 +584,20 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                             value: encodedValue,
                           })
                         );
+
                         cleanValidation("vault_ca");
                       }}
                       accept=".cer,.crt,.cert,.pem"
                       id="vault_ca"
                       name="vault_ca"
-                      label="CA"
+                      label={t("CA")}
                       value={kmsCA.cert}
                     />
                   </fieldset>
                 </Grid>
               </Fragment>
             )}
+
             <Grid item xs={12}>
               <Grid item xs={12} classes={classes.formFieldRow}>
                 <InputBoxWrapper
@@ -576,7 +609,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                     updateField("replicas", e.target.value);
                     cleanValidation("replicas");
                   }}
-                  label="Replicas"
+                  label={t("Replicas")}
                   value={replicas}
                   required
                   error={validationErrors["replicas"] || ""}
@@ -588,7 +621,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                 style={{ marginTop: 15 }}
               >
                 <legend className={classes.descriptionText}>
-                  SecurityContext for KES pods
+                  {t("SecurityContext for KES pods")}
                 </legend>
                 <Grid item xs={12} className={classes.kesSecurityContext}>
                   <div
@@ -608,7 +641,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                           });
                           cleanValidation("kes_securityContext_runAsUser");
                         }}
-                        label="Run As User"
+                        label={t("Run As User")}
                         value={kesSecurityContext.runAsUser}
                         required
                         error={
@@ -632,7 +665,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                           });
                           cleanValidation("kes_securityContext_runAsGroup");
                         }}
-                        label="Run As Group"
+                        label={t("Run As Group")}
                         value={kesSecurityContext.runAsGroup}
                         required
                         error={
@@ -663,7 +696,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                           });
                           cleanValidation("kes_securityContext_fsGroup");
                         }}
-                        label="FsGroup"
+                        label={t("FsGroup")}
                         value={kesSecurityContext.fsGroup}
                         required
                         error={
@@ -676,7 +709,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                       className={`${classes.formFieldRow} ${classes.rightSpacer}`}
                     >
                       <SelectWrapper
-                        label="FsGroupChangePolicy"
+                        label={t("FsGroupChangePolicy")}
                         id="securityContext_fsGroupChangePolicy"
                         name="securityContext_fsGroupChangePolicy"
                         value={kesSecurityContext.fsGroupChangePolicy}
@@ -688,11 +721,11 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                         }}
                         options={[
                           {
-                            label: "Always",
+                            label: t("Always"),
                             value: "Always",
                           },
                           {
-                            label: "OnRootMismatch",
+                            label: t("OnRootMismatch"),
                             value: "OnRootMismatch",
                           },
                         ]}
@@ -716,7 +749,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
                           runAsNonRoot: checked,
                         });
                       }}
-                      label={"Do not run as Root"}
+                      label={t("Do not run as Root")}
                     />
                   </div>
                 </Grid>

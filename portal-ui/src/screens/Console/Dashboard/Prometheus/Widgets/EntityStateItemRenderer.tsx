@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import EntityStateStatItem from "./EntityStateStatItem";
 import { Box } from "@mui/material";
@@ -56,11 +56,12 @@ const EntityStateItemRenderer = ({
           }}
         >
           <CircleIcon />
-          <div className="stat-text">Online</div>
+          <div className="stat-text">{t("Online")}</div>
         </Box>
       }
     />
   );
+
   const rStatItem = (
     <EntityStateStatItem
       panelItem={rightPanel}
@@ -80,7 +81,7 @@ const EntityStateItemRenderer = ({
           }}
         >
           <CircleIcon />
-          <div className="stat-text">Offline</div>
+          <div className="stat-text">{t("Offline")}</div>
         </Box>
       }
     />

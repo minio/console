@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -115,7 +115,7 @@ const SubnetLicenseTenant = ({
                 gutterBottom
                 className={classes.licenseInfoTitle}
               >
-                License
+                {t("License")}
               </Typography>
               <Typography
                 variant="overline"
@@ -123,7 +123,7 @@ const SubnetLicenseTenant = ({
                 gutterBottom
                 className={classes.licenseInfoValue}
               >
-                Commercial License
+                {t("Commercial License")}
               </Typography>
               <Typography
                 variant="button"
@@ -131,7 +131,7 @@ const SubnetLicenseTenant = ({
                 gutterBottom
                 className={classes.licenseInfoTitle}
               >
-                Organization
+                {t("Organization")}
               </Typography>
               <Typography
                 variant="overline"
@@ -147,7 +147,7 @@ const SubnetLicenseTenant = ({
                 gutterBottom
                 className={classes.licenseInfoTitle}
               >
-                Registered Capacity
+                {t("Registered Capacity")}
               </Typography>
               <Typography
                 variant="overline"
@@ -166,7 +166,7 @@ const SubnetLicenseTenant = ({
                 gutterBottom
                 className={classes.licenseInfoTitle}
               >
-                Expiry Date
+                {t("Expiry Date")}
               </Typography>
               <Typography
                 variant="overline"
@@ -186,7 +186,7 @@ const SubnetLicenseTenant = ({
                 gutterBottom
                 className={classes.licenseInfoTitle}
               >
-                Subscription Plan
+                {t("Subscription Plan")}
               </Typography>
               <Typography
                 variant="overline"
@@ -202,7 +202,7 @@ const SubnetLicenseTenant = ({
                 gutterBottom
                 className={classes.licenseInfoTitle}
               >
-                Requestor
+                {t("Requestor")}
               </Typography>
               <Typography
                 variant="overline"
@@ -231,22 +231,23 @@ const SubnetLicenseTenant = ({
                 }}
                 className={classes.noUnderLine}
               >
-                <TooltipWrapper tooltip={"Activate Product"}>
+                <TooltipWrapper tooltip={t("Activate Product")}>
                   <Button
                     id={"activate-product"}
-                    label={"Activate Product"}
+                    label={t("Activate Product")}
                     onClick={() => false}
                     variant={"callAction"}
                   />
                 </TooltipWrapper>
               </Link>
             )}
+
             {licenseInfo && tenant && (
-              <TooltipWrapper tooltip={"Attach License"}>
+              <TooltipWrapper tooltip={t("Attach License")}>
                 <Button
                   id={"attach-license"}
                   disabled={loadingActivateProduct}
-                  label={"Attach License"}
+                  label={t("Attach License")}
                   onClick={() => activateProduct(tenant.namespace, tenant.name)}
                   variant={"callAction"}
                 />

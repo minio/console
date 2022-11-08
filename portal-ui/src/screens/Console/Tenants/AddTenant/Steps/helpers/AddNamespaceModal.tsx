@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import { useSelector } from "react-redux";
 import { DialogContentText, LinearProgress } from "@mui/material";
@@ -49,16 +49,18 @@ const AddNamespaceModal = () => {
   const namespace = useSelector(
     (state: AppState) => state.createTenant.fields.nameTenant.namespace
   );
+
   const addNamespaceLoading = useSelector(
     (state: AppState) => state.createTenant.addNSLoading
   );
+
   const addNamespaceOpen = useSelector(
     (state: AppState) => state.createTenant.addNSOpen
   );
 
   return (
     <ConfirmDialog
-      title={`New namespace`}
+      title={`${t("New namespace")}`}
       confirmText={"Create"}
       confirmButtonProps={{
         variant: "callAction",
@@ -76,7 +78,7 @@ const AddNamespaceModal = () => {
         <React.Fragment>
           {addNamespaceLoading && <LinearProgress />}
           <DialogContentText>
-            Are you sure you want to add a namespace called
+            {t("Are you sure you want to add a namespace called")}
             <br />
             <b className={classes.wrapText}>{namespace}</b>?
           </DialogContentText>

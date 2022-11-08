@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -83,6 +83,7 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
   const securityContextEnabled = useSelector(
     (state: AppState) => state.addPool.configuration.securityContextEnabled
   );
+
   const securityContext = useSelector(
     (state: AppState) => state.addPool.configuration.securityContext
   );
@@ -158,9 +159,9 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Configure</h3>
+        <h3 className={classes.h3Section}>{t("Configure")}</h3>
         <span className={classes.descriptionText}>
-          Aditional Configurations for the new Pool
+          {t("Aditional Configurations for the new Pool")}
         </span>
       </div>
       <Grid item xs={12} className={classes.configSectionItem}>
@@ -175,14 +176,14 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
 
             updateField("securityContextEnabled", checked);
           }}
-          label={"Security Context"}
+          label={t("Security Context")}
         />
       </Grid>
       {securityContextEnabled && (
         <Grid item xs={12} className={classes.tenantCustomizationFields}>
           <fieldset className={classes.fieldGroup}>
             <legend className={classes.descriptionText}>
-              Pool's Security Context
+              {t("Pool's Security Context")}
             </legend>
             <Grid item xs={12} className={`${classes.configSectionItem}`}>
               <div
@@ -200,7 +201,7 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
                       });
                       cleanValidation("pool_securityContext_runAsUser");
                     }}
-                    label="Run As User"
+                    label={t("Run As User")}
                     value={securityContext.runAsUser}
                     required
                     error={
@@ -221,7 +222,7 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
                       });
                       cleanValidation("pool_securityContext_runAsGroup");
                     }}
-                    label="Run As Group"
+                    label={t("Run As Group")}
                     value={securityContext.runAsGroup}
                     required
                     error={
@@ -242,7 +243,7 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
                       });
                       cleanValidation("pool_securityContext_fsGroup");
                     }}
-                    label="FsGroup"
+                    label={t("FsGroup")}
                     value={securityContext.fsGroup}
                     required
                     error={
@@ -269,7 +270,7 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
                       runAsNonRoot: checked,
                     });
                   }}
-                  label={"Do not run as Root"}
+                  label={t("Do not run as Root")}
                 />
               </div>
             </Grid>

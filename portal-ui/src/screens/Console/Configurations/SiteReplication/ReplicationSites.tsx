@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useState } from "react";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -78,7 +78,7 @@ const ReplicationSites = ({
             padding: "25px 25px 25px 20px",
           }}
         >
-          List of Replicated Sites
+          {t("List of Replicated Sites")}
         </Box>
         {sites.map((siteInfo, index) => {
           const key = `${siteInfo.name}`;
@@ -180,7 +180,7 @@ const ReplicationSites = ({
                     },
                   }}
                 >
-                  <TooltipWrapper tooltip="Delete Site">
+                  <TooltipWrapper tooltip={t("Delete Site")}>
                     <Button
                       id={`delete-site-${key}-${index}`}
                       variant="secondary"
@@ -197,7 +197,7 @@ const ReplicationSites = ({
                       }}
                     />
                   </TooltipWrapper>
-                  <TooltipWrapper tooltip={"Edit Endpoint"}>
+                  <TooltipWrapper tooltip={t("Edit Endpoint")}>
                     <Button
                       id={`edit-icon-${key}-${index}`}
                       variant="regular"
@@ -220,7 +220,7 @@ const ReplicationSites = ({
 
               {deleteSiteKey === key ? (
                 <ConfirmDialog
-                  title={`Delete Replication Site`}
+                  title={`${t("Delete Replication Site")}`}
                   confirmText={"Delete"}
                   isOpen={true}
                   titleIcon={<ConfirmDeleteIcon />}
@@ -233,7 +233,9 @@ const ReplicationSites = ({
                   }}
                   confirmationContent={
                     <DialogContentText>
-                      Are you sure you want to remove the replication site:{" "}
+                      {t(
+                        "Are you sure you want to remove the replication site:"
+                      )}{" "}
                       {key}.?
                     </DialogContentText>
                   }

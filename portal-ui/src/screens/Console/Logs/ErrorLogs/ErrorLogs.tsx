@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
@@ -135,6 +136,7 @@ const ErrorLogs = () => {
         selectedNode === "Select node" ? "" : selectedNode
       }`
     );
+
     let interval: any | null = null;
     if (c !== null) {
       c.onopen = () => {
@@ -229,7 +231,7 @@ const ErrorLogs = () => {
 
   return (
     <Fragment>
-      <PageHeader label="Logs" />
+      <PageHeader label={t("Logs")} />
       <PageLayout>
         <Grid container spacing={1}>
           <Grid item xs={4}>
@@ -246,10 +248,10 @@ const ErrorLogs = () => {
                   className={classes.searchField}
                   disabled={loadingNodes || logsStarted}
                   input={<SelectStyled />}
-                  placeholder={"Select Node"}
+                  placeholder={t("Select Node")}
                 >
                   <MenuItem value={"all"} key={`select-node-all`}>
-                    All Nodes
+                    {t("All Nodes")}
                   </MenuItem>
                   {nodes.map((aNode) => (
                     <MenuItem value={aNode} key={`select-node-name-${aNode}`}>
@@ -259,7 +261,7 @@ const ErrorLogs = () => {
                 </Select>
               </FormControl>
             ) : (
-              <h3> Loading nodes</h3>
+              <h3>{t("Loading nodes")}</h3>
             )}
           </Grid>
 
@@ -276,16 +278,16 @@ const ErrorLogs = () => {
                 className={classes.searchField}
                 disabled={loadingNodes || logsStarted}
                 input={<SelectStyled />}
-                placeholder={"Select Log Type"}
+                placeholder={t("Select Log Type")}
               >
                 <MenuItem value="all" key="all-log-types">
-                  All Log Types
+                  {t("All Log Types")}
                 </MenuItem>
                 <MenuItem value="minio" key="minio-log-type">
-                  MinIO
+                  {t("MinIO")}
                 </MenuItem>
                 <MenuItem value="application" key="app-log-type">
-                  Application
+                  {t("Application")}
                 </MenuItem>
               </Select>
             </FormControl>
@@ -310,7 +312,7 @@ const ErrorLogs = () => {
                     key={`select-user-agent-default`}
                     disabled={true}
                   >
-                    Select User Agent
+                    {t("Select User Agent")}
                   </MenuItem>
                   {userAgents.map((anAgent) => (
                     <MenuItem
@@ -336,22 +338,23 @@ const ErrorLogs = () => {
                 variant="callAction"
                 disabled={false}
                 onClick={startLogs}
-                label={"Start Logs"}
+                label={t("Start Logs")}
               />
             )}
+
             {logsStarted && (
               <Button
                 id={"stop-logs"}
                 type="button"
                 variant="callAction"
                 onClick={stopLogs}
-                label={"Stop Logs"}
+                label={t("Stop Logs")}
               />
             )}
           </Grid>
           <Grid item xs={12} className={classes.actionsTray}>
             <SearchBox
-              placeholder="Filter"
+              placeholder={t("Filter")}
               onChange={(e) => {
                 setFilter(e);
               }}
@@ -374,7 +377,7 @@ const ErrorLogs = () => {
                 </Table>
                 {filteredMessages.length === 0 && (
                   <div style={{ padding: 20, textAlign: "center" }}>
-                    No logs to display
+                    {t("No logs to display")}
                   </div>
                 )}
               </TableContainer>

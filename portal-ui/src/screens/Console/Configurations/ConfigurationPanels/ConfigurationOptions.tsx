@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -64,11 +64,11 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
   const { pathname = "" } = useLocation();
 
   let selConfigTab = pathname.substring(pathname.lastIndexOf("/") + 1);
-  selConfigTab = selConfigTab === "settings" ? "region" : selConfigTab;
+  selConfigTab = selConfigTab === "settings" ? t("region") : selConfigTab;
 
   return (
     <Fragment>
-      <PageHeader label={"Settings"} />
+      <PageHeader label={t("Settings")} />
 
       <PageLayout>
         <Grid item xs={12}>
@@ -80,6 +80,7 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
               icon={<SettingsIcon />}
               title={"MinIO Configuration:"}
             />
+
             <VerticalTabs
               selectedTab={selConfigTab}
               isRouteTabs
@@ -92,6 +93,7 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
                       element={<ConfigurationForm />}
                     />
                   ))}
+
                   <Route
                     path={"/"}
                     element={<Navigate to={`${IAM_PAGES.SETTINGS}/region`} />}
@@ -116,21 +118,22 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
         </Grid>
         <Grid item xs={12} sx={{ paddingTop: "15px" }}>
           <HelpBox
-            title={"Learn more about Configurations"}
+            title={t("Learn more about Configurations")}
             iconComponent={<SettingsIcon />}
             help={
               <Fragment>
-                MinIO supports a variety of configurations ranging from
-                encryption, compression, region, notifications, etc.
+                {t(
+                  "MinIO supports a variety of configurations ranging from encryption, compression, region, notifications, etc."
+                )}
                 <br />
                 <br />
-                You can learn more at our{" "}
+                {t("You can learn more at our")}{" "}
                 <a
                   href="https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-config.html?ref=con#id4"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  documentation
+                  {t("documentation")}
                 </a>
                 .
               </Fragment>

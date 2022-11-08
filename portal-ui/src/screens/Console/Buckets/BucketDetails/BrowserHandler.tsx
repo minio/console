@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -62,12 +62,15 @@ const BrowserHandler = () => {
   const versionsMode = useSelector(
     (state: AppState) => state.objectBrowser.versionsMode
   );
+
   const searchObjects = useSelector(
     (state: AppState) => state.objectBrowser.searchObjects
   );
+
   const versionedFile = useSelector(
     (state: AppState) => state.objectBrowser.versionedFile
   );
+
   const searchVersions = useSelector(
     (state: AppState) => state.objectBrowser.searchVersions
   );
@@ -121,7 +124,7 @@ const BrowserHandler = () => {
           errorProps={{ disabled: true }}
         >
           <SearchBox
-            placeholder={"Start typing to filter objects in the bucket"}
+            placeholder={t("Start typing to filter objects in the bucket")}
             onChange={(value) => {
               dispatch(setSearchObjects(value));
             }}
@@ -146,7 +149,7 @@ const BrowserHandler = () => {
     <Fragment>
       {!obOnly ? (
         <PageHeader
-          label={<BackLink label={"Buckets"} to={IAM_PAGES.BUCKETS} />}
+          label={<BackLink label={t("Buckets")} to={IAM_PAGES.BUCKETS} />}
           actions={
             <SecureComponent
               scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
@@ -156,7 +159,7 @@ const BrowserHandler = () => {
               <TooltipWrapper
                 tooltip={
                   configureBucketAllowed
-                    ? "Configure Bucket"
+                    ? t("Configure Bucket")
                     : "You do not have the required permissions to configure this bucket. Please contact your MinIO administrator to request " +
                       IAM_ROLES.BUCKET_ADMIN +
                       " permisions."
@@ -196,6 +199,7 @@ const BrowserHandler = () => {
           </Grid>
         </Grid>
       )}
+
       <Grid>
         <ListObjects />
       </Grid>

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
@@ -141,25 +141,26 @@ const UpdateTenantModal = ({
 
   return (
     <ModalWrapper
-      title={"Update MinIO Version"}
+      title={t("Update MinIO Version")}
       modalOpen={open}
       onClose={closeAction}
     >
       <Grid container>
         <Grid item xs={12} className={classes.modalFormScrollable}>
           <div className={classes.infoText}>
-            Please enter the MinIO image from dockerhub to use. If blank, then
-            latest build will be used.
+            {t(
+              "Please enter the MinIO image from dockerhub to use. If blank, then latest build will be used."
+            )}
           </div>
           <br />
           <br />
           <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               value={minioImage}
-              label={"MinIO's Image"}
+              label={t("MinIO's Image")}
               id={"minioImage"}
               name={"minioImage"}
-              placeholder={"E.g. minio/minio:RELEASE.2022-02-26T02-54-46Z"}
+              placeholder={t("E.g. minio/minio:RELEASE.2022-02-26T02-54-46Z")}
               onChange={(e) => {
                 setMinioImage(e.target.value);
               }}
@@ -174,7 +175,7 @@ const UpdateTenantModal = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setImageRegistry(!imageRegistry);
               }}
-              label={"Set Custom Image Registry"}
+              label={t("Set Custom Image Registry")}
               indicatorLabels={["Yes", "No"]}
             />
           </Grid>
@@ -183,10 +184,10 @@ const UpdateTenantModal = ({
               <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   value={imageRegistryEndpoint}
-                  label={"Endpoint"}
+                  label={t("Endpoint")}
                   id={"imageRegistry"}
                   name={"imageRegistry"}
-                  placeholder={"E.g. https://index.docker.io/v1/"}
+                  placeholder={t("E.g. https://index.docker.io/v1/")}
                   onChange={(e) => {
                     setImageRegistryEndpoint(e.target.value);
                   }}
@@ -195,10 +196,10 @@ const UpdateTenantModal = ({
               <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   value={imageRegistryUsername}
-                  label={"Username"}
+                  label={t("Username")}
                   id={"imageRegistryUsername"}
                   name={"imageRegistryUsername"}
-                  placeholder={"Enter image registry username"}
+                  placeholder={t("Enter image registry username")}
                   onChange={(e) => {
                     setImageRegistryUsername(e.target.value);
                   }}
@@ -207,10 +208,10 @@ const UpdateTenantModal = ({
               <Grid item xs={12} className={classes.formFieldRow}>
                 <InputBoxWrapper
                   value={imageRegistryPassword}
-                  label={"Password"}
+                  label={t("Password")}
                   id={"imageRegistryPassword"}
                   name={"imageRegistryPassword"}
-                  placeholder={"Enter image registry password"}
+                  placeholder={t("Enter image registry password")}
                   onChange={(e) => {
                     setImageRegistryPassword(e.target.value);
                   }}
@@ -224,8 +225,9 @@ const UpdateTenantModal = ({
             id={"clear"}
             variant="regular"
             onClick={resetForm}
-            label="Clear"
+            label={t("Clear")}
           />
+
           <Button
             id={"save-tenant"}
             type="submit"
@@ -239,7 +241,7 @@ const UpdateTenantModal = ({
               isSending
             }
             onClick={updateMinIOImage}
-            label={"Save"}
+            label={t("Save")}
           />
         </Grid>
       </Grid>

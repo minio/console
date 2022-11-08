@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import get from "lodash/get";
@@ -187,7 +187,7 @@ const AddNotificationEndpoint = ({
           <Fragment>
             <BackLink
               to={IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}
-              label="Notification Endpoint"
+              label={t("Notification Endpoint")}
             />
           </Fragment>
         }
@@ -215,7 +215,7 @@ const AddNotificationEndpoint = ({
                     <div className={classes.lambdaNotifTitle}>
                       <b>
                         {targetElement ? targetElement.targetTitle : ""}
-                        Notification Endpoint
+                        {t("Notification Endpoint")}
                       </b>
                     </div>
                   </div>
@@ -231,7 +231,7 @@ const AddNotificationEndpoint = ({
                     type="submit"
                     variant="callAction"
                     disabled={saving}
-                    label={"Save Notification Target"}
+                    label={t("Save Notification Target")}
                   />
                 </Grid>
               </div>

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import { Box, Grid } from "@mui/material";
 import HelpBox from "../../../../common/HelpBox";
@@ -46,18 +46,20 @@ const DistributedOnly = ({ iconComponent, entity }: IDistributedOnly) => {
                 },
               }}
             >
-              <div>This feature is not available for a single-disk setup.</div>
+              <div>
+                {t("This feature is not available for a single-disk setup.")}
+              </div>
 
               <div>
-                Please deploy a server in{" "}
+                {t("Please deploy a server in")}{" "}
                 <a
                   href="https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-multi-node-multi-drive.html?ref=con"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Distributed Mode
+                  {t("Distributed Mode")}
                 </a>{" "}
-                to use this feature.
+                {t("to use this feature.")}
               </div>
             </Box>
           }

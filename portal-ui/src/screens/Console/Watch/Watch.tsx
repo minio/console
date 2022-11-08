@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import {
   FormControl,
@@ -173,7 +174,7 @@ const Watch = () => {
 
   return (
     <React.Fragment>
-      <PageHeader label="Watch" />
+      <PageHeader label={t("Watch")} />
       <PageLayout>
         <Grid item xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>
@@ -194,7 +195,7 @@ const Watch = () => {
                   key={`select-bucket-name-default`}
                   disabled={true}
                 >
-                  Select Bucket
+                  {t("Select Bucket")}
                 </MenuItem>
                 {bucketNames.map((option) => (
                   <MenuItem
@@ -209,7 +210,7 @@ const Watch = () => {
             <TextField
               className={`${classes.searchField} ${classes.searchPrefix}`}
               id="prefix-resource"
-              label="Prefix"
+              label={t("Prefix")}
               disabled={start}
               InputProps={{
                 disableUnderline: true,
@@ -219,10 +220,11 @@ const Watch = () => {
               }}
               variant="standard"
             />
+
             <TextField
               className={`${classes.searchField} ${classes.searchPrefix}`}
               id="suffix-resource"
-              label="Suffix"
+              label={t("Suffix")}
               disabled={start}
               InputProps={{
                 disableUnderline: true,
@@ -232,13 +234,14 @@ const Watch = () => {
               }}
               variant="standard"
             />
+
             {start ? (
               <Button
                 id={"stop-watch"}
                 type="submit"
                 variant="callAction"
                 onClick={() => setStart(false)}
-                label={"Stop"}
+                label={t("Stop")}
               />
             ) : (
               <Button
@@ -246,7 +249,7 @@ const Watch = () => {
                 type="submit"
                 variant="callAction"
                 onClick={() => setStart(true)}
-                label={"Start"}
+                label={t("Start")}
               />
             )}
           </Grid>
@@ -255,21 +258,21 @@ const Watch = () => {
             <TableWrapper
               columns={[
                 {
-                  label: "Time",
+                  label: t("Time"),
                   elementKey: "Time",
                   renderFunction: timeFromDate,
                 },
                 {
-                  label: "Size",
+                  label: t("Size"),
                   elementKey: "Size",
                   renderFunction: niceBytes,
                 },
-                { label: "Type", elementKey: "Type" },
-                { label: "Path", elementKey: "Path" },
+                { label: t("Type"), elementKey: "Type" },
+                { label: t("Path"), elementKey: "Path" },
               ]}
               records={messages}
               entityName={"Watch"}
-              customEmptyMessage={"No Changes at this time"}
+              customEmptyMessage={t("No Changes at this time")}
               idField={"watch_table"}
               isLoading={false}
               customPaperHeight={classes.watchTableHeight}

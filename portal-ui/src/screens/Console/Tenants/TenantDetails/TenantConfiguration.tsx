@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useCallback, useEffect, useState } from "react";
 import { connect, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -174,7 +174,7 @@ const TenantConfiguration = ({ classes }: ITenantConfiguration) => {
   return (
     <React.Fragment>
       <ConfirmDialog
-        title={"Save and Restart"}
+        title={t("Save and Restart")}
         confirmText={"Restart"}
         cancelText="Cancel"
         titleIcon={<ConfirmModalIcon />}
@@ -184,10 +184,13 @@ const TenantConfiguration = ({ classes }: ITenantConfiguration) => {
         onConfirm={updateTenantConfiguration}
         confirmationContent={
           <DialogContentText>
-            Are you sure you want to save the changes and restart the service?
+            {t(
+              "Are you sure you want to save the changes and restart the service?"
+            )}
           </DialogContentText>
         }
       />
+
       {loadingTenant ? (
         <div className={classes.loaderAlign}>
           <Loader />
@@ -195,7 +198,7 @@ const TenantConfiguration = ({ classes }: ITenantConfiguration) => {
       ) : (
         <Grid container spacing={1}>
           <Grid item xs={12}>
-            <h1 className={classes.sectionTitle}>Configuration</h1>
+            <h1 className={classes.sectionTitle}>{t("Configuration")}</h1>
             <hr className={classes.hrClass} />
           </Grid>
           <Grid container spacing={1}>
@@ -210,7 +213,7 @@ const TenantConfiguration = ({ classes }: ITenantConfiguration) => {
                   <InputBoxWrapper
                     id="env_var_key"
                     name="env_var_key"
-                    label="Key"
+                    label={t("Key")}
                     value={envVar.key}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const existingEnvVars = [...envVars];
@@ -231,7 +234,7 @@ const TenantConfiguration = ({ classes }: ITenantConfiguration) => {
                   <InputBoxWrapper
                     id="env_var_value"
                     name="env_var_value"
-                    label="Value"
+                    label={t("Value")}
                     value={envVar.value}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const existingEnvVars = [...envVars];
@@ -275,6 +278,7 @@ const TenantConfiguration = ({ classes }: ITenantConfiguration) => {
                         const existingEnvVars = envVars.filter(
                           (item, fIndex) => fIndex !== index
                         );
+
                         setEnvVars(existingEnvVars);
                         setEnvVarsToBeDeleted([
                           ...envVarsToBeDeleted,
@@ -301,7 +305,7 @@ const TenantConfiguration = ({ classes }: ITenantConfiguration) => {
               variant="callAction"
               disabled={dialogOpen || isSending}
               onClick={() => setDialogOpen(true)}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
         </Grid>

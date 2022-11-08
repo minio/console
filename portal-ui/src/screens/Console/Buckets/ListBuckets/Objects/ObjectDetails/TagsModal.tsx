@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
@@ -183,7 +183,10 @@ const AddTagModal = ({
 
   const tagsFor = (plural: boolean) => (
     <div className={classes.tagsForLabel}>
-      Tag{plural ? "s" : ""} for: <strong>{currentItem}</strong>
+      {t("Tag")}
+      {plural ? "s" : ""}
+      {t("for:")}
+      <strong>{currentItem}</strong>
     </div>
   );
 
@@ -193,9 +196,9 @@ const AddTagModal = ({
         modalOpen={modalOpen}
         title={
           deleteEnabled ? (
-            <span style={{ color: "#C83B51" }}>Delete Tag</span>
+            <span style={{ color: "#C83B51" }}>{t("Delete Tag")}</span>
           ) : (
-            `Edit Tags`
+            `${t("Edit Tags")}`
           )
         }
         onClose={() => {
@@ -213,7 +216,7 @@ const AddTagModal = ({
           <Fragment>
             <Grid container>
               {tagsFor(false)}
-              Are you sure you want to delete the tag{" "}
+              {t("Are you sure you want to delete the tag")}{" "}
               <b className={classes.deleteTag}>
                 {deleteKey} : {deleteLabel}
               </b>{" "}
@@ -224,14 +227,15 @@ const AddTagModal = ({
                   type="button"
                   variant="regular"
                   onClick={cancelDelete}
-                  label={"Cancel"}
+                  label={t("Cancel")}
                 />
+
                 <Button
                   type="submit"
                   variant="secondary"
                   onClick={deleteTagProcess}
                   id={"deleteTag"}
-                  label={"Delete Tag"}
+                  label={t("Delete Tag")}
                 />
               </Grid>
             </Grid>
@@ -251,15 +255,17 @@ const AddTagModal = ({
               >
                 {tagsFor(true)}
                 <div className={classes.currentTagsContainer}>
-                  Current Tags:
+                  {t("Current Tags:")}
+
                   <br />
                   {currTagKeys.length === 0 ? (
                     <span className={classes.noTagsForObject}>
-                      There are no tags for this object
+                      {t("There are no tags for this object")}
                     </span>
                   ) : (
                     <Fragment />
                   )}
+
                   <Box sx={{ marginTop: "5px", marginBottom: "15px" }}>
                     {currTagKeys.map((tagKey: string, index: number) => {
                       const tag = get(currentTags, `${tagKey}`, "");
@@ -304,15 +310,16 @@ const AddTagModal = ({
             >
               <Grid container>
                 <Grid item xs={12} className={classes.newTileHeader}>
-                  <AddNewTagIcon /> Add New Tag
+                  <AddNewTagIcon />
+                  {t("Add New Tag")}
                 </Grid>
                 <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     value={newKey}
-                    label={"Tag Key"}
+                    label={t("Tag Key")}
                     id={"newTagKey"}
                     name={"newTagKey"}
-                    placeholder={"Enter Tag Key"}
+                    placeholder={t("Enter Tag Key")}
                     onChange={(e) => {
                       setNewKey(e.target.value);
                     }}
@@ -321,10 +328,10 @@ const AddTagModal = ({
                 <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
                     value={newLabel}
-                    label={"Tag Label"}
+                    label={t("Tag Label")}
                     id={"newTagLabel"}
                     name={"newTagLabel"}
-                    placeholder={"Enter Tag Label"}
+                    placeholder={t("Enter Tag Label")}
                     onChange={(e) => {
                       setNewLabel(e.target.value);
                     }}
@@ -337,8 +344,9 @@ const AddTagModal = ({
                     variant="regular"
                     color="primary"
                     onClick={resetForm}
-                    label={"Clear"}
+                    label={t("Clear")}
                   />
+
                   <Button
                     type="submit"
                     variant="callAction"
@@ -349,7 +357,7 @@ const AddTagModal = ({
                     }
                     onClick={addTagProcess}
                     id="saveTag"
-                    label={"Save"}
+                    label={t("Save")}
                   />
                 </Grid>
               </Grid>

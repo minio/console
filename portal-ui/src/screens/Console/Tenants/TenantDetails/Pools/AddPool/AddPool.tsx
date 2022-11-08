@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -131,10 +131,11 @@ const AddPool = () => {
         <PageHeader
           label={
             <Fragment>
-              <BackLink to={poolsURL} label={`Tenant Pools`} />
+              <BackLink to={poolsURL} label={`${t("Tenant Pools")}`} />
             </Fragment>
           }
         />
+
         <PageLayout>
           <Grid item xs={12} className={classes.addPoolTitle}>
             <ScreenTitle
@@ -142,7 +143,8 @@ const AddPool = () => {
               title={`Add New Pool to ${tenant?.name || ""}`}
               subTitle={
                 <Fragment>
-                  Namespace: {tenant?.namespace || ""} / Current Capacity:{" "}
+                  {t("Namespace:")}
+                  {tenant?.namespace || ""} / Current Capacity:{" "}
                   {niceBytes((tenant?.total_size || 0).toString(10))}
                 </Fragment>
               }
@@ -153,6 +155,7 @@ const AddPool = () => {
               <LinearProgress />
             </Grid>
           )}
+
           <Grid item xs={12} className={classes.pageBox}>
             <GenericWizard wizardSteps={wizardSteps} />
           </Grid>

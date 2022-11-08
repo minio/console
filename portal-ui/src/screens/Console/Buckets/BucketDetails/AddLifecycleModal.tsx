@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { Button } from "mds";
@@ -234,7 +234,7 @@ const AddLifecycleModal = ({
       onClose={() => {
         closeModalAndRefresh(false);
       }}
-      title="Add Lifecycle Rule"
+      title={t("Add Lifecycle Rule")}
       titleIcon={<LifecycleConfigIcon />}
     >
       {loadingTiers && (
@@ -264,13 +264,13 @@ const AddLifecycleModal = ({
                       currentSelection={ilmType}
                       id="ilm_type"
                       name="ilm_type"
-                      label="Type of lifecycle"
+                      label={t("Type of lifecycle")}
                       onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
                         setIlmType(e.target.value as string);
                       }}
                       selectorOptions={[
-                        { value: "expiry", label: "Expiry" },
-                        { value: "transition", label: "Transition" },
+                        { value: "expiry", label: t("Expiry") },
+                        { value: "transition", label: t("Transition") },
                       ]}
                     />
                   </Grid>
@@ -280,15 +280,18 @@ const AddLifecycleModal = ({
                         value={targetVersion}
                         id="object_version"
                         name="object_version"
-                        label="Object Version"
+                        label={t("Object Version")}
                         onChange={(e) => {
                           setTargetVersion(
                             e.target.value as "current" | "noncurrent"
                           );
                         }}
                         options={[
-                          { value: "current", label: "Current Version" },
-                          { value: "noncurrent", label: "Non-Current Version" },
+                          { value: "current", label: t("Current Version") },
+                          {
+                            value: "noncurrent",
+                            label: t("Non-Current Version"),
+                          },
                         ]}
                       />
                     </Grid>
@@ -304,13 +307,13 @@ const AddLifecycleModal = ({
                         }
                       }}
                       pattern={"[0-9]*"}
-                      label="After"
+                      label={t("After")}
                       value={lifecycleDays}
                       overlayObject={
                         <InputUnitMenu
                           id={"expire-current-unit"}
                           unitSelected={"days"}
-                          unitsList={[{ label: "Days", value: "days" }]}
+                          unitsList={[{ label: t("Days"), value: "days" }]}
                           disabled={true}
                         />
                       }
@@ -323,7 +326,7 @@ const AddLifecycleModal = ({
                     <Fragment>
                       <Grid item xs={12}>
                         <SelectWrapper
-                          label="To Tier"
+                          label={t("To Tier")}
                           id="storage_class"
                           name="storage_class"
                           value={storageClass}
@@ -335,10 +338,11 @@ const AddLifecycleModal = ({
                       </Grid>
                     </Fragment>
                   )}
+
                   <Grid item xs={12} className={classes.formFieldRowFilter}>
                     <Accordion>
                       <AccordionSummary>
-                        <Typography>Filters</Typography>
+                        <Typography>{t("Filters")}</Typography>
                       </AccordionSummary>
                       <AccordionDetails>
                         <Grid item xs={12}>
@@ -350,14 +354,14 @@ const AddLifecycleModal = ({
                             ) => {
                               setPrefix(e.target.value);
                             }}
-                            label="Prefix"
+                            label={t("Prefix")}
                             value={prefix}
                           />
                         </Grid>
                         <Grid item xs={12}>
                           <QueryMultiSelector
                             name="tags"
-                            label="Tags"
+                            label={t("Tags")}
                             elements={""}
                             onChange={(vl: string) => {
                               setTags(vl);
@@ -374,7 +378,7 @@ const AddLifecycleModal = ({
                     <Grid item xs={12} className={classes.formFieldRowFilter}>
                       <Accordion>
                         <AccordionSummary>
-                          <Typography>Advanced</Typography>
+                          <Typography>{t("Advanced")}</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                           <Grid item xs={12}>
@@ -388,10 +392,10 @@ const AddLifecycleModal = ({
                               ) => {
                                 setExpiredObjectDM(event.target.checked);
                               }}
-                              label={"Expire Delete Marker"}
-                              description={
+                              label={t("Expire Delete Marker")}
+                              description={t(
                                 "Remove the reference to the object if no versions are left"
-                              }
+                              )}
                             />
                           </Grid>
                         </AccordionDetails>
@@ -410,15 +414,16 @@ const AddLifecycleModal = ({
                 onClick={() => {
                   closeModalAndRefresh(false);
                 }}
-                label={"Cancel"}
+                label={t("Cancel")}
               />
+
               <Button
                 id={"save-lifecycle"}
                 type="submit"
                 variant="callAction"
                 color="primary"
                 disabled={addLoading || !isFormValid}
-                label={"Save"}
+                label={t("Save")}
               />
             </Grid>
             {addLoading && (

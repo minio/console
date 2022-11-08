@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import {
   Checkbox,
@@ -326,6 +327,7 @@ const generateColumnsMap = (
     columnsSelector,
     columnsShown
   );
+
   return columns.map((column: IColumns, index: number) => {
     if (columnsSelector && !columnsShown.includes(column.elementKey!)) {
       return null;
@@ -352,6 +354,7 @@ const generateColumnsMap = (
                 )}
               </Fragment>
             )}
+
             {column.label}
           </Fragment>
         )}
@@ -450,7 +453,7 @@ const TableWrapper = ({
   onSelect,
   records,
   isLoading,
-  loadingMessage = <Typography component="h3">Loading...</Typography>,
+  loadingMessage = <Typography component="h3">{t("Loading...")}</Typography>,
   entityName,
   selectedItems,
   idField,
@@ -539,7 +542,7 @@ const TableWrapper = ({
           }}
           onClose={closeColumnSelector}
         >
-          <div className={classes.shownColumnsLabel}>Shown Columns</div>
+          <div className={classes.shownColumnsLabel}>{t("Shown Columns")}</div>
           <div className={classes.popoverContent}>
             {columns.map((column: IColumns) => {
               return (
@@ -586,11 +589,13 @@ const TableWrapper = ({
               </Grid>
             </Grid>
           )}
+
           {columnsSelector && !isLoading && records.length > 0 && (
             <div className={classes.overlayColumnSelection}>
               {columnsSelection(columns)}
             </div>
           )}
+
           {records && !isLoading && records.length > 0 ? (
             // @ts-ignore
             <InfiniteLoader
@@ -616,6 +621,7 @@ const TableWrapper = ({
                         ? itemActions.filter((el) => el.type !== "view").length
                         : 0
                     );
+
                     const hasSelect: boolean = !!(onSelect && selectedItems);
                     const hasOptions: boolean = !!(
                       (itemActions && itemActions.length > 1) ||
@@ -623,6 +629,7 @@ const TableWrapper = ({
                         itemActions.length === 1 &&
                         itemActions[0].type !== "view")
                     );
+
                     return (
                       // @ts-ignore
                       <Table
@@ -751,6 +758,7 @@ const TableWrapper = ({
                             }}
                           />
                         )}
+
                         {generateColumnsMap(
                           columns,
                           width,
@@ -764,6 +772,7 @@ const TableWrapper = ({
                           sortConfig ? sortConfig.currentSort : "",
                           sortConfig ? sortConfig.currentDirection : undefined
                         )}
+
                         {hasOptions && (
                           // @ts-ignore
                           <Column

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { SelectChangeEvent } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -111,7 +111,7 @@ const SetAccessPolicy = ({
 
   return (
     <ModalWrapper
-      title="Change Access Policy"
+      title={t("Change Access Policy")}
       modalOpen={open}
       onClose={() => {
         closeModalAndRefresh();
@@ -130,23 +130,23 @@ const SetAccessPolicy = ({
             <Grid item xs={12} className={classes.formFieldRow}>
               <SelectWrapper
                 value={accessPolicy}
-                label="Access Policy"
+                label={t("Access Policy")}
                 id="select-access-policy"
                 name="select-access-policy"
                 onChange={(e: SelectChangeEvent<string>) => {
                   setAccessPolicy(e.target.value as string);
                 }}
                 options={[
-                  { value: "PRIVATE", label: "Private" },
-                  { value: "PUBLIC", label: "Public" },
-                  { value: "CUSTOM", label: "Custom" },
+                  { value: "PRIVATE", label: t("Private") },
+                  { value: "PUBLIC", label: t("Public") },
+                  { value: "CUSTOM", label: t("Custom") },
                 ]}
               />
             </Grid>
             {accessPolicy === "CUSTOM" && (
               <Grid item xs={12} className={classes.codeMirrorContainer}>
                 <CodeMirrorWrapper
-                  label={`Write Policy`}
+                  label={`${t("Write Policy")}`}
                   value={policyDefinition}
                   onBeforeChange={(editor, data, value) => {
                     setPolicyDefinition(value);
@@ -165,8 +165,9 @@ const SetAccessPolicy = ({
                 closeModalAndRefresh();
               }}
               disabled={addLoading}
-              label={"Cancel"}
+              label={t("Cancel")}
             />
+
             <Button
               id={"set"}
               type="submit"
@@ -174,7 +175,7 @@ const SetAccessPolicy = ({
               disabled={
                 addLoading || (accessPolicy === "CUSTOM" && !policyDefinition)
               }
-              label={"Set"}
+              label={t("Set")}
             />
           </Grid>
         </Grid>

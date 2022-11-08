@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import { Button } from "mds";
 import React from "react";
 import { addPoolAsync } from "./addPoolThunks";
@@ -26,6 +26,7 @@ const AddPoolCreateButton = () => {
   const selectedStorageClass = useSelector(
     (state: AppState) => state.addPool.setup.storageClass
   );
+
   const validPages = useSelector((state: AppState) => state.addPool.validPages);
 
   const sending = useSelector((state: AppState) => state.addPool.sending);
@@ -43,7 +44,7 @@ const AddPoolCreateButton = () => {
       }}
       disabled={!enabled}
       key={`button-AddTenant-Create`}
-      label={"Create"}
+      label={t("Create")}
     />
   );
 };

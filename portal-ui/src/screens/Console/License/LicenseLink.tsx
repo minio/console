@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import { useSelector } from "react-redux";
 import { selOpMode } from "../../../systemSlice";
@@ -25,7 +25,7 @@ const LicenseLink = () => {
 
   return (
     <a className="link-text" href={`https://min.io/compliance?ref=${refFrom}`}>
-      GNU AGPL v3
+      {t("GNU AGPL v3")}
     </a>
   );
 };

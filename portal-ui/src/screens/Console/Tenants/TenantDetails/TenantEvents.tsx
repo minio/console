@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { connect, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -91,7 +91,7 @@ const TenantEvents = ({ classes }: ITenantEventsProps) => {
 
   return (
     <React.Fragment>
-      <h1 className={classes.sectionTitle}>Events</h1>
+      <h1 className={classes.sectionTitle}>{t("Events")}</h1>
       <Grid item xs={12}>
         <EventsList events={events} loading={loading} />
       </Grid>

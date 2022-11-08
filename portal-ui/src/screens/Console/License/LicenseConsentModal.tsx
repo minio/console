@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { Box } from "@mui/material";
@@ -37,7 +37,7 @@ const LicenseConsentModal = ({
   return (
     <ModalWrapper
       modalOpen={isOpen}
-      title="License"
+      title={t("License")}
       onClose={() => {
         onClose();
       }}
@@ -73,9 +73,11 @@ const LicenseConsentModal = ({
             marginBottom: "27px",
           }}
         >
-          By using this software, you acknowledge that MinIO software is
-          licensed under the <LicenseLink />, for which, the full text can be
-          found here:{" "}
+          {t(
+            "By using this software, you acknowledge that MinIO software is licensed under the"
+          )}
+          <LicenseLink />
+          {t(", for which, the full text can be found here:")}{" "}
           <a
             href={`https://www.gnu.org/licenses/agpl-3.0.html`}
             rel="noreferrer noopener"
@@ -89,10 +91,9 @@ const LicenseConsentModal = ({
             paddingBottom: "23px",
           }}
         >
-          Please review the terms carefully and ensure you are in compliance
-          with the obligations of the license. If you are not able to satisfy
-          the license obligations, we offer a commercial license which is
-          available here:{" "}
+          {t(
+            "Please review the terms carefully and ensure you are in compliance with the obligations of the license. If you are not able to satisfy the license obligations, we offer a commercial license which is available here:"
+          )}{" "}
           <a
             href={`https://min.io/signup?ref=con`}
             rel="noreferrer noopener"
@@ -115,7 +116,7 @@ const LicenseConsentModal = ({
             type="button"
             variant="callAction"
             onClick={recordAgplConsent}
-            label={"Acknowledge"}
+            label={t("Acknowledge")}
           />
         </Box>
       </Box>

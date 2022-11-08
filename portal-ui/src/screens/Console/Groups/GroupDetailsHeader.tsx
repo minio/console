@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Theme } from "@mui/material/styles";
@@ -17,7 +18,7 @@ const GroupDetailsHeader = ({ classes }: DetailsHeaderProps) => {
     <PageHeader
       label={
         <Fragment>
-          <BackLink to={IAM_PAGES.GROUPS} label={"Groups"} />
+          <BackLink to={IAM_PAGES.GROUPS} label={t("Groups")} />
         </Fragment>
       }
       actions={<React.Fragment />}

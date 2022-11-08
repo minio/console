@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import withStyles from "@mui/styles/withStyles";
 import { AppState, useAppDispatch } from "../../../../../../store";
@@ -58,6 +58,7 @@ const PoolsListing = ({ classes, setPoolDetailsView }: IPoolsSummary) => {
   const loadingTenant = useSelector(
     (state: AppState) => state.tenants.loadingTenant
   );
+
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
 
   const [pools, setPools] = useState<IPool[]>([]);
@@ -92,7 +93,7 @@ const PoolsListing = ({ classes, setPoolDetailsView }: IPoolsSummary) => {
     <Fragment>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
-          placeholder="Filter"
+          placeholder={t("Filter")}
           className={classes.searchField}
           id="search-resource"
           label=""
@@ -110,10 +111,10 @@ const PoolsListing = ({ classes, setPoolDetailsView }: IPoolsSummary) => {
           variant="standard"
         />
 
-        <TooltipWrapper tooltip={"Expand Tenant"}>
+        <TooltipWrapper tooltip={t("Expand Tenant")}>
           <Button
             id={"expand-tenant"}
-            label={"Expand Tenant"}
+            label={t("Expand Tenant")}
             onClick={() => {
               navigate(
                 `/namespaces/${tenant?.namespace || ""}/tenants/${
@@ -130,16 +131,16 @@ const PoolsListing = ({ classes, setPoolDetailsView }: IPoolsSummary) => {
         <TableWrapper
           itemActions={listActions}
           columns={[
-            { label: "Name", elementKey: "name" },
-            { label: "Capacity", elementKey: "capacity" },
-            { label: "# of Instances", elementKey: "servers" },
-            { label: "# of Drives", elementKey: "volumes" },
+            { label: t("Name"), elementKey: "name" },
+            { label: t("Capacity"), elementKey: "capacity" },
+            { label: t("# of Instances"), elementKey: "servers" },
+            { label: t("# of Drives"), elementKey: "volumes" },
           ]}
           isLoading={loadingTenant}
           records={filteredPools}
           entityName="Servers"
           idField="name"
-          customEmptyMessage="No Pools found"
+          customEmptyMessage={t("No Pools found")}
         />
       </Grid>
     </Fragment>

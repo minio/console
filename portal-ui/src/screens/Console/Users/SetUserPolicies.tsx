@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
@@ -113,7 +113,7 @@ const SetUserPolicies = ({
         closeModalAndRefresh();
       }}
       modalOpen={open}
-      title="Set Policies"
+      title={t("Set Policies")}
     >
       <Grid container>
         <Grid item xs={12}>
@@ -128,8 +128,9 @@ const SetUserPolicies = ({
           color="primary"
           className={classes.clearButton}
           onClick={resetSelection}
-          label={"Reset"}
+          label={t("Reset")}
         />
+
         <Button
           id={"save-user-policy"}
           type="button"
@@ -137,7 +138,7 @@ const SetUserPolicies = ({
           color="primary"
           disabled={loading}
           onClick={SetUserPoliciesAction}
-          label={"Save"}
+          label={t("Save")}
         />
       </Grid>
       {loading && (

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Button } from "mds";
 import { useNavigate } from "react-router-dom";
@@ -176,6 +176,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
         <FiberManualRecordIcon
           style={status === "Offline" ? { color: red[500] } : {}}
         />
+
         {status}
       </div>
     );
@@ -186,16 +187,17 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <SearchBox
-            placeholder="Search target"
+            placeholder={t("Search target")}
             onChange={setFilter}
             overrideClass={classes.searchField}
             value={filter}
           />
+
           <div className={classes.rightActionItems}>
-            <TooltipWrapper tooltip={"Refresh List"}>
+            <TooltipWrapper tooltip={t("Refresh List")}>
               <Button
                 id={"reload-notification-endpoints"}
-                label={"Refresh"}
+                label={t("Refresh")}
                 variant="regular"
                 icon={<RefreshIcon />}
                 onClick={() => {
@@ -203,10 +205,10 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                 }}
               />
             </TooltipWrapper>
-            <TooltipWrapper tooltip={"Add Notification Target"}>
+            <TooltipWrapper tooltip={t("Add Notification Target")}>
               <Button
                 id={"add-notification-target"}
-                label={" Add Notification Target"}
+                label={t("Add Notification Target")}
                 variant="callAction"
                 icon={<AddIcon />}
                 onClick={() => {
@@ -226,12 +228,12 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                     itemActions={tableActions}
                     columns={[
                       {
-                        label: "Status",
+                        label: t("Status"),
                         elementKey: "status",
                         renderFunction: statusDisplay,
                         width: 150,
                       },
-                      { label: "Service", elementKey: "service_name" },
+                      { label: t("Service"), elementKey: "service_name" },
                     ]}
                     isLoading={isLoading}
                     records={filteredRecords}
@@ -242,24 +244,22 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                 </Grid>
                 <Grid item xs={12}>
                   <HelpBox
-                    title={"Notification Endpoints"}
+                    title={t("Notification Endpoints")}
                     iconComponent={<LambdaIcon />}
                     help={
                       <Fragment>
-                        MinIO bucket notifications allow administrators to send
-                        notifications to supported external services on certain
-                        object or bucket events. MinIO supports bucket and
-                        object-level S3 events similar to the Amazon S3 Event
-                        Notifications.
+                        {t(
+                          "MinIO bucket notifications allow administrators to send notifications to supported external services on certain object or bucket events. MinIO supports bucket and object-level S3 events similar to the Amazon S3 Event Notifications."
+                        )}
                         <br />
                         <br />
-                        You can learn more at our{" "}
+                        {t("You can learn more at our")}{" "}
                         <a
                           href="https://min.io/docs/minio/linux/administration/monitoring/bucket-notifications.html?ref=con"
                           target="_blank"
                           rel="noreferrer"
                         >
-                          documentation
+                          {t("documentation")}
                         </a>
                         .
                       </Fragment>
@@ -268,6 +268,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                 </Grid>
               </Fragment>
             )}
+
             {records.length === 0 && (
               <Grid
                 container
@@ -277,24 +278,22 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
               >
                 <Grid item xs={8}>
                   <HelpBox
-                    title={"Notification Targets"}
+                    title={t("Notification Targets")}
                     iconComponent={<LambdaIcon />}
                     help={
                       <Fragment>
-                        MinIO bucket notifications allow administrators to send
-                        notifications to supported external services on certain
-                        object or bucket events. MinIO supports bucket and
-                        object-level S3 events similar to the Amazon S3 Event
-                        Notifications.
+                        {t(
+                          "MinIO bucket notifications allow administrators to send notifications to supported external services on certain object or bucket events. MinIO supports bucket and object-level S3 events similar to the Amazon S3 Event Notifications."
+                        )}
                         <br />
                         <br />
-                        To get started,{" "}
+                        {t("To get started,")}{" "}
                         <AButton
                           onClick={() => {
                             navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
                           }}
                         >
-                          Add a Notification Target
+                          {t("Add a Notification Target")}
                         </AButton>
                         .
                       </Fragment>

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { Theme } from "@mui/material/styles";
@@ -54,14 +54,14 @@ const ComponentsScreen = ({ classes }: IComponentsScreen) => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   return (
     <Fragment>
-      <PageHeader label={"Components"} />
+      <PageHeader label={t("Components")} />
       <PageLayout>
         <Grid container spacing={1}>
           <Grid item xs={12}>
-            <SectionTitle>Confirm Dialogs</SectionTitle>
+            <SectionTitle>{t("Confirm Dialogs")}</SectionTitle>
           </Grid>
           <Grid item xs={12}>
-            <p>Used to confirm a non-idempotent action.</p>
+            <p>{t("Used to confirm a non-idempotent action.")}</p>
           </Grid>
           <Grid item xs={12}>
             <Button
@@ -71,10 +71,11 @@ const ComponentsScreen = ({ classes }: IComponentsScreen) => {
               onClick={() => {
                 setDialogOpen(true);
               }}
-              label={"Open Dialog"}
+              label={t("Open Dialog")}
             />
+
             <ConfirmDialog
-              title={`Delete Bucket`}
+              title={`${t("Delete Bucket")}`}
               confirmText={"Delete"}
               isOpen={dialogOpen}
               titleIcon={<ConfirmDeleteIcon />}
@@ -87,8 +88,10 @@ const ComponentsScreen = ({ classes }: IComponentsScreen) => {
               }}
               confirmationContent={
                 <DialogContentText>
-                  Are you sure you want to delete bucket <b>bucket</b>
-                  ? <br />A bucket can only be deleted if it's empty.
+                  {t("Are you sure you want to delete bucket")}
+                  <b>{t("bucket")}</b>
+                  ? <br />
+                  {t("A bucket can only be deleted if it's empty.")}
                 </DialogContentText>
               }
             />

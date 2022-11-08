@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useState } from "react";
 import { DialogContentText } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -77,7 +77,7 @@ const RestoreFileVersion = ({
 
   return (
     <ConfirmDialog
-      title={`Restore File Version`}
+      title={`${t("Restore File Version")}`}
       confirmText={"Restore"}
       isOpen={restoreOpen}
       isLoading={restoreLoading}
@@ -92,8 +92,10 @@ const RestoreFileVersion = ({
       }}
       confirmationContent={
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to restore <br />
-          <b>{objectPath}</b> <br /> with Version ID:
+          {t("Are you sure you want to restore")}
+          <br />
+          <b>{objectPath}</b> <br />
+          {t("with Version ID:")}
           <br />
           <b className={classes.wrapText}>{versionID}</b>?
         </DialogContentText>

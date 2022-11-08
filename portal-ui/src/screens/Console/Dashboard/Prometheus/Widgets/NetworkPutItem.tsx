@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import { Box } from "@mui/material";
 import Loader from "../../../Common/Loader/Loader";
@@ -51,7 +51,7 @@ const NetworkPutItem = ({
             fontWeight: "normal",
           }}
         >
-          PUT
+          {t("PUT")}
         </Box>
         {loading ? (
           <Loader style={{ width: "15px", height: "15px" }} />

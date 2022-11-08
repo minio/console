@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import Grid from "@mui/material/Grid";
@@ -161,7 +161,7 @@ const AddEvent = ({
       onClose={() => {
         closeModalAndRefresh();
       }}
-      title="Subscribe To Bucket Events"
+      title={t("Subscribe To Bucket Events")}
       titleIcon={<EventSubscriptionIcon />}
     >
       <form
@@ -184,7 +184,7 @@ const AddEvent = ({
                 }}
                 id="select-access-policy"
                 name="select-access-policy"
-                label={"ARN"}
+                label={t("ARN")}
                 value={arn}
                 options={arnValues}
               />
@@ -193,7 +193,7 @@ const AddEvent = ({
               <InputBoxWrapper
                 id="prefix-input"
                 name="prefix-input"
-                label="Prefix"
+                label={t("Prefix")}
                 value={prefix}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setPrefix(e.target.value);
@@ -204,7 +204,7 @@ const AddEvent = ({
               <InputBoxWrapper
                 id="suffix-input"
                 name="suffix-input"
-                label="Suffix"
+                label={t("Suffix")}
                 value={suffix}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setSuffix(e.target.value);
@@ -215,8 +215,8 @@ const AddEvent = ({
               <Table size="medium">
                 <TableHead className={classes.minTableHeader}>
                   <TableRow>
-                    <TableCell>Select</TableCell>
-                    <TableCell>Event</TableCell>
+                    <TableCell>{t("Select")}</TableCell>
+                    <TableCell>{t("Event")}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -254,14 +254,15 @@ const AddEvent = ({
               onClick={() => {
                 closeModalAndRefresh();
               }}
-              label={"Cancel"}
+              label={t("Cancel")}
             />
+
             <Button
               id={"save-event"}
               type="submit"
               variant="callAction"
               disabled={addLoading}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
         </Grid>

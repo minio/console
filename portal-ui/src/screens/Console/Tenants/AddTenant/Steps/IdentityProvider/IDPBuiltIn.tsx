@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import {
@@ -87,9 +87,11 @@ const IDPBuiltIn = () => {
   const idpSelection = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.idpSelection
   );
+
   const accessKeys = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.accessKeys
   );
+
   const secretKeys = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.secretKeys
   );
@@ -138,7 +140,8 @@ const IDPBuiltIn = () => {
 
   return (
     <Fragment>
-      Add additional users
+      {t("Add additional users")}
+
       {accessKeys.map((_, index) => {
         return (
           <Fragment key={`identityField-${index.toString()}`}>
@@ -146,7 +149,7 @@ const IDPBuiltIn = () => {
               <InputBoxWrapper
                 id={`accesskey-${index.toString()}`}
                 label={""}
-                placeholder={"Access Key"}
+                placeholder={t("Access Key")}
                 name={`accesskey-${index.toString()}`}
                 value={accessKeys[index]}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,16 +159,18 @@ const IDPBuiltIn = () => {
                       accessKey: e.target.value,
                     })
                   );
+
                   cleanValidation(`accesskey-${index.toString()}`);
                 }}
                 index={index}
                 key={`csv-accesskey-${index.toString()}`}
                 error={validationErrors[`accesskey-${index.toString()}`] || ""}
               />
+
               <InputBoxWrapper
                 id={`secretkey-${index.toString()}`}
                 label={""}
-                placeholder={"Secret Key"}
+                placeholder={t("Secret Key")}
                 name={`secretkey-${index.toString()}`}
                 value={secretKeys[index]}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,12 +180,14 @@ const IDPBuiltIn = () => {
                       secretKey: e.target.value,
                     })
                   );
+
                   cleanValidation(`secretkey-${index.toString()}`);
                 }}
                 index={index}
                 key={`csv-secretkey-${index.toString()}`}
                 error={validationErrors[`secretkey-${index.toString()}`] || ""}
               />
+
               <div className={classes.buttonTray}>
                 <div className={classes.overlayAction}>
                   <IconButton
@@ -214,6 +221,7 @@ const IDPBuiltIn = () => {
                             accessKey: getRandomString(16),
                           })
                         );
+
                         dispatch(
                           setIDPPwdAtIndex({
                             index,

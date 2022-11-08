@@ -13,7 +13,7 @@
 //
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import { Box, Grid } from "@mui/material";
 import VerifiedIcon from "../../../icons/VerifiedIcon";
 import React from "react";
@@ -59,7 +59,7 @@ function RegisterStatus({ classes, showHelp }: IRegisterStatus) {
         marginBottom={"25px"}
       >
         <VerifiedIcon />
-        <span>Registered with MinIO SUBNET</span>
+        <span>{t("Registered with MinIO SUBNET")}</span>
       </Grid>
       {showHelp ? (
         <React.Fragment>
@@ -74,15 +74,15 @@ function RegisterStatus({ classes, showHelp }: IRegisterStatus) {
                 },
               }}
             >
-              Login to{" "}
+              {t("Login to")}{" "}
               <Link
                 href="https://subnet.min.io"
                 target="_blank"
                 className={classes.link}
               >
-                SUBNET
+                {t("SUBNET")}
               </Link>{" "}
-              to avail technical product support for this MinIO cluster
+              {t("to avail technical product support for this MinIO cluster")}
             </Box>
           </Grid>
           <Grid item xs={12} marginTop={"25px"} marginBottom={"25px"}>

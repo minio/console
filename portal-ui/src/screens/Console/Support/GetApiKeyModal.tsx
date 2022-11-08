@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -126,10 +126,11 @@ const GetApiKeyModal = ({
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
             setEmail(event.target.value)
           }
-          label="Email"
+          label={t("Email")}
           value={email}
           overlayIcon={<UsersIcon />}
         />
+
         <InputBoxWrapper
           className={classes.spacerBottom}
           classes={{
@@ -140,7 +141,7 @@ const GetApiKeyModal = ({
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
             setPassword(event.target.value)
           }
-          label="Password"
+          label={t("Password")}
           type={showPassword ? "text" : "password"}
           value={password}
           overlayIcon={
@@ -165,12 +166,13 @@ const GetApiKeyModal = ({
               marginBottom: "30px",
             }}
           >
-            Two-Factor Authentication
+            {t("Two-Factor Authentication")}
           </Box>
 
           <Box>
-            Please enter the 6-digit verification code that was sent to your
-            email address. This code will be valid for 5 minutes.
+            {t(
+              "Please enter the 6-digit verification code that was sent to your email address. This code will be valid for 5 minutes."
+            )}
           </Box>
 
           <Box
@@ -205,7 +207,7 @@ const GetApiKeyModal = ({
 
   return open ? (
     <ConfirmDialog
-      title={"Get API Key from SUBNET"}
+      title={t("Get API Key from SUBNET")}
       confirmText={"Get API Key"}
       isOpen={open}
       titleIcon={<InfoIcon />}

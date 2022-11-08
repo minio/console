@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -83,7 +84,7 @@ const UsageBarWrapper = ({
           <Grid item xs={12} className={classes.currentUsage}>
             {labels && (
               <Fragment>
-                Used:{" "}
+                {t("Used:")}{" "}
                 {renderFunction
                   ? renderFunction(currValue.toString())
                   : currValue}
@@ -106,6 +107,7 @@ const UsageBarWrapper = ({
           </Grid>
         </div>
       )}
+
       {renderComponent()}
     </React.Fragment>
   );

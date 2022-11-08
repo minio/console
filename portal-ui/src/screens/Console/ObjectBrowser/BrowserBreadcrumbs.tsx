@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
 import CopyToClipboard from "react-copy-to-clipboard";
@@ -76,9 +76,11 @@ const BrowserBreadcrumbs = ({
   const rewindEnabled = useSelector(
     (state: AppState) => state.objectBrowser.rewind.rewindEnabled
   );
+
   const versionsMode = useSelector(
     (state: AppState) => state.objectBrowser.versionsMode
   );
+
   const versionedFile = useSelector(
     (state: AppState) => state.objectBrowser.versionedFile
   );
@@ -134,7 +136,8 @@ const BrowserBreadcrumbs = ({
       <Fragment key={`breadcrumbs-versionedItem`}>
         <span>
           <span className={classes.slashSpacingStyle}>/</span>
-          {versionedFile} - Versions
+          {versionedFile}
+          {t("- Versions")}
         </span>
       </Fragment>,
     ];
@@ -179,6 +182,7 @@ const BrowserBreadcrumbs = ({
             existingFiles={existingFiles}
           />
         )}
+
         <Grid item xs={12} className={`${classes.breadcrumbs}`}>
           <IconButton
             onClick={goBackFunction}
@@ -229,10 +233,10 @@ const BrowserBreadcrumbs = ({
           <TooltipWrapper
             tooltip={
               canCreatePath
-                ? "Choose or create a new path"
+                ? t("Choose or create a new path")
                 : permissionTooltipHelper(
                     [IAM_SCOPES.S3_PUT_OBJECT],
-                    "create a new path"
+                    t("create a new path")
                   )
             }
           >
@@ -247,7 +251,7 @@ const BrowserBreadcrumbs = ({
                 whiteSpace: "nowrap",
               }}
               variant={"regular"}
-              label={"Create new path"}
+              label={t("Create new path")}
             />
           </TooltipWrapper>
         )}

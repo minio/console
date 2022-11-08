@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -125,7 +125,7 @@ const EnableQuota = ({
       onClose={() => {
         closeModalAndRefresh();
       }}
-      title="Enable Bucket Quota"
+      title={t("Enable Bucket Quota")}
       titleIcon={<BucketQuotaIcon />}
     >
       <form
@@ -147,7 +147,7 @@ const EnableQuota = ({
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setQuotaEnabled(event.target.checked);
                 }}
-                label={"Enabled"}
+                label={t("Enabled")}
               />
             </Grid>
             {quotaEnabled && (
@@ -166,7 +166,7 @@ const EnableQuota = ({
                             setValidInput(true);
                           }
                         }}
-                        label="Quota"
+                        label={t("Quota")}
                         value={quotaSize}
                         required
                         min="1"
@@ -181,7 +181,9 @@ const EnableQuota = ({
                             disabled={false}
                           />
                         }
-                        error={!validInput ? "Please enter a valid quota" : ""}
+                        error={
+                          !validInput ? t("Please enter a valid quota") : ""
+                        }
                       />
                     </Grid>
                   </Grid>
@@ -198,7 +200,7 @@ const EnableQuota = ({
               onClick={() => {
                 closeModalAndRefresh();
               }}
-              label={"Cancel"}
+              label={t("Cancel")}
             />
 
             <Button
@@ -206,7 +208,7 @@ const EnableQuota = ({
               type="submit"
               variant="callAction"
               disabled={loading || !validInput}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
           {loading && (

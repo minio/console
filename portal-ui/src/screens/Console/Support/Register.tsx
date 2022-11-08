@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
@@ -363,13 +363,14 @@ const Register = ({ classes }: IRegister) => {
               onChange={(e) =>
                 setSelectedSubnetOrganization(e.target.value as string)
               }
-              label="Select an organization"
+              label={t("Select an organization")}
               value={selectedSubnetOrganization}
               options={subnetOrganizations.map((organization) => ({
                 label: organization.company,
                 value: organization.accountId.toString(),
               }))}
             />
+
             <Box
               sx={{
                 display: "flex",
@@ -383,7 +384,7 @@ const Register = ({ classes }: IRegister) => {
                 onClick={() => subnetRegister()}
                 disabled={loading || subnetAccessToken.trim().length === 0}
                 variant="callAction"
-                label={"Register"}
+                label={t("Register")}
               />
             </Box>
           </Box>
@@ -414,12 +415,13 @@ const Register = ({ classes }: IRegister) => {
               marginBottom: "30px",
             }}
           >
-            Two-Factor Authentication
+            {t("Two-Factor Authentication")}
           </Box>
 
           <Box>
-            Please enter the 6-digit verification code that was sent to your
-            email address. This code will be valid for 5 minutes.
+            {t(
+              "Please enter the 6-digit verification code that was sent to your email address. This code will be valid for 5 minutes."
+            )}
           </Box>
 
           <Box
@@ -456,7 +458,7 @@ const Register = ({ classes }: IRegister) => {
                 subnetMFAToken.trim().length === 0
               }
               variant="callAction"
-              label={"Verify"}
+              label={t("Verify")}
             />
           </Box>
         </Box>
@@ -505,8 +507,9 @@ const Register = ({ classes }: IRegister) => {
                 marginBottom: "30px",
               }}
             >
-              Use your MinIO Subscription Network login credentials to register
-              this cluster.
+              {t(
+                "Use your MinIO Subscription Network login credentials to register this cluster."
+              )}
             </Box>
             <Box
               sx={{
@@ -523,10 +526,11 @@ const Register = ({ classes }: IRegister) => {
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                   setSubnetEmail(event.target.value)
                 }
-                label="Email"
+                label={t("Email")}
                 value={subnetEmail}
                 overlayIcon={<UsersIcon />}
               />
+
               <InputBoxWrapper
                 className={classes.spacerBottom}
                 classes={{
@@ -537,7 +541,7 @@ const Register = ({ classes }: IRegister) => {
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                   setSubnetPassword(event.target.value)
                 }
-                label="Password"
+                label={t("Password")}
                 type={showPassword ? "text" : "password"}
                 value={subnetPassword}
                 overlayIcon={
@@ -570,8 +574,9 @@ const Register = ({ classes }: IRegister) => {
                       "_blank"
                     );
                   }}
-                  label={"Sign up"}
+                  label={t("Sign up")}
                 />
+
                 <Button
                   id={"register-credentials"}
                   type="submit"
@@ -582,7 +587,7 @@ const Register = ({ classes }: IRegister) => {
                     subnetPassword.trim().length === 0
                   }
                   onClick={() => subnetLogin()}
-                  label={"Register"}
+                  label={t("Register")}
                 />
               </Box>
             </Box>
@@ -685,7 +690,7 @@ const Register = ({ classes }: IRegister) => {
               <Box className="step-row">
                 <div className="step-number">1</div>{" "}
                 <div className="step-text">
-                  Copy the following registration token
+                  {t("Copy the following registration token")}
                 </div>
               </Box>
 
@@ -722,7 +727,7 @@ const Register = ({ classes }: IRegister) => {
               <Box className="step-row">
                 <div className="step-number">2</div>
                 <div className="step-text">
-                  Navigate to SUBNET and register your cluster
+                  {t("Navigate to SUBNET and register your cluster")}
                 </div>
               </Box>
 
@@ -755,7 +760,7 @@ const Register = ({ classes }: IRegister) => {
               <Box className="step-row">
                 <div className="step-number">3</div>{" "}
                 <div className="step-text">
-                  Enter the API key generated by SUBNET
+                  {t("Enter the API key generated by SUBNET")}
                 </div>
               </Box>
 
@@ -794,7 +799,7 @@ const Register = ({ classes }: IRegister) => {
                 color="primary"
                 onClick={() => subnetLogin()}
                 disabled={loading || license.trim().length === 0}
-                label={"Register"}
+                label={t("Register")}
               />
             </Box>
           </Box>
@@ -829,13 +834,13 @@ const Register = ({ classes }: IRegister) => {
     </Fragment>
   );
 
-  const loadingUi = <div>Loading..</div>;
+  const loadingUi = <div>{t("Loading..")}</div>;
   const uiToShow = loadingLicenseInfo ? loadingUi : regUi;
 
   return (
     <Fragment>
       <PageHeader
-        label="Register to MinIO Subscription Network"
+        label={t("Register to MinIO Subscription Network")}
         actions={<React.Fragment />}
       />
 
@@ -852,17 +857,19 @@ const Register = ({ classes }: IRegister) => {
           scrollButtons="auto"
         >
           <Tab
-            label="Credentials"
+            label={t("Credentials")}
             id="simple-tab-0"
             aria-controls="simple-tabpanel-0"
           />
+
           <Tab
-            label="API Key"
+            label={t("API Key")}
             id="simple-tab-1"
             aria-controls="simple-tabpanel-1"
           />
+
           <Tab
-            label="Airgap"
+            label={t("Airgap")}
             id="simple-tab-2"
             aria-controls="simple-tabpanel-2"
             onClick={() => fetchSubnetRegToken()}

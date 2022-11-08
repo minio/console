@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Menu, MenuItem, Box } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
@@ -142,14 +142,14 @@ const DownloadWidgetDataButton = ({
               downloadAsCSV();
             }}
           >
-            <ListItemText>Download as CSV</ListItemText>
+            <ListItemText>{t("Download as CSV")}</ListItemText>
           </MenuItem>
           <MenuItem
             onClick={() => {
               downloadAsPNG();
             }}
           >
-            <ListItemText>Download as PNG</ListItemText>
+            <ListItemText>{t("Download as PNG")}</ListItemText>
           </MenuItem>
         </Menu>
       </Box>

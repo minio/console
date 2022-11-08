@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React from "react";
 import { Box } from "@mui/material";
 import {
@@ -80,51 +81,53 @@ const AddUserServiceAccountHelpBox = () => {
         }}
       >
         <HelpIconFilled />
-        <div>Learn more about Access Keys</div>
+        <div>{t("Learn more about Access Keys")}</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
         <Box sx={{ paddingBottom: "20px" }}>
           <FeatureItem
             icon={<ServiceAccountIcon />}
-            description={`Create Access Keys`}
+            description={`${t("Create Access Keys")}`}
           />
+
           <Box sx={{ paddingTop: "20px" }}>
-            Access Keys inherit the policies explicitly attached to the parent
-            user, and the policies attached to each group in which the parent
-            user has membership.
+            {t(
+              "Access Keys inherit the policies explicitly attached to the parent user, and the policies attached to each group in which the parent user has membership."
+            )}
           </Box>
         </Box>
         <Box sx={{ paddingBottom: "20px" }}>
           <FeatureItem
             icon={<PasswordKeyIcon />}
-            description={`Assign Custom Credentials`}
+            description={`${t("Assign Custom Credentials")}`}
           />
+
           <Box sx={{ paddingTop: "10px" }}>
-            Randomized access credentials are recommended, and provided by
-            default. You may use your own custom Access Key and Secret Key by
-            replacing the default values. After creation of any Access Key, you
-            will be given the opportunity to view and download the account
-            credentials.
+            {t(
+              "Randomized access credentials are recommended, and provided by default. You may use your own custom Access Key and Secret Key by replacing the default values. After creation of any Access Key, you will be given the opportunity to view and download the account credentials."
+            )}
           </Box>
           <Box sx={{ paddingTop: "10px" }}>
-            Access Keys support programmatic access by applications. You cannot
-            use a Access Key to log into the MinIO Console.
+            {t(
+              "Access Keys support programmatic access by applications. You cannot use a Access Key to log into the MinIO Console."
+            )}
           </Box>
         </Box>
         <Box sx={{ paddingBottom: "20px" }}>
           <FeatureItem
             icon={<IAMPoliciesIcon />}
-            description={`Assign Access Policies`}
+            description={`${t("Assign Access Policies")}`}
           />
+
           <Box sx={{ paddingTop: "10px" }}>
-            You can specify an optional JSON-formatted IAM policy to further
-            restrict Access Key access to a subset of the actions and resources
-            explicitly allowed for the parent user. Additional access beyond
-            that of the parent user cannot be implemented through these
-            policies.
+            {t(
+              "You can specify an optional JSON-formatted IAM policy to further restrict Access Key access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."
+            )}
           </Box>
           <Box sx={{ paddingTop: "10px" }}>
-            You cannot modify the optional Access Key IAM policy after saving.
+            {t(
+              "You cannot modify the optional Access Key IAM policy after saving."
+            )}
           </Box>
         </Box>
       </Box>

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useState } from "react";
 import { Button } from "mds";
 import { Grid } from "@mui/material";
@@ -91,7 +91,7 @@ const AddBucketTagModal = ({
   return (
     <ModalWrapper
       modalOpen={modalOpen}
-      title={`Add New Tag `}
+      title={`${t("Add New Tag")}`}
       onClose={() => {
         onCloseAndUpdate(false);
       }}
@@ -99,15 +99,15 @@ const AddBucketTagModal = ({
     >
       <Grid container>
         <div className={classes.spacerBottom}>
-          <strong>Bucket</strong>: {bucketName}
+          <strong>{t("Bucket")}</strong>: {bucketName}
         </div>
         <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             value={newKey}
-            label={"New Tag Key"}
+            label={t("New Tag Key")}
             id={"newTagKey"}
             name={"newTagKey"}
-            placeholder={"Enter New Tag Key"}
+            placeholder={t("Enter New Tag Key")}
             onChange={(e: any) => {
               setNewKey(e.target.value);
             }}
@@ -116,10 +116,10 @@ const AddBucketTagModal = ({
         <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
             value={newLabel}
-            label={"New Tag Label"}
+            label={t("New Tag Label")}
             id={"newTagLabel"}
             name={"newTagLabel"}
-            placeholder={"Enter New Tag Label"}
+            placeholder={t("Enter New Tag Label")}
             onChange={(e: any) => {
               setNewLabel(e.target.value);
             }}
@@ -131,8 +131,9 @@ const AddBucketTagModal = ({
             type="button"
             variant="regular"
             onClick={resetForm}
-            label={"Clear"}
+            label={t("Clear")}
           />
+
           <Button
             id={"save-add-bucket-tag"}
             type="submit"
@@ -142,7 +143,7 @@ const AddBucketTagModal = ({
               newLabel.trim() === "" || newKey.trim() === "" || isSending
             }
             onClick={addTagProcess}
-            label={"Save"}
+            label={t("Save")}
           />
         </Grid>
       </Grid>

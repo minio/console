@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { DialogContentText, Grid, LinearProgress } from "@mui/material";
 import { IDirectPVFormatResItem, IDirectPVFormatResult } from "./types";
@@ -69,7 +69,7 @@ const FormatDrives = ({
   };
   return (
     <ConfirmDialog
-      title={`Format ${allDrives ? "All " : ""} Drives`}
+      title={`Format ${allDrives ? t("All") : ""} Drives`}
       confirmText={`Format Drive${
         drivesToFormat.length > 1 || allDrives ? "s" : ""
       }`}
@@ -94,6 +94,7 @@ const FormatDrives = ({
                   }`}
                   content={drivesToFormat.join(", ")}
                 />
+
                 <br />
               </Fragment>
             )}
@@ -106,21 +107,26 @@ const FormatDrives = ({
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setForce(event.target.checked);
                 }}
-                label={"Force Format"}
+                label={t("Force Format")}
                 indicatorLabels={["Yes", "No"]}
               />
             </Grid>
-            Are you sure you want to format{" "}
-            {allDrives ? <strong>All</strong> : "the selected"} drive
+            {t("Are you sure you want to format")}{" "}
+            {allDrives ? <strong>{t("All")}</strong> : t("the selected")}
+            {t("drive")}
             {drivesToFormat.length > 1 || allDrives ? "s" : ""}?.
             <br />
             <br />
             <strong>
-              All information contained will be erased and cannot be recovered
+              {t(
+                "All information contained will be erased and cannot be recovered"
+              )}
             </strong>
             <br />
             <br />
-            To continue please type <b>YES, PROCEED</b> in the box.
+            {t("To continue please type")}
+            <b>{t("YES, PROCEED")}</b>
+            {t("in the box.")}
             <Grid item xs={12}>
               <InputBoxWrapper
                 id="format-confirm"

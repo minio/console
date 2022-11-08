@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import { Button } from "mds";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -52,7 +52,7 @@ const CreateTenantButton = () => {
       }}
       disabled={!enabled}
       key={`button-AddTenant-Create`}
-      label={"Create"}
+      label={t("Create")}
     />
   );
 };

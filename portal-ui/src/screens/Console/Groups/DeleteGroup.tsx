@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 
 import { DialogContentText } from "@mui/material";
@@ -73,8 +73,9 @@ const DeleteGroup = ({
       onClose={onClose}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete the following {selectedGroups.length}{" "}
-          group{selectedGroups.length > 1 ? "s?" : "?"}
+          {t("Are you sure you want to delete the following")}
+          {selectedGroups.length} {t("group")}
+          {selectedGroups.length > 1 ? "s?" : "?"}
           {renderGroups}
         </DialogContentText>
       }

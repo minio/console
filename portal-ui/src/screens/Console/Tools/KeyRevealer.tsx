@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { Button } from "mds";
@@ -56,7 +56,7 @@ const KeyRevealer = ({ value }: { value: string }) => {
         }}
         variant="callAction"
         onClick={() => setShown(!shown)}
-        label={"Show/Hide"}
+        label={t("Show/Hide")}
       />
     </Box>
   );

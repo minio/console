@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 
 import { DialogContentText } from "@mui/material";
@@ -85,8 +85,8 @@ const DeleteReplicationRule = ({
     <ConfirmDialog
       title={
         deleteSelectedRules
-          ? "Delete Selected Replication Rules"
-          : "Delete Replication Rule"
+          ? t("Delete Selected Replication Rules")
+          : t("Delete Replication Rule")
       }
       confirmText={"Delete"}
       isOpen={deleteOpen}
@@ -103,12 +103,18 @@ const DeleteReplicationRule = ({
             <Fragment>
               <WarningMessage
                 title={"Warning"}
-                label={"The corresponding remote buckets will also be deleted."}
+                label={t(
+                  "The corresponding remote buckets will also be deleted."
+                )}
               />
-              Are you sure you want to remove the selected replication rules for
-              bucket <b>{selectedBucket}</b>?<br />
+              {t(
+                "Are you sure you want to remove the selected replication rules for bucket"
+              )}
+              <b>{selectedBucket}</b>?<br />
               <br />
-              To continue please type <b>Yes, I am sure</b> in the box.
+              {t("To continue please type")}
+              <b>{t("Yes, I am sure")}</b>
+              {t("in the box.")}
               <Grid item xs={12}>
                 <InputBoxWrapper
                   id="retype-tenant"
@@ -125,9 +131,11 @@ const DeleteReplicationRule = ({
             <Fragment>
               <WarningMessage
                 title={"Warning"}
-                label={"The corresponding remote bucket will also be deleted."}
+                label={t(
+                  "The corresponding remote bucket will also be deleted."
+                )}
               />
-              Are you sure you want to delete replication rule{" "}
+              {t("Are you sure you want to delete replication rule")}{" "}
               <b>{ruleToDelete}</b>?
             </Fragment>
           )}

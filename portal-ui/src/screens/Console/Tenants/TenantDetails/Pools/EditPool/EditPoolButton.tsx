@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import { Button } from "mds";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -27,6 +27,7 @@ const EditPoolButton = () => {
   const selectedStorageClass = useSelector(
     (state: AppState) => state.editPool.fields.setup.storageClass
   );
+
   const validPages = useSelector(
     (state: AppState) => state.editPool.validPages
   );
@@ -50,7 +51,7 @@ const EditPoolButton = () => {
       }}
       disabled={!enabled}
       key={`button-EditPool-Update`}
-      label={"Update"}
+      label={t("Update")}
     />
   );
 };

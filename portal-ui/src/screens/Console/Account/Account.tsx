@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Button } from "mds";
 import { useSelector } from "react-redux";
@@ -187,6 +187,7 @@ const Account = () => {
           }}
         />
       )}
+
       {deleteMultipleOpen && (
         <DeleteMultipleServiceAccounts
           deleteOpen={deleteMultipleOpen}
@@ -202,15 +203,17 @@ const Account = () => {
           closeModalAndRefresh={closePolicyModal}
         />
       )}
+
       <ChangePasswordModal
         open={changePasswordModalOpen}
         closeModal={() => setChangePasswordModalOpen(false)}
       />
-      <PageHeader label="Access Keys" />
+
+      <PageHeader label={t("Access Keys")} />
       <PageLayout>
         <Grid item={true} xs={12} className={classes.actionsTray}>
           <SearchBox
-            placeholder={"Search Access Keys"}
+            placeholder={t("Search Access Keys")}
             onChange={setFilter}
             overrideClass={classes.searchField}
             value={filter}
@@ -222,13 +225,13 @@ const Account = () => {
             }}
           >
             {" "}
-            <TooltipWrapper tooltip={"Delete Selected"}>
+            <TooltipWrapper tooltip={t("Delete Selected")}>
               <Button
                 id={"delete-selected-accounts"}
                 onClick={() => {
                   setDeleteMultipleOpen(true);
                 }}
-                label={"Delete Selected"}
+                label={t("Delete Selected")}
                 icon={<DeleteIcon />}
                 disabled={selectedSAs.length === 0}
                 variant={"secondary"}
@@ -243,7 +246,7 @@ const Account = () => {
               <Button
                 id={"change-password"}
                 onClick={() => setChangePasswordModalOpen(true)}
-                label={`Change Password`}
+                label={`${t("Change Password")}`}
                 icon={<PasswordKeyIcon />}
                 variant={"regular"}
                 disabled={userIDP}
@@ -254,7 +257,7 @@ const Account = () => {
               onClick={() => {
                 navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
               }}
-              label={`Create access key`}
+              label={`${t("Create access key")}`}
               icon={<AddIcon />}
               variant={"callAction"}
             />
@@ -267,7 +270,7 @@ const Account = () => {
             records={filteredRecords}
             entityName={"Access Keys"}
             idField={""}
-            columns={[{ label: "Access Key", elementKey: "" }]}
+            columns={[{ label: t("Access Key"), elementKey: "" }]}
             itemActions={tableActions}
             selectedItems={selectedSAs}
             onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
@@ -276,20 +279,16 @@ const Account = () => {
         </Grid>
         <Grid item xs={12} marginTop={"15px"}>
           <HelpBox
-            title={"Learn more about ACCESS KEYS"}
+            title={t("Learn more about ACCESS KEYS")}
             iconComponent={<AccountIcon />}
             help={
               <Fragment>
-                MinIO access keys are child identities of an authenticated MinIO
-                user, including externally managed identities. Each access key
-                inherits its privileges based on the policies attached to it’s
-                parent user or those groups in which the parent user has
-                membership. Access Keys also support an optional inline policy
-                which further restricts access to a subset of actions and
-                resources available to the parent user.
+                {t(
+                  "MinIO access keys are child identities of an authenticated MinIO user, including externally managed identities. Each access key inherits its privileges based on the policies attached to it’s parent user or those groups in which the parent user has membership. Access Keys also support an optional inline policy which further restricts access to a subset of actions and resources available to the parent user."
+                )}
                 <br />
                 <br />
-                You can learn more at our{" "}
+                {t("You can learn more at our")}{" "}
                 {
                   // TODO: Change this link once it is called access keys
                 }
@@ -298,7 +297,7 @@ const Account = () => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  documentation
+                  {t("documentation")}
                 </a>
                 .
               </Fragment>

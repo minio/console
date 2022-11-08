@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -171,30 +171,37 @@ const CredentialsPrompt = ({
       }}
       title={
         <div className={classes.promptTitle}>
-          <div>New {entity} Created</div>
+          <div>
+            {t("New")}
+            {entity}
+            {t("Created")}
+          </div>
         </div>
       }
       titleIcon={<ServiceAccountCredentialsIcon />}
     >
       <Grid container>
         <Grid item xs={12} className={classes.formScrollable}>
-          A new {entity} has been created with the following details:
+          {t("A new")}
+          {entity}
+          {t("has been created with the following details:")}
           {!idp && consoleCreds && (
             <React.Fragment>
               <Grid item xs={12} className={classes.credentialsPanel}>
                 <div className={classes.credentialTitle}>
-                  Console Credentials
+                  {t("Console Credentials")}
                 </div>
                 {Array.isArray(consoleCreds) &&
                   consoleCreds.map((credentialsPair, index) => {
                     return (
                       <>
                         <CredentialItem
-                          label="Access Key"
+                          label={t("Access Key")}
                           value={credentialsPair.accessKey}
                         />
+
                         <CredentialItem
-                          label="Secret Key"
+                          label={t("Secret Key")}
                           value={credentialsPair.secretKey}
                         />
                       </>
@@ -203,11 +210,12 @@ const CredentialsPrompt = ({
                 {!Array.isArray(consoleCreds) && (
                   <>
                     <CredentialItem
-                      label="Access Key"
+                      label={t("Access Key")}
                       value={consoleCreds.accessKey}
                     />
+
                     <CredentialItem
-                      label="Secret Key"
+                      label={t("Secret Key")}
                       value={consoleCreds.secretKey}
                     />
                   </>
@@ -215,28 +223,32 @@ const CredentialsPrompt = ({
               </Grid>
             </React.Fragment>
           )}
+
           {(consoleCreds === null || consoleCreds === undefined) && (
             <>
               <CredentialItem
-                label="Access Key"
+                label={t("Access Key")}
                 value={newServiceAccount.accessKey || ""}
               />
+
               <CredentialItem
-                label="Secret Key"
+                label={t("Secret Key")}
                 value={newServiceAccount.secretKey || ""}
               />
             </>
           )}
+
           {idp ? (
             <div className={classes.warningBlock}>
-              Please Login via the configured external identity provider.
+              {t("Please Login via the configured external identity provider.")}
             </div>
           ) : (
             <div className={classes.warningBlock}>
               <WarnIcon />
               <span>
-                Write these down, as this is the only time the secret will be
-                displayed.
+                {t(
+                  "Write these down, as this is the only time the secret will be displayed."
+                )}
               </span>
             </div>
           )}
@@ -245,13 +257,13 @@ const CredentialsPrompt = ({
           {!idp && (
             <>
               <TooltipWrapper
-                tooltip={
+                tooltip={t(
                   "Download credentials in a JSON file formatted for import using mc alias import. This will only include the default login credentials."
-                }
+                )}
               >
                 <Button
                   id={"download-button"}
-                  label={"Download for import"}
+                  label={t("Download for import")}
                   className={classes.buttonSpacer}
                   onClick={downloadImport}
                   icon={<DownloadIcon />}
@@ -261,13 +273,13 @@ const CredentialsPrompt = ({
 
               {Array.isArray(consoleCreds) && consoleCreds.length > 1 && (
                 <TooltipWrapper
-                  tooltip={
-                    "Download all access credentials to a JSON file. NOTE: This file is not formatted for import using mc alias import. If you plan to import this alias from the file, please use the Download for Import button. "
-                  }
+                  tooltip={t(
+                    "Download all access credentials to a JSON file. NOTE: This file is not formatted for import using mc alias import. If you plan to import this alias from the file, please use the Download for Import button."
+                  )}
                 >
                   <Button
                     id={"download-all-button"}
-                    label={"Download all access credentials"}
+                    label={t("Download all access credentials")}
                     className={classes.buttonSpacer}
                     onClick={downloaddAllCredentials}
                     icon={<DownloadIcon />}

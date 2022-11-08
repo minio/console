@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import { Card, CardHeader } from "@mui/material";
 import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
@@ -146,7 +146,7 @@ const CommonCard = ({
           {moreLink && (
             <Fragment>
               <span className={classes.viewAll}>
-                <Link to={moreLink}>View All</Link>
+                <Link to={moreLink}>{t("View All")}</Link>
               </span>
             </Fragment>
           )}

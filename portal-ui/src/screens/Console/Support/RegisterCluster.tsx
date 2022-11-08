@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, Button } from "@mui/material";
@@ -35,7 +35,7 @@ const RegisterCluster = ({ compactMode = false }: IRegisterCluster) => {
       color="primary"
       onClick={() => navigate("/support/register")}
     >
-      Register your Cluster
+      {t("Register your Cluster")}
     </Button>
   );
 
@@ -61,6 +61,7 @@ const RegisterCluster = ({ compactMode = false }: IRegisterCluster) => {
           iconComponent={<WarnIcon />}
           help={<Fragment />}
         />
+
         <br />
       </Fragment>
     );
@@ -99,7 +100,7 @@ const RegisterCluster = ({ compactMode = false }: IRegisterCluster) => {
               },
             }}
           >
-            Register your cluster
+            {t("Register your cluster")}
           </Box>
         </Grid>
         <Grid item xs={12}>

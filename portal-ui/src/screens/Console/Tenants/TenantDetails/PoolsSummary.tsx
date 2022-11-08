@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -54,6 +54,7 @@ const PoolsSummary = ({ classes }: IPoolsSummary) => {
   const selectedPool = useSelector(
     (state: AppState) => state.tenants.selectedPool
   );
+
   const poolDetailsOpen = useSelector(
     (state: AppState) => state.tenants.poolDetailsOpen
   );
@@ -66,13 +67,14 @@ const PoolsSummary = ({ classes }: IPoolsSummary) => {
             executeOnClick={() => {
               dispatch(setOpenPoolDetails(false));
             }}
-            label={"Pools list"}
+            label={t("Pools list")}
             to={pathname}
           />
         </Grid>
       )}
+
       <h1 className={classes.sectionTitle}>
-        {poolDetailsOpen ? `Pool Details - ${selectedPool || ""}` : "Pools"}
+        {poolDetailsOpen ? `Pool Details - ${selectedPool || ""}` : t("Pools")}
       </h1>
       <Grid container>
         {poolDetailsOpen ? (

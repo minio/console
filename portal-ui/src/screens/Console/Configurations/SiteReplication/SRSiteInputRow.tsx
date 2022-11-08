@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Box } from "@mui/material";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -53,7 +53,7 @@ const SRSiteInputRow = ({
         <InputBoxWrapper
           id={`add-rep-peer-site-${index}`}
           name={`add-rep-peer-site-${index}`}
-          placeholder={`site-name`}
+          placeholder={`${t("site-name")}`}
           label=""
           extraInputProps={{
             readOnly: disabledFields.includes("name"),
@@ -132,7 +132,7 @@ const SRSiteInputRow = ({
         >
           {showRowActions ? (
             <React.Fragment>
-              <TooltipWrapper tooltip={"Add a Row"}>
+              <TooltipWrapper tooltip={t("Add a Row")}>
                 <Button
                   id={`add-row-${index}`}
                   variant="regular"
@@ -149,7 +149,7 @@ const SRSiteInputRow = ({
                   }}
                 />
               </TooltipWrapper>
-              <TooltipWrapper tooltip={"Remove Row"}>
+              <TooltipWrapper tooltip={t("Remove Row")}>
                 <Button
                   id={`remove-row-${index}`}
                   variant="regular"

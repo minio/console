@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -83,24 +83,30 @@ const PVCDescribeSummary = ({ describeInfo }: IPVCDescribeSummaryProps) => {
     <Fragment>
       <HeaderSection title={"Summary"} />
       <Box sx={{ ...twoColCssGridLayoutConfig }}>
-        <LabelValuePair label={"Name"} value={describeInfo.name} />
-        <LabelValuePair label={"Namespace"} value={describeInfo.namespace} />
-        <LabelValuePair label={"Capacity"} value={describeInfo.capacity} />
-        <LabelValuePair label={"Status"} value={describeInfo.status} />
+        <LabelValuePair label={t("Name")} value={describeInfo.name} />
+        <LabelValuePair label={t("Namespace")} value={describeInfo.namespace} />
+        <LabelValuePair label={t("Capacity")} value={describeInfo.capacity} />
+        <LabelValuePair label={t("Status")} value={describeInfo.status} />
         <LabelValuePair
-          label={"Storage Class"}
+          label={t("Storage Class")}
           value={describeInfo.storageClass}
         />
+
         <LabelValuePair
-          label={"Access Modes"}
+          label={t("Access Modes")}
           value={describeInfo.accessModes.join(", ")}
         />
+
         <LabelValuePair
-          label={"Finalizers"}
+          label={t("Finalizers")}
           value={describeInfo.finalizers.join(", ")}
         />
-        <LabelValuePair label={"Volume"} value={describeInfo.volume} />
-        <LabelValuePair label={"Volume Mode"} value={describeInfo.volumeMode} />
+
+        <LabelValuePair label={t("Volume")} value={describeInfo.volume} />
+        <LabelValuePair
+          label={t("Volume Mode")}
+          value={describeInfo.volumeMode}
+        />
       </Box>
     </Fragment>
   );
@@ -204,9 +210,9 @@ const PVCDescribe = ({
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab id="pvc-describe-summary" label="Summary" />
-            <Tab id="pvc-describe-annotations" label="Annotations" />
-            <Tab id="pvc-describe-labels" label="Labels" />
+            <Tab id="pvc-describe-summary" label={t("Summary")} />
+            <Tab id="pvc-describe-annotations" label={t("Annotations")} />
+            <Tab id="pvc-describe-labels" label={t("Labels")} />
           </Tabs>
           {renderTabComponent(curTab, describeInfo)}
         </Grid>

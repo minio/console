@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React, { useState } from "react";
 import UsersSelectors from "./UsersSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
@@ -82,7 +83,10 @@ const AddGroupMember = ({
       <Grid container>
         <Grid item xs={12}>
           <div className={classes.formFieldRow}>
-            <PredefinedList label={`Selected Group`} content={selectedGroup} />
+            <PredefinedList
+              label={`${t("Selected Group")}`}
+              content={selectedGroup}
+            />
           </div>
           <div className={classes.userSelector}>
             <UsersSelectors
@@ -101,7 +105,7 @@ const AddGroupMember = ({
           onClick={() => {
             setSelectedUsers(preSelectedUsers);
           }}
-          label={"Reset"}
+          label={t("Reset")}
         />
 
         <Button
@@ -111,7 +115,7 @@ const AddGroupMember = ({
           onClick={() => {
             addMembersToGroup();
           }}
-          label={"Save"}
+          label={t("Save")}
         />
       </Grid>
     </ModalWrapper>

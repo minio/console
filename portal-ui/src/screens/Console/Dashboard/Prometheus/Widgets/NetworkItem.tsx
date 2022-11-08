@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import { IDashboardPanel } from "../types";
 import { Box } from "@mui/material";
@@ -58,6 +58,7 @@ const NetworkItem = ({
       }}
     />
   );
+
   const leftCmp = (
     <SingleValueWidget
       title={value.title}
@@ -103,7 +104,7 @@ const NetworkItem = ({
           fontWeight: 600,
         }}
       >
-        Network
+        {t("Network")}
       </Box>
       <Box
         sx={{

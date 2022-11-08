@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import { Box } from "@mui/material";
 import React from "react";
 import { StatsResponseType } from "../SiteReplicationStatus";
@@ -43,7 +44,7 @@ export const EntityNotFound = ({
       <Box sx={{ marginLeft: "5px", marginRight: "5px", fontWeight: 600 }}>
         {entityValue}
       </Box>{" "}
-      not found.
+      {t("not found.")}
     </Box>
   );
 };

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -96,6 +96,7 @@ const PreviewFile = ({
           <LinearProgress />
         </Grid>
       )}
+
       <div style={{ textAlign: "center" }}>
         {objectType === "video" && (
           <video
@@ -114,6 +115,7 @@ const PreviewFile = ({
             <source src={path} type="video/mp4" />
           </video>
         )}
+
         {objectType === "audio" && (
           <audio
             style={{
@@ -129,6 +131,7 @@ const PreviewFile = ({
             <source src={path} type="audio/mpeg" />
           </audio>
         )}
+
         {objectType === "image" && (
           <img
             style={{
@@ -142,6 +145,7 @@ const PreviewFile = ({
             onLoad={iframeLoaded}
           />
         )}
+
         {objectType !== "video" &&
           objectType !== "audio" &&
           objectType !== "image" && (
@@ -159,7 +163,7 @@ const PreviewFile = ({
                 }`}
                 onLoad={iframeLoaded}
               >
-                File couldn't be loaded. Please try Download instead
+                {t("File couldn't be loaded. Please try Download instead")}
               </iframe>
             </div>
           )}

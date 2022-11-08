@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -69,6 +69,7 @@ const PodsSummary = ({ classes }: IPodsSummary) => {
         pod.name
       }`
     );
+
     return;
   };
 
@@ -138,10 +139,11 @@ const PodsSummary = ({ classes }: IPodsSummary) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <h1 className={classes.sectionTitle}>Pods</h1>
+
+      <h1 className={classes.sectionTitle}>{t("Pods")}</h1>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
-          placeholder="Search Pods"
+          placeholder={t("Search Pods")}
           className={classes.searchField}
           id="search-resource"
           label=""
@@ -162,18 +164,18 @@ const PodsSummary = ({ classes }: IPodsSummary) => {
       <Grid item xs={12} className={classes.tableBlock}>
         <TableWrapper
           columns={[
-            { label: "Name", elementKey: "name", width: 200 },
-            { label: "Status", elementKey: "status" },
-            { label: "Age", elementKey: "time" },
-            { label: "Pod IP", elementKey: "podIP" },
+            { label: t("Name"), elementKey: "name", width: 200 },
+            { label: t("Status"), elementKey: "status" },
+            { label: t("Age"), elementKey: "time" },
+            { label: t("Pod IP"), elementKey: "podIP" },
             {
-              label: "Restarts",
+              label: t("Restarts"),
               elementKey: "restarts",
               renderFunction: (input) => {
                 return input !== null ? input : 0;
               },
             },
-            { label: "Node", elementKey: "node" },
+            { label: t("Node"), elementKey: "node" },
           ]}
           isLoading={loadingPods}
           records={filteredRecords}

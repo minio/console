@@ -12,7 +12,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { useSelector } from "react-redux";
@@ -262,6 +262,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                     ? JSON.stringify(JSON.parse(result.policy), null, 4)
                     : ""
                 );
+
                 const pol: IAMPolicy = JSON.parse(result.policy);
                 setPolicyStatements(pol.Statement);
               }
@@ -361,10 +362,11 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
+
       <PageHeader
         label={
           <Fragment>
-            <BackLink to={IAM_PAGES.POLICIES} label={"Policy"} />
+            <BackLink to={IAM_PAGES.POLICIES} label={t("Policy")} />
           </Fragment>
         }
       />
@@ -378,7 +380,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
               </Fragment>
             }
             title={policyName}
-            subTitle={<Fragment>IAM Policy</Fragment>}
+            subTitle={<Fragment>{t("IAM Policy")}</Fragment>}
             actions={
               <Fragment>
                 <SecureComponent
@@ -392,13 +394,13 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                         ? ""
                         : permissionTooltipHelper(
                             deletePolicyPermissions,
-                            "delete Policies"
+                            t("delete Policies")
                           )
                     }
                   >
                     <Button
                       id={"delete-policy"}
-                      label={"Delete Policy"}
+                      label={t("Delete Policy")}
                       variant="secondary"
                       icon={<TrashIcon />}
                       onClick={deletePolicy}
@@ -407,10 +409,10 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                   </TooltipWrapper>
                 </SecureComponent>
 
-                <TooltipWrapper tooltip={"Refresh"}>
+                <TooltipWrapper tooltip={t("Refresh")}>
                   <Button
                     id={"refresh-policy"}
-                    label={"Refresh"}
+                    label={t("Refresh")}
                     variant="regular"
                     icon={<RefreshIcon />}
                     onClick={() => {
@@ -425,10 +427,12 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
 
         <VerticalTabs>
           {{
-            tabConfig: { label: "Summary", disabled: !displayPolicy },
+            tabConfig: { label: t("Summary"), disabled: !displayPolicy },
             content: (
               <Fragment>
-                <div className={classes.sectionTitle}>Policy Summary</div>
+                <div className={classes.sectionTitle}>
+                  {t("Policy Summary")}
+                </div>
                 <Paper className={classes.paperContainer}>
                   <PolicyView policyStatements={policyStatements} />
                 </Paper>
@@ -437,17 +441,17 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Users",
+              label: t("Users"),
               disabled: !displayUsers || ldapIsEnabled,
             },
             content: (
               <Fragment>
-                <div className={classes.sectionTitle}>Users</div>
+                <div className={classes.sectionTitle}>{t("Users")}</div>
                 <Grid container>
                   {userList.length > 0 && (
                     <Grid item xs={12} className={classes.actionsTray}>
                       <TextField
-                        placeholder="Search Users"
+                        placeholder={t("Search Users")}
                         className={classes.searchField}
                         id="search-resource"
                         label=""
@@ -466,9 +470,10 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                       />
                     </Grid>
                   )}
+
                   <TableWrapper
                     itemActions={userTableActions}
-                    columns={[{ label: "Name", elementKey: "name" }]}
+                    columns={[{ label: t("Name"), elementKey: "name" }]}
                     isLoading={loadingUsers}
                     records={filteredUsers}
                     entityName="Users with this Policy associated"
@@ -480,17 +485,17 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Groups",
+              label: t("Groups"),
               disabled: !displayGroups || ldapIsEnabled,
             },
             content: (
               <Fragment>
-                <div className={classes.sectionTitle}>Groups</div>
+                <div className={classes.sectionTitle}>{t("Groups")}</div>
                 <Grid container>
                   {groupList.length > 0 && (
                     <Grid item xs={12} className={classes.actionsTray}>
                       <TextField
-                        placeholder="Search Groups"
+                        placeholder={t("Search Groups")}
                         className={classes.searchField}
                         id="search-resource"
                         label=""
@@ -509,9 +514,10 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                       />
                     </Grid>
                   )}
+
                   <TableWrapper
                     itemActions={groupTableActions}
-                    columns={[{ label: "Name", elementKey: "name" }]}
+                    columns={[{ label: t("Name"), elementKey: "name" }]}
                     isLoading={loadingGroups}
                     records={filteredGroups}
                     entityName="Groups with this Policy associated"
@@ -522,10 +528,10 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
             ),
           }}
           {{
-            tabConfig: { label: "Raw Policy", disabled: !displayPolicy },
+            tabConfig: { label: t("Raw Policy"), disabled: !displayPolicy },
             content: (
               <Fragment>
-                <div className={classes.sectionTitle}>Raw Policy</div>
+                <div className={classes.sectionTitle}>{t("Raw Policy")}</div>
                 <form
                   noValidate
                   autoComplete="off"
@@ -554,9 +560,10 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                             resetForm();
                           }}
                         >
-                          Clear
+                          {t("Clear")}
                         </button>
                       )}
+
                       <SecureComponent
                         scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
                         resource={CONSOLE_UI_RESOURCE}
@@ -568,7 +575,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                               ? ""
                               : permissionTooltipHelper(
                                   createPolicyPermissions,
-                                  "edit a Policy"
+                                  t("edit a Policy")
                                 )
                           }
                         >
@@ -580,7 +587,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                             disabled={
                               addLoading || !validSave || !canEditPolicy
                             }
-                            label={"Save"}
+                            label={t("Save")}
                           />
                         </TooltipWrapper>
                       </SecureComponent>

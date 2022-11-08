@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useState } from "react";
 import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
@@ -76,6 +76,7 @@ const ChangePassword = ({
           detailedError: "",
         })
       );
+
       return;
     }
 
@@ -86,6 +87,7 @@ const ChangePassword = ({
           detailedError: "",
         })
       );
+
       return;
     }
 
@@ -130,8 +132,9 @@ const ChangePassword = ({
       titleIcon={<ChangePasswordIcon />}
     >
       <div>
-        This will change your Console password. Please note your new password
-        down, as it will be required to log into Console after this session.
+        {t(
+          "This will change your Console password. Please note your new password down, as it will be required to log into Console after this session."
+        )}
       </div>
       <form
         noValidate
@@ -149,7 +152,7 @@ const ChangePassword = ({
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setCurrentPassword(event.target.value);
                 }}
-                label="Current Password"
+                label={t("Current Password")}
                 type={showPassword ? "text" : "password"}
                 value={currentPassword}
                 overlayAction={() => setShowPassword(!showPassword)}
@@ -165,7 +168,7 @@ const ChangePassword = ({
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setNewPassword(event.target.value);
                 }}
-                label="New Password"
+                label={t("New Password")}
                 type={showPassword ? "text" : "password"}
                 value={newPassword}
                 overlayAction={() => setShowPassword(!showPassword)}
@@ -181,7 +184,7 @@ const ChangePassword = ({
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setReNewPassword(event.target.value);
                 }}
-                label="Type New Password Again"
+                label={t("Type New Password Again")}
                 type={showPassword ? "text" : "password"}
                 value={reNewPassword}
                 overlayAction={() => setShowPassword(!showPassword)}
@@ -205,7 +208,7 @@ const ChangePassword = ({
                   reNewPassword.length > 0
                 )
               }
-              label="Save"
+              label={t("Save")}
             />
           </Grid>
           {loading && (

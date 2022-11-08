@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import PageHeader from "../Common/PageHeader/PageHeader";
 
@@ -26,7 +26,7 @@ const ListNotificationEndpoints = withSuspense(
 const NotificationEndpoints = () => {
   return (
     <Fragment>
-      <PageHeader label="Notification Endpoints" />
+      <PageHeader label={t("Notification Endpoints")} />
       <ListNotificationEndpoints />
     </Fragment>
   );

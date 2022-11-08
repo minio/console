@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -90,15 +90,19 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
   const storageClasses = useSelector(
     (state: AppState) => state.addPool.storageClasses
   );
+
   const numberOfNodes = useSelector((state: AppState) =>
     state.addPool.setup.numberOfNodes.toString()
   );
+
   const storageClass = useSelector(
     (state: AppState) => state.addPool.setup.storageClass
   );
+
   const volumeSize = useSelector((state: AppState) =>
     state.addPool.setup.volumeSize.toString()
   );
+
   const volumesPerServer = useSelector((state: AppState) =>
     state.addPool.setup.volumesPerServer.toString()
   );
@@ -197,9 +201,9 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>New Pool Configuration</h3>
+        <h3 className={classes.h3Section}>{t("New Pool Configuration")}</h3>
         <span className={classes.descriptionText}>
-          Configure a new Pool to expand MinIO storage
+          {t("Configure a new Pool to expand MinIO storage")}
         </span>
       </div>
 
@@ -216,7 +220,7 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
               setFieldInfo("numberOfNodes", 0);
             }
           }}
-          label="Number of Servers"
+          label={t("Number of Servers")}
           value={numberOfNodes}
           error={validationErrors["number_of_nodes"] || ""}
           pattern={"[0-9]*"}
@@ -235,7 +239,7 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
               setFieldInfo("volumeSize", 0);
             }
           }}
-          label="Volume Size"
+          label={t("Volume Size")}
           value={volumeSize}
           error={validationErrors["pool_size"] || ""}
           pattern={"[0-9]*"}
@@ -244,7 +248,7 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
               id={"quota_unit"}
               onUnitChange={() => {}}
               unitSelected={"Gi"}
-              unitsList={[{ label: "Gi", value: "Gi" }]}
+              unitsList={[{ label: t("Gi"), value: "Gi" }]}
               disabled={true}
             />
           }
@@ -263,7 +267,7 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
               setFieldInfo("volumesPerServer", 0);
             }
           }}
-          label="Volumes per Server"
+          label={t("Volumes per Server")}
           value={volumesPerServer}
           error={validationErrors["volumes_per_server"] || ""}
           pattern={"[0-9]*"}
@@ -276,7 +280,7 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
           onChange={(e: SelectChangeEvent<string>) => {
             setFieldInfo("storageClass", e.target.value as string);
           }}
-          label="Storage Class"
+          label={t("Storage Class")}
           value={storageClass}
           options={storageClasses}
           disabled={storageClasses.length < 1}
@@ -288,13 +292,15 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
             <div className={classes.sizeNumber}>
               {niceBytes(instanceCapacity.toString(10))}
             </div>
-            <div className={classes.sizeDescription}>Instance Capacity</div>
+            <div className={classes.sizeDescription}>
+              {t("Instance Capacity")}
+            </div>
           </div>
           <div>
             <div className={classes.sizeNumber}>
               {niceBytes(totalCapacity.toString(10))}
             </div>
-            <div className={classes.sizeDescription}>Total Capacity</div>
+            <div className={classes.sizeDescription}>{t("Total Capacity")}</div>
           </div>
         </div>
       </Grid>

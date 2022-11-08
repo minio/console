@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useState } from "react";
 import { EditIcon } from "../../../../icons";
 import { Box, DialogContentText } from "@mui/material";
@@ -95,7 +95,7 @@ const EditSiteEndPoint = ({
 
   return (
     <ModalWrapper
-      title={`Edit Replication Endpoint `}
+      title={`${t("Edit Replication Endpoint")}`}
       modalOpen={true}
       titleIcon={<EditIcon />}
       onClose={onClose}
@@ -109,17 +109,17 @@ const EditSiteEndPoint = ({
           }}
         >
           <Box sx={{ marginBottom: "10px" }}>
-            <strong>Site:</strong> {"  "}
+            <strong>{t("Site:")}</strong> {"  "}
             {editSite.name}
           </Box>
           <Box sx={{ marginBottom: "10px" }}>
-            <strong>Current Endpoint:</strong> {"  "}
+            <strong>{t("Current Endpoint:")}</strong> {"  "}
             {editSite.endpoint}
           </Box>
         </Box>
 
         <Grid item xs={12}>
-          <Box sx={{ marginBottom: "5px" }}> New Endpoint:</Box>
+          <Box sx={{ marginBottom: "5px" }}>{t("New Endpoint:")}</Box>
           <InputBoxWrapper
             id="edit-rep-peer-endpoint"
             name="edit-rep-peer-endpoint"
@@ -141,9 +141,11 @@ const EditSiteEndPoint = ({
               marginTop: 2,
             }}
           >
-            <Box sx={{ fontWeight: 600 }}>Note:</Box>{" "}
+            <Box sx={{ fontWeight: 600 }}>{t("Note:")}</Box>{" "}
             <Box sx={{ marginLeft: 1, color: "red" }}>
-              Access Key and Secret Key should be same on the new site/endpoint.
+              {t(
+                "Access Key and Secret Key should be same on the new site/endpoint."
+              )}
             </Box>
           </Box>
         </Grid>
@@ -155,15 +157,16 @@ const EditSiteEndPoint = ({
           type="button"
           variant="regular"
           onClick={onClose}
-          label={"Close"}
+          label={t("Close")}
         />
+
         <Button
           id={"update"}
           type="button"
           variant="callAction"
           disabled={isEditing || !isValidEndPointUrl}
           onClick={updatePeerSite}
-          label={"Update"}
+          label={t("Update")}
         />
       </Grid>
     </ModalWrapper>

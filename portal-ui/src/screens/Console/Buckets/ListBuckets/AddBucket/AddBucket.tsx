@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
@@ -124,6 +124,7 @@ const AddBucket = ({ classes }: IsetProps) => {
   const ipAddressFormat = new RegExp(
     "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
   );
+
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
   const isDirty = useSelector((state: AppState) => state.addBucket.isDirty);
   const [validationResult, setValidationResult] = useState<boolean[]>([]);
@@ -133,33 +134,42 @@ const AddBucket = ({ classes }: IsetProps) => {
   const versioningEnabled = useSelector(
     (state: AppState) => state.addBucket.versioningEnabled
   );
+
   const lockingEnabled = useSelector(
     (state: AppState) => state.addBucket.lockingEnabled
   );
+
   const quotaEnabled = useSelector(
     (state: AppState) => state.addBucket.quotaEnabled
   );
+
   const quotaSize = useSelector((state: AppState) => state.addBucket.quotaSize);
   const quotaUnit = useSelector((state: AppState) => state.addBucket.quotaUnit);
   const retentionEnabled = useSelector(
     (state: AppState) => state.addBucket.retentionEnabled
   );
+
   const retentionMode = useSelector(
     (state: AppState) => state.addBucket.retentionMode
   );
+
   const retentionUnit = useSelector(
     (state: AppState) => state.addBucket.retentionUnit
   );
+
   const retentionValidity = useSelector(
     (state: AppState) => state.addBucket.retentionValidity
   );
+
   const addLoading = useSelector((state: AppState) => state.addBucket.loading);
   const invalidFields = useSelector(
     (state: AppState) => state.addBucket.invalidFields
   );
+
   const lockingFieldDisabled = useSelector(
     (state: AppState) => state.addBucket.lockingFieldDisabled
   );
+
   const distributedSetup = useSelector(selDistSet);
   const siteReplicationInfo = useSelector(selSiteRep);
   const navigateTo = useSelector(
@@ -172,6 +182,7 @@ const AddBucket = ({ classes }: IsetProps) => {
       IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
       IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
     ],
+
     true
   );
 
@@ -188,11 +199,13 @@ const AddBucket = ({ classes }: IsetProps) => {
         bucketName.includes("-.") ||
         bucketName.includes("..")
       ),
+
       !ipAddressFormat.test(bucketName),
       !bucketName.startsWith("xn--"),
       !bucketName.endsWith("-s3alias"),
       !records.includes(bucketName),
     ];
+
     setValidationResult(bucketNameErrors);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucketName, isDirty]);
@@ -233,41 +246,50 @@ const AddBucket = ({ classes }: IsetProps) => {
 
   return (
     <Fragment>
-      <PageHeader label={<BackLink to={"/buckets"} label={"Buckets"} />} />
+      <PageHeader label={<BackLink to={"/buckets"} label={t("Buckets")} />} />
       <PageLayout>
         <FormLayout
-          title={"Create Bucket"}
+          title={t("Create Bucket")}
           icon={<BucketsIcon />}
           helpbox={
             <HelpBox
               iconComponent={<BucketsIcon />}
-              title={"Buckets"}
+              title={t("Buckets")}
               help={
                 <Fragment>
-                  MinIO uses buckets to organize objects. A bucket is similar to
-                  a folder or directory in a filesystem, where each bucket can
-                  hold an arbitrary number of objects.
+                  {t(
+                    "MinIO uses buckets to organize objects. A bucket is similar to a folder or directory in a filesystem, where each bucket can hold an arbitrary number of objects."
+                  )}
+
                   <br />
                   <br />
-                  <b>Versioning</b> allows to keep multiple versions of the same
-                  object under the same key.
+                  <b>{t("Versioning")}</b>
+                  {t(
+                    "allows to keep multiple versions of the same object under the same key."
+                  )}
+
                   <br />
                   <br />
-                  <b>Object Locking</b> prevents objects from being deleted.
-                  Required to support retention and legal hold. Can only be
-                  enabled at bucket creation.
+                  <b>{t("Object Locking")}</b>
+                  {t(
+                    "prevents objects from being deleted. Required to support retention and legal hold. Can only be enabled at bucket creation."
+                  )}
+
                   <br />
                   <br />
-                  <b>Quota</b> limits the amount of data in the bucket.
+                  <b>{t("Quota")}</b>
+                  {t("limits the amount of data in the bucket.")}
                   {lockingAllowed && (
                     <Fragment>
                       <br />
                       <br />
-                      <b>Retention</b> imposes rules to prevent object deletion
-                      for a period of time. Versioning must be enabled in order
-                      to set bucket retention policies.
+                      <b>{t("Retention")}</b>
+                      {t(
+                        "imposes rules to prevent object deletion for a period of time. Versioning must be enabled in order to set bucket retention policies."
+                      )}
                     </Fragment>
                   )}
+
                   <br />
                   <br />
                 </Fragment>
@@ -291,21 +313,23 @@ const AddBucket = ({ classes }: IsetProps) => {
                 <BucketNamingRules errorList={validationResult} />
               </Grid>
               <Grid item xs={12}>
-                <SectionTitle>Features</SectionTitle>
+                <SectionTitle>{t("Features")}</SectionTitle>
                 {!distributedSetup && (
                   <Fragment>
                     <div className={classes.error}>
-                      These features are unavailable in a single-disk setup.
+                      {t(
+                        "These features are unavailable in a single-disk setup."
+                      )}
                       <br />
-                      Please deploy a server in{" "}
+                      {t("Please deploy a server in")}{" "}
                       <a
                         href="https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-multi-node-multi-drive.html?ref=con"
                         target="_blank"
                         rel="noreferrer"
                       >
-                        Distributed Mode
+                        {t("Distributed Mode")}
                       </a>{" "}
-                      to use these features.
+                      {t("to use these features.")}
                     </div>
                     <br />
                     <br />
@@ -317,21 +341,26 @@ const AddBucket = ({ classes }: IsetProps) => {
                   <Fragment>
                     <br />
                     <div className={classes.alertVersioning}>
-                      <InfoIcon /> Versioning setting cannot be changed as
-                      cluster replication is enabled for this site.
+                      <InfoIcon />
+                      {t(
+                        "Versioning setting cannot be changed as cluster replication is enabled for this site."
+                      )}
                     </div>
                     <br />
                   </Fragment>
                 )}
+
                 <TooltipWrapper
                   tooltip={
                     versioningAllowed
                       ? lockingEnabled && versioningEnabled
-                        ? "You must disable Locking before Versioning can be disabled"
+                        ? t(
+                            "You must disable Locking before Versioning can be disabled"
+                          )
                         : ""
                       : permissionTooltipHelper(
                           [IAM_SCOPES.S3_PUT_BUCKET_VERSIONING],
-                          "Versioning"
+                          t("Versioning")
                         )
                   }
                 >
@@ -343,7 +372,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       dispatch(setVersioning(event.target.checked));
                     }}
-                    label={"Versioning"}
+                    label={t("Versioning")}
                     disabled={
                       !distributedSetup ||
                       lockingEnabled ||
@@ -363,7 +392,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                             IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
                             IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
                           ],
-                          "Locking"
+                          t("Locking")
                         )
                   }
                 >
@@ -386,7 +415,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                         dispatch(setVersioning(true));
                       }
                     }}
-                    label={"Object Locking"}
+                    label={t("Object Locking")}
                   />
                 </TooltipWrapper>
               </Grid>
@@ -400,7 +429,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     dispatch(setQuota(event.target.checked));
                   }}
-                  label={"Quota"}
+                  label={t("Quota")}
                   disabled={!distributedSetup}
                 />
               </Grid>
@@ -414,7 +443,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         dispatch(setQuotaSize(e.target.value));
                       }}
-                      label="Capacity"
+                      label={t("Capacity")}
                       value={quotaSize}
                       required
                       min="1"
@@ -431,13 +460,14 @@ const AddBucket = ({ classes }: IsetProps) => {
                       }
                       error={
                         invalidFields.includes("quotaSize")
-                          ? "Please enter a valid quota"
+                          ? t("Please enter a valid quota")
                           : ""
                       }
                     />
                   </Grid>
                 </React.Fragment>
               )}
+
               {versioningEnabled && distributedSetup && lockingAllowed && (
                 <Grid item xs={12}>
                   <FormSwitchWrapper
@@ -448,10 +478,11 @@ const AddBucket = ({ classes }: IsetProps) => {
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       dispatch(setRetention(event.target.checked));
                     }}
-                    label={"Retention"}
+                    label={t("Retention")}
                   />
                 </Grid>
               )}
+
               {retentionEnabled && distributedSetup && (
                 <React.Fragment>
                   <Grid item xs={12}>
@@ -459,13 +490,13 @@ const AddBucket = ({ classes }: IsetProps) => {
                       currentSelection={retentionMode}
                       id="retention_mode"
                       name="retention_mode"
-                      label="Mode"
+                      label={t("Mode")}
                       onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
                         dispatch(setRetentionMode(e.target.value as string));
                       }}
                       selectorOptions={[
-                        { value: "compliance", label: "Compliance" },
-                        { value: "governance", label: "Governance" },
+                        { value: "compliance", label: t("Compliance") },
+                        { value: "governance", label: t("Governance") },
                       ]}
                     />
                   </Grid>
@@ -477,7 +508,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         dispatch(setRetentionValidity(e.target.valueAsNumber));
                       }}
-                      label="Validity"
+                      label={t("Validity")}
                       value={String(retentionValidity)}
                       required
                       overlayObject={
@@ -488,8 +519,8 @@ const AddBucket = ({ classes }: IsetProps) => {
                           }}
                           unitSelected={retentionUnit}
                           unitsList={[
-                            { value: "days", label: "Days" },
-                            { value: "years", label: "Years" },
+                            { value: "days", label: t("Days") },
+                            { value: "years", label: t("Years") },
                           ]}
                           disabled={false}
                         />
@@ -506,12 +537,13 @@ const AddBucket = ({ classes }: IsetProps) => {
                 variant={"regular"}
                 className={classes.clearButton}
                 onClick={resForm}
-                label={"Clear"}
+                label={t("Clear")}
               />
+
               <TooltipWrapper
                 tooltip={
                   invalidFields.length > 0 || !isDirty || hasErrors
-                    ? "You must apply a valid name to the bucket"
+                    ? t("You must apply a valid name to the bucket")
                     : ""
                 }
               >
@@ -526,7 +558,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                     !isDirty ||
                     hasErrors
                   }
-                  label={"Create Bucket"}
+                  label={t("Create Bucket")}
                 />
               </TooltipWrapper>
             </Grid>

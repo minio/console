@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -121,15 +121,19 @@ const Affinity = ({ classes }: IAffinityProps) => {
   const podAffinity = useSelector(
     (state: AppState) => state.addPool.affinity.podAffinity
   );
+
   const nodeSelectorLabels = useSelector(
     (state: AppState) => state.addPool.affinity.nodeSelectorLabels
   );
+
   const withPodAntiAffinity = useSelector(
     (state: AppState) => state.addPool.affinity.withPodAntiAffinity
   );
+
   const keyValuePairs = useSelector(
     (state: AppState) => state.addPool.nodeSelectorPairs
   );
+
   const tolerations = useSelector(
     (state: AppState) => state.addPool.tolerations
   );
@@ -139,6 +143,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
   const [keyValueMap, setKeyValueMap] = useState<{ [key: string]: string[] }>(
     {}
   );
+
   const [keyOptions, setKeyOptions] = useState<OptionPair[]>([]);
 
   // Common
@@ -256,18 +261,18 @@ const Affinity = ({ classes }: IAffinityProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Pod Placement</h3>
+        <h3 className={classes.h3Section}>{t("Pod Placement")}</h3>
         <span className={classes.descriptionText}>
-          Configure how pods will be assigned to nodes
+          {t("Configure how pods will be assigned to nodes")}
         </span>
       </div>
       <Grid item xs={12} className={classes.affinityConfigField}>
         <Grid item className={classes.affinityFieldLabel}>
-          <div className={classes.label}>Type</div>
+          <div className={classes.label}>{t("Type")}</div>
           <div
             className={`${classes.descriptionText} ${classes.affinityHelpText}`}
           >
-            MinIO supports multiple configurations for Pod Affinity
+            {t("MinIO supports multiple configurations for Pod Affinity")}
           </div>
           <Grid item className={classes.radioField}>
             <RadioGroupSelector
@@ -279,9 +284,9 @@ const Affinity = ({ classes }: IAffinityProps) => {
                 updateField("podAffinity", e.target.value);
               }}
               selectorOptions={[
-                { label: "None", value: "none" },
-                { label: "Default (Pod Anti-Affinity)", value: "default" },
-                { label: "Node Selector", value: "nodeSelector" },
+                { label: t("None"), value: "none" },
+                { label: t("Default (Pod Anti-Affinity)"), value: "default" },
+                { label: t("Node Selector"), value: "nodeSelector" },
               ]}
             />
           </Grid>
@@ -302,11 +307,11 @@ const Affinity = ({ classes }: IAffinityProps) => {
 
                 updateField("withPodAntiAffinity", checked);
               }}
-              label={"With Pod Anti-Affinity"}
+              label={t("With Pod Anti-Affinity")}
             />
           </Grid>
           <Grid item xs={12}>
-            <h3>Labels</h3>
+            <h3>{t("Labels")}</h3>
             <span className={classes.error}>{validationErrors["labels"]}</span>
             <Grid container>
               {keyValuePairs &&
@@ -338,6 +343,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
                             options={keyOptions}
                           />
                         )}
+
                         {keyOptions.length === 0 && (
                           <InputBoxWrapper
                             id={`nodeselector-key-${i.toString()}`}
@@ -353,7 +359,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
                               dispatch(setPoolKeyValuePairs(arrCp));
                             }}
                             index={i}
-                            placeholder={"Key"}
+                            placeholder={t("Key")}
                           />
                         )}
                       </Grid>
@@ -381,6 +387,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
                             }
                           />
                         )}
+
                         {keyOptions.length === 0 && (
                           <InputBoxWrapper
                             id={`nodeselector-value-${i.toString()}`}
@@ -396,7 +403,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
                               dispatch(setPoolKeyValuePairs(arrCp));
                             }}
                             index={i}
-                            placeholder={"value"}
+                            placeholder={t("value")}
                           />
                         )}
                       </Grid>
@@ -429,6 +436,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
                                 const arrCp = keyValuePairs.filter(
                                   (item, index) => index !== i
                                 );
+
                                 dispatch(setPoolKeyValuePairs(arrCp));
                               }}
                             >
@@ -444,9 +452,10 @@ const Affinity = ({ classes }: IAffinityProps) => {
           </Grid>
         </Fragment>
       )}
+
       <Grid item xs={12} className={classes.affinityConfigField}>
         <Grid item className={classes.affinityFieldLabel}>
-          <h3>Tolerations</h3>
+          <h3>{t("Tolerations")}</h3>
           <span className={classes.error}>
             {validationErrors["tolerations"]}
           </span>
@@ -485,6 +494,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
                       }}
                       index={i}
                     />
+
                     <div className={classes.overlayAction}>
                       <IconButton
                         size={"small"}

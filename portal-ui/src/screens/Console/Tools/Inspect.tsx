@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, DialogContentText } from "@mui/material";
 import { Button } from "mds";
@@ -75,7 +75,7 @@ const ExampleBlock = ({
             },
           }}
         >
-          <label>Volume/bucket Name :</label> <code>{volumeVal}</code>
+          <label>{t("Volume/bucket Name :")}</label> <code>{volumeVal}</code>
         </Box>
         <Box
           sx={{
@@ -86,7 +86,7 @@ const ExampleBlock = ({
             },
           }}
         >
-          <label>Path : </label>
+          <label>{t("Path :")}</label>
           <code>{pathVal}</code>
         </Box>
       </Box>
@@ -201,7 +201,7 @@ const Inspect = ({ classes }: { classes: any }) => {
 
   return (
     <Fragment>
-      <PageHeader label={"Inspect"} />
+      <PageHeader label={t("Inspect")} />
       <PageLayout>
         {!registeredCluster && <RegisterCluster compactMode />}
         {!distributedSetup ? (
@@ -274,11 +274,11 @@ const Inspect = ({ classes }: { classes: any }) => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setVolumeName(e.target.value);
                     }}
-                    label="Volume or Bucket Name"
+                    label={t("Volume or Bucket Name")}
                     value={volumeName}
                     error={volumeError}
                     required
-                    placeholder={"test-bucket"}
+                    placeholder={t("test-bucket")}
                   />
                 </Box>
                 <Box
@@ -296,10 +296,10 @@ const Inspect = ({ classes }: { classes: any }) => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setInspectPath(e.target.value);
                     }}
-                    label="File or Path to inspect"
+                    label={t("File or Path to inspect")}
                     value={inspectPath}
                     required
-                    placeholder={"test*/xl.meta"}
+                    placeholder={t("test*/xl.meta")}
                   />
                 </Box>
                 <Box
@@ -314,7 +314,7 @@ const Inspect = ({ classes }: { classes: any }) => {
                     extraInputProps={{
                       "data-test-id": "inspect_encrypt",
                     }}
-                    label="Encrypt"
+                    label={t("Encrypt")}
                     indicatorLabels={["True", "False"]}
                     checked={isEncrypt}
                     value={"true"}
@@ -342,15 +342,16 @@ const Inspect = ({ classes }: { classes: any }) => {
                     variant="regular"
                     data-test-id="inspect-clear-button"
                     onClick={resetForm}
-                    label={"Clear"}
+                    label={t("Clear")}
                   />
+
                   <Button
                     id={"inspect-start"}
                     type="submit"
                     variant={!registeredCluster ? "regular" : "callAction"}
                     data-test-id="inspect-submit-button"
                     disabled={!isFormValid}
-                    label={"Inspect"}
+                    label={t("Inspect")}
                   />
                 </Box>
               </form>
@@ -401,7 +402,7 @@ const Inspect = ({ classes }: { classes: any }) => {
                       >
                         <InspectMenuIcon />
                       </Box>
-                      Learn more about the Inspect feature
+                      {t("Learn more about the Inspect feature")}
                     </Box>
 
                     <Box
@@ -412,7 +413,7 @@ const Inspect = ({ classes }: { classes: any }) => {
                         fontSize: "14px",
                       }}
                     >
-                      Examples:
+                      {t("Examples:")}
                     </Box>
 
                     <Box
@@ -496,8 +497,9 @@ const Inspect = ({ classes }: { classes: any }) => {
                       <Box>
                         <Box className="step-row">
                           <div className="step-text">
-                            To Download 'xl.meta' for a specific object from all
-                            the drives in a zip file:
+                            {t(
+                              "To Download 'xl.meta' for a specific object from all the drives in a zip file:"
+                            )}
                           </div>
                         </Box>
 
@@ -510,8 +512,9 @@ const Inspect = ({ classes }: { classes: any }) => {
                       <Box>
                         <Box className="step-row">
                           <div className="step-text">
-                            To Download all constituent parts for a specific
-                            object, and optionally encrypt the downloaded zip:
+                            {t(
+                              "To Download all constituent parts for a specific object, and optionally encrypt the downloaded zip:"
+                            )}
                           </div>
                         </Box>
 
@@ -523,10 +526,14 @@ const Inspect = ({ classes }: { classes: any }) => {
                       <Box>
                         <Box className="step-row">
                           <div className="step-text">
-                            To Download recursively all objects at a prefix.
+                            {t(
+                              "To Download recursively all objects at a prefix."
+                            )}
+
                             <br />
-                            NOTE: This can be an expensive operation use it with
-                            caution.
+                            {t(
+                              "NOTE: This can be an expensive operation use it with caution."
+                            )}
                           </div>
                         </Box>
                         <ExampleBlock
@@ -543,13 +550,13 @@ const Inspect = ({ classes }: { classes: any }) => {
                         fontSize: "14px",
                       }}
                     >
-                      You can learn more at our{" "}
+                      {t("You can learn more at our")}{" "}
                       <a
                         href="https://github.com/minio/minio/tree/master/docs/debugging?ref=con"
                         target="_blank"
                         rel="noreferrer"
                       >
-                        documentation
+                        {t("documentation")}
                       </a>
                       .
                     </Box>
@@ -559,18 +566,20 @@ const Inspect = ({ classes }: { classes: any }) => {
             </Box>
           </Box>
         )}
+
         {decryptionKey ? (
           <ModalWrapper
             modalOpen={true}
-            title="Inspect Decryption Key"
+            title={t("Inspect Decryption Key")}
             onClose={onCloseDecKeyModal}
             titleIcon={<PasswordKeyIcon />}
           >
             <DialogContentText component="div">
               <Box>
-                This will be displayed only once. It cannot be recovered.
+                {t("This will be displayed only once. It cannot be recovered.")}
+
                 <br />
-                Use secure medium to share this key.
+                {t("Use secure medium to share this key.")}
               </Box>
               <form
                 noValidate

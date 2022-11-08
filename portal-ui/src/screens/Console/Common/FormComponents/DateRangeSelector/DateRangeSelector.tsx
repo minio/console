@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
@@ -272,7 +272,7 @@ const DateRangeSelector = ({
               variant="callAction"
               onClick={triggerSync}
               icon={<SyncIcon />}
-              label={"Sync"}
+              label={t("Sync")}
             />
           </Box>
         )}

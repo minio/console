@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -52,6 +52,7 @@ const TenantLicense = ({ classes }: ITenantLicense) => {
   const loadingTenant = useSelector(
     (state: AppState) => state.tenants.loadingTenant
   );
+
   const tenant = useSelector((state: AppState) => state.tenants.tenantInfo);
 
   const [licenseInfo, setLicenseInfo] = useState<SubnetInfo>();
@@ -97,7 +98,7 @@ const TenantLicense = ({ classes }: ITenantLicense) => {
 
   return (
     <Fragment>
-      <h1 className={classes.sectionTitle}>License</h1>
+      <h1 className={classes.sectionTitle}>{t("License")}</h1>
       {loadingTenant ? (
         <div className={classes.loaderAlign}>
           <Loader />

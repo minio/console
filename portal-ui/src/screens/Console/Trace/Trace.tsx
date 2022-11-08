@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
@@ -143,9 +143,9 @@ const Trace = ({ classes }: ITrace) => {
     const isDev = process.env.NODE_ENV === "development";
     const port = isDev ? "9090" : url.port;
 
-    let calls = `${s3 ? "s3," : ""}${internal ? "internal," : ""}${
-      storage ? "storage," : ""
-    }${os ? "os," : ""}`;
+    let calls = `${s3 ? "s3," : ""}${internal ? t("internal,") : ""}${
+      storage ? t("storage,") : ""
+    }${os ? t("os,") : ""}`;
 
     if (all) {
       calls = "all";
@@ -159,7 +159,7 @@ const Trace = ({ classes }: ITrace) => {
       `${wsProt}://${
         url.hostname
       }:${port}${baseUrl}ws/trace?calls=${calls}&threshold=${threshold}&onlyErrors=${
-        errors ? "yes" : "no"
+        errors ? t("yes") : t("no")
       }&statusCode=${statusCode}&method=${method}&funcname=${func}&path=${path}`
     );
 
@@ -200,7 +200,7 @@ const Trace = ({ classes }: ITrace) => {
 
   return (
     <Fragment>
-      <PageHeader label={"Trace"} />
+      <PageHeader label={t("Trace")} />
       <PageLayout>
         <Grid className={classes.formBox}>
           <Grid
@@ -223,7 +223,7 @@ const Trace = ({ classes }: ITrace) => {
                 padding: "20px 0px 20px 0",
               }}
             >
-              Calls to Trace
+              {t("Calls to Trace")}
             </Box>
             <Box
               className={`${traceStarted ? "inactive-state" : ""}`}
@@ -254,7 +254,7 @@ const Trace = ({ classes }: ITrace) => {
                   checked={all}
                   id={"all_calls"}
                   name={"all_calls"}
-                  label={"All"}
+                  label={t("All")}
                   onChange={(item) => {
                     setAll(item.target.checked);
                   }}
@@ -266,6 +266,7 @@ const Trace = ({ classes }: ITrace) => {
                     unCheckedIcon: classes.unCheckedIcon,
                   }}
                 />
+
                 <CheckboxWrapper
                   checked={s3 || all}
                   id={"s3_calls"}
@@ -282,11 +283,12 @@ const Trace = ({ classes }: ITrace) => {
                     unCheckedIcon: classes.unCheckedIcon,
                   }}
                 />
+
                 <CheckboxWrapper
                   checked={internal || all}
                   id={"internal_calls"}
                   name={"internal_calls"}
-                  label={"Internal"}
+                  label={t("Internal")}
                   onChange={(item) => {
                     setInternal(item.target.checked);
                   }}
@@ -298,11 +300,12 @@ const Trace = ({ classes }: ITrace) => {
                     unCheckedIcon: classes.unCheckedIcon,
                   }}
                 />
+
                 <CheckboxWrapper
                   checked={storage || all}
                   id={"storage_calls"}
                   name={"storage_calls"}
-                  label={"Storage"}
+                  label={t("Storage")}
                   onChange={(item) => {
                     setStorage(item.target.checked);
                   }}
@@ -314,11 +317,12 @@ const Trace = ({ classes }: ITrace) => {
                     unCheckedIcon: classes.unCheckedIcon,
                   }}
                 />
+
                 <CheckboxWrapper
                   checked={os || all}
                   id={"os_calls"}
                   name={"os_calls"}
-                  label={"OS"}
+                  label={t("OS")}
                   onChange={(item) => {
                     setOS(item.target.checked);
                   }}
@@ -339,13 +343,13 @@ const Trace = ({ classes }: ITrace) => {
                   gap: "15px",
                 }}
               >
-                <TooltipWrapper tooltip={"More filter options"}>
+                <TooltipWrapper tooltip={t("More filter options")}>
                   <Button
                     id={"filter-toggle"}
                     onClick={() => {
                       setToggleFilter(!toggleFilter);
                     }}
-                    label={"Filters"}
+                    label={t("Filters")}
                     icon={<FilterIcon />}
                     variant={"regular"}
                     className={"filters-toggle-button"}
@@ -359,7 +363,7 @@ const Trace = ({ classes }: ITrace) => {
                 {!traceStarted && (
                   <Button
                     id={"start-trace"}
-                    label={"Start"}
+                    label={t("Start")}
                     data-test-id={"trace-start-button"}
                     variant="callAction"
                     onClick={startTrace}
@@ -368,10 +372,11 @@ const Trace = ({ classes }: ITrace) => {
                     }}
                   />
                 )}
+
                 {traceStarted && (
                   <Button
                     id={"stop-trace"}
-                    label={"Stop Trace"}
+                    label={t("Stop Trace")}
                     data-test-id={"trace-stop-button"}
                     variant="callAction"
                     onClick={stopTrace}
@@ -425,7 +430,7 @@ const Trace = ({ classes }: ITrace) => {
                   className="orient-vertical"
                   id="trace-status-code"
                   name="trace-status-code"
-                  label="Status Code"
+                  label={t("Status Code")}
                   classes={{}}
                   placeholder="e.g. 503"
                   value={statusCode}
@@ -439,9 +444,9 @@ const Trace = ({ classes }: ITrace) => {
                   className="orient-vertical"
                   id="trace-function-name"
                   name="trace-function-name"
-                  label="Function Name"
+                  label={t("Function Name")}
                   classes={{}}
-                  placeholder="e.g. FunctionName2055"
+                  placeholder={t("e.g. FunctionName2055")}
                   value={func}
                   onChange={(e) => {
                     setFunc(e.target.value);
@@ -453,9 +458,9 @@ const Trace = ({ classes }: ITrace) => {
                   className="orient-vertical"
                   id="trace-method"
                   name="trace-method"
-                  label="Method"
+                  label={t("Method")}
                   classes={{}}
-                  placeholder="e.g. Method 2056"
+                  placeholder={t("e.g. Method 2056")}
                   value={method}
                   onChange={(e) => {
                     setMethod(e.target.value);
@@ -482,9 +487,9 @@ const Trace = ({ classes }: ITrace) => {
                     className="orient-vertical"
                     id="trace-path"
                     name="trace-path"
-                    label="Path"
+                    label={t("Path")}
                     classes={{}}
-                    placeholder="e.g. my-bucket/my-prefix/*"
+                    placeholder={t("e.g. my-bucket/my-prefix/*")}
                     value={path}
                     onChange={(e) => {
                       setPath(e.target.value);
@@ -501,10 +506,10 @@ const Trace = ({ classes }: ITrace) => {
                     className="orient-vertical"
                     id="trace-fthreshold"
                     name="trace-fthreshold"
-                    label="Response Threshold"
+                    label={t("Response Threshold")}
                     type="number"
                     classes={{}}
-                    placeholder="e.g. website.io.3249.114.12"
+                    placeholder={t("e.g. website.io.3249.114.12")}
                     value={`${threshold}`}
                     onChange={(e) => {
                       setThreshold(parseInt(e.target.value));
@@ -525,7 +530,7 @@ const Trace = ({ classes }: ITrace) => {
                   checked={errors}
                   id={"only_errors"}
                   name={"only_errors"}
-                  label={"Display only Errors"}
+                  label={t("Display only Errors")}
                   onChange={(item) => {
                     setErrors(item.target.checked);
                   }}
@@ -550,7 +555,7 @@ const Trace = ({ classes }: ITrace) => {
                 marginTop: "30px",
               }}
             >
-              Trace Results
+              {t("Trace Results")}
             </Box>
           </Grid>
           <Grid item xs={12} className={classes.tableBlock}>
@@ -558,7 +563,7 @@ const Trace = ({ classes }: ITrace) => {
               itemActions={[]}
               columns={[
                 {
-                  label: "Time",
+                  label: t("Time"),
                   elementKey: "ptime",
                   renderFunction: (time: Date) => {
                     const timeParse = new Date(time);
@@ -566,34 +571,34 @@ const Trace = ({ classes }: ITrace) => {
                   },
                   globalClass: classes.timeItem,
                 },
-                { label: "Name", elementKey: "api" },
+                { label: t("Name"), elementKey: "api" },
                 {
-                  label: "Status",
+                  label: t("Status"),
                   elementKey: "",
                   renderFunction: (fullElement: TraceMessage) =>
                     `${fullElement.statusCode} ${fullElement.statusMsg}`,
                   renderFullObject: true,
                 },
                 {
-                  label: "Location",
+                  label: t("Location"),
                   elementKey: "configuration_id",
                   renderFunction: (fullElement: TraceMessage) =>
                     `${fullElement.host} ${fullElement.client}`,
                   renderFullObject: true,
                 },
                 {
-                  label: "Load Time",
+                  label: t("Load Time"),
                   elementKey: "callStats.duration",
                   globalClass: classes.timeItem,
                 },
                 {
-                  label: "Upload",
+                  label: t("Upload"),
                   elementKey: "callStats.rx",
                   renderFunction: niceBytes,
                   globalClass: classes.sizeItem,
                 },
                 {
-                  label: "Download",
+                  label: t("Download"),
                   elementKey: "callStats.tx",
                   renderFunction: niceBytes,
                   globalClass: classes.sizeItem,
@@ -605,8 +610,8 @@ const Trace = ({ classes }: ITrace) => {
               idField="api"
               customEmptyMessage={
                 traceStarted
-                  ? "No Traced elements received yet"
-                  : "Trace is not started yet"
+                  ? t("No Traced elements received yet")
+                  : t("Trace is not started yet")
               }
               customPaperHeight={classes.tableWrapper}
               autoScrollToBottom

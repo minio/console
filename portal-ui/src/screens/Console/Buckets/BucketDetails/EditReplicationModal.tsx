@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
@@ -171,7 +171,7 @@ const EditReplicationModal = ({
       onClose={() => {
         closeModalAndRefresh(false);
       }}
-      title="Edit Bucket Replication"
+      title={t("Edit Bucket Replication")}
       titleIcon={<BucketReplicationIcon />}
     >
       <form
@@ -189,7 +189,7 @@ const EditReplicationModal = ({
                 checked={ruleState}
                 id="ruleState"
                 name="ruleState"
-                label="Rule State"
+                label={t("Rule State")}
                 onChange={(e) => {
                   setRuleState(e.target.checked);
                 }}
@@ -197,7 +197,7 @@ const EditReplicationModal = ({
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
-              <PredefinedList label={"Destination"} content={destination} />
+              <PredefinedList label={t("Destination")} content={destination} />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
@@ -208,7 +208,7 @@ const EditReplicationModal = ({
                     setPriority(e.target.value);
                   }
                 }}
-                label="Priority"
+                label={t("Priority")}
                 value={priority}
                 pattern={"[0-9]*"}
               />
@@ -224,15 +224,15 @@ const EditReplicationModal = ({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setTargetStorageClass(e.target.value);
                 }}
-                placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
-                label="Storage Class"
+                placeholder={t("STANDARD_IA,REDUCED_REDUNDANCY etc")}
+                label={t("Storage Class")}
                 value={targetStorageClass}
               />
             </Grid>
             <Grid item xs={12}>
               <fieldset className={classes.fieldGroup}>
                 <legend className={classes.descriptionText}>
-                  Object Filters
+                  {t("Object Filters")}
                 </legend>
                 <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBoxWrapper
@@ -241,15 +241,15 @@ const EditReplicationModal = ({
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPrefix(e.target.value);
                     }}
-                    placeholder="prefix"
-                    label="Prefix"
+                    placeholder={t("prefix")}
+                    label={t("Prefix")}
                     value={prefix}
                   />
                 </Grid>
                 <Grid item xs={12} className={classes.formFieldRow}>
                   <QueryMultiSelector
                     name="tags"
-                    label="Tags"
+                    label={t("Tags")}
                     elements={initialTags}
                     onChange={(vl: string) => {
                       setTags(vl);
@@ -264,43 +264,44 @@ const EditReplicationModal = ({
             <Grid item xs={12}>
               <fieldset className={classes.fieldGroup}>
                 <legend className={classes.descriptionText}>
-                  Replication Options
+                  {t("Replication Options")}
                 </legend>
                 <Grid item xs={12} className={classes.formFieldRow}>
                   <FormSwitchWrapper
                     checked={repExisting}
                     id="repExisting"
                     name="repExisting"
-                    label="Existing Objects"
+                    label={t("Existing Objects")}
                     onChange={(e) => {
                       setRepExisting(e.target.checked);
                     }}
                     value={repExisting}
-                    description={"Replicate existing objects"}
+                    description={t("Replicate existing objects")}
                   />
                 </Grid>
                 <FormSwitchWrapper
                   checked={metadataSync}
                   id="metadatataSync"
                   name="metadatataSync"
-                  label="Metadata Sync"
+                  label={t("Metadata Sync")}
                   onChange={(e) => {
                     setMetadataSync(e.target.checked);
                   }}
                   value={metadataSync}
-                  description={"Metadata Sync"}
+                  description={t("Metadata Sync")}
                 />
+
                 <Grid item xs={12} className={classes.formFieldRow}>
                   <FormSwitchWrapper
                     checked={repDeleteMarker}
                     id="deleteMarker"
                     name="deleteMarker"
-                    label="Delete Marker"
+                    label={t("Delete Marker")}
                     onChange={(e) => {
                       setRepDeleteMarker(e.target.checked);
                     }}
                     value={repDeleteMarker}
-                    description={"Replicate soft deletes"}
+                    description={t("Replicate soft deletes")}
                   />
                 </Grid>
                 <Grid item xs={12} className={classes.formFieldRow}>
@@ -308,12 +309,12 @@ const EditReplicationModal = ({
                     checked={repDelete}
                     id="repDelete"
                     name="repDelete"
-                    label="Deletes"
+                    label={t("Deletes")}
                     onChange={(e) => {
                       setRepDelete(e.target.checked);
                     }}
                     value={repDelete}
-                    description={"Replicate versioned deletes"}
+                    description={t("Replicate versioned deletes")}
                   />
                 </Grid>
               </fieldset>
@@ -328,14 +329,15 @@ const EditReplicationModal = ({
               onClick={() => {
                 closeModalAndRefresh(false);
               }}
-              label={"Cancel"}
+              label={t("Cancel")}
             />
+
             <Button
               id={"save-replication"}
               type="submit"
               variant="callAction"
               disabled={editLoading || saveEdit}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
         </Grid>

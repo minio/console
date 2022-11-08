@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useApi from "../../../../Common/Hooks/useApi";
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -68,6 +69,7 @@ const ObjectMetaData = ({
       "GET",
       `/api/v1/buckets/${bucketName}/objects/metadata?prefix=${internalPaths}`
     );
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucketName, internalPaths, actualInfo]);
 
@@ -117,7 +119,7 @@ const ObjectMetaData = ({
             marginBottom: "0",
           }}
         >
-          Object Metadata
+          {t("Object Metadata")}
         </h3>
       </Grid>
 

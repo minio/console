@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
@@ -232,6 +232,7 @@ const AddBulkReplicationModal = ({
             <CheckCircleOutlineIcon />
           </div>
         );
+
       case "n/a":
         return null;
       default:
@@ -245,6 +246,7 @@ const AddBulkReplicationModal = ({
           );
         }
     }
+
     return null;
   };
 
@@ -315,7 +317,7 @@ const AddBulkReplicationModal = ({
       onClose={() => {
         closeModalAndRefresh(false);
       }}
-      title="Set Multiple Bucket Replication"
+      title={t("Set Multiple Bucket Replication")}
     >
       <GenericWizard
         loadingStep={addLoading || externalLoading}
@@ -437,6 +439,7 @@ const AddBulkReplicationModal = ({
                     />
                   </Grid>
                 )}
+
                 <Grid item xs={12}>
                   <InputBoxWrapper
                     id="healthCheck"
@@ -450,6 +453,7 @@ const AddBulkReplicationModal = ({
                 </Grid>
               </Fragment>
             ),
+
             buttons: [
               {
                 type: "custom",
@@ -492,6 +496,7 @@ const AddBulkReplicationModal = ({
                 </div>
               </Fragment>
             ),
+
             buttons: [
               {
                 type: "back",

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -51,24 +51,31 @@ const AWSKMSAdd = () => {
   const encryptionTab = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.encryptionTab
   );
+
   const awsEndpoint = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.awsEndpoint
   );
+
   const awsRegion = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.awsRegion
   );
+
   const awsKMSKey = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.awsKMSKey
   );
+
   const awsAccessKey = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.awsAccessKey
   );
+
   const awsSecretKey = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.awsSecretKey
   );
+
   const awsToken = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.awsToken
   );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   // Validation
@@ -144,7 +151,7 @@ const AWSKMSAdd = () => {
             updateField("awsEndpoint", e.target.value);
             cleanValidation("aws_endpoint");
           }}
-          label="Endpoint"
+          label={t("Endpoint")}
           value={awsEndpoint}
           error={validationErrors["aws_endpoint"] || ""}
           required
@@ -158,7 +165,7 @@ const AWSKMSAdd = () => {
             updateField("awsRegion", e.target.value);
             cleanValidation("aws_region");
           }}
-          label="Region"
+          label={t("Region")}
           value={awsRegion}
           error={validationErrors["aws_region"] || ""}
           required
@@ -171,13 +178,15 @@ const AWSKMSAdd = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             updateField("awsKMSKey", e.target.value);
           }}
-          label="KMS Key"
+          label={t("KMS Key")}
           value={awsKMSKey}
         />
       </Grid>
       <Grid item xs={12}>
         <fieldset className={classes.fieldGroup}>
-          <legend className={classes.descriptionText}>Credentials</legend>
+          <legend className={classes.descriptionText}>
+            {t("Credentials")}
+          </legend>
           <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="aws_accessKey"
@@ -186,7 +195,7 @@ const AWSKMSAdd = () => {
                 updateField("awsAccessKey", e.target.value);
                 cleanValidation("aws_accessKey");
               }}
-              label="Access Key"
+              label={t("Access Key")}
               value={awsAccessKey}
               error={validationErrors["aws_accessKey"] || ""}
               required
@@ -200,7 +209,7 @@ const AWSKMSAdd = () => {
                 updateField("awsSecretKey", e.target.value);
                 cleanValidation("aws_secretKey");
               }}
-              label="Secret Key"
+              label={t("Secret Key")}
               value={awsSecretKey}
               error={validationErrors["aws_secretKey"] || ""}
               required
@@ -213,7 +222,7 @@ const AWSKMSAdd = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("awsToken", e.target.value);
               }}
-              label="Token"
+              label={t("Token")}
               value={awsToken}
             />
           </Grid>

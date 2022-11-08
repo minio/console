@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Button } from "mds";
 import Grid from "@mui/material/Grid";
@@ -257,11 +257,12 @@ const ListTenants = ({ classes }: ITenantsList) => {
           entity="Tenant"
         />
       )}
+
       <PageHeader
-        label="Tenants"
+        label={t("Tenants")}
         middleComponent={
           <SearchBox
-            placeholder={"Filter Tenants"}
+            placeholder={t("Filter Tenants")}
             onChange={(val) => {
               setFilterTenants(val);
             }}
@@ -275,7 +276,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
             marginRight={"30px"}
             sx={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <TooltipWrapper tooltip={"Refresh Tenant List"}>
+            <TooltipWrapper tooltip={t("Refresh Tenant List")}>
               <Button
                 id={"refresh-tenant-list"}
                 onClick={() => {
@@ -285,10 +286,10 @@ const ListTenants = ({ classes }: ITenantsList) => {
                 variant={"regular"}
               />
             </TooltipWrapper>
-            <TooltipWrapper tooltip={"Create Tenant"}>
+            <TooltipWrapper tooltip={t("Create Tenant")}>
               <Button
                 id={"create-tenant"}
-                label={"Create Tenant"}
+                label={t("Create Tenant")}
                 onClick={() => {
                   navigate("/tenants/add");
                 }}
@@ -299,6 +300,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
           </Grid>
         }
       />
+
       <PageLayout>
         <Grid item xs={12} className={classes.tenantsList}>
           {isLoading && <LinearProgress />}
@@ -308,7 +310,9 @@ const ListTenants = ({ classes }: ITenantsList) => {
                 <Fragment>
                   <Grid item xs={12} className={classes.sortByContainer}>
                     <div className={classes.innerSort}>
-                      <span className={classes.sortByLabel}>Sort by</span>
+                      <span className={classes.sortByLabel}>
+                        {t("Sort by")}
+                      </span>
                       <SelectWrapper
                         id={"sort-by"}
                         label={""}
@@ -318,21 +322,21 @@ const ListTenants = ({ classes }: ITenantsList) => {
                         }}
                         name={"sort-by"}
                         options={[
-                          { label: "Name", value: "name" },
+                          { label: t("Name"), value: "name" },
                           {
-                            label: "Capacity",
+                            label: t("Capacity"),
                             value: "capacity",
                           },
                           {
-                            label: "Usage",
+                            label: t("Usage"),
                             value: "usage",
                           },
                           {
-                            label: "Active Status",
+                            label: t("Active Status"),
                             value: "active_status",
                           },
                           {
-                            label: "Failing Status",
+                            label: t("Failing Status"),
                             value: "failing_status",
                           },
                         ]}
@@ -345,6 +349,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
                   />
                 </Fragment>
               )}
+
               {filteredRecords.length === 0 && (
                 <Grid
                   container
@@ -355,22 +360,23 @@ const ListTenants = ({ classes }: ITenantsList) => {
                   <Grid item xs={8}>
                     <HelpBox
                       iconComponent={<TenantsIcon />}
-                      title={"Tenants"}
+                      title={t("Tenants")}
                       help={
                         <Fragment>
-                          Tenant is the logical structure to represent a MinIO
-                          deployment. A tenant can have different size and
-                          configurations from other tenants, even a different
-                          storage class.
+                          {t(
+                            "Tenant is the logical structure to represent a MinIO deployment. A tenant can have different size and configurations from other tenants, even a different storage class."
+                          )}
+
                           <br />
                           <br />
-                          To get started,&nbsp;
+                          {t("To get started,")}
+
                           <AButton
                             onClick={() => {
                               navigate("/tenants/add");
                             }}
                           >
-                            Create a Tenant.
+                            {t("Create a Tenant.")}
                           </AButton>
                         </Fragment>
                       }

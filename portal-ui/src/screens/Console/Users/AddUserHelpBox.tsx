@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React from "react";
 import { Box } from "@mui/material";
 import {
@@ -79,18 +80,19 @@ const AddUserHelpBox = () => {
         }}
       >
         <HelpIconFilled />
-        <div>Learn more about the Users feature</div>
+        <div>{t("Learn more about the Users feature")}</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-        A MinIO user consists of a unique access key (username) and
-        corresponding secret key (password). Clients must authenticate their
-        identity by specifying both a valid access key (username) and the
-        corresponding secret key (password) of an existing MinIO user.
+        {t(
+          "A MinIO user consists of a unique access key (username) and corresponding secret key (password). Clients must authenticate their identity by specifying both a valid access key (username) and the corresponding secret key (password) of an existing MinIO user."
+        )}
+
         <br />
         <br />
-        Each user can have one or more assigned policies that explicitly list
-        the actions and resources to which that user has access. Users can also
-        inherit policies from the groups in which they have membership.
+        {t(
+          "Each user can have one or more assigned policies that explicitly list the actions and resources to which that user has access. Users can also inherit policies from the groups in which they have membership."
+        )}
+
         <br />
       </Box>
 
@@ -100,11 +102,17 @@ const AddUserHelpBox = () => {
           flexFlow: "column",
         }}
       >
-        <FeatureItem icon={<UsersIcon />} description={`Create Users`} />
-        <FeatureItem icon={<GroupsIcon />} description={`Manage Groups`} />
+        <FeatureItem
+          icon={<UsersIcon />}
+          description={`${t("Create Users")}`}
+        />
+        <FeatureItem
+          icon={<GroupsIcon />}
+          description={`${t("Manage Groups")}`}
+        />
         <FeatureItem
           icon={<ChangeAccessPolicyIcon />}
-          description={`Assign Policies`}
+          description={`${t("Assign Policies")}`}
         />
       </Box>
     </Box>

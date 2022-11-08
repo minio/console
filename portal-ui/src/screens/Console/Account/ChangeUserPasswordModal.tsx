@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useState } from "react";
 import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
@@ -81,6 +81,7 @@ const ChangeUserPassword = ({
           detailedError: "",
         })
       );
+
       setLoading(false);
       return;
     }
@@ -108,7 +109,7 @@ const ChangeUserPassword = ({
 
   return open ? (
     <ModalWrapper
-      title="Change User Password"
+      title={t("Change User Password")}
       modalOpen={open}
       onClose={() => {
         setNewPassword("");
@@ -127,7 +128,8 @@ const ChangeUserPassword = ({
         <Grid container>
           <Grid item xs={12} className={classes.modalFormScrollable}>
             <div className={classes.spacerBottom}>
-              Change password for: {userName}
+              {t("Change password for:")}
+              {userName}
             </div>
             <Grid item xs={12} className={classes.formFieldRow}>
               <InputBoxWrapper
@@ -136,7 +138,7 @@ const ChangeUserPassword = ({
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setNewPassword(event.target.value);
                 }}
-                label="New Password"
+                label={t("New Password")}
                 type="password"
                 value={newPassword}
               />
@@ -148,7 +150,7 @@ const ChangeUserPassword = ({
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setReNewPassword(event.target.value);
                 }}
-                label="Type New Password Again"
+                label={t("Type New Password Again")}
                 type="password"
                 value={reNewPassword}
               />
@@ -164,7 +166,7 @@ const ChangeUserPassword = ({
                 loading ||
                 !(reNewPassword.length > 0 && newPassword === reNewPassword)
               }
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
           {loading && (

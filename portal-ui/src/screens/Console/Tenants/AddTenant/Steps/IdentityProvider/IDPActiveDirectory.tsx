@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
@@ -85,46 +85,58 @@ const IDPActiveDirectory = () => {
   const idpSelection = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.idpSelection
   );
+
   const ADURL = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.ADURL
   );
+
   const ADSkipTLS = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.ADSkipTLS
   );
+
   const ADServerInsecure = useSelector(
     (state: AppState) =>
       state.createTenant.fields.identityProvider.ADServerInsecure
   );
+
   const ADGroupSearchBaseDN = useSelector(
     (state: AppState) =>
       state.createTenant.fields.identityProvider.ADGroupSearchBaseDN
   );
+
   const ADGroupSearchFilter = useSelector(
     (state: AppState) =>
       state.createTenant.fields.identityProvider.ADGroupSearchFilter
   );
+
   const ADUserDNs = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.ADUserDNs
   );
+
   const ADGroupDNs = useSelector(
     (state: AppState) => state.createTenant.fields.identityProvider.ADGroupDNs
   );
+
   const ADLookupBindDN = useSelector(
     (state: AppState) =>
       state.createTenant.fields.identityProvider.ADLookupBindDN
   );
+
   const ADLookupBindPassword = useSelector(
     (state: AppState) =>
       state.createTenant.fields.identityProvider.ADLookupBindPassword
   );
+
   const ADUserDNSearchBaseDN = useSelector(
     (state: AppState) =>
       state.createTenant.fields.identityProvider.ADUserDNSearchBaseDN
   );
+
   const ADUserDNSearchFilter = useSelector(
     (state: AppState) =>
       state.createTenant.fields.identityProvider.ADUserDNSearchFilter
   );
+
   const ADServerStartTLS = useSelector(
     (state: AppState) =>
       state.createTenant.fields.identityProvider.ADServerStartTLS
@@ -200,9 +212,9 @@ const IDPActiveDirectory = () => {
             updateField("ADURL", e.target.value);
             cleanValidation("AD_URL");
           }}
-          label="LDAP Server Address"
+          label={t("LDAP Server Address")}
           value={ADURL}
-          placeholder="ldap-server:636"
+          placeholder={t("ldap-server:636")}
           error={validationErrors["AD_URL"] || ""}
           required
         />
@@ -218,7 +230,7 @@ const IDPActiveDirectory = () => {
             const checked = targetD.checked;
             updateField("ADSkipTLS", checked);
           }}
-          label={"Skip TLS Verification"}
+          label={t("Skip TLS Verification")}
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
@@ -232,7 +244,7 @@ const IDPActiveDirectory = () => {
             const checked = targetD.checked;
             updateField("ADServerInsecure", checked);
           }}
-          label={"Server Insecure"}
+          label={t("Server Insecure")}
         />
       </Grid>
       {ADServerInsecure ? (
@@ -243,7 +255,9 @@ const IDPActiveDirectory = () => {
             display="block"
             gutterBottom
           >
-            Warning: All traffic with Active Directory will be unencrypted
+            {t(
+              "Warning: All traffic with Active Directory will be unencrypted"
+            )}
           </Typography>
           <br />
         </Grid>
@@ -259,7 +273,7 @@ const IDPActiveDirectory = () => {
             const checked = targetD.checked;
             updateField("ADServerStartTLS", checked);
           }}
-          label={"Start TLS connection to AD/LDAP server"}
+          label={t("Start TLS connection to AD/LDAP server")}
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
@@ -270,9 +284,9 @@ const IDPActiveDirectory = () => {
             updateField("ADLookupBindDN", e.target.value);
             cleanValidation("ad_lookupBindDN");
           }}
-          label="Lookup Bind DN"
+          label={t("Lookup Bind DN")}
           value={ADLookupBindDN}
-          placeholder="cn=admin,dc=min,dc=io"
+          placeholder={t("cn=admin,dc=min,dc=io")}
           error={validationErrors["ad_lookupBindDN"] || ""}
           required
         />
@@ -284,9 +298,9 @@ const IDPActiveDirectory = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             updateField("ADLookupBindPassword", e.target.value);
           }}
-          label="Lookup Bind Password"
+          label={t("Lookup Bind Password")}
           value={ADLookupBindPassword}
-          placeholder="admin"
+          placeholder={t("admin")}
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
@@ -296,9 +310,9 @@ const IDPActiveDirectory = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             updateField("ADUserDNSearchBaseDN", e.target.value);
           }}
-          label="User DN Search Base DN"
+          label={t("User DN Search Base DN")}
           value={ADUserDNSearchBaseDN}
-          placeholder="dc=min,dc=io"
+          placeholder={t("dc=min,dc=io")}
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
@@ -308,9 +322,9 @@ const IDPActiveDirectory = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             updateField("ADUserDNSearchFilter", e.target.value);
           }}
-          label="User DN Search Filter"
+          label={t("User DN Search Filter")}
           value={ADUserDNSearchFilter}
-          placeholder="(sAMAcountName=%s)"
+          placeholder={t("(sAMAcountName=%s)")}
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
@@ -320,9 +334,9 @@ const IDPActiveDirectory = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             updateField("ADGroupSearchBaseDN", e.target.value);
           }}
-          label="Group Search Base DN"
+          label={t("Group Search Base DN")}
           value={ADGroupSearchBaseDN}
-          placeholder="ou=hwengg,dc=min,dc=io;ou=swengg,dc=min,dc=io"
+          placeholder={t("ou=hwengg,dc=min,dc=io;ou=swengg,dc=min,dc=io")}
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
@@ -332,14 +346,16 @@ const IDPActiveDirectory = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             updateField("ADGroupSearchFilter", e.target.value);
           }}
-          label="Group Search Filter"
+          label={t("Group Search Filter")}
           value={ADGroupSearchFilter}
-          placeholder="(&(objectclass=groupOfNames)(member=%s))"
+          placeholder={t("(&(objectclass=groupOfNames)(member=%s))")}
         />
       </Grid>
       <fieldset className={classes.fieldGroup}>
         <legend className={classes.descriptionText}>
-          List of user DNs (Distinguished Names) to be Tenant Administrators
+          {t(
+            "List of user DNs (Distinguished Names) to be Tenant Administrators"
+          )}
         </legend>
         <Grid item xs={12}>
           {ADUserDNs.map((_, index) => {
@@ -359,6 +375,7 @@ const IDPActiveDirectory = () => {
                           userDN: e.target.value,
                         })
                       );
+
                       cleanValidation(`ad-userdn-${index.toString()}`);
                     }}
                     index={index}
@@ -367,6 +384,7 @@ const IDPActiveDirectory = () => {
                       validationErrors[`ad-userdn-${index.toString()}`] || ""
                     }
                   />
+
                   <div className={classes.buttonTray}>
                     <Tooltip title="Add User" aria-label="add">
                       <IconButton
@@ -400,7 +418,9 @@ const IDPActiveDirectory = () => {
       </fieldset>
       <fieldset className={classes.fieldGroup}>
         <legend className={classes.descriptionText}>
-          List of group DNs (Distinguished Names) to be Tenant Administrators
+          {t(
+            "List of group DNs (Distinguished Names) to be Tenant Administrators"
+          )}
         </legend>
         <Grid item xs={12}>
           {ADGroupDNs.map((_, index) => {
@@ -420,6 +440,7 @@ const IDPActiveDirectory = () => {
                           userDN: e.target.value,
                         })
                       );
+
                       cleanValidation(`ad-groupdn-${index.toString()}`);
                     }}
                     index={index}
@@ -428,6 +449,7 @@ const IDPActiveDirectory = () => {
                       validationErrors[`ad-groupdn-${index.toString()}`] || ""
                     }
                   />
+
                   <div className={classes.buttonTray}>
                     <Tooltip title="Add Group" aria-label="add">
                       <IconButton

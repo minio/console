@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import {
   Area,
@@ -243,6 +243,7 @@ const LinearGraphWidget = ({
           </Grid>
         </Grid>
       )}
+
       <Box
         sx={
           zoomActivated
@@ -295,6 +296,7 @@ const LinearGraphWidget = ({
                       </linearGradient>
                     </defs>
                   )}
+
                   <CartesianGrid
                     strokeDasharray={areaWidget ? "2 2" : "5 5"}
                     strokeWidth={1}
@@ -302,6 +304,7 @@ const LinearGraphWidget = ({
                     stroke={"#eee0e0"}
                     vertical={!areaWidget}
                   />
+
                   <XAxis
                     dataKey="name"
                     tickFormatter={(value: any) =>
@@ -316,6 +319,7 @@ const LinearGraphWidget = ({
                     tickCount={10}
                     stroke={"#082045"}
                   />
+
                   <YAxis
                     type={"number"}
                     domain={[0, dataMax * 1.1]}
@@ -328,6 +332,7 @@ const LinearGraphWidget = ({
                     }}
                     stroke={"#082045"}
                   />
+
                   {linearConfiguration.map((section, index) => {
                     return (
                       <Area
@@ -362,11 +367,12 @@ const LinearGraphWidget = ({
               <Fragment>
                 {zoomActivated && (
                   <Fragment>
-                    <strong>Series</strong>
+                    <strong>{t("Series")}</strong>
                     <br />
                     <br />
                   </Fragment>
                 )}
+
                 {biggerThanMd && (
                   <div className={classes.legendChart}>
                     {linearConfiguration.map((section, index) => {
@@ -379,6 +385,7 @@ const LinearGraphWidget = ({
                             className={classes.colorContainer}
                             style={{ backgroundColor: section.lineColor }}
                           />
+
                           <div className={classes.legendLabel}>
                             {section.keyLabel}
                           </div>

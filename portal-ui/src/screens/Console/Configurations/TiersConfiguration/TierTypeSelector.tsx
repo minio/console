@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
@@ -37,7 +37,7 @@ const TierTypeSelector = () => {
       <PageHeader
         label={
           <Fragment>
-            <BackLink to={IAM_PAGES.TIERS} label="Tier Types" />
+            <BackLink to={IAM_PAGES.TIERS} label={t("Tier Types")} />
           </Fragment>
         }
         actions={<React.Fragment />}
@@ -46,7 +46,7 @@ const TierTypeSelector = () => {
       <PageLayout>
         <ContentBox>
           <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
-            Select Tier Type
+            {t("Select Tier Type")}
           </div>
           <Box
             sx={{

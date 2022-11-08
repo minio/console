@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -51,15 +51,19 @@ const AzureKMSAdd = () => {
   const encryptionTab = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.encryptionTab
   );
+
   const azureEndpoint = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.azureEndpoint
   );
+
   const azureTenantID = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.azureTenantID
   );
+
   const azureClientID = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.azureClientID
   );
+
   const azureClientSecret = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.azureClientSecret
   );
@@ -139,14 +143,16 @@ const AzureKMSAdd = () => {
             updateField("azureEndpoint", e.target.value);
             cleanValidation("azure_endpoint");
           }}
-          label="Endpoint"
+          label={t("Endpoint")}
           value={azureEndpoint}
           error={validationErrors["azure_endpoint"] || ""}
         />
       </Grid>
       <Grid item xs={12}>
         <fieldset className={classes.fieldGroup}>
-          <legend className={classes.descriptionText}>Credentials</legend>
+          <legend className={classes.descriptionText}>
+            {t("Credentials")}
+          </legend>
           <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="azure_tenant_id"
@@ -155,7 +161,7 @@ const AzureKMSAdd = () => {
                 updateField("azureTenantID", e.target.value);
                 cleanValidation("azure_tenant_id");
               }}
-              label="Tenant ID"
+              label={t("Tenant ID")}
               value={azureTenantID}
               error={validationErrors["azure_tenant_id"] || ""}
             />
@@ -168,7 +174,7 @@ const AzureKMSAdd = () => {
                 updateField("azureClientID", e.target.value);
                 cleanValidation("azure_client_id");
               }}
-              label="Client ID"
+              label={t("Client ID")}
               value={azureClientID}
               error={validationErrors["azure_client_id"] || ""}
             />
@@ -181,7 +187,7 @@ const AzureKMSAdd = () => {
                 updateField("azureClientSecret", e.target.value);
                 cleanValidation("azure_client_secret");
               }}
-              label="Client Secret"
+              label={t("Client Secret")}
               value={azureClientSecret}
               error={validationErrors["azure_client_secret"] || ""}
             />

@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React from "react";
 import { Box } from "@mui/material";
 
@@ -21,7 +22,7 @@ const EntityNotFound = ({
       <Box sx={{ marginLeft: "5px", marginRight: "5px", fontWeight: 600 }}>
         {entityValue}
       </Box>{" "}
-      not found.
+      {t("not found.")}
     </Box>
   );
 };

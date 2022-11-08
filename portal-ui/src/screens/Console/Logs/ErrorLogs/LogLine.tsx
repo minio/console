@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { LogMessage } from "../types";
 import TableRow from "@mui/material/TableRow";
@@ -75,36 +76,36 @@ const messageForError = (log: LogMessage) => {
   return (
     <Fragment>
       <div>
-        <b style={labelStyle}>API:&nbsp;</b>
+        <b style={labelStyle}>{t("API:")}</b>
         <span style={dataStyle}>{log.api.name}</span>
       </div>
       <div>
-        <b style={labelStyle}>Time:&nbsp;</b>
+        <b style={labelStyle}>{t("Time:")}</b>
         <span style={dataStyle}>{log.time.toString()}</span>
       </div>
       <div>
-        <b style={labelStyle}>DeploymentID:&nbsp;</b>
+        <b style={labelStyle}>{t("DeploymentID:")}</b>
         <span style={dataStyle}>{log.deploymentid}</span>
       </div>
       <div>
-        <b style={labelStyle}>RequestID:&nbsp;</b>
+        <b style={labelStyle}>{t("RequestID:")}</b>
         <span style={dataStyle}>{log.requestID}</span>
       </div>
       <div>
-        <b style={labelStyle}>RemoteHost:&nbsp;</b>
+        <b style={labelStyle}>{t("RemoteHost:")}</b>
         <span style={dataStyle}>{log.remotehost}</span>
       </div>
       <div>
-        <b style={labelStyle}>UserAgent:&nbsp;</b>
+        <b style={labelStyle}>{t("UserAgent:")}</b>
         <span style={dataStyle}>{log.userAgent}</span>
       </div>
       <div>
-        <b style={labelStyle}>Error:&nbsp;</b>
+        <b style={labelStyle}>{t("Error:")}</b>
         <span style={dataStyle}>{log.error && log.error.message}</span>
       </div>
       <br />
       <div>
-        <b style={labelStyle}>Backtrace:&nbsp;</b>
+        <b style={labelStyle}>{t("Backtrace:")}</b>
       </div>
       {log.error &&
         log.error.source.map((e, i) => {
@@ -246,7 +247,7 @@ const LogLine = (props: { log: LogMessage }) => {
             }}
           >
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <div style={{ marginTop: 10 }}>Log Details</div>
+              <div style={{ marginTop: 10 }}>{t("Log Details")}</div>
             </Collapse>
           </TableCell>
           <TableCell colSpan={2} style={{ paddingBottom: 0, paddingTop: 0 }}>

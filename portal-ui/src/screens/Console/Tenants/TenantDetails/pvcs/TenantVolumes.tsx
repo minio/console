@@ -13,7 +13,7 @@
 //
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -86,7 +86,7 @@ const TenantVolumes = ({ classes }: IPVCDetailsProps) => {
             to={`/namespaces/${tenantNamespace}/tenants/${tenantName}/volumes`}
             className={classes.breadcrumLink}
           >
-            PVCs
+            {t("PVCs")}
           </Link>{" "}
           &gt; {PVCName}
         </h1>
@@ -104,16 +104,17 @@ const TenantVolumes = ({ classes }: IPVCDetailsProps) => {
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab label="Events" id="simple-tab-0" />
-            <Tab label="Describe" id="simple-tab-1" />
+            <Tab label={t("Events")} id="simple-tab-0" />
+            <Tab label={t("Describe")} id="simple-tab-1" />
           </Tabs>
         </Grid>
         {curTab === 0 && (
           <React.Fragment>
-            <h1 className={classes.sectionTitle}>Events</h1>
+            <h1 className={classes.sectionTitle}>{t("Events")}</h1>
             <EventsList events={events} loading={loading} />
           </React.Fragment>
         )}
+
         {curTab === 1 && (
           <PVCDescribe
             tenant={tenantName || ""}

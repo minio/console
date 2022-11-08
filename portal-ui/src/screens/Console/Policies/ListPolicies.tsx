@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Button } from "mds";
 import { useNavigate } from "react-router-dom";
@@ -195,13 +195,14 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <PageHeader label="IAM Policies" />
+
+      <PageHeader label={t("IAM Policies")} />
       <PageLayout className={classes.pageContainer}>
         <Grid container spacing={1}>
           <Grid item xs={12} className={classes.actionsTray}>
             <SearchBox
               onChange={setFilterPolicies}
-              placeholder="Search Policies"
+              placeholder={t("Search Policies")}
               overrideClass={classes.searchField}
               value={filterPolicies}
             />
@@ -217,13 +218,13 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
                     ? ""
                     : permissionTooltipHelper(
                         createPolicyPermissions,
-                        "create a Policy"
+                        t("create a Policy")
                       )
                 }
               >
                 <Button
                   id={"create-policy"}
-                  label={"Create Policy"}
+                  label={t("Create Policy")}
                   variant="callAction"
                   icon={<AddIcon />}
                   onClick={() => {
@@ -242,7 +243,7 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
             >
               <TableWrapper
                 itemActions={tableActions}
-                columns={[{ label: "Name", elementKey: "name" }]}
+                columns={[{ label: t("Name"), elementKey: "name" }]}
                 isLoading={loading}
                 records={filteredRecords}
                 entityName="Policies"
@@ -260,31 +261,27 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
           </Grid>
           <Grid item xs={12}>
             <HelpBox
-              title={"Learn more about IAM POLICIES"}
+              title={t("Learn more about IAM POLICIES")}
               iconComponent={<IAMPoliciesIcon />}
               help={
                 <Fragment>
-                  MinIO uses Policy-Based Access Control (PBAC) to define the
-                  authorized actions and resources to which an authenticated
-                  user has access. Each policy describes one or more actions and
-                  conditions that outline the permissions of a user or group of
-                  users.
+                  {t(
+                    "MinIO uses Policy-Based Access Control (PBAC) to define the authorized actions and resources to which an authenticated user has access. Each policy describes one or more actions and conditions that outline the permissions of a user or group of users."
+                  )}
                   <br />
                   <br />
-                  MinIO PBAC is built for compatibility with AWS IAM policy
-                  syntax, structure, and behavior. The MinIO documentation makes
-                  a best-effort to cover IAM-specific behavior and
-                  functionality. Consider deferring to the IAM documentation for
-                  more complete documentation on AWS IAM-specific topics.
+                  {t(
+                    "MinIO PBAC is built for compatibility with AWS IAM policy syntax, structure, and behavior. The MinIO documentation makes a best-effort to cover IAM-specific behavior and functionality. Consider deferring to the IAM documentation for more complete documentation on AWS IAM-specific topics."
+                  )}
                   <br />
                   <br />
-                  You can learn more at our{" "}
+                  {t("You can learn more at our")}{" "}
                   <a
                     href="https://min.io/docs/minio/linux/administration/identity-access-management.html?ref=con#access-management"
                     target="_blank"
                     rel="noreferrer"
                   >
-                    documentation
+                    {t("documentation")}
                   </a>
                   .
                 </Fragment>

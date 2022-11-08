@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -125,18 +125,23 @@ const Security = ({ classes }: ISecurityProps) => {
   const enableTLS = useSelector(
     (state: AppState) => state.createTenant.fields.security.enableTLS
   );
+
   const enableAutoCert = useSelector(
     (state: AppState) => state.createTenant.fields.security.enableAutoCert
   );
+
   const enableCustomCerts = useSelector(
     (state: AppState) => state.createTenant.fields.security.enableCustomCerts
   );
+
   const minioCertificates = useSelector(
     (state: AppState) => state.createTenant.certificates.minioServerCertificates
   );
+
   const minioClientCertificates = useSelector(
     (state: AppState) => state.createTenant.certificates.minioClientCertificates
   );
+
   const caCertificates = useSelector(
     (state: AppState) => state.createTenant.certificates.minioCAsCertificates
   );
@@ -172,7 +177,7 @@ const Security = ({ classes }: ISecurityProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Security</h3>
+        <h3 className={classes.h3Section}>{t("Security")}</h3>
       </div>
       <Grid container spacing={1}>
         <Grid item xs={12}>
@@ -187,10 +192,10 @@ const Security = ({ classes }: ISecurityProps) => {
 
               updateField("enableTLS", checked);
             }}
-            label={"TLS"}
-            description={
+            label={t("TLS")}
+            description={t(
               "Securing all the traffic using TLS. This is required for Encryption Configuration"
-            }
+            )}
           />
         </Grid>
         {enableTLS && (
@@ -206,10 +211,10 @@ const Security = ({ classes }: ISecurityProps) => {
                   const checked = targetD.checked;
                   updateField("enableAutoCert", checked);
                 }}
-                label={"AutoCert"}
-                description={
+                label={t("AutoCert")}
+                description={t(
                   "The internode certificates will be generated and managed by MinIO Operator"
-                }
+                )}
               />
             </Grid>
             <Grid item xs={12}>
@@ -223,8 +228,8 @@ const Security = ({ classes }: ISecurityProps) => {
                   const checked = targetD.checked;
                   updateField("enableCustomCerts", checked);
                 }}
-                label={"Custom Certificates"}
-                description={"Certificates used to terminated TLS at MinIO"}
+                label={t("Custom Certificates")}
+                description={t("Certificates used to terminated TLS at MinIO")}
               />
             </Grid>
             {enableCustomCerts && (
@@ -234,8 +239,9 @@ const Security = ({ classes }: ISecurityProps) => {
                     <TLSHelpBox />
                   </Grid>
                 )}
+
                 <Grid item xs={12} className={classes.minioCertsContainer}>
-                  <h5>MinIO Server Certificates</h5>
+                  <h5>{t("MinIO Server Certificates")}</h5>
                   {minioCertificates.map((keyPair: KeyPair, index) => (
                     <Grid
                       item
@@ -258,9 +264,10 @@ const Security = ({ classes }: ISecurityProps) => {
                           accept=".cer,.crt,.cert,.pem"
                           id="tlsCert"
                           name="tlsCert"
-                          label="Cert"
+                          label={t("Cert")}
                           value={keyPair.cert}
                         />
+
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
                             dispatch(
@@ -275,7 +282,7 @@ const Security = ({ classes }: ISecurityProps) => {
                           accept=".key,.pem"
                           id="tlsKey"
                           name="tlsKey"
-                          label="Key"
+                          label={t("Key")}
                           value={keyPair.key}
                         />
                       </Grid>
@@ -308,7 +315,7 @@ const Security = ({ classes }: ISecurityProps) => {
                   ))}
                 </Grid>
                 <Grid item xs={12} className={classes.minioCertsContainer}>
-                  <h5>MinIO Client Certificates</h5>
+                  <h5>{t("MinIO Client Certificates")}</h5>
                   {minioClientCertificates.map((keyPair: KeyPair, index) => (
                     <Grid
                       item
@@ -331,9 +338,10 @@ const Security = ({ classes }: ISecurityProps) => {
                           accept=".cer,.crt,.cert,.pem"
                           id="tlsCert"
                           name="tlsCert"
-                          label="Cert"
+                          label={t("Cert")}
                           value={keyPair.cert}
                         />
+
                         <FileSelector
                           onChange={(encodedValue, fileName) => {
                             dispatch(
@@ -348,7 +356,7 @@ const Security = ({ classes }: ISecurityProps) => {
                           accept=".key,.pem"
                           id="tlsKey"
                           name="tlsKey"
-                          label="Key"
+                          label={t("Key")}
                           value={keyPair.key}
                         />
                       </Grid>
@@ -383,7 +391,7 @@ const Security = ({ classes }: ISecurityProps) => {
                   ))}
                 </Grid>
                 <Grid item xs={12} className={classes.minioCertsContainer}>
-                  <h5>MinIO CA Certificates</h5>
+                  <h5>{t("MinIO CA Certificates")}</h5>
                   {caCertificates.map((keyPair: KeyPair, index) => (
                     <Grid
                       item
@@ -406,7 +414,7 @@ const Security = ({ classes }: ISecurityProps) => {
                           accept=".cer,.crt,.cert,.pem"
                           id="tlsCert"
                           name="tlsCert"
-                          label="Cert"
+                          label={t("Cert")}
                           value={keyPair.cert}
                         />
                       </Grid>

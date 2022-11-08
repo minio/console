@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -144,7 +144,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
 
   const lifecycleColumns = [
     {
-      label: "Type",
+      label: t("Type"),
       renderFullObject: true,
       renderFunction: (el: LifeCycleItem) => {
         if (!el) {
@@ -154,19 +154,19 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
           el.expiration &&
           (el.expiration.days > 0 || el.expiration.noncurrent_expiration_days)
         ) {
-          return <span>Expiry</span>;
+          return <span>{t("Expiry")}</span>;
         }
         if (
           el.transition &&
           (el.transition.days > 0 || el.transition.noncurrent_transition_days)
         ) {
-          return <span>Transition</span>;
+          return <span>{t("Transition")}</span>;
         }
         return <Fragment />;
       },
     },
     {
-      label: "Version",
+      label: t("Version"),
       renderFullObject: true,
       renderFunction: (el: LifeCycleItem) => {
         if (!el) {
@@ -174,32 +174,32 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
         }
         if (el.expiration) {
           if (el.expiration.days > 0) {
-            return <span>Current</span>;
+            return <span>{t("Current")}</span>;
           } else if (el.expiration.noncurrent_expiration_days) {
-            return <span>Non-Current</span>;
+            return <span>{t("Non-Current")}</span>;
           }
         }
         if (el.transition) {
           if (el.transition.days > 0) {
-            return <span>Current</span>;
+            return <span>{t("Current")}</span>;
           } else if (el.transition.noncurrent_transition_days) {
-            return <span>Non-Current</span>;
+            return <span>{t("Non-Current")}</span>;
           }
         }
       },
     },
     {
-      label: "Tier",
+      label: t("Tier"),
       elementKey: "storage_class",
       renderFunction: renderStorageClass,
       renderFullObject: true,
     },
     {
-      label: "Prefix",
+      label: t("Prefix"),
       elementKey: "prefix",
     },
     {
-      label: "After",
+      label: t("After"),
       renderFullObject: true,
       renderFunction: (el: LifeCycleItem) => {
         if (!el) {
@@ -207,22 +207,42 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
         }
         if (el.expiration) {
           if (el.expiration.days > 0) {
-            return <span>{el.expiration.days} days</span>;
+            return (
+              <span>
+                {el.expiration.days}
+                {t("days")}
+              </span>
+            );
           } else if (el.expiration.noncurrent_expiration_days) {
-            return <span>{el.expiration.noncurrent_expiration_days} days</span>;
+            return (
+              <span>
+                {el.expiration.noncurrent_expiration_days}
+                {t("days")}
+              </span>
+            );
           }
         }
         if (el.transition) {
           if (el.transition.days > 0) {
-            return <span>{el.transition.days} days</span>;
+            return (
+              <span>
+                {el.transition.days}
+                {t("days")}
+              </span>
+            );
           } else if (el.transition.noncurrent_transition_days) {
-            return <span>{el.transition.noncurrent_transition_days} days</span>;
+            return (
+              <span>
+                {el.transition.noncurrent_transition_days}
+                {t("days")}
+              </span>
+            );
           }
         }
       },
     },
     {
-      label: "Status",
+      label: t("Status"),
       elementKey: "status",
     },
   ];
@@ -256,6 +276,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
           lifecycleRule={selectedLifecycleRule}
         />
       )}
+
       {addLifecycleOpen && (
         <AddLifecycleModal
           open={addLifecycleOpen}
@@ -263,6 +284,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
           closeModalAndRefresh={closeAddLCAndRefresh}
         />
       )}
+
       {deleteLifecycleOpen && selectedID && (
         <DeleteBucketLifecycleRule
           id={selectedID}
@@ -271,22 +293,23 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
           onCloseAndRefresh={closeDelLCRefresh}
         />
       )}
+
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <PanelTitle>Lifecycle Rules</PanelTitle>
+          <PanelTitle>{t("Lifecycle Rules")}</PanelTitle>
           <SecureComponent
             scopes={[IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION]}
             resource={bucketName}
             matchAll
             errorProps={{ disabled: true }}
           >
-            <TooltipWrapper tooltip={"Add Lifecycle Rule"}>
+            <TooltipWrapper tooltip={t("Add Lifecycle Rule")}>
               <Button
                 id={"add-bucket-lifecycle-rule"}
                 onClick={() => {
                   setAddLifecycleOpen(true);
                 }}
-                label={"Add Lifecycle Rule"}
+                label={t("Add Lifecycle Rule")}
                 icon={<AddIcon />}
                 variant={"callAction"}
               />
@@ -305,7 +328,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
               isLoading={loadingLifecycle}
               records={lifecycleRecords}
               entityName="Lifecycle"
-              customEmptyMessage="There are no Lifecycle rules yet"
+              customEmptyMessage={t("There are no Lifecycle rules yet")}
               idField="id"
               customPaperHeight={classes.twHeight}
             />
@@ -315,23 +338,22 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
           <Grid item xs={12}>
             <br />
             <HelpBox
-              title={"Lifecycle Rules"}
+              title={t("Lifecycle Rules")}
               iconComponent={<TiersIcon />}
               help={
                 <Fragment>
-                  MinIO Object Lifecycle Management allows creating rules for
-                  time or date based automatic transition or expiry of objects.
-                  For object transition, MinIO automatically moves the object to
-                  a configured remote storage tier.
+                  {t(
+                    "MinIO Object Lifecycle Management allows creating rules for time or date based automatic transition or expiry of objects. For object transition, MinIO automatically moves the object to a configured remote storage tier."
+                  )}
                   <br />
                   <br />
-                  You can learn more at our{" "}
+                  {t("You can learn more at our")}{" "}
                   <a
                     href="https://min.io/docs/minio/linux/administration/object-management/object-lifecycle-management.html?ref=con"
                     target="_blank"
                     rel="noreferrer"
                   >
-                    documentation
+                    {t("documentation")}
                   </a>
                   .
                 </Fragment>

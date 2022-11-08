@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { Box } from "@mui/material";
@@ -190,6 +190,7 @@ const UserServiceAccountsPanel = ({
           user={user}
         />
       )}
+
       {deleteOpen && (
         <DeleteServiceAccount
           deleteOpen={deleteOpen}
@@ -199,6 +200,7 @@ const UserServiceAccountsPanel = ({
           }}
         />
       )}
+
       {deleteMultipleOpen && (
         <DeleteMultipleServiceAccounts
           deleteOpen={deleteMultipleOpen}
@@ -206,6 +208,7 @@ const UserServiceAccountsPanel = ({
           closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
         />
       )}
+
       {showNewCredentials && (
         <CredentialsPrompt
           newServiceAccount={newServiceAccount}
@@ -216,6 +219,7 @@ const UserServiceAccountsPanel = ({
           entity="Access Key"
         />
       )}
+
       {policyOpen && (
         <ServiceAccountPolicy
           open={policyOpen}
@@ -223,16 +227,17 @@ const UserServiceAccountsPanel = ({
           closeModalAndRefresh={closePolicyModal}
         />
       )}
+
       <div className={classes.actionsTray}>
-        <PanelTitle>Access Keys</PanelTitle>
+        <PanelTitle>{t("Access Keys")}</PanelTitle>
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <TooltipWrapper tooltip={"Delete Selected"}>
+          <TooltipWrapper tooltip={t("Delete Selected")}>
             <Button
               id={"delete-selected"}
               onClick={() => {
                 setDeleteMultipleOpen(true);
               }}
-              label={"Delete Selected"}
+              label={t("Delete Selected")}
               icon={<DeleteIcon />}
               disabled={selectedSAs.length === 0}
               variant={"secondary"}
@@ -249,10 +254,10 @@ const UserServiceAccountsPanel = ({
             matchAll
             errorProps={{ disabled: true }}
           >
-            <TooltipWrapper tooltip={"Create Access Key"}>
+            <TooltipWrapper tooltip={t("Create Access Key")}>
               <Button
                 id={"create-service-account"}
-                label={"Create Access Key"}
+                label={t("Create Access Key")}
                 variant="callAction"
                 icon={<AddIcon />}
                 onClick={() => {
@@ -272,7 +277,7 @@ const UserServiceAccountsPanel = ({
           records={records}
           entityName={"Access Keys"}
           idField={""}
-          columns={[{ label: "Access Key", elementKey: "" }]}
+          columns={[{ label: t("Access Key"), elementKey: "" }]}
           itemActions={tableActions}
           selectedItems={selectedSAs}
           onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}

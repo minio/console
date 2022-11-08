@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -106,14 +106,16 @@ const TenantCSR = ({ classes }: ITenantCSRProps) => {
 
   return (
     <Fragment>
-      <h1 className={classes.sectionTitle}>Certificate Signing Requests</h1>
+      <h1 className={classes.sectionTitle}>
+        {t("Certificate Signing Requests")}
+      </h1>
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Annotation</TableCell>
+              <TableCell>{t("Name")}</TableCell>
+              <TableCell>{t("Status")}</TableCell>
+              <TableCell>{t("Annotation")}</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>

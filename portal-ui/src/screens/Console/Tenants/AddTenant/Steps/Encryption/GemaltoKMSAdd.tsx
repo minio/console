@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -51,15 +51,19 @@ const GemaltoKMSAdd = () => {
   const encryptionTab = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.encryptionTab
   );
+
   const gemaltoEndpoint = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gemaltoEndpoint
   );
+
   const gemaltoToken = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gemaltoToken
   );
+
   const gemaltoDomain = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gemaltoDomain
   );
+
   const gemaltoRetry = useSelector(
     (state: AppState) => state.createTenant.fields.encryption.gemaltoRetry
   );
@@ -141,7 +145,7 @@ const GemaltoKMSAdd = () => {
             updateField("gemaltoEndpoint", e.target.value);
             cleanValidation("gemalto_endpoint");
           }}
-          label="Endpoint"
+          label={t("Endpoint")}
           value={gemaltoEndpoint}
           error={validationErrors["gemalto_endpoint"] || ""}
           required
@@ -155,7 +159,9 @@ const GemaltoKMSAdd = () => {
         }}
       >
         <fieldset className={classes.fieldGroup}>
-          <legend className={classes.descriptionText}>Credentials</legend>
+          <legend className={classes.descriptionText}>
+            {t("Credentials")}
+          </legend>
           <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="gemalto_token"
@@ -164,7 +170,7 @@ const GemaltoKMSAdd = () => {
                 updateField("gemaltoToken", e.target.value);
                 cleanValidation("gemalto_token");
               }}
-              label="Token"
+              label={t("Token")}
               value={gemaltoToken}
               error={validationErrors["gemalto_token"] || ""}
               required
@@ -178,7 +184,7 @@ const GemaltoKMSAdd = () => {
                 updateField("gemaltoDomain", e.target.value);
                 cleanValidation("gemalto_domain");
               }}
-              label="Domain"
+              label={t("Domain")}
               value={gemaltoDomain}
               error={validationErrors["gemalto_domain"] || ""}
               required
@@ -194,7 +200,7 @@ const GemaltoKMSAdd = () => {
                 updateField("gemaltoRetry", e.target.value);
                 cleanValidation("gemalto_retry");
               }}
-              label="Retry (seconds)"
+              label={t("Retry (seconds)")}
               value={gemaltoRetry}
               error={validationErrors["gemalto_retry"] || ""}
             />

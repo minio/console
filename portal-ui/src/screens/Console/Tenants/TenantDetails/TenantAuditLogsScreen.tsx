@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
@@ -81,23 +81,29 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
   const [dbLabels, setDBLabels] = useState<IKeyValue[]>([
     { key: "", value: "" },
   ]);
+
   const [dbAnnotations, setDBAnnotations] = useState<IKeyValue[]>([
     { key: "", value: "" },
   ]);
+
   const [dbNodeSelector, setDBNodeSelector] = useState<IKeyValue[]>([
     { key: "", value: "" },
   ]);
+
   const [labels, setLabels] = useState<IKeyValue[]>([{ key: "", value: "" }]);
   const [annotations, setAnnotations] = useState<IKeyValue[]>([
     { key: "", value: "" },
   ]);
+
   const [nodeSelector, setNodeSelector] = useState<IKeyValue[]>([
     { key: "", value: "" },
   ]);
+
   const dispatch = useAppDispatch();
   const auditLoggingEnabled = useSelector(
     (state: AppState) => state.editTenantLogging.auditLoggingEnabled
   );
+
   function a11yProps(index: any) {
     return {
       id: `simple-tab-${index}`,
@@ -251,8 +257,8 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
             isOpen={toggleConfirmOpen}
             title={
               !auditLoggingEnabled
-                ? "Enable Audit Logging for this tenant?"
-                : "Disable Audit Logging for this tenant?"
+                ? t("Enable Audit Logging for this tenant?")
+                : t("Disable Audit Logging for this tenant?")
             }
             confirmText={!auditLoggingEnabled ? "Enable" : "Disable"}
             cancelText="Cancel"
@@ -261,8 +267,12 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
             confirmationContent={
               <DialogContentText>
                 {!auditLoggingEnabled
-                  ? "A small Postgres server will be started per the configuration provided, which will collect the audit logs for your tenant."
-                  : " Current configuration will be lost, and defaults reset if reenabled."}
+                  ? t(
+                      "A small Postgres server will be started per the configuration provided, which will collect the audit logs for your tenant."
+                    )
+                  : t(
+                      "Current configuration will be lost, and defaults reset if reenabled."
+                    )}
               </DialogContentText>
             }
           />
@@ -270,7 +280,7 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
       </Grid>
       <Grid container>
         <Grid item xs>
-          <h1 className={classes.sectionTitle}>Audit Logs</h1>
+          <h1 className={classes.sectionTitle}>{t("Audit Logs")}</h1>
         </Grid>
         <Grid>
           <FormSwitchWrapper
@@ -302,8 +312,8 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
                 variant="scrollable"
                 scrollButtons="auto"
               >
-                <Tab label="Configuration" {...a11yProps(0)} />
-                <Tab label="DB Configuration" {...a11yProps(1)} />
+                <Tab label={t("Configuration")} {...a11yProps(0)} />
+                <Tab label={t("DB Configuration")} {...a11yProps(1)} />
               </Tabs>
             </Grid>
             <Grid item xs={12}>
@@ -317,6 +327,7 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
                 nodeSelector={nodeSelector}
               />
             )}
+
             {curTab === 1 && (
               <LoggingDBDetails
                 classes={classes}

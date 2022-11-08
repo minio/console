@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -193,7 +193,7 @@ const License = () => {
 
   return (
     <Fragment>
-      <PageHeader label="License" />
+      <PageHeader label={t("License")} />
 
       <PageLayout>
         <Grid item xs={12}>
@@ -235,7 +235,8 @@ const License = () => {
                   },
                 }}
               >
-                Are you already a customer of <LoginMinIOLogo />?
+                {t("Are you already a customer of")}
+                <LoginMinIOLogo />?
               </Box>
               <Link
                 to={IAM_PAGES.REGISTER_SUPPORT}
@@ -246,7 +247,7 @@ const License = () => {
                   alignItems: "center",
                 }}
               >
-                Register this cluster{" "}
+                {t("Register this cluster")}{" "}
                 <ArrowRightLink
                   style={{
                     width: "13px",
@@ -265,7 +266,7 @@ const License = () => {
                 fontWeight: 600,
               }}
             >
-              MinIO License and Support plans
+              {t("MinIO License and Support plans")}
             </Box>
           </Grid>
         )}

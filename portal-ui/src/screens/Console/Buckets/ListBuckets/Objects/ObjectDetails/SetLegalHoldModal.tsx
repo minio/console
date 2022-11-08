@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -99,7 +99,7 @@ const SetLegalHoldModal = ({
 
   return (
     <ModalWrapper
-      title="Set Legal Hold"
+      title={t("Set Legal Hold")}
       modalOpen={open}
       onClose={() => {
         resetForm();
@@ -107,7 +107,8 @@ const SetLegalHoldModal = ({
       }}
     >
       <Grid item xs={12} className={classes.spacerBottom}>
-        Object: {bucketName}
+        {t("Object:")}
+        {bucketName}
       </Grid>
 
       <form
@@ -126,7 +127,7 @@ const SetLegalHoldModal = ({
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setLegalHoldEnabled(!legalHoldEnabled);
             }}
-            label={"Legal Hold Status"}
+            label={t("Legal Hold Status")}
             indicatorLabels={["Enabled", "Disabled"]}
             tooltip={
               "To enable this feature you need to enable versioning on the bucket before creation"
@@ -139,14 +140,15 @@ const SetLegalHoldModal = ({
             type="button"
             variant="regular"
             onClick={resetForm}
-            label={"Clear"}
+            label={t("Clear")}
           />
+
           <Button
             id={"save"}
             type="submit"
             variant="callAction"
             disabled={isSaving}
-            label={" Save"}
+            label={t("Save")}
           />
         </Grid>
       </form>

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -96,15 +96,19 @@ const LoggingDBDetails = ({
   const dbImage = useSelector(
     (state: AppState) => state.editTenantLogging.dbImage
   );
+
   const dbInitImage = useSelector(
     (state: AppState) => state.editTenantLogging.dbInitImage
   );
+
   const dbCpuRequest = useSelector(
     (state: AppState) => state.editTenantLogging.dbCPURequest
   );
+
   const dbMemRequest = useSelector(
     (state: AppState) => state.editTenantLogging.dbMemRequest
   );
+
   const dbServiceAccountName = useSelector(
     (state: AppState) => state.editTenantLogging.dbServiceAccountName
   );
@@ -112,29 +116,36 @@ const LoggingDBDetails = ({
   const dbRunAsGroup = useSelector(
     (state: AppState) => state.editTenantLogging.dbSecurityContext.runAsGroup
   );
+
   const dbRunAsUser = useSelector(
     (state: AppState) => state.editTenantLogging.dbSecurityContext.runAsUser
   );
+
   const dbFSGroup = useSelector(
     (state: AppState) => state.editTenantLogging.dbSecurityContext.fsGroup
   );
+
   const dbFSGroupChangePolicy = useSelector(
     (state: AppState) =>
       state.editTenantLogging.dbSecurityContext.fsGroupChangePolicy
   );
+
   const dbRunAsNonRoot = useSelector(
     (state: AppState) => state.editTenantLogging.dbSecurityContext.runAsNonRoot
   );
+
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   const [dbLabels, setDBLabels] = useState<IKeyValue[]>(
     labels != null && labels.length > 0 ? labels : [{ key: "", value: "" }]
   );
+
   const [dbAnnotations, setDBAnnotations] = useState<IKeyValue[]>(
     annotations != null && annotations.length > 0
       ? annotations
       : [{ key: "", value: "" }]
   );
+
   const [dbNodeSelector, setDBNodeSelector] = useState<IKeyValue[]>(
     nodeSelector != null && nodeSelector.length > 0
       ? nodeSelector
@@ -185,7 +196,7 @@ const LoggingDBDetails = ({
         fsGroup: dbFSGroup != null ? dbFSGroup : "",
         runAsNonRoot: dbRunAsNonRoot != null ? dbRunAsNonRoot : true,
         fsGroupChangePolicy:
-          dbFSGroupChangePolicy != null ? dbFSGroupChangePolicy : "Always",
+          dbFSGroupChangePolicy != null ? dbFSGroupChangePolicy : t("Always"),
       };
       api
         .invoke(
@@ -219,8 +230,8 @@ const LoggingDBDetails = ({
         <Grid item xs={12} paddingBottom={2}>
           <InputBoxWrapper
             id={`dbImage`}
-            label={"DB Postgres Image"}
-            placeholder={"library/postgres:13"}
+            label={t("DB Postgres Image")}
+            placeholder={t("library/postgres:13")}
             name={`dbImage`}
             value={dbImage}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -237,8 +248,8 @@ const LoggingDBDetails = ({
         <Grid item xs={12} paddingBottom={2}>
           <InputBoxWrapper
             id={`dbInitImage`}
-            label={"DB Init Image"}
-            placeholder={"library/busybox:1.33.1"}
+            label={t("DB Init Image")}
+            placeholder={t("library/busybox:1.33.1")}
             name={`dbInitImage`}
             value={dbInitImage}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -255,8 +266,8 @@ const LoggingDBDetails = ({
         <Grid item xs={12} paddingBottom={2}>
           <InputBoxWrapper
             id={`dbCPURequest`}
-            label={"DB CPU Request"}
-            placeholder={"DB CPU Request"}
+            label={t("DB CPU Request")}
+            placeholder={t("DB CPU Request")}
             name={`dbCPURequest`}
             value={dbCpuRequest}
             pattern={numericPattern}
@@ -273,8 +284,8 @@ const LoggingDBDetails = ({
         <Grid item xs={12} paddingBottom={2}>
           <InputBoxWrapper
             id={`dbMemRequest`}
-            label={"DB Memory Request"}
-            placeholder={"DB Memory request"}
+            label={t("DB Memory Request")}
+            placeholder={t("DB Memory request")}
             name={`dbMemRequest`}
             value={dbMemRequest}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -291,7 +302,7 @@ const LoggingDBDetails = ({
                 id={"size-unit"}
                 onUnitChange={() => {}}
                 unitSelected={"Gi"}
-                unitsList={[{ label: "Gi", value: "Gi" }]}
+                unitsList={[{ label: t("Gi"), value: "Gi" }]}
                 disabled={true}
               />
             }
@@ -299,7 +310,7 @@ const LoggingDBDetails = ({
         </Grid>
 
         <Grid item xs={12} className={classes.formFieldRow}>
-          <span className={classes.inputLabel}>DB Labels</span>
+          <span className={classes.inputLabel}>{t("DB Labels")}</span>
           <KeyPairEdit
             newValues={dbLabels}
             setNewValues={setDBLabels}
@@ -309,7 +320,7 @@ const LoggingDBDetails = ({
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
-          <span className={classes.inputLabel}>DB Annotations</span>
+          <span className={classes.inputLabel}>{t("DB Annotations")}</span>
           <KeyPairEdit
             newValues={dbAnnotations}
             setNewValues={setDBAnnotations}
@@ -320,7 +331,7 @@ const LoggingDBDetails = ({
         </Grid>
 
         <Grid item xs={12} className={classes.formFieldRow}>
-          <span className={classes.inputLabel}>DB Node Selector</span>
+          <span className={classes.inputLabel}>{t("DB Node Selector")}</span>
           <KeyPairEdit
             newValues={dbNodeSelector}
             setNewValues={setDBNodeSelector}
@@ -356,7 +367,7 @@ const LoggingDBDetails = ({
             variant="callAction"
             disabled={!checkValid()}
             onClick={() => submitLoggingInfo()}
-            label={"Save"}
+            label={t("Save")}
           />
         </Grid>
       </Fragment>

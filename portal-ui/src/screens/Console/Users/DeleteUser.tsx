@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
@@ -82,10 +82,12 @@ const DeleteUser = ({
       <b>{user}</b>
     </div>
   ));
+
   const viewAction = (selectionElement: any): void => {
     navigate(
       `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.userName)}`
     );
+
     onClose();
   };
   const tableActions = [
@@ -139,15 +141,18 @@ const DeleteUser = ({
           {hasSA ? (
             <Fragment>
               <WarningMessage
-                label="Click on a user to view the full listing of asociated Access Keys. All Access Keys associated with a user will be deleted along with the user. Are you sure you want to continue?"
+                label={t(
+                  "Click on a user to view the full listing of asociated Access Keys. All Access Keys associated with a user will be deleted along with the user. Are you sure you want to continue?"
+                )}
                 title="Warning: One or more users selected has associated Access Keys. "
               />
+
               <TableWrapper
                 itemActions={tableActions}
                 columns={[
-                  { label: "Username", elementKey: "userName" },
+                  { label: t("Username"), elementKey: "userName" },
                   {
-                    label: "# Associated Access Keys",
+                    label: t("# Associated Access Keys"),
                     elementKey: "numSAs",
                   },
                 ]}

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 
 import { Button } from "mds";
@@ -112,7 +112,7 @@ const ServiceAccountPolicy = ({
 
   return (
     <ModalWrapper
-      title="Access Key Policy"
+      title={t("Access Key Policy")}
       modalOpen={open}
       onClose={() => {
         closeModalAndRefresh();
@@ -129,7 +129,7 @@ const ServiceAccountPolicy = ({
         <Grid container>
           <Grid item xs={12} className={classes.codeMirrorContainer}>
             <CodeMirrorWrapper
-              label={`Access Key Policy`}
+              label={`${t("Access Key Policy")}`}
               value={policyDefinition}
               onBeforeChange={(editor, data, value) => {
                 setPolicyDefinition(value);
@@ -146,15 +146,16 @@ const ServiceAccountPolicy = ({
                 closeModalAndRefresh();
               }}
               disabled={loading}
-              label={"Cancel"}
+              label={t("Cancel")}
             />
+
             <Button
               id={"save-sa-policy"}
               type="submit"
               variant="callAction"
               color="primary"
               disabled={loading}
-              label={"Set"}
+              label={t("Set")}
             />
           </Grid>
         </Grid>

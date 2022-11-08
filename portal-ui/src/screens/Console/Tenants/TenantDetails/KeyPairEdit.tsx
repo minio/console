@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React, { Fragment, useEffect } from "react";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -88,7 +89,7 @@ const KeyPairEdit = ({
             <InputBoxWrapper
               id={`key-${paramName.replace(/ /g, "")}-${index.toString()}`}
               label={""}
-              placeholder={"Key"}
+              placeholder={t("Key")}
               name={`key-${index.toString()}`}
               value={newValues[index].key}
               onChange={(e) => {
@@ -101,10 +102,11 @@ const KeyPairEdit = ({
               key={`csv-key-${index.toString()}`}
               error={error[`key-${index.toString()}`] || ""}
             />
+
             <InputBoxWrapper
               id={`val-${paramName.replace(/ /g, "")}-${index.toString()}`}
               label={""}
-              placeholder={"Value"}
+              placeholder={t("Value")}
               name={`val-${index.toString()}`}
               value={newValues[index].value}
               onChange={(e) => {
@@ -117,6 +119,7 @@ const KeyPairEdit = ({
               key={`csv-val-${index.toString()}`}
               error={error[`val-${index.toString()}`] || ""}
             />
+
             <Tooltip title={`Add ${paramName}`} aria-label="addlabel">
               <IconButton
                 id={`add-${paramName.replace(/ /g, "")}-${index.toString()}`}

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { DialogContentText } from "@mui/material";
 import api from "../../../../common/api";
@@ -63,7 +63,7 @@ const EnableVersioningModal = ({
 
   return (
     <ConfirmDialog
-      title={`Versioning on Bucket`}
+      title={`${t("Versioning on Bucket")}`}
       confirmText={versioningCurrentState ? "Disable" : "Enable"}
       isOpen={modalOpen}
       isLoading={versioningLoading}
@@ -77,14 +77,16 @@ const EnableVersioningModal = ({
       }}
       confirmationContent={
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to{" "}
-          <strong>{versioningCurrentState ? "disable" : "enable"}</strong>{" "}
-          versioning for this bucket?
+          {t("Are you sure you want to")}{" "}
+          <strong>{versioningCurrentState ? t("disable") : t("enable")}</strong>{" "}
+          {t("versioning for this bucket?")}
           {versioningCurrentState && (
             <Fragment>
               <br />
               <br />
-              <strong>File versions won't be automatically deleted.</strong>
+              <strong>
+                {t("File versions won't be automatically deleted.")}
+              </strong>
             </Fragment>
           )}
         </DialogContentText>

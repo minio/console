@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
@@ -200,7 +200,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
           display={"flex"}
         >
           <TierOnlineIcon />
-          ONLINE
+          {t("ONLINE")}
         </Grid>
       );
     }
@@ -217,7 +217,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
         display={"flex"}
       >
         <TierOfflineIcon />
-        OFFLINE
+        {t("OFFLINE")}
       </Grid>
     );
   };
@@ -305,7 +305,8 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
           closeModalAndRefresh={closeTierCredentials}
         />
       )}
-      <PageHeader label="Tiers" />
+
+      <PageHeader label={t("Tiers")} />
       <PageLayout>
         {!distributedSetup ? (
           <DistributedOnly
@@ -316,7 +317,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
           <Fragment>
             <Grid item xs={12} className={classes.actionsTray}>
               <SearchBox
-                placeholder="Filter"
+                placeholder={t("Filter")}
                 onChange={setFilter}
                 overrideClass={classes.searchField}
                 value={filter}
@@ -326,11 +327,12 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                 <Button
                   id={"refresh-list"}
                   icon={<RefreshIcon />}
-                  label={`Refresh List`}
+                  label={`${t("Refresh List")}`}
                   onClick={() => {
                     setIsLoading(true);
                   }}
                 />
+
                 <TooltipWrapper
                   tooltip={
                     hasSetTier
@@ -348,7 +350,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                     <Button
                       id={"add-tier"}
                       icon={<AddIcon />}
-                      label={`Create Tier`}
+                      label={`${t("Create Tier")}`}
                       onClick={addTier}
                       variant="callAction"
                     />
@@ -379,61 +381,61 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                           ]}
                           columns={[
                             {
-                              label: "Tier Name",
+                              label: t("Tier Name"),
                               elementKey: "type",
                               renderFunction: renderTierName,
                               renderFullObject: true,
                             },
                             {
-                              label: "Status",
+                              label: t("Status"),
                               elementKey: "status",
                               renderFunction: renderTierStatus,
                               width: 50,
                             },
                             {
-                              label: "Type",
+                              label: t("Type"),
                               elementKey: "type",
                               renderFunction: renderTierType,
                               width: 50,
                             },
                             {
-                              label: "Endpoint",
+                              label: t("Endpoint"),
                               elementKey: "type",
                               renderFunction: renderTierEndpoint,
                               renderFullObject: true,
                             },
                             {
-                              label: "Bucket",
+                              label: t("Bucket"),
                               elementKey: "type",
                               renderFunction: renderTierBucket,
                               renderFullObject: true,
                             },
                             {
-                              label: "Prefix",
+                              label: t("Prefix"),
                               elementKey: "type",
                               renderFunction: renderTierPrefix,
                               renderFullObject: true,
                             },
                             {
-                              label: "Region",
+                              label: t("Region"),
                               elementKey: "type",
                               renderFunction: renderTierRegion,
                               renderFullObject: true,
                             },
                             {
-                              label: "Usage",
+                              label: t("Usage"),
                               elementKey: "type",
                               renderFunction: renderTierUsage,
                               renderFullObject: true,
                             },
                             {
-                              label: "Objects",
+                              label: t("Objects"),
                               elementKey: "type",
                               renderFunction: renderTierObjects,
                               renderFullObject: true,
                             },
                             {
-                              label: "Versions",
+                              label: t("Versions"),
                               elementKey: "type",
                               renderFunction: renderTierVersions,
                               renderFullObject: true,
@@ -455,25 +457,22 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                       }}
                     >
                       <HelpBox
-                        title={"Learn more about TIERS"}
+                        title={t("Learn more about TIERS")}
                         iconComponent={<TiersIcon />}
                         help={
                           <Fragment>
-                            Tiers are used by the MinIO Object Lifecycle
-                            Management which allows creating rules for time or
-                            date based automatic transition or expiry of
-                            objects. For object transition, MinIO automatically
-                            moves the object to a configured remote storage
-                            tier.
+                            {t(
+                              "Tiers are used by the MinIO Object Lifecycle Management which allows creating rules for time or date based automatic transition or expiry of objects. For object transition, MinIO automatically moves the object to a configured remote storage tier."
+                            )}
                             <br />
                             <br />
-                            You can learn more at our{" "}
+                            {t("You can learn more at our")}{" "}
                             <a
                               href="https://min.io/docs/minio/linux/administration/object-management/object-lifecycle-management.html?ref=con"
                               target="_blank"
                               rel="noreferrer"
                             >
-                              documentation
+                              {t("documentation")}
                             </a>
                             .
                           </Fragment>
@@ -482,6 +481,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                     </Grid>
                   </Fragment>
                 )}
+
                 {records.length === 0 && (
                   <Grid
                     container
@@ -491,22 +491,22 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                   >
                     <Grid item xs={8}>
                       <HelpBox
-                        title={"Tiers"}
+                        title={t("Tiers")}
                         iconComponent={<TiersIcon />}
                         help={
                           <Fragment>
-                            Tiers are used by the MinIO Object Lifecycle
-                            Management which allows creating rules for time or
-                            date based automatic transition or expiry of
-                            objects. For object transition, MinIO automatically
-                            moves the object to a configured remote storage
-                            tier.
+                            {t(
+                              "Tiers are used by the MinIO Object Lifecycle Management which allows creating rules for time or date based automatic transition or expiry of objects. For object transition, MinIO automatically moves the object to a configured remote storage tier."
+                            )}
+
                             <br />
                             <br />
                             {hasSetTier ? (
                               <div>
-                                To get started,{" "}
-                                <AButton onClick={addTier}>Create Tier</AButton>
+                                {t("To get started,")}{" "}
+                                <AButton onClick={addTier}>
+                                  {t("Create Tier")}
+                                </AButton>
                                 .
                               </div>
                             ) : (

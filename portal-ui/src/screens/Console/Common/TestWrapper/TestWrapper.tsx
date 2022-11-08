@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -149,6 +149,7 @@ const TestWrapper = ({
               },
               0
             );
+
             setTotalDrives(totalServers);
           }
 
@@ -172,8 +173,9 @@ const TestWrapper = ({
               <Fragment>
                 <Grid item xs={12} md={4} className={classes.serversData}>
                   <DrivesIcon /> <strong>{totalNodes}</strong>
-                  &nbsp;nodes,&nbsp;
-                  <strong>{totalDrives}</strong>&nbsp; drives
+                  {t("nodes,")}
+                  <strong>{totalDrives}</strong>
+                  {t("drives")}
                 </Grid>
                 <Grid
                   item
@@ -184,7 +186,8 @@ const TestWrapper = ({
                   <span className={classes.versionIcon}>
                     <VersionIcon />
                   </span>{" "}
-                  MinIO VERSION&nbsp;<strong>{version}</strong>
+                  {t("MinIO VERSION")}
+                  <strong>{version}</strong>
                 </Grid>
                 <Grid item xs={12} md={4} className={classes.advancedContainer}>
                   {advancedVisible && (
@@ -194,7 +197,7 @@ const TestWrapper = ({
                       }}
                       className={classes.advancedConfiguration}
                     >
-                      Advanced configurations{" "}
+                      {t("Advanced configurations")}{" "}
                       <span
                         className={
                           advancedOpen

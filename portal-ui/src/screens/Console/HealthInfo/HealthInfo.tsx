@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
 import {
@@ -116,6 +117,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
   const serverDiagnosticStatus = useSelector(
     (state: AppState) => state.system.serverDiagnosticStatus
   );
+
   const [startDiagnostic, setStartDiagnostic] = useState(false);
   const [downloadDisabled, setDownloadDisabled] = useState(true);
   const [localMessage, setMessage] = useState<string>("");
@@ -134,6 +136,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
       "href",
       `data:application/gzip;base64,${diagFileContent}`
     );
+
     element.setAttribute("download", "diagnostic.json.gz");
 
     element.style.display = "none";
@@ -150,6 +153,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
       setMessage(
         "Diagnostic started. Please do not refresh page during diagnosis."
       );
+
       return;
     }
 
@@ -214,6 +218,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
           setMessage(
             "Diagnostic started. Please do not refresh page during diagnosis."
           );
+
           dispatch(setServerDiagStat(DiagStatInProgress));
         };
         c.onmessage = (message: IMessageEvent) => {
@@ -222,6 +227,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
             m.serverHealthInfo.timestamp = new Date(
               m.serverHealthInfo.timestamp.toString()
             );
+
             dispatch(healthInfoMessageReceived(m.serverHealthInfo));
           }
           if (m.encoded !== "") {
@@ -269,7 +275,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
 
   return (
     <Fragment>
-      <PageHeader label="Health" />
+      <PageHeader label={t("Health")} />
       <PageLayout>
         {!registeredCluster && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>
@@ -296,9 +302,10 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                           variant="callAction"
                           onClick={() => download()}
                           disabled={downloadDisabled}
-                          label={"Download"}
+                          label={t("Download")}
                         />
                       )}
+
                     <Grid
                       item
                       xs={12}
@@ -325,9 +332,9 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
           <Fragment>
             <br />
             <HelpBox
-              title={
+              title={t(
                 "During the health diagnostics run, all production traffic will be suspended."
-              }
+              )}
               iconComponent={<WarnIcon />}
               help={<Fragment />}
             />

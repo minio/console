@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -75,12 +75,14 @@ const AccessDetails = () => {
       IAM_SCOPES.ADMIN_LIST_USERS,
       IAM_SCOPES.ADMIN_LIST_GROUPS,
     ],
+
     true
   );
 
   const viewUser = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.ADMIN_GET_USER,
   ]);
+
   const viewPolicy = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.ADMIN_GET_POLICY,
     IAM_SCOPES.ADMIN_LIST_USERS,
@@ -154,7 +156,7 @@ const AccessDetails = () => {
 
   return (
     <Fragment>
-      <PanelTitle>Access Audit</PanelTitle>
+      <PanelTitle>{t("Access Audit")}</PanelTitle>
       <Tabs
         value={curTab}
         onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
@@ -166,8 +168,8 @@ const AccessDetails = () => {
         variant="scrollable"
         scrollButtons="auto"
       >
-        {displayPoliciesList && <Tab label="Policies" {...a11yProps(0)} />}
-        {displayUsersList && <Tab label="Users" {...a11yProps(1)} />}
+        {displayPoliciesList && <Tab label={t("Policies")} {...a11yProps(0)} />}
+        {displayUsersList && <Tab label={t("Users")} {...a11yProps(1)} />}
       </Tabs>
       <Paper>
         <TabPanel index={0} value={curTab}>
@@ -179,7 +181,7 @@ const AccessDetails = () => {
             <TableWrapper
               noBackground={true}
               itemActions={PolicyActions}
-              columns={[{ label: "Name", elementKey: "name" }]}
+              columns={[{ label: t("Name"), elementKey: "name" }]}
               isLoading={loadingPolicies}
               records={bucketPolicy}
               entityName="Policies"
@@ -202,7 +204,7 @@ const AccessDetails = () => {
             <TableWrapper
               noBackground={true}
               itemActions={userTableActions}
-              columns={[{ label: "User", elementKey: "accessKey" }]}
+              columns={[{ label: t("User"), elementKey: "accessKey" }]}
               isLoading={loadingUsers}
               records={bucketUsers}
               entityName="Users"

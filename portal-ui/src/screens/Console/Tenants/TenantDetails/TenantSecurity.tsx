@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -166,6 +166,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
       encoded_cert: "",
     },
   ]);
+
   const [minioClientCertificates, setMinioClientCertificates] = useState<
     KeyPair[]
   >([
@@ -177,6 +178,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
       encoded_cert: "",
     },
   ]);
+
   const [minioCaCertificates, setMinioCaCertificates] = useState<KeyPair[]>([
     {
       id: Date.now().toString(),
@@ -186,6 +188,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
       encoded_cert: "",
     },
   ]);
+
   const [minioServerCertificateSecrets, setMinioServerCertificateSecrets] =
     useState<ICertificateInfo[]>([]);
   const [minioClientCertificateSecrets, setMinioClientCertificateSecrets] =
@@ -196,15 +199,19 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
   const runAsGroup = useSelector(
     (state: AppState) => state.editTenantSecurityContext.runAsGroup
   );
+
   const runAsUser = useSelector(
     (state: AppState) => state.editTenantSecurityContext.runAsUser
   );
+
   const fsGroup = useSelector(
     (state: AppState) => state.editTenantSecurityContext.fsGroup
   );
+
   const runAsNonRoot = useSelector(
     (state: AppState) => state.editTenantSecurityContext.runAsNonRoot
   );
+
   const fsGroupChangePolicy = useSelector(
     (state: AppState) => state.editTenantSecurityContext.fsGroupChangePolicy
   );
@@ -287,6 +294,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
           ...minioClientCertificateSecrets.map((cert) => cert.name),
           ...minioTLSCaCertificateSecrets.map((cert) => cert.name),
         ],
+
         minioServerCertificates: [],
         minioClientCertificates: [],
         minioCAsCertificates: [],
@@ -312,6 +320,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
             key: "",
           },
         ]);
+
         setMinioClientCertificates([
           {
             cert: "",
@@ -321,6 +330,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
             key: "",
           },
         ]);
+
         setMinioCaCertificates([
           {
             cert: "",
@@ -330,6 +340,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
             key: "",
           },
         ]);
+
         getTenantSecurityInfo();
       })
       .catch((err: ErrorResponseHandler) => {
@@ -352,15 +363,18 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
       minioServerCertificateSecrets.filter(
         (certificateSecret) => certificateSecret.name !== certificateInfo.name
       );
+
     // Update MinIO client TLS certificate secrets
     const updatedMinioClientCertificateSecrets =
       minioClientCertificateSecrets.filter(
         (certificateSecret) => certificateSecret.name !== certificateInfo.name
       );
+
     const updatedMinIOTLSCaCertificateSecrets =
       minioTLSCaCertificateSecrets.filter(
         (certificateSecret) => certificateSecret.name !== certificateInfo.name
       );
+
     setMinioServerCertificateSecrets(updatedMinioServerCertificateSecrets);
     setMinioClientCertificateSecrets(updatedMinioClientCertificateSecrets);
     setMinioTLSCaCertificateSecrets(updatedMinIOTLSCaCertificateSecrets);
@@ -435,6 +449,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
       const cleanCertsList = certificates.filter(
         (item: KeyPair) => item.id !== id
       );
+
       updateCertificates(cleanCertsList);
     }
   };
@@ -461,6 +476,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
       }
       default:
     }
+
     const updatedCertificates = [
       ...certificates,
       {
@@ -471,13 +487,14 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
         encoded_cert: "",
       },
     ];
+
     updateCertificates(updatedCertificates);
   };
 
   return (
     <React.Fragment>
       <ConfirmDialog
-        title={"Save and Restart"}
+        title={t("Save and Restart")}
         confirmText={"Restart"}
         cancelText="Cancel"
         titleIcon={<ConfirmModalIcon />}
@@ -487,10 +504,13 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
         onConfirm={updateTenantSecurity}
         confirmationContent={
           <DialogContentText>
-            Are you sure you want to save the changes and restart the service?
+            {t(
+              "Are you sure you want to save the changes and restart the service?"
+            )}
           </DialogContentText>
         }
       />
+
       {loadingTenant ? (
         <div className={classes.loaderAlign}>
           <Loader />
@@ -498,7 +518,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
       ) : (
         <Grid container spacing={1}>
           <Grid item xs={12}>
-            <h1 className={classes.sectionTitle}>Security</h1>
+            <h1 className={classes.sectionTitle}>{t("Security")}</h1>
             <hr className={classes.hrClass} />
           </Grid>
           <Grid container spacing={1}>
@@ -513,10 +533,10 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                   const checked = targetD.checked;
                   setEnableTLS(checked);
                 }}
-                label={"TLS"}
-                description={
+                label={t("TLS")}
+                description={t(
                   "Securing all the traffic using TLS. This is required for Encryption Configuration"
-                }
+                )}
               />
             </Grid>
             {enableTLS && (
@@ -532,10 +552,10 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                       const checked = targetD.checked;
                       setEnableAutoCert(checked);
                     }}
-                    label={"AutoCert"}
-                    description={
+                    label={t("AutoCert")}
+                    description={t(
                       "The internode certificates will be generated and managed by MinIO Operator"
-                    }
+                    )}
                   />
                 </Grid>
                 <Grid item xs={12} className={classes.formFieldRow}>
@@ -549,15 +569,17 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                       const checked = targetD.checked;
                       setEnableCustomCerts(checked);
                     }}
-                    label={"Custom Certificates"}
-                    description={"Certificates used to terminated TLS at MinIO"}
+                    label={t("Custom Certificates")}
+                    description={t(
+                      "Certificates used to terminated TLS at MinIO"
+                    )}
                   />
                 </Grid>
 
                 {enableCustomCerts && (
                   <Fragment>
                     <Grid item xs={12} className={classes.formFieldRow}>
-                      <h5>MinIO Server Certificates</h5>
+                      <h5>{t("MinIO Server Certificates")}</h5>
                     </Grid>
                     <Grid item xs={12}>
                       {minioServerCertificateSecrets.map(
@@ -591,9 +613,10 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                               accept=".cer,.crt,.cert,.pem"
                               id="tlsCert"
                               name="tlsCert"
-                              label="Cert"
+                              label={t("Cert")}
                               value={keyPair.cert}
                             />
+
                             <FileSelector
                               onChange={(encodedValue, fileName) =>
                                 addFileToKeyPair(
@@ -607,7 +630,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                               accept=".key,.pem"
                               id="tlsKey"
                               name="tlsKey"
-                              label="Key"
+                              label={t("Key")}
                               value={keyPair.key}
                             />
                           </Grid>
@@ -640,7 +663,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                     </Grid>
 
                     <Grid item xs={12} className={classes.formFieldRow}>
-                      <h5>MinIO Client Certificates</h5>
+                      <h5>{t("MinIO Client Certificates")}</h5>
                     </Grid>
                     <Grid item xs={12}>
                       {minioClientCertificateSecrets.map(
@@ -674,9 +697,10 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                               accept=".cer,.crt,.cert,.pem"
                               id="tlsCert"
                               name="tlsCert"
-                              label="Cert"
+                              label={t("Cert")}
                               value={keyPair.cert}
                             />
+
                             <FileSelector
                               onChange={(encodedValue, fileName) =>
                                 addFileToKeyPair(
@@ -690,7 +714,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                               accept=".key,.pem"
                               id="tlsKey"
                               name="tlsKey"
-                              label="Key"
+                              label={t("Key")}
                               value={keyPair.key}
                             />
                           </Grid>
@@ -723,7 +747,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                     </Grid>
 
                     <Grid item xs={12}>
-                      <h5>MinIO CA Certificates</h5>
+                      <h5>{t("MinIO CA Certificates")}</h5>
                     </Grid>
                     <Grid item xs={12}>
                       {minioTLSCaCertificateSecrets.map(
@@ -757,7 +781,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                               accept=".cer,.crt,.cert,.pem"
                               id="tlsCert"
                               name="tlsCert"
-                              label="Cert"
+                              label={t("Cert")}
                               value={keyPair.cert}
                             />
                           </Grid>
@@ -794,8 +818,9 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                 )}
               </Fragment>
             )}
+
             <Grid item xs={12} className={classes.formFieldRow}>
-              <h1 className={classes.sectionTitle}>Security Context</h1>
+              <h1 className={classes.sectionTitle}>{t("Security Context")}</h1>
               <hr className={classes.hrClass} />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
@@ -830,7 +855,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
                 variant="callAction"
                 disabled={dialogOpen || isSending}
                 onClick={() => setDialogOpen(true)}
-                label={"Save"}
+                label={t("Save")}
               />
             </Grid>
           </Grid>

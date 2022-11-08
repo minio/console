@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -112,7 +112,7 @@ const SiteReplication = () => {
 
   return (
     <Fragment>
-      <PageHeader label={"Site Replication"} />
+      <PageHeader label={t("Site Replication")} />
       <PageLayout>
         <Box
           sx={{
@@ -126,10 +126,10 @@ const SiteReplication = () => {
         >
           {hasSites ? (
             <Fragment>
-              <TooltipWrapper tooltip={"Delete All"}>
+              <TooltipWrapper tooltip={t("Delete All")}>
                 <Button
                   id={"delete-all"}
-                  label={"Delete All"}
+                  label={t("Delete All")}
                   variant="secondary"
                   disabled={isRemoving}
                   icon={<TrashIcon />}
@@ -138,10 +138,10 @@ const SiteReplication = () => {
                   }}
                 />
               </TooltipWrapper>
-              <TooltipWrapper tooltip={"Replication Status"}>
+              <TooltipWrapper tooltip={t("Replication Status")}>
                 <Button
                   id={"replication-status"}
-                  label={"Replication Status"}
+                  label={t("Replication Status")}
                   variant="regular"
                   icon={<RecoverIcon />}
                   onClick={(e) => {
@@ -152,10 +152,10 @@ const SiteReplication = () => {
               </TooltipWrapper>
             </Fragment>
           ) : null}
-          <TooltipWrapper tooltip={"Add Replication Sites"}>
+          <TooltipWrapper tooltip={t("Add Replication Sites")}>
             <Button
               id={"add-replication-site"}
-              label={"Add Sites"}
+              label={t("Add Sites")}
               variant="callAction"
               disabled={isRemoving}
               icon={<AddIcon />}
@@ -193,32 +193,32 @@ const SiteReplication = () => {
           >
             <Grid item xs={8}>
               <HelpBox
-                title={"Site Replication"}
+                title={t("Site Replication")}
                 iconComponent={<ClustersIcon />}
                 help={
                   <Fragment>
-                    This feature allows multiple independent MinIO sites (or
-                    clusters) that are using the same external IDentity Provider
-                    (IDP) to be configured as replicas.
+                    {t(
+                      "This feature allows multiple independent MinIO sites (or clusters) that are using the same external IDentity Provider (IDP) to be configured as replicas."
+                    )}
                     <br />
                     <br />
-                    To get started,{" "}
+                    {t("To get started,")}{" "}
                     <AButton
                       onClick={() => {
                         navigate(IAM_PAGES.SITE_REPLICATION_ADD);
                       }}
                     >
-                      Add a Replication Site
+                      {t("Add a Replication Site")}
                     </AButton>
                     .
                     <br />
-                    You can learn more at our{" "}
+                    {t("You can learn more at our")}{" "}
                     <a
                       href="https://min.io/docs/minio/linux/operations/install-deploy-manage/multi-site-replication.html?ref=con"
                       target="_blank"
                       rel="noreferrer"
                     >
-                      documentation
+                      {t("documentation")}
                     </a>
                     .
                   </Fragment>
@@ -229,41 +229,40 @@ const SiteReplication = () => {
         ) : null}
         {hasSites && !isSiteInfoLoading ? (
           <HelpBox
-            title={"Site Replication"}
+            title={t("Site Replication")}
             iconComponent={<ClustersIcon />}
             help={
               <Fragment>
-                This feature allows multiple independent MinIO sites (or
-                clusters) that are using the same external IDentity Provider
-                (IDP) to be configured as replicas. In this situation the set of
-                replica sites are referred to as peer sites or just sites.
+                {t(
+                  "This feature allows multiple independent MinIO sites (or clusters) that are using the same external IDentity Provider (IDP) to be configured as replicas. In this situation the set of replica sites are referred to as peer sites or just sites."
+                )}
                 <br />
                 <br />
-                Initially, only one of the sites added for replication may have
-                data. After site-replication is successfully configured, this
-                data is replicated to the other (initially empty) sites.
-                Subsequently, objects may be written to any of the sites, and
-                they will be replicated to all other sites.
+                {t(
+                  "Initially, only one of the sites added for replication may have data. After site-replication is successfully configured, this data is replicated to the other (initially empty) sites. Subsequently, objects may be written to any of the sites, and they will be replicated to all other sites."
+                )}
                 <br />
                 <br />
-                All sites must have the same deployment credentials (i.e.
-                MINIO_ROOT_USER, MINIO_ROOT_PASSWORD).
+                {t(
+                  "All sites must have the same deployment credentials (i.e. MINIO_ROOT_USER, MINIO_ROOT_PASSWORD)."
+                )}
                 <br />
                 <br />
-                All sites must be using the same external IDP(s) if any.
+                {t("All sites must be using the same external IDP(s) if any.")}
                 <br />
                 <br />
-                For SSE-S3 or SSE-KMS encryption via KMS, all sites must have
-                access to a central KMS deployment server.
+                {t(
+                  "For SSE-S3 or SSE-KMS encryption via KMS, all sites must have access to a central KMS deployment server."
+                )}
                 <br />
                 <br />
-                You can learn more at our{" "}
+                {t("You can learn more at our")}{" "}
                 <a
                   href="https://github.com/minio/minio/tree/master/docs/site-replication?ref=con"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  documentation
+                  {t("documentation")}
                 </a>
                 .
               </Fragment>
@@ -273,7 +272,7 @@ const SiteReplication = () => {
 
         {deleteAll ? (
           <ConfirmDialog
-            title={`Delete All`}
+            title={`${t("Delete All")}`}
             confirmText={"Delete"}
             isOpen={true}
             titleIcon={<ConfirmDeleteIcon />}
@@ -287,7 +286,9 @@ const SiteReplication = () => {
             }}
             confirmationContent={
               <DialogContentText>
-                Are you sure you want to remove all the replication sites?.
+                {t(
+                  "Are you sure you want to remove all the replication sites?."
+                )}
               </DialogContentText>
             }
           />

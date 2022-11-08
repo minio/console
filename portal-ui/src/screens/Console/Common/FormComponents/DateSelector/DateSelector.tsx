@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, {
   forwardRef,
   useEffect,
@@ -214,7 +214,7 @@ const DateSelector = forwardRef(
               input={<SelectStyled />}
             >
               <MenuItem value="" disabled>
-                {"<Month>"}
+                {t("<Month>")}
               </MenuItem>
               {months.map((option) => (
                 <MenuItem
@@ -239,7 +239,7 @@ const DateSelector = forwardRef(
               input={<SelectStyled />}
             >
               <MenuItem value="" disabled>
-                {"<Day>"}
+                {t("<Day>")}
               </MenuItem>
               {days.map((dayNumber) => (
                 <MenuItem
@@ -264,7 +264,7 @@ const DateSelector = forwardRef(
               input={<SelectStyled />}
             >
               <MenuItem value="" disabled>
-                {"<Year>"}
+                {t("<Year>")}
               </MenuItem>
               {years.map((year) => (
                 <MenuItem value={year} key={`select-${id}-yearOP-${year}`}>

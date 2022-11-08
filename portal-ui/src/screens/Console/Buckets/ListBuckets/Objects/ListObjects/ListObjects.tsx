@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, {
   Fragment,
   useCallback,
@@ -138,6 +138,7 @@ import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 const HistoryIcon = React.lazy(
   () => import("../../../../../../icons/HistoryIcon")
 );
+
 const RefreshIcon = React.lazy(
   () => import("../../../../../../icons/RefreshIcon")
 );
@@ -149,9 +150,11 @@ const DeleteIcon = React.lazy(
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects"))
 );
+
 const ShareFile = withSuspense(
   React.lazy(() => import("../ObjectDetails/ShareFile"))
 );
+
 const RewindEnable = withSuspense(React.lazy(() => import("./RewindEnable")));
 const PreviewFileModal = withSuspense(
   React.lazy(() => import("../Preview/PreviewFileModal"))
@@ -278,7 +281,7 @@ function useInterval(callback: any, delay: number) {
   }, [delay]);
 }
 
-const defLoading = <Typography component="h3">Loading...</Typography>;
+const defLoading = <Typography component="h3">{t("Loading...")}</Typography>;
 
 const ListObjects = () => {
   const classes = useStyles();
@@ -290,12 +293,15 @@ const ListObjects = () => {
   const rewindEnabled = useSelector(
     (state: AppState) => state.objectBrowser.rewind.rewindEnabled
   );
+
   const rewindDate = useSelector(
     (state: AppState) => state.objectBrowser.rewind.dateToRewind
   );
+
   const bucketToRewind = useSelector(
     (state: AppState) => state.objectBrowser.rewind.bucketToRewind
   );
+
   const versionsMode = useSelector(
     (state: AppState) => state.objectBrowser.versionsMode
   );
@@ -303,18 +309,23 @@ const ListObjects = () => {
   const searchObjects = useSelector(
     (state: AppState) => state.objectBrowser.searchObjects
   );
+
   const showDeleted = useSelector(
     (state: AppState) => state.objectBrowser.showDeleted
   );
+
   const detailsOpen = useSelector(
     (state: AppState) => state.objectBrowser.objectDetailsOpen
   );
+
   const selectedInternalPaths = useSelector(
     (state: AppState) => state.objectBrowser.selectedInternalPaths
   );
+
   const loading = useSelector(
     (state: AppState) => state.objectBrowser.loadingObjects
   );
+
   const simplePath = useSelector(
     (state: AppState) => state.objectBrowser.simplePath
   );
@@ -436,7 +447,7 @@ const ListObjects = () => {
       setLoadingMessage(
         <Fragment>
           <Typography component="h3">
-            This operation is taking longer than expected... (
+            {t("This operation is taking longer than expected... (")}
             {Math.ceil(timeDelta / 1000)}s)
           </Typography>
         </Fragment>
@@ -444,7 +455,7 @@ const ListObjects = () => {
     } else if (timeDelta / 1000 >= 3) {
       setLoadingMessage(
         <Typography component="h3">
-          This operation is taking longer than expected...
+          {t("This operation is taking longer than expected...")}
         </Typography>
       );
     }
@@ -478,6 +489,7 @@ const ListObjects = () => {
               "Error Getting Object Versioning Status: ",
               err.detailedError
             );
+
             setLoadingVersioning(false);
           });
       } else {
@@ -501,6 +513,7 @@ const ListObjects = () => {
               "Error Getting Object Locking Status: ",
               err.detailedError
             );
+
             setLoadingLocking(false);
           });
       } else {
@@ -528,6 +541,7 @@ const ListObjects = () => {
           `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`
         )
       );
+
       dispatch(
         setSimplePathHandler(
           `${decodedIPaths.split("/").slice(0, -1).join("/")}/`
@@ -646,6 +660,7 @@ const ListObjects = () => {
                       0,
                       pathPrefix.length - 1
                     );
+
                     for (let i = 0; i < res.objects.length; i++) {
                       if (res.objects[i].name === pathPrefixChopped) {
                         found = true;
@@ -809,6 +824,7 @@ const ListObjects = () => {
         dispatch(cancelObjectInList(identityDownload));
       }
     );
+
     storeCallForObjectWithID(ID, downloadCall);
     dispatch(
       setNewObject({
@@ -951,6 +967,7 @@ const ListObjects = () => {
                     msg: errorMessage,
                   })
                 );
+
                 reject({ status: xhr.status, message: errorMessage });
 
                 removeTrace(ID);
@@ -965,6 +982,7 @@ const ListObjects = () => {
                   msg: "A network error occurred.",
                 })
               );
+
               return;
             });
 
@@ -987,6 +1005,7 @@ const ListObjects = () => {
                   msg: "A network error occurred.",
                 })
               );
+
               return;
             };
             xhr.onloadend = () => {
@@ -1035,6 +1054,7 @@ const ListObjects = () => {
           const errors = results.filter(
             (result) => result.status === "rejected"
           );
+
           if (errors.length > 0) {
             const totalFiles = uploadFilePromises.length;
             const successUploadedFiles =
@@ -1068,7 +1088,7 @@ const ListObjects = () => {
             errorMessage: "Upload not allowed",
             detailedError: permissionTooltipHelper(
               [IAM_SCOPES.S3_PUT_OBJECT],
-              "upload objects to this location"
+              t("upload objects to this location")
             ),
           })
         );
@@ -1290,43 +1310,47 @@ const ListObjects = () => {
   const multiActionButtons = [
     {
       action: downloadSelected,
-      label: "Download",
+      label: t("Download"),
       disabled: !canDownload || selectedObjects.length === 0,
       icon: <DownloadIcon />,
       tooltip: canDownload
-        ? "Download Selected"
+        ? t("Download Selected")
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_GET_OBJECT],
-            "download objects from this bucket"
+            t("download objects from this bucket")
           ),
     },
     {
       action: openShare,
-      label: "Share",
+      label: t("Share"),
       disabled: selectedObjects.length !== 1 || !canShareFile,
       icon: <ShareIcon />,
-      tooltip: canShareFile ? "Share Selected File" : "Sharing unavailable",
+      tooltip: canShareFile
+        ? t("Share Selected File")
+        : t("Sharing unavailable"),
     },
     {
       action: openPreview,
-      label: "Preview",
+      label: t("Preview"),
       disabled: selectedObjects.length !== 1 || !canPreviewFile,
       icon: <PreviewIcon />,
-      tooltip: canPreviewFile ? "Preview Selected File" : "Preview unavailable",
+      tooltip: canPreviewFile
+        ? t("Preview Selected File")
+        : t("Preview unavailable"),
     },
     {
       action: () => {
         setDeleteMultipleOpen(true);
       },
-      label: "Delete",
+      label: t("Delete"),
       icon: <DeleteIcon />,
       disabled:
         !canDelete || selectedObjects.length === 0 || !displayDeleteObject,
       tooltip: canDelete
-        ? "Delete Selected Files"
+        ? t("Delete Selected Files")
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_DELETE_OBJECT],
-            "delete objects in this bucket"
+            t("delete objects in this bucket")
           ),
     },
   ];
@@ -1345,6 +1369,7 @@ const ListObjects = () => {
           }}
         />
       )}
+
       {deleteMultipleOpen && (
         <DeleteMultipleObjects
           deleteOpen={deleteMultipleOpen}
@@ -1354,6 +1379,7 @@ const ListObjects = () => {
           versioning={isVersioned}
         />
       )}
+
       {rewindSelect && (
         <RewindEnable
           open={rewindSelect}
@@ -1361,6 +1387,7 @@ const ListObjects = () => {
           bucketName={bucketName}
         />
       )}
+
       {previewOpen && (
         <PreviewFileModal
           open={previewOpen}
@@ -1369,6 +1396,7 @@ const ListObjects = () => {
           onClosePreview={closePreviewWindow}
         />
       )}
+
       {!!downloadRenameModal && (
         <RenameLongFileName
           open={!!downloadRenameModal}
@@ -1384,6 +1412,7 @@ const ListObjects = () => {
           }}
         />
       )}
+
       <PageLayout variant={"full"}>
         <Grid item xs={12} className={classes.screenTitleContainer}>
           <ScreenTitle
@@ -1398,11 +1427,13 @@ const ListObjects = () => {
               <Fragment>
                 <Grid item xs={12} className={classes.bucketDetails}>
                   <span className={classes.detailsSpacer}>
-                    Created:&nbsp;&nbsp;&nbsp;
+                    {t("Created:")}
+
                     <strong>{bucketInfo?.creation_date || ""}</strong>
                   </span>
                   <span className={classes.detailsSpacer}>
-                    Access:&nbsp;&nbsp;&nbsp;
+                    {t("Access:")}
+
                     <strong>{bucketInfo?.access || ""}</strong>
                   </span>
                   {bucketInfo && (
@@ -1411,13 +1442,16 @@ const ListObjects = () => {
                         {bucketInfo.size && (
                           <Fragment>{niceBytesInt(bucketInfo.size)}</Fragment>
                         )}
+
                         {bucketInfo.size && quota && (
                           <Fragment> / {niceBytesInt(quota.quota)}</Fragment>
                         )}
+
                         {bucketInfo.size && bucketInfo.objects ? " - " : ""}
                         {bucketInfo.objects && (
                           <Fragment>
-                            {bucketInfo.objects}&nbsp;Object
+                            {bucketInfo.objects}
+                            {t("Object")}
                             {bucketInfo.objects && bucketInfo.objects !== 1
                               ? "s"
                               : ""}
@@ -1432,10 +1466,10 @@ const ListObjects = () => {
             actions={
               <Fragment>
                 <div className={classes.actionsSection}>
-                  <TooltipWrapper tooltip={"Rewind Bucket"}>
+                  <TooltipWrapper tooltip={t("Rewind Bucket")}>
                     <Button
                       id={"rewind-objects-list"}
-                      label={"Rewind"}
+                      label={t("Rewind")}
                       icon={
                         <Badge
                           badgeContent=" "
@@ -1466,10 +1500,10 @@ const ListObjects = () => {
                       }
                     />
                   </TooltipWrapper>
-                  <TooltipWrapper tooltip={"Reload List"}>
+                  <TooltipWrapper tooltip={t("Reload List")}>
                     <Button
                       id={"refresh-objects-list"}
-                      label={"Refresh"}
+                      label={t("Refresh")}
                       icon={<RefreshIcon />}
                       variant={"regular"}
                       onClick={() => {
@@ -1493,6 +1527,7 @@ const ListObjects = () => {
                     style={{ display: "none" }}
                     ref={fileUpload}
                   />
+
                   <input
                     type="file"
                     multiple
@@ -1500,6 +1535,7 @@ const ListObjects = () => {
                     style={{ display: "none" }}
                     ref={folderUpload}
                   />
+
                   <UploadFilesButton
                     bucketName={bucketName}
                     uploadPath={uploadPath.join("/")}
@@ -1560,7 +1596,7 @@ const ListObjects = () => {
                               name={"deleted_objects"}
                               id={"showDeletedObjects"}
                               value={"deleted_on"}
-                              label={"Show deleted objects"}
+                              label={t("Show deleted objects")}
                               onChange={setDeletedAction}
                               checked={showDeleted}
                               overrideLabelClasses={classes.labelStyle}
@@ -1589,7 +1625,9 @@ const ListObjects = () => {
                     selectedItems={selectedObjects}
                     onSelect={selectListObjects}
                     customEmptyMessage={`This location is empty${
-                      !rewindEnabled ? ", please try uploading a new file" : ""
+                      !rewindEnabled
+                        ? t(", please try uploading a new file")
+                        : ""
                     }`}
                     sortConfig={{
                       currentSort: currentSortField,
@@ -1609,6 +1647,7 @@ const ListObjects = () => {
                 </Grid>
               </SecureComponent>
             )}
+
             <SecureComponent
               scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
               resource={bucketName}
@@ -1624,9 +1663,10 @@ const ListObjects = () => {
                 {selectedObjects.length > 0 && (
                   <ActionsListSection
                     items={multiActionButtons}
-                    title={"Selected Objects:"}
+                    title={t("Selected Objects:")}
                   />
                 )}
+
                 {selectedInternalPaths !== null && (
                   <ObjectDetailPanel
                     internalPaths={selectedInternalPaths}

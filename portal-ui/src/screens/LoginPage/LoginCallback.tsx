@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useEffect, useState } from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { useNavigate } from "react-router-dom";
 import api from "../../common/api";
@@ -165,7 +165,7 @@ const LoginCallback = ({ classes }: ILoginCallBackProps) => {
               <span className={classes.messageIcon}>
                 <ErrorOutlineIcon />
               </span>
-              <span className={classes.errorLabel}>Error from IDP</span>
+              <span className={classes.errorLabel}>{t("Error from IDP")}</span>
             </div>
             <div className={classes.simpleError}>{error}</div>
             <Typography
@@ -185,7 +185,7 @@ const LoginCallback = ({ classes }: ILoginCallBackProps) => {
               variant="callAction"
               fullWidth
             >
-              Back to Login
+              {t("Back to Login")}
             </Button>
           </Grid>
         </Grid>

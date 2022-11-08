@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useState } from "react";
 import { DialogContentText } from "@mui/material";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -56,6 +56,7 @@ const DeletePVC = ({
           detailedError: "",
         })
       );
+
       return;
     }
     invokeDeleteApi(
@@ -66,7 +67,7 @@ const DeletePVC = ({
 
   return (
     <ConfirmDialog
-      title={`Delete PVC`}
+      title={`${t("Delete PVC")}`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
@@ -78,7 +79,9 @@ const DeletePVC = ({
       }}
       confirmationContent={
         <DialogContentText>
-          To continue please type <b>{selectedPVC.name}</b> in the box.
+          {t("To continue please type")}
+          <b>{selectedPVC.name}</b>
+          {t("in the box.")}
           <Grid item xs={12}>
             <InputBoxWrapper
               id="retype-PVC"

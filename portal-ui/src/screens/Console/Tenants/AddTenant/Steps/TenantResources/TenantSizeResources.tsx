@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -61,10 +61,8 @@ const TenantSizeResources = ({
   classes,
 }: // updateAddField,
 // isPageValid,
-
 ITenantSizeResourcesProps) => {
   const dispatch = useAppDispatch();
-
   const nodes = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.nodes
   );
@@ -72,13 +70,16 @@ ITenantSizeResourcesProps) => {
   const resourcesSize = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.resourcesSize
   );
+
   const selectedStorageClass = useSelector(
     (state: AppState) =>
       state.createTenant.fields.nameTenant.selectedStorageClass
   );
+
   const maxCPUsUse = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.maxCPUsUse
   );
+
   const maxMemorySize = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.maxMemorySize
   );
@@ -92,14 +93,17 @@ ITenantSizeResourcesProps) => {
     (state: AppState) =>
       state.createTenant.fields.tenantSize.resourcesCPURequestError
   );
+
   const resourcesCPURequest = useSelector(
     (state: AppState) =>
       state.createTenant.fields.tenantSize.resourcesCPURequest
   );
+
   const resourcesCPULimitError = useSelector(
     (state: AppState) =>
       state.createTenant.fields.tenantSize.resourcesCPULimitError
   );
+
   const resourcesCPULimit = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.resourcesCPULimit
   );
@@ -108,14 +112,17 @@ ITenantSizeResourcesProps) => {
     (state: AppState) =>
       state.createTenant.fields.tenantSize.resourcesMemoryRequestError
   );
+
   const resourcesMemoryRequest = useSelector(
     (state: AppState) =>
       state.createTenant.fields.tenantSize.resourcesMemoryRequest
   );
+
   const resourcesMemoryLimitError = useSelector(
     (state: AppState) =>
       state.createTenant.fields.tenantSize.resourcesMemoryLimitError
   );
+
   const resourcesMemoryLimit = useSelector(
     (state: AppState) =>
       state.createTenant.fields.tenantSize.resourcesMemoryLimit
@@ -192,6 +199,7 @@ ITenantSizeResourcesProps) => {
         const maxMemory = floor(
           res.mem_priority.max_allocatable_mem / 1024 / 1024 / 1024
         );
+
         // We default to Best CPU Configuration
         updateField("maxMemorySize", maxMemory.toString());
         updateField(
@@ -231,10 +239,11 @@ ITenantSizeResourcesProps) => {
     <Fragment>
       <Grid item xs={12}>
         <div className={classes.headerElement}>
-          <h3 className={classes.h3Section}>Resources</h3>
+          <h3 className={classes.h3Section}>{t("Resources")}</h3>
           <span className={classes.descriptionText}>
-            You may specify the amount of CPU and Memory that MinIO servers
-            should reserve on each node.
+            {t(
+              "You may specify the amount of CPU and Memory that MinIO servers should reserve on each node."
+            )}
           </span>
         </div>
       </Grid>
@@ -246,7 +255,7 @@ ITenantSizeResourcesProps) => {
 
       <Grid item xs={12} className={classes.formFieldRow}>
         <InputBoxWrapper
-          label={"CPU Request"}
+          label={t("CPU Request")}
           id={"resourcesCPURequest"}
           name={"resourcesCPURequest"}
           onChange={(e) => {
@@ -305,13 +314,13 @@ ITenantSizeResourcesProps) => {
             }
             updateField("resourcesMemoryRequest", e.target.value);
           }}
-          label="Memory Request"
+          label={t("Memory Request")}
           overlayObject={
             <InputUnitMenu
               id={"size-unit"}
               onUnitChange={() => {}}
               unitSelected={"Gi"}
-              unitsList={[{ label: "Gi", value: "Gi" }]}
+              unitsList={[{ label: t("Gi"), value: "Gi" }]}
               disabled={true}
             />
           }
@@ -334,7 +343,7 @@ ITenantSizeResourcesProps) => {
 
             updateField("resourcesSpecifyLimit", checked);
           }}
-          label={"Specify Limit"}
+          label={t("Specify Limit")}
         />
       </Grid>
 
@@ -342,7 +351,7 @@ ITenantSizeResourcesProps) => {
         <Fragment>
           <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
-              label={"CPU Limit"}
+              label={t("CPU Limit")}
               id={"resourcesCPULimit"}
               name={"resourcesCPULimit"}
               onChange={(e) => {
@@ -389,13 +398,13 @@ ITenantSizeResourcesProps) => {
                 }
                 updateField("resourcesMemoryLimit", e.target.value);
               }}
-              label="Memory Limit"
+              label={t("Memory Limit")}
               overlayObject={
                 <InputUnitMenu
                   id={"size-unit"}
                   onUnitChange={() => {}}
                   unitSelected={"Gi"}
-                  unitsList={[{ label: "Gi", value: "Gi" }]}
+                  unitsList={[{ label: t("Gi"), value: "Gi" }]}
                   disabled={true}
                 />
               }

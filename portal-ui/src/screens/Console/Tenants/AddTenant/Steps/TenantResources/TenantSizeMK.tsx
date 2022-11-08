@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -76,49 +76,64 @@ const TenantSizeMK = ({
   const volumeSize = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.volumeSize
   );
+
   const sizeFactor = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.sizeFactor
   );
+
   const drivesPerServer = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.drivesPerServer
   );
+
   const nodes = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.nodes
   );
+
   const memoryNode = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.memoryNode
   );
+
   const ecParity = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.ecParity
   );
+
   const ecParityChoices = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.ecParityChoices
   );
+
   const cleanECChoices = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.cleanECChoices
   );
+
   const resourcesSize = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.resourcesSize
   );
+
   const distribution = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.distribution
   );
+
   const ecParityCalc = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.ecParityCalc
   );
+
   const cpuToUse = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.cpuToUse
   );
+
   const maxCPUsUse = useSelector(
     (state: AppState) => state.createTenant.fields.tenantSize.maxCPUsUse
   );
+
   const integrationSelection = useSelector(
     (state: AppState) =>
       state.createTenant.fields.tenantSize.integrationSelection
   );
+
   const limitSize = useSelector(
     (state: AppState) => state.createTenant.limitSize
   );
+
   const selectedStorageType = useSelector(
     (state: AppState) =>
       state.createTenant.fields.nameTenant.selectedStorageType
@@ -206,6 +221,7 @@ const TenantSizeMK = ({
               mainSelection.driveSize.sizeUnit,
               true
             ),
+
             10
           );
 
@@ -223,6 +239,7 @@ const TenantSizeMK = ({
             "resourcesCPURequest",
             Math.max(1, mainSelection.CPU / 2)
           );
+
           updateField(
             "resourcesMemoryRequest",
             Math.max(2, mainSelection.memory / 2)
@@ -299,6 +316,7 @@ const TenantSizeMK = ({
                 valid: false,
               })
             );
+
             updateField("ecParity", "");
           });
       }
@@ -311,9 +329,9 @@ const TenantSizeMK = ({
     <Fragment>
       <Grid item xs={12}>
         <div className={classes.headerElement}>
-          <h3 className={classes.h3Section}>Tenant Size</h3>
+          <h3 className={classes.h3Section}>{t("Tenant Size")}</h3>
           <span className={classes.descriptionText}>
-            Please select the desired capacity
+            {t("Please select the desired capacity")}
           </span>
         </div>
       </Grid>
@@ -322,11 +340,13 @@ const TenantSizeMK = ({
           <div className={classes.error}>{distribution.error}</div>
         </Grid>
       )}
+
       {resourcesSize.error !== "" && (
         <Grid item xs={12}>
           <div className={classes.error}>{resourcesSize.error}</div>
         </Grid>
       )}
+
       <Grid item xs={12} className={classes.formFieldRow}>
         <InputBoxWrapper
           id="nodes"
@@ -337,7 +357,7 @@ const TenantSizeMK = ({
               cleanValidation("nodes");
             }
           }}
-          label="Number of Servers"
+          label={t("Number of Servers")}
           disabled={selectedStorageType === ""}
           value={nodes}
           min="4"
@@ -353,14 +373,16 @@ const TenantSizeMK = ({
           onChange={(e: SelectChangeEvent<string>) => {
             updateField("ecParity", e.target.value as string);
           }}
-          label="Erasure Code Parity"
+          label={t("Erasure Code Parity")}
           disabled={selectedStorageType === ""}
           value={ecParity}
           options={ecParityChoices}
         />
+
         <span className={classes.descriptionText}>
-          Please select the desired parity. This setting will change the max
-          usable capacity in the cluster
+          {t(
+            "Please select the desired parity. This setting will change the max usable capacity in the cluster"
+          )}
         </span>
       </Grid>
     </Fragment>

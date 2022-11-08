@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -115,11 +115,12 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
     <Fragment>
       <Grid item xs={12}>
         <PageHeader
-          label={<BackLink to={IAM_PAGES.GROUPS} label={"Groups"} />}
+          label={<BackLink to={IAM_PAGES.GROUPS} label={t("Groups")} />}
         />
+
         <PageLayout>
           <FormLayout
-            title={"Create Group"}
+            title={t("Create Group")}
             icon={<CreateGroupIcon />}
             helpbox={<AddGroupHelpBox />}
           >
@@ -129,7 +130,7 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
                   <InputBoxWrapper
                     id="group-name"
                     name="group-name"
-                    label="Group Name"
+                    label={t("Group Name")}
                     autoFocus={true}
                     value={groupName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,7 +153,7 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
                   variant="regular"
                   style={classes.spacerRight}
                   onClick={resetForm}
-                  label={"Clear"}
+                  label={t("Clear")}
                 />
 
                 <Button
@@ -160,7 +161,7 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
                   type="submit"
                   variant="callAction"
                   disabled={saving || !validGroup}
-                  label={"Save"}
+                  label={t("Save")}
                 />
               </Grid>
               {saving && (

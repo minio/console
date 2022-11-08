@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import { t } from "i18next";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -148,24 +148,31 @@ const Configure = ({ classes }: IConfigureProps) => {
   const exposeMinIO = useSelector(
     (state: AppState) => state.createTenant.fields.configure.exposeMinIO
   );
+
   const exposeConsole = useSelector(
     (state: AppState) => state.createTenant.fields.configure.exposeConsole
   );
+
   const setDomains = useSelector(
     (state: AppState) => state.createTenant.fields.configure.setDomains
   );
+
   const consoleDomain = useSelector(
     (state: AppState) => state.createTenant.fields.configure.consoleDomain
   );
+
   const minioDomains = useSelector(
     (state: AppState) => state.createTenant.fields.configure.minioDomains
   );
+
   const tenantCustom = useSelector(
     (state: AppState) => state.createTenant.fields.configure.tenantCustom
   );
+
   const tenantEnvVars = useSelector(
     (state: AppState) => state.createTenant.fields.configure.envVars
   );
+
   const tenantSecurityContext = useSelector(
     (state: AppState) =>
       state.createTenant.fields.configure.tenantSecurityContext
@@ -279,16 +286,17 @@ const Configure = ({ classes }: IConfigureProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Configure</h3>
+        <h3 className={classes.h3Section}>{t("Configure")}</h3>
         <span className={classes.descriptionText}>
-          Basic configurations for tenant management
+          {t("Basic configurations for tenant management")}
         </span>
       </div>
       <div className={classes.headerElement}>
-        <h4 className={classes.h3Section}>Services</h4>
+        <h4 className={classes.h3Section}>{t("Services")}</h4>
         <span className={classes.descriptionText}>
-          Whether the tenant's services should request an external IP via
-          LoadBalancer service type.
+          {t(
+            "Whether the tenant's services should request an external IP via LoadBalancer service type."
+          )}
         </span>
       </div>
       <Grid item xs={12} className={classes.configSectionItem}>
@@ -303,7 +311,7 @@ const Configure = ({ classes }: IConfigureProps) => {
 
             updateField("exposeMinIO", checked);
           }}
-          label={"Expose MinIO Service"}
+          label={t("Expose MinIO Service")}
         />
       </Grid>
       <Grid item xs={12} className={classes.configSectionItem}>
@@ -318,7 +326,7 @@ const Configure = ({ classes }: IConfigureProps) => {
 
             updateField("exposeConsole", checked);
           }}
-          label={"Expose Console Service"}
+          label={t("Expose Console Service")}
         />
       </Grid>
       <Grid item xs={12} className={classes.configSectionItem}>
@@ -333,14 +341,14 @@ const Configure = ({ classes }: IConfigureProps) => {
 
             updateField("setDomains", checked);
           }}
-          label={"Set Custom Domains"}
+          label={t("Set Custom Domains")}
         />
       </Grid>
       {setDomains && (
         <Grid item xs={12} className={classes.tenantCustomizationFields}>
           <fieldset className={classes.fieldGroup}>
             <legend className={classes.descriptionText}>
-              Custom Domains for MinIO
+              {t("Custom Domains for MinIO")}
             </legend>
             <Grid item xs={12} className={`${classes.configSectionItem}`}>
               <div className={classes.containerItem}>
@@ -351,16 +359,16 @@ const Configure = ({ classes }: IConfigureProps) => {
                     updateField("consoleDomain", e.target.value);
                     cleanValidation("tenant_securityContext_runAsUser");
                   }}
-                  label="Console Domain"
+                  label={t("Console Domain")}
                   value={consoleDomain}
-                  placeholder={
+                  placeholder={t(
                     "Eg. http://subdomain.domain:port/subpath1/subpath2"
-                  }
+                  )}
                   error={validationErrors["console_domain"] || ""}
                 />
               </div>
               <div>
-                <h4>MinIO Domains</h4>
+                <h4>{t("MinIO Domains")}</h4>
                 <div className={`${classes.responsiveSectionItem}`}>
                   {minioDomains.map((domain, index) => {
                     return (
@@ -378,13 +386,14 @@ const Configure = ({ classes }: IConfigureProps) => {
                           }}
                           label={`MinIO Domain ${index + 1}`}
                           value={domain}
-                          placeholder={"Eg. http://subdomain.domain"}
+                          placeholder={t("Eg. http://subdomain.domain")}
                           error={
                             validationErrors[
                               `minio-domain-${index.toString()}`
                             ] || ""
                           }
                         />
+
                         <div className={classes.overlayAction}>
                           <IconButton
                             size={"small"}
@@ -426,14 +435,14 @@ const Configure = ({ classes }: IConfigureProps) => {
 
             updateField("tenantCustom", checked);
           }}
-          label={"Security Context"}
+          label={t("Security Context")}
         />
       </Grid>
       {tenantCustom && (
         <Grid item xs={12} className={classes.tenantCustomizationFields}>
           <fieldset className={classes.fieldGroup}>
             <legend className={classes.descriptionText}>
-              SecurityContext for MinIO
+              {t("SecurityContext for MinIO")}
             </legend>
             <Grid item xs={12} className={`${classes.configSectionItem}`}>
               <div
@@ -451,7 +460,7 @@ const Configure = ({ classes }: IConfigureProps) => {
                       });
                       cleanValidation("tenant_securityContext_runAsUser");
                     }}
-                    label="Run As User"
+                    label={t("Run As User")}
                     value={tenantSecurityContext.runAsUser}
                     required
                     error={
@@ -472,7 +481,7 @@ const Configure = ({ classes }: IConfigureProps) => {
                       });
                       cleanValidation("tenant_securityContext_runAsGroup");
                     }}
-                    label="Run As Group"
+                    label={t("Run As Group")}
                     value={tenantSecurityContext.runAsGroup}
                     required
                     error={
@@ -501,7 +510,7 @@ const Configure = ({ classes }: IConfigureProps) => {
                       });
                       cleanValidation("tenant_securityContext_fsGroup");
                     }}
-                    label="FsGroup"
+                    label={t("FsGroup")}
                     value={tenantSecurityContext.fsGroup}
                     required
                     error={
@@ -513,7 +522,7 @@ const Configure = ({ classes }: IConfigureProps) => {
                 <div className={classes.containerItem}>
                   <div className={classes.configSectionItem}>
                     <SelectWrapper
-                      label="FsGroupChangePolicy"
+                      label={t("FsGroupChangePolicy")}
                       id="securityContext_fsGroupChangePolicy"
                       name="securityContext_fsGroupChangePolicy"
                       value={tenantSecurityContext.fsGroupChangePolicy}
@@ -525,11 +534,11 @@ const Configure = ({ classes }: IConfigureProps) => {
                       }}
                       options={[
                         {
-                          label: "Always",
+                          label: t("Always"),
                           value: "Always",
                         },
                         {
-                          label: "OnRootMismatch",
+                          label: t("OnRootMismatch"),
                           value: "OnRootMismatch",
                         },
                       ]}
@@ -554,19 +563,24 @@ const Configure = ({ classes }: IConfigureProps) => {
                       runAsNonRoot: checked,
                     });
                   }}
-                  label={"Do not run as Root"}
+                  label={t("Do not run as Root")}
                 />
               </div>
             </Grid>
           </fieldset>
         </Grid>
       )}
+
       <Divider />
 
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Additional Environment Variables</h3>
+        <h3 className={classes.h3Section}>
+          {t("Additional Environment Variables")}
+        </h3>
         <span className={classes.descriptionText}>
-          Define additional environment variables to be used by your MinIO pods
+          {t(
+            "Define additional environment variables to be used by your MinIO pods"
+          )}
         </span>
       </div>
       <Grid container>
@@ -581,7 +595,7 @@ const Configure = ({ classes }: IConfigureProps) => {
               <InputBoxWrapper
                 id="env_var_key"
                 name="env_var_key"
-                label="Key"
+                label={t("Key")}
                 value={envVar.key}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const existingEnvVars = [...tenantEnvVars];
@@ -603,7 +617,7 @@ const Configure = ({ classes }: IConfigureProps) => {
               <InputBoxWrapper
                 id="env_var_value"
                 name="env_var_value"
-                label="Value"
+                label={t("Value")}
                 value={envVar.value}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const existingEnvVars = [...tenantEnvVars];
@@ -643,6 +657,7 @@ const Configure = ({ classes }: IConfigureProps) => {
                     const existingEnvVars = tenantEnvVars.filter(
                       (item, fIndex) => fIndex !== index
                     );
+
                     dispatch(setEnvVars(existingEnvVars));
                   }}
                   disabled={tenantEnvVars.length <= 1}

@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React from "react";
 import { Box } from "@mui/material";
 import VerifiedIcon from "../../../icons/VerifiedIcon";
@@ -33,7 +34,9 @@ const RegistrationStatusBanner = ({ email = "" }: { email?: string }) => {
       }}
     >
       <Box className="registered-box">
-        <Box sx={{ fontSize: "16px", fontWeight: 400 }}>Register status:</Box>
+        <Box sx={{ fontSize: "16px", fontWeight: 400 }}>
+          {t("Register status:")}
+        </Box>
         <Box className="reg-badge-box">
           <VerifiedIcon />
           <Box
@@ -41,7 +44,7 @@ const RegistrationStatusBanner = ({ email = "" }: { email?: string }) => {
               fontWeight: 600,
             }}
           >
-            Registered
+            {t("Registered")}
           </Box>
         </Box>
       </Box>
@@ -57,7 +60,9 @@ const RegistrationStatusBanner = ({ email = "" }: { email?: string }) => {
           },
         }}
       >
-        <Box sx={{ fontSize: "16px", fontWeight: 400 }}>Registered to:</Box>
+        <Box sx={{ fontSize: "16px", fontWeight: 400 }}>
+          {t("Registered to:")}
+        </Box>
         <Box sx={{ marginLeft: "8px", fontWeight: 600 }}>{email}</Box>
       </Box>
     </Box>
