@@ -117,7 +117,7 @@ type MinioAdmin interface {
 	addTier(ctx context.Context, tier *madmin.TierConfig) error
 	// Edit Tier Credentials
 	editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error
-	//verify Tier status
+	// verify Tier status
 	verifyTierStatus(ctx context.Context, tierName string) error
 	// Speedtest
 	speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error)
