@@ -14,15 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useState } from "react";
 
-import { DialogContentText } from "@mui/material";
+import { DialogContentText, Grid } from "@mui/material";
 import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import WarningMessage from "../Common/WarningMessage/WarningMessage";
+import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
 interface IDeleteKMSModalProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -46,6 +48,7 @@ const DeleteKMSModal = ({
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+  const [retypeKey, setRetypeKey] = useState("");
 
   if (!selectedItem) {
     return null;
@@ -64,10 +67,32 @@ const DeleteKMSModal = ({
       isLoading={deleteLoading}
       onConfirm={onConfirmDelete}
       onClose={onClose}
+      confirmButtonProps={{
+        disabled: retypeKey !== selectedItem || deleteLoading,
+      }}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete this element <br />
-          <b>{selectedItem}</b>?
+          <Grid item xs={12}>
+            <WarningMessage
+              title={"WARNING"}
+              label={
+                "Please note that this is a dangerous operation. Once a key has been deleted all data that has been encrypted with it cannot be decrypted anymore, and therefore, is lost."
+              }
+            />
+          </Grid>
+          To continue please type <b>{selectedItem}</b> in the box.
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="retype-key"
+              name="retype-key"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setRetypeKey(event.target.value);
+              }}
+              onPaste={(e) => e.preventDefault()}
+              label=""
+              value={retypeKey}
+            />
+          </Grid>
         </DialogContentText>
       }
     />

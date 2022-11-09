@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { useState } from "react";
+import React, { ClipboardEvent, useState } from "react";
 import {
   Grid,
   IconButton,
@@ -44,6 +44,7 @@ interface InputBoxProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyPress?: (e: any) => void;
   onFocus?: () => void;
+  onPaste?: (e: ClipboardEvent<HTMLInputElement>) => void;
   value: string | boolean;
   id: string;
   name: string;
@@ -137,6 +138,7 @@ const InputBoxWrapper = ({
   className = "",
   onKeyPress,
   onFocus,
+  onPaste,
 }: InputBoxProps) => {
   let inputProps: any = { "data-index": index, ...extraInputProps };
   const [toggleTextInput, setToggleTextInput] = useState<boolean>(false);
@@ -216,6 +218,7 @@ const InputBoxWrapper = ({
             className={classes.inputRebase}
             onKeyPress={onKeyPress}
             onFocus={onFocus}
+            onPaste={onPaste}
           />
           {inputBoxWrapperIcon && (
             <div
