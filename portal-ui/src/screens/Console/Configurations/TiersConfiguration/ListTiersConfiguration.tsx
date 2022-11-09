@@ -118,65 +118,6 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     IAM_SCOPES.ADMIN_SET_TIER,
   ]);
 
-  const tierStatus = (tierName: string) => {
-    const url = new URL(window.location.toString());
-
-    // check if we are using base path, if not this always is `/`
-    const baseLocation = new URL(document.baseURI);
-    const baseUrl = baseLocation.pathname;
-    const port = url.port;
-
-    const wsProt = wsProtocol(url.protocol);
-    const c = new W3CWebSocket(
-      `${wsProt}://${url.hostname}:${port}${baseUrl}ws/tier/${tierName}`
-    );
-
-    if (c !== null) {
-      c.onopen = () => {
-        console.log("checking status of ", tierName);
-        c.send("ok");
-      };
-      c.onerror = (error: Error) => {
-        console.log(tierName + "not online:", error.message);
-        c.close(1000);
-      };
-      c.onmessage = (message: IMessageEvent) => {
-        console.log("there was a message", message);
-      };
-      c.onclose = () => {
-        console.log("connection closed by server");
-      };
-      return () => {
-        c.close(1000);
-        console.log("closing websockets");
-      };
-    }
-  };
-
-  useEffect(() => {
-    records.forEach(function (tier) {
-      switch (tier.type) {
-        case "s3":
-          console.log(tierStatus(tier.s3?.name || ""));
-          return;
-        case "minio":
-          console.log(tierStatus(tier.minio?.name || ""));
-          return;
-        case "azure":
-          console.log(tierStatus(tier.azure?.name || ""));
-          return;
-        case "gcs":
-          console.log(tierStatus(tier.gcs?.name || ""));
-          return;
-        case "unsupported":
-          console.log("Unsupported tier type");
-          return;
-        default:
-          return;
-      }
-    });
-  }, [records]);
-
   useEffect(() => {
     if (isLoading) {
       if (distributedSetup) {
