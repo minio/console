@@ -58,3 +58,8 @@ func (ac adminClientMock) changePassword(ctx context.Context, accessKey, secretK
 func (ac adminClientMock) speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error) {
 	return nil, nil
 }
+
+// implements madmin.VerifyTier() - WILL ALWAYS RETURN TRUE AS SET NOW, FIX IF USED IN TEST
+func (ac adminClientMock) verifyTierStatus(ctx context.Context, tierName string) error {
+	return nil
+}
