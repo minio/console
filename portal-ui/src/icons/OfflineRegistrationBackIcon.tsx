@@ -7,8 +7,6 @@ const OfflineRegistrationBackIcon = (props: SVGProps<SVGSVGElement>) => (
     className={`min-icon`}
     fill={"currentcolor"}
     viewBox="0 0 256 256"
-    width="16.1"
-    height="13.5"
     {...props}
   >
     <path data-name="Rect\xE1ngulo 1602" fill="none" d="M0 0h256v256H0z" />
