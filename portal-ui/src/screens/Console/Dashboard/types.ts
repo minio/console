@@ -27,6 +27,13 @@ export interface Usage {
   lastScan: any;
   lastHeal: any;
   upTime: any;
+  backend: Backend
+}
+
+export interface Backend {
+  backendType: string;
+  standardSCParity: number;
+  rrSCParity: number;
 }
 
 export interface ServerInfo {

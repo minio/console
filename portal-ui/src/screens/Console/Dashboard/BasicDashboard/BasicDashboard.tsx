@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import {
   ArrowRightIcon,
   BucketsIcon,
@@ -276,6 +276,29 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
               </Box>
             </Box>
           </Box>
+          <Grid container spacing={1}>
+            <Grid item xs={4}>
+              <TimeStatItem
+                icon={<UptimeIcon />}
+                label={"Backend Type"}
+                value={usage ? usage.backend.backendType : "Unknown"}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TimeStatItem
+                icon={<UptimeIcon />}
+                label={"Standard storage class Parity"}
+                value={usage ? usage.backend.standardSCParity.toString() : "0"}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TimeStatItem
+                icon={<UptimeIcon />}
+                label={"Reduced Redundancy storage class Parity"}
+                value={usage ? usage.backend.rrSCParity.toString() : "0"}
+              />
+            </Grid>
+          </Grid>
 
           <Box
             sx={{
