@@ -25,6 +25,8 @@ import {
   ServersIcon,
   TotalObjectsIcon,
   UptimeIcon,
+  FormatDrivesIcon,
+  StorageIcon,
 } from "../../../../icons";
 import HelpBox from "../../../../common/HelpBox";
 import { calculateBytes, representationNumber } from "../../../../common/utils";
@@ -279,21 +281,21 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
           <Grid container spacing={1}>
             <Grid item xs={4}>
               <TimeStatItem
-                icon={<UptimeIcon />}
+                icon={<StorageIcon />}
                 label={"Backend Type"}
                 value={usage ? usage.backend.backendType : "Unknown"}
               />
             </Grid>
             <Grid item xs={4}>
               <TimeStatItem
-                icon={<UptimeIcon />}
+                icon={<FormatDrivesIcon />}
                 label={"Standard storage class Parity"}
                 value={usage ? usage.backend.standardSCParity.toString() : "0"}
               />
             </Grid>
             <Grid item xs={4}>
               <TimeStatItem
-                icon={<UptimeIcon />}
+                icon={<FormatDrivesIcon />}
                 label={"Reduced Redundancy storage class Parity"}
                 value={usage ? usage.backend.rrSCParity.toString() : "0"}
               />
