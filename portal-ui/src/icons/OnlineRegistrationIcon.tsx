@@ -41,7 +41,6 @@ const OnlineRegistrationIcon = (props: SVGProps<SVGSVGElement>) => (
         data-name="Grupo 2522"
         transform="translate(0 32.999)"
         clipPath="url(#online-registration-icn_svg__a)"
-        fill="#00142f"
       >
         <path
           data-name="Trazado 7258"
