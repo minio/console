@@ -284,7 +284,7 @@ jobs:
           semgrep --config semgrep.yaml $(pwd)/portal-ui --error
 
   no-warnings-and-make-assets:
-    name: "React Code Has No Warnings & is Prettified, then Make Assets"
+    name: "React Code Has No Vulnerabilities, Warnings & is Prettified, then Make Assets"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -333,6 +333,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-assets-
 
+      - name: Checks for known security issues with the installed packages
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          yarn audit
       - name: Install Dependencies
         working-directory: ./portal-ui
         continue-on-error: false
