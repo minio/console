@@ -290,14 +290,16 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
               <TimeStatItem
                 icon={<FormatDrivesIcon />}
                 label={"Standard storage class Parity"}
-                value={usage ? usage.backend.standardSCParity.toString() : "0"}
+                value={
+                  usage ? usage.backend.standardSCParity.toString() : "n/a"
+                }
               />
             </Grid>
             <Grid item xs={4}>
               <TimeStatItem
                 icon={<FormatDrivesIcon />}
                 label={"Reduced Redundancy storage class Parity"}
-                value={usage ? usage.backend.rrSCParity.toString() : "0"}
+                value={usage ? usage.backend.rrSCParity.toString() : "n/a"}
               />
             </Grid>
           </Grid>

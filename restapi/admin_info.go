@@ -77,8 +77,7 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 	var rrSCParity float64
 	var standardSCParity float64
 
-	switch v := serverInfo.Backend.(type) {
-	case map[string]interface{}:
+	if v, success := serverInfo.Backend.(map[string]interface{}); success {
 		bt, ok := v["backendType"]
 		if ok {
 			backendType = bt.(string)

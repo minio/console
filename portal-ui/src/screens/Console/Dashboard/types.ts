@@ -23,11 +23,11 @@ export interface Usage {
   advancedMetricsStatus: "available" | "unavailable" | "not configured";
   widgets?: any;
   servers: ServerInfo[];
+  backend: Backend;
   //TODO
   lastScan: any;
   lastHeal: any;
   upTime: any;
-  backend: Backend
 }
 
 export interface Backend {
