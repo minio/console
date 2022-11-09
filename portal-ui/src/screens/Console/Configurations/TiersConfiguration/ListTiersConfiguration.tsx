@@ -23,7 +23,6 @@ import withStyles from "@mui/styles/withStyles";
 import { Box, LinearProgress } from "@mui/material";
 import { Button } from "mds";
 import Grid from "@mui/material/Grid";
-import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import {
   actionsTray,
   containerForHeader,
@@ -63,7 +62,6 @@ import { hasPermission } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import TierOnlineIcon from "../../../../icons/TierOnlineIcon";
 import TierOfflineIcon from "../../../../icons/TierOfflineIcon";
-import { wsProtocol } from "../../../../utils/wsUtils";
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );

@@ -163,9 +163,8 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 		case madmin.Unsupported:
 			tiersList = append(tiersList, &models.Tier{
 				Type:   models.TierTypeUnsupported,
-				Status: false,
+				Status: client.verifyTierStatus(ctx, tierData.Name) == nil,
 			})
-
 		}
 	}
 	// build response
@@ -410,25 +409,3 @@ func getEditTierCredentialsResponse(session *models.Principal, params tieringApi
 	}
 	return nil
 }
-
-/*
-func checkTierStatus(endpoint string, accessKey string, secretKey string, bucketName string) bool {
-	// Initialize minio client object.
-	re := regexp.MustCompile(`(^\w+:|^)\/\/`)
-	s := re.ReplaceAllString(endpoint, "")
-	minioClient, err := minio.New(s, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
-		Secure: false,
-	})
-	if err != nil {
-		log.Println(err)
-		return false
-	}
-	bucketTest, err := minioClient.BucketExists(context.Background(), bucketName)
-	if err != nil {
-		log.Println(err)
-		return strings.Contains(err.Error(), "The request signature we calculated does not match the signature you provided. Check your key and signing method.")
-	}
-	return bucketTest
-}
-*/
