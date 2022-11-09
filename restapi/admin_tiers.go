@@ -91,7 +91,6 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 				break
 			}
 		}
-
 		switch tierData.Type {
 		case madmin.S3:
 			tiersList = append(tiersList, &models.Tier{
@@ -109,7 +108,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:      strconv.Itoa(stats.NumObjects),
 					Versions:     strconv.Itoa(stats.NumVersions),
 				},
-				Status: false,
+				Status: client.verifyTierStatus(ctx, tierData.Name) == nil,
 			})
 		case madmin.MinIO:
 			tiersList = append(tiersList, &models.Tier{
@@ -126,7 +125,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:   strconv.Itoa(stats.NumObjects),
 					Versions:  strconv.Itoa(stats.NumVersions),
 				},
-				Status: true, //checkTierStatus(tierData.MinIO.Endpoint, tierData.MinIO.AccessKey, tierData.MinIO.SecretKey, tierData.MinIO.Bucket) == nil,
+				Status: client.verifyTierStatus(ctx, tierData.Name) == nil,
 			})
 		case madmin.GCS:
 			tiersList = append(tiersList, &models.Tier{
@@ -142,7 +141,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:  strconv.Itoa(stats.NumObjects),
 					Versions: strconv.Itoa(stats.NumVersions),
 				},
-				Status: false,
+				Status: client.verifyTierStatus(ctx, tierData.Name) == nil,
 			})
 		case madmin.Azure:
 			tiersList = append(tiersList, &models.Tier{
@@ -159,7 +158,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:     strconv.Itoa(stats.NumObjects),
 					Versions:    strconv.Itoa(stats.NumVersions),
 				},
-				Status: false,
+				Status: client.verifyTierStatus(ctx, tierData.Name) == nil,
 			})
 		case madmin.Unsupported:
 			tiersList = append(tiersList, &models.Tier{
