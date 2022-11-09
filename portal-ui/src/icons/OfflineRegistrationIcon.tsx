@@ -40,14 +40,12 @@ const OfflineRegistrationIcon = (props: SVGProps<SVGSVGElement>) => (
     <g data-name="Grupo 2526">
       <path
         data-name="Rect\xE1ngulo 1603"
-        fill="#00142f"
         d="m19.235 39.602 10.497-10.49L218.26 217.77l-10.497 10.49z"
       />
       <g data-name="Grupo 2525">
         <g
           data-name="Grupo 2524"
           clipPath="url(#Offline-Registration_svg__a)"
-          fill="#00142f"
           transform="translate(0 29.146)"
         >
           <path
