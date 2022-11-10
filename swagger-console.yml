@@ -4248,6 +4248,8 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/serverProperties"
+      backend:
+        $ref: "#/definitions/BackendProperties"
   serverProperties:
     type: object
     properties:
@@ -4293,6 +4295,15 @@ definitions:
       usedSpace:
         type: integer
       availableSpace:
+        type: integer
+  BackendProperties:
+    type: object
+    properties:
+      backendType:
+        type: string
+      rrSCParity:
+        type: integer
+      standardSCParity:
         type: integer
   arnsResponse:
     type: object
@@ -5437,40 +5448,40 @@ definitions:
         type: string
 
   kmsDescribeIdentityResponse:
-      type: object
-      properties:
-        policy:
-          type: string
-        identity:
-          type: string
-        admin:
-          type: boolean
-        createdAt:
-          type: string
-        createdBy:
-          type: string
+    type: object
+    properties:
+      policy:
+        type: string
+      identity:
+        type: string
+      admin:
+        type: boolean
+      createdAt:
+        type: string
+      createdBy:
+        type: string
   kmsDescribeSelfIdentityResponse:
-      type: object
-      properties:
-        identity:
-          type: string
-        policyName:
-          type: string
-        admin:
-          type: boolean
-        createdAt:
-          type: string
-        createdBy:
-          type: string
-        policy:
-          $ref: "#/definitions/kmsGetPolicyResponse"
+    type: object
+    properties:
+      identity:
+        type: string
+      policyName:
+        type: string
+      admin:
+        type: boolean
+      createdAt:
+        type: string
+      createdBy:
+        type: string
+      policy:
+        $ref: "#/definitions/kmsGetPolicyResponse"
   kmsListIdentitiesResponse:
-      type: object
-      properties:
-        results:
-          type: array
-          items:
-            $ref: "#/definitions/kmsIdentityInfo"
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/kmsIdentityInfo"
   kmsIdentityInfo:
     type: object
     properties:
@@ -5514,7 +5525,7 @@ definitions:
       errorEvents:
         type: integer
       latencyHistogram:
-        $ref:  "#/definitions/kmsLatencyHistogram"
+        $ref: "#/definitions/kmsLatencyHistogram"
       uptime:
         type: integer
       cpus:
