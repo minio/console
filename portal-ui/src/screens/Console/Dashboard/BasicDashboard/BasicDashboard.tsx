@@ -282,24 +282,34 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             <Grid item xs={4}>
               <TimeStatItem
                 icon={<StorageIcon />}
-                label={"Backend Type"}
-                value={usage ? usage.backend.backendType : "Unknown"}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TimeStatItem
-                icon={<FormatDrivesIcon />}
-                label={"Standard storage class Parity"}
+                label={"Backend type"}
                 value={
-                  usage ? usage.backend.standardSCParity.toString() : "n/a"
+                  usage?.backend?.backendType
+                    ? usage.backend.backendType
+                    : "Unknown"
                 }
               />
             </Grid>
             <Grid item xs={4}>
               <TimeStatItem
                 icon={<FormatDrivesIcon />}
-                label={"Reduced Redundancy storage class Parity"}
-                value={usage ? usage.backend.rrSCParity.toString() : "n/a"}
+                label={"Standard storage class parity"}
+                value={
+                  usage?.backend?.standardSCParity
+                    ? usage.backend.standardSCParity.toString()
+                    : "n/a"
+                }
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TimeStatItem
+                icon={<FormatDrivesIcon />}
+                label={"Reduced redundancy storage class parity"}
+                value={
+                  usage?.backend?.standardSCParity
+                    ? usage.backend.rrSCParity.toString()
+                    : "n/a"
+                }
               />
             </Grid>
           </Grid>
