@@ -4864,6 +4864,20 @@ func init() {
     }
   },
   "definitions": {
+    "BackendProperties": {
+      "type": "object",
+      "properties": {
+        "backendType": {
+          "type": "string"
+        },
+        "rrSCParity": {
+          "type": "integer"
+        },
+        "standardSCParity": {
+          "type": "integer"
+        }
+      }
+    },
     "SubnetRegTokenResponse": {
       "type": "object",
       "properties": {
@@ -5128,6 +5142,9 @@ func init() {
             "available",
             "unavailable"
           ]
+        },
+        "backend": {
+          "$ref": "#/definitions/BackendProperties"
         },
         "buckets": {
           "type": "integer"
@@ -13002,6 +13019,20 @@ func init() {
     }
   },
   "definitions": {
+    "BackendProperties": {
+      "type": "object",
+      "properties": {
+        "backendType": {
+          "type": "string"
+        },
+        "rrSCParity": {
+          "type": "integer"
+        },
+        "standardSCParity": {
+          "type": "integer"
+        }
+      }
+    },
     "BucketDetails": {
       "type": "object",
       "properties": {
@@ -13392,6 +13423,9 @@ func init() {
             "available",
             "unavailable"
           ]
+        },
+        "backend": {
+          "$ref": "#/definitions/BackendProperties"
         },
         "buckets": {
           "type": "integer"
