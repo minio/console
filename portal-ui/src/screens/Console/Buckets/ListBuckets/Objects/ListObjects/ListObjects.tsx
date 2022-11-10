@@ -1594,9 +1594,18 @@ const ListObjects = () => {
                     } ${detailsOpen ? "actionsPanelOpen" : ""}`}
                     selectedItems={selectedObjects}
                     onSelect={selectListObjects}
-                    customEmptyMessage={`This location is empty${
-                      !rewindEnabled ? ", please try uploading a new file" : ""
-                    }`}
+                    customEmptyMessage={
+                      !displayListObjects
+                        ? permissionTooltipHelper(
+                            [IAM_SCOPES.S3_LIST_BUCKET],
+                            "view Objects in this bucket"
+                          )
+                        : `This location is empty${
+                            !rewindEnabled
+                              ? ", please try uploading a new file"
+                              : ""
+                          }`
+                    }
                     sortConfig={{
                       currentSort: currentSortField,
                       currentDirection: sortDirection,
