@@ -140,7 +140,9 @@ export const groupStatusText = Selector("#group-status");
 export const table = Selector(".ReactVirtualized__Table");
 export const bucketsTableDisabled = Selector("#object-list-wrapper")
   .find(".MuiPaper-root")
-  .withText("You require additional permissions in order to view Objects in this bucket. Please ask your MinIO administrator to grant you s3:ListBucket permission in order to view Objects in this bucket.");
+  .withText(
+    "You require additional permissions in order to view Objects in this bucket. Please ask your MinIO administrator to grant you s3:ListBucket permission in order to view Objects in this bucket."
+  );
 export const createGroupUserTable = Selector(
   ".MuiDialog-container .ReactVirtualized__Table"
 );
