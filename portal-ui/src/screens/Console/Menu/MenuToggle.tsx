@@ -15,13 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, Suspense, useEffect } from "react";
-import OperatorLogo from "../../../icons/OperatorLogo";
-import DirectPVLogo from "../../../icons/DirectPVLogo";
+import { ApplicationLogo } from "mds";
 
-import { LoginMinIOLogo, VersionIcon } from "../../../icons";
+import { VersionIcon } from "../../../icons";
 import { Box, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import LicensedConsoleLogo from "../Common/Components/LicensedConsoleLogo";
 import { useSelector } from "react-redux";
 import useApi from "../Common/Hooks/useApi";
 import {
@@ -30,7 +28,7 @@ import {
   setLicenseInfo,
 } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
-import MenuToggleIcon from "../../../icons/MenuToggleIcon";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 type MenuToggleProps = {
   isOpen: boolean;
@@ -67,10 +65,22 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
 
   const { plan = "" } = licenseInfo || {};
 
+  let logoPlan = "simple";
+
+  if (!isLicenseLoading) {
+    if (plan === "STANDARD" || plan === "ENTERPRISE") {
+      logoPlan = plan.toLowerCase();
+    } else {
+      logoPlan = "AGPL";
+    }
+  }
+
   return (
     <Box
+      className={`${stateClsName}`}
       sx={{
         width: "100%",
+        cursor: "pointer",
         "&::after": {
           width: "80%",
           height: "1px",
@@ -79,6 +89,15 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
           backgroundColor: "#0F446C",
           margin: "0px auto",
         },
+        "&.wide:hover": {
+          background:
+            "transparent linear-gradient(270deg, #00000000 0%, #051d39 53%, #54545400 100%) 0% 0% no-repeat padding-box",
+        },
+      }}
+      onClick={() => {
+        if (isOpen) {
+          onToggle(false);
+        }
       }}
     >
       <Box
@@ -101,11 +120,15 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
           },
           "& .logo": {
             background: "transparent",
+            width: "180px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             "&.wide": {
               flex: "1",
               "& svg": {
                 fill: "white",
-                width: 120,
+                maxWidth: 180,
               },
             },
             "&.mini": {
@@ -119,26 +142,37 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
         }}
       >
         {isOpen ? (
-          <div className={`logo ${stateClsName}`}>
-            {!operatorMode && !directPVMode ? (
-              <Fragment>
-                <div
-                  style={{ marginLeft: "4px", width: 100, textAlign: "right" }}
-                >
-                  <LoginMinIOLogo style={{ width: 100 }} />
-                  <br />
-                  <LicensedConsoleLogo
-                    plan={plan}
-                    isLoading={isLicenseLoading}
+          <TooltipWrapper
+            tooltip={"Click to Collapse Menu"}
+            placement={"right"}
+          >
+            <div className={`logo ${stateClsName}`}>
+              {!operatorMode && !directPVMode ? (
+                <Fragment>
+                  <ApplicationLogo
+                    applicationName={"console"}
+                    subVariant={
+                      logoPlan as
+                        | "AGPL"
+                        | "simple"
+                        | "standard"
+                        | "enterprise"
+                        | undefined
+                    }
+                    inverse
                   />
-                </div>
-              </Fragment>
-            ) : (
-              <Fragment>
-                {directPVMode ? <DirectPVLogo /> : <OperatorLogo />}
-              </Fragment>
-            )}
-          </div>
+                </Fragment>
+              ) : (
+                <Fragment>
+                  {directPVMode ? (
+                    <ApplicationLogo applicationName={"directpv"} inverse />
+                  ) : (
+                    <ApplicationLogo applicationName={"operator"} inverse />
+                  )}
+                </Fragment>
+              )}
+            </div>
+          </TooltipWrapper>
         ) : (
           <div className={`logo ${stateClsName}`}>
             <Suspense fallback={<div>...</div>}>
@@ -147,38 +181,36 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
           </div>
         )}
 
-        <IconButton
-          className={`${stateClsName}`}
-          sx={{
-            height: "30px",
-            width: "30px",
-            "&.mini": {
-              "&:hover": {
-                background: "#081C42",
+        {!isOpen && (
+          <IconButton
+            className={`${stateClsName}`}
+            sx={{
+              height: "30px",
+              width: "30px",
+              "&.mini": {
+                "&:hover": {
+                  background: "#081C42",
+                },
               },
-            },
 
-            "&:hover": {
-              borderRadius: "50%",
-              background: "#073052",
-            },
-            "& svg": {
-              fill: "#ffffff",
-              height: "18px",
-              width: "18px",
-            },
-          }}
-          onClick={() => {
-            if (isOpen) {
-              onToggle(false);
-            } else {
+              "&:hover": {
+                borderRadius: "50%",
+                background: "#073052",
+              },
+              "& svg": {
+                fill: "#ffffff",
+                height: "18px",
+                width: "18px",
+              },
+            }}
+            onClick={() => {
               onToggle(true);
-            }
-          }}
-          size="small"
-        >
-          {isOpen ? <MenuToggleIcon /> : <MenuIcon />}
-        </IconButton>
+            }}
+            size="small"
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
       </Box>
     </Box>
   );
