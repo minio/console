@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { HorizontalBar } from "react-chartjs-2";
@@ -254,7 +255,7 @@ const Heal = () => {
 
   return (
     <Fragment>
-      <PageHeader label="Drives" />
+      <PageHeader label={t("Drives")} />
       <PageLayout>
         {!distributedSetup ? (
           <DistributedOnly entity={"Heal"} iconComponent={<HealIcon />} />
@@ -267,7 +268,7 @@ const Heal = () => {
               <Grid item xs={12} className={classes.actionsTray}>
                 <FormControl variant="outlined" className={classes.bucketField}>
                   <Select
-                    label="Bucket"
+                    label={t("Bucket")}
                     id="bucket-name"
                     name="bucket-name"
                     value={bucketName}
@@ -279,7 +280,7 @@ const Heal = () => {
                     displayEmpty
                   >
                     <MenuItem value="" key={`select-bucket-name-default`}>
-                      Select Bucket
+                      {t("Select Bucket")}
                     </MenuItem>
                     {bucketNames.map((option) => (
                       <MenuItem
@@ -292,7 +293,7 @@ const Heal = () => {
                   </Select>
                 </FormControl>
                 <TextField
-                  label="Prefix"
+                  label={t("Prefix")}
                   className={classes.prefixField}
                   id="prefix-resource"
                   disabled={false}
@@ -315,7 +316,7 @@ const Heal = () => {
                     setRecursive(e.target.checked);
                   }}
                   disabled={false}
-                  label="Recursive"
+                  label={t("Recursive")}
                 />
                 <CheckboxWrapper
                   name="forceStart"
@@ -326,7 +327,7 @@ const Heal = () => {
                     setForceStart(e.target.checked);
                   }}
                   disabled={false}
-                  label="Force Start"
+                  label={t("Force Start")}
                 />
                 <CheckboxWrapper
                   name="forceStop"
@@ -337,7 +338,7 @@ const Heal = () => {
                     setForceStop(e.target.checked);
                   }}
                   disabled={false}
-                  label="Force Stop"
+                  label={t("Force Stop")}
                 />
               </Grid>
               <Grid item xs={12} className={classes.buttonBar}>
@@ -348,7 +349,7 @@ const Heal = () => {
                   color="primary"
                   disabled={start}
                   onClick={() => setStart(true)}
-                  label={"Start"}
+                  label={t("Start")}
                 />
               </Grid>
             </Grid>
@@ -371,14 +372,14 @@ const Heal = () => {
               />
               <Grid item xs={12} className={classes.scanInfo}>
                 <div className={classes.scanData}>
-                  <strong>Size scanned:</strong> {hStatus.sizeScanned}
+                  <strong>{t("Size scanned:")}</strong> {hStatus.sizeScanned}
                 </div>
                 <div className={classes.scanData}>
-                  <strong>Objects healed:</strong> {hStatus.objectsHealed} /{" "}
-                  {hStatus.objectsScanned}
+                  <strong>{t("Objects healed:")}</strong>{" "}
+                  {hStatus.objectsHealed} / {hStatus.objectsScanned}
                 </div>
                 <div className={classes.scanData}>
-                  <strong>Healing time:</strong> {hStatus.healDuration}s
+                  <strong>{t("Healing time:")}</strong> {hStatus.healDuration}s
                 </div>
               </Grid>
             </Grid>

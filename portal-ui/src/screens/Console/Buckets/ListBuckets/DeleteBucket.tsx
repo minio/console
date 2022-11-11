@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 
 import { DialogContentText } from "@mui/material";
@@ -56,8 +57,8 @@ const DeleteBucket = ({
 
   return (
     <ConfirmDialog
-      title={`Delete Bucket`}
-      confirmText={"Delete"}
+      title={`${t("Delete Bucket")}`}
+      confirmText={t("Delete")}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
@@ -65,8 +66,9 @@ const DeleteBucket = ({
       onClose={onClose}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete bucket <b>{selectedBucket}</b>? <br />
-          A bucket can only be deleted if it's empty.
+          {t("Are you sure you want to delete bucket")}
+          <b>{selectedBucket}</b>? <br />
+          {t("A bucket can only be deleted if it's empty.")}
         </DialogContentText>
       }
     />

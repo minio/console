@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import {
   Area,
@@ -362,7 +363,7 @@ const LinearGraphWidget = ({
               <Fragment>
                 {zoomActivated && (
                   <Fragment>
-                    <strong>Series</strong>
+                    <strong>{t("Series")}</strong>
                     <br />
                     <br />
                   </Fragment>

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { Box, Grid } from "@mui/material";
 import {
@@ -150,7 +151,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
           >
             <BoxItem>
               <CounterCard
-                label={"Buckets"}
+                label={t("Buckets")}
                 icon={<BucketsIcon />}
                 counterValue={usage ? representationNumber(usage.buckets) : 0}
                 actions={
@@ -164,11 +165,11 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                       marginRight: "75px",
                     }}
                   >
-                    <TooltipWrapper tooltip={"Browse"}>
+                    <TooltipWrapper tooltip={t("Browse")}>
                       <Button
                         id={"browse-dashboard"}
                         onClick={() => {}}
-                        label={"Browse"}
+                        label={t("Browse")}
                         icon={<ArrowRightIcon />}
                         variant={"regular"}
                         style={{
@@ -185,7 +186,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             </BoxItem>
             <BoxItem>
               <CounterCard
-                label={"Objects"}
+                label={t("Objects")}
                 icon={<TotalObjectsIcon />}
                 counterValue={usage ? representationNumber(usage.objects) : 0}
               />
@@ -195,7 +196,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
               <StatusCountCard
                 onlineCount={onlineServers.length}
                 offlineCount={offlineServers.length}
-                label={"Servers"}
+                label={t("Servers")}
                 icon={<ServersIcon />}
               />
             </BoxItem>
@@ -203,7 +204,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
               <StatusCountCard
                 offlineCount={offlineDrives.length}
                 onlineCount={onlineDrives.length}
-                label={"Drives"}
+                label={t("Drives")}
                 icon={<DrivesIcon />}
               />
             </BoxItem>
@@ -244,9 +245,9 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                           },
                         }}
                       >
-                        Time since last
+                        {t("Time since last")}
                       </Box>{" "}
-                      Heal Activity
+                      {t("Heal Activity")}
                     </Box>
                   }
                   value={lastHeal}
@@ -263,16 +264,16 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                           },
                         }}
                       >
-                        Time since last
+                        {t("Time since last")}
                       </Box>{" "}
-                      Scan Activity
+                      {t("Scan Activity")}
                     </Box>
                   }
                   value={lastScan}
                 />
                 <TimeStatItem
                   icon={<UptimeIcon />}
-                  label={"Uptime"}
+                  label={t("Uptime")}
                   value={upTime}
                 />
               </Box>
@@ -282,7 +283,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             <Grid item xs={4}>
               <TimeStatItem
                 icon={<StorageIcon />}
-                label={"Backend type"}
+                label={t("Backend type")}
                 value={
                   usage?.backend?.backendType
                     ? usage.backend.backendType
@@ -293,7 +294,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             <Grid item xs={4}>
               <TimeStatItem
                 icon={<FormatDrivesIcon />}
-                label={"Standard storage class parity"}
+                label={t("Standard storage class parity")}
                 value={
                   usage?.backend?.standardSCParity
                     ? usage.backend.standardSCParity.toString()
@@ -304,7 +305,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             <Grid item xs={4}>
               <TimeStatItem
                 icon={<FormatDrivesIcon />}
-                label={"Reduced redundancy storage class parity"}
+                label={t("Reduced redundancy storage class parity")}
                 value={
                   usage?.backend?.standardSCParity
                     ? usage.backend.rrSCParity.toString()
@@ -329,7 +330,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
           <Box>
             <HelpBox
               iconComponent={<PrometheusErrorIcon />}
-              title={"We can’t retrieve advanced metrics at this time."}
+              title={t("We can’t retrieve advanced metrics at this time.")}
               help={
                 <Box>
                   <Box
@@ -337,11 +338,9 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                       fontSize: "14px",
                     }}
                   >
-                    MinIO Dashboard will display basic metrics as we couldn’t
-                    connect to Prometheus successfully. Please try again in a
-                    few minutes. If the problem persists, you can review your
-                    configuration and confirm that Prometheus server is up and
-                    running.
+                    {t(
+                      "MinIO Dashboard will display basic metrics as we couldn’t connect to Prometheus successfully. Please try again in a few minutes. If the problem persists, you can review your configuration and confirm that Prometheus server is up and running."
+                    )}
                   </Box>
                   <Box
                     sx={{
@@ -357,7 +356,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      Read more about Prometheus on our Docs site.
+                      {t("Read more about Prometheus on our Docs site.")}
                     </a>
                   </Box>
                 </Box>

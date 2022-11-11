@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
@@ -44,7 +45,8 @@ const ServersList = ({ data }: { data: ServerInfo[] }) => {
           marginBottom: "10px",
         }}
       >
-        Servers ({data.length})
+        {t("Servers (")}
+        {data.length})
       </Box>
       <List
         sx={{ width: "100%", flex: 1, padding: "0" }}
@@ -129,7 +131,8 @@ const ServersList = ({ data }: { data: ServerInfo[] }) => {
                     component="div"
                     sx={{ paddingLeft: "30px" }}
                   >
-                    Drives ({serverInfo.drives.length})
+                    {t("Drives (")}
+                    {serverInfo.drives.length})
                   </ListSubheader>
 
                   <Collapse

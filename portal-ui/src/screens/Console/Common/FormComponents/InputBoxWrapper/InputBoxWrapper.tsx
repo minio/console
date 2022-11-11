@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React, { useState } from "react";
 import {
   Grid,
@@ -162,7 +163,8 @@ const InputBoxWrapper = ({
     ) : (
       <RemoveRedEyeIcon />
     );
-    inputBoxWrapperType = toggleTextInput ? "text" : "password";
+
+    inputBoxWrapperType = toggleTextInput ? t("text") : t("password");
   }
 
   return (

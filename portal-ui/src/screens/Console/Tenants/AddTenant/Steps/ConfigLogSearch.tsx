@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -128,7 +129,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   const configureSTClasses = [
-    { label: "Default", value: "default" },
+    { label: t("Default"), value: "default" },
     ...storageClasses,
   ];
 
@@ -269,7 +270,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
     <Paper className={classes.paperWrapper}>
       <Grid container alignItems={"center"}>
         <Grid item xs>
-          <SectionH1>Audit Log</SectionH1>
+          <SectionH1>{t("Audit Log")}</SectionH1>
         </Grid>
         <Grid item xs={4}>
           <FormSwitchWrapper
@@ -290,8 +291,9 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <span className={classes.descriptionText}>
-            Deploys a small PostgreSQL database and stores access logs of all
-            calls into the tenant.
+            {t(
+              "Deploys a small PostgreSQL database and stores access logs of all calls into the tenant."
+            )}
           </span>
         </Grid>
         <Grid xs={12}>
@@ -309,7 +311,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                     e.target.value as string
                   );
                 }}
-                label="Log Search Storage Class"
+                label={t("Log Search Storage Class")}
                 value={logSearchSelectedStorageClass}
                 options={configureSTClasses}
                 disabled={configureSTClasses.length < 1}
@@ -325,13 +327,13 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                     updateField("logSearchVolumeSize", e.target.value);
                     cleanValidation("log_search_volume_size");
                   }}
-                  label="Storage Size"
+                  label={t("Storage Size")}
                   overlayObject={
                     <InputUnitMenu
                       id={"size-unit"}
                       onUnitChange={() => {}}
                       unitSelected={"Gi"}
-                      unitsList={[{ label: "Gi", value: "Gi" }]}
+                      unitsList={[{ label: t("Gi"), value: "Gi" }]}
                       disabled={true}
                     />
                   }
@@ -347,7 +349,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
               className={`${classes.fieldGroup} ${classes.fieldSpaceTop}`}
             >
               <legend className={classes.descriptionText}>
-                SecurityContext for LogSearch
+                {t("SecurityContext for LogSearch")}
               </legend>
 
               <Grid item xs={12}>
@@ -366,7 +368,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                         });
                         cleanValidation("logSearch_securityContext_runAsUser");
                       }}
-                      label="Run As User"
+                      label={t("Run As User")}
                       value={logSearchSecurityContext.runAsUser}
                       required
                       error={
@@ -389,7 +391,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                         });
                         cleanValidation("logSearch_securityContext_runAsGroup");
                       }}
-                      label="Run As Group"
+                      label={t("Run As Group")}
                       value={logSearchSecurityContext.runAsGroup}
                       required
                       error={
@@ -419,7 +421,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                         });
                         cleanValidation("logSearch_securityContext_fsGroup");
                       }}
-                      label="FsGroup"
+                      label={t("FsGroup")}
                       value={logSearchSecurityContext.fsGroup}
                       required
                       error={
@@ -431,7 +433,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                   </div>
                   <div className={classes.configSectionItem}>
                     <SelectWrapper
-                      label="FsGroupChangePolicy"
+                      label={t("FsGroupChangePolicy")}
                       id="securityContext_fsGroupChangePolicy"
                       name="securityContext_fsGroupChangePolicy"
                       value={logSearchSecurityContext.fsGroupChangePolicy}
@@ -443,11 +445,11 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                       }}
                       options={[
                         {
-                          label: "Always",
+                          label: t("Always"),
                           value: "Always",
                         },
                         {
-                          label: "OnRootMismatch",
+                          label: t("OnRootMismatch"),
                           value: "OnRootMismatch",
                         },
                       ]}
@@ -471,14 +473,14 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                         runAsNonRoot: checked,
                       });
                     }}
-                    label={"Do not run as Root"}
+                    label={t("Do not run as Root")}
                   />
                 </div>
               </Grid>
             </fieldset>
             <fieldset className={classes.fieldGroup}>
               <legend className={classes.descriptionText}>
-                SecurityContext for PostgreSQL
+                {t("SecurityContext for PostgreSQL")}
               </legend>
 
               <Grid item xs={12}>
@@ -497,7 +499,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                         });
                         cleanValidation("postgres_securityContext_runAsUser");
                       }}
-                      label="Run As User"
+                      label={t("Run As User")}
                       value={logSearchPostgresSecurityContext.runAsUser}
                       required
                       error={
@@ -520,7 +522,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                         });
                         cleanValidation("postgres_securityContext_runAsGroup");
                       }}
-                      label="Run As Group"
+                      label={t("Run As Group")}
                       value={logSearchPostgresSecurityContext.runAsGroup}
                       required
                       error={
@@ -550,7 +552,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                         });
                         cleanValidation("postgres_securityContext_fsGroup");
                       }}
-                      label="FsGroup"
+                      label={t("FsGroup")}
                       value={logSearchPostgresSecurityContext.fsGroup}
                       required
                       error={
@@ -562,7 +564,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                   </div>
                   <div className={classes.configSectionItem}>
                     <SelectWrapper
-                      label="FsGroupChangePolicy"
+                      label={t("FsGroupChangePolicy")}
                       id="securityContext_fsGroupChangePolicy"
                       name="securityContext_fsGroupChangePolicy"
                       value={
@@ -576,11 +578,11 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                       }}
                       options={[
                         {
-                          label: "Always",
+                          label: t("Always"),
                           value: "Always",
                         },
                         {
-                          label: "OnRootMismatch",
+                          label: t("OnRootMismatch"),
                           value: "OnRootMismatch",
                         },
                       ]}
@@ -604,7 +606,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
                         runAsNonRoot: checked,
                       });
                     }}
-                    label={"Do not run as Root"}
+                    label={t("Do not run as Root")}
                   />
                 </div>
               </Grid>

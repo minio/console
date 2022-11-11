@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -359,7 +360,7 @@ const Login = () => {
       ) {
         loginComponent = (
           <React.Fragment>
-            <div className={classes.loginSsoText}>Login with SSO:</div>
+            <div className={classes.loginSsoText}>{t("Login with SSO:")}</div>
             <Select
               id="ssoLogin"
               name="ssoLogin"
@@ -396,7 +397,7 @@ const Login = () => {
               id="sso-login"
               label={
                 redirectItems[0].displayName === ""
-                  ? "Login with SSO"
+                  ? t("Login with SSO")
                   : redirectItems[0].displayName
               }
               onClick={() => (window.location.href = redirectItems[0].redirect)}
@@ -407,7 +408,7 @@ const Login = () => {
       } else {
         loginComponent = (
           <div className={classes.loginStrategyMessage}>
-            Cannot retrieve redirect from login strategy
+            {t("Cannot retrieve redirect from login strategy")}
           </div>
         );
       }
@@ -431,7 +432,7 @@ const Login = () => {
                   name="jwt"
                   autoComplete="off"
                   disabled={loginSending}
-                  placeholder={"Enter JWT"}
+                  placeholder={t("Enter JWT")}
                   variant={"outlined"}
                   InputProps={{
                     startAdornment: (
@@ -448,7 +449,7 @@ const Login = () => {
                 variant="callAction"
                 id="do-login"
                 disabled={jwt === "" || loginSending}
-                label={"Login"}
+                label={t("Login")}
                 fullWidth
               />
             </Grid>
@@ -469,9 +470,10 @@ const Login = () => {
             <React.Fragment>
               <div>
                 <p style={{ color: "#000", textAlign: "center" }}>
-                  An error has occurred
+                  {t("An error has occurred")}
+
                   <br />
-                  The backend cannot be reached.
+                  {t("The backend cannot be reached.")}
                 </p>
               </div>
               <div className={classes.buttonRetry}>
@@ -483,7 +485,7 @@ const Login = () => {
                   iconLocation={"end"}
                   variant="regular"
                   id="retry"
-                  label={"Retry"}
+                  label={t("Retry")}
                 />
               </div>
             </React.Fragment>
@@ -540,7 +542,7 @@ const Login = () => {
                 font: "normal normal normal 20px/24px Lato",
               }}
             >
-              Multicloud Object Storage
+              {t("Multicloud Object Storage")}
             </Box>
           </Grid>
           <Grid
@@ -568,7 +570,9 @@ const Login = () => {
                   font: "normal normal normal 12px/15px Lato",
                 }}
               >
-                Learn more about {isOperator ? "OPERATOR CONSOLE" : "CONSOLE"}
+                {t("Learn more about")}
+
+                {isOperator ? t("OPERATOR CONSOLE") : t("CONSOLE")}
               </a>
               <a
                 href={hyperLink}
@@ -593,7 +597,8 @@ const Login = () => {
                 target="_blank"
                 rel="noreferrer"
               >
-                <DocumentationIcon /> Documentation
+                <DocumentationIcon />
+                {t("Documentation")}
               </a>
               <span className={classes.separator}>|</span>
               <a
@@ -601,7 +606,8 @@ const Login = () => {
                 target="_blank"
                 rel="noreferrer"
               >
-                <GithubIcon /> Github
+                <GithubIcon />
+                {t("Github")}
               </a>
               <span className={classes.separator}>|</span>
               <a
@@ -609,7 +615,8 @@ const Login = () => {
                 target="_blank"
                 rel="noreferrer"
               >
-                <SupportMenuIcon /> Support
+                <SupportMenuIcon />
+                {t("Support")}
               </a>
               <span className={classes.separator}>|</span>
               <a
@@ -617,7 +624,8 @@ const Login = () => {
                 target="_blank"
                 rel="noreferrer"
               >
-                <DownloadIcon /> Download
+                <DownloadIcon />
+                {t("Download")}
               </a>
             </div>
             <div className={clsx(classes.miniLinks, classes.miniLogo)}>
@@ -632,7 +640,7 @@ const Login = () => {
                   marginBottom: 20,
                 }}
               >
-                <MinIOTierIconXs /> <b>Latest Version:</b>&nbsp;
+                <MinIOTierIconXs /> <b>{t("Latest Version:")}</b>&nbsp;
                 {!loadingVersion && latestMinIOVersion !== "" && (
                   <React.Fragment>{latestMinIOVersion}</React.Fragment>
                 )}

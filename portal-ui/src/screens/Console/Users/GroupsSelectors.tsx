@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useCallback, useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
@@ -141,11 +142,13 @@ const GroupsSelectors = ({
         {records !== null && records.length > 0 ? (
           <React.Fragment>
             <Grid item xs={12} className={classes.actionsTray}>
-              <label className={classes.actionsTitle}>Assign Groups</label>
+              <label className={classes.actionsTitle}>
+                {t("Assign Groups")}
+              </label>
 
               <div className={classes.searchBox}>
                 <SearchBox
-                  placeholder="Start typing to search for Groups"
+                  placeholder={t("Start typing to search for Groups")}
                   adornmentPosition="end"
                   onChange={setFilter}
                   value={filter}
@@ -154,7 +157,7 @@ const GroupsSelectors = ({
             </Grid>
             <Grid item xs={12} className={classes.tableBlock}>
               <TableWrapper
-                columns={[{ label: "Group", elementKey: "" }]}
+                columns={[{ label: t("Group"), elementKey: "" }]}
                 onSelect={selectionChanged}
                 selectedItems={selGroups}
                 isLoading={loading}
@@ -166,7 +169,7 @@ const GroupsSelectors = ({
             </Grid>
           </React.Fragment>
         ) : (
-          <div className={classes.noFound}>No Groups Available</div>
+          <div className={classes.noFound}>{t("No Groups Available")}</div>
         )}
       </Grid>
     </React.Fragment>

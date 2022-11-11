@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { styled } from "@mui/material/styles";
 import LinearProgress, {
@@ -78,10 +79,10 @@ function LinearProgressWithLabel(
         className={"value"}
       >
         {props.cancelled ? (
-          "Cancelled"
+          t("Cancelled")
         ) : (
           <Fragment>
-            {props.error ? "Failed" : `${Math.round(props.value || 0)}%`}
+            {props.error ? t("Failed") : `${Math.round(props.value || 0)}%`}
           </Fragment>
         )}
       </Box>
@@ -110,7 +111,9 @@ const ProgressBarWrapper = ({
   }
   const propsComponent: LinearProgressProps = {
     variant:
-      indeterminate && !ready && !cancelled ? "indeterminate" : "determinate",
+      indeterminate && !ready && !cancelled
+        ? t("indeterminate")
+        : t("determinate"),
     value: ready ? 100 : value,
     color: color,
   };

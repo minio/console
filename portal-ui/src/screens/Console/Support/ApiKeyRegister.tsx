@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { Button } from "mds";
@@ -131,8 +132,9 @@ const ApiKeyRegister = ({
               marginBottom: "30px",
             }}
           >
-            Use your MinIO Subscription Network API Key to register this
-            cluster.
+            {t(
+              "Use your MinIO Subscription Network API Key to register this cluster."
+            )}
           </Box>
           <Box
             sx={{
@@ -149,7 +151,7 @@ const ApiKeyRegister = ({
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                 setApiKey(event.target.value)
               }
-              label="API Key"
+              label={t("API Key")}
               value={apiKey}
             />
 
@@ -169,7 +171,7 @@ const ApiKeyRegister = ({
                 className={classes.spacerRight}
                 disabled={loading}
                 onClick={() => setShowApiKeyModal(true)}
-                label={"Get from SUBNET"}
+                label={t("Get from SUBNET")}
               />
               <Button
                 id={"register"}
@@ -177,7 +179,7 @@ const ApiKeyRegister = ({
                 variant="callAction"
                 disabled={loading || apiKey.trim().length === 0}
                 onClick={() => onRegister()}
-                label={"Register"}
+                label={t("Register")}
               />
               <GetApiKeyModal
                 open={showApiKeyModal}

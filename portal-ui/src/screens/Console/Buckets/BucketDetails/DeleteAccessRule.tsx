@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { DialogContentText } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -61,8 +62,8 @@ const DeleteAccessRule = ({
 
   return (
     <ConfirmDialog
-      title={`Delete Access Rule`}
-      confirmText={"Delete"}
+      title={`${t("Delete Access Rule")}`}
+      confirmText={t("Delete")}
       isOpen={modalOpen}
       isLoading={deleteLoading}
       onConfirm={onConfirmDelete}
@@ -70,7 +71,7 @@ const DeleteAccessRule = ({
       onClose={onClose}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete this access rule?
+          {t("Are you sure you want to delete this access rule?")}
         </DialogContentText>
       }
     />

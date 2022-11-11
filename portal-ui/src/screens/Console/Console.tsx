@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, {
   Fragment,
   Suspense,
@@ -560,20 +561,22 @@ const Console = ({ classes }: IConsoleProps) => {
               <div className={classes.warningBar}>
                 {isServerLoading ? (
                   <Fragment>
-                    The server is restarting.
+                    {t("The server is restarting.")}
+
                     <LinearProgress className={classes.progress} />
                   </Fragment>
                 ) : (
                   <Fragment>
-                    The instance needs to be restarted for configuration changes
-                    to take effect.{" "}
+                    {t(
+                      "The instance needs to be restarted for configuration changes to take effect."
+                    )}{" "}
                     <Button
                       id={"restart-server"}
                       variant="secondary"
                       onClick={() => {
                         restartServer();
                       }}
-                      label={"Restart"}
+                      label={t("Restart")}
                     />
                   </Fragment>
                 )}

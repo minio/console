@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -67,7 +68,9 @@ const SecurityContextSelector = ({
   return (
     <Fragment>
       <fieldset className={`${classes.fieldGroup} ${classes.fieldSpaceTop} `}>
-        <legend className={classes.descriptionText}>Security Context</legend>
+        <legend className={classes.descriptionText}>
+          {t("Security Context")}
+        </legend>
 
         <Grid item xs={12}>
           <div className={`${classes.multiContainerStackNarrow} `}>
@@ -79,7 +82,7 @@ const SecurityContextSelector = ({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   dispatch(setRunAsUser(e.target.value));
                 }}
-                label="Run As User"
+                label={t("Run As User")}
                 value={runAsUser}
                 required
                 min="0"
@@ -93,7 +96,7 @@ const SecurityContextSelector = ({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   dispatch(setRunAsGroup(e.target.value));
                 }}
-                label="Run As Group"
+                label={t("Run As Group")}
                 value={runAsGroup}
                 required
                 min="0"
@@ -111,7 +114,7 @@ const SecurityContextSelector = ({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   dispatch(setFSGroup(e.target.value));
                 }}
-                label="FsGroup"
+                label={t("FsGroup")}
                 value={fsGroup}
                 required
                 min="0"
@@ -120,7 +123,7 @@ const SecurityContextSelector = ({
 
             <div className={classes.configSectionItem}>
               <SelectWrapper
-                label="FsGroupChangePolicy"
+                label={t("FsGroupChangePolicy")}
                 id="securityContext_fsGroupChangePolicy"
                 name="securityContext_fsGroupChangePolicy"
                 onChange={(e: SelectChangeEvent<string>) => {
@@ -129,11 +132,11 @@ const SecurityContextSelector = ({
                 value={fsGroupChangePolicy}
                 options={[
                   {
-                    label: "Always",
+                    label: t("Always"),
                     value: "Always",
                   },
                   {
-                    label: "OnRootMismatch",
+                    label: t("OnRootMismatch"),
                     value: "OnRootMismatch",
                   },
                 ]}
@@ -151,7 +154,7 @@ const SecurityContextSelector = ({
               onChange={() => {
                 dispatch(setRunAsNonRoot(!runAsNonRoot));
               }}
-              label={"Do not run as Root"}
+              label={t("Do not run as Root")}
             />
           </div>
         </Grid>

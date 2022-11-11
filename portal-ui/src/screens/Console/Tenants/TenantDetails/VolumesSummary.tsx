@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
@@ -128,10 +129,10 @@ const TenantVolumes = ({ classes }: ITenantVolumesProps) => {
         />
       )}
       <Grid container spacing={1}>
-        <h1 className={classes.sectionTitle}>Volumes</h1>
+        <h1 className={classes.sectionTitle}>{t("Volumes")}</h1>
         <Grid item xs={12}>
           <TextField
-            placeholder="Search Volumes (PVCs)"
+            placeholder={t("Search Volumes (PVCs)")}
             className={classes.searchField}
             id="search-resource"
             label=""
@@ -157,21 +158,21 @@ const TenantVolumes = ({ classes }: ITenantVolumesProps) => {
             ]}
             columns={[
               {
-                label: "Name",
+                label: t("Name"),
                 elementKey: "name",
               },
               {
-                label: "Status",
+                label: t("Status"),
                 elementKey: "status",
                 width: 120,
               },
               {
-                label: "Capacity",
+                label: t("Capacity"),
                 elementKey: "capacity",
                 width: 120,
               },
               {
-                label: "Storage Class",
+                label: t("Storage Class"),
                 elementKey: "storageClass",
               },
             ]}

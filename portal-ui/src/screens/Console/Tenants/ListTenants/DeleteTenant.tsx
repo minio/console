@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useState } from "react";
 import { DialogContentText } from "@mui/material";
 import { ITenant } from "./types";
@@ -69,8 +70,8 @@ const DeleteTenant = ({
 
   return (
     <ConfirmDialog
-      title={`Delete Tenant`}
-      confirmText={"Delete"}
+      title={`${t("Delete Tenant")}`}
+      confirmText={t("Delete")}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
@@ -84,14 +85,17 @@ const DeleteTenant = ({
           {deleteVolumes && (
             <Grid item xs={12}>
               <WarningMessage
-                title={"WARNING"}
-                label={
+                title={t("WARNING")}
+                label={t(
                   "Delete Volumes: Data will be permanently deleted. Please proceed with caution."
-                }
+                )}
               />
             </Grid>
           )}
-          To continue please type <b>{selectedTenant.name}</b> in the box.
+          {t("To continue please type")}
+
+          <b>{selectedTenant.name}</b>
+          {t("in the box.")}
           <Grid item xs={12}>
             <InputBoxWrapper
               id="retype-tenant"
@@ -106,7 +110,7 @@ const DeleteTenant = ({
             <FormSwitchWrapper
               checked={deleteVolumes}
               id={`delete-volumes`}
-              label={"Delete Volumes"}
+              label={t("Delete Volumes")}
               name={`delete-volumes`}
               onChange={() => {
                 setDeleteVolumes(!deleteVolumes);

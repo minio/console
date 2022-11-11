@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
@@ -315,7 +316,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
       <PageHeader
         label={
           <Fragment>
-            <BackLink to={IAM_PAGES.TIERS_ADD} label={"Add Tier"} />
+            <BackLink to={IAM_PAGES.TIERS_ADD} label={t("Add Tier")} />
           </Fragment>
         }
         actions={<React.Fragment />}
@@ -358,8 +359,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
 
                 <div className={classes.lambdaNotifTitle}>
                   <b>
-                    {titleSelection ? titleSelection : ""} - Add Tier
-                    Configuration
+                    {titleSelection ? titleSelection : ""}
+                    {t("- Add Tier Configuration")}
                   </b>
                 </div>
               </Grid>
@@ -381,8 +382,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                   <InputBoxWrapper
                     id="name"
                     name="name"
-                    label="Name"
-                    placeholder="Enter Name (Eg. REMOTE-TIER)"
+                    label={t("Name")}
+                    placeholder={t("Enter Name (Eg. REMOTE-TIER)")}
                     value={name}
                     onChange={updateTierName}
                     error={nameInputError}
@@ -391,8 +392,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                   <InputBoxWrapper
                     id="endpoint"
                     name="endpoint"
-                    label="Endpoint"
-                    placeholder="Enter Endpoint"
+                    label={t("Endpoint")}
+                    placeholder={t("Enter Endpoint")}
                     value={endpoint}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setEndpoint(e.target.value);
@@ -404,8 +405,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                       <InputBoxWrapper
                         id="accessKey"
                         name="accessKey"
-                        label="Access Key"
-                        placeholder="Enter Access Key"
+                        label={t("Access Key")}
+                        placeholder={t("Enter Access Key")}
                         value={accessKey}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setAccessKey(e.target.value);
@@ -415,8 +416,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                       <InputBoxWrapper
                         id="secretKey"
                         name="secretKey"
-                        label="Secret Key"
-                        placeholder="Enter Secret Key"
+                        label={t("Secret Key")}
+                        placeholder={t("Enter Secret Key")}
                         value={secretKey}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setSecretKey(e.target.value);
@@ -434,7 +435,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                         fileReselect: classes.fileReselectCss,
                       }}
                       id="creds"
-                      label="Credentials"
+                      label={t("Credentials")}
                       name="creds"
                       onChange={(encodedValue, fileName) => {
                         setEncodedCreds(encodedValue);
@@ -449,8 +450,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                       <InputBoxWrapper
                         id="accountName"
                         name="accountName"
-                        label="Account Name"
-                        placeholder="Enter Account Name"
+                        label={t("Account Name")}
+                        placeholder={t("Enter Account Name")}
                         value={accountName}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setAccountName(e.target.value);
@@ -460,8 +461,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                       <InputBoxWrapper
                         id="accountKey"
                         name="accountKey"
-                        label="Account Key"
-                        placeholder="Enter Account Key"
+                        label={t("Account Key")}
+                        placeholder={t("Enter Account Key")}
                         value={accountKey}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setAccountKey(e.target.value);
@@ -473,8 +474,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                   <InputBoxWrapper
                     id="bucket"
                     name="bucket"
-                    label="Bucket"
-                    placeholder="Enter Bucket"
+                    label={t("Bucket")}
+                    placeholder={t("Enter Bucket")}
                     value={bucket}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setBucket(e.target.value);
@@ -484,8 +485,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                   <InputBoxWrapper
                     id="prefix"
                     name="prefix"
-                    label="Prefix"
-                    placeholder="Enter Prefix"
+                    label={t("Prefix")}
+                    placeholder={t("Enter Prefix")}
                     value={prefix}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPrefix(e.target.value);
@@ -497,7 +498,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                       setRegion(value);
                     }}
                     required={type !== "minio"}
-                    label={"Region"}
+                    label={t("Region")}
                     id="region"
                     name="region"
                     type={type as "azure" | "s3" | "minio" | "gcs"}
@@ -506,8 +507,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                     <InputBoxWrapper
                       id="storageClass"
                       name="storageClass"
-                      label="Storage Class"
-                      placeholder="Enter Storage Class"
+                      label={t("Storage Class")}
+                      placeholder={t("Enter Storage Class")}
                       value={storageClass}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setStorageClass(e.target.value);
@@ -523,7 +524,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                 type="submit"
                 variant="callAction"
                 disabled={saving || !isFormValid}
-                label={"Save Tier Configuration"}
+                label={t("Save Tier Configuration")}
               />
             </Grid>
           </form>

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
@@ -220,11 +221,12 @@ const DirectPVMain = ({ classes }: IDirectPVMain) => {
           }}
         />
       )}
-      <PageHeader label="Local Drives" />
+
+      <PageHeader label={t("Local Drives")} />
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
-            placeholder="Search Drives"
+            placeholder={t("Search Drives")}
             className={classes.searchField}
             id="search-resource"
             label=""
@@ -257,13 +259,13 @@ const DirectPVMain = ({ classes }: IDirectPVMain) => {
             variant="callAction"
             disabled={checkedDrives.length <= 0 || notAvailable}
             onClick={formatSelectedDrives}
-            label={"Format Selected Drives"}
+            label={t("Format Selected Drives")}
             icon={<GroupIcon />}
           />
           <Button
             id={"format-all-drives"}
             variant="callAction"
-            label={"Format All Drives"}
+            label={t("Format All Drives")}
             onClick={formatAllDrives}
             disabled={notAvailable}
             icon={<AddIcon />}
@@ -273,23 +275,23 @@ const DirectPVMain = ({ classes }: IDirectPVMain) => {
         <Grid item xs={12}>
           {notAvailable && !loading ? (
             <HelpBox
-              title={"Leverage locally attached drives"}
+              title={t("Leverage locally attached drives")}
               iconComponent={<StorageIcon />}
               help={
                 <Fragment>
-                  We can automatically provision persistent volumes (PVs) on top
-                  locally attached drives on your Kubernetes nodes by leveraging
-                  DirectPV.
+                  {t(
+                    "We can automatically provision persistent volumes (PVs) on top locally attached drives on your Kubernetes nodes by leveraging DirectPV."
+                  )}
                   <br />
                   <br />
-                  For more information{" "}
+                  {t("For more information")}{" "}
                   <a
                     href="https://github.com/minio/directpv"
                     rel="noreferrer"
                     target="_blank"
                     className={classes.linkItem}
                   >
-                    Visit DirectPV Documentation
+                    {t("Visit DirectPV Documentation")}
                   </a>
                 </Fragment>
               }
@@ -299,29 +301,29 @@ const DirectPVMain = ({ classes }: IDirectPVMain) => {
               itemActions={tableActions}
               columns={[
                 {
-                  label: "Drive",
+                  label: t("Drive"),
                   elementKey: "drive",
                 },
                 {
-                  label: "Capacity",
+                  label: t("Capacity"),
                   elementKey: "capacity",
                   renderFunction: niceBytes,
                 },
                 {
-                  label: "Allocated",
+                  label: t("Allocated"),
                   elementKey: "allocated",
                   renderFunction: niceBytes,
                 },
                 {
-                  label: "Volumes",
+                  label: t("Volumes"),
                   elementKey: "volumes",
                 },
                 {
-                  label: "Node",
+                  label: t("Node"),
                   elementKey: "node",
                 },
                 {
-                  label: "Status",
+                  label: t("Status"),
                   elementKey: "status",
                 },
               ]}

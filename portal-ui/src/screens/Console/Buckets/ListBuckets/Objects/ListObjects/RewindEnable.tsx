@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { LinearProgress } from "@mui/material";
@@ -91,7 +92,7 @@ const RewindEnable = ({
           value={dateSelected}
           onChange={setDateSelected}
           id="rewind-selector"
-          label="Rewind to"
+          label={t("Rewind to")}
           disabled={!rewindEnableButton}
         />
       </Grid>
@@ -106,7 +107,7 @@ const RewindEnable = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setRewindEnableButton(e.target.checked);
               }}
-              label={"Current Status"}
+              label={t("Current Status")}
               indicatorLabels={["Enabled", "Disabled"]}
             />
           </Grid>
@@ -124,8 +125,8 @@ const RewindEnable = ({
             id={"rewind-apply-button"}
             label={
               !rewindEnableButton && rewindEnabled
-                ? "Show Current Data"
-                : "Show Rewind Data"
+                ? t("Show Current Data")
+                : t("Show Rewind Data")
             }
           />
         </Grid>

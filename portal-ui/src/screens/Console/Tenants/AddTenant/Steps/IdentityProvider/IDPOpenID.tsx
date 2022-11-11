@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import { Grid } from "@mui/material";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
@@ -171,7 +172,7 @@ const IDPOpenID = () => {
             updateField("openIDConfigurationURL", e.target.value);
             cleanValidation("openID_CONFIGURATION_URL");
           }}
-          label="Configuration URL"
+          label={t("Configuration URL")}
           value={openIDConfigurationURL}
           placeholder="https://your-identity-provider.com/.well-known/openid-configuration"
           error={validationErrors["openID_CONFIGURATION_URL"] || ""}
@@ -186,7 +187,7 @@ const IDPOpenID = () => {
             updateField("openIDClientID", e.target.value);
             cleanValidation("openID_clientID");
           }}
-          label="Client ID"
+          label={t("Client ID")}
           value={openIDClientID}
           error={validationErrors["openID_clientID"] || ""}
           required
@@ -200,7 +201,7 @@ const IDPOpenID = () => {
             updateField("openIDSecretID", e.target.value);
             cleanValidation("openID_secretID");
           }}
-          label="Secret ID"
+          label={t("Secret ID")}
           value={openIDSecretID}
           error={validationErrors["openID_secretID"] || ""}
           required
@@ -214,7 +215,7 @@ const IDPOpenID = () => {
             updateField("openIDCallbackURL", e.target.value);
             cleanValidation("openID_callbackURL");
           }}
-          label="Callback URL"
+          label={t("Callback URL")}
           value={openIDCallbackURL}
           placeholder="https://your-console-endpoint:9443/oauth_callback"
           error={validationErrors["openID_callbackURL"] || ""}
@@ -228,7 +229,7 @@ const IDPOpenID = () => {
             updateField("openIDClaimName", e.target.value);
             cleanValidation("openID_claimName");
           }}
-          label="Claim Name"
+          label={t("Claim Name")}
           value={openIDClaimName}
           error={validationErrors["openID_claimName"] || ""}
           required
@@ -242,7 +243,7 @@ const IDPOpenID = () => {
             updateField("openIDScopes", e.target.value);
             cleanValidation("openID_scopes");
           }}
-          label="Scopes"
+          label={t("Scopes")}
           value={openIDScopes}
         />
       </Grid>

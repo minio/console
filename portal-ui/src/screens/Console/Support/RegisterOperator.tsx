@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public APIKey
 // along with this program.  If not, see <http://www.gnu.org/APIKeys/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -152,7 +153,7 @@ const RegisterOperator = ({ classes }: IRegister) => {
   return (
     <Fragment>
       <PageHeader
-        label="Register to MinIO Subscription Network"
+        label={t("Register to MinIO Subscription Network")}
         actions={<React.Fragment />}
       />
 
@@ -169,7 +170,7 @@ const RegisterOperator = ({ classes }: IRegister) => {
           scrollButtons="auto"
         >
           <Tab
-            label="API Key"
+            label={t("API Key")}
             id="simple-tab-0"
             aria-controls="simple-tabpanel-1"
           />

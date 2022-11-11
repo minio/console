@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { Grid, Theme } from "@mui/material";
 import { Button } from "mds";
@@ -69,23 +70,25 @@ const FormatErrorsResult = ({
   return (
     <ModalWrapper
       modalOpen={open}
-      title={"Format Errors"}
+      title={t("Format Errors")}
       onClose={onCloseFormatErrorsList}
       titleIcon={<DriveFormatErrorsIcon />}
     >
       <Grid container>
         <Grid item xs={12} className={classes.modalFormScrollable}>
-          There were some issues trying to format the selected CSI Drives,
-          please fix the issues and try again.
+          {t(
+            "There were some issues trying to format the selected CSI Drives, please fix the issues and try again."
+          )}
+
           <br />
           <TableWrapper
             columns={[
               {
-                label: "Node",
+                label: t("Node"),
                 elementKey: "node",
               },
-              { label: "Drive", elementKey: "drive" },
-              { label: "Message", elementKey: "error" },
+              { label: t("Drive"), elementKey: "drive" },
+              { label: t("Message"), elementKey: "error" },
             ]}
             entityName="Format Errors"
             idField="drive"
@@ -103,13 +106,13 @@ const FormatErrorsResult = ({
             onClick={() => {
               download("csiFormatErrors.json", JSON.stringify([...errorsList]));
             }}
-            label={"Download"}
+            label={t("Download")}
           />
           <Button
             id={"finish"}
             onClick={onCloseFormatErrorsList}
             variant="callAction"
-            label={"Donw"}
+            label={t("Donw")}
           />
         </Grid>
       </Grid>

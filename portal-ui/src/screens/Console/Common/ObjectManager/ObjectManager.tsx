@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
@@ -114,7 +115,7 @@ const ObjectManager = ({ classes }: IObjectManager) => {
               </IconButton>
             </Tooltip>
           </div>
-          <div className={classes.title}>Downloads / Uploads</div>
+          <div className={classes.title}>{t("Downloads / Uploads")}</div>
           <div className={classes.actionsContainer}>
             {objects.map((object, key) => (
               <ObjectHandled

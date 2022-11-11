@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import { Box, Grid, Link } from "@mui/material";
 import { Fragment, useState } from "react";
 import { CopyIcon, SettingsIcon } from "../../../icons";
@@ -46,15 +47,15 @@ export const ClusterRegistered = ({
             },
           }}
         >
-          Login to{" "}
+          {t("Login to")}{" "}
           <Link
             href="https://subnet.min.io"
             target="_blank"
             className={linkClass}
           >
-            SUBNET
+            {t("SUBNET")}
           </Link>{" "}
-          to avail support for this MinIO cluster
+          {t("to avail support for this MinIO cluster")}
         </Box>
       </Grid>
     </Fragment>
@@ -95,7 +96,7 @@ export const ProxyConfiguration = ({ linkClass }: { linkClass: string }) => {
           >
             <SettingsIcon />
             <div style={{ marginLeft: "10px", fontWeight: 600 }}>
-              Proxy Configuration
+              {t("Proxy Configuration")}
             </div>
           </Box>
           <Box
@@ -105,15 +106,15 @@ export const ProxyConfiguration = ({ linkClass }: { linkClass: string }) => {
               fontSize: "14px",
             }}
           >
-            For airgap/firewalled environments it is possible to{" "}
+            {t("For airgap/firewalled environments it is possible to")}{" "}
             <Link
               className={linkClass}
               href="https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-config.html?ref=con"
               target="_blank"
             >
-              configure a proxy
+              {t("configure a proxy")}
             </Link>{" "}
-            to connect to SUBNET .
+            {t("to connect to SUBNET .")}
           </Box>
           <Box>
             {displaySubnetProxy && (

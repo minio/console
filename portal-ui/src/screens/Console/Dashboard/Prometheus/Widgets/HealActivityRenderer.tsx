@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { Box } from "@mui/material";
 import TimeStatItem from "../../TimeStatItem";
@@ -56,9 +57,9 @@ const HealActivityRenderer = ({
                 },
               }}
             >
-              Time since last
+              {t("Time since last")}
             </Box>{" "}
-            Heal Activity
+            {t("Heal Activity")}
           </Box>
         }
         value={valueToRender}

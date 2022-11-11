@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
@@ -49,7 +50,7 @@ const TenantMetrics = ({ classes }: ITenantMetrics) => {
 
   return (
     <React.Fragment>
-      <h1 className={classes.sectionTitle}>Metrics</h1>
+      <h1 className={classes.sectionTitle}>{t("Metrics")}</h1>
       {loading && (
         <div style={{ marginTop: "80px" }}>
           <LinearProgress />

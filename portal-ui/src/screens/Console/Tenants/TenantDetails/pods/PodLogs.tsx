@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -202,7 +203,7 @@ const PodLogs = ({
     <React.Fragment>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
-          placeholder="Highlight Line"
+          placeholder={t("Highlight Line")}
           className={classes.searchField}
           id="search-resource"
           label=""

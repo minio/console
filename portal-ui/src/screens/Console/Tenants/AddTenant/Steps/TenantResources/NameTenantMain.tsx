@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -73,7 +74,7 @@ const NameTenantField = () => {
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(setTenantName(e.target.value));
       }}
-      label="Name"
+      label={t("Name")}
       value={tenantName}
       required
       error={tenantNameError || ""}
@@ -129,9 +130,9 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
             <Grid container>
               <Grid item xs={12}>
                 <div className={classes.headerElement}>
-                  <h3 className={classes.h3Section}>Name</h3>
+                  <h3 className={classes.h3Section}>{t("Name")}</h3>
                   <span className={classes.descriptionText}>
-                    How would you like to name this new tenant?
+                    {t("How would you like to name this new tenant?")}
                   </span>
                 </div>
                 <div className={classes.formFieldRow}>
@@ -152,7 +153,7 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
                         e.target.value as string
                       );
                     }}
-                    label="Storage Class"
+                    label={t("Storage Class")}
                     value={selectedStorageClass}
                     options={storageClasses}
                     disabled={storageClasses.length < 1}

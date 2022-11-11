@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import { Tooltip } from "@mui/material";
@@ -235,7 +236,7 @@ const ObjectHandled = ({
               </div>
             </Tooltip>
             <span className={classes.bucketName}>
-              <strong>Bucket: </strong>
+              <strong>{t("Bucket:")}</strong>
               {objectToDisplay.bucketName}
             </span>
           </div>
@@ -255,7 +256,7 @@ const ObjectHandled = ({
         </div>
         {objectToDisplay.errorMessage !== "" && (
           <div className={classes.errorMessage}>
-            <strong>Error: </strong>
+            <strong>{t("Error:")}</strong>
             {objectToDisplay.errorMessage}
           </div>
         )}

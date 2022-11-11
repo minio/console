@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -414,7 +415,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
         />
       )}
 
-      <SectionTitle>Summary</SectionTitle>
+      <SectionTitle>{t("Summary")}</SectionTitle>
       <Grid container spacing={1}>
         <SecureComponent
           scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
@@ -430,7 +431,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   <EditablePropertyItem
                     iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_POLICY]}
                     resourceName={bucketName}
-                    property={"Access Policy:"}
+                    property={t("Access Policy:")}
                     value={accessPolicy.toLowerCase()}
                     onEdit={() => {
                       setAccessPolicyScreenOpen(true);
@@ -448,7 +449,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                       IAM_SCOPES.S3_PUT_BUCKET_ENCRYPTION_CONFIGURATION,
                     ]}
                     resourceName={bucketName}
-                    property={"Encryption:"}
+                    property={t("Encryption:")}
                     value={encryptionEnabled ? "Enabled" : "Disabled"}
                     onEdit={() => {
                       setEnableEncryptionScreenOpen(true);
@@ -462,7 +463,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   resource={bucketName}
                 >
                   <LabelValuePair
-                    label={"Replication:"}
+                    label={t("Replication:")}
                     value={
                       <LabelWithIcon
                         icon={
@@ -470,7 +471,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                         }
                         label={
                           <label className={classes.textMuted}>
-                            {replicationRules ? "Enabled" : "Disabled"}
+                            {replicationRules ? t("Enabled") : t("Disabled")}
                           </label>
                         }
                       />
@@ -483,7 +484,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   resource={bucketName}
                 >
                   <LabelValuePair
-                    label={"Object Locking:"}
+                    label={t("Object Locking:")}
                     value={
                       <LabelWithIcon
                         icon={
@@ -491,7 +492,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                         }
                         label={
                           <label className={classes.textMuted}>
-                            {hasObjectLocking ? "Enabled" : "Disabled"}
+                            {hasObjectLocking ? t("Enabled") : t("Disabled")}
                           </label>
                         }
                       />
@@ -500,14 +501,14 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                 </SecureComponent>
                 <Box className={classes.spacerTop}>
                   <LabelValuePair
-                    label={"Tags:"}
+                    label={t("Tags:")}
                     value={<BucketTags bucketName={bucketName} />}
                   />
                 </Box>
                 <EditablePropertyItem
                   iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
                   resourceName={bucketName}
-                  property={"Quota:"}
+                  property={t("Quota:")}
                   value={quotaEnabled ? "Enabled" : "Disabled"}
                   onEdit={setBucketQuota}
                   isLoading={loadingQuota}
@@ -536,7 +537,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
             resource={bucketName}
           >
             <Grid item xs={12}>
-              <SectionTitle>Versioning</SectionTitle>
+              <SectionTitle>{t("Versioning")}</SectionTitle>
 
               <Box
                 sx={{
@@ -551,7 +552,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   <EditablePropertyItem
                     iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_VERSIONING]}
                     resourceName={bucketName}
-                    property={"Current Status:"}
+                    property={t("Current Status:")}
                     value={isVersioned ? "Versioned" : "Unversioned (Default)"}
                     onEdit={setBucketVersioning}
                     isLoading={loadingVersioning}
@@ -568,7 +569,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
             resource={bucketName}
           >
             <Grid item xs={12}>
-              <SectionTitle>Retention</SectionTitle>
+              <SectionTitle>{t("Retention")}</SectionTitle>
 
               <Box
                 sx={{
@@ -589,7 +590,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   <EditablePropertyItem
                     iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
                     resourceName={bucketName}
-                    property={"Retention:"}
+                    property={t("Retention:")}
                     value={retentionEnabled ? "Enabled" : "Disabled"}
                     onEdit={() => {
                       setRetentionConfigOpen(true);
@@ -598,7 +599,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   />
 
                   <LabelValuePair
-                    label={"Mode:"}
+                    label={t("Mode:")}
                     value={
                       <label
                         className={classes.textMuted}
@@ -611,7 +612,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                     }
                   />
                   <LabelValuePair
-                    label={"Validity:"}
+                    label={t("Validity:")}
                     value={
                       <label
                         className={classes.textMuted}

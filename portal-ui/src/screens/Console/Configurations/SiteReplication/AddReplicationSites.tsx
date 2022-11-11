@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, LinearProgress } from "@mui/material";
@@ -66,11 +67,20 @@ const TableHeader = () => {
           marginLeft: "5px",
         }}
       >
-        Site Name
+        {t("Site Name")}
       </Box>
-      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>Endpoint {"*"}</Box>
-      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>Access Key {"*"}</Box>
-      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>Secret Key {"*"}</Box>
+      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>
+        {t("Endpoint")}
+        {"*"}
+      </Box>
+      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>
+        {t("Access Key")}
+        {"*"}
+      </Box>
+      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>
+        {t("Secret Key")}
+        {"*"}
+      </Box>
       <Box> </Box>
     </React.Fragment>
   );
@@ -267,7 +277,7 @@ const AddReplicationSites = () => {
           marginTop: "15px",
         }}
       >
-        <SiteTypeHeader title={"This Site"} />
+        <SiteTypeHeader title={t("This Site")} />
         <Box
           sx={{
             display: "grid",
@@ -283,10 +293,10 @@ const AddReplicationSites = () => {
 
           {currentSite.map((cs, index) => {
             const accessKeyError = isEmptyValue(cs.accessKey)
-              ? "AccessKey is required"
+              ? t("AccessKey is required")
               : "";
             const secretKeyError = isEmptyValue(cs.secretKey)
-              ? "SecretKey is required"
+              ? t("SecretKey is required")
               : "";
             return (
               <SRSiteInputRow
@@ -326,7 +336,7 @@ const AddReplicationSites = () => {
           marginTop: "25px",
         }}
       >
-        <SiteTypeHeader title={"Peer Sites"} />
+        <SiteTypeHeader title={t("Peer Sites")} />
         <Box
           sx={{
             display: "grid",
@@ -344,10 +354,10 @@ const AddReplicationSites = () => {
             const endPointError = isValidEndPoint(ps.endpoint);
 
             const accessKeyError = isEmptyValue(ps.accessKey)
-              ? "AccessKey is required"
+              ? t("AccessKey is required")
               : "";
             const secretKeyError = isEmptyValue(ps.secretKey)
-              ? "SecretKey is required"
+              ? t("SecretKey is required")
               : "";
 
             return (
@@ -402,7 +412,7 @@ const AddReplicationSites = () => {
         label={
           <BackLink
             to={IAM_PAGES.SITE_REPLICATION}
-            label={"Add Replication Site"}
+            label={t("Add Replication Site")}
           />
         }
       />
@@ -418,7 +428,7 @@ const AddReplicationSites = () => {
         >
           <Box>
             <SectionTitle icon={<ClustersIcon />}>
-              Add Sites for Replication
+              {t("Add Sites for Replication")}
             </SectionTitle>
 
             {isSiteInfoLoading || isAdding ? <LinearProgress /> : null}
@@ -431,8 +441,9 @@ const AddReplicationSites = () => {
                 marginBottom: "10px",
               }}
             >
-              Note: AccessKey and SecretKey values for every site is required
-              while adding or editing peer sites
+              {t(
+                "Note: AccessKey and SecretKey values for every site is required while adding or editing peer sites"
+              )}
             </Box>
             <form
               noValidate
@@ -462,7 +473,7 @@ const AddReplicationSites = () => {
                     variant="regular"
                     disabled={isAdding}
                     onClick={resetForm}
-                    label={"Clear"}
+                    label={t("Clear")}
                   />
 
                   <Button
@@ -470,7 +481,7 @@ const AddReplicationSites = () => {
                     type="submit"
                     variant="callAction"
                     disabled={isAdding || !isAllFieldsValid}
-                    label={"Save"}
+                    label={t("Save")}
                   />
                 </Box>
               </Grid>
@@ -514,7 +525,7 @@ const AddReplicationSites = () => {
                   >
                     <ClustersIcon />
                   </Box>
-                  About Site Replication
+                  {t("About Site Replication")}
                 </Box>
                 <Box
                   sx={{
@@ -556,18 +567,22 @@ const AddReplicationSites = () => {
                   }}
                 >
                   <Box>
-                    The following changes are replicated to all other sites
+                    {t(
+                      "The following changes are replicated to all other sites"
+                    )}
                   </Box>
                   <ul>
-                    <li>Creation and deletion of buckets and objects</li>
+                    <li>{t("Creation and deletion of buckets and objects")}</li>
                     <li>
-                      Creation and deletion of all IAM users, groups, policies
-                      and their mappings to users or groups
+                      {t(
+                        "Creation and deletion of all IAM users, groups, policies and their mappings to users or groups"
+                      )}
                     </li>
-                    <li>Creation of STS credentials</li>
+                    <li>{t("Creation of STS credentials")}</li>
                     <li>
-                      Creation and deletion of service accounts (except those
-                      owned by the root user)
+                      {t(
+                        "Creation and deletion of service accounts (except those owned by the root user)"
+                      )}
                     </li>
                     <li>
                       <Box
@@ -583,13 +598,13 @@ const AddReplicationSites = () => {
                             paddingTop: "1px",
                           }}
                         >
-                          Changes to Bucket features such as
+                          {t("Changes to Bucket features such as")}
                         </div>
                         <ul>
-                          <li>Bucket Policies</li>
-                          <li>Bucket Tags</li>
-                          <li>Bucket Object-Lock configurations</li>
-                          <li>Bucket Encryption configuration</li>
+                          <li>{t("Bucket Policies")}</li>
+                          <li>{t("Bucket Tags")}</li>
+                          <li>{t("Bucket Object-Lock configurations")}</li>
+                          <li>{t("Bucket Encryption configuration")}</li>
                         </ul>
                       </Box>
                     </li>
@@ -608,12 +623,14 @@ const AddReplicationSites = () => {
                             paddingTop: "1px",
                           }}
                         >
-                          The following Bucket features will NOT be replicated
+                          {t(
+                            "The following Bucket features will NOT be replicated"
+                          )}
                         </div>
 
                         <ul>
-                          <li>Bucket notification configuration</li>
-                          <li>Bucket lifecycle (ILM) configuration</li>
+                          <li>{t("Bucket notification configuration")}</li>
+                          <li>{t("Bucket lifecycle (ILM) configuration")}</li>
                         </ul>
                       </Box>
                     </li>

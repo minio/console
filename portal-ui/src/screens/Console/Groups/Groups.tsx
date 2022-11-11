@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -222,7 +223,8 @@ const Groups = ({ classes }: IGroupsProps) => {
           }}
         />
       )}
-      <PageHeader label={"Groups"} />
+
+      <PageHeader label={t("Groups")} />
 
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
@@ -232,7 +234,7 @@ const Groups = ({ classes }: IGroupsProps) => {
             errorProps={{ disabled: true }}
           >
             <SearchBox
-              placeholder={"Search Groups"}
+              placeholder={t("Search Groups")}
               onChange={setFilter}
               overrideClass={classes.searchField}
               value={filter}
@@ -252,12 +254,14 @@ const Groups = ({ classes }: IGroupsProps) => {
               <TooltipWrapper
                 tooltip={
                   checkedGroups.length < 1
-                    ? "Please select Groups on which you want to apply Policies"
+                    ? t(
+                        "Please select Groups on which you want to apply Policies"
+                      )
                     : applyPolicy
-                    ? "Select Policy"
+                    ? t("Select Policy")
                     : permissionTooltipHelper(
                         applyPolicyPermissions,
-                        "apply policies to Groups"
+                        t("apply policies to Groups")
                       )
                 }
               >
@@ -266,7 +270,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                   onClick={() => {
                     setPolicyOpen(true);
                   }}
-                  label={"Assign Policy"}
+                  label={t("Assign Policy")}
                   icon={<IAMPoliciesIcon />}
                   disabled={checkedGroups.length < 1 || !applyPolicy}
                   variant={"regular"}
@@ -282,12 +286,12 @@ const Groups = ({ classes }: IGroupsProps) => {
               <TooltipWrapper
                 tooltip={
                   checkedGroups.length === 0
-                    ? "Select Groups to delete"
+                    ? t("Select Groups to delete")
                     : getGroup
-                    ? "Delete Selected"
+                    ? t("Delete Selected")
                     : permissionTooltipHelper(
                         getGroupPermissions,
-                        "delete Groups"
+                        t("delete Groups")
                       )
                 }
               >
@@ -296,7 +300,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                   onClick={() => {
                     setDeleteOpen(true);
                   }}
-                  label={"Delete Selected"}
+                  label={t("Delete Selected")}
                   icon={<DeleteIcon />}
                   variant="secondary"
                   disabled={checkedGroups.length === 0 || !getGroup}
@@ -309,10 +313,10 @@ const Groups = ({ classes }: IGroupsProps) => {
               matchAll
               errorProps={{ disabled: true }}
             >
-              <TooltipWrapper tooltip={"Create Group"}>
+              <TooltipWrapper tooltip={t("Create Group")}>
                 <Button
                   id={"create-group"}
-                  label={"Create Group"}
+                  label={t("Create Group")}
                   variant="callAction"
                   icon={<AddIcon />}
                   onClick={() => {
@@ -334,7 +338,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                       ? ""
                       : permissionTooltipHelper(
                           getGroupPermissions,
-                          "view Group details"
+                          t("view Group details")
                         )
                   }
                 >
@@ -346,7 +350,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                     >
                       <TableWrapper
                         itemActions={tableActions}
-                        columns={[{ label: "Name", elementKey: "" }]}
+                        columns={[{ label: t("Name"), elementKey: "" }]}
                         isLoading={loading}
                         selectedItems={checkedGroups}
                         onSelect={
@@ -361,23 +365,22 @@ const Groups = ({ classes }: IGroupsProps) => {
                 </TooltipWrapper>
                 <Grid item xs={12} marginTop={"25px"}>
                   <HelpBox
-                    title={"Groups"}
+                    title={t("Groups")}
                     iconComponent={<GroupsIcon />}
                     help={
                       <Fragment>
-                        A group can have one attached IAM policy, where all
-                        users with membership in that group inherit that policy.
-                        Groups support more simplified management of user
-                        permissions on the MinIO Tenant.
+                        {t(
+                          "A group can have one attached IAM policy, where all users with membership in that group inherit that policy. Groups support more simplified management of user permissions on the MinIO Tenant."
+                        )}
                         <br />
                         <br />
-                        You can learn more at our{" "}
+                        {t("You can learn more at our")}{" "}
                         <a
                           href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-group-management.html?ref=con"
                           target="_blank"
                           rel="noreferrer"
                         >
-                          documentation
+                          {t("documentation")}
                         </a>
                         .
                       </Fragment>
@@ -395,14 +398,14 @@ const Groups = ({ classes }: IGroupsProps) => {
               >
                 <Grid item xs={8}>
                   <HelpBox
-                    title={"Groups"}
+                    title={t("Groups")}
                     iconComponent={<UsersIcon />}
                     help={
                       <Fragment>
-                        A group can have one attached IAM policy, where all
-                        users with membership in that group inherit that policy.
-                        Groups support more simplified management of user
-                        permissions on the MinIO Tenant.
+                        {t(
+                          "A group can have one attached IAM policy, where all users with membership in that group inherit that policy. Groups support more simplified management of user permissions on the MinIO Tenant."
+                        )}
+
                         <SecureComponent
                           resource={CONSOLE_UI_RESOURCE}
                           scopes={createGroupPermissions}
@@ -410,13 +413,13 @@ const Groups = ({ classes }: IGroupsProps) => {
                         >
                           <br />
                           <br />
-                          To get started,{" "}
+                          {t("To get started,")}{" "}
                           <AButton
                             onClick={() => {
                               navigate(`${IAM_PAGES.GROUPS_ADD}`);
                             }}
                           >
-                            Create a Group
+                            {t("Create a Group")}
                           </AButton>
                           .
                         </SecureComponent>

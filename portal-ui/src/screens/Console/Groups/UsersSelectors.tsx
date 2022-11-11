@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useCallback, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -155,11 +156,11 @@ const UsersSelectors = ({
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
                 <label className={classes.actionsTitle}>
-                  {editMode ? "Edit Members" : "Assign Users"}
+                  {editMode ? t("Edit Members") : t("Assign Users")}
                 </label>
                 <div className={classes.searchBox}>
                   <SearchBox
-                    placeholder="Filter Users"
+                    placeholder={t("Filter Users")}
                     adornmentPosition="end"
                     onChange={setFilter}
                     value={filter}
@@ -168,7 +169,9 @@ const UsersSelectors = ({
               </Grid>
               <Grid item xs={12} className={classes.tableBlock}>
                 <TableWrapper
-                  columns={[{ label: "Access Key", elementKey: "accessKey" }]}
+                  columns={[
+                    { label: t("Access Key"), elementKey: "accessKey" },
+                  ]}
                   onSelect={selectionChanged}
                   selectedItems={selUsers}
                   isLoading={loading}
@@ -180,7 +183,7 @@ const UsersSelectors = ({
               </Grid>
             </React.Fragment>
           ) : (
-            <div className={classes.noFound}>No Users to display</div>
+            <div className={classes.noFound}>{t("No Users to display")}</div>
           )}
         </Paper>
       </Grid>

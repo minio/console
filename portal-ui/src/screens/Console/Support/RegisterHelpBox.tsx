@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { Box, Link } from "@mui/material";
 import {
@@ -87,12 +88,12 @@ const RegisterHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
         }}
       >
         <HelpIconFilled />
-        <div>Why should I register?</div>
+        <div>{t("Why should I register?")}</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-        Registering this cluster with the MinIO Subscription Network (SUBNET)
-        provides the following benefits in addition to the commercial license
-        and SLA backed support.
+        {t(
+          "Registering this cluster with the MinIO Subscription Network (SUBNET) provides the following benefits in addition to the commercial license and SLA backed support."
+        )}
       </Box>
 
       <Box
@@ -103,15 +104,15 @@ const RegisterHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
       >
         <FeatureItem
           icon={<CallHomeFeatureIcon />}
-          description={`Call Home Monitoring`}
+          description={`${t("Call Home Monitoring")}`}
         />
         <FeatureItem
           icon={<DiagnosticsFeatureIcon />}
-          description={`Health Diagnostics`}
+          description={`${t("Health Diagnostics")}`}
         />
         <FeatureItem
           icon={<PerformanceFeatureIcon />}
-          description={`Performance Analysis`}
+          description={`${t("Performance Analysis")}`}
         />
         <FeatureItem
           icon={<ExtraFeaturesIcon />}
@@ -124,7 +125,7 @@ const RegisterHelpBox = ({ hasMargin = true }: { hasMargin?: boolean }) => {
                 cursor: "pointer",
               }}
             >
-              More Features
+              {t("More Features")}
             </Link>
           }
         />

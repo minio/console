@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
@@ -236,7 +237,8 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
           open={lifecycleModalOpen}
         />
       )}
-      {!obOnly && <PageHeader label={"Buckets"} />}
+
+      {!obOnly && <PageHeader label={t("Buckets")} />}
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray} display="flex">
           {obOnly && (
@@ -247,7 +249,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
           {hasBuckets && (
             <SearchBox
               onChange={setFilterBuckets}
-              placeholder="Search Buckets"
+              placeholder={t("Search Buckets")}
               overrideClass={classes.searchField}
               value={filterBuckets}
             />
@@ -272,8 +274,8 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                     !hasBuckets
                       ? ""
                       : bulkSelect
-                      ? "Unselect Buckets"
-                      : "Select Multiple Buckets"
+                      ? t("Unselect Buckets")
+                      : t("Select Multiple Buckets")
                   }
                 >
                   <Button
@@ -294,8 +296,8 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                       !hasBuckets
                         ? ""
                         : selectedBuckets.length === filteredRecords.length
-                        ? "Unselect All Buckets"
-                        : "Select All Buckets"
+                        ? t("Unselect All Buckets")
+                        : t("Select All Buckets")
                     }
                   >
                     <Button
@@ -314,13 +316,17 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                       : !canPutLifecycle
                       ? permissionTooltipHelper(
                           IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
-                          "configure lifecycle for the selected buckets"
+                          t("configure lifecycle for the selected buckets")
                         )
                       : selectedBuckets.length === 0
                       ? bulkSelect
-                        ? "Please select at least one bucket on which to configure Lifecycle"
-                        : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
-                      : "Set Lifecycle"
+                        ? t(
+                            "Please select at least one bucket on which to configure Lifecycle"
+                          )
+                        : t(
+                            "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
+                          )
+                      : t("Set Lifecycle")
                   }
                 >
                   <Button
@@ -340,9 +346,13 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                       ? ""
                       : selectedBuckets.length === 0
                       ? bulkSelect
-                        ? "Please select at least one bucket on which to configure Replication"
-                        : "Use the Select Multiple Buckets button to choose buckets on which to configure Replication"
-                      : "Set Replication"
+                        ? t(
+                            "Please select at least one bucket on which to configure Replication"
+                          )
+                        : t(
+                            "Use the Select Multiple Buckets button to choose buckets on which to configure Replication"
+                          )
+                      : t("Set Replication")
                   }
                 >
                   <Button
@@ -358,7 +368,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
               </Fragment>
             )}
 
-            <TooltipWrapper tooltip={"Refresh"}>
+            <TooltipWrapper tooltip={t("Refresh")}>
               <Button
                 id={"refresh-buckets"}
                 onClick={() => {
@@ -376,7 +386,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                     ? ""
                     : permissionTooltipHelper(
                         [IAM_SCOPES.S3_CREATE_BUCKET],
-                        "create a bucket"
+                        t("create a bucket")
                       )
                 }
               >
@@ -388,7 +398,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                   icon={<AddIcon />}
                   variant={"callAction"}
                   disabled={!canCreateBucket}
-                  label={"Create Bucket"}
+                  label={t("Create Bucket")}
                 />
               </TooltipWrapper>
             )}
@@ -418,10 +428,10 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                 <Grid item xs={8}>
                   <HelpBox
                     iconComponent={<BucketsIcon />}
-                    title={"No Results"}
+                    title={t("No Results")}
                     help={
                       <Fragment>
-                        No buckets match the filtering condition
+                        {t("No buckets match the filtering condition")}
                       </Fragment>
                     }
                   />
@@ -438,12 +448,13 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                 <Grid item xs={8}>
                   <HelpBox
                     iconComponent={<BucketsIcon />}
-                    title={"Buckets"}
+                    title={t("Buckets")}
                     help={
                       <Fragment>
-                        MinIO uses buckets to organize objects. A bucket is
-                        similar to a folder or directory in a filesystem, where
-                        each bucket can hold an arbitrary number of objects.
+                        {t(
+                          "MinIO uses buckets to organize objects. A bucket is similar to a folder or directory in a filesystem, where each bucket can hold an arbitrary number of objects."
+                        )}
+
                         <br />
                         {canListBuckets ? (
                           ""
@@ -452,7 +463,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                             <br />
                             {permissionTooltipHelper(
                               [IAM_SCOPES.S3_LIST_BUCKET],
-                              "view the buckets on this server"
+                              t("view the buckets on this server")
                             )}
                             <br />
                           </Fragment>
@@ -462,13 +473,14 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                           resource={CONSOLE_UI_RESOURCE}
                         >
                           <br />
-                          To get started,&nbsp;
+                          {t("To get started,")}
+
                           <AButton
                             onClick={() => {
                               navigate(IAM_PAGES.ADD_BUCKETS);
                             }}
                           >
-                            Create a Bucket.
+                            {t("Create a Bucket.")}
                           </AButton>
                         </SecureComponent>
                       </Fragment>

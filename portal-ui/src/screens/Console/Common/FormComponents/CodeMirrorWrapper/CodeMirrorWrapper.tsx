@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import Grid from "@mui/material/Grid";
 import { Box, InputLabel, Tooltip } from "@mui/material";
@@ -125,7 +126,7 @@ const CodeMirrorWrapper = ({
             },
           }}
         >
-          <TooltipWrapper tooltip={"Copy to Clipboard"}>
+          <TooltipWrapper tooltip={t("Copy to Clipboard")}>
             <CopyToClipboard text={value}>
               <Button
                 type={"button"}

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Grid } from "@mui/material";
 import HelpBox from "../../../../common/HelpBox";
@@ -42,13 +43,13 @@ const MissingIntegration = ({
           iconComponent={iconComponent}
           help={
             <Fragment>
-              This feature is not available.
+              {t("This feature is not available.")}
               <br />
-              Please configure{" "}
+              {t("Please configure")}{" "}
               <a href={documentationLink} target="_blank" rel="noreferrer">
                 {entity}
               </a>{" "}
-              first to use this feature.
+              {t("first to use this feature.")}
             </Fragment>
           }
         />

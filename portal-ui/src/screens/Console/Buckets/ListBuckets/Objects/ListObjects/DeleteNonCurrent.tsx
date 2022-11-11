@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 
 import { DialogContentText } from "@mui/material";
@@ -76,8 +77,8 @@ const DeleteNonCurrentVersions = ({
 
   return (
     <ConfirmDialog
-      title={`Delete Non-Current versions`}
-      confirmText={"Delete"}
+      title={`${t("Delete Non-Current versions")}`}
+      confirmText={t("Delete")}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
@@ -88,10 +89,14 @@ const DeleteNonCurrentVersions = ({
       }}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete all the non-current versions for:{" "}
+          {t(
+            "Are you sure you want to delete all the non-current versions for:"
+          )}{" "}
           <b>{decodeURLString(selectedObject)}</b>? <br />
           <br />
-          To continue please type <b>YES, PROCEED</b> in the box.
+          {t("To continue please type")}
+          <b>{t("YES, PROCEED")}</b>
+          {t("in the box.")}
           <Grid item xs={12}>
             <InputBoxWrapper
               id="type-confirm"

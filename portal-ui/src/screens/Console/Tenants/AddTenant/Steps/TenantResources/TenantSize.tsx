@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -322,9 +323,9 @@ const TenantSize = ({ classes, formToRender }: ITenantSizeProps) => {
     <Fragment>
       <Grid item xs={12}>
         <div className={classes.headerElement}>
-          <h3 className={classes.h3Section}>Capacity</h3>
+          <h3 className={classes.h3Section}>{t("Capacity")}</h3>
           <span className={classes.descriptionText}>
-            Please select the desired capacity
+            {t("Please select the desired capacity")}
           </span>
         </div>
       </Grid>
@@ -343,7 +344,7 @@ const TenantSize = ({ classes, formToRender }: ITenantSizeProps) => {
               cleanValidation("nodes");
             }
           }}
-          label="Number of Servers"
+          label={t("Number of Servers")}
           disabled={selectedStorageClass === ""}
           value={nodes}
           min="4"
@@ -362,7 +363,7 @@ const TenantSize = ({ classes, formToRender }: ITenantSizeProps) => {
               cleanValidation("drivesps");
             }
           }}
-          label="Drives per Server"
+          label={t("Drives per Server")}
           value={drivesPerServer}
           disabled={selectedStorageClass === ""}
           min="1"
@@ -381,7 +382,7 @@ const TenantSize = ({ classes, formToRender }: ITenantSizeProps) => {
               updateField("volumeSize", e.target.value);
               cleanValidation("volume_size");
             }}
-            label="Total Size"
+            label={t("Total Size")}
             value={volumeSize}
             disabled={selectedStorageClass === ""}
             required
@@ -409,14 +410,15 @@ const TenantSize = ({ classes, formToRender }: ITenantSizeProps) => {
           onChange={(e: SelectChangeEvent<string>) => {
             updateField("ecParity", e.target.value as string);
           }}
-          label="Erasure Code Parity"
+          label={t("Erasure Code Parity")}
           disabled={selectedStorageClass === ""}
           value={ecParity}
           options={ecParityChoices}
         />
         <span className={classes.descriptionText}>
-          Please select the desired parity. This setting will change the max
-          usable capacity in the cluster
+          {t(
+            "Please select the desired parity. This setting will change the max usable capacity in the cluster"
+          )}
         </span>
       </Grid>
 

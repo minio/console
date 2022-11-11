@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect, useSelector } from "react-redux";
 import {
@@ -352,9 +353,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
   return (
     <React.Fragment>
       <ConfirmDialog
-        title={"Save and Restart"}
-        confirmText={"Restart"}
-        cancelText="Cancel"
+        title={t("Save and Restart")}
+        confirmText={t("Restart")}
+        cancelText={t("Cancel")}
         titleIcon={<ConfirmModalIcon />}
         isLoading={isSending}
         onClose={() => setDialogOpen(false)}
@@ -362,7 +363,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
         onConfirm={updateTenantIdentityProvider}
         confirmationContent={
           <DialogContentText>
-            Are you sure you want to save the changes and restart the service?
+            {t(
+              "Are you sure you want to save the changes and restart the service?"
+            )}
           </DialogContentText>
         }
       />
@@ -373,7 +376,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
       ) : (
         <Fragment>
           <Grid item xs={12}>
-            <h1 className={classes.sectionTitle}>Identity Provider</h1>
+            <h1 className={classes.sectionTitle}>{t("Identity Provider")}</h1>
             <hr className={classes.hrClass} />
           </Grid>
           <Grid
@@ -386,7 +389,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
               currentSelection={idpSelection}
               id="idp-options"
               name="idp-options"
-              label="Protocol"
+              label={t("Protocol")}
               onChange={(e) => {
                 setIdpSelection(e.target.value);
               }}
@@ -408,7 +411,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     setOpenIDConfigurationURL(e.target.value);
                     cleanValidation("openID_CONFIGURATION_URL");
                   }}
-                  label="Configuration URL"
+                  label={t("Configuration URL")}
                   value={openIDConfigurationURL}
                   placeholder="https://your-identity-provider.com/.well-known/openid-configuration"
                   error={validationErrors["openID_CONFIGURATION_URL"] || ""}
@@ -423,7 +426,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     setOpenIDClientID(e.target.value);
                     cleanValidation("openID_clientID");
                   }}
-                  label="Client ID"
+                  label={t("Client ID")}
                   value={openIDClientID}
                   error={validationErrors["openID_clientID"] || ""}
                   required
@@ -438,7 +441,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     setOpenIDSecretID(e.target.value);
                     cleanValidation("openID_secretID");
                   }}
-                  label="Secret ID"
+                  label={t("Secret ID")}
                   value={openIDSecretID}
                   error={validationErrors["openID_secretID"] || ""}
                   required
@@ -460,7 +463,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     setOpenIDCallbackURL(e.target.value);
                     cleanValidation("openID_callbackURL");
                   }}
-                  label="Callback URL"
+                  label={t("Callback URL")}
                   value={openIDCallbackURL}
                   placeholder="https://your-console-endpoint:9443/oauth_callback"
                   error={validationErrors["openID_callbackURL"] || ""}
@@ -474,7 +477,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     setOpenIDClaimName(e.target.value);
                     cleanValidation("openID_claimName");
                   }}
-                  label="Claim Name"
+                  label={t("Claim Name")}
                   value={openIDClaimName}
                   error={validationErrors["openID_claimName"] || ""}
                   required
@@ -488,7 +491,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     setOpenIDScopes(e.target.value);
                     cleanValidation("openID_scopes");
                   }}
-                  label="Scopes"
+                  label={t("Scopes")}
                   value={openIDScopes}
                 />
               </Grid>
@@ -505,9 +508,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     setADURL(e.target.value);
                     cleanValidation("AD_URL");
                   }}
-                  label="LDAP Server Address"
+                  label={t("LDAP Server Address")}
                   value={ADURL}
-                  placeholder="ldap-server:636"
+                  placeholder={t("ldap-server:636")}
                   error={validationErrors["AD_URL"] || ""}
                   required
                 />
@@ -523,7 +526,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     const checked = targetD.checked;
                     setADSkipTLS(checked);
                   }}
-                  label={"Skip TLS Verification"}
+                  label={t("Skip TLS Verification")}
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
@@ -537,7 +540,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     const checked = targetD.checked;
                     setADServerInsecure(checked);
                   }}
-                  label={"Server Insecure"}
+                  label={t("Server Insecure")}
                 />
               </Grid>
               {ADServerInsecure ? (
@@ -548,8 +551,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     display="block"
                     gutterBottom
                   >
-                    Warning: All traffic with Active Directory will be
-                    unencrypted
+                    {t(
+                      "Warning: All traffic with Active Directory will be unencrypted"
+                    )}
                   </Typography>
                   <br />
                 </Grid>
@@ -565,7 +569,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     const checked = targetD.checked;
                     setADServerStartTLS(checked);
                   }}
-                  label={"Start TLS connection to AD/LDAP server"}
+                  label={t("Start TLS connection to AD/LDAP server")}
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
@@ -576,9 +580,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                     setADLookupBindDN(e.target.value);
                     cleanValidation("ad_lookupBindDN");
                   }}
-                  label="Lookup Bind DN"
+                  label={t("Lookup Bind DN")}
                   value={ADLookupBindDN}
-                  placeholder="cn=admin,dc=min,dc=io"
+                  placeholder={t("cn=admin,dc=min,dc=io")}
                   error={validationErrors["ad_lookupBindDN"] || ""}
                   required
                 />
@@ -591,9 +595,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setADLookupBindPassword(e.target.value);
                   }}
-                  label="Lookup Bind Password"
+                  label={t("Lookup Bind Password")}
                   value={ADLookupBindPassword}
-                  placeholder="admin"
+                  placeholder={t("admin")}
                   overlayIcon={
                     showADLookupBindPassword ? (
                       <VisibilityOffIcon />
@@ -613,9 +617,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setADUserDNSearchBaseDN(e.target.value);
                   }}
-                  label="User DN Search Base DN"
+                  label={t("User DN Search Base DN")}
                   value={ADUserDNSearchBaseDN}
-                  placeholder="dc=min,dc=io"
+                  placeholder={t("dc=min,dc=io")}
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
@@ -625,9 +629,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setADUserDNSearchFilter(e.target.value);
                   }}
-                  label="User DN Search Filter"
+                  label={t("User DN Search Filter")}
                   value={ADUserDNSearchFilter}
-                  placeholder="(sAMAcountName=%s)"
+                  placeholder={t("(sAMAcountName=%s)")}
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
@@ -637,9 +641,11 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setADGroupSearchBaseDN(e.target.value);
                   }}
-                  label="Group Search Base DN"
+                  label={t("Group Search Base DN")}
                   value={ADGroupSearchBaseDN}
-                  placeholder="ou=hwengg,dc=min,dc=io;ou=swengg,dc=min,dc=io"
+                  placeholder={t(
+                    "ou=hwengg,dc=min,dc=io;ou=swengg,dc=min,dc=io"
+                  )}
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
@@ -649,9 +655,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setADGroupSearchFilter(e.target.value);
                   }}
-                  label="Group Search Filter"
+                  label={t("Group Search Filter")}
                   value={ADGroupSearchFilter}
-                  placeholder="(&(objectclass=groupOfNames)(member=%s))"
+                  placeholder={t("(&(objectclass=groupOfNames)(member=%s))")}
                 />
               </Grid>
             </Fragment>
@@ -665,18 +671,19 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
               color="primary"
               disabled={!isFormValid || isSending}
               onClick={() => setDialogOpen(true)}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
 
           {idpSelection === "AD" && (
             <Fragment>
-              <SectionTitle>User & Group management</SectionTitle>
+              <SectionTitle>{t("User & Group management")}</SectionTitle>
               <br />
               <fieldset className={classes.fieldGroup}>
                 <legend className={classes.descriptionText}>
-                  List of user DNs (Distinguished Names) to be added as Tenant
-                  Administrators
+                  {t(
+                    "List of user DNs (Distinguished Names) to be added as Tenant Administrators"
+                  )}
                 </legend>
                 <Grid item xs={12}>
                   {ADUserDNs.map((_, index) => {
@@ -741,8 +748,9 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
               </fieldset>
               <fieldset className={classes.fieldGroup}>
                 <legend className={classes.descriptionText}>
-                  List of group DNs (Distinguished Names) to be added as Tenant
-                  Administrators
+                  {t(
+                    "List of group DNs (Distinguished Names) to be added as Tenant Administrators"
+                  )}
                 </legend>
                 <Grid item xs={12}>
                   {ADGroupDNs.map((_, index) => {
@@ -813,7 +821,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
                   variant="callAction"
                   disabled={!isFormValid || isSending}
                   onClick={() => setAdministrators()}
-                  label={"Add additional DNs"}
+                  label={t("Add additional DNs")}
                 />
               </Grid>
             </Fragment>

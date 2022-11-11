@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -102,19 +103,22 @@ const GeneralUsePaginator = ({
           <span className={classes.paginatorEntity}>{entity}</span>
           <br />
           <span className={classes.paginatorInformation}>
-            Showing{" "}
+            {t("Showing")}{" "}
             {totalPages > 1 ? (
               <Fragment>
-                {currentInitialItem} - {displayCurrentEndItem} out of{" "}
+                {currentInitialItem} - {displayCurrentEndItem}
+                {t("out of")}{" "}
               </Fragment>
             ) : null}
-            {totalItems} Total {entity}
+            {totalItems}
+            {t("Total")}
+            {entity}
           </span>
         </Grid>
         <Grid item xs={6} className={classes.paginationElement}>
           {totalPages > 1 && (
             <Fragment>
-              Go to:{" "}
+              {t("Go to:")}{" "}
               <Pagination
                 count={totalPages}
                 variant={"text"}

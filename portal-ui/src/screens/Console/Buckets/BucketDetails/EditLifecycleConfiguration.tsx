@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import {
   Accordion,
@@ -333,7 +334,7 @@ const EditLifecycleConfiguration = ({
         closeModalAndRefresh(false);
       }}
       modalOpen={open}
-      title={"Edit Lifecycle Configuration"}
+      title={t("Edit Lifecycle Configuration")}
       titleIcon={<LifecycleConfigIcon />}
     >
       <form
@@ -350,7 +351,7 @@ const EditLifecycleConfiguration = ({
                 <InputBoxWrapper
                   id="id"
                   name="id"
-                  label="Id"
+                  label={t("Id")}
                   value={lifecycleRule.id}
                   onChange={() => {}}
                   disabled
@@ -358,7 +359,7 @@ const EditLifecycleConfiguration = ({
               </Grid>
               <Grid item xs={12}>
                 <FormSwitchWrapper
-                  label="Status"
+                  label={t("Status")}
                   indicatorLabels={["Enabled", "Disabled"]}
                   checked={enabled}
                   value={"user_enabled"}
@@ -374,10 +375,10 @@ const EditLifecycleConfiguration = ({
                   currentSelection={ilmType}
                   id="rule_type"
                   name="rule_type"
-                  label="Rule Type"
+                  label={t("Rule Type")}
                   selectorOptions={[
-                    { value: "expiry", label: "Expiry" },
-                    { value: "transition", label: "Transition" },
+                    { value: "expiry", label: t("Expiry") },
+                    { value: "transition", label: t("Transition") },
                   ]}
                   onChange={() => {}}
                   disableOptions
@@ -392,7 +393,7 @@ const EditLifecycleConfiguration = ({
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setExpiryDays(e.target.value);
                     }}
-                    label="Expiry Days"
+                    label={t("Expiry Days")}
                     value={expiryDays}
                     min="0"
                   />
@@ -409,7 +410,7 @@ const EditLifecycleConfiguration = ({
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setNCExpirationDays(e.target.value);
                       }}
-                      label="Non-current Expiration Days"
+                      label={t("Non-current Expiration Days")}
                       value={NCExpirationDays}
                       min="0"
                     />
@@ -425,7 +426,7 @@ const EditLifecycleConfiguration = ({
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setTransitionDays(e.target.value);
                       }}
-                      label="Transition Days"
+                      label={t("Transition Days")}
                       value={transitionDays}
                       min="0"
                     />
@@ -433,7 +434,7 @@ const EditLifecycleConfiguration = ({
 
                   <Grid item xs={12}>
                     <SelectWrapper
-                      label="Storage Class"
+                      label={t("Storage Class")}
                       id="storage_class"
                       name="storage_class"
                       value={storageClass}
@@ -457,7 +458,7 @@ const EditLifecycleConfiguration = ({
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setNCTransitionDays(e.target.value);
                         }}
-                        label="Non-current Transition Days"
+                        label={t("Non-current Transition Days")}
                         value={NCTransitionDays}
                         min="0"
                       />
@@ -470,8 +471,12 @@ const EditLifecycleConfiguration = ({
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setNCTransitionSC(e.target.value);
                         }}
-                        placeholder="Set Non-current Version Transition Storage Class"
-                        label="Non-current Version Transition Storage Class"
+                        placeholder={t(
+                          "Set Non-current Version Transition Storage Class"
+                        )}
+                        label={t(
+                          "Non-current Version Transition Storage Class"
+                        )}
                         value={NCTransitionSC}
                       />
                     </Grid>
@@ -480,7 +485,7 @@ const EditLifecycleConfiguration = ({
               <Grid item xs={12} className={classes.formFieldRowAccordion}>
                 <Accordion>
                   <AccordionSummary>
-                    <Typography>Filters</Typography>
+                    <Typography>{t("Filters")}</Typography>
                   </AccordionSummary>
 
                   <AccordionDetails>
@@ -491,14 +496,14 @@ const EditLifecycleConfiguration = ({
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setPrefix(e.target.value);
                         }}
-                        label="Prefix"
+                        label={t("Prefix")}
                         value={prefix}
                       />
                     </Grid>
                     <Grid item xs={12}>
                       <QueryMultiSelector
                         name="tags"
-                        label="Tags"
+                        label={t("Tags")}
                         elements={tags}
                         onChange={(vl: string) => {
                           setTags(vl);
@@ -516,7 +521,7 @@ const EditLifecycleConfiguration = ({
                   <Grid item xs={12} className={classes.formFieldRowAccordion}>
                     <Accordion>
                       <AccordionSummary>
-                        <Typography>Advanced</Typography>
+                        <Typography>{t("Advanced")}</Typography>
                       </AccordionSummary>
 
                       <AccordionDetails>
@@ -531,7 +536,7 @@ const EditLifecycleConfiguration = ({
                             ) => {
                               setExpiredObjectDM(event.target.checked);
                             }}
-                            label={"Expired Object Delete Marker"}
+                            label={t("Expired Object Delete Marker")}
                           />
                         </Grid>
                       </AccordionDetails>
@@ -549,7 +554,7 @@ const EditLifecycleConfiguration = ({
               onClick={() => {
                 closeModalAndRefresh(false);
               }}
-              label={"Cancel"}
+              label={t("Cancel")}
             />
             <Button
               id={"save"}
@@ -557,7 +562,7 @@ const EditLifecycleConfiguration = ({
               variant="callAction"
               color="primary"
               disabled={addLoading || !isFormValid}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
           {addLoading && (

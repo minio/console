@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
@@ -228,7 +229,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
                     display: "flex",
                   }}
                 >
-                  Server Information
+                  {t("Server Information")}
                 </Box>
               </Grid>
               <Grid item xs>
@@ -242,7 +243,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
                         dispatch(getUsageAsync());
                       }}
                       icon={<SyncIcon />}
-                      label={"Sync"}
+                      label={t("Sync")}
                     />
                   </Grid>
                 </Grid>
@@ -266,15 +267,16 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
             {usage?.advancedMetricsStatus === "unavailable" && (
               <HelpBox
                 iconComponent={<PrometheusErrorIcon />}
-                title={"We can’t retrieve advanced metrics at this time."}
+                title={t("We can’t retrieve advanced metrics at this time.")}
                 help={
                   <Box
                     sx={{
                       fontSize: "14px",
                     }}
                   >
-                    It looks like Prometheus is not available or reachable at
-                    the moment.
+                    {t(
+                      "It looks like Prometheus is not available or reachable at the moment."
+                    )}
                   </Box>
                 }
               />
@@ -287,15 +289,16 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
             {usage?.advancedMetricsStatus === "unavailable" && (
               <HelpBox
                 iconComponent={<PrometheusErrorIcon />}
-                title={"We can’t retrieve advanced metrics at this time."}
+                title={t("We can’t retrieve advanced metrics at this time.")}
                 help={
                   <Box
                     sx={{
                       fontSize: "14px",
                     }}
                   >
-                    It looks like Prometheus is not available or reachable at
-                    the moment.
+                    {t(
+                      "It looks like Prometheus is not available or reachable at the moment."
+                    )}
                   </Box>
                 }
               />
@@ -308,22 +311,23 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
             {usage?.advancedMetricsStatus === "unavailable" && (
               <HelpBox
                 iconComponent={<PrometheusErrorIcon />}
-                title={"We can’t retrieve advanced metrics at this time."}
+                title={t("We can’t retrieve advanced metrics at this time.")}
                 help={
                   <Box
                     sx={{
                       fontSize: "14px",
                     }}
                   >
-                    It looks like Prometheus is not available or reachable at
-                    the moment.
+                    {t(
+                      "It looks like Prometheus is not available or reachable at the moment."
+                    )}
                   </Box>
                 }
               />
             )}
             {panelInformation.length ? renderResourcesPanels() : null}
             <h2 style={{ margin: 0, borderBottom: "1px solid #dedede" }}>
-              Advanced
+              {t("Advanced")}
             </h2>
             {panelInformation.length ? renderAdvancedResourcesPanels() : null}
           </RowPanelLayout>

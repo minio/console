@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useState } from "react";
 import { Button } from "mds";
 import withStyles from "@mui/styles/withStyles";
@@ -129,7 +130,7 @@ const InspectObject = ({
         <ModalWrapper
           modalOpen={inspectOpen}
           titleIcon={<InspectMenuIcon />}
-          title={`Inspect Object`}
+          title={`${t("Inspect Object")}`}
           onClose={onClose}
         >
           <form
@@ -139,10 +140,10 @@ const InspectObject = ({
               onSubmit(e);
             }}
           >
-            Would you like to encrypt <b>{decodeURLString(inspectPath)}</b>?{" "}
-            <br />
+            {t("Would you like to encrypt")}
+            <b>{decodeURLString(inspectPath)}</b>? <br />
             <FormSwitchWrapper
-              label={"Encrypt"}
+              label={t("Encrypt")}
               indicatorLabels={["Yes", "No"]}
               checked={isEncrypt}
               value={"encrypt"}
@@ -160,7 +161,7 @@ const InspectObject = ({
                 variant="callAction"
                 color="primary"
                 onClick={performInspect}
-                label={"Inspect"}
+                label={t("Inspect")}
               />
             </Grid>
           </form>
@@ -169,15 +170,16 @@ const InspectObject = ({
       {decryptionKey ? (
         <ModalWrapper
           modalOpen={inspectOpen}
-          title="Inspect Decryption Key"
+          title={t("Inspect Decryption Key")}
           onClose={onCloseDecKeyModal}
           titleIcon={<PasswordKeyIcon />}
         >
           <DialogContentText>
             <Box>
-              This will be displayed only once. It cannot be recovered.
+              {t("This will be displayed only once. It cannot be recovered.")}
+
               <br />
-              Use secure medium to share this key.
+              {t("Use secure medium to share this key.")}
             </Box>
             <Box>
               <KeyRevealer value={decryptionKey} />

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
@@ -213,23 +214,25 @@ const EditDomains = ({
 
                   setConsoleDomainValid(e.target.validity.valid);
                 }}
-                label="Console Domain"
+                label={t("Console Domain")}
                 value={consoleDomain}
-                placeholder={
+                placeholder={t(
                   "Eg. http://subdomain.domain:port/subpath1/subpath2"
-                }
+                )}
                 pattern={
                   "^(https?):\\/\\/([a-zA-Z0-9\\-.]+)(:[0-9]+)?(\\/[a-zA-Z0-9\\-.\\/]*)?$"
                 }
                 error={
                   !consoleDomainValid
-                    ? "Domain format is incorrect (http|https://subdomain.domain:port/subpath1/subpath2)"
+                    ? t(
+                        "Domain format is incorrect (http|https://subdomain.domain:port/subpath1/subpath2)"
+                      )
                     : ""
                 }
               />
             </div>
             <div>
-              <h4>MinIO Domains</h4>
+              <h4>{t("MinIO Domains")}</h4>
               <div>
                 {minioDomains.map((domain, index) => {
                   return (
@@ -249,13 +252,15 @@ const EditDomains = ({
                         }}
                         label={`MinIO Domain ${index + 1}`}
                         value={domain}
-                        placeholder={"Eg. http://subdomain.domain"}
+                        placeholder={t("Eg. http://subdomain.domain")}
                         pattern={
                           "^(https?):\\/\\/([a-zA-Z0-9\\-.]+)(:[0-9]+)?$"
                         }
                         error={
                           !minioDomainValid[index]
-                            ? "MinIO domain format is incorrect (http|https://subdomain.domain)"
+                            ? t(
+                                "MinIO domain format is incorrect (http|https://subdomain.domain)"
+                              )
                             : ""
                         }
                       />
@@ -290,7 +295,7 @@ const EditDomains = ({
               type="button"
               variant="regular"
               onClick={resetForm}
-              label={"Clear"}
+              label={t("Clear")}
             />
             <Button
               id={"save-domain"}
@@ -302,7 +307,7 @@ const EditDomains = ({
                 minioDomainValid.filter((domain) => !domain).length > 0
               }
               onClick={updateDomainsList}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
         </Grid>

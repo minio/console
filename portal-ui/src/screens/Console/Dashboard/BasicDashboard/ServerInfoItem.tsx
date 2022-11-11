@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -203,20 +204,20 @@ const ServerInfoItem = ({ server }: ICardProps) => {
         >
           <ServerStatItem
             statusColor={getDriveStatusColor(activeDisks, totalDrives)}
-            label={"Drives"}
+            label={t("Drives")}
             hasStatus={true}
             value={`${activeDisks}/${totalDrives}`}
           />
           <ServerStatItem
             statusColor={getNetworkStatusColor(activeNetwork, networkTotal)}
-            label={"Network"}
+            label={t("Network")}
             hasStatus={true}
             value={`${activeNetwork}/${networkTotal}`}
           />
 
           <ServerStatItem
             statusColor={"green"}
-            label={"Up time"}
+            label={t("Up time")}
             value={server?.uptime ? niceDays(server.uptime) : "N/A"}
           />
         </Box>
@@ -240,7 +241,7 @@ const ServerInfoItem = ({ server }: ICardProps) => {
                 },
               }}
             >
-              <span className="label">Version:</span>
+              <span className="label">{t("Version:")}</span>
               {server.version ? server.version : "N/A"}
             </Box>
           }

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import {
   ITolerationEffect,
@@ -109,11 +110,14 @@ const TolerationSelector = ({
   return (
     <Grid item xs={12}>
       <fieldset className={classes.fieldsetStyle}>
-        <legend className={classes.legendStyle}>Toleration {index + 1}</legend>
+        <legend className={classes.legendStyle}>
+          {t("Toleration")}
+          {index + 1}
+        </legend>
         <Grid container>
           <Grid container className={classes.firstLevel}>
             <Grid item xs className={classes.labelsStyle}>
-              If
+              {t("If")}
             </Grid>
             <Grid item xs className={classes.fieldContainer}>
               <InputBoxWrapper
@@ -125,12 +129,12 @@ const TolerationSelector = ({
                   onTolerationKeyChange(e.target.value);
                 }}
                 index={index}
-                placeholder={"Toleration Key"}
+                placeholder={t("Toleration Key")}
               />
             </Grid>
             {ITolerationOperator[operator] === ITolerationOperator.Equal && (
               <Grid item xs className={classes.labelsStyle}>
-                is
+                {t("is")}
               </Grid>
             )}
             <Grid item xs={1} className={classes.fieldContainer}>
@@ -149,7 +153,7 @@ const TolerationSelector = ({
             </Grid>
             {ITolerationOperator[operator] === ITolerationOperator.Equal && (
               <Grid item xs className={classes.labelsStyle}>
-                to
+                {t("to")}
               </Grid>
             )}
             {ITolerationOperator[operator] === ITolerationOperator.Equal && (
@@ -163,14 +167,14 @@ const TolerationSelector = ({
                     onValueChange(e.target.value);
                   }}
                   index={index}
-                  placeholder={"Toleration Value"}
+                  placeholder={t("Toleration Value")}
                 />
               </Grid>
             )}
           </Grid>
           <Grid container>
             <Grid item xs className={classes.labelsStyle}>
-              then
+              {t("then")}
             </Grid>
             <Grid item xs className={classes.fieldContainer}>
               <SelectWrapper
@@ -187,7 +191,7 @@ const TolerationSelector = ({
               />
             </Grid>
             <Grid item xs className={classes.labelsStyle}>
-              after
+              {t("after")}
             </Grid>
             <Grid item xs className={classes.fieldContainer}>
               <InputBoxWrapper
@@ -206,7 +210,7 @@ const TolerationSelector = ({
                   <InputUnitMenu
                     id={`seconds-${index}`}
                     unitSelected={"seconds"}
-                    unitsList={[{ label: "Seconds", value: "seconds" }]}
+                    unitsList={[{ label: t("Seconds"), value: "seconds" }]}
                     disabled={true}
                   />
                 }

@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useState } from "react";
 import { IAMStatement } from "./types";
 import { Box } from "@mui/material";
@@ -79,9 +80,9 @@ const PolicyView = ({
             gap: "15px",
           }}
         >
-          <Box>Statements</Box>
+          <Box>{t("Statements")}</Box>
           <SearchBox
-            placeholder={"Search"}
+            placeholder={t("Search")}
             onChange={setFilter}
             overrideClass={classes.searchField}
             value={filter}
@@ -127,7 +128,7 @@ const PolicyView = ({
               }}
             >
               <Box sx={rowGridStyle}>
-                <Box className="label">Effect:</Box>
+                <Box className="label">{t("Effect:")}</Box>
                 <Box
                   sx={{
                     display: "flex",
@@ -157,7 +158,7 @@ const PolicyView = ({
                 }}
               >
                 <Box sx={rowGridStyle}>
-                  <Box className="label">Actions:</Box>
+                  <Box className="label">{t("Actions:")}</Box>
                   <Box>
                     {stmt.Action &&
                       stmt.Action.map((act, actIndex) => (
@@ -168,7 +169,7 @@ const PolicyView = ({
                   </Box>
                 </Box>
                 <Box sx={rowGridStyle}>
-                  <Box className="label">Resources:</Box>
+                  <Box className="label">{t("Resources:")}</Box>
                   <Box>
                     {stmt.Resource &&
                       stmt.Resource.map((res, resIndex) => (

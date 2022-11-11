@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useApi from "../../../../Common/Hooks/useApi";
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -117,7 +118,7 @@ const ObjectMetaData = ({
             marginBottom: "0",
           }}
         >
-          Object Metadata
+          {t("Object Metadata")}
         </h3>
       </Grid>
 

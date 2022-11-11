@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
@@ -133,18 +134,22 @@ const RenameLongFileName = ({
 
   return (
     <ModalWrapper
-      title={`Rename Download`}
+      title={`${t("Rename Download")}`}
       modalOpen={open}
       onClose={closeModal}
       titleIcon={<EditIcon />}
     >
       <div>
-        The file you are trying to download has a long name.
+        {t("The file you are trying to download has a long name.")}
+
         <br />
-        This can cause issues on Windows Systems by trimming the file name after
-        download.
+        {t(
+          "This can cause issues on Windows Systems by trimming the file name after download."
+        )}
+
         <br />
-        <br /> We recommend to rename the file download
+        <br />
+        {t("We recommend to rename the file download")}
       </div>
       <form
         noValidate
@@ -167,7 +172,7 @@ const RenameLongFileName = ({
                 value={newFileName}
                 error={
                   newFileName.length > 200 && !acceptLongName
-                    ? "Filename should be less than 200 characters long."
+                    ? t("Filename should be less than 200 characters long.")
                     : ""
                 }
               />
@@ -184,7 +189,7 @@ const RenameLongFileName = ({
                     setNewFileName(currentItem);
                   }
                 }}
-                label={"Use Original Name"}
+                label={t("Use Original Name")}
               />
             </Grid>
           </Grid>
@@ -195,7 +200,7 @@ const RenameLongFileName = ({
               variant="callAction"
               color="primary"
               disabled={newFileName.length > 200 && !acceptLongName}
-              label={"Download File"}
+              label={t("Download File")}
             />
           </Grid>
         </Grid>

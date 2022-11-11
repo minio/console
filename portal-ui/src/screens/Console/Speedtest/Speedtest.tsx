@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
@@ -210,7 +211,7 @@ const Speedtest = () => {
 
   return (
     <Fragment>
-      <PageHeader label="Performance" />
+      <PageHeader label={t("Performance")} />
       <PageLayout>
         {!registeredCluster && <RegisterCluster compactMode />}
         {!distributedSetup ? (
@@ -229,15 +230,16 @@ const Speedtest = () => {
                   <div className={classes.stepProgressText}>
                     {start ? (
                       <Fragment>
-                        Speedtest in progress...
+                        {t("Speedtest in progress...")}
+
                         <Loader style={{ width: 15, height: 15 }} />
                       </Fragment>
                     ) : (
                       <Fragment>
                         {currStatus && !start ? (
-                          <b>Speed Test results:</b>
+                          <b>{t("Speed Test results:")}</b>
                         ) : (
-                          <b>Performance test</b>
+                          <b>{t("Performance test")}</b>
                         )}
                       </Fragment>
                     )}
@@ -256,7 +258,7 @@ const Speedtest = () => {
                     <InputBoxWrapper
                       id={"size"}
                       name={"size"}
-                      label={"Object Size"}
+                      label={t("Object Size")}
                       onChange={(e) => {
                         setSize(e.target.value);
                       }}
@@ -269,9 +271,9 @@ const Speedtest = () => {
                           onUnitChange={setSizeUnit}
                           unitSelected={sizeUnit}
                           unitsList={[
-                            { label: "KiB", value: "KiB" },
-                            { label: "MiB", value: "MiB" },
-                            { label: "GiB", value: "GiB" },
+                            { label: t("KiB"), value: "KiB" },
+                            { label: t("MiB"), value: "MiB" },
+                            { label: t("GiB"), value: "GiB" },
                           ]}
                           disabled={start}
                         />
@@ -284,7 +286,7 @@ const Speedtest = () => {
                     <InputBoxWrapper
                       id={"duration"}
                       name={"duration"}
-                      label={"Duration"}
+                      label={t("Duration")}
                       onChange={(e) => {
                         if (e.target.validity.valid) {
                           setDuration(e.target.value);
@@ -298,7 +300,7 @@ const Speedtest = () => {
                           id={"size-unit"}
                           onUnitChange={() => {}}
                           unitSelected={"s"}
-                          unitsList={[{ label: "s", value: "s" }]}
+                          unitsList={[{ label: t("s"), value: "s" }]}
                           disabled={start}
                         />
                       }
@@ -344,9 +346,9 @@ const Speedtest = () => {
               <Fragment>
                 <br />
                 <HelpBox
-                  title={
+                  title={t(
                     "During the speed test all your production traffic will be temporarily suspended."
-                  }
+                  )}
                   iconComponent={<WarnIcon />}
                   help={<Fragment />}
                 />

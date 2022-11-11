@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import Box from "@mui/material/Box";
 import Copyright from "../common/Copyright";
@@ -40,7 +41,7 @@ const NotFound: React.FC = () => {
             color: "#909090",
           }}
         >
-          404 Error
+          {t("404 Error")}
         </Box>
         <Box
           sx={{
@@ -49,7 +50,7 @@ const NotFound: React.FC = () => {
             fontWeight: 700,
           }}
         >
-          Sorry, the page could not be found.
+          {t("Sorry, the page could not be found.")}
         </Box>
         <Box mt={5}>
           <Copyright />

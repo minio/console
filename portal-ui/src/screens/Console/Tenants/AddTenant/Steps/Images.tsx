@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -307,9 +308,11 @@ const Images = ({ classes }: IImagesProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Container Images</h3>
+        <h3 className={classes.h3Section}>{t("Container Images")}</h3>
         <span className={classes.descriptionText}>
-          Specify the container images used by the Tenant and it's features.
+          {t(
+            "Specify the container images used by the Tenant and it's features."
+          )}
         </span>
       </div>
 
@@ -322,10 +325,10 @@ const Images = ({ classes }: IImagesProps) => {
               updateField("imageName", e.target.value);
               cleanValidation("image");
             }}
-            label="MinIO"
+            label={t("MinIO")}
             value={imageName}
             error={validationErrors["image"] || ""}
-            placeholder="minio/minio:RELEASE.2022-02-26T02-54-46Z"
+            placeholder={t("minio/minio:RELEASE.2022-02-26T02-54-46Z")}
           />
         </Grid>
 
@@ -337,14 +340,14 @@ const Images = ({ classes }: IImagesProps) => {
               updateField("kesImage", e.target.value);
               cleanValidation("kesImage");
             }}
-            label="KES"
+            label={t("KES")}
             value={kesImage}
             error={validationErrors["kesImage"] || ""}
-            placeholder="minio/kes:v0.17.6"
+            placeholder={t("minio/kes:v0.17.6")}
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
-          <h4>Log Search</h4>
+          <h4>{t("Log Search")}</h4>
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
@@ -354,10 +357,10 @@ const Images = ({ classes }: IImagesProps) => {
               updateField("logSearchImage", e.target.value);
               cleanValidation("logSearchImage");
             }}
-            label="API"
+            label={t("API")}
             value={logSearchImage}
             error={validationErrors["logSearchImage"] || ""}
-            placeholder="minio/operator:v4.4.22"
+            placeholder={t("minio/operator:v4.4.22")}
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -368,10 +371,10 @@ const Images = ({ classes }: IImagesProps) => {
               updateField("logSearchPostgresImage", e.target.value);
               cleanValidation("logSearchPostgresImage");
             }}
-            label="PostgreSQL"
+            label={t("PostgreSQL")}
             value={logSearchPostgresImage}
             error={validationErrors["logSearchPostgresImage"] || ""}
-            placeholder="library/postgres:13"
+            placeholder={t("library/postgres:13")}
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -382,14 +385,14 @@ const Images = ({ classes }: IImagesProps) => {
               updateField("logSearchPostgresInitImage", e.target.value);
               cleanValidation("logSearchPostgresInitImage");
             }}
-            label="PostgreSQL Init"
+            label={t("PostgreSQL Init")}
             value={logSearchPostgresInitImage}
             error={validationErrors["logSearchPostgresInitImage"] || ""}
-            placeholder="library/busybox:1.33.1"
+            placeholder={t("library/busybox:1.33.1")}
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
-          <h4>Monitoring</h4>
+          <h4>{t("Monitoring")}</h4>
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
           <InputBoxWrapper
@@ -399,10 +402,10 @@ const Images = ({ classes }: IImagesProps) => {
               updateField("prometheusImage", e.target.value);
               cleanValidation("prometheusImage");
             }}
-            label="Prometheus"
+            label={t("Prometheus")}
             value={prometheusImage}
             error={validationErrors["prometheusImage"] || ""}
-            placeholder="quay.io/prometheus/prometheus:latest"
+            placeholder={t("quay.io/prometheus/prometheus:latest")}
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -413,10 +416,10 @@ const Images = ({ classes }: IImagesProps) => {
               updateField("prometheusSidecarImage", e.target.value);
               cleanValidation("prometheusSidecarImage");
             }}
-            label="Prometheus Sidecar"
+            label={t("Prometheus Sidecar")}
             value={prometheusSidecarImage}
             error={validationErrors["prometheusSidecarImage"] || ""}
-            placeholder="library/alpine:latest"
+            placeholder={t("library/alpine:latest")}
           />
         </Grid>
         <Grid item xs={12} className={classes.formFieldRow}>
@@ -427,10 +430,10 @@ const Images = ({ classes }: IImagesProps) => {
               updateField("prometheusInitImage", e.target.value);
               cleanValidation("prometheusInitImage");
             }}
-            label="Prometheus Init"
+            label={t("Prometheus Init")}
             value={prometheusInitImage}
             error={validationErrors["prometheusInitImage"] || ""}
-            placeholder="library/busybox:1.33.1"
+            placeholder={t("library/busybox:1.33.1")}
           />
         </Grid>
       </Fragment>
@@ -438,7 +441,7 @@ const Images = ({ classes }: IImagesProps) => {
       {customImage && (
         <Fragment>
           <Grid item xs={12} className={classes.formFieldRow}>
-            <h4>Custom Container Registry</h4>
+            <h4>{t("Custom Container Registry")}</h4>
           </Grid>
           <Grid item xs={12} className={classes.formFieldRow}>
             <FormSwitchWrapper
@@ -452,7 +455,7 @@ const Images = ({ classes }: IImagesProps) => {
 
                 updateField("customDockerhub", checked);
               }}
-              label={"Use a private container registry"}
+              label={t("Use a private container registry")}
             />
           </Grid>
         </Fragment>
@@ -466,7 +469,7 @@ const Images = ({ classes }: IImagesProps) => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("imageRegistry", e.target.value);
               }}
-              label="Endpoint"
+              label={t("Endpoint")}
               value={imageRegistry}
               error={validationErrors["registry"] || ""}
               placeholder="https://index.docker.io/v1/"
@@ -480,7 +483,7 @@ const Images = ({ classes }: IImagesProps) => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("imageRegistryUsername", e.target.value);
               }}
-              label="Username"
+              label={t("Username")}
               value={imageRegistryUsername}
               error={validationErrors["registryUsername"] || ""}
               required
@@ -493,7 +496,7 @@ const Images = ({ classes }: IImagesProps) => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("imageRegistryPassword", e.target.value);
               }}
-              label="Password"
+              label={t("Password")}
               value={imageRegistryPassword}
               error={validationErrors["registryPassword"] || ""}
               required

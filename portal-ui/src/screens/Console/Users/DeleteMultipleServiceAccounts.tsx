@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React from "react";
 
 import { DialogContentText } from "@mui/material";
@@ -52,8 +53,8 @@ const DeleteMultipleSAs = ({
   };
   return (
     <ConfirmDialog
-      title={`Delete Access Keys`}
-      confirmText={"Delete"}
+      title={`${t("Delete Access Keys")}`}
+      confirmText={t("Delete")}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
@@ -61,8 +62,8 @@ const DeleteMultipleSAs = ({
       onClose={onClose}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete the selected {selectedSAs.length}{" "}
-          Access Keys?{" "}
+          {t("Are you sure you want to delete the selected")}
+          {selectedSAs.length} {t("Access Keys?")}{" "}
         </DialogContentText>
       }
     />

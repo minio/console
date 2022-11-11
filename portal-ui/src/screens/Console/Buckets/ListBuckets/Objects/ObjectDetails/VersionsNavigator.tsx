@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
@@ -530,7 +531,7 @@ const VersionsNavigator = ({
                     {objectNameArray.length > 0
                       ? objectNameArray[objectNameArray.length - 1]
                       : actualInfo.name}{" "}
-                    Versions
+                    {t("Versions")}
                   </span>
                 }
                 subTitle={
@@ -538,7 +539,8 @@ const VersionsNavigator = ({
                     <Grid item xs={12} className={classes.bucketDetails}>
                       <span className={classes.detailsSpacer}>
                         <strong>
-                          {versions.length} Version
+                          {versions.length}
+                          {t("Version")}
                           {versions.length === 1 ? "" : "s"}&nbsp;&nbsp;&nbsp;
                         </strong>
                       </span>
@@ -550,7 +552,7 @@ const VersionsNavigator = ({
                 }
                 actions={
                   <Fragment>
-                    <TooltipWrapper tooltip={"Select Multiple Versions"}>
+                    <TooltipWrapper tooltip={t("Select Multiple Versions")}>
                       <Button
                         id={"select-multiple-versions"}
                         onClick={() => {
@@ -562,7 +564,7 @@ const VersionsNavigator = ({
                       />
                     </TooltipWrapper>
                     {selectEnabled && (
-                      <TooltipWrapper tooltip={"Delete Selected Versions"}>
+                      <TooltipWrapper tooltip={t("Delete Selected Versions")}>
                         <Button
                           id={"delete-multiple-versions"}
                           onClick={() => {
@@ -575,7 +577,8 @@ const VersionsNavigator = ({
                         />
                       </TooltipWrapper>
                     )}
-                    <TooltipWrapper tooltip={"Delete Non Current Versions"}>
+
+                    <TooltipWrapper tooltip={t("Delete Non Current Versions")}>
                       <Button
                         id={"delete-non-current"}
                         onClick={() => {
@@ -587,7 +590,7 @@ const VersionsNavigator = ({
                         disabled={versions.length <= 1}
                       />
                     </TooltipWrapper>
-                    <span className={classes.sortByLabel}>Sort by</span>
+                    <span className={classes.sortByLabel}>{t("Sort by")}</span>
                     <SelectWrapper
                       id={"sort-by"}
                       label={""}
@@ -597,9 +600,9 @@ const VersionsNavigator = ({
                       }}
                       name={"sort-by"}
                       options={[
-                        { label: "Date", value: "date" },
+                        { label: t("Date"), value: "date" },
                         {
-                          label: "Size",
+                          label: t("Size"),
                           value: "size",
                         },
                       ]}

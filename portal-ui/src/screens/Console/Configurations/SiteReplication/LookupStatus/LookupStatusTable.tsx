@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { Box } from "@mui/material";
 import { CircleIcon } from "../../../../../icons";
@@ -127,7 +128,8 @@ const LookupStatusTable = ({
       }}
     >
       <Box sx={{ marginTop: "15px", marginBottom: "15px" }}>
-        Replication status for {entityType}: <strong>{entityName}</strong>.
+        {t("Replication status for")}
+        {entityType}: <strong>{entityName}</strong>.
       </Box>
       <table>
         <thead>

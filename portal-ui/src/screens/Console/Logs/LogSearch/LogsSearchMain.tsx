@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button } from "mds";
@@ -287,7 +288,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
         />
       )}
 
-      <PageHeader label="Audit Logs" />
+      <PageHeader label={t("Audit Logs")} />
       <PageLayout>
         {!logSearchEnabled ? (
           <MissingIntegration
@@ -316,7 +317,8 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
                     }}
                     className={classes.advancedConfiguration}
                   >
-                    {filterOpen ? "Hide" : "Show"} advanced Filters{" "}
+                    {filterOpen ? t("Hide") : t("Show")}
+                    {t("advanced Filters")}{" "}
                     <span
                       className={
                         filterOpen
@@ -338,38 +340,41 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
               >
                 <div className={classes.innerContainer}>
                   <div className={classes.noticeLabel}>
-                    Enable your preferred options to get filtered records.
+                    {t(
+                      "Enable your preferred options to get filtered records."
+                    )}
+
                     <br />
-                    You can use '*' to match any character, '.' to signify a
-                    single character or '\' to scape an special character (E.g.
-                    mybucket-*)
+                    {t(
+                      "You can use '*' to match any character, '.' to signify a single character or '' to scape an special character (E.g. mybucket-*)"
+                    )}
                   </div>
                   <div className={classes.filtersContainer}>
                     <FilterInputWrapper
                       onChange={setBucket}
                       value={bucket}
-                      label={"Bucket"}
+                      label={t("Bucket")}
                       id="bucket"
                       name="bucket"
                     />
                     <FilterInputWrapper
                       onChange={setApiName}
                       value={apiName}
-                      label={"API Name"}
+                      label={t("API Name")}
                       id="api_name"
                       name="api_name"
                     />
                     <FilterInputWrapper
                       onChange={setAccessKey}
                       value={accessKey}
-                      label={"Access Key"}
+                      label={t("Access Key")}
                       id="access_key"
                       name="access_key"
                     />
                     <FilterInputWrapper
                       onChange={setUserAgent}
                       value={userAgent}
-                      label={"User Agent"}
+                      label={t("User Agent")}
                       id="user_agent"
                       name="user_agent"
                     />
@@ -378,21 +383,21 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
                     <FilterInputWrapper
                       onChange={setObject}
                       value={object}
-                      label={"Object"}
+                      label={t("Object")}
                       id="object"
                       name="object"
                     />
                     <FilterInputWrapper
                       onChange={setRequestID}
                       value={requestID}
-                      label={"Request ID"}
+                      label={t("Request ID")}
                       id="request_id"
                       name="request_id"
                     />
                     <FilterInputWrapper
                       onChange={setResponseStatus}
                       value={responseStatus}
-                      label={"Response Status"}
+                      label={t("Response Status")}
                       id="response_status"
                       name="response_status"
                     />
@@ -405,7 +410,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
                   type="button"
                   variant="callAction"
                   onClick={triggerLoad}
-                  label={"Get Information"}
+                  label={t("Get Information")}
                 />
               </Grid>
             </Grid>
@@ -483,9 +488,9 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
                   isLoading={loading}
                   records={records}
                   entityName="Logs"
-                  customEmptyMessage={
+                  customEmptyMessage={t(
                     "There is no information with this criteria"
-                  }
+                  )}
                   idField="request_id"
                   columnsSelector
                   columnsShown={columnsShown}

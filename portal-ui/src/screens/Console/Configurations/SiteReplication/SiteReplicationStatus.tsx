@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { Button } from "mds";
@@ -120,7 +121,7 @@ const SiteReplicationStatus = () => {
         label={
           <BackLink
             to={IAM_PAGES.SITE_REPLICATION}
-            label={"Site Replication"}
+            label={t("Site Replication")}
           />
         }
       />
@@ -129,13 +130,13 @@ const SiteReplicationStatus = () => {
           title={"Replication status from all Sites"}
           actions={
             <Fragment>
-              <TooltipWrapper tooltip={"Refresh"}>
+              <TooltipWrapper tooltip={t("Refresh")}>
                 <Button
                   id={"refresh"}
                   onClick={() => {
                     getStats();
                   }}
-                  label={"Refresh"}
+                  label={t("Refresh")}
                   icon={<RefreshIcon />}
                   variant={"regular"}
                   collapseOnSmall={false}

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import * as reactMoment from "react-moment";
 import Grid from "@mui/material/Grid";
@@ -320,13 +321,13 @@ const FileVersionItem = ({
           </Grid>
           <Grid item xs={12} className={classes.collapsableInfo}>
             <span className={classes.versionData}>
-              <strong>Last modified:</strong>{" "}
+              <strong>{t("Last modified:")}</strong>{" "}
               <reactMoment.default>
                 {versionInfo.last_modified}
               </reactMoment.default>
             </span>
             <span className={classes.versionData}>
-              <strong>Size:</strong> {niceBytes(versionInfo.size || "0")}
+              <strong>{t("Size:")}</strong> {niceBytes(versionInfo.size || "0")}
             </span>
           </Grid>
         </Grid>

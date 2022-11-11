@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { Link, useParams } from "react-router-dom";
@@ -70,7 +71,7 @@ const PodDetails = ({ classes }: IPodDetailsProps) => {
             }/pods`}
             className={classes.breadcrumLink}
           >
-            Pods
+            {t("Pods")}
           </Link>{" "}
           &gt; {podName}
         </h1>
@@ -88,9 +89,9 @@ const PodDetails = ({ classes }: IPodDetailsProps) => {
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab label="Events" {...a11yProps(0)} />
-            <Tab label="Describe" {...a11yProps(1)} />
-            <Tab label="Logs" {...a11yProps(2)} />
+            <Tab label={t("Events")} {...a11yProps(0)} />
+            <Tab label={t("Describe")} {...a11yProps(1)} />
+            <Tab label={t("Logs")} {...a11yProps(2)} />
           </Tabs>
         </Grid>
         {curTab === 0 && (

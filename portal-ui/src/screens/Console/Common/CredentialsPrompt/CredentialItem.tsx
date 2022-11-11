@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { InputAdornment, OutlinedInput } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
@@ -75,7 +76,7 @@ const CredentialItem = ({
           readOnly
           endAdornment={
             <InputAdornment position="end">
-              <TooltipWrapper tooltip={"Copy"}>
+              <TooltipWrapper tooltip={t("Copy")}>
                 <CopyToClipboard text={value}>
                   <Button
                     id={"copy-clipboard"}

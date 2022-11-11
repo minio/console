@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
@@ -73,12 +74,12 @@ const EndpointDisplay = ({
 
   return (
     <Fragment>
-      <h3>Currently Configured Endpoints</h3>
+      <h3>{t("Currently Configured Endpoints")}</h3>
 
       <TableWrapper
         columns={[
-          { label: "Name", elementKey: "name" },
-          { label: "Endpoint", elementKey: "endpoint" },
+          { label: t("Name"), elementKey: "name" },
+          { label: t("Endpoint"), elementKey: "endpoint" },
         ]}
         idField="config-id"
         isLoading={false}

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setSecretKey, setShowPassword } from "./AddUsersSlice";
@@ -42,7 +43,7 @@ const PasswordSelector = ({ classes }: IAddUserProps2) => {
       }}
       id="standard-multiline-static"
       name="standard-multiline-static"
-      label="Password"
+      label={t("Password")}
       type={showPassword ? "text" : "password"}
       value={secretKey}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

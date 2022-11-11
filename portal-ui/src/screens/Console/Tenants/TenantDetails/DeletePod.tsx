@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useState } from "react";
 import { DialogContentText } from "@mui/material";
 import { IPodListElement } from "../ListTenants/types";
@@ -64,8 +65,8 @@ const DeletePod = ({
 
   return (
     <ConfirmDialog
-      title={`Delete Pod`}
-      confirmText={"Delete"}
+      title={`${t("Delete Pod")}`}
+      confirmText={t("Delete")}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
@@ -76,7 +77,9 @@ const DeletePod = ({
       }}
       confirmationContent={
         <DialogContentText>
-          To continue please type <b>{selectedPod.name}</b> in the box.
+          {t("To continue please type")}
+          <b>{selectedPod.name}</b>
+          {t("in the box.")}
           <Grid item xs={12}>
             <InputBoxWrapper
               id="retype-pod"

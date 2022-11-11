@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -93,43 +94,47 @@ const PoolDetails = () => {
                 }/edit-pool`
               );
             }}
-            label={"Edit Pool"}
+            label={t("Edit Pool")}
             id={"editPool"}
           />
         </div>
         <HeaderSection title={"Pool Configuration"} />
         <Box sx={{ ...twoColCssGridLayoutConfig }}>
-          <LabelValuePair label={"Pool Name"} value={poolInformation.name} />
+          <LabelValuePair label={t("Pool Name")} value={poolInformation.name} />
           <LabelValuePair
-            label={"Total Volumes"}
+            label={t("Total Volumes")}
             value={poolInformation.volumes}
           />
           <LabelValuePair
-            label={"Volumes per server"}
+            label={t("Volumes per server")}
             value={poolInformation.volumes_per_server}
           />
-          <LabelValuePair label={"Capacity"} value={poolInformation.capacity} />
+
+          <LabelValuePair
+            label={t("Capacity")}
+            value={poolInformation.capacity}
+          />
         </Box>
         <HeaderSection title={"Resources"} />
         <Box sx={{ ...twoColCssGridLayoutConfig }}>
           {poolInformation.resources && (
             <Fragment>
               <LabelValuePair
-                label={"CPU"}
+                label={t("CPU")}
                 value={poolInformation.resources.requests.cpu}
               />
               <LabelValuePair
-                label={"Memory"}
+                label={t("Memory")}
                 value={niceBytesInt(poolInformation.resources.requests.memory)}
               />
             </Fragment>
           )}
           <LabelValuePair
-            label={"Volume Size"}
+            label={t("Volume Size")}
             value={niceBytesInt(poolInformation.volume_configuration.size)}
           />
           <LabelValuePair
-            label={"Storage Class Name"}
+            label={t("Storage Class Name")}
             value={poolInformation.volume_configuration.storage_class_name}
           />
         </Box>
@@ -144,7 +149,7 @@ const PoolDetails = () => {
                 {poolInformation.securityContext.runAsNonRoot !== null && (
                   <Box sx={{ ...twoColCssGridLayoutConfig }}>
                     <LabelValuePair
-                      label={"Run as Non Root"}
+                      label={t("Run as Non Root")}
                       value={
                         poolInformation.securityContext.runAsNonRoot
                           ? "Yes"
@@ -165,19 +170,19 @@ const PoolDetails = () => {
                 >
                   {poolInformation.securityContext.runAsUser && (
                     <LabelValuePair
-                      label={"Run as User"}
+                      label={t("Run as User")}
                       value={poolInformation.securityContext.runAsUser}
                     />
                   )}
                   {poolInformation.securityContext.runAsGroup && (
                     <LabelValuePair
-                      label={"Run as Group"}
+                      label={t("Run as Group")}
                       value={poolInformation.securityContext.runAsGroup}
                     />
                   )}
                   {poolInformation.securityContext.fsGroup && (
                     <LabelValuePair
-                      label={"FsGroup"}
+                      label={t("FsGroup")}
                       value={poolInformation.securityContext.fsGroup}
                     />
                   )}
@@ -188,10 +193,13 @@ const PoolDetails = () => {
         <HeaderSection title={"Affinity"} />
         <Box>
           <Box sx={{ ...twoColCssGridLayoutConfig }}>
-            <LabelValuePair label={"Type"} value={affinityType} />
+            <LabelValuePair label={t("Type")} value={affinityType} />
             {poolInformation.affinity?.nodeAffinity &&
             poolInformation.affinity?.podAntiAffinity ? (
-              <LabelValuePair label={"With Pod Anti affinity"} value={"Yes"} />
+              <LabelValuePair
+                label={t("With Pod Anti affinity")}
+                value={"Yes"}
+              />
             ) : (
               <span />
             )}
@@ -225,22 +233,26 @@ const PoolDetails = () => {
                     <li>
                       {tolItem.operator === "Equal" ? (
                         <Fragment>
-                          If <strong>{tolItem.key}</strong> is equal to{" "}
-                          <strong>{tolItem.value}</strong> then{" "}
-                          <strong>{tolItem.effect}</strong> after{" "}
+                          {t("If")}
+                          <strong>{tolItem.key}</strong>
+                          {t("is equal to")} <strong>{tolItem.value}</strong>
+                          {t("then")} <strong>{tolItem.effect}</strong>
+                          {t("after")}{" "}
                           <strong>
                             {tolItem.tolerationSeconds?.seconds || 0}
                           </strong>{" "}
-                          seconds
+                          {t("seconds")}
                         </Fragment>
                       ) : (
                         <Fragment>
-                          If <strong>{tolItem.key}</strong> exists then{" "}
-                          <strong>{tolItem.effect}</strong> after{" "}
+                          {t("If")}
+                          <strong>{tolItem.key}</strong>
+                          {t("exists then")} <strong>{tolItem.effect}</strong>
+                          {t("after")}{" "}
                           <strong>
                             {tolItem.tolerationSeconds?.seconds || 0}
                           </strong>{" "}
-                          seconds
+                          {t("seconds")}
                         </Fragment>
                       )}
                     </li>

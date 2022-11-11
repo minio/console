@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -154,7 +155,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
       )}
       <Grid item xs={12}>
         <PageHeader
-          label={<BackLink to={IAM_PAGES.ACCOUNT} label={"Access Keys"} />}
+          label={<BackLink to={IAM_PAGES.ACCOUNT} label={t("Access Keys")} />}
         />
         <PageLayout>
           <Box
@@ -171,7 +172,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
           >
             <Box>
               <SectionTitle icon={<ServiceAccountCredentialsIcon />}>
-                Create Access Key
+                {t("Create Access Key")}
               </SectionTitle>
 
               <form
@@ -196,10 +197,10 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                                 <div className={classes.stackedInputs}>
                                   <InputBoxWrapper
                                     value={accessKey}
-                                    label={"Access Key"}
+                                    label={t("Access Key")}
                                     id={"accessKey"}
                                     name={"accessKey"}
-                                    placeholder={"Enter Access Key"}
+                                    placeholder={t("Enter Access Key")}
                                     onChange={(e) => {
                                       setAccessKey(e.target.value);
                                     }}
@@ -210,11 +211,11 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                                 <div className={classes.stackedInputs}>
                                   <InputBoxWrapper
                                     value={secretKey}
-                                    label={"Secret Key"}
+                                    label={t("Secret Key")}
                                     id={"secretKey"}
                                     name={"secretKey"}
                                     type={showPassword ? "text" : "password"}
-                                    placeholder={"Enter Secret Key"}
+                                    placeholder={t("Enter Secret Key")}
                                     onChange={(e) => {
                                       setSecretKey(e.target.value);
                                     }}
@@ -254,7 +255,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                             ) => {
                               setIsRestrictedByPolicy(event.target.checked);
                             }}
-                            label={"Restrict beyond user policy"}
+                            label={t("Restrict beyond user policy")}
                             tooltip={
                               "You can specify an optional JSON-formatted IAM policy to further restrict Access Key access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."
                             }
@@ -270,8 +271,9 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                       >
                         <div>
                           <PanelTitle>
-                            Current User Policy - edit the JSON to remove
-                            permissions for this Access Key
+                            {t(
+                              "Current User Policy - edit the JSON to remove permissions for this Access Key"
+                            )}
                           </PanelTitle>
                         </div>
                         <Grid item xs={12} className={classes.formScrollable}>
@@ -292,7 +294,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                       type="button"
                       variant="regular"
                       onClick={resetForm}
-                      label={"Clear"}
+                      label={t("Clear")}
                     />
 
                     <Button
@@ -300,7 +302,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                       type="submit"
                       variant="callAction"
                       color="primary"
-                      label={"Create"}
+                      label={t("Create")}
                     />
                   </Grid>
                 </Grid>

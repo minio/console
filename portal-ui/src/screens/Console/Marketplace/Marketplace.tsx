@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import SetEmailModal from "./SetEmailModal";
@@ -70,7 +71,7 @@ const Marketplace = () => {
   if (features) {
     return (
       <Fragment>
-        <PageHeader label="Operator Marketplace" />
+        <PageHeader label={t("Operator Marketplace")} />
         <PageLayout>
           <SetEmailModal open={true} closeModal={closeModal} />
         </PageLayout>

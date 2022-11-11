@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -129,7 +130,7 @@ const TLSCertificate = ({
             <Box className={classes.certificateExpiry}>
               <EventBusyIcon color="inherit" fontSize="small" />
               &nbsp;
-              <span className={"label"}>Expiry:&nbsp;</span>
+              <span className={"label"}>{t("Expiry:")}</span>
               <span>
                 <Moment format="YYYY/MM/DD">{certificateInfo.expiry}</Moment>
               </span>

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, {
   Fragment,
   useCallback,
@@ -278,7 +279,7 @@ function useInterval(callback: any, delay: number) {
   }, [delay]);
 }
 
-const defLoading = <Typography component="h3">Loading...</Typography>;
+const defLoading = <Typography component="h3">{t("Loading...")}</Typography>;
 
 const ListObjects = () => {
   const classes = useStyles();
@@ -453,7 +454,7 @@ const ListObjects = () => {
       setLoadingMessage(
         <Fragment>
           <Typography component="h3">
-            This operation is taking longer than expected... (
+            {t("This operation is taking longer than expected... (")}
             {Math.ceil(timeDelta / 1000)}s)
           </Typography>
         </Fragment>
@@ -461,7 +462,7 @@ const ListObjects = () => {
     } else if (timeDelta / 1000 >= 3) {
       setLoadingMessage(
         <Typography component="h3">
-          This operation is taking longer than expected...
+          {t("This operation is taking longer than expected...")}
         </Typography>
       );
     }
@@ -1085,7 +1086,7 @@ const ListObjects = () => {
             errorMessage: "Upload not allowed",
             detailedError: permissionTooltipHelper(
               [IAM_SCOPES.S3_PUT_OBJECT],
-              "upload objects to this location"
+              t("upload objects to this location")
             ),
           })
         );
@@ -1296,43 +1297,47 @@ const ListObjects = () => {
   const multiActionButtons = [
     {
       action: downloadSelected,
-      label: "Download",
+      label: t("Download"),
       disabled: !canDownload || selectedObjects.length === 0,
       icon: <DownloadIcon />,
       tooltip: canDownload
-        ? "Download Selected"
+        ? t("Download Selected")
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_GET_OBJECT],
-            "download objects from this bucket"
+            t("download objects from this bucket")
           ),
     },
     {
       action: openShare,
-      label: "Share",
+      label: t("Share"),
       disabled: selectedObjects.length !== 1 || !canShareFile,
       icon: <ShareIcon />,
-      tooltip: canShareFile ? "Share Selected File" : "Sharing unavailable",
+      tooltip: canShareFile
+        ? t("Share Selected File")
+        : t("Sharing unavailable"),
     },
     {
       action: openPreview,
-      label: "Preview",
+      label: t("Preview"),
       disabled: selectedObjects.length !== 1 || !canPreviewFile,
       icon: <PreviewIcon />,
-      tooltip: canPreviewFile ? "Preview Selected File" : "Preview unavailable",
+      tooltip: canPreviewFile
+        ? t("Preview Selected File")
+        : t("Preview unavailable"),
     },
     {
       action: () => {
         setDeleteMultipleOpen(true);
       },
-      label: "Delete",
+      label: t("Delete"),
       icon: <DeleteIcon />,
       disabled:
         !canDelete || selectedObjects.length === 0 || !displayDeleteObject,
       tooltip: canDelete
-        ? "Delete Selected Files"
+        ? t("Delete Selected Files")
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_DELETE_OBJECT],
-            "delete objects in this bucket"
+            t("delete objects in this bucket")
           ),
     },
   ];
@@ -1404,11 +1409,13 @@ const ListObjects = () => {
               <Fragment>
                 <Grid item xs={12} className={classes.bucketDetails}>
                   <span className={classes.detailsSpacer}>
-                    Created:&nbsp;&nbsp;&nbsp;
+                    {t("Created:")}
+
                     <strong>{bucketInfo?.creation_date || ""}</strong>
                   </span>
                   <span className={classes.detailsSpacer}>
-                    Access:&nbsp;&nbsp;&nbsp;
+                    {t("Access:")}
+
                     <strong>{bucketInfo?.access || ""}</strong>
                   </span>
                   {bucketInfo && (
@@ -1423,7 +1430,8 @@ const ListObjects = () => {
                         {bucketInfo.size && bucketInfo.objects ? " - " : ""}
                         {bucketInfo.objects && (
                           <Fragment>
-                            {bucketInfo.objects}&nbsp;Object
+                            {bucketInfo.objects}
+                            {t("Object")}
                             {bucketInfo.objects && bucketInfo.objects !== 1
                               ? "s"
                               : ""}
@@ -1438,10 +1446,10 @@ const ListObjects = () => {
             actions={
               <Fragment>
                 <div className={classes.actionsSection}>
-                  <TooltipWrapper tooltip={"Rewind Bucket"}>
+                  <TooltipWrapper tooltip={t("Rewind Bucket")}>
                     <Button
                       id={"rewind-objects-list"}
-                      label={"Rewind"}
+                      label={t("Rewind")}
                       icon={
                         <Badge
                           badgeContent=" "
@@ -1472,10 +1480,10 @@ const ListObjects = () => {
                       }
                     />
                   </TooltipWrapper>
-                  <TooltipWrapper tooltip={"Reload List"}>
+                  <TooltipWrapper tooltip={t("Reload List")}>
                     <Button
                       id={"refresh-objects-list"}
-                      label={"Refresh"}
+                      label={t("Refresh")}
                       icon={<RefreshIcon />}
                       variant={"regular"}
                       onClick={() => {
@@ -1566,7 +1574,7 @@ const ListObjects = () => {
                               name={"deleted_objects"}
                               id={"showDeletedObjects"}
                               value={"deleted_on"}
-                              label={"Show deleted objects"}
+                              label={t("Show deleted objects")}
                               onChange={setDeletedAction}
                               checked={showDeleted}
                               overrideLabelClasses={classes.labelStyle}
@@ -1595,7 +1603,9 @@ const ListObjects = () => {
                     selectedItems={selectedObjects}
                     onSelect={selectListObjects}
                     customEmptyMessage={`This location is empty${
-                      !rewindEnabled ? ", please try uploading a new file" : ""
+                      !rewindEnabled
+                        ? t(", please try uploading a new file")
+                        : ""
                     }`}
                     sortConfig={{
                       currentSort: currentSortField,
@@ -1630,7 +1640,7 @@ const ListObjects = () => {
                 {selectedObjects.length > 0 && (
                   <ActionsListSection
                     items={multiActionButtons}
-                    title={"Selected Objects:"}
+                    title={t("Selected Objects:")}
                   />
                 )}
                 {selectedInternalPaths !== null && (

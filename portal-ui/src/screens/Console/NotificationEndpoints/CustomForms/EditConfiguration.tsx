@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Button } from "mds";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -76,7 +77,7 @@ const EditConfiguration = ({
   const { pathname = "" } = useLocation();
 
   let selConfigTab = pathname.substring(pathname.lastIndexOf("/") + 1);
-  selConfigTab = selConfigTab === "settings" ? "region" : selConfigTab;
+  selConfigTab = selConfigTab === "settings" ? t("region") : selConfigTab;
 
   //Local States
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
@@ -225,7 +226,7 @@ const EditConfiguration = ({
                 onClick={() => {
                   setResetConfigurationOpen(true);
                 }}
-                label={"Restore Defaults"}
+                label={t("Restore Defaults")}
               />
               &nbsp; &nbsp;
               <Button
@@ -233,7 +234,7 @@ const EditConfiguration = ({
                 type="submit"
                 variant="callAction"
                 disabled={saving}
-                label={"Save"}
+                label={t("Save")}
               />
             </Grid>
           </form>

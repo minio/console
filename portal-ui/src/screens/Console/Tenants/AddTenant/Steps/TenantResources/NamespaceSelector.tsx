@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useMemo } from "react";
 import AddIcon from "../../../../../../icons/AddIcon";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -72,7 +73,7 @@ const NamespaceSelector = ({ formToRender }: { formToRender?: IMkEnvs }) => {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           dispatch(setNamespace(e.target.value));
         }}
-        label="Namespace"
+        label={t("Namespace")}
         value={namespace}
         error={namespaceError || ""}
         overlayId={"add-namespace"}

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { Cell, Pie, PieChart } from "recharts";
 import { CapacityValue, CapacityValues } from "./types";
@@ -101,7 +102,7 @@ const TenantCapacity = ({
     ...tiersList,
     {
       value: emptySpace,
-      color: render === "bar" ? BGColor : "transparent",
+      color: render === "bar" ? BGColor : t("transparent"),
       label: "Empty Space",
     },
   ];

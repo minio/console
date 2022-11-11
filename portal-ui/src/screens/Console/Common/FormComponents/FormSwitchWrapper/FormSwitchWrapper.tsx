@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -136,7 +137,7 @@ const FormSwitchWrapper = ({
         >
           {indicatorLabels && indicatorLabels.length > 1
             ? indicatorLabels[1]
-            : "OFF"}
+            : t("OFF")}
         </span>
       )}
       <StyledSwitch
@@ -158,7 +159,7 @@ const FormSwitchWrapper = ({
             [classes.indicatorLabelOn]: checked,
           })}
         >
-          {indicatorLabels ? indicatorLabels[0] : "ON"}
+          {indicatorLabels ? indicatorLabels[0] : t("ON")}
         </span>
       )}
     </React.Fragment>

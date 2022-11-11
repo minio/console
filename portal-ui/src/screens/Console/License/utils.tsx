@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import { Box } from "@mui/material";
 import LicenseLink from "./LicenseLink";
 
@@ -130,14 +131,24 @@ export const COMMUNITY_PLAN_FEATURES = [
           }}
         >
           <span>
-            Designed for developers who are building open source applications in
-            compliance with the <LicenseLink /> license, MinIO Trademarks and
-            are able to self support themselves. It is fully featured. If you
-            distribute, host or create derivative works of the MinIO software
-            over the network, the <LicenseLink /> license requires that you also
-            distribute the complete, corresponding source code of the combined
-            work under the same <LicenseLink /> license. This requirement
-            applies whether or not you modified MinIO.
+            {t(
+              "Designed for developers who are building open source applications in compliance with the"
+            )}
+
+            <LicenseLink />
+            {t(
+              "license, MinIO Trademarks and are able to self support themselves. It is fully featured. If you distribute, host or create derivative works of the MinIO software over the network, the"
+            )}
+
+            <LicenseLink />
+            {t(
+              "license requires that you also distribute the complete, corresponding source code of the combined work under the same"
+            )}
+
+            <LicenseLink />
+            {t(
+              "license. This requirement applies whether or not you modified MinIO."
+            )}
           </span>
         </Box>
       );
@@ -217,12 +228,11 @@ export const STANDARD_PLAN_FEATURES = [
           }}
         >
           <span>
-            Designed for customers who require a commercial license and can
-            mostly self-support but want the peace of mind that comes with the
-            MinIO Subscription Network’s suite of operational capabilities and
-            direct-to-engineer interaction. The Standard version is fully
-            featured but with SLA limitations. <br /> <br /> To learn more about
-            the MinIO Subscription Network
+            {t(
+              "Designed for customers who require a commercial license and can mostly self-support but want the peace of mind that comes with the MinIO Subscription Network’s suite of operational capabilities and direct-to-engineer interaction. The Standard version is fully featured but with SLA limitations."
+            )}
+            <br /> <br />
+            {t("To learn more about the MinIO Subscription Network")}
           </span>{" "}
           <a
             href="https://min.io/product/subnet?ref=con"
@@ -230,7 +240,7 @@ export const STANDARD_PLAN_FEATURES = [
             target="_blank"
             rel="noopener noreferrer"
           >
-            click here
+            {t("click here")}
           </a>
           .
         </Box>
@@ -254,7 +264,7 @@ export const STANDARD_PLAN_FEATURES = [
           fontWeight: 600,
         }}
       >
-        $10 per TiB per month
+        {t("$10 per TiB per month")}
       </Box>
     ),
     detail: () => (
@@ -265,7 +275,7 @@ export const STANDARD_PLAN_FEATURES = [
           marginBottom: "5px",
         }}
       >
-        (Minimum of 100TiB)
+        {t("(Minimum of 100TiB)")}
       </Box>
     ),
   },
@@ -332,10 +342,11 @@ export const ENTERPRISE_PLAN_FEATURES = [
           }}
         >
           <span>
-            Designed for mission critical environments where both a license and
-            strict SLAs are required. The Enterprise version is fully featured
-            but comes with additional capabilities. <br /> <br /> To learn more
-            about the MinIO Subscription Network
+            {t(
+              "Designed for mission critical environments where both a license and strict SLAs are required. The Enterprise version is fully featured but comes with additional capabilities."
+            )}
+            <br /> <br />
+            {t("To learn more about the MinIO Subscription Network")}
           </span>{" "}
           <a
             href="https://min.io/product/subnet?ref=con"
@@ -343,7 +354,7 @@ export const ENTERPRISE_PLAN_FEATURES = [
             target="_blank"
             rel="noopener noreferrer"
           >
-            click here
+            {t("click here")}
           </a>
           .
         </Box>
@@ -367,7 +378,7 @@ export const ENTERPRISE_PLAN_FEATURES = [
           fontWeight: 600,
         }}
       >
-        $20 per TiB per month
+        {t("$20 per TiB per month")}
       </Box>
     ),
     detail: () => (
@@ -378,7 +389,7 @@ export const ENTERPRISE_PLAN_FEATURES = [
           marginBottom: "5px",
         }}
       >
-        (Minimum of 100TiB)
+        {t("(Minimum of 100TiB)")}
       </Box>
     ),
   },

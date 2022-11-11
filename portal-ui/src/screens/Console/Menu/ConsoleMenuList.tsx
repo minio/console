@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect, useState, Fragment } from "react";
 import { Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
@@ -171,7 +172,7 @@ const ConsoleMenuList = ({
             <LogoutIcon />
           </ListItemIcon>
           <ListItemText
-            primary="Sign Out"
+            primary={t("Sign Out")}
             id={"logout"}
             sx={{ ...menuItemTextStyles }}
             className={stateClsName}

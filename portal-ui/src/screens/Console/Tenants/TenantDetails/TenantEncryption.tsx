@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import {
   ICertificateInfo,
   ISecurityContext,
@@ -655,25 +656,25 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
           isOpen={confirmOpen}
           title={
             encryptionEnabled
-              ? "Enable encryption at rest for tenant?"
-              : "Disable encryption at rest for tenant?"
+              ? t("Enable encryption at rest for tenant?")
+              : t("Disable encryption at rest for tenant?")
           }
-          confirmText={encryptionEnabled ? "Enable" : "Disable"}
-          cancelText="Cancel"
+          confirmText={encryptionEnabled ? t("Enable") : t("Disable")}
+          cancelText={t("Cancel")}
           onClose={() => setConfirmOpen(false)}
           onConfirm={updateEncryptionConfiguration}
           confirmationContent={
             <DialogContentText>
               {encryptionEnabled
-                ? "Data will be encrypted using and external KMS"
-                : "Current encrypted information will not be accessible"}
+                ? t("Data will be encrypted using and external KMS")
+                : t("Current encrypted information will not be accessible")}
             </DialogContentText>
           }
         />
       )}
       <Grid container spacing={1}>
         <Grid item xs>
-          <h1 className={classes.sectionTitle}>Encryption</h1>
+          <h1 className={classes.sectionTitle}>{t("Encryption")}</h1>
         </Grid>
         <Grid item xs={4} justifyContent={"end"} textAlign={"right"}>
           <FormSwitchWrapper
@@ -706,8 +707,8 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                 variant="scrollable"
                 scrollButtons="auto"
               >
-                <Tab id="kms-options" label="Options" />
-                <Tab id="kms-raw-configuration" label="Raw Edit" />
+                <Tab id="kms-options" label={t("Options")} />
+                <Tab id="kms-raw-configuration" label={t("Raw Edit")} />
               </Tabs>
             </Grid>
 
@@ -731,16 +732,16 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                     currentSelection={encryptionType}
                     id="encryptionType"
                     name="encryptionType"
-                    label="KMS"
+                    label={t("KMS")}
                     onChange={(e) => {
                       setEncryptionType(e.target.value);
                     }}
                     selectorOptions={[
-                      { label: "Vault", value: "vault" },
-                      { label: "AWS", value: "aws" },
-                      { label: "Gemalto", value: "gemalto" },
-                      { label: "GCP", value: "gcp" },
-                      { label: "Azure", value: "azure" },
+                      { label: t("Vault"), value: "vault" },
+                      { label: t("AWS"), value: "aws" },
+                      { label: t("Gemalto"), value: "gemalto" },
+                      { label: t("GCP"), value: "gcp" },
+                      { label: t("Azure"), value: "azure" },
                     ]}
                   />
                 </Grid>
@@ -756,7 +757,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             endpoint: e.target.value,
                           })
                         }
-                        label="Endpoint"
+                        label={t("Endpoint")}
                         value={vaultConfiguration?.endpoint || ""}
                         error={validationErrors["vault_ping"] || ""}
                         required
@@ -772,7 +773,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             engine: e.target.value,
                           })
                         }
-                        label="Engine"
+                        label={t("Engine")}
                         value={vaultConfiguration?.engine || ""}
                       />
                     </Grid>
@@ -786,7 +787,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             namespace: e.target.value,
                           })
                         }
-                        label="Namespace"
+                        label={t("Namespace")}
                         value={vaultConfiguration?.namespace || ""}
                       />
                     </Grid>
@@ -800,12 +801,12 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             prefix: e.target.value,
                           })
                         }
-                        label="Prefix"
+                        label={t("Prefix")}
                         value={vaultConfiguration?.prefix || ""}
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <SectionTitle>App Role</SectionTitle>
+                      <SectionTitle>{t("App Role")}</SectionTitle>
                     </Grid>
                     <Grid item xs={12}>
                       <InputBoxWrapper
@@ -820,7 +821,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Engine"
+                        label={t("Engine")}
                         value={vaultConfiguration?.approle?.engine || ""}
                       />
                     </Grid>
@@ -838,7 +839,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="AppRole ID"
+                        label={t("AppRole ID")}
                         value={vaultConfiguration?.approle?.id || ""}
                         required
                         error={validationErrors["vault_id"] || ""}
@@ -868,7 +869,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="AppRole Secret"
+                        label={t("AppRole Secret")}
                         value={vaultConfiguration?.approle?.secret || ""}
                         required
                         error={validationErrors["vault_secret"] || ""}
@@ -899,13 +900,13 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Retry (Seconds)"
+                        label={t("Retry (Seconds)")}
                         error={validationErrors["vault_retry"] || ""}
                         value={vaultConfiguration?.approle?.retry || ""}
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <SectionTitle>Status</SectionTitle>
+                      <SectionTitle>{t("Status")}</SectionTitle>
                     </Grid>
                     <Grid item xs={12}>
                       <InputBoxWrapper
@@ -922,7 +923,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Ping (Seconds)"
+                        label={t("Ping (Seconds)")}
                         error={validationErrors["vault_ping"] || ""}
                         value={vaultConfiguration?.status?.ping || ""}
                       />
@@ -944,13 +945,13 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Endpoint"
+                        label={t("Endpoint")}
                         error={validationErrors["azure_endpoint"] || ""}
                         value={azureConfiguration?.keyvault?.endpoint || ""}
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <SectionTitle>Credentials</SectionTitle>
+                      <SectionTitle>{t("Credentials")}</SectionTitle>
                     </Grid>
                     <Grid item xs={12}>
                       <InputBoxWrapper
@@ -968,7 +969,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Tenant ID"
+                        label={t("Tenant ID")}
                         value={
                           azureConfiguration?.keyvault?.credentials
                             ?.tenant_id || ""
@@ -992,7 +993,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Client ID"
+                        label={t("Client ID")}
                         value={
                           azureConfiguration?.keyvault?.credentials
                             ?.client_id || ""
@@ -1016,7 +1017,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Client Secret"
+                        label={t("Client Secret")}
                         value={
                           azureConfiguration?.keyvault?.credentials
                             ?.client_secret || ""
@@ -1041,7 +1042,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Project ID"
+                        label={t("Project ID")}
                         value={gcpConfiguration?.secretmanager.project_id || ""}
                       />
                     </Grid>
@@ -1058,12 +1059,12 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Endpoint"
+                        label={t("Endpoint")}
                         value={gcpConfiguration?.secretmanager.endpoint || ""}
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <SectionTitle>Credentials</SectionTitle>
+                      <SectionTitle>{t("Credentials")}</SectionTitle>
                     </Grid>
                     <Grid item xs={12}>
                       <InputBoxWrapper
@@ -1081,7 +1082,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Client Email"
+                        label={t("Client Email")}
                         value={
                           gcpConfiguration?.secretmanager.credentials
                             ?.client_email || ""
@@ -1104,7 +1105,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Client ID"
+                        label={t("Client ID")}
                         value={
                           gcpConfiguration?.secretmanager.credentials
                             ?.client_id || ""
@@ -1127,7 +1128,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Private Key ID"
+                        label={t("Private Key ID")}
                         value={
                           gcpConfiguration?.secretmanager.credentials
                             ?.private_key_id || ""
@@ -1150,7 +1151,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Private Key"
+                        label={t("Private Key")}
                         value={
                           gcpConfiguration?.secretmanager.credentials
                             ?.private_key || ""
@@ -1174,7 +1175,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Endpoint"
+                        label={t("Endpoint")}
                         value={awsConfiguration?.secretsmanager?.endpoint || ""}
                         required
                         error={validationErrors["aws_endpoint"] || ""}
@@ -1193,7 +1194,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Region"
+                        label={t("Region")}
                         value={awsConfiguration?.secretsmanager?.region || ""}
                         error={validationErrors["aws_region"] || ""}
                         required
@@ -1212,12 +1213,12 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="KMS Key"
+                        label={t("KMS Key")}
                         value={awsConfiguration?.secretsmanager?.kmskey || ""}
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <SectionTitle>Credentials</SectionTitle>
+                      <SectionTitle>{t("Credentials")}</SectionTitle>
                     </Grid>
                     <Grid item xs={12}>
                       <InputBoxWrapper
@@ -1236,7 +1237,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Access Key"
+                        label={t("Access Key")}
                         value={
                           awsConfiguration?.secretsmanager?.credentials
                             ?.accesskey || ""
@@ -1262,7 +1263,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Secret Key"
+                        label={t("Secret Key")}
                         value={
                           awsConfiguration?.secretsmanager?.credentials
                             ?.secretkey || ""
@@ -1288,7 +1289,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Token"
+                        label={t("Token")}
                         value={
                           awsConfiguration?.secretsmanager?.credentials
                             ?.token || ""
@@ -1312,14 +1313,14 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Endpoint"
+                        label={t("Endpoint")}
                         value={gemaltoConfiguration?.keysecure?.endpoint || ""}
                         error={validationErrors["gemalto_endpoint"] || ""}
                         required
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <SectionTitle>Credentials</SectionTitle>
+                      <SectionTitle>{t("Credentials")}</SectionTitle>
                     </Grid>
                     <Grid item xs={12}>
                       <InputBoxWrapper
@@ -1337,7 +1338,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Token"
+                        label={t("Token")}
                         value={
                           gemaltoConfiguration?.keysecure?.credentials?.token ||
                           ""
@@ -1362,7 +1363,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Domain"
+                        label={t("Domain")}
                         value={
                           gemaltoConfiguration?.keysecure?.credentials
                             ?.domain || ""
@@ -1389,7 +1390,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                             },
                           })
                         }
-                        label="Retry (seconds)"
+                        label={t("Retry (seconds)")}
                         value={
                           gemaltoConfiguration?.keysecure?.credentials?.retry ||
                           ""
@@ -1403,7 +1404,9 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
             )}
 
             <Grid item xs={12}>
-              <SectionTitle>Additional Configuration for KES</SectionTitle>
+              <SectionTitle>
+                {t("Additional Configuration for KES")}
+              </SectionTitle>
             </Grid>
             <Grid item xs={12}>
               <FormSwitchWrapper
@@ -1414,7 +1417,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                 onChange={() =>
                   setEnabledCustomCertificates(!enabledCustomCertificates)
                 }
-                label={"Custom Certificates"}
+                label={t("Custom Certificates")}
               />
             </Grid>
             {enabledCustomCertificates && (
@@ -1422,7 +1425,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                 <Grid item xs={12}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
-                      Encryption server certificates
+                      {t("Encryption server certificates")}
                     </legend>
                     {kesServerTLSCertificateSecret ? (
                       <TLSCertificate
@@ -1448,7 +1451,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                           accept=".key,.pem"
                           id="serverKey"
                           name="serverKey"
-                          label="Key"
+                          label={t("Key")}
                           value={kesServerCertificate?.key}
                         />
                         <FileSelector
@@ -1466,7 +1469,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                           accept=".cer,.crt,.cert,.pem"
                           id="serverCert"
                           name="serverCert"
-                          label="Cert"
+                          label={t("Cert")}
                           value={kesServerCertificate?.cert}
                         />
                       </Fragment>
@@ -1476,8 +1479,9 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                 <Grid item xs={12}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
-                      MinIO mTLS certificates (connection between MinIO and the
-                      Encryption server)
+                      {t(
+                        "MinIO mTLS certificates (connection between MinIO and the Encryption server)"
+                      )}
                     </legend>
                     {minioMTLSCertificateSecret ? (
                       <TLSCertificate
@@ -1503,7 +1507,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                           accept=".key,.pem"
                           id="clientKey"
                           name="clientKey"
-                          label="Key"
+                          label={t("Key")}
                           value={minioMTLSCertificate?.key}
                         />
                         <FileSelector
@@ -1521,7 +1525,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                           accept=".cer,.crt,.cert,.pem"
                           id="clientCert"
                           name="clientCert"
-                          label="Cert"
+                          label={t("Cert")}
                           value={minioMTLSCertificate?.cert}
                         />
                       </Fragment>
@@ -1531,8 +1535,9 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                 <Grid item xs={12}>
                   <fieldset className={classes.fieldGroup}>
                     <legend className={classes.descriptionText}>
-                      KMS mTLS certificates (connection between the Encryption
-                      server and the KMS)
+                      {t(
+                        "KMS mTLS certificates (connection between the Encryption server and the KMS)"
+                      )}
                     </legend>
                     {kmsMTLSCertificateSecret ? (
                       <TLSCertificate
@@ -1557,7 +1562,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                           accept=".key,.pem"
                           id="kms_mtls_key"
                           name="kms_mtls_key"
-                          label="Key"
+                          label={t("Key")}
                           value={kmsMTLSCertificate?.key}
                         />
                         <FileSelector
@@ -1574,7 +1579,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                           accept=".cer,.crt,.cert,.pem"
                           id="kms_mtls_cert"
                           name="kms_mtls_cert"
-                          label="Cert"
+                          label={t("Cert")}
                           value={kmsMTLSCertificate?.cert || ""}
                         />
                       </Fragment>
@@ -1600,7 +1605,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                         accept=".cer,.crt,.cert,.pem"
                         id="kms_mtls_ca"
                         name="kms_mtls_ca"
-                        label="CA"
+                        label={t("CA")}
                         value={kmsCACertificate?.cert || ""}
                       />
                     )}
@@ -1616,8 +1621,8 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setImage(e.target.value)
                 }
-                label="Image"
-                placeholder="minio/kes:v0.17.6"
+                label={t("Image")}
+                placeholder={t("minio/kes:v0.17.6")}
                 value={image}
               />
             </Grid>
@@ -1630,14 +1635,14 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setReplicas(e.target.value)
                 }
-                label="Replicas"
+                label={t("Replicas")}
                 value={replicas}
                 required
                 error={validationErrors["replicas"] || ""}
               />
             </Grid>
             <Grid item xs={12}>
-              <SectionTitle>SecurityContext for KES</SectionTitle>
+              <SectionTitle>{t("SecurityContext for KES")}</SectionTitle>
             </Grid>
             <Grid item xs={12}>
               <div
@@ -1656,7 +1661,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                         runAsUser: e.target.value,
                       });
                     }}
-                    label="Run As User"
+                    label={t("Run As User")}
                     value={securityContext.runAsUser}
                     required
                     error={
@@ -1678,7 +1683,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                         runAsGroup: e.target.value,
                       });
                     }}
-                    label="Run As Group"
+                    label={t("Run As Group")}
                     value={securityContext.runAsGroup}
                     required
                     error={
@@ -1700,7 +1705,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                         fsGroup: e.target.value,
                       });
                     }}
-                    label="FsGroup"
+                    label={t("FsGroup")}
                     value={securityContext.fsGroup}
                     required
                     error={
@@ -1725,7 +1730,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
                     runAsNonRoot: checked,
                   });
                 }}
-                label={"Do not run as Root"}
+                label={t("Do not run as Root")}
               />
             </Grid>
           </Fragment>
@@ -1737,7 +1742,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
             variant="callAction"
             disabled={!isFormValid}
             onClick={() => setConfirmOpen(true)}
-            label={"Save"}
+            label={t("Save")}
           />
         </Grid>
       </Grid>

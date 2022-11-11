@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -311,9 +312,9 @@ const TenantSizeMK = ({
     <Fragment>
       <Grid item xs={12}>
         <div className={classes.headerElement}>
-          <h3 className={classes.h3Section}>Tenant Size</h3>
+          <h3 className={classes.h3Section}>{t("Tenant Size")}</h3>
           <span className={classes.descriptionText}>
-            Please select the desired capacity
+            {t("Please select the desired capacity")}
           </span>
         </div>
       </Grid>
@@ -337,7 +338,7 @@ const TenantSizeMK = ({
               cleanValidation("nodes");
             }
           }}
-          label="Number of Servers"
+          label={t("Number of Servers")}
           disabled={selectedStorageType === ""}
           value={nodes}
           min="4"
@@ -353,14 +354,15 @@ const TenantSizeMK = ({
           onChange={(e: SelectChangeEvent<string>) => {
             updateField("ecParity", e.target.value as string);
           }}
-          label="Erasure Code Parity"
+          label={t("Erasure Code Parity")}
           disabled={selectedStorageType === ""}
           value={ecParity}
           options={ecParityChoices}
         />
         <span className={classes.descriptionText}>
-          Please select the desired parity. This setting will change the max
-          usable capacity in the cluster
+          {t(
+            "Please select the desired parity. This setting will change the max usable capacity in the cluster"
+          )}
         </span>
       </Grid>
     </Fragment>

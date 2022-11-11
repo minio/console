@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React from "react";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "../../../icons";
@@ -16,8 +17,8 @@ const ConfirmDeleteTargetModal = ({
 }) => {
   return (
     <ConfirmDialog
-      title={`Delete Endpoint`}
-      confirmText={"Delete"}
+      title={`${t("Delete Endpoint")}`}
+      confirmText={t("Delete")}
       isOpen={true}
       titleIcon={<ConfirmModalIcon />}
       isLoading={false}
@@ -26,9 +27,12 @@ const ConfirmDeleteTargetModal = ({
       confirmationContent={
         <React.Fragment>
           <DialogContentText>
-            Are you sure you want to delete the notification endpoint ?
+            {t("Are you sure you want to delete the notification endpoint ?")}
+
             <br />
-            <b>{serviceName}</b> which is <b>{status}</b>
+            <b>{serviceName}</b>
+            {t("which is")}
+            <b>{status}</b>
           </DialogContentText>
         </React.Fragment>
       }

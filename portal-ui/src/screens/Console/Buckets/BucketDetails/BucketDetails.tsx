@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import {
   Link,
@@ -140,7 +141,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
   const bucketName = params.bucketName || "";
 
   let selTab = params["0"] || "";
-  selTab = selTab ? selTab : "summary";
+  selTab = selTab ? selTab : t("summary");
 
   const [activeTab, setActiveTab] = useState(selTab);
   const canDelete = hasPermission(bucketName, deleteBucketPermissions);
@@ -216,15 +217,15 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
         />
       )}
       <PageHeader
-        label={<BackLink to={"/buckets"} label={"Buckets"} />}
+        label={<BackLink to={"/buckets"} label={t("Buckets")} />}
         actions={
           <TooltipWrapper
             tooltip={
               canBrowse
-                ? "Browse Bucket"
+                ? t("Browse Bucket")
                 : permissionTooltipHelper(
                     IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER],
-                    "browsing this bucket"
+                    t("browsing this bucket")
                   )
             }
           >
@@ -260,7 +261,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                 scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
                 resource={bucketName}
               >
-                <span style={{ fontSize: 15 }}>Access: </span>
+                <span style={{ fontSize: 15 }}>{t("Access:")}</span>
                 <span
                   className={classes.capitalize}
                   style={{ fontWeight: 600, fontSize: 15 }}
@@ -285,7 +286,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                               IAM_SCOPES.S3_DELETE_BUCKET,
                               IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
                             ],
-                            "deleting this bucket"
+                            t("deleting this bucket")
                           )
                     }
                   >
@@ -294,7 +295,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                       onClick={() => {
                         setDeleteOpen(true);
                       }}
-                      label={"Delete Bucket"}
+                      label={t("Delete Bucket")}
                       icon={<TrashIcon />}
                       variant={"secondary"}
                       disabled={!canDelete}
@@ -306,7 +307,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   onClick={() => {
                     dispatch(setBucketDetailsLoad(true));
                   }}
-                  label={"Refresh"}
+                  label={t("Refresh")}
                   icon={<RefreshIcon />}
                 />
               </Fragment>
@@ -349,7 +350,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
           >
             {{
               tabConfig: {
-                label: "Summary",
+                label: t("Summary"),
                 value: "summary",
                 component: Link,
                 to: getRoutePath("summary"),
@@ -357,7 +358,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Events",
+                label: t("Events"),
                 value: "events",
                 component: Link,
                 disabled: !hasPermission(bucketName, [
@@ -369,7 +370,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Replication",
+                label: t("Replication"),
                 value: "replication",
                 component: Link,
                 disabled:
@@ -385,7 +386,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Lifecycle",
+                label: t("Lifecycle"),
                 value: "lifecycle",
                 component: Link,
                 disabled:
@@ -399,7 +400,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Access Audit",
+                label: t("Access Audit"),
                 value: "access",
                 component: Link,
                 disabled: !hasPermission(bucketName, [
@@ -412,7 +413,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Access Rules",
+                label: t("Access Rules"),
                 value: "prefix",
                 component: Link,
                 disabled: !hasPermission(bucketName, [

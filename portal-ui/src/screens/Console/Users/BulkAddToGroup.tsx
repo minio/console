@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { Button } from "mds";
 import { Theme } from "@mui/material/styles";
@@ -114,8 +115,8 @@ const BulkAddToGroup = ({
       }}
       title={
         accepted
-          ? "The selected users were added to the following groups."
-          : "Add Users to Group"
+          ? t("The selected users were added to the following groups.")
+          : t("Add Users to Group")
       }
       titleIcon={<AddMembersToGroupIcon />}
     >
@@ -123,10 +124,14 @@ const BulkAddToGroup = ({
         <React.Fragment>
           <Grid container>
             <PredefinedList
-              label={"Groups"}
+              label={t("Groups")}
               content={selectedGroups.join(", ")}
             />
-            <PredefinedList label={"Users"} content={checkedUsers.join(", ")} />
+
+            <PredefinedList
+              label={t("Users")}
+              content={checkedUsers.join(", ")}
+            />
           </Grid>
           <br />
           <br />
@@ -138,7 +143,7 @@ const BulkAddToGroup = ({
             <Grid item xs={12} className={classes.modalFormScrollable}>
               <Grid item xs={12} className={classes.formFieldRow}>
                 <PredefinedList
-                  label={"Selected Users"}
+                  label={t("Selected Users")}
                   content={checkedUsers.join(", ")}
                 />
               </Grid>
@@ -156,14 +161,14 @@ const BulkAddToGroup = ({
                 variant="regular"
                 color="primary"
                 onClick={resetForm}
-                label={"Clear"}
+                label={t("Clear")}
               />
               <Button
                 id={"save-add-group"}
                 type="submit"
                 variant="callAction"
                 disabled={saving || selectedGroups.length < 1}
-                label={"Save"}
+                label={t("Save")}
               />
             </Grid>
             {saving && (

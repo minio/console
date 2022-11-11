@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 
 import { DialogContentText, LinearProgress } from "@mui/material";
@@ -77,8 +78,8 @@ const ResetConfigurationModal = ({
 
   return (
     <ConfirmDialog
-      title={`Restore Defaults`}
-      confirmText={"Yes, Reset Configuration"}
+      title={`${t("Restore Defaults")}`}
+      confirmText={t("Yes, Reset Configuration")}
       isOpen={resetOpen}
       titleIcon={<ConfirmDeleteIcon />}
       isLoading={resetLoading}
@@ -90,11 +91,15 @@ const ResetConfigurationModal = ({
         <React.Fragment>
           {resetLoading && <LinearProgress />}
           <DialogContentText>
-            Are you sure you want to restore these configurations to default
-            values?
+            {t(
+              "Are you sure you want to restore these configurations to default values?"
+            )}
+
             <br />
             <b className={classes.wrapText}>
-              Please note that this may cause your system to not be accessible
+              {t(
+                "Please note that this may cause your system to not be accessible"
+              )}
             </b>
           </DialogContentText>
         </React.Fragment>

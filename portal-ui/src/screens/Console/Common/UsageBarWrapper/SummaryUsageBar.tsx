@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import { LinearProgress, Stack } from "@mui/material";
@@ -134,7 +135,7 @@ const SummaryUsageBar = ({
             {(!tenant.tiers || tenant.tiers.length === 0) && (
               <Fragment>
                 <LabelValuePair
-                  label={"Internal:"}
+                  label={t("Internal:")}
                   orientation={"row"}
                   value={`${used.value} ${used.unit}`}
                 />
@@ -143,12 +144,12 @@ const SummaryUsageBar = ({
             {tenant.tiers && tenant.tiers.length > 0 && (
               <Fragment>
                 <LabelValuePair
-                  label={"Internal:"}
+                  label={t("Internal:")}
                   orientation={"row"}
                   value={`${localUse.value} ${localUse.unit}`}
                 />
                 <LabelValuePair
-                  label={"Tiered:"}
+                  label={t("Tiered:")}
                   orientation={"row"}
                   value={`${tieredUse.value} ${tieredUse.unit}`}
                 />
@@ -157,7 +158,7 @@ const SummaryUsageBar = ({
             {healthStatus && (
               <LabelValuePair
                 orientation={"row"}
-                label={"Health:"}
+                label={t("Health:")}
                 value={
                   <span className={healthStatus}>
                     <CircleIcon />

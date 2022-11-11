@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -151,7 +152,7 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
 
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <PanelTitle>Events</PanelTitle>
+          <PanelTitle>{t("Events")}</PanelTitle>
           <SecureComponent
             scopes={[
               IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
@@ -161,13 +162,13 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
             matchAll
             errorProps={{ disabled: true }}
           >
-            <TooltipWrapper tooltip={"Subscribe to Event"}>
+            <TooltipWrapper tooltip={t("Subscribe to Event")}>
               <Button
                 id={"Subscribe-bucket-event"}
                 onClick={() => {
                   setAddEventScreenOpen(true);
                 }}
-                label={"Subscribe to Event"}
+                label={t("Subscribe to Event")}
                 icon={<AddIcon />}
                 variant={"callAction"}
               />
@@ -183,14 +184,14 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
             <TableWrapper
               itemActions={tableActions}
               columns={[
-                { label: "SQS", elementKey: "arn" },
+                { label: t("SQS"), elementKey: "arn" },
                 {
-                  label: "Events",
+                  label: t("Events"),
                   elementKey: "events",
                   renderFunction: eventsDisplay,
                 },
-                { label: "Prefix", elementKey: "prefix" },
-                { label: "Suffix", elementKey: "suffix" },
+                { label: t("Prefix"), elementKey: "prefix" },
+                { label: t("Suffix"), elementKey: "suffix" },
               ]}
               isLoading={loadingEvents}
               records={records}
@@ -204,23 +205,22 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
           <Grid item xs={12}>
             <br />
             <HelpBox
-              title={"Lambda Notifications"}
+              title={t("Lambda Notifications")}
               iconComponent={<LambdaIcon />}
               help={
                 <Fragment>
-                  MinIO bucket notifications allow administrators to send
-                  notifications to supported external services on certain object
-                  or bucket events. MinIO supports bucket and object-level S3
-                  events similar to the Amazon S3 Event Notifications.
+                  {t(
+                    "MinIO bucket notifications allow administrators to send notifications to supported external services on certain object or bucket events. MinIO supports bucket and object-level S3 events similar to the Amazon S3 Event Notifications."
+                  )}
                   <br />
                   <br />
-                  You can learn more at our{" "}
+                  {t("You can learn more at our")}{" "}
                   <a
                     href="https://min.io/docs/minio/linux/administration/monitoring/bucket-notifications.html?ref=con"
                     target="_blank"
                     rel="noreferrer"
                   >
-                    documentation
+                    {t("documentation")}
                   </a>
                   .
                 </Fragment>

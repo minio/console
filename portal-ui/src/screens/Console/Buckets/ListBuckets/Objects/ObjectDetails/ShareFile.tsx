@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
@@ -206,7 +207,7 @@ const ShareFile = ({
   return (
     <React.Fragment>
       <ModalWrapper
-        title="Share File"
+        title={t("Share File")}
         titleIcon={<ShareIcon style={{ fill: "#4CCB92" }} />}
         modalOpen={open}
         onClose={() => {
@@ -221,18 +222,20 @@ const ShareFile = ({
         {!isLoadingVersion && (
           <Fragment>
             <Grid item xs={12} className={classes.shareLinkInfo}>
-              This is a temporary URL with integrated access credentials for
-              sharing objects valid for up to 7 days.
+              {t(
+                "This is a temporary URL with integrated access credentials for sharing objects valid for up to 7 days."
+              )}
+
               <br />
               <br />
-              The temporary URL expires after the configured time limit.
+              {t("The temporary URL expires after the configured time limit.")}
             </Grid>
             <br />
             <Grid item xs={12} className={classes.dateContainer}>
               <DaysSelector
                 initialDate={initialDate}
                 id="date"
-                label="Active for"
+                label={t("Active for")}
                 maxDays={7}
                 onChange={dateChanged}
                 entity="Link"

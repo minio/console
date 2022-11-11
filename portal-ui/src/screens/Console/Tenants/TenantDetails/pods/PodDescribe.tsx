@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -205,13 +206,16 @@ const PodDescribeSummary = ({ describeInfo }: IPodDescribeSummaryProps) => {
     <React.Fragment>
       <HeaderSection title={"Summary"} />
       <Box sx={{ ...twoColCssGridLayoutConfig }}>
-        <LabelValuePair label={"Name"} value={describeInfo.name} />
-        <LabelValuePair label={"Namespace"} value={describeInfo.namespace} />
-        <LabelValuePair label={"Node"} value={describeInfo.nodeName} />
-        <LabelValuePair label={"Start time"} value={describeInfo.startTime} />
-        <LabelValuePair label={"Status"} value={describeInfo.phase} />
-        <LabelValuePair label={"QoS Class"} value={describeInfo.qosClass} />
-        <LabelValuePair label={"IP"} value={describeInfo.podIP} />
+        <LabelValuePair label={t("Name")} value={describeInfo.name} />
+        <LabelValuePair label={t("Namespace")} value={describeInfo.namespace} />
+        <LabelValuePair label={t("Node")} value={describeInfo.nodeName} />
+        <LabelValuePair
+          label={t("Start time")}
+          value={describeInfo.startTime}
+        />
+        <LabelValuePair label={t("Status")} value={describeInfo.phase} />
+        <LabelValuePair label={t("QoS Class")} value={describeInfo.qosClass} />
+        <LabelValuePair label={t("IP")} value={describeInfo.podIP} />
       </Box>
     </React.Fragment>
   );
@@ -287,18 +291,18 @@ const PodDescribeVolumes = ({ volumes }: IPodDescribeVolumesProps) => {
             {volume.pvc && (
               <React.Fragment>
                 <LabelValuePair
-                  label={"Type"}
+                  label={t("Type")}
                   value="Persistant Volume Claim"
                 />
                 <LabelValuePair
-                  label={"Claim Name"}
+                  label={t("Claim Name")}
                   value={volume.pvc.claimName}
                 />
               </React.Fragment>
             )}
             {/* TODO Add component to display projected data (Maybe change API response) */}
             {volume.projected && (
-              <LabelValuePair label={"Type"} value="Projected" />
+              <LabelValuePair label={t("Type")} value="Projected" />
             )}
           </Box>
         </React.Fragment>
@@ -352,30 +356,34 @@ const PodDescribeContainers = ({ containers }: IPodDescribeContainersProps) => {
             style={{ wordBreak: "break-all" }}
             sx={{ ...twoColCssGridLayoutConfig }}
           >
-            <LabelValuePair label={"Image"} value={container.image} />
-            <LabelValuePair label={"Ready"} value={`${container.ready}`} />
+            <LabelValuePair label={t("Image")} value={container.image} />
+            <LabelValuePair label={t("Ready")} value={`${container.ready}`} />
             <LabelValuePair
-              label={"Ports"}
+              label={t("Ports")}
               value={container.ports.join(", ")}
             />
             <LabelValuePair
-              label={"Host Ports"}
+              label={t("Host Ports")}
               value={container.hostPorts.join(", ")}
             />
             <LabelValuePair
-              label={"Arguments"}
+              label={t("Arguments")}
               value={container.args.join(", ")}
             />
-            <LabelValuePair label={"Started"} value={container.state.started} />
-            <LabelValuePair label={"State"} value={container.state.state} />
+
+            <LabelValuePair
+              label={t("Started")}
+              value={container.state.started}
+            />
+            <LabelValuePair label={t("State")} value={container.state.state} />
           </Box>
           <Box
             style={{ wordBreak: "break-all" }}
             sx={{ ...twoColCssGridLayoutConfig }}
           >
-            <LabelValuePair label={"Image ID"} value={container.imageID} />
+            <LabelValuePair label={t("Image ID")} value={container.imageID} />
             <LabelValuePair
-              label={"Container ID"}
+              label={t("Container ID")}
               value={container.containerID}
             />
           </Box>
@@ -478,13 +486,13 @@ const PodDescribe = ({
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab id="pod-describe-summary" label="Summary" />
-            <Tab id="pod-describe-annotations" label="Annotations" />
-            <Tab id="pod-describe-labels" label=" Labels" />
-            <Tab id="pod-describe-conditions" label="Conditions" />
-            <Tab id="pod-describe-tolerations" label="Tolerations" />
-            <Tab id="pod-describe-volumes" label="Volumes" />
-            <Tab id="pod-describe-containers" label="Containers" />
+            <Tab id="pod-describe-summary" label={t("Summary")} />
+            <Tab id="pod-describe-annotations" label={t("Annotations")} />
+            <Tab id="pod-describe-labels" label={t("Labels")} />
+            <Tab id="pod-describe-conditions" label={t("Conditions")} />
+            <Tab id="pod-describe-tolerations" label={t("Tolerations")} />
+            <Tab id="pod-describe-volumes" label={t("Volumes")} />
+            <Tab id="pod-describe-containers" label={t("Containers")} />
           </Tabs>
           {renderTabComponent(curTab, describeInfo)}
         </Grid>

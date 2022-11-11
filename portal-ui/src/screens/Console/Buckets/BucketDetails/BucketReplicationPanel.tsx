@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -172,7 +173,9 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
   };
 
   const tagDisplay = (events: BucketReplicationRule) => {
-    return <Fragment>{events && events.tags !== "" ? "Yes" : "No"}</Fragment>;
+    return (
+      <Fragment>{events && events.tags !== "" ? t("Yes") : t("No")}</Fragment>
+    );
   };
 
   const selectAllItems = () => {
@@ -250,7 +253,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <PanelTitle>Replication</PanelTitle>
+          <PanelTitle>{t("Replication")}</PanelTitle>
           <div style={{ display: "flex" }}>
             <SecureComponent
               scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
@@ -258,13 +261,13 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
               matchAll
               errorProps={{ disabled: true }}
             >
-              <TooltipWrapper tooltip={"Remove Selected Replication Rules"}>
+              <TooltipWrapper tooltip={t("Remove Selected Replication Rules")}>
                 <Button
                   id={"remove-bucket-replication-rule"}
                   onClick={() => {
                     confirmDeleteSelectedReplicationRules();
                   }}
-                  label={"Remove Selected Rules"}
+                  label={t("Remove Selected Rules")}
                   icon={<TrashIcon />}
                   color={"secondary"}
                   disabled={selectedRepRules.length === 0}
@@ -278,13 +281,13 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
               matchAll
               errorProps={{ disabled: true }}
             >
-              <TooltipWrapper tooltip={"Add Replication Rule"}>
+              <TooltipWrapper tooltip={t("Add Replication Rule")}>
                 <Button
                   id={"add-bucket-replication-rule"}
                   onClick={() => {
                     setOpenReplicationOpen(true);
                   }}
-                  label={"Add Replication Rule"}
+                  label={t("Add Replication Rule")}
                   icon={<AddIcon />}
                   variant={"callAction"}
                 />
@@ -302,28 +305,28 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
               itemActions={replicationTableActions}
               columns={[
                 {
-                  label: "Priority",
+                  label: t("Priority"),
                   elementKey: "priority",
                   width: 55,
                   contentTextAlign: "center",
                 },
                 {
-                  label: "Destination",
+                  label: t("Destination"),
                   elementKey: "destination",
                   renderFunction: ruleDestDisplay,
                 },
                 {
-                  label: "Prefix",
+                  label: t("Prefix"),
                   elementKey: "prefix",
                   width: 200,
                 },
                 {
-                  label: "Tags",
+                  label: t("Tags"),
                   elementKey: "tags",
                   renderFunction: tagDisplay,
                   width: 60,
                 },
-                { label: "Status", elementKey: "status", width: 100 },
+                { label: t("Status"), elementKey: "status", width: 100 },
               ]}
               isLoading={loadingReplication}
               records={replicationRules}
@@ -340,21 +343,22 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
         <Grid item xs={12}>
           <br />
           <HelpBox
-            title={"Replication"}
+            title={t("Replication")}
             iconComponent={<BucketsIcon />}
             help={
               <Fragment>
-                MinIO supports server-side and client-side replication of
-                objects between source and destination buckets.
+                {t(
+                  "MinIO supports server-side and client-side replication of objects between source and destination buckets."
+                )}
                 <br />
                 <br />
-                You can learn more at our{" "}
+                {t("You can learn more at our")}{" "}
                 <a
                   href="https://min.io/docs/minio/linux/administration/bucket-replication.html?ref=con"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  documentation
+                  {t("documentation")}
                 </a>
                 .
               </Fragment>

@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate, useParams } from "react-router-dom";
@@ -211,9 +212,9 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   const groupsTabContent = (
     <React.Fragment>
       <div className={classes.actionsTray}>
-        <PanelTitle>Members</PanelTitle>
+        <PanelTitle>{t("Members")}</PanelTitle>
         <SearchBox
-          placeholder={"Search members"}
+          placeholder={t("Search members")}
           onChange={(searchText) => {
             setMemberFilter(searchText);
           }}
@@ -231,7 +232,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                 ? memberActionText
                 : permissionTooltipHelper(
                     createGroupPermissions,
-                    "edit Group membership"
+                    t("edit Group membership")
                   )
             }
           >
@@ -265,7 +266,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                 disableButtonFunction: () => !viewUser,
               },
             ]}
-            columns={[{ label: "Access Key", elementKey: "" }]}
+            columns={[{ label: t("Access Key"), elementKey: "" }]}
             selectedItems={[]}
             isLoading={false}
             records={filteredMembers}
@@ -288,20 +289,20 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   const policiesTabContent = (
     <React.Fragment>
       <div className={classes.actionsTray}>
-        <PanelTitle>Policies</PanelTitle>
+        <PanelTitle>{t("Policies")}</PanelTitle>
         <TooltipWrapper
           tooltip={
             canSetPolicies
-              ? "Set Policies"
+              ? t("Set Policies")
               : permissionTooltipHelper(
                   setGroupPoliciesPermissions,
-                  "assign Policies"
+                  t("assign Policies")
                 )
           }
         >
           <Button
             id={"set-policies"}
-            label={`Set Policies`}
+            label={`${t("Set Policies")}`}
             variant="callAction"
             icon={<IAMPoliciesIcon />}
             onClick={() => {
@@ -322,7 +323,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
               disableButtonFunction: () => !canViewPolicy,
             },
           ]}
-          columns={[{ label: "Policy", elementKey: "" }]}
+          columns={[{ label: t("Policy"), elementKey: "" }]}
           isLoading={false}
           records={groupPolicies}
           entityName="Policies"
@@ -355,9 +356,11 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             subTitle={null}
             actions={
               <Fragment>
-                <span className={classes.statusLabel}>Group Status:</span>
+                <span className={classes.statusLabel}>
+                  {t("Group Status:")}
+                </span>
                 <span id="group-status" className={classes.statusValue}>
-                  {isGroupEnabled ? "Enabled" : "Disabled"}
+                  {isGroupEnabled ? t("Enabled") : t("Disabled")}
                 </span>
                 <TooltipWrapper
                   tooltip={
@@ -369,7 +372,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                       ? ""
                       : permissionTooltipHelper(
                           enableDisableGroupPermissions,
-                          "enable or disable Groups"
+                          t("enable or disable Groups")
                         )
                   }
                 >
@@ -394,7 +397,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                 </TooltipWrapper>
 
                 <div className={classes.spacerLeft}>
-                  <TooltipWrapper tooltip={"Delete Group"}>
+                  <TooltipWrapper tooltip={t("Delete Group")}>
                     <Button
                       id={"delete-user-group"}
                       variant="secondary"
@@ -413,11 +416,11 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
         <Grid item xs={12}>
           <VerticalTabs>
             {{
-              tabConfig: { label: "Members" },
+              tabConfig: { label: t("Members") },
               content: groupsTabContent,
             }}
             {{
-              tabConfig: { label: "Policies" },
+              tabConfig: { label: t("Policies") },
               content: policiesTabContent,
             }}
           </VerticalTabs>

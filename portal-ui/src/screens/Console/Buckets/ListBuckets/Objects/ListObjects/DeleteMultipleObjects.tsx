@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useState } from "react";
 import { DialogContentText } from "@mui/material";
 
@@ -84,8 +85,8 @@ const DeleteObject = ({
 
   return (
     <ConfirmDialog
-      title={`Delete Objects`}
-      confirmText={"Delete"}
+      title={`${t("Delete Objects")}`}
+      confirmText={t("Delete")}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
       isLoading={deleteLoading}
@@ -93,11 +94,11 @@ const DeleteObject = ({
       onClose={onClose}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete the selected {selectedObjects.length}{" "}
-          objects?{" "}
+          {t("Are you sure you want to delete the selected")}
+          {selectedObjects.length} {t("objects?")}{" "}
           {versioning && (
             <FormSwitchWrapper
-              label={"Delete All Versions"}
+              label={t("Delete All Versions")}
               indicatorLabels={["Yes", "No"]}
               checked={deleteVersions}
               value={"delete_versions"}

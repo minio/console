@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
@@ -76,43 +77,56 @@ const TLSHelpBox = () => {
       >
         <FeatureItem
           icon={<CertificateIcon />}
-          description={`TLS Certificates Warning`}
+          description={`${t("TLS Certificates Warning")}`}
         />
         <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-          Automatic certificate generation is not enabled.
+          {t("Automatic certificate generation is not enabled.")}
           <br />
           <br />
-          If you wish to continue only with <b>custom certificates</b> make sure
-          they are valid for the following internode hostnames, i.e.:
+          {t("If you wish to continue only with")}
+          <b>{t("custom certificates")}</b>
+          {t(
+            "make sure they are valid for the following internode hostnames, i.e.:"
+          )}
           <br />
           <br />
           <div
             style={{ fontSize: "14px", fontStyle: "italic", color: "#5E5E5E" }}
           >
-            minio.{namespace}
+            {t("minio.")}
+            {namespace}
             <br />
-            minio.{namespace}.svc
+            {t("minio.")}
+            {namespace}
+            {t(".svc")}
             <br />
-            minio.{namespace}.svc.&#x3C;cluster domain&#x3E;
+            {t("minio.")}
+            {namespace}
+            {t(".svc.<cluster domain>")}
             <br />
-            *.{tenantName}-hl.{namespace}.svc.&#x3C;cluster domain&#x3E;
+            *.{tenantName}
+            {t("-hl.")}
+            {namespace}
+            {t(".svc.<cluster domain>")}
             <br />
-            *.{namespace}.svc.&#x3C;cluster domain&#x3E;
+            *.{namespace}
+            {t(".svc.<cluster domain>")}
           </div>
           <br />
-          Replace <em>&#x3C;tenant-name&#x3E;</em>,{" "}
-          <em>&#x3C;namespace&#x3E;</em> and
-          <em>&#x3C;cluster domain&#x3E;</em> with the actual values for your
-          MinIO tenant.
+          {t("Replace")}
+          <em>{t("<tenant-name>")}</em>, <em>{t("<namespace>")}</em>
+          {t("and")}
+          <em>{t("<cluster domain>")}</em>
+          {t("with the actual values for your MinIO tenant.")}
           <br />
           <br />
-          You can learn more at our{" "}
+          {t("You can learn more at our")}{" "}
           <a
             href="https://min.io/docs/minio/kubernetes/upstream/operations/network-encryption.html?ref=op#id5"
             target="_blank"
             rel="noreferrer"
           >
-            documentation
+            {t("documentation")}
           </a>
           .
         </Box>

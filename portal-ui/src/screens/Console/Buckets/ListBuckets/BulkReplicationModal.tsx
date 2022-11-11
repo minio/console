@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
@@ -315,7 +316,7 @@ const AddBulkReplicationModal = ({
       onClose={() => {
         closeModalAndRefresh(false);
       }}
-      title="Set Multiple Bucket Replication"
+      title={t("Set Multiple Bucket Replication")}
     >
       <GenericWizard
         loadingStep={addLoading || externalLoading}

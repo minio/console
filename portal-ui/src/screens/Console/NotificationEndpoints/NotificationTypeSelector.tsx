@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -51,7 +52,7 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
           <Fragment>
             <BackLink
               to={IAM_PAGES.NOTIFICATIONS_ENDPOINTS}
-              label="Notification Targets"
+              label={t("Notification Targets")}
             />
           </Fragment>
         }
@@ -60,7 +61,7 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
       <PageLayout>
         <ContentBox>
           <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
-            Select Target Type
+            {t("Select Target Type")}
           </div>
           <div className={classes.iconContainer}>
             {withLogos.map((item) => {

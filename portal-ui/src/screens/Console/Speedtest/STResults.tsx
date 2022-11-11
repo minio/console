@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -301,10 +302,10 @@ const STResults = ({ classes, results, start }: ISTResults) => {
           <Grid container>
             <Grid item xs={12} md={6} className={classes.descriptorLabel}>
               {start ? (
-                <Fragment>Preliminar Results:</Fragment>
+                <Fragment>{t("Preliminar Results:")}</Fragment>
               ) : (
                 <Fragment>
-                  {jsonView ? "JSON Results:" : "Detailed Results:"}
+                  {jsonView ? t("JSON Results:") : t("Detailed Results:")}
                 </Fragment>
               )}
             </Grid>
@@ -358,7 +359,9 @@ const STResults = ({ classes, results, start }: ISTResults) => {
                   lg={2}
                   className={classes.detailedItem}
                 >
-                  Nodes:&nbsp;<strong>{finalRes.servers}</strong>
+                  {t("Nodes:")}
+
+                  <strong>{finalRes.servers}</strong>
                 </Grid>
                 <Grid
                   item
@@ -368,7 +371,9 @@ const STResults = ({ classes, results, start }: ISTResults) => {
                   lg={2}
                   className={classes.detailedItem}
                 >
-                  Drives:&nbsp;<strong>{finalRes.disks}</strong>
+                  {t("Drives:")}
+
+                  <strong>{finalRes.disks}</strong>
                 </Grid>
                 <Grid
                   item
@@ -378,7 +383,9 @@ const STResults = ({ classes, results, start }: ISTResults) => {
                   lg={2}
                   className={classes.detailedItem}
                 >
-                  Concurrent:&nbsp;<strong>{finalRes.concurrent}</strong>
+                  {t("Concurrent:")}
+
+                  <strong>{finalRes.concurrent}</strong>
                 </Grid>
                 <Grid
                   item
@@ -391,7 +398,8 @@ const STResults = ({ classes, results, start }: ISTResults) => {
                   <span className={classes.versionIcon}>
                     <VersionIcon />
                   </span>{" "}
-                  MinIO VERSION&nbsp;<strong>{finalRes.version}</strong>
+                  {t("MinIO VERSION")}
+                  <strong>{finalRes.version}</strong>
                 </Grid>
                 <Grid item xs={12} className={classes.tableOverflow}>
                   <table
@@ -401,9 +409,9 @@ const STResults = ({ classes, results, start }: ISTResults) => {
                   >
                     <thead>
                       <tr>
-                        <th colSpan={2}>Servers</th>
-                        <th>GET</th>
-                        <th>PUT</th>
+                        <th colSpan={2}>{t("Servers")}</th>
+                        <th>{t("GET")}</th>
+                        <th>{t("PUT")}</th>
                       </tr>
                     </thead>
                     <tbody>

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -201,7 +202,7 @@ const DriveInfoItem = ({ drive }: ICardProps) => {
                   drive.totalSpace ? drive.totalSpace.toString() : "0"
                 )}
               </div>
-              <label className="info-label">Capacity</label>
+              <label className="info-label">{t("Capacity")}</label>
             </Box>
 
             <Box
@@ -213,7 +214,7 @@ const DriveInfoItem = ({ drive }: ICardProps) => {
               <div className="info-value">
                 {niceBytes(drive.usedSpace ? drive.usedSpace.toString() : "0")}
               </div>
-              <label className="info-label">Used</label>
+              <label className="info-label">{t("Used")}</label>
             </Box>
             <Box
               sx={{
@@ -226,7 +227,7 @@ const DriveInfoItem = ({ drive }: ICardProps) => {
                   drive.availableSpace ? drive.availableSpace.toString() : "0"
                 )}
               </div>
-              <label className="info-label">Available</label>
+              <label className="info-label">{t("Available")}</label>
             </Box>
           </Box>
         </Box>

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
@@ -181,7 +182,7 @@ const AddTenant = () => {
         label={
           <BackLink
             to={"/tenants"}
-            label={"Tenants"}
+            label={t("Tenants")}
             executeOnClick={() => {
               dispatch(resetAddTenantForm());
             }}
@@ -201,21 +202,27 @@ const AddTenant = () => {
         {formRender === IMkEnvs.aws && (
           <Grid item xs={12} style={{ marginTop: 16 }}>
             <HelpBox
-              title={"EBS Volume Configuration."}
+              title={t("EBS Volume Configuration.")}
               iconComponent={<StorageIcon />}
               help={
                 <Fragment>
-                  <b>Performance Optimized</b>: Uses the <i>gp3</i> EBS storage
-                  class class configured at 1,000Mi/s throughput and 16,000
-                  IOPS, however the minimum volume size for this type of EBS
-                  volume is <b>32Gi</b>.
+                  <b>{t("Performance Optimized")}</b>
+                  {t(": Uses the")}
+                  <i>{t("gp3")}</i>
+                  {t(
+                    "EBS storage class class configured at 1,000Mi/s throughput and 16,000 IOPS, however the minimum volume size for this type of EBS volume is"
+                  )}
+                  <b>{t("32Gi")}</b>.
                   <br />
                   <br />
-                  <b>Storage Optimized</b>: Uses the <i>sc1</i> EBS storage
-                  class, however the minimum volume size for this type of EBS
-                  volume is &nbsp;
-                  <b>16Ti</b> to unlock their maximum throughput speed of
-                  250Mi/s.
+                  <b>{t("Storage Optimized")}</b>
+                  {t(": Uses the")}
+                  <i>{t("sc1")}</i>
+                  {t(
+                    "EBS storage class, however the minimum volume size for this type of EBS volume is"
+                  )}
+                  <b>{t("16Ti")}</b>
+                  {t("to unlock their maximum throughput speed of 250Mi/s.")}
                 </Fragment>
               }
             />

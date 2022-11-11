@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -58,7 +59,7 @@ const LogSearchFullModal = ({
     <Fragment>
       <ModalWrapper
         modalOpen={modalOpen}
-        title="Full Log Information"
+        title={t("Full Log Information")}
         onClose={() => {
           onClose();
         }}
@@ -84,7 +85,7 @@ const LogSearchFullModal = ({
               variant="callAction"
               color="primary"
               onClick={onClose}
-              label={"Close"}
+              label={t("Close")}
             />
           </Grid>
         </Grid>

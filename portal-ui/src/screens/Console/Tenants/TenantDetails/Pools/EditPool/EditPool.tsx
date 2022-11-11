@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -154,7 +155,7 @@ const EditPool = () => {
         <PageHeader
           label={
             <Fragment>
-              <BackLink to={poolsURL} label={`Pool Details`} />
+              <BackLink to={poolsURL} label={`${t("Pool Details")}`} />
             </Fragment>
           }
         />
@@ -165,7 +166,8 @@ const EditPool = () => {
               title={`Edit Pool - ${selectedPool}`}
               subTitle={
                 <Fragment>
-                  Namespace: {tenant?.namespace || ""} / Current Capacity:{" "}
+                  {t("Namespace:")}
+                  {tenant?.namespace || ""} / Current Capacity:{" "}
                   {niceBytes((tenant?.total_size || 0).toString(10))} / Tenant:{" "}
                   {tenant?.name || ""}
                 </Fragment>

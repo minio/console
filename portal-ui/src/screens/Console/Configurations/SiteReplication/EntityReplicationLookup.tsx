@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { Button } from "mds";
@@ -78,7 +79,7 @@ const EntityReplicationLookup = () => {
         }}
       >
         <Box sx={{ width: "240px", flexGrow: "0" }}>
-          View Replication Status for a:
+          {t("View Replication Status for a:")}
         </Box>
         <Box
           sx={{
@@ -99,19 +100,19 @@ const EntityReplicationLookup = () => {
             value={entityType}
             options={[
               {
-                label: "Bucket",
+                label: t("Bucket"),
                 value: "bucket",
               },
               {
-                label: "User",
+                label: t("User"),
                 value: "user",
               },
               {
-                label: "Group",
+                label: t("Group"),
                 value: "group",
               },
               {
-                label: "Policy",
+                label: t("Policy"),
                 value: "policy",
               },
             ]}
@@ -141,14 +142,14 @@ const EntityReplicationLookup = () => {
             maxWidth: "80px",
           }}
         >
-          <TooltipWrapper tooltip={"View across sites"}>
+          <TooltipWrapper tooltip={t("View across sites")}>
             <Button
               id={"view-across-sites"}
               type={"button"}
               onClick={() => {
                 getStats(entityType, entityValue);
               }}
-              label={`View`}
+              label={`${t("View")}`}
               icon={<ClustersIcon />}
               collapseOnSmall={false}
               disabled={!entityValue || !entityType}

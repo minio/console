@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect, useRef, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
@@ -197,7 +198,7 @@ const SetRetention = ({
 
   return (
     <ModalWrapper
-      title="Set Retention Policy"
+      title={t("Set Retention Policy")}
       modalOpen={open}
       onClose={() => {
         resetForm();
@@ -205,7 +206,7 @@ const SetRetention = ({
       }}
     >
       <div className={classes.spacerBottom}>
-        <strong>Selected Object</strong>: {objectName}
+        <strong>{t("Selected Object")}</strong>: {objectName}
       </div>
       <form
         noValidate
@@ -224,7 +225,7 @@ const SetRetention = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setStatusEnabled(!statusEnabled);
               }}
-              label={"Status"}
+              label={t("Status")}
               indicatorLabels={["Enabled", "Disabled"]}
             />
           </Grid>
@@ -234,7 +235,7 @@ const SetRetention = ({
             currentSelection={type}
             id="type"
             name="type"
-            label="Type"
+            label={t("Type")}
             disableOptions={
               !statusEnabled || (alreadyConfigured && type !== "")
             }
@@ -242,15 +243,15 @@ const SetRetention = ({
               setType(e.target.value);
             }}
             selectorOptions={[
-              { label: "Governance", value: "governance" },
-              { label: "Compliance", value: "compliance" },
+              { label: t("Governance"), value: "governance" },
+              { label: t("Compliance"), value: "compliance" },
             ]}
           />
         </Grid>
         <Grid item xs={12} className={`${classes.dateSelector} `}>
           <DateSelector
             id="date"
-            label="Date"
+            label={t("Date")}
             disableOptions={dateFieldDisabled()}
             ref={dateElement}
             value={date}
@@ -269,7 +270,7 @@ const SetRetention = ({
             type="button"
             variant="regular"
             onClick={resetForm}
-            label={"Reset"}
+            label={t("Reset")}
           />
           <Button
             id={"save"}
@@ -281,7 +282,7 @@ const SetRetention = ({
               isSaving
             }
             onClick={saveNewRetentionPolicy}
-            label={"Save"}
+            label={t("Save")}
           />
         </Grid>
       </form>

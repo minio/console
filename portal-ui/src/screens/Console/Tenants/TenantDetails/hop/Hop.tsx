@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -79,7 +80,7 @@ const Hop = ({ classes }: IHopSimple) => {
           label={
             <Fragment>
               <Link to={"/tenants"} className={classes.breadcrumLink}>
-                Tenants
+                {t("Tenants")}
               </Link>
               {` > `}
               <Link
@@ -88,7 +89,7 @@ const Hop = ({ classes }: IHopSimple) => {
               >
                 {tenantName}
               </Link>
-              {` > Management`}
+              {`${t("> Management")}`}
             </Fragment>
           }
           actions={

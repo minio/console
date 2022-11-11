@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -82,12 +83,12 @@ const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
 
   return open ? (
     <ConfirmDialog
-      title={"Register Email"}
-      confirmText={"Register"}
+      title={t("Register Email")}
+      confirmText={t("Register")}
       isOpen={open}
       titleIcon={<InfoIcon />}
       isLoading={isLoading}
-      cancelText={"Later"}
+      cancelText={t("Later")}
       onConfirm={onConfirm}
       onClose={closeModal}
       confirmButtonProps={{
@@ -97,28 +98,30 @@ const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
       confirmationContent={
         <Fragment>
           <p>
-            Your Marketplace subscription includes support access from the
+            {t(
+              "Your Marketplace subscription includes support access from the"
+            )}
             <a
               href="https://min.io/product/subnet"
               target="_blank"
               rel="noreferrer"
             >
-              MinIO Subscription Network (SUBNET)
+              {t("MinIO Subscription Network (SUBNET)")}
             </a>
             .
             <br />
-            Enter your email to register now.
+            {t("Enter your email to register now.")}
           </p>
           <p>
-            To register later, contact{" "}
-            <a href="mailto: support@min.io">support@min.io</a>.
+            {t("To register later, contact")}{" "}
+            <a href="mailto: support@min.io">{t("support@min.io")}</a>.
           </p>
           <InputBoxWrapper
             id="set-mp-email"
             name="set-mp-email"
             onChange={handleInputChange}
             label={""}
-            placeholder="Enter email"
+            placeholder={t("Enter email")}
             type={"email"}
             value={email}
           />

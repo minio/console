@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -213,7 +214,9 @@ const GenericWizard = ({
       {forModal ? (
         <Fragment>
           <div className={classes.stepsMasterContainer}>
-            <div className={`${classes.stepsLabel} stepsModalTitle`}>Steps</div>
+            <div className={`${classes.stepsLabel} stepsModalTitle`}>
+              {t("Steps")}
+            </div>
             <div className={classes.modalWizardSteps}>{stepsListModal()}</div>
           </div>
         </Fragment>

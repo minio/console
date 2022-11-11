@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -256,15 +257,15 @@ const Affinity = ({ classes }: IAffinityProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Pod Placement</h3>
+        <h3 className={classes.h3Section}>{t("Pod Placement")}</h3>
       </div>
       <Grid item xs={12} className={classes.affinityConfigField}>
         <Grid item className={classes.affinityFieldLabel}>
-          <div className={classes.label}>Type</div>
+          <div className={classes.label}>{t("Type")}</div>
           <div
             className={`${classes.descriptionText} ${classes.affinityHelpText}`}
           >
-            MinIO supports multiple configurations for Pod Affinity
+            {t("MinIO supports multiple configurations for Pod Affinity")}
           </div>
           <Grid item className={classes.radioField}>
             <RadioGroupSelector
@@ -276,9 +277,9 @@ const Affinity = ({ classes }: IAffinityProps) => {
                 updateField("podAffinity", e.target.value);
               }}
               selectorOptions={[
-                { label: "None", value: "none" },
-                { label: "Default (Pod Anti-Affinity)", value: "default" },
-                { label: "Node Selector", value: "nodeSelector" },
+                { label: t("None"), value: "none" },
+                { label: t("Default (Pod Anti-Affinity)"), value: "default" },
+                { label: t("Node Selector"), value: "nodeSelector" },
               ]}
             />
           </Grid>
@@ -299,11 +300,11 @@ const Affinity = ({ classes }: IAffinityProps) => {
 
                 updateField("withPodAntiAffinity", checked);
               }}
-              label={"With Pod Anti-Affinity"}
+              label={t("With Pod Anti-Affinity")}
             />
           </Grid>
           <Grid item xs={12}>
-            <h3>Labels</h3>
+            <h3>{t("Labels")}</h3>
             <span className={classes.error}>{validationErrors["labels"]}</span>
             <Grid container>
               {keyValuePairs &&
@@ -350,7 +351,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
                               dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                             index={i}
-                            placeholder={"Key"}
+                            placeholder={t("Key")}
                           />
                         )}
                       </Grid>
@@ -393,7 +394,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
                               dispatch(setEditPoolKeyValuePairs(arrCp));
                             }}
                             index={i}
-                            placeholder={"value"}
+                            placeholder={t("value")}
                           />
                         )}
                       </Grid>
@@ -443,7 +444,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
       )}
       <Grid item xs={12} className={classes.affinityConfigField}>
         <Grid item className={classes.affinityFieldLabel}>
-          <h3>Tolerations</h3>
+          <h3>{t("Tolerations")}</h3>
           <span className={classes.error}>
             {validationErrors["tolerations"]}
           </span>

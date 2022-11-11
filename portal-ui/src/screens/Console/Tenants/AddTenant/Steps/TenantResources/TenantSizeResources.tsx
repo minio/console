@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -231,10 +232,11 @@ ITenantSizeResourcesProps) => {
     <Fragment>
       <Grid item xs={12}>
         <div className={classes.headerElement}>
-          <h3 className={classes.h3Section}>Resources</h3>
+          <h3 className={classes.h3Section}>{t("Resources")}</h3>
           <span className={classes.descriptionText}>
-            You may specify the amount of CPU and Memory that MinIO servers
-            should reserve on each node.
+            {t(
+              "You may specify the amount of CPU and Memory that MinIO servers should reserve on each node."
+            )}
           </span>
         </div>
       </Grid>
@@ -246,7 +248,7 @@ ITenantSizeResourcesProps) => {
 
       <Grid item xs={12} className={classes.formFieldRow}>
         <InputBoxWrapper
-          label={"CPU Request"}
+          label={t("CPU Request")}
           id={"resourcesCPURequest"}
           name={"resourcesCPURequest"}
           onChange={(e) => {
@@ -305,13 +307,13 @@ ITenantSizeResourcesProps) => {
             }
             updateField("resourcesMemoryRequest", e.target.value);
           }}
-          label="Memory Request"
+          label={t("Memory Request")}
           overlayObject={
             <InputUnitMenu
               id={"size-unit"}
               onUnitChange={() => {}}
               unitSelected={"Gi"}
-              unitsList={[{ label: "Gi", value: "Gi" }]}
+              unitsList={[{ label: t("Gi"), value: "Gi" }]}
               disabled={true}
             />
           }
@@ -334,7 +336,7 @@ ITenantSizeResourcesProps) => {
 
             updateField("resourcesSpecifyLimit", checked);
           }}
-          label={"Specify Limit"}
+          label={t("Specify Limit")}
         />
       </Grid>
 
@@ -342,7 +344,7 @@ ITenantSizeResourcesProps) => {
         <Fragment>
           <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
-              label={"CPU Limit"}
+              label={t("CPU Limit")}
               id={"resourcesCPULimit"}
               name={"resourcesCPULimit"}
               onChange={(e) => {
@@ -389,13 +391,13 @@ ITenantSizeResourcesProps) => {
                 }
                 updateField("resourcesMemoryLimit", e.target.value);
               }}
-              label="Memory Limit"
+              label={t("Memory Limit")}
               overlayObject={
                 <InputUnitMenu
                   id={"size-unit"}
                   onUnitChange={() => {}}
                   unitSelected={"Gi"}
-                  unitsList={[{ label: "Gi", value: "Gi" }]}
+                  unitsList={[{ label: t("Gi"), value: "Gi" }]}
                   disabled={true}
                 />
               }

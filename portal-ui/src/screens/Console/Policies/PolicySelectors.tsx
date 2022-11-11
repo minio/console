@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useCallback, useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
@@ -147,10 +148,10 @@ const PolicySelectors = ({
         {records.length > 0 ? (
           <React.Fragment>
             <Grid item xs={12} className={classes.filterBox}>
-              <span className={classes.fieldLabel}>Assign Policies</span>
+              <span className={classes.fieldLabel}>{t("Assign Policies")}</span>
               <div className={classes.searchBox}>
                 <SearchBox
-                  placeholder="Start typing to search for a Policy"
+                  placeholder={t("Start typing to search for a Policy")}
                   onChange={(value) => {
                     setFilter(value);
                   }}
@@ -165,7 +166,7 @@ const PolicySelectors = ({
               style={{ paddingBottom: 16 }}
             >
               <TableWrapper
-                columns={[{ label: "Policy", elementKey: "name" }]}
+                columns={[{ label: t("Policy"), elementKey: "name" }]}
                 onSelect={selectionChanged}
                 selectedItems={currentPolicies}
                 isLoading={loading}
@@ -177,7 +178,7 @@ const PolicySelectors = ({
             </Grid>
           </React.Fragment>
         ) : (
-          <div className={classes.noFound}>No Policies Available</div>
+          <div className={classes.noFound}>{t("No Policies Available")}</div>
         )}
       </Grid>
     </Grid>

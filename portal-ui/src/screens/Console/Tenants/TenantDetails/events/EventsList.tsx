@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -106,10 +107,10 @@ const EventsList = ({ classes, events, loading }: IEventsListProps) => {
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell>Type</TableCell>
-            <TableCell>Reason</TableCell>
-            <TableCell>Age</TableCell>
-            <TableCell>Message</TableCell>
+            <TableCell>{t("Type")}</TableCell>
+            <TableCell>{t("Reason")}</TableCell>
+            <TableCell>{t("Age")}</TableCell>
+            <TableCell>{t("Message")}</TableCell>
             <TableCell />
           </TableRow>
         </TableHead>

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
 import CopyToClipboard from "react-copy-to-clipboard";
@@ -134,7 +135,8 @@ const BrowserBreadcrumbs = ({
       <Fragment key={`breadcrumbs-versionedItem`}>
         <span>
           <span className={classes.slashSpacingStyle}>/</span>
-          {versionedFile} - Versions
+          {versionedFile}
+          {t("- Versions")}
         </span>
       </Fragment>,
     ];
@@ -229,10 +231,10 @@ const BrowserBreadcrumbs = ({
           <TooltipWrapper
             tooltip={
               canCreatePath
-                ? "Choose or create a new path"
+                ? t("Choose or create a new path")
                 : permissionTooltipHelper(
                     [IAM_SCOPES.S3_PUT_OBJECT],
-                    "create a new path"
+                    t("create a new path")
                   )
             }
           >
@@ -247,7 +249,7 @@ const BrowserBreadcrumbs = ({
                 whiteSpace: "nowrap",
               }}
               variant={"regular"}
-              label={"Create new path"}
+              label={t("Create new path")}
             />
           </TooltipWrapper>
         )}

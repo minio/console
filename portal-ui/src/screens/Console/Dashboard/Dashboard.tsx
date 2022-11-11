@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import PrDashboard from "./Prometheus/PrDashboard";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -51,7 +52,7 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
 
   return (
     <Fragment>
-      <PageHeader label="Metrics" />
+      <PageHeader label={t("Metrics")} />
       {loading ? (
         <Grid container>
           <Grid item xs={12} className={classes.container}>

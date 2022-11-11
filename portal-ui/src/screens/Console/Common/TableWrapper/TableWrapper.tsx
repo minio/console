@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import {
   Checkbox,
@@ -450,7 +451,7 @@ const TableWrapper = ({
   onSelect,
   records,
   isLoading,
-  loadingMessage = <Typography component="h3">Loading...</Typography>,
+  loadingMessage = <Typography component="h3">{t("Loading...")}</Typography>,
   entityName,
   selectedItems,
   idField,
@@ -539,7 +540,7 @@ const TableWrapper = ({
           }}
           onClose={closeColumnSelector}
         >
-          <div className={classes.shownColumnsLabel}>Shown Columns</div>
+          <div className={classes.shownColumnsLabel}>{t("Shown Columns")}</div>
           <div className={classes.popoverContent}>
             {columns.map((column: IColumns) => {
               return (

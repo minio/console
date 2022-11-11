@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useCallback, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
@@ -151,7 +152,7 @@ const ChangeUserGroups = ({
         closeModalAndRefresh();
       }}
       modalOpen={open}
-      title={"Set Groups"}
+      title={t("Set Groups")}
       titleIcon={<AddMembersToGroup />}
     >
       <React.Fragment>
@@ -178,7 +179,7 @@ const ChangeUserGroups = ({
                 variant="regular"
                 style={classes.spacerRight}
                 onClick={resetForm}
-                label={"Clear"}
+                label={t("Clear")}
               />
 
               <Button
@@ -186,7 +187,7 @@ const ChangeUserGroups = ({
                 type="submit"
                 variant="callAction"
                 disabled={addLoading || !sendEnabled}
-                label={"Save"}
+                label={t("Save")}
               />
             </Grid>
             {addLoading && (

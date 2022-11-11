@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import InputLabel from "@mui/material/InputLabel";
@@ -218,7 +219,7 @@ const DaysSelector = ({
               type="number"
               min="0"
               max={maxDays ? maxDays.toString() : "999"}
-              label="Days"
+              label={t("Days")}
               name={id}
               onChange={(e) => {
                 setSelectedDays(parseInt(e.target.value));
@@ -235,7 +236,7 @@ const DaysSelector = ({
               type="number"
               min="0"
               max="23"
-              label="Hours"
+              label={t("Hours")}
               name={id}
               onChange={(e) => {
                 setSelectedHours(parseInt(e.target.value));
@@ -252,7 +253,7 @@ const DaysSelector = ({
               type="number"
               min="0"
               max="59"
-              label="Minutes"
+              label={t("Minutes")}
               name={id}
               onChange={(e) => {
                 setSelectedMinutes(parseInt(e.target.value));
@@ -272,7 +273,8 @@ const DaysSelector = ({
             <div className={classes.validityText}>
               <LinkIcon />
               <div className={classes.validityLabel}>
-                {entity} will be available until:
+                {entity}
+                {t("will be available until:")}
               </div>{" "}
               <div className={classes.validTill}>
                 {dateSelected.format("MM/DD/YYYY HH:mm:ss")}
@@ -280,7 +282,7 @@ const DaysSelector = ({
             </div>
           ) : (
             <div className={classes.invalidDurationText}>
-              Please select a valid duration.
+              {t("Please select a valid duration.")}
             </div>
           )}
         </Grid>

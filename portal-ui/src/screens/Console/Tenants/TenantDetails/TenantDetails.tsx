@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button } from "mds";
@@ -268,7 +269,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
       <PageHeader
         label={
           <Fragment>
-            <BackLink to={IAM_PAGES.TENANTS} label="Tenants" />
+            <BackLink to={IAM_PAGES.TENANTS} label={t("Tenants")} />
           </Fragment>
         }
         actions={<React.Fragment />}
@@ -301,13 +302,14 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
             title={tenantName}
             subTitle={
               <Fragment>
-                Namespace: {tenantNamespace} / Capacity:{" "}
+                {t("Namespace:")}
+                {tenantNamespace} / Capacity:{" "}
                 {niceBytes((tenantInfo?.total_size || 0).toString(10))}
               </Fragment>
             }
             actions={
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <TooltipWrapper tooltip={"Delete"}>
+                <TooltipWrapper tooltip={t("Delete")}>
                   <Button
                     id={"delete-tenant"}
                     variant="secondary"
@@ -315,13 +317,13 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
                       confirmDeleteTenant();
                     }}
                     color="secondary"
-                    label={"Delete"}
+                    label={t("Delete")}
                     icon={<TrashIcon />}
                   />
                 </TooltipWrapper>
-                <TooltipWrapper tooltip={"Edit YAML"}>
+                <TooltipWrapper tooltip={t("Edit YAML")}>
                   <Button
-                    label={"YAML"}
+                    label={t("YAML")}
                     icon={<EditIcon />}
                     id={"yaml_button"}
                     variant="regular"
@@ -331,7 +333,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
                     }}
                   />
                 </TooltipWrapper>
-                <TooltipWrapper tooltip={"Management Console"}>
+                <TooltipWrapper tooltip={t("Management Console")}>
                   <Button
                     id={"tenant-hop"}
                     onClick={() => {
@@ -341,11 +343,11 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
                     }}
                     disabled={!tenantInfo || !tenantIsOnline(tenantInfo)}
                     variant={"regular"}
-                    label={"Console"}
+                    label={t("Console")}
                     icon={<MinIOTierIconXs style={{ height: 16 }} />}
                   />
                 </TooltipWrapper>
-                <TooltipWrapper tooltip={"Refresh"}>
+                <TooltipWrapper tooltip={t("Refresh")}>
                   <Button
                     id={"tenant-refresh"}
                     variant="regular"
@@ -353,7 +355,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
                     onClick={() => {
                       dispatch(getTenantAsync());
                     }}
-                    label={"Refresh"}
+                    label={t("Refresh")}
                     icon={<RefreshIcon />}
                   />
                 </TooltipWrapper>
@@ -409,7 +411,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
         >
           {{
             tabConfig: {
-              label: "Summary",
+              label: t("Summary"),
               value: "summary",
               component: Link,
               to: getRoutePath("summary"),
@@ -417,7 +419,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Configuration",
+              label: t("Configuration"),
               value: "configuration",
               component: Link,
               to: getRoutePath("configuration"),
@@ -425,7 +427,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Metrics",
+              label: t("Metrics"),
               value: "metrics",
               component: Link,
               to: getRoutePath("metrics"),
@@ -433,7 +435,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Identity Provider",
+              label: t("Identity Provider"),
               value: "identity-provider",
               component: Link,
               to: getRoutePath("identity-provider"),
@@ -441,7 +443,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Security",
+              label: t("Security"),
               value: "security",
               component: Link,
               to: getRoutePath("security"),
@@ -449,7 +451,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Encryption",
+              label: t("Encryption"),
               value: "encryption",
               component: Link,
               to: getRoutePath("encryption"),
@@ -457,7 +459,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Pools",
+              label: t("Pools"),
               value: "pools",
               component: Link,
               to: getRoutePath("pools"),
@@ -465,7 +467,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Monitoring",
+              label: t("Monitoring"),
               value: "monitoring",
               component: Link,
               to: getRoutePath("monitoring"),
@@ -473,7 +475,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Audit Log",
+              label: t("Audit Log"),
               value: "logging",
               component: Link,
               to: getRoutePath("logging"),
@@ -481,7 +483,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Pods",
+              label: t("Pods"),
               value: "pods",
               component: Link,
               id: "tenant-pod-tab",
@@ -491,7 +493,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
 
           {{
             tabConfig: {
-              label: "Volumes",
+              label: t("Volumes"),
               value: "volumes",
               component: Link,
               to: getRoutePath("volumes"),
@@ -499,7 +501,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Events",
+              label: t("Events"),
               value: "events",
               component: Link,
               to: getRoutePath("events"),
@@ -507,7 +509,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "Certificate Requests",
+              label: t("Certificate Requests"),
               value: "csr",
               component: Link,
               to: getRoutePath("csr"),
@@ -515,7 +517,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
           }}
           {{
             tabConfig: {
-              label: "License",
+              label: t("License"),
               value: "license",
               component: Link,
               to: getRoutePath("license"),

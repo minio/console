@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useCallback } from "react";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -81,7 +82,7 @@ const GCPKMSAdd = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             updateField("gcpProjectID", e.target.value);
           }}
-          label="Project ID"
+          label={t("Project ID")}
           value={gcpProjectID}
         />
       </Grid>
@@ -92,13 +93,15 @@ const GCPKMSAdd = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             updateField("gcpEndpoint", e.target.value);
           }}
-          label="Endpoint"
+          label={t("Endpoint")}
           value={gcpEndpoint}
         />
       </Grid>
       <Grid item xs={12}>
         <fieldset className={classes.fieldGroup}>
-          <legend className={classes.descriptionText}>Credentials</legend>
+          <legend className={classes.descriptionText}>
+            {t("Credentials")}
+          </legend>
           <Grid item xs={12} className={classes.formFieldRow}>
             <InputBoxWrapper
               id="gcp_client_email"
@@ -106,7 +109,7 @@ const GCPKMSAdd = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("gcpClientEmail", e.target.value);
               }}
-              label="Client Email"
+              label={t("Client Email")}
               value={gcpClientEmail}
             />
           </Grid>
@@ -117,7 +120,7 @@ const GCPKMSAdd = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("gcpClientID", e.target.value);
               }}
-              label="Client ID"
+              label={t("Client ID")}
               value={gcpClientID}
             />
           </Grid>
@@ -128,7 +131,7 @@ const GCPKMSAdd = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("gcpPrivateKeyID", e.target.value);
               }}
-              label="Private Key ID"
+              label={t("Private Key ID")}
               value={gcpPrivateKeyID}
             />
           </Grid>
@@ -139,7 +142,7 @@ const GCPKMSAdd = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("gcpPrivateKey", e.target.value);
               }}
-              label="Private Key"
+              label={t("Private Key")}
               value={gcpPrivateKey}
             />
           </Grid>

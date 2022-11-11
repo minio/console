@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import { t } from "i18next";
 import { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
 import {
@@ -269,7 +270,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
 
   return (
     <Fragment>
-      <PageHeader label="Health" />
+      <PageHeader label={t("Health")} />
       <PageLayout>
         {!registeredCluster && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>
@@ -296,7 +297,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                           variant="callAction"
                           onClick={() => download()}
                           disabled={downloadDisabled}
-                          label={"Download"}
+                          label={t("Download")}
                         />
                       )}
                     <Grid
@@ -325,9 +326,9 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
           <Fragment>
             <br />
             <HelpBox
-              title={
+              title={t(
                 "During the health diagnostics run, all production traffic will be suspended."
-              }
+              )}
               iconComponent={<WarnIcon />}
               help={<Fragment />}
             />

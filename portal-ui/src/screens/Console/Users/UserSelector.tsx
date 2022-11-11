@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setUserName } from "./AddUsersSlice";
@@ -36,7 +37,7 @@ const UserSelector = ({ classes }: IAddUserProps2) => {
         }}
         id="accesskey-input"
         name="accesskey-input"
-        label="User Name"
+        label={t("User Name")}
         value={userName}
         autoFocus={true}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

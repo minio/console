@@ -14,6 +14,7 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -335,7 +336,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
     }
   }, [isSmallScreen, currentPlan]);
 
-  const linkTracker = `?ref=${operatorMode ? "op" : "con"}`;
+  const linkTracker = `?ref=${operatorMode ? t("op") : t("con")}`;
 
   const featureList = FEATURE_ITEMS;
   return (
@@ -529,8 +530,10 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
                         rel="noreferrer noopener"
                         className={"link-text"}
                       >
-                        View License agreement <br />
-                        for the registered plan.
+                        {t("View License agreement")}
+
+                        <br />
+                        {t("for the registered plan.")}
                       </a>
                     </Box>
                   );
@@ -652,8 +655,9 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
               {getButton(
                 `https://min.io/signup${linkTracker}`,
                 !PAID_PLANS.includes(currentPlan)
-                  ? "Subscribe"
-                  : "Login to SUBNET",
+                  ? t("Subscribe")
+                  : t("Login to SUBNET"),
+
                 "callAction",
                 LICENSE_PLANS.STANDARD
               )}
@@ -704,8 +708,9 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
               {getButton(
                 `https://min.io/signup${linkTracker}`,
                 !PAID_PLANS.includes(currentPlan)
-                  ? "Subscribe"
-                  : "Login to SUBNET",
+                  ? t("Subscribe")
+                  : t("Login to SUBNET"),
+
                 "callAction",
                 LICENSE_PLANS.ENTERPRISE
               )}

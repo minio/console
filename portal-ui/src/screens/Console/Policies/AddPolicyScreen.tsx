@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
@@ -83,11 +84,11 @@ const AddPolicyScreen = () => {
     <Fragment>
       <Grid item xs={12}>
         <PageHeader
-          label={<BackLink to={IAM_PAGES.POLICIES} label={"Policies"} />}
+          label={<BackLink to={IAM_PAGES.POLICIES} label={t("Policies")} />}
         />
         <PageLayout>
           <FormLayout
-            title={"Create Policy"}
+            title={t("Create Policy")}
             icon={<AddAccessRuleIcon />}
             helpbox={<AddPolicyHelpBox />}
           >
@@ -103,7 +104,7 @@ const AddPolicyScreen = () => {
                   <InputBoxWrapper
                     id="policy-name"
                     name="policy-name"
-                    label="Policy Name"
+                    label={t("Policy Name")}
                     autoFocus={true}
                     value={policyName}
                     error={validatePolicyname(policyName)}
@@ -114,7 +115,7 @@ const AddPolicyScreen = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <CodeMirrorWrapper
-                    label={"Write Policy"}
+                    label={t("Write Policy")}
                     value={policyDefinition}
                     onBeforeChange={(editor, data, value) => {
                       setPolicyDefinition(value);
@@ -137,7 +138,7 @@ const AddPolicyScreen = () => {
                       type="button"
                       variant="regular"
                       onClick={resetForm}
-                      label={"Clear"}
+                      label={t("Clear")}
                     />
 
                     <Button
@@ -146,7 +147,7 @@ const AddPolicyScreen = () => {
                       variant="callAction"
                       color="primary"
                       disabled={addLoading || !validSave}
-                      label={"Save"}
+                      label={t("Save")}
                     />
                   </Box>
                 </Grid>

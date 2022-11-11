@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
@@ -71,10 +72,11 @@ const IdentityProvider = () => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Identity Provider</h3>
+        <h3 className={classes.h3Section}>{t("Identity Provider")}</h3>
         <span className={classes.descriptionText}>
-          Access to the tenant can be controlled via an external Identity
-          Manager.
+          {t(
+            "Access to the tenant can be controlled via an external Identity Manager."
+          )}
         </span>
       </div>
       <Grid item xs={12} padding="10px">
@@ -82,7 +84,7 @@ const IdentityProvider = () => {
           currentSelection={idpSelection}
           id="idp-options"
           name="idp-options"
-          label="Protocol"
+          label={t("Protocol")}
           onChange={(e) => {
             dispatch(setIDP(e.target.value));
           }}

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
@@ -204,11 +205,12 @@ const ListUsers = ({ classes }: IUsersProps) => {
           }}
         />
       )}
-      <PageHeader label={"Users"} />
+
+      <PageHeader label={t("Users")} />
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <SearchBox
-            placeholder={"Search Users"}
+            placeholder={t("Search Users")}
             onChange={setFilter}
             overrideClass={classes.searchField}
             value={filter}
@@ -223,11 +225,11 @@ const ListUsers = ({ classes }: IUsersProps) => {
               tooltip={
                 hasPermission("console", [IAM_SCOPES.ADMIN_DELETE_USER])
                   ? checkedUsers.length === 0
-                    ? "Select Users to delete"
-                    : "Delete Selected"
+                    ? t("Select Users to delete")
+                    : t("Delete Selected")
                   : permissionTooltipHelper(
                       [IAM_SCOPES.ADMIN_DELETE_USER],
-                      "delete users"
+                      t("delete users")
                     )
               }
             >
@@ -236,7 +238,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
                 onClick={() => {
                   setDeleteOpen(true);
                 }}
-                label={"Delete Selected"}
+                label={t("Delete Selected")}
                 icon={<DeleteIcon />}
                 disabled={checkedUsers.length === 0}
                 variant={"secondary"}
@@ -253,17 +255,17 @@ const ListUsers = ({ classes }: IUsersProps) => {
               tooltip={
                 hasPermission("console", [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP])
                   ? checkedUsers.length === 0
-                    ? "Select Users to group"
-                    : "Add to Group"
+                    ? t("Select Users to group")
+                    : t("Add to Group")
                   : permissionTooltipHelper(
                       [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP],
-                      "add users to groups"
+                      t("add users to groups")
                     )
               }
             >
               <Button
                 id={"add-to-group"}
-                label={"Add to Group"}
+                label={t("Add to Group")}
                 icon={<GroupsIcon />}
                 disabled={checkedUsers.length <= 0}
                 onClick={() => {
@@ -297,7 +299,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
                   ],
                   true
                 )
-                  ? "Create User"
+                  ? t("Create User")
                   : permissionTooltipHelper(
                       [
                         IAM_SCOPES.ADMIN_CREATE_USER,
@@ -305,13 +307,13 @@ const ListUsers = ({ classes }: IUsersProps) => {
                         IAM_SCOPES.ADMIN_LIST_GROUPS,
                         IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
                       ],
-                      "create users"
+                      t("create users")
                     )
               }
             >
               <Button
                 id={"create-user"}
-                label={"Create User"}
+                label={t("Create User")}
                 icon={<AddIcon />}
                 onClick={() => {
                   navigate(`${IAM_PAGES.USER_ADD}`);
@@ -345,7 +347,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
                       ? ""
                       : permissionTooltipHelper(
                           [IAM_SCOPES.ADMIN_GET_USER],
-                          "view user details"
+                          t("view user details")
                         )
                   }
                 >
@@ -363,7 +365,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
                       <TableWrapper
                         itemActions={tableActions}
                         columns={[
-                          { label: "Access Key", elementKey: "accessKey" },
+                          { label: t("Access Key"), elementKey: "accessKey" },
                         ]}
                         onSelect={
                           addUserToGroup || deleteUser
@@ -380,43 +382,40 @@ const ListUsers = ({ classes }: IUsersProps) => {
                   </Grid>
                 </TooltipWrapper>
                 <HelpBox
-                  title={"Users"}
+                  title={t("Users")}
                   iconComponent={<UsersIcon />}
                   help={
                     <Fragment>
-                      A MinIO user consists of a unique access key (username)
-                      and corresponding secret key (password). Clients must
-                      authenticate their identity by specifying both a valid
-                      access key (username) and the corresponding secret key
-                      (password) of an existing MinIO user.
+                      {t(
+                        "A MinIO user consists of a unique access key (username) and corresponding secret key (password). Clients must authenticate their identity by specifying both a valid access key (username) and the corresponding secret key (password) of an existing MinIO user."
+                      )}
                       <br />
-                      Groups provide a simplified method for managing shared
-                      permissions among users with common access patterns and
-                      workloads.
+                      {t(
+                        "Groups provide a simplified method for managing shared permissions among users with common access patterns and workloads."
+                      )}
                       <br />
                       <br />
-                      Users inherit access permissions to data and resources
-                      through the groups they belong to.
+                      {t(
+                        "Users inherit access permissions to data and resources through the groups they belong to."
+                      )}
                       <br />
-                      MinIO uses Policy-Based Access Control (PBAC) to define
-                      the authorized actions and resources to which an
-                      authenticated user has access. Each policy describes one
-                      or more actions and conditions that outline the
-                      permissions of a user or group of users.
-                      <br />
-                      <br />
-                      Each user can access only those resources and operations
-                      which are explicitly granted by the built-in role. MinIO
-                      denies access to any other resource or action by default.
+                      {t(
+                        "MinIO uses Policy-Based Access Control (PBAC) to define the authorized actions and resources to which an authenticated user has access. Each policy describes one or more actions and conditions that outline the permissions of a user or group of users."
+                      )}
                       <br />
                       <br />
-                      You can learn more at our{" "}
+                      {t(
+                        "Each user can access only those resources and operations which are explicitly granted by the built-in role. MinIO denies access to any other resource or action by default."
+                      )}
+                      <br />
+                      <br />
+                      {t("You can learn more at our")}{" "}
                       <a
                         href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/minio-user-management.html?ref=con"
                         target="_blank"
                         rel="noreferrer"
                       >
-                        documentation
+                        {t("documentation")}
                       </a>
                       .
                     </Fragment>
@@ -433,35 +432,36 @@ const ListUsers = ({ classes }: IUsersProps) => {
               >
                 <Grid item xs={8}>
                   <HelpBox
-                    title={"Users"}
+                    title={t("Users")}
                     iconComponent={<UsersIcon />}
                     help={
                       <Fragment>
-                        A MinIO user consists of a unique access key (username)
-                        and corresponding secret key (password). Clients must
-                        authenticate their identity by specifying both a valid
-                        access key (username) and the corresponding secret key
-                        (password) of an existing MinIO user.
+                        {t(
+                          "A MinIO user consists of a unique access key (username) and corresponding secret key (password). Clients must authenticate their identity by specifying both a valid access key (username) and the corresponding secret key (password) of an existing MinIO user."
+                        )}
+
                         <br />
-                        Groups provide a simplified method for managing shared
-                        permissions among users with common access patterns and
-                        workloads.
-                        <br />
-                        <br />
-                        Users inherit access permissions to data and resources
-                        through the groups they belong to.
-                        <br />
-                        MinIO uses Policy-Based Access Control (PBAC) to define
-                        the authorized actions and resources to which an
-                        authenticated user has access. Each policy describes one
-                        or more actions and conditions that outline the
-                        permissions of a user or group of users.
+                        {t(
+                          "Groups provide a simplified method for managing shared permissions among users with common access patterns and workloads."
+                        )}
+
                         <br />
                         <br />
-                        Each user can access only those resources and operations
-                        which are explicitly granted by the built-in role. MinIO
-                        denies access to any other resource or action by
-                        default.
+                        {t(
+                          "Users inherit access permissions to data and resources through the groups they belong to."
+                        )}
+
+                        <br />
+                        {t(
+                          "MinIO uses Policy-Based Access Control (PBAC) to define the authorized actions and resources to which an authenticated user has access. Each policy describes one or more actions and conditions that outline the permissions of a user or group of users."
+                        )}
+
+                        <br />
+                        <br />
+                        {t(
+                          "Each user can access only those resources and operations which are explicitly granted by the built-in role. MinIO denies access to any other resource or action by default."
+                        )}
+
                         <SecureComponent
                           scopes={[
                             IAM_SCOPES.ADMIN_CREATE_USER,
@@ -473,13 +473,13 @@ const ListUsers = ({ classes }: IUsersProps) => {
                         >
                           <br />
                           <br />
-                          To get started,{" "}
+                          {t("To get started,")}{" "}
                           <AButton
                             onClick={() => {
                               navigate(`${IAM_PAGES.USER_ADD}`);
                             }}
                           >
-                            Create a User
+                            {t("Create a User")}
                           </AButton>
                           .
                         </SecureComponent>

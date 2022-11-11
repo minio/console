@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 
 import { useNavigate } from "react-router-dom";
@@ -64,8 +65,8 @@ const DeleteUserModal = ({
 
   return (
     <ConfirmDialog
-      title={`Delete User`}
-      confirmText={"Delete"}
+      title={`${t("Delete User")}`}
+      confirmText={t("Delete")}
       isOpen={deleteOpen}
       isLoading={deleteLoading}
       onConfirm={onConfirmDelete}
@@ -73,7 +74,8 @@ const DeleteUserModal = ({
       titleIcon={<ConfirmDeleteIcon />}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete user <br />
+          {t("Are you sure you want to delete user")}
+          <br />
           <b>{userName}</b>?
         </DialogContentText>
       }

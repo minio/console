@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -194,7 +195,7 @@ const AccessRule = () => {
         />
       )}
       <Grid item xs={12} className={classes.actionsTray}>
-        <PanelTitle>Access Rules</PanelTitle>
+        <PanelTitle>{t("Access Rules")}</PanelTitle>
         <SecureComponent
           scopes={[
             IAM_SCOPES.S3_GET_BUCKET_POLICY,
@@ -204,13 +205,13 @@ const AccessRule = () => {
           matchAll
           errorProps={{ disabled: true }}
         >
-          <TooltipWrapper tooltip={"Add Access Rule"}>
+          <TooltipWrapper tooltip={t("Add Access Rule")}>
             <Button
               id={"add-bucket-access-rule"}
               onClick={() => {
                 setAddAccessRuleOpen(true);
               }}
-              label={"Add Access Rule"}
+              label={t("Add Access Rule")}
               icon={<AddIcon />}
               variant={"callAction"}
             />
@@ -227,8 +228,8 @@ const AccessRule = () => {
             noBackground={true}
             itemActions={AccessRuleActions}
             columns={[
-              { label: "Prefix", elementKey: "prefix" },
-              { label: "Access", elementKey: "access" },
+              { label: t("Prefix"), elementKey: "prefix" },
+              { label: t("Access"), elementKey: "access" },
             ]}
             isLoading={loadingAccessRules}
             records={accessRules}

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useState } from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Grid } from "@mui/material";
@@ -60,9 +61,9 @@ const EditAccessRule = ({
   const [selectedAccess, setSelectedAccess] = useState<any>(initial);
 
   const accessOptions = [
-    { label: "readonly", value: "readonly" },
-    { label: "writeonly", value: "writeonly" },
-    { label: "readwrite", value: "readwrite" },
+    { label: t("readonly"), value: "readonly" },
+    { label: t("writeonly"), value: "writeonly" },
+    { label: t("readwrite"), value: "readwrite" },
   ];
 
   const resetForm = () => {
@@ -100,7 +101,7 @@ const EditAccessRule = ({
               onChange={(e) => {
                 setSelectedAccess(e.target.value);
               }}
-              label="Access"
+              label={t("Access")}
               value={selectedAccess}
               options={accessOptions}
               disabled={false}
@@ -112,14 +113,14 @@ const EditAccessRule = ({
               type="button"
               variant="regular"
               onClick={resetForm}
-              label={"Clear"}
+              label={t("Clear")}
             />
             <Button
               id={"save"}
               type="submit"
               variant="callAction"
               onClick={createProcess}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
         </Grid>

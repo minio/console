@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //import {  ISecurityContext} from "../types";
+import { t } from "i18next";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -222,8 +223,8 @@ const TenantAuditLogging = ({
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`image`}
-              label={"Image"}
-              placeholder={"minio/operator:v4.4.22"}
+              label={t("Image")}
+              placeholder={t("minio/operator:v4.4.22")}
               name={`image`}
               value={image}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -241,8 +242,8 @@ const TenantAuditLogging = ({
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`diskCapacityGB`}
-              label={"Disk Capacity"}
-              placeholder={"Disk Capacity"}
+              label={t("Disk Capacity")}
+              placeholder={t("Disk Capacity")}
               name={`diskCapacityGB`}
               value={!isNaN(diskCapacityGB) ? diskCapacityGB.toString() : "0"}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -259,7 +260,7 @@ const TenantAuditLogging = ({
                   id={"size-unit"}
                   onUnitChange={() => {}}
                   unitSelected={"Gi"}
-                  unitsList={[{ label: "Gi", value: "Gi" }]}
+                  unitsList={[{ label: t("Gi"), value: "Gi" }]}
                   disabled={true}
                 />
               }
@@ -268,8 +269,8 @@ const TenantAuditLogging = ({
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`cpuRequest`}
-              label={"CPU Request"}
-              placeholder={"CPU Request"}
+              label={t("CPU Request")}
+              placeholder={t("CPU Request")}
               name={`cpuRequest`}
               value={cpuRequest}
               pattern={numericPattern}
@@ -287,8 +288,8 @@ const TenantAuditLogging = ({
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`memRequest`}
-              label={"Memory Request"}
-              placeholder={"Memory request"}
+              label={t("Memory Request")}
+              placeholder={t("Memory request")}
               name={`memRequest`}
               value={memRequest}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -305,7 +306,7 @@ const TenantAuditLogging = ({
                   id={"size-unit"}
                   onUnitChange={() => {}}
                   unitSelected={"Gi"}
-                  unitsList={[{ label: "Gi", value: "Gi" }]}
+                  unitsList={[{ label: t("Gi"), value: "Gi" }]}
                   disabled={true}
                 />
               }
@@ -315,8 +316,8 @@ const TenantAuditLogging = ({
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`serviceAccountName`}
-              label={"Service Account"}
-              placeholder={"Service Account Name"}
+              label={t("Service Account")}
+              placeholder={t("Service Account Name")}
               name={`serviceAccountName`}
               value={serviceAccountName}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -351,7 +352,7 @@ const TenantAuditLogging = ({
           </Grid>
 
           <Grid item xs={12} className={classes.formFieldRow}>
-            <span className={classes.inputLabel}>Labels</span>
+            <span className={classes.inputLabel}>{t("Labels")}</span>
             <KeyPairEdit
               newValues={logLabels}
               setNewValues={setLabels}
@@ -362,7 +363,7 @@ const TenantAuditLogging = ({
           </Grid>
 
           <Grid item xs={12} className={classes.formFieldRow}>
-            <span className={classes.inputLabel}>Annotations</span>
+            <span className={classes.inputLabel}>{t("Annotations")}</span>
             <KeyPairEdit
               newValues={logAnnotations}
               setNewValues={setAnnotations}
@@ -373,7 +374,7 @@ const TenantAuditLogging = ({
           </Grid>
 
           <Grid item xs={12} className={classes.formFieldRow}>
-            <span className={classes.inputLabel}>Node Selector</span>
+            <span className={classes.inputLabel}>{t("Node Selector")}</span>
             <KeyPairEdit
               newValues={logNodeSelector}
               setNewValues={setNodeSelector}
@@ -394,7 +395,7 @@ const TenantAuditLogging = ({
               variant="callAction"
               disabled={loading || !checkValid()}
               onClick={() => submitLoggingInfo()}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
         </Fragment>

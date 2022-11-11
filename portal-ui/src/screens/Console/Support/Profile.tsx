@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import React, { Fragment, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
@@ -148,7 +149,7 @@ const Profile = ({ classes }: IProfileProps) => {
 
   return (
     <Fragment>
-      <PageHeader label="Profile" />
+      <PageHeader label={t("Profile")} />
       <PageLayout>
         {!registeredCluster && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>
@@ -160,7 +161,9 @@ const Profile = ({ classes }: IProfileProps) => {
                 profilingStarted && classes.checkboxDisabled
               }`}
             >
-              <div className={classes.checkboxLabel}>Types to profile:</div>
+              <div className={classes.checkboxLabel}>
+                {t("Types to profile:")}
+              </div>
               {typesList.map((t) => (
                 <CheckboxWrapper
                   checked={types.indexOf(t.value) > -1}
@@ -188,7 +191,7 @@ const Profile = ({ classes }: IProfileProps) => {
                 }
                 startProfiling();
               }}
-              label={"Start Profiling"}
+              label={t("Start Profiling")}
             />
             <Button
               id={"stop-profiling"}
@@ -199,7 +202,7 @@ const Profile = ({ classes }: IProfileProps) => {
               onClick={() => {
                 stopProfiling();
               }}
-              label={"Stop Profiling"}
+              label={t("Stop Profiling")}
             />
           </Grid>
         </Grid>

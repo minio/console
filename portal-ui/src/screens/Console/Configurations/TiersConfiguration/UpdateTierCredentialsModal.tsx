@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { Button } from "mds";
@@ -150,8 +151,8 @@ const UpdateTierCredentialsModal = ({
                   <InputBoxWrapper
                     id="accessKey"
                     name="accessKey"
-                    label="Access Key"
-                    placeholder="Enter Access Key"
+                    label={t("Access Key")}
+                    placeholder={t("Enter Access Key")}
                     value={accessKey}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setAccessKey(e.target.value);
@@ -162,8 +163,8 @@ const UpdateTierCredentialsModal = ({
                   <InputBoxWrapper
                     id="secretKey"
                     name="secretKey"
-                    label="Secret Key"
-                    placeholder="Enter Secret Key"
+                    label={t("Secret Key")}
+                    placeholder={t("Enter Secret Key")}
                     value={secretKey}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setSecretKey(e.target.value);
@@ -177,7 +178,7 @@ const UpdateTierCredentialsModal = ({
                 <FileSelector
                   accept=".json"
                   id="creds"
-                  label="Credentials"
+                  label={t("Credentials")}
                   name="creds"
                   onChange={(encodedValue, fileName) => {
                     setEncodedCreds(encodedValue);
@@ -193,8 +194,8 @@ const UpdateTierCredentialsModal = ({
                   <InputBoxWrapper
                     id="accountName"
                     name="accountName"
-                    label="Account Name"
-                    placeholder="Enter Account Name"
+                    label={t("Account Name")}
+                    placeholder={t("Enter Account Name")}
                     value={accountName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setAccountName(e.target.value);
@@ -205,8 +206,8 @@ const UpdateTierCredentialsModal = ({
                   <InputBoxWrapper
                     id="accountKey"
                     name="accountKey"
-                    label="Account Key"
-                    placeholder="Enter Account Key"
+                    label={t("Account Key")}
+                    placeholder={t("Enter Account Key")}
                     value={accountKey}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setAccountKey(e.target.value);
@@ -222,7 +223,7 @@ const UpdateTierCredentialsModal = ({
               type="submit"
               variant="callAction"
               disabled={savingTiers || !isFormValid}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
           {savingTiers && (

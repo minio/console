@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import { Grid } from "@mui/material";
 import LDAPIcon from "../../../icons/LDAPIcon";
 import { OIDCIcon } from "../../../icons";
@@ -25,7 +26,7 @@ export const OIDCLogoElement = () => {
       <Grid>
         <OIDCIcon width={"16px"} height={"16px"} />
       </Grid>
-      <Grid item>Open ID</Grid>
+      <Grid item>{t("Open ID")}</Grid>
     </Grid>
   );
 };
@@ -36,7 +37,7 @@ export const LDAPLogoElement = () => {
       <Grid>
         <LDAPIcon width={"16px"} height={"16px"} />
       </Grid>
-      <Grid item>LDAP / Active Directory</Grid>
+      <Grid item>{t("LDAP / Active Directory")}</Grid>
     </Grid>
   );
 };
@@ -47,7 +48,7 @@ export const BuiltInLogoElement = () => {
       <Grid>
         <UsersIcon width={"16px"} height={"16px"} />
       </Grid>
-      <Grid item>Built-in</Grid>
+      <Grid item>{t("Built-in")}</Grid>
     </Grid>
   );
 };

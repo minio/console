@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
@@ -311,25 +312,29 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           isOpen={toggleConfirmOpen}
           title={
             !prometheusEnabled
-              ? "Enable Prometheus monitoring for this tenant?"
-              : "Disable Prometheus monitoring for this tenant?"
+              ? t("Enable Prometheus monitoring for this tenant?")
+              : t("Disable Prometheus monitoring for this tenant?")
           }
-          confirmText={!prometheusEnabled ? "Enable" : "Disable"}
-          cancelText="Cancel"
+          confirmText={!prometheusEnabled ? t("Enable") : t("Disable")}
+          cancelText={t("Cancel")}
           onClose={() => setToggleConfirmOpen(false)}
           onConfirm={togglePrometheus}
           confirmationContent={
             <DialogContentText>
               {!prometheusEnabled
-                ? "A small Prometheus server will be started per the configuration provided, which will collect the Prometheus metrics for your tenant."
-                : " Current configuration will be lost, and defaults reset if reenabled."}
+                ? t(
+                    "A small Prometheus server will be started per the configuration provided, which will collect the Prometheus metrics for your tenant."
+                  )
+                : t(
+                    "Current configuration will be lost, and defaults reset if reenabled."
+                  )}
             </DialogContentText>
           }
         />
       )}
       <Grid container spacing={1}>
         <Grid item xs>
-          <h1 className={classes.sectionTitle}>Prometheus Monitoring </h1>
+          <h1 className={classes.sectionTitle}>{t("Prometheus Monitoring")}</h1>
         </Grid>
         <Grid item xs={7} justifyContent={"end"} textAlign={"right"}>
           <FormSwitchWrapper
@@ -355,8 +360,8 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`prometheus_image`}
-              label={"Image"}
-              placeholder={"quay.io/prometheus/prometheus:latest"}
+              label={t("Image")}
+              placeholder={t("quay.io/prometheus/prometheus:latest")}
               name={`image`}
               value={image}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -373,8 +378,8 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`sidecarImage`}
-              label={"Sidecar Image"}
-              placeholder={"library/alpine:latest"}
+              label={t("Sidecar Image")}
+              placeholder={t("library/alpine:latest")}
               name={`sidecarImage`}
               value={sidecarImage}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -391,8 +396,8 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`initImage`}
-              label={"Init Image"}
-              placeholder={"library/busybox:1.33.1"}
+              label={t("Init Image")}
+              placeholder={t("library/busybox:1.33.1")}
               name={`initImage`}
               value={initImage}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -409,8 +414,8 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`diskCapacityGB`}
-              label={"Disk Capacity"}
-              placeholder={"Disk Capacity"}
+              label={t("Disk Capacity")}
+              placeholder={t("Disk Capacity")}
               name={`diskCapacityGB`}
               value={diskCapacityGB}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -427,7 +432,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                   id={"size-unit"}
                   onUnitChange={() => {}}
                   unitSelected={"Gi"}
-                  unitsList={[{ label: "Gi", value: "Gi" }]}
+                  unitsList={[{ label: t("Gi"), value: "Gi" }]}
                   disabled={true}
                 />
               }
@@ -436,8 +441,8 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`cpuRequest`}
-              label={"CPU Request"}
-              placeholder={"CPU Request"}
+              label={t("CPU Request")}
+              placeholder={t("CPU Request")}
               name={`cpuRequest`}
               value={cpuRequest}
               pattern={numericPattern}
@@ -454,8 +459,8 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`memRequest`}
-              label={"Memory Request"}
-              placeholder={"Memory request"}
+              label={t("Memory Request")}
+              placeholder={t("Memory request")}
               name={`memRequest`}
               value={memRequest}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -472,7 +477,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
                   id={"size-unit"}
                   onUnitChange={() => {}}
                   unitSelected={"Gi"}
-                  unitsList={[{ label: "Gi", value: "Gi" }]}
+                  unitsList={[{ label: t("Gi"), value: "Gi" }]}
                   disabled={true}
                 />
               }
@@ -481,8 +486,8 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`serviceAccountName`}
-              label={"Service Account"}
-              placeholder={"Service Account Name"}
+              label={t("Service Account")}
+              placeholder={t("Service Account Name")}
               name={`serviceAccountName`}
               value={serviceAccountName}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -499,8 +504,8 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           <Grid item xs={12} paddingBottom={2}>
             <InputBoxWrapper
               id={`storageClassName`}
-              label={"Storage Class"}
-              placeholder={"Storage Class Name"}
+              label={t("Storage Class")}
+              placeholder={t("Storage Class Name")}
               name={`storageClassName`}
               value={storageClassName}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -516,7 +521,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           </Grid>
           {labels !== null && (
             <Grid item xs={12} className={classes.formFieldRow}>
-              <span className={classes.inputLabel}>Labels</span>
+              <span className={classes.inputLabel}>{t("Labels")}</span>
               <KeyPairEdit
                 newValues={labels}
                 setNewValues={setLabels}
@@ -529,7 +534,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
 
           {annotations !== null && (
             <Grid item xs={12} className={classes.formFieldRow}>
-              <span className={classes.inputLabel}>Annotations</span>
+              <span className={classes.inputLabel}>{t("Annotations")}</span>
               <KeyPairEdit
                 newValues={annotations}
                 setNewValues={setAnnotations}
@@ -541,7 +546,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           )}
           {nodeSelector !== null && (
             <Grid item xs={12} className={classes.formFieldRow}>
-              <span className={classes.inputLabel}>Node Selector</span>
+              <span className={classes.inputLabel}>{t("Node Selector")}</span>
               <KeyPairEdit
                 newValues={nodeSelector}
                 setNewValues={setNodeSelector}
@@ -581,7 +586,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
               variant="callAction"
               disabled={!checkValid()}
               onClick={() => submitMonitoringInfo()}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
         </Fragment>

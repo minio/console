@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
@@ -48,8 +49,8 @@ const KeyPairView = ({ classes, records, recordName }: IKeyPairView) => {
     <Fragment>
       <TableWrapper
         columns={[
-          { label: "Key", elementKey: "key" },
-          { label: "Value", elementKey: "value" },
+          { label: t("Key"), elementKey: "key" },
+          { label: t("Value"), elementKey: "value" },
         ]}
         isLoading={false}
         records={records}

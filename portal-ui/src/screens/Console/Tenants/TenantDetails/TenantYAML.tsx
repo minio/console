@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -140,7 +141,7 @@ const TenantYAML = ({ classes }: ITenantYAMLProps) => {
         >
           <Grid container>
             <Grid item xs={12}>
-              <SectionTitle>Tenant Specification</SectionTitle>
+              <SectionTitle>{t("Tenant Specification")}</SectionTitle>
             </Grid>
             <Grid item xs={12}>
               <CodeMirrorWrapper
@@ -171,7 +172,7 @@ const TenantYAML = ({ classes }: ITenantYAMLProps) => {
                     `/namespaces/${namespace}/tenants/${tenant}/summary`
                   );
                 }}
-                label={"Cancel"}
+                label={t("Cancel")}
               />
               <Button
                 id={"save-tenant-yaml"}
@@ -179,7 +180,7 @@ const TenantYAML = ({ classes }: ITenantYAMLProps) => {
                 variant="callAction"
                 disabled={addLoading || !validSave}
                 style={{ marginLeft: 8 }}
-                label={"Save"}
+                label={t("Save")}
               />
             </Grid>
           </Grid>

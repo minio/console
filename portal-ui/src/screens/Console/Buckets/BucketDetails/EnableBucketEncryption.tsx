@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { LinearProgress, SelectChangeEvent } from "@mui/material";
@@ -113,7 +114,7 @@ const EnableBucketEncryption = ({
       onClose={() => {
         closeModalAndRefresh();
       }}
-      title="Enable Bucket Encryption"
+      title={t("Enable Bucket Encryption")}
       titleIcon={<BucketEncryptionIcon />}
     >
       <form
@@ -132,19 +133,19 @@ const EnableBucketEncryption = ({
                 }}
                 id="select-encryption-type"
                 name="select-encryption-type"
-                label={"Encryption Type"}
+                label={t("Encryption Type")}
                 value={encryptionType}
                 options={[
                   {
-                    label: "Disabled",
+                    label: t("Disabled"),
                     value: "disabled",
                   },
                   {
-                    label: "SSE-S3",
+                    label: t("SSE-S3"),
                     value: "sse-s3",
                   },
                   {
-                    label: "SSE-KMS",
+                    label: t("SSE-KMS"),
                     value: "sse-kms",
                   },
                 ]}
@@ -156,7 +157,7 @@ const EnableBucketEncryption = ({
                 <InputBoxWrapper
                   id="kms-key-id"
                   name="kms-key-id"
-                  label="KMS Key ID"
+                  label={t("KMS Key ID")}
                   value={kmsKeyID}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setKmsKeyID(e.target.value);
@@ -174,14 +175,14 @@ const EnableBucketEncryption = ({
                 closeModalAndRefresh();
               }}
               disabled={loading}
-              label={"Cancel"}
+              label={t("Cancel")}
             />
             <Button
               id={"save"}
               type="submit"
               variant="callAction"
               disabled={loading}
-              label={"Save"}
+              label={t("Save")}
             />
           </Grid>
           {loading && (

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import { Menu, MenuItem } from "@mui/material";
@@ -84,10 +85,10 @@ const UploadFilesButton = ({
       <TooltipWrapper
         tooltip={
           uploadEnabled
-            ? "Upload Files"
+            ? t("Upload Files")
             : permissionTooltipHelper(
                 [IAM_SCOPES.S3_PUT_OBJECT],
-                "upload files to this bucket"
+                t("upload files to this bucket")
               )
         }
       >
@@ -97,7 +98,7 @@ const UploadFilesButton = ({
           aria-haspopup="true"
           aria-expanded={openUploadMenu ? "true" : undefined}
           onClick={handleClick}
-          label={"Upload"}
+          label={t("Upload")}
           icon={<UploadIcon />}
           variant={"callAction"}
           disabled={forceDisable || !uploadEnabled}
@@ -129,7 +130,7 @@ const UploadFilesButton = ({
           <ListItemIcon className={classes.listUploadIcons}>
             <UploadIcon />
           </ListItemIcon>
-          <ListItemText>Upload File</ListItemText>
+          <ListItemText>{t("Upload File")}</ListItemText>
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -140,7 +141,7 @@ const UploadFilesButton = ({
           <ListItemIcon className={classes.listUploadIcons}>
             <UploadFolderIcon />
           </ListItemIcon>
-          <ListItemText>Upload Folder</ListItemText>
+          <ListItemText>{t("Upload Folder")}</ListItemText>
         </MenuItem>
       </Menu>
     </Fragment>

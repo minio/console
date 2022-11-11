@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { t } from "i18next";
 import React from "react";
 import * as reactMoment from "react-moment";
 import { BucketObjectItem } from "./types";
@@ -37,7 +38,7 @@ export const displayNiceBytes = (object: BucketObjectItem) => {
 };
 
 export const displayDeleteFlag = (state: boolean) => {
-  return state ? "Yes" : "No";
+  return state ? t("Yes") : t("No");
 };
 
 // Table Props
