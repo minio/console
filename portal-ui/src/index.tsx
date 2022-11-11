@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
+import i18next from "i18next";
 import * as serviceWorker from "./serviceWorker";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
@@ -26,15 +27,30 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <StyleHandler>
-        <MainRouter />
-      </StyleHandler>
-    </Provider>
-  </React.StrictMode>
-);
+i18next
+  .init({
+    lng: "en",
+    debug: false,
+    nsSeparator: false,
+    keySeparator: false,
+    fallbackLng: false,
+    resources: {
+      en: {
+        translation: {},
+      },
+    },
+  })
+  .then(() => {
+    root.render(
+      <React.StrictMode>
+        <Provider store={store}>
+          <StyleHandler>
+            <MainRouter />
+          </StyleHandler>
+        </Provider>
+      </React.StrictMode>
+    );
+  });
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

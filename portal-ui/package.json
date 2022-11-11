@@ -27,6 +27,8 @@
     "@types/websocket": "^1.0.0",
     "@uiw/react-textarea-code-editor": "^2.0.2",
     "chart.js": "^2.9.3",
+    "cross-env": "^7.0.3",
+    "i18next": "^22.0.4",
     "kbar": "^0.1.0-beta.34",
     "local-storage-fallback": "^4.1.1",
     "lodash": "^4.17.21",
@@ -52,7 +54,7 @@
     "websocket": "^1.0.31"
   },
   "scripts": {
-    "start": "PORT=5005 react-scripts start",
+    "start": "cross-env PORT=5005 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
