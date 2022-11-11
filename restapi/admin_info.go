@@ -61,6 +61,7 @@ type UsageInfo struct {
 	DisksUsage       int64
 	Servers          []*models.ServerProperties
 	EndpointNotReady bool
+	Backend          *models.BackendProperties
 }
 
 // GetAdminInfo invokes admin info and returns a parsed `UsageInfo` structure
@@ -71,6 +72,25 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 	}
 	// we are trimming uint64 to int64 this will report an incorrect measurement for numbers greater than
 	// 9,223,372,036,854,775,807
+
+	var backendType string
+	var rrSCParity float64
+	var standardSCParity float64
+
+	if v, success := serverInfo.Backend.(map[string]interface{}); success {
+		bt, ok := v["backendType"]
+		if ok {
+			backendType = bt.(string)
+		}
+		rp, ok := v["rrSCParity"]
+		if ok {
+			rrSCParity = rp.(float64)
+		}
+		sp, ok := v["standardSCParity"]
+		if ok {
+			standardSCParity = sp.(float64)
+		}
+	}
 
 	var usedSpace int64
 	for _, serv := range serverInfo.Servers {
@@ -113,12 +133,19 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 		serverArray = append(serverArray, newServer)
 	}
 
+	backendData := &models.BackendProperties{
+		BackendType:      backendType,
+		RrSCParity:       int64(rrSCParity),
+		StandardSCParity: int64(standardSCParity),
+	}
+
 	return &UsageInfo{
 		Buckets:    int64(serverInfo.Buckets.Count),
 		Objects:    int64(serverInfo.Objects.Count),
 		Usage:      int64(serverInfo.Usage.Size),
 		DisksUsage: usedSpace,
 		Servers:    serverArray,
+		Backend:    backendData,
 	}, nil
 }
 
@@ -913,6 +940,7 @@ func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAd
 			sessionResp.Objects = usage.Objects
 			sessionResp.Usage = usage.Usage
 			sessionResp.Servers = usage.Servers
+			sessionResp.Backend = usage.Backend
 		}
 	}()
 

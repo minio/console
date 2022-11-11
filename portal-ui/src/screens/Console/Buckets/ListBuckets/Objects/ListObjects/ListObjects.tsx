@@ -359,8 +359,25 @@ const ListObjects = () => {
   const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
   const bucketName = params.bucketName || "";
 
+  const pageTitle = decodeURLString(internalPaths);
+  const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
+
+  let uploadPath = [bucketName];
+  if (currentPath.length > 0) {
+    uploadPath = uploadPath.concat(currentPath);
+  }
+
   const fileUpload = useRef<HTMLInputElement>(null);
   const folderUpload = useRef<HTMLInputElement>(null);
+
+  const canDownload = hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT]);
+  const canDelete = hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]);
+  const canUpload = hasPermission(
+    uploadPath,
+    [IAM_SCOPES.S3_PUT_OBJECT],
+    true,
+    true
+  );
 
   useEffect(() => {
     if (folderUpload.current !== null) {
@@ -1179,9 +1196,6 @@ const ListObjects = () => {
     dispatch(setLoadingObjectsList(true));
   };
 
-  const pageTitle = decodeURLString(internalPaths);
-  const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
-
   const plSelect = filteredRecords;
   const sortASC = plSelect.sort(sortListObjects(currentSortField));
 
@@ -1231,14 +1245,6 @@ const ListObjects = () => {
       });
     }
   };
-  let uploadPath = [bucketName];
-  if (currentPath.length > 0) {
-    uploadPath = uploadPath.concat(currentPath);
-  }
-
-  const canDownload = hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT]);
-  const canDelete = hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]);
-  const canUpload = hasPermission(uploadPath, [IAM_SCOPES.S3_PUT_OBJECT]);
 
   const onClosePanel = (forceRefresh: boolean) => {
     dispatch(setSelectedObjectView(null));
