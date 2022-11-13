@@ -21,15 +21,29 @@ interface ITooltipWrapperProps {
   tooltip: string;
   children: any;
   errorProps?: any;
+  placement?:
+    | "bottom-end"
+    | "bottom-start"
+    | "bottom"
+    | "left-end"
+    | "left-start"
+    | "left"
+    | "right-end"
+    | "right-start"
+    | "right"
+    | "top-end"
+    | "top-start"
+    | "top";
 }
 
 const TooltipWrapper = ({
   tooltip,
   children,
   errorProps = null,
+  placement,
 }: ITooltipWrapperProps) => {
   return (
-    <Tooltip title={tooltip}>
+    <Tooltip title={tooltip} placement={placement}>
       <span>
         {errorProps ? cloneElement(children, { ...errorProps }) : children}
       </span>
