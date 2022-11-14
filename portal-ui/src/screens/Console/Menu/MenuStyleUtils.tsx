@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export const menuItemContainerStyles: any = {
-  padding: "12px 0",
+  padding: "7px 0",
   "div:nth-of-type(2)": {
     flexGrow: 0,
     marginRight: "15px",
@@ -23,7 +23,7 @@ export const menuItemContainerStyles: any = {
 
   "&.active": {
     background:
-      "transparent linear-gradient(270deg, #00000000 0%, #051d39 53%, #54545400 100%) 0% 0% no-repeat padding-box",
+      "transparent linear-gradient(270deg, #00000000 0%, #005F81 53%, #54545400 100%) 0% 0% no-repeat padding-box",
     backgroundBlendMode: "multiply",
 
     "& span": {

@@ -21,16 +21,13 @@ import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { AppState, useAppDispatch } from "../../../../store";
-import OperatorLogo from "../../../../icons/OperatorLogo";
-import ConsoleLogo from "../../../../icons/ConsoleLogo";
-import DirectPVLogo from "../../../../icons/DirectPVLogo";
 
 import { CircleIcon, ObjectManagerIcon } from "../../../../icons";
 import { Box } from "@mui/material";
 import { toggleList } from "../../ObjectBrowser/objectBrowserSlice";
 import { selFeatures } from "../../consoleSlice";
 import { selDirectPVMode, selOpMode } from "../../../../systemSlice";
-import { Button } from "mds";
+import { ApplicationLogo, Button } from "mds";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -57,9 +54,8 @@ const styles = (theme: Theme) =>
     },
     logo: {
       marginLeft: 34,
-      fill: theme.palette.primary.main,
-      "& .min-icon": {
-        width: 120,
+      "& svg": {
+        width: 150,
       },
     },
     middleComponent: {
@@ -124,8 +120,19 @@ const PageHeader = ({
   const newItems = useSelector(
     (state: AppState) => state.objectBrowser.objectManager.newItems
   );
+  const licenseInfo = useSelector(
+    (state: AppState) => state?.system?.licenseInfo
+  );
 
   const [newObject, setNewObject] = useState<boolean>(false);
+
+  const { plan = "" } = licenseInfo || {};
+
+  let logoPlan = "AGPL";
+
+  if (plan === "STANDARD" || plan === "ENTERPRISE") {
+    logoPlan = plan.toLowerCase();
+  }
 
   useEffect(() => {
     if (managerObjects.length > 0 && !managerOpen) {
@@ -159,10 +166,24 @@ const PageHeader = ({
         {!sidebarOpen && (
           <div className={classes.logo}>
             {!operatorMode && !directPVMode ? (
-              <ConsoleLogo />
+              <ApplicationLogo
+                applicationName={"console"}
+                subVariant={
+                  logoPlan as
+                    | "AGPL"
+                    | "simple"
+                    | "standard"
+                    | "enterprise"
+                    | undefined
+                }
+              />
             ) : (
               <Fragment>
-                {directPVMode ? <DirectPVLogo /> : <OperatorLogo />}
+                {directPVMode ? (
+                  <ApplicationLogo applicationName={"directpv"} />
+                ) : (
+                  <ApplicationLogo applicationName={"operator"} />
+                )}
               </Fragment>
             )}
           </div>
