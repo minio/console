@@ -58,6 +58,8 @@ import {
   setRunAsNonRoot,
   resetAuditLogForm,
 } from "../TenantDetails/tenantAuditLogSlice";
+import HelpBox from "../../../../common/HelpBox";
+import { WarnIcon } from "../../../../icons";
 
 interface ILoggingScreenProps {
   classes: any;
@@ -73,6 +75,7 @@ const styles = (theme: Theme) =>
   });
 
 const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
+  const deprecated = true; // Use a flag to hide UI for the moment, all related code will be removed once deprecation actually happens
   const { tenantNamespace, tenantName } = useParams();
   const [curTab, setCurTab] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
@@ -243,7 +246,37 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
     }
   };
 
-  return (
+  return deprecated ? (
+    <Fragment>
+      <HelpBox
+        title={
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexGrow: 1,
+            }}
+          >
+            <span>
+              Current Audit logs functionality will be deprecated soon, please
+              refer to the
+              <a
+                href="https://min.io/docs/minio/kubernetes/upstream/operations/monitoring/minio-logging.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {" documentation "}
+              </a>
+              in order to setup an external service for logs
+            </span>
+          </div>
+        }
+        iconComponent={<WarnIcon />}
+        help={<Fragment />}
+      />
+    </Fragment>
+  ) : (
     <Fragment>
       <Grid item xs>
         {toggleConfirmOpen && (
