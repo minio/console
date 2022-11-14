@@ -115,12 +115,11 @@ const ConsoleMenuList = ({
               }
 
               return (
-                <Fragment>
+                <Fragment key={`${menuGroup.id}-${index.toString()}`}>
                   {grHeader}
                   <MenuItem
                     stateClsName={stateClsName}
                     page={menuGroup}
-                    key={`${menuGroup.id}-${index.toString()}`}
                     id={menuGroup.id}
                     selectedMenuItem={selectedMenuItem}
                     setSelectedMenuItem={setSelectedMenuItem}

@@ -117,6 +117,10 @@ const TableActionButton = ({
             }
           : () => null
       }
+      sx={{
+        width: "30px",
+        height: "30px",
+      }}
     >
       {icon}
     </IconButton>
