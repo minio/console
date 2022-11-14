@@ -180,16 +180,21 @@ const LinearGraphWidget = ({
   const onHover = () => {
     setHover(true);
   };
+
   const onStopHover = () => {
     setHover(false);
   };
+
   useEffect(() => {
-    var dateFormatData = data;
-    dateFormatData.forEach((element: any) => {
-      var date = new Date(element.name * 1000);
-      element.name = date;
+    const fmtData = data.map((el: any) => {
+      const date = new Date(el?.name * 1000);
+      return {
+        ...el,
+        name: date,
+      };
     });
-    setCsvData(dateFormatData);
+
+    setCsvData(fmtData);
   }, [data]);
 
   const linearConfiguration = result
