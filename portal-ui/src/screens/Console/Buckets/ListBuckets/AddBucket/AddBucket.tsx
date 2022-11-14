@@ -122,7 +122,7 @@ const AddBucket = ({ classes }: IsetProps) => {
 
   const validBucketCharacters = new RegExp(`^[a-z0-9.-]*$`);
   const ipAddressFormat = new RegExp(
-    "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
+    "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}$"
   );
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
   const isDirty = useSelector((state: AppState) => state.addBucket.isDirty);
