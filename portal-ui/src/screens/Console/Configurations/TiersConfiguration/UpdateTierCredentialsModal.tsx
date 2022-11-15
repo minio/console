@@ -152,21 +152,21 @@ const UpdateTierCredentialsModal = ({
                     name="accessKey"
                     label="Access Key"
                     placeholder="Enter Access Key"
-                    value={accessKey}
+                    value={accountName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setAccessKey(e.target.value);
+                      setAccountName(e.target.value);
                     }}
                   />
                 </div>
                 <div className={classes.formFieldRow}>
                   <InputBoxWrapper
-                    id="secretKey"
-                    name="secretKey"
+                    id="accountKey"
+                    name="accountKey"
                     label="Secret Key"
                     placeholder="Enter Secret Key"
-                    value={secretKey}
+                    value={accountKey}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setSecretKey(e.target.value);
+                      setAccountKey(e.target.value);
                     }}
                   />
                 </div>
