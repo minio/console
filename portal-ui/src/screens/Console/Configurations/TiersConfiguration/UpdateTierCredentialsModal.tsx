@@ -62,9 +62,6 @@ const UpdateTierCredentialsModal = ({
 }: ITierCredentialsModal) => {
   const dispatch = useAppDispatch();
   const [savingTiers, setSavingTiers] = useState<boolean>(false);
-  const [accessKey, setAccessKey] = useState<string>("");
-  const [secretKey, setSecretKey] = useState<string>("");
-
   const [creds, setCreds] = useState<string>("");
   const [encodedCreds, setEncodedCreds] = useState<string>("");
 
@@ -160,8 +157,8 @@ const UpdateTierCredentialsModal = ({
                 </div>
                 <div className={classes.formFieldRow}>
                   <InputBoxWrapper
-                    id="accountKey"
-                    name="accountKey"
+                    id="secretKey"
+                    name="secretKey"
                     label="Secret Key"
                     placeholder="Enter Secret Key"
                     value={accountKey}
