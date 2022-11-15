@@ -24,10 +24,13 @@ const MenuSectionHeader = ({ label }: IMenuSectionHeader) => {
   return (
     <div
       style={{
-        fontSize: 18,
-        color: "#fff",
+        fontSize: 15,
+        color: "#b3c9d9",
         marginTop: 20,
         marginBottom: 10,
+        borderBottom: "#0F446C 1px solid",
+        marginRight: 25,
+        paddingBottom: 5,
       }}
       className={"menuHeader"}
     >
