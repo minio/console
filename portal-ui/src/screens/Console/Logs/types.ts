@@ -42,4 +42,6 @@ export interface LogMessage {
   ConsoleMsg: string;
   key: number;
   errKind: string;
+  level?: string | number;
+  node?: string | number;
 }
