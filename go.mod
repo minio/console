@@ -23,8 +23,8 @@ require (
 	github.com/minio/directpv v1.4.4-0.20220805090942-948ca4731651
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.21.1
-	github.com/minio/madmin-go v1.7.1
-	github.com/minio/mc v0.0.0-20221101010057-15e52fd862f5
+	github.com/minio/madmin-go v1.7.5
+	github.com/minio/mc v0.0.0-20221115155611-9051548c802d
 	github.com/minio/minio-go/v7 v7.0.41
 	github.com/minio/operator v0.0.0-20220902184351-21e4073132b0
 	github.com/minio/pkg v1.5.4
@@ -96,6 +96,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+	github.com/jedib0t/go-pretty/v6 v6.3.8 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.1.2 // indirect
