@@ -1405,7 +1405,9 @@ const ListObjects = () => {
                 <Grid item xs={12} className={classes.bucketDetails}>
                   <span className={classes.detailsSpacer}>
                     Created:&nbsp;&nbsp;&nbsp;
-                    <strong>{bucketInfo?.creation_date || ""}</strong>
+                    <strong>
+                      {new Date(bucketInfo?.creation_date || "").toString()}
+                    </strong>
                   </span>
                   <span className={classes.detailsSpacer}>
                     Access:&nbsp;&nbsp;&nbsp;
