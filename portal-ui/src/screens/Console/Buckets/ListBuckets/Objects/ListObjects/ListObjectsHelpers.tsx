@@ -26,7 +26,11 @@ export const displayParsedDate = (object: BucketObjectItem) => {
   if (object.name.endsWith("/")) {
     return "";
   }
-  return <reactMoment.default>{object.last_modified}</reactMoment.default>;
+  return (
+    <reactMoment.default>
+      {new Date(object.last_modified).toString()}
+    </reactMoment.default>
+  );
 };
 
 export const displayNiceBytes = (object: BucketObjectItem) => {
