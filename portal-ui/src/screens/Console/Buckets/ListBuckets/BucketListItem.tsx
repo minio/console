@@ -208,8 +208,6 @@ const BucketListItem = ({
     onSelect(e);
   };
 
-  const localTime = new Date(bucket.creation_date).toString();
-
   return (
     <Grid container className={clsx(classes.root, "bucket-item")}>
       <Grid item xs={12}>
@@ -240,7 +238,7 @@ const BucketListItem = ({
                 <Grid container className={classes.bucketInfo}>
                   <Grid item xs={12} sm>
                     <Typography variant="body2">
-                      Created: {localTime}
+                      Created: {new Date(bucket.creation_date).toString()}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm>
