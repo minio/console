@@ -33,7 +33,6 @@ const ReportedUsageFullIcon = (props: SVGProps<SVGSVGElement>) => {
             width="37"
             height="37"
             transform="translate(0 0)"
-            fill="#07193e"
           />
         </clipPath>
       </defs>
@@ -62,7 +61,6 @@ const ReportedUsageFullIcon = (props: SVGProps<SVGSVGElement>) => {
               data-name="Trazado 7046"
               d="M18.5,0A18.5,18.5,0,1,0,37,18.5,18.5,18.5,0,0,0,18.5,0m0,18.5V4.756A13.757,13.757,0,0,1,32.238,18.5H18.5Z"
               transform="translate(0.074 0.074)"
-              fill="#07193e"
             />
           </g>
         </g>

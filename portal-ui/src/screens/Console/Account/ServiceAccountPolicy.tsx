@@ -112,7 +112,7 @@ const ServiceAccountPolicy = ({
 
   return (
     <ModalWrapper
-      title="Service Account Policy"
+      title="Access Key Policy"
       modalOpen={open}
       onClose={() => {
         closeModalAndRefresh();
@@ -129,7 +129,7 @@ const ServiceAccountPolicy = ({
         <Grid container>
           <Grid item xs={12} className={classes.codeMirrorContainer}>
             <CodeMirrorWrapper
-              label={`Service Account Policy`}
+              label={`Access Key Policy`}
               value={policyDefinition}
               onBeforeChange={(editor, data, value) => {
                 setPolicyDefinition(value);

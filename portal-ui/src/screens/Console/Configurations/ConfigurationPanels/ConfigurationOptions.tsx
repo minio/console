@@ -68,7 +68,7 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
 
   return (
     <Fragment>
-      <PageHeader label={"Configurations"} />
+      <PageHeader label={"Settings"} />
 
       <PageLayout>
         <Grid item xs={12}>
@@ -76,7 +76,10 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
             id="settings-container"
             className={classes.settingsOptionsContainer}
           >
-            <ScreenTitle icon={<SettingsIcon />} title={"Configuration:"} />
+            <ScreenTitle
+              icon={<SettingsIcon />}
+              title={"MinIO Configuration:"}
+            />
             <VerticalTabs
               selectedTab={selConfigTab}
               isRouteTabs

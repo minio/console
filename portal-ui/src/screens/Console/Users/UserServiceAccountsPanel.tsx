@@ -140,7 +140,7 @@ const UserServiceAccountsPanel = ({
   const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
     setDeleteMultipleOpen(false);
     if (refresh) {
-      dispatch(setSnackBarMessage(`Service accounts deleted successfully.`));
+      dispatch(setSnackBarMessage(`Access Keys deleted successfully.`));
       setSelectedSAs([]);
       setLoading(true);
     }
@@ -213,7 +213,7 @@ const UserServiceAccountsPanel = ({
           closeModal={() => {
             closeCredentialsModal();
           }}
-          entity="Service Account"
+          entity="Access Key"
         />
       )}
       {policyOpen && (
@@ -224,7 +224,7 @@ const UserServiceAccountsPanel = ({
         />
       )}
       <div className={classes.actionsTray}>
-        <PanelTitle>Service Accounts</PanelTitle>
+        <PanelTitle>Access Keys</PanelTitle>
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <TooltipWrapper tooltip={"Delete Selected"}>
             <Button
@@ -249,10 +249,10 @@ const UserServiceAccountsPanel = ({
             matchAll
             errorProps={{ disabled: true }}
           >
-            <TooltipWrapper tooltip={"Create service account"}>
+            <TooltipWrapper tooltip={"Create Access Key"}>
               <Button
                 id={"create-service-account"}
-                label={"Create service account"}
+                label={"Create Access Key"}
                 variant="callAction"
                 icon={<AddIcon />}
                 onClick={() => {
@@ -270,9 +270,9 @@ const UserServiceAccountsPanel = ({
         <TableWrapper
           isLoading={loading}
           records={records}
-          entityName={"Service Accounts"}
+          entityName={"Access Keys"}
           idField={""}
-          columns={[{ label: "Service Account", elementKey: "" }]}
+          columns={[{ label: "Access Key", elementKey: "" }]}
           itemActions={tableActions}
           selectedItems={selectedSAs}
           onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}

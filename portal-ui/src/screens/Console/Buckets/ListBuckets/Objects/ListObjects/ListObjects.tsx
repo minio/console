@@ -359,8 +359,25 @@ const ListObjects = () => {
   const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
   const bucketName = params.bucketName || "";
 
+  const pageTitle = decodeURLString(internalPaths);
+  const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
+
+  let uploadPath = [bucketName];
+  if (currentPath.length > 0) {
+    uploadPath = uploadPath.concat(currentPath);
+  }
+
   const fileUpload = useRef<HTMLInputElement>(null);
   const folderUpload = useRef<HTMLInputElement>(null);
+
+  const canDownload = hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT]);
+  const canDelete = hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]);
+  const canUpload = hasPermission(
+    uploadPath,
+    [IAM_SCOPES.S3_PUT_OBJECT],
+    true,
+    true
+  );
 
   useEffect(() => {
     if (folderUpload.current !== null) {
@@ -1179,9 +1196,6 @@ const ListObjects = () => {
     dispatch(setLoadingObjectsList(true));
   };
 
-  const pageTitle = decodeURLString(internalPaths);
-  const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
-
   const plSelect = filteredRecords;
   const sortASC = plSelect.sort(sortListObjects(currentSortField));
 
@@ -1231,23 +1245,6 @@ const ListObjects = () => {
       });
     }
   };
-  let uploadPath = [bucketName];
-  if (currentPath.length > 0) {
-    uploadPath = uploadPath.concat(currentPath);
-  }
-
-  const canDownload = hasPermission(bucketName, [
-    IAM_SCOPES.S3_GET_OBJECT,
-    IAM_SCOPES.S3_STAR_OBJECT,
-  ]);
-  const canDelete = hasPermission(bucketName, [
-    IAM_SCOPES.S3_DELETE_OBJECT,
-    IAM_SCOPES.S3_STAR_OBJECT,
-  ]);
-  const canUpload = hasPermission(uploadPath, [
-    IAM_SCOPES.S3_PUT_OBJECT,
-    IAM_SCOPES.S3_STAR_OBJECT,
-  ]);
 
   const onClosePanel = (forceRefresh: boolean) => {
     dispatch(setSelectedObjectView(null));
@@ -1408,7 +1405,9 @@ const ListObjects = () => {
                 <Grid item xs={12} className={classes.bucketDetails}>
                   <span className={classes.detailsSpacer}>
                     Created:&nbsp;&nbsp;&nbsp;
-                    <strong>{bucketInfo?.creation_date || ""}</strong>
+                    <strong>
+                      {new Date(bucketInfo?.creation_date || "").toString()}
+                    </strong>
                   </span>
                   <span className={classes.detailsSpacer}>
                     Access:&nbsp;&nbsp;&nbsp;
@@ -1597,9 +1596,18 @@ const ListObjects = () => {
                     } ${detailsOpen ? "actionsPanelOpen" : ""}`}
                     selectedItems={selectedObjects}
                     onSelect={selectListObjects}
-                    customEmptyMessage={`This location is empty${
-                      !rewindEnabled ? ", please try uploading a new file" : ""
-                    }`}
+                    customEmptyMessage={
+                      !displayListObjects
+                        ? permissionTooltipHelper(
+                            [IAM_SCOPES.S3_LIST_BUCKET],
+                            "view Objects in this bucket"
+                          )
+                        : `This location is empty${
+                            !rewindEnabled
+                              ? ", please try uploading a new file"
+                              : ""
+                          }`
+                    }
                     sortConfig={{
                       currentSort: currentSortField,
                       currentDirection: sortDirection,

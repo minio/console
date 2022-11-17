@@ -80,18 +80,18 @@ const AddServiceAccountHelpBox = () => {
         }}
       >
         <HelpIconFilled />
-        <div>Learn more about Service Accounts</div>
+        <div>Learn more about Access Keys</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
         <Box sx={{ paddingBottom: "20px" }}>
           <FeatureItem
             icon={<ServiceAccountIcon />}
-            description={`Create Service Accounts`}
+            description={`Create Access Keys`}
           />
           <Box sx={{ paddingTop: "20px" }}>
-            Service Accounts inherit the policies explicitly attached to the
-            parent user, and the policies attached to each group in which the
-            parent user has membership.
+            Access Keys inherit the policies explicitly attached to the parent
+            user, and the policies attached to each group in which the parent
+            user has membership.
           </Box>
         </Box>
         <Box sx={{ paddingBottom: "20px" }}>
@@ -102,13 +102,13 @@ const AddServiceAccountHelpBox = () => {
           <Box sx={{ paddingTop: "10px" }}>
             Randomized access credentials are recommended, and provided by
             default. You may use your own custom Access Key and Secret Key by
-            replacing the default values. After creation of any Service Account,
-            you will be given the opportunity to view and download the account
+            replacing the default values. After creation of any Access Key, you
+            will be given the opportunity to view and download the account
             credentials.
           </Box>
           <Box sx={{ paddingTop: "10px" }}>
-            Service Accounts support programmatic access by applications. You
-            cannot use a Service Account to log into the MinIO Console.
+            Access Keys support programmatic access by applications. You cannot
+            use a Access Key to log into the MinIO Console.
           </Box>
         </Box>
         <Box sx={{ paddingBottom: "20px" }}>
@@ -118,14 +118,13 @@ const AddServiceAccountHelpBox = () => {
           />
           <Box sx={{ paddingTop: "10px" }}>
             You can specify an optional JSON-formatted IAM policy to further
-            restrict Service Account access to a subset of the actions and
-            resources explicitly allowed for the parent user. Additional access
-            beyond that of the parent user cannot be implemented through these
+            restrict Access Key access to a subset of the actions and resources
+            explicitly allowed for the parent user. Additional access beyond
+            that of the parent user cannot be implemented through these
             policies.
           </Box>
           <Box sx={{ paddingTop: "10px" }}>
-            You cannot modify the optional Service Account IAM policy after
-            saving.
+            You cannot modify the optional Access Key IAM policy after saving.
           </Box>
         </Box>
       </Box>

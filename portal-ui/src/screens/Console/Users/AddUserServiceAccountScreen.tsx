@@ -169,7 +169,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
           closeModal={() => {
             closeCredentialsModal();
           }}
-          entity="Service Account"
+          entity="Access Key"
         />
       )}
       <Grid item xs={12}>
@@ -196,7 +196,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
           >
             <Box>
               <SectionTitle icon={<ServiceAccountCredentialsIcon />}>
-                {`Create Service Account for ${userName}`}
+                {`Create Access Key for ${userName}`}
               </SectionTitle>
               <form
                 noValidate
@@ -280,7 +280,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                             }}
                             label={"Restrict beyond user policy"}
                             tooltip={
-                              "You can specify an optional JSON-formatted IAM policy to further restrict Service Account access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."
+                              "You can specify an optional JSON-formatted IAM policy to further restrict Access Key access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."
                             }
                           />
                         </Grid>

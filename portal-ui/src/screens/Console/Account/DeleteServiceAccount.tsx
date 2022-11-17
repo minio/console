@@ -72,7 +72,7 @@ const DeleteServiceAccount = ({
 
   return (
     <ConfirmDialog
-      title={`Delete Service Account`}
+      title={`Delete Access Key`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
@@ -81,7 +81,7 @@ const DeleteServiceAccount = ({
       onClose={onClose}
       confirmationContent={
         <DialogContentText>
-          Are you sure you want to delete service account{" "}
+          Are you sure you want to delete Access Key{" "}
           <b className={classes.wrapText}>{selectedServiceAccount}</b>?
         </DialogContentText>
       }

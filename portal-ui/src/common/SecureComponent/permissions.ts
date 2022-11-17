@@ -27,7 +27,6 @@ export const IAM_SCOPES = {
   S3_GET_BUCKET_POLICY: "s3:GetBucketPolicy",
   S3_PUT_BUCKET_POLICY: "s3:PutBucketPolicy",
   S3_GET_OBJECT: "s3:GetObject",
-  S3_STAR_OBJECT: "s3:*Object",
   S3_PUT_OBJECT: "s3:PutObject",
   S3_GET_OBJECT_LEGAL_HOLD: "s3:GetObjectLegalHold",
   S3_PUT_OBJECT_LEGAL_HOLD: "s3:PutObjectLegalHold",
@@ -127,8 +126,8 @@ export const IAM_PAGES = {
   GROUPS: "/identity/groups",
   GROUPS_ADD: "/identity/groups/create-group",
   GROUPS_VIEW: "/identity/groups/:groupName",
-  ACCOUNT: "/identity/account",
-  ACCOUNT_ADD: "/identity/account/new-account",
+  ACCOUNT: "/access-keys",
+  ACCOUNT_ADD: "/access-keys/new-account",
   USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
 
   POLICIES: "/identity/policies",
@@ -282,7 +281,6 @@ export const IAM_PERMISSIONS = {
     IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
     IAM_SCOPES.ADMIN_LIST_USERS,
     IAM_SCOPES.ADMIN_HEAL,
-    IAM_SCOPES.S3_STAR_BUCKET,
   ],
   [IAM_ROLES.BUCKET_LIFECYCLE]: [
     IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
@@ -438,11 +436,13 @@ export const S3_ALL_RESOURCES = "arn:aws:s3:::*";
 export const CONSOLE_UI_RESOURCE = "console-ui";
 
 export const permissionTooltipHelper = (scopes: string[], name: string) => {
+  let niceScopes = scopes.join(", ").toString();
+
   return (
     "You require additional permissions in order to " +
     name +
     ". Please ask your MinIO administrator to grant you " +
-    scopes +
+    niceScopes +
     " permission" +
     (scopes.length > 1 ? "s" : "") +
     " in order to " +
@@ -460,6 +460,21 @@ export const deleteUserPermissions = [IAM_SCOPES.ADMIN_DELETE_USER];
 export const enableUserPermissions = [IAM_SCOPES.ADMIN_ENABLE_USER];
 
 export const disableUserPermissions = [IAM_SCOPES.ADMIN_DISABLE_USER];
+
+//note that adminUserPermissions does NOT include ADMIN_CREATE_USER to allow hiding the Users tab for users wtih only this permission as it is being applied by default
+export const adminUserPermissions = [
+  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+  IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
+  IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
+  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+  IAM_SCOPES.ADMIN_LIST_USERS,
+  IAM_SCOPES.ADMIN_DELETE_USER,
+  IAM_SCOPES.ADMIN_ENABLE_USER,
+  IAM_SCOPES.ADMIN_DISABLE_USER,
+  IAM_SCOPES.ADMIN_GET_USER,
+  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+];
 
 export const assignIAMPolicyPermissions = [
   IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
@@ -532,10 +547,6 @@ export const listGroupPermissions = [
 export const deleteBucketPermissions = [
   IAM_SCOPES.S3_DELETE_BUCKET,
   IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
-  IAM_SCOPES.S3_STAR_BUCKET,
 ];
 
-export const browseBucketPermissions = [
-  IAM_SCOPES.S3_LIST_BUCKET,
-  IAM_SCOPES.S3_STAR_BUCKET,
-];
+export const browseBucketPermissions = [IAM_SCOPES.S3_LIST_BUCKET];

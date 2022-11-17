@@ -139,21 +139,21 @@ const DeleteUser = ({
           {hasSA ? (
             <Fragment>
               <WarningMessage
-                label="Click on a user to view the full listing of asociated Service Accounts. All Service Accounts associated with a user will be deleted along with the user. Are you sure you want to continue?"
-                title="Warning: One or more users selected has associated Service Accounts. "
+                label="Click on a user to view the full listing of asociated Access Keys. All Access Keys associated with a user will be deleted along with the user. Are you sure you want to continue?"
+                title="Warning: One or more users selected has associated Access Keys. "
               />
               <TableWrapper
                 itemActions={tableActions}
                 columns={[
                   { label: "Username", elementKey: "userName" },
                   {
-                    label: "# Associated Service Accounts",
+                    label: "# Associated Access Keys",
                     elementKey: "numSAs",
                   },
                 ]}
                 isLoading={loadingSA}
                 records={userSAList}
-                entityName="User Service Accounts"
+                entityName="User Access Keys"
                 idField="userName"
                 customPaperHeight="250"
               />
