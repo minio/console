@@ -138,7 +138,7 @@ const Account = () => {
   const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
     setDeleteMultipleOpen(false);
     if (refresh) {
-      dispatch(setSnackBarMessage(`Service accounts deleted successfully.`));
+      dispatch(setSnackBarMessage(`Access keys deleted successfully.`));
       setSelectedSAs([]);
       setLoading(true);
     }
@@ -206,11 +206,11 @@ const Account = () => {
         open={changePasswordModalOpen}
         closeModal={() => setChangePasswordModalOpen(false)}
       />
-      <PageHeader label="Service Accounts" />
+      <PageHeader label="Access Keys" />
       <PageLayout>
         <Grid item={true} xs={12} className={classes.actionsTray}>
           <SearchBox
-            placeholder={"Search Service Accounts"}
+            placeholder={"Search Access Keys"}
             onChange={setFilter}
             overrideClass={classes.searchField}
             value={filter}
@@ -254,7 +254,7 @@ const Account = () => {
               onClick={() => {
                 navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
               }}
-              label={`Create service account`}
+              label={`Create access key`}
               icon={<AddIcon />}
               variant={"callAction"}
             />
@@ -265,9 +265,9 @@ const Account = () => {
           <TableWrapper
             isLoading={loading}
             records={filteredRecords}
-            entityName={"Service Accounts"}
+            entityName={"Access Keys"}
             idField={""}
-            columns={[{ label: "Service Account", elementKey: "" }]}
+            columns={[{ label: "Access Key", elementKey: "" }]}
             itemActions={tableActions}
             selectedItems={selectedSAs}
             onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
@@ -276,20 +276,23 @@ const Account = () => {
         </Grid>
         <Grid item xs={12} marginTop={"15px"}>
           <HelpBox
-            title={"Learn more about SERVICE ACCOUNTS"}
+            title={"Learn more about ACCESS KEYS"}
             iconComponent={<AccountIcon />}
             help={
               <Fragment>
-                MinIO service accounts are child identities of an authenticated
-                MinIO user, including externally managed identities. Each
-                service account inherits its privileges based on the policies
-                attached to it’s parent user or those groups in which the parent
-                user has membership. Service accounts also support an optional
-                inline policy which further restricts access to a subset of
-                actions and resources available to the parent user.
+                MinIO access keys are child identities of an authenticated MinIO
+                user, including externally managed identities. Each access key
+                inherits its privileges based on the policies attached to it’s
+                parent user or those groups in which the parent user has
+                membership. Access Keys also support an optional inline policy
+                which further restricts access to a subset of actions and
+                resources available to the parent user.
                 <br />
                 <br />
                 You can learn more at our{" "}
+                {
+                  // TODO: Change this link once it is called access keys
+                }
                 <a
                   href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html?ref=con#service-accounts"
                   target="_blank"

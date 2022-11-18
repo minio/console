@@ -52,7 +52,7 @@ const DeleteMultipleSAs = ({
   };
   return (
     <ConfirmDialog
-      title={`Delete Service Accounts`}
+      title={`Delete Access Keys`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
@@ -62,7 +62,7 @@ const DeleteMultipleSAs = ({
       confirmationContent={
         <DialogContentText>
           Are you sure you want to delete the selected {selectedSAs.length}{" "}
-          service accounts?{" "}
+          Access Keys?{" "}
         </DialogContentText>
       }
     />

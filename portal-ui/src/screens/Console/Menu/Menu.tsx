@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -116,7 +116,11 @@ const Menu = ({ classes }: IMenuProps) => {
         isOpen={sidebarOpen}
       />
 
-      <ConsoleMenuList menuItems={allowedMenuItems} isOpen={sidebarOpen} />
+      <ConsoleMenuList
+        menuItems={allowedMenuItems}
+        isOpen={sidebarOpen}
+        displayHeaders={!operatorMode && !directPVMode}
+      />
     </Drawer>
   );
 };

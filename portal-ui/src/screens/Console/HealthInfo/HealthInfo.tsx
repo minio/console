@@ -22,6 +22,7 @@ import {
 } from "websocket";
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Button } from "mds";
 import {
   DiagStatError,
@@ -56,6 +57,7 @@ import {
   healthInfoMessageReceived,
   healthInfoResetMessage,
 } from "./healthInfoSlice";
+import RegisterCluster from "../Support/RegisterCluster";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -100,8 +102,16 @@ interface IHealthInfo {
 
 const HealthInfo = ({ classes }: IHealthInfo) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const message = useSelector((state: AppState) => state.healthInfo.message);
+
+  const licenseInfo = useSelector(
+    (state: AppState) => state?.system?.licenseInfo
+  );
+
+  const { plan = "" } = licenseInfo || {};
+  const registeredCluster = plan === "STANDARD" || plan === "ENTERPRISE";
 
   const serverDiagnosticStatus = useSelector(
     (state: AppState) => state.system.serverDiagnosticStatus
@@ -249,10 +259,19 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
     }
   }, [startDiagnostic, dispatch]);
 
+  const startDiagnosticAction = () => {
+    if (plan !== "STANDARD" && plan !== "ENTERPRISE") {
+      navigate("/support/register");
+      return;
+    }
+    setStartDiagnostic(true);
+  };
+
   return (
     <Fragment>
       <PageHeader label="Health" />
       <PageLayout>
+        {!registeredCluster && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>
           <TestWrapper title={title} advancedVisible={false}>
             <Grid container className={classes.buttons}>
@@ -290,9 +309,9 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                       <Button
                         id="start-new-diagnostic"
                         type="submit"
-                        variant="callAction"
+                        variant={!registeredCluster ? "regular" : "callAction"}
                         disabled={startDiagnostic}
-                        onClick={() => setStartDiagnostic(true)}
+                        onClick={startDiagnosticAction}
                         label={buttonStartText}
                       />
                     </Grid>
@@ -302,7 +321,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
             </Grid>
           </TestWrapper>
         </Grid>
-        {!startDiagnostic && (
+        {!startDiagnostic && registeredCluster && (
           <Fragment>
             <br />
             <HelpBox

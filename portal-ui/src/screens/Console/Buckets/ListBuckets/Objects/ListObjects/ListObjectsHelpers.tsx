@@ -26,7 +26,11 @@ export const displayParsedDate = (object: BucketObjectItem) => {
   if (object.name.endsWith("/")) {
     return "";
   }
-  return <reactMoment.default>{object.last_modified}</reactMoment.default>;
+  return (
+    <reactMoment.default>
+      {new Date(object.last_modified).toString()}
+    </reactMoment.default>
+  );
 };
 
 export const displayNiceBytes = (object: BucketObjectItem) => {
@@ -62,7 +66,6 @@ export const listModeColumns = [
     renderFunction: displayNiceBytes,
     renderFullObject: true,
     width: 100,
-    contentTextAlign: "center",
     enableSort: true,
   },
 ];
@@ -87,7 +90,6 @@ export const rewindModeColumns = [
     renderFunction: displayNiceBytes,
     renderFullObject: true,
     width: 100,
-    contentTextAlign: "center",
     enableSort: true,
   },
   {
@@ -95,6 +97,5 @@ export const rewindModeColumns = [
     elementKey: "delete_flag",
     renderFunction: displayDeleteFlag,
     width: 60,
-    contentTextAlign: "center",
   },
 ];

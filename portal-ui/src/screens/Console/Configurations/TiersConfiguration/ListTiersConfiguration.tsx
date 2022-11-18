@@ -31,12 +31,7 @@ import {
   tableStyles,
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
-import {
-  AddIcon,
-  CircleIcon,
-  TiersIcon,
-  TiersNotAvailableIcon,
-} from "../../../../icons";
+import { AddIcon, TiersIcon, TiersNotAvailableIcon } from "../../../../icons";
 
 import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -65,7 +60,8 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
 import { hasPermission } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-
+import TierOnlineIcon from "../../../../icons/TierOnlineIcon";
+import TierOfflineIcon from "../../../../icons/TierOfflineIcon";
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );
@@ -110,7 +106,6 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const [records, setRecords] = useState<ITierElement[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [checkTierStatus, setcheckTierStatus] = useState<boolean>(false);
   const [updateCredentialsOpen, setUpdateCredentialsOpen] =
     useState<boolean>(false);
   const [selectedTier, setSelectedTier] = useState<ITierElement>({
@@ -122,46 +117,6 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   ]);
 
   useEffect(() => {
-    if (checkTierStatus) {
-      records.forEach((tier: ITierElement) => {
-        var endpoint: string;
-        switch (tier.type) {
-          case "minio":
-            endpoint = tier.minio?.endpoint + "/" + tier.minio?.bucket || "";
-            break;
-          case "s3":
-            endpoint = tier.s3?.endpoint + "/" + tier.s3?.bucket || "";
-            break;
-          case "gcs":
-            endpoint = tier.gcs?.endpoint + "/" + tier.gcs?.bucket || "";
-            break;
-          case "azure":
-            endpoint = tier.azure?.endpoint + "/" + tier.azure?.bucket || "";
-            break;
-          default:
-            endpoint = "";
-        }
-        const xhr = new XMLHttpRequest();
-        xhr.open("HEAD", endpoint);
-        xhr.send();
-        xhr.onreadystatechange = () => {
-          if (xhr.readyState === 4 || xhr.readyState === 2) {
-            tier.status = true;
-          } else {
-            tier.status = false;
-          }
-        };
-        xhr.onerror = () => {
-          tier.status = false;
-        };
-      });
-      setRecords(records);
-      setcheckTierStatus(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkTierStatus]);
-
-  useEffect(() => {
     if (isLoading) {
       if (distributedSetup) {
         const fetchRecords = () => {
@@ -170,7 +125,6 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
             .then((res: ITierResponse) => {
               setRecords(res.items || []);
               setIsLoading(false);
-              setcheckTierStatus(true);
             })
             .catch((err: ErrorResponseHandler) => {
               dispatch(setErrorSnackMessage(err));
@@ -233,35 +187,38 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const renderTierStatus = (item: boolean) => {
     if (item) {
       return (
-        <Box
+        <Grid
+          container
           sx={{
             display: "flex",
             alignItems: "center",
-            "& .min-icon": {
-              width: "18px",
-              height: "22px",
-              fill: "#4CCB92",
-            },
+            justifyItems: "start",
+            color: "#4CCB92",
+            fontSize: "8px",
           }}
+          flexDirection={"column"}
+          display={"flex"}
         >
-          <CircleIcon />
-        </Box>
+          <TierOnlineIcon />
+          ONLINE
+        </Grid>
       );
     }
     return (
-      <Box
+      <Grid
+        container
         sx={{
           display: "flex",
           alignItems: "center",
-          "& .min-icon": {
-            width: "18px",
-            height: "22px",
-            fill: "#C83B51",
-          },
+          color: "#C83B51",
+          fontSize: "8px",
         }}
+        flexDirection={"column"}
+        display={"flex"}
       >
-        <CircleIcon />
-      </Box>
+        <TierOfflineIcon />
+        OFFLINE
+      </Grid>
     );
   };
 
@@ -364,6 +321,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                 overrideClass={classes.searchField}
                 value={filter}
               />
+
               <div className={classes.rightActionButtons}>
                 <Button
                   id={"refresh-list"}

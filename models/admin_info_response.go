@@ -42,6 +42,9 @@ type AdminInfoResponse struct {
 	// Enum: [not configured available unavailable]
 	AdvancedMetricsStatus string `json:"advancedMetricsStatus,omitempty"`
 
+	// backend
+	Backend *BackendProperties `json:"backend,omitempty"`
+
 	// buckets
 	Buckets int64 `json:"buckets,omitempty"`
 
@@ -63,6 +66,10 @@ func (m *AdminInfoResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAdvancedMetricsStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateBackend(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -125,6 +132,25 @@ func (m *AdminInfoResponse) validateAdvancedMetricsStatus(formats strfmt.Registr
 	return nil
 }
 
+func (m *AdminInfoResponse) validateBackend(formats strfmt.Registry) error {
+	if swag.IsZero(m.Backend) { // not required
+		return nil
+	}
+
+	if m.Backend != nil {
+		if err := m.Backend.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("backend")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("backend")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *AdminInfoResponse) validateServers(formats strfmt.Registry) error {
 	if swag.IsZero(m.Servers) { // not required
 		return nil
@@ -181,6 +207,10 @@ func (m *AdminInfoResponse) validateWidgets(formats strfmt.Registry) error {
 func (m *AdminInfoResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateBackend(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateServers(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -192,6 +222,22 @@ func (m *AdminInfoResponse) ContextValidate(ctx context.Context, formats strfmt.
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *AdminInfoResponse) contextValidateBackend(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Backend != nil {
+		if err := m.Backend.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("backend")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("backend")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
