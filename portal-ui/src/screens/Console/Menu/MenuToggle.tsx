@@ -127,8 +127,9 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
             "&.wide": {
               flex: "1",
               "& svg": {
-                fill: "white",
+                width: "100%",
                 maxWidth: 180,
+                fill: "white",
               },
             },
             "&.mini": {
