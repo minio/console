@@ -202,3 +202,5 @@ export { default as StandardLightLogo } from "./StandardLightLogo";
 export { default as AGPLV3DarkLogo } from "./AGPLV3DarkLogo";
 export { default as LDAPIcon } from "./LDAPIcon";
 export { default as OIDCIcon } from "./OIDCIcon";
+export { default as StarIcon } from "./StarIcon";
+export { default as ExtraFeaturesIcon } from "./ExtraFeaturesIcon";

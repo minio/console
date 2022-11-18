@@ -19,7 +19,10 @@ package restapi
 import (
 	"context"
 	"encoding/base64"
+	"log"
+	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/dustin/go-humanize"
 	"github.com/go-openapi/runtime/middleware"
@@ -27,6 +30,9 @@ import (
 	"github.com/minio/console/restapi/operations"
 	tieringApi "github.com/minio/console/restapi/operations/tiering"
 	"github.com/minio/madmin-go"
+
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
@@ -109,6 +115,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:      strconv.Itoa(stats.NumObjects),
 					Versions:     strconv.Itoa(stats.NumVersions),
 				},
+				Status: false,
 			})
 		case madmin.MinIO:
 			tiersList = append(tiersList, &models.Tier{
@@ -125,6 +132,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:   strconv.Itoa(stats.NumObjects),
 					Versions:  strconv.Itoa(stats.NumVersions),
 				},
+				Status: checkTierStatus(tierData.MinIO.Endpoint, tierData.MinIO.AccessKey, tierData.MinIO.SecretKey, tierData.MinIO.Bucket),
 			})
 		case madmin.GCS:
 			tiersList = append(tiersList, &models.Tier{
@@ -140,6 +148,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:  strconv.Itoa(stats.NumObjects),
 					Versions: strconv.Itoa(stats.NumVersions),
 				},
+				Status: false,
 			})
 		case madmin.Azure:
 			tiersList = append(tiersList, &models.Tier{
@@ -156,15 +165,16 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Objects:     strconv.Itoa(stats.NumObjects),
 					Versions:    strconv.Itoa(stats.NumVersions),
 				},
+				Status: false,
 			})
 		case madmin.Unsupported:
 			tiersList = append(tiersList, &models.Tier{
-				Type: models.TierTypeUnsupported,
+				Type:   models.TierTypeUnsupported,
+				Status: false,
 			})
 
 		}
 	}
-
 	// build response
 	return &models.TierListResponse{
 		Items: tiersList,
@@ -406,4 +416,24 @@ func getEditTierCredentialsResponse(session *models.Principal, params tieringApi
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
+}
+
+func checkTierStatus(endpoint string, accessKey string, secretKey string, bucketName string) bool {
+	// Initialize minio client object.
+	re := regexp.MustCompile(`(^\w+:|^)\/\/`)
+	s := re.ReplaceAllString(endpoint, "")
+	minioClient, err := minio.New(s, &minio.Options{
+		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
+		Secure: false,
+	})
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	bucketTest, err := minioClient.BucketExists(context.Background(), bucketName)
+	if err != nil {
+		log.Println(err)
+		return strings.Contains(err.Error(), "The request signature we calculated does not match the signature you provided. Check your key and signing method.")
+	}
+	return bucketTest
 }

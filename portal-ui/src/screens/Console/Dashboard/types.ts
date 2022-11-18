@@ -23,10 +23,17 @@ export interface Usage {
   advancedMetricsStatus: "available" | "unavailable" | "not configured";
   widgets?: any;
   servers: ServerInfo[];
+  backend: Backend;
   //TODO
   lastScan: any;
   lastHeal: any;
   upTime: any;
+}
+
+export interface Backend {
+  backendType: string;
+  standardSCParity: number;
+  rrSCParity: number;
 }
 
 export interface ServerInfo {

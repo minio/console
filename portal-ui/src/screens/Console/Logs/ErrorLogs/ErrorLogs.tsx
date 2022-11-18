@@ -150,13 +150,28 @@ const ErrorLogs = () => {
         // FORMAT: 00:35:17 UTC 01/01/2021
 
         let m: LogMessage = JSON.parse(message.data.toString());
-        m.time = moment(m.time, "HH:mm:s UTC MM/DD/YYYY").toDate();
+        let isValidEntry = true;
+        if (
+          m.level === "" &&
+          m.errKind === "" &&
+          //@ts-ignore
+          m.time === "00:00:00 UTC 01/01/0001" &&
+          m.ConsoleMsg === "" &&
+          m.node === ""
+        ) {
+          isValidEntry = false;
+        }
+        const logTime = moment(m.time, "HH:mm:s UTC MM/DD/YYYY").toDate();
+
+        m.time = logTime;
         m.key = Math.random();
         if (userAgents.indexOf(m.userAgent) < 0 && m.userAgent !== undefined) {
           userAgents.push(m.userAgent);
           setUserAgents(userAgents);
         }
-        dispatch(logMessageReceived(m));
+        if (isValidEntry) {
+          dispatch(logMessageReceived(m));
+        }
       };
       c.onclose = () => {
         clearInterval(interval);

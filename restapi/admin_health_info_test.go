@@ -57,15 +57,8 @@ func Test_serverHealthInfo(t *testing.T) {
 		{
 			test: "Return simple health info, no errors",
 			args: args{
-				deadline: deadlineDuration,
-				mockMessages: []madmin.HealthInfo{
-					{
-						Perf: madmin.SpeedTestResults{},
-					},
-					{
-						Perf: madmin.SpeedTestResults{},
-					},
-				},
+				deadline:     deadlineDuration,
+				mockMessages: []madmin.HealthInfo{{}, {}},
 				wsWriteMock: func(messageType int, data []byte) error {
 					// mock connection WriteMessage() no error
 					// emulate that receiver gets the message written
@@ -80,12 +73,8 @@ func Test_serverHealthInfo(t *testing.T) {
 		{
 			test: "Return simple health info2, no errors",
 			args: args{
-				deadline: deadlineDuration,
-				mockMessages: []madmin.HealthInfo{
-					{
-						Perf: madmin.SpeedTestResults{},
-					},
-				},
+				deadline:     deadlineDuration,
+				mockMessages: []madmin.HealthInfo{{}},
 				wsWriteMock: func(messageType int, data []byte) error {
 					// mock connection WriteMessage() no error
 					// emulate that receiver gets the message written
@@ -100,12 +89,8 @@ func Test_serverHealthInfo(t *testing.T) {
 		{
 			test: "Handle error on ws write",
 			args: args{
-				deadline: deadlineDuration,
-				mockMessages: []madmin.HealthInfo{
-					{
-						Perf: madmin.SpeedTestResults{},
-					},
-				},
+				deadline:     deadlineDuration,
+				mockMessages: []madmin.HealthInfo{{}},
 				wsWriteMock: func(messageType int, data []byte) error {
 					// mock connection WriteMessage() no error
 					// emulate that receiver gets the message written

@@ -149,12 +149,12 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
           closeModal={() => {
             closeCredentialsModal();
           }}
-          entity="Service Account"
+          entity="Access Key"
         />
       )}
       <Grid item xs={12}>
         <PageHeader
-          label={<BackLink to={IAM_PAGES.ACCOUNT} label={"Service Accounts"} />}
+          label={<BackLink to={IAM_PAGES.ACCOUNT} label={"Access Keys"} />}
         />
         <PageLayout>
           <Box
@@ -171,7 +171,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
           >
             <Box>
               <SectionTitle icon={<ServiceAccountCredentialsIcon />}>
-                Create Service Account
+                Create Access Key
               </SectionTitle>
 
               <form
@@ -256,7 +256,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                             }}
                             label={"Restrict beyond user policy"}
                             tooltip={
-                              "You can specify an optional JSON-formatted IAM policy to further restrict Service Account access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."
+                              "You can specify an optional JSON-formatted IAM policy to further restrict Access Key access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."
                             }
                           />
                         </Grid>
@@ -271,7 +271,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                         <div>
                           <PanelTitle>
                             Current User Policy - edit the JSON to remove
-                            permissions for this service account
+                            permissions for this Access Key
                           </PanelTitle>
                         </div>
                         <Grid item xs={12} className={classes.formScrollable}>

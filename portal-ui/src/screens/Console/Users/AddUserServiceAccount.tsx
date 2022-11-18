@@ -43,7 +43,7 @@ const AddUserServiceAccount = ({
   closeModalAndRefresh,
   user,
 }: IAddUserServiceAccountProps) => {
-  return <Fragment>zxzzzz</Fragment>;
+  return <Fragment />;
 };
 
 export default withStyles(styles)(AddUserServiceAccount);
