@@ -14,17 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Box,
   InputAdornment,
   LinearProgress,
   MenuItem,
   Select,
 } from "@mui/material";
-import { Button } from "mds";
-import { Theme, useTheme } from "@mui/material/styles";
+import { Button, LoginWrapper } from "mds";
+import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import Grid from "@mui/material/Grid";
@@ -32,18 +31,8 @@ import { loginStrategyType, redirectRule } from "./types";
 import LogoutIcon from "../../icons/LogoutIcon";
 import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
-import {
-  ConsoleLogo,
-  DocumentationIcon,
-  DownloadIcon,
-  LockIcon,
-  MinIOTierIconXs,
-  OperatorLogo,
-} from "../../icons";
+import { LockIcon } from "../../icons";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
-import CssBaseline from "@mui/material/CssBaseline";
-import { SupportMenuIcon } from "../../icons/SidebarMenus";
-import GithubIcon from "../../icons/GithubIcon";
 import clsx from "clsx";
 import Loader from "../Console/Common/Loader/Loader";
 import { AppState, useAppDispatch } from "../../store";
@@ -56,7 +45,6 @@ import {
 import { resetForm, setJwt } from "./loginSlice";
 import StrategyForm from "./StrategyForm";
 import { LoginField } from "./LoginField";
-import DirectPVLogo from "../../icons/DirectPVLogo";
 import { redirectRules } from "../../utils/sortFunctions";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -111,8 +99,8 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     separator: {
-      marginLeft: 8,
-      marginRight: 8,
+      marginLeft: 4,
+      marginRight: 4,
     },
     linkHolder: {
       marginTop: 20,
@@ -298,10 +286,6 @@ const Login = () => {
   const loadingFetchConfiguration = useSelector(
     (state: AppState) => state.login.loadingFetchConfiguration
   );
-
-  const latestMinIOVersion = useSelector(
-    (state: AppState) => state.login.latestMinIOVersion
-  );
   const loadingVersion = useSelector(
     (state: AppState) => state.login.loadingVersion
   );
@@ -358,7 +342,7 @@ const Login = () => {
         loginStrategy.redirectRules.length > 1
       ) {
         loginComponent = (
-          <React.Fragment>
+          <Fragment>
             <div className={classes.loginSsoText}>Login with SSO:</div>
             <Select
               id="ssoLogin"
@@ -385,7 +369,7 @@ const Login = () => {
                 </MenuItem>
               ))}
             </Select>
-          </React.Fragment>
+          </Fragment>
         );
       } else if (redirectItems.length === 1) {
         loginComponent = (
@@ -415,7 +399,7 @@ const Login = () => {
     }
     case loginStrategyType.serviceAccount: {
       loginComponent = (
-        <React.Fragment>
+        <Fragment>
           <form className={classes.form} noValidate onSubmit={formSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
@@ -456,7 +440,7 @@ const Login = () => {
               {loginSending && <LinearProgress />}
             </Grid>
           </form>
-        </React.Fragment>
+        </Fragment>
       );
       break;
     }
@@ -466,7 +450,7 @@ const Login = () => {
           {loadingFetchConfiguration ? (
             <Loader className={classes.loadingLoginStrategy} />
           ) : (
-            <React.Fragment>
+            <Fragment>
               <div>
                 <p style={{ color: "#000", textAlign: "center" }}>
                   An error has occurred
@@ -486,162 +470,80 @@ const Login = () => {
                   label={"Retry"}
                 />
               </div>
-            </React.Fragment>
+            </Fragment>
           )}
         </div>
       );
   }
 
-  let modeLogo = <ConsoleLogo />;
+  let modeLogo: "console" | "directpv" | "operator" | "kes" | "subnet" =
+    "console";
 
   if (directPVMode) {
-    modeLogo = <DirectPVLogo />;
+    modeLogo = "directpv";
   } else if (isOperator) {
-    modeLogo = <OperatorLogo />;
+    modeLogo = "operator";
   }
 
-  const hyperLink = isOperator
-    ? "https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/minio-operator-console.html?ref=con"
-    : "https://min.io/docs/minio/linux/administration/minio-console.html?ref=con";
-
-  const theme = useTheme();
   return (
-    <div className={classes.root}>
-      <CssBaseline />
+    <Fragment>
       <MainError />
-      <div className={classes.loginPage}>
-        <Grid
-          container
-          style={{
-            maxWidth: 400,
-            margin: "auto",
-          }}
-        >
-          <Grid
-            item
-            xs={12}
-            style={{
-              background:
-                "transparent linear-gradient(180deg, #FBFAFA 0%, #E4E4E4 100%) 0% 0% no-repeat padding-box",
-              padding: 40,
-              color: theme.palette.primary.main,
-            }}
-            sx={{
-              marginTop: {
-                md: 16,
-                sm: 8,
-                xs: 3,
-              },
-            }}
-          >
-            <Box className={classes.iconLogo}>{modeLogo}</Box>
-            <Box
-              style={{
-                font: "normal normal normal 20px/24px Lato",
-              }}
+      <LoginWrapper
+        logoProps={{ applicationName: modeLogo }}
+        form={loginComponent}
+        formFooter={
+          <Fragment>
+            <a
+              href="https://min.io/docs/minio/linux/index.html?ref=con"
+              target="_blank"
+              rel="noreferrer"
             >
-              Multicloud Object Storage
-            </Box>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            style={{
-              backgroundColor: "white",
-              padding: 40,
-              color: theme.palette.primary.main,
-            }}
-          >
-            {loginComponent}
-            <Box
-              style={{
-                textAlign: "center",
-                marginTop: 20,
-              }}
+              Documentation
+            </a>
+            <span className={classes.separator}>|</span>
+            <a
+              href="https://github.com/minio/minio"
+              target="_blank"
+              rel="noreferrer"
             >
-              <a
-                href={hyperLink}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  color: theme.colors.link,
-                  font: "normal normal normal 12px/15px Lato",
-                }}
-              >
-                Learn more about {isOperator ? "OPERATOR CONSOLE" : "CONSOLE"}
-              </a>
-              <a
-                href={hyperLink}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  color: theme.colors.link,
-                  font: "normal normal normal 12px/15px Lato",
-                  textDecoration: "none",
-                  fontWeight: "bold",
-                  paddingLeft: 4,
-                }}
-              >
-                ➔
-              </a>
-            </Box>
-          </Grid>
-          <Grid item xs={12} className={classes.linkHolder}>
-            <div className={classes.miniLinks}>
-              <a
-                href="https://min.io/docs/minio/linux/index.html?ref=con"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <DocumentationIcon /> Documentation
-              </a>
-              <span className={classes.separator}>|</span>
-              <a
-                href="https://github.com/minio/minio"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <GithubIcon /> Github
-              </a>
-              <span className={classes.separator}>|</span>
-              <a
-                href="https://subnet.min.io/?ref=con"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <SupportMenuIcon /> Support
-              </a>
-              <span className={classes.separator}>|</span>
-              <a
-                href="https://min.io/download/?ref=con"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <DownloadIcon /> Download
-              </a>
-            </div>
-            <div className={clsx(classes.miniLinks, classes.miniLogo)}>
-              <a
-                href={"https://github.com/minio/minio/releases"}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: 20,
-                }}
-              >
-                <MinIOTierIconXs /> <b>Latest Version:</b>&nbsp;
-                {!loadingVersion && latestMinIOVersion !== "" && (
-                  <React.Fragment>{latestMinIOVersion}</React.Fragment>
-                )}
-              </a>
-            </div>
-          </Grid>
-        </Grid>
-      </div>
-    </div>
+              Github
+            </a>
+            <span className={classes.separator}>|</span>
+            <a
+              href="https://subnet.min.io/?ref=con"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Support
+            </a>
+            <span className={classes.separator}>|</span>
+            <a
+              href="https://min.io/download/?ref=con"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Download
+            </a>
+          </Fragment>
+        }
+        promoHeader={
+          <Fragment>
+            Multi-Cloud
+            <br />
+            Object Store
+          </Fragment>
+        }
+        promoInfo={
+          <Fragment>
+            MinIO offers high-performance, S3 compatible object storage. <br />
+            Native to Kubernetes, MinIO is the only object storage suite
+            available on every public cloud, every Kubernetes distribution, the
+            private cloud and the edge. MinIO is software-defined and is 100%
+            open source under GNU AGPL v3.
+          </Fragment>
+        }
+      />
+    </Fragment>
   );
 };
 

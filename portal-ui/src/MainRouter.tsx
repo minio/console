@@ -43,24 +43,9 @@ const MainRouter = () => {
         <Route
           path="/login"
           element={
-            <div
-              style={{
-                backgroundImage: `url('images/background-wave-orig2.svg'), url('images/background.svg')`,
-                backgroundPosition: "center 250px, center center",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "2547px 980px,cover",
-                backgroundBlendMode: "color-dodge",
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                color: "#fff",
-                overflow: "auto",
-              }}
-            >
-              <Suspense fallback={<LoadingComponent />}>
-                <Login />
-              </Suspense>
-            </div>
+            <Suspense fallback={<LoadingComponent />}>
+              <Login />
+            </Suspense>
           }
         />
         <Route
