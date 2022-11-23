@@ -78,7 +78,7 @@ const styles = (theme: Theme) =>
     },
     bucketList: {
       marginTop: 25,
-      height: "calc(100vh - 210px)",
+      height: "calc(100vh - 211px)",
       "&.isEmbedded": {
         height: "calc(100vh - 128px)",
       },
