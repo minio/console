@@ -236,7 +236,7 @@ const AddReplicationSites = () => {
         accessKey: es.accessKey,
         secretKey: es.secretKey,
         name: es.name,
-        endpoint: es.endpoint,
+        endpoint: es.endpoint.trim(),
       };
     });
 
@@ -247,7 +247,7 @@ const AddReplicationSites = () => {
             accessKey: ns.accessKey,
             secretKey: ns.secretKey,
             name: ns.name || `dr-site-${idx}`,
-            endpoint: ns.endpoint,
+            endpoint: ns.endpoint.trim(),
           });
         }
         return acc;
@@ -291,7 +291,6 @@ const AddReplicationSites = () => {
             return (
               <SRSiteInputRow
                 key={`current-${index}`}
-                disabledFields={["endpoint"].concat(cs.isSaved ? "name" : "")}
                 rowData={cs}
                 rowId={index}
                 fieldErrors={{
@@ -360,7 +359,6 @@ const AddReplicationSites = () => {
                   accessKey: accessKeyError,
                   secretKey: secretKeyError,
                 }}
-                disabledFields={ps.isSaved ? ["endpoint", "name"] : []}
                 onFieldChange={(e, fieldName, index) => {
                   const filedValue = e.target.value;
                   setExistingSites((prevItems) => {
