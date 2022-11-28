@@ -237,10 +237,10 @@ const BucketListItem = ({
               </Grid>
               <Grid item xs={12}>
                 <Grid container className={classes.bucketInfo}>
-                  <Grid item xs={12} sm>
+                  <Grid item xs={12} sm paddingRight={5}>
                     <Typography variant="body2">
-                      {t("Created:")}
-                      {bucket.creation_date}
+                      {t("Created")}:{" "}
+                      {new Date(bucket.creation_date).toString()}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm>

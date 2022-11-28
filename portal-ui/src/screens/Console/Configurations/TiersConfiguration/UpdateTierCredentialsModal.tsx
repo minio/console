@@ -63,9 +63,6 @@ const UpdateTierCredentialsModal = ({
 }: ITierCredentialsModal) => {
   const dispatch = useAppDispatch();
   const [savingTiers, setSavingTiers] = useState<boolean>(false);
-  const [accessKey, setAccessKey] = useState<string>("");
-  const [secretKey, setSecretKey] = useState<string>("");
-
   const [creds, setCreds] = useState<string>("");
   const [encodedCreds, setEncodedCreds] = useState<string>("");
 
@@ -153,9 +150,9 @@ const UpdateTierCredentialsModal = ({
                     name="accessKey"
                     label={t("Access Key")}
                     placeholder={t("Enter Access Key")}
-                    value={accessKey}
+                    value={accountName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setAccessKey(e.target.value);
+                      setAccountName(e.target.value);
                     }}
                   />
                 </div>
@@ -165,9 +162,9 @@ const UpdateTierCredentialsModal = ({
                     name="secretKey"
                     label={t("Secret Key")}
                     placeholder={t("Enter Secret Key")}
-                    value={secretKey}
+                    value={accountKey}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setSecretKey(e.target.value);
+                      setAccountKey(e.target.value);
                     }}
                   />
                 </div>

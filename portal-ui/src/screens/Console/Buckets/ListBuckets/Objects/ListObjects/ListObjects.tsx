@@ -1409,9 +1409,10 @@ const ListObjects = () => {
               <Fragment>
                 <Grid item xs={12} className={classes.bucketDetails}>
                   <span className={classes.detailsSpacer}>
-                    {t("Created:")}
-
-                    <strong>{bucketInfo?.creation_date || ""}</strong>
+                    {t("Created")}:&nbsp;&nbsp;&nbsp;
+                    <strong>
+                      {new Date(bucketInfo?.creation_date || "").toString()}
+                    </strong>
                   </span>
                   <span className={classes.detailsSpacer}>
                     {t("Access:")}
@@ -1602,11 +1603,18 @@ const ListObjects = () => {
                     } ${detailsOpen ? "actionsPanelOpen" : ""}`}
                     selectedItems={selectedObjects}
                     onSelect={selectListObjects}
-                    customEmptyMessage={`This location is empty${
-                      !rewindEnabled
-                        ? t(", please try uploading a new file")
-                        : ""
-                    }`}
+                    customEmptyMessage={
+                      !displayListObjects
+                        ? permissionTooltipHelper(
+                            [IAM_SCOPES.S3_LIST_BUCKET],
+                            t("view Objects in this bucket")
+                          )
+                        : `This location is empty${
+                            !rewindEnabled
+                              ? ", please try uploading a new file"
+                              : ""
+                          }`
+                    }
                     sortConfig={{
                       currentSort: currentSortField,
                       currentDirection: sortDirection,

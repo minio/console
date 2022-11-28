@@ -26,6 +26,8 @@ import BoxArrowUp from "../../../../icons/BoxArrowUp";
 import BoxArrowDown from "../../../../icons/BoxArrowDown";
 import WarnFilledIcon from "../../../../icons/WarnFilledIcon";
 
+import getByKey from "lodash/get";
+
 const messageForConsoleMsg = (log: LogMessage) => {
   // regex for terminal colors like e.g. `[31;4m `
   const tColorRegex = /((\[[0-9;]+m))/g;
@@ -73,49 +75,53 @@ const messageForError = (log: LogMessage) => {
     fontFamily: "monospace",
     fontSize: "12px",
   };
+
+  const getLogEntryKey = (keyPath: string) => {
+    return getByKey(log, keyPath, "");
+  };
+
   return (
     <Fragment>
       <div>
-        <b style={labelStyle}>{t("API:")}</b>
-        <span style={dataStyle}>{log.api.name}</span>
+        <b style={labelStyle}>{t("API")}:&nbsp;</b>
+        <span style={dataStyle}>{getLogEntryKey("api.name")}</span>
       </div>
       <div>
-        <b style={labelStyle}>{t("Time:")}</b>
-        <span style={dataStyle}>{log.time.toString()}</span>
+        <b style={labelStyle}>{t("Time")}:&nbsp;</b>
+        <span style={dataStyle}>{getLogEntryKey("time").toString()}</span>
       </div>
       <div>
-        <b style={labelStyle}>{t("DeploymentID:")}</b>
-        <span style={dataStyle}>{log.deploymentid}</span>
+        <b style={labelStyle}>{t("DeploymentID")}:&nbsp;</b>
+        <span style={dataStyle}>{getLogEntryKey("deploymentid")}</span>
       </div>
       <div>
-        <b style={labelStyle}>{t("RequestID:")}</b>
-        <span style={dataStyle}>{log.requestID}</span>
+        <b style={labelStyle}>{t("RequestID")}:&nbsp;</b>
+        <span style={dataStyle}>{getLogEntryKey("requestID")}</span>
       </div>
       <div>
-        <b style={labelStyle}>{t("RemoteHost:")}</b>
-        <span style={dataStyle}>{log.remotehost}</span>
+        <b style={labelStyle}>{t("RemoteHost")}:&nbsp;</b>
+        <span style={dataStyle}>{getLogEntryKey("remotehost")}</span>
       </div>
       <div>
-        <b style={labelStyle}>{t("UserAgent:")}</b>
-        <span style={dataStyle}>{log.userAgent}</span>
+        <b style={labelStyle}>{t("UserAgent")}:&nbsp;</b>
+        <span style={dataStyle}>{getLogEntryKey("userAgent")}</span>
       </div>
       <div>
-        <b style={labelStyle}>{t("Error:")}</b>
-        <span style={dataStyle}>{log.error && log.error.message}</span>
+        <b style={labelStyle}>{t("Error")}:&nbsp;</b>
+        <span style={dataStyle}>{getLogEntryKey("error.message")}</span>
       </div>
       <br />
       <div>
         <b style={labelStyle}>{t("Backtrace:")}</b>
       </div>
-      {log.error &&
-        log.error.source.map((e, i) => {
-          return (
-            <div>
-              <b style={labelStyle}>{i}:&nbsp;</b>
-              <span style={dataStyle}>{e}</span>
-            </div>
-          );
-        })}
+      {(getLogEntryKey("error.source") || []).map((e: any, i: number) => {
+        return (
+          <div>
+            <b style={labelStyle}>{i}:&nbsp;</b>
+            <span style={dataStyle}>{e}</span>
+          </div>
+        );
+      })}
     </Fragment>
   );
 };
@@ -124,14 +130,20 @@ const LogLine = (props: { log: LogMessage }) => {
   const { log } = props;
   const [open, setOpen] = useState<boolean>(false);
 
+  const getLogLineKey = (keyPath: string) => {
+    return getByKey(log, keyPath, "");
+  };
+
   let logMessage = "";
-  if (log.ConsoleMsg !== "") {
-    logMessage = log.ConsoleMsg;
-  } else if (log.error !== null && log.error.message !== "") {
-    logMessage = log.error.message;
+  let consoleMsg = getLogLineKey("ConsoleMsg");
+  let errMsg = getLogLineKey("error.message");
+  if (consoleMsg !== "") {
+    logMessage = consoleMsg;
+  } else if (errMsg !== "") {
+    logMessage = errMsg;
   }
   // remove any non ascii characters, exclude any control codes
-  let titleLogMessage = logMessage.replace(/━|┏|┓|┃|┗|┛/g, "");
+  let titleLogMessage = (logMessage || "").replace(/━|┏|┓|┃|┗|┛/g, "");
   // remove any non ascii characters, exclude any control codes
   titleLogMessage = titleLogMessage.replace(/([^\x20-\x7F])/g, "");
 
@@ -139,13 +151,13 @@ const LogLine = (props: { log: LogMessage }) => {
   const tColorRegex = /((\[[0-9;]+m))/g;
 
   let fullMessage = <Fragment />;
-  if (log.ConsoleMsg !== "") {
+  if (consoleMsg !== "") {
     fullMessage = messageForConsoleMsg(log);
-  } else if (log.error !== null && log.error.message !== "") {
+  } else if (errMsg !== "") {
     fullMessage = messageForError(log);
   }
 
-  titleLogMessage = titleLogMessage.replace(tColorRegex, "");
+  titleLogMessage = (titleLogMessage || "").replace(tColorRegex, "");
 
   let dateStr = <Moment format="YYYY/MM/DD UTC HH:mm:ss">{log.time}</Moment>;
   if (log.time.getFullYear() === 1) {

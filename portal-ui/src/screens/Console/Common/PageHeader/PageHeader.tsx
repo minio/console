@@ -37,7 +37,7 @@ const styles = (theme: Theme) =>
       display: "flex",
       backgroundColor: "#fff",
       left: 0,
-      boxShadow: "rgba(0,0,0,.08) 0 3px 10px",
+      borderBottom: "1px solid #E5E5E5",
     },
     label: {
       display: "flex",
