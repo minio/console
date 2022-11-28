@@ -83,6 +83,12 @@ paths:
     post:
       summary: Logout from Console.
       operationId: Logout
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/logoutRequest"
       responses:
         200:
           description: A successful response.
@@ -4079,6 +4085,13 @@ definitions:
     type: object
     properties:
       sessionId:
+        type: string
+      IDPRefreshToken:
+        type: string
+  logoutRequest:
+    type: object
+    properties:
+      state:
         type: string
   # Structure that holds the `Bearer {TOKEN}` present on authenticated requests
   principal:

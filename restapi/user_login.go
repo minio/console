@@ -65,6 +65,14 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
 			cookie := NewSessionCookieForConsole(loginResponse.SessionID)
 			http.SetCookie(w, &cookie)
+			http.SetCookie(w, &http.Cookie{
+				Path:     "/",
+				Name:     "idp-refresh-token",
+				Value:    loginResponse.IDPRefreshToken,
+				HttpOnly: true,
+				Secure:   len(GlobalPublicCerts) > 0,
+				SameSite: http.SameSiteLaxMode,
+			})
 			authApi.NewLoginOauth2AuthNoContent().WriteResponse(w, p)
 		})
 	})
@@ -252,7 +260,8 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProv
 		}
 		// serialize output
 		loginResponse := &models.LoginResponse{
-			SessionID: *token,
+			SessionID:       *token,
+			IDPRefreshToken: identityProvider.Client.RefreshToken,
 		}
 		return loginResponse, nil
 	}
