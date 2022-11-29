@@ -10,7 +10,7 @@ import {
   ITenant,
   ValueUnit,
 } from "../../Tenants/ListTenants/types";
-import { CircleIcon } from "../../../../icons";
+import { CallHomeFeatureIcon, CircleIcon } from "../../../../icons";
 import { niceBytes, niceBytesInt } from "../../../../common/utils";
 import Loader from "../Loader/Loader";
 import TenantCapacity from "../../Tenants/ListTenants/TenantCapacity";
@@ -21,6 +21,7 @@ import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import HelpBox from "../../../../common/HelpBox";
 
 interface ISummaryUsageBar {
   tenant: ITenant;
@@ -64,6 +65,7 @@ const SummaryUsageBar = ({
   error,
 }: ISummaryUsageBar) => {
   const [healthLoading, setHealthLoading] = useState<boolean>(false);
+  const [hasRunHealthReport, setHasRunHealthReport] = useState<boolean>(false);
   let raw: ValueUnit = { value: "n/a", unit: "" };
   let capacity: ValueUnit = { value: "n/a", unit: "" };
   let used: ValueUnit = { value: "n/a", unit: "" };
@@ -131,6 +133,7 @@ const SummaryUsageBar = ({
       .then((res: any) => {
         console.log("this is the result:", res);
         setHealthLoading(false);
+        setHasRunHealthReport(true);
       })
       .catch((err: ErrorResponseHandler) => {
         dispatch(setErrorSnackMessage(err));
@@ -190,26 +193,31 @@ const SummaryUsageBar = ({
                 }
               />
             )}
+            <Button
+              id={"health-check"}
+              variant="secondary"
+              onClick={() => {
+                setHealthLoading(true);
+                fetchHealthReport();
+                console.log("Go get the health report");
+              }}
+              color="secondary"
+              label={"Health check"}
+              icon={<HealthMenuIcon />}
+            />
+            {hasRunHealthReport && (
+              <HelpBox
+                iconComponent={<CallHomeFeatureIcon />}
+                title={"Success!"}
+                help={<Fragment>Health check uploaded to Subnet</Fragment>}
+              />
+            )}
           </Stack>
-          <Button
-            id={"delete-tenant"}
-            variant="secondary"
-            onClick={() => {
-              setHealthLoading(true);
-              fetchHealthReport();
-              console.log("Go get the health report");
-            }}
-            color="secondary"
-            label={"Health check"}
-            icon={<HealthMenuIcon />}
-          />
-          {healthLoading ? (
+          {healthLoading && (
             <Fragment>
               Generating Tenant Health Report
               <LinearProgress className={classes.progress} />
             </Fragment>
-          ) : (
-            <Fragment></Fragment>
           )}
         </Grid>
       );
