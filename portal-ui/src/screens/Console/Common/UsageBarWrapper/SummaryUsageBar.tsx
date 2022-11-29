@@ -146,6 +146,7 @@ const SummaryUsageBar = ({
         }
 
         setHealthLoading(false);
+        setHasRunHealthReport(true);
       })
       .catch((err: ErrorResponseHandler) => {
         dispatch(setErrorSnackMessage(err));
