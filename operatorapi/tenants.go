@@ -2954,14 +2954,16 @@ func uploadFileToSubnet(filename string, reqURL string, headers map[string]strin
 func getTenantHealthReport(session *models.Principal, params operator_api.TenantHealthReportParams) (*models.HealthReport, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-
+	healthInfo := models.HealthReport{}
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+		healthInfo.Error = restapi.ErrUnableToGetTenantHealthReport.Error()
+		return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
 	}
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+		healthInfo.Error = restapi.ErrUnableToGetTenantHealthReport.Error()
+		return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
 	}
 
 	opClient := &operatorClient{
@@ -2973,7 +2975,8 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+		healthInfo.Error = restapi.ErrUnableToGetTenantHealthReport.Error()
+		return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
 	}
 	minTenant.EnsureDefaults()
 	svcURL := "http://127.0.0.1:9001" // GetTenantServiceURL(minTenant)
@@ -2985,7 +2988,8 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 		svcURL,
 	)
 	if err != nil {
-		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+		healthInfo.Error = restapi.ErrUnableToGetTenantHealthReport.Error()
+		return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
 	}
 
 	opts := GetHealthDataTypeSlice()
@@ -3002,7 +3006,8 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 	resp, version, e := mAdmin.ServerHealthInfo(cont, opts, timeout)
 	if e != nil {
 		cancel()
-		return nil, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToGetTenantHealthReport)
+		healthInfo.Error = restapi.ErrUnableToGetTenantHealthReport.Error()
+		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToGetTenantHealthReport)
 	}
 
 	var healthInfoV1 ClusterHealthV1
@@ -3013,7 +3018,7 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 	timestamp := t.Format(time.RFC3339)
 
 	var filename string = params.Namespace + "_" + params.Tenant + "_" + timestamp + "_HealthReport.tar"
-	healthInfo := models.HealthReport{}
+
 	decoder := json.NewDecoder(resp.Body)
 	switch version {
 	case madmin.HealthInfoVersion0:
@@ -3027,7 +3032,8 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 			}
 		}
 		if err != nil {
-			return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+			healthInfo.Error = restapi.ErrUnableToGetTenantHealthReport.Error()
+			return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
 		}
 		// Old minio versions don't return the MinIO info in
 		// response of the healthinfo api. So fetch it separately
@@ -3042,7 +3048,8 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 		version = madmin.HealthInfoVersion1
 		saveErr := tarGZ(healthInfoV1, version, filename)
 		if saveErr != nil {
-			return nil, restapi.ErrorWithContext(ctx, saveErr, restapi.ErrUnableToSaveTenantHealthReport)
+			healthInfo.Error = restapi.ErrUnableToSaveTenantHealthReport.Error()
+			return &healthInfo, restapi.ErrorWithContext(ctx, saveErr, restapi.ErrUnableToSaveTenantHealthReport)
 		}
 		healthInfo.Version = "1"
 		healthInfo.Error = healthInfoV1.Error
@@ -3058,12 +3065,14 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 			}
 		}
 		if err != nil {
-			return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+			healthInfo.Error = restapi.ErrUnableToGetTenantHealthReport.Error()
+			return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
 		}
 		healthInfoV2 = info
 		saveError := tarGZ(healthInfoV2, healthInfoV2.Version, filename)
 		if saveError != nil {
-			return nil, restapi.ErrorWithContext(ctx, saveError, restapi.ErrUnableToSaveTenantHealthReport)
+			healthInfo.Error = restapi.ErrUnableToSaveTenantHealthReport.Error()
+			return &healthInfo, restapi.ErrorWithContext(ctx, saveError, restapi.ErrUnableToSaveTenantHealthReport)
 		}
 		healthInfo.Version = healthInfoV2.Version
 		healthInfo.Error = healthInfoV2.Error
@@ -3079,12 +3088,14 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 			}
 		}
 		if err != nil {
-			return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
+			healthInfo.Error = restapi.ErrUnableToGetTenantHealthReport.Error()
+			return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
 		}
 		healthInfoV3 = info
 		saveError := tarGZ(healthInfoV3, healthInfoV3.Version, filename)
 		if saveError != nil {
-			return nil, restapi.ErrorWithContext(ctx, saveError, restapi.ErrUnableToSaveTenantHealthReport)
+			healthInfo.Error = restapi.ErrUnableToSaveTenantHealthReport.Error()
+			return &healthInfo, restapi.ErrorWithContext(ctx, saveError, restapi.ErrUnableToSaveTenantHealthReport)
 		}
 		healthInfo.Version = healthInfoV3.Version
 		healthInfo.Error = healthInfoV3.Error
@@ -3100,25 +3111,20 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 
 	apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
 	if err != nil {
+		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
 		return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToUploadTenantHealthReport)
-	}
-
-	if err != nil {
-		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToUploadTenantHealthReport)
 	}
 
 	reqURL, headers := prepareSubnetUploadURL(subnetURL, filename, apiKey)
 
 	respStatus, e := uploadFileToSubnet(filename, reqURL, headers)
 	if e != nil {
-		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToSaveTenantHealthReport)
+		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
+		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
 	}
 	fmt.Println("respStatus: ", respStatus)
 	healthInfo.Error = e.Error()
-	if e != nil {
-		return nil, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToSaveTenantHealthReport)
-	}
-	//fmt.Println("uploadReq, subnetResponse: ", uploadReq, subnetResponse)
+
 	return &healthInfo, nil
 }
 

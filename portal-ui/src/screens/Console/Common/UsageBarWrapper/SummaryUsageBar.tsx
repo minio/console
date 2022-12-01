@@ -65,7 +65,7 @@ const SummaryUsageBar = ({
   error,
 }: ISummaryUsageBar) => {
   const [healthLoading, setHealthLoading] = useState<boolean>(false);
-  const [hasRunHealthReport, setHasRunHealthReport] = useState<boolean>(false);
+  const [healthReportSuccess, setHealthReportSuccess] = useState<boolean>(false);
   let raw: ValueUnit = { value: "n/a", unit: "" };
   let capacity: ValueUnit = { value: "n/a", unit: "" };
   let used: ValueUnit = { value: "n/a", unit: "" };
@@ -132,8 +132,9 @@ const SummaryUsageBar = ({
       )
       .then((res: any) => {
         console.log("this is the result:", res);
+      
+       {res.error.length === 0 ? setHealthReportSuccess(true) :  dispatch(setErrorSnackMessage( {errorMessage: "Error with Health report", detailedError: res.error}))}
         setHealthLoading(false);
-        setHasRunHealthReport(true);
       })
       .catch((err: ErrorResponseHandler) => {
         dispatch(setErrorSnackMessage(err));
@@ -199,13 +200,12 @@ const SummaryUsageBar = ({
               onClick={() => {
                 setHealthLoading(true);
                 fetchHealthReport();
-                console.log("Go get the health report");
               }}
               color="secondary"
               label={"Health check"}
               icon={<HealthMenuIcon />}
             />
-            {hasRunHealthReport && (
+            {healthReportSuccess && (
               <HelpBox
                 iconComponent={<CallHomeFeatureIcon />}
                 title={"Success!"}
