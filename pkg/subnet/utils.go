@@ -27,7 +27,7 @@ import (
 
 	xhttp "github.com/minio/console/pkg/http"
 
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/pkg/env"
 )

@@ -24,7 +24,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
