@@ -2859,6 +2859,7 @@ func subnetUploadReq(url string, filename string) (*http.Request, error) {
 
 	return r, nil
 }
+
 func subnetAPIKeyAuthHeaders(apiKey string) map[string]string {
 	return map[string]string{"x-subnet-api-key": apiKey}
 }
