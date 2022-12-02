@@ -31,7 +31,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 )
 
 var upgrader = websocket.Upgrader{

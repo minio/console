@@ -23,7 +23,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/minio/console/models"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 )
 
 var items []*models.StartProfilingItem

@@ -24,7 +24,7 @@ import (
 	"testing"
 	"time"
 
-	madmin "github.com/minio/madmin-go"
+	madmin "github.com/minio/madmin-go/v2"
 )
 
 // assigning mock at runtime instead of compile time

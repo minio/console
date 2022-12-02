@@ -23,11 +23,11 @@ require (
 	github.com/minio/directpv v1.4.4-0.20220805090942-948ca4731651
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.22.0
-	github.com/minio/madmin-go v1.7.5
-	github.com/minio/mc v0.0.0-20221121180832-640654972949
+	github.com/minio/madmin-go/v2 v2.0.0
+	github.com/minio/mc v0.0.0-20221201184114-854b4f123f03
 	github.com/minio/minio-go/v7 v7.0.44
 	github.com/minio/operator v0.0.0-20220902184351-21e4073132b0
-	github.com/minio/pkg v1.5.4
+	github.com/minio/pkg v1.5.5
 	github.com/minio/selfupdate v0.5.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.4.0
@@ -100,7 +100,7 @@ require (
 	github.com/jedib0t/go-pretty/v6 v6.3.8 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/cpuid/v2 v2.1.2 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.1 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/lestrrat-go/backoff/v2 v2.0.8 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.1 // indirect
@@ -122,6 +122,7 @@ require (
 	github.com/miekg/dns v1.1.48 // indirect
 	github.com/minio/colorjson v1.0.4 // indirect
 	github.com/minio/filepath v1.0.0 // indirect
+	github.com/minio/madmin-go v1.7.5 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect

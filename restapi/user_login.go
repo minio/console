@@ -29,7 +29,7 @@ import (
 	"github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/console/restapi/operations"
 	authApi "github.com/minio/console/restapi/operations/auth"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 

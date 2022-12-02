@@ -28,7 +28,7 @@ import (
 	"github.com/klauspost/compress/gzip"
 
 	"github.com/gorilla/websocket"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 )
 
 // startHealthInfo starts fetching mc.ServerHealthInfo and
