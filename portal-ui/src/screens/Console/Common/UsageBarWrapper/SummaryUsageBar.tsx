@@ -133,8 +133,9 @@ const SummaryUsageBar = ({
       .then((res: any) => {
         console.log("this is the result:", res);
       
-       {res.error.length === 0 ? setHealthReportSuccess(true) :  dispatch(setErrorSnackMessage( {errorMessage: "Error with Health report", detailedError: res.error}))}
-        setHealthLoading(false);
+       if (res.error.length === 0) { setHealthReportSuccess(true) } else {  dispatch(setErrorSnackMessage( {errorMessage: "Error with Health report", detailedError: res.error}))}
+      
+      setHealthLoading(false);
       })
       .catch((err: ErrorResponseHandler) => {
         dispatch(setErrorSnackMessage(err));

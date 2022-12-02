@@ -2873,6 +2873,7 @@ func subnetURLWithAuth(reqURL string, apiKey string) (string, map[string]string,
 		if e != nil {
 			return "", nil, e
 		}
+
 		apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
 		if err != nil {
 			return "nil", nil, e
@@ -2890,6 +2891,7 @@ func prepareSubnetUploadURL(uploadURL string, filename string, apiKey string) (s
 		apiKey = "cec35b03-4f02-130c-8256-a6577102f081"
 	}
 	reqURL, headers, e := subnetURLWithAuth(uploadURL, apiKey)
+	fmt.Println("===========uploadURL: ", uploadURL, " requrl: ", reqURL, " headers: ", headers)
 	if e != nil {
 		return "there was an error here", nil
 	}
@@ -2980,7 +2982,7 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 		return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantHealthReport)
 	}
 	minTenant.EnsureDefaults()
-	svcURL := "http://127.0.0.1:9001" // GetTenantServiceURL(minTenant)
+	svcURL := "http://127.0.0.1:9000" // GetTenantServiceURL(minTenant)
 	// getTenantAdminClient will use all certificates under ~/.console/certs/CAs to trust the TLS connections with MinIO tenants
 	mAdmin, _ := getTenantAdminClient(
 		ctx,
@@ -3109,17 +3111,19 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
 
 	token, _, _ := restapi.SubnetLogin(subnetHTTPClient, "jill@min.io", "testPassword1!")
-
-	apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
-	if err != nil {
-		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
-		return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToUploadTenantHealthReport)
-	}
-
+	fmt.Println("Is this my fail? token: ", token)
+	//apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
+	//if err != nil {
+	//	fmt.Println("fail at getapikey")
+	//	healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
+	//	return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToUploadTenantHealthReport)
+	//}
+	apiKey := "cec35b03-4f02-130c-8256-a6577102f081"
 	reqURL, headers := prepareSubnetUploadURL(subnetURL, filename, apiKey)
 
 	respStatus, e := uploadFileToSubnet(filename, reqURL, headers)
 	if e != nil {
+		fmt.Println("fail at uploadfiletosubnet")
 		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
 		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
 	}
