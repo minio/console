@@ -25,7 +25,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 	minioIAMPolicy "github.com/minio/pkg/iam/policy"
 )
 
