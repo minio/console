@@ -29,7 +29,7 @@ import (
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7/pkg/credentials"

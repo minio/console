@@ -31,7 +31,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	saApi "github.com/minio/console/restapi/operations/service_account"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
