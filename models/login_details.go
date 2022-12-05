@@ -41,6 +41,9 @@ type LoginDetails struct {
 	// is direct p v
 	IsDirectPV bool `json:"isDirectPV,omitempty"`
 
+	// is k8 s
+	IsK8S bool `json:"isK8S,omitempty"`
+
 	// login strategy
 	// Enum: [form redirect service-account redirect-service-account]
 	LoginStrategy string `json:"loginStrategy,omitempty"`

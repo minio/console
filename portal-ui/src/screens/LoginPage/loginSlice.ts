@@ -38,6 +38,7 @@ export interface LoginState {
   latestMinIOVersion: string;
   loadingVersion: boolean;
   isDirectPV: boolean;
+  isK8S: boolean;
 
   navigateTo: string;
 }
@@ -57,6 +58,7 @@ const initialState: LoginState = {
   latestMinIOVersion: "",
   loadingVersion: true,
   isDirectPV: false,
+  isK8S: false,
 
   navigateTo: "",
 };
@@ -110,6 +112,7 @@ export const loginSlice = createSlice({
         if (action.payload) {
           state.loginStrategy = action.payload;
           state.isDirectPV = !!action.payload.isDirectPV;
+          state.isK8S = !!action.payload.isK8S;
         }
       })
       .addCase(doLoginAsync.pending, (state, action) => {

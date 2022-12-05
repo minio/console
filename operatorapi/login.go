@@ -25,6 +25,7 @@ import (
 	xoauth2 "golang.org/x/oauth2"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/minio/pkg/env"
 
 	"github.com/minio/console/restapi"
 
@@ -93,6 +94,15 @@ func login(credentials restapi.ConsoleCredentialsI) (*string, error) {
 	return &token, nil
 }
 
+// isKubernetes returns true if minio is running in kubernetes.
+func isKubernetes() bool {
+	// Kubernetes env used to validate if we are
+	// indeed running inside a kubernetes pod
+	// is KUBERNETES_SERVICE_HOST
+	// https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/kubelet_pods.go#L541
+	return env.Get("KUBERNETES_SERVICE_HOST", "") != ""
+}
+
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
 func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDetails, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
@@ -129,6 +139,7 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDet
 		LoginStrategy: loginStrategy,
 		RedirectRules: redirectRules,
 		IsDirectPV:    getDirectPVEnabled(),
+		IsK8S:         isKubernetes(),
 	}
 	return loginDetails, nil
 }
