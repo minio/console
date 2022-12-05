@@ -1399,7 +1399,7 @@ export const detailsPanel: any = {
   },
   titleLabel: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#000",
     padding: "12px 30px 8px 22px",
     whiteSpace: "nowrap",
@@ -1429,7 +1429,7 @@ export const detailsPanel: any = {
         borderBottom: 0,
       },
       "&::before": {
-        content: "' '",
+        content: "' '!important",
       },
     },
   },
