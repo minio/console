@@ -116,8 +116,8 @@ func TestLogout(t *testing.T) {
 		log.Println("authentication token not found in cookies response")
 		return
 	}
-
-	request, err = http.NewRequest("POST", "http://localhost:9090/api/v1/logout", requestDataBody)
+	logoutRequest := bytes.NewReader([]byte("{}"))
+	request, err = http.NewRequest("POST", "http://localhost:9090/api/v1/logout", logoutRequest)
 	if err != nil {
 		log.Println(err)
 		return
@@ -126,7 +126,6 @@ func TestLogout(t *testing.T) {
 	request.Header.Add("Content-Type", "application/json")
 
 	response, err = client.Do(request)
-
 	assert.NotNil(response, "Logout response is nil")
 	assert.Nil(err, "Logout errored out")
 	assert.Equal(response.StatusCode, 200)

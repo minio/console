@@ -110,6 +110,7 @@ type Provider struct {
 	IDPName string
 	// if enabled means that we need extrace access_token as well
 	UserInfo       bool
+	RefreshToken   string
 	oauth2Config   Configuration
 	provHTTPClient *http.Client
 }
@@ -319,6 +320,7 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state, roleARN
 	getWebTokenExpiry := func() (*credentials.WebIdentityToken, error) {
 		customCtx := context.WithValue(ctx, oauth2.HTTPClient, client.provHTTPClient)
 		oauth2Token, err := client.oauth2Config.Exchange(customCtx, code)
+		client.RefreshToken = oauth2Token.RefreshToken
 		if err != nil {
 			return nil, err
 		}
