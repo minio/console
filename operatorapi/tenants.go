@@ -3047,7 +3047,7 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 			info.Minio.Info = minioInfo
 		}
 
-		healthInfoV1 = MapHealthInfoToV1(info, nil)
+		healthInfoV1 = madmin.HealthInfoV0{TimeStamp: info.TimeStamp, Error: info.Error, Minio: info.Minio, Sys: info.Sys, Perf: info.Perf}
 		version = madmin.HealthInfoVersion1
 		saveErr := tarGZ(healthInfoV1, version, filename)
 		if saveErr != nil {
