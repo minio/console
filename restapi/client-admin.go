@@ -87,6 +87,7 @@ type MinioAdmin interface {
 	delConfigKV(ctx context.Context, kv string) (err error)
 	serviceRestart(ctx context.Context) error
 	serverInfo(ctx context.Context) (madmin.InfoMessage, error)
+
 	startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
 	stopProfiling(ctx context.Context) (io.ReadCloser, error)
 	serviceTrace(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo
@@ -116,6 +117,8 @@ type MinioAdmin interface {
 	addTier(ctx context.Context, tier *madmin.TierConfig) error
 	// Edit Tier Credentials
 	editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error
+	// verify Tier status
+	verifyTierStatus(ctx context.Context, tierName string) error
 	// Speedtest
 	speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error)
 	// Site Relication
@@ -460,6 +463,11 @@ func (ac AdminClient) inspect(ctx context.Context, insOpts madmin.InspectOptions
 // implements madmin.EditTier()
 func (ac AdminClient) editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error {
 	return ac.Client.EditTier(ctx, tierName, creds)
+}
+
+// implements madmin.VerifyTier()
+func (ac AdminClient) verifyTierStatus(ctx context.Context, tierName string) error {
+	return ac.Client.VerifyTier(ctx, tierName)
 }
 
 func NewMinioAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {
