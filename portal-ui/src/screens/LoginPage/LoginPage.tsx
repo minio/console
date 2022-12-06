@@ -291,7 +291,8 @@ const Login = () => {
   );
   const navigateTo = useSelector((state: AppState) => state.login.navigateTo);
 
-  const directPVMode = useSelector((state: AppState) => state.login.isDirectPV);
+  const isDirectPV = useSelector((state: AppState) => state.login.isDirectPV);
+  const isK8S = useSelector((state: AppState) => state.login.isK8S);
 
   const isOperator =
     loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
@@ -479,10 +480,16 @@ const Login = () => {
   let modeLogo: "console" | "directpv" | "operator" | "kes" | "subnet" =
     "console";
 
-  if (directPVMode) {
+  if (isDirectPV) {
     modeLogo = "directpv";
   } else if (isOperator) {
     modeLogo = "operator";
+  }
+
+  let docsURL = "https://min.io/docs/minio/linux/index.html?ref=con";
+  if (isK8S) {
+    docsURL =
+      "https://min.io/docs/minio/kubernetes/upstream/index.html?ref=con";
   }
 
   return (
@@ -493,11 +500,7 @@ const Login = () => {
         form={loginComponent}
         formFooter={
           <Fragment>
-            <a
-              href="https://min.io/docs/minio/linux/index.html?ref=con"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href={docsURL} target="_blank" rel="noreferrer">
               Documentation
             </a>
             <span className={classes.separator}>|</span>
