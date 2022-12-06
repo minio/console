@@ -2802,6 +2802,9 @@ func tarGZ(healthInfo interface{}, version string, filename string) error {
 	if e := enc.Encode(header); e != nil {
 		return e
 	}
+	if e := enc.Encode(healthInfo); e != nil {
+		return e
+	}
 
 	return nil
 }
@@ -2864,12 +2867,13 @@ func subnetAPIKeyAuthHeaders(apiKey string) map[string]string {
 	return map[string]string{"x-subnet-api-key": apiKey}
 }
 
-func subnetURLWithAuth(reqURL string, apiKey string) (string, map[string]string, error) {
+func subnetURLWithAuth(uploadURL string, apiKey string) (string, map[string]string, error) {
 	if len(apiKey) == 0 {
 		// API key not available in minio/mc config.
 		// Ask the user to log in to get auth token
 		subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
-		token, _, e := restapi.SubnetLogin(subnetHTTPClient, "jill@min.io", "testPassword1!")
+		token, thisThing, e := restapi.SubnetLogin(subnetHTTPClient, "jill@min.io", "testPassword1!")
+		fmt.Println("getting the url thisThing: ", thisThing)
 		if e != nil {
 			return "", nil, e
 		}
@@ -2878,9 +2882,9 @@ func subnetURLWithAuth(reqURL string, apiKey string) (string, map[string]string,
 		if err != nil {
 			return "nil", nil, e
 		}
-		return reqURL, subnetAPIKeyAuthHeaders(apiKey), nil
+		return thisThing, subnetAPIKeyAuthHeaders(apiKey), nil
 	}
-	return reqURL, subnetAPIKeyAuthHeaders(apiKey), nil
+	return uploadURL, subnetAPIKeyAuthHeaders(apiKey), nil
 }
 
 func prepareSubnetUploadURL(uploadURL string, filename string, apiKey string) (string, map[string]string) {
@@ -2937,6 +2941,7 @@ func subnetReqDo(r *http.Request, headers map[string]string) (int, string, error
 }
 
 func uploadFileToSubnet(filename string, reqURL string, headers map[string]string) (int, error) {
+	fmt.Println("this is the requrl: ", reqURL)
 	req, e := subnetUploadReq(subnetUploadURL("health", filename), filename)
 	if e != nil {
 		return 400, e
@@ -2945,13 +2950,19 @@ func uploadFileToSubnet(filename string, reqURL string, headers map[string]strin
 	if e != nil {
 		return 400, e
 	}
+	//fmt.Println("respStatus came with this thing : ", thisThing)
 	// Delete the file after successful upload
-	os.Remove(filename)
+	//os.Remove(filename)
 	// ensure that both api-key and license from
 	// SUBNET response are saved in the config
 	// extractAndSaveSubnetCreds(alias, resp)
 
 	return respStatus, e
+}
+
+// UTCNow - returns current UTC time.
+func UTCNow() time.Time {
+	return time.Now().UTC()
 }
 
 func getTenantHealthReport(session *models.Principal, params operator_api.TenantHealthReportParams) (*models.HealthReport, *models.Error) {
@@ -3017,10 +3028,9 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 	var healthInfoV2 madmin.HealthInfoV2
 	var healthInfoV3 madmin.HealthInfo
 
-	t := time.Now()
-	timestamp := t.Format(time.RFC3339)
+	filename := fmt.Sprintf("%s-%s-health_%s.json.gz", params.Namespace, params.Tenant, UTCNow().Format("20060102150405"))
 
-	var filename string = params.Namespace + "_" + params.Tenant + "_" + timestamp + "_HealthReport.tar"
+	//string = params.Namespace + "_" + params.Tenant + "_" + timestamp + "_HealthReport.json"
 
 	decoder := json.NewDecoder(resp.Body)
 	switch version {
@@ -3107,7 +3117,7 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 	// cancel the context if supportDiagChan has returned.
 	cancel()
 
-	subnetURL := "https://subnet.min.io"
+	uploadURL := subnetUploadURL("health", filename)
 	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
 
 	token, _, _ := restapi.SubnetLogin(subnetHTTPClient, "jill@min.io", "testPassword1!")
@@ -3119,7 +3129,7 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 	//	return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToUploadTenantHealthReport)
 	//}
 	apiKey := "cec35b03-4f02-130c-8256-a6577102f081"
-	reqURL, headers := prepareSubnetUploadURL(subnetURL, filename, apiKey)
+	reqURL, headers := prepareSubnetUploadURL(uploadURL, filename, apiKey)
 
 	respStatus, e := uploadFileToSubnet(filename, reqURL, headers)
 	if e != nil {
@@ -3128,7 +3138,8 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
 	}
 	fmt.Println("respStatus: ", respStatus)
-	healthInfo.Error = e.Error()
+
+	//healthInfo.Error = e.Error()
 
 	return &healthInfo, nil
 }
