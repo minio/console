@@ -6379,6 +6379,9 @@ func init() {
         "isDirectPV": {
           "type": "boolean"
         },
+        "isK8S": {
+          "type": "boolean"
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -7154,6 +7157,9 @@ func init() {
           "type": "string"
         },
         "delete_flag": {
+          "type": "boolean"
+        },
+        "is_latest": {
           "type": "boolean"
         },
         "last_modified": {
@@ -14681,6 +14687,9 @@ func init() {
         "isDirectPV": {
           "type": "boolean"
         },
+        "isK8S": {
+          "type": "boolean"
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -15456,6 +15465,9 @@ func init() {
           "type": "string"
         },
         "delete_flag": {
+          "type": "boolean"
+        },
+        "is_latest": {
           "type": "boolean"
         },
         "last_modified": {

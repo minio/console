@@ -181,7 +181,7 @@ const VersionsNavigator = ({
   const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [restoreVersionOpen, setRestoreVersionOpen] = useState<boolean>(false);
-  const [restoreVersion, setRestoreVersion] = useState<string>("");
+  const [restoreVersion, setRestoreVersion] = useState<IFileInfo | null>(null);
   const [sortValue, setSortValue] = useState<string>("date");
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [deleteNonCurrentOpen, setDeleteNonCurrentOpen] =
@@ -313,7 +313,7 @@ const VersionsNavigator = ({
   };
 
   const onRestoreItem = (item: IFileInfo) => {
-    setRestoreVersion(item.version_id || "");
+    setRestoreVersion(item);
     setRestoreVersionOpen(true);
   };
 
@@ -334,7 +334,7 @@ const VersionsNavigator = ({
 
   const closeRestoreModal = (reloadObjectData: boolean) => {
     setRestoreVersionOpen(false);
-    setRestoreVersion("");
+    setRestoreVersion(null);
 
     if (reloadObjectData) {
       dispatch(setLoadingVersions(true));
@@ -454,11 +454,11 @@ const VersionsNavigator = ({
           dataObject={objectToShare || actualInfo}
         />
       )}
-      {restoreVersionOpen && actualInfo && (
+      {restoreVersionOpen && actualInfo && restoreVersion && (
         <RestoreFileVersion
           restoreOpen={restoreVersionOpen}
           bucketName={bucketName}
-          versionID={restoreVersion}
+          versionToRestore={restoreVersion}
           objectPath={actualInfo.name}
           onCloseAndUpdate={closeRestoreModal}
         />
@@ -477,7 +477,7 @@ const VersionsNavigator = ({
               objectToShare && objectToShare.size ? objectToShare.size : "0"
             ),
             content_type: "",
-            last_modified: new Date(actualInfo.last_modified),
+            last_modified: actualInfo.last_modified,
           }}
           onClosePreview={() => {
             setPreviewOpen(false);
@@ -514,7 +514,6 @@ const VersionsNavigator = ({
               <BrowserBreadcrumbs
                 bucketName={bucketName}
                 internalPaths={decodeURLString(internalPaths)}
-                existingFiles={[]}
                 hidePathButton={true}
               />
             </Grid>

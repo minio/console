@@ -1,8 +1,21 @@
-import React, { Fragment, useCallback, useEffect, useState } from "react";
-import useApi from "../../../../Common/Hooks/useApi";
-import { ErrorResponseHandler } from "../../../../../../common/types";
-import { MetadataResponse } from "./types";
-import get from "lodash/get";
+// This file is part of MinIO Console Server
+// Copyright (c) 2022 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import React, { Fragment } from "react";
+import { withStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import { Box, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -11,13 +24,10 @@ import {
   detailsPanel,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { withStyles } from "@mui/styles";
 
 interface IObjectMetadata {
-  bucketName: string;
-  internalPaths: string;
+  metaData: any;
   classes?: any;
-  actualInfo: any;
   linear?: boolean;
 }
 
@@ -45,38 +55,11 @@ const styles = (theme: Theme) =>
   });
 
 const ObjectMetaData = ({
-  bucketName,
-  internalPaths,
+  metaData,
   classes,
-  actualInfo,
   linear = false,
 }: IObjectMetadata) => {
-  const [metaData, setMetaData] = useState<any>({});
-
-  const onMetaDataSuccess = (res: MetadataResponse) => {
-    let metadata = get(res, "objectMetadata", {});
-
-    setMetaData(metadata);
-  };
-  const onMetaDataError = (err: ErrorResponseHandler) => false;
-
-  const [, invokeMetaDataApi] = useApi(onMetaDataSuccess, onMetaDataError);
-
   const metaKeys = Object.keys(metaData);
-  const loadMetaData = useCallback(() => {
-    invokeMetaDataApi(
-      "GET",
-      `/api/v1/buckets/${bucketName}/objects/metadata?prefix=${internalPaths}`
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bucketName, internalPaths, actualInfo]);
-
-  useEffect(() => {
-    if (actualInfo) {
-      loadMetaData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actualInfo, loadMetaData]);
 
   if (linear) {
     return (

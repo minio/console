@@ -247,7 +247,7 @@ export const permissionItems = (
           returnElements.push({
             name: `${currentElementInPath}/`,
             size: 0,
-            last_modified: new Date(),
+            last_modified: "",
             version_id: "",
           });
         }
@@ -276,7 +276,7 @@ export const permissionItems = (
                     pathToRouteElements.length > 0 ? "/" : ""
                   }${splitElement}/`,
                   size: 0,
-                  last_modified: new Date(),
+                  last_modified: "",
                   version_id: "",
                 });
                 return false;
