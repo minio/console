@@ -2828,7 +2828,6 @@ func httpClient(timeout time.Duration) *http.Client {
 }
 
 func getSubnetClient() *http.Client {
-	fmt.Println("in getSubnetClient")
 	client := httpClient(10 * time.Second)
 	if globalSubnetProxyURL != nil {
 		client.Transport.(*http.Transport).Proxy = http.ProxyURL(globalSubnetProxyURL)
@@ -2873,7 +2872,6 @@ func subnetURLWithAuth(uploadURL string, apiKey string) (string, map[string]stri
 		// Ask the user to log in to get auth token
 		subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
 		token, thisThing, e := restapi.SubnetLogin(subnetHTTPClient, "jill@min.io", "testPassword1!")
-		fmt.Println("getting the url thisThing: ", thisThing)
 		if e != nil {
 			return "", nil, e
 		}
@@ -2891,11 +2889,11 @@ func prepareSubnetUploadURL(uploadURL string, filename string, apiKey string) (s
 	var e error
 	if len(apiKey) == 0 {
 		// api key not passed as flag. check if it's available in the config
-		// apiKey, e = getSubnetAPIKey(alias)
-		apiKey = "cec35b03-4f02-130c-8256-a6577102f081"
+		return "", nil
+
+		//apiKey = "cec35b03-4f02-130c-8256-a6577102f081"
 	}
 	reqURL, headers, e := subnetURLWithAuth(uploadURL, apiKey)
-	fmt.Println("===========uploadURL: ", uploadURL, " requrl: ", reqURL, " headers: ", headers)
 	if e != nil {
 		return "there was an error here", nil
 	}
@@ -2920,7 +2918,6 @@ func subnetReqDo(r *http.Request, headers map[string]string) (int, string, error
 	if len(ct) == 0 {
 		r.Header.Add("Content-Type", "application/json")
 	}
-	fmt.Println("************** r: ", r)
 	resp, e := subnetHTTPDo(r)
 	if e != nil {
 		return 400, "", e
@@ -2941,24 +2938,21 @@ func subnetReqDo(r *http.Request, headers map[string]string) (int, string, error
 	return resp.StatusCode, respStr, fmt.Errorf("Request failed with code %d and error: %s", resp.StatusCode, respStr)
 }
 
-func uploadFileToSubnet(filename string, reqURL string, headers map[string]string) (int, error) {
-	fmt.Println("this is the requrl: ", reqURL)
+func uploadFileToSubnet(filename string, reqURL string, headers map[string]string) error {
+
 	req, e := subnetUploadReq(reqURL, filename)
 	if e != nil {
-		return 400, e
+		return e
 	}
-	respStatus, _, e := subnetReqDo(req, headers)
+	_, _, e = subnetReqDo(req, headers)
 	if e != nil {
-		return 400, e
+		return e
 	}
-	//fmt.Println("respStatus came with this thing : ", thisThing)
-	// Delete the file after successful upload
-	//os.Remove(filename)
-	// ensure that both api-key and license from
-	// SUBNET response are saved in the config
-	// extractAndSaveSubnetCreds(alias, resp)
 
-	return respStatus, e
+	// Delete the file after successful upload
+	os.Remove(filename)
+
+	return nil
 }
 
 // UTCNow - returns current UTC time.
@@ -3031,9 +3025,8 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 
 	filename := fmt.Sprintf("%s-%s-health_%s.json.gz", params.Namespace, params.Tenant, UTCNow().Format("20060102150405"))
 
-	//string = params.Namespace + "_" + params.Tenant + "_" + timestamp + "_HealthReport.json"
-
 	decoder := json.NewDecoder(resp.Body)
+
 	switch version {
 	case madmin.HealthInfoVersion0:
 		info := madmin.HealthInfoV0{}
@@ -3119,28 +3112,22 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 	cancel()
 
 	uploadURL := subnetUploadURL("health", filename)
-	subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
+	//subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
+	adminClient := restapi.AdminClient{Client: mAdmin}
 
-	token, _, _ := restapi.SubnetLogin(subnetHTTPClient, "jill@min.io", "testPassword1!")
-	fmt.Println("Is this my fail? token: ", token)
-	//apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
-	//if err != nil {
-	//	fmt.Println("fail at getapikey")
-	//	healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
-	//	return &healthInfo, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToUploadTenantHealthReport)
-	//}
-	apiKey := "cec35b03-4f02-130c-8256-a6577102f081"
-	reqURL, headers := prepareSubnetUploadURL(uploadURL, filename, apiKey)
-
-	respStatus, e := uploadFileToSubnet(filename, reqURL, headers)
+	subnetTokenConfig, e := restapi.GetSubnetKeyFromMinIOConfig(ctx, adminClient)
 	if e != nil {
-		fmt.Println("fail at uploadfiletosubnet")
 		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
 		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
 	}
-	fmt.Println("respStatus: ", respStatus)
 
-	//healthInfo.Error = e.Error()
+	reqURL, headers := prepareSubnetUploadURL(uploadURL, filename, subnetTokenConfig.APIKey)
+
+	e = uploadFileToSubnet(filename, reqURL, headers)
+	if e != nil {
+		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
+		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
+	}
 
 	return &healthInfo, nil
 }

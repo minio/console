@@ -110,9 +110,9 @@ func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKe
 }
 
 func SubnetLogin(client xhttp.ClientI, username, password string) (string, string, error) {
-	fmt.Println("subnetlogin client: ", client, " username: ", username, " password: ", password)
+	//fmt.Println("subnetlogin client: ", client, " username: ", username, " password: ", password)
 	tokens, err := subnet.Login(client, username, password)
-	fmt.Println("got some tokens! tokens: ", tokens)
+	//fmt.Println("got some tokens! tokens: ", tokens)
 	if err != nil {
 		fmt.Println("why fail?")
 		return "", "", err
