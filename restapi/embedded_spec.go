@@ -6621,6 +6621,9 @@ func init() {
         "isDirectPV": {
           "type": "boolean"
         },
+        "isK8S": {
+          "type": "boolean"
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -15171,6 +15174,9 @@ func init() {
       "type": "object",
       "properties": {
         "isDirectPV": {
+          "type": "boolean"
+        },
+        "isK8S": {
           "type": "boolean"
         },
         "loginStrategy": {
