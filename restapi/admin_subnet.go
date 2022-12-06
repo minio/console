@@ -110,20 +110,15 @@ func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKe
 }
 
 func SubnetLogin(client xhttp.ClientI, username, password string) (string, string, error) {
-	//fmt.Println("subnetlogin client: ", client, " username: ", username, " password: ", password)
 	tokens, err := subnet.Login(client, username, password)
-	//fmt.Println("got some tokens! tokens: ", tokens)
 	if err != nil {
-		fmt.Println("why fail?")
 		return "", "", err
 	}
 	if tokens.MfaToken != "" {
-		fmt.Println("why fail mfa?")
 		// user needs to complete login flow using mfa
 		return tokens.MfaToken, tokens.MfaToken, nil
 	}
 	if tokens.AccessToken != "" {
-		fmt.Println("why not fail?")
 		// register token to minio
 		return tokens.AccessToken, "", nil
 	}
@@ -255,7 +250,6 @@ func GetSubnetKeyFromMinIOConfig(ctx context.Context, minioClient MinioAdmin) (*
 	if err != nil {
 		return nil, err
 	}
-
 	for _, scfg := range subSysConfigs {
 		if scfg.Target == "" {
 			res := subnet.LicenseTokenConfig{}
