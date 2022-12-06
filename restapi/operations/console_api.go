@@ -43,6 +43,7 @@ import (
 	"github.com/minio/console/restapi/operations/bucket"
 	"github.com/minio/console/restapi/operations/configuration"
 	"github.com/minio/console/restapi/operations/group"
+	"github.com/minio/console/restapi/operations/idp"
 	"github.com/minio/console/restapi/operations/inspect"
 	"github.com/minio/console/restapi/operations/k_m_s"
 	"github.com/minio/console/restapi/operations/logging"
@@ -145,6 +146,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BucketCreateBucketEventHandler: bucket.CreateBucketEventHandlerFunc(func(params bucket.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.CreateBucketEvent has not yet been implemented")
 		}),
+		IdpCreateConfigurationHandler: idp.CreateConfigurationHandlerFunc(func(params idp.CreateConfigurationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation idp.CreateConfiguration has not yet been implemented")
+		}),
 		ServiceAccountCreateServiceAccountHandler: service_account.CreateServiceAccountHandlerFunc(func(params service_account.CreateServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation service_account.CreateServiceAccount has not yet been implemented")
 		}),
@@ -174,6 +178,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		BucketDeleteBucketReplicationRuleHandler: bucket.DeleteBucketReplicationRuleHandlerFunc(func(params bucket.DeleteBucketReplicationRuleParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.DeleteBucketReplicationRule has not yet been implemented")
+		}),
+		IdpDeleteConfigurationHandler: idp.DeleteConfigurationHandlerFunc(func(params idp.DeleteConfigurationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation idp.DeleteConfiguration has not yet been implemented")
 		}),
 		ObjectDeleteMultipleObjectsHandler: object.DeleteMultipleObjectsHandlerFunc(func(params object.DeleteMultipleObjectsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.DeleteMultipleObjects has not yet been implemented")
@@ -234,6 +241,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		BucketGetBucketVersioningHandler: bucket.GetBucketVersioningHandlerFunc(func(params bucket.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.GetBucketVersioning has not yet been implemented")
+		}),
+		IdpGetConfigurationHandler: idp.GetConfigurationHandlerFunc(func(params idp.GetConfigurationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation idp.GetConfiguration has not yet been implemented")
 		}),
 		ObjectGetObjectMetadataHandler: object.GetObjectMetadataHandlerFunc(func(params object.GetObjectMetadataParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.GetObjectMetadata has not yet been implemented")
@@ -336,6 +346,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		ConfigurationListConfigHandler: configuration.ListConfigHandlerFunc(func(params configuration.ListConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation configuration.ListConfig has not yet been implemented")
+		}),
+		IdpListConfigurationsHandler: idp.ListConfigurationsHandlerFunc(func(params idp.ListConfigurationsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation idp.ListConfigurations has not yet been implemented")
 		}),
 		BucketListExternalBucketsHandler: bucket.ListExternalBucketsHandlerFunc(func(params bucket.ListExternalBucketsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.ListExternalBuckets has not yet been implemented")
@@ -505,6 +518,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BucketUpdateBucketLifecycleHandler: bucket.UpdateBucketLifecycleHandlerFunc(func(params bucket.UpdateBucketLifecycleParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.UpdateBucketLifecycle has not yet been implemented")
 		}),
+		IdpUpdateConfigurationHandler: idp.UpdateConfigurationHandlerFunc(func(params idp.UpdateConfigurationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation idp.UpdateConfiguration has not yet been implemented")
+		}),
 		GroupUpdateGroupHandler: group.UpdateGroupHandlerFunc(func(params group.UpdateGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation group.UpdateGroup has not yet been implemented")
 		}),
@@ -615,6 +631,8 @@ type ConsoleAPI struct {
 	UserCreateAUserServiceAccountHandler user.CreateAUserServiceAccountHandler
 	// BucketCreateBucketEventHandler sets the operation handler for the create bucket event operation
 	BucketCreateBucketEventHandler bucket.CreateBucketEventHandler
+	// IdpCreateConfigurationHandler sets the operation handler for the create configuration operation
+	IdpCreateConfigurationHandler idp.CreateConfigurationHandler
 	// ServiceAccountCreateServiceAccountHandler sets the operation handler for the create service account operation
 	ServiceAccountCreateServiceAccountHandler service_account.CreateServiceAccountHandler
 	// UserCreateServiceAccountCredentialsHandler sets the operation handler for the create service account credentials operation
@@ -635,6 +653,8 @@ type ConsoleAPI struct {
 	BucketDeleteBucketLifecycleRuleHandler bucket.DeleteBucketLifecycleRuleHandler
 	// BucketDeleteBucketReplicationRuleHandler sets the operation handler for the delete bucket replication rule operation
 	BucketDeleteBucketReplicationRuleHandler bucket.DeleteBucketReplicationRuleHandler
+	// IdpDeleteConfigurationHandler sets the operation handler for the delete configuration operation
+	IdpDeleteConfigurationHandler idp.DeleteConfigurationHandler
 	// ObjectDeleteMultipleObjectsHandler sets the operation handler for the delete multiple objects operation
 	ObjectDeleteMultipleObjectsHandler object.DeleteMultipleObjectsHandler
 	// ServiceAccountDeleteMultipleServiceAccountsHandler sets the operation handler for the delete multiple service accounts operation
@@ -675,6 +695,8 @@ type ConsoleAPI struct {
 	BucketGetBucketRewindHandler bucket.GetBucketRewindHandler
 	// BucketGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
 	BucketGetBucketVersioningHandler bucket.GetBucketVersioningHandler
+	// IdpGetConfigurationHandler sets the operation handler for the get configuration operation
+	IdpGetConfigurationHandler idp.GetConfigurationHandler
 	// ObjectGetObjectMetadataHandler sets the operation handler for the get object metadata operation
 	ObjectGetObjectMetadataHandler object.GetObjectMetadataHandler
 	// PolicyGetSAUserPolicyHandler sets the operation handler for the get s a user policy operation
@@ -743,6 +765,8 @@ type ConsoleAPI struct {
 	BucketListBucketsHandler bucket.ListBucketsHandler
 	// ConfigurationListConfigHandler sets the operation handler for the list config operation
 	ConfigurationListConfigHandler configuration.ListConfigHandler
+	// IdpListConfigurationsHandler sets the operation handler for the list configurations operation
+	IdpListConfigurationsHandler idp.ListConfigurationsHandler
 	// BucketListExternalBucketsHandler sets the operation handler for the list external buckets operation
 	BucketListExternalBucketsHandler bucket.ListExternalBucketsHandler
 	// GroupListGroupsHandler sets the operation handler for the list groups operation
@@ -855,6 +879,8 @@ type ConsoleAPI struct {
 	TieringTiersListHandler tiering.TiersListHandler
 	// BucketUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
 	BucketUpdateBucketLifecycleHandler bucket.UpdateBucketLifecycleHandler
+	// IdpUpdateConfigurationHandler sets the operation handler for the update configuration operation
+	IdpUpdateConfigurationHandler idp.UpdateConfigurationHandler
 	// GroupUpdateGroupHandler sets the operation handler for the update group operation
 	GroupUpdateGroupHandler group.UpdateGroupHandler
 	// BucketUpdateMultiBucketReplicationHandler sets the operation handler for the update multi bucket replication operation
@@ -1013,6 +1039,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.BucketCreateBucketEventHandler == nil {
 		unregistered = append(unregistered, "bucket.CreateBucketEventHandler")
 	}
+	if o.IdpCreateConfigurationHandler == nil {
+		unregistered = append(unregistered, "idp.CreateConfigurationHandler")
+	}
 	if o.ServiceAccountCreateServiceAccountHandler == nil {
 		unregistered = append(unregistered, "service_account.CreateServiceAccountHandler")
 	}
@@ -1042,6 +1071,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.BucketDeleteBucketReplicationRuleHandler == nil {
 		unregistered = append(unregistered, "bucket.DeleteBucketReplicationRuleHandler")
+	}
+	if o.IdpDeleteConfigurationHandler == nil {
+		unregistered = append(unregistered, "idp.DeleteConfigurationHandler")
 	}
 	if o.ObjectDeleteMultipleObjectsHandler == nil {
 		unregistered = append(unregistered, "object.DeleteMultipleObjectsHandler")
@@ -1102,6 +1134,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.BucketGetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "bucket.GetBucketVersioningHandler")
+	}
+	if o.IdpGetConfigurationHandler == nil {
+		unregistered = append(unregistered, "idp.GetConfigurationHandler")
 	}
 	if o.ObjectGetObjectMetadataHandler == nil {
 		unregistered = append(unregistered, "object.GetObjectMetadataHandler")
@@ -1204,6 +1239,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.ConfigurationListConfigHandler == nil {
 		unregistered = append(unregistered, "configuration.ListConfigHandler")
+	}
+	if o.IdpListConfigurationsHandler == nil {
+		unregistered = append(unregistered, "idp.ListConfigurationsHandler")
 	}
 	if o.BucketListExternalBucketsHandler == nil {
 		unregistered = append(unregistered, "bucket.ListExternalBucketsHandler")
@@ -1372,6 +1410,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.BucketUpdateBucketLifecycleHandler == nil {
 		unregistered = append(unregistered, "bucket.UpdateBucketLifecycleHandler")
+	}
+	if o.IdpUpdateConfigurationHandler == nil {
+		unregistered = append(unregistered, "idp.UpdateConfigurationHandler")
 	}
 	if o.GroupUpdateGroupHandler == nil {
 		unregistered = append(unregistered, "group.UpdateGroupHandler")
@@ -1572,6 +1613,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/idp/{type}"] = idp.NewCreateConfiguration(o.context, o.IdpCreateConfigurationHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/service-accounts"] = service_account.NewCreateServiceAccount(o.context, o.ServiceAccountCreateServiceAccountHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -1609,6 +1654,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/buckets/{bucket_name}/replication/{rule_id}"] = bucket.NewDeleteBucketReplicationRule(o.context, o.BucketDeleteBucketReplicationRuleHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/idp/{type}/{name}"] = idp.NewDeleteConfiguration(o.context, o.IdpDeleteConfigurationHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -1689,6 +1738,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/versioning"] = bucket.NewGetBucketVersioning(o.context, o.BucketGetBucketVersioningHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/idp/{type}/{name}"] = idp.NewGetConfiguration(o.context, o.IdpGetConfigurationHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1825,6 +1878,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/configs"] = configuration.NewListConfig(o.context, o.ConfigurationListConfigHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/idp/{type}"] = idp.NewListConfigurations(o.context, o.IdpListConfigurationsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -2049,6 +2106,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/buckets/{bucket_name}/lifecycle/{lifecycle_id}"] = bucket.NewUpdateBucketLifecycle(o.context, o.BucketUpdateBucketLifecycleHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/idp/{type}/{name}"] = idp.NewUpdateConfiguration(o.context, o.IdpUpdateConfigurationHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

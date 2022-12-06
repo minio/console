@@ -150,6 +150,12 @@ type MinioAdmin interface {
 	describeSelfIdentity(ctx context.Context) (*madmin.KMSDescribeSelfIdentity, error)
 	deleteIdentity(ctx context.Context, identity string) error
 	listIdentities(ctx context.Context, pattern string) ([]madmin.KMSIdentityInfo, error)
+
+	// IDP
+	addOrUpdateIDPConfig(ctx context.Context, idpType, cfgName, cfgData string, update bool) (restart bool, err error)
+	listIDPConfig(ctx context.Context, idpType string) ([]madmin.IDPListItem, error)
+	deleteIDPConfig(ctx context.Context, idpType, cfgName string) (restart bool, err error)
+	getIDPConfig(ctx context.Context, cfgType, cfgName string) (c madmin.IDPConfig, err error)
 }
 
 // Interface implementation
@@ -696,4 +702,20 @@ func (ac AdminClient) deleteIdentity(ctx context.Context, identity string) error
 
 func (ac AdminClient) listIdentities(ctx context.Context, pattern string) ([]madmin.KMSIdentityInfo, error) {
 	return ac.Client.ListIdentities(ctx, pattern)
+}
+
+func (ac AdminClient) addOrUpdateIDPConfig(ctx context.Context, idpType, cfgName, cfgData string, update bool) (restart bool, err error) {
+	return ac.Client.AddOrUpdateIDPConfig(ctx, idpType, cfgName, cfgData, update)
+}
+
+func (ac AdminClient) listIDPConfig(ctx context.Context, idpType string) ([]madmin.IDPListItem, error) {
+	return ac.Client.ListIDPConfig(ctx, idpType)
+}
+
+func (ac AdminClient) deleteIDPConfig(ctx context.Context, idpType, cfgName string) (restart bool, err error) {
+	return ac.Client.DeleteIDPConfig(ctx, idpType, cfgName)
+}
+
+func (ac AdminClient) getIDPConfig(ctx context.Context, idpType, cfgName string) (c madmin.IDPConfig, err error) {
+	return ac.Client.GetIDPConfig(ctx, idpType, cfgName)
 }

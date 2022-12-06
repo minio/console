@@ -3265,6 +3265,133 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - Inspect
+  /idp/{type}:
+    post:
+      summary: Create IDP Configuration
+      operationId: CreateConfiguration
+      parameters:
+        - name: type
+          description: IDP Configuration Type
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/idpServerConfiguration"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/setIDPResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - idp
+    get:
+      summary: List IDP Configurations
+      operationId: ListConfigurations
+      parameters:
+        - name: type
+          description: IDP Configuration Type
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/idpListConfigurationsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - idp
+  /idp/{type}/{name}:
+    get:
+      summary: Get IDP Configuration
+      operationId: GetConfiguration
+      parameters:
+        - name: name
+          description: IDP Configuration Name
+          in: path
+          required: true
+          type: string
+        - name: type
+          description: IDP Configuration Type
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/idpServerConfiguration"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - idp
+    delete:
+      summary: Delete IDP Configuration
+      operationId: DeleteConfiguration
+      parameters:
+        - name: name
+          description: IDP Configuration Name
+          in: path
+          required: true
+          type: string
+        - name: type
+          description: IDP Configuration Type
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/setIDPResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - idp
+    put:
+      summary: Update IDP Configuration
+      operationId: UpdateConfiguration
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/idpServerConfiguration"
+        - name: name
+          description: IDP Configuration Name
+          in: path
+          required: true
+          type: string
+        - name: type
+          description: IDP Configuration Type
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/setIDPResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - idp
 
 definitions:
   accountChangePasswordRequest:
@@ -5601,3 +5728,42 @@ definitions:
         type: string
       displayName:
         type: string
+
+  idpServerConfiguration:
+    type: object
+    properties:
+      name:
+        type: string
+      input:
+        type: string
+      type:
+        type: string
+      enabled:
+        type: boolean
+      info:
+        type: array
+        items:
+          $ref: "#/definitions/idpServerConfigurationInfo"
+  idpServerConfigurationInfo:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+      isCfg:
+        type: boolean
+      isEnv:
+        type: boolean
+  idpListConfigurationsResponse:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/idpServerConfiguration"
+  setIDPResponse:
+    type: object
+    properties:
+      restart:
+        type: boolean
