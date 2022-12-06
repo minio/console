@@ -37,6 +37,7 @@ type ProviderConfig struct {
 	Userinfo                 bool
 	RedirectCallbackDynamic  bool
 	RedirectCallback         string
+	EndSessionEndpoint       string
 	RoleArn                  string // can be empty
 }
 
