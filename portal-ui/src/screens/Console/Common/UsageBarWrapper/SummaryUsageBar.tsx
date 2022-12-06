@@ -125,16 +125,13 @@ const SummaryUsageBar = ({
 
   const dispatch = useAppDispatch();
   const fetchHealthReport = () => {
-    console.log("Let's call the API");
     api
       .invoke(
         "GET",
         `/api/v1/namespaces/${tenant.namespace}/tenants/${tenant.name}/health`
       )
       .then((res: any) => {
-        console.log("this is the result:", res);
-
-        if (res.error.length === 0) {
+        if (!res.error) {
           setHealthReportSuccess(true);
         } else {
           dispatch(
@@ -144,7 +141,6 @@ const SummaryUsageBar = ({
             })
           );
         }
-
         setHealthLoading(false);
       })
       .catch((err: ErrorResponseHandler) => {
