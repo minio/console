@@ -3460,6 +3460,16 @@ func init() {
         ],
         "summary": "Logout from Console.",
         "operationId": "Logout",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/logoutRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response."
@@ -6426,7 +6436,18 @@ func init() {
     "loginResponse": {
       "type": "object",
       "properties": {
+        "IDPRefreshToken": {
+          "type": "string"
+        },
         "sessionId": {
+          "type": "string"
+        }
+      }
+    },
+    "logoutRequest": {
+      "type": "object",
+      "properties": {
+        "state": {
           "type": "string"
         }
       }
@@ -11615,6 +11636,16 @@ func init() {
         ],
         "summary": "Logout from Console.",
         "operationId": "Logout",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/logoutRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response."
@@ -14707,7 +14738,18 @@ func init() {
     "loginResponse": {
       "type": "object",
       "properties": {
+        "IDPRefreshToken": {
+          "type": "string"
+        },
         "sessionId": {
+          "type": "string"
+        }
+      }
+    },
+    "logoutRequest": {
+      "type": "object",
+      "properties": {
+        "state": {
           "type": "string"
         }
       }
