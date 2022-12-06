@@ -165,9 +165,7 @@ func ParseLicense(client http.ClientI, license string) (*licverifier.LicenseInfo
 }
 
 func GetAPIKey(client http.ClientI, token string) (string, error) {
-
 	resp, err := subnetGetReq(client, subnetAPIKeyURL(), subnetAuthHeaders(token))
-
 	if err != nil {
 		fmt.Println("fail at subnetGetReq")
 		return "", err
