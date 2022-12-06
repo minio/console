@@ -2891,7 +2891,7 @@ func prepareSubnetUploadURL(uploadURL string, filename string, apiKey string) (s
 		// api key not passed as flag. check if it's available in the config
 		return "", nil
 
-		//apiKey = "cec35b03-4f02-130c-8256-a6577102f081"
+		// apiKey = "cec35b03-4f02-130c-8256-a6577102f081"
 	}
 	reqURL, headers, e := subnetURLWithAuth(uploadURL, apiKey)
 	if e != nil {
@@ -2939,7 +2939,6 @@ func subnetReqDo(r *http.Request, headers map[string]string) (int, string, error
 }
 
 func uploadFileToSubnet(filename string, reqURL string, headers map[string]string) error {
-
 	req, e := subnetUploadReq(reqURL, filename)
 	if e != nil {
 		return e
@@ -3112,7 +3111,7 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 	cancel()
 
 	uploadURL := subnetUploadURL("health", filename)
-	//subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
+	// subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
 	adminClient := restapi.AdminClient{Client: mAdmin}
 
 	subnetTokenConfig, e := restapi.GetSubnetKeyFromMinIOConfig(ctx, adminClient)

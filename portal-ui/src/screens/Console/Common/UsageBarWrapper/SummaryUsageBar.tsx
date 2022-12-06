@@ -65,7 +65,8 @@ const SummaryUsageBar = ({
   error,
 }: ISummaryUsageBar) => {
   const [healthLoading, setHealthLoading] = useState<boolean>(false);
-  const [healthReportSuccess, setHealthReportSuccess] = useState<boolean>(false);
+  const [healthReportSuccess, setHealthReportSuccess] =
+    useState<boolean>(false);
   let raw: ValueUnit = { value: "n/a", unit: "" };
   let capacity: ValueUnit = { value: "n/a", unit: "" };
   let used: ValueUnit = { value: "n/a", unit: "" };
@@ -132,10 +133,19 @@ const SummaryUsageBar = ({
       )
       .then((res: any) => {
         console.log("this is the result:", res);
-      
-       if (res.error.length === 0) { setHealthReportSuccess(true) } else {  dispatch(setErrorSnackMessage( {errorMessage: "Error with Health report", detailedError: res.error}))}
-      
-      setHealthLoading(false);
+
+        if (res.error.length === 0) {
+          setHealthReportSuccess(true);
+        } else {
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage: "Error with Health report",
+              detailedError: res.error,
+            })
+          );
+        }
+
+        setHealthLoading(false);
       })
       .catch((err: ErrorResponseHandler) => {
         dispatch(setErrorSnackMessage(err));
