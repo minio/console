@@ -35,8 +35,9 @@ const LogoutPage = () => {
       dispatch(resetSession());
       navigate(`login`);
     };
+    const state = localStorage.getItem("auth-state");
     api
-      .invoke("POST", `/api/v1/logout`)
+      .invoke("POST", `/api/v1/logout`, { state })
       .then(() => {
         deleteSession();
       })

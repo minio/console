@@ -29,30 +29,27 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// LoginResponse login response
+// LogoutRequest logout request
 //
-// swagger:model loginResponse
-type LoginResponse struct {
+// swagger:model logoutRequest
+type LogoutRequest struct {
 
-	// ID p refresh token
-	IDPRefreshToken string `json:"IDPRefreshToken,omitempty"`
-
-	// session Id
-	SessionID string `json:"sessionId,omitempty"`
+	// state
+	State string `json:"state,omitempty"`
 }
 
-// Validate validates this login response
-func (m *LoginResponse) Validate(formats strfmt.Registry) error {
+// Validate validates this logout request
+func (m *LogoutRequest) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this login response based on context it is used
-func (m *LoginResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this logout request based on context it is used
+func (m *LogoutRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *LoginResponse) MarshalBinary() ([]byte, error) {
+func (m *LogoutRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -60,8 +57,8 @@ func (m *LoginResponse) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *LoginResponse) UnmarshalBinary(b []byte) error {
-	var res LoginResponse
+func (m *LogoutRequest) UnmarshalBinary(b []byte) error {
+	var res LogoutRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

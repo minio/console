@@ -17,11 +17,17 @@
 package restapi
 
 import (
+	"context"
+	"encoding/base64"
+	"encoding/json"
 	"net/http"
+	"net/url"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
+	"github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/console/restapi/operations"
 	authApi "github.com/minio/console/restapi/operations/auth"
 )
@@ -29,13 +35,26 @@ import (
 func registerLogoutHandlers(api *operations.ConsoleAPI) {
 	// logout from console
 	api.AuthLogoutHandler = authApi.LogoutHandlerFunc(func(params authApi.LogoutParams, session *models.Principal) middleware.Responder {
-		getLogoutResponse(session)
+		err := getLogoutResponse(session, params)
+		if err != nil {
+			return authApi.NewLogoutDefault(int(err.Code)).WithPayload(err)
+		}
 		// Custom response writer to expire the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
 			expiredCookie := ExpireSessionCookie()
 			// this will tell the browser to clear the cookie and invalidate user session
 			// additionally we are deleting the cookie from the client side
 			http.SetCookie(w, &expiredCookie)
+			http.SetCookie(w, &http.Cookie{
+				Path:     "/",
+				Name:     "idp-refresh-token",
+				Value:    "",
+				MaxAge:   -1,
+				Expires:  time.Now().Add(-100 * time.Hour),
+				HttpOnly: true,
+				Secure:   len(GlobalPublicCerts) > 0,
+				SameSite: http.SameSiteLaxMode,
+			})
 			authApi.NewLogoutOK().WriteResponse(w, p)
 		})
 	})
@@ -47,8 +66,45 @@ func logout(credentials ConsoleCredentialsI) {
 }
 
 // getLogoutResponse performs logout() and returns nil or errors
-func getLogoutResponse(session *models.Principal) {
+func getLogoutResponse(session *models.Principal, params authApi.LogoutParams) *models.Error {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	state := params.Body.State
+	if state != "" {
+		if err := logoutFromIDPProvider(params.HTTPRequest, state); err != nil {
+			return ErrorWithContext(ctx, err)
+		}
+	}
 	creds := getConsoleCredentialsFromSession(session)
 	credentials := ConsoleCredentials{ConsoleCredentials: creds}
 	logout(credentials)
+	return nil
+}
+
+func logoutFromIDPProvider(r *http.Request, state string) error {
+	decodedRState, err := base64.StdEncoding.DecodeString(state)
+	if err != nil {
+		return err
+	}
+	var requestItems oauth2.LoginURLParams
+	err = json.Unmarshal(decodedRState, &requestItems)
+	if err != nil {
+		return err
+	}
+	providerCfg := GlobalMinIOConfig.OpenIDProviders[requestItems.IDPName]
+	refreshToken, err := r.Cookie("idp-refresh-token")
+	if err != nil {
+		return err
+	}
+	if providerCfg.EndSessionEndpoint != "" {
+		params := url.Values{}
+		params.Add("client_id", providerCfg.ClientID)
+		params.Add("client_secret", providerCfg.ClientSecret)
+		params.Add("refresh_token", refreshToken.Value)
+		_, err := http.PostForm(providerCfg.EndSessionEndpoint, params)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
