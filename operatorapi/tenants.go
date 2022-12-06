@@ -2920,6 +2920,7 @@ func subnetReqDo(r *http.Request, headers map[string]string) (int, string, error
 	if len(ct) == 0 {
 		r.Header.Add("Content-Type", "application/json")
 	}
+	fmt.Println("************** r: ", r)
 	resp, e := subnetHTTPDo(r)
 	if e != nil {
 		return 400, "", e
@@ -2942,7 +2943,7 @@ func subnetReqDo(r *http.Request, headers map[string]string) (int, string, error
 
 func uploadFileToSubnet(filename string, reqURL string, headers map[string]string) (int, error) {
 	fmt.Println("this is the requrl: ", reqURL)
-	req, e := subnetUploadReq(subnetUploadURL("health", filename), filename)
+	req, e := subnetUploadReq(reqURL, filename)
 	if e != nil {
 		return 400, e
 	}
