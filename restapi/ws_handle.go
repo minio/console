@@ -18,12 +18,16 @@ package restapi
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/minio/madmin-go/v2"
 
 	"github.com/minio/console/pkg/utils"
 
@@ -31,7 +35,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth"
-	"github.com/minio/madmin-go/v2"
 )
 
 var upgrader = websocket.Upgrader{
@@ -68,6 +71,18 @@ type wsS3Client struct {
 	conn wsConn
 	// mcClient
 	client MCClient
+}
+
+// ConsoleWebSocketMClient interface of a Websocket Client
+type ConsoleWebsocketMClient interface {
+	objectManager(options objectsListOpts)
+}
+
+type wsMinioClient struct {
+	// websocket connection.
+	conn wsConn
+	// MinIO admin Client
+	client minioClient
 }
 
 // WSConn interface with all functions to be implemented
@@ -135,9 +150,9 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Un-comment for development so websockets work on port 5005
-	// upgrader.CheckOrigin = func(r *http.Request) bool {
-	// 	return true
-	// }
+	/*upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}*/
 
 	// upgrades the HTTP server connection to the WebSocket protocol.
 	conn, err := upgrader.Upgrade(w, req, nil)
@@ -236,7 +251,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.BucketName)
+		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.BucketName, "")
 		if err != nil {
 			ErrorWithContext(ctx, err)
 			closeWsConn(conn)
@@ -272,6 +287,15 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		}
 		go wsAdminClient.profile(ctx, pOptions)
 
+	case strings.HasPrefix(wsPath, `/objectManager`):
+		wsMinioClient, err := newWebSocketMinioClient(conn, session)
+		if err != nil {
+			ErrorWithContext(ctx, err)
+			closeWsConn(conn)
+			return
+		}
+
+		go wsMinioClient.objectManager(session)
 	default:
 		// path not found
 		closeWsConn(conn)
@@ -299,10 +323,10 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) 
 }
 
 // newWebSocketS3Client returns a wsAdminClient authenticated as Console admin
-func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName string) (*wsS3Client, error) {
+func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName, prefix string) (*wsS3Client, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
-	s3Client, err := newS3BucketClient(claims, bucketName, "")
+	s3Client, err := newS3BucketClient(claims, bucketName, prefix)
 	if err != nil {
 		LogError("error creating S3Client:", err)
 		return nil, err
@@ -316,6 +340,28 @@ func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucket
 	// create websocket client and handle request
 	wsS3Client := &wsS3Client{conn: wsConnection, client: mcS3C}
 	return wsS3Client, nil
+}
+
+func newWebSocketMinioClient(conn *websocket.Conn, claims *models.Principal) (*wsMinioClient, error) {
+	// Only start Websocket Interaction after user has been
+	// authenticated with MinIO
+
+	mClient, err := newMinioClient(claims)
+	if err != nil {
+		LogError("error creating MinioClient:", err)
+		return nil, err
+	}
+
+	// create a websocket connection interface implementation
+	// defining the connection to be used
+	wsConnection := wsConn{conn: conn}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	// create websocket client and handle request
+	wsMinioClient := &wsMinioClient{conn: wsConnection, client: minioClient}
+	return wsMinioClient, nil
 }
 
 // wsReadClientCtx reads the messages that come from the client
@@ -492,6 +538,228 @@ func (wsc *wsAdminClient) profile(ctx context.Context, opts *profileOptions) {
 	sendWsCloseMessage(wsc.conn, err)
 }
 
+func (wsc *wsMinioClient) objectManager(session *models.Principal) {
+	// Storage of Cancel Contexts for this connection
+	cancelContexts := make(map[int64]context.CancelFunc)
+
+	// Initial goroutine
+	defer func() {
+		// We close socket at the end of requests
+		wsc.conn.close()
+		for _, c := range cancelContexts {
+			// invoke cancel
+			c()
+		}
+	}()
+
+	writeChannel := make(chan WSResponse)
+	done := make(chan interface{})
+
+	// Read goroutine
+	go func() {
+		for {
+			mType, message, err := wsc.conn.readMessage()
+			if err != nil {
+				LogInfo("Error while reading objectManager message", err)
+				close(done)
+				return
+			}
+
+			if mType == websocket.TextMessage {
+				// We get request data & review information
+				var messageRequest ObjectsRequest
+
+				err := json.Unmarshal(message, &messageRequest)
+				if err != nil {
+					LogInfo("Error on message request unmarshal")
+					close(done)
+					return
+				}
+
+				// new message, new context
+				ctx, cancel := context.WithCancel(context.Background())
+
+				// We store the cancel func associated with this request
+				cancelContexts[messageRequest.RequestID] = cancel
+
+				const itemsPerBatch = 1000
+				switch messageRequest.Mode {
+				case "close":
+					close(done)
+					return
+				case "cancel":
+					// if we have that request id, cancel it
+					if cancelFunc, ok := cancelContexts[messageRequest.RequestID]; ok {
+						cancelFunc()
+						delete(cancelContexts, messageRequest.RequestID)
+					}
+				case "objects":
+					// cancel all previous open objects requests for listing
+					for rid, c := range cancelContexts {
+						if rid < messageRequest.RequestID {
+							// invoke cancel
+							c()
+						}
+					}
+
+					// start listing and writing to web socket
+					go func() {
+						defer func() {
+							log.Println("Closing listing goroutine:", messageRequest.RequestID)
+						}()
+						objectRqConfigs, err := getObjectsOptionsFromReq(messageRequest)
+						if err != nil {
+							LogInfo(fmt.Sprintf("Error during Objects OptionsParse %s", err.Error()))
+							return
+						}
+						var buffer []ObjectResponse
+						for lsObj := range startObjectsListing(ctx, wsc.client, objectRqConfigs) {
+							if cancelContexts[messageRequest.RequestID] == nil {
+								return
+							}
+							if lsObj.Err != nil {
+								writeChannel <- WSResponse{
+									RequestID: messageRequest.RequestID,
+									Error:     lsObj.Err.Error(),
+								}
+
+								continue
+							}
+							objItem := ObjectResponse{
+								Name:         lsObj.Key,
+								Size:         lsObj.Size,
+								LastModified: lsObj.LastModified.Format(time.RFC3339),
+								VersionID:    lsObj.VersionID,
+								IsLatest:     lsObj.IsLatest,
+								DeleteMarker: lsObj.IsDeleteMarker,
+							}
+							buffer = append(buffer, objItem)
+
+							if len(buffer) >= itemsPerBatch {
+								writeChannel <- WSResponse{
+									RequestID: messageRequest.RequestID,
+									Data:      buffer,
+								}
+								buffer = nil
+							}
+						}
+						if len(buffer) > 0 {
+							writeChannel <- WSResponse{
+								RequestID: messageRequest.RequestID,
+								Data:      buffer,
+							}
+						}
+
+						writeChannel <- WSResponse{
+							RequestID:  messageRequest.RequestID,
+							RequestEnd: true,
+						}
+
+						// remove the cancellation context
+						delete(cancelContexts, messageRequest.RequestID)
+					}()
+				case "rewind":
+					// cancel all previous open objects requests for listing
+					for rid, c := range cancelContexts {
+						if rid < messageRequest.RequestID {
+							// invoke cancel
+							c()
+						}
+					}
+
+					// start listing and writing to web socket
+					go func() {
+						objectRqConfigs, err := getObjectsOptionsFromReq(messageRequest)
+						if err != nil {
+							LogInfo(fmt.Sprintf("Error during Objects OptionsParse %s", err.Error()))
+							cancel()
+							return
+						}
+
+						s3Client, err := newS3BucketClient(session, objectRqConfigs.BucketName, objectRqConfigs.Prefix)
+						if err != nil {
+							LogError("error creating S3Client:", err)
+							close(done)
+							cancel()
+							return
+						}
+
+						mcS3C := mcClient{client: s3Client}
+
+						var buffer []ObjectResponse
+
+						for lsObj := range startRewindListing(ctx, mcS3C, objectRqConfigs) {
+							if lsObj.Err != nil {
+								writeChannel <- WSResponse{
+									RequestID: messageRequest.RequestID,
+									Error:     lsObj.Err.String(),
+								}
+
+								continue
+							}
+
+							name := strings.ReplaceAll(lsObj.URL.Path, fmt.Sprintf("/%s/", objectRqConfigs.BucketName), "")
+
+							objItem := ObjectResponse{
+								Name:         name,
+								Size:         lsObj.Size,
+								LastModified: lsObj.Time.Format(time.RFC3339),
+								VersionID:    lsObj.VersionID,
+								IsLatest:     lsObj.IsLatest,
+								DeleteMarker: lsObj.IsDeleteMarker,
+							}
+							buffer = append(buffer, objItem)
+
+							if len(buffer) >= itemsPerBatch {
+								writeChannel <- WSResponse{
+									RequestID: messageRequest.RequestID,
+									Data:      buffer,
+								}
+								buffer = nil
+							}
+
+						}
+						if len(buffer) > 0 {
+							writeChannel <- WSResponse{
+								RequestID: messageRequest.RequestID,
+								Data:      buffer,
+							}
+						}
+
+						writeChannel <- WSResponse{
+							RequestID:  messageRequest.RequestID,
+							RequestEnd: true,
+						}
+
+						// remove the cancellation context
+						delete(cancelContexts, messageRequest.RequestID)
+					}()
+				}
+			}
+		}
+	}()
+
+	// Write goroutine
+	go func() {
+		for writeM := range writeChannel {
+			jsonData, err := json.Marshal(writeM)
+			if err != nil {
+				LogInfo("Error while parsing the response", err)
+				return
+			}
+
+			err = wsc.conn.writeMessage(websocket.TextMessage, jsonData)
+
+			if err != nil {
+				LogInfo("Error while writing the message", err)
+				return
+			}
+		}
+	}()
+
+	<-done
+}
+
 // sendWsCloseMessage sends Websocket Connection Close Message indicating the Status Code
 // see https://tools.ietf.org/html/rfc6455#page-45
 func sendWsCloseMessage(conn WSConn, err error) {
@@ -507,7 +775,7 @@ func sendWsCloseMessage(conn WSConn, err error) {
 			return
 		}
 		// else, internal server error
-		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, ErrDefault.Error()))
+		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
 		return
 	}
 	// normal closure

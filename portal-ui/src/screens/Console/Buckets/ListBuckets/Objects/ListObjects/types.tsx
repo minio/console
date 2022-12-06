@@ -14,17 +14,48 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { IFileInfo } from "../ObjectDetails/types";
+
 export interface BucketObjectItem {
   name: string;
   size: number;
   etag?: string;
-  last_modified: Date;
+  last_modified: string;
   content_type?: string;
   version_id: string;
   delete_flag?: boolean;
+  is_latest?: boolean;
 }
 
 export interface BucketObjectItemsList {
   objects: BucketObjectItem[];
   total?: number;
+}
+
+export interface WebsocketRequest {
+  mode: "objects" | "rewind" | "close" | "cancel";
+  bucket_name?: string;
+  prefix?: string;
+  date?: string;
+  request_id: number;
+}
+
+export interface WebsocketResponse {
+  request_id: number;
+  error?: string;
+  request_end?: boolean;
+  data?: ObjectResponse[];
+}
+export interface ObjectResponse {
+  name: string;
+  last_modified: string;
+  size: number;
+  version_id: string;
+  delete_flag: boolean;
+  is_latest: boolean;
+}
+
+export interface IRestoreLocalObjectList {
+  prefix: string;
+  objectInfo: IFileInfo;
 }
