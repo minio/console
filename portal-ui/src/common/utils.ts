@@ -84,7 +84,9 @@ export const deleteCookie = (name: string) => {
 
 export const clearSession = () => {
   storage.removeItem("token");
+  storage.removeItem("auth-state");
   deleteCookie("token");
+  deleteCookie("idp-refresh-token");
 };
 
 // timeFromDate gets time string from date input
