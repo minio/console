@@ -135,7 +135,7 @@ const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {
       type: "delete",
       onClick: confirmDeleteIDP,
       sendOnlyId: true,
-      disableButtonFunction: () => !deleteIDP,
+      disableButtonFunction: (idp: string) => !deleteIDP || idp === "Default",
     },
   ];
 

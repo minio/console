@@ -68,6 +68,10 @@ const AddIDPLDAPConfiguration = ({ classes }: AddIDPLDAPConfigurationProps) => {
         <AddIDPConfigurationHelpBox
           helpText={"Learn more about LDAP Configurations"}
           contents={helpBoxContents}
+          docLink={
+            "https://min.io/docs/minio/linux/operations/external-iam.html?ref=con#minio-external-iam-ad-ldap"
+          }
+          docText={"Learn more about LDAP Configurations"}
         />
       }
       header={"LDAP Configurations"}

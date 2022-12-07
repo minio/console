@@ -100,6 +100,7 @@ const IDPConfigurationDetails = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const [fields, setFields] = useState<any>({});
+  const [originalFields, setOriginalFields] = useState<any>({});
   const [record, setRecord] = useState<any>({});
   const [editMode, setEditMode] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -147,19 +148,29 @@ const IDPConfigurationDetails = ({
     setFields(fields);
   };
 
+  const parseOriginalFields = (record: any) => {
+    let fields: any = {};
+    if (record.info) {
+      record.info.forEach((item: any) => {
+        fields[item.key] = item.value;
+      });
+    }
+    setOriginalFields(fields);
+  };
+
   useEffect(() => {
     setLoading(true);
   }, []);
 
   useEffect(() => {
     const loadRecord = () => {
-      // if (displayStatus) {
       api
         .invoke("GET", `${endpoint}${configurationName}`)
         .then((result: any) => {
           if (result) {
             setRecord(result);
             parseFields(result);
+            parseOriginalFields(result);
           }
           setLoading(false);
         })
@@ -197,7 +208,7 @@ const IDPConfigurationDetails = ({
     event.preventDefault();
     let input = "";
     for (const key of Object.keys(formFields)) {
-      if (fields[key]) {
+      if (fields[key] || fields[key] !== originalFields[key]) {
         input += `${key}=${fields[key]} `;
       }
     }
@@ -254,15 +265,17 @@ const IDPConfigurationDetails = ({
             title={configurationName === "_" ? "Default" : configurationName}
             actions={
               <Fragment>
-                <Button
-                  id={"delete-idp-config"}
-                  onClick={() => {
-                    setDeleteOpen(true);
-                  }}
-                  label={"Delete Configuration"}
-                  icon={<TrashIcon />}
-                  variant={"secondary"}
-                />
+                {configurationName !== "_" && (
+                  <Button
+                    id={"delete-idp-config"}
+                    onClick={() => {
+                      setDeleteOpen(true);
+                    }}
+                    label={"Delete Configuration"}
+                    icon={<TrashIcon />}
+                    variant={"secondary"}
+                  />
+                )}
                 <Button
                   id={"refresh-idp-config"}
                   onClick={() => setLoading(true)}

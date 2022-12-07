@@ -143,9 +143,9 @@ export const validRoutes = (
           icon: AccessMenuIcon,
         },
         {
-          name: "Openid",
+          name: "OpenID",
           component: NavLink,
-          id: "openid",
+          id: "openID",
           to: IAM_PAGES.IDP_OPENID_CONFIGURATIONS,
           icon: LockOpen,
         },
