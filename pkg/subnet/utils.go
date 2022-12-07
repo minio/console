@@ -57,7 +57,6 @@ func subnetMFAURL() string {
 }
 
 func subnetAPIKeyURL() string {
-	fmt.Println("get the subnetAPIKeyURL")
 	return subnetBaseURL() + "/api/auth/api-key"
 }
 
@@ -71,7 +70,6 @@ func GenerateRegToken(clusterRegInfo mc.ClusterRegistrationInfo) (string, error)
 }
 
 func subnetAuthHeaders(authToken string) map[string]string {
-	fmt.Println("get the subnetAuthHeaders")
 	return map[string]string{"Authorization": "Bearer " + authToken}
 }
 

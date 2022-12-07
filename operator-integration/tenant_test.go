@@ -1305,3 +1305,39 @@ func TestTenantDetails(t *testing.T) {
 		)
 	}
 }
+
+func TenantHealthReport(nameSpace, tenant string) (*http.Response, error) {
+	request, err := http.NewRequest(
+		"GET",
+		"http://localhost:9090/api/v1/namespaces/"+nameSpace+"/tenants/"+tenant+"/health",
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestTenantHealthReport(t *testing.T) {
+	// Vars
+	assert := assert.New(t)
+	nameSpace := "tenant-lite"
+	tenant := "storage-lite"
+	resp, err := TenantHealthReport(nameSpace, tenant)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if resp != nil {
+		assert.Equal(
+			200,
+			resp.StatusCode,
+			inspectHTTPResponse(resp),
+		)
+	}
+}
