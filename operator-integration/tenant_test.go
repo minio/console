@@ -1315,6 +1315,7 @@ func TenantHealthReport(nameSpace, tenant string) (*http.Response, error) {
 	if err != nil {
 		log.Println(err)
 	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
 	client := &http.Client{
 		Timeout: 2 * time.Second,
