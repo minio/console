@@ -43,8 +43,6 @@ import (
 
 	"github.com/mattn/go-ieproxy"
 	utils2 "github.com/minio/console/pkg/http"
-	xhttp "github.com/minio/console/pkg/http"
-	"github.com/minio/console/pkg/subnet"
 
 	"github.com/minio/madmin-go/v2"
 
@@ -2868,19 +2866,7 @@ func subnetAPIKeyAuthHeaders(apiKey string) map[string]string {
 
 func subnetURLWithAuth(uploadURL string, apiKey string) (string, map[string]string, error) {
 	if len(apiKey) == 0 {
-		// API key not available in minio/mc config.
-		// Ask the user to log in to get auth token
-		subnetHTTPClient := &xhttp.Client{Client: restapi.GetConsoleHTTPClient("")}
-		token, thisThing, e := restapi.SubnetLogin(subnetHTTPClient, "jill@min.io", "testPassword1!")
-		if e != nil {
-			return "", nil, e
-		}
-
-		apiKey, err := subnet.GetAPIKey(subnetHTTPClient, token)
-		if err != nil {
-			return "nil", nil, e
-		}
-		return thisThing, subnetAPIKeyAuthHeaders(apiKey), nil
+		return "", subnetAPIKeyAuthHeaders(apiKey), fmt.Errorf("API key missing")
 	}
 	return uploadURL, subnetAPIKeyAuthHeaders(apiKey), nil
 }
