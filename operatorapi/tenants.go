@@ -29,7 +29,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net"
 	"net/http"
@@ -43,6 +42,7 @@ import (
 
 	"github.com/mattn/go-ieproxy"
 	utils2 "github.com/minio/console/pkg/http"
+	"github.com/minio/console/pkg/subnet"
 
 	"github.com/minio/madmin-go/v2"
 
@@ -2809,24 +2809,17 @@ func tarGZ(healthInfo interface{}, version string, filename string) error {
 
 var globalSubnetProxyURL *url.URL
 
-func httpClient(timeout time.Duration) *http.Client {
-	return &http.Client{
-		Timeout: timeout,
+func getSubnetClient() *http.Client {
+	client := &http.Client{
+		Timeout: 10 * time.Second,
 		Transport: &http.Transport{
 			Proxy: ieproxy.GetProxyFunc(),
 			TLSClientConfig: &tls.Config{
-				// RootCAs: globalRootCAs,
-				// Can't use SSLv3 because of POODLE and BEAST
-				// Can't use TLSv1.0 because of POODLE and BEAST using CBC cipher
-				// Can't use TLSv1.1 because of RC4 cipher usage
 				MinVersion: tls.VersionTLS12,
 			},
 		},
 	}
-}
 
-func getSubnetClient() *http.Client {
-	client := httpClient(10 * time.Second)
 	if globalSubnetProxyURL != nil {
 		client.Transport.(*http.Transport).Proxy = http.ProxyURL(globalSubnetProxyURL)
 	}
@@ -2871,19 +2864,6 @@ func subnetURLWithAuth(uploadURL string, apiKey string) (string, map[string]stri
 	return uploadURL, subnetAPIKeyAuthHeaders(apiKey), nil
 }
 
-func prepareSubnetUploadURL(uploadURL string, filename string, apiKey string) (string, map[string]string) {
-	var e error
-	if len(apiKey) == 0 {
-		// api key not passed as flag. check if it's available in the config
-		return "missing API key", nil
-	}
-	reqURL, headers, e := subnetURLWithAuth(uploadURL, apiKey)
-	if e != nil {
-		return "there was an error here", nil
-	}
-	return reqURL, headers
-}
-
 func subnetUploadURL(uploadType string, filename string) string {
 	return fmt.Sprintf("%s/api/%s/upload?filename=%s",
 		"https://subnet.min.io", uploadType, filename)
@@ -2893,53 +2873,19 @@ func subnetHTTPDo(req *http.Request) (*http.Response, error) {
 	return getSubnetClient().Do(req)
 }
 
-func subnetReqDo(r *http.Request, headers map[string]string) (int, string, error) {
-	for k, v := range headers {
-		r.Header.Add(k, v)
-	}
-
-	ct := r.Header.Get("Content-Type")
-	if len(ct) == 0 {
-		r.Header.Add("Content-Type", "application/json")
-	}
-	resp, e := subnetHTTPDo(r)
-	if e != nil {
-		return 400, "", e
-	}
-
-	const subnetRespBodyLimit int64 = 1 << 20
-	defer resp.Body.Close()
-
-	respBytes, e := ioutil.ReadAll(io.LimitReader(resp.Body, subnetRespBodyLimit))
-	if e != nil {
-		return 400, "", e
-	}
-	respStr := string(respBytes)
-
-	if resp.StatusCode == http.StatusOK {
-		return resp.StatusCode, respStr, nil
-	}
-	return resp.StatusCode, respStr, fmt.Errorf("Request failed with code %d and error: %s", resp.StatusCode, respStr)
-}
-
-func uploadFileToSubnet(filename string, reqURL string, headers map[string]string) (int, error) {
+func uploadFileToSubnet(minioClient *utils2.Client, filename string, reqURL string, headers map[string]string) error {
 	req, e := subnetUploadReq(reqURL, filename)
 	if e != nil {
-		return 400, e
+		return e
 	}
-	respCode, _, e := subnetReqDo(req, headers)
+	_, e = subnet.SubnetReqDo(minioClient, req, headers)
 	if e != nil {
-		return 400, e
+		return e
 	}
 	// Delete the file after successful upload
 	os.Remove(filename)
 
-	return respCode, nil
-}
-
-// UTCNow - returns current UTC time.
-func UTCNow() time.Time {
-	return time.Now().UTC()
+	return nil
 }
 
 func getTenantHealthReport(session *models.Principal, params operator_api.TenantHealthReportParams) (*models.HealthReport, *models.Error) {
@@ -3005,7 +2951,7 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 	var healthInfoV2 madmin.HealthInfoV2
 	var healthInfoV3 madmin.HealthInfo
 
-	filename := fmt.Sprintf("%s-%s-health_%s.json.gz", params.Namespace, params.Tenant, UTCNow().Format("20060102150405"))
+	filename := fmt.Sprintf("%s-%s-health_%s.json.gz", params.Namespace, params.Tenant, time.Now().UTC().Format("20060102150405"))
 
 	decoder := json.NewDecoder(resp.Body)
 
@@ -3098,16 +3044,17 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 
 	uploadURL := subnetUploadURL("health", filename)
 	adminClient := restapi.AdminClient{Client: mAdmin}
+	subnetHTTPClient, err := restapi.GetSubnetHTTPClient(ctx, adminClient)
 
 	subnetTokenConfig, e := restapi.GetSubnetKeyFromMinIOConfig(ctx, adminClient)
 	if e != nil {
 		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
 		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
 	}
-	reqURL, headers := prepareSubnetUploadURL(uploadURL, filename, subnetTokenConfig.APIKey)
+	reqURL, headers, e := subnetURLWithAuth(uploadURL, subnetTokenConfig.APIKey)
 
-	respCode, e := uploadFileToSubnet(filename, reqURL, headers)
-	if e != nil || respCode != 200 {
+	e = uploadFileToSubnet(subnetHTTPClient, filename, reqURL, headers)
+	if e != nil {
 		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
 		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
 	}
