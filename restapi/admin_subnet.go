@@ -116,7 +116,7 @@ func SubnetLogin(client xhttp.ClientI, username, password string) (string, strin
 	}
 	if tokens.MfaToken != "" {
 		// user needs to complete login flow using mfa
-		return tokens.MfaToken, tokens.MfaToken, nil
+		return "", tokens.MfaToken, nil
 	}
 	if tokens.AccessToken != "" {
 		// register token to minio
