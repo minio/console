@@ -18,6 +18,7 @@ export interface ILoginDetails {
   loginStrategy: loginStrategyType;
   redirectRules: redirectRule[];
   isDirectPV?: boolean;
+  isK8S?: boolean;
 }
 
 export interface redirectRule {

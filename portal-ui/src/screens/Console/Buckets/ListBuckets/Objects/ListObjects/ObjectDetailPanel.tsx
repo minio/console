@@ -30,7 +30,7 @@ import {
   spacingUtils,
   textStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { IFileInfo } from "../ObjectDetails/types";
+import { IFileInfo, MetadataResponse } from "../ObjectDetails/types";
 import { download, extensionPreview } from "../utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
@@ -190,6 +190,8 @@ const ObjectDetailPanel = ({
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [totalVersionsSize, setTotalVersionsSize] = useState<number>(0);
   const [longFileOpen, setLongFileOpen] = useState<boolean>(false);
+  const [metaData, setMetaData] = useState<any | null>(null);
+  const [loadMetadata, setLoadingMetadata] = useState<boolean>(false);
 
   const internalPathsDecoded = decodeURLString(internalPaths) || "";
   const allPathData = internalPathsDecoded.split("/");
@@ -211,6 +213,10 @@ const ObjectDetailPanel = ({
           allInfoElements.find(
             (el: IFileInfo) => el.version_id === selectedVersion
           ) || emptyFile;
+      }
+
+      if (!infoElement.is_delete_marker) {
+        setLoadingMetadata(true);
       }
 
       setActualInfo(infoElement);
@@ -243,8 +249,14 @@ const ObjectDetailPanel = ({
 
             setTotalVersionsSize(tVersionSize);
           } else {
-            setActualInfo(result[0]);
+            const resInfo = result[0];
+
+            setActualInfo(resInfo);
             setVersions([]);
+
+            if (!resInfo.is_delete_marker) {
+              setLoadingMetadata(true);
+            }
           }
 
           dispatch(setLoadingObjectInfo(false));
@@ -262,6 +274,26 @@ const ObjectDetailPanel = ({
     distributedSetup,
     selectedVersion,
   ]);
+
+  useEffect(() => {
+    if (loadMetadata && internalPaths !== "") {
+      api
+        .invoke(
+          "GET",
+          `/api/v1/buckets/${bucketName}/objects/metadata?prefix=${internalPaths}`
+        )
+        .then((res: MetadataResponse) => {
+          let metadata = get(res, "objectMetadata", {});
+
+          setMetaData(metadata);
+          setLoadingMetadata(false);
+        })
+        .catch((err) => {
+          console.error("Error Getting Metadata Status: ", err.detailedError);
+          setLoadingMetadata(false);
+        });
+    }
+  }, [bucketName, internalPaths, loadMetadata]);
 
   let tagKeys: string[] = [];
 
@@ -656,7 +688,7 @@ const ObjectDetailPanel = ({
             version_id: actualInfo.version_id || "null",
             size: parseInt(actualInfo.size || "0"),
             content_type: "",
-            last_modified: new Date(actualInfo.last_modified),
+            last_modified: actualInfo.last_modified,
           }}
           onClosePreview={() => {
             setPreviewOpen(false);
@@ -847,20 +879,19 @@ const ObjectDetailPanel = ({
               </Fragment>
             </SecureComponent>
           </Box>
-          <Grid item xs={12} className={classes.headerForSection}>
-            <span>{t("Metadata")}</span>
-            <MetadataIcon />
-          </Grid>
-          <Box className={classes.detailContainer}>
-            {actualInfo ? (
-              <ObjectMetaData
-                bucketName={bucketName}
-                internalPaths={internalPaths}
-                actualInfo={actualInfo}
-                linear
-              />
-            ) : null}
-          </Box>
+          {!actualInfo.is_delete_marker && (
+            <Fragment>
+              <Grid item xs={12} className={classes.headerForSection}>
+                <span>Metadata</span>
+                <MetadataIcon />
+              </Grid>
+              <Box className={classes.detailContainer}>
+                {actualInfo && metaData ? (
+                  <ObjectMetaData metaData={metaData} linear />
+                ) : null}
+              </Box>
+            </Fragment>
+          )}
         </Fragment>
       )}
     </Fragment>
