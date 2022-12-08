@@ -3018,7 +3018,7 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 
 	uploadURL := subnetUploadURL("health", filename)
 	adminClient := restapi.AdminClient{Client: mAdmin}
-	subnetHTTPClient, err := restapi.GetSubnetHTTPClient(ctx, adminClient)
+	subnetHTTPClient, e := restapi.GetSubnetHTTPClient(ctx, adminClient)
 	if e != nil {
 		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
 		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
