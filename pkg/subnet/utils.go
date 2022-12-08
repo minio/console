@@ -60,10 +60,6 @@ func subnetAPIKeyURL() string {
 	return subnetBaseURL() + "/api/auth/api-key"
 }
 
-func subnetUploadURL() string {
-	return subnetBaseURL() + "/health"
-}
-
 func GenerateRegToken(clusterRegInfo mc.ClusterRegistrationInfo) (string, error) {
 	token, e := json.Marshal(clusterRegInfo)
 	if e != nil {
@@ -81,7 +77,7 @@ func httpDo(client xhttp.ClientI, req *http.Request) (*http.Response, error) {
 	return client.Do(req)
 }
 
-func SubnetReqDo(client xhttp.ClientI, r *http.Request, headers map[string]string) (string, error) {
+func ReqDo(client xhttp.ClientI, r *http.Request, headers map[string]string) (string, error) {
 	for k, v := range headers {
 		r.Header.Add(k, v)
 	}
@@ -114,7 +110,7 @@ func subnetGetReq(client xhttp.ClientI, reqURL string, headers map[string]string
 	if e != nil {
 		return "", e
 	}
-	return SubnetReqDo(client, r, headers)
+	return ReqDo(client, r, headers)
 }
 
 func subnetPostReq(client xhttp.ClientI, reqURL string, payload interface{}, headers map[string]string) (string, error) {
@@ -126,7 +122,7 @@ func subnetPostReq(client xhttp.ClientI, reqURL string, payload interface{}, hea
 	if e != nil {
 		return "", e
 	}
-	return SubnetReqDo(client, r, headers)
+	return ReqDo(client, r, headers)
 }
 
 func GetClusterRegInfo(admInfo madmin.InfoMessage) mc.ClusterRegistrationInfo {

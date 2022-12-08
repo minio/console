@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
-	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
@@ -32,7 +31,6 @@ import (
 	"mime/multipart"
 	"net"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
@@ -40,7 +38,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mattn/go-ieproxy"
 	utils2 "github.com/minio/console/pkg/http"
 	"github.com/minio/console/pkg/subnet"
 
@@ -2807,25 +2804,6 @@ func tarGZ(healthInfo interface{}, version string, filename string) error {
 	return nil
 }
 
-var globalSubnetProxyURL *url.URL
-
-func getSubnetClient() *http.Client {
-	client := &http.Client{
-		Timeout: 10 * time.Second,
-		Transport: &http.Transport{
-			Proxy: ieproxy.GetProxyFunc(),
-			TLSClientConfig: &tls.Config{
-				MinVersion: tls.VersionTLS12,
-			},
-		},
-	}
-
-	if globalSubnetProxyURL != nil {
-		client.Transport.(*http.Transport).Proxy = http.ProxyURL(globalSubnetProxyURL)
-	}
-	return client
-}
-
 func subnetUploadReq(url string, filename string) (*http.Request, error) {
 	file, e := os.Open(filename)
 	if e != nil {
@@ -2869,16 +2847,12 @@ func subnetUploadURL(uploadType string, filename string) string {
 		"https://subnet.min.io", uploadType, filename)
 }
 
-func subnetHTTPDo(req *http.Request) (*http.Response, error) {
-	return getSubnetClient().Do(req)
-}
-
 func uploadFileToSubnet(minioClient *utils2.Client, filename string, reqURL string, headers map[string]string) error {
 	req, e := subnetUploadReq(reqURL, filename)
 	if e != nil {
 		return e
 	}
-	_, e = subnet.SubnetReqDo(minioClient, req, headers)
+	_, e = subnet.ReqDo(minioClient, req, headers)
 	if e != nil {
 		return e
 	}
@@ -3045,14 +3019,20 @@ func getTenantHealthReport(session *models.Principal, params operator_api.Tenant
 	uploadURL := subnetUploadURL("health", filename)
 	adminClient := restapi.AdminClient{Client: mAdmin}
 	subnetHTTPClient, err := restapi.GetSubnetHTTPClient(ctx, adminClient)
-
+	if e != nil {
+		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
+		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
+	}
 	subnetTokenConfig, e := restapi.GetSubnetKeyFromMinIOConfig(ctx, adminClient)
 	if e != nil {
 		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
 		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
 	}
 	reqURL, headers, e := subnetURLWithAuth(uploadURL, subnetTokenConfig.APIKey)
-
+	if e != nil {
+		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
+		return &healthInfo, restapi.ErrorWithContext(ctx, e, restapi.ErrUnableToUploadTenantHealthReport)
+	}
 	e = uploadFileToSubnet(subnetHTTPClient, filename, reqURL, headers)
 	if e != nil {
 		healthInfo.Error = restapi.ErrUnableToUploadTenantHealthReport.Error()
