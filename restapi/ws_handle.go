@@ -20,7 +20,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"strconv"
@@ -604,9 +603,6 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 
 					// start listing and writing to web socket
 					go func() {
-						defer func() {
-							log.Println("Closing listing goroutine:", messageRequest.RequestID)
-						}()
 						objectRqConfigs, err := getObjectsOptionsFromReq(messageRequest)
 						if err != nil {
 							LogInfo(fmt.Sprintf("Error during Objects OptionsParse %s", err.Error()))
