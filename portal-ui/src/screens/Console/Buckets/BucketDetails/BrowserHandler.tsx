@@ -84,7 +84,10 @@ let currentRequestID: number = 0;
 let errorCounter: number = 0;
 let wsInFlight: boolean = false;
 
-const initWSConnection = (openCallback?: () => void) => {
+const initWSConnection = (
+  openCallback?: () => void,
+  onMessageCallback?: (message: IMessageEvent) => void
+) => {
   if (wsInFlight) {
     return;
   }
@@ -111,9 +114,13 @@ const initWSConnection = (openCallback?: () => void) => {
     errorCounter = 0;
   };
 
+  if (onMessageCallback) {
+    objectsWS.onmessage = onMessageCallback;
+  }
+
   const reconnectFn = () => {
     if (errorCounter <= 5) {
-      initWSConnection(openCallback);
+      initWSConnection(openCallback, onMessageCallback);
       errorCounter += 1;
     } else {
       console.error("Websocket not available.");
@@ -261,13 +268,12 @@ const BrowserHandler = () => {
     },
     [dispatch, internalPaths, allowResources, bucketName]
   );
-  if (objectsWS) {
-    objectsWS.onmessage = onMessageCallBack;
-  }
 
   const initWSRequest = useCallback(
     (path: string, date: Date) => {
+      console.log("cb");
       if (objectsWS && objectsWS.readyState === 1) {
+        console.log("cb2");
         try {
           const newRequestID = currentRequestID + 1;
           dispatch(resetMessages());
@@ -293,10 +299,10 @@ const BrowserHandler = () => {
           initWSRequest(path, date);
         };
 
-        initWSConnection(dupRequest);
+        initWSConnection(dupRequest, onMessageCallBack);
       }
     },
-    [bucketName, rewindEnabled, showDeleted, dispatch]
+    [bucketName, rewindEnabled, showDeleted, dispatch, onMessageCallBack]
   );
 
   useEffect(() => {
