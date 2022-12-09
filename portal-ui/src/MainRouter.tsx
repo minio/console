@@ -39,7 +39,14 @@ const MainRouter = () => {
             </Suspense>
           }
         />
-        <Route path="/logout" element={<Logout />} />
+        <Route
+          path="/logout"
+          element={
+            <Suspense fallback={<LoadingComponent />}>
+              <Logout />
+            </Suspense>
+          }
+        />
         <Route
           path="/login"
           element={
