@@ -271,9 +271,7 @@ const BrowserHandler = () => {
 
   const initWSRequest = useCallback(
     (path: string, date: Date) => {
-      console.log("cb");
       if (objectsWS && objectsWS.readyState === 1) {
-        console.log("cb2");
         try {
           const newRequestID = currentRequestID + 1;
           dispatch(resetMessages());
@@ -291,7 +289,7 @@ const BrowserHandler = () => {
           // We store the new ID for the requestID
           currentRequestID = newRequestID;
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       } else {
         // Socket is disconnected, we request reconnection but will need to recreate call
