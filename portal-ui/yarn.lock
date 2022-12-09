@@ -7969,9 +7969,9 @@ mdn-data@2.0.4:
   resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-2.0.4.tgz#699b3c38ac6f1d728091a64650b65d388502fd5b"
   integrity sha512-iV3XNKw06j5Q7mi6h+9vbx23Tv7JkjEVgKHW4pimwyDGWm0OIQntJJ+u1C6mg6mK1EaTv42XQ7w76yuzH7M2cA==
 
-"mds@https://github.com/minio/mds.git#v0.0.5":
-  version "0.0.5"
-  resolved "https://github.com/minio/mds.git#b9183841f178b7cc3ef320554f762c1d5bf6d7bd"
+"mds@https://github.com/minio/mds.git#v0.0.7":
+  version "0.0.7"
+  resolved "https://github.com/minio/mds.git#dd51b9d694550e7737e6cf2462195b8ad70fbfe6"
   dependencies:
     "@types/styled-components" "^5.1.25"
     styled-components "^5.3.6"
