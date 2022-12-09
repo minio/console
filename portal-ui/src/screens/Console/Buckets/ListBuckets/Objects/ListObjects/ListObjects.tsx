@@ -96,7 +96,7 @@ import {
   resetMessages,
   resetRewind,
   setDownloadRenameModal,
-  setLoadingObjectsList,
+  setLoadingObjects,
   setLoadingRecords,
   setLoadingVersions,
   setNewObject,
@@ -317,7 +317,7 @@ const ListObjects = () => {
 
   useEffect(() => {
     dispatch(setSearchObjects(""));
-    dispatch(setLoadingObjectsList(true));
+    dispatch(setLoadingObjects(true));
     dispatch(setSelectedObjects([]));
   }, [simplePath, dispatch]);
 
@@ -424,7 +424,7 @@ const ListObjects = () => {
     if (refresh) {
       dispatch(setSnackBarMessage(`Objects deleted successfully.`));
       dispatch(setSelectedObjects([]));
-      dispatch(setLoadingObjectsList(true));
+      dispatch(setLoadingObjects(true));
     }
   };
 
@@ -595,7 +595,7 @@ const ListObjects = () => {
             };
             xhr.onloadend = () => {
               if (files.length === 0) {
-                dispatch(setLoadingObjectsList(true));
+                dispatch(setLoadingObjects(true));
               }
             };
             xhr.onabort = () => {
@@ -650,7 +650,7 @@ const ListObjects = () => {
             dispatch(setErrorSnackMessage(err));
           }
           // We force objects list reload after all promises were handled
-          dispatch(setLoadingObjectsList(true));
+          dispatch(setLoadingObjects(true));
           dispatch(setSelectedObjects([]));
         });
       };
@@ -736,7 +736,7 @@ const ListObjects = () => {
     dispatch(setSelectedObjects([]));
 
     if (forceRefresh) {
-      dispatch(setLoadingObjectsList(true));
+      dispatch(setLoadingObjects(true));
     }
   };
 
@@ -949,7 +949,7 @@ const ListObjects = () => {
                         } else {
                           dispatch(resetMessages());
                           dispatch(setLoadingRecords(true));
-                          dispatch(setLoadingObjectsList(true));
+                          dispatch(setLoadingObjects(true));
                         }
                       }}
                       disabled={
