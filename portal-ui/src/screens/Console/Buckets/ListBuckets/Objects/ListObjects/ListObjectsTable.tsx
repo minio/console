@@ -27,7 +27,7 @@ import { AppState, useAppDispatch } from "../../../../../../store";
 import { selFeatures } from "../../../../consoleSlice";
 import { encodeURLString } from "../../../../../../common/utils";
 import {
-  setLoadingObjectsList,
+  setLoadingObjects,
   setLoadingVersions,
   setObjectDetailsView,
   setSelectedObjects,
@@ -168,7 +168,7 @@ const ListObjectsTable = () => {
     const newSortDirection = get(sortData, "sortDirection", "DESC");
     setCurrentSortField(sortData.sortBy);
     setSortDirection(newSortDirection);
-    dispatch(setLoadingObjectsList(true));
+    dispatch(setLoadingObjects(true));
   };
 
   const selectAllItems = () => {

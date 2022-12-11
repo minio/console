@@ -59,6 +59,7 @@ import {
 import SettingsIcon from "../../icons/SettingsIcon";
 import React from "react";
 import LicenseBadge from "./Menu/LicenseBadge";
+import { LockOpen, Login } from "@mui/icons-material";
 
 export const validRoutes = (
   features: string[] | null | undefined,
@@ -140,6 +141,20 @@ export const validRoutes = (
           id: "policies",
           to: IAM_PAGES.POLICIES,
           icon: AccessMenuIcon,
+        },
+        {
+          name: "OpenID",
+          component: NavLink,
+          id: "openID",
+          to: IAM_PAGES.IDP_OPENID_CONFIGURATIONS,
+          icon: LockOpen,
+        },
+        {
+          name: "LDAP",
+          component: NavLink,
+          id: "ldap",
+          to: IAM_PAGES.IDP_LDAP_CONFIGURATIONS,
+          icon: Login,
         },
       ],
     },
