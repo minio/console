@@ -91,12 +91,6 @@ const NotificationEndpointTypeSelectorHelpBox = () => {
           </Box>
         </Box>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexFlow: "column",
-        }}
-      ></Box>
     </Box>
   );
 };
