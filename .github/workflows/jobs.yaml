@@ -482,20 +482,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-1
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-1-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-1-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-1.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -511,13 +505,6 @@ jobs:
           GOOS: linux
         run: |
           make console
-
-      - name: Install dependencies
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          cd portal-ui; yarn install;
 
       - name: clean-previous-containers-if-any
         run: |
@@ -585,20 +572,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-2
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-2-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-2-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-2.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -681,20 +662,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-3
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-3-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-3-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-3.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -773,20 +748,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-4
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-4-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-4-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-4.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -858,20 +827,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-5
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-5-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-5-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-5.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -943,20 +906,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-6
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-6-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-6-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-6.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -1028,20 +985,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-7
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-7-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-7-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-7.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -1113,20 +1064,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-8
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-8-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-8-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-8.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -1203,20 +1148,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-9
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-9-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-9-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-9.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -1298,20 +1237,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-A
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-A-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-A-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-A.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -1327,13 +1260,6 @@ jobs:
           GOOS: linux
         run: |
           make console
-
-      - name: Install dependencies
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          cd portal-ui; yarn install;
 
       - name: clean-previous-containers-if-any
         run: |
@@ -1400,20 +1326,14 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache-permissions-test-part-B
+        id: assets-cache
         name: Assets Cache
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-permissions-test-part-B-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-permissions-test-part-B-assets-
-
-      - name: Generate Assets
-        if: steps.assets-cache-permissions-test-part-B.outputs.cache-hit != 'true'
-        run: |
-          echo "There was no hit, hence we generate the assets"
-          make assets
+            ${{ runner.os }}-assets-
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -1429,13 +1349,6 @@ jobs:
           GOOS: linux
         run: |
           make console
-
-      - name: Install dependencies
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          cd portal-ui; yarn install;
 
       - name: clean-previous-containers-if-any
         run: |
