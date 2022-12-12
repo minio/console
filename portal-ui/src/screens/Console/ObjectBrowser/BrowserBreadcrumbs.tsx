@@ -95,7 +95,7 @@ const BrowserBreadcrumbs = ({
 
   let breadcrumbsMap = splitPaths.map((objectItem: string, index: number) => {
     const subSplit = `${splitPaths.slice(0, index + 1).join("/")}/`;
-    const route = `/buckets/${bucketName}/browse/${
+    const route = `/browser/${bucketName}/${
       subSplit ? `${encodeURLString(subSplit)}` : ``
     }`;
 

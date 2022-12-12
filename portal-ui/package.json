@@ -20,7 +20,6 @@
     "@types/react-dom": "18.0.9",
     "@types/react-grid-layout": "^1.1.1",
     "@types/react-redux": "^7.1.24",
-    "@types/react-router-dom": "^5.3.3",
     "@types/react-virtualized": "^9.21.21",
     "@types/superagent": "^4.1.16",
     "@types/webpack-env": "^1.14.1",

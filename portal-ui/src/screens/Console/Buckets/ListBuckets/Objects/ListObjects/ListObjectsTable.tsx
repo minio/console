@@ -142,7 +142,7 @@ const ListObjectsTable = () => {
   const openPath = (idElement: string) => {
     dispatch(setSelectedObjects([]));
 
-    const newPath = `/buckets/${bucketName}/browse${
+    const newPath = `/browser/${bucketName}${
       idElement ? `/${encodeURLString(idElement)}` : ``
     }`;
     navigate(newPath);

@@ -200,7 +200,7 @@ const BrowserHandler = () => {
   const features = useSelector(selFeatures);
 
   const bucketName = params.bucketName || "";
-  const pathSegment = location.pathname.split("/browse/");
+  const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
 
   const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
 
@@ -547,7 +547,12 @@ const BrowserHandler = () => {
     <Fragment>
       {!obOnly ? (
         <PageHeader
-          label={<BackLink label={"Buckets"} to={IAM_PAGES.BUCKETS} />}
+          label={
+            <BackLink
+              label={"Object Browser"}
+              to={IAM_PAGES.OBJECT_BROWSER_VIEW}
+            />
+          }
           actions={
             <SecureComponent
               scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
