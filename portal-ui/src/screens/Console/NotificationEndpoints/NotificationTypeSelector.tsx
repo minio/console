@@ -30,7 +30,6 @@ import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import ContentBox from "../Common/ContentBox";
 import { Box } from "@mui/material";
-import AddServiceAccountHelpBox from "../Account/AddServiceAccountHelpBox";
 import NotificationEndpointTypeSelectorHelpBox from "../Account/NotificationEndpointTypeSelectorHelpBox";
 
 interface INotificationTypeSelector {
