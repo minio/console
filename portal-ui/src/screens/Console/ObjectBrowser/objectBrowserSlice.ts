@@ -233,7 +233,7 @@ export const objectBrowserSlice = createSlice({
     setSearchObjects: (state, action: PayloadAction<string>) => {
       state.searchObjects = action.payload;
     },
-    setLoadingObjectsList: (state, action: PayloadAction<boolean>) => {
+    setLoadingObjects: (state, action: PayloadAction<boolean>) => {
       state.loadingObjects = action.payload;
     },
     setSearchVersions: (state, action: PayloadAction<string>) => {
@@ -352,7 +352,7 @@ export const {
   openList,
   closeList,
   setSearchObjects,
-  setLoadingObjectsList,
+  setLoadingObjects,
   cancelObjectInList,
   setSearchVersions,
   setSelectedVersion,

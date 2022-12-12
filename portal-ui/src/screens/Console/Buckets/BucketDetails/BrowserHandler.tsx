@@ -43,7 +43,7 @@ import {
   setIsVersioned,
   setLoadingLocking,
   setLoadingObjectInfo,
-  setLoadingObjectsList,
+  setLoadingObjects,
   setLoadingRecords,
   setLoadingVersioning,
   setLoadingVersions,
@@ -83,12 +83,16 @@ const styles = (theme: Theme) =>
 let objectsWS: WebSocket;
 let currentRequestID: number = 0;
 let errorCounter: number = 0;
+let wsInFlight: boolean = false;
 
 const initWSConnection = (
-  onMessageCallback: (message: IMessageEvent) => void,
   openCallback?: () => void,
-  notAvailableCallback?: () => void
+  onMessageCallback?: (message: IMessageEvent) => void
 ) => {
+  if (wsInFlight) {
+    return;
+  }
+  wsInFlight = true;
   const url = new URL(window.location.toString());
   const isDev = process.env.NODE_ENV === "development";
   const port = isDev ? "9090" : url.port;
@@ -104,25 +108,28 @@ const initWSConnection = (
   );
 
   objectsWS.onopen = () => {
+    wsInFlight = false;
     if (openCallback) {
       openCallback();
     }
     errorCounter = 0;
   };
 
+  if (onMessageCallback) {
+    objectsWS.onmessage = onMessageCallback;
+  }
+
   const reconnectFn = () => {
     if (errorCounter <= 5) {
-      initWSConnection(onMessageCallback, openCallback);
+      initWSConnection(openCallback, onMessageCallback);
       errorCounter += 1;
     } else {
       console.error("Websocket not available.");
-      if (notAvailableCallback) {
-        notAvailableCallback();
-      }
     }
   };
 
   objectsWS.onclose = () => {
+    wsInFlight = false;
     console.warn("Websocket Disconnected. Attempting Reconnection...");
 
     // We reconnect after 3 seconds
@@ -130,14 +137,13 @@ const initWSConnection = (
   };
 
   objectsWS.onerror = () => {
+    wsInFlight = false;
     console.error("Error in websocket connection. Attempting reconnection...");
 
     // We reconnect after 3 seconds
     setTimeout(reconnectFn, 3000);
   };
 };
-
-initWSConnection(() => {});
 
 const BrowserHandler = () => {
   const dispatch = useAppDispatch();
@@ -202,10 +208,10 @@ const BrowserHandler = () => {
   const obOnly = !!features?.includes("object-browser-only");
 
   /*WS Request Handlers*/
-  objectsWS.onmessage = useCallback(
+  const onMessageCallBack = useCallback(
     (message: IMessageEvent) => {
       // reset start status
-      dispatch(setLoadingObjectsList(false));
+      dispatch(setLoadingObjects(false));
 
       const response: WebsocketResponse = JSON.parse(message.data.toString());
       if (currentRequestID === response.request_id) {
@@ -251,7 +257,7 @@ const BrowserHandler = () => {
 
         // This indicates final messages is received.
         if (response.request_end) {
-          dispatch(setLoadingObjectsList(false));
+          dispatch(setLoadingObjects(false));
           dispatch(setLoadingRecords(false));
           return;
         }
@@ -284,7 +290,7 @@ const BrowserHandler = () => {
           // We store the new ID for the requestID
           currentRequestID = newRequestID;
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       } else {
         // Socket is disconnected, we request reconnection but will need to recreate call
@@ -292,10 +298,10 @@ const BrowserHandler = () => {
           initWSRequest(path, date);
         };
 
-        initWSConnection(dupRequest);
+        initWSConnection(dupRequest, onMessageCallBack);
       }
     },
-    [bucketName, rewindEnabled, showDeleted, dispatch]
+    [bucketName, rewindEnabled, showDeleted, dispatch, onMessageCallBack]
   );
 
   useEffect(() => {
@@ -395,7 +401,7 @@ const BrowserHandler = () => {
 
       initWSRequest(pathPrefix, requestDate);
     } else {
-      dispatch(setLoadingObjectsList(false));
+      dispatch(setLoadingObjects(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
