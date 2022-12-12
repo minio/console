@@ -132,7 +132,10 @@ func GetSubnetLoginResponse(session *models.Principal, params subnetApi.SubnetLo
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
-	minioClient := AdminClient{Client: mAdmin}
+	return subnetLoginResponse(ctx, AdminClient{Client: mAdmin}, params)
+}
+
+func subnetLoginResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetLoginParams) (*models.SubnetLoginResponse, *models.Error) {
 	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, minioClient)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -229,6 +232,10 @@ func GetSubnetLoginWithMFAResponse(session *models.Principal, params subnetApi.S
 		return nil, ErrorWithContext(ctx, err)
 	}
 	minioClient := AdminClient{Client: mAdmin}
+	return subnetLoginWithMFAResponse(ctx, minioClient, params)
+}
+
+func subnetLoginWithMFAResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *models.Error) {
 	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, minioClient)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -294,11 +301,15 @@ func GetSubnetRegisterResponse(session *models.Principal, params subnetApi.Subne
 		return ErrorWithContext(ctx, err)
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, adminClient)
+	return subnetRegisterResponse(ctx, adminClient, params)
+}
+
+func subnetRegisterResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetRegisterParams) *models.Error {
+	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, minioClient)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
-	err = GetSubnetRegister(ctx, adminClient, subnetHTTPClient, params)
+	err = GetSubnetRegister(ctx, minioClient, subnetHTTPClient, params)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -348,7 +359,11 @@ func GetSubnetRegTokenResponse(session *models.Principal, params subnetApi.Subne
 		return nil, ErrorWithContext(ctx, err)
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	token, err := GetSubnetRegToken(ctx, adminClient)
+	return subnetRegTokenResponse(ctx, adminClient)
+}
+
+func subnetRegTokenResponse(ctx context.Context, minioClient MinioAdmin) (*models.SubnetRegTokenResponse, *models.Error) {
+	token, err := GetSubnetRegToken(ctx, minioClient)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -365,7 +380,11 @@ func GetSubnetAPIKeyResponse(session *models.Principal, params subnetApi.SubnetA
 		return nil, ErrorWithContext(ctx, err)
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, adminClient)
+	return subnetAPIKeyResponse(ctx, adminClient, params)
+}
+
+func subnetAPIKeyResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetAPIKeyParams) (*models.APIKey, *models.Error) {
+	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, minioClient)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
