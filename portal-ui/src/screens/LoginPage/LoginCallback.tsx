@@ -142,6 +142,9 @@ const LoginCallback = ({ classes }: ILoginCallBackProps) => {
               targetPath = `${localStorage.getItem("redirect-path")}`;
               localStorage.setItem("redirect-path", "");
             }
+            if (state) {
+              localStorage.setItem("auth-state", state);
+            }
             setLoading(false);
             navigate(targetPath);
           })

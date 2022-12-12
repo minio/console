@@ -30,7 +30,7 @@ import { generateOverrideTheme } from "./utils/stylesUtils";
 import "./index.css";
 import { useSelector } from "react-redux";
 import { AppState } from "./store";
-import { ThemeHandler } from "mds";
+import { GlobalStyles, ThemeHandler } from "mds";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -62,54 +62,12 @@ const StyleHandler = ({ children }: IStyleHandler) => {
     };
   }
 
+  // Kept for Compatibility purposes. Once mds migration is complete then this will be removed
   const GlobalCss = withStyles({
     // @global is handled by jss-plugin-global.
     "@global": {
       body: {
-        height: "100vh",
-        width: "100vw",
-        fontFamily: "Lato, sans-serif",
         ...globalBody,
-      },
-      "#root": {
-        height: "100%",
-        width: "100%",
-        display: "flex",
-        flexFlow: "column",
-        alignItems: "stretch",
-      },
-      ".min-icon": {
-        width: 26,
-      },
-      ".MuiButton-endIcon": {
-        "& .min-icon": {
-          width: 16,
-        },
-      },
-      ".MuiButton-contained": {
-        fontSize: "14px",
-        textTransform: "capitalize",
-        padding: "15px 25px 15px 25px",
-        borderRadius: 3,
-      },
-      ".MuiButton-sizeSmall": {
-        padding: "4px 10px",
-        fontSize: "0.8125rem",
-      },
-      ".MuiTableCell-head": {
-        borderRadius: "3px 3px 0px 0px",
-        fontSize: 13,
-      },
-      ".MuiPaper-root": {
-        borderRadius: 3,
-      },
-      ".MuiDrawer-paperAnchorDockedLeft": {
-        borderRight: 0,
-      },
-      ".MuiDrawer-root": {
-        "& .MuiPaper-root": {
-          borderRadius: 0,
-        },
       },
       ".rowLine": {
         ...rowColor,
@@ -117,44 +75,13 @@ const StyleHandler = ({ children }: IStyleHandler) => {
       ".detailsListPanel": {
         ...detailsListPanel,
       },
-      hr: {
-        borderTop: 0,
-        borderLeft: 0,
-        borderRight: 0,
-        borderColor: "#999999",
-        backgroundColor: "transparent" as const,
-      },
-      ul: {
-        paddingLeft: 20,
-        listStyle: "none" /* Remove default bullets */,
-        "& li::before:not(.Mui*)": {
-          content: '"￭"',
-          color: "#2781B0",
-          fontSize: 20,
-          display:
-            "inline-block" /* Needed to add space between the bullet and the text */,
-          width: "1em" /* Also needed for space (tweak if needed) */,
-          marginLeft: "-1em" /* Also needed for space (tweak if needed) */,
-        },
-        "& ul": {
-          listStyle: "none" /* Remove default bullets */,
-          "& li::before:not(.Mui*)": {
-            content: '"￮"',
-            color: "#2781B0",
-            fontSize: 20,
-            display:
-              "inline-block" /* Needed to add space between the bullet and the text */,
-            width: "1em" /* Also needed for space (tweak if needed) */,
-            marginLeft: "-1em" /* Also needed for space (tweak if needed) */,
-          },
-        },
-      },
     },
   })(() => null);
 
   // ThemeHandler is needed for MDS components theming. Eventually we will remove Theme Provider & use only mds themes.
   return (
     <Fragment>
+      <GlobalStyles />
       <GlobalCss />
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={thm}>

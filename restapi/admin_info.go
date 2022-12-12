@@ -25,6 +25,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -32,7 +33,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	systemApi "github.com/minio/console/restapi/operations/system"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 )
 
 func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
@@ -61,6 +62,7 @@ type UsageInfo struct {
 	DisksUsage       int64
 	Servers          []*models.ServerProperties
 	EndpointNotReady bool
+	Backend          *models.BackendProperties
 }
 
 // GetAdminInfo invokes admin info and returns a parsed `UsageInfo` structure
@@ -71,6 +73,25 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 	}
 	// we are trimming uint64 to int64 this will report an incorrect measurement for numbers greater than
 	// 9,223,372,036,854,775,807
+
+	var backendType string
+	var rrSCParity float64
+	var standardSCParity float64
+
+	if v, success := serverInfo.Backend.(map[string]interface{}); success {
+		bt, ok := v["backendType"]
+		if ok {
+			backendType = bt.(string)
+		}
+		rp, ok := v["rrSCParity"]
+		if ok {
+			rrSCParity = rp.(float64)
+		}
+		sp, ok := v["standardSCParity"]
+		if ok {
+			standardSCParity = sp.(float64)
+		}
+	}
 
 	var usedSpace int64
 	for _, serv := range serverInfo.Servers {
@@ -113,12 +134,19 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 		serverArray = append(serverArray, newServer)
 	}
 
+	backendData := &models.BackendProperties{
+		BackendType:      backendType,
+		RrSCParity:       int64(rrSCParity),
+		StandardSCParity: int64(standardSCParity),
+	}
+
 	return &UsageInfo{
 		Buckets:    int64(serverInfo.Buckets.Count),
 		Objects:    int64(serverInfo.Objects.Count),
 		Usage:      int64(serverInfo.Usage.Size),
 		DisksUsage: usedSpace,
 		Servers:    serverArray,
+		Backend:    backendData,
 	}, nil
 }
 
@@ -913,6 +941,7 @@ func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAd
 			sessionResp.Objects = usage.Objects
 			sessionResp.Usage = usage.Usage
 			sessionResp.Servers = usage.Servers
+			sessionResp.Backend = usage.Backend
 		}
 	}()
 
@@ -949,20 +978,28 @@ func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAd
 
 func unmarshalPrometheus(ctx context.Context, endpoint string, data interface{}) bool {
 	httpClnt := GetConsoleHTTPClient(endpoint)
-	resp, err := httpClnt.Get(endpoint)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
-		ErrorWithContext(ctx, fmt.Errorf("Unable to fetch labels from prometheus (%s)", resp.Status))
+		ErrorWithContext(ctx, fmt.Errorf("Unable to create the request to fetch labels from prometheus: %w", err))
 		return true
 	}
+
+	resp, err := httpClnt.Do(req)
+	if err != nil {
+		ErrorWithContext(ctx, fmt.Errorf("Unable to fetch labels from prometheus: %w", err))
+		return true
+	}
+
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		ErrorWithContext(ctx, fmt.Errorf("Unexpected errors from prometheus (%s)", resp.Status))
+	if resp.StatusCode != http.StatusOK {
+		ErrorWithContext(ctx, fmt.Errorf("Unexpected status code from prometheus (%s)", resp.Status))
 		return true
 	}
 
 	if err = json.NewDecoder(resp.Body).Decode(data); err != nil {
-		ErrorWithContext(ctx, fmt.Errorf("Unexpected errors from prometheus (%s)", resp.Status))
+		ErrorWithContext(ctx, fmt.Errorf("Unexpected error from prometheus: %w", err))
 		return true
 	}
 
@@ -1053,10 +1090,17 @@ LabelsWaitLoop:
 			continue
 		}
 
-		targetResults := make(chan *models.ResultTarget)
+		var (
+			wg            sync.WaitGroup
+			targetResults = make([]*models.ResultTarget, len(m.Targets))
+		)
+
 		// for each target we will launch another goroutine to fetch the values
-		for _, target := range m.Targets {
-			go func(target Target, inStep *int32, inStart *int64, inEnd *int64) {
+		for idx, target := range m.Targets {
+			wg.Add(1)
+			go func(idx int, target Target, inStep *int32, inStart *int64, inEnd *int64) {
+				defer wg.Done()
+
 				apiType := "query_range"
 				now := time.Now()
 
@@ -1117,9 +1161,11 @@ LabelsWaitLoop:
 					})
 				}
 
-				targetResults <- &targetResult
-			}(target, step, start, end)
+				targetResults[idx] = &targetResult
+			}(idx, target, step, start, end)
 		}
+
+		wg.Wait()
 
 		wdgtResult := models.WidgetDetails{
 			ID:    m.ID,
@@ -1133,15 +1179,10 @@ LabelsWaitLoop:
 				},
 			}
 		}
-		// count how many targets we have received
-		targetsReceived := 0
 
-		for res := range targetResults {
-			wdgtResult.Targets = append(wdgtResult.Targets, res)
-			targetsReceived++
-			// upon receiving the total number of targets needed, we can close the channel to not lock the goroutine
-			if targetsReceived >= len(m.Targets) {
-				close(targetResults)
+		for _, res := range targetResults {
+			if res != nil {
+				wdgtResult.Targets = append(wdgtResult.Targets, res)
 			}
 		}
 		return &wdgtResult, nil

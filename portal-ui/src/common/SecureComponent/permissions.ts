@@ -150,6 +150,15 @@ export const IAM_PAGES = {
   ACCOUNT_ADD: "/access-keys/new-account",
   USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
 
+  /* IDP */
+  IDP_LDAP_CONFIGURATIONS: "/idp/ldap/configurations",
+  IDP_LDAP_CONFIGURATIONS_VIEW: "/idp/ldap/configurations/:idpName",
+  IDP_LDAP_CONFIGURATIONS_ADD: "/idp/ldap/configurations/add-idp",
+
+  IDP_OPENID_CONFIGURATIONS: "/idp/openid/configurations",
+  IDP_OPENID_CONFIGURATIONS_VIEW: "/idp/openid/configurations/:idpName",
+  IDP_OPENID_CONFIGURATIONS_ADD: "/idp/openid/configurations/add-idp",
+
   POLICIES: "/identity/policies",
   POLICY_ADD: "/identity/add-policy",
   POLICIES_VIEW: "/identity/policies/*",
@@ -475,17 +484,43 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.KMS_ALL_ACTIONS,
     IAM_SCOPES.KMS_IMPORT_KEY,
   ],
+  [IAM_PAGES.IDP_LDAP_CONFIGURATIONS]: [
+    IAM_SCOPES.ADMIN_ALL_ACTIONS,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.IDP_LDAP_CONFIGURATIONS_ADD]: [
+    IAM_SCOPES.ADMIN_ALL_ACTIONS,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.IDP_LDAP_CONFIGURATIONS_VIEW]: [
+    IAM_SCOPES.ADMIN_ALL_ACTIONS,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.IDP_OPENID_CONFIGURATIONS]: [
+    IAM_SCOPES.ADMIN_ALL_ACTIONS,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.IDP_OPENID_CONFIGURATIONS_ADD]: [
+    IAM_SCOPES.ADMIN_ALL_ACTIONS,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.IDP_OPENID_CONFIGURATIONS_VIEW]: [
+    IAM_SCOPES.ADMIN_ALL_ACTIONS,
+    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
 };
 
 export const S3_ALL_RESOURCES = "arn:aws:s3:::*";
 export const CONSOLE_UI_RESOURCE = "console-ui";
 
 export const permissionTooltipHelper = (scopes: string[], name: string) => {
+  let niceScopes = scopes.join(", ").toString();
+
   return (
     "You require additional permissions in order to " +
     name +
     ". Please ask your MinIO administrator to grant you " +
-    scopes +
+    niceScopes +
     " permission" +
     (scopes.length > 1 ? "s" : "") +
     " in order to " +

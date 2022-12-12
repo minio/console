@@ -143,6 +143,19 @@ const SetAccessPolicy = ({
                 ]}
               />
             </Grid>
+            {accessPolicy === "PUBLIC" && (
+              <div
+                style={{
+                  marginTop: "25px",
+                  fontSize: "14px",
+                  fontStyle: "italic",
+                  color: "#5E5E5E",
+                }}
+              >
+                * Warning: With Public access anyone will be able to upload,
+                download and delete files from this Bucket *
+              </div>
+            )}
             {accessPolicy === "CUSTOM" && (
               <Grid item xs={12} className={classes.codeMirrorContainer}>
                 <CodeMirrorWrapper

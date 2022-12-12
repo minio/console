@@ -40,6 +40,9 @@ type RewindItem struct {
 	// delete flag
 	DeleteFlag bool `json:"delete_flag,omitempty"`
 
+	// is latest
+	IsLatest bool `json:"is_latest,omitempty"`
+
 	// last modified
 	LastModified string `json:"last_modified,omitempty"`
 

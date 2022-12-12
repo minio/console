@@ -31,7 +31,6 @@ import {
   IAM_SCOPES,
   permissionTooltipHelper,
 } from "../../../common/SecureComponent/permissions";
-import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
@@ -58,7 +57,6 @@ interface IObjectBrowser {
   bucketName: string;
   internalPaths: string;
   hidePathButton?: boolean;
-  existingFiles: BucketObjectItem[];
   additionalOptions?: React.ReactNode;
 }
 
@@ -66,7 +64,6 @@ const BrowserBreadcrumbs = ({
   classes,
   bucketName,
   internalPaths,
-  existingFiles,
   hidePathButton,
   additionalOptions,
 }: IObjectBrowser) => {
@@ -176,7 +173,6 @@ const BrowserBreadcrumbs = ({
             bucketName={bucketName}
             folderName={internalPaths}
             onClose={closeAddFolderModal}
-            existingFiles={existingFiles}
           />
         )}
         <Grid item xs={12} className={`${classes.breadcrumbs}`}>

@@ -30,8 +30,6 @@ const LoadingComponent = () => {
     >
       <Grid item xs={3} style={{ textAlign: "center" }}>
         <Loader style={{ width: 35, height: 35 }} />
-        <br />
-        Loading...
       </Grid>
     </Grid>
   );
