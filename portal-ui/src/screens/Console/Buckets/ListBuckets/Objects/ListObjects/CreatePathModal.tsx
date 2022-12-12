@@ -22,7 +22,6 @@ import { Grid } from "@mui/material";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -34,9 +33,9 @@ import { BucketObjectItem } from "./types";
 import { CreateNewPathIcon } from "../../../../../../icons";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
+import makeStyles from "@mui/styles/makeStyles";
 
 interface ICreatePath {
-  classes: any;
   modalOpen: boolean;
   bucketName: string;
   folderName: string;
@@ -44,22 +43,23 @@ interface ICreatePath {
   simplePath: string | null;
 }
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...modalStyleUtils,
     ...formFieldStyles,
-  });
+  })
+);
 
 const CreatePathModal = ({
   modalOpen,
   folderName,
   bucketName,
   onClose,
-  classes,
   simplePath,
 }: ICreatePath) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const classes = useStyles();
 
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
@@ -197,4 +197,4 @@ const mapStateToProps = ({ objectBrowser }: AppState) => ({
 
 const connector = connect(mapStateToProps);
 
-export default connector(withStyles(styles)(CreatePathModal));
+export default connector(CreatePathModal);
