@@ -30,7 +30,7 @@ import (
 
 	"github.com/go-openapi/loads"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 
 	asrt "github.com/stretchr/testify/assert"
 )

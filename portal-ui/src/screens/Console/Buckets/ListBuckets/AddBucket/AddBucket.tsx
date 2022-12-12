@@ -120,10 +120,10 @@ const AddBucket = ({ classes }: IsetProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const validBucketCharacters = new RegExp(`^[a-z0-9.-]*$`);
-  const ipAddressFormat = new RegExp(
-    "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(.|$)){4}$"
+  const validBucketCharacters = new RegExp(
+    `^[a-z0-9][a-z0-9\\.\\-]{1,61}[a-z0-9]$`
   );
+  const ipAddressFormat = new RegExp(`^(\\d+\\.){3}\\d+$`);
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
   const isDirty = useSelector((state: AppState) => state.addBucket.isDirty);
   const [validationResult, setValidationResult] = useState<boolean[]>([]);

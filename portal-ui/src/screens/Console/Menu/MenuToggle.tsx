@@ -82,7 +82,6 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
         width: "100%",
         cursor: "pointer",
         "&::after": {
-          width: "80%",
           height: "1px",
           display: "block",
           content: "' '",
@@ -107,7 +106,7 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
           marginRight: "8px",
           display: "flex",
           alignItems: "center",
-          height: "83px",
+          height: "82px",
 
           "&.mini": {
             flexFlow: "column",
@@ -127,8 +126,9 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
             "&.wide": {
               flex: "1",
               "& svg": {
-                fill: "white",
+                width: "100%",
                 maxWidth: 180,
+                fill: "white",
               },
             },
             "&.mini": {

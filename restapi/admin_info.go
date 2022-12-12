@@ -33,7 +33,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	systemApi "github.com/minio/console/restapi/operations/system"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 )
 
 func registerAdminInfoHandlers(api *operations.ConsoleAPI) {

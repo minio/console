@@ -64,6 +64,7 @@ import { selFeatures } from "../../consoleSlice";
 import AutoColorIcon from "../../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import AButton from "../../Common/AButton/AButton";
+import { setLoadingObjects } from "../../ObjectBrowser/objectBrowserSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -78,7 +79,7 @@ const styles = (theme: Theme) =>
     },
     bucketList: {
       marginTop: 25,
-      height: "calc(100vh - 210px)",
+      height: "calc(100vh - 211px)",
       "&.isEmbedded": {
         height: "calc(100vh - 128px)",
       },
@@ -123,6 +124,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
           .then((res: BucketList) => {
             setLoading(false);
             setRecords(res.buckets || []);
+            dispatch(setLoadingObjects(true));
           })
           .catch((err: ErrorResponseHandler) => {
             setLoading(false);

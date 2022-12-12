@@ -225,6 +225,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 		Recursive:    recursive,
 		WithVersions: withVersions,
 		WithMetadata: withMetadata,
+		MaxKeys:      100,
 	}
 	if withMetadata {
 		opts.MaxKeys = 1

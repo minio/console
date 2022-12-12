@@ -24,7 +24,7 @@ import (
 	"time"
 
 	policies "github.com/minio/console/restapi/policy"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 
 	jwtgo "github.com/golang-jwt/jwt/v4"
 	"github.com/minio/pkg/bucket/policy/condition"

@@ -33,7 +33,7 @@ import (
 	accountApi "github.com/minio/console/restapi/operations/account"
 	bucketApi "github.com/minio/console/restapi/operations/bucket"
 	userApi "github.com/minio/console/restapi/operations/user"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
 

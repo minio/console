@@ -23,7 +23,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/pkg/utils"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 
 	groupApi "github.com/minio/console/restapi/operations/group"
 
