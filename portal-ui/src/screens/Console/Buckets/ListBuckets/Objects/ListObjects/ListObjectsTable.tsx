@@ -27,6 +27,7 @@ import { AppState, useAppDispatch } from "../../../../../../store";
 import { selFeatures } from "../../../../consoleSlice";
 import { encodeURLString } from "../../../../../../common/utils";
 import {
+  setIsOpeningOD,
   setLoadingObjects,
   setLoadingVersions,
   setObjectDetailsView,
@@ -154,6 +155,7 @@ const ListObjectsTable = () => {
         `${idElement ? `${encodeURLString(idElement)}` : ``}`
       )
     );
+    dispatch(setIsOpeningOD(true));
   };
   const tableActions: ItemActions[] = [
     {

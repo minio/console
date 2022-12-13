@@ -30,7 +30,7 @@ import {
   prettyNumber,
 } from "../../../../common/utils";
 import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   IAM_PERMISSIONS,
   IAM_ROLES,
@@ -181,6 +181,7 @@ const BucketListItem = ({
   noManage = false,
 }: IBucketListItem) => {
   const classes = useStyles();
+  const navigate = useNavigate();
 
   const usage = niceBytes(`${bucket.size}` || "0");
   const usageScalar = usage.split(" ")[0];
@@ -192,7 +193,6 @@ const BucketListItem = ({
   const manageAllowed =
     hasPermission(bucket.name, IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]) &&
     false;
-  console.log("manageAllowed", manageAllowed);
 
   const accessToStr = (bucket: Bucket): string => {
     if (bucket.rw_access?.read && !bucket.rw_access?.write) {
@@ -209,100 +209,101 @@ const BucketListItem = ({
   };
 
   return (
-    <Link
-      to={`/buckets/${bucket.name}/admin`}
-      style={{ textDecoration: "none" }}
+    <Grid
+      container
+      className={clsx(classes.root, "bucket-item", {
+        [classes.disabled]: manageAllowed,
+      })}
+      onClick={() => {
+        navigate(`/buckets/${bucket.name}/admin`);
+      }}
+      sx={{
+        cursor: "pointer",
+      }}
+      id={`manageBucket-${bucket.name}`}
     >
-      <Grid
-        container
-        className={clsx(classes.root, "bucket-item", {
-          [classes.disabled]: manageAllowed,
-        })}
-        style={{}}
-      >
-        <Grid item xs={12}>
-          <Grid container justifyContent={"space-between"}>
-            <Grid item xs={12} sm={7}>
-              <Grid container>
-                <Grid item xs={12}>
-                  {bulkSelect && (
-                    <div
-                      className={classes.checkBoxElement}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      <CheckboxWrapper
-                        checked={selected}
-                        id={`select-${bucket.name}`}
-                        label={""}
-                        name={`select-${bucket.name}`}
-                        onChange={onCheckboxClick}
-                        value={bucket.name}
-                      />
-                    </div>
-                  )}
-                  <h1 className={classes.bucketName}>
-                    {bucket.name} {manageAllowed}
-                  </h1>
-                </Grid>
-                <Grid item xs={12}>
-                  <Grid container className={classes.bucketInfo}>
-                    <Grid item xs={12} sm paddingRight={5}>
-                      <Typography variant="body2">
-                        Created: {new Date(bucket.creation_date).toString()}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={12} sm>
-                      <Typography variant="body2">
-                        Access: {accessToStr(bucket)}
-                      </Typography>
-                    </Grid>
+      <Grid item xs={12}>
+        <Grid container justifyContent={"space-between"}>
+          <Grid item xs={12} sm={7}>
+            <Grid container>
+              <Grid item xs={12}>
+                {bulkSelect && (
+                  <div
+                    className={classes.checkBoxElement}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <CheckboxWrapper
+                      checked={selected}
+                      id={`select-${bucket.name}`}
+                      label={""}
+                      name={`select-${bucket.name}`}
+                      onChange={onCheckboxClick}
+                      value={bucket.name}
+                    />
+                  </div>
+                )}
+                <h1 className={classes.bucketName}>
+                  {bucket.name} {manageAllowed}
+                </h1>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container className={classes.bucketInfo}>
+                  <Grid item xs={12} sm paddingRight={5}>
+                    <Typography variant="body2">
+                      Created: {new Date(bucket.creation_date).toString()}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm>
+                    <Typography variant="body2">
+                      Access: {accessToStr(bucket)}
+                    </Typography>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={12} sm={5} className={classes.bucketActionButtons}>
-              <Box display={{ xs: "none", sm: "block" }}>
-                <div style={{ marginBottom: 10 }} />
-              </Box>
-            </Grid>
           </Grid>
-        </Grid>
-
-        <Grid item xs={12} className={classes.bucketStats}>
-          <Grid container justifyContent={"flex-start"} spacing={4}>
-            <Grid item className={classes.bucketIcon}>
-              <Link to={`/buckets/${bucket.name}/browse`}>
-                <BucketsIcon />
-              </Link>
-            </Grid>
-            <Grid item textAlign={"left"} className={classes.metric}>
-              <ReportedUsageIcon />
-              <span className={classes.metricLabel}>Usage</span>
-              <div className={classes.metricText}>
-                {usageScalar}
-                <span className={classes.unit}>{usageUnit}</span>
-                {quota !== "0" && (
-                  <Fragment>
-                    {" "}
-                    / {quotaForString.total}
-                    <span className={classes.unit}>{quotaForString.unit}</span>
-                  </Fragment>
-                )}
-              </div>
-            </Grid>
-            <Grid item textAlign={"left"} className={classes.metric}>
-              <TotalObjectsIcon />
-              <span className={classes.metricLabel}>Objects</span>
-              <div className={classes.metricText}>
-                {bucket.objects ? prettyNumber(bucket.objects) : 0}
-              </div>
-            </Grid>
+          <Grid item xs={12} sm={5} className={classes.bucketActionButtons}>
+            <Box display={{ xs: "none", sm: "block" }}>
+              <div style={{ marginBottom: 10 }} />
+            </Box>
           </Grid>
         </Grid>
       </Grid>
-    </Link>
+
+      <Grid item xs={12} className={classes.bucketStats}>
+        <Grid container justifyContent={"flex-start"} spacing={4}>
+          <Grid item className={classes.bucketIcon}>
+            <Link to={`/buckets/${bucket.name}/browse`}>
+              <BucketsIcon />
+            </Link>
+          </Grid>
+          <Grid item textAlign={"left"} className={classes.metric}>
+            <ReportedUsageIcon />
+            <span className={classes.metricLabel}>Usage</span>
+            <div className={classes.metricText}>
+              {usageScalar}
+              <span className={classes.unit}>{usageUnit}</span>
+              {quota !== "0" && (
+                <Fragment>
+                  {" "}
+                  / {quotaForString.total}
+                  <span className={classes.unit}>{quotaForString.unit}</span>
+                </Fragment>
+              )}
+            </div>
+          </Grid>
+          <Grid item textAlign={"left"} className={classes.metric}>
+            <TotalObjectsIcon />
+            <span className={classes.metricLabel}>Objects</span>
+            <div className={classes.metricText}>
+              {bucket.objects ? prettyNumber(bucket.objects) : 0}
+            </div>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 

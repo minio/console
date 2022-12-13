@@ -94,11 +94,7 @@ export const setVersionedBucket = (t, name) => {
 };
 
 export const namedManageButtonFor = (name) => {
-  return Selector("h1")
-    .withText(name)
-    .parent(4)
-    .find("button:enabled")
-    .withText("Manage");
+  return Selector("div").withAttribute("id", `manageBucket-${name}`);
 };
 
 export const manageButtonFor = (modifier) => {
@@ -122,10 +118,7 @@ export const cleanUpBucket = (t, modifier) => {
 };
 
 export const namedTestBucketBrowseButtonFor = (name) => {
-  return Selector(".ReactVirtualized__Table__rowColumn > span")
-    .withText(name)
-    .parent()
-    .parent();
+  return Selector("span").withAttribute("id", `browse-${name}`);
 };
 
 export const testBucketBrowseButtonFor = (modifier) => {

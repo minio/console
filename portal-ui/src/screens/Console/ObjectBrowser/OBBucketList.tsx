@@ -198,7 +198,13 @@ const OBListBuckets = () => {
                 entityName={"Buckets"}
                 idField={"name"}
                 columns={[
-                  { label: "Name", elementKey: "name" },
+                  {
+                    label: "Name",
+                    elementKey: "name",
+                    renderFunction: (label) => (
+                      <span id={`browse-${label}`}>{label}</span>
+                    ),
+                  },
                   {
                     label: "Objects",
                     elementKey: "objects",
