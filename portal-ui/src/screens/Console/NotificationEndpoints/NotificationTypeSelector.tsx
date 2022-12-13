@@ -47,10 +47,6 @@ const styles = (theme: Theme) =>
 const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
   const [hoverItem, setHoverItem] = useState<string>("");
 
-  const buttonHover = {
-    background: `${"fafafa"}`,
-  };
-
   const navigate = useNavigate();
   return (
     <Fragment>
@@ -86,10 +82,12 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
               {withLogos.map((item) => {
                 return (
                   <button
-                  onMouseEnter={() => {setHoverItem(item.targetTitle); 
-                    console.log("hover item set to ", item.targetTitle)}}
-                  onMouseLeave={() => {setHoverItem("") ;
-                  console.log("hover item set to ", item.targetTitle)}}
+                    onMouseEnter={() => {
+                      setHoverItem(item.targetTitle);
+                    }}
+                    onMouseLeave={() => {
+                      setHoverItem("");
+                    }}
                     key={`icon-${item.targetTitle}`}
                     className={classes.lambdaNotif}
                     onClick={() => {
@@ -97,22 +95,28 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
                         `${IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}/${item.actionTrigger}`
                       );
                     }}
-                    style={hoverItem === item.targetTitle ? {background:"#abcabc"} : {
-                      background:"#aaaaaa"
-                    }}
+                    style={
+                      hoverItem === item.targetTitle
+                        ? { background: "#ebebeb" }
+                        : {}
+                    }
                   >
-                    
-                    <div className={classes.lambdaNotifIcon}>
-                    
+                    <div
+                      className={classes.lambdaNotifIcon}
+                      style={
+                        hoverItem === item.targetTitle
+                          ? { background: "#ebebeb" }
+                          : {}
+                      }
+                    >
                       <img
                         src={item.logo}
                         className={classes.logoButton}
                         alt={item.targetTitle}
                       />
                     </div>
-                    
+
                     <div className={classes.lambdaNotifTitle}>
-                      
                       <b>{item.targetTitle}</b>
                     </div>
                   </button>
