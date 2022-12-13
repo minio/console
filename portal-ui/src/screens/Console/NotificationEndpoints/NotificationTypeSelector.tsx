@@ -29,6 +29,8 @@ import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import ContentBox from "../Common/ContentBox";
+import { Box } from "@mui/material";
+import NotificationEndpointTypeSelectorHelpBox from "../Account/NotificationEndpointTypeSelectorHelpBox";
 
 interface INotificationTypeSelector {
   classes: any;
@@ -58,38 +60,52 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
         actions={<React.Fragment />}
       />
       <PageLayout>
-        <ContentBox>
-          <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
-            Select Target Type
-          </div>
-          <div className={classes.iconContainer}>
-            {withLogos.map((item) => {
-              return (
-                <button
-                  key={`icon-${item.targetTitle}`}
-                  className={classes.lambdaNotif}
-                  onClick={() => {
-                    navigate(
-                      `${IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}/${item.actionTrigger}`
-                    );
-                  }}
-                >
-                  <div className={classes.lambdaNotifIcon}>
-                    <img
-                      src={item.logo}
-                      className={classes.logoButton}
-                      alt={item.targetTitle}
-                    />
-                  </div>
+        <Box
+          sx={{
+            display: "grid",
+            padding: "25px",
+            gap: "25px",
+            gridTemplateColumns: {
+              md: "2fr 1.2fr",
+              xs: "1fr",
+            },
+            border: "1px solid #eaeaea",
+          }}
+        >
+          <ContentBox>
+            <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
+              Select Target Type
+            </div>
+            <div className={classes.iconContainer}>
+              {withLogos.map((item) => {
+                return (
+                  <button
+                    key={`icon-${item.targetTitle}`}
+                    className={classes.lambdaNotif}
+                    onClick={() => {
+                      navigate(
+                        `${IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}/${item.actionTrigger}`
+                      );
+                    }}
+                  >
+                    <div className={classes.lambdaNotifIcon}>
+                      <img
+                        src={item.logo}
+                        className={classes.logoButton}
+                        alt={item.targetTitle}
+                      />
+                    </div>
 
-                  <div className={classes.lambdaNotifTitle}>
-                    <b>{item.targetTitle}</b>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </ContentBox>
+                    <div className={classes.lambdaNotifTitle}>
+                      <b>{item.targetTitle}</b>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </ContentBox>
+          <NotificationEndpointTypeSelectorHelpBox />
+        </Box>
       </PageLayout>
     </Fragment>
   );
