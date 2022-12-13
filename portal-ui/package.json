@@ -78,7 +78,7 @@
     "@types/recharts": "^1.8.24",
     "prettier": "2.7.1",
     "react-scripts": "5.0.1",
-    "testcafe": "^1.18.6",
+    "testcafe": "^2.1.0",
     "typescript": "^4.4.3"
   },
   "resolutions": {

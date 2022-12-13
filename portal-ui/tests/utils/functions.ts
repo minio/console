@@ -122,9 +122,10 @@ export const cleanUpBucket = (t, modifier) => {
 };
 
 export const namedTestBucketBrowseButtonFor = (name) => {
-  return Selector("button:enabled")
-    .withAttribute("id", `browse-${name}`)
-    .withText("Browse");
+  return Selector(".ReactVirtualized__Table__rowColumn > span")
+    .withText(name)
+    .parent()
+    .parent();
 };
 
 export const testBucketBrowseButtonFor = (modifier) => {

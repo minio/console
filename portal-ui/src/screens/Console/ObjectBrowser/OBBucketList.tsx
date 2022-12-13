@@ -196,7 +196,7 @@ const OBListBuckets = () => {
                 isLoading={loading}
                 records={filteredRecords}
                 entityName={"Buckets"}
-                idField={""}
+                idField={"name"}
                 columns={[
                   { label: "Name", elementKey: "name" },
                   {
@@ -225,9 +225,6 @@ const OBListBuckets = () => {
                   },
                 ]}
                 itemActions={tableActions}
-                // selectedItems={selectedSAs}
-                // onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
-                // onSelectAll={selectAllItems}
               />
             )}
             {filteredRecords.length === 0 && filterBuckets !== "" && (

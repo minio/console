@@ -140,7 +140,7 @@ const BrowserBreadcrumbs = ({
   const listBreadcrumbs: any[] = [
     <Fragment key={`breadcrumbs-root-path`}>
       <Link
-        to={`/buckets/${bucketName}/browse`}
+        to={`/browser/${bucketName}`}
         onClick={() => {
           dispatch(setVersionsModeEnabled({ status: false, objectName: "" }));
         }}
