@@ -42,15 +42,14 @@ const styles = (theme: Theme) =>
   createStyles({
     ...settingsCommon,
     ...typesSelection,
-    
   });
 
 const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
-  const [hoverItem, setHoverItem] = useState<string>("")
+  const [hoverItem, setHoverItem] = useState<string>("");
 
-  const buttonHover={
-      background:`${"fafafa"}`
-    }
+  const buttonHover = {
+    background: `${"fafafa"}`,
+  };
 
   const navigate = useNavigate();
   return (
