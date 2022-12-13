@@ -16,7 +16,6 @@
 
 import { t } from "i18next";
 import React, { Fragment, useEffect, useState } from "react";
-import get from "lodash/get";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
@@ -129,15 +128,15 @@ const ShareFile = ({
               dataObject.name
             )}${distributedSetup ? "&with_versions=true" : ""}`
           )
-          .then((res: IFileInfo[]) => {
-            const result = get(res, "objects", []);
+          .then((res: { objects: IFileInfo[] }) => {
+            const result: IFileInfo[] = res.objects || [];
 
-            const latestVersion = result.find(
+            const latestVersion: IFileInfo | undefined = result.find(
               (elem: IFileInfo) => elem.is_latest
             );
 
             if (latestVersion) {
-              setVersionID(latestVersion.version_id);
+              setVersionID(`${latestVersion.version_id}`);
               return;
             }
 

@@ -155,8 +155,9 @@ const QueryMultiSelector = ({
     e.persist();
 
     let updatedElement = [...currentKeys];
-    const index = get(e.target, "dataset.index", 0);
-    updatedElement[index] = e.target.value;
+    const index = get(e.target, "dataset.index", "0");
+    const indexNum = parseInt(index);
+    updatedElement[indexNum] = e.target.value;
 
     setCurrentKeys(updatedElement);
   };
@@ -165,8 +166,9 @@ const QueryMultiSelector = ({
     e.persist();
 
     let updatedElement = [...currentValues];
-    const index = get(e.target, "dataset.index", 0);
-    updatedElement[index] = e.target.value;
+    const index = get(e.target, "dataset.index", "0");
+    const indexNum = parseInt(index);
+    updatedElement[indexNum] = e.target.value;
 
     setCurrentValues(updatedElement);
   };

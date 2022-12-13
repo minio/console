@@ -114,7 +114,8 @@ const messageForError = (log: LogMessage) => {
       <div>
         <b style={labelStyle}>{t("Backtrace:")}</b>
       </div>
-      {(getLogEntryKey("error.source") || []).map((e: any, i: number) => {
+
+      {(log.error.source || []).map((e: any, i: number) => {
         return (
           <div>
             <b style={labelStyle}>{i}:&nbsp;</b>
