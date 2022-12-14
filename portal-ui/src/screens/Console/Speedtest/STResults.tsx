@@ -19,7 +19,6 @@ import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
 import { IndvServerMetric, SpeedTestResponse, STServer } from "./types";
 import { calculateBytes, prettyNumber } from "../../../common/utils";
@@ -36,8 +35,9 @@ import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMi
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer } from "recharts";
 import { cleanMetrics } from "./utils";
 import SpeedTestUnit from "./SpeedTestUnit";
+import makeStyles from "@mui/styles/makeStyles";
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     actionButtons: {
       textAlign: "right",
@@ -130,15 +130,21 @@ const styles = (theme: Theme) =>
         color: "rgb(66,127,172)",
       },
     },
-  });
+    versionIcon: {
+      color: "#07193E",
+      marginRight: 20,
+    },
+  })
+);
 
 interface ISTResults {
-  classes: any;
   results: SpeedTestResponse[];
   start: boolean;
 }
 
-const STResults = ({ classes, results, start }: ISTResults) => {
+const STResults = ({ results, start }: ISTResults) => {
+  const classes = useStyles();
+
   const [jsonView, setJsonView] = useState<boolean>(false);
 
   const finalRes = results[results.length - 1] || [];
@@ -233,7 +239,7 @@ const STResults = ({ classes, results, start }: ISTResults) => {
                   </div>
                 }
                 title={"GET"}
-                throughput={getThroughput}
+                throughput={`${getThroughput}`}
                 objects={getObjects}
               />
             </Grid>
@@ -245,7 +251,7 @@ const STResults = ({ classes, results, start }: ISTResults) => {
                   </div>
                 }
                 title={"PUT"}
-                throughput={putThroughput}
+                throughput={`${putThroughput}`}
                 objects={putObjects}
               />
             </Grid>
@@ -447,4 +453,4 @@ const STResults = ({ classes, results, start }: ISTResults) => {
   );
 };
 
-export default withStyles(styles)(STResults);
+export default STResults;

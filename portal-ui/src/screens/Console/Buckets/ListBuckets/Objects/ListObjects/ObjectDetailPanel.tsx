@@ -231,15 +231,16 @@ const ObjectDetailPanel = ({
             distributedSetup ? "&with_versions=true" : ""
           }`
         )
-        .then((res: IFileInfo[]) => {
-          const result = get(res, "objects", []);
+        .then((res: { objects: IFileInfo[] }) => {
+          const result: IFileInfo[] = res.objects || [];
           if (distributedSetup) {
             setAllInfoElements(result);
             setVersions(result);
+
             const tVersionSize = result.reduce(
-              (acc: number, currValue: IFileInfo) => {
+              (acc: number, currValue: IFileInfo): number => {
                 if (currValue?.size) {
-                  return acc + currValue.size;
+                  return acc + parseInt(currValue.size);
                 }
                 return acc;
               },
