@@ -15,58 +15,67 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 
-import { Button } from "@mui/material";
+import { Button } from "mds";
 
 type TierTypeCardProps = {
   onClick: (name: string) => void;
   icon?: any;
   name: string;
+  classes: any;
 };
-const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
+const TierTypeCard = ({ onClick, icon, name, classes }: TierTypeCardProps) => {
+  const styles = {
+    tierTypeCard: {
+      height: "80px",
+      width: "300px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "start",
+      padding: 5,
+      border: "1px solid #E5E5E5",
+      borderRadius: 2,
+      cursor: "pointer",
+
+      "&:hover": { background: "#ebebeb" },
+    },
+  };
   return (
     <Button
+      id={name}
       onClick={() => {
         onClick(name);
       }}
-      sx={{
-        height: "10px",
-        width: "275px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        padding: 5,
-        border: "1px solid #E5E5E5",
-        borderRadius: 2,
-        cursor: "pointer",
-        "&:hover": {
-          background: "#ebebeb",
-        },
-      }}
+      style={styles.tierTypeCard}
     >
-      {icon ? (
-        <Box
-          sx={{
-            "& .min-icon": {
-              height: "30px",
-              width: "30px",
-            },
-          }}
-        >
-          {icon}
-        </Box>
-      ) : null}
-
-      <div
-        style={{
-          fontWeight: 600,
-          marginLeft: 20,
-          fontSize: 14,
-        }}
-      >
-        {name}
-      </div>
+      <Grid container alignItems={"center"}>
+        {icon ? (
+          <Grid item padding={5}>
+            <Box
+              sx={{
+                "& .min-icon": {
+                  height: "30px",
+                  width: "30px",
+                },
+              }}
+            >
+              {icon}
+            </Box>
+          </Grid>
+        ) : null}
+        <Grid item>
+          <div
+            style={{
+              fontWeight: 600,
+              marginLeft: 10,
+              fontSize: 14,
+            }}
+          >
+            {name}
+          </div>
+        </Grid>
+      </Grid>
     </Button>
   );
 };
