@@ -587,9 +587,13 @@ export const typesSelection = {
     cursor: "pointer",
     padding: 0,
     overflow: "hidden",
+    "&:hover": {
+      backgroundColor: "#ebebeb",
+    },
   },
+
   lambdaNotifIcon: {
-    backgroundColor: "#FEFEFE",
+    background: "transparent",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
