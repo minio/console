@@ -24,6 +24,9 @@ import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
 import TierTypeCard from "./TierTypeCard";
 import ContentBox from "../../Common/ContentBox";
+import HelpBox from "../../../../common/HelpBox";
+import { Help } from "@mui/icons-material";
+import TierOfflineIcon from "../../../../icons/TierOfflineIcon";
 
 const TierTypeSelector = () => {
   const navigate = useNavigate();
@@ -52,7 +55,7 @@ const TierTypeSelector = () => {
             sx={{
               margin: "0 auto",
               display: "grid",
-              gridGap: "47px",
+              gridGap: "20px",
               gridTemplateColumns: {
                 xs: "repeat(1, 1fr)",
                 sm: "repeat(2, 1fr)",

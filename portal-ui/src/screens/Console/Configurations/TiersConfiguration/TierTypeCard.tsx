@@ -17,6 +17,8 @@
 import React from "react";
 import { Box } from "@mui/material";
 
+import { Button } from "@mui/material";
+
 type TierTypeCardProps = {
   onClick: (name: string) => void;
   icon?: any;
@@ -24,27 +26,31 @@ type TierTypeCardProps = {
 };
 const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
   return (
-    <button
-      style={{
+    <Button
+      onClick={() => {
+        onClick(name);
+      }}
+      sx={{
+        height: "10px",
+        width: "275px",
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-start",
-        padding: 10,
-        background: "transparent",
+        padding: 5,
         border: "1px solid #E5E5E5",
         borderRadius: 2,
         cursor: "pointer",
-      }}
-      onClick={() => {
-        onClick(name);
+        "&:hover": {
+          background: "#ebebeb",
+        },
       }}
     >
       {icon ? (
         <Box
           sx={{
             "& .min-icon": {
-              height: "60px",
-              width: "60px",
+              height: "30px",
+              width: "30px",
             },
           }}
         >
@@ -56,11 +62,12 @@ const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
         style={{
           fontWeight: 600,
           marginLeft: 20,
+          fontSize: 14,
         }}
       >
         {name}
       </div>
-    </button>
+    </Button>
   );
 };
 
