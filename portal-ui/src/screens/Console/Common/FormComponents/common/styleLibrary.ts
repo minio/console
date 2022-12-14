@@ -591,6 +591,7 @@ export const typesSelection = {
       backgroundColor: "#ebebeb",
     },
   },
+
   lambdaNotifIcon: {
     background: "transparent",
     display: "flex",

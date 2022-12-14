@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
@@ -45,8 +45,6 @@ const styles = (theme: Theme) =>
   });
 
 const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
-  const [hoverItem, setHoverItem] = useState<string>("");
-
   const navigate = useNavigate();
   return (
     <Fragment>
@@ -82,12 +80,6 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
               {withLogos.map((item) => {
                 return (
                   <button
-                    onMouseEnter={() => {
-                      setHoverItem(item.targetTitle);
-                    }}
-                    onMouseLeave={() => {
-                      setHoverItem("");
-                    }}
                     key={`icon-${item.targetTitle}`}
                     className={classes.lambdaNotif}
                     onClick={() => {
@@ -95,20 +87,8 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
                         `${IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}/${item.actionTrigger}`
                       );
                     }}
-                    style={
-                      hoverItem === item.targetTitle
-                        ? { background: "#ebebeb" }
-                        : {}
-                    }
                   >
-                    <div
-                      className={classes.lambdaNotifIcon}
-                      style={
-                        hoverItem === item.targetTitle
-                          ? { background: "#ebebeb" }
-                          : {}
-                      }
-                    >
+                    <div className={classes.lambdaNotifIcon}>
                       <img
                         src={item.logo}
                         className={classes.logoButton}
