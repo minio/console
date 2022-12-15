@@ -2814,10 +2814,10 @@ func TestReplication(t *testing.T) {
 		log.Println(err)
 		assert.Nil(err)
 	}
-	expected := 0
-	actual := len(structBucketRepl.Rules)
+	expected = 0
+	actual = len(structBucketRepl.Rules)
 	assert.Equal(expected, actual, "Delete failed")
-	
+
 }
 
 func GetBucketVersioning(bucketName string) (*http.Response, error) {
