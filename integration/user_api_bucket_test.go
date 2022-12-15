@@ -2708,8 +2708,33 @@ func DeleteBucketReplicationRule(bucketName, ruleID string) (*http.Response, err
 func TestReplication(t *testing.T) {
 	// Vars
 	assert := assert.New(t)
-	originBucket := "testputobjectslegalholdstatus"
-	destinationBuckets := []string{"testgetbucketquota", "testputbucketquota", "testlistbucketevents"} // an array of strings to iterate over
+
+
+	originBucket := "originbucketfortestreplication"
+    destinationbucket1 := "destinationbucket1"
+	destinationbucket2 := "destinationbucket2"
+	destinationbucket3 := "destinationbucket3"
+	locking := true
+	versioning := true
+
+
+	// 0. Create bucket with versioning as true and locking as false
+	if !BucketGotAdded(originBucket, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+	if !BucketGotAdded(destinationbucket1, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+	if !BucketGotAdded(destinationbucket2, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+	if !BucketGotAdded(destinationbucket3, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+
+
+	destinationBuckets := []string{destinationbucket1, destinationbucket2, destinationbucket3} // an array of strings to iterate over
+
 
 	// 1. Set replication rules with DIFFERENT PRIORITY <------- NOT SAME BUT DIFFERENT! 1, 2, etc.
 	for index, destinationBucket := range destinationBuckets {
