@@ -2770,8 +2770,8 @@ func TestReplication(t *testing.T) {
 	}
 
 	// Verify rule
-	bodyBytes, _ = ioutil.ReadAll(response.Body)
-	structBucketRepl = models.BucketReplicationResponse{}
+	bodyBytes, _ := ioutil.ReadAll(response.Body)
+	structBucketRepl := models.BucketReplicationResponse{}
 	err = json.Unmarshal(bodyBytes, &structBucketRepl)
 	if err != nil {
 		log.Println(err)
@@ -2790,7 +2790,7 @@ func TestReplication(t *testing.T) {
 		log.Println(err)
 		return
 	}
-	finalResponse = inspectHTTPResponse(response)
+	finalResponse := inspectHTTPResponse(response)
 	if response != nil {
 		assert.Equal(204, response.StatusCode, finalResponse)
 	}
