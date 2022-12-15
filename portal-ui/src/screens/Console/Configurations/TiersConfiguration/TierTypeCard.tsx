@@ -23,9 +23,8 @@ type TierTypeCardProps = {
   onClick: (name: string) => void;
   icon?: any;
   name: string;
-  classes: any;
 };
-const TierTypeCard = ({ onClick, icon, name, classes }: TierTypeCardProps) => {
+const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
   const styles = {
     tierTypeCard: {
       height: "80px",
@@ -37,7 +36,6 @@ const TierTypeCard = ({ onClick, icon, name, classes }: TierTypeCardProps) => {
       border: "1px solid #E5E5E5",
       borderRadius: 2,
       cursor: "pointer",
-
       "&:hover": { background: "#ebebeb" },
     },
   };

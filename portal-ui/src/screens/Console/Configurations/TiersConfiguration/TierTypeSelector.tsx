@@ -69,7 +69,6 @@ const TierTypeSelector = () => {
                   typeSelect(tierType.serviceName);
                 }}
                 icon={tierType.logo}
-                classes
               />
             ))}
           </Box>
