@@ -228,7 +228,7 @@ type MCClient interface {
 	addNotificationConfig(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
 	removeNotificationConfig(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error
 	watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error)
-	remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult
+	remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult
 	list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 	get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
 	shareDownload(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
@@ -269,8 +269,8 @@ func (c mcClient) setVersioning(ctx context.Context, status string) *probe.Error
 	return c.client.SetVersion(ctx, status, []string{}, false)
 }
 
-func (c mcClient) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
-	return c.client.Remove(ctx, isIncomplete, isRemoveBucket, isBypass, false, contentCh)
+func (c mcClient) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+	return c.client.Remove(ctx, isIncomplete, isRemoveBucket, isBypass, forceDelete, contentCh)
 }
 
 func (c mcClient) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
