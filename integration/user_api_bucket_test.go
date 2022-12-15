@@ -2705,7 +2705,120 @@ func DeleteBucketReplicationRule(bucketName, ruleID string) (*http.Response, err
 	return response, err
 }
 
+// Test explanation: To be able to set and delete a replication rule with our different APIs.
+func TestReplication(t *testing.T) {
 
+	// Vars
+	assert := assert.New(t)
+	locking := true
+	versioning := true
+
+	// Buckets
+	sourceBucket := "source-replication-bucket"
+	destinationBucket := "destination-replication-bucket"
+	destinationBuckets := []string{destinationBucket}
+
+	// Create buckets
+	if !BucketGotAdded(sourceBucket, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+	if !BucketGotAdded(destinationBucket, locking, versioning, nil, nil, assert, 201) {
+		return
+	}
+
+	// Set replication rule
+	for index, destinationBucket := range destinationBuckets {
+		response, err := SetMultiBucketReplication(
+			"minioadmin",             // accessKey string
+			"minioadmin",             // secretKey string
+			"http://localhost:9000/", // targetURL string
+			"",                       // region string
+			sourceBucket,             // originBucket string
+			destinationBucket,        // destinationBucket string
+			"async",                  // syncMode string
+			107374182400,             // bandwidth int
+			60,                       // healthCheckPeriod int
+			"",                       // prefix string
+			"",                       // tags string
+			true,                     // replicateDeleteMarkers bool
+			true,                     // replicateDeletes bool
+			index+1,                  // priority int
+			"",                       // storageClass string
+			true,                     // replicateMetadata bool
+		)
+		assert.Nil(err)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		finalResponse := inspectHTTPResponse(response)
+		if response != nil {
+			assert.Equal(200, response.StatusCode, finalResponse)
+		}
+
+	}
+
+	// Get replication rule
+	response, err = GetBucketReplication(originBucket)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(200, response.StatusCode, "error invalid status")
+	}
+
+	// Verify rule
+	bodyBytes, _ = ioutil.ReadAll(response.Body)
+	structBucketRepl = models.BucketReplicationResponse{}
+	err = json.Unmarshal(bodyBytes, &structBucketRepl)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	expected := 1
+	actual := len(structBucketRepl.Rules)
+	assert.Equal(expected, actual, "create replication rule failed")
+
+	// Delete rule
+	response, err = DeletesAllReplicationRulesOnABucket(
+		originBucket,
+	)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	finalResponse = inspectHTTPResponse(response)
+	if response != nil {
+		assert.Equal(204, response.StatusCode, finalResponse)
+	}
+
+	// Get replication rule
+	response, err = GetBucketReplication(originBucket)
+	assert.Nil(err)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if response != nil {
+		assert.Equal(200, response.StatusCode, "error invalid status")
+	}
+
+	// Verify rule is gone
+	bodyBytes, _ = ioutil.ReadAll(response.Body)
+	structBucketRepl = models.BucketReplicationResponse{}
+	err = json.Unmarshal(bodyBytes, &structBucketRepl)
+	if err != nil {
+		log.Println(err)
+		assert.Nil(err)
+	}
+	expected := 0
+	actual := len(structBucketRepl.Rules)
+	assert.Equal(expected, actual, "Delete failed")
+	
+}
 
 func GetBucketVersioning(bucketName string) (*http.Response, error) {
 	/*
