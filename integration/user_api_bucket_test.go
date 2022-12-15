@@ -2759,7 +2759,7 @@ func TestReplication(t *testing.T) {
 	}
 
 	// Get replication rule
-	response, err = GetBucketReplication(originBucket)
+	response, err := GetBucketReplication(sourceBucket)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -2783,7 +2783,7 @@ func TestReplication(t *testing.T) {
 
 	// Delete rule
 	response, err = DeletesAllReplicationRulesOnABucket(
-		originBucket,
+		sourceBucket,
 	)
 	assert.Nil(err)
 	if err != nil {
@@ -2796,7 +2796,7 @@ func TestReplication(t *testing.T) {
 	}
 
 	// Get replication rule
-	response, err = GetBucketReplication(originBucket)
+	response, err = GetBucketReplication(sourceBucket)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
