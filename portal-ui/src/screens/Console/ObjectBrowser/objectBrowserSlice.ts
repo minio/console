@@ -63,6 +63,7 @@ const initialState: ObjectBrowserState = {
   selectedPreview: null,
   previewOpen: false,
   shareFileModalOpen: false,
+  isOpeningObjectDetail: false,
 };
 
 export const objectBrowserSlice = createSlice({
@@ -336,6 +337,9 @@ export const objectBrowserSlice = createSlice({
         );
       }
     },
+    setIsOpeningOD: (state, action: PayloadAction<boolean>) => {
+      state.isOpeningObjectDetail = action.payload;
+    },
   },
 });
 export const {
@@ -378,6 +382,7 @@ export const {
   setShareFileModalOpen,
   setLoadingRecords,
   restoreLocalObjectList,
+  setIsOpeningOD,
 } = objectBrowserSlice.actions;
 
 export default objectBrowserSlice.reducer;

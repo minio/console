@@ -117,7 +117,10 @@ export const IAM_PAGES = {
   BUCKETS: "/buckets",
   ADD_BUCKETS: "add-bucket",
   BUCKETS_ADMIN_VIEW: ":bucketName/admin/*",
-  BUCKETS_BROWSE_VIEW: ":bucketName/browse/*",
+  /* Object Browser */
+  OBJECT_BROWSER_VIEW: "/browser",
+  OBJECT_BROWSER_BUCKET_VIEW: "/browser/:bucketName",
+  OBJECT_BROWSER_BUCKET_DETAILS_VIEW: "/browser/:bucketName/*",
   /* Identity */
   IDENTITY: "/identity",
   USERS: "/identity/users",
@@ -307,7 +310,7 @@ export const IAM_PAGES_PERMISSIONS = {
   [IAM_PAGES.BUCKETS_ADMIN_VIEW]: [
     ...IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN], // bucket admin page
   ],
-  [IAM_PAGES.BUCKETS_BROWSE_VIEW]: [
+  [IAM_PAGES.OBJECT_BROWSER_VIEW]: [
     ...IAM_PERMISSIONS[IAM_ROLES.BUCKET_OWNER],
     ...IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER],
   ],

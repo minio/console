@@ -106,7 +106,7 @@ const CreatePathModal = ({
       .filter((splitItem) => splitItem.trim() !== "")
       .join("/");
 
-    const newPath = `/buckets/${bucketName}/browse/${encodeURLString(
+    const newPath = `/browser/${bucketName}/${encodeURLString(
       `${folderPath}${cleanPathURL}/`
     )}`;
     navigate(newPath);

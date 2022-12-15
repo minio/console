@@ -29,7 +29,7 @@ test
       const uploadButton = elements.uploadButton;
       await t
         .useRole(roles.bucketWritePrefixOnly)
-        .navigateTo("http://localhost:9090/buckets/testcafe/browse")
+        .navigateTo("http://localhost:9090/browser/testcafe")
         .click(uploadButton)
         .expect(Selector("li").withText("Upload File").hasClass("Mui-disabled"))
         .ok()
@@ -48,7 +48,7 @@ test
       const uploadButton = elements.uploadButton;
       await t
         .useRole(roles.bucketWritePrefixOnly)
-        .navigateTo("http://localhost:9090/buckets/testcafe/browse/d3JpdGU=")
+        .navigateTo("http://localhost:9090/browser/testcafe/d3JpdGU=")
         .click(uploadButton)
         .expect(Selector("li").withText("Upload File").hasClass("Mui-disabled"))
         .notOk()

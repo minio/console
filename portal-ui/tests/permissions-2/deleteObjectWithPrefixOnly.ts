@@ -43,7 +43,7 @@ test
   })("Delete button is disabled for object inside bucket", async (t) => {
     await t
       .useRole(roles.deleteObjectWithPrefixOnly)
-      .navigateTo(`http://localhost:9090/buckets`)
+      .navigateTo(`http://localhost:9090/browser`)
       .click(test1BucketBrowseButton)
       .click(
         Selector(".ReactVirtualized__Table__rowColumn").withText("test.txt")
@@ -69,7 +69,7 @@ test
     async (t) => {
       await t
         .useRole(roles.deleteObjectWithPrefixOnly)
-        .navigateTo(`http://localhost:9090/buckets`)
+        .navigateTo(`http://localhost:9090/browser`)
         .click(test2BucketBrowseButton)
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText(
@@ -103,7 +103,7 @@ test
     async (t) => {
       await t
         .useRole(roles.deleteObjectWithPrefixOnly)
-        .navigateTo(`http://localhost:9090/buckets`)
+        .navigateTo(`http://localhost:9090/browser`)
         .click(test3BucketBrowseButton)
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText(

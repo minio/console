@@ -41,7 +41,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .expect(testBucketBrowseButtonFor("bucketread1").exists)
       .ok();
   })
@@ -79,7 +79,7 @@ test
     await functions.setUpBucket(t, "aread3");
     await t
       .useRole(roles.admin)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("aread3"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
@@ -88,7 +88,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .wait(2000)
       .click(testBucketBrowseButtonFor("aread3"))
       .wait(2000)
