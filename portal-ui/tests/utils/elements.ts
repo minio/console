@@ -150,8 +150,7 @@ export const createGroupUserTable = Selector(
 //----------------------------------------------------
 // Bucket page vertical tabs
 //----------------------------------------------------
-export const bucketAccessRulesTab =
-  Selector(".MuiTab-root").withText("Access Rules");
+export const bucketAccessRulesTab = Selector(".MuiTab-root").withText("Access");
 
 //----------------------------------------------------
 // Settings window
