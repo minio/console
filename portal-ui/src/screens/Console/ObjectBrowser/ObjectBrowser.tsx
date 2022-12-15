@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -16,16 +16,19 @@
 
 import React, { Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-
-import NotFoundPage from "../../NotFoundPage";
-import LoadingComponent from "../../../common/LoadingComponent";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import LoadingComponent from "../../../common/LoadingComponent";
+import NotFoundPage from "../../NotFoundPage";
+import OBBucketList from "./OBBucketList";
 
-const ListBuckets = React.lazy(() => import("./ListBuckets/ListBuckets"));
-const BucketDetails = React.lazy(() => import("./BucketDetails/BucketDetails"));
-const AddBucket = React.lazy(() => import("./ListBuckets/AddBucket/AddBucket"));
+const BrowserHandler = React.lazy(
+  () => import("../Buckets/BucketDetails/BrowserHandler")
+);
+const AddBucket = React.lazy(
+  () => import("../Buckets/ListBuckets/AddBucket/AddBucket")
+);
 
-const Buckets = () => {
+const ObjectBrowser = () => {
   return (
     <Routes>
       <Route
@@ -40,20 +43,27 @@ const Buckets = () => {
         path="/"
         element={
           <Suspense fallback={<LoadingComponent />}>
-            <ListBuckets />
+            <OBBucketList />
           </Suspense>
         }
       />
-
       <Route
-        path=":bucketName/admin/*"
+        path="/:bucketName/*"
         element={
           <Suspense fallback={<LoadingComponent />}>
-            <BucketDetails />
+            <BrowserHandler />
           </Suspense>
         }
       />
-      <Route element={<Navigate to={`/buckets`} />} path="*" />
+      <Route
+        path=":bucketName/"
+        element={
+          <Suspense fallback={<LoadingComponent />}>
+            <BrowserHandler />
+          </Suspense>
+        }
+      />
+      <Route element={<Navigate to={`/browser`} />} path="*" />
 
       <Route
         element={
@@ -66,4 +76,4 @@ const Buckets = () => {
   );
 };
 
-export default Buckets;
+export default ObjectBrowser;

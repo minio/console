@@ -229,7 +229,7 @@ export const permissionItems = (
     // splitURL has more items than bucket name, we can continue validating
     if (splitURLARN.length > 1) {
       splitURLARN.every((currentElementInPath, index) => {
-        // It is a wildcard element. We can stor the verification as value should be included (?)
+        // It is a wildcard element. We can store the verification as value should be included (?)
         if (currentElementInPath === "*") {
           return false;
         }

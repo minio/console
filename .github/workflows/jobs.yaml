@@ -16,207 +16,6 @@ concurrency:
 
 jobs:
 
-  replication:
-
-    name: Site Replication Test
-    needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: [ ubuntu-latest ]
-
-    strategy:
-      matrix:
-        go-version: [ 1.18.x ]
-
-    steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      # To build minio image, we need to clone the repository first
-      - name: clone https://github.com/minio/minio
-        uses: actions/checkout@master
-        with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
-          repository: minio/minio
-          
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
-          path: 'minio_repository'
-
-      - name: Build on ${{ matrix.os }}
-        run: |
-          echo "The idea is to build minio image from downloaded repository";
-          cd $GITHUB_WORKSPACE/minio_repository;
-          echo "Get git version to build MinIO Image";
-          VERSION=`git rev-parse HEAD`;
-          echo $VERSION;
-          echo "Create minio image";
-          make docker VERSION=$VERSION;
-          echo "Jumping back to console repository to run the integration test"
-          cd $GITHUB_WORKSPACE;
-          echo "We are going to use the built image on test-integration";
-          VERSION="minio/minio:$VERSION";
-          echo $VERSION;
-          make test-replication MINIO_VERSION=$VERSION;
-      - uses: actions/cache@v3
-        id: coverage-cache-replication
-        name: Coverage Cache Replication
-        with:
-          path: |
-            ./replication/coverage/
-          key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
-
-      # To save our replication.out file into an artifact.
-      # By default, GitHub stores build logs and artifacts for 90 days.
-      - uses: actions/upload-artifact@v3
-        with:
-          name: replication-artifact
-          path: ./replication/coverage/replication.out
-
-  sso-integration:
-
-    name: SSO Integration Test
-    needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        go-version: [ 1.18.x ]
-
-    steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      # To build minio image, we need to clone the repository first
-      - name: clone https://github.com/minio/minio
-        uses: actions/checkout@master
-        with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
-          repository: minio/minio
-          
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
-          path: 'minio_repository'
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Build on ${{ matrix.os }}
-        run: |
-          echo "The idea is to build minio image from downloaded repository";
-          cd $GITHUB_WORKSPACE/minio_repository;
-          echo "replace github.com/minio/console => ../" >> go.mod
-
-          echo "updates to go.mod needed; to update it: go mod tidy"
-          go mod tidy -compat=1.18
-
-          echo "Get git version to build MinIO Image";
-          VERSION=`git rev-parse HEAD`;
-          echo $VERSION;
-          echo "Create minio image";
-          make docker VERSION=$VERSION;
-          echo "Jumping back to console repository to run the integration test"
-          cd $GITHUB_WORKSPACE;
-          echo "We are going to use the built image on test-integration";
-          VERSION="minio/minio:$VERSION";
-          echo $VERSION;
-          make test-sso-integration MINIO_VERSION=$VERSION;
-      - uses: actions/cache@v3
-        id: coverage-cache-sso
-        name: Coverage Cache SSO
-        with:
-          path: |
-            ./sso-integration/coverage/
-          key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
-
-  c-operator-api-tests:
-
-    name: Operator API Tests
-    needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        go-version: [ 1.18.x ]
-
-    steps:
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - uses: actions/checkout@v2
-
-      # To build operator image, we need to clone the repository first
-      - name: clone https://github.com/minio/operator
-        uses: actions/checkout@master
-        with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
-          repository: minio/operator
-
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
-          path: 'operator_repository'
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Operator API Tests
-        run: |
-          curl -sLO "https://dl.k8s.io/release/v1.23.1/bin/linux/amd64/kubectl" -o kubectl
-          chmod +x kubectl
-          mv kubectl /usr/local/bin
-          "${GITHUB_WORKSPACE}/tests/deploy-tenant.sh"
-          echo "start ---> make test-operator-integration";
-          make test-operator-integration;
-
-      - uses: actions/cache@v3
-        id: coverage-cache-operator
-        name: Coverage Cache Operator
-        with:
-          path: |
-            ./operator-integration/coverage/
-          key: ${{ runner.os }}-coverage-2-operator-${{ github.run_id }}
 
   lint-job:
     name: Checking Lint
@@ -232,7 +31,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - name: Build on ${{ matrix.os }}
@@ -249,19 +48,18 @@ jobs:
       matrix:
         go-version: [ 1.19 ]
     steps:
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v3
-    - uses: actions/setup-go@v3
-      with:
-        go-version: ${{ matrix.go-version }}
-        check-latest: true
-    - name: Get govulncheck
-      run: go install golang.org/x/vuln/cmd/govulncheck@latest
-      shell: bash
-    - name: Run govulncheck
-      run: govulncheck ./...
-      shell: bash
-
+      - name: Check out code
+        uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          check-latest: true
+      - name: Get govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+        shell: bash
+      - name: Run govulncheck
+        run: govulncheck ./...
+        shell: bash
   semgrep-static-code-analysis:
     name: "semgrep checks"
     runs-on: ubuntu-latest
@@ -280,21 +78,16 @@ jobs:
           pip3 install semgrep
           semgrep --config semgrep.yaml $(pwd)/portal-ui --error
 
-  react-code-known-vulnerabilities:
-    name: "React Code Has No Known Vulnerable Deps"
+
+  ui-assets:
+    name: "React Code Has No Warnings & Prettified"
     runs-on: ubuntu-latest
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - name: Read .nvmrc
@@ -317,8 +110,8 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
         id: assets-cache
@@ -327,64 +120,6 @@ jobs:
           path: |
             ./portal-ui/build/
           key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - name: Checks for known security issues with the installed packages
-        working-directory: ./portal-ui
-        continue-on-error: false
-        run: |
-          yarn audit
-
-  no-warnings-and-make-assets:
-    name: "React Code Has No Warnings & is Prettified, then Make Assets"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [ 1.18.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NVMRC }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
-        with:
-          path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
 
       - name: Install Dependencies
         working-directory: ./portal-ui
@@ -401,7 +136,6 @@ jobs:
         continue-on-error: false
         run: |
           ./check-prettier.sh
-
   reuse-golang-dependencies:
     name: reuse golang dependencies
     runs-on: ubuntu-latest
@@ -415,17 +149,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
-
       - name: Build on ${{ matrix.os }}
         env:
           GO111MODULE: on
           GOOS: linux
         run: |
           go mod download
-
       - uses: actions/cache@v3
         name: Go Mod Cache
         with:
@@ -433,16 +164,15 @@ jobs:
             ~/.cache/go-build
             ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ github.run_id }}
-
-  all-permissions-1:
-    name: Permissions Tests Part 1
+  
+  compile-binary:
+    name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
-    runs-on: [ ubuntu-latest ]
-    timeout-minutes: 10
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         go-version: [ 1.18.x ]
@@ -454,7 +184,48 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
+        uses: actions/checkout@v2
+      - uses: actions/cache@v3
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+      - uses: actions/cache@v3
+        name: Console Binary Cache
+        with:
+          path: |
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
+      - uses: actions/cache@v3
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make console
+  
+  
+
+  react-code-known-vulnerabilities:
+    name: "React Code Has No Known Vulnerable Deps"
+    needs:
+      - ui-assets
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [ 1.18.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Check out code
         uses: actions/checkout@v2
 
       - name: Read .nvmrc
@@ -476,35 +247,93 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
-        with:
-          path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
+      - name: Checks for known security issues with the installed packages
+        working-directory: ./portal-ui
+        continue-on-error: false
         run: |
-          make console
+          yarn audit  
+  
+  
+
+  testcafe-cache:
+    name: "Testcafe Cache Stage"
+    #    needs:
+    #      - ui-assets
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [ 1.18.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v3
+        id: testcafe-cache
+        name: Testcafe Cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ./portal-ui/node_modules/
+          key: ${{ runner.os }}-testcafe-${{ github.run_id }}
+      - name: Install Testcafe
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add testcafe --save
+  
+
+  all-permissions-1:
+    name: Permissions Tests Part 1
+    needs:
+      - compile-binary
+    runs-on: [ ubuntu-latest ]
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        go-version: [ 1.18.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Read .nvmrc
+        id: node_version
+        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NVMRC }}
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v3
+        id: yarn-cache
+        name: Yarn Cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ./portal-ui/node_modules/
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
+
+      - uses: actions/cache@v3
+        name: Console Binary Cache
+        with:
+          path: |
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -527,10 +356,7 @@ jobs:
   all-permissions-2:
     name: Permissions Tests Part 2
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
@@ -538,27 +364,17 @@ jobs:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
-
       - name: Read .nvmrc
         id: node_version
         run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ env.NVMRC }}
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-
       - uses: actions/cache@v3
         id: yarn-cache
         name: Yarn Cache
@@ -566,35 +382,16 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -617,10 +414,7 @@ jobs:
   all-permissions-3:
     name: Permissions Tests Part 3
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
@@ -628,13 +422,7 @@ jobs:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - name: Read .nvmrc
@@ -656,35 +444,16 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -708,10 +477,7 @@ jobs:
   all-permissions-4:
     name: Permissions Tests Part 4
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: [ ubuntu-latest ]
     timeout-minutes: 15
     strategy:
@@ -719,12 +485,7 @@ jobs:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
       - name: Read .nvmrc
         id: node_version
@@ -742,34 +503,16 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -784,26 +527,17 @@ jobs:
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-4/ --skip-js-errors'
-
   all-permissions-5:
     name: Permissions Tests Part 5
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
       - name: Read .nvmrc
         id: node_version
@@ -821,34 +555,16 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -863,26 +579,17 @@ jobs:
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-5/ --skip-js-errors'
-
   all-permissions-6:
     name: Permissions Tests Part 6
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
       - name: Read .nvmrc
         id: node_version
@@ -900,34 +607,16 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -942,26 +631,17 @@ jobs:
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-6/ --skip-js-errors'
-
   all-permissions-7:
     name: Permissions Tests Part 7
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
       - name: Read .nvmrc
         id: node_version
@@ -979,34 +659,16 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -1021,26 +683,17 @@ jobs:
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-7/ --skip-js-errors'
-
   all-permissions-8:
     name: Permissions Tests Part 8
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
       - name: Read .nvmrc
         id: node_version
@@ -1058,34 +711,16 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -1100,33 +735,21 @@ jobs:
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-8/ --skip-js-errors'
-
   all-permissions-9:
     name: Permissions Tests Part 9
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
-
       - name: Read .nvmrc
         id: node_version
         run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ env.NVMRC }}
@@ -1142,35 +765,16 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -1193,23 +797,14 @@ jobs:
   all-permissions-A:
     name: Permissions Tests Part A
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - name: Read .nvmrc
@@ -1231,35 +826,16 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -1282,23 +858,14 @@ jobs:
   all-permissions-B:
     name: Permissions Tests Part B
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - name: Read .nvmrc
@@ -1320,35 +887,16 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
-            ./portal-ui/build/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       - name: clean-previous-containers-if-any
         run: |
@@ -1371,23 +919,14 @@ jobs:
   all-operator-tests-1:
     name: Operator UI Tests Part 1
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       # To build operator image, we need to clone the repository first
@@ -1431,25 +970,13 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       # Runs a set of commands using the runners shell
       - name: Start Kind for Operator UI
@@ -1460,27 +987,18 @@ jobs:
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome:headless" portal-ui/tests/operator/login --skip-js-errors -c 3'
-
   all-operator-tests-2:
     name: Operator UI Tests Part 2
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       # To build operator image, we need to clone the repository first
@@ -1524,25 +1042,15 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       # Runs a set of commands using the runners shell
       - name: Start Kind for Operator UI
@@ -1553,27 +1061,18 @@ jobs:
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome:headless" portal-ui/tests/operator/tenant/test-1 --skip-js-errors -c 3'
-
   all-operator-tests-3:
     name: Operator UI Tests Part 3
     needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
+      - compile-binary
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         go-version: [ 1.18.x ]
         os: [ ubuntu-latest ]
     steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       # To build operator image, we need to clone the repository first
@@ -1617,25 +1116,15 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ./portal-ui/node_modules/
           key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      #          restore-keys: |
+      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        name: Console Binary Cache
         with:
           path: |
-            ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
-
-      - name: Build Console on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
 
       # Runs a set of commands using the runners shell
       - name: Start Kind for Operator UI
@@ -1646,12 +1135,11 @@ jobs:
         uses: DevExpress/testcafe-action@latest
         with:
           args: '"chrome:headless" portal-ui/tests/operator/tenant/test-2 --skip-js-errors -c 3'
-
   # all-operator-tests-4:
   #   name: Operator UI Tests Part 4
   #   needs:
   #     - lint-job
-  #     - no-warnings-and-make-assets
+  #     - ui-assets
   #     - reuse-golang-dependencies
   #     - semgrep-static-code-analysis
   #   runs-on: ${{ matrix.os }}
@@ -1666,7 +1154,7 @@ jobs:
   #         go-version: ${{ matrix.go-version }}
   #       id: go
 
-  #     - name: Check out code into the Go module directory
+  #     - name: Check out code
   #       uses: actions/checkout@v2
 
   #     # To build operator image, we need to clone the repository first
@@ -1720,8 +1208,6 @@ jobs:
   #         path: |
   #           ./portal-ui/build/
   #         key: ${{ runner.os }}-assets-${{ github.run_id }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-assets-
 
   #     - name: Build Console on ${{ matrix.os }}
   #       env:
@@ -1744,7 +1230,7 @@ jobs:
   #   name: Operator UI Tests Part 5
   #   needs:
   #     - lint-job
-  #     - no-warnings-and-make-assets
+  #     - ui-assets
   #     - reuse-golang-dependencies
   #     - semgrep-static-code-analysis
   #   runs-on: ${{ matrix.os }}
@@ -1759,7 +1245,7 @@ jobs:
   #         go-version: ${{ matrix.go-version }}
   #       id: go
 
-  #     - name: Check out code into the Go module directory
+  #     - name: Check out code
   #       uses: actions/checkout@v2
 
   #     # To build operator image, we need to clone the repository first
@@ -1813,8 +1299,6 @@ jobs:
   #         path: |
   #           ./portal-ui/build/
   #         key: ${{ runner.os }}-assets-${{ github.run_id }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-assets-
 
   #     - name: Build Console on ${{ matrix.os }}
   #       env:
@@ -1833,48 +1317,11 @@ jobs:
   #       with:
   #         args: '"chrome:headless" portal-ui/tests/operator/tenant/test-4 --skip-js-errors -c 3'
 
-  compile-job:
-    name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs:
-      - lint-job
-      - no-warnings-and-make-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.18.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
-
   cross-compile-1:
     name: Cross compile
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
@@ -1889,7 +1336,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - uses: actions/cache@v3
@@ -1911,7 +1358,7 @@ jobs:
     name: Cross compile 2
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
@@ -1926,7 +1373,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - uses: actions/cache@v3
@@ -1948,7 +1395,7 @@ jobs:
     name: Cross compile 3
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
@@ -1963,7 +1410,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - uses: actions/cache@v3
@@ -1985,7 +1432,7 @@ jobs:
     name: Cross compile 4
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
@@ -2000,7 +1447,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - uses: actions/cache@v3
@@ -2022,7 +1469,7 @@ jobs:
     name: Cross compile 5
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
@@ -2037,7 +1484,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - uses: actions/cache@v3
@@ -2059,7 +1506,7 @@ jobs:
     name: Test Pkg on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
@@ -2074,7 +1521,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - name: Build on ${{ matrix.os }}
@@ -2091,12 +1538,11 @@ jobs:
           path: |
             ./pkg/coverage/
           key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
-
   test-restapi-on-go:
     name: Test Restapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
@@ -2111,7 +1557,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - uses: actions/cache@v3
@@ -2136,12 +1582,11 @@ jobs:
           path: |
             ./restapi/coverage/
           key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
-
   test-operatorapi-on-go:
     name: Test Operatorapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
@@ -2156,7 +1601,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       - uses: actions/cache@v3
@@ -2181,12 +1626,11 @@ jobs:
           path: |
             ./operatorapi/coverage/
           key: ${{ runner.os }}-coverage-unittest-operatorapi-2-${{ github.run_id }}
-
   b-integration-tests:
     name: Integration Tests with Latest Distributed MinIO
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ubuntu-latest
@@ -2202,7 +1646,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
 
       # To build minio image, we need to clone the repository first
@@ -2273,12 +1717,11 @@ jobs:
           path: |
             ./integration/coverage/
           key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
-
   react-tests:
     name: React Tests
     needs:
       - lint-job
-      - no-warnings-and-make-assets
+      - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ubuntu-latest
@@ -2290,7 +1733,205 @@ jobs:
       - name: Run tests
         working-directory: ./portal-ui
         run: yarn test
+  replication:
 
+    name: Site Replication Test
+    needs:
+      - lint-job
+      - ui-assets
+      - reuse-golang-dependencies
+      - semgrep-static-code-analysis
+    runs-on: [ ubuntu-latest ]
+
+    strategy:
+      matrix:
+        go-version: [ 1.18.x ]
+
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      # To build minio image, we need to clone the repository first
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+
+          # Repository name with owner. For example, actions/checkout
+          # Default: ${{ github.repository }}
+          repository: minio/minio
+
+          # Relative path under $GITHUB_WORKSPACE to place the repository
+          # To have two repositories under the same test
+          path: 'minio_repository'
+
+      - name: Build on ${{ matrix.os }}
+        run: |
+          echo "The idea is to build minio image from downloaded repository";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          VERSION=`git rev-parse HEAD`;
+          echo $VERSION;
+          echo "Create minio image";
+          make docker VERSION=$VERSION;
+          echo "Jumping back to console repository to run the integration test"
+          cd $GITHUB_WORKSPACE;
+          echo "We are going to use the built image on test-integration";
+          VERSION="minio/minio:$VERSION";
+          echo $VERSION;
+          make test-replication MINIO_VERSION=$VERSION;
+      - uses: actions/cache@v3
+        id: coverage-cache-replication
+        name: Coverage Cache Replication
+        with:
+          path: |
+            ./replication/coverage/
+          key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
+
+      # To save our replication.out file into an artifact.
+      # By default, GitHub stores build logs and artifacts for 90 days.
+      - uses: actions/upload-artifact@v3
+        with:
+          name: replication-artifact
+          path: ./replication/coverage/replication.out
+  sso-integration:
+
+    name: SSO Integration Test
+    needs:
+      - lint-job
+      - ui-assets
+      - reuse-golang-dependencies
+      - semgrep-static-code-analysis
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go-version: [ 1.18.x ]
+
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      # To build minio image, we need to clone the repository first
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+
+          # Repository name with owner. For example, actions/checkout
+          # Default: ${{ github.repository }}
+          repository: minio/minio
+
+          # Relative path under $GITHUB_WORKSPACE to place the repository
+          # To have two repositories under the same test
+          path: 'minio_repository'
+
+      - uses: actions/cache@v3
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+
+      - name: Build on ${{ matrix.os }}
+        run: |
+          echo "The idea is to build minio image from downloaded repository";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "replace github.com/minio/console => ../" >> go.mod
+
+          echo "updates to go.mod needed; to update it: go mod tidy"
+          go mod tidy -compat=1.18
+
+          echo "Get git version to build MinIO Image";
+          VERSION=`git rev-parse HEAD`;
+          echo $VERSION;
+          echo "Create minio image";
+          make docker VERSION=$VERSION;
+          echo "Jumping back to console repository to run the integration test"
+          cd $GITHUB_WORKSPACE;
+          echo "We are going to use the built image on test-integration";
+          VERSION="minio/minio:$VERSION";
+          echo $VERSION;
+          make test-sso-integration MINIO_VERSION=$VERSION;
+      - uses: actions/cache@v3
+        id: coverage-cache-sso
+        name: Coverage Cache SSO
+        with:
+          path: |
+            ./sso-integration/coverage/
+          key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
+  c-operator-api-tests:
+
+    name: Operator API Tests
+    needs:
+      - lint-job
+      - ui-assets
+      - reuse-golang-dependencies
+      - semgrep-static-code-analysis
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go-version: [ 1.18.x ]
+
+    steps:
+
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - uses: actions/checkout@v2
+
+      # To build operator image, we need to clone the repository first
+      - name: clone https://github.com/minio/operator
+        uses: actions/checkout@master
+        with:
+
+          # Repository name with owner. For example, actions/checkout
+          # Default: ${{ github.repository }}
+          repository: minio/operator
+
+          # Relative path under $GITHUB_WORKSPACE to place the repository
+          # To have two repositories under the same test
+          path: 'operator_repository'
+
+      - uses: actions/cache@v3
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+
+      - name: Operator API Tests
+        run: |
+          curl -sLO "https://dl.k8s.io/release/v1.23.1/bin/linux/amd64/kubectl" -o kubectl
+          chmod +x kubectl
+          mv kubectl /usr/local/bin
+          "${GITHUB_WORKSPACE}/tests/deploy-tenant.sh"
+          echo "start ---> make test-operator-integration";
+          make test-operator-integration;
+
+      - uses: actions/cache@v3
+        id: coverage-cache-operator
+        name: Coverage Cache Operator
+        with:
+          path: |
+            ./operator-integration/coverage/
+          key: ${{ runner.os }}-coverage-2-operator-${{ github.run_id }}
   coverage:
     name: "Coverage Limit Check"
     needs:
@@ -2312,7 +1953,7 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
         id: go
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
       - name: Check out gocovmerge as a nested repository
         uses: actions/checkout@v2

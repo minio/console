@@ -200,10 +200,6 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
     }
   };
 
-  const openBucketBrowser = () => {
-    navigate(`/buckets/${bucketName}/browse`);
-  };
-
   return (
     <Fragment>
       {deleteOpen && (
@@ -231,7 +227,9 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             <Button
               id={"switch-browse-view"}
               aria-label="Browse Bucket"
-              onClick={openBucketBrowser}
+              onClick={() => {
+                navigate(`/browser/${bucketName}`);
+              }}
               icon={
                 <FolderIcon style={{ width: 20, height: 20, marginTop: -3 }} />
               }

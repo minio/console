@@ -31,7 +31,7 @@ test
     await functions.setVersioned(t, "bucketobjecttags");
     await t
       .useRole(roles.bucketObjectTags)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("bucketobjecttags"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
@@ -39,7 +39,7 @@ test
   })("Tags can be created and deleted", async (t) => {
     await t
       .useRole(roles.bucketObjectTags)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("bucketobjecttags"))
       .click(
         "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
@@ -69,7 +69,7 @@ test
     await functions.setVersioned(t, "bucketcannottag");
     await t
       .useRole(roles.bucketCannotTag)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("bucketcannottag"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
@@ -77,7 +77,7 @@ test
   })("User should not be able to create tag", async (t) => {
     await t
       .useRole(roles.bucketCannotTag)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("bucketcannottag"))
       .click(
         "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"

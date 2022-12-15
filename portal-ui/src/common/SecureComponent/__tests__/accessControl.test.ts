@@ -146,7 +146,7 @@ test("Can Browse Bucket", () => {
   expect(
     hasPermission(
       "bucket-svc",
-      IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_BROWSE_VIEW]
+      IAM_PAGES_PERMISSIONS[IAM_PAGES.OBJECT_BROWSER_VIEW]
     )
   ).toBe(true);
 });
@@ -166,7 +166,7 @@ test("Can browse a bucket for a policy with a wildcard", () => {
   expect(
     hasPermission(
       "testbucket-0",
-      IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_BROWSE_VIEW]
+      IAM_PAGES_PERMISSIONS[IAM_PAGES.OBJECT_BROWSER_VIEW]
     )
   ).toBe(true);
 });
