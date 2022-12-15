@@ -261,7 +261,7 @@ const Console = ({ classes }: IConsoleProps) => {
   useLayoutEffect(() => {
     // Debounce to not execute constantly
     const debounceSize = debounce(() => {
-      if (open && window.innerWidth <= 800) {
+      if (open && window.innerWidth <= 1024) {
         dispatch(menuOpen(false));
       }
     }, 300);
