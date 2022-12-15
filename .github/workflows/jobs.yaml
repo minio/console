@@ -62,7 +62,7 @@ jobs:
           echo "The idea is to build minio image from downloaded repository";
           cd $GITHUB_WORKSPACE/minio_repository;
           echo "Get git version to build MinIO Image";
-          VERSION=`git rev-parse HEAD`;
+          VERSION=c73ea27ed77353244898bb40bac5079ea4d496e8
           echo $VERSION;
           echo "Create minio image";
           make docker VERSION=$VERSION;
