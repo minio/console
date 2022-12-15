@@ -617,6 +617,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 								writeChannel <- WSResponse{
 									RequestID: messageRequest.RequestID,
 									Error:     lsObj.Err.Error(),
+									Prefix:    messageRequest.Prefix,
 								}
 
 								continue
@@ -689,6 +690,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 								writeChannel <- WSResponse{
 									RequestID: messageRequest.RequestID,
 									Error:     lsObj.Err.String(),
+									Prefix:    messageRequest.Prefix,
 								}
 
 								continue

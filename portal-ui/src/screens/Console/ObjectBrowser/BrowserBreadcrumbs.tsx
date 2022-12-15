@@ -95,7 +95,7 @@ const BrowserBreadcrumbs = ({
 
   let breadcrumbsMap = splitPaths.map((objectItem: string, index: number) => {
     const subSplit = `${splitPaths.slice(0, index + 1).join("/")}/`;
-    const route = `/buckets/${bucketName}/browse/${
+    const route = `/browser/${bucketName}/${
       subSplit ? `${encodeURLString(subSplit)}` : ``
     }`;
 
@@ -140,7 +140,7 @@ const BrowserBreadcrumbs = ({
   const listBreadcrumbs: any[] = [
     <Fragment key={`breadcrumbs-root-path`}>
       <Link
-        to={`/buckets/${bucketName}/browse`}
+        to={`/browser/${bucketName}`}
         onClick={() => {
           dispatch(setVersionsModeEnabled({ status: false, objectName: "" }));
         }}

@@ -61,7 +61,7 @@ test
     async (t) => {
       await t
         .useRole(roles.conditions2)
-        .navigateTo(`http://localhost:9090/buckets`)
+        .navigateTo(`http://localhost:9090/browser`)
         .click(test1BucketBrowseButton)
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText("firstlevel")
@@ -111,7 +111,7 @@ test
   })("User can browse from first level as policy has wildcard", async (t) => {
     await t
       .useRole(roles.conditions1)
-      .navigateTo(`http://localhost:9090/buckets`)
+      .navigateTo(`http://localhost:9090/browser`)
       .click(test1BucketBrowseButton)
       .click(
         Selector(".ReactVirtualized__Table__rowColumn").withText("firstlevel")

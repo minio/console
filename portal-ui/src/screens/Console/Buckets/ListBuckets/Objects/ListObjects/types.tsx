@@ -45,6 +45,7 @@ export interface WebsocketResponse {
   error?: string;
   request_end?: boolean;
   data?: ObjectResponse[];
+  prefix?: string;
 }
 export interface ObjectResponse {
   name: string;
