@@ -81,7 +81,11 @@ const DeleteObject = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
+        <DialogContentText
+          sx={{
+            width: "430px",
+          }}
+        >
           Are you sure you want to delete: <br />
           <b>{decodeURLString(selectedObject)}</b>{" "}
           {selectedVersion !== "" ? (
@@ -98,18 +102,40 @@ const DeleteObject = ({
           ? <br />
           <br />
           {versioning && selectedVersion === "" && (
-            <FormSwitchWrapper
-              label={"Delete All Versions"}
-              indicatorLabels={["Yes", "No"]}
-              checked={deleteVersions}
-              value={"delete_versions"}
-              id="delete-versions"
-              name="delete-versions"
-              onChange={(e) => {
-                setDeleteVersions(!deleteVersions);
-              }}
-              description=""
-            />
+            <Fragment>
+              <FormSwitchWrapper
+                label={"Delete All Versions"}
+                indicatorLabels={["Yes", "No"]}
+                checked={deleteVersions}
+                value={"delete_versions"}
+                id="delete-versions"
+                name="delete-versions"
+                onChange={(e) => {
+                  setDeleteVersions(!deleteVersions);
+                }}
+                description=""
+              />
+              {deleteVersions && (
+                <Fragment>
+                  <div
+                    style={{
+                      marginTop: 10,
+                      border: "#c83b51 1px solid",
+                      borderRadius: 3,
+                      padding: 5,
+                      backgroundColor: "#c83b5120",
+                      color: "#c83b51",
+                    }}
+                  >
+                    This will remove the object as well as all of its versions,{" "}
+                    <br />
+                    This action is irreversible.
+                  </div>
+                  <br />
+                  Are you sure you want to continue?
+                </Fragment>
+              )}
+            </Fragment>
           )}
         </DialogContentText>
       }
