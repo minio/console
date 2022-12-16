@@ -142,9 +142,9 @@ export const IAM_PAGES = {
   IDP_OPENID_CONFIGURATIONS_VIEW: "/idp/openid/configurations/:idpName",
   IDP_OPENID_CONFIGURATIONS_ADD: "/idp/openid/configurations/add-idp",
 
-  POLICIES: "/identity/policies",
-  POLICY_ADD: "/identity/add-policy",
-  POLICIES_VIEW: "/identity/policies/*",
+  POLICIES: "/policies",
+  POLICY_ADD: "/add-policy",
+  POLICIES_VIEW: "/policies/*",
   /* Monitoring */
   TOOLS_LOGS: "/tools/logs",
   TOOLS_AUDITLOGS: "/tools/audit-logs",
