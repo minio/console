@@ -148,10 +148,12 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Un-comment for development so websockets work on port 5005
-	/*upgrader.CheckOrigin = func(r *http.Request) bool {
-		return true
-	}*/
+	// Development mode validation
+	if getConsoleDevMode() {
+		upgrader.CheckOrigin = func(r *http.Request) bool {
+			return true
+		}
+	}
 
 	// upgrades the HTTP server connection to the WebSocket protocol.
 	conn, err := upgrader.Upgrade(w, req, nil)
