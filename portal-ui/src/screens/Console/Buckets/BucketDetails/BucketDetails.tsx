@@ -397,7 +397,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Access Audit",
+                label: "Access",
                 value: "access",
                 component: Link,
                 disabled: !hasPermission(bucketName, [
@@ -410,7 +410,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Access Rules",
+                label: "Anonymous",
                 value: "prefix",
                 component: Link,
                 disabled: !hasPermission(bucketName, [

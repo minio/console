@@ -121,6 +121,14 @@ export const validRoutes = (
     },
     {
       group: "Administrator",
+      name: "Policies",
+      component: NavLink,
+      id: "policies",
+      to: IAM_PAGES.POLICIES,
+      icon: AccessMenuIcon,
+    },
+    {
+      group: "Administrator",
       name: "Identity",
       id: "identity",
       icon: IdentityMenuIcon,
@@ -144,13 +152,6 @@ export const validRoutes = (
           name: "Groups",
           icon: GroupsMenuIcon,
           fsHidden: ldapIsEnabled,
-        },
-        {
-          name: "Policies",
-          component: NavLink,
-          id: "policies",
-          to: IAM_PAGES.POLICIES,
-          icon: AccessMenuIcon,
         },
         {
           name: "OpenID",
