@@ -424,17 +424,6 @@ const IDPConfigurationDetails = ({
                   label={"Refresh"}
                   icon={<RefreshIcon />}
                 />
-                {/* <FormSwitchWrapper
-                  label={""}
-                  indicatorLabels={["Enabled", "Disabled"]}
-                  checked={isEnabled}
-                  value={"is-configuration-enabled"}
-                  id={"is-configuration-enabled"}
-                  name={"is-configuration-enabled"}
-                  onChange={(e) => toggleConfiguration(e.target.checked)}
-                  description=""
-                  disabled={loadingEnabledSave}
-                /> */}
               </Fragment>
             }
           />
