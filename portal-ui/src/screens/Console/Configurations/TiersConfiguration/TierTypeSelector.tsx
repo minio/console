@@ -52,7 +52,7 @@ const TierTypeSelector = () => {
             sx={{
               margin: "0 auto",
               display: "grid",
-              gridGap: "47px",
+              gridGap: "20px",
               gridTemplateColumns: {
                 xs: "repeat(1, 1fr)",
                 sm: "repeat(2, 1fr)",
