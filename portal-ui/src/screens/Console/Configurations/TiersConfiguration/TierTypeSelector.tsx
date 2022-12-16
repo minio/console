@@ -23,7 +23,9 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
 import TierTypeCard from "./TierTypeCard";
-import ContentBox from "../../Common/ContentBox";
+import HelpBox from "../../../../common/HelpBox";
+import { TiersIcon } from "../../../../icons";
+import FormLayout from "../../Common/FormLayout";
 
 const TierTypeSelector = () => {
   const navigate = useNavigate();
@@ -44,20 +46,39 @@ const TierTypeSelector = () => {
       />
 
       <PageLayout>
-        <ContentBox>
-          <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
-            Select Tier Type
-          </div>
+        <FormLayout
+          title={"Select Tier Type"}
+          icon={<TiersIcon />}
+          helpbox={
+            <HelpBox
+              iconComponent={<TiersIcon />}
+              title={"Tier Types"}
+              help={
+                <Fragment>
+                  MinIO supports creating object transition lifecycle management
+                  rules, where MinIO can automatically move an object to a
+                  remote storage “tier”.
+                  <br />
+                  MinIO object transition supports use cases like moving aged
+                  data from MinIO clusters in private or public cloud
+                  infrastructure to low-cost private or public cloud storage
+                  solutions. MinIO manages retrieving tiered objects on-the-fly
+                  without any additional application-side logic.
+                </Fragment>
+              }
+            />
+          }
+        >
           <Box
             sx={{
-              margin: "0 auto",
+              margin: "15px",
               display: "grid",
               gridGap: "20px",
               gridTemplateColumns: {
                 xs: "repeat(1, 1fr)",
-                sm: "repeat(2, 1fr)",
-                md: "repeat(3, 1fr)",
-                lg: "repeat(4, 1fr)",
+                sm: "repeat(1, 1fr)",
+                md: "repeat(2, 1fr)",
+                lg: "repeat(2, 1fr)",
               },
             }}
           >
@@ -72,7 +93,7 @@ const TierTypeSelector = () => {
               />
             ))}
           </Box>
-        </ContentBox>
+        </FormLayout>
       </PageLayout>
     </Fragment>
   );
