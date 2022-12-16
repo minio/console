@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { LockIcon } from "../../../icons";
 import AddIDPConfiguration from "./AddIDPConfiguration";
-import { openIDFormFields } from "./utils";
+import { openIDFormFields, openIDHelpBoxContents } from "./utils";
 import AddIDPConfigurationHelpBox from "./AddIDPConfigurationHelpbox";
 
 type AddIDPOpenIDConfigurationProps = {
@@ -34,25 +34,13 @@ const styles = (theme: Theme) => createStyles({});
 const AddIDPOpenIDConfiguration = ({
   classes,
 }: AddIDPOpenIDConfigurationProps) => {
-  const helpBoxContents = [
-    {
-      text: "MinIO supports using an OpenID Connect (OIDC) compatible IDentity Provider (IDP) such as Okta, KeyCloak, Dex, Google, or Facebook for external management of user identities.",
-      icon: <LockIcon />,
-      iconDescription: "Create Configurations",
-    },
-    {
-      text: "Configuring an external IDP enables Single-Sign On workflows, where applications authenticate against the external IDP before accessing MinIO.",
-      icon: null,
-      iconDescription: "",
-    },
-  ];
   return (
     <AddIDPConfiguration
       icon={<LockIcon />}
       helpBox={
         <AddIDPConfigurationHelpBox
           helpText={"Learn more about OpenID Connect Configurations"}
-          contents={helpBoxContents}
+          contents={openIDHelpBoxContents}
           docLink={
             "https://min.io/docs/minio/linux/operations/external-iam.html?ref=con#minio-external-iam-oidc"
           }
