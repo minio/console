@@ -29,7 +29,7 @@ import {
   pageContentStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { RefreshIcon, TrashIcon } from "../../../icons";
+import { EditIcon, RefreshIcon, TrashIcon } from "../../../icons";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button } from "mds";
 import { useNavigate, useParams } from "react-router-dom";
@@ -47,6 +47,7 @@ import BackLink from "../../../common/BackLink";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import LabelValuePair from "../Common/UsageBarWrapper/LabelValuePair";
 
 type IDPConfigurationDetailsProps = {
   classes?: any;
@@ -55,6 +56,7 @@ type IDPConfigurationDetailsProps = {
   backLink: string;
   header: string;
   idpType: string;
+  helpBox: React.ReactNode;
   icon: React.ReactNode;
 };
 
@@ -90,6 +92,7 @@ const IDPConfigurationDetails = ({
   header,
   idpType,
   icon,
+  helpBox,
 }: IDPConfigurationDetailsProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -229,6 +232,144 @@ const IDPConfigurationDetails = ({
     invokeEnabledApi("PUT", `${endpoint}${configurationName}`, { input });
   };
 
+  const renderFormField = (key: string, value: any) => {
+    switch (value.type) {
+      case "toggle":
+        return (
+          <FormSwitchWrapper
+            indicatorLabels={["Enabled", "Disabled"]}
+            checked={fields[key] === "on" ? true : false}
+            value={"is-field-enabled"}
+            id={"is-field-enabled"}
+            name={"is-field-enabled"}
+            label={value.label}
+            tooltip={value.tooltip}
+            onChange={(e) =>
+              setFields({ ...fields, [key]: e.target.checked ? "on" : "off" })
+            }
+            description=""
+            disabled={!editMode}
+          />
+        );
+      default:
+        return (
+          <InputBoxWrapper
+            id={key}
+            required={value.required}
+            name={key}
+            label={value.label}
+            tooltip={value.tooltip}
+            error={value.hasError(fields[key], editMode)}
+            value={fields[key] ? fields[key] : ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setFields({ ...fields, [key]: e.target.value })
+            }
+            placeholder={value.placeholder}
+            disabled={!editMode}
+            type={value.type}
+          />
+        );
+    }
+  };
+
+  const renderEditForm = () => {
+    return (
+      <Box
+        sx={{
+          display: "grid",
+          padding: "25px",
+          gap: "25px",
+          gridTemplateColumns: {
+            md: "2fr 1.2fr",
+            xs: "1fr",
+          },
+          border: "1px solid #eaeaea",
+        }}
+      >
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            saveRecord(e);
+          }}
+        >
+          <Grid container item spacing="20" sx={{ marginTop: 1 }}>
+            <Grid xs={12} item className={classes.fieldBox}>
+              {Object.entries(formFields).map(([key, value]) => (
+                <Grid item xs={12} className={classes.formFieldRow} key={key}>
+                  {renderFormField(key, value)}
+                </Grid>
+              ))}
+              <Grid item xs={12} textAlign={"right"}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                    marginTop: "20px",
+                    gap: "15px",
+                  }}
+                >
+                  {editMode && (
+                    <Button
+                      id={"clear"}
+                      type="button"
+                      variant="regular"
+                      onClick={resetForm}
+                      label={"Clear"}
+                    />
+                  )}
+                  {editMode && (
+                    <Button
+                      id={"cancel"}
+                      type="button"
+                      variant="regular"
+                      onClick={toggleEditMode}
+                      label={"Cancel"}
+                    />
+                  )}
+                  {editMode && (
+                    <Button
+                      id={"save-key"}
+                      type="submit"
+                      variant="callAction"
+                      color="primary"
+                      disabled={loading || loadingSave || !validSave()}
+                      label={"Save"}
+                    />
+                  )}
+                </Box>
+              </Grid>
+            </Grid>
+          </Grid>
+        </form>
+        {helpBox}
+      </Box>
+    );
+  };
+  const renderViewForm = () => {
+    return (
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
+          gridAutoFlow: { xs: "dense", sm: "row" },
+          gap: 3,
+          padding: "15px",
+          border: "1px solid #eaeaea",
+        }}
+      >
+        {Object.entries(formFields).map(([key, value]) => (
+          <LabelValuePair
+            key={key}
+            label={value.label}
+            value={fields[key] ? fields[key] : ""}
+          />
+        ))}
+      </Box>
+    );
+  };
+
   return (
     <Grid item xs={12}>
       {deleteOpen && configurationName && (
@@ -239,24 +380,9 @@ const IDPConfigurationDetails = ({
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <PageHeader
-        label={<BackLink to={backLink} label={header} />}
-        actions={
-          <FormSwitchWrapper
-            label={""}
-            indicatorLabels={["Enabled", "Disabled"]}
-            checked={isEnabled}
-            value={"is-configuration-enabled"}
-            id={"is-configuration-enabled"}
-            name={"is-configuration-enabled"}
-            onChange={(e) => toggleConfiguration(e.target.checked)}
-            description=""
-            disabled={loadingEnabledSave}
-          />
-        }
-      />
+      <PageHeader label={<BackLink to={backLink} label={header} />} />
       <PageLayout className={classes.pageContainer}>
-        <Grid item xs={12}>
+        <Box>
           <ScreenTitle
             classes={{
               screenTitle: classes.screenTitle,
@@ -276,6 +402,22 @@ const IDPConfigurationDetails = ({
                     variant={"secondary"}
                   />
                 )}
+                {!editMode && (
+                  <Button
+                    id={"edit"}
+                    type="button"
+                    variant={"callAction"}
+                    icon={<EditIcon />}
+                    onClick={toggleEditMode}
+                    label={"Edit"}
+                  />
+                )}
+                <Button
+                  id={"is-configuration-enabled"}
+                  onClick={() => toggleConfiguration(!isEnabled)}
+                  label={isEnabled ? "Disable" : "Enable"}
+                  disabled={loadingEnabledSave}
+                />
                 <Button
                   id={"refresh-idp-config"}
                   onClick={() => setLoading(true)}
@@ -285,77 +427,9 @@ const IDPConfigurationDetails = ({
               </Fragment>
             }
           />
-        </Grid>
-        <form
-          noValidate
-          autoComplete="off"
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-            saveRecord(e);
-          }}
-        >
-          <Grid container item spacing="20" sx={{ marginTop: 1 }}>
-            <Grid xs={12} item className={classes.fieldBox}>
-              {Object.entries(formFields).map(([key, value]) => (
-                <Grid item xs={12} className={classes.formFieldRow} key={key}>
-                  <InputBoxWrapper
-                    id={key}
-                    required={value.required}
-                    name={key}
-                    label={value.label}
-                    tooltip={value.tooltip}
-                    error={value.hasError(fields[key], editMode)}
-                    value={fields[key] ? fields[key] : ""}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setFields({ ...fields, [key]: e.target.value })
-                    }
-                    placeholder={value.placeholder}
-                    disabled={!editMode}
-                    type={value.type}
-                  />
-                </Grid>
-              ))}
-              <Grid item xs={12} textAlign={"right"}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                    marginTop: "20px",
-                    gap: "15px",
-                  }}
-                >
-                  <Button
-                    id={"edit"}
-                    type="button"
-                    variant={editMode ? "regular" : "callAction"}
-                    onClick={toggleEditMode}
-                    label={editMode ? "Cancel" : "Edit"}
-                  />
-                  {editMode && (
-                    <Button
-                      id={"clear"}
-                      type="button"
-                      variant="regular"
-                      onClick={resetForm}
-                      label={"Clear"}
-                    />
-                  )}
 
-                  {editMode && (
-                    <Button
-                      id={"save-key"}
-                      type="submit"
-                      variant="callAction"
-                      color="primary"
-                      disabled={loading || loadingSave || !validSave()}
-                      label={"Save"}
-                    />
-                  )}
-                </Box>
-              </Grid>
-            </Grid>
-          </Grid>
-        </form>
+          {editMode ? renderEditForm() : renderViewForm()}
+        </Box>
       </PageLayout>
     </Grid>
   );

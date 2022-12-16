@@ -19,10 +19,11 @@ import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { ldapFormFields } from "./utils";
+import { ldapFormFields, ldapHelpBoxContents } from "./utils";
 import LoginIcon from "@mui/icons-material/Login";
 import IDPConfigurationDetails from "./IDPConfigurationDetails";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import AddIDPConfigurationHelpBox from "./AddIDPConfigurationHelpbox";
 
 type IDPLDAPConfigurationDetailsProps = {
   classes?: any;
@@ -39,6 +40,16 @@ const IDPLDAPConfigurationDetails = ({
       header={"LDAP Configurations"}
       endpoint={"/api/v1/idp/ldap/"}
       idpType={"ldap"}
+      helpBox={
+        <AddIDPConfigurationHelpBox
+          helpText={"Learn more about LDAP Configurations"}
+          contents={ldapHelpBoxContents}
+          docLink={
+            "https://min.io/docs/minio/linux/operations/external-iam.html?ref=con#minio-external-iam-ad-ldap"
+          }
+          docText={"Learn more about LDAP Configurations"}
+        />
+      }
       formFields={ldapFormFields}
       icon={<LoginIcon width={40} />}
     />

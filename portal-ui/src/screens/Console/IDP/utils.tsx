@@ -14,6 +14,40 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import LoginIcon from "@mui/icons-material/Login";
+import { LockIcon } from "../../../icons";
+
+export const ldapHelpBoxContents = [
+  {
+    text: "MinIO supports using an Active Directory or LDAP (AD/LDAP) service for external management of user identities. Configuring an external IDentity Provider (IDP) enables Single-Sign On (SSO) workflows, where applications authenticate against the external IDP before accessing MinIO.",
+    icon: <LoginIcon />,
+    iconDescription: "Create Configurations",
+  },
+  {
+    text: "MinIO queries the configured Active Directory / LDAP server to verify the credentials specified by the application and optionally return a list of groups in which the user has membership. MinIO supports two modes (Lookup-Bind Mode and Username-Bind Mode) for performing these queries",
+    icon: null,
+    iconDescription: "",
+  },
+  {
+    text: "MinIO recommends using Lookup-Bind mode as the preferred method for verifying AD/LDAP credentials. Username-Bind mode is a legacy method retained for backwards compatibility only.",
+    icon: null,
+    iconDescription: "",
+  },
+];
+
+export const openIDHelpBoxContents = [
+  {
+    text: "MinIO supports using an OpenID Connect (OIDC) compatible IDentity Provider (IDP) such as Okta, KeyCloak, Dex, Google, or Facebook for external management of user identities.",
+    icon: <LockIcon />,
+    iconDescription: "Create Configurations",
+  },
+  {
+    text: "Configuring an external IDP enables Single-Sign On workflows, where applications authenticate against the external IDP before accessing MinIO.",
+    icon: null,
+    iconDescription: "",
+  },
+];
+
 export const openIDFormFields = {
   config_url: {
     required: true,
@@ -46,14 +80,6 @@ export const openIDFormFields = {
     placeholder: "Enter Client Secret",
     type: "password",
   },
-  display_name: {
-    required: false,
-    label: "Display Name",
-    tooltip: "Display Name",
-    placeholder: "Enter Display Name",
-    type: "text",
-    hasError: (s: string, editMode: boolean) => "",
-  },
   claim_name: {
     required: false,
     label: "Claim Name",
@@ -62,10 +88,18 @@ export const openIDFormFields = {
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
   },
+  display_name: {
+    required: false,
+    label: "Display Name",
+    tooltip: "",
+    placeholder: "Enter Display Name",
+    type: "text",
+    hasError: (s: string, editMode: boolean) => "",
+  },
   claim_prefix: {
     required: false,
     label: "Claim Prefix",
-    tooltip: "Claim Prefix",
+    tooltip: "",
     placeholder: "Enter Claim Prefix",
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
@@ -73,7 +107,7 @@ export const openIDFormFields = {
   scopes: {
     required: false,
     label: "Scopes",
-    tooltip: "Scopes",
+    tooltip: "",
     placeholder: "openid,profile,email",
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
@@ -81,7 +115,7 @@ export const openIDFormFields = {
   redirect_uri: {
     required: false,
     label: "Redirect URI",
-    tooltip: "Redirect URI",
+    tooltip: "",
     placeholder: "https://console-endpoint-url/oauth_callback",
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
@@ -89,9 +123,25 @@ export const openIDFormFields = {
   role_policy: {
     required: false,
     label: "Role Policy",
-    tooltip: "Role Policy",
+    tooltip: "",
     placeholder: "readonly",
     type: "text",
+    hasError: (s: string, editMode: boolean) => "",
+  },
+  claim_userinfo: {
+    required: false,
+    label: "Claim User Info",
+    tooltip: "",
+    placeholder: "Claim User Info",
+    type: "toggle",
+    hasError: (s: string, editMode: boolean) => "",
+  },
+  redirect_uri_dynamic: {
+    required: false,
+    label: "Redirect URI Dynamic",
+    tooltip: "",
+    placeholder: "Redirect URI Dynamic",
+    type: "toggle",
     hasError: (s: string, editMode: boolean) => "",
   },
 };
@@ -135,7 +185,7 @@ export const ldapFormFields = {
       return !s && editMode ? "User DN Search Base DN is required" : "";
     },
     label: "User DN Search Base",
-    tooltip: "Base LDAP DN to search for user DN",
+    tooltip: "",
     placeholder: "DC=example,DC=net",
     type: "text",
   },
@@ -145,14 +195,14 @@ export const ldapFormFields = {
       return !s && editMode ? "User DN Search Filter is required" : "";
     },
     label: "User DN Search Filter",
-    tooltip: "Search filter to lookup user DN",
+    tooltip: "",
     placeholder: "(sAMAcountName=%s)",
     type: "text",
   },
   display_name: {
     required: false,
     label: "Display Name",
-    tooltip: "Display Name",
+    tooltip: "",
     placeholder: "Enter Display Name",
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
@@ -161,7 +211,7 @@ export const ldapFormFields = {
     required: false,
     hasError: (s: string, editMode: boolean) => "",
     label: "Group Search Base DN",
-    tooltip: "Group Search Base DN",
+    tooltip: "",
     placeholder: "ou=swengg,dc=min,dc=io",
     type: "text",
   },
@@ -169,7 +219,7 @@ export const ldapFormFields = {
     required: false,
     hasError: (s: string, editMode: boolean) => "",
     label: "Group Search Filter",
-    tooltip: "Group Search Filter",
+    tooltip: "",
     placeholder: "(&(objectclass=groupofnames)(member=%d))",
     type: "text",
   },
