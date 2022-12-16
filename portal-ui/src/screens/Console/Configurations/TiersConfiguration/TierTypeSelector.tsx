@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { tierTypes } from "./utils";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
@@ -59,11 +59,47 @@ const TierTypeSelector = () => {
                   rules, where MinIO can automatically move an object to a
                   remote storage “tier”.
                   <br />
-                  MinIO object transition supports use cases like moving aged
-                  data from MinIO clusters in private or public cloud
-                  infrastructure to low-cost private or public cloud storage
-                  solutions. MinIO manages retrieving tiered objects on-the-fly
-                  without any additional application-side logic.
+                  <br />
+                  MinIO supports the following Tier types:
+                  <br />
+                  <ul>
+                    <li>
+                      <a
+                        href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-s3.html#minio-lifecycle-management-transition-to-s3?ref=con"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        MinIO or other S3-compatible storage
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-s3.html#minio-lifecycle-management-transition-to-s3?ref=con"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Amazon S3
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-gcs.html#minio-lifecycle-management-transition-to-gcs?ref=con"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Google Cloud Storage
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-azure.html#minio-lifecycle-management-transition-to-azure?ref=con"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Microsoft Azure Blob Storage
+                      </a>
+                    </li>
+                  </ul>
                 </Fragment>
               }
             />
