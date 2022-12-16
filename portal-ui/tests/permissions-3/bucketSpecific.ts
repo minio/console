@@ -117,7 +117,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .expect(
         namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-4`).exists
       )
@@ -157,7 +157,7 @@ test
     await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-6`);
     await t
       .useRole(roles.admin)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-6`))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
@@ -166,7 +166,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-6`))
       .expect(elements.table.exists)
       .ok();
@@ -191,7 +191,7 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .expect(testBucketBrowseButton.exists)
       .ok();
   })
@@ -240,7 +240,7 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButton)
       .expect(uploadExists)
       .ok();
@@ -263,7 +263,7 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButton)
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt");
@@ -283,7 +283,7 @@ test
   })("Object list table is disabled", async (t) => {
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-11`))
       .expect(elements.bucketsTableDisabled.exists)
       .ok();

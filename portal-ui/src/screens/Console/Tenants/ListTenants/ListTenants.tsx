@@ -273,7 +273,6 @@ const ListTenants = ({ classes }: ITenantsList) => {
           <Grid
             item
             xs={12}
-            marginRight={"30px"}
             sx={{ display: "flex", justifyContent: "flex-end" }}
           >
             <TooltipWrapper tooltip={t("Refresh Tenant List")}>

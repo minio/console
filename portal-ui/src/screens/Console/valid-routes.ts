@@ -52,6 +52,7 @@ import {
   DocumentationIcon,
   LambdaIcon,
   LicenseIcon,
+  ObjectBrowserIcon,
   RecoverIcon,
   StorageIcon,
   TenantsOutlineIcon,
@@ -71,11 +72,11 @@ export const validRoutes = (
   let consoleMenus: IMenuItem[] = [
     {
       group: t("User"),
-      name: t("Buckets"),
-      id: "buckets",
+      name: t("Object Browser"),
+      id: "object-browser",
       component: NavLink,
-      to: IAM_PAGES.BUCKETS,
-      icon: BucketsMenuIcon,
+      to: IAM_PAGES.OBJECT_BROWSER_VIEW,
+      icon: ObjectBrowserIcon,
       forceDisplay: true,
       children: [],
     },
@@ -109,7 +110,24 @@ export const validRoutes = (
         );
       },
     },
-
+    {
+      group: "Administrator",
+      name: "Buckets",
+      id: "buckets",
+      component: NavLink,
+      to: IAM_PAGES.BUCKETS,
+      icon: BucketsMenuIcon,
+      forceDisplay: true,
+      children: [],
+    },
+    {
+      group: "Administrator",
+      name: "Policies",
+      component: NavLink,
+      id: "policies",
+      to: IAM_PAGES.POLICIES,
+      icon: AccessMenuIcon,
+    },
     {
       group: t("Administrator"),
       name: t("Identity"),
@@ -137,14 +155,7 @@ export const validRoutes = (
           fsHidden: ldapIsEnabled,
         },
         {
-          name: t("Policies"),
-          component: NavLink,
-          id: "policies",
-          to: IAM_PAGES.POLICIES,
-          icon: AccessMenuIcon,
-        },
-        {
-          name: "OpenID",
+          name: t("OpenID"),
           component: NavLink,
           id: "openID",
           to: IAM_PAGES.IDP_OPENID_CONFIGURATIONS,

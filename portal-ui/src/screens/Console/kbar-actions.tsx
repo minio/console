@@ -70,7 +70,7 @@ export const routesAsKbarActions = (
           name: buck.name,
           section: "List of Buckets",
           perform: () => {
-            navigate(`/buckets/${buck.name}/browse`);
+            navigate(`/browser/${buck.name}`);
           },
           icon: <BucketsIcon />,
         }),

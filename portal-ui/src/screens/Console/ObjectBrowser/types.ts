@@ -89,6 +89,7 @@ export interface ObjectBrowserState {
   selectedPreview: BucketObjectItem | null;
   previewOpen: boolean;
   shareFileModalOpen: boolean;
+  isOpeningObjectDetail: boolean;
 }
 
 export interface ObjectManager {

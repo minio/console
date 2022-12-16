@@ -284,10 +284,10 @@ const ListObjects = () => {
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
 
-  const pathSegment = location.pathname.split("/browse/");
-
-  const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
   const bucketName = params.bucketName || "";
+
+  const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
+  const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
 
   const pageTitle = decodeURLString(internalPaths);
   const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
@@ -730,7 +730,7 @@ const ListObjects = () => {
         URLItem = `${splitURLS.join("/")}/`;
       }
 
-      navigate(`/buckets/${bucketName}/browse/${encodeURLString(URLItem)}`);
+      navigate(`/browser/${bucketName}/${encodeURLString(URLItem)}`);
     }
 
     dispatch(setObjectDetailsView(false));
