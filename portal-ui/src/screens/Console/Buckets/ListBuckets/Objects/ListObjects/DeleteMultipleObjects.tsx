@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { DialogContentText } from "@mui/material";
 
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -96,18 +96,42 @@ const DeleteObject = ({
           Are you sure you want to delete the selected {selectedObjects.length}{" "}
           objects?{" "}
           {versioning && (
-            <FormSwitchWrapper
-              label={"Delete All Versions"}
-              indicatorLabels={["Yes", "No"]}
-              checked={deleteVersions}
-              value={"delete_versions"}
-              id="delete-versions"
-              name="delete-versions"
-              onChange={(e) => {
-                setDeleteVersions(!deleteVersions);
-              }}
-              description=""
-            />
+            <Fragment>
+              <br />
+              <br />
+              <FormSwitchWrapper
+                label={"Delete All Versions"}
+                indicatorLabels={["Yes", "No"]}
+                checked={deleteVersions}
+                value={"delete_versions"}
+                id="delete-versions"
+                name="delete-versions"
+                onChange={(e) => {
+                  setDeleteVersions(!deleteVersions);
+                }}
+                description=""
+              />
+              {deleteVersions && (
+                <Fragment>
+                  <div
+                    style={{
+                      marginTop: 10,
+                      border: "#c83b51 1px solid",
+                      borderRadius: 3,
+                      padding: 5,
+                      backgroundColor: "#c83b5120",
+                      color: "#c83b51",
+                    }}
+                  >
+                    This will remove the objects as well as all of their
+                    versions, <br />
+                    This action is irreversible.
+                  </div>
+                  <br />
+                  Are you sure you want to continue?
+                </Fragment>
+              )}
+            </Fragment>
           )}
         </DialogContentText>
       }
