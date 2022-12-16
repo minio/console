@@ -41,7 +41,7 @@ const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
     },
     tierTypeTitle: {
       fontWeight: 600,
-      fontSize: 13,
+      fontSize: 14,
       justifyContent: "center",
     },
   };
@@ -59,8 +59,8 @@ const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
             <Box
               sx={{
                 "& .min-icon": {
-                  height: "40px",
-                  width: "40px",
+                  height: "30px",
+                  width: "30px",
                 },
               }}
             >
