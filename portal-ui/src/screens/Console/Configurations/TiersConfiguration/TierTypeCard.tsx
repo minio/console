@@ -28,15 +28,21 @@ const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
   const styles = {
     tierTypeCard: {
       height: "80px",
-      width: "300px",
+      width: "auto",
       display: "flex",
       alignItems: "center",
-      justifyContent: "start",
+      justifyContent: "flex-start",
       padding: 5,
       border: "1px solid #E5E5E5",
       borderRadius: 2,
       cursor: "pointer",
+      overflow: "hidden",
       "&:hover": { background: "#ebebeb" },
+    },
+    tierTypeTitle: {
+      fontWeight: 600,
+      fontSize: 14,
+      justifyContent: "center",
     },
   };
   return (
@@ -49,7 +55,7 @@ const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
     >
       <Grid container alignItems={"center"}>
         {icon ? (
-          <Grid item padding={5}>
+          <Grid item padding={1} xs={4}>
             <Box
               sx={{
                 "& .min-icon": {
@@ -62,16 +68,8 @@ const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
             </Box>
           </Grid>
         ) : null}
-        <Grid item>
-          <div
-            style={{
-              fontWeight: 600,
-              marginLeft: 10,
-              fontSize: 14,
-            }}
-          >
-            {name}
-          </div>
+        <Grid item xs={8} style={styles.tierTypeTitle} paddingLeft={1}>
+          {name}
         </Grid>
       </Grid>
     </Button>
