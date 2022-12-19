@@ -49,7 +49,7 @@ var (
 
 var (
 	mcListMock          func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
-	mcRemoveMock        func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult
+	mcRemoveMock        func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult
 	mcGetMock           func(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
 	mcShareDownloadMock func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
 )
@@ -96,8 +96,8 @@ func (c s3ClientMock) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.
 	return mcListMock(ctx, opts)
 }
 
-func (c s3ClientMock) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
-	return mcRemoveMock(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
+func (c s3ClientMock) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+	return mcRemoveMock(ctx, isIncomplete, isRemoveBucket, isBypass, forceDelete, contentCh)
 }
 
 func (c s3ClientMock) get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error) {
@@ -595,7 +595,7 @@ func Test_deleteObjects(t *testing.T) {
 		recursive  bool
 		nonCurrent bool
 		listFunc   func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
-		removeFunc func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult
+		removeFunc func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult
 	}
 	tests := []struct {
 		test      string
@@ -609,7 +609,7 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  false,
 				nonCurrent: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: nil}
 					close(resultCh)
@@ -625,7 +625,7 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  false,
 				nonCurrent: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: probe.NewError(errors.New("probe error"))}
 					close(resultCh)
@@ -641,7 +641,7 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  true,
 				nonCurrent: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: nil}
 					close(resultCh)
@@ -665,7 +665,7 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  true,
 				nonCurrent: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: probe.NewError(errors.New("probe error"))}
 					close(resultCh)
@@ -687,7 +687,7 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  true,
 				nonCurrent: true,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: nil}
 					close(resultCh)
@@ -711,7 +711,7 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  true,
 				nonCurrent: true,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: probe.NewError(errors.New("probe error"))}
 					close(resultCh)

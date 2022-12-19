@@ -664,7 +664,7 @@ func deleteObjects(ctx context.Context, client MCClient, bucket string, path str
 		return deleteNonCurrentVersions(ctx, client, bucket, path)
 	}
 
-	if recursive {
+	if recursive || allVersions {
 		return deleteMultipleObjects(ctx, client, recursive, allVersions)
 	}
 
@@ -675,10 +675,16 @@ func deleteObjects(ctx context.Context, client MCClient, bucket string, path str
 //
 //	Use cases:
 //	   * Remove objects recursively
-func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool, allVersions bool) error {
+func deleteMultipleObjects(ctx context.Context, client MCClient, recursive, allVersions bool) error {
 	isBypass := false
 	isIncomplete := false
 	isRemoveBucket := false
+	forceDelete := false
+
+	if recursive || allVersions {
+		forceDelete = true
+	}
+
 	listOpts := mc.ListOptions{
 		Recursive:         recursive,
 		Incomplete:        isIncomplete,
@@ -707,7 +713,7 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool,
 		}
 	}()
 
-	for result := range client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh) {
+	for result := range client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, forceDelete, contentCh) {
 		if result.Err != nil {
 			return result.Err.Cause
 		}
@@ -726,7 +732,7 @@ func deleteSingleObject(ctx context.Context, client MCClient, bucket, object str
 	isIncomplete := false
 	isRemoveBucket := false
 
-	resultCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
+	resultCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, false, contentCh)
 	for result := range resultCh {
 		if result.Err != nil {
 			return result.Err.Cause
@@ -767,7 +773,7 @@ func deleteNonCurrentVersions(ctx context.Context, client MCClient, bucket, path
 		}
 	}()
 
-	for result := range client.remove(ctx, false, false, false, contentCh) {
+	for result := range client.remove(ctx, false, false, false, false, contentCh) {
 		if result.Err != nil {
 			return result.Err.Cause
 		}
