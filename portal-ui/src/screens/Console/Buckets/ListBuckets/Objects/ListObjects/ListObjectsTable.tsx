@@ -113,7 +113,7 @@ const ListObjectsTable = () => {
   );
 
   const displayListObjects = hasPermission(bucketName, [
-    IAM_SCOPES.S3_LIST_BUCKET,
+    IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET
   ]);
 
   const filteredRecords = records.filter((b: BucketObjectItem) => {
@@ -221,7 +221,7 @@ const ListObjectsTable = () => {
       customEmptyMessage={
         !displayListObjects
           ? permissionTooltipHelper(
-              [IAM_SCOPES.S3_LIST_BUCKET],
+              [IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET],
               "view Objects in this bucket"
             )
           : `This location is empty${

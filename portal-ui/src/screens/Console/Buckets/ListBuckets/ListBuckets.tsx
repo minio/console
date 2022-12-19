@@ -220,7 +220,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
   };
 
   const canCreateBucket = hasPermission("*", [IAM_SCOPES.S3_CREATE_BUCKET]);
-  const canListBuckets = hasPermission("*", [IAM_SCOPES.S3_LIST_BUCKET]);
+  const canListBuckets = hasPermission("*", [IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET]);
 
   return (
     <Fragment>
@@ -453,7 +453,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                           <Fragment>
                             <br />
                             {permissionTooltipHelper(
-                              [IAM_SCOPES.S3_LIST_BUCKET],
+                              [IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET],
                               "view the buckets on this server"
                             )}
                             <br />
