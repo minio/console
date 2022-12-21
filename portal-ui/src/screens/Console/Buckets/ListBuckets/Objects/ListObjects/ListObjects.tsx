@@ -27,6 +27,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
+import { DateTime } from "luxon";
 import createStyles from "@mui/styles/createStyles";
 import Grid from "@mui/material/Grid";
 import get from "lodash/get";
@@ -750,6 +751,12 @@ const ListObjects = () => {
     dispatch(setDownloadRenameModal(null));
   };
 
+  let createdTime = DateTime.now();
+
+  if (bucketInfo?.creation_date) {
+    createdTime = DateTime.fromISO(bucketInfo.creation_date);
+  }
+
   const multiActionButtons = [
     {
       action: () => {
@@ -867,9 +874,13 @@ const ListObjects = () => {
               <Fragment>
                 <Grid item xs={12} className={classes.bucketDetails}>
                   <span className={classes.detailsSpacer}>
-                    Created:&nbsp;&nbsp;&nbsp;
+                    Created on:&nbsp;&nbsp;
                     <strong>
-                      {new Date(bucketInfo?.creation_date || "").toString()}
+                      {bucketInfo?.creation_date
+                        ? createdTime.toFormat(
+                            "ccc, LLL dd yyyy HH:mm:ss (ZZZZ)"
+                          )
+                        : ""}
                     </strong>
                   </span>
                   <span className={classes.detailsSpacer}>
