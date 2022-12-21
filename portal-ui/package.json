@@ -29,7 +29,7 @@
     "kbar": "^0.1.0-beta.39",
     "local-storage-fallback": "^4.1.1",
     "lodash": "^4.17.21",
-    "mds": "https://github.com/minio/mds.git#v0.0.7",
+    "mds": "https://github.com/minio/mds.git#v0.0.8",
     "minio": "^7.0.32",
     "moment": "^2.29.4",
     "react": "^18.1.0",

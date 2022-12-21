@@ -529,20 +529,14 @@ const Login = () => {
             </a>
           </Fragment>
         }
-        promoHeader={
-          <Fragment>
-            Multi-Cloud
-            <br />
-            Object Store
-          </Fragment>
-        }
+        promoHeader={<Fragment>Multi-Cloud Object&nbsp;Store</Fragment>}
         promoInfo={
           <Fragment>
-            MinIO offers high-performance, S3 compatible object storage. <br />
-            Native to Kubernetes, MinIO is the only object storage suite
-            available on every public cloud, every Kubernetes distribution, the
-            private cloud and the edge. MinIO is software-defined and is 100%
-            open source under GNU AGPL v3.
+            MinIO's high-performance, kubernetes-native object store is licensed
+            under GNU AGPL v3 and is available on every cloud - public, private
+            and edge. For more information on the terms of the license or to
+            learn more about commercial licensing options visit the{" "}
+            <a href={"https://min.io/pricing"}>pricing page</a>.
           </Fragment>
         }
       />
