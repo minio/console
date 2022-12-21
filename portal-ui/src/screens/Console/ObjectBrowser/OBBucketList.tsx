@@ -129,7 +129,10 @@ const OBListBuckets = () => {
 
   const hasBuckets = records.length > 0;
 
-  const canListBuckets = hasPermission("*", [IAM_SCOPES.S3_LIST_BUCKET]);
+  const canListBuckets = hasPermission("*", [
+    IAM_SCOPES.S3_LIST_BUCKET,
+    IAM_SCOPES.S3_ALL_LIST_BUCKET,
+  ]);
 
   const tableActions = [
     {
@@ -276,7 +279,10 @@ const OBListBuckets = () => {
                           <Fragment>
                             <br />
                             {permissionTooltipHelper(
-                              [IAM_SCOPES.S3_LIST_BUCKET],
+                              [
+                                IAM_SCOPES.S3_LIST_BUCKET,
+                                IAM_SCOPES.S3_ALL_LIST_BUCKET,
+                              ],
                               "view the buckets on this server"
                             )}
                             <br />

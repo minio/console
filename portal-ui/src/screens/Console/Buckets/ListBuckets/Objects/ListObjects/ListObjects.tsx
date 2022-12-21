@@ -955,6 +955,7 @@ const ListObjects = () => {
                       disabled={
                         !hasPermission(bucketName, [
                           IAM_SCOPES.S3_LIST_BUCKET,
+                          IAM_SCOPES.S3_ALL_LIST_BUCKET,
                         ]) || rewindEnabled
                       }
                     />
@@ -1016,7 +1017,10 @@ const ListObjects = () => {
               </Fragment>
             ) : (
               <SecureComponent
-                scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+                scopes={[
+                  IAM_SCOPES.S3_LIST_BUCKET,
+                  IAM_SCOPES.S3_ALL_LIST_BUCKET,
+                ]}
                 resource={bucketName}
                 errorProps={{ disabled: true }}
               >
@@ -1050,7 +1054,10 @@ const ListObjects = () => {
               </SecureComponent>
             )}
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+              scopes={[
+                IAM_SCOPES.S3_LIST_BUCKET,
+                IAM_SCOPES.S3_ALL_LIST_BUCKET,
+              ]}
               resource={bucketName}
               errorProps={{ disabled: true }}
             >
