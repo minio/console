@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 import { DialogContentText } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -25,7 +25,11 @@ import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import api from "../../../../../../common/api";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
+import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { hasPermission } from "../../../../../../common/SecureComponent";
+import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import { useSelector } from "react-redux";
 
 interface IDeleteNonCurrentProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -43,13 +47,26 @@ const DeleteNonCurrentVersions = ({
   const dispatch = useAppDispatch();
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const [typeConfirm, setTypeConfirm] = useState<string>("");
+  const [bypassGovernance, setBypassGovernance] = useState<boolean>(false);
+
+  const retentionConfig = useSelector(
+    (state: AppState) => state.objectBrowser.retentionConfig
+  );
+
+  const canBypass =
+    hasPermission(
+      [selectedBucket],
+      [IAM_SCOPES.S3_BYPASS_GOVERNANCE_RETENTION]
+    ) && retentionConfig?.mode === "governance";
 
   useEffect(() => {
     if (deleteLoading) {
       api
         .invoke(
           "DELETE",
-          `/api/v1/buckets/${selectedBucket}/objects?path=${selectedObject}&non_current_versions=true`
+          `/api/v1/buckets/${selectedBucket}/objects?path=${selectedObject}&non_current_versions=true${
+            bypassGovernance ? "&bypass=true" : ""
+          }`
         )
         .then(() => {
           closeDeleteModalAndRefresh(true);
@@ -65,6 +82,7 @@ const DeleteNonCurrentVersions = ({
     dispatch,
     selectedObject,
     selectedBucket,
+    bypassGovernance,
   ]);
 
   if (!selectedObject) {
@@ -90,6 +108,28 @@ const DeleteNonCurrentVersions = ({
         <DialogContentText>
           Are you sure you want to delete all the non-current versions for:{" "}
           <b>{decodeURLString(selectedObject)}</b>? <br />
+          {canBypass && (
+            <Fragment>
+              <div
+                style={{
+                  marginTop: 10,
+                }}
+              >
+                <FormSwitchWrapper
+                  label={"Bypass Governance Mode"}
+                  indicatorLabels={["Yes", "No"]}
+                  checked={bypassGovernance}
+                  value={"bypass_governance"}
+                  id="bypass_governance"
+                  name="bypass_governance"
+                  onChange={(e) => {
+                    setBypassGovernance(!bypassGovernance);
+                  }}
+                  description=""
+                />
+              </div>
+            </Fragment>
+          )}
           <br />
           To continue please type <b>YES, PROCEED</b> in the box.
           <Grid item xs={12}>

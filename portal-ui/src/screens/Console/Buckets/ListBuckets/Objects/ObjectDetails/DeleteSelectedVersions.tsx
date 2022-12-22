@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 import { DialogContentText } from "@mui/material";
 
@@ -23,7 +23,11 @@ import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "../../../../../../icons";
 import api from "../../../../../../common/api";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
+import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { hasPermission } from "../../../../../../common/SecureComponent";
+import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import { useSelector } from "react-redux";
 
 interface IDeleteSelectedVersionsProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -42,6 +46,17 @@ const DeleteObject = ({
 }: IDeleteSelectedVersionsProps) => {
   const dispatch = useAppDispatch();
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [bypassGovernance, setBypassGovernance] = useState<boolean>(false);
+
+  const retentionConfig = useSelector(
+    (state: AppState) => state.objectBrowser.retentionConfig
+  );
+
+  const canBypass =
+    hasPermission(
+      [selectedBucket],
+      [IAM_SCOPES.S3_BYPASS_GOVERNANCE_RETENTION]
+    ) && retentionConfig?.mode === "governance";
 
   const onClose = () => closeDeleteModalAndRefresh(false);
   const onConfirmDelete = () => {
@@ -62,7 +77,9 @@ const DeleteObject = ({
         api
           .invoke(
             "POST",
-            `/api/v1/buckets/${selectedBucket}/delete-objects?all_versions=false`,
+            `/api/v1/buckets/${selectedBucket}/delete-objects?all_versions=false${
+              bypassGovernance ? "&bypass=true" : ""
+            }`,
             selectedObjectsRequest
           )
           .then(() => {
@@ -81,6 +98,7 @@ const DeleteObject = ({
     selectedBucket,
     selectedObject,
     selectedVersions,
+    bypassGovernance,
     dispatch,
   ]);
 
@@ -101,6 +119,28 @@ const DeleteObject = ({
         <DialogContentText>
           Are you sure you want to delete the selected {selectedVersions.length}{" "}
           versions for <strong>{selectedObject}</strong>?
+          {canBypass && (
+            <Fragment>
+              <div
+                style={{
+                  marginTop: 10,
+                }}
+              >
+                <FormSwitchWrapper
+                  label={"Bypass Governance Mode"}
+                  indicatorLabels={["Yes", "No"]}
+                  checked={bypassGovernance}
+                  value={"bypass_governance"}
+                  id="bypass_governance"
+                  name="bypass_governance"
+                  onChange={(e) => {
+                    setBypassGovernance(!bypassGovernance);
+                  }}
+                  description=""
+                />
+              </div>
+            </Fragment>
+          )}
         </DialogContentText>
       }
     />

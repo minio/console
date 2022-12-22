@@ -734,7 +734,7 @@ func Test_deleteObjects(t *testing.T) {
 		t.Run(tt.test, func(t *testing.T) {
 			mcListMock = tt.args.listFunc
 			mcRemoveMock = tt.args.removeFunc
-			err := deleteObjects(ctx, s3Client1, tt.args.bucket, tt.args.path, tt.args.versionID, tt.args.recursive, false, tt.args.nonCurrent)
+			err := deleteObjects(ctx, s3Client1, tt.args.bucket, tt.args.path, tt.args.versionID, tt.args.recursive, false, tt.args.nonCurrent, false)
 			switch {
 			case err == nil && tt.wantError != nil:
 				t.Errorf("deleteObjects() error: %v, wantErr: %v", err, tt.wantError)

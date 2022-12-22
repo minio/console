@@ -579,7 +579,7 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 	}), nil
 }
 
-// getDeleteObjectResponse returns whether there was an errors on deletion of object
+// getDeleteObjectResponse returns whether there was an error on deletion of object
 func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteObjectParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -603,6 +603,7 @@ func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteO
 	var version string
 	var allVersions bool
 	var nonCurrentVersions bool
+	var bypass bool
 	if params.Recursive != nil {
 		rec = *params.Recursive
 	}
@@ -615,27 +616,34 @@ func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteO
 	if params.NonCurrentVersions != nil {
 		nonCurrentVersions = *params.NonCurrentVersions
 	}
+	if params.Bypass != nil {
+		bypass = *params.Bypass
+	}
 
 	if allVersions && nonCurrentVersions {
 		err := errors.New("cannot set delete all versions and delete non-current versions flags at the same time")
 		return ErrorWithContext(ctx, err)
 	}
 
-	err = deleteObjects(ctx, mcClient, params.BucketName, prefix, version, rec, allVersions, nonCurrentVersions)
+	err = deleteObjects(ctx, mcClient, params.BucketName, prefix, version, rec, allVersions, nonCurrentVersions, bypass)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
-// getDeleteMultiplePathsResponse returns whether there was an errors on deletion of any object
+// getDeleteMultiplePathsResponse returns whether there was an error on deletion of any object
 func getDeleteMultiplePathsResponse(session *models.Principal, params objectApi.DeleteMultipleObjectsParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	var version string
 	var allVersions bool
+	var bypass bool
 	if params.AllVersions != nil {
 		allVersions = *params.AllVersions
+	}
+	if params.Bypass != nil {
+		bypass = *params.Bypass
 	}
 	for i := 0; i < len(params.Files); i++ {
 		if params.Files[i].VersionID != "" {
@@ -649,7 +657,7 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params objectApi.
 		// create a mc S3Client interface implementation
 		// defining the client to be used
 		mcClient := mcClient{client: s3Client}
-		err = deleteObjects(ctx, mcClient, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive, allVersions, false)
+		err = deleteObjects(ctx, mcClient, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive, allVersions, false, bypass)
 		if err != nil {
 			return ErrorWithContext(ctx, err)
 		}
@@ -658,30 +666,29 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params objectApi.
 }
 
 // deleteObjects deletes either a single object or multiple objects based on recursive flag
-func deleteObjects(ctx context.Context, client MCClient, bucket string, path string, versionID string, recursive bool, allVersions bool, nonCurrentVersionsOnly bool) error {
+func deleteObjects(ctx context.Context, client MCClient, bucket string, path string, versionID string, recursive, allVersions, nonCurrentVersionsOnly, bypass bool) error {
 	// Delete All non-Current versions only.
 	if nonCurrentVersionsOnly {
-		return deleteNonCurrentVersions(ctx, client, bucket, path)
+		return deleteNonCurrentVersions(ctx, client, bucket, path, bypass)
 	}
 
 	if recursive || allVersions {
-		return deleteMultipleObjects(ctx, client, recursive, allVersions)
+		return deleteMultipleObjects(ctx, client, recursive, allVersions, bypass)
 	}
 
-	return deleteSingleObject(ctx, client, bucket, path, versionID)
+	return deleteSingleObject(ctx, client, bucket, path, versionID, bypass)
 }
 
 // deleteMultipleObjects uses listing before removal, it can list recursively or not,
 //
 //	Use cases:
 //	   * Remove objects recursively
-func deleteMultipleObjects(ctx context.Context, client MCClient, recursive, allVersions bool) error {
-	isBypass := false
+func deleteMultipleObjects(ctx context.Context, client MCClient, recursive, allVersions, isBypass bool) error {
 	isIncomplete := false
 	isRemoveBucket := false
 	forceDelete := false
 
-	if recursive || allVersions {
+	if recursive || (allVersions && !isBypass) {
 		forceDelete = true
 	}
 
@@ -722,13 +729,12 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive, allV
 	return nil
 }
 
-func deleteSingleObject(ctx context.Context, client MCClient, bucket, object string, versionID string) error {
+func deleteSingleObject(ctx context.Context, client MCClient, bucket, object string, versionID string, isBypass bool) error {
 	targetURL := fmt.Sprintf("%s/%s", bucket, object)
 	contentCh := make(chan *mc.ClientContent, 1)
 	contentCh <- &mc.ClientContent{URL: *newClientURL(targetURL), VersionID: versionID}
 	close(contentCh)
 
-	isBypass := false
 	isIncomplete := false
 	isRemoveBucket := false
 
@@ -741,7 +747,7 @@ func deleteSingleObject(ctx context.Context, client MCClient, bucket, object str
 	return nil
 }
 
-func deleteNonCurrentVersions(ctx context.Context, client MCClient, bucket, path string) error {
+func deleteNonCurrentVersions(ctx context.Context, client MCClient, bucket, path string, isBypass bool) error {
 	lctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -773,7 +779,7 @@ func deleteNonCurrentVersions(ctx context.Context, client MCClient, bucket, path
 		}
 	}()
 
-	for result := range client.remove(ctx, false, false, false, false, contentCh) {
+	for result := range client.remove(ctx, false, false, isBypass, false, contentCh) {
 		if result.Err != nil {
 			return result.Err.Cause
 		}

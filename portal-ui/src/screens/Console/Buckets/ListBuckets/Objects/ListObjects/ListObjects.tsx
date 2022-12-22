@@ -50,7 +50,10 @@ import { Badge } from "@mui/material";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import { extensionPreview } from "../utils";
 import { BucketInfo, BucketQuota } from "../../../types";
-import { ErrorResponseHandler } from "../../../../../../common/types";
+import {
+  ErrorResponseHandler,
+  IRetentionConfig,
+} from "../../../../../../common/types";
 
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 
@@ -103,7 +106,9 @@ import {
   setNewObject,
   setObjectDetailsView,
   setPreviewOpen,
+  setRetentionConfig,
   setSearchObjects,
+  setSelectedBucket,
   setSelectedObjects,
   setSelectedObjectView,
   setSelectedPreview,
@@ -273,6 +278,9 @@ const ListObjects = () => {
   const previewOpen = useSelector(
     (state: AppState) => state.objectBrowser.previewOpen
   );
+  const selectedBucket = useSelector(
+    (state: AppState) => state.objectBrowser.selectedBucket
+  );
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
   const bucketInfo = useSelector(selBucketDetailsInfo);
@@ -411,6 +419,7 @@ const ListObjects = () => {
         .then((res: BucketInfo) => {
           dispatch(setBucketDetailsLoad(false));
           dispatch(setBucketInfo(res));
+          dispatch(setSelectedBucket(bucketName));
         })
         .catch((err: ErrorResponseHandler) => {
           dispatch(setBucketDetailsLoad(false));
@@ -418,6 +427,21 @@ const ListObjects = () => {
         });
     }
   }, [bucketName, loadingBucket, dispatch]);
+
+  // Load retention Config
+
+  useEffect(() => {
+    if (selectedBucket !== "") {
+      api
+        .invoke("GET", `/api/v1/buckets/${selectedBucket}/retention`)
+        .then((res: IRetentionConfig) => {
+          dispatch(setRetentionConfig(res));
+        })
+        .catch((err: ErrorResponseHandler) => {
+          dispatch(setRetentionConfig(null));
+        });
+    }
+  }, [selectedBucket, dispatch]);
 
   const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
     setDeleteMultipleOpen(false);
