@@ -135,13 +135,14 @@ export const IAM_PAGES = {
   USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
 
   /* IDP */
-  IDP_LDAP_CONFIGURATIONS: "/idp/ldap/configurations",
-  IDP_LDAP_CONFIGURATIONS_VIEW: "/idp/ldap/configurations/:idpName",
-  IDP_LDAP_CONFIGURATIONS_ADD: "/idp/ldap/configurations/add-idp",
+  IDP_LDAP_CONFIGURATIONS: "/identity/idp/ldap/configurations",
+  IDP_LDAP_CONFIGURATIONS_VIEW: "/identity/idp/ldap/configurations/:idpName",
+  IDP_LDAP_CONFIGURATIONS_ADD: "/identity/idp/ldap/configurations/add-idp",
 
-  IDP_OPENID_CONFIGURATIONS: "/idp/openid/configurations",
-  IDP_OPENID_CONFIGURATIONS_VIEW: "/idp/openid/configurations/:idpName",
-  IDP_OPENID_CONFIGURATIONS_ADD: "/idp/openid/configurations/add-idp",
+  IDP_OPENID_CONFIGURATIONS: "/identity/idp/openid/configurations",
+  IDP_OPENID_CONFIGURATIONS_VIEW:
+    "/identity/idp/openid/configurations/:idpName",
+  IDP_OPENID_CONFIGURATIONS_ADD: "/identity/idp/openid/configurations/add-idp",
 
   POLICIES: "/policies",
   POLICY_ADD: "/add-policy",
