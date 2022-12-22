@@ -532,7 +532,7 @@ const Login = () => {
         promoHeader={<Fragment>Multi-Cloud Object&nbsp;Store</Fragment>}
         promoInfo={
           <Fragment>
-            MinIO's high-performance, kubernetes-native object store is licensed
+            MinIO's high-performance, Kubernetes-native object store is licensed
             under GNU AGPL v3 and is available on every cloud - public, private
             and edge. For more information on the terms of the license or to
             learn more about commercial licensing options visit the{" "}
