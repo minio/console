@@ -93,6 +93,7 @@
     "react-scripts/**/glob-parent": "^6.0.1",
     "react-scripts/**/minimatch": "^3.0.5",
     "react-scripts/**/loader-utils": "^2.0.4",
-    "recharts/**/d3-color": "^3.1.0"
+    "recharts/**/d3-color": "^3.1.0",
+    "testcafe/**/jsonwebtoken": "^9.0.0"
   }
 }
