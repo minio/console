@@ -90,6 +90,7 @@ test-replication:
 	@(docker stop minio2 || true)
 	@(docker network rm mynet123 || true)
 	@(docker network create mynet123)
+	@(echo "running test with docker image: $(MINIO_VERSION)")
 	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 \
 	  --net=mynet123 -d \
 	  --name minio \
@@ -135,7 +136,7 @@ test-replication:
 test-sso-integration:
 	@echo "create the network in bridge mode to communicate all containers"
 	@(docker network create my-net)
-	@echo "run openldap container using MinIO Image: quay.io/minio/openldap:latest"
+	@echo "run openldap container using MinIO Image: $(MINIO_VERSION)"
 	@(docker run \
 		-e LDAP_ORGANIZATION="MinIO Inc" \
 		-e LDAP_DOMAIN="min.io" \
@@ -192,37 +193,37 @@ test-operator:
 	@(docker stop minio)
 
 test-permissions-1:
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4})
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh "portal-ui/tests/permissions-1/")
 	@(docker stop minio)
 
 test-permissions-2:
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4})
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh "portal-ui/tests/permissions-2/")
 	@(docker stop minio)
 
 test-permissions-3:
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4})
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh "portal-ui/tests/permissions-3/")
 	@(docker stop minio)
 
 test-permissions-4:
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4})
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh "portal-ui/tests/permissions-4/")
 	@(docker stop minio)
 
 test-permissions-5:
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4})
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh "portal-ui/tests/permissions-5/")
 	@(docker stop minio)
 
 test-permissions-6:
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4})
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh "portal-ui/tests/permissions-6/")
 	@(docker stop minio)
 
 test-permissions-7:
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4})
 	@(env bash $(PWD)/portal-ui/tests/scripts/permissions.sh "portal-ui/tests/permissions-7/")
 	@(docker stop minio)
 
@@ -230,7 +231,9 @@ test-apply-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/initialize-env.sh)
 
 test-start-docker-minio:
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+    @echo "Setting up test MinIO using:"
+    @($(MINIO_VERSION))
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 $(MINIO_VERSION) server /data{1...4})
 
 initialize-operator:
 	@echo "Done initializing operator test"

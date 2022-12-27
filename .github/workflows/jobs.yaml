@@ -13,6 +13,8 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
   cancel-in-progress: true
+env:
+  MINIO_REVISION: latest
 
 jobs:
 
@@ -151,12 +153,6 @@ jobs:
         id: go
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          go mod download
       - uses: actions/cache@v3
         name: Go Mod Cache
         with:
@@ -164,7 +160,64 @@ jobs:
             ~/.cache/go-build
             ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ github.run_id }}
-  
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          go mod download
+
+  build-minio-master:
+    name: Build MinIO Master
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go-version: [ 1.18.x ]
+
+    steps:
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
+      - name: Build on ${{ matrix.os }}
+        if: ${{ steps.minio-binary-cache.outputs.cache-hit != 'true' }}
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Create minio image";
+          make docker VERSION=$MINIO_REVISION;
+          echo "Jumping back to console repository to run the integration test"
+          cd $GITHUB_WORKSPACE;
+          echo "We are going to use the built image on test-integration";
+          VERSION="minio/minio:$MINIO_REVISION";
+          echo $VERSION;
+          docker save -o minio.tar $VERSION
+          ls -lh
+          pwd
+
   compile-binary:
     name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
@@ -213,6 +266,11 @@ jobs:
         run: |
           make console
   
+  
+
+  
+  
+
   
 
   react-code-known-vulnerabilities:
@@ -295,6 +353,7 @@ jobs:
     name: Permissions Tests Part 1
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
@@ -334,7 +393,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -342,7 +420,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
@@ -357,6 +437,7 @@ jobs:
     name: Permissions Tests Part 2
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
@@ -392,7 +473,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -400,7 +500,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
@@ -415,6 +517,7 @@ jobs:
     name: Permissions Tests Part 3
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
@@ -454,7 +557,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -462,7 +584,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
@@ -478,6 +602,7 @@ jobs:
     name: Permissions Tests Part 4
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     timeout-minutes: 15
     strategy:
@@ -513,7 +638,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -521,7 +665,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
       - name: Run TestCafe Tests
         timeout-minutes: 10
         uses: DevExpress/testcafe-action@latest
@@ -531,6 +677,7 @@ jobs:
     name: Permissions Tests Part 5
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
@@ -565,7 +712,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -573,7 +739,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
       - name: Run TestCafe Tests
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
@@ -583,6 +751,7 @@ jobs:
     name: Permissions Tests Part 6
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
@@ -617,7 +786,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -625,7 +813,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
       - name: Run TestCafe Tests
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
@@ -635,6 +825,7 @@ jobs:
     name: Permissions Tests Part 7
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
@@ -669,7 +860,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -677,7 +887,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
       - name: Run TestCafe Tests
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
@@ -687,6 +899,7 @@ jobs:
     name: Permissions Tests Part 8
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
@@ -721,7 +934,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -729,7 +961,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
       - name: Run TestCafe Tests
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
@@ -739,6 +973,7 @@ jobs:
     name: Permissions Tests Part 9
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
@@ -775,7 +1010,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -783,7 +1037,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
@@ -798,6 +1054,7 @@ jobs:
     name: Permissions Tests Part A
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
@@ -836,7 +1093,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -844,7 +1120,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
@@ -859,6 +1137,7 @@ jobs:
     name: Permissions Tests Part B
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
@@ -897,7 +1176,26 @@ jobs:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-
+      - name: clone https://github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
       - name: clean-previous-containers-if-any
         run: |
           docker stop minio || true;
@@ -905,7 +1203,9 @@ jobs:
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
-          (./console server) & (make initialize-permissions)
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
+          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
@@ -920,6 +1220,7 @@ jobs:
     name: Operator UI Tests Part 1
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -991,6 +1292,7 @@ jobs:
     name: Operator UI Tests Part 2
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -1065,6 +1367,7 @@ jobs:
     name: Operator UI Tests Part 3
     needs:
       - compile-binary
+      - build-minio-master
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -1364,6 +1667,7 @@ jobs:
       - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
+      - build-minio-master
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -1392,7 +1696,8 @@ jobs:
           GO111MODULE: on
           GOOS: linux
         run: |
-          make test
+          echo "Running standing restapi tests"
+          make test;
 
       - uses: actions/cache@v3
         id: coverage-cache-restapi
@@ -1452,6 +1757,7 @@ jobs:
       - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
+      - build-minio-master
     runs-on: ubuntu-latest
 
     strategy:
@@ -1468,18 +1774,27 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      # To build minio image, we need to clone the repository first
       - name: clone https://github.com/minio/minio
         uses: actions/checkout@master
         with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
           repository: minio/minio
-          
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
           path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
+
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -1491,17 +1806,8 @@ jobs:
 
       - name: Build on ${{ matrix.os }}
         run: |
-          echo "The idea is to build minio image from downloaded repository";
-          cd $GITHUB_WORKSPACE/minio_repository;
-          echo "Get git version to build MinIO Image";
-          VERSION=`git rev-parse HEAD`;
-          echo $VERSION;
-          echo "Create minio image";
-          make docker VERSION=$VERSION;
-          echo "Jumping back to console repository to run the integration test"
-          cd $GITHUB_WORKSPACE;
-          echo "We are going to use the built image on test-integration";
-          VERSION="minio/minio:$VERSION";
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
           echo $VERSION;
           
           echo "Create bucket for replication with versioning"
@@ -1527,7 +1833,7 @@ jobs:
           # mc admin bucket remote add myminio/source https://minioadmin:minioadmin@play.min.io/target --service "replication"
           # expected output is: Remote ARN = `arn:minio:replication::f5bdb8d7-541d-415e-aaf4-592979484ba9:target`.
           
-          make test-integration MINIO_VERSION=$VERSION TARGET_BUCKET=$TARGET_BUCKET;
+          MINIO_VERSION=$VERSION TARGET_BUCKET=$TARGET_BUCKET make test-integration;
 
       - uses: actions/cache@v3
         id: coverage-cache
@@ -1560,6 +1866,7 @@ jobs:
       - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
+      - build-minio-master
     runs-on: [ ubuntu-latest ]
 
     strategy:
@@ -1576,32 +1883,38 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      # To build minio image, we need to clone the repository first
       - name: clone https://github.com/minio/minio
         uses: actions/checkout@master
         with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
           repository: minio/minio
-
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
           path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
+      - uses: actions/cache@v3
+        name: Go Mod Cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         run: |
-          echo "The idea is to build minio image from downloaded repository";
-          cd $GITHUB_WORKSPACE/minio_repository;
-          echo "Get git version to build MinIO Image";
-          VERSION=`git rev-parse HEAD`;
-          echo $VERSION;
-          echo "Create minio image";
-          make docker VERSION=$VERSION;
-          echo "Jumping back to console repository to run the integration test"
-          cd $GITHUB_WORKSPACE;
-          echo "We are going to use the built image on test-integration";
-          VERSION="minio/minio:$VERSION";
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
           echo $VERSION;
           make test-replication MINIO_VERSION=$VERSION;
       - uses: actions/cache@v3
@@ -1626,6 +1939,7 @@ jobs:
       - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
+      - build-minio-master
     runs-on: ubuntu-latest
 
     strategy:
@@ -1642,18 +1956,26 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      # To build minio image, we need to clone the repository first
       - name: clone https://github.com/minio/minio
         uses: actions/checkout@master
         with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
           repository: minio/minio
-
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
           path: 'minio_repository'
+      - name: MinIO Revision
+        run: |
+          echo "Build MinIO's master branch";
+          cd $GITHUB_WORKSPACE/minio_repository;
+          echo "Get git version to build MinIO Image";
+          MINIO_REVISION=`git rev-parse HEAD`;
+          echo "MinIO Revision on Master: $MINIO_REVISION";
+          echo "MINIO_REVISION=$MINIO_REVISION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: MinIO Binary Cache
+        id: minio-binary-cache
+        with:
+          path: |
+            ./minio.tar
+          key: minio-cache-${{env.MINIO_REVISION}}
 
       - uses: actions/cache@v3
         name: Go Mod Cache
@@ -1665,24 +1987,10 @@ jobs:
 
       - name: Build on ${{ matrix.os }}
         run: |
-          echo "The idea is to build minio image from downloaded repository";
-          cd $GITHUB_WORKSPACE/minio_repository;
-          echo "replace github.com/minio/console => ../" >> go.mod
-
-          echo "updates to go.mod needed; to update it: go mod tidy"
-          go mod tidy -compat=1.18
-
-          echo "Get git version to build MinIO Image";
-          VERSION=`git rev-parse HEAD`;
+          VERSION="minio/minio:$MINIO_REVISION";
+          docker load < minio.tar;
           echo $VERSION;
-          echo "Create minio image";
-          make docker VERSION=$VERSION;
-          echo "Jumping back to console repository to run the integration test"
-          cd $GITHUB_WORKSPACE;
-          echo "We are going to use the built image on test-integration";
-          VERSION="minio/minio:$VERSION";
-          echo $VERSION;
-          make test-sso-integration MINIO_VERSION=$VERSION;
+          MINIO_VERSION=$VERSION make test-sso-integration;
       - uses: actions/cache@v3
         id: coverage-cache-sso
         name: Coverage Cache SSO
