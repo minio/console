@@ -1697,7 +1697,7 @@ jobs:
           GOOS: linux
         run: |
           echo "Running standing restapi tests"
-          make test;
+          make test-restapi;
 
       - uses: actions/cache@v3
         id: coverage-cache-restapi

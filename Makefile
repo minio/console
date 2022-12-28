@@ -245,7 +245,7 @@ cleanup-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/cleanup-env.sh)
 	@(docker stop minio)
 
-test:
+test-restapi:
 	@echo "execute test and get coverage"
 	@(cd restapi && mkdir coverage && GO111MODULE=on go test -test.v -coverprofile=coverage/coverage.out)
 
