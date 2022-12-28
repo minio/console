@@ -422,7 +422,7 @@ jobs:
         run: |
           VERSION="minio/minio:$MINIO_REVISION";
           docker load < minio.tar;
-          (./console server) & (MINIO_VERSION=$VERSION make initialize-permissions)
+          (./console server) & (make initialize-permissions MINIO_VERSION=$VERSION)
 
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
