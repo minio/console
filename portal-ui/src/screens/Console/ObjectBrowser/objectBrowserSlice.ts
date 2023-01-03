@@ -20,6 +20,7 @@ import {
   BucketObjectItem,
   IRestoreLocalObjectList,
 } from "../Buckets/ListBuckets/Objects/ListObjects/types";
+import { IRetentionConfig } from "../../../common/types";
 
 const defaultRewind = {
   rewindEnabled: false,
@@ -28,6 +29,7 @@ const defaultRewind = {
 };
 
 const initialState: ObjectBrowserState = {
+  selectedBucket: "",
   versionsMode: false,
   loadingObjects: true,
   objectDetailsOpen: false,
@@ -64,6 +66,11 @@ const initialState: ObjectBrowserState = {
   previewOpen: false,
   shareFileModalOpen: false,
   isOpeningObjectDetail: false,
+  retentionConfig: {
+    mode: "",
+    unit: "",
+    validity: 0,
+  },
 };
 
 export const objectBrowserSlice = createSlice({
@@ -340,6 +347,15 @@ export const objectBrowserSlice = createSlice({
     setIsOpeningOD: (state, action: PayloadAction<boolean>) => {
       state.isOpeningObjectDetail = action.payload;
     },
+    setRetentionConfig: (
+      state,
+      action: PayloadAction<IRetentionConfig | null>
+    ) => {
+      state.retentionConfig = action.payload;
+    },
+    setSelectedBucket: (state, action: PayloadAction<string>) => {
+      state.selectedBucket = action.payload;
+    },
   },
 });
 export const {
@@ -383,6 +399,8 @@ export const {
   setLoadingRecords,
   restoreLocalObjectList,
   setIsOpeningOD,
+  setRetentionConfig,
+  setSelectedBucket,
 } = objectBrowserSlice.actions;
 
 export default objectBrowserSlice.reducer;
