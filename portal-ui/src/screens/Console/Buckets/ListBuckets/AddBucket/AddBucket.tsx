@@ -171,12 +171,14 @@ const AddBucket = ({ classes }: IsetProps) => {
     [
       IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
       IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
+      IAM_SCOPES.S3_ALL_PUT_OBJECT,
     ],
     true
   );
 
   const versioningAllowed = hasPermission("*", [
     IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+    IAM_SCOPES.S3_ALL_PUT_OBJECT,
   ]);
 
   useEffect(() => {
@@ -330,7 +332,10 @@ const AddBucket = ({ classes }: IsetProps) => {
                         ? "You must disable Locking before Versioning can be disabled"
                         : ""
                       : permissionTooltipHelper(
-                          [IAM_SCOPES.S3_PUT_BUCKET_VERSIONING],
+                          [
+                            IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+                            IAM_SCOPES.S3_ALL_PUT_OBJECT,
+                          ],
                           "Versioning"
                         )
                   }
@@ -362,6 +367,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                           [
                             IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
                             IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
+                            IAM_SCOPES.S3_ALL_PUT_OBJECT,
                           ],
                           "Locking"
                         )

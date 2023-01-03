@@ -298,7 +298,10 @@ const AddTagModal = ({
               </Box>
             </SecureComponent>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_PUT_OBJECT_TAGGING]}
+              scopes={[
+                IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
+                IAM_SCOPES.S3_ALL_PUT_OBJECT,
+              ]}
               resource={bucketName}
               errorProps={{ disabled: true, onClick: null }}
             >
