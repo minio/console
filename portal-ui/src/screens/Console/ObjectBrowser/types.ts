@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
+import { IRetentionConfig } from "../../../common/types";
 
 export const REWIND_SET_ENABLE = "REWIND/SET_ENABLE";
 export const REWIND_RESET_REWIND = "REWIND/RESET_REWIND";
@@ -64,6 +65,7 @@ export interface RewindItem {
 }
 
 export interface ObjectBrowserState {
+  selectedBucket: string;
   rewind: RewindItem;
   objectManager: ObjectManager;
   searchObjects: string;
@@ -90,6 +92,7 @@ export interface ObjectBrowserState {
   previewOpen: boolean;
   shareFileModalOpen: boolean;
   isOpeningObjectDetail: boolean;
+  retentionConfig: IRetentionConfig | null;
 }
 
 export interface ObjectManager {

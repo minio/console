@@ -25,7 +25,10 @@ import { ConfirmDeleteIcon } from "../../../../../../icons";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
+import { hasPermission } from "../../../../../../common/SecureComponent";
+import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import { useSelector } from "react-redux";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -42,7 +45,6 @@ const DeleteObject = ({
   deleteOpen,
   selectedBucket,
   selectedObject,
-
   versioning,
   selectedVersion = "",
 }: IDeleteObjectProps) => {
@@ -54,6 +56,17 @@ const DeleteObject = ({
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
   const [deleteVersions, setDeleteVersions] = useState<boolean>(false);
+  const [bypassGovernance, setBypassGovernance] = useState<boolean>(false);
+
+  const retentionConfig = useSelector(
+    (state: AppState) => state.objectBrowser.retentionConfig
+  );
+
+  const canBypass =
+    hasPermission(
+      [selectedBucket],
+      [IAM_SCOPES.S3_BYPASS_GOVERNANCE_RETENTION]
+    ) && retentionConfig?.mode === "governance";
 
   if (!selectedObject) {
     return null;
@@ -67,7 +80,7 @@ const DeleteObject = ({
         selectedVersion !== ""
           ? `&version_id=${selectedVersion}`
           : `&recursive=${recursive}&all_versions=${deleteVersions}`
-      }`
+      }${bypassGovernance ? "&bypass=true" : ""}`
     );
   };
 
@@ -115,26 +128,48 @@ const DeleteObject = ({
                 }}
                 description=""
               />
-              {deleteVersions && (
-                <Fragment>
-                  <div
-                    style={{
-                      marginTop: 10,
-                      border: "#c83b51 1px solid",
-                      borderRadius: 3,
-                      padding: 5,
-                      backgroundColor: "#c83b5120",
-                      color: "#c83b51",
-                    }}
-                  >
-                    This will remove the object as well as all of its versions,{" "}
-                    <br />
-                    This action is irreversible.
-                  </div>
-                  <br />
-                  Are you sure you want to continue?
-                </Fragment>
-              )}
+            </Fragment>
+          )}
+          {canBypass && (deleteVersions || selectedVersion !== "") && (
+            <Fragment>
+              <div
+                style={{
+                  marginTop: 10,
+                }}
+              >
+                <FormSwitchWrapper
+                  label={"Bypass Governance Mode"}
+                  indicatorLabels={["Yes", "No"]}
+                  checked={bypassGovernance}
+                  value={"bypass_governance"}
+                  id="bypass_governance"
+                  name="bypass_governance"
+                  onChange={(e) => {
+                    setBypassGovernance(!bypassGovernance);
+                  }}
+                  description=""
+                />
+              </div>
+            </Fragment>
+          )}
+          {deleteVersions && (
+            <Fragment>
+              <div
+                style={{
+                  marginTop: 10,
+                  border: "#c83b51 1px solid",
+                  borderRadius: 3,
+                  padding: 5,
+                  backgroundColor: "#c83b5120",
+                  color: "#c83b51",
+                }}
+              >
+                This will remove the object as well as all of its versions,{" "}
+                <br />
+                This action is irreversible.
+              </div>
+              <br />
+              Are you sure you want to continue?
             </Fragment>
           )}
         </DialogContentText>

@@ -24,6 +24,7 @@ export const IAM_ROLES = {
 export const IAM_SCOPES = {
   S3_STAR_BUCKET: "s3:*Bucket",
   S3_LIST_BUCKET: "s3:ListBucket",
+  S3_ALL_LIST_BUCKET: "s3:List*",
   S3_GET_BUCKET_POLICY: "s3:GetBucketPolicy",
   S3_PUT_BUCKET_POLICY: "s3:PutBucketPolicy",
   S3_GET_OBJECT: "s3:GetObject",
@@ -154,13 +155,14 @@ export const IAM_PAGES = {
   USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
 
   /* IDP */
-  IDP_LDAP_CONFIGURATIONS: "/idp/ldap/configurations",
-  IDP_LDAP_CONFIGURATIONS_VIEW: "/idp/ldap/configurations/:idpName",
-  IDP_LDAP_CONFIGURATIONS_ADD: "/idp/ldap/configurations/add-idp",
+  IDP_LDAP_CONFIGURATIONS: "/identity/idp/ldap/configurations",
+  IDP_LDAP_CONFIGURATIONS_VIEW: "/identity/idp/ldap/configurations/:idpName",
+  IDP_LDAP_CONFIGURATIONS_ADD: "/identity/idp/ldap/configurations/add-idp",
 
-  IDP_OPENID_CONFIGURATIONS: "/idp/openid/configurations",
-  IDP_OPENID_CONFIGURATIONS_VIEW: "/idp/openid/configurations/:idpName",
-  IDP_OPENID_CONFIGURATIONS_ADD: "/idp/openid/configurations/add-idp",
+  IDP_OPENID_CONFIGURATIONS: "/identity/idp/openid/configurations",
+  IDP_OPENID_CONFIGURATIONS_VIEW:
+    "/identity/idp/openid/configurations/:idpName",
+  IDP_OPENID_CONFIGURATIONS_ADD: "/identity/idp/openid/configurations/add-idp",
 
   POLICIES: "/policies",
   POLICY_ADD: "/add-policy",
@@ -265,7 +267,10 @@ export const IAM_PERMISSIONS = {
     IAM_SCOPES.S3_PUT_OBJECT,
     IAM_SCOPES.S3_DELETE_OBJECT,
   ],
-  [IAM_ROLES.BUCKET_VIEWER]: [IAM_SCOPES.S3_LIST_BUCKET],
+  [IAM_ROLES.BUCKET_VIEWER]: [
+    IAM_SCOPES.S3_LIST_BUCKET,
+    IAM_SCOPES.S3_ALL_LIST_BUCKET,
+  ],
   [IAM_ROLES.BUCKET_ADMIN]: [
     IAM_SCOPES.S3_ALL_ACTIONS,
     IAM_SCOPES.ADMIN_ALL_ACTIONS,
@@ -630,4 +635,7 @@ export const deleteBucketPermissions = [
   IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
 ];
 
-export const browseBucketPermissions = [IAM_SCOPES.S3_LIST_BUCKET];
+export const browseBucketPermissions = [
+  IAM_SCOPES.S3_LIST_BUCKET,
+  IAM_SCOPES.S3_ALL_LIST_BUCKET,
+];
