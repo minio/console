@@ -29,6 +29,7 @@ export const IAM_SCOPES = {
   S3_PUT_BUCKET_POLICY: "s3:PutBucketPolicy",
   S3_GET_OBJECT: "s3:GetObject",
   S3_PUT_OBJECT: "s3:PutObject",
+  S3_ALL_PUT_OBJECT: "s3:Put*",
   S3_GET_OBJECT_LEGAL_HOLD: "s3:GetObjectLegalHold",
   S3_PUT_OBJECT_LEGAL_HOLD: "s3:PutObjectLegalHold",
   S3_DELETE_OBJECT: "s3:DeleteObject",
@@ -238,6 +239,7 @@ export const IAM_PAGES = {
 export const IAM_PERMISSIONS = {
   [IAM_ROLES.BUCKET_OWNER]: [
     IAM_SCOPES.S3_PUT_OBJECT,
+    IAM_SCOPES.S3_ALL_PUT_OBJECT,
     IAM_SCOPES.S3_DELETE_OBJECT,
   ],
   [IAM_ROLES.BUCKET_VIEWER]: [
