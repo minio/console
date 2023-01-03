@@ -30,7 +30,7 @@
     "local-storage-fallback": "^4.1.1",
     "lodash": "^4.17.21",
     "luxon": "^3.1.1",
-    "mds": "https://github.com/minio/mds.git#v0.0.8",
+    "mds": "https://github.com/minio/mds.git#v0.0.9",
     "minio": "^7.0.32",
     "moment": "^2.29.4",
     "react": "^18.1.0",
