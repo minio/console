@@ -80,7 +80,7 @@
     "@types/recharts": "^1.8.24",
     "prettier": "2.7.1",
     "react-scripts": "5.0.1",
-    "testcafe": "^2.1.0",
+    "testcafe": "^2.2.0",
     "typescript": "^4.4.3"
   },
   "resolutions": {
@@ -94,6 +94,7 @@
     "react-scripts/**/minimatch": "^3.0.5",
     "react-scripts/**/loader-utils": "^2.0.4",
     "recharts/**/d3-color": "^3.1.0",
-    "testcafe/**/jsonwebtoken": "^9.0.0"
+    "react-scripts/**/json5": "^2.2.2",
+    "testcafe/**/json5": "^2.2.2"
   }
 }
