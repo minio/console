@@ -443,14 +443,20 @@ const ObjectDetailPanel = ({
   ];
   const canSetLegalHold = hasPermission(bucketName, [
     IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
   const canSetTags = hasPermission(objectResources, [
     IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 
   const canChangeRetention = hasPermission(
     objectResources,
-    [IAM_SCOPES.S3_GET_OBJECT_RETENTION, IAM_SCOPES.S3_PUT_OBJECT_RETENTION],
+    [
+      IAM_SCOPES.S3_GET_OBJECT_RETENTION,
+      IAM_SCOPES.S3_PUT_OBJECT_RETENTION,
+      IAM_SCOPES.S3_PUT_ACTIONS,
+    ],
     true
   );
   const canInspect = hasPermission(objectResources, [
@@ -460,6 +466,7 @@ const ObjectDetailPanel = ({
     IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
     IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
     IAM_SCOPES.S3_GET_OBJECT_VERSION,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
   const canGetObject = hasPermission(objectResources, [
     IAM_SCOPES.S3_GET_OBJECT,
@@ -532,7 +539,7 @@ const ObjectDetailPanel = ({
           ? "Change Legal Hold rules for this File"
           : "Object Locking must be enabled on this bucket in order to set Legal Hold"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD],
+            [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD, IAM_SCOPES.S3_PUT_ACTIONS],
             "change legal hold settings for this object"
           ),
     },
@@ -554,6 +561,7 @@ const ObjectDetailPanel = ({
             [
               IAM_SCOPES.S3_GET_OBJECT_RETENTION,
               IAM_SCOPES.S3_PUT_OBJECT_RETENTION,
+              IAM_SCOPES.S3_PUT_ACTIONS,
             ],
             "change Retention Rules for this object"
           ),
@@ -572,6 +580,7 @@ const ObjectDetailPanel = ({
             [
               IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
               IAM_SCOPES.S3_GET_OBJECT_TAGGING,
+              IAM_SCOPES.S3_PUT_ACTIONS,
             ],
             "set Tags on this object"
           ),
@@ -617,6 +626,7 @@ const ObjectDetailPanel = ({
             [
               IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
               IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+              IAM_SCOPES.S3_PUT_ACTIONS,
               IAM_SCOPES.S3_GET_OBJECT_VERSION,
             ],
             "display all versions of this object"

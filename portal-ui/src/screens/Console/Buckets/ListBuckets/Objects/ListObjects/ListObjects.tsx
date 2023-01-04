@@ -312,7 +312,7 @@ const ListObjects = () => {
   const canDelete = hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]);
   const canUpload = hasPermission(
     uploadPath,
-    [IAM_SCOPES.S3_PUT_OBJECT],
+    [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
     true,
     true
   );
@@ -696,7 +696,7 @@ const ListObjects = () => {
           setErrorSnackMessage({
             errorMessage: "Upload not allowed",
             detailedError: permissionTooltipHelper(
-              [IAM_SCOPES.S3_PUT_OBJECT],
+              [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
               "upload objects to this location"
             ),
           })
