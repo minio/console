@@ -56,6 +56,7 @@ import {
   setRunAsNonRoot,
   setFSGroupChangePolicy,
 } from "../tenantSecurityContextSlice";
+import TLSHelpBox from "../HelpBox/TLSHelpBox";
 import RemoveIcon from "../../../../icons/RemoveIcon";
 
 interface ITenantSecurity {
@@ -556,6 +557,11 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
 
                 {enableCustomCerts && (
                   <Fragment>
+                    {!enableAutoCert && (
+                      <Grid item xs={12}>
+                        <TLSHelpBox />
+                      </Grid>
+                    )}
                     <Grid item xs={12} className={classes.formFieldRow}>
                       <h5>MinIO Server Certificates</h5>
                     </Grid>
