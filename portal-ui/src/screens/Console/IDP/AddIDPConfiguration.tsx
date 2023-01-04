@@ -38,6 +38,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 import SectionTitle from "../Common/SectionTitle";
+import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 type AddIDPConfigurationProps = {
   classes?: any;
@@ -127,6 +128,44 @@ const AddIDPConfiguration = ({
     invokeApi("POST", endpoint, { name, input });
   };
 
+  const renderFormField = (key: string, value: any) => {
+    switch (value.type) {
+      case "toggle":
+        return (
+          <FormSwitchWrapper
+            indicatorLabels={["Enabled", "Disabled"]}
+            checked={fields[key] === "on" ? true : false}
+            value={"is-field-enabled"}
+            id={"is-field-enabled"}
+            name={"is-field-enabled"}
+            label={value.label}
+            tooltip={value.tooltip}
+            onChange={(e) =>
+              setFields({ ...fields, [key]: e.target.checked ? "on" : "off" })
+            }
+            description=""
+          />
+        );
+      default:
+        return (
+          <InputBoxWrapper
+            id={key}
+            required={value.required}
+            name={key}
+            label={value.label}
+            tooltip={value.tooltip}
+            error={value.hasError(fields[key], true)}
+            value={fields[key] ? fields[key] : ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setFields({ ...fields, [key]: e.target.value })
+            }
+            placeholder={value.placeholder}
+            type={value.type}
+          />
+        );
+    }
+  };
+
   return (
     <Grid item xs={12}>
       <PageHeader label={<BackLink to={backLink} label={header} />} />
@@ -161,20 +200,7 @@ const AddIDPConfiguration = ({
                       className={classes.formFieldRow}
                       key={key}
                     >
-                      <InputBoxWrapper
-                        id={key}
-                        required={value.required}
-                        name={key}
-                        label={value.label}
-                        tooltip={value.tooltip}
-                        error={value.hasError(fields[key], true)}
-                        value={fields[key] ? fields[key] : ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setFields({ ...fields, [key]: e.target.value })
-                        }
-                        placeholder={value.placeholder}
-                        type={value.type}
-                      />
+                      {renderFormField(key, value)}
                     </Grid>
                   ))}
                   <Grid item xs={12} textAlign={"right"}>

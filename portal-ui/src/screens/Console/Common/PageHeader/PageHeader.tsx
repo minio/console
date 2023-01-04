@@ -205,7 +205,7 @@ const PageHeader = ({
           item
           xs={12}
           sm={12}
-          md={5}
+          md={4}
           className={classes.middleComponent}
           sx={{ marginTop: ["10px", "10px", "0", "0"] }}
         >
@@ -216,7 +216,7 @@ const PageHeader = ({
         item
         xs={12}
         sm={12}
-        md={middleComponent ? 3 : 6}
+        md={middleComponent ? 4 : 6}
         className={classes.rightMenu}
       >
         {actions && actions}

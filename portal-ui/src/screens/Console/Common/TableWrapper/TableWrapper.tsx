@@ -191,8 +191,13 @@ const styles = () =>
           },
         },
         "& .selected": {
-          color: "#081C42",
           fontWeight: 600,
+        },
+        "&:not(.deleted) .selected": {
+          color: "#081C42",
+        },
+        "&.deleted .selected": {
+          color: "#C51B3F",
         },
       },
       ".headerItem": {
@@ -646,9 +651,11 @@ const TableWrapper = ({
                         onRowClick={({ rowData }) => {
                           clickAction(rowData);
                         }}
-                        rowClassName={`rowLine ${findView ? "canClick" : ""} ${
-                          !findView && textSelectable ? "canSelectText" : ""
-                        }`}
+                        rowClassName={(r) =>
+                          `rowLine ${findView ? "canClick" : ""} ${
+                            !findView && textSelectable ? "canSelectText" : ""
+                          } ${rowStyle ? rowStyle(r) : ""}`
+                        }
                         onRowsRendered={onRowsRendered}
                         sort={sortConfig ? sortConfig.triggerSort : undefined}
                         sortBy={sortConfig ? sortConfig.currentSort : undefined}

@@ -587,9 +587,13 @@ export const typesSelection = {
     cursor: "pointer",
     padding: 0,
     overflow: "hidden",
+    "&:hover": {
+      backgroundColor: "#ebebeb",
+    },
   },
+
   lambdaNotifIcon: {
-    backgroundColor: "#FEFEFE",
+    background: "transparent",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -1455,8 +1459,10 @@ export const objectBrowserExtras = {
 // These classes are meant to be used as React.CSSProperties for TableWrapper
 export const TableRowPredefStyles: any = {
   deleted: {
-    color: "#ACACAC",
-    backgroundColor: "#FDFDFD",
-    fontStyle: "italic",
+    color: "#707070",
+    backgroundColor: "#f1f0f0",
+    "&.selected": {
+      color: "#b2b2b2",
+    },
   },
 };

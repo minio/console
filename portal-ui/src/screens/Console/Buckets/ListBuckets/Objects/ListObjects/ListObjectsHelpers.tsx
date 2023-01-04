@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import * as reactMoment from "react-moment";
+import { DateTime } from "luxon";
 import { BucketObjectItem } from "./types";
 import { niceBytes } from "../../../../../../common/utils";
 import { displayFileIconName } from "./utils";
@@ -26,11 +25,20 @@ export const displayParsedDate = (object: BucketObjectItem) => {
   if (object.name.endsWith("/")) {
     return "";
   }
-  return (
-    <reactMoment.default>
-      {new Date(object.last_modified).toString()}
-    </reactMoment.default>
-  );
+
+  const currTime = DateTime.now();
+  const objectTime = DateTime.fromISO(object.last_modified);
+
+  const isToday =
+    currTime.hasSame(objectTime, "day") &&
+    currTime.hasSame(objectTime, "month") &&
+    currTime.hasSame(objectTime, "year");
+
+  if (isToday) {
+    return `Today, ${objectTime.toFormat("HH:mm")}`;
+  }
+
+  return objectTime.toFormat("ccc, LLL dd yyyy HH:mm (ZZZZ)");
 };
 
 export const displayNiceBytes = (object: BucketObjectItem) => {

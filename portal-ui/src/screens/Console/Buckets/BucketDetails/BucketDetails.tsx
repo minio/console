@@ -200,10 +200,6 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
     }
   };
 
-  const openBucketBrowser = () => {
-    navigate(`/buckets/${bucketName}/browse`);
-  };
-
   return (
     <Fragment>
       {deleteOpen && (
@@ -231,7 +227,9 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             <Button
               id={"switch-browse-view"}
               aria-label="Browse Bucket"
-              onClick={openBucketBrowser}
+              onClick={() => {
+                navigate(`/browser/${bucketName}`);
+              }}
               icon={
                 <FolderIcon style={{ width: 20, height: 20, marginTop: -3 }} />
               }
@@ -363,6 +361,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                 disabled: !hasPermission(bucketName, [
                   IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
                   IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
+                  IAM_SCOPES.S3_PUT_ACTIONS,
                 ]),
                 to: getRoutePath("events"),
               },
@@ -379,6 +378,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   !hasPermission(bucketName, [
                     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
                     IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+                    IAM_SCOPES.S3_PUT_ACTIONS,
                   ]),
                 to: getRoutePath("replication"),
               },
@@ -393,13 +393,14 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   !hasPermission(bucketName, [
                     IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
                     IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+                    IAM_SCOPES.S3_PUT_ACTIONS,
                   ]),
                 to: getRoutePath("lifecycle"),
               },
             }}
             {{
               tabConfig: {
-                label: "Access Audit",
+                label: "Access",
                 value: "access",
                 component: Link,
                 disabled: !hasPermission(bucketName, [
@@ -412,7 +413,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Access Rules",
+                label: "Anonymous",
                 value: "prefix",
                 component: Link,
                 disabled: !hasPermission(bucketName, [

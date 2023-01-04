@@ -16,14 +16,10 @@
 import React, { Fragment } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import {
-  ArrowRightIcon,
   BucketsIcon,
   ReportedUsageIcon,
-  SettingsIcon,
   TotalObjectsIcon,
 } from "../../../../icons";
 import { Bucket } from "../types";
@@ -38,14 +34,12 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   IAM_PERMISSIONS,
   IAM_ROLES,
-  permissionTooltipHelper,
 } from "../../../../common/SecureComponent/permissions";
-import { SecureComponent } from "../../../../common/SecureComponent";
-import clsx from "clsx";
-import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import { hasPermission } from "../../../../common/SecureComponent";
+import clsx from "clsx";
+import makeStyles from "@mui/styles/makeStyles";
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       marginBottom: 30,
@@ -53,6 +47,10 @@ const styles = (theme: Theme) =>
       color: theme.palette.primary.main,
       border: "#E5E5E5 1px solid",
       borderRadius: 2,
+      textDecoration: "none",
+      "&:hover": {
+        backgroundColor: "#fafafa",
+      },
       "& .min-icon": {
         height: 14,
         width: 14,
@@ -161,11 +159,14 @@ const styles = (theme: Theme) =>
         marginTop: "-33px",
       },
     },
-  });
+    disabled: {
+      backgroundColor: "red",
+    },
+  })
+);
 
 interface IBucketListItem {
   bucket: Bucket;
-  classes: any;
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selected: boolean;
   bulkSelect: boolean;
@@ -173,13 +174,13 @@ interface IBucketListItem {
 }
 
 const BucketListItem = ({
-  classes,
   bucket,
   onSelect,
   selected,
   bulkSelect,
   noManage = false,
 }: IBucketListItem) => {
+  const classes = useStyles();
   const navigate = useNavigate();
 
   const usage = niceBytes(`${bucket.size}` || "0");
@@ -189,10 +190,9 @@ const BucketListItem = ({
   const quota = get(bucket, "details.quota.quota", "0");
   const quotaForString = calculateBytes(quota, true, false);
 
-  const manageAllowed = hasPermission(
-    bucket.name,
-    IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]
-  );
+  const manageAllowed =
+    hasPermission(bucket.name, IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]) &&
+    false;
 
   const accessToStr = (bucket: Bucket): string => {
     if (bucket.rw_access?.read && !bucket.rw_access?.write) {
@@ -209,7 +209,19 @@ const BucketListItem = ({
   };
 
   return (
-    <Grid container className={clsx(classes.root, "bucket-item")}>
+    <Grid
+      container
+      className={clsx(classes.root, "bucket-item", {
+        [classes.disabled]: manageAllowed,
+      })}
+      onClick={() => {
+        navigate(`/buckets/${bucket.name}/admin`);
+      }}
+      sx={{
+        cursor: "pointer",
+      }}
+      id={`manageBucket-${bucket.name}`}
+    >
       <Grid item xs={12}>
         <Grid container justifyContent={"space-between"}>
           <Grid item xs={12} sm={7}>
@@ -232,7 +244,9 @@ const BucketListItem = ({
                     />
                   </div>
                 )}
-                <h1 className={classes.bucketName}>{bucket.name}</h1>
+                <h1 className={classes.bucketName}>
+                  {bucket.name} {manageAllowed}
+                </h1>
               </Grid>
               <Grid item xs={12}>
                 <Grid container className={classes.bucketInfo}>
@@ -251,43 +265,6 @@ const BucketListItem = ({
             </Grid>
           </Grid>
           <Grid item xs={12} sm={5} className={classes.bucketActionButtons}>
-            {!noManage && (
-              <SecureComponent
-                scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
-                resource={bucket.name}
-              >
-                <TooltipWrapper
-                  tooltip={
-                    manageAllowed
-                      ? "Manage Bucket"
-                      : permissionTooltipHelper(
-                          IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN],
-                          "managing this bucket"
-                        )
-                  }
-                >
-                  <Button
-                    onClick={() => navigate(`/buckets/${bucket.name}/admin`)}
-                    label={"Manage"}
-                    icon={<SettingsIcon />}
-                    color={"primary"}
-                    variant={"regular"}
-                    id={`manage-${bucket.name}`}
-                    disabled={!manageAllowed}
-                  />
-                </TooltipWrapper>
-              </SecureComponent>
-            )}
-            <TooltipWrapper tooltip={"Browse"}>
-              <Button
-                onClick={() => navigate(`/buckets/${bucket.name}/browse`)}
-                label={"Browse"}
-                icon={<ArrowRightIcon />}
-                color={"primary"}
-                variant={"callAction"}
-                id={`browse-${bucket.name}`}
-              />
-            </TooltipWrapper>
             <Box display={{ xs: "none", sm: "block" }}>
               <div style={{ marginBottom: 10 }} />
             </Box>
@@ -330,4 +307,4 @@ const BucketListItem = ({
   );
 };
 
-export default withStyles(styles)(BucketListItem);
+export default BucketListItem;

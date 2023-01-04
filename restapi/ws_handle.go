@@ -148,10 +148,12 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Un-comment for development so websockets work on port 5005
-	/*upgrader.CheckOrigin = func(r *http.Request) bool {
-		return true
-	}*/
+	// Development mode validation
+	if getConsoleDevMode() {
+		upgrader.CheckOrigin = func(r *http.Request) bool {
+			return true
+		}
+	}
 
 	// upgrades the HTTP server connection to the WebSocket protocol.
 	conn, err := upgrader.Upgrade(w, req, nil)
@@ -617,6 +619,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 								writeChannel <- WSResponse{
 									RequestID: messageRequest.RequestID,
 									Error:     lsObj.Err.Error(),
+									Prefix:    messageRequest.Prefix,
 								}
 
 								continue
@@ -689,6 +692,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 								writeChannel <- WSResponse{
 									RequestID: messageRequest.RequestID,
 									Error:     lsObj.Err.String(),
+									Prefix:    messageRequest.Prefix,
 								}
 
 								continue
