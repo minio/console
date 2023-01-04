@@ -155,6 +155,7 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
           <SecureComponent
             scopes={[
               IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
+              IAM_SCOPES.S3_PUT_ACTIONS,
               IAM_SCOPES.ADMIN_SERVER_INFO,
             ]}
             resource={bucketName}

@@ -275,7 +275,10 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
         <Grid item xs={12} className={classes.actionsTray}>
           <PanelTitle>Lifecycle Rules</PanelTitle>
           <SecureComponent
-            scopes={[IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION]}
+            scopes={[
+              IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+              IAM_SCOPES.S3_PUT_ACTIONS,
+            ]}
             resource={bucketName}
             matchAll
             errorProps={{ disabled: true }}

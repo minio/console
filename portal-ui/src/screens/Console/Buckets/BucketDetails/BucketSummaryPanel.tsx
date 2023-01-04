@@ -428,7 +428,10 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   resource={bucketName}
                 >
                   <EditablePropertyItem
-                    iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_POLICY]}
+                    iamScopes={[
+                      IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+                      IAM_SCOPES.S3_PUT_ACTIONS,
+                    ]}
                     resourceName={bucketName}
                     property={"Access Policy:"}
                     value={accessPolicy.toLowerCase()}
@@ -446,6 +449,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   <EditablePropertyItem
                     iamScopes={[
                       IAM_SCOPES.S3_PUT_BUCKET_ENCRYPTION_CONFIGURATION,
+                      IAM_SCOPES.S3_PUT_ACTIONS,
                     ]}
                     resourceName={bucketName}
                     property={"Encryption:"}
@@ -549,7 +553,10 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   }}
                 >
                   <EditablePropertyItem
-                    iamScopes={[IAM_SCOPES.S3_PUT_BUCKET_VERSIONING]}
+                    iamScopes={[
+                      IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+                      IAM_SCOPES.S3_PUT_ACTIONS,
+                    ]}
                     resourceName={bucketName}
                     property={"Current Status:"}
                     value={isVersioned ? "Versioned" : "Unversioned (Default)"}
