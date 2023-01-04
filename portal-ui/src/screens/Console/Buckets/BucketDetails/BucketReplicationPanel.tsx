@@ -212,7 +212,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
         bucketName,
         [
           IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
-          IAM_SCOPES.S3_ALL_PUT_OBJECT,
+          IAM_SCOPES.S3_PUT_ACTIONS,
         ],
         true
       ),
@@ -258,7 +258,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
             <SecureComponent
               scopes={[
                 IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
-                IAM_SCOPES.S3_ALL_PUT_OBJECT,
+                IAM_SCOPES.S3_PUT_ACTIONS,
               ]}
               resource={bucketName}
               matchAll
@@ -281,7 +281,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
             <SecureComponent
               scopes={[
                 IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
-                IAM_SCOPES.S3_ALL_PUT_OBJECT,
+                IAM_SCOPES.S3_PUT_ACTIONS,
               ]}
               resource={bucketName}
               matchAll

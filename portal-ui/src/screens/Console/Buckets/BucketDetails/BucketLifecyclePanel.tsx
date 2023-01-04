@@ -277,7 +277,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
           <SecureComponent
             scopes={[
               IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
-              IAM_SCOPES.S3_ALL_PUT_OBJECT,
+              IAM_SCOPES.S3_PUT_ACTIONS,
             ]}
             resource={bucketName}
             matchAll

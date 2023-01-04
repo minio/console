@@ -300,7 +300,7 @@ const AddTagModal = ({
             <SecureComponent
               scopes={[
                 IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
-                IAM_SCOPES.S3_ALL_PUT_OBJECT,
+                IAM_SCOPES.S3_PUT_ACTIONS,
               ]}
               resource={bucketName}
               errorProps={{ disabled: true, onClick: null }}
