@@ -15,10 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import * as reactMoment from "react-moment";
 import Grid from "@mui/material/Grid";
-import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
+import { DateTime } from "luxon";
+import { Theme } from "@mui/material/styles";
 import { withStyles } from "@mui/styles";
 import { displayFileIconName } from "../ListObjects/utils";
 import { IFileInfo } from "./types";
@@ -215,6 +215,12 @@ const FileVersionItem = ({
     pill = "null";
   }
 
+  let lastModified = DateTime.now();
+
+  if (versionInfo.last_modified) {
+    lastModified = DateTime.fromISO(versionInfo.last_modified);
+  }
+
   return (
     <Grid
       container
@@ -321,9 +327,7 @@ const FileVersionItem = ({
           <Grid item xs={12} className={classes.collapsableInfo}>
             <span className={classes.versionData}>
               <strong>Last modified:</strong>{" "}
-              <reactMoment.default>
-                {versionInfo.last_modified}
-              </reactMoment.default>
+              {lastModified.toFormat("ccc, LLL dd yyyy HH:mm:ss (ZZZZ)")}
             </span>
             <span className={classes.versionData}>
               <strong>Size:</strong> {niceBytes(versionInfo.size || "0")}
