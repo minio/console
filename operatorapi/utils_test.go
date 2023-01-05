@@ -228,3 +228,27 @@ func TestGenerateTenantConfigurationFile(t *testing.T) {
 		})
 	}
 }
+
+func Test_stringPtr(t *testing.T) {
+	type args struct {
+		str string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantNil bool
+	}{
+		{
+			name: "get a pointer",
+			args: args{
+				str: "",
+			},
+			wantNil: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.NotNilf(t, stringPtr(tt.args.str), "stringPtr(%v)", tt.args.str)
+		})
+	}
+}
