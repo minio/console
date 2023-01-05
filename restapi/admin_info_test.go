@@ -141,7 +141,7 @@ func (suite *AdminInfoTestSuite) TestGetWidgetDetailsWithoutError() {
 	ctx := context.Background()
 	suite.isPrometheusRequest = true
 	var step int32 = 1
-	var start int64 = 0
+	var start int64
 	var end int64 = 1
 	res, err := getWidgetDetails(ctx, suite.server.URL, "mock", 1, &step, &start, &end)
 	suite.assert.Nil(err)
