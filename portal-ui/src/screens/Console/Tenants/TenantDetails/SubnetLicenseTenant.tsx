@@ -22,7 +22,7 @@ import Grid from "@mui/material/Grid";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import { Typography } from "@mui/material";
 import { niceBytes } from "../../../../common/utils";
-import Moment from "react-moment";
+import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { ITenant } from "../ListTenants/types";
@@ -99,6 +99,10 @@ const SubnetLicenseTenant = ({
   licenseInfo,
   activateProduct,
 }: ISubnetLicenseTenant) => {
+  const expiryTime = tenant
+    ? DateTime.fromISO(tenant.subnet_license.expires_at)
+    : DateTime.now();
+
   return (
     <Paper
       className={
@@ -174,9 +178,7 @@ const SubnetLicenseTenant = ({
                 gutterBottom
                 className={classes.licenseInfoValue}
               >
-                <Moment format="YYYY-MM-DD">
-                  {tenant.subnet_license.expires_at}
-                </Moment>
+                {expiryTime.toFormat("yyyy-MM-dd")}
               </Typography>
             </Grid>
             <Grid item xs={6}>
