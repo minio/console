@@ -22,10 +22,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
-	"path/filepath"
 	"strconv"
-	"syscall"
 	"time"
 
 	"github.com/minio/console/pkg/logger"
@@ -133,58 +130,6 @@ func buildOperatorServer() (*operatorapi.Server, error) {
 	}
 
 	return server, nil
-}
-
-func loadOperatorAllCerts(ctx *cli.Context) error {
-	var err error
-	// Set all certs and CAs directories path
-	certs.GlobalCertsDir, _, err = certs.NewConfigDirFromCtx(ctx, "certs-dir", certs.DefaultCertsDir.Get)
-	if err != nil {
-		return err
-	}
-
-	certs.GlobalCertsCADir = &certs.ConfigDir{Path: filepath.Join(certs.GlobalCertsDir.Get(), certs.CertsCADir)}
-	// check if certs and CAs directories exists or can be created
-	if err = certs.MkdirAllIgnorePerm(certs.GlobalCertsCADir.Get()); err != nil {
-		return fmt.Errorf("unable to create certs CA directory at %s: failed with %w", certs.GlobalCertsCADir.Get(), err)
-	}
-
-	// load the certificates and the CAs
-	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager, err = certs.GetAllCertificatesAndCAs()
-	if err != nil {
-		return fmt.Errorf("unable to load certificates at %s: failed with %w", certs.GlobalCertsDir.Get(), err)
-	}
-
-	{
-		// TLS flags from swagger server, used to support VMware vsphere operator version.
-		swaggerServerCertificate := ctx.String("tls-certificate")
-		swaggerServerCertificateKey := ctx.String("tls-key")
-		swaggerServerCACertificate := ctx.String("tls-ca")
-		// load tls cert and key from swagger server tls-certificate and tls-key flags
-		if swaggerServerCertificate != "" && swaggerServerCertificateKey != "" {
-			if err = restapi.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
-				return err
-			}
-			x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate)
-			if err == nil {
-				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs...)
-			}
-		}
-
-		// load ca cert from swagger server tls-ca flag
-		if swaggerServerCACertificate != "" {
-			caCert, caCertErr := ioutil.ReadFile(swaggerServerCACertificate)
-			if caCertErr == nil {
-				restapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
-			}
-		}
-	}
-
-	if restapi.GlobalTLSCertsManager != nil {
-		restapi.GlobalTLSCertsManager.ReloadOnSignal(syscall.SIGHUP)
-	}
-
-	return nil
 }
 
 // StartServer starts the console service
