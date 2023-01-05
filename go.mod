@@ -18,16 +18,16 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/jessevdk/go-flags v1.5.0
-	github.com/klauspost/compress v1.15.12
+	github.com/klauspost/compress v1.15.14
 	github.com/minio/cli v1.24.2
 	github.com/minio/directpv v1.4.4-0.20220805090942-948ca4731651
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.22.2
-	github.com/minio/madmin-go/v2 v2.0.1
-	github.com/minio/mc v0.0.0-20221209193822-daa06599e44d
+	github.com/minio/madmin-go/v2 v2.0.4
+	github.com/minio/mc v0.0.0-20221224152138-176072dee43d
 	github.com/minio/minio-go/v7 v7.0.45
 	github.com/minio/operator v0.0.0-20220902184351-21e4073132b0
-	github.com/minio/pkg v1.5.6
+	github.com/minio/pkg v1.5.8
 	github.com/minio/selfupdate v0.5.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.4.0
@@ -35,17 +35,17 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/tidwall/gjson v1.14.4
 	github.com/unrolled/secure v1.13.0
-	golang.org/x/crypto v0.4.0
-	golang.org/x/net v0.4.0
-	golang.org/x/oauth2 v0.3.0
+	golang.org/x/crypto v0.5.0
+	golang.org/x/net v0.5.0
+	golang.org/x/oauth2 v0.4.0
 	// Added to include security fix for
 	// https://github.com/golang/go/issues/56152
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/text v0.6.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/api v0.25.4
-	k8s.io/apimachinery v0.25.4
-	k8s.io/client-go v0.25.4
-	k8s.io/utils v0.0.0-20221108210102-8e77b1f39fe2
+	k8s.io/api v0.26.0
+	k8s.io/apimachinery v0.26.0
+	k8s.io/client-go v0.26.0
+	k8s.io/utils v0.0.0-20221128185143-99ec85e7a448
 )
 
 require (
@@ -177,8 +177,8 @@ require (
 	go.uber.org/zap v1.23.0 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/term v0.3.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/term v0.4.0 // indirect
 	golang.org/x/time v0.0.0-20220224211638-0e9765cccd65 // indirect
 	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
