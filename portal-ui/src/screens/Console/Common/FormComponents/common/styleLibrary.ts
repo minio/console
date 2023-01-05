@@ -750,7 +750,6 @@ export const snackBarCommon = {
     fontWeight: 400,
     fontFamily: "Lato, sans-serif",
     fontSize: 14,
-    padding: "0px 20px 0px 20px;",
     boxShadow: "none" as const,
     "&.MuiPaper-root.MuiSnackbarContent-root": {
       borderRadius: "0px 0px 5px 5px",
@@ -761,6 +760,9 @@ export const snackBarCommon = {
       width: "100%",
       overflowX: "hidden",
       textOverflow: "ellipsis",
+    },
+    "&.MuiPaper-root": {
+      padding: "0px 20px 0px 20px",
     },
   },
   errorSnackBar: {
