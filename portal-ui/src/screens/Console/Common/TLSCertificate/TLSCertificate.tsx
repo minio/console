@@ -34,7 +34,7 @@ import {
   Typography,
 } from "@mui/material";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
-import CertificateIcon from "../../../../icons/CertificateIcon";
+import { CertificateIcon } from "mds";
 
 const styles = (theme: Theme) =>
   createStyles({

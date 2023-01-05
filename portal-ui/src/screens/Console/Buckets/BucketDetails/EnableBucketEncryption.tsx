@@ -31,7 +31,7 @@ import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { BucketEncryptionIcon } from "../../../../icons";
+import { BucketEncryptionIcon } from "mds";
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";

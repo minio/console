@@ -38,7 +38,7 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import { Grid } from "@mui/material";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import { Button } from "mds";
-import { AddIcon, RefreshIcon } from "../../../icons";
+import { AddIcon, RefreshIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 

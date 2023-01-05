@@ -17,7 +17,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import FeatureNotAvailablePage from "../Common/Components/FeatureNotAvailablePage";
-import { SupportMenuIcon } from "../../../icons/SidebarMenus";
+import { SupportMenuIcon } from "mds";
 
 import withSuspense from "../Common/Components/withSuspense";
 import NotFoundPage from "../../NotFoundPage";

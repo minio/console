@@ -26,7 +26,7 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 import { encodeURLString } from "../../../../../../common/utils";
 import api from "../../../../../../common/api";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
-import RecoverIcon from "../../../../../../icons/RecoverIcon";
+import { RecoverIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
 import { IFileInfo } from "./types";

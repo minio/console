@@ -24,12 +24,7 @@ import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
 import { Box } from "@mui/material";
 
-import {
-  AccountIcon,
-  AddIcon,
-  DeleteIcon,
-  PasswordKeyIcon,
-} from "../../../icons";
+import { AccountIcon, AddIcon, DeleteIcon, PasswordKeyIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import PageHeader from "../Common/PageHeader/PageHeader";

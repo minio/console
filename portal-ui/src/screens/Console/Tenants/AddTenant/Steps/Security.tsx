@@ -31,7 +31,7 @@ import { KeyPair } from "../../ListTenants/utils";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import FileSelector from "../../../Common/FormComponents/FileSelector/FileSelector";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "../../../../../icons/RemoveIcon";
+import { RemoveIcon } from "mds";
 import {
   addCaCertificate,
   deleteCaCertificate,

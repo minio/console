@@ -17,7 +17,7 @@
 import React from "react";
 import EntityStateStatItem from "./EntityStateStatItem";
 import { Box } from "@mui/material";
-import { CircleIcon, DrivesIcon, ServersIcon } from "../../../../../icons";
+import { CircleIcon, DrivesIcon, ServersIcon } from "mds";
 import DualStatCard from "./DualStatCard";
 import { IDashboardPanel } from "../types";
 

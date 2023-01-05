@@ -29,7 +29,7 @@ import {
   ConsoleEnterprise,
   ConsoleStandard,
   LicenseDocIcon,
-} from "../../../icons";
+} from "mds";
 import {
   COMMUNITY_PLAN_FEATURES,
   ENTERPRISE_PLAN_FEATURES,

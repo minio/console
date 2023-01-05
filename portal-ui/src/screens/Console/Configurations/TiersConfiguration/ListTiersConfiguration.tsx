@@ -31,14 +31,14 @@ import {
   tableStyles,
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { AddIcon, TiersIcon, TiersNotAvailableIcon } from "../../../../icons";
+import { AddIcon, TiersIcon, TiersNotAvailableIcon } from "mds";
 
 import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 
-import RefreshIcon from "../../../../icons/RefreshIcon";
+import { RefreshIcon } from "mds";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import HelpBox from "../../../../common/HelpBox";
 import AButton from "../../Common/AButton/AButton";
@@ -60,8 +60,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
 import { hasPermission } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import TierOnlineIcon from "../../../../icons/TierOnlineIcon";
-import TierOfflineIcon from "../../../../icons/TierOfflineIcon";
+import { TierOnlineIcon, TierOfflineIcon } from "mds";
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );

@@ -49,7 +49,7 @@ import {
 import withSuspense from "../../Common/Components/withSuspense";
 import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
 import LabelWithIcon from "./SummaryItems/LabelWithIcon";
-import { DisabledIcon, EnabledIcon } from "../../../../icons";
+import { DisabledIcon, EnabledIcon } from "mds";
 import EditablePropertyItem from "./SummaryItems/EditablePropertyItem";
 import ReportedUsage from "./SummaryItems/ReportedUsage";
 import BucketQuotaSize from "./SummaryItems/BucketQuotaSize";

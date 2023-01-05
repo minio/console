@@ -22,7 +22,7 @@ import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../Common/Hooks/useApi";
 import React, { Fragment, useState } from "react";
 import { ISetEmailModalProps } from "./types";
-import { InfoIcon } from "../../../icons";
+import { InfoIcon } from "mds";
 import { ErrorResponseHandler } from "../../../common/types";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";

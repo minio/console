@@ -25,7 +25,7 @@ import api from "../../../common/api";
 import { Grid, LinearProgress } from "@mui/material";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
-import { AddIcon, DeleteIcon, GroupsIcon, UsersIcon } from "../../../icons";
+import { AddIcon, DeleteIcon, GroupsIcon, UsersIcon } from "mds";
 import {
   actionsTray,
   containerForHeader,

@@ -53,7 +53,7 @@ import {
   DeleteNonCurrentIcon,
   SelectMultipleIcon,
   VersionsIcon,
-} from "../../../../../../icons";
+} from "mds";
 import FileVersionItem from "./FileVersionItem";
 import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import PreviewFileModal from "../Preview/PreviewFileModal";

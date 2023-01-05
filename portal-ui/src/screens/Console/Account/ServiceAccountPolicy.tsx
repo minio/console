@@ -30,7 +30,7 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import { ChangeAccessPolicyIcon } from "../../../icons";
+import { ChangeAccessPolicyIcon } from "mds";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";

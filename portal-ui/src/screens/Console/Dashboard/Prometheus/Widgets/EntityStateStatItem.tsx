@@ -20,7 +20,7 @@ import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { IDashboardPanel } from "../types";
-import Loader from "../../../Common/Loader/Loader";
+import { Loader } from "mds";
 
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../store";

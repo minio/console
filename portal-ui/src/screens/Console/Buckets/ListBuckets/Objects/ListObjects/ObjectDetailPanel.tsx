@@ -57,8 +57,8 @@ import {
   ShareIcon,
   TagsIcon,
   VersionsIcon,
-} from "../../../../../../icons";
-import { InspectMenuIcon } from "../../../../../../icons/SidebarMenus";
+} from "mds";
+import { InspectMenuIcon } from "mds";
 import api from "../../../../../../common/api";
 import ShareFile from "../ObjectDetails/ShareFile";
 import SetRetention from "../ObjectDetails/SetRetention";
@@ -74,7 +74,7 @@ import ActionsListSection from "./ActionsListSection";
 import { displayFileIconName } from "./utils";
 import TagsModal from "../ObjectDetails/TagsModal";
 import InspectObject from "./InspectObject";
-import Loader from "../../../../Common/Loader/Loader";
+import { Loader } from "mds";
 import { selDistSet } from "../../../../../../systemSlice";
 import {
   makeid,

@@ -39,7 +39,7 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
-import { FilterIcon } from "../../../icons";
+import { FilterIcon } from "mds";
 
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import {

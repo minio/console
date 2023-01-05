@@ -43,10 +43,7 @@ import {
   SupportMenuIcon,
   TraceMenuIcon,
   UsersMenuIcon,
-} from "../../icons/SidebarMenus";
-import { hasPermission } from "../../common/SecureComponent";
-import WatchIcon from "../../icons/WatchIcon";
-import {
+  WatchIcon,
   ClustersIcon,
   DocumentationIcon,
   LambdaIcon,
@@ -56,8 +53,9 @@ import {
   StorageIcon,
   TenantsOutlineIcon,
   TiersIcon,
-} from "../../icons";
-import SettingsIcon from "../../icons/SettingsIcon";
+  SettingsIcon,
+} from "mds";
+import { hasPermission } from "../../common/SecureComponent";
 import React from "react";
 import LicenseBadge from "./Menu/LicenseBadge";
 import { LockOpen, Login } from "@mui/icons-material";

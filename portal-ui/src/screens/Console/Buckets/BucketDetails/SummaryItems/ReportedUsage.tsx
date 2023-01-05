@@ -17,7 +17,7 @@
 import React from "react";
 import { Box } from "@mui/material";
 import { niceBytes } from "../../../../../common/utils";
-import { ReportedUsageFullIcon } from "../../../../../icons";
+import { ReportedUsageFullIcon } from "mds";
 
 const ReportedUsage = ({ bucketSize }: { bucketSize: string }) => {
   return (

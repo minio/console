@@ -16,7 +16,7 @@
 
 import React, { Fragment } from "react";
 import Grid from "@mui/material/Grid";
-import { CircleIcon } from "../../../../../icons";
+import { CircleIcon } from "mds";
 
 interface INARule {
   ruleText: string;

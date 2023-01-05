@@ -18,7 +18,7 @@ import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { Button } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { CopyIcon } from "../../../icons";
+import { CopyIcon } from "mds";
 
 const KeyRevealer = ({ value }: { value: string }) => {
   const [shown, setShown] = useState<boolean>(false);

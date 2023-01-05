@@ -23,7 +23,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
-import { LinkIcon } from "../../../../../icons";
+import { LinkIcon } from "mds";
 
 interface IDaysSelector {
   classes: any;

@@ -25,7 +25,7 @@ import {
   inputFieldStyles,
   tooltipHelper,
 } from "../../Common/FormComponents/common/styleLibrary";
-import HelpIcon from "../../../../icons/HelpIcon";
+import { HelpIcon } from "mds";
 import clsx from "clsx";
 import RegionSelect from "./RegionSelect";
 

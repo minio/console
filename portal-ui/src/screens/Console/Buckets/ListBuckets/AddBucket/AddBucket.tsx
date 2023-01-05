@@ -31,7 +31,7 @@ import { useSelector } from "react-redux";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../../common/BackLink";
-import { BucketsIcon, InfoIcon } from "../../../../../icons";
+import { BucketsIcon, InfoIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { BucketList } from "../../types";

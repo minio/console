@@ -21,7 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import { UploadFolderIcon, UploadIcon } from "../../../../icons";
+import { UploadFolderIcon, UploadIcon } from "mds";
 import {
   IAM_SCOPES,
   permissionTooltipHelper,

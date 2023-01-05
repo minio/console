@@ -23,7 +23,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { Policy, PolicyList } from "./types";
-import { AddIcon, IAMPoliciesIcon } from "../../../icons";
+import { AddIcon, IAMPoliciesIcon } from "mds";
 
 import {
   actionsTray,

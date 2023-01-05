@@ -24,7 +24,7 @@ import { SubnetInfo } from "./types";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
-import { ArrowRightLink, LoginMinIOLogo } from "../../../icons";
+import { ArrowRightLink, ThemedLogo } from "mds";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import LicensePlans from "./LicensePlans";
 import { Link } from "react-router-dom";
@@ -235,7 +235,7 @@ const License = () => {
                   },
                 }}
               >
-                Are you already a customer of <LoginMinIOLogo />?
+                Are you already a customer of <ThemedLogo />?
               </Box>
               <Link
                 to={IAM_PAGES.REGISTER_SUPPORT}

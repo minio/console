@@ -38,7 +38,7 @@ import {
 
 import { LifeCycleItem } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { LifecycleConfigIcon } from "../../../../icons";
+import { LifecycleConfigIcon } from "mds";
 import { ITiersDropDown } from "./AddLifecycleModal";
 import {
   ITierElement,

@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 
-import { ConfirmDeleteIcon } from "../../../../icons";
+import { ConfirmDeleteIcon } from "mds";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import api from "../../../../common/api";
 

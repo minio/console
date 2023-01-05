@@ -28,9 +28,8 @@ import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { InputLabel, Tooltip } from "@mui/material";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import HelpIcon from "../../../../../icons/HelpIcon";
+import { HelpIcon, AddIcon } from "mds";
 import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
-import AddIcon from "../../../../../icons/AddIcon";
 
 interface ICSVMultiSelector {
   elements: string;

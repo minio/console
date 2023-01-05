@@ -23,7 +23,7 @@ import {
   fieldBasic,
   tooltipHelper,
 } from "../common/styleLibrary";
-import HelpIcon from "../../../../../icons/HelpIcon";
+import { HelpIcon } from "mds";
 
 interface CheckBoxProps {
   label: string;

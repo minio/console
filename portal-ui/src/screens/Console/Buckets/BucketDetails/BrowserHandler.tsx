@@ -26,7 +26,7 @@ import { containerForHeader } from "../../Common/FormComponents/common/styleLibr
 
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import SettingsIcon from "../../../../icons/SettingsIcon";
+import { SettingsIcon } from "mds";
 
 import { SecureComponent } from "../../../../common/SecureComponent";
 import {

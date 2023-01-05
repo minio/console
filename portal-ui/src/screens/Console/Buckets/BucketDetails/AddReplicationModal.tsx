@@ -38,7 +38,7 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
-import { BucketReplicationIcon } from "../../../../icons";
+import { BucketReplicationIcon } from "mds";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";

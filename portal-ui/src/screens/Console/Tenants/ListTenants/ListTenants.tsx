@@ -30,10 +30,10 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 
-import { AddIcon, TenantsIcon } from "../../../../icons";
+import { AddIcon, TenantsIcon } from "mds";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
-import RefreshIcon from "../../../../icons/RefreshIcon";
+import { RefreshIcon } from "mds";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import TenantListItem from "./TenantListItem";
 import HelpBox from "../../../../common/HelpBox";

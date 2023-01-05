@@ -24,7 +24,7 @@ import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmDeleteIcon } from "../../../../icons";
+import { ConfirmDeleteIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 
