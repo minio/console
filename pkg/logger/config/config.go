@@ -23,8 +23,6 @@ import (
 // Default keys
 const (
 	Default = madmin.Default
-	Enable  = madmin.EnableKey
-	License = "license" // Deprecated Dec 2021
 )
 
 // Top level config constants.

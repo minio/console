@@ -32,18 +32,12 @@ import (
 )
 
 const (
-	NotifyPostgresSubSys       = "notify_postgres"
-	PostgresFormat             = "format"
-	PostgresConnectionString   = "connection_string"
-	PostgresTable              = "table"
-	PostgresHost               = "host"
-	PostgresPort               = "port"
-	PostgresUsername           = "username"
-	PostgresPassword           = "password"
-	PostgresDatabase           = "database"
-	PostgresQueueDir           = "queue_dir"
-	PostgresQueueLimit         = "queue_limit"
-	PostgresMaxOpenConnections = "max_open_connections"
+	NotifyPostgresSubSys     = "notify_postgres"
+	PostgresFormat           = "format"
+	PostgresConnectionString = "connection_string"
+	PostgresTable            = "table"
+	PostgresQueueDir         = "queue_dir"
+	PostgresQueueLimit       = "queue_limit"
 )
 
 // assigning mock at runtime instead of compile time
