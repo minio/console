@@ -22,8 +22,8 @@ import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { AppState } from "../../../store";
 import { Button } from "mds";
+import { DateTime } from "luxon";
 import createStyles from "@mui/styles/createStyles";
-import moment from "moment/moment";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import {
   actionsTray,
@@ -123,14 +123,12 @@ const Speedtest = () => {
         `${wsProt}://${url.hostname}:${port}${baseUrl}ws/speedtest?&size=${size}${sizeUnit}&duration=${duration}s`
       );
 
-      const baseDate = moment();
+      const baseDate = DateTime.now();
 
-      const currentTime = baseDate.unix() / 1000;
+      const currentTime = baseDate.toUnixInteger() / 1000;
 
       const incrementDate =
-        baseDate
-          .add(parseInt("10") * 2, "s" as moment.unitOfTime.DurationConstructor)
-          .unix() / 1000;
+        baseDate.plus({ seconds: parseInt("10") * 2 }).toUnixInteger() / 1000;
 
       const totalSeconds = (incrementDate - currentTime) / 1000;
 
@@ -160,7 +158,7 @@ const Speedtest = () => {
             return [...prSt, ...insertData];
           });
 
-          const currTime = moment().unix() / 1000;
+          const currTime = DateTime.now().toUnixInteger() / 1000;
           setCurrentValue(currTime);
         };
         c.onclose = () => {

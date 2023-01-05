@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import InputLabel from "@mui/material/InputLabel";
-import moment from "moment/moment";
+import { DateTime } from "luxon";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -111,10 +111,7 @@ const calculateNewTime = (
   hours: number,
   minutes: number
 ) => {
-  return moment(initialDate)
-    .add(days, "days")
-    .add(hours, "hours")
-    .add(minutes, "minutes");
+  return DateTime.fromJSDate(initialDate).plus({ days, hours, minutes });
 };
 
 const DaysSelector = ({
@@ -130,22 +127,29 @@ const DaysSelector = ({
   const [selectedHours, setSelectedHours] = useState<number>(0);
   const [selectedMinutes, setSelectedMinutes] = useState<number>(0);
   const [validDate, setValidDate] = useState<boolean>(true);
-  const [dateSelected, setDateSelected] = useState<moment.Moment>(moment());
+  const [dateSelected, setDateSelected] = useState<DateTime>(DateTime.now());
 
   useEffect(() => {
-    setDateSelected(
-      calculateNewTime(
-        initialDate,
-        selectedDays,
-        selectedHours,
-        selectedMinutes
-      )
-    );
+    if (
+      !isNaN(selectedHours) &&
+      !isNaN(selectedDays) &&
+      !isNaN(selectedMinutes)
+    ) {
+      setDateSelected(
+        calculateNewTime(
+          initialDate,
+          selectedDays,
+          selectedHours,
+          selectedMinutes
+        )
+      );
+    }
   }, [initialDate, selectedDays, selectedHours, selectedMinutes]);
 
   useEffect(() => {
     if (validDate) {
-      onChange(dateSelected.format("YYYY-MM-DDTHH:mm:ss"), true);
+      const formattedDate = dateSelected.toFormat("yyyy-MM-dd HH:mm:ss");
+      onChange(formattedDate.split(" ").join("T"), true);
     } else {
       onChange("0000-00-00", false);
     }
@@ -275,7 +279,7 @@ const DaysSelector = ({
                 {entity} will be available until:
               </div>{" "}
               <div className={classes.validTill}>
-                {dateSelected.format("MM/DD/YYYY HH:mm:ss")}
+                {dateSelected.toFormat("MM/dd/yyyy HH:mm:ss")}
               </div>
             </div>
           ) : (

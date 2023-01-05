@@ -17,7 +17,7 @@
 import React, { Fragment } from "react";
 import { Grid, InputLabel, TextField, Tooltip } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import InputAdornment from "@mui/material/InputAdornment";
 import ScheduleIcon from "@mui/icons-material/Schedule";
@@ -279,7 +279,7 @@ const DateTimePickerWrapper = ({
     : classes.dateSelectorFormOverride;
 
   const inputItem = (
-    <LocalizationProvider dateAdapter={AdapterMoment}>
+    <LocalizationProvider dateAdapter={AdapterLuxon}>
       <DateTimePicker
         value={value}
         onChange={onChange}
