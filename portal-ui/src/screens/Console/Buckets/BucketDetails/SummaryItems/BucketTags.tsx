@@ -114,7 +114,10 @@ const BucketTags = ({ bucketName }: BucketTagProps) => {
                   return (
                     <SecureComponent
                       key={`chip-${index}`}
-                      scopes={[IAM_SCOPES.S3_PUT_BUCKET_TAGGING]}
+                      scopes={[
+                        IAM_SCOPES.S3_PUT_BUCKET_TAGGING,
+                        IAM_SCOPES.S3_PUT_ACTIONS,
+                      ]}
                       resource={bucketName}
                       matchAll
                       errorProps={{
@@ -143,7 +146,10 @@ const BucketTags = ({ bucketName }: BucketTagProps) => {
           </Box>
 
           <SecureComponent
-            scopes={[IAM_SCOPES.S3_PUT_BUCKET_TAGGING]}
+            scopes={[
+              IAM_SCOPES.S3_PUT_BUCKET_TAGGING,
+              IAM_SCOPES.S3_PUT_ACTIONS,
+            ]}
             resource={bucketName}
             errorProps={{ disabled: true, onClick: null }}
           >

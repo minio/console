@@ -382,6 +382,7 @@ const BrowserHandler = () => {
 
   const displayListObjects = hasPermission(bucketName, [
     IAM_SCOPES.S3_LIST_BUCKET,
+    IAM_SCOPES.S3_ALL_LIST_BUCKET,
   ]);
 
   // Common objects list
@@ -524,13 +525,14 @@ const BrowserHandler = () => {
     IAM_SCOPES.S3_LIST_BUCKET_VERSIONS,
     IAM_SCOPES.S3_GET_BUCKET_POLICY_STATUS,
     IAM_SCOPES.S3_DELETE_BUCKET_POLICY,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 
   const searchBar = (
     <Fragment>
       {!versionsMode ? (
         <SecureComponent
-          scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+          scopes={[IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET]}
           resource={bucketName}
           errorProps={{ disabled: true }}
         >

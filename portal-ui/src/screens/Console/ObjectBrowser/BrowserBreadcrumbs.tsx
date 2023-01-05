@@ -83,7 +83,10 @@ const BrowserBreadcrumbs = ({
 
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
 
-  const canCreatePath = hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT]);
+  const canCreatePath = hasPermission(bucketName, [
+    IAM_SCOPES.S3_PUT_OBJECT,
+    IAM_SCOPES.S3_PUT_ACTIONS,
+  ]);
 
   let paths = internalPaths;
 
@@ -229,7 +232,7 @@ const BrowserBreadcrumbs = ({
               canCreatePath
                 ? t("Choose or create a new path")
                 : permissionTooltipHelper(
-                    [IAM_SCOPES.S3_PUT_OBJECT],
+                    [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
                     t("create a new path")
                   )
             }

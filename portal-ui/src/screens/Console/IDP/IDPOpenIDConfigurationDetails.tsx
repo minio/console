@@ -21,8 +21,9 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { LockIcon } from "../../../icons";
-import { openIDFormFields } from "./utils";
+import { openIDFormFields, openIDHelpBoxContents } from "./utils";
 import IDPConfigurationDetails from "./IDPConfigurationDetails";
+import AddIDPConfigurationHelpBox from "./AddIDPConfigurationHelpbox";
 
 type IDPOpenIDConfigurationDetailsProps = {
   classes?: any;
@@ -39,6 +40,16 @@ const IDPOpenIDConfigurationDetails = ({
       header={"OpenID Configurations"}
       endpoint={"/api/v1/idp/openid/"}
       idpType={"openid"}
+      helpBox={
+        <AddIDPConfigurationHelpBox
+          helpText={"Learn more about OpenID Connect Configurations"}
+          contents={openIDHelpBoxContents}
+          docLink={
+            "https://min.io/docs/minio/linux/operations/external-iam.html?ref=con#minio-external-iam-oidc"
+          }
+          docText={"Learn more about OpenID Connect Configurations"}
+        />
+      }
       formFields={openIDFormFields}
       icon={<LockIcon width={40} />}
     />

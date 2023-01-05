@@ -172,12 +172,14 @@ const AddBucket = ({ classes }: IsetProps) => {
     [
       IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
       IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
+      IAM_SCOPES.S3_PUT_ACTIONS,
     ],
     true
   );
 
   const versioningAllowed = hasPermission("*", [
     IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 
   useEffect(() => {
@@ -345,7 +347,10 @@ const AddBucket = ({ classes }: IsetProps) => {
                           )
                         : ""
                       : permissionTooltipHelper(
-                          [IAM_SCOPES.S3_PUT_BUCKET_VERSIONING],
+                          [
+                            IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+                            IAM_SCOPES.S3_PUT_ACTIONS,
+                          ],
                           t("Versioning")
                         )
                   }
@@ -377,6 +382,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                           [
                             IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
                             IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
+                            IAM_SCOPES.S3_PUT_ACTIONS,
                           ],
                           t("Locking")
                         )

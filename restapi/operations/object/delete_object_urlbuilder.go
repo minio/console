@@ -36,6 +36,7 @@ type DeleteObjectURL struct {
 	BucketName string
 
 	AllVersions        *bool
+	Bypass             *bool
 	NonCurrentVersions *bool
 	Path               string
 	Recursive          *bool
@@ -88,6 +89,14 @@ func (o *DeleteObjectURL) Build() (*url.URL, error) {
 	}
 	if allVersionsQ != "" {
 		qs.Set("all_versions", allVersionsQ)
+	}
+
+	var bypassQ string
+	if o.Bypass != nil {
+		bypassQ = swag.FormatBool(*o.Bypass)
+	}
+	if bypassQ != "" {
+		qs.Set("bypass", bypassQ)
 	}
 
 	var nonCurrentVersionsQ string
