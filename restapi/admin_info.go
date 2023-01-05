@@ -33,7 +33,6 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	systemApi "github.com/minio/console/restapi/operations/system"
-	"github.com/minio/madmin-go/v2"
 )
 
 func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
@@ -94,18 +93,13 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 	}
 
 	var usedSpace int64
-	for _, serv := range serverInfo.Servers {
-		for _, disk := range serv.Disks {
-			usedSpace += int64(disk.UsedSpace)
-		}
-	}
-
 	// serverArray contains the serverProperties which describe the servers in the network
 	var serverArray []*models.ServerProperties
 	for _, serv := range serverInfo.Servers {
 		drives := []*models.ServerDrives{}
 
 		for _, drive := range serv.Disks {
+			usedSpace += int64(drive.UsedSpace)
 			drives = append(drives, &models.ServerDrives{
 				State:          drive.State,
 				UUID:           drive.UUID,
@@ -905,7 +899,7 @@ func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoP
 		return nil, ErrorWithContext(ctx, err)
 	}
 
-	sessionResp, err2 := getUsageWidgetsForDeployment(ctx, prometheusURL, mAdmin)
+	sessionResp, err2 := getUsageWidgetsForDeployment(ctx, prometheusURL, AdminClient{Client: mAdmin})
 	if err2 != nil {
 		return nil, ErrorWithContext(ctx, err2)
 	}
@@ -913,7 +907,7 @@ func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoP
 	return sessionResp, nil
 }
 
-func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAdmin *madmin.AdminClient) (*models.AdminInfoResponse, error) {
+func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, adminClient MinioAdmin) (*models.AdminInfoResponse, error) {
 	prometheusStatus := models.AdminInfoResponseAdvancedMetricsStatusAvailable
 	if prometheusURL == "" {
 		prometheusStatus = models.AdminInfoResponseAdvancedMetricsStatusNotConfigured
@@ -927,10 +921,6 @@ func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, mAd
 	doneCh := make(chan error)
 	go func() {
 		defer close(doneCh)
-		// create a minioClient interface implementation
-		// defining the client to be used
-		adminClient := AdminClient{Client: mAdmin}
-
 		// serialize output
 		usage, err := GetAdminInfo(ctx, adminClient)
 		if err != nil {
@@ -1039,11 +1029,6 @@ func getAdminInfoWidgetResponse(params systemApi.DashboardWidgetDetailsParams) (
 	prometheusJobID := getPrometheusJobID()
 	prometheusExtraLabels := getPrometheusExtraLabels()
 
-	// We test if prometheus URL is reachable. this is meant to avoid unuseful calls and application hang.
-	if !testPrometheusURL(ctx, prometheusURL) {
-		return nil, ErrorWithContext(ctx, errors.New("Prometheus URL is unreachable"))
-	}
-
 	selector := fmt.Sprintf(`job="%s"`, prometheusJobID)
 	if strings.TrimSpace(prometheusExtraLabels) != "" {
 		selector = fmt.Sprintf(`job="%s",%s`, prometheusJobID, prometheusExtraLabels)
@@ -1052,6 +1037,10 @@ func getAdminInfoWidgetResponse(params systemApi.DashboardWidgetDetailsParams) (
 }
 
 func getWidgetDetails(ctx context.Context, prometheusURL string, selector string, widgetID int32, step *int32, start *int64, end *int64) (*models.WidgetDetails, *models.Error) {
+	// We test if prometheus URL is reachable. this is meant to avoid unuseful calls and application hang.
+	if !testPrometheusURL(ctx, prometheusURL) {
+		return nil, ErrorWithContext(ctx, errors.New("prometheus URL is unreachable"))
+	}
 	labelResultsCh := make(chan LabelResults)
 
 	for _, lbl := range labels {
