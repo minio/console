@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+
 	"github.com/dustin/go-humanize"
 
 	"github.com/minio/console/restapi"
