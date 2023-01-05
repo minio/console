@@ -265,8 +265,8 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 		{
 			name:          "Edit with an invalid site endpoint",
 			args:          invalidUpdatedSiteInfo,
-			expStatusCode: -1,
-			expectedError: true,
+			expStatusCode: 500,
+			expectedError: false,
 		},
 		{
 			name:          "Edit with an invalid empty site ",
