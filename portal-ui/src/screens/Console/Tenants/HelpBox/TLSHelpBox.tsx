@@ -17,6 +17,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
 import CertificateIcon from "../../../../icons/CertificateIcon";
+import { useParams } from "react-router-dom";
 import { AppState } from "../../../../store";
 
 const FeatureItem = ({
@@ -46,12 +47,30 @@ const FeatureItem = ({
   );
 };
 const TLSHelpBox = () => {
+  const params = useParams();
+  const tenantNameParam = params.tenantName || "";
+  const tenantNamespaceParam = params.tenantNamespace || "";
   const namespace = useSelector((state: AppState) => {
-    return state.createTenant.fields.nameTenant.namespace || "<namespace>";
+    var defaultNamespace = "<namespace>";
+    if (tenantNamespaceParam !== "") {
+      return tenantNamespaceParam;
+    }
+    if (state.createTenant.fields.nameTenant.namespace !== "") {
+      return state.createTenant.fields.nameTenant.namespace;
+    }
+    return defaultNamespace;
   });
 
   const tenantName = useSelector((state: AppState) => {
-    return state.createTenant.fields.nameTenant.tenantName || "<tenant-name>";
+    var defaultTenantName = "<tenant-name>";
+    if (tenantNameParam !== "") {
+      return tenantNameParam;
+    }
+
+    if (state.createTenant.fields.nameTenant.tenantName !== "") {
+      return state.createTenant.fields.nameTenant.tenantName;
+    }
+    return defaultTenantName;
   });
 
   return (
