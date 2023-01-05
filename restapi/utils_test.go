@@ -244,3 +244,76 @@ func TestRandomCharString(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateEncodedStyles(t *testing.T) {
+	type args struct {
+		encodedStyles string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "valid",
+			args: args{
+				encodedStyles: "ewogICJiYWNrZ3JvdW5kQ29sb3IiOiAiIzI3ODdjNiIsCiAgImZvbnRDb2xvciI6ICIjZmYwIiwKICAiYnV0dG9uU3R5bGVzIjogewogICAgImJhY2tncm91bmRDb2xvciI6ICIjZWRlYWE4IiwKICAgICJ0ZXh0Q29sb3IiOiAiIzJiMmEyYSIsCiAgICAiaG92ZXJDb2xvciI6ICIjZWRlYWE4IiwKICAgICJob3ZlclRleHQiOiAiIzJiMmEyYSIsCiAgICAiYWN0aXZlQ29sb3IiOiAiI2VkZWFhOCIsCiAgICAiYWN0aXZlVGV4dCI6ICIjMmIyYTJhIgogIH0KfQ==",
+			},
+			wantErr: false,
+		},
+		{
+			name: "invalid config",
+			args: args{
+				encodedStyles: "ewogICJvb3JnbGUiOiAic3MiCn0===",
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalid style config",
+			args: args{
+				encodedStyles: "e30=",
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalid base64",
+			args: args{
+				encodedStyles: "duck",
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.wantErr {
+				assert.NotNilf(t, ValidateEncodedStyles(tt.args.encodedStyles), "Wanted an error")
+			} else {
+				assert.Nilf(t, ValidateEncodedStyles(tt.args.encodedStyles), "Did not wanted an error")
+			}
+		})
+	}
+}
+
+func TestSanitizeEncodedPrefix1(t *testing.T) {
+	type args struct {
+		rawPrefix string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "input sanitized",
+			args: args{
+				rawPrefix: "x y",
+			},
+			want: "x+y",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, SanitizeEncodedPrefix(tt.args.rawPrefix), "SanitizeEncodedPrefix(%v)", tt.args.rawPrefix)
+		})
+	}
+}
