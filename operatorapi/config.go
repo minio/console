@@ -73,6 +73,5 @@ func getMarketplace() string {
 // Get DirectPVMode
 func getDirectPVEnabled() bool {
 	currentMode := env.Get(DirectPVMode, "off")
-
 	return currentMode == "on"
 }

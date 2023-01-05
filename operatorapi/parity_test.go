@@ -18,8 +18,12 @@ package operatorapi
 
 import (
 	"encoding/json"
+	"net/http"
 	"reflect"
 	"testing"
+
+	"github.com/minio/console/operatorapi/operations/operator_api"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/minio/console/models"
 )
@@ -73,6 +77,54 @@ func Test_getParityInfo(t *testing.T) {
 				ji, _ := json.Marshal(parity)
 				vi, _ := json.Marshal(tt.expectedResp)
 				t.Errorf("\ngot: %s \nwant: %s", ji, vi)
+			}
+		})
+	}
+}
+
+func Test_getParityResponse(t *testing.T) {
+	type args struct {
+		params operator_api.GetParityParams
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    models.ParityResponse
+		wantErr bool
+	}{
+		{
+			name: "valid",
+			args: args{
+				params: operator_api.GetParityParams{
+					HTTPRequest:  &http.Request{},
+					DisksPerNode: 4,
+					Nodes:        4,
+				},
+			},
+			want:    models.ParityResponse{"EC:8", "EC:7", "EC:6", "EC:5", "EC:4", "EC:3", "EC:2"},
+			wantErr: false,
+		},
+		{
+			name: "invalid",
+			args: args{
+				params: operator_api.GetParityParams{
+					HTTPRequest:  &http.Request{},
+					DisksPerNode: -4,
+					Nodes:        4,
+				},
+			},
+			want:    models.ParityResponse(nil),
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1 := getParityResponse(tt.args.params)
+			assert.Equalf(t, tt.want, got, "getParityResponse(%v)", tt.args.params)
+			if tt.wantErr {
+				assert.NotNilf(t, got1, "getParityResponse(%v)", tt.args.params)
+			} else {
+				assert.Nilf(t, got1, "getParityResponse(%v)", tt.args.params)
 			}
 		})
 	}
