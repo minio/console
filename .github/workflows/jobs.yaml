@@ -97,7 +97,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-          cache: 'npm'
+          cache: 'yarn'
           cache-dependency-path: portal-ui/yarn.lock
       - uses: actions/cache@v3
         id: assets-cache
@@ -110,7 +110,7 @@ jobs:
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
-          yarn install
+          yarn install --immutable
       - name: Check for Warnings in build output
         working-directory: ./portal-ui
         continue-on-error: false
@@ -206,7 +206,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-          cache: 'npm'
+          cache: 'yarn'
           cache-dependency-path: portal-ui/yarn.lock
       - name: Checks for known security issues with the installed packages
         working-directory: ./portal-ui
