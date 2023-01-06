@@ -25,14 +25,15 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
-
-      - name: Check out code
-        uses: actions/checkout@v2
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -53,6 +54,7 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
           check-latest: true
       - name: Get govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
@@ -88,31 +90,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
       - name: Read .nvmrc
         id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
-      - uses: actions/setup-node@v2
+        run: echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+          cache: 'yarn'
+          cache-dependency-path: portal-ui/yarn.lock
       - uses: actions/cache@v3
         id: assets-cache
         name: Assets Cache
@@ -120,12 +106,11 @@ jobs:
           path: |
             ./portal-ui/build/
           key: ${{ runner.os }}-assets-${{ github.run_id }}
-
       - name: Install Dependencies
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
-          yarn install
+          yarn install --frozen-lockfile --immutable
       - name: Check for Warnings in build output
         working-directory: ./portal-ui
         continue-on-error: false
@@ -144,27 +129,21 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
-      - name: Check out code
-        uses: actions/checkout@v2
       - name: Build on ${{ matrix.os }}
         env:
           GO111MODULE: on
           GOOS: linux
         run: |
           go mod download
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-  
+
   compile-binary:
     name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
@@ -178,21 +157,15 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
-
-      - name: Check out code
-        uses: actions/checkout@v2
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -214,7 +187,7 @@ jobs:
           make console
   
   
-
+  
   react-code-known-vulnerabilities:
     name: "React Code Has No Known Vulnerable Deps"
     needs:
@@ -226,70 +199,20 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
       - name: Read .nvmrc
         id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
-      - uses: actions/setup-node@v2
+        run: echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
+          cache: 'yarn'
+          cache-dependency-path: portal-ui/yarn.lock
       - name: Checks for known security issues with the installed packages
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
           yarn audit  
-  
-  
-
-  testcafe-cache:
-    name: "Testcafe Cache Stage"
-    #    needs:
-    #      - ui-assets
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [ 1.19.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: testcafe-cache
-        name: Testcafe Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-testcafe-${{ github.run_id }}
-      - name: Install Testcafe
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add testcafe --save
-  
 
   all-permissions-1:
     name: Permissions Tests Part 1
@@ -303,30 +226,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
 
       - uses: actions/cache@v3
         name: Console Binary Cache
@@ -365,27 +273,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -423,31 +319,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -486,27 +366,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -538,27 +406,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -590,27 +446,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -642,27 +486,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -694,27 +526,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -746,29 +566,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -805,31 +611,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -866,31 +656,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
-      - uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
-
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -927,8 +701,15 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       # To build operator image, we need to clone the repository first
       - name: clone https://github.com/minio/operator
         uses: actions/checkout@master
@@ -941,35 +722,6 @@ jobs:
           # Relative path under $GITHUB_WORKSPACE to place the repository
           # To have two repositories under the same test
           path: 'operator_repository'
-
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NVMRC }}
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
 
       - uses: actions/cache@v3
         name: Console Binary Cache
@@ -997,10 +749,16 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
-
       - name: Check out code
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       # To build operator image, we need to clone the repository first
       - name: clone https://github.com/minio/operator
         uses: actions/checkout@master
@@ -1013,37 +771,6 @@ jobs:
           # Relative path under $GITHUB_WORKSPACE to place the repository
           # To have two repositories under the same test
           path: 'operator_repository'
-
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NVMRC }}
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
         name: Console Binary Cache
@@ -1071,10 +798,16 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
-
       - name: Check out code
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       # To build operator image, we need to clone the repository first
       - name: clone https://github.com/minio/operator
         uses: actions/checkout@master
@@ -1087,37 +820,6 @@ jobs:
           # Relative path under $GITHUB_WORKSPACE to place the repository
           # To have two repositories under the same test
           path: 'operator_repository'
-
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NVMRC }}
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v3
-        id: yarn-cache
-        name: Yarn Cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ./portal-ui/node_modules/
-          key: ${{ runner.os }}-yarn-${{ hashFiles('./portal-ui/yarn.lock') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-yarn-
 
       - uses: actions/cache@v3
         name: Console Binary Cache
@@ -1149,22 +851,16 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
 
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -1186,22 +882,15 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
 
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -1223,22 +912,16 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
 
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -1260,22 +943,16 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
 
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -1297,22 +974,16 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
 
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -1334,14 +1005,15 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
-
-      - name: Check out code
-        uses: actions/checkout@v2
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -1370,22 +1042,16 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
 
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -1414,22 +1080,16 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
 
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -1459,14 +1119,15 @@ jobs:
         go-version: [ 1.19.x ]
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
-
-      - name: Check out code
-        uses: actions/checkout@v2
 
       # To build minio image, we need to clone the repository first
       - name: clone https://github.com/minio/minio
@@ -1481,13 +1142,6 @@ jobs:
           # To have two repositories under the same test
           path: 'minio_repository'
 
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         run: |
@@ -1545,7 +1199,7 @@ jobs:
       - semgrep-static-code-analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install modules
         working-directory: ./portal-ui
         run: yarn
@@ -1567,14 +1221,15 @@ jobs:
         go-version: [ 1.19.x ]
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
-
-      - name: Check out code
-        uses: actions/checkout@v2
 
       # To build minio image, we need to clone the repository first
       - name: clone https://github.com/minio/minio
@@ -1633,14 +1288,15 @@ jobs:
         go-version: [ 1.19.x ]
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
-
-      - name: Check out code
-        uses: actions/checkout@v2
 
       # To build minio image, we need to clone the repository first
       - name: clone https://github.com/minio/minio
@@ -1655,13 +1311,6 @@ jobs:
           # To have two repositories under the same test
           path: 'minio_repository'
 
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Build on ${{ matrix.os }}
         run: |
@@ -1706,13 +1355,14 @@ jobs:
 
     steps:
 
+      - uses: actions/checkout@v3
+
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
-
-      - uses: actions/checkout@v2
 
       # To build operator image, we need to clone the repository first
       - name: clone https://github.com/minio/operator
@@ -1727,13 +1377,6 @@ jobs:
           # To have two repositories under the same test
           path: 'operator_repository'
 
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - name: Operator API Tests
         run: |
@@ -1767,25 +1410,19 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
+          cache: true
         id: go
-      - name: Check out code
-        uses: actions/checkout@v2
       - name: Check out gocovmerge as a nested repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: wadey/gocovmerge
           path: gocovmerge
-      - uses: actions/cache@v3
-        name: Go Mod Cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ github.run_id }}
 
       - uses: actions/cache@v3
         id: coverage-cache
