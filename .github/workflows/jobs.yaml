@@ -143,26 +143,6 @@ jobs:
           GOOS: linux
         run: |
           go mod download
-  testcafe-cache:
-    name: "Testcafe Cache Stage"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [ 1.19.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Read .nvmrc
-        id: node_version
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-          cache: 'npm'
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
 
   compile-binary:
     name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
@@ -170,7 +150,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
@@ -248,6 +227,14 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
 
       - uses: actions/cache@v3
         name: Console Binary Cache
@@ -287,7 +274,14 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -326,8 +320,14 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -367,7 +367,14 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -400,7 +407,14 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -433,7 +447,14 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -466,7 +487,14 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -499,7 +527,14 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -532,7 +567,14 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -573,8 +615,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-          cache: 'npm'
-          cache-dependency-path: portal-ui/yarn.lock
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -615,8 +660,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-          cache: 'npm'
-          cache-dependency-path: portal-ui/yarn.lock
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -654,7 +702,14 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       # To build operator image, we need to clone the repository first
       - name: clone https://github.com/minio/operator
         uses: actions/checkout@master
@@ -694,10 +749,16 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
-
       - name: Check out code
         uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       # To build operator image, we need to clone the repository first
       - name: clone https://github.com/minio/operator
         uses: actions/checkout@master
@@ -737,10 +798,16 @@ jobs:
         go-version: [ 1.19.x ]
         os: [ ubuntu-latest ]
     steps:
-
       - name: Check out code
         uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
       # To build operator image, we need to clone the repository first
       - name: clone https://github.com/minio/operator
         uses: actions/checkout@master
@@ -777,7 +844,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
@@ -809,7 +875,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
@@ -840,7 +905,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
@@ -872,7 +936,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
@@ -904,7 +967,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
@@ -936,7 +998,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
@@ -974,7 +1035,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
@@ -1013,7 +1073,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
@@ -1052,7 +1111,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ubuntu-latest
 
@@ -1138,7 +1196,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ubuntu-latest
     steps:
@@ -1156,7 +1213,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: [ ubuntu-latest ]
 
@@ -1224,7 +1280,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ubuntu-latest
 
@@ -1291,7 +1346,6 @@ jobs:
       - lint-job
       - ui-assets
       - reuse-golang-dependencies
-      - testcafe-cache
       - semgrep-static-code-analysis
     runs-on: ubuntu-latest
 
