@@ -110,7 +110,7 @@ jobs:
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
-          yarn install --immutable
+          yarn install --frozen-lockfile --immutable
       - name: Check for Warnings in build output
         working-directory: ./portal-ui
         continue-on-error: false
