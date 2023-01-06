@@ -308,7 +308,10 @@ const ListObjects = () => {
   const fileUpload = useRef<HTMLInputElement>(null);
   const folderUpload = useRef<HTMLInputElement>(null);
 
-  const canDownload = hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT]);
+  const canDownload = hasPermission(bucketName, [
+    IAM_SCOPES.S3_GET_OBJECT,
+    IAM_SCOPES.S3_GET_ACTIONS,
+  ]);
   const canDelete = hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]);
   const canUpload = hasPermission(
     uploadPath,
@@ -792,7 +795,7 @@ const ListObjects = () => {
       tooltip: canDownload
         ? "Download Selected"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
+            [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
             "download objects from this bucket"
           ),
     },
@@ -968,7 +971,10 @@ const ListObjects = () => {
                       }}
                       disabled={
                         !isVersioned ||
-                        !hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT])
+                        !hasPermission(bucketName, [
+                          IAM_SCOPES.S3_GET_OBJECT,
+                          IAM_SCOPES.S3_GET_ACTIONS,
+                        ])
                       }
                     />
                   </TooltipWrapper>
