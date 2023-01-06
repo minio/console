@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -18,42 +18,137 @@ package restapi
 
 import (
 	"context"
-	"errors"
+	"net/http"
+	"net/http/httptest"
+	"os"
 	"testing"
 
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	systemApi "github.com/minio/console/restapi/operations/system"
 	"github.com/minio/madmin-go/v2"
-	asrt "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestAdminInfo(t *testing.T) {
-	assert := asrt.New(t)
-	adminClient := adminClientMock{}
-	// Test-1 : getAdminInfo() returns proper information
+type AdminInfoTestSuite struct {
+	suite.Suite
+	assert              *assert.Assertions
+	currentServer       string
+	isServerSet         bool
+	isPrometheusRequest bool
+	server              *httptest.Server
+	adminClient         adminClientMock
+}
+
+func (suite *AdminInfoTestSuite) SetupSuite() {
+	suite.assert = assert.New(suite.T())
+	suite.adminClient = adminClientMock{}
 	minioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
 		return madmin.InfoMessage{
-			Buckets: madmin.Buckets{Count: 10},
-			Objects: madmin.Objects{Count: 10},
-			Usage:   madmin.Usage{Size: 10},
+			Servers: []madmin.ServerProperties{{
+				Disks: []madmin.Disk{{}},
+			}},
+			Backend: map[string]interface{}{
+				"backendType":      "mock",
+				"rrSCParity":       0.0,
+				"standardSCParity": 0.0,
+			},
 		}, nil
 	}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	serverInfo, err := GetAdminInfo(ctx, adminClient)
-	assert.NotNil(serverInfo, "server info was returned nil")
-	if serverInfo != nil {
-		var actual64 int64 = 10
-		assert.Equal(serverInfo.Buckets, actual64, "Incorrect bucket count")
-		assert.Equal(serverInfo.Objects, actual64, "Incorrect object count")
-		assert.Equal(serverInfo.Usage, actual64, "Incorrect usage size")
-	}
-	assert.Nil(err, "Error should have been nil")
+}
 
-	// Test-2 : getAdminInfo(ctx) fails for whatever reason
-	minioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
-		return madmin.InfoMessage{}, errors.New("some reason")
-	}
+func (suite *AdminInfoTestSuite) SetupTest() {
+	suite.server = httptest.NewServer(http.HandlerFunc(suite.serverHandler))
+	suite.currentServer, suite.isServerSet = os.LookupEnv(ConsoleMinIOServer)
+	os.Setenv(ConsoleMinIOServer, suite.server.URL)
+}
 
-	serverInfo, err = GetAdminInfo(ctx, adminClient)
-	assert.Nil(serverInfo, "server info was not returned nil")
-	assert.NotNil(err, "An error should have ben returned")
+func (suite *AdminInfoTestSuite) serverHandler(w http.ResponseWriter, r *http.Request) {
+	if suite.isPrometheusRequest {
+		w.WriteHeader(200)
+	} else {
+		w.WriteHeader(400)
+	}
+}
+
+func (suite *AdminInfoTestSuite) TearDownSuite() {
+}
+
+func (suite *AdminInfoTestSuite) TearDownTest() {
+	if suite.isServerSet {
+		os.Setenv(ConsoleMinIOServer, suite.currentServer)
+	} else {
+		os.Unsetenv(ConsoleMinIOServer)
+	}
+}
+
+func (suite *AdminInfoTestSuite) TestRegisterAdminInfoHandlers() {
+	api := &operations.ConsoleAPI{}
+	suite.assertHandlersAreNil(api)
+	registerAdminInfoHandlers(api)
+	suite.assertHandlersAreNotNil(api)
+}
+
+func (suite *AdminInfoTestSuite) assertHandlersAreNil(api *operations.ConsoleAPI) {
+	suite.assert.Nil(api.SystemAdminInfoHandler)
+	suite.assert.Nil(api.SystemDashboardWidgetDetailsHandler)
+}
+
+func (suite *AdminInfoTestSuite) assertHandlersAreNotNil(api *operations.ConsoleAPI) {
+	suite.assert.NotNil(api.SystemAdminInfoHandler)
+	suite.assert.NotNil(api.SystemDashboardWidgetDetailsHandler)
+}
+
+func (suite *AdminInfoTestSuite) TestSystemAdminInfoHandlerWithError() {
+	params, api := suite.initSystemAdminInfoRequest()
+	response := api.SystemAdminInfoHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*systemApi.AdminInfoDefault)
+	suite.assert.True(ok)
+}
+
+func (suite *AdminInfoTestSuite) initSystemAdminInfoRequest() (params systemApi.AdminInfoParams, api operations.ConsoleAPI) {
+	registerAdminInfoHandlers(&api)
+	params.HTTPRequest = &http.Request{}
+	defaultOnly := false
+	params.DefaultOnly = &defaultOnly
+	return params, api
+}
+
+func (suite *AdminInfoTestSuite) TestSystemDashboardWidgetDetailsHandlerWithError() {
+	params, api := suite.initSystemDashboardWidgetDetailsRequest()
+	response := api.SystemDashboardWidgetDetailsHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*systemApi.DashboardWidgetDetailsDefault)
+	suite.assert.True(ok)
+}
+
+func (suite *AdminInfoTestSuite) initSystemDashboardWidgetDetailsRequest() (params systemApi.DashboardWidgetDetailsParams, api operations.ConsoleAPI) {
+	registerAdminInfoHandlers(&api)
+	params.HTTPRequest = &http.Request{}
+	return params, api
+}
+
+func (suite *AdminInfoTestSuite) TestGetUsageWidgetsForDeploymentWithoutError() {
+	ctx := context.Background()
+	suite.isPrometheusRequest = true
+	res, err := getUsageWidgetsForDeployment(ctx, suite.server.URL, suite.adminClient)
+	suite.assert.Nil(err)
+	suite.assert.NotNil(res)
+	suite.isPrometheusRequest = false
+}
+
+func (suite *AdminInfoTestSuite) TestGetWidgetDetailsWithoutError() {
+	ctx := context.Background()
+	suite.isPrometheusRequest = true
+	var step int32 = 1
+	var start int64
+	var end int64 = 1
+	res, err := getWidgetDetails(ctx, suite.server.URL, "mock", 1, &step, &start, &end)
+	suite.assert.Nil(err)
+	suite.assert.NotNil(res)
+	suite.isPrometheusRequest = false
+}
+
+func TestAdminInfo(t *testing.T) {
+	suite.Run(t, new(AdminInfoTestSuite))
 }

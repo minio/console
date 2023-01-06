@@ -105,6 +105,7 @@ const AccessRule = () => {
 
   const editAccessRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 
   useEffect(() => {
@@ -199,6 +200,7 @@ const AccessRule = () => {
           scopes={[
             IAM_SCOPES.S3_GET_BUCKET_POLICY,
             IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+            IAM_SCOPES.S3_PUT_ACTIONS,
           ]}
           resource={bucketName}
           matchAll

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
+import { DateTime } from "luxon";
 import { Box, Grid } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Button } from "mds";
@@ -37,7 +38,6 @@ import {
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
-import moment from "moment/moment";
 import PageLayout from "../Common/Layout/PageLayout";
 import { FilterIcon } from "../../../icons";
 
@@ -175,7 +175,8 @@ const Trace = ({ classes }: ITrace) => {
       };
       c.onmessage = (message: IMessageEvent) => {
         let m: TraceMessage = JSON.parse(message.data.toString());
-        m.ptime = moment(m.time, "YYYY-MM-DD HH:mm:s.SSSS +0000 UTC").toDate();
+
+        m.ptime = DateTime.fromISO(m.time).toJSDate();
         m.key = Math.random();
         dispatch(traceMessageReceived(m));
       };

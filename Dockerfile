@@ -13,7 +13,7 @@ RUN make build-static
 
 USER node
 
-FROM golang:1.18 as golayer
+FROM golang:1.19 as golayer
 
 RUN apt-get update -y && apt-get install -y ca-certificates
 

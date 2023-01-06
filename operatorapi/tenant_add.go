@@ -20,7 +20,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"os"
 
 	"github.com/dustin/go-humanize"
 
@@ -586,13 +585,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
-	// Integrations
-	if os.Getenv("GKE_INTEGRATION") != "" {
-		err := gkeIntegration(clientSet, tenantName, ns, session.STSSessionToken)
-		if err != nil {
-			return nil, restapi.ErrorWithContext(ctx, err)
-		}
-	}
 	response = &models.CreateTenantResponse{
 		ExternalIDP: tenantExternalIDPConfigured,
 	}

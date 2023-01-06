@@ -210,7 +210,10 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
       onClick: editReplicationRule,
       disableButtonFunction: !hasPermission(
         bucketName,
-        [IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION],
+        [
+          IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+          IAM_SCOPES.S3_PUT_ACTIONS,
+        ],
         true
       ),
     },
@@ -253,7 +256,10 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
           <PanelTitle>Replication</PanelTitle>
           <div style={{ display: "flex" }}>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
+              scopes={[
+                IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+                IAM_SCOPES.S3_PUT_ACTIONS,
+              ]}
               resource={bucketName}
               matchAll
               errorProps={{ disabled: true }}
@@ -273,7 +279,10 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
               </TooltipWrapper>
             </SecureComponent>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
+              scopes={[
+                IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+                IAM_SCOPES.S3_PUT_ACTIONS,
+              ]}
               resource={bucketName}
               matchAll
               errorProps={{ disabled: true }}

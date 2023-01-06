@@ -361,6 +361,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                 disabled: !hasPermission(bucketName, [
                   IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
                   IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
+                  IAM_SCOPES.S3_PUT_ACTIONS,
                 ]),
                 to: getRoutePath("events"),
               },
@@ -377,6 +378,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   !hasPermission(bucketName, [
                     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
                     IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+                    IAM_SCOPES.S3_PUT_ACTIONS,
                   ]),
                 to: getRoutePath("replication"),
               },
@@ -391,6 +393,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   !hasPermission(bucketName, [
                     IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
                     IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+                    IAM_SCOPES.S3_PUT_ACTIONS,
                   ]),
                 to: getRoutePath("lifecycle"),
               },

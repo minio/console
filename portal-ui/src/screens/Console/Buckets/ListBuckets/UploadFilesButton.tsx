@@ -69,10 +69,11 @@ const UploadFilesButton = ({
 
   const uploadObjectAllowed = hasPermission(uploadPath, [
     IAM_SCOPES.S3_PUT_OBJECT,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
   const uploadFolderAllowed = hasPermission(
     bucketName,
-    [IAM_SCOPES.S3_PUT_OBJECT],
+    [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
     false,
     true
   );
@@ -86,7 +87,7 @@ const UploadFilesButton = ({
           uploadEnabled
             ? "Upload Files"
             : permissionTooltipHelper(
-                [IAM_SCOPES.S3_PUT_OBJECT],
+                [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
                 "upload files to this bucket"
               )
         }
