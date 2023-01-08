@@ -2610,6 +2610,8 @@ definitions:
           https://kubernetes.io/docs/concepts/configuration/assign-pod-node/"
       affinity:
         $ref: "#/definitions/poolAffinity"
+      runtimeClassName:
+        type: string
       tolerations:
         $ref: "#/definitions/poolTolerations"
       securityContext:

@@ -383,7 +383,7 @@ export MINIO_SECRET_KEY=minio123
 	}
 }
 
-func NoTestTenantInfo(t *testing.T) {
+func Test_TenantInfo(t *testing.T) {
 	testTimeStamp := metav1.Now()
 	type args struct {
 		minioTenant *miniov2.Tenant
@@ -418,6 +418,7 @@ func NoTestTenantInfo(t *testing.T) {
 										StorageClassName: swag.String("standard"),
 									},
 								},
+								RuntimeClassName: swag.String(""),
 							},
 						},
 
@@ -435,7 +436,12 @@ func NoTestTenantInfo(t *testing.T) {
 				CurrentState: "ready",
 				Pools: []*models.Pool{
 					{
-						Name:             "pool1",
+						Name: "pool1",
+						SecurityContext: &models.SecurityContext{
+							RunAsGroup:   nil,
+							RunAsNonRoot: nil,
+							RunAsUser:    nil,
+						},
 						Servers:          swag.Int64(int64(2)),
 						VolumesPerServer: swag.Int32(4),
 						VolumeConfiguration: &models.PoolVolumeConfiguration{
@@ -483,6 +489,7 @@ func NoTestTenantInfo(t *testing.T) {
 										StorageClassName: swag.String("standard"),
 									},
 								},
+								RuntimeClassName: swag.String(""),
 							},
 						},
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
@@ -500,7 +507,12 @@ func NoTestTenantInfo(t *testing.T) {
 				CurrentState: "ready",
 				Pools: []*models.Pool{
 					{
-						Name:             "pool1",
+						Name: "pool1",
+						SecurityContext: &models.SecurityContext{
+							RunAsGroup:   nil,
+							RunAsNonRoot: nil,
+							RunAsUser:    nil,
+						},
 						Servers:          swag.Int64(int64(2)),
 						VolumesPerServer: swag.Int32(4),
 						VolumeConfiguration: &models.PoolVolumeConfiguration{
@@ -1025,7 +1037,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 				},
 				params: operator_api.UpdateTenantParams{
 					Body: &models.UpdateTenantRequest{
-						Image: "minio/minio:RELEASE.2020-06-03T22-13-49Z",
+						Image: "minio/minio:RELEASE.2023-01-06T18-11-18Z",
 					},
 				},
 			},
@@ -1050,7 +1062,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 				},
 				params: operator_api.UpdateTenantParams{
 					Body: &models.UpdateTenantRequest{
-						Image: "minio/minio:RELEASE.2020-06-03T22-13-49Z",
+						Image: "minio/minio:RELEASE.2023-01-06T18-11-18Z",
 					},
 				},
 			},
@@ -1076,7 +1088,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 				params: operator_api.UpdateTenantParams{
 					Tenant: "minio-tenant",
 					Body: &models.UpdateTenantRequest{
-						Image: "minio/minio:RELEASE.2020-06-03T22-13-49Z",
+						Image: "minio/minio:RELEASE.2023-01-06T18-11-18Z",
 					},
 				},
 			},
