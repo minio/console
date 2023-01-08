@@ -23,18 +23,18 @@ package operatorapi
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
+  "encoding/json"
 )
 
 var (
-	// SwaggerJSON embedded version of the swagger document used at generation time
-	SwaggerJSON json.RawMessage
-	// FlatSwaggerJSON embedded flattened version of the swagger document used at generation time
-	FlatSwaggerJSON json.RawMessage
+  // SwaggerJSON embedded version of the swagger document used at generation time
+  SwaggerJSON json.RawMessage
+  // FlatSwaggerJSON embedded flattened version of the swagger document used at generation time
+  FlatSwaggerJSON json.RawMessage
 )
 
 func init() {
-	SwaggerJSON = json.RawMessage([]byte(`{
+  SwaggerJSON = json.RawMessage([]byte(`{
   "consumes": [
     "application/json"
   ],
@@ -4043,6 +4043,9 @@ func init() {
         "resources": {
           "$ref": "#/definitions/poolResources"
         },
+        "runtimeClassName": {
+          "type": "string"
+        },
         "securityContext": {
           "type": "object",
           "$ref": "#/definitions/securityContext"
@@ -5236,7 +5239,7 @@ func init() {
     }
   ]
 }`))
-	FlatSwaggerJSON = json.RawMessage([]byte(`{
+  FlatSwaggerJSON = json.RawMessage([]byte(`{
   "consumes": [
     "application/json"
   ],
@@ -9975,6 +9978,9 @@ func init() {
         },
         "resources": {
           "$ref": "#/definitions/poolResources"
+        },
+        "runtimeClassName": {
+          "type": "string"
         },
         "securityContext": {
           "type": "object",

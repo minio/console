@@ -48,6 +48,9 @@ type Pool struct {
 	// resources
 	Resources *PoolResources `json:"resources,omitempty"`
 
+	// runtime class name
+	RuntimeClassName string `json:"runtimeClassName,omitempty"`
+
 	// security context
 	SecurityContext *SecurityContext `json:"securityContext,omitempty"`
 
