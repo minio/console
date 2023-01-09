@@ -255,7 +255,10 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             title={bucketName}
             subTitle={
               <SecureComponent
-                scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
+                scopes={[
+                  IAM_SCOPES.S3_GET_BUCKET_POLICY,
+                  IAM_SCOPES.S3_GET_ACTIONS,
+                ]}
                 resource={bucketName}
               >
                 <span style={{ fontSize: 15 }}>Access: </span>
@@ -361,6 +364,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                 disabled: !hasPermission(bucketName, [
                   IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
                   IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
+                  IAM_SCOPES.S3_GET_ACTIONS,
                   IAM_SCOPES.S3_PUT_ACTIONS,
                 ]),
                 to: getRoutePath("events"),
@@ -378,6 +382,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   !hasPermission(bucketName, [
                     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
                     IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+                    IAM_SCOPES.S3_GET_ACTIONS,
                     IAM_SCOPES.S3_PUT_ACTIONS,
                   ]),
                 to: getRoutePath("replication"),
@@ -393,6 +398,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   !hasPermission(bucketName, [
                     IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
                     IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+                    IAM_SCOPES.S3_GET_ACTIONS,
                     IAM_SCOPES.S3_PUT_ACTIONS,
                   ]),
                 to: getRoutePath("lifecycle"),
@@ -418,6 +424,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                 component: Link,
                 disabled: !hasPermission(bucketName, [
                   IAM_SCOPES.S3_GET_BUCKET_POLICY,
+                  IAM_SCOPES.S3_GET_ACTIONS,
                 ]),
                 to: getRoutePath("prefix"),
               },

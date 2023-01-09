@@ -239,7 +239,10 @@ const AddTagModal = ({
         ) : (
           <Grid container>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_GET_OBJECT_TAGGING]}
+              scopes={[
+                IAM_SCOPES.S3_GET_OBJECT_TAGGING,
+                IAM_SCOPES.S3_GET_ACTIONS,
+              ]}
               resource={bucketName}
             >
               <Box

@@ -96,7 +96,7 @@ const BucketTags = ({ bucketName }: BucketTagProps) => {
     <Box>
       {isLoading ? <Loader style={{ width: 16, height: 16 }} /> : null}
       <SecureComponent
-        scopes={[IAM_SCOPES.S3_GET_BUCKET_TAGGING]}
+        scopes={[IAM_SCOPES.S3_GET_BUCKET_TAGGING, IAM_SCOPES.S3_GET_ACTIONS]}
         resource={bucketName}
       >
         <Box

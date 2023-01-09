@@ -94,6 +94,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
 
   const displayReplicationRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
 
   useEffect(() => {
@@ -303,7 +304,10 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
         </Grid>
         <Grid item xs={12}>
           <SecureComponent
-            scopes={[IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION]}
+            scopes={[
+              IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
+              IAM_SCOPES.S3_GET_ACTIONS,
+            ]}
             resource={bucketName}
             errorProps={{ disabled: true }}
           >

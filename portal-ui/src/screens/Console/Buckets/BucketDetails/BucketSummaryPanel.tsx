@@ -149,10 +149,12 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
 
   const displayGetBucketObjectLockConfiguration = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_BUCKET_OBJECT_LOCK_CONFIGURATION,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
 
   const displayGetBucketEncryptionConfiguration = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_BUCKET_ENCRYPTION_CONFIGURATION,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
 
   const displayGetBucketQuota = hasPermission(bucketName, [
@@ -417,14 +419,17 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
       <SectionTitle>Summary</SectionTitle>
       <Grid container spacing={1}>
         <SecureComponent
-          scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
+          scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY, IAM_SCOPES.S3_GET_ACTIONS]}
           resource={bucketName}
         >
           <Grid item xs={12}>
             <Box sx={{ ...twoColCssGridLayoutConfig }}>
               <Box sx={{ ...twoColCssGridLayoutConfig }}>
                 <SecureComponent
-                  scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
+                  scopes={[
+                    IAM_SCOPES.S3_GET_BUCKET_POLICY,
+                    IAM_SCOPES.S3_GET_ACTIONS,
+                  ]}
                   resource={bucketName}
                 >
                   <EditablePropertyItem
@@ -443,7 +448,10 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                 </SecureComponent>
 
                 <SecureComponent
-                  scopes={[IAM_SCOPES.S3_GET_BUCKET_ENCRYPTION_CONFIGURATION]}
+                  scopes={[
+                    IAM_SCOPES.S3_GET_BUCKET_ENCRYPTION_CONFIGURATION,
+                    IAM_SCOPES.S3_GET_ACTIONS,
+                  ]}
                   resource={bucketName}
                 >
                   <EditablePropertyItem
@@ -462,7 +470,10 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                 </SecureComponent>
 
                 <SecureComponent
-                  scopes={[IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION]}
+                  scopes={[
+                    IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
+                    IAM_SCOPES.S3_GET_ACTIONS,
+                  ]}
                   resource={bucketName}
                 >
                   <LabelValuePair
@@ -483,7 +494,10 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                 </SecureComponent>
 
                 <SecureComponent
-                  scopes={[IAM_SCOPES.S3_GET_BUCKET_OBJECT_LOCK_CONFIGURATION]}
+                  scopes={[
+                    IAM_SCOPES.S3_GET_BUCKET_OBJECT_LOCK_CONFIGURATION,
+                    IAM_SCOPES.S3_GET_ACTIONS,
+                  ]}
                   resource={bucketName}
                 >
                   <LabelValuePair
@@ -536,7 +550,10 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
 
         {distributedSetup && (
           <SecureComponent
-            scopes={[IAM_SCOPES.S3_GET_BUCKET_VERSIONING]}
+            scopes={[
+              IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
+              IAM_SCOPES.S3_GET_ACTIONS,
+            ]}
             resource={bucketName}
           >
             <Grid item xs={12}>
@@ -571,7 +588,10 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
 
         {hasObjectLocking && (
           <SecureComponent
-            scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
+            scopes={[
+              IAM_SCOPES.S3_GET_OBJECT_RETENTION,
+              IAM_SCOPES.S3_GET_ACTIONS,
+            ]}
             resource={bucketName}
           >
             <Grid item xs={12}>
