@@ -20,7 +20,7 @@ import { DialogContentText } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { ErrorResponseHandler } from "../../../common/types";
-import { ConfirmDeleteIcon } from "../../../icons";
+import { ConfirmDeleteIcon } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import useApi from "../Common/Hooks/useApi";
@@ -28,7 +28,7 @@ import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import WarningMessage from "../Common/WarningMessage/WarningMessage";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
-import Loader from "../Common/Loader/Loader";
+import { Loader } from "mds";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;

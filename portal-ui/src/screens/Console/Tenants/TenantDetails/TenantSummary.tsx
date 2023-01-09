@@ -33,7 +33,7 @@ import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import SectionTitle from "../../Common/SectionTitle";
 import { Button } from "mds";
-import { EditIcon } from "../../../../icons";
+import { EditIcon } from "mds";
 import EditDomains from "./EditDomains";
 import { ITenant } from "../ListTenants/types";
 import { useParams } from "react-router-dom";

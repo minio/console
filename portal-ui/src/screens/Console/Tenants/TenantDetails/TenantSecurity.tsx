@@ -40,13 +40,13 @@ import {
 import { KeyPair } from "../ListTenants/utils";
 import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { AddIcon, ConfirmModalIcon } from "../../../../icons";
+import { AddIcon, ConfirmModalIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import Loader from "../../Common/Loader/Loader";
+import { Loader } from "mds";
 import TLSCertificate from "../../Common/TLSCertificate/TLSCertificate";
 import SecurityContextSelector from "../securityContextSelector";
 import {
@@ -57,7 +57,7 @@ import {
   setFSGroupChangePolicy,
 } from "../tenantSecurityContextSlice";
 import TLSHelpBox from "../HelpBox/TLSHelpBox";
-import RemoveIcon from "../../../../icons/RemoveIcon";
+import { RemoveIcon } from "mds";
 
 interface ITenantSecurity {
   classes: any;

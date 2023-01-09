@@ -16,7 +16,7 @@
 
 import React from "react";
 import { IconButton } from "@mui/material";
-import EditIcon from "../../../../../icons/EditIcon";
+import { EditIcon } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";

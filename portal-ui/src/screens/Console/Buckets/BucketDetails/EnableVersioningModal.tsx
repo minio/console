@@ -20,7 +20,7 @@ import api from "../../../../common/api";
 
 import { ErrorResponseHandler } from "../../../../common/types";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmModalIcon } from "../../../../icons";
+import { ConfirmModalIcon } from "mds";
 
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";

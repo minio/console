@@ -24,7 +24,7 @@ import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import GenericWizard from "../../../../Common/GenericWizard/GenericWizard";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import TenantsIcon from "../../../../../../icons/TenantsIcon";
+import { TenantsIcon } from "mds";
 import BackLink from "../../../../../../common/BackLink";
 import EditPoolResources from "./EditPoolResources";
 import EditPoolConfiguration from "./EditPoolConfiguration";

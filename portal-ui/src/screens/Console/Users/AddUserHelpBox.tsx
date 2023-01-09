@@ -20,7 +20,7 @@ import {
   GroupsIcon,
   HelpIconFilled,
   UsersIcon,
-} from "../../../icons";
+} from "mds";
 
 const FeatureItem = ({
   icon,

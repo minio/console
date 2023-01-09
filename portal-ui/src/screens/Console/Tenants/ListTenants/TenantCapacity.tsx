@@ -18,7 +18,7 @@ import React from "react";
 import { Cell, Pie, PieChart } from "recharts";
 import { CapacityValue, CapacityValues } from "./types";
 import { niceBytesInt } from "../../../../common/utils";
-import { CircleIcon } from "../../../../icons";
+import { CircleIcon } from "mds";
 import UsageBar, { ISizeBarItem } from "../../Common/UsageBar/UsageBar";
 
 interface ITenantCapacity {

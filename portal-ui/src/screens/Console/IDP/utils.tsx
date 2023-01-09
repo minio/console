@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import LoginIcon from "@mui/icons-material/Login";
-import { LockIcon } from "../../../icons";
+import { LockIcon } from "mds";
 
 export const ldapHelpBoxContents = [
   {

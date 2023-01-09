@@ -23,7 +23,7 @@ import createStyles from "@mui/styles/createStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Bucket, BucketList } from "../Buckets/types";
-import { BucketsIcon } from "../../../icons";
+import { BucketsIcon } from "mds";
 import {
   actionsTray,
   containerForHeader,
@@ -34,7 +34,7 @@ import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
 
 import HelpBox from "../../../common/HelpBox";
-import RefreshIcon from "../../../icons/RefreshIcon";
+import { RefreshIcon } from "mds";
 import { SecureComponent } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,

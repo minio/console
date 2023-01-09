@@ -28,13 +28,11 @@ import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import Grid from "@mui/material/Grid";
 import { loginStrategyType, redirectRule } from "./types";
-import LogoutIcon from "../../icons/LogoutIcon";
-import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
-import { LockIcon } from "../../icons";
+import { LockIcon, LogoutIcon, RefreshIcon } from "mds";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 import clsx from "clsx";
-import Loader from "../Console/Common/Loader/Loader";
+import { Loader } from "mds";
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import {

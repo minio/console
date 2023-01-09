@@ -16,7 +16,7 @@
 
 import React, { Fragment } from "react";
 import Grid from "@mui/material/Grid";
-import { ConfirmDeleteIcon } from "../../../../../icons";
+import { ConfirmDeleteIcon } from "mds";
 
 interface IInvalidRule {
   ruleText: string;

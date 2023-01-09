@@ -24,7 +24,7 @@ import { widgetDetailsToPanel } from "../utils";
 import { IDashboardPanel } from "../types";
 
 import { ErrorResponseHandler } from "../../../../../common/types";
-import Loader from "../../../Common/Loader/Loader";
+import { Loader } from "mds";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../store";
 

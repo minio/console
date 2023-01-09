@@ -32,11 +32,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import {
-  AddNewTagIcon,
-  DisabledIcon,
-  EditTagIcon,
-} from "../../../../../../icons";
+import { AddNewTagIcon, DisabledIcon, EditTagIcon } from "mds";
 import { IFileInfo } from "./types";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../../../common/SecureComponent";
@@ -239,7 +235,10 @@ const AddTagModal = ({
         ) : (
           <Grid container>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_GET_OBJECT_TAGGING]}
+              scopes={[
+                IAM_SCOPES.S3_GET_OBJECT_TAGGING,
+                IAM_SCOPES.S3_GET_ACTIONS,
+              ]}
               resource={bucketName}
             >
               <Box

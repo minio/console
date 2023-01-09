@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
 import { Box } from "@mui/material";
-import { HelpIconFilled, LambdaNotificationsIcon } from "../../../icons";
+import { HelpIconFilled, LambdaNotificationsIcon } from "mds";
 
 const FeatureItem = ({
   icon,

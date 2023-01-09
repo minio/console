@@ -23,12 +23,7 @@ import { withStyles } from "@mui/styles";
 import { displayFileIconName } from "../ListObjects/utils";
 import { IFileInfo } from "./types";
 import { IconButton, Tooltip } from "@mui/material";
-import {
-  DownloadIcon,
-  PreviewIcon,
-  RecoverIcon,
-  ShareIcon,
-} from "../../../../../../icons";
+import { DownloadIcon, PreviewIcon, RecoverIcon, ShareIcon } from "mds";
 import { niceBytes } from "../../../../../../common/utils";
 import SpecificVersionPill from "./SpecificVersionPill";
 import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";

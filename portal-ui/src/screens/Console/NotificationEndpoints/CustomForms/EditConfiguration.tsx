@@ -46,7 +46,7 @@ import {
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import Loader from "../../Common/Loader/Loader";
+import { Loader } from "mds";
 import EndpointDisplay from "./EndpointDisplay";
 
 const styles = (theme: Theme) =>

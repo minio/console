@@ -27,7 +27,7 @@ import {
   DownloadStatIcon,
   EnabledIcon,
   UploadStatIcon,
-} from "../../../../icons";
+} from "mds";
 import clsx from "clsx";
 import { callForObjectID } from "../../ObjectBrowser/transferManager";
 

@@ -39,7 +39,7 @@ import {
   radioIcons,
   TableRowPredefStyles,
 } from "../FormComponents/common/styleLibrary";
-import Loader from "../Loader/Loader";
+import { Loader } from "mds";
 import TooltipWrapper from "../TooltipWrapper/TooltipWrapper";
 
 //Interfaces for table Items

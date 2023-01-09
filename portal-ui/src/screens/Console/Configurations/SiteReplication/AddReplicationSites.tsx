@@ -20,7 +20,7 @@ import { Box, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Button } from "mds";
 import useApi from "../../Common/Hooks/useApi";
-import { ClustersIcon } from "../../../../icons";
+import { ClustersIcon } from "mds";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";

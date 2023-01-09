@@ -26,7 +26,7 @@ import { containerForHeader } from "../../Common/FormComponents/common/styleLibr
 
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import SettingsIcon from "../../../../icons/SettingsIcon";
+import { SettingsIcon } from "mds";
 
 import { SecureComponent } from "../../../../common/SecureComponent";
 import {
@@ -524,6 +524,7 @@ const BrowserHandler = () => {
     IAM_SCOPES.S3_LIST_BUCKET_VERSIONS,
     IAM_SCOPES.S3_GET_BUCKET_POLICY_STATUS,
     IAM_SCOPES.S3_DELETE_BUCKET_POLICY,
+    IAM_SCOPES.S3_GET_ACTIONS,
     IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 

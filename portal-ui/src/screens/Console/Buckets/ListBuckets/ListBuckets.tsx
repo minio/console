@@ -29,7 +29,10 @@ import {
   BucketsIcon,
   LifecycleConfigIcon,
   SelectAllIcon,
-} from "../../../../icons";
+  RefreshIcon,
+  MultipleBucketsIcon,
+  SelectMultipleIcon,
+} from "mds";
 import {
   containerForHeader,
   searchField,
@@ -40,9 +43,6 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import HelpBox from "../../../../common/HelpBox";
-import RefreshIcon from "../../../../icons/RefreshIcon";
-import MultipleBucketsIcon from "../../../../icons/MultipleBucketsIcon";
-import SelectMultipleIcon from "../../../../icons/SelectMultipleIcon";
 import { SecureComponent } from "../../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,

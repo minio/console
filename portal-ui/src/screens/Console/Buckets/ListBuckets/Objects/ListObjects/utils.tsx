@@ -16,55 +16,26 @@
 
 import React from "react";
 
-import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
-import ObjectBrowserFolderIcon from "../../../../../../icons/ObjectBrowserFolderIcon";
+import {
+  FileBookIcon,
+  FileCodeIcon,
+  FileConfigIcon,
+  FileDbIcon,
+  FileFontIcon,
+  FileImageIcon,
+  FileLockIcon,
+  FileMissingIcon,
+  FileMusicIcon,
+  FilePdfIcon,
+  FilePptIcon,
+  FileTxtIcon,
+  FileVideoIcon,
+  FileXlsIcon,
+  FileZipIcon,
+  FolderBrowserIcon,
+  FileNonType,
+} from "mds";
 import IconWithLabel from "./IconWithLabel";
-
-const FileBookIcon = React.lazy(
-  () => import("../../../../../../icons/FileBookIcon")
-);
-const FileCodeIcon = React.lazy(
-  () => import("../../../../../../icons/FileCodeIcon")
-);
-const FileConfigIcon = React.lazy(
-  () => import("../../../../../../icons/FileConfigIcon")
-);
-const FileDbIcon = React.lazy(
-  () => import("../../../../../../icons/FileDbIcon")
-);
-const FileFontIcon = React.lazy(
-  () => import("../../../../../../icons/FileFontIcon")
-);
-const FileImageIcon = React.lazy(
-  () => import("../../../../../../icons/FileImageIcon")
-);
-const FileLockIcon = React.lazy(
-  () => import("../../../../../../icons/FileLockIcon")
-);
-const FileMissingIcon = React.lazy(
-  () => import("../../../../../../icons/FileMissingIcon")
-);
-const FileMusicIcon = React.lazy(
-  () => import("../../../../../../icons/FileMusicIcon")
-);
-const FilePdfIcon = React.lazy(
-  () => import("../../../../../../icons/FilePdfIcon")
-);
-const FilePptIcon = React.lazy(
-  () => import("../../../../../../icons/FilePptIcon")
-);
-const FileTxtIcon = React.lazy(
-  () => import("../../../../../../icons/FileTxtIcon")
-);
-const FileVideoIcon = React.lazy(
-  () => import("../../../../../../icons/FileVideoIcon")
-);
-const FileXlsIcon = React.lazy(
-  () => import("../../../../../../icons/FileXlsIcon")
-);
-const FileZipIcon = React.lazy(
-  () => import("../../../../../../icons/FileZipIcon")
-);
 
 interface IExtToIcon {
   icon: any;
@@ -114,7 +85,7 @@ export const extensionToIcon: IExtToIcon[] = [
   },
   {
     icon: <FileTxtIcon />,
-    extensions: ["txt"],
+    extensions: ["doc", "docx", "txt", "rtf"],
   },
   {
     icon: <FileZipIcon />,
@@ -135,10 +106,10 @@ export const displayFileIconName = (
   returnOnlyIcon: boolean = false
 ) => {
   let elementString = element;
-  let icon = <ObjectBrowserIcon />;
+  let icon = <FileNonType />;
   // Element is a folder
   if (element.endsWith("/")) {
-    icon = <ObjectBrowserFolderIcon />;
+    icon = <FolderBrowserIcon />;
     elementString = element.slice(0, -1);
   }
 

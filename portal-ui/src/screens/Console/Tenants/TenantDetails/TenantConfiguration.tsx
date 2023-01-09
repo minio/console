@@ -19,7 +19,7 @@ import { connect, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { DialogContentText, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "../../../../icons/RemoveIcon";
+import { RemoveIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
@@ -40,11 +40,11 @@ import {
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { ConfirmModalIcon } from "../../../../icons";
+import { ConfirmModalIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import api from "../../../../common/api";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import Loader from "../../Common/Loader/Loader";
+import { Loader } from "mds";
 import { Button } from "mds";
 import { MinIOEnvVarsSettings } from "../../../../common/utils";
 

@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { Button } from "mds";
-import { OnlineRegistrationIcon } from "../../../icons";
+import { OnlineRegistrationIcon } from "mds";
 import { FormTitle } from "./utils";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import GetApiKeyModal from "./GetApiKeyModal";

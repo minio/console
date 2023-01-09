@@ -22,7 +22,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { PasswordKeyIcon } from "../../../icons";
+import { PasswordKeyIcon } from "mds";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -40,7 +40,7 @@ import {
   performDownload,
 } from "../../../common/utils";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
-import { InspectMenuIcon } from "../../../icons/SidebarMenus";
+import { InspectMenuIcon } from "mds";
 import KeyRevealer from "./KeyRevealer";
 import { selDistSet, setErrorSnackMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";

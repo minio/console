@@ -25,7 +25,7 @@ import Chip from "@mui/material/Chip";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import withSuspense from "../../../Common/Components/withSuspense";
-import Loader from "../../../Common/Loader/Loader";
+import { Loader } from "mds";
 
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../store";
@@ -96,7 +96,7 @@ const BucketTags = ({ bucketName }: BucketTagProps) => {
     <Box>
       {isLoading ? <Loader style={{ width: 16, height: 16 }} /> : null}
       <SecureComponent
-        scopes={[IAM_SCOPES.S3_GET_BUCKET_TAGGING]}
+        scopes={[IAM_SCOPES.S3_GET_BUCKET_TAGGING, IAM_SCOPES.S3_GET_ACTIONS]}
         resource={bucketName}
       >
         <Box

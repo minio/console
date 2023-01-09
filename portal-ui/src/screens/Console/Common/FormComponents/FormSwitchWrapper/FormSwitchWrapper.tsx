@@ -21,7 +21,7 @@ import withStyles from "@mui/styles/withStyles";
 import { InputLabel, Switch, Tooltip, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { actionsTray, fieldBasic } from "../common/styleLibrary";
-import HelpIcon from "../../../../../icons/HelpIcon";
+import { HelpIcon } from "mds";
 import clsx from "clsx";
 import { InputProps as StandardInputProps } from "@mui/material/Input/Input";
 

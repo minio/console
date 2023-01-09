@@ -17,7 +17,7 @@
 import React from "react";
 import { Box } from "@mui/material";
 import { niceBytes } from "../../../../../common/utils";
-import { HardBucketQuotaIcon } from "../../../../../icons";
+import { HardBucketQuotaIcon } from "mds";
 
 const BucketQuotaSize = ({ quota }: { quota: any }) => {
   return (

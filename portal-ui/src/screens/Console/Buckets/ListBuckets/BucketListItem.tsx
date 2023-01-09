@@ -17,11 +17,7 @@ import React, { Fragment } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import {
-  BucketsIcon,
-  ReportedUsageIcon,
-  TotalObjectsIcon,
-} from "../../../../icons";
+import { BucketsIcon, ReportedUsageIcon, TotalObjectsIcon } from "mds";
 import { Bucket } from "../types";
 import { Box, Grid, Typography } from "@mui/material";
 import {

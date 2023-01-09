@@ -29,7 +29,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import AddMembersToGroup from "../../../icons/AddMembersToGroupIcon";
+import { AddMembersToGroupIcon } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
@@ -153,7 +153,7 @@ const ChangeUserGroups = ({
       }}
       modalOpen={open}
       title={"Set Groups"}
-      titleIcon={<AddMembersToGroup />}
+      titleIcon={<AddMembersToGroupIcon />}
     >
       <React.Fragment>
         <form

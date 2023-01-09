@@ -24,9 +24,8 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import HelpIcon from "../../../../../icons/HelpIcon";
+import { HelpIcon, OpenListIcon } from "mds";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import OpenListIcon from "../../../../../icons/OpenListIcon";
 
 interface IDateTimePicker {
   value: any;

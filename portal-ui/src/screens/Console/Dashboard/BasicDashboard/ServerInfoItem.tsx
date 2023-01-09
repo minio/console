@@ -20,7 +20,7 @@ import withStyles from "@mui/styles/withStyles";
 import { ServerInfo } from "../types";
 import { niceDays } from "../../../../common/utils";
 import { Box } from "@mui/material";
-import { CircleIcon } from "../../../../icons";
+import { CircleIcon } from "mds";
 import get from "lodash/get";
 import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
 import {

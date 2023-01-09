@@ -18,7 +18,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { AppState } from "../../../store";
 import { Box } from "@mui/material";
-import { CircleIcon } from "../../../icons";
+import { CircleIcon } from "mds";
 import { getLicenseConsent } from "../License/utils";
 
 const LicenseBadge = () => {

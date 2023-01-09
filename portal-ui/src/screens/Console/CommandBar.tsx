@@ -34,7 +34,7 @@ import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import { routesAsKbarActions } from "./kbar-actions";
 import { Box } from "@mui/material";
-import { MenuExpandedIcon } from "../../icons/SidebarMenus";
+import { MenuExpandedIcon } from "mds";
 import { useSelector } from "react-redux";
 import useApi from "./Common/Hooks/useApi";
 import { Bucket, BucketList } from "./Buckets/types";

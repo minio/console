@@ -25,7 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
-import { BackCaretIcon, CopyIcon, NewPathIcon } from "../../../icons";
+import { BackCaretIcon, CopyIcon, NewPathIcon } from "mds";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   IAM_SCOPES,
