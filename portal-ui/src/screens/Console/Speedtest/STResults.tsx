@@ -30,7 +30,7 @@ import {
   StorageIcon,
   UploadStatIcon,
   VersionIcon,
-} from "../../../icons";
+} from "mds";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer } from "recharts";
 import { cleanMetrics } from "./utils";

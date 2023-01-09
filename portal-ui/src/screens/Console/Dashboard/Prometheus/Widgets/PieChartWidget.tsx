@@ -28,7 +28,7 @@ import { splitSizeMetric, widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import get from "lodash/get";
 import api from "../../../../../common/api";
-import Loader from "../../../Common/Loader/Loader";
+import { Loader } from "mds";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../store";
 import { useSelector } from "react-redux";

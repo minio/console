@@ -29,9 +29,9 @@ import {
   RadioGroup,
 } from "@mui/material";
 
-import * as cicons from "../../../icons";
-import * as micons from "../../../icons/SidebarMenus";
-import Loader from "./Loader/Loader";
+import * as cicons from "mds";
+import * as micons from "mds";
+import { Loader } from "mds";
 
 interface IIconsScreenSimple {
   classes: any;
@@ -87,20 +87,9 @@ const IconsScreen = ({ classes }: IIconsScreenSimple) => {
         })}
       >
         <Grid item xs={3}>
-          <cicons.ConsoleLogo />
+          <cicons.ThemedLogo />
           <br />
-          ConsoleLogo
-        </Grid>
-        <Grid item xs={3}>
-          <cicons.LoginMinIOLogo />
-          <br />
-          LoginMinIOLogo
-        </Grid>
-
-        <Grid item xs={3}>
-          <cicons.OperatorLogo />
-          <br />
-          OperatorLogo
+          ThemedLogo
         </Grid>
       </Grid>
       <h1>Loaders</h1>

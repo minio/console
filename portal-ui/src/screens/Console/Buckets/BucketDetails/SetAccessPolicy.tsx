@@ -31,7 +31,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { ChangeAccessPolicyIcon } from "../../../../icons";
+import { ChangeAccessPolicyIcon } from "mds";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";

@@ -21,7 +21,7 @@ import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { CopyIcon } from "../../../../icons";
+import { CopyIcon } from "mds";
 import { fieldBasic } from "../FormComponents/common/styleLibrary";
 import TooltipWrapper from "../TooltipWrapper/TooltipWrapper";
 

@@ -21,7 +21,7 @@ import { DialogContentText } from "@mui/material";
 import { ErrorResponseHandler } from "../../../common/types";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../Common/Hooks/useApi";
-import { ConfirmDeleteIcon } from "../../../icons";
+import { ConfirmDeleteIcon } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";

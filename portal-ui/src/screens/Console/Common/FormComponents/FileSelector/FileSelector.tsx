@@ -29,7 +29,7 @@ import {
   tooltipHelper,
 } from "../common/styleLibrary";
 import { fileProcess } from "./utils";
-import HelpIcon from "../../../../../icons/HelpIcon";
+import { HelpIcon } from "mds";
 import ErrorBlock from "../../../../shared/ErrorBlock";
 
 interface InputBoxProps {

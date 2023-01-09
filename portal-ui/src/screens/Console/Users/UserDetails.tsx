@@ -27,7 +27,7 @@ import {
   PasswordKeyIcon,
   TrashIcon,
   UsersIcon,
-} from "../../../icons";
+} from "mds";
 
 import {
   actionsTray,

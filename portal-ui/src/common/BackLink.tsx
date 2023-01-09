@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { BackSettingsIcon } from "../icons";
+import { BackSettingsIcon } from "mds";
 import { Box } from "@mui/material";
 
 const styles = (theme: Theme) =>

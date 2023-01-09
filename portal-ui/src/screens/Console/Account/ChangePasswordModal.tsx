@@ -32,7 +32,7 @@ import {
 import { ChangePasswordRequest } from "../Buckets/types";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
-import { ChangePasswordIcon } from "../../../icons";
+import { ChangePasswordIcon } from "mds";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { setModalErrorSnackMessage } from "../../../systemSlice";

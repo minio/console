@@ -21,9 +21,7 @@ import Collapse from "@mui/material/Collapse";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { LogMessage } from "../types";
-import BoxArrowUp from "../../../../icons/BoxArrowUp";
-import BoxArrowDown from "../../../../icons/BoxArrowDown";
-import WarnFilledIcon from "../../../../icons/WarnFilledIcon";
+import { BoxArrowUp, BoxArrowDown, WarnFilledIcon } from "mds";
 
 import getByKey from "lodash/get";
 

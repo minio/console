@@ -18,7 +18,7 @@ import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { Grid, IconButton } from "@mui/material";
-import { ClosePanelIcon } from "../../../../../../icons";
+import { ClosePanelIcon } from "mds";
 import makeStyles from "@mui/styles/makeStyles";
 
 interface IDetailsListPanel {

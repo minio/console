@@ -26,7 +26,7 @@ import {
 } from "../../../../common/utils";
 import { Box } from "@mui/material";
 import { Cell, Pie, PieChart } from "recharts";
-import { CircleIcon } from "../../../../icons";
+import { CircleIcon } from "mds";
 import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
 import { STATUS_COLORS } from "./Utils";
 

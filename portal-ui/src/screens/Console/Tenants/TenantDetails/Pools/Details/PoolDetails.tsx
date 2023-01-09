@@ -24,7 +24,7 @@ import LabelValuePair from "../../../../Common/UsageBarWrapper/LabelValuePair";
 import { niceBytesInt } from "../../../../../../common/utils";
 import StackRow from "../../../../Common/UsageBarWrapper/StackRow";
 import { Button } from "mds";
-import { EditTenantIcon } from "../../../../../../icons";
+import { EditTenantIcon } from "mds";
 
 const stylingLayout = {
   border: "#EAEAEA 1px solid",

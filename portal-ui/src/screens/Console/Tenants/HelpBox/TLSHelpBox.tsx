@@ -16,7 +16,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
-import CertificateIcon from "../../../../icons/CertificateIcon";
+import { CertificateIcon } from "mds";
 import { useParams } from "react-router-dom";
 import { AppState } from "../../../../store";
 

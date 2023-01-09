@@ -17,7 +17,7 @@
 import React, { Fragment, Suspense, useEffect } from "react";
 import { ApplicationLogo } from "mds";
 
-import { VersionIcon } from "../../../icons";
+import { VersionIcon } from "mds";
 import { Box, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useSelector } from "react-redux";

@@ -33,7 +33,7 @@ import api from "../../../../common/api";
 import { ITierElement } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import { LockIcon } from "../../../../icons";
+import { LockIcon } from "mds";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 

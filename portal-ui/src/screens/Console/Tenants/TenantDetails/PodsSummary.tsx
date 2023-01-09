@@ -34,7 +34,7 @@ import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import DeletePod from "./DeletePod";
 import { Grid, InputAdornment, TextField } from "@mui/material";
-import SearchIcon from "../../../../icons/SearchIcon";
+import { SearchIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 
 interface IPodsSummary {

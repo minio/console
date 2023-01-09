@@ -37,12 +37,10 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { AppState, useAppDispatch } from "../../../../store";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import { CircleIcon, MinIOTierIconXs, TrashIcon } from "../../../../icons";
+import { CircleIcon, MinIOTierIconXs, TrashIcon } from "mds";
 import { niceBytes } from "../../../../common/utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
-import EditIcon from "../../../../icons/EditIcon";
-import RefreshIcon from "../../../../icons/RefreshIcon";
-import TenantsIcon from "../../../../icons/TenantsIcon";
+import { EditIcon, RefreshIcon, TenantsIcon } from "mds";
 import PageLayout from "../../Common/Layout/PageLayout";
 import BackLink from "../../../../common/BackLink";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";

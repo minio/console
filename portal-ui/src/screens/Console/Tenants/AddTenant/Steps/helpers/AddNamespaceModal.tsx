@@ -24,7 +24,7 @@ import {
   modalBasic,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmModalIcon } from "../../../../../../icons";
+import { ConfirmModalIcon } from "mds";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { closeAddNSModal } from "../../createTenantSlice";
 import makeStyles from "@mui/styles/makeStyles";

@@ -22,7 +22,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { searchField } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
-import { DisabledIcon, EnabledIcon } from "../../../icons";
+import { DisabledIcon, EnabledIcon } from "mds";
 import { STATUS_COLORS } from "../Dashboard/BasicDashboard/Utils";
 
 const styles = (theme: Theme) =>

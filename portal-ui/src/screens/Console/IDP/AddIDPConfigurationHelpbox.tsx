@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 
 import { Box } from "@mui/material";
-import { HelpIconFilled } from "../../../icons";
+import { HelpIconFilled } from "mds";
 
 interface IContent {
   icon: React.ReactNode;

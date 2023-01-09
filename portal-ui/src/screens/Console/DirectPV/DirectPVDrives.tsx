@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import { Grid, InputAdornment, TextField } from "@mui/material";
 import get from "lodash/get";
 import GroupIcon from "@mui/icons-material/Group";
-import { AddIcon, StorageIcon } from "../../../icons";
+import { AddIcon, StorageIcon } from "mds";
 import {
   actionsTray,
   containerForHeader,
@@ -37,8 +37,7 @@ import { niceBytes } from "../../../common/utils";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import RefreshIcon from "../../../icons/RefreshIcon";
-import SearchIcon from "../../../icons/SearchIcon";
+import { RefreshIcon, SearchIcon } from "mds";
 import HelpBox from "../../../common/HelpBox";
 
 import withSuspense from "../Common/Components/withSuspense";

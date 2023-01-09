@@ -24,7 +24,7 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import BackLink from "../../../common/BackLink";
-import { AddAccessRuleIcon } from "../../../icons";
+import { AddAccessRuleIcon } from "mds";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../../src/common/api";

@@ -39,10 +39,7 @@ import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMi
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import IAMPoliciesIcon from "../../../icons/IAMPoliciesIcon";
-import RefreshIcon from "../../../icons/RefreshIcon";
-import SearchIcon from "../../../icons/SearchIcon";
-import TrashIcon from "../../../icons/TrashIcon";
+import { IAMPoliciesIcon, RefreshIcon, SearchIcon, TrashIcon } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import BackLink from "../../../common/BackLink";

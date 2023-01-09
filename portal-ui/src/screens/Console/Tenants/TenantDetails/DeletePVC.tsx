@@ -22,7 +22,7 @@ import Grid from "@mui/material/Grid";
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmDeleteIcon } from "../../../../icons";
+import { ConfirmDeleteIcon } from "mds";
 import { IStoragePVCs } from "../../Storage/types";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";

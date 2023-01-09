@@ -16,7 +16,7 @@
 
 import React from "react";
 import NumericStatCard from "./NumericStatCard";
-import { TotalObjectsIcon } from "../../../../../icons";
+import { TotalObjectsIcon } from "mds";
 
 const ObjectsCountItem = ({
   title,

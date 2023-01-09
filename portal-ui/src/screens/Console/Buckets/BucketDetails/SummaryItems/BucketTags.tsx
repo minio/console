@@ -25,7 +25,7 @@ import Chip from "@mui/material/Chip";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import withSuspense from "../../../Common/Components/withSuspense";
-import Loader from "../../../Common/Loader/Loader";
+import { Loader } from "mds";
 
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../store";

@@ -30,7 +30,7 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import InputAdornment from "@mui/material/InputAdornment";
 import api from "../../../../../common/api";
-import SearchIcon from "../../../../../icons/SearchIcon";
+import { SearchIcon } from "mds";
 import {
   actionsTray,
   buttonsStyles,

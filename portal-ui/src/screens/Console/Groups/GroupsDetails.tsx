@@ -14,12 +14,7 @@ import {
 import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import {
-  AddIcon,
-  GroupsIcon,
-  IAMPoliciesIcon,
-  TrashIcon,
-} from "../../../icons";
+import { AddIcon, GroupsIcon, IAMPoliciesIcon, TrashIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import SetPolicy from "../Policies/SetPolicy";

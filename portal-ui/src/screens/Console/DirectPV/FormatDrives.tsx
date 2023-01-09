@@ -23,7 +23,7 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
-import { FormatDrivesIcon } from "../../../icons";
+import { FormatDrivesIcon } from "mds";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 

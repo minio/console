@@ -16,7 +16,7 @@
 
 import React from "react";
 import { Grid } from "@mui/material";
-import Loader from "../screens/Console/Common/Loader/Loader";
+import { Loader } from "mds";
 
 const LoadingComponent = () => {
   return (

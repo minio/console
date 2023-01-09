@@ -23,10 +23,7 @@ import { ServerInfo } from "../types";
 import ServerInfoItem from "./ServerInfoItem";
 import { Box } from "@mui/material";
 import DriveInfoItem from "./DriveInfoItem";
-import {
-  MenuCollapsedIcon,
-  MenuExpandedIcon,
-} from "../../../../icons/SidebarMenus";
+import { MenuCollapsedIcon, MenuExpandedIcon } from "mds";
 
 const ServersList = ({ data }: { data: ServerInfo[] }) => {
   const [expanded, setExpanded] = React.useState<string>(

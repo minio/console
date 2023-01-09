@@ -24,8 +24,8 @@ import { NewServiceAccount } from "./types";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 import Grid from "@mui/material/Grid";
 import CredentialItem from "./CredentialItem";
-import WarnIcon from "../../../../icons/WarnIcon";
-import { DownloadIcon, ServiceAccountCredentialsIcon } from "../../../../icons";
+import { WarnIcon } from "mds";
+import { DownloadIcon, ServiceAccountCredentialsIcon } from "mds";
 import TooltipWrapper from "../TooltipWrapper/TooltipWrapper";
 
 const styles = (theme: Theme) =>
