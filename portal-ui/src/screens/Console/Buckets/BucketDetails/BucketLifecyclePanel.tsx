@@ -76,6 +76,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
 
   const displayLifeCycleRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
 
   useEffect(() => {
@@ -298,7 +299,10 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
         </Grid>
         <Grid item xs={12}>
           <SecureComponent
-            scopes={[IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION]}
+            scopes={[
+              IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
+              IAM_SCOPES.S3_GET_ACTIONS,
+            ]}
             resource={bucketName}
             errorProps={{ disabled: true }}
           >

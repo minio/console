@@ -97,6 +97,7 @@ const AccessRule = () => {
 
   const displayAccessRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_BUCKET_POLICY,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
 
   const deleteAccessRules = hasPermission(bucketName, [
@@ -200,6 +201,7 @@ const AccessRule = () => {
           scopes={[
             IAM_SCOPES.S3_GET_BUCKET_POLICY,
             IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+            IAM_SCOPES.S3_GET_ACTIONS,
             IAM_SCOPES.S3_PUT_ACTIONS,
           ]}
           resource={bucketName}
@@ -221,7 +223,7 @@ const AccessRule = () => {
       </Grid>
       <Paper className={classes.tableBlock}>
         <SecureComponent
-          scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
+          scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY, IAM_SCOPES.S3_GET_ACTIONS]}
           resource={bucketName}
           errorProps={{ disabled: true }}
         >

@@ -80,6 +80,7 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
 
   const displayEvents = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
 
   useEffect(() => {
@@ -177,7 +178,10 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
         </Grid>
         <Grid item xs={12}>
           <SecureComponent
-            scopes={[IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS]}
+            scopes={[
+              IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
+              IAM_SCOPES.S3_GET_ACTIONS,
+            ]}
             resource={bucketName}
             errorProps={{ disabled: true }}
           >
