@@ -23,9 +23,6 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 const ListBuckets = React.lazy(() => import("./ListBuckets/ListBuckets"));
 const BucketDetails = React.lazy(() => import("./BucketDetails/BucketDetails"));
-const BrowserHandler = React.lazy(
-  () => import("./BucketDetails/BrowserHandler")
-);
 const AddBucket = React.lazy(() => import("./ListBuckets/AddBucket/AddBucket"));
 
 const Buckets = () => {
@@ -53,22 +50,6 @@ const Buckets = () => {
         element={
           <Suspense fallback={<LoadingComponent />}>
             <BucketDetails />
-          </Suspense>
-        }
-      />
-      <Route
-        path=":bucketName/browse/*"
-        element={
-          <Suspense fallback={<LoadingComponent />}>
-            <BrowserHandler />
-          </Suspense>
-        }
-      />
-      <Route
-        path=":bucketName/browse"
-        element={
-          <Suspense fallback={<LoadingComponent />}>
-            <BrowserHandler />
           </Suspense>
         }
       />

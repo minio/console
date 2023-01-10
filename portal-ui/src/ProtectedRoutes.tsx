@@ -35,6 +35,7 @@ import { SRInfoStateType } from "./types";
 import { AppState, useAppDispatch } from "./store";
 import { saveSessionResponse } from "./screens/Console/consoleSlice";
 import { getOverrideColorVariants } from "./utils/stylesUtils";
+import LoadingComponent from "./common/LoadingComponent";
 
 interface ProtectedRouteProps {
   Component: any;
@@ -119,7 +120,7 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
 
   // if we're still trying to retrieve user session render nothing
   if (sessionLoading) {
-    return null;
+    return <LoadingComponent />;
   }
   // redirect user to the right page based on session status
   return userLoggedIn ? <Component /> : <StorePathAndRedirect />;

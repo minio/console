@@ -29,7 +29,7 @@ import (
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg"
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -116,6 +116,8 @@ type MinioAdmin interface {
 	addTier(ctx context.Context, tier *madmin.TierConfig) error
 	// Edit Tier Credentials
 	editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error
+	// verify Tier status
+	verifyTierStatus(ctx context.Context, tierName string) error
 	// Speedtest
 	speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error)
 	// Site Relication
@@ -147,6 +149,12 @@ type MinioAdmin interface {
 	describeSelfIdentity(ctx context.Context) (*madmin.KMSDescribeSelfIdentity, error)
 	deleteIdentity(ctx context.Context, identity string) error
 	listIdentities(ctx context.Context, pattern string) ([]madmin.KMSIdentityInfo, error)
+
+	// IDP
+	addOrUpdateIDPConfig(ctx context.Context, idpType, cfgName, cfgData string, update bool) (restart bool, err error)
+	listIDPConfig(ctx context.Context, idpType string) ([]madmin.IDPListItem, error)
+	deleteIDPConfig(ctx context.Context, idpType, cfgName string) (restart bool, err error)
+	getIDPConfig(ctx context.Context, cfgType, cfgName string) (c madmin.IDPConfig, err error)
 }
 
 // Interface implementation
@@ -462,6 +470,11 @@ func (ac AdminClient) editTierCreds(ctx context.Context, tierName string, creds 
 	return ac.Client.EditTier(ctx, tierName, creds)
 }
 
+// implements madmin.VerifyTier()
+func (ac AdminClient) verifyTierStatus(ctx context.Context, tierName string) error {
+	return ac.Client.VerifyTier(ctx, tierName)
+}
+
 func NewMinioAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {
 	adminClient, err := newAdminFromClaims(sessionClaims)
 	if err != nil {
@@ -688,4 +701,20 @@ func (ac AdminClient) deleteIdentity(ctx context.Context, identity string) error
 
 func (ac AdminClient) listIdentities(ctx context.Context, pattern string) ([]madmin.KMSIdentityInfo, error) {
 	return ac.Client.ListIdentities(ctx, pattern)
+}
+
+func (ac AdminClient) addOrUpdateIDPConfig(ctx context.Context, idpType, cfgName, cfgData string, update bool) (restart bool, err error) {
+	return ac.Client.AddOrUpdateIDPConfig(ctx, idpType, cfgName, cfgData, update)
+}
+
+func (ac AdminClient) listIDPConfig(ctx context.Context, idpType string) ([]madmin.IDPListItem, error) {
+	return ac.Client.ListIDPConfig(ctx, idpType)
+}
+
+func (ac AdminClient) deleteIDPConfig(ctx context.Context, idpType, cfgName string) (restart bool, err error) {
+	return ac.Client.DeleteIDPConfig(ctx, idpType, cfgName)
+}
+
+func (ac AdminClient) getIDPConfig(ctx context.Context, idpType, cfgName string) (c madmin.IDPConfig, err error) {
+	return ac.Client.GetIDPConfig(ctx, idpType, cfgName)
 }

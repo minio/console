@@ -20,7 +20,7 @@ import {
   IAMPoliciesIcon,
   PasswordKeyIcon,
   ServiceAccountIcon,
-} from "../../../icons";
+} from "mds";
 
 const FeatureItem = ({
   icon,

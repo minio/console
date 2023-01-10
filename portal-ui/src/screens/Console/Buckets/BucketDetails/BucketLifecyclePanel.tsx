@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { LifeCycleItem } from "../types";
-import { AddIcon, TiersIcon } from "../../../../icons";
+import { AddIcon, TiersIcon } from "mds";
 import {
   actionsTray,
   searchField,
@@ -76,6 +76,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
 
   const displayLifeCycleRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
 
   useEffect(() => {
@@ -275,7 +276,10 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
         <Grid item xs={12} className={classes.actionsTray}>
           <PanelTitle>Lifecycle Rules</PanelTitle>
           <SecureComponent
-            scopes={[IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION]}
+            scopes={[
+              IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+              IAM_SCOPES.S3_PUT_ACTIONS,
+            ]}
             resource={bucketName}
             matchAll
             errorProps={{ disabled: true }}
@@ -295,7 +299,10 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
         </Grid>
         <Grid item xs={12}>
           <SecureComponent
-            scopes={[IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION]}
+            scopes={[
+              IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
+              IAM_SCOPES.S3_GET_ACTIONS,
+            ]}
             resource={bucketName}
             errorProps={{ disabled: true }}
           >

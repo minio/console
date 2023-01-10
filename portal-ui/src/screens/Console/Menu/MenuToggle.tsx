@@ -17,7 +17,7 @@
 import React, { Fragment, Suspense, useEffect } from "react";
 import { ApplicationLogo } from "mds";
 
-import { VersionIcon } from "../../../icons";
+import { VersionIcon } from "mds";
 import { Box, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useSelector } from "react-redux";
@@ -82,7 +82,6 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
         width: "100%",
         cursor: "pointer",
         "&::after": {
-          width: "80%",
           height: "1px",
           display: "block",
           content: "' '",
@@ -107,7 +106,7 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
           marginRight: "8px",
           display: "flex",
           alignItems: "center",
-          height: "83px",
+          height: "82px",
 
           "&.mini": {
             flexFlow: "column",

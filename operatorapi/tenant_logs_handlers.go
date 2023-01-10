@@ -72,10 +72,14 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantLogs)
 	}
+	return getTenantLogsInfo(minTenant), nil
+}
+
+func getTenantLogsInfo(minTenant *miniov2.Tenant) *models.TenantLogs {
 	if minTenant.Spec.Log == nil {
 		return &models.TenantLogs{
 			Disabled: true,
-		}, nil
+		}
 	}
 	annotations := []*models.Annotation{}
 	for k, v := range minTenant.Spec.Log.Annotations {
@@ -157,7 +161,7 @@ func getTenantLogsResponse(session *models.Principal, params operator_api.GetTen
 		tenantLoggingConfiguration.LogDBCPURequest = requestedDBCPU
 		tenantLoggingConfiguration.LogDBMemRequest = requestedDBMem
 	}
-	return tenantLoggingConfiguration, nil
+	return tenantLoggingConfiguration
 }
 
 // setTenantLogsResponse updates the Audit Log and Log DB configuration for the tenant
@@ -177,7 +181,11 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
+	return setTenantLogs(ctx, minTenant, opClient, params)
+}
 
+func setTenantLogs(ctx context.Context, minTenant *miniov2.Tenant, opClient OperatorClientI, params operator_api.SetTenantLogsParams) (bool, *models.Error) {
+	var err error
 	labels := make(map[string]string)
 	if params.Data.Labels != nil {
 		for i := 0; i < len(params.Data.Labels); i++ {
@@ -315,7 +323,11 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 				logSearchStorageClass := "standard"
 
 				logSearchDiskSpace := resource.NewQuantity(diskSpaceFromAPI, resource.DecimalExponent)
-
+				resources := corev1.ResourceRequirements{
+					Requests: corev1.ResourceList{
+						corev1.ResourceStorage: *logSearchDiskSpace,
+					},
+				}
 				minTenant.Spec.Log.Db = &miniov2.LogDbConfig{
 					VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
 						ObjectMeta: metav1.ObjectMeta{
@@ -325,11 +337,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 							AccessModes: []corev1.PersistentVolumeAccessMode{
 								corev1.ReadWriteOnce,
 							},
-							Resources: corev1.ResourceRequirements{
-								Requests: corev1.ResourceList{
-									corev1.ResourceStorage: *logSearchDiskSpace,
-								},
-							},
+							Resources:        resources,
 							StorageClassName: &logSearchStorageClass,
 						},
 					},
@@ -339,7 +347,7 @@ func setTenantLogsResponse(session *models.Principal, params operator_api.SetTen
 					Image:              params.Data.DbImage,
 					ServiceAccountName: params.Data.DbServiceAccountName,
 					Resources: corev1.ResourceRequirements{
-						Requests: minTenant.Spec.Log.Db.Resources.Requests,
+						Requests: resources.Requests,
 					},
 				}
 			} else {
@@ -382,6 +390,10 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
+	return enableTenantLogging(ctx, minTenant, opClient, params.Tenant)
+}
+
+func enableTenantLogging(ctx context.Context, minTenant *miniov2.Tenant, opClient OperatorClientI, tenantName string) (bool, *models.Error) {
 	minTenant.EnsureDefaults()
 	// Default class name for Log search
 	diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
@@ -399,7 +411,7 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 		Db: &miniov2.LogDbConfig{
 			VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: params.Tenant + "-log",
+					Name: tenantName + "-log",
 				},
 				Spec: corev1.PersistentVolumeClaimSpec{
 					AccessModes: []corev1.PersistentVolumeAccessMode{
@@ -416,7 +428,7 @@ func enableTenantLoggingResponse(session *models.Principal, params operator_api.
 		},
 	}
 
-	_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+	_, err := opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err)
 	}

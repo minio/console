@@ -16,7 +16,7 @@
 
 import React from "react";
 import NumericStatCard from "./NumericStatCard";
-import { BucketsIcon } from "../../../../../icons";
+import { BucketsIcon } from "mds";
 
 const BucketsCountItem = ({
   title,

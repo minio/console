@@ -5,7 +5,7 @@ import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import ErrorBlock from "../../../shared/ErrorBlock";
-import Loader from "../Loader/Loader";
+import { Loader } from "mds";
 
 interface IProgressBar {
   maxValue: number;

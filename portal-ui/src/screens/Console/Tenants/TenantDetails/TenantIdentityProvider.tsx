@@ -52,14 +52,14 @@ import {
   commonFormValidation,
   IValidation,
 } from "../../../../utils/validationFunctions";
-import { ConfirmModalIcon } from "../../../../icons";
+import { ConfirmModalIcon } from "mds";
 import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
-import Loader from "../../Common/Loader/Loader";
+import { Loader } from "mds";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";

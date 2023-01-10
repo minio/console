@@ -25,7 +25,7 @@ import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapp
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   resetRewind,
-  setLoadingObjectsList,
+  setLoadingObjects,
   setRewindEnable,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
 
@@ -73,7 +73,7 @@ const RewindEnable = ({
         })
       );
     }
-    dispatch(setLoadingObjectsList(true));
+    dispatch(setLoadingObjects(true));
 
     closeModalAndRefresh();
   };

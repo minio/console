@@ -1007,6 +1007,11 @@ func init() {
             "in": "query"
           },
           {
+            "type": "boolean",
+            "name": "bypass",
+            "in": "query"
+          },
+          {
             "name": "files",
             "in": "body",
             "required": true,
@@ -1538,6 +1543,11 @@ func init() {
           {
             "type": "boolean",
             "name": "non_current_versions",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "bypass",
             "in": "query"
           }
         ],
@@ -2787,6 +2797,197 @@ func init() {
         }
       }
     },
+    "/idp/{type}": {
+      "get": {
+        "tags": [
+          "idp"
+        ],
+        "summary": "List IDP Configurations",
+        "operationId": "ListConfigurations",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "IDP Configuration Type",
+            "name": "type",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idpListConfigurationsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "idp"
+        ],
+        "summary": "Create IDP Configuration",
+        "operationId": "CreateConfiguration",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "IDP Configuration Type",
+            "name": "type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idpServerConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setIDPResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/idp/{type}/{name}": {
+      "get": {
+        "tags": [
+          "idp"
+        ],
+        "summary": "Get IDP Configuration",
+        "operationId": "GetConfiguration",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "IDP Configuration Name",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "IDP Configuration Type",
+            "name": "type",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idpServerConfiguration"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "idp"
+        ],
+        "summary": "Update IDP Configuration",
+        "operationId": "UpdateConfiguration",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idpServerConfiguration"
+            }
+          },
+          {
+            "type": "string",
+            "description": "IDP Configuration Name",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "IDP Configuration Type",
+            "name": "type",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setIDPResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "idp"
+        ],
+        "summary": "Delete IDP Configuration",
+        "operationId": "DeleteConfiguration",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "IDP Configuration Name",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "IDP Configuration Type",
+            "name": "type",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setIDPResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/kms/apis": {
       "get": {
         "tags": [
@@ -3460,6 +3661,16 @@ func init() {
         ],
         "summary": "Logout from Console.",
         "operationId": "Logout",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/logoutRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response."
@@ -5788,6 +5999,57 @@ func init() {
         }
       }
     },
+    "idpListConfigurationsResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/idpServerConfiguration"
+          }
+        }
+      }
+    },
+    "idpServerConfiguration": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/idpServerConfigurationInfo"
+          }
+        },
+        "input": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "idpServerConfigurationInfo": {
+      "type": "object",
+      "properties": {
+        "isCfg": {
+          "type": "boolean"
+        },
+        "isEnv": {
+          "type": "boolean"
+        },
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
     "kmDeleteKeyRequest": {
       "type": "object"
     },
@@ -6369,6 +6631,9 @@ func init() {
         "isDirectPV": {
           "type": "boolean"
         },
+        "isK8S": {
+          "type": "boolean"
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -6426,7 +6691,18 @@ func init() {
     "loginResponse": {
       "type": "object",
       "properties": {
+        "IDPRefreshToken": {
+          "type": "string"
+        },
         "sessionId": {
+          "type": "string"
+        }
+      }
+    },
+    "logoutRequest": {
+      "type": "object",
+      "properties": {
+        "state": {
           "type": "string"
         }
       }
@@ -7135,6 +7411,9 @@ func init() {
         "delete_flag": {
           "type": "boolean"
         },
+        "is_latest": {
+          "type": "boolean"
+        },
         "last_modified": {
           "type": "string"
         },
@@ -7388,6 +7667,14 @@ func init() {
       "properties": {
         "restart": {
           "description": "Returns wheter server needs to restart to apply changes or not",
+          "type": "boolean"
+        }
+      }
+    },
+    "setIDPResponse": {
+      "type": "object",
+      "properties": {
+        "restart": {
           "type": "boolean"
         }
       }
@@ -9162,6 +9449,11 @@ func init() {
             "in": "query"
           },
           {
+            "type": "boolean",
+            "name": "bypass",
+            "in": "query"
+          },
+          {
             "name": "files",
             "in": "body",
             "required": true,
@@ -9693,6 +9985,11 @@ func init() {
           {
             "type": "boolean",
             "name": "non_current_versions",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "bypass",
             "in": "query"
           }
         ],
@@ -10942,6 +11239,197 @@ func init() {
         }
       }
     },
+    "/idp/{type}": {
+      "get": {
+        "tags": [
+          "idp"
+        ],
+        "summary": "List IDP Configurations",
+        "operationId": "ListConfigurations",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "IDP Configuration Type",
+            "name": "type",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idpListConfigurationsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "idp"
+        ],
+        "summary": "Create IDP Configuration",
+        "operationId": "CreateConfiguration",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "IDP Configuration Type",
+            "name": "type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idpServerConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setIDPResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/idp/{type}/{name}": {
+      "get": {
+        "tags": [
+          "idp"
+        ],
+        "summary": "Get IDP Configuration",
+        "operationId": "GetConfiguration",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "IDP Configuration Name",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "IDP Configuration Type",
+            "name": "type",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idpServerConfiguration"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "idp"
+        ],
+        "summary": "Update IDP Configuration",
+        "operationId": "UpdateConfiguration",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idpServerConfiguration"
+            }
+          },
+          {
+            "type": "string",
+            "description": "IDP Configuration Name",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "IDP Configuration Type",
+            "name": "type",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setIDPResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "idp"
+        ],
+        "summary": "Delete IDP Configuration",
+        "operationId": "DeleteConfiguration",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "IDP Configuration Name",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "IDP Configuration Type",
+            "name": "type",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setIDPResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/kms/apis": {
       "get": {
         "tags": [
@@ -11615,6 +12103,16 @@ func init() {
         ],
         "summary": "Logout from Console.",
         "operationId": "Logout",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/logoutRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response."
@@ -14069,6 +14567,57 @@ func init() {
         }
       }
     },
+    "idpListConfigurationsResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/idpServerConfiguration"
+          }
+        }
+      }
+    },
+    "idpServerConfiguration": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/idpServerConfigurationInfo"
+          }
+        },
+        "input": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "idpServerConfigurationInfo": {
+      "type": "object",
+      "properties": {
+        "isCfg": {
+          "type": "boolean"
+        },
+        "isEnv": {
+          "type": "boolean"
+        },
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
     "kmDeleteKeyRequest": {
       "type": "object"
     },
@@ -14650,6 +15199,9 @@ func init() {
         "isDirectPV": {
           "type": "boolean"
         },
+        "isK8S": {
+          "type": "boolean"
+        },
         "loginStrategy": {
           "type": "string",
           "enum": [
@@ -14707,7 +15259,18 @@ func init() {
     "loginResponse": {
       "type": "object",
       "properties": {
+        "IDPRefreshToken": {
+          "type": "string"
+        },
         "sessionId": {
+          "type": "string"
+        }
+      }
+    },
+    "logoutRequest": {
+      "type": "object",
+      "properties": {
+        "state": {
           "type": "string"
         }
       }
@@ -15416,6 +15979,9 @@ func init() {
         "delete_flag": {
           "type": "boolean"
         },
+        "is_latest": {
+          "type": "boolean"
+        },
         "last_modified": {
           "type": "string"
         },
@@ -15669,6 +16235,14 @@ func init() {
       "properties": {
         "restart": {
           "description": "Returns wheter server needs to restart to apply changes or not",
+          "type": "boolean"
+        }
+      }
+    },
+    "setIDPResponse": {
+      "type": "object",
+      "properties": {
+        "restart": {
           "type": "boolean"
         }
       }

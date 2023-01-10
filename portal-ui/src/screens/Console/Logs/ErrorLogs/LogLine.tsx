@@ -14,16 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { Fragment, useState } from "react";
-import { LogMessage } from "../types";
+import { DateTime } from "luxon";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Collapse from "@mui/material/Collapse";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Moment from "react-moment";
-import BoxArrowUp from "../../../../icons/BoxArrowUp";
-import BoxArrowDown from "../../../../icons/BoxArrowDown";
-import WarnFilledIcon from "../../../../icons/WarnFilledIcon";
+import { LogMessage } from "../types";
+import { BoxArrowUp, BoxArrowDown, WarnFilledIcon } from "mds";
 
 import getByKey from "lodash/get";
 
@@ -113,7 +111,8 @@ const messageForError = (log: LogMessage) => {
       <div>
         <b style={labelStyle}>Backtrace:&nbsp;</b>
       </div>
-      {(getLogEntryKey("error.source") || []).map((e: any, i: number) => {
+
+      {(log.error.source || []).map((e: any, i: number) => {
         return (
           <div>
             <b style={labelStyle}>{i}:&nbsp;</b>
@@ -158,7 +157,12 @@ const LogLine = (props: { log: LogMessage }) => {
 
   titleLogMessage = (titleLogMessage || "").replace(tColorRegex, "");
 
-  let dateStr = <Moment format="YYYY/MM/DD UTC HH:mm:ss">{log.time}</Moment>;
+  const logTime = DateTime.fromJSDate(log.time);
+
+  let dateStr = (
+    <Fragment>{logTime.toFormat("yyyy/MM/dd HH:mm:ss (ZZZZ)")}</Fragment>
+  );
+
   if (log.time.getFullYear() === 1) {
     dateStr = <Fragment>n/a</Fragment>;
   }

@@ -22,50 +22,50 @@ import { Grid } from "@mui/material";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import {
   formFieldStyles,
   modalStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { encodeURLString } from "../../../../../../common/utils";
 
 import { BucketObjectItem } from "./types";
-import { CreateNewPathIcon } from "../../../../../../icons";
+import { CreateNewPathIcon } from "mds";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
+import makeStyles from "@mui/styles/makeStyles";
 
 interface ICreatePath {
-  classes: any;
   modalOpen: boolean;
   bucketName: string;
   folderName: string;
   onClose: () => any;
-  existingFiles: BucketObjectItem[];
   simplePath: string | null;
 }
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...modalStyleUtils,
     ...formFieldStyles,
-  });
+  })
+);
 
 const CreatePathModal = ({
   modalOpen,
   folderName,
   bucketName,
   onClose,
-  classes,
-  existingFiles,
   simplePath,
 }: ICreatePath) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const classes = useStyles();
 
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [currentPath, setCurrentPath] = useState(bucketName);
+
+  const records = useSelector((state: AppState) => state.objectBrowser.records);
 
   useEffect(() => {
     if (simplePath) {
@@ -91,7 +91,7 @@ const CreatePathModal = ({
     const sharesName = (record: BucketObjectItem) =>
       record.name === folderPath + pathUrl;
 
-    if (existingFiles.findIndex(sharesName) !== -1) {
+    if (records.findIndex(sharesName) !== -1) {
       dispatch(
         setModalErrorSnackMessage({
           errorMessage: "Folder cannot have the same name as an existing file",
@@ -106,7 +106,7 @@ const CreatePathModal = ({
       .filter((splitItem) => splitItem.trim() !== "")
       .join("/");
 
-    const newPath = `/buckets/${bucketName}/browse/${encodeURLString(
+    const newPath = `/browser/${bucketName}/${encodeURLString(
       `${folderPath}${cleanPathURL}/`
     )}`;
     navigate(newPath);
@@ -197,4 +197,4 @@ const mapStateToProps = ({ objectBrowser }: AppState) => ({
 
 const connector = connect(mapStateToProps);
 
-export default connector(withStyles(styles)(CreatePathModal));
+export default connector(CreatePathModal);

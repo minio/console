@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
+import { DateTime } from "luxon";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -33,8 +34,7 @@ import {
   Typography,
 } from "@mui/material";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
-import Moment from "react-moment";
-import CertificateIcon from "../../../../icons/CertificateIcon";
+import { CertificateIcon } from "mds";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -111,6 +111,9 @@ const TLSCertificate = ({
   onDelete = () => {},
 }: ITLSCertificate) => {
   const certificates = certificateInfo.domains || [];
+
+  const expiry = DateTime.fromISO(certificateInfo.expiry);
+
   return (
     <Chip
       key={certificateInfo.name}
@@ -130,9 +133,7 @@ const TLSCertificate = ({
               <EventBusyIcon color="inherit" fontSize="small" />
               &nbsp;
               <span className={"label"}>Expiry:&nbsp;</span>
-              <span>
-                <Moment format="YYYY/MM/DD">{certificateInfo.expiry}</Moment>
-              </span>
+              <span>{expiry.toFormat("yyyy/MM/dd")}</span>
             </Box>
             <Divider />
             <br />

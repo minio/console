@@ -37,7 +37,7 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
-import { BucketQuotaIcon } from "../../../../icons";
+import { BucketQuotaIcon } from "mds";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";

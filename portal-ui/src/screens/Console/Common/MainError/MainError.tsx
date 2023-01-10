@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import get from "lodash/get";
 import { AppState, useAppDispatch } from "../../../../store";
 import { Box } from "@mui/material";
-import { AlertCloseIcon } from "../../../../icons";
+import { AlertCloseIcon } from "mds";
 import { Portal } from "@mui/base";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 

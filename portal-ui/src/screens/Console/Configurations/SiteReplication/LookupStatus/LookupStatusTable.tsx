@@ -16,7 +16,7 @@
 
 import React from "react";
 import { Box } from "@mui/material";
-import { CircleIcon } from "../../../../../icons";
+import { CircleIcon } from "mds";
 
 const LookupStatusTable = ({
   matrixData = [],

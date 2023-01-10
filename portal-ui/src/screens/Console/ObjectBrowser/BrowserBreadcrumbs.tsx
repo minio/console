@@ -25,13 +25,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
-import { BackCaretIcon, CopyIcon, NewPathIcon } from "../../../icons";
+import { BackCaretIcon, CopyIcon, NewPathIcon } from "mds";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   IAM_SCOPES,
   permissionTooltipHelper,
 } from "../../../common/SecureComponent/permissions";
-import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
@@ -58,7 +57,6 @@ interface IObjectBrowser {
   bucketName: string;
   internalPaths: string;
   hidePathButton?: boolean;
-  existingFiles: BucketObjectItem[];
   additionalOptions?: React.ReactNode;
 }
 
@@ -66,7 +64,6 @@ const BrowserBreadcrumbs = ({
   classes,
   bucketName,
   internalPaths,
-  existingFiles,
   hidePathButton,
   additionalOptions,
 }: IObjectBrowser) => {
@@ -85,7 +82,10 @@ const BrowserBreadcrumbs = ({
 
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
 
-  const canCreatePath = hasPermission(bucketName, [IAM_SCOPES.S3_PUT_OBJECT]);
+  const canCreatePath = hasPermission(bucketName, [
+    IAM_SCOPES.S3_PUT_OBJECT,
+    IAM_SCOPES.S3_PUT_ACTIONS,
+  ]);
 
   let paths = internalPaths;
 
@@ -98,7 +98,7 @@ const BrowserBreadcrumbs = ({
 
   let breadcrumbsMap = splitPaths.map((objectItem: string, index: number) => {
     const subSplit = `${splitPaths.slice(0, index + 1).join("/")}/`;
-    const route = `/buckets/${bucketName}/browse/${
+    const route = `/browser/${bucketName}/${
       subSplit ? `${encodeURLString(subSplit)}` : ``
     }`;
 
@@ -143,7 +143,7 @@ const BrowserBreadcrumbs = ({
   const listBreadcrumbs: any[] = [
     <Fragment key={`breadcrumbs-root-path`}>
       <Link
-        to={`/buckets/${bucketName}/browse`}
+        to={`/browser/${bucketName}`}
         onClick={() => {
           dispatch(setVersionsModeEnabled({ status: false, objectName: "" }));
         }}
@@ -176,7 +176,6 @@ const BrowserBreadcrumbs = ({
             bucketName={bucketName}
             folderName={internalPaths}
             onClose={closeAddFolderModal}
-            existingFiles={existingFiles}
           />
         )}
         <Grid item xs={12} className={`${classes.breadcrumbs}`}>
@@ -231,7 +230,7 @@ const BrowserBreadcrumbs = ({
               canCreatePath
                 ? "Choose or create a new path"
                 : permissionTooltipHelper(
-                    [IAM_SCOPES.S3_PUT_OBJECT],
+                    [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
                     "create a new path"
                   )
             }

@@ -108,6 +108,8 @@ const ObjectManager = React.lazy(
   () => import("./Common/ObjectManager/ObjectManager")
 );
 
+const ObjectBrowser = React.lazy(() => import("./ObjectBrowser/ObjectBrowser"));
+
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
 const Policies = React.lazy(() => import("./Policies/Policies"));
 
@@ -122,6 +124,24 @@ const AccountCreate = React.lazy(
 
 const Users = React.lazy(() => import("./Users/Users"));
 const Groups = React.lazy(() => import("./Groups/Groups"));
+const IDPLDAPConfigurations = React.lazy(
+  () => import("./IDP/IDPLDAPConfigurations")
+);
+const IDPOpenIDConfigurations = React.lazy(
+  () => import("./IDP/IDPOpenIDConfigurations")
+);
+const AddIDPLDAPConfiguration = React.lazy(
+  () => import("./IDP/AddIDPLDAPConfiguration")
+);
+const AddIDPOpenIDConfiguration = React.lazy(
+  () => import("./IDP/AddIDPOpenIDConfiguration")
+);
+const IDPLDAPConfigurationDetails = React.lazy(
+  () => import("./IDP/IDPLDAPConfigurationDetails")
+);
+const IDPOpenIDConfigurationDetails = React.lazy(
+  () => import("./IDP/IDPOpenIDConfigurationDetails")
+);
 
 const TenantDetails = React.lazy(
   () => import("./Tenants/TenantDetails/TenantDetails")
@@ -241,7 +261,7 @@ const Console = ({ classes }: IConsoleProps) => {
   useLayoutEffect(() => {
     // Debounce to not execute constantly
     const debounceSize = debounce(() => {
-      if (open && window.innerWidth <= 800) {
+      if (open && window.innerWidth <= 1024) {
         dispatch(menuOpen(false));
       }
     }, 300);
@@ -254,6 +274,23 @@ const Console = ({ classes }: IConsoleProps) => {
   });
 
   const consoleAdminRoutes: IRouteRule[] = [
+    {
+      component: ObjectBrowser,
+      path: IAM_PAGES.OBJECT_BROWSER_VIEW,
+      forceDisplay: true,
+      customPermissionFnc: () => {
+        const path = window.location.pathname;
+        const resource = path.match(/browser\/(.*)\//);
+        return (
+          resource &&
+          resource.length > 0 &&
+          hasPermission(
+            resource[1],
+            IAM_PAGES_PERMISSIONS[IAM_PAGES.OBJECT_BROWSER_VIEW]
+          )
+        );
+      },
+    },
     {
       component: Buckets,
       path: IAM_PAGES.BUCKETS,
@@ -286,22 +323,7 @@ const Console = ({ classes }: IConsoleProps) => {
         );
       },
     },
-    {
-      component: Buckets,
-      path: IAM_PAGES.BUCKETS_BROWSE_VIEW,
-      customPermissionFnc: () => {
-        const path = window.location.pathname;
-        const resource = path.match(/buckets\/(.*)\/browse*/);
-        return (
-          resource &&
-          resource.length > 0 &&
-          hasPermission(
-            resource[1],
-            IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_BROWSE_VIEW]
-          )
-        );
-      },
-    },
+
     {
       component: Watch,
       path: IAM_PAGES.TOOLS_WATCH,
@@ -342,6 +364,30 @@ const Console = ({ classes }: IConsoleProps) => {
     {
       component: Policies,
       path: IAM_PAGES.POLICIES,
+    },
+    {
+      component: IDPLDAPConfigurations,
+      path: IAM_PAGES.IDP_LDAP_CONFIGURATIONS,
+    },
+    {
+      component: IDPOpenIDConfigurations,
+      path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS,
+    },
+    {
+      component: AddIDPLDAPConfiguration,
+      path: IAM_PAGES.IDP_LDAP_CONFIGURATIONS_ADD,
+    },
+    {
+      component: AddIDPOpenIDConfiguration,
+      path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS_ADD,
+    },
+    {
+      component: IDPLDAPConfigurationDetails,
+      path: IAM_PAGES.IDP_LDAP_CONFIGURATIONS_VIEW,
+    },
+    {
+      component: IDPOpenIDConfigurationDetails,
+      path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS_VIEW,
     },
     {
       component: Heal,

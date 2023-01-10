@@ -62,6 +62,10 @@ type DeleteObjectParams struct {
 	/*
 	  In: query
 	*/
+	Bypass *bool
+	/*
+	  In: query
+	*/
 	NonCurrentVersions *bool
 	/*
 	  Required: true
@@ -96,6 +100,11 @@ func (o *DeleteObjectParams) BindRequest(r *http.Request, route *middleware.Matc
 
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qBypass, qhkBypass, _ := qs.GetOK("bypass")
+	if err := o.bindBypass(qBypass, qhkBypass, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -157,6 +166,29 @@ func (o *DeleteObjectParams) bindBucketName(rawData []string, hasKey bool, forma
 	// Required: true
 	// Parameter is provided by construction from the route
 	o.BucketName = raw
+
+	return nil
+}
+
+// bindBypass binds and validates parameter Bypass from query.
+func (o *DeleteObjectParams) bindBypass(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	value, err := swag.ConvertBool(raw)
+	if err != nil {
+		return errors.InvalidType("bypass", "query", "bool", raw)
+	}
+	o.Bypass = &value
 
 	return nil
 }

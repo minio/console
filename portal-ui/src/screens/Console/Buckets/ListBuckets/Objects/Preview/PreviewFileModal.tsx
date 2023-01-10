@@ -18,7 +18,7 @@ import React, { Fragment } from "react";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import PreviewFileContent from "./PreviewFileContent";
 import { BucketObjectItem } from "../ListObjects/types";
-import { ObjectPreviewIcon } from "../../../../../../icons";
+import { ObjectPreviewIcon } from "mds";
 
 interface IPreviewFileProps {
   open: boolean;

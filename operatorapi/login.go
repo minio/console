@@ -18,6 +18,8 @@ package operatorapi
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -25,6 +27,7 @@ import (
 	xoauth2 "golang.org/x/oauth2"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/minio/pkg/env"
 
 	"github.com/minio/console/restapi"
 
@@ -93,6 +96,15 @@ func login(credentials restapi.ConsoleCredentialsI) (*string, error) {
 	return &token, nil
 }
 
+// isKubernetes returns true if minio is running in kubernetes.
+func isKubernetes() bool {
+	// Kubernetes env used to validate if we are
+	// indeed running inside a kubernetes pod
+	// is KUBERNETES_SERVICE_HOST
+	// https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/kubelet_pods.go#L541
+	return env.Get("KUBERNETES_SERVICE_HOST", "") != ""
+}
+
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
 func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDetails, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
@@ -129,6 +141,7 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams) (*models.LoginDet
 		LoginStrategy: loginStrategy,
 		RedirectRules: redirectRules,
 		IsDirectPV:    getDirectPVEnabled(),
+		IsK8S:         isKubernetes(),
 	}
 	return loginDetails, nil
 }
@@ -150,6 +163,18 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams) (*models.L
 	lr := params.Body
 
 	if oauth2.IsIDPEnabled() {
+		decodedRState, err := base64.StdEncoding.DecodeString(*lr.State)
+		if err != nil {
+			return nil, restapi.ErrorWithContext(ctx, err)
+		}
+
+		var requestItems oauth2.LoginURLParams
+		err = json.Unmarshal(decodedRState, &requestItems)
+
+		if err != nil {
+			return nil, restapi.ErrorWithContext(ctx, err)
+		}
+
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, restapi.GetConsoleHTTPClient(""))
 		if err != nil {
@@ -161,7 +186,7 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams) (*models.L
 			Client:  oauth2Client,
 		}
 		// Validate user against IDP
-		_, err = verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, *lr.State)
+		_, err = verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, requestItems.State)
 		if err != nil {
 			return nil, restapi.ErrorWithContext(ctx, err)
 		}

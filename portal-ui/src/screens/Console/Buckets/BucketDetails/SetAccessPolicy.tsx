@@ -31,7 +31,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { ChangeAccessPolicyIcon } from "../../../../icons";
+import { ChangeAccessPolicyIcon } from "mds";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
@@ -143,6 +143,19 @@ const SetAccessPolicy = ({
                 ]}
               />
             </Grid>
+            {accessPolicy === "PUBLIC" && (
+              <div
+                style={{
+                  marginTop: "25px",
+                  fontSize: "14px",
+                  fontStyle: "italic",
+                  color: "#5E5E5E",
+                }}
+              >
+                * Warning: With Public access anyone will be able to upload,
+                download and delete files from this Bucket *
+              </div>
+            )}
             {accessPolicy === "CUSTOM" && (
               <Grid item xs={12} className={classes.codeMirrorContainer}>
                 <CodeMirrorWrapper

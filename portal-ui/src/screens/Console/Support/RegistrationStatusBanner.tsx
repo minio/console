@@ -1,6 +1,6 @@
 import React from "react";
 import { Box } from "@mui/material";
-import VerifiedIcon from "../../../icons/VerifiedIcon";
+import { VerifiedIcon } from "mds";
 
 const RegistrationStatusBanner = ({ email = "" }: { email?: string }) => {
   return (

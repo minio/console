@@ -24,7 +24,7 @@ import PageHeader from "./PageHeader/PageHeader";
 import PageLayout from "./Layout/PageLayout";
 import SectionTitle from "./SectionTitle";
 import { Button } from "mds";
-import { ConfirmDeleteIcon } from "../../../icons";
+import { ConfirmDeleteIcon } from "mds";
 import ConfirmDialog from "./ModalWrapper/ConfirmDialog";
 
 interface IComponentsScreen {

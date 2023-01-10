@@ -19,8 +19,7 @@ import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 import { AppState } from "../../../../../store";
 import { useSelector } from "react-redux";
-import ShowTextIcon from "../../../../../icons/ShowTextIcon";
-import HideTextIcon from "../../../../../icons/HideTextIcon";
+import { CollapseCaret, ExpandCaret } from "mds";
 import { Button } from "mds";
 import ValidRule from "./ValidRule";
 import InvalidRule from "./InvalidRule";
@@ -68,7 +67,7 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
         onClick={() => {
           toggleNamingRules();
         }}
-        icon={showNamingRules ? <ShowTextIcon /> : <HideTextIcon />}
+        icon={showNamingRules ? <CollapseCaret /> : <ExpandCaret />}
         label={(showNamingRules ? "Hide" : "View") + " Bucket Naming Rules"}
         style={{
           height: "10px",

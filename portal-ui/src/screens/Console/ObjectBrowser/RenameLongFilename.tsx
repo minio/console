@@ -20,7 +20,7 @@ import createStyles from "@mui/styles/createStyles";
 import { Button } from "mds";
 import makeStyles from "@mui/styles/makeStyles";
 import { Theme } from "@mui/material/styles";
-import { EditIcon } from "../../../icons";
+import { EditIcon } from "mds";
 import {
   containerForHeader,
   formFieldStyles,

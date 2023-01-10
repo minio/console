@@ -29,7 +29,10 @@ import {
   BucketsIcon,
   LifecycleConfigIcon,
   SelectAllIcon,
-} from "../../../../icons";
+  RefreshIcon,
+  MultipleBucketsIcon,
+  SelectMultipleIcon,
+} from "mds";
 import {
   containerForHeader,
   searchField,
@@ -40,9 +43,6 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import HelpBox from "../../../../common/HelpBox";
-import RefreshIcon from "../../../../icons/RefreshIcon";
-import MultipleBucketsIcon from "../../../../icons/MultipleBucketsIcon";
-import SelectMultipleIcon from "../../../../icons/SelectMultipleIcon";
 import { SecureComponent } from "../../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
@@ -64,6 +64,7 @@ import { selFeatures } from "../../consoleSlice";
 import AutoColorIcon from "../../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import AButton from "../../Common/AButton/AButton";
+import { setLoadingObjects } from "../../ObjectBrowser/objectBrowserSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -78,7 +79,7 @@ const styles = (theme: Theme) =>
     },
     bucketList: {
       marginTop: 25,
-      height: "calc(100vh - 210px)",
+      height: "calc(100vh - 211px)",
       "&.isEmbedded": {
         height: "calc(100vh - 128px)",
       },
@@ -123,6 +124,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
           .then((res: BucketList) => {
             setLoading(false);
             setRecords(res.buckets || []);
+            dispatch(setLoadingObjects(true));
           })
           .catch((err: ErrorResponseHandler) => {
             setLoading(false);
@@ -218,7 +220,10 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
   };
 
   const canCreateBucket = hasPermission("*", [IAM_SCOPES.S3_CREATE_BUCKET]);
-  const canListBuckets = hasPermission("*", [IAM_SCOPES.S3_LIST_BUCKET]);
+  const canListBuckets = hasPermission("*", [
+    IAM_SCOPES.S3_LIST_BUCKET,
+    IAM_SCOPES.S3_ALL_LIST_BUCKET,
+  ]);
 
   return (
     <Fragment>
@@ -451,7 +456,10 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
                           <Fragment>
                             <br />
                             {permissionTooltipHelper(
-                              [IAM_SCOPES.S3_LIST_BUCKET],
+                              [
+                                IAM_SCOPES.S3_LIST_BUCKET,
+                                IAM_SCOPES.S3_ALL_LIST_BUCKET,
+                              ],
                               "view the buckets on this server"
                             )}
                             <br />

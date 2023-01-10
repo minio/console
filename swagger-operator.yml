@@ -1645,6 +1645,8 @@ definitions:
           $ref: "#/definitions/redirectRule"
       isDirectPV:
         type: boolean
+      isK8S:
+        type: boolean
   loginRequest:
     type: object
     properties:

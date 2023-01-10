@@ -25,7 +25,7 @@ import (
 	"github.com/minio/console/restapi/operations"
 	bucektApi "github.com/minio/console/restapi/operations/bucket"
 
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 
 	"github.com/minio/console/models"
 )

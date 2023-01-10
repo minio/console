@@ -587,9 +587,13 @@ export const typesSelection = {
     cursor: "pointer",
     padding: 0,
     overflow: "hidden",
+    "&:hover": {
+      backgroundColor: "#ebebeb",
+    },
   },
+
   lambdaNotifIcon: {
-    backgroundColor: "#FEFEFE",
+    background: "transparent",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -746,7 +750,6 @@ export const snackBarCommon = {
     fontWeight: 400,
     fontFamily: "Lato, sans-serif",
     fontSize: 14,
-    padding: "0px 20px 0px 20px;",
     boxShadow: "none" as const,
     "&.MuiPaper-root.MuiSnackbarContent-root": {
       borderRadius: "0px 0px 5px 5px",
@@ -757,6 +760,9 @@ export const snackBarCommon = {
       width: "100%",
       overflowX: "hidden",
       textOverflow: "ellipsis",
+    },
+    "&.MuiPaper-root": {
+      padding: "0px 20px 0px 20px",
     },
   },
   errorSnackBar: {
@@ -1399,7 +1405,7 @@ export const detailsPanel: any = {
   },
   titleLabel: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#000",
     padding: "12px 30px 8px 22px",
     whiteSpace: "nowrap",
@@ -1429,7 +1435,7 @@ export const detailsPanel: any = {
         borderBottom: 0,
       },
       "&::before": {
-        content: "' '",
+        content: "' '!important",
       },
     },
   },
@@ -1455,8 +1461,10 @@ export const objectBrowserExtras = {
 // These classes are meant to be used as React.CSSProperties for TableWrapper
 export const TableRowPredefStyles: any = {
   deleted: {
-    color: "#ACACAC",
-    backgroundColor: "#FDFDFD",
-    fontStyle: "italic",
+    color: "#707070",
+    backgroundColor: "#f1f0f0",
+    "&.selected": {
+      color: "#b2b2b2",
+    },
   },
 };

@@ -25,7 +25,7 @@ import {
 } from "../../createTenantSlice";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "../../../../../../icons/RemoveIcon";
+import { RemoveIcon } from "mds";
 import { clearValidationError, getRandomString } from "../../../utils";
 import CasinoIcon from "@mui/icons-material/Casino";
 import { useSelector } from "react-redux";

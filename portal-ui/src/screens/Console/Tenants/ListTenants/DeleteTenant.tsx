@@ -23,7 +23,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import Grid from "@mui/material/Grid";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmDeleteIcon } from "../../../../icons";
+import { ConfirmDeleteIcon } from "mds";
 import WarningMessage from "../../Common/WarningMessage/WarningMessage";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { setErrorSnackMessage } from "../../../../systemSlice";

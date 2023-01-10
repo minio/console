@@ -36,6 +36,7 @@ type DeleteMultipleObjectsURL struct {
 	BucketName string
 
 	AllVersions *bool
+	Bypass      *bool
 
 	_basePath string
 	// avoid unkeyed usage
@@ -84,6 +85,14 @@ func (o *DeleteMultipleObjectsURL) Build() (*url.URL, error) {
 	}
 	if allVersionsQ != "" {
 		qs.Set("all_versions", allVersionsQ)
+	}
+
+	var bypassQ string
+	if o.Bypass != nil {
+		bypassQ = swag.FormatBool(*o.Bypass)
+	}
+	if bypassQ != "" {
+		qs.Set("bypass", bypassQ)
 	}
 
 	_result.RawQuery = qs.Encode()

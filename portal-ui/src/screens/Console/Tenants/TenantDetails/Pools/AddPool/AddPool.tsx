@@ -31,7 +31,7 @@ import GenericWizard from "../../../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../../../Common/GenericWizard/types";
 import PoolResources from "./PoolResources";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import TenantsIcon from "../../../../../../icons/TenantsIcon";
+import { TenantsIcon } from "mds";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { useSelector } from "react-redux";

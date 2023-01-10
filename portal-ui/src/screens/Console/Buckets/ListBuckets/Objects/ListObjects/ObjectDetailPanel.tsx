@@ -29,7 +29,7 @@ import {
   spacingUtils,
   textStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { IFileInfo } from "../ObjectDetails/types";
+import { IFileInfo, MetadataResponse } from "../ObjectDetails/types";
 import { download, extensionPreview } from "../utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
@@ -57,8 +57,8 @@ import {
   ShareIcon,
   TagsIcon,
   VersionsIcon,
-} from "../../../../../../icons";
-import { InspectMenuIcon } from "../../../../../../icons/SidebarMenus";
+} from "mds";
+import { InspectMenuIcon } from "mds";
 import api from "../../../../../../common/api";
 import ShareFile from "../ObjectDetails/ShareFile";
 import SetRetention from "../ObjectDetails/SetRetention";
@@ -74,7 +74,7 @@ import ActionsListSection from "./ActionsListSection";
 import { displayFileIconName } from "./utils";
 import TagsModal from "../ObjectDetails/TagsModal";
 import InspectObject from "./InspectObject";
-import Loader from "../../../../Common/Loader/Loader";
+import { Loader } from "mds";
 import { selDistSet } from "../../../../../../systemSlice";
 import {
   makeid,
@@ -189,6 +189,8 @@ const ObjectDetailPanel = ({
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [totalVersionsSize, setTotalVersionsSize] = useState<number>(0);
   const [longFileOpen, setLongFileOpen] = useState<boolean>(false);
+  const [metaData, setMetaData] = useState<any | null>(null);
+  const [loadMetadata, setLoadingMetadata] = useState<boolean>(false);
 
   const internalPathsDecoded = decodeURLString(internalPaths) || "";
   const allPathData = internalPathsDecoded.split("/");
@@ -212,6 +214,10 @@ const ObjectDetailPanel = ({
           ) || emptyFile;
       }
 
+      if (!infoElement.is_delete_marker) {
+        setLoadingMetadata(true);
+      }
+
       setActualInfo(infoElement);
     }
   }, [selectedVersion, distributedSetup, allInfoElements]);
@@ -225,15 +231,16 @@ const ObjectDetailPanel = ({
             distributedSetup ? "&with_versions=true" : ""
           }`
         )
-        .then((res: IFileInfo[]) => {
-          const result = get(res, "objects", []);
+        .then((res: { objects: IFileInfo[] }) => {
+          const result: IFileInfo[] = res.objects || [];
           if (distributedSetup) {
             setAllInfoElements(result);
             setVersions(result);
+
             const tVersionSize = result.reduce(
-              (acc: number, currValue: IFileInfo) => {
+              (acc: number, currValue: IFileInfo): number => {
                 if (currValue?.size) {
-                  return acc + currValue.size;
+                  return acc + parseInt(currValue.size);
                 }
                 return acc;
               },
@@ -242,8 +249,14 @@ const ObjectDetailPanel = ({
 
             setTotalVersionsSize(tVersionSize);
           } else {
-            setActualInfo(result[0]);
+            const resInfo = result[0];
+
+            setActualInfo(resInfo);
             setVersions([]);
+
+            if (!resInfo.is_delete_marker) {
+              setLoadingMetadata(true);
+            }
           }
 
           dispatch(setLoadingObjectInfo(false));
@@ -261,6 +274,26 @@ const ObjectDetailPanel = ({
     distributedSetup,
     selectedVersion,
   ]);
+
+  useEffect(() => {
+    if (loadMetadata && internalPaths !== "") {
+      api
+        .invoke(
+          "GET",
+          `/api/v1/buckets/${bucketName}/objects/metadata?prefix=${internalPaths}`
+        )
+        .then((res: MetadataResponse) => {
+          let metadata = get(res, "objectMetadata", {});
+
+          setMetaData(metadata);
+          setLoadingMetadata(false);
+        })
+        .catch((err) => {
+          console.error("Error Getting Metadata Status: ", err.detailedError);
+          setLoadingMetadata(false);
+        });
+    }
+  }, [bucketName, internalPaths, loadMetadata]);
 
   let tagKeys: string[] = [];
 
@@ -410,14 +443,21 @@ const ObjectDetailPanel = ({
   ];
   const canSetLegalHold = hasPermission(bucketName, [
     IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
   const canSetTags = hasPermission(objectResources, [
     IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 
   const canChangeRetention = hasPermission(
     objectResources,
-    [IAM_SCOPES.S3_GET_OBJECT_RETENTION, IAM_SCOPES.S3_PUT_OBJECT_RETENTION],
+    [
+      IAM_SCOPES.S3_GET_OBJECT_RETENTION,
+      IAM_SCOPES.S3_PUT_OBJECT_RETENTION,
+      IAM_SCOPES.S3_GET_ACTIONS,
+      IAM_SCOPES.S3_PUT_ACTIONS,
+    ],
     true
   );
   const canInspect = hasPermission(objectResources, [
@@ -427,9 +467,12 @@ const ObjectDetailPanel = ({
     IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
     IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
     IAM_SCOPES.S3_GET_OBJECT_VERSION,
+    IAM_SCOPES.S3_GET_ACTIONS,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
   const canGetObject = hasPermission(objectResources, [
     IAM_SCOPES.S3_GET_OBJECT,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
   const canDelete = hasPermission(
     [bucketName, currentItem, [bucketName, actualInfo.name].join("/")],
@@ -447,7 +490,7 @@ const ObjectDetailPanel = ({
       tooltip: canGetObject
         ? "Download this Object"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
+            [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
             "download this object"
           ),
     },
@@ -461,7 +504,7 @@ const ObjectDetailPanel = ({
       tooltip: canGetObject
         ? "Share this File"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
+            [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
             "share this object"
           ),
     },
@@ -478,7 +521,7 @@ const ObjectDetailPanel = ({
       tooltip: canGetObject
         ? "Preview this File"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
+            [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
             "preview this object"
           ),
     },
@@ -499,7 +542,7 @@ const ObjectDetailPanel = ({
           ? "Change Legal Hold rules for this File"
           : "Object Locking must be enabled on this bucket in order to set Legal Hold"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD],
+            [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD, IAM_SCOPES.S3_PUT_ACTIONS],
             "change legal hold settings for this object"
           ),
     },
@@ -521,6 +564,8 @@ const ObjectDetailPanel = ({
             [
               IAM_SCOPES.S3_GET_OBJECT_RETENTION,
               IAM_SCOPES.S3_PUT_OBJECT_RETENTION,
+              IAM_SCOPES.S3_GET_ACTIONS,
+              IAM_SCOPES.S3_PUT_ACTIONS,
             ],
             "change Retention Rules for this object"
           ),
@@ -539,6 +584,8 @@ const ObjectDetailPanel = ({
             [
               IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
               IAM_SCOPES.S3_GET_OBJECT_TAGGING,
+              IAM_SCOPES.S3_GET_ACTIONS,
+              IAM_SCOPES.S3_PUT_ACTIONS,
             ],
             "set Tags on this object"
           ),
@@ -585,6 +632,8 @@ const ObjectDetailPanel = ({
               IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
               IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
               IAM_SCOPES.S3_GET_OBJECT_VERSION,
+              IAM_SCOPES.S3_GET_ACTIONS,
+              IAM_SCOPES.S3_PUT_ACTIONS,
             ],
             "display all versions of this object"
           ),
@@ -649,7 +698,7 @@ const ObjectDetailPanel = ({
             version_id: actualInfo.version_id || "null",
             size: parseInt(actualInfo.size || "0"),
             content_type: "",
-            last_modified: new Date(actualInfo.last_modified),
+            last_modified: actualInfo.last_modified,
           }}
           onClosePreview={() => {
             setPreviewOpen(false);
@@ -802,7 +851,10 @@ const ObjectDetailPanel = ({
           </Box>
           <Box className={classes.detailContainer}>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD]}
+              scopes={[
+                IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD,
+                IAM_SCOPES.S3_GET_ACTIONS,
+              ]}
               resource={bucketName}
             >
               <Fragment>
@@ -814,7 +866,10 @@ const ObjectDetailPanel = ({
           </Box>
           <Box className={classes.detailContainer}>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
+              scopes={[
+                IAM_SCOPES.S3_GET_OBJECT_RETENTION,
+                IAM_SCOPES.S3_GET_ACTIONS,
+              ]}
               resource={bucketName}
             >
               <Fragment>
@@ -838,20 +893,19 @@ const ObjectDetailPanel = ({
               </Fragment>
             </SecureComponent>
           </Box>
-          <Grid item xs={12} className={classes.headerForSection}>
-            <span>Metadata</span>
-            <MetadataIcon />
-          </Grid>
-          <Box className={classes.detailContainer}>
-            {actualInfo ? (
-              <ObjectMetaData
-                bucketName={bucketName}
-                internalPaths={internalPaths}
-                actualInfo={actualInfo}
-                linear
-              />
-            ) : null}
-          </Box>
+          {!actualInfo.is_delete_marker && (
+            <Fragment>
+              <Grid item xs={12} className={classes.headerForSection}>
+                <span>Metadata</span>
+                <MetadataIcon />
+              </Grid>
+              <Box className={classes.detailContainer}>
+                {actualInfo && metaData ? (
+                  <ObjectMetaData metaData={metaData} linear />
+                ) : null}
+              </Box>
+            </Fragment>
+          )}
         </Fragment>
       )}
     </Fragment>

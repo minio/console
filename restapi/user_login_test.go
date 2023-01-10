@@ -24,7 +24,7 @@ import (
 
 	xoauth2 "golang.org/x/oauth2"
 
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 
 	iampolicy "github.com/minio/pkg/iam/policy"
 

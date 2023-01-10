@@ -65,9 +65,10 @@ export const groupsElement = identityChildren
   .find("a")
   .withAttribute("href", IAM_PAGES.GROUPS);
 
-export const iamPoliciesElement = identityChildren
-  .find("a")
-  .withAttribute("href", IAM_PAGES.POLICIES);
+export const iamPoliciesElement = sidebarItem.withAttribute(
+  "href",
+  IAM_PAGES.POLICIES
+);
 
 export const configurationsElement = Selector(".MuiPaper-root")
   .find("ul")

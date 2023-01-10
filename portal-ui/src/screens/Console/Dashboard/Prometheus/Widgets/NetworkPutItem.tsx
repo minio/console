@@ -16,8 +16,8 @@
 
 import React from "react";
 import { Box } from "@mui/material";
-import Loader from "../../../Common/Loader/Loader";
-import { NetworkPutIcon } from "../../../../../icons";
+import { Loader } from "mds";
+import { NetworkPutIcon } from "mds";
 
 const NetworkPutItem = ({
   value,

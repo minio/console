@@ -50,7 +50,7 @@ import {
   resourcesConfigurations,
 } from "./Steps/TenantResources/utils";
 import HelpBox from "../../../../common/HelpBox";
-import { StorageIcon } from "../../../../icons";
+import { StorageIcon } from "mds";
 import { selFeatures } from "../../consoleSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { resetAddTenantForm } from "./createTenantSlice";

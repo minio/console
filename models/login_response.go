@@ -34,6 +34,9 @@ import (
 // swagger:model loginResponse
 type LoginResponse struct {
 
+	// ID p refresh token
+	IDPRefreshToken string `json:"IDPRefreshToken,omitempty"`
+
 	// session Id
 	SessionID string `json:"sessionId,omitempty"`
 }

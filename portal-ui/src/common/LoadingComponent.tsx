@@ -16,7 +16,7 @@
 
 import React from "react";
 import { Grid } from "@mui/material";
-import Loader from "../screens/Console/Common/Loader/Loader";
+import { Loader } from "mds";
 
 const LoadingComponent = () => {
   return (
@@ -30,8 +30,6 @@ const LoadingComponent = () => {
     >
       <Grid item xs={3} style={{ textAlign: "center" }}>
         <Loader style={{ width: 35, height: 35 }} />
-        <br />
-        Loading...
       </Grid>
     </Grid>
   );

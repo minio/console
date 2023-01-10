@@ -17,14 +17,12 @@
 package config
 
 import (
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 )
 
 // Default keys
 const (
 	Default = madmin.Default
-	Enable  = madmin.EnableKey
-	License = "license" // Deprecated Dec 2021
 )
 
 // Top level config constants.

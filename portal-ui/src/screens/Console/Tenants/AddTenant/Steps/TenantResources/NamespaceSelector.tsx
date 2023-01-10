@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useMemo } from "react";
-import AddIcon from "../../../../../../icons/AddIcon";
+import { AddIcon } from "mds";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { openAddNSModal, setNamespace } from "../../createTenantSlice";
 import { useSelector } from "react-redux";

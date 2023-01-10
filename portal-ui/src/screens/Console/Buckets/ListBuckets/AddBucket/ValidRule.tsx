@@ -16,7 +16,7 @@
 
 import React, { Fragment } from "react";
 import Grid from "@mui/material/Grid";
-import { ConfirmModalIcon } from "../../../../../icons";
+import { ConfirmModalIcon } from "mds";
 
 interface IValidRule {
   ruleText: string;

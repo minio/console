@@ -29,10 +29,11 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import AddMembersToGroup from "../../../icons/AddMembersToGroupIcon";
+import { AddMembersToGroupIcon } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import Box from "@mui/material/Box";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -152,7 +153,7 @@ const ChangeUserGroups = ({
       }}
       modalOpen={open}
       title={"Set Groups"}
-      titleIcon={<AddMembersToGroup />}
+      titleIcon={<AddMembersToGroupIcon />}
     >
       <React.Fragment>
         <form
@@ -171,12 +172,19 @@ const ChangeUserGroups = ({
                 }}
               />
             </Grid>
-            <Grid item xs={12} className={classes.buttonContainer}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                alignItems: "center",
+                justifyContent: "flex-end",
+                width: "100%",
+              }}
+            >
               <Button
                 id={"clear-change-user-groups"}
                 type="button"
                 variant="regular"
-                style={classes.spacerRight}
                 onClick={resetForm}
                 label={"Clear"}
               />
@@ -188,7 +196,7 @@ const ChangeUserGroups = ({
                 disabled={addLoading || !sendEnabled}
                 label={"Save"}
               />
-            </Grid>
+            </Box>
             {addLoading && (
               <Grid item xs={12}>
                 <LinearProgress />

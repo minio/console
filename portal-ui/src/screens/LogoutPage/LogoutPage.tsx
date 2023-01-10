@@ -19,9 +19,10 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../store";
 import { ErrorResponseHandler } from "../../common/types";
 import { clearSession } from "../../common/utils";
-import api from "../../common/api";
 import { userLogged } from "../../systemSlice";
 import { resetSession } from "../Console/consoleSlice";
+import api from "../../common/api";
+import LoadingComponent from "../../common/LoadingComponent";
 
 const LogoutPage = () => {
   const dispatch = useAppDispatch();
@@ -33,10 +34,11 @@ const LogoutPage = () => {
       localStorage.setItem("userLoggedIn", "");
       localStorage.setItem("redirect-path", "");
       dispatch(resetSession());
-      navigate(`login`);
+      navigate(`/login`);
     };
+    const state = localStorage.getItem("auth-state");
     api
-      .invoke("POST", `/api/v1/logout`)
+      .invoke("POST", `/api/v1/logout`, { state })
       .then(() => {
         deleteSession();
       })
@@ -46,7 +48,7 @@ const LogoutPage = () => {
       });
   };
   logout();
-  return <></>;
+  return <LoadingComponent />;
 };
 
 export default LogoutPage;

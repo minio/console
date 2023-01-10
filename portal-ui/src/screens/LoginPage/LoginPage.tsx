@@ -28,13 +28,11 @@ import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import Grid from "@mui/material/Grid";
 import { loginStrategyType, redirectRule } from "./types";
-import LogoutIcon from "../../icons/LogoutIcon";
-import RefreshIcon from "../../icons/RefreshIcon";
 import MainError from "../Console/Common/MainError/MainError";
-import { LockIcon } from "../../icons";
+import { LockIcon, LogoutIcon, RefreshIcon } from "mds";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 import clsx from "clsx";
-import Loader from "../Console/Common/Loader/Loader";
+import { Loader } from "mds";
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import {
@@ -291,7 +289,8 @@ const Login = () => {
   );
   const navigateTo = useSelector((state: AppState) => state.login.navigateTo);
 
-  const directPVMode = useSelector((state: AppState) => state.login.isDirectPV);
+  const isDirectPV = useSelector((state: AppState) => state.login.isDirectPV);
+  const isK8S = useSelector((state: AppState) => state.login.isK8S);
 
   const isOperator =
     loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
@@ -479,10 +478,16 @@ const Login = () => {
   let modeLogo: "console" | "directpv" | "operator" | "kes" | "subnet" =
     "console";
 
-  if (directPVMode) {
+  if (isDirectPV) {
     modeLogo = "directpv";
   } else if (isOperator) {
     modeLogo = "operator";
+  }
+
+  let docsURL = "https://min.io/docs/minio/linux/index.html?ref=con";
+  if (isK8S) {
+    docsURL =
+      "https://min.io/docs/minio/kubernetes/upstream/index.html?ref=con";
   }
 
   return (
@@ -493,11 +498,7 @@ const Login = () => {
         form={loginComponent}
         formFooter={
           <Fragment>
-            <a
-              href="https://min.io/docs/minio/linux/index.html?ref=con"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href={docsURL} target="_blank" rel="noreferrer">
               Documentation
             </a>
             <span className={classes.separator}>|</span>
@@ -526,20 +527,14 @@ const Login = () => {
             </a>
           </Fragment>
         }
-        promoHeader={
-          <Fragment>
-            Multi-Cloud
-            <br />
-            Object Store
-          </Fragment>
-        }
+        promoHeader={<Fragment>Multi-Cloud Object&nbsp;Store</Fragment>}
         promoInfo={
           <Fragment>
-            MinIO offers high-performance, S3 compatible object storage. <br />
-            Native to Kubernetes, MinIO is the only object storage suite
-            available on every public cloud, every Kubernetes distribution, the
-            private cloud and the edge. MinIO is software-defined and is 100%
-            open source under GNU AGPL v3.
+            MinIO's high-performance, Kubernetes-native object store is licensed
+            under GNU AGPL v3 and is available on every cloud - public, private
+            and edge. For more information on the terms of the license or to
+            learn more about commercial licensing options visit the{" "}
+            <a href={"https://min.io/pricing"}>pricing page</a>.
           </Fragment>
         }
       />

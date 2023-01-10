@@ -45,7 +45,7 @@ import {
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../common/SecureComponent";
-import { SearchIcon } from "../../../../icons";
+import { SearchIcon } from "mds";
 import MissingIntegration from "../../Common/MissingIntegration/MissingIntegration";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selFeatures } from "../../consoleSlice";

@@ -34,7 +34,7 @@ import (
 
 	utils2 "github.com/minio/console/pkg/http"
 
-	"github.com/minio/madmin-go"
+	"github.com/minio/madmin-go/v2"
 
 	"github.com/minio/console/restapi"
 

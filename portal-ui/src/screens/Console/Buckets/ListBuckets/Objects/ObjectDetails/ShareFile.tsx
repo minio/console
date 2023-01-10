@@ -15,10 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import get from "lodash/get";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
+import { ShareIcon, CopyIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import CopyToClipboard from "react-copy-to-clipboard";
@@ -36,15 +36,12 @@ import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
 import { encodeURLString } from "../../../../../../common/utils";
-import { ShareIcon } from "../../../../../../icons";
 import {
   selDistSet,
   setModalErrorSnackMessage,
   setModalSnackMessage,
 } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
-
-const CopyIcon = React.lazy(() => import("../../../../../../icons/CopyIcon"));
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -128,15 +125,15 @@ const ShareFile = ({
               dataObject.name
             )}${distributedSetup ? "&with_versions=true" : ""}`
           )
-          .then((res: IFileInfo[]) => {
-            const result = get(res, "objects", []);
+          .then((res: { objects: IFileInfo[] }) => {
+            const result: IFileInfo[] = res.objects || [];
 
-            const latestVersion = result.find(
+            const latestVersion: IFileInfo | undefined = result.find(
               (elem: IFileInfo) => elem.is_latest
             );
 
             if (latestVersion) {
-              setVersionID(latestVersion.version_id);
+              setVersionID(`${latestVersion.version_id}`);
               return;
             }
 
