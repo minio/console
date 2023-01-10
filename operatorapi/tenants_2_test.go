@@ -145,7 +145,7 @@ func (suite *TenantTestSuite) initCreateTenantRequest() (params operator_api.Cre
 func (suite *TenantTestSuite) TestListAllTenantsHandlerWithoutError() {
 	params, api := suite.initListAllTenantsRequest()
 	response := api.OperatorAPIListAllTenantsHandler.Handle(params, &models.Principal{})
-	_, ok := response.(*operator_api.ListTenantsOK)
+	_, ok := response.(*operator_api.ListTenantsDefault)
 	suite.assert.True(ok)
 }
 
@@ -158,7 +158,7 @@ func (suite *TenantTestSuite) initListAllTenantsRequest() (params operator_api.L
 func (suite *TenantTestSuite) TestListTenantsHandlerWithoutError() {
 	params, api := suite.initListTenantsRequest()
 	response := api.OperatorAPIListTenantsHandler.Handle(params, &models.Principal{})
-	_, ok := response.(*operator_api.ListTenantsOK)
+	_, ok := response.(*operator_api.ListTenantsDefault)
 	suite.assert.True(ok)
 }
 
@@ -307,7 +307,7 @@ func (suite *TenantTestSuite) initDeleteTenantRequest() (params operator_api.Del
 func (suite *TenantTestSuite) TestDeletePodHandlerWithoutError() {
 	params, api := suite.initDeletePodRequest()
 	response := api.OperatorAPIDeletePodHandler.Handle(params, &models.Principal{})
-	_, ok := response.(*operator_api.DeletePodNoContent)
+	_, ok := response.(*operator_api.DeletePodDefault)
 	suite.assert.True(ok)
 }
 
@@ -371,7 +371,7 @@ func (suite *TenantTestSuite) initGetTenantUsageRequest() (params operator_api.G
 func (suite *TenantTestSuite) TestGetTenantPodsHandlerWithoutError() {
 	params, api := suite.initGetTenantPodsRequest()
 	response := api.OperatorAPIGetTenantPodsHandler.Handle(params, &models.Principal{})
-	_, ok := response.(*operator_api.GetTenantPodsOK)
+	_, ok := response.(*operator_api.GetTenantPodsDefault)
 	suite.assert.True(ok)
 }
 
