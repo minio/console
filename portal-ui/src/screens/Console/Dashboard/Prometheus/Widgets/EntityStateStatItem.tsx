@@ -56,7 +56,8 @@ const EntityStateStatItem = ({
     if (loading) {
       let stepCalc = 0;
       if (timeStart !== null && timeEnd !== null) {
-        const secondsInPeriod = timeEnd.unix() - timeStart.unix();
+        const secondsInPeriod =
+          timeEnd.toUnixInteger() - timeStart.toUnixInteger();
         const periods = Math.floor(secondsInPeriod / 60);
 
         stepCalc = periods < 1 ? 15 : periods;
@@ -68,9 +69,9 @@ const EntityStateStatItem = ({
           `/api/v1/${apiPrefix}/info/widgets/${
             panelItem.id
           }/?step=${stepCalc}&${
-            timeStart !== null ? `&start=${timeStart.unix()}` : ""
+            timeStart !== null ? `&start=${timeStart.toUnixInteger()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
-            timeEnd !== null ? `end=${timeEnd.unix()}` : ""
+            timeEnd !== null ? `end=${timeEnd.toUnixInteger()}` : ""
           }`
         )
         .then((res: any) => {
