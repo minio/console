@@ -23,7 +23,7 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { IDirectPVFormatResItem } from "./types";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { DriveFormatErrorsIcon } from "../../../icons";
+import { DriveFormatErrorsIcon } from "mds";
 import { encodeURLString } from "../../../common/utils";
 
 interface IFormatErrorsProps {

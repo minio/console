@@ -25,7 +25,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 
-import AddIcon from "../../../../icons/AddIcon";
+import { AddIcon } from "mds";
 import Grid from "@mui/material/Grid";
 import {
   actionsTray,

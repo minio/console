@@ -33,7 +33,7 @@ import { ChangeUserPasswordRequest } from "../Buckets/types";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
-import { ChangePasswordIcon } from "../../../icons";
+import { ChangePasswordIcon } from "mds";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 

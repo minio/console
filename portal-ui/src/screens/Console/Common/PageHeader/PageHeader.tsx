@@ -22,7 +22,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { AppState, useAppDispatch } from "../../../../store";
 
-import { CircleIcon, ObjectManagerIcon } from "../../../../icons";
+import { CircleIcon, ObjectManagerIcon } from "mds";
 import { Box } from "@mui/material";
 import { toggleList } from "../../ObjectBrowser/objectBrowserSlice";
 import { selFeatures } from "../../consoleSlice";

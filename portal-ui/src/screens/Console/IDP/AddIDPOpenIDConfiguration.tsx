@@ -20,7 +20,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { LockIcon } from "../../../icons";
+import { LockIcon } from "mds";
 import AddIDPConfiguration from "./AddIDPConfiguration";
 import { openIDFormFields, openIDHelpBoxContents } from "./utils";
 import AddIDPConfigurationHelpBox from "./AddIDPConfigurationHelpbox";

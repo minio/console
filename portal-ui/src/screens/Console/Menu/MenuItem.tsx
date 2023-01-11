@@ -30,10 +30,7 @@ import {
   menuItemTextStyles,
 } from "./MenuStyleUtils";
 import List from "@mui/material/List";
-import {
-  MenuCollapsedIcon,
-  MenuExpandedIcon,
-} from "../../../icons/SidebarMenus";
+import { MenuCollapsedIcon, MenuExpandedIcon } from "mds";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,

@@ -18,13 +18,11 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { AddIcon, Button, LambdaIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
-import AddIcon from "../../../../icons/AddIcon";
-import LambdaIcon from "../../../../icons/LambdaIcon";
 import { BucketEvent, BucketEventList } from "../types";
 import {
   actionsTray,

@@ -73,7 +73,10 @@ import {
   DownloadIcon,
   PreviewIcon,
   ShareIcon,
-} from "../../../../../../icons";
+  HistoryIcon,
+  RefreshIcon,
+  DeleteIcon,
+} from "mds";
 import UploadFilesButton from "../../UploadFilesButton";
 import DetailsListPanel from "./DetailsListPanel";
 import ObjectDetailPanel from "./ObjectDetailPanel";
@@ -132,17 +135,6 @@ import {
   openPreview,
   openShare,
 } from "../../../../ObjectBrowser/objectBrowserThunks";
-
-const HistoryIcon = React.lazy(
-  () => import("../../../../../../icons/HistoryIcon")
-);
-const RefreshIcon = React.lazy(
-  () => import("../../../../../../icons/RefreshIcon")
-);
-
-const DeleteIcon = React.lazy(
-  () => import("../../../../../../icons/DeleteIcon")
-);
 
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects"))

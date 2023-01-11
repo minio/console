@@ -30,7 +30,7 @@ import {
   TransformedEndpointItem,
 } from "./types";
 import { getNotificationConfigKey, notificationTransform } from "./utils";
-import { AddIcon, LambdaIcon } from "../../../icons";
+import { AddIcon, LambdaIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 import {
@@ -42,7 +42,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
-import RefreshIcon from "../../../icons/RefreshIcon";
+import { RefreshIcon } from "mds";
 import HelpBox from "../../../common/HelpBox";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";

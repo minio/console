@@ -37,7 +37,7 @@ import {
   SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import { AddIcon, BucketsIcon, TrashIcon } from "../../../../icons";
+import { AddIcon, BucketsIcon, TrashIcon } from "mds";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import HelpBox from "../../../../common/HelpBox";

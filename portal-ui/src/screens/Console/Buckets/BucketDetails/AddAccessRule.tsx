@@ -30,7 +30,7 @@ import {
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { AddAccessRuleIcon } from "../../../../icons";
+import { AddAccessRuleIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 

@@ -32,11 +32,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import {
-  AddNewTagIcon,
-  DisabledIcon,
-  EditTagIcon,
-} from "../../../../../../icons";
+import { AddNewTagIcon, DisabledIcon, EditTagIcon } from "mds";
 import { IFileInfo } from "./types";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../../../common/SecureComponent";

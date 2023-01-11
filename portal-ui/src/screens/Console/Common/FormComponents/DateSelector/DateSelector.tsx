@@ -33,7 +33,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputBase from "@mui/material/InputBase";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import HelpIcon from "../../../../../icons/HelpIcon";
+import { HelpIcon } from "mds";
 import FormSwitchWrapper from "../FormSwitchWrapper/FormSwitchWrapper";
 import { days, months, validDate, years } from "./utils";
 

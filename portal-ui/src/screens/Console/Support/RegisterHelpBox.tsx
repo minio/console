@@ -22,7 +22,7 @@ import {
   ExtraFeaturesIcon,
   HelpIconFilled,
   PerformanceFeatureIcon,
-} from "../../../icons";
+} from "mds";
 
 const FeatureItem = ({
   icon,

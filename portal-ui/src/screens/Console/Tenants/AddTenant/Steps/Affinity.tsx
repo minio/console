@@ -36,8 +36,7 @@ import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelecto
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../../common/api";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import AddIcon from "../../../../../icons/AddIcon";
-import RemoveIcon from "../../../../../icons/RemoveIcon";
+import { AddIcon, RemoveIcon } from "mds";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import TolerationSelector from "../../../Common/TolerationSelector/TolerationSelector";
 import { setModalErrorSnackMessage } from "../../../../../systemSlice";

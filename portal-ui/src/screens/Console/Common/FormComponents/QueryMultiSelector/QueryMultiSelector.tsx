@@ -31,7 +31,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import { InputLabel, Tooltip } from "@mui/material";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
-import AddIcon from "../../../../../icons/AddIcon";
+import { AddIcon } from "mds";
 
 interface IQueryMultiSelector {
   elements: string;

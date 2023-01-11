@@ -16,7 +16,7 @@
 
 import React from "react";
 import { Box, Tooltip } from "@mui/material";
-import Loader from "../../../Common/Loader/Loader";
+import { Loader } from "mds";
 
 const NumericStatCard = ({
   value,

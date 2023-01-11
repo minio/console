@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { LifeCycleItem } from "../types";
-import { AddIcon, TiersIcon } from "../../../../icons";
+import { AddIcon, TiersIcon } from "mds";
 import {
   actionsTray,
   searchField,

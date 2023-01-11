@@ -9,9 +9,9 @@ import {
   ITenant,
   ValueUnit,
 } from "../../Tenants/ListTenants/types";
-import { CircleIcon } from "../../../../icons";
+import { CircleIcon } from "mds";
 import { niceBytes, niceBytesInt } from "../../../../common/utils";
-import Loader from "../Loader/Loader";
+import { Loader } from "mds";
 import TenantCapacity from "../../Tenants/ListTenants/TenantCapacity";
 import ErrorBlock from "../../../shared/ErrorBlock";
 import LabelValuePair from "./LabelValuePair";

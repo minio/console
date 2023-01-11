@@ -340,7 +340,7 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 	api.OperatorAPIUpdateTenantDomainsHandler = operator_api.UpdateTenantDomainsHandlerFunc(func(params operator_api.UpdateTenantDomainsParams, principal *models.Principal) middleware.Responder {
 		err := getUpdateDomainsResponse(principal, params)
 		if err != nil {
-			operator_api.NewUpdateTenantDomainsDefault(int(err.Code)).WithPayload(err)
+			return operator_api.NewUpdateTenantDomainsDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewUpdateTenantDomainsNoContent()
 	})
@@ -434,7 +434,7 @@ func deleteTenantAction(
 	return nil
 }
 
-// getDeleteTenantResponse gets the output of deleting a minio instance
+// getDeletePodResponse gets the output of deleting a minio instance
 func getDeletePodResponse(session *models.Principal, params operator_api.DeletePodParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
@@ -2733,7 +2733,6 @@ func getTenantEventsResponse(session *models.Principal, params operator_api.GetT
 func getUpdateDomainsResponse(session *models.Principal, params operator_api.UpdateTenantDomainsParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-
 	operatorCli, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return restapi.ErrorWithContext(ctx, err)

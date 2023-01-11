@@ -34,7 +34,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { wsProtocol } from "../../../utils/wsUtils";
 import { SpeedTestResponse } from "./types";
-import { SpeedtestIcon } from "../../../icons";
+import { SpeedtestIcon } from "mds";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
@@ -47,8 +47,8 @@ import PageLayout from "../Common/Layout/PageLayout";
 import { SecureComponent } from "../../../common/SecureComponent";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 import HelpBox from "../../../common/HelpBox";
-import WarnIcon from "../../../icons/WarnIcon";
-import Loader from "../Common/Loader/Loader";
+import { WarnIcon } from "mds";
+import { Loader } from "mds";
 import { selDistSet } from "../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import RegisterCluster from "../Support/RegisterCluster";

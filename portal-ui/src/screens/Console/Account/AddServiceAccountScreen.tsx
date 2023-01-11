@@ -30,7 +30,7 @@ import {
   IAMPoliciesIcon,
   PasswordKeyIcon,
   ServiceAccountCredentialsIcon,
-} from "../../../icons";
+} from "mds";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";

@@ -22,15 +22,14 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import PageLayout from "../../Common/Layout/PageLayout";
 import useApi from "../../Common/Hooks/useApi";
 import ReplicationSites from "./ReplicationSites";
-import TrashIcon from "../../../../icons/TrashIcon";
-import { Button } from "mds";
-import Loader from "../../Common/Loader/Loader";
+import { Button, Loader } from "mds";
 import {
   AddIcon,
   ClustersIcon,
   ConfirmDeleteIcon,
   RecoverIcon,
-} from "../../../../icons";
+  TrashIcon,
+} from "mds";
 import { ErrorResponseHandler } from "../../../../common/types";
 import HelpBox from "../../../../common/HelpBox";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";

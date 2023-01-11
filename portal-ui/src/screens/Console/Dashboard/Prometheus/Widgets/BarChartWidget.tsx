@@ -37,7 +37,7 @@ import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import { useTheme } from "@mui/styles";
-import Loader from "../../../Common/Loader/Loader";
+import { Loader } from "mds";
 import ExpandGraphLink from "./ExpandGraphLink";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../store";
@@ -116,7 +116,8 @@ const BarChartWidget = ({
     if (loading) {
       let stepCalc = 0;
       if (timeStart !== null && timeEnd !== null) {
-        const secondsInPeriod = timeEnd.unix() - timeStart.unix();
+        const secondsInPeriod =
+          timeEnd.toUnixInteger() - timeStart.toUnixInteger();
         const periods = Math.floor(secondsInPeriod / 60);
 
         stepCalc = periods < 1 ? 15 : periods;
@@ -128,9 +129,9 @@ const BarChartWidget = ({
           `/api/v1/${apiPrefix}/info/widgets/${
             panelItem.id
           }/?step=${stepCalc}&${
-            timeStart !== null ? `&start=${timeStart.unix()}` : ""
+            timeStart !== null ? `&start=${timeStart.toUnixInteger()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
-            timeEnd !== null ? `end=${timeEnd.unix()}` : ""
+            timeEnd !== null ? `end=${timeEnd.toUnixInteger()}` : ""
           }`
         )
         .then((res: any) => {

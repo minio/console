@@ -23,7 +23,7 @@ import withStyles from "@mui/styles/withStyles";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
-import { BucketReplicationIcon } from "../../../../icons";
+import { BucketReplicationIcon } from "mds";
 import {
   createTenantCommon,
   formFieldStyles,

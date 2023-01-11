@@ -27,7 +27,7 @@ import {
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../Common/Hooks/useApi";
 import React, { useState } from "react";
-import { InfoIcon, UsersIcon } from "../../../icons";
+import { InfoIcon, UsersIcon } from "mds";
 import { ErrorResponseHandler } from "../../../common/types";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { useAppDispatch } from "../../../store";

@@ -21,7 +21,7 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 import { decodeURLString } from "../../../../../../common/utils";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../../../../Common/Hooks/useApi";
-import { ConfirmDeleteIcon } from "../../../../../../icons";
+import { ConfirmDeleteIcon } from "mds";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 import { setErrorSnackMessage } from "../../../../../../systemSlice";

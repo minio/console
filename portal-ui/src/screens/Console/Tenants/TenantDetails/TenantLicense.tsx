@@ -29,7 +29,7 @@ import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import SubnetLicenseTenant from "./SubnetLicenseTenant";
 import api from "../../../../common/api";
-import Loader from "../../Common/Loader/Loader";
+import { Loader } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { setTenantDetailsLoad } from "../tenantsSlice";
 

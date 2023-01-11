@@ -33,7 +33,7 @@ import AddGroupHelpBox from "./AddGroupHelpBox";
 import UsersSelectors from "./UsersSelectors";
 import BackLink from "../../../common/BackLink";
 
-import { CreateGroupIcon } from "../../../icons";
+import { CreateGroupIcon } from "mds";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";

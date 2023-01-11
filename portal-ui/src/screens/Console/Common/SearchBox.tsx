@@ -16,7 +16,7 @@
 
 import React from "react";
 import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "../../../icons/SearchIcon";
+import { SearchIcon } from "mds";
 import TextField from "@mui/material/TextField";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
