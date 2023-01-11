@@ -147,7 +147,7 @@ export const systemSlice = createSlice({
     setSiteReplicationInfo: (state, action: PayloadAction<SRInfoStateType>) => {
       state.siteReplicationInfo = action.payload;
     },
-    setLicenseInfo: (state, action: PayloadAction<SubnetInfo | null>) => {
+    setSystemLicenseInfo: (state, action: PayloadAction<SubnetInfo | null>) => {
       state.licenseInfo = action.payload;
     },
     setOverrideStyles: (
@@ -181,7 +181,7 @@ export const {
   setServerDiagStat,
   globalSetDistributedSetup,
   setSiteReplicationInfo,
-  setLicenseInfo,
+  setSystemLicenseInfo,
   setOverrideStyles,
   setAnonymousMode,
   resetSystem,

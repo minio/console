@@ -23,7 +23,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	xhttp "github.com/minio/console/pkg/http"
 
@@ -62,6 +65,49 @@ func subnetAPIKeyURL() string {
 
 func LogWebhookURL() string {
 	return subnetBaseURL() + "/api/logs"
+}
+func UploadURL(uploadType string, filename string) string {
+	return fmt.Sprintf("%s/api/%s/upload?filename=%s", subnetBaseURL(), uploadType, filename)
+}
+
+func UploadAuthHeaders(apiKey string) map[string]string {
+	return map[string]string{"x-subnet-api-key": apiKey}
+}
+
+func UploadFileToSubnet(client *xhttp.Client, filename string, reqURL string, headers map[string]string) (string, error) {
+	req, e := subnetUploadReq(reqURL, filename)
+	if e != nil {
+		return "", e
+	}
+	resp, e := subnetReqDo(client, req, headers)
+	return resp, e
+}
+
+func subnetUploadReq(url string, filename string) (*http.Request, error) {
+	file, e := os.Open(filename)
+	if e != nil {
+		return nil, e
+	}
+	defer file.Close()
+
+	var body bytes.Buffer
+	writer := multipart.NewWriter(&body)
+	part, e := writer.CreateFormFile("file", filepath.Base(file.Name()))
+	if e != nil {
+		return nil, e
+	}
+	if _, e = io.Copy(part, file); e != nil {
+		return nil, e
+	}
+	writer.Close()
+
+	r, e := http.NewRequest(http.MethodPost, url, &body)
+	if e != nil {
+		return nil, e
+	}
+	r.Header.Add("Content-Type", writer.FormDataContentType())
+
+	return r, nil
 }
 
 func GenerateRegToken(clusterRegInfo mc.ClusterRegistrationInfo) (string, error) {

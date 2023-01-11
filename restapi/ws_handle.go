@@ -502,7 +502,6 @@ func (wsc *wsAdminClient) healthInfo(ctx context.Context, deadline *time.Duratio
 	LogInfo("health info started")
 
 	ctx = wsReadClientCtx(ctx, wsc.conn)
-
 	err := startHealthInfo(ctx, wsc.conn, wsc.client, deadline)
 
 	sendWsCloseMessage(wsc.conn, err)
