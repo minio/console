@@ -2494,11 +2494,9 @@ func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 		}
 	}
 
-	runtimeClassNameValue := ""
-	runtimeClassName := &runtimeClassNameValue
-
+	var runtimeClassName string
 	if pool.RuntimeClassName != nil {
-		runtimeClassName = pool.RuntimeClassName
+		runtimeClassName = *pool.RuntimeClassName
 	}
 
 	poolModel := &models.Pool{
@@ -2514,7 +2512,7 @@ func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 		Affinity:         affinity,
 		Tolerations:      tolerations,
 		SecurityContext:  &securityContext,
-		RuntimeClassName: *runtimeClassName,
+		RuntimeClassName: runtimeClassName,
 	}
 	return poolModel
 }
