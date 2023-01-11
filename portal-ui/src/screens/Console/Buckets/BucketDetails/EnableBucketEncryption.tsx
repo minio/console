@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { LinearProgress, SelectChangeEvent } from "@mui/material";
-import { Button } from "mds";
+import { AddIcon, Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -29,12 +29,18 @@ import { BucketEncryptionInfo } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { BucketEncryptionIcon } from "mds";
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../../common/SecureComponent/permissions";
+import { SecureComponent } from "../../../../common/SecureComponent";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import AddKeyModal from "./AddKeyModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -62,6 +68,9 @@ const EnableBucketEncryption = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [kmsKeyID, setKmsKeyID] = useState<string>("");
   const [encryptionType, setEncryptionType] = useState<string>("disabled");
+  const [keys, setKeys] = useState<[]>([]);
+  const [loadingKeys, setLoadingKeys] = useState<boolean>(false);
+  const [addOpen, setAddOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (encryptionCfg) {
@@ -73,6 +82,21 @@ const EnableBucketEncryption = ({
       }
     }
   }, [encryptionCfg]);
+
+  useEffect(() => {
+    if (encryptionType === "sse-kms") {
+      api
+        .invoke("GET", `/api/v1/kms/keys`)
+        .then((res: any) => {
+          setKeys(res.results);
+          setLoadingKeys(false);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setLoadingKeys(false);
+          dispatch(setModalErrorSnackMessage(err));
+        });
+    }
+  }, [encryptionType, loadingKeys, dispatch]);
 
   const enableBucketEncryption = (event: React.FormEvent) => {
     event.preventDefault();
@@ -108,90 +132,132 @@ const EnableBucketEncryption = ({
   };
 
   return (
-    <ModalWrapper
-      modalOpen={open}
-      onClose={() => {
-        closeModalAndRefresh();
-      }}
-      title="Enable Bucket Encryption"
-      titleIcon={<BucketEncryptionIcon />}
-    >
-      <form
-        noValidate
-        autoComplete="off"
-        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-          enableBucketEncryption(e);
+    <Fragment>
+      {addOpen && (
+        <AddKeyModal
+          addOpen={addOpen}
+          closeAddModalAndRefresh={(refresh: boolean) => {
+            setAddOpen(false);
+            setLoadingKeys(true);
+          }}
+        />
+      )}
+
+      <ModalWrapper
+        modalOpen={open}
+        onClose={() => {
+          closeModalAndRefresh();
         }}
+        title="Enable Bucket Encryption"
+        titleIcon={<BucketEncryptionIcon />}
       >
-        <Grid container>
-          <Grid item xs={12} className={classes.modalFormScrollable}>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <SelectWrapper
-                onChange={(e: SelectChangeEvent<string>) => {
-                  setEncryptionType(e.target.value as string);
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            enableBucketEncryption(e);
+          }}
+        >
+          <Grid container>
+            <Grid item xs={12} className={classes.modalFormScrollable}>
+              <Grid item xs={12} className={classes.formFieldRow}>
+                <SelectWrapper
+                  onChange={(e: SelectChangeEvent<string>) => {
+                    setEncryptionType(e.target.value as string);
+                  }}
+                  id="select-encryption-type"
+                  name="select-encryption-type"
+                  label={"Encryption Type"}
+                  value={encryptionType}
+                  options={[
+                    {
+                      label: "Disabled",
+                      value: "disabled",
+                    },
+                    {
+                      label: "SSE-S3",
+                      value: "sse-s3",
+                    },
+                    {
+                      label: "SSE-KMS",
+                      value: "sse-kms",
+                    },
+                  ]}
+                />
+              </Grid>
+
+              {encryptionType === "sse-kms" && (
+                <Grid
+                  item
+                  xs={12}
+                  className={classes.formFieldRow}
+                  display={"flex"}
+                >
+                  <SelectWrapper
+                    onChange={(e: SelectChangeEvent<string>) => {
+                      setKmsKeyID(e.target.value);
+                    }}
+                    id="select-kms-key-id"
+                    name="select-kms-key-id"
+                    label={"KMS Key ID"}
+                    value={kmsKeyID}
+                    options={keys.map((key: any) => {
+                      return {
+                        label: key.name,
+                        value: key.name,
+                      };
+                    })}
+                  />
+                  <Grid marginLeft={1}>
+                    <SecureComponent
+                      scopes={[IAM_SCOPES.KMS_IMPORT_KEY]}
+                      resource={CONSOLE_UI_RESOURCE}
+                      errorProps={{ disabled: true }}
+                    >
+                      <TooltipWrapper tooltip={"Add key"}>
+                        <Button
+                          id={"import-key"}
+                          variant={"regular"}
+                          icon={<AddIcon />}
+                          onClick={(e) => {
+                            setAddOpen(true);
+                            e.preventDefault();
+                          }}
+                        />
+                      </TooltipWrapper>
+                    </SecureComponent>
+                  </Grid>
+                </Grid>
+              )}
+            </Grid>
+            <Grid item xs={12} className={classes.modalButtonBar}>
+              <Button
+                id={"cancel"}
+                type="submit"
+                variant="regular"
+                onClick={() => {
+                  closeModalAndRefresh();
                 }}
-                id="select-encryption-type"
-                name="select-encryption-type"
-                label={"Encryption Type"}
-                value={encryptionType}
-                options={[
-                  {
-                    label: "Disabled",
-                    value: "disabled",
-                  },
-                  {
-                    label: "SSE-S3",
-                    value: "sse-s3",
-                  },
-                  {
-                    label: "SSE-KMS",
-                    value: "sse-kms",
-                  },
-                ]}
+                disabled={loading}
+                label={"Cancel"}
+              />
+              <Button
+                id={"save"}
+                type="submit"
+                variant="callAction"
+                disabled={loading}
+                label={"Save"}
               />
             </Grid>
-
-            {encryptionType === "sse-kms" && (
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
-                  id="kms-key-id"
-                  name="kms-key-id"
-                  label="KMS Key ID"
-                  value={kmsKeyID}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setKmsKeyID(e.target.value);
-                  }}
-                />
+            {loading && (
+              <Grid item xs={12}>
+                <LinearProgress />
               </Grid>
             )}
           </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
-            <Button
-              id={"cancel"}
-              type="submit"
-              variant="regular"
-              onClick={() => {
-                closeModalAndRefresh();
-              }}
-              disabled={loading}
-              label={"Cancel"}
-            />
-            <Button
-              id={"save"}
-              type="submit"
-              variant="callAction"
-              disabled={loading}
-              label={"Save"}
-            />
-          </Grid>
-          {loading && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
-        </Grid>
-      </form>
-    </ModalWrapper>
+        </form>
+      </ModalWrapper>
+    </Fragment>
   );
 };
 

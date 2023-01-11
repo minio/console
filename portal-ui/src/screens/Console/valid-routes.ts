@@ -58,6 +58,8 @@ import {
 import { hasPermission } from "../../common/SecureComponent";
 import React from "react";
 import LicenseBadge from "./Menu/LicenseBadge";
+import EncryptionIcon from "../../icons/SidebarMenus/EncryptionIcon";
+import EncryptionStatusIcon from "../../icons/SidebarMenus/EncryptionStatusIcon";
 import { LockOpen, Login } from "@mui/icons-material";
 
 export const validRoutes = (
@@ -66,6 +68,7 @@ export const validRoutes = (
   directPVMode: boolean
 ) => {
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
+  const kmsIsEnabled = (features && features.includes("kms")) || false;
   let consoleMenus: IMenuItem[] = [
     {
       group: "User",
@@ -216,6 +219,14 @@ export const validRoutes = (
           icon: DrivesMenuIcon,
           component: NavLink,
         },
+        {
+          name: "Encryption",
+          id: "monitorEncryption",
+          to: IAM_PAGES.KMS_STATUS,
+          icon: EncryptionStatusIcon,
+          component: NavLink,
+          fsHidden: !kmsIsEnabled,
+        },
       ],
     },
     {
@@ -241,6 +252,15 @@ export const validRoutes = (
       name: "Site Replication",
       icon: RecoverIcon,
       id: "sitereplication",
+    },
+    {
+      group: "Administrator",
+      component: NavLink,
+      to: IAM_PAGES.KMS_KEYS,
+      name: "Encryption",
+      icon: EncryptionIcon,
+      id: "encryption",
+      fsHidden: !kmsIsEnabled,
     },
     {
       group: "Administrator",
