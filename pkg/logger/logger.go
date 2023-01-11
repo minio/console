@@ -60,9 +60,6 @@ const (
 
 var trimStrings []string
 
-// TimeFormat - logging time format.
-const TimeFormat string = "15:04:05 MST 01/02/2006"
-
 var matchingFuncNames = [...]string{
 	"http.HandlerFunc.ServeHTTP",
 	"cmd.serverMain",
@@ -254,8 +251,6 @@ type Kind string
 const (
 	// Minio errors
 	Minio Kind = "CONSOLE"
-	// Application errors
-	Application Kind = "APPLICATION"
 	// All errors
 	All Kind = "ALL"
 )

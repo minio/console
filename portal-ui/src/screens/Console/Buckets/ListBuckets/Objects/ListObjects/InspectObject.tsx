@@ -26,7 +26,7 @@ import {
 } from "../../../../../../common/utils";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import { InspectMenuIcon } from "../../../../../../icons/SidebarMenus";
+import { InspectMenuIcon } from "mds";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -35,7 +35,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { PasswordKeyIcon } from "../../../../../../icons";
+import { PasswordKeyIcon } from "mds";
 import { Box, DialogContentText } from "@mui/material";
 import KeyRevealer from "../../../../Tools/KeyRevealer";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";

@@ -43,6 +43,7 @@ type WSResponse struct {
 	RequestID  int64            `json:"request_id,nonempty"`
 	Error      string           `json:"error,omitempty"`
 	RequestEnd bool             `json:"request_end,omitempty"`
+	Prefix     string           `json:"prefix,omitempty"`
 	Data       []ObjectResponse `json:"data,omitempty"`
 }
 

@@ -22,7 +22,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { AppState, useAppDispatch } from "../../../../store";
 
-import { CircleIcon, ObjectManagerIcon } from "../../../../icons";
+import { CircleIcon, ObjectManagerIcon } from "mds";
 import { Box } from "@mui/material";
 import { toggleList } from "../../ObjectBrowser/objectBrowserSlice";
 import { selFeatures } from "../../consoleSlice";
@@ -205,7 +205,7 @@ const PageHeader = ({
           item
           xs={12}
           sm={12}
-          md={5}
+          md={4}
           className={classes.middleComponent}
           sx={{ marginTop: ["10px", "10px", "0", "0"] }}
         >
@@ -216,7 +216,7 @@ const PageHeader = ({
         item
         xs={12}
         sm={12}
-        md={middleComponent ? 3 : 6}
+        md={middleComponent ? 4 : 6}
         className={classes.rightMenu}
       >
         {actions && actions}

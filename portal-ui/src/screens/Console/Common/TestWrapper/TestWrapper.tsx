@@ -20,11 +20,11 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { DrivesIcon, VersionIcon } from "../../../../icons";
+import { DrivesIcon, VersionIcon } from "mds";
 import { ServerInfo, Usage } from "../../Dashboard/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
-import Loader from "../Loader/Loader";
+import { Loader } from "mds";
 
 interface ITestWrapper {
   title: any;

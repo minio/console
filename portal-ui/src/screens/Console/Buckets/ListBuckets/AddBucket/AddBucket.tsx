@@ -31,7 +31,7 @@ import { useSelector } from "react-redux";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../../common/BackLink";
-import { BucketsIcon, InfoIcon } from "../../../../../icons";
+import { BucketsIcon, InfoIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { BucketList } from "../../types";
@@ -171,12 +171,14 @@ const AddBucket = ({ classes }: IsetProps) => {
     [
       IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
       IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
+      IAM_SCOPES.S3_PUT_ACTIONS,
     ],
     true
   );
 
   const versioningAllowed = hasPermission("*", [
     IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 
   useEffect(() => {
@@ -330,7 +332,10 @@ const AddBucket = ({ classes }: IsetProps) => {
                         ? "You must disable Locking before Versioning can be disabled"
                         : ""
                       : permissionTooltipHelper(
-                          [IAM_SCOPES.S3_PUT_BUCKET_VERSIONING],
+                          [
+                            IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
+                            IAM_SCOPES.S3_PUT_ACTIONS,
+                          ],
                           "Versioning"
                         )
                   }
@@ -362,6 +367,7 @@ const AddBucket = ({ classes }: IsetProps) => {
                           [
                             IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
                             IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
+                            IAM_SCOPES.S3_PUT_ACTIONS,
                           ],
                           "Locking"
                         )

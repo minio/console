@@ -351,6 +351,10 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: bypass
+          in: query
+          required: false
+          type: boolean
       responses:
         200:
           description: A successful response.
@@ -371,6 +375,10 @@ paths:
           required: true
           type: string
         - name: all_versions
+          in: query
+          required: false
+          type: boolean
+        - name: bypass
           in: query
           required: false
           type: boolean

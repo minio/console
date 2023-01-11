@@ -18,12 +18,11 @@ import React, { Fragment, useState } from "react";
 import { Box } from "@mui/material";
 
 import Grid from "@mui/material/Grid";
-import { Button } from "mds";
+import { AddAccessRuleIcon, Button } from "mds";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import BackLink from "../../../common/BackLink";
-import { AddAccessRuleIcon } from "../../../icons";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
 import FormLayout from "../Common/FormLayout";

@@ -32,7 +32,7 @@ import {
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../../common/api";
-import RemoveIcon from "../../../../icons/RemoveIcon";
+import { RemoveIcon } from "mds";
 import {
   setModalErrorSnackMessage,
   setSnackBarMessage,

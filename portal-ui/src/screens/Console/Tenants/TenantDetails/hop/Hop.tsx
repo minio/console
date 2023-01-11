@@ -23,8 +23,8 @@ import { Box, IconButton } from "@mui/material";
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import RefreshIcon from "../../../../../icons/RefreshIcon";
-import Loader from "../../../Common/Loader/Loader";
+import { RefreshIcon } from "mds";
+import { Loader } from "mds";
 
 interface IHopSimple {
   classes: any;

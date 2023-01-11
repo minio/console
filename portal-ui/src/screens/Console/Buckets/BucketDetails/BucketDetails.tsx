@@ -44,7 +44,7 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { Box } from "@mui/material";
 
-import RefreshIcon from "../../../../icons/RefreshIcon";
+import { RefreshIcon, BucketsIcon, FolderIcon } from "mds";
 import {
   IAM_SCOPES,
   IAM_PERMISSIONS,
@@ -62,7 +62,7 @@ import {
 } from "../../../../common/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
-import { TrashIcon } from "../../../../icons";
+import { TrashIcon } from "mds";
 import {
   selDistSet,
   selSiteRep,
@@ -76,9 +76,6 @@ import {
 } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-
-const BucketsIcon = React.lazy(() => import("../../../../icons/BucketsIcon"));
-const FolderIcon = React.lazy(() => import("../../../../icons/FolderIcon"));
 
 const DeleteBucket = withSuspense(
   React.lazy(() => import("../ListBuckets/DeleteBucket"))
@@ -200,10 +197,6 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
     }
   };
 
-  const openBucketBrowser = () => {
-    navigate(`/buckets/${bucketName}/browse`);
-  };
-
   return (
     <Fragment>
       {deleteOpen && (
@@ -231,7 +224,9 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             <Button
               id={"switch-browse-view"}
               aria-label="Browse Bucket"
-              onClick={openBucketBrowser}
+              onClick={() => {
+                navigate(`/browser/${bucketName}`);
+              }}
               icon={
                 <FolderIcon style={{ width: 20, height: 20, marginTop: -3 }} />
               }
@@ -257,7 +252,10 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             title={bucketName}
             subTitle={
               <SecureComponent
-                scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
+                scopes={[
+                  IAM_SCOPES.S3_GET_BUCKET_POLICY,
+                  IAM_SCOPES.S3_GET_ACTIONS,
+                ]}
                 resource={bucketName}
               >
                 <span style={{ fontSize: 15 }}>Access: </span>
@@ -363,6 +361,8 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                 disabled: !hasPermission(bucketName, [
                   IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
                   IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
+                  IAM_SCOPES.S3_GET_ACTIONS,
+                  IAM_SCOPES.S3_PUT_ACTIONS,
                 ]),
                 to: getRoutePath("events"),
               },
@@ -379,6 +379,8 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   !hasPermission(bucketName, [
                     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
                     IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+                    IAM_SCOPES.S3_GET_ACTIONS,
+                    IAM_SCOPES.S3_PUT_ACTIONS,
                   ]),
                 to: getRoutePath("replication"),
               },
@@ -393,13 +395,15 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   !hasPermission(bucketName, [
                     IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
                     IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
+                    IAM_SCOPES.S3_GET_ACTIONS,
+                    IAM_SCOPES.S3_PUT_ACTIONS,
                   ]),
                 to: getRoutePath("lifecycle"),
               },
             }}
             {{
               tabConfig: {
-                label: "Access Audit",
+                label: "Access",
                 value: "access",
                 component: Link,
                 disabled: !hasPermission(bucketName, [
@@ -412,11 +416,12 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             }}
             {{
               tabConfig: {
-                label: "Access Rules",
+                label: "Anonymous",
                 value: "prefix",
                 component: Link,
                 disabled: !hasPermission(bucketName, [
                   IAM_SCOPES.S3_GET_BUCKET_POLICY,
+                  IAM_SCOPES.S3_GET_ACTIONS,
                 ]),
                 to: getRoutePath("prefix"),
               },

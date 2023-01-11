@@ -19,6 +19,8 @@ package operatorapi
 import (
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_getK8sSAToken(t *testing.T) {
@@ -93,6 +95,42 @@ func Test_getMarketplace(t *testing.T) {
 					os.Unsetenv(k)
 				}
 			}
+		})
+	}
+}
+
+func Test_getDirectPVEnabled(t *testing.T) {
+	type args struct {
+		setEnv bool
+	}
+	tests := []struct {
+		name string
+		want bool
+		args args
+	}{
+		{
+			name: "DirectPV Mode is Set",
+			want: true,
+			args: args{
+				setEnv: true,
+			},
+		},
+		{
+			name: "DirectPV Mode is not set",
+			want: false,
+			args: args{
+				setEnv: false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.args.setEnv {
+				os.Setenv(DirectPVMode, "on")
+			} else {
+				os.Unsetenv(DirectPVMode)
+			}
+			assert.Equalf(t, tt.want, getDirectPVEnabled(), "getDirectPVEnabled()")
 		})
 	}
 }

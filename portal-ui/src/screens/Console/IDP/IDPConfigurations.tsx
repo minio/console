@@ -38,7 +38,7 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import { Grid } from "@mui/material";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import { Button } from "mds";
-import { AddIcon, RefreshIcon } from "../../../icons";
+import { AddIcon, RefreshIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 
@@ -114,7 +114,7 @@ const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {
 
   const viewAction = (idp: any) => {
     let name = idp.name === "Default" ? "_" : idp.name;
-    navigate(`/idp/${idpType}/configurations/${name}`);
+    navigate(`/identity/idp/${idpType}/configurations/${name}`);
   };
 
   const closeDeleteModalAndRefresh = async (refresh: boolean) => {
@@ -190,7 +190,7 @@ const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {
                   variant={"callAction"}
                   icon={<AddIcon />}
                   onClick={() =>
-                    navigate(`/idp/${idpType}/configurations/add-idp`)
+                    navigate(`/identity/idp/${idpType}/configurations/add-idp`)
                   }
                 />
               </TooltipWrapper>

@@ -24,8 +24,8 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import { actionsTray, widgetContainerCommon } from "../common/styleLibrary";
 import DateTimePickerWrapper from "../DateTimePickerWrapper/DateTimePickerWrapper";
-import SyncIcon from "../../../../../icons/SyncIcon";
-import { OpenListIcon } from "../../../../../icons";
+import { SyncIcon } from "mds";
+import { OpenListIcon } from "mds";
 
 interface IDateRangeSelector {
   classes: any;

@@ -45,7 +45,7 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
-import { HealIcon } from "../../../icons";
+import { HealIcon } from "mds";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";

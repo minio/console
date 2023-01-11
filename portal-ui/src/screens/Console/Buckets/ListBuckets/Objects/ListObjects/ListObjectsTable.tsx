@@ -27,6 +27,7 @@ import { AppState, useAppDispatch } from "../../../../../../store";
 import { selFeatures } from "../../../../consoleSlice";
 import { encodeURLString } from "../../../../../../common/utils";
 import {
+  setIsOpeningOD,
   setLoadingObjects,
   setLoadingVersions,
   setObjectDetailsView,
@@ -113,6 +114,7 @@ const ListObjectsTable = () => {
 
   const displayListObjects = hasPermission(bucketName, [
     IAM_SCOPES.S3_LIST_BUCKET,
+    IAM_SCOPES.S3_ALL_LIST_BUCKET,
   ]);
 
   const filteredRecords = records.filter((b: BucketObjectItem) => {
@@ -142,7 +144,7 @@ const ListObjectsTable = () => {
   const openPath = (idElement: string) => {
     dispatch(setSelectedObjects([]));
 
-    const newPath = `/buckets/${bucketName}/browse${
+    const newPath = `/browser/${bucketName}${
       idElement ? `/${encodeURLString(idElement)}` : ``
     }`;
     navigate(newPath);
@@ -154,6 +156,7 @@ const ListObjectsTable = () => {
         `${idElement ? `${encodeURLString(idElement)}` : ``}`
       )
     );
+    dispatch(setIsOpeningOD(true));
   };
   const tableActions: ItemActions[] = [
     {
@@ -219,7 +222,7 @@ const ListObjectsTable = () => {
       customEmptyMessage={
         !displayListObjects
           ? permissionTooltipHelper(
-              [IAM_SCOPES.S3_LIST_BUCKET],
+              [IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET],
               "view Objects in this bucket"
             )
           : `This location is empty${

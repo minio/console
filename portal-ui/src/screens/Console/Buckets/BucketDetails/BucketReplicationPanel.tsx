@@ -37,7 +37,7 @@ import {
   SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import { AddIcon, BucketsIcon, TrashIcon } from "../../../../icons";
+import { AddIcon, BucketsIcon, TrashIcon } from "mds";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import HelpBox from "../../../../common/HelpBox";
@@ -94,6 +94,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
 
   const displayReplicationRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
 
   useEffect(() => {
@@ -210,7 +211,10 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
       onClick: editReplicationRule,
       disableButtonFunction: !hasPermission(
         bucketName,
-        [IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION],
+        [
+          IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+          IAM_SCOPES.S3_PUT_ACTIONS,
+        ],
         true
       ),
     },
@@ -253,7 +257,10 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
           <PanelTitle>Replication</PanelTitle>
           <div style={{ display: "flex" }}>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
+              scopes={[
+                IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+                IAM_SCOPES.S3_PUT_ACTIONS,
+              ]}
               resource={bucketName}
               matchAll
               errorProps={{ disabled: true }}
@@ -273,7 +280,10 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
               </TooltipWrapper>
             </SecureComponent>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION]}
+              scopes={[
+                IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
+                IAM_SCOPES.S3_PUT_ACTIONS,
+              ]}
               resource={bucketName}
               matchAll
               errorProps={{ disabled: true }}
@@ -294,7 +304,10 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
         </Grid>
         <Grid item xs={12}>
           <SecureComponent
-            scopes={[IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION]}
+            scopes={[
+              IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
+              IAM_SCOPES.S3_GET_ACTIONS,
+            ]}
             resource={bucketName}
             errorProps={{ disabled: true }}
           >

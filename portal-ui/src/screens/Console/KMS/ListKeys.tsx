@@ -16,7 +16,7 @@
 
 import { Grid, Theme } from "@mui/material";
 import { createStyles, withStyles } from "@mui/styles";
-import { Button } from "mds";
+import { AddIcon, Button, RefreshIcon, UploadIcon } from "mds";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../common/api";
@@ -30,7 +30,6 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
-import { AddIcon, RefreshIcon, UploadIcon } from "../../../icons";
 import { useAppDispatch } from "../../../store";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import withSuspense from "../Common/Components/withSuspense";

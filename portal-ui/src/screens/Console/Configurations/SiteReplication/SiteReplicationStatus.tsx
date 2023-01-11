@@ -30,9 +30,9 @@ import {
   IAMPoliciesIcon,
   RefreshIcon,
   UsersIcon,
-} from "../../../../icons";
+} from "mds";
 import EntityReplicationLookup from "./EntityReplicationLookup";
-import Loader from "../../Common/Loader/Loader";
+import { Loader } from "mds";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 export type StatsResponseType = {

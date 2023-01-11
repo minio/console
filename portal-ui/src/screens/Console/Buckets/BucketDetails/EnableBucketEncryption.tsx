@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { LinearProgress, SelectChangeEvent } from "@mui/material";
-import { Button } from "mds";
+import { AddIcon, Button } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,7 +30,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { AddIcon, BucketEncryptionIcon } from "../../../../icons";
+import { BucketEncryptionIcon } from "mds";
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";

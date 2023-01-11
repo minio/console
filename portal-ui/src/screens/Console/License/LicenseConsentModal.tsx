@@ -18,7 +18,7 @@ import React from "react";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { Box } from "@mui/material";
 import { Button } from "mds";
-import { AGPLV3DarkLogo } from "../../../icons";
+import { AGPLV3DarkLogo } from "mds";
 import { setLicenseConsent } from "./utils";
 import LicenseLink from "./LicenseLink";
 

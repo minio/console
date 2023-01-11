@@ -15,7 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
+
+import { Button } from "mds";
 
 type TierTypeCardProps = {
   onClick: (name: string) => void;
@@ -23,44 +25,54 @@ type TierTypeCardProps = {
   name: string;
 };
 const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
+  const styles = {
+    tierTypeCard: {
+      height: "80px",
+      width: "auto",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      padding: 5,
+      border: "1px solid #E5E5E5",
+      borderRadius: 2,
+      cursor: "pointer",
+      overflow: "hidden",
+      "&:hover": { background: "#ebebeb" },
+    },
+    tierTypeTitle: {
+      fontWeight: 600,
+      fontSize: 14,
+      justifyContent: "center",
+    },
+  };
   return (
-    <button
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        padding: 10,
-        background: "transparent",
-        border: "1px solid #E5E5E5",
-        borderRadius: 2,
-        cursor: "pointer",
-      }}
+    <Button
+      id={name}
       onClick={() => {
         onClick(name);
       }}
+      style={styles.tierTypeCard}
     >
-      {icon ? (
-        <Box
-          sx={{
-            "& .min-icon": {
-              height: "60px",
-              width: "60px",
-            },
-          }}
-        >
-          {icon}
-        </Box>
-      ) : null}
-
-      <div
-        style={{
-          fontWeight: 600,
-          marginLeft: 20,
-        }}
-      >
-        {name}
-      </div>
-    </button>
+      <Grid container alignItems={"center"}>
+        {icon ? (
+          <Grid item padding={1} xs={4}>
+            <Box
+              sx={{
+                "& .min-icon": {
+                  height: "30px",
+                  width: "30px",
+                },
+              }}
+            >
+              {icon}
+            </Box>
+          </Grid>
+        ) : null}
+        <Grid item xs={8} style={styles.tierTypeTitle} paddingLeft={1}>
+          {name}
+        </Grid>
+      </Grid>
+    </Button>
   );
 };
 

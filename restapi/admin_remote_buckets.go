@@ -111,9 +111,14 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketDeleteAllReplicationRulesHandler = bucketApi.DeleteAllReplicationRulesHandlerFunc(func(params bucketApi.DeleteAllReplicationRulesParams, session *models.Principal) middleware.Responder {
 		err := deleteBucketReplicationRulesResponse(session, params)
 		if err != nil {
+			if err.Code == 500 && *err.DetailedMessage == "The remote target does not exist" {
+				// We should ignore this MinIO error when deleting all replication rules
+				return bucketApi.NewDeleteAllReplicationRulesNoContent() // This will return 204 as per swagger spec
+			}
+			// If there is a different error, then we should handle it
+			// This will return a generic error with err.Code (likely a 500 or 404) and its *err.DetailedMessage
 			return bucketApi.NewDeleteAllReplicationRulesDefault(int(err.Code)).WithPayload(err)
 		}
-
 		return bucketApi.NewDeleteAllReplicationRulesNoContent()
 	})
 

@@ -108,6 +108,8 @@ const ObjectManager = React.lazy(
   () => import("./Common/ObjectManager/ObjectManager")
 );
 
+const ObjectBrowser = React.lazy(() => import("./ObjectBrowser/ObjectBrowser"));
+
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
 const Policies = React.lazy(() => import("./Policies/Policies"));
 
@@ -262,7 +264,7 @@ const Console = ({ classes }: IConsoleProps) => {
   useLayoutEffect(() => {
     // Debounce to not execute constantly
     const debounceSize = debounce(() => {
-      if (open && window.innerWidth <= 800) {
+      if (open && window.innerWidth <= 1024) {
         dispatch(menuOpen(false));
       }
     }, 300);
@@ -275,6 +277,23 @@ const Console = ({ classes }: IConsoleProps) => {
   });
 
   const consoleAdminRoutes: IRouteRule[] = [
+    {
+      component: ObjectBrowser,
+      path: IAM_PAGES.OBJECT_BROWSER_VIEW,
+      forceDisplay: true,
+      customPermissionFnc: () => {
+        const path = window.location.pathname;
+        const resource = path.match(/browser\/(.*)\//);
+        return (
+          resource &&
+          resource.length > 0 &&
+          hasPermission(
+            resource[1],
+            IAM_PAGES_PERMISSIONS[IAM_PAGES.OBJECT_BROWSER_VIEW]
+          )
+        );
+      },
+    },
     {
       component: Buckets,
       path: IAM_PAGES.BUCKETS,
@@ -307,22 +326,7 @@ const Console = ({ classes }: IConsoleProps) => {
         );
       },
     },
-    {
-      component: Buckets,
-      path: IAM_PAGES.BUCKETS_BROWSE_VIEW,
-      customPermissionFnc: () => {
-        const path = window.location.pathname;
-        const resource = path.match(/buckets\/(.*)\/browse*/);
-        return (
-          resource &&
-          resource.length > 0 &&
-          hasPermission(
-            resource[1],
-            IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_BROWSE_VIEW]
-          )
-        );
-      },
-    },
+
     {
       component: Watch,
       path: IAM_PAGES.TOOLS_WATCH,

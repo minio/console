@@ -39,31 +39,8 @@ function setup_kind() {
 
 function install_operator() {
 
-    echo " "
-    echo "==================Compile Operator:====================="
-    echo "  Change Directory to: $GITHUB_WORKSPACE/operator_repository"
-    cd "$GITHUB_WORKSPACE/operator_repository"
-    echo "  Compile Operator: make docker"
-    make docker # It will generate: docker.io/minio/operator:dev
-    echo "  Load minio/operator:dev image to the cluster"
-    kind load docker-image minio/operator:dev
-
-    echo "  Value of image before:"
-    yq '.spec.template.spec.containers[0].image' "${GITHUB_WORKSPACE}/operator_repository/resources/base/deployment.yaml"
-
-    echo "  Change image of template from v4.4.28 to dev"
-    yq e -i '.spec.template.spec.containers[0].image = "minio/operator:dev"' "${GITHUB_WORKSPACE}/operator_repository/resources/base/deployment.yaml"
-
-    echo "  Value of image after:"
-    yq '.spec.template.spec.containers[0].image' "${GITHUB_WORKSPACE}/operator_repository/resources/base/deployment.yaml"
-
-    cd $GITHUB_WORKSPACE # Back to the workspace
-    echo "========================================================"
-    echo " "
-
-    echo "Installing Latest Operator"
-    try kubectl apply -k "${GITHUB_WORKSPACE}/operator_repository/resources"
-
+    echo "  Load minio/operator image to the cluster"
+	try kubectl apply -k github.com/minio/operator/
     echo "Waiting for k8s api"
     sleep 10
     echo "Waiting for Operator Pods to come online (2m timeout)"

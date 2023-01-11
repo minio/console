@@ -21,7 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IconButton, Tooltip } from "@mui/material";
 import { AppState, useAppDispatch } from "../../../../store";
-import { RemoveAllIcon } from "../../../../icons";
+import { RemoveAllIcon } from "mds";
 import ObjectHandled from "./ObjectHandled";
 import {
   cleanList,

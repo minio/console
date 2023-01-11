@@ -20,11 +20,11 @@ import { DialogContentText, Grid } from "@mui/material";
 import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmDeleteIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import WarningMessage from "../Common/WarningMessage/WarningMessage";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { ConfirmDeleteIcon } from "mds";
 
 interface IDeleteKMSModalProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;

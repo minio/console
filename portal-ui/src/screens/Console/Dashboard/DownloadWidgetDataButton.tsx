@@ -17,7 +17,7 @@
 import React, { Fragment } from "react";
 import { Menu, MenuItem, Box } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
-import { DownloadIcon } from "../../../icons";
+import { DownloadIcon } from "mds";
 import { exportComponentAsPNG } from "react-component-export-image";
 import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../../src/store";

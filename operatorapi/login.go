@@ -18,6 +18,8 @@ package operatorapi
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -161,6 +163,18 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams) (*models.L
 	lr := params.Body
 
 	if oauth2.IsIDPEnabled() {
+		decodedRState, err := base64.StdEncoding.DecodeString(*lr.State)
+		if err != nil {
+			return nil, restapi.ErrorWithContext(ctx, err)
+		}
+
+		var requestItems oauth2.LoginURLParams
+		err = json.Unmarshal(decodedRState, &requestItems)
+
+		if err != nil {
+			return nil, restapi.ErrorWithContext(ctx, err)
+		}
+
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, r, restapi.GetConsoleHTTPClient(""))
 		if err != nil {
@@ -172,7 +186,7 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams) (*models.L
 			Client:  oauth2Client,
 		}
 		// Validate user against IDP
-		_, err = verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, *lr.State)
+		_, err = verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, requestItems.State)
 		if err != nil {
 			return nil, restapi.ErrorWithContext(ctx, err)
 		}

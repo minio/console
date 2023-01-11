@@ -25,7 +25,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 
-import AddIcon from "../../../../icons/AddIcon";
+import { AddIcon } from "mds";
 import Grid from "@mui/material/Grid";
 import {
   actionsTray,
@@ -97,6 +97,7 @@ const AccessRule = () => {
 
   const displayAccessRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_BUCKET_POLICY,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
 
   const deleteAccessRules = hasPermission(bucketName, [
@@ -105,6 +106,7 @@ const AccessRule = () => {
 
   const editAccessRules = hasPermission(bucketName, [
     IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 
   useEffect(() => {
@@ -194,11 +196,13 @@ const AccessRule = () => {
         />
       )}
       <Grid item xs={12} className={classes.actionsTray}>
-        <PanelTitle>Access Rules</PanelTitle>
+        <PanelTitle>Anonymous Access</PanelTitle>
         <SecureComponent
           scopes={[
             IAM_SCOPES.S3_GET_BUCKET_POLICY,
             IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+            IAM_SCOPES.S3_GET_ACTIONS,
+            IAM_SCOPES.S3_PUT_ACTIONS,
           ]}
           resource={bucketName}
           matchAll
@@ -219,7 +223,7 @@ const AccessRule = () => {
       </Grid>
       <Paper className={classes.tableBlock}>
         <SecureComponent
-          scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY]}
+          scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY, IAM_SCOPES.S3_GET_ACTIONS]}
           resource={bucketName}
           errorProps={{ disabled: true }}
         >

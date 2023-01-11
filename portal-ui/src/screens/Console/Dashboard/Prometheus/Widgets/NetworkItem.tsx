@@ -17,7 +17,7 @@
 import React from "react";
 import { IDashboardPanel } from "../types";
 import { Box } from "@mui/material";
-import { SpeedtestIcon } from "../../../../../icons";
+import { SpeedtestIcon } from "mds";
 import SingleValueWidget from "./SingleValueWidget";
 import NetworkGetItem from "./NetworkGetItem";
 import NetworkPutItem from "./NetworkPutItem";

@@ -30,7 +30,7 @@ import { IStoragePVCs } from "../../Storage/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import SearchIcon from "../../../../icons/SearchIcon";
+import { SearchIcon } from "mds";
 import { IPodListElement } from "../ListTenants/types";
 import withSuspense from "../../Common/Components/withSuspense";
 import { AppState, useAppDispatch } from "../../../../store";

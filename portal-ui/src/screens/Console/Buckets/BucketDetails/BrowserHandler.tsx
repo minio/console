@@ -26,7 +26,7 @@ import { containerForHeader } from "../../Common/FormComponents/common/styleLibr
 
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import SettingsIcon from "../../../../icons/SettingsIcon";
+import { SettingsIcon } from "mds";
 
 import { SecureComponent } from "../../../../common/SecureComponent";
 import {
@@ -39,6 +39,7 @@ import BackLink from "../../../../common/BackLink";
 import {
   newMessage,
   resetMessages,
+  setIsOpeningOD,
   setIsVersioned,
   setLoadingLocking,
   setLoadingObjectInfo,
@@ -184,24 +185,23 @@ const BrowserHandler = () => {
   const loadingLocking = useSelector(
     (state: AppState) => state.objectBrowser.loadingLocking
   );
-  const bucketToRewind = useSelector(
-    (state: AppState) => state.objectBrowser.rewind.bucketToRewind
-  );
   const loadRecords = useSelector(
     (state: AppState) => state.objectBrowser.loadRecords
   );
-  const detailsOpen = useSelector(
-    (state: AppState) => state.objectBrowser.objectDetailsOpen
-  );
   const selectedInternalPaths = useSelector(
     (state: AppState) => state.objectBrowser.selectedInternalPaths
+  );
+  const simplePath = useSelector(
+    (state: AppState) => state.objectBrowser.simplePath
+  );
+  const isOpeningOD = useSelector(
+    (state: AppState) => state.objectBrowser.isOpeningObjectDetail
   );
 
   const features = useSelector(selFeatures);
 
   const bucketName = params.bucketName || "";
-  const pathSegment = location.pathname.split("/browse/");
-
+  const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
   const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
 
   const obOnly = !!features?.includes("object-browser-only");
@@ -226,9 +226,12 @@ const BrowserHandler = () => {
           // Session expired.
           window.location.reload();
         } else if (response.error === "Access Denied.") {
+          const internalPathsPrefix = response.prefix;
           let pathPrefix = "";
-          if (internalPaths) {
-            const decodedPath = decodeURLString(internalPaths);
+
+          if (internalPathsPrefix) {
+            const decodedPath = decodeURLString(internalPathsPrefix);
+
             pathPrefix = decodedPath.endsWith("/")
               ? decodedPath
               : decodedPath + "/";
@@ -266,7 +269,7 @@ const BrowserHandler = () => {
         }
       }
     },
-    [dispatch, internalPaths, allowResources, bucketName]
+    [dispatch, allowResources, bucketName]
   );
 
   const initWSRequest = useCallback(
@@ -317,58 +320,68 @@ const BrowserHandler = () => {
   }, []);
 
   useEffect(() => {
-    if (objectsWS?.readyState === 1) {
-      const decodedIPaths = decodeURLString(internalPaths);
+    const decodedIPaths = decodeURLString(internalPaths);
 
-      if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
-        dispatch(setObjectDetailsView(false));
-        dispatch(setSelectedObjectView(null));
-        dispatch(
-          setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths)
-        );
-      } else {
-        dispatch(setLoadingObjectInfo(true));
-        dispatch(setObjectDetailsView(true));
-        dispatch(setLoadingVersions(true));
-        dispatch(
-          setSelectedObjectView(
-            `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`
-          )
-        );
-        dispatch(
-          setSimplePathHandler(
-            `${decodedIPaths.split("/").slice(0, -1).join("/")}/`
-          )
-        );
-      }
+    dispatch(setLoadingVersioning(true));
+
+    if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
+      dispatch(setObjectDetailsView(false));
+      dispatch(setSelectedObjectView(null));
+      dispatch(
+        setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths)
+      );
+    } else {
+      dispatch(setLoadingObjectInfo(true));
+      dispatch(setObjectDetailsView(true));
+      dispatch(setLoadingVersions(true));
+      dispatch(
+        setSelectedObjectView(
+          `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`
+        )
+      );
+      dispatch(
+        setSimplePathHandler(
+          `${decodedIPaths.split("/").slice(0, -1).join("/")}/`
+        )
+      );
     }
   }, [internalPaths, rewindDate, rewindEnabled, dispatch]);
 
   // Direct file access effect / prefix
   useEffect(() => {
-    if (!loadingObjects && loadRecords && !rewindEnabled) {
-      const parentPath = `${decodeURLString(internalPaths)
-        .split("/")
-        .slice(0, -1)
-        .join("/")}/`;
+    if (!loadingObjects && !loadRecords && !rewindEnabled && !isOpeningOD) {
+      // No requests are in progress, We review current path, if it doesn't end in '/' and current list is empty then we trigger a new request.
+      const decodedInternalPaths = decodeURLString(internalPaths);
 
-      initWSRequest(parentPath, new Date());
+      if (
+        !decodedInternalPaths.endsWith("/") &&
+        simplePath !== decodedInternalPaths &&
+        decodedInternalPaths !== ""
+      ) {
+        setLoadingRecords(true);
+        const parentPath = `${decodedInternalPaths
+          .split("/")
+          .slice(0, -1)
+          .join("/")}/`;
+
+        initWSRequest(parentPath, new Date());
+      }
     }
+    dispatch(setIsOpeningOD(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     loadingObjects,
     loadRecords,
-    bucketName,
-    bucketToRewind,
     dispatch,
     internalPaths,
-    rewindDate,
-    rewindEnabled,
     initWSRequest,
-    detailsOpen,
+    rewindEnabled,
+    simplePath,
   ]);
 
   const displayListObjects = hasPermission(bucketName, [
     IAM_SCOPES.S3_LIST_BUCKET,
+    IAM_SCOPES.S3_ALL_LIST_BUCKET,
   ]);
 
   // Common objects list
@@ -511,13 +524,15 @@ const BrowserHandler = () => {
     IAM_SCOPES.S3_LIST_BUCKET_VERSIONS,
     IAM_SCOPES.S3_GET_BUCKET_POLICY_STATUS,
     IAM_SCOPES.S3_DELETE_BUCKET_POLICY,
+    IAM_SCOPES.S3_GET_ACTIONS,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 
   const searchBar = (
     <Fragment>
       {!versionsMode ? (
         <SecureComponent
-          scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+          scopes={[IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET]}
           resource={bucketName}
           errorProps={{ disabled: true }}
         >
@@ -547,7 +562,12 @@ const BrowserHandler = () => {
     <Fragment>
       {!obOnly ? (
         <PageHeader
-          label={<BackLink label={"Buckets"} to={IAM_PAGES.BUCKETS} />}
+          label={
+            <BackLink
+              label={"Object Browser"}
+              to={IAM_PAGES.OBJECT_BROWSER_VIEW}
+            />
+          }
           actions={
             <SecureComponent
               scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}

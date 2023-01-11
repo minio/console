@@ -21,7 +21,7 @@ import { Theme } from "@mui/material/styles";
 import { CapacityValues, ITenant, ValueUnit } from "./types";
 import { setTenantName } from "../tenantsSlice";
 import { getTenantAsync } from "../thunks/tenantDetailsAsync";
-import { DrivesIcon } from "../../../../icons";
+import { DrivesIcon } from "mds";
 import { niceBytes, niceBytesInt } from "../../../../common/utils";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";

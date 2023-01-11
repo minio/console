@@ -34,7 +34,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import AddUserServiceAccount from "./AddUserServiceAccount";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import { AddIcon, DeleteIcon } from "../../../icons";
+import { AddIcon, DeleteIcon } from "mds";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";

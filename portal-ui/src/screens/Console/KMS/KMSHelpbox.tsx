@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Box } from "@mui/material";
-import { HelpIconFilled } from "../../../icons";
+import { HelpIconFilled } from "mds";
 
 interface IKMSHelpBoxProps {
   helpText: string;

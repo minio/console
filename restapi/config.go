@@ -272,3 +272,7 @@ func getMaxConcurrentDownloadsLimit() int64 {
 
 	return cu
 }
+
+func getConsoleDevMode() bool {
+	return strings.ToLower(env.Get(ConsoleDevMode, "off")) == "on"
+}

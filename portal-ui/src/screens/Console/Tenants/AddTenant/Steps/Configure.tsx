@@ -42,7 +42,7 @@ import {
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "../../../../../icons/RemoveIcon";
+import { RemoveIcon } from "mds";
 import {
   addNewMinIODomain,
   isPageValid,

@@ -28,12 +28,12 @@ test
     await functions.setVersioned(t, "abucketrewind");
     await t
       .useRole(roles.bucketReadWrite)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("abucketrewind"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
       .wait(1000)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("abucketrewind"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
@@ -41,7 +41,7 @@ test
   })("Rewind works in bucket", async (t) => {
     await t
       .useRole(roles.bucketReadWrite)
-      .navigateTo("http://localhost:9090/buckets")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("abucketrewind"))
       .expect(elements.table.exists)
       .ok()

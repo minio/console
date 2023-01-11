@@ -20,7 +20,7 @@ import { DialogContentText } from "@mui/material";
 import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmDeleteIcon } from "../../../icons";
+import { ConfirmDeleteIcon } from "mds";
 import {
   setErrorSnackMessage,
   setServerNeedsRestart,

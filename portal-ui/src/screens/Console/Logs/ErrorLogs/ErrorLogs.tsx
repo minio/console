@@ -21,13 +21,12 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { useSelector } from "react-redux";
 import { FormControl, Grid, InputBase, MenuItem, Select } from "@mui/material";
+import { DateTime } from "luxon";
 
-import moment from "moment/moment";
 import { ErrorResponseHandler } from "../../../../../src/common/types";
 import api from "../../../../../src/common/api";
 import { AppState, useAppDispatch } from "../../../../store";
 
-import { LogMessage } from "../types";
 import { wsProtocol } from "../../../../utils/wsUtils";
 import {
   actionsTray,
@@ -149,7 +148,7 @@ const ErrorLogs = () => {
         // console.log(message.data.toString())
         // FORMAT: 00:35:17 UTC 01/01/2021
 
-        let m: LogMessage = JSON.parse(message.data.toString());
+        let m: any = JSON.parse(message.data.toString());
         let isValidEntry = true;
         if (
           m.level === "" &&
@@ -161,7 +160,11 @@ const ErrorLogs = () => {
         ) {
           isValidEntry = false;
         }
-        const logTime = moment(m.time, "HH:mm:s UTC MM/DD/YYYY").toDate();
+
+        const logTime = DateTime.fromFormat(
+          m.time,
+          "HH:mm:ss UTC MM/dd/yyyy"
+        ).toJSDate();
 
         m.time = logTime;
         m.key = Math.random();
@@ -401,5 +404,4 @@ const ErrorLogs = () => {
   );
 };
 
-//export default withStyles(styles)(connector(ErrorLogs));
 export default ErrorLogs;

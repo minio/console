@@ -27,6 +27,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
 import { Button } from "mds";
+import { DateTime } from "luxon";
 import createStyles from "@mui/styles/createStyles";
 import Grid from "@mui/material/Grid";
 import get from "lodash/get";
@@ -49,7 +50,10 @@ import { Badge } from "@mui/material";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import { extensionPreview } from "../utils";
 import { BucketInfo, BucketQuota } from "../../../types";
-import { ErrorResponseHandler } from "../../../../../../common/types";
+import {
+  ErrorResponseHandler,
+  IRetentionConfig,
+} from "../../../../../../common/types";
 
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 
@@ -69,7 +73,10 @@ import {
   DownloadIcon,
   PreviewIcon,
   ShareIcon,
-} from "../../../../../../icons";
+  HistoryIcon,
+  RefreshIcon,
+  DeleteIcon,
+} from "mds";
 import UploadFilesButton from "../../UploadFilesButton";
 import DetailsListPanel from "./DetailsListPanel";
 import ObjectDetailPanel from "./ObjectDetailPanel";
@@ -102,7 +109,9 @@ import {
   setNewObject,
   setObjectDetailsView,
   setPreviewOpen,
+  setRetentionConfig,
   setSearchObjects,
+  setSelectedBucket,
   setSelectedObjects,
   setSelectedObjectView,
   setSelectedPreview,
@@ -126,17 +135,6 @@ import {
   openPreview,
   openShare,
 } from "../../../../ObjectBrowser/objectBrowserThunks";
-
-const HistoryIcon = React.lazy(
-  () => import("../../../../../../icons/HistoryIcon")
-);
-const RefreshIcon = React.lazy(
-  () => import("../../../../../../icons/RefreshIcon")
-);
-
-const DeleteIcon = React.lazy(
-  () => import("../../../../../../icons/DeleteIcon")
-);
 
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects"))
@@ -272,6 +270,9 @@ const ListObjects = () => {
   const previewOpen = useSelector(
     (state: AppState) => state.objectBrowser.previewOpen
   );
+  const selectedBucket = useSelector(
+    (state: AppState) => state.objectBrowser.selectedBucket
+  );
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
   const bucketInfo = useSelector(selBucketDetailsInfo);
@@ -283,10 +284,10 @@ const ListObjects = () => {
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
 
-  const pathSegment = location.pathname.split("/browse/");
-
-  const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
   const bucketName = params.bucketName || "";
+
+  const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
+  const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
 
   const pageTitle = decodeURLString(internalPaths);
   const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
@@ -299,11 +300,14 @@ const ListObjects = () => {
   const fileUpload = useRef<HTMLInputElement>(null);
   const folderUpload = useRef<HTMLInputElement>(null);
 
-  const canDownload = hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT]);
+  const canDownload = hasPermission(bucketName, [
+    IAM_SCOPES.S3_GET_OBJECT,
+    IAM_SCOPES.S3_GET_ACTIONS,
+  ]);
   const canDelete = hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]);
   const canUpload = hasPermission(
     uploadPath,
-    [IAM_SCOPES.S3_PUT_OBJECT],
+    [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
     true,
     true
   );
@@ -410,6 +414,7 @@ const ListObjects = () => {
         .then((res: BucketInfo) => {
           dispatch(setBucketDetailsLoad(false));
           dispatch(setBucketInfo(res));
+          dispatch(setSelectedBucket(bucketName));
         })
         .catch((err: ErrorResponseHandler) => {
           dispatch(setBucketDetailsLoad(false));
@@ -417,6 +422,21 @@ const ListObjects = () => {
         });
     }
   }, [bucketName, loadingBucket, dispatch]);
+
+  // Load retention Config
+
+  useEffect(() => {
+    if (selectedBucket !== "") {
+      api
+        .invoke("GET", `/api/v1/buckets/${selectedBucket}/retention`)
+        .then((res: IRetentionConfig) => {
+          dispatch(setRetentionConfig(res));
+        })
+        .catch((err: ErrorResponseHandler) => {
+          dispatch(setRetentionConfig(null));
+        });
+    }
+  }, [selectedBucket, dispatch]);
 
   const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
     setDeleteMultipleOpen(false);
@@ -671,7 +691,7 @@ const ListObjects = () => {
           setErrorSnackMessage({
             errorMessage: "Upload not allowed",
             detailedError: permissionTooltipHelper(
-              [IAM_SCOPES.S3_PUT_OBJECT],
+              [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
               "upload objects to this location"
             ),
           })
@@ -729,7 +749,7 @@ const ListObjects = () => {
         URLItem = `${splitURLS.join("/")}/`;
       }
 
-      navigate(`/buckets/${bucketName}/browse/${encodeURLString(URLItem)}`);
+      navigate(`/browser/${bucketName}/${encodeURLString(URLItem)}`);
     }
 
     dispatch(setObjectDetailsView(false));
@@ -750,6 +770,12 @@ const ListObjects = () => {
     dispatch(setDownloadRenameModal(null));
   };
 
+  let createdTime = DateTime.now();
+
+  if (bucketInfo?.creation_date) {
+    createdTime = DateTime.fromISO(bucketInfo.creation_date);
+  }
+
   const multiActionButtons = [
     {
       action: () => {
@@ -761,7 +787,7 @@ const ListObjects = () => {
       tooltip: canDownload
         ? "Download Selected"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
+            [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
             "download objects from this bucket"
           ),
     },
@@ -867,9 +893,13 @@ const ListObjects = () => {
               <Fragment>
                 <Grid item xs={12} className={classes.bucketDetails}>
                   <span className={classes.detailsSpacer}>
-                    Created:&nbsp;&nbsp;&nbsp;
+                    Created on:&nbsp;&nbsp;
                     <strong>
-                      {new Date(bucketInfo?.creation_date || "").toString()}
+                      {bucketInfo?.creation_date
+                        ? createdTime.toFormat(
+                            "ccc, LLL dd yyyy HH:mm:ss (ZZZZ)"
+                          )
+                        : ""}
                     </strong>
                   </span>
                   <span className={classes.detailsSpacer}>
@@ -933,7 +963,10 @@ const ListObjects = () => {
                       }}
                       disabled={
                         !isVersioned ||
-                        !hasPermission(bucketName, [IAM_SCOPES.S3_GET_OBJECT])
+                        !hasPermission(bucketName, [
+                          IAM_SCOPES.S3_GET_OBJECT,
+                          IAM_SCOPES.S3_GET_ACTIONS,
+                        ])
                       }
                     />
                   </TooltipWrapper>
@@ -955,6 +988,7 @@ const ListObjects = () => {
                       disabled={
                         !hasPermission(bucketName, [
                           IAM_SCOPES.S3_LIST_BUCKET,
+                          IAM_SCOPES.S3_ALL_LIST_BUCKET,
                         ]) || rewindEnabled
                       }
                     />
@@ -1016,7 +1050,10 @@ const ListObjects = () => {
               </Fragment>
             ) : (
               <SecureComponent
-                scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+                scopes={[
+                  IAM_SCOPES.S3_LIST_BUCKET,
+                  IAM_SCOPES.S3_ALL_LIST_BUCKET,
+                ]}
                 resource={bucketName}
                 errorProps={{ disabled: true }}
               >
@@ -1050,7 +1087,10 @@ const ListObjects = () => {
               </SecureComponent>
             )}
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_LIST_BUCKET]}
+              scopes={[
+                IAM_SCOPES.S3_LIST_BUCKET,
+                IAM_SCOPES.S3_ALL_LIST_BUCKET,
+              ]}
               resource={bucketName}
               errorProps={{ disabled: true }}
             >

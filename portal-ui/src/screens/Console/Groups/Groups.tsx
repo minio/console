@@ -28,7 +28,7 @@ import {
   GroupsIcon,
   IAMPoliciesIcon,
   UsersIcon,
-} from "../../../icons";
+} from "mds";
 
 import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";

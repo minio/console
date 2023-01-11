@@ -141,7 +141,7 @@ export const table = Selector(".ReactVirtualized__Table");
 export const bucketsTableDisabled = Selector("#object-list-wrapper")
   .find(".MuiPaper-root")
   .withText(
-    "You require additional permissions in order to view Objects in this bucket. Please ask your MinIO administrator to grant you s3:ListBucket permission in order to view Objects in this bucket."
+    "You require additional permissions in order to view Objects in this bucket. Please ask your MinIO administrator to grant you"
   );
 export const createGroupUserTable = Selector(
   ".MuiDialog-container .ReactVirtualized__Table"
@@ -151,7 +151,7 @@ export const createGroupUserTable = Selector(
 // Bucket page vertical tabs
 //----------------------------------------------------
 export const bucketAccessRulesTab =
-  Selector(".MuiTab-root").withText("Access Rules");
+  Selector(".MuiTab-root").withText("Anonymous");
 
 //----------------------------------------------------
 // Settings window

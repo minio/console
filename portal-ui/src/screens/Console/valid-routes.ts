@@ -43,20 +43,19 @@ import {
   SupportMenuIcon,
   TraceMenuIcon,
   UsersMenuIcon,
-} from "../../icons/SidebarMenus";
-import { hasPermission } from "../../common/SecureComponent";
-import WatchIcon from "../../icons/WatchIcon";
-import {
+  WatchIcon,
   ClustersIcon,
   DocumentationIcon,
   LambdaIcon,
   LicenseIcon,
+  ObjectBrowserIcon,
   RecoverIcon,
   StorageIcon,
   TenantsOutlineIcon,
   TiersIcon,
-} from "../../icons";
-import SettingsIcon from "../../icons/SettingsIcon";
+  SettingsIcon,
+} from "mds";
+import { hasPermission } from "../../common/SecureComponent";
 import React from "react";
 import LicenseBadge from "./Menu/LicenseBadge";
 import EncryptionIcon from "../../icons/SidebarMenus/EncryptionIcon";
@@ -73,11 +72,11 @@ export const validRoutes = (
   let consoleMenus: IMenuItem[] = [
     {
       group: "User",
-      name: "Buckets",
-      id: "buckets",
+      name: "Object Browser",
+      id: "object-browser",
       component: NavLink,
-      to: IAM_PAGES.BUCKETS,
-      icon: BucketsMenuIcon,
+      to: IAM_PAGES.OBJECT_BROWSER_VIEW,
+      icon: ObjectBrowserIcon,
       forceDisplay: true,
       children: [],
     },
@@ -111,7 +110,24 @@ export const validRoutes = (
         );
       },
     },
-
+    {
+      group: "Administrator",
+      name: "Buckets",
+      id: "buckets",
+      component: NavLink,
+      to: IAM_PAGES.BUCKETS,
+      icon: BucketsMenuIcon,
+      forceDisplay: true,
+      children: [],
+    },
+    {
+      group: "Administrator",
+      name: "Policies",
+      component: NavLink,
+      id: "policies",
+      to: IAM_PAGES.POLICIES,
+      icon: AccessMenuIcon,
+    },
     {
       group: "Administrator",
       name: "Identity",
@@ -137,13 +153,6 @@ export const validRoutes = (
           name: "Groups",
           icon: GroupsMenuIcon,
           fsHidden: ldapIsEnabled,
-        },
-        {
-          name: "Policies",
-          component: NavLink,
-          id: "policies",
-          to: IAM_PAGES.POLICIES,
-          icon: AccessMenuIcon,
         },
         {
           name: "OpenID",

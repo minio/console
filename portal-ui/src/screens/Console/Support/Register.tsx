@@ -28,11 +28,10 @@ import withStyles from "@mui/styles/withStyles";
 import { Box, Link } from "@mui/material";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
-import { CopyIcon, UsersIcon } from "../../../icons";
+import { CopyIcon, UsersIcon } from "mds";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import OnlineRegistrationIcon from "../../../icons/OnlineRegistrationIcon";
-import OfflineRegistrationIcon from "../../../icons/OfflineRegistrationIcon";
+import { OnlineRegistrationIcon, OfflineRegistrationIcon } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../common/api";
 

@@ -57,8 +57,8 @@ import {
   ShareIcon,
   TagsIcon,
   VersionsIcon,
-} from "../../../../../../icons";
-import { InspectMenuIcon } from "../../../../../../icons/SidebarMenus";
+} from "mds";
+import { InspectMenuIcon } from "mds";
 import api from "../../../../../../common/api";
 import ShareFile from "../ObjectDetails/ShareFile";
 import SetRetention from "../ObjectDetails/SetRetention";
@@ -74,7 +74,7 @@ import ActionsListSection from "./ActionsListSection";
 import { displayFileIconName } from "./utils";
 import TagsModal from "../ObjectDetails/TagsModal";
 import InspectObject from "./InspectObject";
-import Loader from "../../../../Common/Loader/Loader";
+import { Loader } from "mds";
 import { selDistSet } from "../../../../../../systemSlice";
 import {
   makeid,
@@ -231,15 +231,16 @@ const ObjectDetailPanel = ({
             distributedSetup ? "&with_versions=true" : ""
           }`
         )
-        .then((res: IFileInfo[]) => {
-          const result = get(res, "objects", []);
+        .then((res: { objects: IFileInfo[] }) => {
+          const result: IFileInfo[] = res.objects || [];
           if (distributedSetup) {
             setAllInfoElements(result);
             setVersions(result);
+
             const tVersionSize = result.reduce(
-              (acc: number, currValue: IFileInfo) => {
+              (acc: number, currValue: IFileInfo): number => {
                 if (currValue?.size) {
-                  return acc + currValue.size;
+                  return acc + parseInt(currValue.size);
                 }
                 return acc;
               },
@@ -442,14 +443,21 @@ const ObjectDetailPanel = ({
   ];
   const canSetLegalHold = hasPermission(bucketName, [
     IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
   const canSetTags = hasPermission(objectResources, [
     IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 
   const canChangeRetention = hasPermission(
     objectResources,
-    [IAM_SCOPES.S3_GET_OBJECT_RETENTION, IAM_SCOPES.S3_PUT_OBJECT_RETENTION],
+    [
+      IAM_SCOPES.S3_GET_OBJECT_RETENTION,
+      IAM_SCOPES.S3_PUT_OBJECT_RETENTION,
+      IAM_SCOPES.S3_GET_ACTIONS,
+      IAM_SCOPES.S3_PUT_ACTIONS,
+    ],
     true
   );
   const canInspect = hasPermission(objectResources, [
@@ -459,9 +467,12 @@ const ObjectDetailPanel = ({
     IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
     IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
     IAM_SCOPES.S3_GET_OBJECT_VERSION,
+    IAM_SCOPES.S3_GET_ACTIONS,
+    IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
   const canGetObject = hasPermission(objectResources, [
     IAM_SCOPES.S3_GET_OBJECT,
+    IAM_SCOPES.S3_GET_ACTIONS,
   ]);
   const canDelete = hasPermission(
     [bucketName, currentItem, [bucketName, actualInfo.name].join("/")],
@@ -479,7 +490,7 @@ const ObjectDetailPanel = ({
       tooltip: canGetObject
         ? "Download this Object"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
+            [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
             "download this object"
           ),
     },
@@ -493,7 +504,7 @@ const ObjectDetailPanel = ({
       tooltip: canGetObject
         ? "Share this File"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
+            [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
             "share this object"
           ),
     },
@@ -510,7 +521,7 @@ const ObjectDetailPanel = ({
       tooltip: canGetObject
         ? "Preview this File"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT],
+            [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
             "preview this object"
           ),
     },
@@ -531,7 +542,7 @@ const ObjectDetailPanel = ({
           ? "Change Legal Hold rules for this File"
           : "Object Locking must be enabled on this bucket in order to set Legal Hold"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD],
+            [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD, IAM_SCOPES.S3_PUT_ACTIONS],
             "change legal hold settings for this object"
           ),
     },
@@ -553,6 +564,8 @@ const ObjectDetailPanel = ({
             [
               IAM_SCOPES.S3_GET_OBJECT_RETENTION,
               IAM_SCOPES.S3_PUT_OBJECT_RETENTION,
+              IAM_SCOPES.S3_GET_ACTIONS,
+              IAM_SCOPES.S3_PUT_ACTIONS,
             ],
             "change Retention Rules for this object"
           ),
@@ -571,6 +584,8 @@ const ObjectDetailPanel = ({
             [
               IAM_SCOPES.S3_PUT_OBJECT_TAGGING,
               IAM_SCOPES.S3_GET_OBJECT_TAGGING,
+              IAM_SCOPES.S3_GET_ACTIONS,
+              IAM_SCOPES.S3_PUT_ACTIONS,
             ],
             "set Tags on this object"
           ),
@@ -617,6 +632,8 @@ const ObjectDetailPanel = ({
               IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
               IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
               IAM_SCOPES.S3_GET_OBJECT_VERSION,
+              IAM_SCOPES.S3_GET_ACTIONS,
+              IAM_SCOPES.S3_PUT_ACTIONS,
             ],
             "display all versions of this object"
           ),
@@ -834,7 +851,10 @@ const ObjectDetailPanel = ({
           </Box>
           <Box className={classes.detailContainer}>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD]}
+              scopes={[
+                IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD,
+                IAM_SCOPES.S3_GET_ACTIONS,
+              ]}
               resource={bucketName}
             >
               <Fragment>
@@ -846,7 +866,10 @@ const ObjectDetailPanel = ({
           </Box>
           <Box className={classes.detailContainer}>
             <SecureComponent
-              scopes={[IAM_SCOPES.S3_GET_OBJECT_RETENTION]}
+              scopes={[
+                IAM_SCOPES.S3_GET_OBJECT_RETENTION,
+                IAM_SCOPES.S3_GET_ACTIONS,
+              ]}
               resource={bucketName}
             >
               <Fragment>

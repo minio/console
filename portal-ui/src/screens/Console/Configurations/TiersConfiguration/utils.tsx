@@ -23,7 +23,7 @@ import {
   MinIOTierIconXs,
   S3TierIcon,
   S3TierIconXs,
-} from "../../../../icons";
+} from "mds";
 
 export const minioServiceName = "minio";
 export const gcsServiceName = "gcs";
