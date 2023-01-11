@@ -22,36 +22,11 @@ import (
 	"reflect"
 	"testing"
 
-	storagev1 "k8s.io/api/storage/v1"
-
 	"github.com/minio/console/models"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
-
-type k8sClientMock struct{}
-
-var (
-	k8sclientGetResourceQuotaMock func(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error)
-	k8sclientGetNameSpaceMock     func(ctx context.Context, name string, opts metav1.GetOptions) (*v1.Namespace, error)
-	k8sclientStorageClassesMock   func(ctx context.Context, opts metav1.ListOptions) (*storagev1.StorageClassList, error)
-)
-
-// mock functions
-func (c k8sClientMock) getResourceQuota(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error) {
-	return k8sclientGetResourceQuotaMock(ctx, namespace, resource, opts)
-}
-
-// mock functions
-func (c k8sClientMock) getNamespace(ctx context.Context, name string, opts metav1.GetOptions) (*v1.Namespace, error) {
-	return k8sclientGetNameSpaceMock(ctx, name, opts)
-}
-
-// mock functions
-func (c k8sClientMock) getStorageClasses(ctx context.Context, opts metav1.ListOptions) (*storagev1.StorageClassList, error) {
-	return k8sclientStorageClassesMock(ctx, opts)
-}
 
 func Test_ResourceQuota(t *testing.T) {
 	mockHardResourceQuota := v1.ResourceList{
@@ -141,7 +116,7 @@ func Test_ResourceQuota(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			k8sclientGetResourceQuotaMock = tt.mockResourceQuota
+			k8sClientGetResourceQuotaMock = tt.mockResourceQuota
 			got, err := getResourceQuota(tt.args.ctx, tt.args.client, "ns", mockRQResponse.Name)
 			if err != nil {
 				if tt.wantErr {

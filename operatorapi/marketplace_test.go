@@ -35,13 +35,9 @@ import (
 )
 
 var (
-	testWithError                = false
-	testServerWithError          = false
-	errMock                      = errors.New("mock error")
-	k8sClientGetConfigMapMock    func(ctx context.Context, namespace, configMap string, opts metav1.GetOptions) (*corev1.ConfigMap, error)
-	k8sClientCreateConfigMapMock func(ctx context.Context, namespace string, cm *corev1.ConfigMap, opts metav1.CreateOptions) (*corev1.ConfigMap, error)
-	k8sClientUpdateConfigMapMock func(ctx context.Context, namespace string, cm *corev1.ConfigMap, opts metav1.UpdateOptions) (*corev1.ConfigMap, error)
-	k8sClientDeleteConfigMapMock func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
+	testWithError       = false
+	testServerWithError = false
+	errMock             = errors.New("mock error")
 )
 
 type MarketplaceTestSuite struct {
@@ -50,22 +46,6 @@ type MarketplaceTestSuite struct {
 	kClient    k8sClientMock
 	namespace  string
 	postServer *httptest.Server
-}
-
-func (c k8sClientMock) getConfigMap(ctx context.Context, namespace, configMap string, opts metav1.GetOptions) (*corev1.ConfigMap, error) {
-	return k8sClientGetConfigMapMock(ctx, namespace, configMap, opts)
-}
-
-func (c k8sClientMock) createConfigMap(ctx context.Context, namespace string, cm *corev1.ConfigMap, opts metav1.CreateOptions) (*corev1.ConfigMap, error) {
-	return k8sClientCreateConfigMapMock(ctx, namespace, cm, opts)
-}
-
-func (c k8sClientMock) updateConfigMap(ctx context.Context, namespace string, cm *corev1.ConfigMap, opts metav1.UpdateOptions) (*corev1.ConfigMap, error) {
-	return k8sClientUpdateConfigMapMock(ctx, namespace, cm, opts)
-}
-
-func (c k8sClientMock) deleteConfigMap(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
-	return k8sClientDeleteConfigMapMock(ctx, namespace, name, opts)
 }
 
 func (suite *MarketplaceTestSuite) SetupSuite() {
