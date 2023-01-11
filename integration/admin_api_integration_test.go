@@ -113,7 +113,7 @@ func NotifyPostgres() (*http.Response, error) {
 		KeyValues: []*models.ConfigurationKV{
 			{
 				Key:   "connection_string",
-				Value: "user=postgres password=password host=173.18.0.3 dbname=postgres port=5432 sslmode=disable",
+				Value: "user=postgres password=password host=173.18.0.4 dbname=postgres port=5432 sslmode=disable",
 			},
 			{
 				Key:   "table",

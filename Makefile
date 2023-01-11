@@ -71,17 +71,23 @@ assets:
 test-integration:
 	@(docker stop pgsqlcontainer || true)
 	@(docker stop minio || true)
+	@(docker stop minio2 || true)
 	@(docker network rm mynet123 || true)
 	@echo "create docker network to communicate containers MinIO & PostgreSQL"
 	@(docker network create --subnet=173.18.0.0/29 mynet123)
 	@echo "docker run with MinIO Version below:"
 	@echo $(MINIO_VERSION)
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 --net=mynet123 -d --name minio --rm -p 9000:9000 -p 9001:9001 -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= $(MINIO_VERSION) server /data{1...4} --console-address ':9001' && sleep 5)
-	@(docker run --net=mynet123 --ip=173.18.0.3 --name pgsqlcontainer --rm -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres && sleep 5)
+	@echo "MinIO 1"
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 --net=mynet123 -d --name minio --rm -p 9000:9000 -p 9091:9091 -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= $(MINIO_VERSION) server /data{1...4} --console-address ':9091' && sleep 5)
+	@echo "MinIO 2"
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 --net=mynet123 -d --name minio2 --rm -p 9001:9001 -p 9092:9092 -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= $(MINIO_VERSION) server /data{1...4} --address ':9001' --console-address ':9092' && sleep 5)
+	@echo "Postgres"
+	@(docker run --net=mynet123 --ip=173.18.0.4 --name pgsqlcontainer --rm -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres && sleep 5)
 	@echo "execute test and get coverage for test-integration:"
-	@(cd integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && export THETARGET=$(TARGET_BUCKET) && echo "THETARGET: ${THETARGET}" && ./integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/system.out)
+	@(cd integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage &&  ./integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/system.out)
 	@(docker stop pgsqlcontainer)
 	@(docker stop minio)
+	@(docker stop minio2)
 	@(docker network rm mynet123)
 
 test-replication:
