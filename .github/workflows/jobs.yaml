@@ -1164,24 +1164,7 @@ jobs:
           echo "Change the permissions to execute mc command"
           chmod +x mc
           echo "Create the folder to put the all.out file"
-          TARGET_BUCKET=`echo $RANDOM | md5sum | head -c 20; echo;`
-          echo "TARGET_BUCKET: ${TARGET_BUCKET}"
-          echo "Only run our test if play is up and running..."
-          PLAY_IS_ON=`wget --spider --server-response https://play.min.io:9443/login 2>&1 | grep '200\ OK' | wc -l`
-          if [ $PLAY_IS_ON == 1 ]
-          then
-            echo "Play is up and running, we will proceed with the test"
-          else
-            echo "Play is down, please report it on hack channel"
-            exit
-          fi
-          ./mc mb --ignore-existing play/${TARGET_BUCKET}/
-          ./mc version enable play/${TARGET_BUCKET}
-          # Via API we are going to test:
-          # mc admin bucket remote add myminio/source https://minioadmin:minioadmin@play.min.io/target --service "replication"
-          # expected output is: Remote ARN = `arn:minio:replication::f5bdb8d7-541d-415e-aaf4-592979484ba9:target`.
-          
-          make test-integration MINIO_VERSION=$VERSION TARGET_BUCKET=$TARGET_BUCKET;
+          make test-integration MINIO_VERSION=$VERSION;
 
       - uses: actions/cache@v3
         id: coverage-cache
