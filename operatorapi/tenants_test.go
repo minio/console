@@ -28,15 +28,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
-
-	xhttp "github.com/minio/console/pkg/http"
-
-	"github.com/minio/console/operatorapi/operations/operator_api"
-
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
+	"github.com/minio/console/operatorapi/operations/operator_api"
+	xhttp "github.com/minio/console/pkg/http"
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
+	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -55,12 +52,10 @@ var (
 )
 
 var (
-	opClientTenantListMock  func(ctx context.Context, namespace string, opts metav1.ListOptions) (*miniov2.TenantList, error)
-	httpClientGetMock       func(url string) (resp *http.Response, err error)
-	httpClientPostMock      func(url, contentType string, body io.Reader) (resp *http.Response, err error)
-	httpClientDoMock        func(req *http.Request) (*http.Response, error)
-	k8sclientGetSecretMock  func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
-	k8sclientGetServiceMock func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error)
+	opClientTenantListMock func(ctx context.Context, namespace string, opts metav1.ListOptions) (*miniov2.TenantList, error)
+	httpClientGetMock      func(url string) (resp *http.Response, err error)
+	httpClientPostMock     func(url, contentType string, body io.Reader) (resp *http.Response, err error)
+	httpClientDoMock       func(req *http.Request) (*http.Response, error)
 )
 
 // mock function of TenantDelete()
@@ -101,14 +96,6 @@ func (h httpClientMock) Post(url, contentType string, body io.Reader) (resp *htt
 // mock function of Do()
 func (h httpClientMock) Do(req *http.Request) (*http.Response, error) {
 	return httpClientDoMock(req)
-}
-
-func (c k8sClientMock) getSecret(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
-	return k8sclientGetSecretMock(ctx, namespace, secretName, opts)
-}
-
-func (c k8sClientMock) getService(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error) {
-	return k8sclientGetServiceMock(ctx, namespace, serviceName, opts)
 }
 
 func Test_TenantInfoTenantAdminClient(t *testing.T) {
@@ -1834,8 +1821,8 @@ func Test_updateTenantConfigurationFile(t *testing.T) {
 	for _, tt := range tests {
 		k8sclientGetSecretMock = tt.args.mockGetSecret
 		opClientTenantGetMock = tt.args.mockTenantGet
-		UpdateSecretMock = tt.args.mockUpdateSecret
-		DeletePodCollectionMock = tt.args.mockDeletePodCollection
+		k8sClientUpdateSecretMock = tt.args.mockUpdateSecret
+		k8sClientDeletePodCollectionMock = tt.args.mockDeletePodCollection
 		t.Run(tt.name, func(t *testing.T) {
 			err := updateTenantConfigurationFile(tt.args.ctx, tt.args.operatorClient, tt.args.client, tt.args.namespace, tt.args.params)
 			if (err != nil) != tt.wantErr {

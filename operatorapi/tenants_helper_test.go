@@ -30,29 +30,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var (
-	DeletePodCollectionMock func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
-	DeleteSecretMock        func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
-	CreateSecretMock        func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
-	UpdateSecretMock        func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error)
-)
-
-func (c k8sClientMock) deletePodCollection(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
-	return DeletePodCollectionMock(ctx, namespace, opts, listOpts)
-}
-
-func (c k8sClientMock) deleteSecret(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
-	return DeleteSecretMock(ctx, namespace, name, opts)
-}
-
-func (c k8sClientMock) createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
-	return CreateSecretMock(ctx, namespace, secret, opts)
-}
-
-func (c k8sClientMock) updateSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error) {
-	return UpdateSecretMock(ctx, namespace, secret, opts)
-}
-
 func Test_tenantUpdateCertificates(t *testing.T) {
 	k8sClient := k8sClientMock{}
 	opClient := opClientMock{}
@@ -198,9 +175,9 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		opClientTenantGetMock = tt.args.mockTenantGet
-		DeleteSecretMock = tt.args.mockDeleteSecret
-		CreateSecretMock = tt.args.mockCreateSecret
-		DeletePodCollectionMock = tt.args.mockDeletePodCollection
+		k8sClientDeleteSecretMock = tt.args.mockDeleteSecret
+		k8sClientCreateSecretMock = tt.args.mockCreateSecret
+		k8sClientDeletePodCollectionMock = tt.args.mockDeletePodCollection
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tenantUpdateCertificates(tt.args.ctx, tt.args.opClient, tt.args.clientSet, tt.args.namespace, tt.args.params); (err != nil) != tt.wantErr {
 				t.Errorf("tenantUpdateCertificates() error = %v, wantErr %v", err, tt.wantErr)
@@ -246,9 +223,9 @@ func Test_tenantUpdateEncryption(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			opClientTenantGetMock = tt.args.mockTenantGet
-			DeleteSecretMock = tt.args.mockDeleteSecret
-			CreateSecretMock = tt.args.mockCreateSecret
-			DeletePodCollectionMock = tt.args.mockDeletePodCollection
+			k8sClientDeleteSecretMock = tt.args.mockDeleteSecret
+			k8sClientCreateSecretMock = tt.args.mockCreateSecret
+			k8sClientDeletePodCollectionMock = tt.args.mockDeletePodCollection
 			if err := tenantUpdateEncryption(tt.args.ctx, tt.args.opClient, tt.args.clientSet, tt.args.namespace, tt.args.params); (err != nil) != tt.wantErr {
 				t.Errorf("tenantUpdateEncryption() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -380,8 +357,8 @@ func Test_createOrReplaceKesConfigurationSecrets(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			DeleteSecretMock = tt.args.mockDeleteSecret
-			CreateSecretMock = tt.args.mockCreateSecret
+			k8sClientDeleteSecretMock = tt.args.mockDeleteSecret
+			k8sClientCreateSecretMock = tt.args.mockCreateSecret
 			got, got1, err := createOrReplaceKesConfigurationSecrets(tt.args.ctx, tt.args.clientSet, tt.args.ns, tt.args.encryptionCfg, tt.args.kesConfigurationSecretName, tt.args.kesClientCertSecretName, tt.args.tenantName)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("createOrReplaceKesConfigurationSecrets() error = %v, wantErr %v", err, tt.wantErr)
