@@ -5677,7 +5677,9 @@ definitions:
       errorEvents:
         type: integer
       latencyHistogram:
-        $ref: "#/definitions/kmsLatencyHistogram"
+        type: array
+        items:
+          $ref:  "#/definitions/kmsLatencyHistogram"
       uptime:
         type: integer
       cpus:
@@ -5697,6 +5699,9 @@ definitions:
     properties:
       duration:
         type: integer
+      total:
+        type: integer
+
   kmsAPIsResponse:
     type: object
     properties:

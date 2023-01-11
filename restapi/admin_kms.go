@@ -20,6 +20,7 @@ package restapi
 import (
 	"context"
 	"encoding/json"
+	"sort"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -120,7 +121,7 @@ func kmsMetrics(ctx context.Context, minioClient MinioAdmin) (*models.KmsMetrics
 		RequestActive:    &metrics.RequestActive,
 		AuditEvents:      &metrics.AuditEvents,
 		ErrorEvents:      &metrics.ErrorEvents,
-		LatencyHistogram: nil,
+		LatencyHistogram: parseHistogram(metrics.LatencyHistogram),
 		Uptime:           &metrics.UpTime,
 		Cpus:             &metrics.CPUs,
 		UsableCPUs:       &metrics.UsableCPUs,
@@ -129,6 +130,17 @@ func kmsMetrics(ctx context.Context, minioClient MinioAdmin) (*models.KmsMetrics
 		HeapObjects:      metrics.HeapObjects,
 		StackAlloc:       &metrics.StackAlloc,
 	}, nil
+}
+
+func parseHistogram(histogram map[int64]int64) (records []*models.KmsLatencyHistogram) {
+	for duration, total := range histogram {
+		records = append(records, &models.KmsLatencyHistogram{Duration: duration, Total: total})
+	}
+	cp := func(i, j int) bool {
+		return records[i].Duration < records[j].Duration
+	}
+	sort.Slice(records, cp)
+	return records
 }
 
 func GetKMSAPIsResponse(session *models.Principal, params kmsAPI.KMSAPIsParams) (*models.KmsAPIsResponse, *models.Error) {
