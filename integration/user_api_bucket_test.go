@@ -40,28 +40,58 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type AddBucketOps struct {
+	Name       string
+	Locking    bool
+	Versioning bool
+	Quota      map[string]interface{}
+	Retention  map[string]interface{}
+	Endpoint   *string
+	UseToken   *string
+}
+
 func AddBucket(name string, locking, versioning bool, quota, retention map[string]interface{}) (*http.Response, error) {
+	return AddBucketWithOpts(&AddBucketOps{
+		Name:       name,
+		Locking:    locking,
+		Versioning: versioning,
+		Quota:      quota,
+		Retention:  retention,
+		Endpoint:   nil,
+	})
+}
+
+func AddBucketWithOpts(opts *AddBucketOps) (*http.Response, error) {
 	/*
 	   This is an atomic function that we can re-use to create a bucket on any
 	   desired test.
 	*/
 	// Needed Parameters for API Call
 	requestDataAdd := map[string]interface{}{
-		"name":       name,
-		"locking":    locking,
-		"versioning": versioning,
-		"quota":      quota,
-		"retention":  retention,
+		"name":       opts.Name,
+		"locking":    opts.Locking,
+		"versioning": opts.Versioning,
+		"quota":      opts.Quota,
+		"retention":  opts.Retention,
+	}
+
+	endpoint := "http://localhost:9090/api/v1/buckets"
+	if opts.Endpoint != nil {
+		endpoint = fmt.Sprintf("%s/api/v1/buckets", *opts.Endpoint)
 	}
 
 	// Creating the Call by adding the URL and Headers
 	requestDataJSON, _ := json.Marshal(requestDataAdd)
 	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/buckets", requestDataBody)
+	request, err := http.NewRequest("POST", endpoint, requestDataBody)
 	if err != nil {
 		log.Println(err)
 	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	if opts.UseToken != nil {
+		request.Header.Add("Cookie", fmt.Sprintf("token=%s", *opts.UseToken))
+	} else {
+		request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	}
 	request.Header.Add("Content-Type", "application/json")
 
 	// Performing the call
@@ -72,13 +102,66 @@ func AddBucket(name string, locking, versioning bool, quota, retention map[strin
 	return response, err
 }
 
-func BucketGotAdded(name string, locking, versioning bool, quota, retention map[string]interface{}, assert *assert.Assertions, expected int) bool {
+func getTokenForEndpoint(endpoint string) string {
+	var loginToken string
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	// get login credentials
+
+	requestData := map[string]string{
+		"accessKey": "minioadmin",
+		"secretKey": "minioadmin",
+	}
+
+	requestDataJSON, _ := json.Marshal(requestData)
+
+	requestDataBody := bytes.NewReader(requestDataJSON)
+
+	request, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v1/login", endpoint), requestDataBody)
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err := client.Do(request)
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+
+	if response != nil {
+		for _, cookie := range response.Cookies() {
+			if cookie.Name == "token" {
+				loginToken = cookie.Value
+				break
+			}
+		}
+	}
+	return loginToken
+}
+
+func setupBucket(name string, locking, versioning bool, quota, retention map[string]interface{}, assert *assert.Assertions, expected int) bool {
+	return setupBucketForEndpoint(name, locking, versioning, quota, retention, assert, expected, nil, nil)
+}
+
+func setupBucketForEndpoint(name string, locking, versioning bool, quota, retention map[string]interface{}, assert *assert.Assertions, expected int, endpoint, endpointToken *string) bool {
 	/*
 		The intention of this function is to return either true or false to
 		reduce the code by performing the verification in one place only.
 	*/
 	// Verify if there is an error and return either true or false
-	response, err := AddBucket(name, locking, versioning, quota, retention)
+	response, err := AddBucketWithOpts(&AddBucketOps{
+		Name:       name,
+		Locking:    locking,
+		Versioning: versioning,
+		Quota:      quota,
+		Retention:  retention,
+		Endpoint:   endpoint,
+		UseToken:   endpointToken,
+	})
 	if err != nil {
 		assert.Fail("Error adding the bucket")
 		return false
@@ -665,7 +748,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	status := "enabled"
 
 	// 1. Create bucket
-	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
 		return
 	}
 
@@ -752,7 +835,7 @@ func TestGetBucketQuota(t *testing.T) {
 	validBucket := "testgetbucketquota"
 
 	// 1. Create bucket
-	if !BucketGotAdded(validBucket, true, true, nil, nil, assert, 201) {
+	if !setupBucket(validBucket, true, true, nil, nil, assert, 201) {
 		return
 	}
 
@@ -829,7 +912,7 @@ func TestPutBucketQuota(t *testing.T) {
 	validBucket := "testputbucketquota"
 
 	// 1. Create bucket
-	if !BucketGotAdded(validBucket, true, true, nil, nil, assert, 201) {
+	if !setupBucket(validBucket, true, true, nil, nil, assert, 201) {
 		return
 	}
 
@@ -888,7 +971,7 @@ func TestListBucketEvents(t *testing.T) {
 	validBucket := "testlistbucketevents"
 
 	// 1. Create bucket
-	if !BucketGotAdded(validBucket, true, true, nil, nil, assert, 201) {
+	if !setupBucket(validBucket, true, true, nil, nil, assert, 201) {
 		return
 	}
 
@@ -946,7 +1029,7 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 	validPrefix := encodeBase64(fileName)
 
 	// 1. Create bucket
-	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1053,7 +1136,7 @@ func TestBucketSetPolicy(t *testing.T) {
 	validBucketName := "testbucketsetpolicy"
 
 	// 1. Create bucket
-	if !BucketGotAdded(validBucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(validBucketName, true, true, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1114,7 +1197,7 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 	validPrefix := encodeBase64(fileName)
 
 	// 1. Create bucket
-	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1202,7 +1285,7 @@ func TestPutBucketsTags(t *testing.T) {
 	// 1. Create the bucket
 	assert := assert.New(t)
 	validBucketName := "testputbuckettags1"
-	if !BucketGotAdded(validBucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(validBucketName, false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1260,7 +1343,7 @@ func TestGetsTheMetadataOfAnObject(t *testing.T) {
 	tags["tag"] = "testputobjecttagbucketonetagone"
 
 	// 1. Create the bucket
-	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1331,7 +1414,7 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 	prefix := encodeBase64(fileName)
 
 	// 1. Create bucket
-	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1429,7 +1512,7 @@ func TestShareObjectOnURL(t *testing.T) {
 	versionID := "null"
 
 	// 1. Create the bucket
-	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1503,7 +1586,7 @@ func TestListObjects(t *testing.T) {
 	fileName := "testlistobjecttobucket1.txt"
 
 	// 1. Create the bucket
-	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1551,7 +1634,7 @@ func TestDeleteObject(t *testing.T) {
 	numberOfFiles := 2
 
 	// 1. Create bucket
-	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1617,7 +1700,7 @@ func TestUploadObjectToBucket(t *testing.T) {
 	fileName := "sample.txt"
 
 	// 1. Create the bucket
-	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1652,7 +1735,7 @@ func TestDownloadObject(t *testing.T) {
 	}
 
 	// 1. Create the bucket
-	if !BucketGotAdded(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1714,7 +1797,7 @@ func TestDeleteMultipleObjects(t *testing.T) {
 	fileName := "testdeletemultipleobjs"
 
 	// 1. Create a bucket for this particular test
-	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1791,7 +1874,7 @@ func TestPutObjectTag(t *testing.T) {
 	versionID := "null"
 
 	// 1. Create the bucket
-	if !BucketGotAdded(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1865,7 +1948,7 @@ func TestBucketRetention(t *testing.T) {
 	retention["mode"] = "compliance"
 	retention["unit"] = "years"
 	retention["validity"] = 2
-	if !BucketGotAdded("setbucketretention1", true, true, nil, retention, assert, 201) {
+	if !setupBucket("setbucketretention1", true, true, nil, retention, assert, 201) {
 		return
 	}
 
@@ -1916,7 +1999,7 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 
 	// 1. Create the bucket
 	assert := assert.New(t)
-	if !BucketGotAdded("bucketinformation2", false, false, nil, nil, assert, 201) {
+	if !setupBucket("bucketinformation2", false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -1961,7 +2044,7 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 
 	// 1. Create the bucket
 	assert := assert.New(t)
-	if !BucketGotAdded("bucketinformation1", false, false, nil, nil, assert, 201) {
+	if !setupBucket("bucketinformation1", false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -2074,7 +2157,7 @@ func TestListBuckets(t *testing.T) {
 	// 1. Create buckets
 	numberOfBuckets := 3
 	for i := 1; i <= numberOfBuckets; i++ {
-		if !BucketGotAdded("testlistbuckets"+strconv.Itoa(i), false, false, nil, nil, assert, 201) {
+		if !setupBucket("testlistbuckets"+strconv.Itoa(i), false, false, nil, nil, assert, 201) {
 			return
 		}
 	}
@@ -2190,7 +2273,7 @@ func TestBucketVersioning(t *testing.T) {
 
 	requestDataBody := bytes.NewReader(requestDataJSON)
 
-	if !BucketGotAdded("test2", true, false, nil, nil, assert, 201) {
+	if !setupBucket("test2", true, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -2253,7 +2336,7 @@ func TestSetBucketTags(t *testing.T) {
 	}
 
 	// put bucket
-	if !BucketGotAdded("test4", false, false, nil, nil, assert, 201) {
+	if !setupBucket("test4", false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -2320,7 +2403,7 @@ func TestGetBucket(t *testing.T) {
 		Timeout: 2 * time.Second,
 	}
 
-	if !BucketGotAdded("test3", false, false, nil, nil, assert, 201) {
+	if !setupBucket("test3", false, false, nil, nil, assert, 201) {
 		return
 	}
 
@@ -2373,7 +2456,7 @@ func TestAddBucket(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if !BucketGotAdded(tt.args.bucketName, false, false, nil, nil, assert, tt.expectedStatus) {
+			if !setupBucket(tt.args.bucketName, false, false, nil, nil, assert, tt.expectedStatus) {
 				return
 			}
 		})
@@ -2918,7 +3001,7 @@ func TestReturnsTheStatusOfObjectLockingSupportOnTheBucket(t *testing.T) {
 	)
 }
 
-func SetBucketVersioning(bucketName string, versioning bool) (*http.Response, error) {
+func SetBucketVersioning(bucketName string, versioning bool, endpoint, useToken *string) (*http.Response, error) {
 	/*
 		Helper function to set Bucket Versioning
 	*/
@@ -2927,13 +3010,21 @@ func SetBucketVersioning(bucketName string, versioning bool) (*http.Response, er
 	}
 	requestDataJSON, _ := json.Marshal(requestDataAdd)
 	requestDataBody := bytes.NewReader(requestDataJSON)
+	endpointURL := fmt.Sprintf("http://localhost:9090/api/v1/buckets/%s/versioning", bucketName)
+	if endpoint != nil {
+		endpointURL = fmt.Sprintf("%s/api/v1/buckets/%s/versioning", *endpoint, bucketName)
+	}
 	request, err := http.NewRequest("PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/versioning",
+		endpointURL,
 		requestDataBody)
 	if err != nil {
 		log.Println(err)
 	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	if useToken != nil {
+		request.Header.Add("Cookie", fmt.Sprintf("token=%s", *useToken))
+	} else {
+		request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	}
 	request.Header.Add("Content-Type", "application/json")
 	client := &http.Client{
 		Timeout: 2 * time.Second,
@@ -2950,12 +3041,12 @@ func TestSetBucketVersioning(t *testing.T) {
 	versioning := true
 
 	// 1. Create bucket with versioning as true and locking as false
-	if !BucketGotAdded(bucket, locking, versioning, nil, nil, assert, 201) {
+	if !setupBucket(bucket, locking, versioning, nil, nil, assert, 201) {
 		return
 	}
 
 	// 2. Set versioning as False
-	response, err := SetBucketVersioning(bucket, false)
+	response, err := SetBucketVersioning(bucket, false, nil, nil)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -3028,7 +3119,7 @@ func TestEnableBucketEncryption(t *testing.T) {
 	kmsKeyID := ""
 
 	// 1. Add bucket
-	if !BucketGotAdded(bucketName, locking, versioning, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, locking, versioning, nil, nil, assert, 201) {
 		return
 	}
 
@@ -3297,7 +3388,7 @@ func TestBucketLifeCycle(t *testing.T) {
 	var noncurrentversionExpirationDays int64
 
 	// 1. Add bucket
-	if !BucketGotAdded(bucketName, locking, versioning, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, locking, versioning, nil, nil, assert, 201) {
 		return
 	}
 
@@ -3507,7 +3598,7 @@ func TestAccessRule(t *testing.T) {
 	access := "readonly"
 
 	// 1. Add bucket
-	if !BucketGotAdded(bucketName, locking, versioning, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, locking, versioning, nil, nil, assert, 201) {
 		return
 	}
 
@@ -3745,14 +3836,24 @@ func TestAddRemoteBucket(t *testing.T) {
 	assert := assert.New(t)
 	accessKey := "minioadmin"
 	secretKey := "minioadmin"
-	targetURL := "https://play.min.io"
+	targetURL := "http://173.18.0.3:9001"
 	sourceBucket := "source"
-	targetBucket := os.Getenv("THETARGET")
+	targetBucket := "targetbucket"
 	fmt.Println("targetBucket: ", targetBucket)
 
 	// 1. Create bucket
-	if !BucketGotAdded("source", true, true, nil, nil, assert, 201) {
+	if !setupBucket("source", true, true, nil, nil, assert, 201) {
 		return
+	}
+	// 1.1. Create target bucket
+	targetEndpoint := "http://localhost:9092"
+	targetToken := getTokenForEndpoint(targetEndpoint)
+	if !setupBucketForEndpoint(targetBucket, true, true, nil, nil, assert, 201, &targetEndpoint, &targetToken) {
+		log.Println("bucket already exists")
+	}
+	_, err := SetBucketVersioning(targetBucket, false, &targetURL, &targetToken)
+	if err != nil {
+		log.Println("bucket already has versioning")
 	}
 
 	// 2. Add Remote Bucket
@@ -3794,14 +3895,24 @@ func TestDeleteRemoteBucket(t *testing.T) {
 	assert := assert.New(t)
 	accessKey := "minioadmin"
 	secretKey := "minioadmin"
-	targetURL := "https://play.min.io"
+	targetURL := "http://173.18.0.3:9001"
 	sourceBucket := "deletesource"
-	targetBucket := os.Getenv("THETARGET")
+	targetBucket := "targetbucket2"
 	fmt.Println("targetBucket: ", targetBucket)
 
 	// 1. Create bucket
-	if !BucketGotAdded("deletesource", true, true, nil, nil, assert, 201) {
+	if !setupBucket("deletesource", true, true, nil, nil, assert, 201) {
 		return
+	}
+	// 1.1. Create target bucket
+	targetEndpoint := "http://localhost:9092"
+	targetToken := getTokenForEndpoint(targetEndpoint)
+	if !setupBucketForEndpoint(targetBucket, true, true, nil, nil, assert, 201, &targetEndpoint, &targetToken) {
+		log.Println("bucket already exists")
+	}
+	_, err := SetBucketVersioning(targetBucket, false, &targetURL, &targetToken)
+	if err != nil {
+		log.Println("bucket already has versioning")
 	}
 
 	// 2. Add Remote Bucket
@@ -3842,15 +3953,19 @@ func TestDeleteRemoteBucket(t *testing.T) {
 	}
 
 	// 4. Delete Remote Bucket
-	resp, err = DeleteRemoteBucket(sourceBucket, *remoteBucket.RemoteARN)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	finalResponse := inspectHTTPResponse(resp)
-	if resp != nil {
-		assert.Equal(
-			204, resp.StatusCode, finalResponse)
+	if remoteBucket.RemoteARN != nil {
+		resp, err = DeleteRemoteBucket(sourceBucket, *remoteBucket.RemoteARN)
+		assert.Nil(err)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		finalResponse := inspectHTTPResponse(resp)
+		if resp != nil {
+			assert.Equal(
+				204, resp.StatusCode, finalResponse)
+		}
+	} else {
+		assert.Fail("No remote arn response")
 	}
 }
