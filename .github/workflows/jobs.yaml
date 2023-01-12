@@ -144,6 +144,36 @@ jobs:
         run: |
           go mod download
 
+  latest-minio:
+    name: Build latest MinIO
+    runs-on: [ ubuntu-latest ]
+    strategy:
+      matrix:
+        go-version: [ 1.19.x ]
+    steps:
+      # To build minio image, we need to clone the repository first
+      - name: Clone github.com/minio/minio
+        uses: actions/checkout@v3
+        with:
+          repository: minio/minio
+      - uses: actions/cache@v3
+        id: minio-latest-cache
+        name: MinIO Latest Cache
+        with:
+          path: |
+            ./minio
+          key: ${{ runner.os }}-minio-latest-${{ hashFiles('./go.sum') }}
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        id: go-minio
+      - name: Build on ${{ matrix.os }}
+        if: steps.minio-latest-cache.outputs.cache-hit != 'true'
+        run: |
+          echo "Create minio binary";
+          make build;
   compile-binary:
     name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
@@ -1112,6 +1142,7 @@ jobs:
       - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
+      - latest-minio
     runs-on: ubuntu-latest
 
     strategy:
@@ -1121,27 +1152,24 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-
+      - name: Clone github.com/minio/minio
+        uses: actions/checkout@master
+        with:
+          repository: minio/minio
+          path: 'minio_repository'
+      - uses: actions/cache@v3
+        id: minio-latest-cache
+        name: MinIO Latest Cache
+        with:
+          path: |
+            ./minio
+          key: ${{ runner.os }}-minio-latest-${{ hashFiles('./minio_repository/go.sum') }}
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
           cache: true
         id: go
-
-      # To build minio image, we need to clone the repository first
-      - name: clone https://github.com/minio/minio
-        uses: actions/checkout@master
-        with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
-          repository: minio/minio
-          
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
-          path: 'minio_repository'
-
 
       - name: Build on ${{ matrix.os }}
         run: |
@@ -1150,8 +1178,9 @@ jobs:
           echo "Get git version to build MinIO Image";
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
-          echo "Create minio image";
-          make docker VERSION=$VERSION;
+          echo "Create MinIO image";
+          cp ../minio .
+          docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
           echo "We are going to use the built image on test-integration";
@@ -1197,6 +1226,7 @@ jobs:
       - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
+      - latest-minio
     runs-on: [ ubuntu-latest ]
 
     strategy:
@@ -1214,18 +1244,18 @@ jobs:
           cache: true
         id: go
 
-      # To build minio image, we need to clone the repository first
-      - name: clone https://github.com/minio/minio
+      - name: Clone github.com/minio/minio
         uses: actions/checkout@master
         with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
           repository: minio/minio
-
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
           path: 'minio_repository'
+      - uses: actions/cache@v3
+        id: minio-latest-cache
+        name: MinIO Latest Cache
+        with:
+          path: |
+            ./minio
+          key: ${{ runner.os }}-minio-latest-${{ hashFiles('./minio_repository/go.sum') }}
 
       - name: Build on ${{ matrix.os }}
         run: |
@@ -1234,8 +1264,9 @@ jobs:
           echo "Get git version to build MinIO Image";
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
-          echo "Create minio image";
-          make docker VERSION=$VERSION;
+          echo "Create MinIO image";
+          cp ../minio .
+          docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
           echo "We are going to use the built image on test-integration";
@@ -1264,6 +1295,7 @@ jobs:
       - ui-assets
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
+      - latest-minio
     runs-on: ubuntu-latest
 
     strategy:
@@ -1281,19 +1313,18 @@ jobs:
           cache: true
         id: go
 
-      # To build minio image, we need to clone the repository first
-      - name: clone https://github.com/minio/minio
+      - name: Clone github.com/minio/minio
         uses: actions/checkout@master
         with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
           repository: minio/minio
-
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
           path: 'minio_repository'
-
+      - uses: actions/cache@v3
+        id: minio-latest-cache
+        name: MinIO Latest Cache
+        with:
+          path: |
+            ./minio
+          key: ${{ runner.os }}-minio-latest-${{ hashFiles('./minio_repository/go.sum') }}
 
       - name: Build on ${{ matrix.os }}
         run: |
@@ -1307,8 +1338,9 @@ jobs:
           echo "Get git version to build MinIO Image";
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
-          echo "Create minio image";
-          make docker VERSION=$VERSION;
+          echo "Create MinIO image";
+          cp ../minio .
+          docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
           echo "We are going to use the built image on test-integration";
