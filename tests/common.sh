@@ -23,16 +23,7 @@ die() {
 try() { "$@" || die "cannot $*"; }
 
 function setup_kind() {
-	# TODO once feature is added: https://github.com/kubernetes-sigs/kind/issues/1300
-	echo "kind: Cluster" > kind-config.yaml
-	echo "apiVersion: kind.x-k8s.io/v1alpha4" >> kind-config.yaml
-	echo "nodes:" >> kind-config.yaml
-	echo "  - role: control-plane" >> kind-config.yaml
-	echo "  - role: worker" >> kind-config.yaml
-	echo "  - role: worker" >> kind-config.yaml
-	echo "  - role: worker" >> kind-config.yaml
-	echo "  - role: worker" >> kind-config.yaml
-	try kind create cluster --config kind-config.yaml
+	try kind create cluster
 	echo "Kind is ready"
 	try kubectl get nodes
 }
@@ -41,6 +32,8 @@ function install_operator() {
 
     echo "  Load minio/operator image to the cluster"
 	try kubectl apply -k github.com/minio/operator/
+	echo "Scaling down MinIO Operator Deployment"
+	try kubectl -n minio-operator scale deployment minio-operator --replicas=1
     echo "Waiting for k8s api"
     sleep 10
     echo "Waiting for Operator Pods to come online (2m timeout)"
@@ -119,9 +112,28 @@ function install_tenant() {
 	namespace=tenant-lite
 	key=v1.min.io/tenant
 	value=storage-lite
-	echo "Installing lite tenant"
+	echo "Installing lite tenant with no TLS"
 
-	try kubectl apply -k "${SCRIPT_DIR}/tenant-lite"
+	mkdir -p "${SCRIPT_DIR}/no-cert"
+
+  echo "apiVersion: minio.min.io/v2" > $SCRIPT_DIR/no-cert/tenant.yaml
+  echo "kind: Tenant" >> $SCRIPT_DIR/no-cert/tenant.yaml
+  echo "metadata:" >> $SCRIPT_DIR/no-cert/tenant.yaml
+  echo "  name: storage-lite" >> $SCRIPT_DIR/no-cert/tenant.yaml
+  echo "  namespace: tenant-lite" >> $SCRIPT_DIR/no-cert/tenant.yaml
+  echo "spec:" >> $SCRIPT_DIR/no-cert/tenant.yaml
+  echo "  requestAutoCert: false" >> $SCRIPT_DIR/no-cert/tenant.yaml
+
+  echo "apiVersion: kustomize.config.k8s.io/v1beta1" >> $SCRIPT_DIR/no-cert/kustomization.yaml
+  echo "kind: Kustomization" >> $SCRIPT_DIR/no-cert/kustomization.yaml
+  echo "resources:" >> $SCRIPT_DIR/no-cert/kustomization.yaml
+  echo "  - ../tenant-lite" >> $SCRIPT_DIR/no-cert/kustomization.yaml
+  echo "" >> $SCRIPT_DIR/no-cert/kustomization.yaml
+  echo "patchesStrategicMerge:" >> $SCRIPT_DIR/no-cert/kustomization.yaml
+  echo "  - tenant.yaml" >> $SCRIPT_DIR/no-cert/kustomization.yaml
+
+
+	try kubectl apply -k "${SCRIPT_DIR}/no-cert"
 
 	echo "Waiting for the tenant statefulset, this indicates the tenant is being fulfilled"
 	echo $namespace
