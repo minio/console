@@ -1180,7 +1180,7 @@ jobs:
           echo $VERSION;
           echo "Create MinIO image";
           cp ../minio .
-          docker build -q --no-cache -t $VERSION . -f Dockerfile
+          docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
           echo "We are going to use the built image on test-integration";
@@ -1266,7 +1266,7 @@ jobs:
           echo $VERSION;
           echo "Create MinIO image";
           cp ../minio .
-          docker build -q --no-cache -t $VERSION . -f Dockerfile
+          docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
           echo "We are going to use the built image on test-integration";
@@ -1340,7 +1340,7 @@ jobs:
           echo $VERSION;
           echo "Create MinIO image";
           cp ../minio .
-          docker build -q --no-cache -t $VERSION . -f Dockerfile
+          docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
           echo "We are going to use the built image on test-integration";
