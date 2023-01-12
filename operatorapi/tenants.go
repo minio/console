@@ -2270,9 +2270,10 @@ func parseTenantPoolRequest(poolParams *models.Pool) (*miniov2.Pool, error) {
 			Requests: resourcesRequests,
 			Limits:   resourcesLimits,
 		},
-		NodeSelector: poolParams.NodeSelector,
-		Affinity:     affinity,
-		Tolerations:  tolerations,
+		NodeSelector:     poolParams.NodeSelector,
+		Affinity:         affinity,
+		Tolerations:      tolerations,
+		RuntimeClassName: &poolParams.RuntimeClassName,
 	}
 	// if security context for Tenant is present, configure it.
 	if poolParams.SecurityContext != nil {
@@ -2492,6 +2493,12 @@ func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 			FsGroupChangePolicy: fsGroupChangePolicy,
 		}
 	}
+
+	var runtimeClassName string
+	if pool.RuntimeClassName != nil {
+		runtimeClassName = *pool.RuntimeClassName
+	}
+
 	poolModel := &models.Pool{
 		Name:             pool.Name,
 		Servers:          swag.Int64(int64(pool.Servers)),
@@ -2500,11 +2507,12 @@ func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 			Size:             size,
 			StorageClassName: storageClassName,
 		},
-		NodeSelector:    pool.NodeSelector,
-		Resources:       resources,
-		Affinity:        affinity,
-		Tolerations:     tolerations,
-		SecurityContext: &securityContext,
+		NodeSelector:     pool.NodeSelector,
+		Resources:        resources,
+		Affinity:         affinity,
+		Tolerations:      tolerations,
+		SecurityContext:  &securityContext,
+		RuntimeClassName: runtimeClassName,
 	}
 	return poolModel
 }

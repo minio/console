@@ -4043,6 +4043,9 @@ func init() {
         "resources": {
           "$ref": "#/definitions/poolResources"
         },
+        "runtimeClassName": {
+          "type": "string"
+        },
         "securityContext": {
           "type": "object",
           "$ref": "#/definitions/securityContext"
@@ -9975,6 +9978,9 @@ func init() {
         },
         "resources": {
           "$ref": "#/definitions/poolResources"
+        },
+        "runtimeClassName": {
+          "type": "string"
         },
         "securityContext": {
           "type": "object",
