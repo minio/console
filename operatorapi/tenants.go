@@ -2492,7 +2492,6 @@ func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 			FsGroupChangePolicy: fsGroupChangePolicy,
 		}
 	}
-
 	poolModel := &models.Pool{
 		Name:             pool.Name,
 		Servers:          swag.Int64(int64(pool.Servers)),
