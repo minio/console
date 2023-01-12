@@ -36,6 +36,7 @@ type K8sClientI interface {
 	getService(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*v1.Service, error)
 	deletePodCollection(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
 	deleteSecret(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
+	deleteSecretsCollection(ctx context.Context, namespace string, deleteOpts metav1.DeleteOptions, listOpts metav1.ListOptions) error
 	createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
 	updateSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error)
 	getPVC(ctx context.Context, namespace string, pvcName string, opts metav1.GetOptions) (*v1.PersistentVolumeClaim, error)
@@ -70,6 +71,10 @@ func (c *k8sClient) deletePodCollection(ctx context.Context, namespace string, o
 
 func (c *k8sClient) deleteSecret(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
 	return c.client.CoreV1().Secrets(namespace).Delete(ctx, name, opts)
+}
+
+func (c *k8sClient) deleteSecretsCollection(ctx context.Context, namespace string, deleteOpts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+	return c.client.CoreV1().Secrets(namespace).DeleteCollection(ctx, deleteOpts, listOpts)
 }
 
 func (c *k8sClient) createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {

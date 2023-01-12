@@ -37,12 +37,13 @@ var (
 	k8sClientUpdateConfigMapMock func(ctx context.Context, namespace string, cm *corev1.ConfigMap, opts metav1.UpdateOptions) (*corev1.ConfigMap, error)
 	k8sClientDeleteConfigMapMock func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
 
-	k8sClientDeletePodCollectionMock func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
-	k8sClientDeleteSecretMock        func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
-	k8sClientCreateSecretMock        func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
-	k8sClientUpdateSecretMock        func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error)
-	k8sclientGetSecretMock           func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
-	k8sclientGetServiceMock          func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error)
+	k8sClientDeletePodCollectionMock     func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
+	k8sClientDeleteSecretMock            func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
+	k8sClientDeleteSecretsCollectionMock func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
+	k8sClientCreateSecretMock            func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
+	k8sClientUpdateSecretMock            func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error)
+	k8sclientGetSecretMock               func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
+	k8sclientGetServiceMock              func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error)
 )
 
 func (c k8sClientMock) getResourceQuota(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error) {
@@ -79,6 +80,10 @@ func (c k8sClientMock) deletePodCollection(ctx context.Context, namespace string
 
 func (c k8sClientMock) deleteSecret(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
 	return k8sClientDeleteSecretMock(ctx, namespace, name, opts)
+}
+
+func (c k8sClientMock) deleteSecretsCollection(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+	return k8sClientDeleteSecretsCollectionMock(ctx, namespace, opts, listOpts)
 }
 
 func (c k8sClientMock) createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
