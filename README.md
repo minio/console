@@ -4,9 +4,9 @@
 
 A graphical user interface for [MinIO](https://github.com/minio/minio)
 
-| Dashboard                     | Creating a bucket             |
-|-------------------------------|-------------------------------|
-| ![Dashboard](images/pic1.png) | ![Dashboard](images/pic2.png) |
+| Object Browser                     | Dashboard                     | Creating a bucket             |
+|------------------------------------|-------------------------------|-------------------------------|
+| ![Object Browser](images/pic3.png) | ![Dashboard](images/pic1.png) | ![Dashboard](images/pic2.png) |
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
@@ -117,7 +117,8 @@ mc admin policy set myminio consoleAdmin user=console
 ```
 
 > NOTE: Additionally, you can create policies to limit the privileges for other `console` users, for example, if you
-> want the user to only have access to dashboard, buckets, notifications and watch page, the policy should look like this:
+> want the user to only have access to dashboard, buckets, notifications and watch page, the policy should look like
+> this:
 
 ```json
 {
