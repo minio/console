@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"path/filepath"
 	"reflect"
 	"testing"
 	"time"
@@ -1121,6 +1122,167 @@ func Test_getObjectInfo(t *testing.T) {
 			} else {
 				assert.Nil(err, fmt.Sprintf("getObjectInfo() error: %v, wantErr: %v", err, tt.wantError))
 			}
+		})
+	}
+}
+
+func Test_getScheme(t *testing.T) {
+	type args struct {
+		rawurl string
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantScheme string
+		wantPath   string
+	}{
+		{
+			name: "expected",
+			args: args{
+				rawurl: "http://domain.com",
+			},
+			wantScheme: "http",
+			wantPath:   "//domain.com",
+		},
+		{
+			name: "no scheme",
+			args: args{
+				rawurl: "domain.com",
+			},
+			wantScheme: "",
+			wantPath:   "domain.com",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotScheme, gotPath := getScheme(tt.args.rawurl)
+			assert.Equalf(t, tt.wantScheme, gotScheme, "getScheme(%v)", tt.args.rawurl)
+			assert.Equalf(t, tt.wantPath, gotPath, "getScheme(%v)", tt.args.rawurl)
+		})
+	}
+}
+
+func Test_splitSpecial(t *testing.T) {
+	type args struct {
+		s            string
+		delimiter    string
+		cutdelimiter bool
+	}
+	tests := []struct {
+		name  string
+		args  args
+		want  string
+		want1 string
+	}{
+		{
+			name: "Expected",
+			args: args{
+				s:            "[s , s]",
+				delimiter:    ",",
+				cutdelimiter: false,
+			},
+			want:  "[s ",
+			want1: ", s]",
+		},
+		{
+			name: "no delimited",
+			args: args{
+				s:            "[s s]",
+				delimiter:    "",
+				cutdelimiter: false,
+			},
+			want:  "",
+			want1: "[s s]",
+		},
+		{
+			name: "Expected not delim",
+			args: args{
+				s:            "[s , s]",
+				delimiter:    ",",
+				cutdelimiter: true,
+			},
+			want:  "[s ",
+			want1: " s]",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1 := splitSpecial(tt.args.s, tt.args.delimiter, tt.args.cutdelimiter)
+			assert.Equalf(t, tt.want, got, "splitSpecial(%v, %v, %v)", tt.args.s, tt.args.delimiter, tt.args.cutdelimiter)
+			assert.Equalf(t, tt.want1, got1, "splitSpecial(%v, %v, %v)", tt.args.s, tt.args.delimiter, tt.args.cutdelimiter)
+		})
+	}
+}
+
+func Test_getHost(t *testing.T) {
+	type args struct {
+		authority string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantHost string
+	}{
+		{
+			name: "Expected",
+			args: args{
+				authority: "username@domain.com",
+			},
+			wantHost: "",
+		},
+		{
+			name: "Expected 2",
+			args: args{
+				authority: "domain.com",
+			},
+			wantHost: "domain.com",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.wantHost, getHost(tt.args.authority), "getHost(%v)", tt.args.authority)
+		})
+	}
+}
+
+func Test_newClientURL(t *testing.T) {
+	type args struct {
+		urlStr string
+	}
+	tests := []struct {
+		name string
+		args args
+		want mc.ClientURL
+	}{
+		{
+			name: "Expected",
+			args: args{
+				urlStr: "http://domain.com",
+			},
+			want: mc.ClientURL{
+				Type:            0,
+				Scheme:          "http",
+				Host:            "domain.com",
+				Path:            "/",
+				SchemeSeparator: "://",
+				Separator:       47,
+			},
+		},
+		{
+			name: "Expected file",
+			args: args{
+				urlStr: "file.jpeg",
+			},
+			want: mc.ClientURL{
+				Type:      fileSystem,
+				Path:      "file.jpeg",
+				Separator: filepath.Separator,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, *newClientURL(tt.args.urlStr), "newClientURL(%v)", tt.args.urlStr)
 		})
 	}
 }
