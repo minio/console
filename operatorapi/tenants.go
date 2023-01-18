@@ -666,7 +666,7 @@ func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov
 		return nil, err
 	}
 	// Security Context used by MinIO server
-	if tenant.Spec.Pools[0].SecurityContext != nil {
+	if len(tenant.Spec.Pools) > 0 && tenant.Spec.Pools[0].SecurityContext != nil {
 		tenantSecurityContext = convertK8sSCToModelSC(tenant.Spec.Pools[0].SecurityContext)
 	}
 	return &models.TenantSecurityResponse{
@@ -861,15 +861,15 @@ func getTenantIdentityProviderResponse(session *models.Principal, params operato
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
-	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	// get Kubernetes Client
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
-	// get Kubernetes Client
-	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
@@ -1083,15 +1083,15 @@ func getTenantSecurityResponse(session *models.Principal, params operator_api.Te
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
-	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	// get Kubernetes Client
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
-	// get Kubernetes Client
-	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
