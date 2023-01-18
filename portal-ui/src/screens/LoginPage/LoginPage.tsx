@@ -102,7 +102,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     linkHolder: {
       marginTop: 20,
-      font: "normal normal normal 14px/16px Lato",
+      font: "normal normal normal 14px/16px Inter",
     },
     miniLinks: {
       margin: "auto",
@@ -171,7 +171,7 @@ const useStyles = makeStyles((theme: Theme) =>
           marginBottom: 10,
         },
         "& .text-line1": {
-          font: " 100 44px 'Lato'",
+          font: " 100 44px 'Inter'",
         },
         "& .text-line2": {
           fontSize: 80,

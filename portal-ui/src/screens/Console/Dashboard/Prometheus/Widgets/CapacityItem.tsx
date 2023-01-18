@@ -240,7 +240,7 @@ const CapacityItem = ({
               display: "flex",
               "& .value": {
                 fontSize: "50px",
-                fontFamily: "Lato",
+                fontFamily: "Inter",
                 fontWeight: 600,
                 alignSelf: "flex-end",
                 lineHeight: 1,

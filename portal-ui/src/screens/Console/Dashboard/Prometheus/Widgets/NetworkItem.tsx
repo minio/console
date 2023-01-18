@@ -147,7 +147,7 @@ const NetworkItem = ({
           sx={{
             display: "flex",
             alignItems: "center",
-            "& .value": { fontSize: "50px", fontFamily: "Lato" },
+            "& .value": { fontSize: "50px", fontFamily: "Inter" },
             "& .unit": {
               color: "#5E5E5E",
               fontSize: "18px",

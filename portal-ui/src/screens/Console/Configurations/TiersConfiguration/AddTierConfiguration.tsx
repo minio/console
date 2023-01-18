@@ -58,7 +58,7 @@ const styles = (theme: Theme) =>
     lambdaNotifTitle: {
       color: "#07193E",
       fontSize: 16,
-      fontFamily: "Lato,sans-serif",
+      fontFamily: "Inter,sans-serif",
       paddingLeft: 18,
     },
     fileInputFieldCss: {

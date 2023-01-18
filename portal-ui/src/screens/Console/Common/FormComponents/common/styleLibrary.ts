@@ -75,7 +75,7 @@ export const modalBasic = {
     marginLeft: 0,
   },
   clearButton: {
-    fontFamily: "Lato, sans-serif",
+    fontFamily: "Inter, sans-serif",
     border: "0",
     backgroundColor: "transparent",
     color: "#393939",
@@ -608,7 +608,7 @@ export const typesSelection = {
   lambdaNotifTitle: {
     color: "#07193E",
     fontSize: 16,
-    fontFamily: "Lato,sans-serif",
+    fontFamily: "Inter,sans-serif",
     paddingLeft: 18,
   },
 };
@@ -748,7 +748,7 @@ export const snackBarCommon = {
   snackBar: {
     backgroundColor: "#081F44",
     fontWeight: 400,
-    fontFamily: "Lato, sans-serif",
+    fontFamily: "Inter, sans-serif",
     fontSize: 14,
     boxShadow: "none" as const,
     "&.MuiPaper-root.MuiSnackbarContent-root": {
