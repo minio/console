@@ -199,7 +199,7 @@ const StrategyForm = () => {
               }}
               style={{
                 color: theme.colors.link,
-                font: "normal normal normal 14px Lato",
+                font: "normal normal normal 14px Inter",
                 textDecoration: "underline",
                 cursor: "pointer",
               }}
@@ -213,7 +213,7 @@ const StrategyForm = () => {
               }}
               style={{
                 color: theme.colors.link,
-                font: "normal normal normal 12px/15px Lato",
+                font: "normal normal normal 12px/15px Inter",
                 textDecoration: "none",
                 fontWeight: "bold",
                 paddingLeft: 4,

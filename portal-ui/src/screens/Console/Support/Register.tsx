@@ -91,7 +91,7 @@ const styles = (theme: Theme) =>
     },
     subnetDescription: {
       textAlign: "left",
-      Font: "normal normal normal 14px/17px Lato",
+      Font: "normal normal normal 14px/17px Inter",
       letterSpacing: 0,
       color: "#000000",
       "& span": {

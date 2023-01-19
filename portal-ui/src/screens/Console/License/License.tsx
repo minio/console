@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.info.main,
     },
     linkButton: {
-      fontFamily: '"Lato", sans-serif',
+      fontFamily: '"Inter", sans-serif',
       fontWeight: "normal",
       textTransform: "none",
       fontSize: "inherit",

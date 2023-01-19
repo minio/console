@@ -60,7 +60,7 @@ const NetworkGetItem = ({
       <Box
         sx={{
           fontSize: "50px",
-          fontFamily: "Lato",
+          fontFamily: "Inter",
           fontWeight: 600,
         }}
       >

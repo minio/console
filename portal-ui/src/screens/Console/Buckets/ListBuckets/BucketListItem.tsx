@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
         wordWrap: "break-word",
         overflowWrap: "break-word",
         wordBreak: "break-all",
-        font: "normal normal bold 24px/27px Lato",
+        font: "normal normal bold 24px/27px Inter",
         color: theme.palette.primary.main,
 
         "& .MuiTypography-root": {

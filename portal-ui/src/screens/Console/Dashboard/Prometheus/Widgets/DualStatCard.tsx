@@ -117,7 +117,7 @@ const DualStatCard = ({
   return (
     <Box
       sx={{
-        fontFamily: "Lato,sans-serif",
+        fontFamily: "Inter,sans-serif",
         color: "#07193E",
         maxWidth: "321px",
         display: "flex",

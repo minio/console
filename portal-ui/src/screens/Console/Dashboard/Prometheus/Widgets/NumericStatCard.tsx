@@ -116,7 +116,7 @@ const NumericStatCard = ({
   return (
     <Box
       sx={{
-        fontFamily: "Lato,sans-serif",
+        fontFamily: "Inter,sans-serif",
         color: "#07193E",
         maxWidth: "300px",
         display: "flex",

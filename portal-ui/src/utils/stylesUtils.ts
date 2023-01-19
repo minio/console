@@ -59,7 +59,7 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
       },
     },
     typography: {
-      fontFamily: ["Lato", "sans-serif"].join(","),
+      fontFamily: ["Inter", "sans-serif"].join(","),
       h1: {
         fontWeight: "bold",
         color: overrideVars.fontColor,
