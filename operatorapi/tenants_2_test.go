@@ -27,8 +27,10 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
+	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -420,6 +422,79 @@ func (suite *TenantTestSuite) initTenantSecurityRequest() (params operator_api.T
 	return params, api
 }
 
+func (suite *TenantTestSuite) TestGetTenantSecurityWithWrongServerCertificates() {
+	ctx := context.Background()
+	tenant := &miniov2.Tenant{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "mock-tenant",
+			Namespace: "mock-namespace",
+		},
+		Spec: miniov2.TenantSpec{
+			ExternalCertSecret: []*miniov2.LocalCertificateReference{{}},
+		},
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		return nil, errors.New("mock-error")
+	}
+	_, err := getTenantSecurity(ctx, suite.k8sclient, tenant)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestGetTenantSecurityWithWrongClientCertificates() {
+	ctx := context.Background()
+	tenant := &miniov2.Tenant{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "mock-tenant",
+			Namespace: "mock-namespace",
+		},
+		Spec: miniov2.TenantSpec{
+			ExternalClientCertSecrets: []*miniov2.LocalCertificateReference{{}},
+		},
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		return nil, errors.New("mock-error")
+	}
+	_, err := getTenantSecurity(ctx, suite.k8sclient, tenant)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestGetTenantSecurityWithWrongCACertificates() {
+	ctx := context.Background()
+	tenant := &miniov2.Tenant{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "mock-tenant",
+			Namespace: "mock-namespace",
+		},
+		Spec: miniov2.TenantSpec{
+			ExternalCaCertSecret: []*miniov2.LocalCertificateReference{{}},
+		},
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		return nil, errors.New("mock-error")
+	}
+	_, err := getTenantSecurity(ctx, suite.k8sclient, tenant)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestGetTenantSecurityWithoutError() {
+	ctx := context.Background()
+	tenant := &miniov2.Tenant{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "mock-tenant",
+			Namespace: "mock-namespace",
+		},
+		Spec: miniov2.TenantSpec{
+			ExternalCaCertSecret: []*miniov2.LocalCertificateReference{},
+		},
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		return nil, errors.New("mock-error")
+	}
+	sec, err := getTenantSecurity(ctx, suite.k8sclient, tenant)
+	suite.assert.NotNil(sec)
+	suite.assert.Nil(err)
+}
+
 func (suite *TenantTestSuite) TestUpdateTenantSecurityHandlerWithError() {
 	params, api := suite.initUpdateTenantSecurityRequest()
 	response := api.OperatorAPIUpdateTenantSecurityHandler.Handle(params, &models.Principal{})
@@ -463,6 +538,57 @@ func (suite *TenantTestSuite) initTenantIdentityProviderRequest() (params operat
 	params.Namespace = "mock-namespace"
 	params.Tenant = "mock-tenant"
 	return params, api
+}
+
+func (suite *TenantTestSuite) TestGetTenantIdentityProviderWithIDPConfig() {
+	ctx := context.Background()
+	tenant := &miniov2.Tenant{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "mock-tenant",
+			Namespace: "mock-namespace",
+		},
+		Spec: miniov2.TenantSpec{
+			Env: []corev1.EnvVar{
+				{Name: "MINIO_IDENTITY_OPENID_CONFIG_URL", Value: "mock"},
+				{Name: "MINIO_IDENTITY_OPENID_REDIRECT_URI", Value: "mock"},
+				{Name: "MINIO_IDENTITY_OPENID_CLAIM_NAME", Value: "mock"},
+				{Name: "MINIO_IDENTITY_OPENID_CLIENT_ID", Value: "mock"},
+				{Name: "MINIO_IDENTITY_OPENID_CLIENT_SECRET", Value: "mock"},
+			},
+		},
+	}
+	res, err := getTenantIdentityProvider(ctx, suite.k8sclient, tenant)
+	suite.assert.NotNil(res)
+	suite.assert.NotNil(res.Oidc)
+	suite.assert.Nil(err)
+}
+
+func (suite *TenantTestSuite) TestGetTenantIdentityProviderWithLDAPConfig() {
+	ctx := context.Background()
+	tenant := &miniov2.Tenant{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "mock-tenant",
+			Namespace: "mock-namespace",
+		},
+		Spec: miniov2.TenantSpec{
+			Env: []corev1.EnvVar{
+				{Name: "MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN", Value: "mock"},
+				{Name: "MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER", Value: "mock"},
+				{Name: "MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN", Value: "mock"},
+				{Name: "MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD", Value: "mock"},
+				{Name: "MINIO_IDENTITY_LDAP_SERVER_INSECURE", Value: "mock"},
+				{Name: "MINIO_IDENTITY_LDAP_SERVER_STARTTLS", Value: "mock"},
+				{Name: "MINIO_IDENTITY_LDAP_TLS_SKIP_VERIFY", Value: "mock"},
+				{Name: "MINIO_IDENTITY_LDAP_SERVER_ADDR", Value: "mock"},
+				{Name: "MINIO_IDENTITY_LDAP_USER_DN_SEARCH_BASE_DN", Value: "mock"},
+				{Name: "MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER", Value: "mock"},
+			},
+		},
+	}
+	res, err := getTenantIdentityProvider(ctx, suite.k8sclient, tenant)
+	suite.assert.NotNil(res)
+	suite.assert.NotNil(res.ActiveDirectory)
+	suite.assert.Nil(err)
 }
 
 func (suite *TenantTestSuite) TestUpdateTenantIdentityProviderHandlerWithError() {
