@@ -844,10 +844,7 @@ func updateTenantIdentityProvider(ctx context.Context, operatorClient OperatorCl
 	tenant.EnsureDefaults()
 	// update tenant CRD
 	_, err = operatorClient.TenantUpdate(ctx, tenant, metav1.UpdateOptions{})
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func getTenantIdentityProviderResponse(session *models.Principal, params operator_api.TenantIdentityProviderParams) (*models.IdpConfiguration, *models.Error) {
@@ -1217,10 +1214,7 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 	minInst.Spec.ExternalClientCertSecrets = newExternalClientCertSecrets
 	minInst.Spec.ExternalCaCertSecret = newExternalCaCertSecret
 	_, err = operatorClient.TenantUpdate(ctx, minInst, metav1.UpdateOptions{})
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace string, limit *int32) (*models.ListTenantsResponse, error) {
