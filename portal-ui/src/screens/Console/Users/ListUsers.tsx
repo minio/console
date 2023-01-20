@@ -414,7 +414,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
                       <a
                         href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/minio-user-management.html?ref=con"
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener"
                       >
                         documentation
                       </a>

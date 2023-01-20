@@ -530,7 +530,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
                       <LicenseDocIcon />
                       <a
                         href={`https://subnet.min.io/terms-and-conditions/${currentPlan}`}
-                        rel="noreferrer noopener"
+                        rel="noopener"
                         className={"link-text"}
                       >
                         View License agreement <br />

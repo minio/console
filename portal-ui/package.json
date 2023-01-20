@@ -56,7 +56,10 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "react/jsx-no-target-blank": "off"
+    }
   },
   "browserslist": {
     "production": [

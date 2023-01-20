@@ -79,7 +79,7 @@ const LicenseConsentModal = ({
           found here:{" "}
           <a
             href={`https://www.gnu.org/licenses/agpl-3.0.html`}
-            rel="noreferrer noopener"
+            rel="noopener"
             className={"link-text"}
           >
             https://www.gnu.org/licenses/agpl-3.0.html.
@@ -96,7 +96,7 @@ const LicenseConsentModal = ({
           available here:{" "}
           <a
             href={`https://min.io/signup?ref=con`}
-            rel="noreferrer noopener"
+            rel="noopener"
             className={"link-text"}
           >
             https://min.io/signup.

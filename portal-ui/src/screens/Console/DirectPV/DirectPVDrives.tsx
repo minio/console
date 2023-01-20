@@ -284,7 +284,7 @@ const DirectPVMain = ({ classes }: IDirectPVMain) => {
                   For more information{" "}
                   <a
                     href="https://github.com/minio/directpv"
-                    rel="noreferrer"
+                    rel="noopener"
                     target="_blank"
                     className={classes.linkItem}
                   >

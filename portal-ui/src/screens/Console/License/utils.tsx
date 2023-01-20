@@ -40,7 +40,7 @@ const FeatureLink = ({ text, anchor }: { text: string; anchor: string }) => {
       href={`https://min.io/product/subnet?ref=con#${anchor}`}
       className={"link-text"}
       target="_blank"
-      rel="noopener noreferrer"
+      rel="noopener "
       style={{
         color: "#2781B0",
       }}
@@ -242,7 +242,7 @@ export const STANDARD_PLAN_FEATURES = [
             href="https://min.io/product/subnet?ref=con"
             className={"link-text"}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
           >
             click here
           </a>
@@ -355,7 +355,7 @@ export const ENTERPRISE_PLAN_FEATURES = [
             href="https://min.io/product/subnet?ref=con"
             className={"link-text"}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
           >
             click here
           </a>

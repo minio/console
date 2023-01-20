@@ -129,7 +129,7 @@ const TLSHelpBox = () => {
           <a
             href="https://min.io/docs/minio/kubernetes/upstream/operations/network-encryption.html?ref=op#id5"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener"
           >
             documentation
           </a>
