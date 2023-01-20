@@ -27,9 +27,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var minioAddServiceAccountMock func(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error)
-
 func TestAddServiceAccount(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client

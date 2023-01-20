@@ -79,6 +79,7 @@ var (
 	minioSetUserStatusMock func(accessKey string, status madmin.AccountStatus) error
 
 	minioAccountInfoMock          func(ctx context.Context) (madmin.AccountInfo, error)
+	minioAddServiceAccountMock    func(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error)
 	minioListServiceAccountsMock  func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 	minioDeleteServiceAccountMock func(ctx context.Context, serviceAccount string) error
 	minioInfoServiceAccountMock   func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
