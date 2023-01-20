@@ -29,44 +29,9 @@ import (
 	asrt "github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var minioListUsersMock func() (map[string]madmin.UserInfo, error)
-
-var (
-	minioAddUserMock       func(accessKey, secreyKey string) error
-	minioRemoveUserMock    func(accessKey string) error
-	minioGetUserInfoMock   func(accessKey string) (madmin.UserInfo, error)
-	minioSetUserStatusMock func(accessKey string, status madmin.AccountStatus) error
-)
-
-// mock function of listUsers()
-func (ac adminClientMock) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
-	return minioListUsersMock()
-}
-
-// mock function of addUser()
-func (ac adminClientMock) addUser(ctx context.Context, accessKey, secretKey string) error {
-	return minioAddUserMock(accessKey, secretKey)
-}
-
-// mock function of removeUser()
-func (ac adminClientMock) removeUser(ctx context.Context, accessKey string) error {
-	return minioRemoveUserMock(accessKey)
-}
-
-// mock function of getUserInfo()
-func (ac adminClientMock) getUserInfo(ctx context.Context, accessKey string) (madmin.UserInfo, error) {
-	return minioGetUserInfoMock(accessKey)
-}
-
-// mock function of setUserStatus()
-func (ac adminClientMock) setUserStatus(ctx context.Context, accessKey string, status madmin.AccountStatus) error {
-	return minioSetUserStatusMock(accessKey, status)
-}
-
 func TestListUsers(t *testing.T) {
 	assert := asrt.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// Test-1 : listUsers() Get response from minio client with two users and return the same number on listUsers()
@@ -120,7 +85,7 @@ func TestListUsers(t *testing.T) {
 
 func TestAddUser(t *testing.T) {
 	assert := asrt.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// Test-1: valid case of adding a user with a proper access key
@@ -203,7 +168,7 @@ func TestAddUser(t *testing.T) {
 func TestRemoveUser(t *testing.T) {
 	assert := asrt.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	function := "removeUser()"
@@ -232,7 +197,7 @@ func TestRemoveUser(t *testing.T) {
 func TestUserGroups(t *testing.T) {
 	assert := asrt.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -294,7 +259,7 @@ func TestUserGroups(t *testing.T) {
 
 func TestGetUserInfo(t *testing.T) {
 	assert := asrt.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -340,7 +305,7 @@ func TestGetUserInfo(t *testing.T) {
 
 func TestSetUserStatus(t *testing.T) {
 	assert := asrt.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	function := "setUserStatus()"
 	userName := "userName123"
 	ctx, cancel := context.WithCancel(context.Background())
@@ -383,7 +348,7 @@ func TestSetUserStatus(t *testing.T) {
 func TestUserGroupsBulk(t *testing.T) {
 	assert := asrt.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -416,7 +381,7 @@ func TestListUsersWithAccessToBucket(t *testing.T) {
 	assert := asrt.New(t)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	user1 := madmin.UserInfo{
 		SecretKey:  "testtest",
 		PolicyName: "consoleAdmin,testPolicy,redundantPolicy",

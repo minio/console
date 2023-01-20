@@ -30,46 +30,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var minioListPoliciesMock func() (map[string]*iampolicy.Policy, error)
-
-var (
-	minioGetPolicyMock    func(name string) (*iampolicy.Policy, error)
-	minioRemovePolicyMock func(name string) error
-	minioAddPolicyMock    func(name string, policy *iampolicy.Policy) error
-	minioSetPolicyMock    func(policyName, entityName string, isGroup bool) error
-)
-
-// mock function of listPolicies()
-func (ac adminClientMock) listPolicies(ctx context.Context) (map[string]*iampolicy.Policy, error) {
-	return minioListPoliciesMock()
-}
-
-// mock function of getPolicy()
-func (ac adminClientMock) getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error) {
-	return minioGetPolicyMock(name)
-}
-
-// mock function of removePolicy()
-func (ac adminClientMock) removePolicy(ctx context.Context, name string) error {
-	return minioRemovePolicyMock(name)
-}
-
-// mock function of addPolicy()
-func (ac adminClientMock) addPolicy(ctx context.Context, name string, policy *iampolicy.Policy) error {
-	return minioAddPolicyMock(name, policy)
-}
-
-// mock function SetPolicy()
-func (ac adminClientMock) setPolicy(ctx context.Context, policyName, entityName string, isGroup bool) error {
-	return minioSetPolicyMock(policyName, entityName, isGroup)
-}
-
 func TestListPolicies(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	funcAssert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	// mock function response from listPolicies()
 	minioListPoliciesMock = func() (map[string]*iampolicy.Policy, error) {
 		var readonly iampolicy.Policy
@@ -115,7 +80,7 @@ func TestRemovePolicy(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	funcAssert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	// Test-1 : removePolicy() remove an existing policy
 	policyToRemove := "console-policy"
 	minioRemovePolicyMock = func(name string) error {
@@ -138,7 +103,7 @@ func TestAddPolicy(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	funcAssert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	policyName := "new-policy"
 	policyDefinition := "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\",\"s3:ListAllMyBuckets\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}"
 	minioAddPolicyMock = func(name string, policy *iampolicy.Policy) error {
@@ -195,7 +160,7 @@ func TestSetPolicy(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	funcAssert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	policyName := "readOnly"
 	entityName := "alevsk"
 	entityObject := models.PolicyEntityUser
@@ -235,7 +200,7 @@ func TestSetPolicy(t *testing.T) {
 func Test_SetPolicyMultiple(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 
 	type args struct {
 		policyName    string

@@ -29,7 +29,7 @@ import (
 )
 
 func Test_addNotificationEndpoint(t *testing.T) {
-	client := adminClientMock{}
+	client := AdminClientMock{}
 
 	type args struct {
 		ctx    context.Context
