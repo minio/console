@@ -21,6 +21,7 @@ import { Button } from "mds";
 import { AGPLV3DarkLogo } from "mds";
 import { setLicenseConsent } from "./utils";
 import LicenseLink from "./LicenseLink";
+import LicenseFAQ from "./LicenseFAQ";
 
 const LicenseConsentModal = ({
   isOpen,
@@ -101,6 +102,8 @@ const LicenseConsentModal = ({
             https://min.io/signup.
           </a>
         </Box>
+
+        <LicenseFAQ />
 
         <Box
           sx={{
