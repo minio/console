@@ -348,6 +348,7 @@ func (suite *TenantTestSuite) TestCreateTenantWithImageRegistryCreateError() {
 	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
 	suite.assert.NotNil(err)
 }
+
 func (suite *TenantTestSuite) TestCreateTenantWithImageRegistryUpdateError() {
 	params, _ := suite.initCreateTenantRequest()
 	registry := "mock-registry"
