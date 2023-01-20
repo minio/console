@@ -31,11 +31,10 @@ import (
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
-	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 // updateTenantAction does an update on the minioTenant by patching the desired changes
-func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, clientset v1.CoreV1Interface, httpCl http.ClientI, namespace string, params operator_api.UpdateTenantParams) error {
+func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, clientset K8sClientI, httpCl http.ClientI, namespace string, params operator_api.UpdateTenantParams) error {
 	imageToUpdate := params.Body.Image
 	imageRegistryReq := params.Body.ImageRegistry
 

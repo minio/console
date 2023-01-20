@@ -924,6 +924,10 @@ func getSetTenantAdministratorsResponse(session *models.Principal, params operat
 	if err != nil {
 		return restapi.ErrorWithContext(ctx, err)
 	}
+	return setTenantAdministrators(ctx, minTenant, k8sClient, params)
+}
+
+func setTenantAdministrators(ctx context.Context, minTenant *miniov2.Tenant, k8sClient K8sClientI, params operator_api.SetTenantAdministratorsParams) *models.Error {
 	minTenant.EnsureDefaults()
 
 	svcURL := GetTenantServiceURL(minTenant)
@@ -963,19 +967,23 @@ func getTenantConfigurationResponse(session *models.Principal, params operator_a
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
+	// get Kubernetes Client
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err)
+	}
+	k8sClient := &k8sClient{
+		client: clientSet,
+	}
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
-	// get Kubernetes Client
-	clientSet, err := cluster.K8sClient(session.STSSessionToken)
-	k8sClient := k8sClient{
-		client: clientSet,
-	}
-	if err != nil {
-		return nil, restapi.ErrorWithContext(ctx, err)
-	}
-	tenantConfiguration, err := GetTenantConfiguration(ctx, &k8sClient, minTenant)
+	return parseTenantConfiguration(ctx, k8sClient, minTenant)
+}
+
+func parseTenantConfiguration(ctx context.Context, k8sClient K8sClientI, minTenant *miniov2.Tenant) (*models.TenantConfigurationResponse, *models.Error) {
+	tenantConfiguration, err := GetTenantConfiguration(ctx, k8sClient, minTenant)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
@@ -1335,7 +1343,7 @@ func getListTenantsResponse(session *models.Principal, params operator_api.ListT
 
 // setImageRegistry creates a secret to store the private registry credentials, if one exist it updates the existing one
 // returns the name of the secret created/updated
-func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset v1.CoreV1Interface, namespace, tenantName string) (string, error) {
+func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset K8sClientI, namespace, tenantName string) (string, error) {
 	if req == nil || req.Registry == nil || req.Username == nil || req.Password == nil {
 		return "", nil
 	}
@@ -1363,7 +1371,7 @@ func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset 
 		corev1.DockerConfigJsonKey: []byte(string(imRegistryJSON)),
 	}
 	// Get or Create secret if it doesn't exist
-	currentSecret, err := clientset.Secrets(namespace).Get(ctx, pullSecretName, metav1.GetOptions{})
+	currentSecret, err := clientset.getSecret(ctx, namespace, pullSecretName, metav1.GetOptions{})
 	if err != nil {
 		if k8sErrors.IsNotFound(err) {
 			instanceSecret := corev1.Secret{
@@ -1376,7 +1384,7 @@ func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset 
 				Data: secretCredentials,
 				Type: corev1.SecretTypeDockerConfigJson,
 			}
-			_, err = clientset.Secrets(namespace).Create(ctx, &instanceSecret, metav1.CreateOptions{})
+			_, err = clientset.createSecret(ctx, namespace, &instanceSecret, metav1.CreateOptions{})
 			if err != nil {
 				return "", err
 			}
@@ -1385,7 +1393,7 @@ func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset 
 		return "", err
 	}
 	currentSecret.Data = secretCredentials
-	_, err = clientset.Secrets(namespace).Update(ctx, currentSecret, metav1.UpdateOptions{})
+	_, err = clientset.updateSecret(ctx, namespace, currentSecret, metav1.UpdateOptions{})
 	if err != nil {
 		return "", err
 	}
@@ -1426,6 +1434,9 @@ func getUpdateTenantResponse(session *models.Principal, params operator_api.Upda
 	if err != nil {
 		return restapi.ErrorWithContext(ctx, err)
 	}
+	k8sClient := &k8sClient{
+		client: clientSet,
+	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
@@ -1434,7 +1445,7 @@ func getUpdateTenantResponse(session *models.Principal, params operator_api.Upda
 			Timeout: 4 * time.Second,
 		},
 	}
-	if err := updateTenantAction(ctx, opClient, clientSet.CoreV1(), httpC, params.Namespace, params); err != nil {
+	if err := updateTenantAction(ctx, opClient, k8sClient, httpC, params.Namespace, params); err != nil {
 		return restapi.ErrorWithContext(ctx, err, errors.New("unable to update tenant"))
 	}
 	return nil
