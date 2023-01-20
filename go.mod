@@ -5,15 +5,15 @@ go 1.19
 require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cheggaaa/pb/v3 v3.1.0
-	github.com/dustin/go-humanize v1.0.0
+	github.com/dustin/go-humanize v1.0.1
 	github.com/fatih/color v1.13.0
 	github.com/go-openapi/errors v0.20.3
 	github.com/go-openapi/loads v0.21.2
 	github.com/go-openapi/runtime v0.25.0
-	github.com/go-openapi/spec v0.20.7
+	github.com/go-openapi/spec v0.20.8
 	github.com/go-openapi/strfmt v0.21.3
 	github.com/go-openapi/swag v0.22.3
-	github.com/go-openapi/validate v0.22.0
+	github.com/go-openapi/validate v0.22.1
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/websocket v1.5.0
@@ -23,9 +23,9 @@ require (
 	github.com/minio/directpv v1.4.4-0.20220805090942-948ca4731651
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.22.2
-	github.com/minio/madmin-go/v2 v2.0.4
-	github.com/minio/mc v0.0.0-20221224152138-176072dee43d
-	github.com/minio/minio-go/v7 v7.0.45
+	github.com/minio/madmin-go/v2 v2.0.7
+	github.com/minio/mc v0.0.0-20230119171340-e9e6c2231fe3
+	github.com/minio/minio-go/v7 v7.0.47
 	github.com/minio/operator v0.0.0-20220902184351-21e4073132b0
 	github.com/minio/pkg v1.5.8
 	github.com/minio/selfupdate v0.5.0
@@ -42,10 +42,10 @@ require (
 	// https://github.com/golang/go/issues/56152
 	golang.org/x/text v0.6.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/api v0.26.0
-	k8s.io/apimachinery v0.26.0
-	k8s.io/client-go v0.26.0
-	k8s.io/utils v0.0.0-20221128185143-99ec85e7a448
+	k8s.io/api v0.26.1
+	k8s.io/apimachinery v0.26.1
+	k8s.io/client-go v0.26.1
+	k8s.io/utils v0.0.0-20230115233650-391b47cb4029
 )
 
 require (
