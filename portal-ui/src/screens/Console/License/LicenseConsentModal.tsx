@@ -21,6 +21,7 @@ import { Button } from "mds";
 import { AGPLV3DarkLogo } from "mds";
 import { setLicenseConsent } from "./utils";
 import LicenseLink from "./LicenseLink";
+import LicenseFAQ from "./LicenseFAQ";
 
 const LicenseConsentModal = ({
   isOpen,
@@ -78,7 +79,7 @@ const LicenseConsentModal = ({
           found here:{" "}
           <a
             href={`https://www.gnu.org/licenses/agpl-3.0.html`}
-            rel="noreferrer noopener"
+            rel="noopener"
             className={"link-text"}
           >
             https://www.gnu.org/licenses/agpl-3.0.html.
@@ -95,12 +96,14 @@ const LicenseConsentModal = ({
           available here:{" "}
           <a
             href={`https://min.io/signup?ref=con`}
-            rel="noreferrer noopener"
+            rel="noopener"
             className={"link-text"}
           >
             https://min.io/signup.
           </a>
         </Box>
+
+        <LicenseFAQ />
 
         <Box
           sx={{

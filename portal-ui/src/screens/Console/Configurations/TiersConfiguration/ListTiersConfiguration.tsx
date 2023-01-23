@@ -470,7 +470,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                             <a
                               href="https://min.io/docs/minio/linux/administration/object-management/object-lifecycle-management.html?ref=con"
                               target="_blank"
-                              rel="noreferrer"
+                              rel="noopener"
                             >
                               documentation
                             </a>

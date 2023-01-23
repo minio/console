@@ -547,7 +547,7 @@ const Inspect = ({ classes }: { classes: any }) => {
                       <a
                         href="https://github.com/minio/minio/tree/master/docs/debugging?ref=con"
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener"
                       >
                         documentation
                       </a>

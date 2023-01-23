@@ -45,7 +45,7 @@ const MissingIntegration = ({
               This feature is not available.
               <br />
               Please configure{" "}
-              <a href={documentationLink} target="_blank" rel="noreferrer">
+              <a href={documentationLink} target="_blank" rel="noopener">
                 {entity}
               </a>{" "}
               first to use this feature.

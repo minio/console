@@ -445,6 +445,8 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
               fontSize: "14px",
               "& .link-text": {
                 color: "#2781B0",
+                cursor: "pointer",
+                textDecoration: "underline",
               },
 
               "&.icon-yes": {
@@ -514,6 +516,8 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
 
                         "& .link-text": {
                           color: "#2781B0",
+                          cursor: "pointer",
+                          textDecoration: "underline",
                         },
 
                         "& .min-icon": {
@@ -526,7 +530,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
                       <LicenseDocIcon />
                       <a
                         href={`https://subnet.min.io/terms-and-conditions/${currentPlan}`}
-                        rel="noreferrer noopener"
+                        rel="noopener"
                         className={"link-text"}
                       >
                         View License agreement <br />

@@ -101,7 +101,7 @@ const SetEmailModal = ({ open, closeModal }: ISetEmailModalProps) => {
             <a
               href="https://min.io/product/subnet"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener"
             >
               MinIO Subscription Network (SUBNET)
             </a>
