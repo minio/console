@@ -215,7 +215,7 @@ const SiteReplication = () => {
                     <a
                       href="https://min.io/docs/minio/linux/operations/install-deploy-manage/multi-site-replication.html?ref=con"
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener"
                     >
                       documentation
                     </a>
@@ -260,7 +260,7 @@ const SiteReplication = () => {
                 <a
                   href="https://github.com/minio/minio/tree/master/docs/site-replication?ref=con"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener"
                 >
                   documentation
                 </a>

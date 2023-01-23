@@ -282,7 +282,7 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
                   <a
                     href="https://min.io/docs/minio/linux/administration/identity-access-management.html?ref=con#access-management"
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener"
                   >
                     documentation
                   </a>
