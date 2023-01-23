@@ -27,8 +27,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var minioChangePasswordMock func(ctx context.Context, accessKey, secretKey string) error
-
 func Test_getChangePasswordResponse(t *testing.T) {
 	assert := assert.New(t)
 	session := &models.Principal{
@@ -51,10 +49,10 @@ func Test_getChangePasswordResponse(t *testing.T) {
 }
 
 func Test_changePassword(t *testing.T) {
-	client := adminClientMock{}
+	client := AdminClientMock{}
 	type args struct {
 		ctx              context.Context
-		client           adminClientMock
+		client           AdminClientMock
 		session          *models.Principal
 		currentSecretKey string
 		newSecretKey     string

@@ -26,94 +26,9 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	kmsAPI "github.com/minio/console/restapi/operations/k_m_s"
-	"github.com/minio/madmin-go/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
-
-func (ac adminClientMock) kmsStatus(ctx context.Context) (madmin.KMSStatus, error) {
-	return madmin.KMSStatus{Name: "name", DefaultKeyID: "key", Endpoints: map[string]madmin.ItemState{"localhost": madmin.ItemState("online")}}, nil
-}
-
-func (ac adminClientMock) kmsAPIs(ctx context.Context) ([]madmin.KMSAPI, error) {
-	return []madmin.KMSAPI{{Method: "GET", Path: "/mock"}}, nil
-}
-
-func (ac adminClientMock) kmsMetrics(ctx context.Context) (*madmin.KMSMetrics, error) {
-	return &madmin.KMSMetrics{}, nil
-}
-
-func (ac adminClientMock) kmsVersion(ctx context.Context) (*madmin.KMSVersion, error) {
-	return &madmin.KMSVersion{Version: "test-version"}, nil
-}
-
-func (ac adminClientMock) createKey(ctx context.Context, key string) error {
-	return nil
-}
-
-func (ac adminClientMock) importKey(ctx context.Context, key string, content []byte) error {
-	return nil
-}
-
-func (ac adminClientMock) listKeys(ctx context.Context, pattern string) ([]madmin.KMSKeyInfo, error) {
-	return []madmin.KMSKeyInfo{{
-		Name:      "name",
-		CreatedBy: "by",
-	}}, nil
-}
-
-func (ac adminClientMock) keyStatus(ctx context.Context, key string) (*madmin.KMSKeyStatus, error) {
-	return &madmin.KMSKeyStatus{KeyID: "key"}, nil
-}
-
-func (ac adminClientMock) deleteKey(ctx context.Context, key string) error {
-	return nil
-}
-
-func (ac adminClientMock) setKMSPolicy(ctx context.Context, policy string, content []byte) error {
-	return nil
-}
-
-func (ac adminClientMock) assignPolicy(ctx context.Context, policy string, content []byte) error {
-	return nil
-}
-
-func (ac adminClientMock) describePolicy(ctx context.Context, policy string) (*madmin.KMSDescribePolicy, error) {
-	return &madmin.KMSDescribePolicy{Name: "name"}, nil
-}
-
-func (ac adminClientMock) getKMSPolicy(ctx context.Context, policy string) (*madmin.KMSPolicy, error) {
-	return &madmin.KMSPolicy{Allow: []string{""}, Deny: []string{""}}, nil
-}
-
-func (ac adminClientMock) listKMSPolicies(ctx context.Context, pattern string) ([]madmin.KMSPolicyInfo, error) {
-	return []madmin.KMSPolicyInfo{{
-		Name:      "name",
-		CreatedBy: "by",
-	}}, nil
-}
-
-func (ac adminClientMock) deletePolicy(ctx context.Context, policy string) error {
-	return nil
-}
-
-func (ac adminClientMock) describeIdentity(ctx context.Context, identity string) (*madmin.KMSDescribeIdentity, error) {
-	return &madmin.KMSDescribeIdentity{}, nil
-}
-
-func (ac adminClientMock) describeSelfIdentity(ctx context.Context) (*madmin.KMSDescribeSelfIdentity, error) {
-	return &madmin.KMSDescribeSelfIdentity{
-		Policy: &madmin.KMSPolicy{Allow: []string{}, Deny: []string{}},
-	}, nil
-}
-
-func (ac adminClientMock) deleteIdentity(ctx context.Context, identity string) error {
-	return nil
-}
-
-func (ac adminClientMock) listIdentities(ctx context.Context, pattern string) ([]madmin.KMSIdentityInfo, error) {
-	return []madmin.KMSIdentityInfo{{Identity: "identity"}}, nil
-}
 
 type KMSTestSuite struct {
 	suite.Suite
@@ -121,12 +36,12 @@ type KMSTestSuite struct {
 	currentServer string
 	isServerSet   bool
 	server        *httptest.Server
-	adminClient   adminClientMock
+	adminClient   AdminClientMock
 }
 
 func (suite *KMSTestSuite) SetupSuite() {
 	suite.assert = assert.New(suite.T())
-	suite.adminClient = adminClientMock{}
+	suite.adminClient = AdminClientMock{}
 }
 
 func (suite *KMSTestSuite) SetupTest() {

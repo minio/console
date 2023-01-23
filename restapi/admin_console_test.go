@@ -26,17 +26,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var minioGetLogsMock func(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo
-
-// mock function of listPolicies()
-func (ac adminClientMock) getLogs(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo {
-	return minioGetLogsMock(ctx, node, lineCnt, logKind)
-}
-
 func TestAdminConsoleLog(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	mockWSConn := mockConn{}
 	function := "startConsoleLog(ctx, )"
 	ctx, cancel := context.WithCancel(context.Background())
