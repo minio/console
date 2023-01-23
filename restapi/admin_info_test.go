@@ -38,12 +38,12 @@ type AdminInfoTestSuite struct {
 	isServerSet         bool
 	isPrometheusRequest bool
 	server              *httptest.Server
-	adminClient         adminClientMock
+	adminClient         AdminClientMock
 }
 
 func (suite *AdminInfoTestSuite) SetupSuite() {
 	suite.assert = assert.New(suite.T())
-	suite.adminClient = adminClientMock{}
+	suite.adminClient = AdminClientMock{}
 	minioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
 		return madmin.InfoMessage{
 			Servers: []madmin.ServerProperties{{

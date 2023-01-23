@@ -114,13 +114,6 @@ func (c s3ClientMock) setVersioning(ctx context.Context, state string) *probe.Er
 	return minioSetVersioningMock(ctx, state)
 }
 
-var minioAccountInfoMock func(ctx context.Context) (madmin.AccountInfo, error)
-
-// mock function of dataUsageInfo() needed for list bucket's usage
-func (ac adminClientMock) AccountInfo(ctx context.Context) (madmin.AccountInfo, error) {
-	return minioAccountInfoMock(ctx)
-}
-
 func (mc minioClientMock) GetBucketTagging(ctx context.Context, bucketName string) (*tags.Tags, error) {
 	return minioGetBucketTaggingMock(ctx, bucketName)
 }
@@ -193,7 +186,7 @@ func TestBucketInfo(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
 	minClient := minioClientMock{}
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx := context.Background()
 	function := "getBucketInfo()"
 
@@ -1176,7 +1169,7 @@ func Test_getAccountBuckets(t *testing.T) {
 			minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
 				return tt.args.mockBucketList, tt.args.mockError
 			}
-			client := adminClientMock{}
+			client := AdminClientMock{}
 
 			got, err := getAccountBuckets(tt.args.ctx, client)
 			if !tt.wantErr(t, err, fmt.Sprintf("getAccountBuckets(%v, %v)", tt.args.ctx, client)) {

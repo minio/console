@@ -27,41 +27,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var getSiteReplicationInfo func(ctx context.Context) (*madmin.SiteReplicationInfo, error)
-
-func (ac adminClientMock) getSiteReplicationInfo(ctx context.Context) (*madmin.SiteReplicationInfo, error) {
-	return getSiteReplicationInfo(ctx)
-}
-
-var addSiteReplicationInfo func(ctx context.Context, sites []madmin.PeerSite) (*madmin.ReplicateAddStatus, error)
-
-func (ac adminClientMock) addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite) (*madmin.ReplicateAddStatus, error) {
-	return addSiteReplicationInfo(ctx, sites)
-}
-
-var editSiteReplicationInfo func(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error)
-
-func (ac adminClientMock) editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error) {
-	return editSiteReplicationInfo(ctx, site)
-}
-
-var deleteSiteReplicationInfoMock func(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error)
-
-func (ac adminClientMock) deleteSiteReplicationInfo(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error) {
-	return deleteSiteReplicationInfoMock(ctx, removeReq)
-}
-
-var getSiteReplicationStatus func(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error)
-
-func (ac adminClientMock) getSiteReplicationStatus(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error) {
-	return getSiteReplicationStatus(ctx, params)
-}
-
 func TestGetSiteReplicationInfo(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 
 	function := "getSiteReplicationInfo()"
 	ctx, cancel := context.WithCancel(context.Background())
@@ -117,7 +86,7 @@ func TestGetSiteReplicationInfo(t *testing.T) {
 func TestAddSiteReplicationInfo(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 
 	function := "addSiteReplicationInfo()"
 	ctx, cancel := context.WithCancel(context.Background())
@@ -166,7 +135,7 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 func TestEditSiteReplicationInfo(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 
 	function := "editSiteReplicationInfo()"
 	ctx, cancel := context.WithCancel(context.Background())
@@ -204,7 +173,7 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 func TestDeleteSiteReplicationInfo(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 
 	function := "deleteSiteReplicationInfo()"
 	ctx, cancel := context.WithCancel(context.Background())
@@ -241,7 +210,7 @@ func TestDeleteSiteReplicationInfo(t *testing.T) {
 func TestSiteReplicationStatus(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 
 	function := "getSiteReplicationStatus()"
 	ctx, cancel := context.WithCancel(context.Background())

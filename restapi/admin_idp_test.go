@@ -26,26 +26,9 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/idp"
-	"github.com/minio/madmin-go/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
-
-func (ac adminClientMock) addOrUpdateIDPConfig(ctx context.Context, idpType, cfgName, cfgData string, update bool) (restart bool, err error) {
-	return true, nil
-}
-
-func (ac adminClientMock) listIDPConfig(ctx context.Context, idpType string) ([]madmin.IDPListItem, error) {
-	return []madmin.IDPListItem{{Name: "mock"}}, nil
-}
-
-func (ac adminClientMock) deleteIDPConfig(ctx context.Context, idpType, cfgName string) (restart bool, err error) {
-	return true, nil
-}
-
-func (ac adminClientMock) getIDPConfig(ctx context.Context, cfgType, cfgName string) (c madmin.IDPConfig, err error) {
-	return madmin.IDPConfig{Info: []madmin.IDPCfgInfo{{Key: "mock", Value: "mock"}}}, nil
-}
 
 type IDPTestSuite struct {
 	suite.Suite
@@ -53,12 +36,12 @@ type IDPTestSuite struct {
 	currentServer string
 	isServerSet   bool
 	server        *httptest.Server
-	adminClient   adminClientMock
+	adminClient   AdminClientMock
 }
 
 func (suite *IDPTestSuite) SetupSuite() {
 	suite.assert = assert.New(suite.T())
-	suite.adminClient = adminClientMock{}
+	suite.adminClient = AdminClientMock{}
 	minioServiceRestartMock = func(ctx context.Context) error {
 		return nil
 	}

@@ -26,17 +26,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var minioServiceTraceMock func(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo
-
-// mock function of listPolicies()
-func (ac adminClientMock) serviceTrace(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo {
-	return minioServiceTraceMock(ctx, threshold, s3, internal, storage, os, errTrace)
-}
-
 func TestAdminTrace(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	mockWSConn := mockConn{}
 	function := "startTraceInfo(ctx, )"
 	ctx, cancel := context.WithCancel(context.Background())

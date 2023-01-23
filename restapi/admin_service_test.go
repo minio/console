@@ -25,17 +25,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var minioServiceRestartMock func(ctx context.Context) error
-
-// mock function of serviceRestart()
-func (ac adminClientMock) serviceRestart(ctx context.Context) error {
-	return minioServiceRestartMock(ctx)
-}
-
 func TestServiceRestart(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx := context.Background()
 	function := "serviceRestart()"
 	// Test-1 : serviceRestart() restart services no errors

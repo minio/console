@@ -37,7 +37,7 @@ import (
 
 func TestArnsList(t *testing.T) {
 	assert := asrt.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	// Test-1 : getArns() returns proper arn list
 	minioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
 		return madmin.InfoMessage{
