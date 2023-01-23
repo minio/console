@@ -25,8 +25,8 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	"github.com/gorilla/websocket"
 	"github.com/minio/madmin-go/v2"
+	"github.com/minio/websocket"
 )
 
 // getSpeedtesthOptionsFromReq gets duration, size & concurrent requests from a websocket

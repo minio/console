@@ -21,7 +21,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/gorilla/websocket"
+	"github.com/minio/websocket"
 )
 
 // Common mocks for WSConn interface
