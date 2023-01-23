@@ -227,10 +227,10 @@ const License = () => {
                   display: "flex",
                   alignItems: "center",
 
-                  "& .min-icon": {
+                  "& svg": {
                     width: "83px",
                     height: "14px",
-                    marginLeft: "5px",
+                    marginLeft: "8px",
                     marginRight: "5px",
                   },
                 }}

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { ThemedLogo } from "mds";
+import { Grid, ThemedLogo } from "mds";
 import { useSelector } from "react-redux";
 import { AppState } from "../../../../store";
 
@@ -35,14 +35,18 @@ const AutoColorIcon = ({ marginRight, marginTop }: IAutoColorIcon) => {
     tinycolor(colorVariants?.backgroundColor || "#fff").getBrightness() <= 128;
 
   return (
-    <ThemedLogo
-      style={{
-        width: 105,
-        marginRight,
-        marginTop,
-        fill: isDark ? "#fff" : "#081C42",
+    <Grid
+      sx={{
+        "& svg": {
+          width: 105,
+          marginRight,
+          marginTop,
+          fill: isDark ? "#fff" : "#081C42",
+        },
       }}
-    />
+    >
+      <ThemedLogo />
+    </Grid>
   );
 };
 
