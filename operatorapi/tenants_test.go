@@ -1166,9 +1166,9 @@ func Test_UpdateTenantAction(t *testing.T) {
 		opClientTenantGetMock = tt.args.mockTenantGet
 		opClientTenantPatchMock = tt.args.mockTenantPatch
 		httpClientGetMock = tt.args.mockHTTPClientGet
-		cnsClient := fake.NewSimpleClientset(tt.objs...)
+		cnsClient := k8sClientMock{}
 		t.Run(tt.name, func(t *testing.T) {
-			if err := updateTenantAction(tt.args.ctx, tt.args.operatorClient, cnsClient.CoreV1(), tt.args.httpCl, tt.args.nameSpace, tt.args.params); (err != nil) != tt.wantErr {
+			if err := updateTenantAction(tt.args.ctx, tt.args.operatorClient, cnsClient, tt.args.httpCl, tt.args.nameSpace, tt.args.params); (err != nil) != tt.wantErr {
 				t.Errorf("updateTenantAction() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

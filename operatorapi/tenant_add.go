@@ -34,7 +34,6 @@ import (
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 func getTenantCreatedResponse(session *models.Principal, params operator_api.CreateTenantParams) (response *models.CreateTenantResponse, mError *models.Error) {
@@ -49,10 +48,10 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 
-	return createTenant(ctx, params, k8sClient, k8sClient.client.CoreV1(), session)
+	return createTenant(ctx, params, k8sClient, session)
 }
 
-func createTenant(ctx context.Context, params operator_api.CreateTenantParams, clientSet K8sClientI, cv1 v1.CoreV1Interface, session *models.Principal) (response *models.CreateTenantResponse, mError *models.Error) {
+func createTenant(ctx context.Context, params operator_api.CreateTenantParams, clientSet K8sClientI, session *models.Principal) (response *models.CreateTenantResponse, mError *models.Error) {
 	tenantReq := params.Body
 	minioImage := getTenantMinIOImage(tenantReq.Image)
 
@@ -240,7 +239,7 @@ func createTenant(ctx context.Context, params operator_api.CreateTenantParams, c
 
 	if tenantReq.ImagePullSecret != "" {
 		imagePullSecret = tenantReq.ImagePullSecret
-	} else if imagePullSecret, err = setImageRegistry(ctx, tenantReq.ImageRegistry, cv1, ns, tenantName); err != nil {
+	} else if imagePullSecret, err = setImageRegistry(ctx, tenantReq.ImageRegistry, clientSet, ns, tenantName); err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
 	// pass the image pull secret to the Tenant

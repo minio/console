@@ -32,7 +32,9 @@ import (
 	"github.com/stretchr/testify/suite"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
+	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 type TenantTestSuite struct {
@@ -148,7 +150,7 @@ func (suite *TenantTestSuite) TestCreateTenantWithWrongECP() {
 	k8sClientCreateSecretMock = func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
 		return nil, nil
 	}
-	_, err := createTenant(context.Background(), params, suite.k8sclient, nil, &models.Principal{})
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
 	suite.assert.NotNil(err)
 }
 
@@ -174,7 +176,7 @@ func (suite *TenantTestSuite) TestCreateTenantWithWrongActiveDirectoryConfig() {
 
 		return nil, nil
 	}
-	_, err := createTenant(context.Background(), params, suite.k8sclient, nil, &models.Principal{})
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
 	suite.assert.NotNil(err)
 }
 
@@ -196,7 +198,7 @@ func (suite *TenantTestSuite) TestCreateTenantWithWrongBuiltInUsers() {
 		}
 		return nil, nil
 	}
-	_, err := createTenant(context.Background(), params, suite.k8sclient, nil, &models.Principal{})
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
 	suite.assert.NotNil(err)
 }
 
@@ -227,7 +229,7 @@ func (suite *TenantTestSuite) TestCreateTenantWithOIDCAndWrongServerCertificates
 	k8sClientDeleteSecretMock = func(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
 		return nil
 	}
-	_, err := createTenant(context.Background(), params, suite.k8sclient, nil, &models.Principal{})
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
 	suite.assert.NotNil(err)
 }
 
@@ -246,7 +248,7 @@ func (suite *TenantTestSuite) TestCreateTenantWithWrongClientCertificates() {
 	k8sClientDeleteSecretMock = func(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
 		return nil
 	}
-	_, err := createTenant(context.Background(), params, suite.k8sclient, nil, &models.Principal{})
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
 	suite.assert.NotNil(err)
 }
 
@@ -264,7 +266,7 @@ func (suite *TenantTestSuite) TestCreateTenantWithWrongCAsCertificates() {
 		}
 		return nil, nil
 	}
-	_, err := createTenant(context.Background(), params, suite.k8sclient, nil, &models.Principal{})
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
 	suite.assert.NotNil(err)
 }
 
@@ -283,7 +285,7 @@ func (suite *TenantTestSuite) TestCreateTenantWithWrongMtlsCertificates() {
 	k8sClientDeleteSecretMock = func(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
 		return nil
 	}
-	_, err := createTenant(context.Background(), params, suite.k8sclient, nil, &models.Principal{})
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
 	suite.assert.NotNil(err)
 }
 
@@ -304,7 +306,7 @@ func (suite *TenantTestSuite) TestCreateTenantWithWrongKESConfig() {
 	k8sClientDeleteSecretMock = func(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
 		return nil
 	}
-	_, err := createTenant(context.Background(), params, suite.k8sclient, nil, &models.Principal{})
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
 	suite.assert.NotNil(err)
 }
 
@@ -318,7 +320,55 @@ func (suite *TenantTestSuite) TestCreateTenantWithWrongPool() {
 	k8sClientDeleteSecretMock = func(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
 		return nil
 	}
-	_, err := createTenant(context.Background(), params, suite.k8sclient, nil, &models.Principal{})
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestCreateTenantWithImageRegistryCreateError() {
+	params, _ := suite.initCreateTenantRequest()
+	params.Body.MountPath = "/mock-path"
+	registry := "mock-registry"
+	username := "mock-username"
+	password := "mock-password"
+	params.Body.ImageRegistry = &models.ImageRegistry{
+		Registry: &registry,
+		Username: &username,
+		Password: &password,
+	}
+
+	k8sClientCreateSecretMock = func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
+		if strings.HasPrefix(secret.Name, fmt.Sprintf("%s-secret", *params.Body.Name)) {
+			return nil, nil
+		}
+		return nil, errors.New("mock-create-error")
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		return nil, k8sErrors.NewNotFound(schema.GroupResource{}, "")
+	}
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestCreateTenantWithImageRegistryUpdateError() {
+	params, _ := suite.initCreateTenantRequest()
+	registry := "mock-registry"
+	username := "mock-username"
+	password := "mock-password"
+	params.Body.ImageRegistry = &models.ImageRegistry{
+		Registry: &registry,
+		Username: &username,
+		Password: &password,
+	}
+	k8sClientCreateSecretMock = func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
+		return nil, nil
+	}
+	k8sClientUpdateSecretMock = func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error) {
+		return nil, errors.New("mock-update-error")
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		return &v1.Secret{}, nil
+	}
+	_, err := createTenant(context.Background(), params, suite.k8sclient, &models.Principal{})
 	suite.assert.NotNil(err)
 }
 
@@ -390,6 +440,20 @@ func (suite *TenantTestSuite) initTenantConfigurationRequest() (params operator_
 	params.Namespace = "mock-namespace"
 	params.Tenant = "mock-tenant"
 	return params, api
+}
+
+func (suite *TenantTestSuite) TestParseTenantConfigurationWithoutError() {
+	tenant := &miniov2.Tenant{
+		Spec: miniov2.TenantSpec{
+			Env: []corev1.EnvVar{
+				{Name: "mock", Value: "mock-env"},
+				{Name: "mock", Value: "mock-env-2"},
+			},
+		},
+	}
+	config, err := parseTenantConfiguration(context.Background(), suite.k8sclient, tenant)
+	suite.assert.NotNil(config)
+	suite.assert.Nil(err)
 }
 
 func (suite *TenantTestSuite) TestUpdateTenantConfigurationHandlerWithError() {
@@ -629,11 +693,63 @@ func (suite *TenantTestSuite) TestSetTenantAdministratorsHandlerWithError() {
 	suite.assert.True(ok)
 }
 
+func (suite *TenantTestSuite) TestSetTenantAdministratorsWithAdminClientError() {
+	params, _ := suite.initSetTenantAdministratorsRequest()
+	tenant := &miniov2.Tenant{}
+	err := setTenantAdministrators(context.Background(), tenant, suite.k8sclient, params)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestSetTenantAdministratorsWithUserPolicyError() {
+	params, _ := suite.initSetTenantAdministratorsRequest()
+	tenant := &miniov2.Tenant{
+		Spec: miniov2.TenantSpec{
+			Env: []corev1.EnvVar{
+				{Name: "accesskey", Value: "mock-access"},
+				{Name: "secretkey", Value: "mock-secret"},
+			},
+		},
+	}
+	params.Body.UserDNS = []string{"mock-user"}
+	err := setTenantAdministrators(context.Background(), tenant, suite.k8sclient, params)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestSetTenantAdministratorsWithGroupPolicyError() {
+	params, _ := suite.initSetTenantAdministratorsRequest()
+	tenant := &miniov2.Tenant{
+		Spec: miniov2.TenantSpec{
+			Env: []corev1.EnvVar{
+				{Name: "accesskey", Value: "mock-access"},
+				{Name: "secretkey", Value: "mock-secret"},
+			},
+		},
+	}
+	params.Body.GroupDNS = []string{"mock-user"}
+	err := setTenantAdministrators(context.Background(), tenant, suite.k8sclient, params)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestSetTenantAdministratorsWithoutError() {
+	params, _ := suite.initSetTenantAdministratorsRequest()
+	tenant := &miniov2.Tenant{
+		Spec: miniov2.TenantSpec{
+			Env: []corev1.EnvVar{
+				{Name: "accesskey", Value: "mock-access"},
+				{Name: "secretkey", Value: "mock-secret"},
+			},
+		},
+	}
+	err := setTenantAdministrators(context.Background(), tenant, suite.k8sclient, params)
+	suite.assert.Nil(err)
+}
+
 func (suite *TenantTestSuite) initSetTenantAdministratorsRequest() (params operator_api.SetTenantAdministratorsParams, api operations.OperatorAPI) {
 	registerTenantHandlers(&api)
 	params.HTTPRequest = &http.Request{}
 	params.Namespace = "mock-namespace"
 	params.Tenant = "mock-tenant"
+	params.Body = &models.SetAdministratorsRequest{}
 	return params, api
 }
 
