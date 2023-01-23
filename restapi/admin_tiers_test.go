@@ -28,42 +28,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var minioListTiersMock func(ctx context.Context) ([]*madmin.TierConfig, error)
-
-// mock function of listTiers()
-func (ac adminClientMock) listTiers(ctx context.Context) ([]*madmin.TierConfig, error) {
-	return minioListTiersMock(ctx)
-}
-
-// assigning mock at runtime instead of compile time
-var minioTierStatsMock func(ctx context.Context) ([]madmin.TierInfo, error)
-
-// mock function of tierStats()
-func (ac adminClientMock) tierStats(ctx context.Context) ([]madmin.TierInfo, error) {
-	return minioTierStatsMock(ctx)
-}
-
-// assigning mock at runtime instead of compile time
-var minioAddTiersMock func(ctx context.Context, tier *madmin.TierConfig) error
-
-// mock function of addTier()
-func (ac adminClientMock) addTier(ctx context.Context, tier *madmin.TierConfig) error {
-	return minioAddTiersMock(ctx, tier)
-}
-
-// assigning mock at runtime instead of compile time
-var minioEditTiersMock func(ctx context.Context, tierName string, creds madmin.TierCreds) error
-
-// mock function of editTierCreds()
-func (ac adminClientMock) editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error {
-	return minioEditTiersMock(ctx, tierName, creds)
-}
-
 func TestGetTiers(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 
 	function := "getTiers()"
 	ctx, cancel := context.WithCancel(context.Background())
@@ -187,7 +155,7 @@ func TestGetTiers(t *testing.T) {
 func TestAddTier(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 
 	function := "addTier()"
 	ctx, cancel := context.WithCancel(context.Background())
@@ -229,7 +197,7 @@ func TestAddTier(t *testing.T) {
 func TestUpdateTierCreds(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 
 	function := "editTierCredentials()"
 	ctx, cancel := context.WithCancel(context.Background())

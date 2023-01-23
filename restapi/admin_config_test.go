@@ -40,37 +40,9 @@ const (
 	PostgresQueueLimit       = "queue_limit"
 )
 
-// assigning mock at runtime instead of compile time
-var minioHelpConfigKVMock func(subSys, key string, envOnly bool) (madmin.Help, error)
-
-var (
-	minioGetConfigKVMock func(key string) ([]byte, error)
-	minioSetConfigKVMock func(kv string) (restart bool, err error)
-	minioDelConfigKVMock func(name string) (err error)
-)
-
-// mock function helpConfigKV()
-func (ac adminClientMock) helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error) {
-	return minioHelpConfigKVMock(subSys, key, envOnly)
-}
-
-// mock function getConfigKV()
-func (ac adminClientMock) getConfigKV(ctx context.Context, name string) ([]byte, error) {
-	return minioGetConfigKVMock(name)
-}
-
-// mock function setConfigKV()
-func (ac adminClientMock) setConfigKV(ctx context.Context, kv string) (restart bool, err error) {
-	return minioSetConfigKVMock(kv)
-}
-
-func (ac adminClientMock) delConfigKV(ctx context.Context, name string) (err error) {
-	return minioDelConfigKVMock(name)
-}
-
 func TestListConfig(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	function := "listConfig()"
 	// Test-1 : listConfig() get list of two configurations and ensure is output correctly
 	configListMock := []madmin.HelpKV{
@@ -119,7 +91,7 @@ func TestListConfig(t *testing.T) {
 
 func TestSetConfig(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	function := "setConfig()"
 	// mock function response from setConfig()
 	minioSetConfigKVMock = func(kv string) (restart bool, err error) {
@@ -169,7 +141,7 @@ func TestSetConfig(t *testing.T) {
 
 func TestDelConfig(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	function := "resetConfig()"
 	// mock function response from setConfig()
 	minioDelConfigKVMock = func(name string) (err error) {
@@ -258,7 +230,7 @@ func Test_buildConfig(t *testing.T) {
 
 func Test_setConfigWithARN(t *testing.T) {
 	assert := assert.New(t)
-	client := adminClientMock{}
+	client := AdminClientMock{}
 
 	type args struct {
 		ctx        context.Context
@@ -369,7 +341,7 @@ func Test_setConfigWithARN(t *testing.T) {
 }
 
 func Test_getConfig(t *testing.T) {
-	client := adminClientMock{}
+	client := AdminClientMock{}
 	type args struct {
 		client MinioAdmin
 		name   string

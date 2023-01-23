@@ -38,12 +38,12 @@ type AdminSubnetTestSuite struct {
 	currentServer string
 	isServerSet   bool
 	server        *httptest.Server
-	adminClient   adminClientMock
+	adminClient   AdminClientMock
 }
 
 func (suite *AdminSubnetTestSuite) SetupSuite() {
 	suite.assert = assert.New(suite.T())
-	suite.adminClient = adminClientMock{}
+	suite.adminClient = AdminClientMock{}
 	minioGetConfigKVMock = func(key string) ([]byte, error) {
 		return []byte("subnet license=mock api_key=mock proxy=http://mock.com"), nil
 	}

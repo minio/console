@@ -29,20 +29,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var minioHealMock func(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
-	forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error)
-
-func (ac adminClientMock) heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
-	forceStart, forceStop bool,
-) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error) {
-	return minioHealMock(ctx, bucket, prefix, healOpts, clientToken, forceStart, forceStop)
-}
-
 func TestHeal(t *testing.T) {
 	assert := assert.New(t)
 
-	client := adminClientMock{}
+	client := AdminClientMock{}
 	mockWSConn := mockConn{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

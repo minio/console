@@ -29,21 +29,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	minioStartProfiling func(profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
-	minioStopProfiling  func() (io.ReadCloser, error)
-)
-
-// mock function for startProfiling()
-func (ac adminClientMock) startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
-	return minioStartProfiling(profiler)
-}
-
-// mock function for stopProfiling()
-func (ac adminClientMock) stopProfiling(ctx context.Context) (io.ReadCloser, error) {
-	return minioStopProfiling()
-}
-
 // Implementing fake closingBuffer to mock stopProfiling() (io.ReadCloser, error)
 type ClosingBuffer struct {
 	*bytes.Buffer
@@ -58,7 +43,7 @@ func TestStartProfiling(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	mockWSConn := mockConn{}
 	function := "startProfiling()"
 	testOptions := &profileOptions{

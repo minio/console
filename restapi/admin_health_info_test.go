@@ -27,20 +27,12 @@ import (
 	madmin "github.com/minio/madmin-go/v2"
 )
 
-// assigning mock at runtime instead of compile time
-var minioServerHealthInfoMock func(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error)
-
-// mock function serverHealthInfo
-func (ac adminClientMock) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error) {
-	return minioServerHealthInfoMock(ctx, healthDataTypes, deadline)
-}
-
 func Test_serverHealthInfo(t *testing.T) {
 	var testReceiver chan madmin.HealthInfo
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	client := adminClientMock{}
+	client := AdminClientMock{}
 	mockWSConn := mockConn{}
 	deadlineDuration, _ := time.ParseDuration("1h")
 

@@ -149,7 +149,7 @@ func Test_validateUserAgainstIDP(t *testing.T) {
 }
 
 func Test_getAccountInfo(t *testing.T) {
-	client := adminClientMock{}
+	client := AdminClientMock{}
 	type args struct {
 		ctx    context.Context
 		client MinioAdmin
