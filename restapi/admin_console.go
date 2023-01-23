@@ -22,8 +22,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/minio/madmin-go/v2"
+	"github.com/minio/websocket"
 )
 
 const logTimeFormat string = "15:04:05 MST 01/02/2006"

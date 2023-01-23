@@ -23,8 +23,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/minio/madmin-go/v2"
+	"github.com/minio/websocket"
 )
 
 // shortTraceMsg Short trace record
