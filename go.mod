@@ -16,7 +16,6 @@ require (
 	github.com/go-openapi/validate v0.22.1
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/google/uuid v1.3.0
-	github.com/gorilla/websocket v1.5.0
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/klauspost/compress v1.15.14
 	github.com/minio/cli v1.24.2
@@ -27,8 +26,9 @@ require (
 	github.com/minio/mc v0.0.0-20230119171340-e9e6c2231fe3
 	github.com/minio/minio-go/v7 v7.0.47
 	github.com/minio/operator v0.0.0-20220902184351-21e4073132b0
-	github.com/minio/pkg v1.5.8
+	github.com/minio/pkg v1.6.0
 	github.com/minio/selfupdate v0.5.0
+	github.com/minio/websocket v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.4.0
 	github.com/secure-io/sio-go v0.3.1

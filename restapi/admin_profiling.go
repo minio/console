@@ -21,9 +21,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/gorilla/websocket"
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go/v2"
+	"github.com/minio/websocket"
 )
 
 var items []*models.StartProfilingItem

@@ -31,7 +31,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gorilla/websocket"
+	"github.com/minio/websocket"
 
 	v2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 
