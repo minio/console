@@ -365,7 +365,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
                 <a
                   href="https://min.io/docs/minio/linux/administration/bucket-replication.html?ref=con"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener"
                 >
                   documentation
                 </a>

@@ -16,6 +16,9 @@
 
 import { Box } from "@mui/material";
 import LicenseLink from "./LicenseLink";
+import { openFAQModal } from "./licenseSlice";
+import store from "../../../store";
+import FAQModal from "./FAQModal";
 
 export const LICENSE_PLANS = {
   COMMUNITY: "community",
@@ -37,7 +40,7 @@ const FeatureLink = ({ text, anchor }: { text: string; anchor: string }) => {
       href={`https://min.io/product/subnet?ref=con#${anchor}`}
       className={"link-text"}
       target="_blank"
-      rel="noopener noreferrer"
+      rel="noopener "
       style={{
         color: "#2781B0",
       }}
@@ -56,7 +59,7 @@ export const FEATURE_ITEMS: FeatureItem[] = [
     label: "",
     isHeader: false,
     style: {
-      height: "360px",
+      height: "400px",
       verticalAlign: "top",
       alignItems: "start",
     },
@@ -138,13 +141,24 @@ export const COMMUNITY_PLAN_FEATURES = [
             distribute the complete, corresponding source code of the combined
             work under the same <LicenseLink /> license. This requirement
             applies whether or not you modified MinIO.
+            <br />
+            <br />
+            <span
+              className="link-text"
+              onClick={() => {
+                store.dispatch(openFAQModal());
+              }}
+            >
+              Compliance FAQ
+            </span>
+            <FAQModal />
           </span>
         </Box>
       );
     },
     isHeader: false,
     style: {
-      height: "360px",
+      height: "400px",
       borderBottom: 0,
     },
   },
@@ -228,7 +242,7 @@ export const STANDARD_PLAN_FEATURES = [
             href="https://min.io/product/subnet?ref=con"
             className={"link-text"}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
           >
             click here
           </a>
@@ -237,7 +251,7 @@ export const STANDARD_PLAN_FEATURES = [
       );
     },
     style: {
-      height: "360px",
+      height: "400px",
       borderBottom: 0,
     },
   },
@@ -341,7 +355,7 @@ export const ENTERPRISE_PLAN_FEATURES = [
             href="https://min.io/product/subnet?ref=con"
             className={"link-text"}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener"
           >
             click here
           </a>
@@ -350,7 +364,7 @@ export const ENTERPRISE_PLAN_FEATURES = [
       );
     },
     style: {
-      height: "360px",
+      height: "400px",
       borderBottom: 0,
     },
   },

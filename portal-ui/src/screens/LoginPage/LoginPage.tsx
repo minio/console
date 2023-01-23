@@ -498,14 +498,14 @@ const Login = () => {
         form={loginComponent}
         formFooter={
           <Fragment>
-            <a href={docsURL} target="_blank" rel="noreferrer">
+            <a href={docsURL} target="_blank" rel="noopener">
               Documentation
             </a>
             <span className={classes.separator}>|</span>
             <a
               href="https://github.com/minio/minio"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener"
             >
               Github
             </a>
@@ -513,7 +513,7 @@ const Login = () => {
             <a
               href="https://subnet.min.io/?ref=con"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener"
             >
               Support
             </a>
@@ -521,7 +521,7 @@ const Login = () => {
             <a
               href="https://min.io/download/?ref=con"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener"
             >
               Download
             </a>

@@ -67,7 +67,7 @@ const TierTypeSelector = () => {
                       <a
                         href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-s3.html#minio-lifecycle-management-transition-to-s3?ref=con"
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener"
                       >
                         MinIO or other S3-compatible storage
                       </a>
@@ -76,7 +76,7 @@ const TierTypeSelector = () => {
                       <a
                         href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-s3.html#minio-lifecycle-management-transition-to-s3?ref=con"
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener"
                       >
                         Amazon S3
                       </a>
@@ -85,7 +85,7 @@ const TierTypeSelector = () => {
                       <a
                         href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-gcs.html#minio-lifecycle-management-transition-to-gcs?ref=con"
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener"
                       >
                         Google Cloud Storage
                       </a>
@@ -94,7 +94,7 @@ const TierTypeSelector = () => {
                       <a
                         href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-azure.html#minio-lifecycle-management-transition-to-azure?ref=con"
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener"
                       >
                         Microsoft Azure Blob Storage
                       </a>
