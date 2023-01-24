@@ -684,13 +684,12 @@ func deleteObjects(ctx context.Context, client MCClient, bucket string, path str
 //	Use cases:
 //	   * Remove objects recursively
 func deleteMultipleObjects(ctx context.Context, client MCClient, recursive, allVersions, isBypass bool) error {
-	isIncomplete := false
-	isRemoveBucket := false
-	forceDelete := false
-
-	if recursive || (allVersions && !isBypass) {
-		forceDelete = true
-	}
+	// Constants defined to make this code more readable
+	const (
+		isIncomplete   = false
+		isRemoveBucket = false
+		forceDelete    = false // Force delete not meant to be used by console UI.
+	)
 
 	listOpts := mc.ListOptions{
 		Recursive:         recursive,
