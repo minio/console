@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../store";
 import { ErrorResponseHandler } from "../../common/types";
@@ -27,27 +27,29 @@ import LoadingComponent from "../../common/LoadingComponent";
 const LogoutPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const logout = () => {
-    const deleteSession = () => {
-      clearSession();
-      dispatch(userLogged(false));
-      localStorage.setItem("userLoggedIn", "");
-      localStorage.setItem("redirect-path", "");
-      dispatch(resetSession());
-      navigate(`/login`);
+  useEffect(() => {
+    const logout = () => {
+      const deleteSession = () => {
+        clearSession();
+        dispatch(userLogged(false));
+        localStorage.setItem("userLoggedIn", "");
+        localStorage.setItem("redirect-path", "");
+        dispatch(resetSession());
+        navigate(`/login`);
+      };
+      const state = localStorage.getItem("auth-state");
+      api
+        .invoke("POST", `/api/v1/logout`, { state })
+        .then(() => {
+          deleteSession();
+        })
+        .catch((err: ErrorResponseHandler) => {
+          console.log(err);
+          deleteSession();
+        });
     };
-    const state = localStorage.getItem("auth-state");
-    api
-      .invoke("POST", `/api/v1/logout`, { state })
-      .then(() => {
-        deleteSession();
-      })
-      .catch((err: ErrorResponseHandler) => {
-        console.log(err);
-        deleteSession();
-      });
-  };
-  logout();
+    logout();
+  }, [dispatch, navigate]);
   return <LoadingComponent />;
 };
 
