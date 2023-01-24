@@ -121,7 +121,7 @@ const initWSConnection = (
 
   const reconnectFn = () => {
     if (errorCounter <= 5) {
-      initWSConnection(openCallback, onMessageCallback);
+      initWSConnection(() => {}, onMessageCallback);
       errorCounter += 1;
     } else {
       console.error("Websocket not available.");
@@ -139,9 +139,7 @@ const initWSConnection = (
   objectsWS.onerror = () => {
     wsInFlight = false;
     console.error("Error in websocket connection. Attempting reconnection...");
-
-    // We reconnect after 3 seconds
-    setTimeout(reconnectFn, 3000);
+    // Reconnect function will be called in the onClose by specification.
   };
 };
 
