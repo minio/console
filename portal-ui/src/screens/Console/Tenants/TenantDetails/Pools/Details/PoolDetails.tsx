@@ -215,41 +215,42 @@ const PoolDetails = () => {
             </Fragment>
           )}
         </Box>
-        {poolInformation.tolerations && poolInformation.tolerations.length > 0 && (
-          <Fragment>
-            <HeaderSection title={"Tolerations"} />
-            <Box>
-              <ul>
-                {poolInformation.tolerations.map((tolItem) => {
-                  return (
-                    <li>
-                      {tolItem.operator === "Equal" ? (
-                        <Fragment>
-                          If <strong>{tolItem.key}</strong> is equal to{" "}
-                          <strong>{tolItem.value}</strong> then{" "}
-                          <strong>{tolItem.effect}</strong> after{" "}
-                          <strong>
-                            {tolItem.tolerationSeconds?.seconds || 0}
-                          </strong>{" "}
-                          seconds
-                        </Fragment>
-                      ) : (
-                        <Fragment>
-                          If <strong>{tolItem.key}</strong> exists then{" "}
-                          <strong>{tolItem.effect}</strong> after{" "}
-                          <strong>
-                            {tolItem.tolerationSeconds?.seconds || 0}
-                          </strong>{" "}
-                          seconds
-                        </Fragment>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </Box>
-          </Fragment>
-        )}
+        {poolInformation.tolerations &&
+          poolInformation.tolerations.length > 0 && (
+            <Fragment>
+              <HeaderSection title={"Tolerations"} />
+              <Box>
+                <ul>
+                  {poolInformation.tolerations.map((tolItem) => {
+                    return (
+                      <li>
+                        {tolItem.operator === "Equal" ? (
+                          <Fragment>
+                            If <strong>{tolItem.key}</strong> is equal to{" "}
+                            <strong>{tolItem.value}</strong> then{" "}
+                            <strong>{tolItem.effect}</strong> after{" "}
+                            <strong>
+                              {tolItem.tolerationSeconds?.seconds || 0}
+                            </strong>{" "}
+                            seconds
+                          </Fragment>
+                        ) : (
+                          <Fragment>
+                            If <strong>{tolItem.key}</strong> exists then{" "}
+                            <strong>{tolItem.effect}</strong> after{" "}
+                            <strong>
+                              {tolItem.tolerationSeconds?.seconds || 0}
+                            </strong>{" "}
+                            seconds
+                          </Fragment>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </Box>
+            </Fragment>
+          )}
       </Grid>
     </Fragment>
   );
