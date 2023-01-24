@@ -296,10 +296,12 @@ const Login = () => {
     loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
     loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount;
 
-  if (navigateTo !== "") {
-    navigate(navigateTo);
-    dispatch(resetForm());
-  }
+  useEffect(() => {
+    if (navigateTo !== "") {
+      dispatch(resetForm());
+      navigate(navigateTo);
+    }
+  }, [navigateTo, dispatch, navigate]);
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
