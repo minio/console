@@ -139,7 +139,7 @@ const initWSConnection = (
   objectsWS.onerror = () => {
     wsInFlight = false;
     console.error("Error in websocket connection. Attempting reconnection...");
-    // Reconnect function will be called in the onClose by specification.
+    // Onclose will be triggered by specification, reconnect function will be executed there to avoid duplicated requests
   };
 };
 
