@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.info.main,
     },
     linkButton: {
-      fontFamily: '"Lato", sans-serif',
+      fontFamily: '"Inter", sans-serif',
       fontWeight: "normal",
       textTransform: "none",
       fontSize: "inherit",
@@ -227,10 +227,10 @@ const License = () => {
                   display: "flex",
                   alignItems: "center",
 
-                  "& .min-icon": {
+                  "& svg": {
                     width: "83px",
                     height: "14px",
-                    marginLeft: "5px",
+                    marginLeft: "8px",
                     marginRight: "5px",
                   },
                 }}

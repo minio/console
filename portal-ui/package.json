@@ -30,7 +30,7 @@
     "local-storage-fallback": "^4.1.1",
     "lodash": "^4.17.21",
     "luxon": "^3.2.1",
-    "mds": "https://github.com/minio/mds.git#v0.1.0",
+    "mds": "https://github.com/minio/mds.git#v0.2.0",
     "minio": "^7.0.32",
     "react": "^18.1.0",
     "react-chartjs-2": "^2.9.0",
@@ -45,7 +45,7 @@
     "react-window": "^1.8.8",
     "react-window-infinite-loader": "^1.0.7",
     "recharts": "^2.2.0",
-    "superagent": "^8.0.6",
+    "superagent": "^8.0.8",
     "tinycolor2": "^1.4.2",
     "websocket": "^1.0.31"
   },
@@ -56,7 +56,10 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "react/jsx-no-target-blank": "off"
+    }
   },
   "browserslist": {
     "production": [

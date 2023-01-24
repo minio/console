@@ -94,7 +94,7 @@ const AddIDPConfigurationHelpBox = ({
           </Fragment>
         ))}
         <Box sx={{ paddingBottom: "20px" }}>
-          <a href={docLink} target="_blank" rel="noreferrer">
+          <a href={docLink} target="_blank" rel="noopener">
             {docText}
           </a>
         </Box>

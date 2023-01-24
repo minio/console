@@ -24,7 +24,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gorilla/websocket"
+	"github.com/minio/websocket"
 	"github.com/stretchr/testify/assert"
 )
 

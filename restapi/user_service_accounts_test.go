@@ -27,45 +27,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var minioAddServiceAccountMock func(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error)
-
-var (
-	minioListServiceAccountsMock  func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
-	minioDeleteServiceAccountMock func(ctx context.Context, serviceAccount string) error
-	minioInfoServiceAccountMock   func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
-	minioUpdateServiceAccountMock func(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error
-)
-
-// mock function of AddServiceAccount()
-func (ac adminClientMock) addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error) {
-	return minioAddServiceAccountMock(ctx, policy, user, accessKey, secretKey)
-}
-
-// mock function of ListServiceAccounts()
-func (ac adminClientMock) listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
-	return minioListServiceAccountsMock(ctx, user)
-}
-
-// mock function of DeleteServiceAccount()
-func (ac adminClientMock) deleteServiceAccount(ctx context.Context, serviceAccount string) error {
-	return minioDeleteServiceAccountMock(ctx, serviceAccount)
-}
-
-// mock function of InfoServiceAccount()
-func (ac adminClientMock) infoServiceAccount(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error) {
-	return minioInfoServiceAccountMock(ctx, serviceAccount)
-}
-
-// mock function of UpdateServiceAccount()
-func (ac adminClientMock) updateServiceAccount(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error {
-	return minioUpdateServiceAccountMock(ctx, serviceAccount, opts)
-}
-
 func TestAddServiceAccount(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	client := adminClientMock{}
+	client := AdminClientMock{}
 	function := "createServiceAccount()"
 	// Test-1: createServiceAccount create a service account by assigning it a policy
 	ctx, cancel := context.WithCancel(context.Background())
@@ -115,7 +80,7 @@ func TestAddServiceAccount(t *testing.T) {
 func TestListServiceAccounts(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	client := adminClientMock{}
+	client := AdminClientMock{}
 	function := "getUserServiceAccounts()"
 
 	// Test-1: getUserServiceAccounts list serviceaccounts for a user
@@ -148,7 +113,7 @@ func TestListServiceAccounts(t *testing.T) {
 func TestDeleteServiceAccount(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	client := adminClientMock{}
+	client := AdminClientMock{}
 	function := "deleteServiceAccount()"
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -175,7 +140,7 @@ func TestDeleteServiceAccount(t *testing.T) {
 func TestGetServiceAccountPolicy(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
-	client := adminClientMock{}
+	client := AdminClientMock{}
 	function := "getServiceAccountPolicy()"
 
 	// Test-1: getServiceAccountPolicy list serviceaccounts for a user

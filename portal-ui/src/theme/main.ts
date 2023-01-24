@@ -41,7 +41,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: ["Lato", "sans-serif"].join(","),
+    fontFamily: ["Inter", "sans-serif"].join(","),
     h1: {
       fontWeight: "bold",
       color: "#081C42",

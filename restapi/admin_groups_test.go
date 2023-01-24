@@ -28,38 +28,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// assigning mock at runtime instead of compile time
-var minioListGroupsMock func() ([]string, error)
-
-var (
-	minioUpdateGroupMembersMock  func(madmin.GroupAddRemove) error
-	minioGetGroupDescriptionMock func(group string) (*madmin.GroupDesc, error)
-	minioSetGroupStatusMock      func(group string, status madmin.GroupStatus) error
-)
-
-// mock function of listGroups()
-func (ac adminClientMock) listGroups(ctx context.Context) ([]string, error) {
-	return minioListGroupsMock()
-}
-
-// mock function of updateGroupMembers()
-func (ac adminClientMock) updateGroupMembers(ctx context.Context, req madmin.GroupAddRemove) error {
-	return minioUpdateGroupMembersMock(req)
-}
-
-// mock function of getGroupDescription()
-func (ac adminClientMock) getGroupDescription(ctx context.Context, group string) (*madmin.GroupDesc, error) {
-	return minioGetGroupDescriptionMock(group)
-}
-
-// mock function setGroupStatus()
-func (ac adminClientMock) setGroupStatus(ctx context.Context, group string, status madmin.GroupStatus) error {
-	return minioSetGroupStatusMock(group, status)
-}
-
 func TestListGroups(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// Test-1 : listGroups() Get response from minio client with two Groups and return the same number on listGroups()
@@ -95,7 +66,7 @@ func TestListGroups(t *testing.T) {
 
 func TestAddGroup(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// Test-1 : addGroup() add a new group with two members
@@ -122,7 +93,7 @@ func TestAddGroup(t *testing.T) {
 
 func TestRemoveGroup(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// Test-1 : removeGroup() remove group assume it has no members
@@ -147,7 +118,7 @@ func TestRemoveGroup(t *testing.T) {
 
 func TestGroupInfo(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// Test-1 : groupInfo() get group info
@@ -184,7 +155,7 @@ func TestGroupInfo(t *testing.T) {
 
 func TestUpdateGroup(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// Test-1 : addOrDeleteMembers()  update group members add user3 and delete user2
@@ -280,7 +251,7 @@ func TestUpdateGroup(t *testing.T) {
 
 func TestSetGroupStatus(t *testing.T) {
 	assert := assert.New(t)
-	adminClient := adminClientMock{}
+	adminClient := AdminClientMock{}
 	function := "setGroupStatus()"
 	groupName := "acmeGroup"
 	ctx, cancel := context.WithCancel(context.Background())

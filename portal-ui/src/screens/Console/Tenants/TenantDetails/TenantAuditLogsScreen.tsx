@@ -264,7 +264,7 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
               <a
                 href="https://min.io/docs/minio/kubernetes/upstream/operations/monitoring/minio-logging.html"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener"
               >
                 {" documentation "}
               </a>

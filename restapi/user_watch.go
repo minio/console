@@ -24,8 +24,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gorilla/websocket"
 	mc "github.com/minio/mc/cmd"
+	"github.com/minio/websocket"
 )
 
 type watchOptions struct {

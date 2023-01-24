@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2022 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,39 +15,27 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Grid, ThemedLogo } from "mds";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import LicenseFAQ from "./LicenseFAQ";
 import { useSelector } from "react-redux";
-import { AppState } from "../../../../store";
+import { AppState, useAppDispatch } from "../../../store";
+import { closeFAQModal } from "./licenseSlice";
 
-interface IAutoColorIcon {
-  marginRight: number;
-  marginTop: number;
-}
-
-const AutoColorIcon = ({ marginRight, marginTop }: IAutoColorIcon) => {
-  let tinycolor = require("tinycolor2");
-
-  const colorVariants = useSelector(
-    (state: AppState) => state.system.overrideStyles
-  );
-
-  const isDark =
-    tinycolor(colorVariants?.backgroundColor || "#fff").getBrightness() <= 128;
+const FAQModal = () => {
+  const dispatch = useAppDispatch();
+  const isOpen = useSelector((state: AppState) => state.license.faqModalOpen);
 
   return (
-    <Grid
-      sx={{
-        "& svg": {
-          width: 105,
-          marginRight,
-          marginTop,
-          fill: isDark ? "#fff" : "#081C42",
-        },
+    <ModalWrapper
+      modalOpen={isOpen}
+      title="License FAQ"
+      onClose={() => {
+        dispatch(closeFAQModal());
       }}
     >
-      <ThemedLogo />
-    </Grid>
+      <LicenseFAQ />
+    </ModalWrapper>
   );
 };
 
-export default AutoColorIcon;
+export default FAQModal;
