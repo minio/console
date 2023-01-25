@@ -1536,6 +1536,7 @@ func getTenantUsage(ctx context.Context, minTenant *miniov2.Tenant, k8sClient K8
 	}
 	return _getTenantUsage(ctx, restapi.AdminClient{Client: mAdmin})
 }
+
 func _getTenantUsage(ctx context.Context, adminClient restapi.MinioAdmin) (*models.TenantUsage, *models.Error) {
 	adminInfo, err := restapi.GetAdminInfo(ctx, adminClient)
 	if err != nil {
@@ -1939,7 +1940,6 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 }
 
 func getTenantMonitoring(minInst *miniov2.Tenant) *models.TenantMonitoringInfo {
-
 	monitoringInfo := &models.TenantMonitoringInfo{}
 
 	if minInst.Spec.Prometheus != nil {
