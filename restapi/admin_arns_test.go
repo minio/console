@@ -39,7 +39,7 @@ func TestArnsList(t *testing.T) {
 	assert := asrt.New(t)
 	adminClient := AdminClientMock{}
 	// Test-1 : getArns() returns proper arn list
-	minioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
+	MinioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
 		return madmin.InfoMessage{
 			SQSARN: []string{"uno"},
 		}, nil
@@ -54,7 +54,7 @@ func TestArnsList(t *testing.T) {
 	assert.Nil(err, "Error should have been nil")
 
 	// Test-2 : getArns(ctx) fails for whatever reason
-	minioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
+	MinioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
 		return madmin.InfoMessage{}, errors.New("some reason")
 	}
 

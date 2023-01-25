@@ -1539,7 +1539,7 @@ jobs:
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
           result=${result%\%}
-          threshold=65.4
+          threshold=66.1
           echo "Result:"
           echo "$result%"
           if (( $(echo "$result >= $threshold" |bc -l) )); then

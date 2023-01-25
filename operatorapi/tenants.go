@@ -1517,6 +1517,10 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
+	return getTenantUsage(ctx, minTenant, k8sClient)
+}
+
+func getTenantUsage(ctx context.Context, minTenant *miniov2.Tenant, k8sClient K8sClientI) (*models.TenantUsage, *models.Error) {
 	minTenant.EnsureDefaults()
 
 	svcURL := GetTenantServiceURL(minTenant)
@@ -1530,16 +1534,15 @@ func getTenantUsageResponse(session *models.Principal, params operator_api.GetTe
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
-	// create a minioClient interface implementation
-	// defining the client to be used
-	adminClient := restapi.AdminClient{Client: mAdmin}
-	// serialize output
+	return _getTenantUsage(ctx, restapi.AdminClient{Client: mAdmin})
+}
+
+func _getTenantUsage(ctx context.Context, adminClient restapi.MinioAdmin) (*models.TenantUsage, *models.Error) {
 	adminInfo, err := restapi.GetAdminInfo(ctx, adminClient)
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
-	info := &models.TenantUsage{Used: adminInfo.Usage, DiskUsed: adminInfo.DisksUsage}
-	return info, nil
+	return &models.TenantUsage{Used: adminInfo.Usage, DiskUsed: adminInfo.DisksUsage}, nil
 }
 
 func getTenantPodsResponse(session *models.Principal, params operator_api.GetTenantPodsParams) ([]*models.TenantPod, *models.Error) {
@@ -1556,6 +1559,10 @@ func getTenantPodsResponse(session *models.Principal, params operator_api.GetTen
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
+	return getTenantPods(pods), nil
+}
+
+func getTenantPods(pods *corev1.PodList) []*models.TenantPod {
 	retval := []*models.TenantPod{}
 	for _, pod := range pods.Items {
 		var restarts int64
@@ -1575,7 +1582,7 @@ func getTenantPodsResponse(session *models.Principal, params operator_api.GetTen
 			Node:        pod.Spec.NodeName,
 		})
 	}
-	return retval, nil
+	return retval
 }
 
 func getPodLogsResponse(session *models.Principal, params operator_api.GetPodLogsParams) (string, *models.Error) {
@@ -1929,13 +1936,17 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if err != nil {
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
+	return getTenantMonitoring(minInst), nil
+}
+
+func getTenantMonitoring(minInst *miniov2.Tenant) *models.TenantMonitoringInfo {
 	monitoringInfo := &models.TenantMonitoringInfo{}
 
 	if minInst.Spec.Prometheus != nil {
 		monitoringInfo.PrometheusEnabled = true
 	} else {
 		monitoringInfo.PrometheusEnabled = false
-		return monitoringInfo, nil
+		return monitoringInfo
 	}
 
 	var storageClassName string
@@ -2002,7 +2013,7 @@ func getTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if minInst.Spec.Prometheus.SecurityContext != nil {
 		monitoringInfo.SecurityContext = convertK8sSCToModelSC(minInst.Spec.Prometheus.SecurityContext)
 	}
-	return monitoringInfo, nil
+	return monitoringInfo
 }
 
 // sets tenant Prometheus monitoring cofiguration fields to values provided
