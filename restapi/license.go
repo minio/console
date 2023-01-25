@@ -17,9 +17,10 @@
 package restapi
 
 import (
+	"os"
+
 	"github.com/minio/console/pkg/http"
 	"github.com/minio/console/pkg/subnet"
-	"os"
 )
 
 type SubnetPlan int
