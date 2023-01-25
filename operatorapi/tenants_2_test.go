@@ -23,31 +23,37 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
+	"github.com/minio/console/restapi"
+	"github.com/minio/madmin-go/v2"
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 type TenantTestSuite struct {
 	suite.Suite
-	assert    *assert.Assertions
-	opClient  opClientMock
-	k8sclient k8sClientMock
+	assert      *assert.Assertions
+	opClient    opClientMock
+	k8sclient   k8sClientMock
+	adminClient restapi.AdminClientMock
 }
 
 func (suite *TenantTestSuite) SetupSuite() {
 	suite.assert = assert.New(suite.T())
 	suite.opClient = opClientMock{}
 	suite.k8sclient = k8sClientMock{}
+	suite.adminClient = restapi.AdminClientMock{}
 	k8sClientDeleteSecretsCollectionMock = func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
 		return nil
 	}
@@ -700,6 +706,7 @@ func (suite *TenantTestSuite) TestSetTenantAdministratorsWithAdminClientError() 
 	suite.assert.NotNil(err)
 }
 
+// TODO: Mock minio adminclient
 func (suite *TenantTestSuite) TestSetTenantAdministratorsWithUserPolicyError() {
 	params, _ := suite.initSetTenantAdministratorsRequest()
 	tenant := &miniov2.Tenant{
@@ -715,6 +722,7 @@ func (suite *TenantTestSuite) TestSetTenantAdministratorsWithUserPolicyError() {
 	suite.assert.NotNil(err)
 }
 
+// TODO: Mock minio adminclient
 func (suite *TenantTestSuite) TestSetTenantAdministratorsWithGroupPolicyError() {
 	params, _ := suite.initSetTenantAdministratorsRequest()
 	tenant := &miniov2.Tenant{
@@ -996,7 +1004,32 @@ func (suite *TenantTestSuite) initGetTenantUsageRequest() (params operator_api.G
 	return params, api
 }
 
-func (suite *TenantTestSuite) TestGetTenantPodsHandlerWithoutError() {
+func (suite *TenantTestSuite) TestGetTenantUsageWithWrongAdminClient() {
+	tenant := &miniov2.Tenant{}
+	usage, err := getTenantUsage(context.Background(), tenant, suite.k8sclient)
+	suite.assert.Nil(usage)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestGetTenantUsageWithError() {
+	restapi.MinioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
+		return madmin.InfoMessage{}, errors.New("mock-server-info-error")
+	}
+	usage, err := _getTenantUsage(context.Background(), suite.adminClient)
+	suite.assert.Nil(usage)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestGetTenantUsageWithNoError() {
+	restapi.MinioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
+		return madmin.InfoMessage{}, nil
+	}
+	usage, err := _getTenantUsage(context.Background(), suite.adminClient)
+	suite.assert.NotNil(usage)
+	suite.assert.Nil(err)
+}
+
+func (suite *TenantTestSuite) TestGetTenantPodsHandlerWithError() {
 	params, api := suite.initGetTenantPodsRequest()
 	response := api.OperatorAPIGetTenantPodsHandler.Handle(params, &models.Principal{})
 	_, ok := response.(*operator_api.GetTenantPodsDefault)
@@ -1009,6 +1042,22 @@ func (suite *TenantTestSuite) initGetTenantPodsRequest() (params operator_api.Ge
 	params.Namespace = "mock-namespace"
 	params.Tenant = "mock-tenant"
 	return params, api
+}
+
+func (suite *TenantTestSuite) TestGetTenantPodsWithoutError() {
+	pods := getTenantPods(&corev1.PodList{
+		Items: []corev1.Pod{
+			{
+				Status: corev1.PodStatus{
+					ContainerStatuses: []corev1.ContainerStatus{{}},
+				},
+				ObjectMeta: metav1.ObjectMeta{
+					DeletionTimestamp: &metav1.Time{Time: time.Now()},
+				},
+			},
+		},
+	})
+	suite.assert.Equal(1, len(pods))
 }
 
 func (suite *TenantTestSuite) TestGetPodLogsHandlerWithError() {
@@ -1072,6 +1121,54 @@ func (suite *TenantTestSuite) initGetTenantMonitoringRequest() (params operator_
 	params.Namespace = "mock-namespace"
 	params.Tenant = "mock-tenant"
 	return params, api
+}
+
+func (suite *TenantTestSuite) TestGetTenantMonitoringWithoutPrometheus() {
+	tenant := &miniov2.Tenant{}
+	monitoring := getTenantMonitoring(tenant)
+	suite.assert.False(monitoring.PrometheusEnabled)
+}
+
+func (suite *TenantTestSuite) TestGetTenantMonitoringWithPrometheus() {
+	stn := "mock-storage-class"
+	dc := 10
+	runAsUser := int64(1000)
+	runAsGroup := int64(1000)
+	fsGroup := int64(1000)
+	tenant := &miniov2.Tenant{
+		Spec: miniov2.TenantSpec{
+			Prometheus: &miniov2.PrometheusConfig{
+				StorageClassName: &stn,
+				Resources: corev1.ResourceRequirements{
+					Requests: corev1.ResourceList{
+						corev1.ResourceCPU:    resource.MustParse("1"),
+						corev1.ResourceMemory: resource.MustParse("1Gi"),
+					},
+				},
+				Labels: map[string]string{
+					"mock-label": "mock-value",
+				},
+				Annotations: map[string]string{
+					"mock-label": "mock-value",
+				},
+				NodeSelector: map[string]string{
+					"mock-label": "mock-value",
+				},
+				DiskCapacityDB:     &dc,
+				Image:              "mock-image",
+				InitImage:          "mock-init-image",
+				ServiceAccountName: "mock-service-account-name",
+				SideCarImage:       "mock-sidecar-image",
+				SecurityContext: &corev1.PodSecurityContext{
+					RunAsUser:  &runAsUser,
+					RunAsGroup: &runAsGroup,
+					FSGroup:    &fsGroup,
+				},
+			},
+		},
+	}
+	monitoring := getTenantMonitoring(tenant)
+	suite.assert.True(monitoring.PrometheusEnabled)
 }
 
 func (suite *TenantTestSuite) TestSetTenantMonitoringHandlerWithError() {

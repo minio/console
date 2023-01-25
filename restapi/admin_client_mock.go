@@ -28,7 +28,7 @@ import (
 type AdminClientMock struct{}
 
 var (
-	minioServerInfoMock     func(ctx context.Context) (madmin.InfoMessage, error)
+	MinioServerInfoMock     func(ctx context.Context) (madmin.InfoMessage, error)
 	minioChangePasswordMock func(ctx context.Context, accessKey, secretKey string) error
 
 	minioHelpConfigKVMock func(subSys, key string, envOnly bool) (madmin.Help, error)
@@ -87,7 +87,7 @@ var (
 )
 
 func (ac AdminClientMock) serverInfo(ctx context.Context) (madmin.InfoMessage, error) {
-	return minioServerInfoMock(ctx)
+	return MinioServerInfoMock(ctx)
 }
 
 func (ac AdminClientMock) listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error) {
