@@ -62,7 +62,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	})
 	// Get subnet info
 	api.SubnetSubnetInfoHandler = subnetApi.SubnetInfoHandlerFunc(func(params subnetApi.SubnetInfoParams, session *models.Principal) middleware.Responder {
-		resp, err := GetSubnetInfoResponse(session, params)
+		resp, err := GetSubnetInfoResponse(params)
 		if err != nil {
 			return subnetApi.NewSubnetInfoDefault(int(err.Code)).WithPayload(err)
 		}
@@ -85,6 +85,8 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 		return subnetApi.NewSubnetAPIKeyOK().WithPayload(resp)
 	})
 }
+
+const EnvSubnetLicense = "CONSOLE_SUBNET_LICENSE"
 
 func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKey string) (bool, error) {
 	serverInfo, err := minioClient.serverInfo(ctx)
@@ -316,14 +318,14 @@ func subnetRegisterResponse(ctx context.Context, minioClient MinioAdmin, params 
 	return nil
 }
 
-func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInfoParams) (*models.License, *models.Error) {
+func GetSubnetInfoResponse(params subnetApi.SubnetInfoParams) (*models.License, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	client := &xhttp.Client{
 		Client: GetConsoleHTTPClient(""),
 	}
 
-	licenseInfo, err := subnet.ParseLicense(client, os.Getenv("CONSOLE_SUBNET_LICENSE"))
+	licenseInfo, err := subnet.ParseLicense(client, os.Getenv(EnvSubnetLicense))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
