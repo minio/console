@@ -79,13 +79,17 @@ const BrowserBreadcrumbs = ({
   const versionedFile = useSelector(
     (state: AppState) => state.objectBrowser.versionedFile
   );
+  const anonymousMode = useSelector(
+    (state: AppState) => state.system.anonymousMode
+  );
 
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
 
-  const canCreatePath = hasPermission(bucketName, [
-    IAM_SCOPES.S3_PUT_OBJECT,
-    IAM_SCOPES.S3_PUT_ACTIONS,
-  ]);
+  const canCreatePath =
+    hasPermission(bucketName, [
+      IAM_SCOPES.S3_PUT_OBJECT,
+      IAM_SCOPES.S3_PUT_ACTIONS,
+    ]) || anonymousMode;
 
   let paths = internalPaths;
 
@@ -240,7 +244,7 @@ const BrowserBreadcrumbs = ({
               onClick={() => {
                 setCreateFolderOpen(true);
               }}
-              disabled={rewindEnabled || !canCreatePath}
+              disabled={anonymousMode ? false : rewindEnabled || !canCreatePath}
               icon={<NewPathIcon style={{ fill: "#969FA8" }} />}
               style={{
                 whiteSpace: "nowrap",

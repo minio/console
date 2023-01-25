@@ -18,6 +18,7 @@ import { BucketObjectItem } from "./ListObjects/types";
 import { IAllowResources } from "../../../types";
 import { encodeURLString } from "../../../../../common/utils";
 import { removeTrace } from "../../../ObjectBrowser/transferManager";
+import store from "../../../../../store";
 
 export const download = (
   bucketName: string,
@@ -34,6 +35,8 @@ export const download = (
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
   let basename = document.baseURI.replace(window.location.origin, "");
+  const state = store.getState();
+  const anonymousMode = state.system.anonymousMode;
 
   let path = `${
     window.location.origin
@@ -48,6 +51,9 @@ export const download = (
 
   var req = new XMLHttpRequest();
   req.open("GET", path, true);
+  if (anonymousMode) {
+    req.setRequestHeader("X-Anonymous", "1");
+  }
   req.addEventListener(
     "progress",
     function (evt) {

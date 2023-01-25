@@ -28,7 +28,9 @@ const hasPermission = (
     return false;
   }
   const state = store.getState();
-  const sessionGrants = state.console.session.permissions || {};
+  const sessionGrants = state.console.session
+    ? state.console.session.permissions || {}
+    : {};
 
   const globalGrants = sessionGrants["arn:aws:s3:::*"] || [];
   let resources: string[] = [];

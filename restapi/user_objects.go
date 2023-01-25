@@ -205,7 +205,16 @@ func getListObjectsResponse(session *models.Principal, params objectApi.ListObje
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
-	objs, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, recursive, withVersions, withMetadata)
+	objs, err := listBucketObjects(ListObjectsOpts{
+		ctx:          ctx,
+		client:       minioClient,
+		bucketName:   params.BucketName,
+		prefix:       prefix,
+		recursive:    recursive,
+		withVersions: withVersions,
+		withMetadata: withMetadata,
+		limit:        params.Limit,
+	})
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -217,20 +226,35 @@ func getListObjectsResponse(session *models.Principal, params objectApi.ListObje
 	return resp, nil
 }
 
+type ListObjectsOpts struct {
+	ctx          context.Context
+	client       MinioClient
+	bucketName   string
+	prefix       string
+	recursive    bool
+	withVersions bool
+	withMetadata bool
+	limit        *int32
+}
+
 // listBucketObjects gets an array of objects in a bucket
-func listBucketObjects(ctx context.Context, client MinioClient, bucketName string, prefix string, recursive, withVersions bool, withMetadata bool) ([]*models.BucketObject, error) {
+func listBucketObjects(listOpts ListObjectsOpts) ([]*models.BucketObject, error) {
 	var objects []*models.BucketObject
 	opts := minio.ListObjectsOptions{
-		Prefix:       prefix,
-		Recursive:    recursive,
-		WithVersions: withVersions,
-		WithMetadata: withMetadata,
+		Prefix:       listOpts.prefix,
+		Recursive:    listOpts.recursive,
+		WithVersions: listOpts.withVersions,
+		WithMetadata: listOpts.withMetadata,
 		MaxKeys:      100,
 	}
-	if withMetadata {
+	if listOpts.withMetadata {
 		opts.MaxKeys = 1
 	}
-	for lsObj := range client.listObjects(ctx, bucketName, opts) {
+	if listOpts.limit != nil {
+		opts.MaxKeys = int(*listOpts.limit)
+	}
+	var totalObjs int32
+	for lsObj := range listOpts.client.listObjects(listOpts.ctx, listOpts.bucketName, opts) {
 		if lsObj.Err != nil {
 			return nil, lsObj.Err
 		}
@@ -248,37 +272,44 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			Etag:           lsObj.ETag,
 		}
 		// only if single object with or without versions; get legalhold, retention and tags
-		if !lsObj.IsDeleteMarker && prefix != "" && !strings.HasSuffix(prefix, "/") {
+		if !lsObj.IsDeleteMarker && listOpts.prefix != "" && !strings.HasSuffix(listOpts.prefix, "/") {
 			// Add Legal Hold Status if available
-			legalHoldStatus, err := client.getObjectLegalHold(ctx, bucketName, lsObj.Key, minio.GetObjectLegalHoldOptions{VersionID: lsObj.VersionID})
+			legalHoldStatus, err := listOpts.client.getObjectLegalHold(listOpts.ctx, listOpts.bucketName, lsObj.Key, minio.GetObjectLegalHoldOptions{VersionID: lsObj.VersionID})
 			if err != nil {
 				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
 				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
-					ErrorWithContext(ctx, fmt.Errorf("error getting legal hold status for %s : %v", lsObj.VersionID, err))
+					ErrorWithContext(listOpts.ctx, fmt.Errorf("error getting legal hold status for %s : %v", lsObj.VersionID, err))
 				}
 			} else if legalHoldStatus != nil {
 				obj.LegalHoldStatus = string(*legalHoldStatus)
 			}
 			// Add Retention Status if available
-			retention, retUntilDate, err := client.getObjectRetention(ctx, bucketName, lsObj.Key, lsObj.VersionID)
+			retention, retUntilDate, err := listOpts.client.getObjectRetention(listOpts.ctx, listOpts.bucketName, lsObj.Key, lsObj.VersionID)
 			if err != nil {
 				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
 				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
-					ErrorWithContext(ctx, fmt.Errorf("error getting retention status for %s : %v", lsObj.VersionID, err))
+					ErrorWithContext(listOpts.ctx, fmt.Errorf("error getting retention status for %s : %v", lsObj.VersionID, err))
 				}
 			} else if retention != nil && retUntilDate != nil {
 				date := *retUntilDate
 				obj.RetentionMode = string(*retention)
 				obj.RetentionUntilDate = date.Format(time.RFC3339)
 			}
-			tags, err := client.getObjectTagging(ctx, bucketName, lsObj.Key, minio.GetObjectTaggingOptions{VersionID: lsObj.VersionID})
+			objTags, err := listOpts.client.getObjectTagging(listOpts.ctx, listOpts.bucketName, lsObj.Key, minio.GetObjectTaggingOptions{VersionID: lsObj.VersionID})
 			if err != nil {
-				ErrorWithContext(ctx, fmt.Errorf("error getting object tags for %s : %v", lsObj.VersionID, err))
+				ErrorWithContext(listOpts.ctx, fmt.Errorf("error getting object tags for %s : %v", lsObj.VersionID, err))
 			} else {
-				obj.Tags = tags.ToMap()
+				obj.Tags = objTags.ToMap()
 			}
 		}
 		objects = append(objects, obj)
+		totalObjs++
+
+		if listOpts.limit != nil {
+			if totalObjs >= *listOpts.limit {
+				break
+			}
+		}
 	}
 	return objects, nil
 }
@@ -499,7 +530,15 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 		return nil, ErrorWithContext(ctx, err)
 	}
 	minioClient := minioClient{client: mClient}
-	objects, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, true, false, false)
+	objects, err := listBucketObjects(ListObjectsOpts{
+		ctx:          ctx,
+		client:       minioClient,
+		bucketName:   params.BucketName,
+		prefix:       prefix,
+		recursive:    true,
+		withVersions: false,
+		withMetadata: false,
+	})
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

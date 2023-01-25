@@ -369,6 +369,9 @@ func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 // getConsoleCredentialsFromSession returns the *consoleCredentials.Login associated to the
 // provided session token, this is useful for running the Expire() or IsExpired() operations
 func getConsoleCredentialsFromSession(claims *models.Principal) *credentials.Credentials {
+	if claims == nil {
+		return credentials.NewStaticV4("", "", "")
+	}
 	return credentials.NewStaticV4(claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken)
 }
 
