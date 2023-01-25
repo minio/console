@@ -164,6 +164,9 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 
 	api.ServerShutdown = func() {}
 
+	// do an initial subnet plan caching
+	fetchLicensePlan()
+
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }
 
@@ -408,6 +411,7 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 	} else if getSubPath() != "/" {
 		indexPageBytes = replaceBaseInIndex(indexPageBytes, getSubPath())
 	}
+	indexPageBytes = replaceLicense(indexPageBytes)
 
 	mimeType := mimedb.TypeByExtension(filepath.Ext(r.URL.Path))
 
@@ -487,6 +491,14 @@ func replaceBaseInIndex(indexPageBytes []byte, basePath string) []byte {
 		indexPageBytes = []byte(indexPageStr)
 
 	}
+	return indexPageBytes
+}
+
+func replaceLicense(indexPageBytes []byte) []byte {
+	indexPageStr := string(indexPageBytes)
+	newPlan := fmt.Sprintf("<meta name=\"minio-license\" content=\"%s\" />", InstanceLicensePlan.String())
+	indexPageStr = strings.Replace(indexPageStr, "<meta name=\"minio-license\" content=\"apgl\"/>", newPlan, 1)
+	indexPageBytes = []byte(indexPageStr)
 	return indexPageBytes
 }
 

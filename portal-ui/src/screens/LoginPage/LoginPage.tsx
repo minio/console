@@ -22,17 +22,22 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { Button, LoginWrapper } from "mds";
+import {
+  Button,
+  Loader,
+  LockIcon,
+  LoginWrapper,
+  LogoutIcon,
+  RefreshIcon,
+} from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import Grid from "@mui/material/Grid";
 import { loginStrategyType, redirectRule } from "./types";
 import MainError from "../Console/Common/MainError/MainError";
-import { LockIcon, LogoutIcon, RefreshIcon } from "mds";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 import clsx from "clsx";
-import { Loader } from "mds";
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import {
@@ -44,6 +49,7 @@ import { resetForm, setJwt } from "./loginSlice";
 import StrategyForm from "./StrategyForm";
 import { LoginField } from "./LoginField";
 import { redirectRules } from "../../utils/sortFunctions";
+import { getLogoVar } from "../../config";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -479,6 +485,7 @@ const Login = () => {
 
   let modeLogo: "console" | "directpv" | "operator" | "kes" | "subnet" =
     "console";
+  const logoVar = getLogoVar();
 
   if (isDirectPV) {
     modeLogo = "directpv";
@@ -496,7 +503,7 @@ const Login = () => {
     <Fragment>
       <MainError />
       <LoginWrapper
-        logoProps={{ applicationName: modeLogo }}
+        logoProps={{ applicationName: modeLogo, subVariant: logoVar }}
         form={loginComponent}
         formFooter={
           <Fragment>
