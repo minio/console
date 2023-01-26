@@ -113,6 +113,7 @@ type Provider struct {
 	RefreshToken   string
 	oauth2Config   Configuration
 	provHTTPClient *http.Client
+	stsHTTPClient  *http.Client
 }
 
 // DefaultDerivedKey is the key used to compute the HMAC for signing the oauth state parameter
@@ -217,8 +218,8 @@ var defaultScopes = []string{"openid", "profile", "email"}
 //
 // We only support Authentication with the Authorization Code Flow - spec:
 // https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
-func (o OpenIDPCfg) NewOauth2ProviderClient(name string, scopes []string, r *http.Request, httpClient *http.Client) (*Provider, error) {
-	ddoc, err := parseDiscoveryDoc(o[name].URL, httpClient)
+func (o OpenIDPCfg) NewOauth2ProviderClient(name string, scopes []string, r *http.Request, idpClient, stsClient *http.Client) (*Provider, error) {
+	ddoc, err := parseDiscoveryDoc(o[name].URL, idpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -277,7 +278,9 @@ func (o OpenIDPCfg) NewOauth2ProviderClient(name string, scopes []string, r *htt
 
 	client.IDPName = name
 	client.UserInfo = o[name].Userinfo
-	client.provHTTPClient = httpClient
+
+	client.provHTTPClient = idpClient
+	client.stsHTTPClient = stsClient
 	return client, nil
 }
 
@@ -357,7 +360,7 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state, roleARN
 	stsEndpoint := GetSTSEndpoint()
 
 	sts := credentials.New(&credentials.STSWebIdentity{
-		Client:              client.provHTTPClient,
+		Client:              client.stsHTTPClient,
 		STSEndpoint:         stsEndpoint,
 		GetWebIDTokenExpiry: getWebTokenExpiry,
 		RoleARN:             roleARN,
