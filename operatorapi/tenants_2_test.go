@@ -39,6 +39,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	types "k8s.io/apimachinery/pkg/types"
 )
 
 type TenantTestSuite struct {
@@ -1202,6 +1203,203 @@ func (suite *TenantTestSuite) initTenantUpdatePoolsRequest() (params operator_ap
 		Pools: []*models.Pool{},
 	}
 	return params, api
+}
+
+func (suite *TenantTestSuite) TestUpdateTenantPoolsWithPoolError() {
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{}, nil
+	}
+	_, err := updateTenantPools(context.Background(), suite.opClient, "mock-namespace", "mock-tenant", []*models.Pool{{}})
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestUpdateTenantPoolsWithPatchError() {
+	size := int64(1024)
+	seconds := int64(5)
+	weight := int32(1024)
+	servers := int64(4)
+	volumes := int32(4)
+	mockString := "mock-string"
+	pools := []*models.Pool{{
+		VolumeConfiguration: &models.PoolVolumeConfiguration{
+			Size: &size,
+		},
+		Servers:          &servers,
+		VolumesPerServer: &volumes,
+		Resources: &models.PoolResources{
+			Requests: map[string]int64{
+				"cpu": 1,
+			},
+			Limits: map[string]int64{
+				"memory": 1,
+			},
+		},
+		Tolerations: models.PoolTolerations{{
+			TolerationSeconds: &models.PoolTolerationSeconds{
+				Seconds: &seconds,
+			},
+		}},
+		Affinity: &models.PoolAffinity{
+			NodeAffinity: &models.PoolAffinityNodeAffinity{
+				RequiredDuringSchedulingIgnoredDuringExecution: &models.PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution{
+					NodeSelectorTerms: []*models.NodeSelectorTerm{{
+						MatchExpressions: []*models.NodeSelectorTermMatchExpressionsItems0{{
+							Key:      &mockString,
+							Operator: &mockString,
+						}},
+					}},
+				},
+				PreferredDuringSchedulingIgnoredDuringExecution: []*models.PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{{
+					Weight: &weight,
+					Preference: &models.NodeSelectorTerm{
+						MatchFields: []*models.NodeSelectorTermMatchFieldsItems0{{
+							Key:      &mockString,
+							Operator: &mockString,
+						}},
+					},
+				}},
+			},
+			PodAffinity: &models.PoolAffinityPodAffinity{
+				RequiredDuringSchedulingIgnoredDuringExecution: []*models.PodAffinityTerm{{
+					LabelSelector: &models.PodAffinityTermLabelSelector{
+						MatchExpressions: []*models.PodAffinityTermLabelSelectorMatchExpressionsItems0{{
+							Key:      &mockString,
+							Operator: &mockString,
+						}},
+					},
+					TopologyKey: &mockString,
+				}},
+				PreferredDuringSchedulingIgnoredDuringExecution: []*models.PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{{
+					PodAffinityTerm: &models.PodAffinityTerm{
+						LabelSelector: &models.PodAffinityTermLabelSelector{
+							MatchExpressions: []*models.PodAffinityTermLabelSelectorMatchExpressionsItems0{{
+								Key:      &mockString,
+								Operator: &mockString,
+							}},
+						},
+						TopologyKey: &mockString,
+					},
+					Weight: &weight,
+				}},
+			},
+			PodAntiAffinity: &models.PoolAffinityPodAntiAffinity{
+				RequiredDuringSchedulingIgnoredDuringExecution: []*models.PodAffinityTerm{{
+					LabelSelector: &models.PodAffinityTermLabelSelector{
+						MatchExpressions: []*models.PodAffinityTermLabelSelectorMatchExpressionsItems0{{
+							Key:      &mockString,
+							Operator: &mockString,
+						}},
+					},
+					TopologyKey: &mockString,
+				}},
+				PreferredDuringSchedulingIgnoredDuringExecution: []*models.PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{{
+					PodAffinityTerm: &models.PodAffinityTerm{
+						LabelSelector: &models.PodAffinityTermLabelSelector{
+							MatchExpressions: []*models.PodAffinityTermLabelSelectorMatchExpressionsItems0{{
+								Key:      &mockString,
+								Operator: &mockString,
+							}},
+						},
+						TopologyKey: &mockString,
+					},
+					Weight: &weight,
+				}},
+			},
+		},
+	}}
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{}, nil
+	}
+	opClientTenantPatchMock = func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+		return nil, errors.New("mock-patch-error")
+	}
+	_, err := updateTenantPools(context.Background(), suite.opClient, "mock-namespace", "mock-tenant", pools)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestUpdateTenantPoolsWithoutError() {
+	fscp := corev1.PodFSGroupChangePolicy("OnRootMismatch")
+	seconds := int64(10)
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{}, nil
+	}
+	opClientTenantPatchMock = func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{
+			Spec: miniov2.TenantSpec{
+				Pools: []miniov2.Pool{{
+					VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+						Spec: corev1.PersistentVolumeClaimSpec{
+							Resources: corev1.ResourceRequirements{
+								Requests: corev1.ResourceList{
+									corev1.ResourceStorage: resource.MustParse("1Gi"),
+								},
+							},
+						},
+					},
+					SecurityContext: &corev1.PodSecurityContext{
+						RunAsUser:           &[]int64{1000}[0],
+						RunAsGroup:          &[]int64{1000}[0],
+						FSGroup:             &[]int64{1000}[0],
+						FSGroupChangePolicy: &fscp,
+					},
+					Tolerations: []corev1.Toleration{{
+						TolerationSeconds: &seconds,
+					}},
+					Resources: corev1.ResourceRequirements{
+						Requests: corev1.ResourceList{
+							corev1.ResourceCPU:    resource.MustParse("1"),
+							corev1.ResourceMemory: resource.MustParse("1Gi"),
+						},
+						Limits: corev1.ResourceList{
+							corev1.ResourceLimitsMemory: resource.MustParse("1"),
+						},
+					},
+					Affinity: &corev1.Affinity{
+						NodeAffinity: &corev1.NodeAffinity{
+							RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
+								NodeSelectorTerms: []corev1.NodeSelectorTerm{{
+									MatchExpressions: []corev1.NodeSelectorRequirement{{}},
+								}},
+							},
+							PreferredDuringSchedulingIgnoredDuringExecution: []corev1.PreferredSchedulingTerm{{
+								Preference: corev1.NodeSelectorTerm{},
+							}},
+						},
+						PodAffinity: &corev1.PodAffinity{
+							RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{{
+								LabelSelector: &metav1.LabelSelector{
+									MatchExpressions: []metav1.LabelSelectorRequirement{{}},
+								},
+							}},
+							PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{{
+								PodAffinityTerm: corev1.PodAffinityTerm{
+									LabelSelector: &metav1.LabelSelector{
+										MatchExpressions: []metav1.LabelSelectorRequirement{{}},
+									},
+								},
+							}},
+						},
+						PodAntiAffinity: &corev1.PodAntiAffinity{
+							RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{{
+								LabelSelector: &metav1.LabelSelector{
+									MatchExpressions: []metav1.LabelSelectorRequirement{{}},
+								},
+							}},
+							PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{{
+								PodAffinityTerm: corev1.PodAffinityTerm{
+									LabelSelector: &metav1.LabelSelector{
+										MatchExpressions: []metav1.LabelSelectorRequirement{{}},
+									},
+								},
+							}},
+						},
+					},
+				}},
+			},
+		}, nil
+	}
+	_, err := updateTenantPools(context.Background(), suite.opClient, "mock-namespace", "mock-tenant", []*models.Pool{})
+	suite.assert.Nil(err)
 }
 
 func (suite *TenantTestSuite) TestTenantUpdateCertificateHandlerWithError() {
