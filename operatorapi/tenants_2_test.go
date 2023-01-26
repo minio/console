@@ -392,12 +392,12 @@ func (suite *TenantTestSuite) initCreateTenantRequest() (params operator_api.Cre
 	return params, api
 }
 
-// func (suite *TenantTestSuite) TestListAllTenantsHandlerWithoutError() {
-// 	params, api := suite.initListAllTenantsRequest()
-// 	response := api.OperatorAPIListAllTenantsHandler.Handle(params, &models.Principal{})
-// 	_, ok := response.(*operator_api.ListTenantsDefault)
-// 	suite.assert.True(ok)
-// }
+func (suite *TenantTestSuite) TestListAllTenantsHandlerWithoutError() {
+	params, api := suite.initListAllTenantsRequest()
+	response := api.OperatorAPIListAllTenantsHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*operator_api.ListTenantsDefault)
+	suite.assert.True(ok)
+}
 
 func (suite *TenantTestSuite) initListAllTenantsRequest() (params operator_api.ListAllTenantsParams, api operations.OperatorAPI) {
 	registerTenantHandlers(&api)
@@ -405,12 +405,12 @@ func (suite *TenantTestSuite) initListAllTenantsRequest() (params operator_api.L
 	return params, api
 }
 
-// func (suite *TenantTestSuite) TestListTenantsHandlerWithoutError() {
-// 	params, api := suite.initListTenantsRequest()
-// 	response := api.OperatorAPIListTenantsHandler.Handle(params, &models.Principal{})
-// 	_, ok := response.(*operator_api.ListTenantsDefault)
-// 	suite.assert.True(ok)
-// }
+func (suite *TenantTestSuite) TestListTenantsHandlerWithoutError() {
+	params, api := suite.initListTenantsRequest()
+	response := api.OperatorAPIListTenantsHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*operator_api.ListTenantsDefault)
+	suite.assert.True(ok)
+}
 
 func (suite *TenantTestSuite) initListTenantsRequest() (params operator_api.ListTenantsParams, api operations.OperatorAPI) {
 	registerTenantHandlers(&api)
@@ -708,36 +708,36 @@ func (suite *TenantTestSuite) TestSetTenantAdministratorsWithAdminClientError() 
 }
 
 // TODO: Mock minio adminclient
-// func (suite *TenantTestSuite) TestSetTenantAdministratorsWithUserPolicyError() {
-// 	params, _ := suite.initSetTenantAdministratorsRequest()
-// 	tenant := &miniov2.Tenant{
-// 		Spec: miniov2.TenantSpec{
-// 			Env: []corev1.EnvVar{
-// 				{Name: "accesskey", Value: "mock-access"},
-// 				{Name: "secretkey", Value: "mock-secret"},
-// 			},
-// 		},
-// 	}
-// 	params.Body.UserDNS = []string{"mock-user"}
-// 	err := setTenantAdministrators(context.Background(), tenant, suite.k8sclient, params)
-// 	suite.assert.NotNil(err)
-// }
+func (suite *TenantTestSuite) TestSetTenantAdministratorsWithUserPolicyError() {
+	params, _ := suite.initSetTenantAdministratorsRequest()
+	tenant := &miniov2.Tenant{
+		Spec: miniov2.TenantSpec{
+			Env: []corev1.EnvVar{
+				{Name: "accesskey", Value: "mock-access"},
+				{Name: "secretkey", Value: "mock-secret"},
+			},
+		},
+	}
+	params.Body.UserDNS = []string{"mock-user"}
+	err := setTenantAdministrators(context.Background(), tenant, suite.k8sclient, params)
+	suite.assert.NotNil(err)
+}
 
 // TODO: Mock minio adminclient
-// func (suite *TenantTestSuite) TestSetTenantAdministratorsWithGroupPolicyError() {
-// 	params, _ := suite.initSetTenantAdministratorsRequest()
-// 	tenant := &miniov2.Tenant{
-// 		Spec: miniov2.TenantSpec{
-// 			Env: []corev1.EnvVar{
-// 				{Name: "accesskey", Value: "mock-access"},
-// 				{Name: "secretkey", Value: "mock-secret"},
-// 			},
-// 		},
-// 	}
-// 	params.Body.GroupDNS = []string{"mock-user"}
-// 	err := setTenantAdministrators(context.Background(), tenant, suite.k8sclient, params)
-// 	suite.assert.NotNil(err)
-// }
+func (suite *TenantTestSuite) TestSetTenantAdministratorsWithGroupPolicyError() {
+	params, _ := suite.initSetTenantAdministratorsRequest()
+	tenant := &miniov2.Tenant{
+		Spec: miniov2.TenantSpec{
+			Env: []corev1.EnvVar{
+				{Name: "accesskey", Value: "mock-access"},
+				{Name: "secretkey", Value: "mock-secret"},
+			},
+		},
+	}
+	params.Body.GroupDNS = []string{"mock-user"}
+	err := setTenantAdministrators(context.Background(), tenant, suite.k8sclient, params)
+	suite.assert.NotNil(err)
+}
 
 func (suite *TenantTestSuite) TestSetTenantAdministratorsWithoutError() {
 	params, _ := suite.initSetTenantAdministratorsRequest()
@@ -941,12 +941,12 @@ func (suite *TenantTestSuite) initDeleteTenantRequest() (params operator_api.Del
 	return params, api
 }
 
-// func (suite *TenantTestSuite) TestDeletePodHandlerWithoutError() {
-// 	params, api := suite.initDeletePodRequest()
-// 	response := api.OperatorAPIDeletePodHandler.Handle(params, &models.Principal{})
-// 	_, ok := response.(*operator_api.DeletePodDefault)
-// 	suite.assert.True(ok)
-// }
+func (suite *TenantTestSuite) TestDeletePodHandlerWithoutError() {
+	params, api := suite.initDeletePodRequest()
+	response := api.OperatorAPIDeletePodHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*operator_api.DeletePodDefault)
+	suite.assert.True(ok)
+}
 
 func (suite *TenantTestSuite) initDeletePodRequest() (params operator_api.DeletePodParams, api operations.OperatorAPI) {
 	registerTenantHandlers(&api)
@@ -1030,12 +1030,12 @@ func (suite *TenantTestSuite) TestGetTenantUsageWithNoError() {
 	suite.assert.Nil(err)
 }
 
-// func (suite *TenantTestSuite) TestGetTenantPodsHandlerWithError() {
-// 	params, api := suite.initGetTenantPodsRequest()
-// 	response := api.OperatorAPIGetTenantPodsHandler.Handle(params, &models.Principal{})
-// 	_, ok := response.(*operator_api.GetTenantPodsDefault)
-// 	suite.assert.True(ok)
-// }
+func (suite *TenantTestSuite) TestGetTenantPodsHandlerWithError() {
+	params, api := suite.initGetTenantPodsRequest()
+	response := api.OperatorAPIGetTenantPodsHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*operator_api.GetTenantPodsDefault)
+	suite.assert.True(ok)
+}
 
 func (suite *TenantTestSuite) initGetTenantPodsRequest() (params operator_api.GetTenantPodsParams, api operations.OperatorAPI) {
 	registerTenantHandlers(&api)
