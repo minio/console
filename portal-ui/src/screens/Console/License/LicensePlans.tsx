@@ -140,7 +140,6 @@ const PlanHeader = ({
         },
 
         "&.active, &.active.xs-active": {
-          borderTop: "3px solid #2781B0",
           color: "#ffffff",
           position: "relative",
 
@@ -152,7 +151,7 @@ const PlanHeader = ({
             content: "' '",
             position: "absolute",
             width: "100%",
-            height: "15px",
+            height: "18px",
             backgroundColor: "#2781B0",
             display: "block",
             top: -16,
@@ -504,7 +503,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
                 if (isPaidPlan) {
                   return (
                     <Box
-                      key={fi.desc}
+                      key={`plan-header-${fi.desc}`}
                       className="plan-header"
                       sx={{
                         fontSize: "14px",
@@ -542,7 +541,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
 
                 return (
                   <Box
-                    key={fi.desc}
+                    key={`plan-header-label-${fi.desc}`}
                     className={`plan-header`}
                     sx={{
                       fontSize: "14px",
@@ -560,7 +559,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
               if (featureTitleRow) {
                 return (
                   <Box
-                    key={fi.desc}
+                    key={`plan-descript-${fi.desc}`}
                     className="feature-title"
                     sx={{
                       fontSize: "14px",
@@ -573,7 +572,11 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
                 );
               }
               return (
-                <Box key={fi.desc} className="feature-name" style={fi.style}>
+                <Box
+                  key={`plan-feature-name-${fi.desc}`}
+                  className="feature-name"
+                  style={fi.style}
+                >
                   <div>{getRenderValue(fi.desc)} </div>
                 </Box>
               );
@@ -595,7 +598,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
                 if (featureTitleRow) {
                   return (
                     <FeatureTitleRowCmp
-                      key={fi.id}
+                      key={`title-row-${fi.id}`}
                       featureLabel={featureLabel}
                     />
                   );
@@ -603,7 +606,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
 
                 return (
                   <PricingFeatureItem
-                    key={fi.id}
+                    key={`pricing-feature-${fi.id}`}
                     featureLabel={featureLabel}
                     label={fi.label}
                     detail={fi.detail}
@@ -637,12 +640,15 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
               }
               if (featureTitleRow) {
                 return (
-                  <FeatureTitleRowCmp key={fi.id} featureLabel={featureLabel} />
+                  <FeatureTitleRowCmp
+                    key={`feature-title-row-${fi.id}`}
+                    featureLabel={featureLabel}
+                  />
                 );
               }
               return (
                 <PricingFeatureItem
-                  key={fi.id}
+                  key={`feature-item-${fi.id}`}
                   featureLabel={featureLabel}
                   label={fi.label}
                   detail={fi.detail}
@@ -678,7 +684,10 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
 
               if (featureTitleRow) {
                 return (
-                  <FeatureTitleRowCmp key={fi.id} featureLabel={featureLabel} />
+                  <FeatureTitleRowCmp
+                    key={`feature-title-row2-${fi.id}`}
+                    featureLabel={featureLabel}
+                  />
                 );
               }
 
@@ -696,7 +705,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
               }
               return (
                 <PricingFeatureItem
-                  key={fi.id}
+                  key={`pricing-feature-item-${fi.id}`}
                   featureLabel={featureLabel}
                   label={fi.label}
                   detail={fi.detail}
