@@ -2588,14 +2588,11 @@ func getTenantUpdatePoolResponse(session *models.Principal, params operator_api.
 		client: opClientClientSet,
 	}
 
-	t, err := updateTenantPools(ctx, opClient, params.Namespace, params.Tenant, params.Body.Pools)
+	tenant, err := updateTenantPools(ctx, opClient, params.Namespace, params.Tenant, params.Body.Pools)
 	if err != nil {
 		restapi.LogError("error updating Tenant's pools: %v", err)
 		return nil, restapi.ErrorWithContext(ctx, err)
 	}
-
-	// parse it to models.Tenant
-	tenant := getTenantInfo(t)
 	return tenant, nil
 }
 
@@ -2608,7 +2605,7 @@ func updateTenantPools(
 	namespace string,
 	tenantName string,
 	poolsReq []*models.Pool,
-) (*miniov2.Tenant, error) {
+) (*models.Tenant, error) {
 	minInst, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
@@ -2638,7 +2635,7 @@ func updateTenantPools(
 	if err != nil {
 		return nil, err
 	}
-	return tenantUpdated, nil
+	return getTenantInfo(tenantUpdated), nil
 }
 
 func getTenantYAML(session *models.Principal, params operator_api.GetTenantYAMLParams) (*models.TenantYAML, *models.Error) {
