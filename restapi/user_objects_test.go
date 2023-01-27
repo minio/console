@@ -121,6 +121,7 @@ func Test_listObjects(t *testing.T) {
 		recursive            bool
 		withVersions         bool
 		withMetadata         bool
+		limit                *int32
 		listFunc             func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
 		objectLegalHoldFunc  func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
 		objectRetentionFunc  func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
@@ -553,6 +554,150 @@ func Test_listObjects(t *testing.T) {
 			},
 			wantError: nil,
 		},
+		{
+			test: "Return objects",
+			args: args{
+				bucketName:   "bucket1",
+				prefix:       "prefix",
+				recursive:    true,
+				withVersions: false,
+				withMetadata: false,
+				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+					objectStatCh := make(chan minio.ObjectInfo, 1)
+					go func(objectStatCh chan<- minio.ObjectInfo) {
+						defer close(objectStatCh)
+						for _, bucket := range []minio.ObjectInfo{
+							{
+								Key:          "obj1",
+								LastModified: t1,
+								Size:         int64(1024),
+								ContentType:  "content",
+							},
+							{
+								Key:          "obj2",
+								LastModified: t1,
+								Size:         int64(512),
+								ContentType:  "content",
+							},
+						} {
+							objectStatCh <- bucket
+						}
+					}(objectStatCh)
+					return objectStatCh
+				},
+				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+					s := minio.LegalHoldEnabled
+					return &s, nil
+				},
+				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+					m := minio.Governance
+					return &m, &tretention, nil
+				},
+				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+					tagMap := map[string]string{
+						"tag1": "value1",
+					}
+					otags, err := tags.MapToObjectTags(tagMap)
+					if err != nil {
+						return nil, err
+					}
+					return otags, nil
+				},
+			},
+			expectedResp: []*models.BucketObject{
+				{
+					Name:               "obj1",
+					LastModified:       t1.Format(time.RFC3339),
+					Size:               int64(1024),
+					ContentType:        "content",
+					LegalHoldStatus:    string(minio.LegalHoldEnabled),
+					RetentionMode:      string(minio.Governance),
+					RetentionUntilDate: tretention.Format(time.RFC3339),
+					Tags: map[string]string{
+						"tag1": "value1",
+					},
+				}, {
+					Name:               "obj2",
+					LastModified:       t1.Format(time.RFC3339),
+					Size:               int64(512),
+					ContentType:        "content",
+					LegalHoldStatus:    string(minio.LegalHoldEnabled),
+					RetentionMode:      string(minio.Governance),
+					RetentionUntilDate: tretention.Format(time.RFC3339),
+					Tags: map[string]string{
+						"tag1": "value1",
+					},
+				},
+			},
+			wantError: nil,
+		},
+		{
+			test: "Limit 1",
+			args: args{
+				bucketName:   "bucket1",
+				prefix:       "prefix",
+				recursive:    true,
+				withVersions: false,
+				withMetadata: false,
+				limit:        swag.Int32(1),
+				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+					objectStatCh := make(chan minio.ObjectInfo, 1)
+					go func(objectStatCh chan<- minio.ObjectInfo) {
+						defer close(objectStatCh)
+						for _, bucket := range []minio.ObjectInfo{
+							{
+								Key:          "obj1",
+								LastModified: t1,
+								Size:         int64(1024),
+								ContentType:  "content",
+							},
+							{
+								Key:          "obj2",
+								LastModified: t1,
+								Size:         int64(512),
+								ContentType:  "content",
+							},
+						} {
+							objectStatCh <- bucket
+						}
+					}(objectStatCh)
+					return objectStatCh
+				},
+				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+					s := minio.LegalHoldEnabled
+					return &s, nil
+				},
+				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+					m := minio.Governance
+					return &m, &tretention, nil
+				},
+				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+					tagMap := map[string]string{
+						"tag1": "value1",
+					}
+					otags, err := tags.MapToObjectTags(tagMap)
+					if err != nil {
+						return nil, err
+					}
+					return otags, nil
+				},
+			},
+			expectedResp: []*models.BucketObject{
+				{
+					Name:               "obj1",
+					LastModified:       t1.Format(time.RFC3339),
+					Size:               int64(1024),
+					ContentType:        "content",
+					LegalHoldStatus:    string(minio.LegalHoldEnabled),
+					RetentionMode:      string(minio.Governance),
+					RetentionUntilDate: tretention.Format(time.RFC3339),
+					Tags: map[string]string{
+						"tag1": "value1",
+					},
+				},
+			},
+			wantError: nil,
+		},
 	}
 
 	t.Parallel()
@@ -563,7 +708,16 @@ func Test_listObjects(t *testing.T) {
 			minioGetObjectLegalHoldMock = tt.args.objectLegalHoldFunc
 			minioGetObjectRetentionMock = tt.args.objectRetentionFunc
 			minioGetObjectTaggingMock = tt.args.objectGetTaggingFunc
-			resp, err := listBucketObjects(ctx, minClient, tt.args.bucketName, tt.args.prefix, tt.args.recursive, tt.args.withVersions, tt.args.withMetadata)
+			resp, err := listBucketObjects(ListObjectsOpts{
+				ctx:          ctx,
+				client:       minClient,
+				bucketName:   tt.args.bucketName,
+				prefix:       tt.args.prefix,
+				recursive:    tt.args.recursive,
+				withVersions: tt.args.withVersions,
+				withMetadata: tt.args.withMetadata,
+				limit:        tt.args.limit,
+			})
 			switch {
 			case err == nil && tt.wantError != nil:
 				t.Errorf("listBucketObjects() error: %v, wantErr: %v", err, tt.wantError)

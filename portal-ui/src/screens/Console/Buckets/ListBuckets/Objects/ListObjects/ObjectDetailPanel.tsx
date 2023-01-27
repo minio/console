@@ -18,7 +18,21 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
 import { withStyles } from "@mui/styles";
-import { Button } from "mds";
+import {
+  Button,
+  DeleteIcon,
+  DownloadIcon,
+  InspectMenuIcon,
+  LegalHoldIcon,
+  Loader,
+  MetadataIcon,
+  ObjectInfoIcon,
+  PreviewIcon,
+  RetentionIcon,
+  ShareIcon,
+  TagsIcon,
+  VersionsIcon,
+} from "mds";
 import createStyles from "@mui/styles/createStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
@@ -30,13 +44,11 @@ import {
   textStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo, MetadataResponse } from "../ObjectDetails/types";
-import { download, extensionPreview } from "../utils";
+import { extensionPreview } from "../utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import {
   decodeURLString,
-  encodeURLString,
-  getClientOS,
   niceBytes,
   niceBytesInt,
   niceDaysInt,
@@ -46,19 +58,6 @@ import {
   permissionTooltipHelper,
 } from "../../../../../../common/SecureComponent/permissions";
 import { AppState, useAppDispatch } from "../../../../../../store";
-import {
-  DeleteIcon,
-  DownloadIcon,
-  LegalHoldIcon,
-  MetadataIcon,
-  ObjectInfoIcon,
-  PreviewIcon,
-  RetentionIcon,
-  ShareIcon,
-  TagsIcon,
-  VersionsIcon,
-} from "mds";
-import { InspectMenuIcon } from "mds";
 import api from "../../../../../../common/api";
 import ShareFile from "../ObjectDetails/ShareFile";
 import SetRetention from "../ObjectDetails/SetRetention";
@@ -74,25 +73,16 @@ import ActionsListSection from "./ActionsListSection";
 import { displayFileIconName } from "./utils";
 import TagsModal from "../ObjectDetails/TagsModal";
 import InspectObject from "./InspectObject";
-import { Loader } from "mds";
 import { selDistSet } from "../../../../../../systemSlice";
 import {
-  makeid,
-  storeCallForObjectWithID,
-} from "../../../../ObjectBrowser/transferManager";
-import {
-  cancelObjectInList,
-  completeObject,
-  failObject,
   setLoadingObjectInfo,
   setLoadingVersions,
-  setNewObject,
   setSelectedVersion,
   setVersionsModeEnabled,
-  updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
 import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
 import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
+import { downloadObject } from "../../../../ObjectBrowser/utils";
 
 const styles = () =>
   createStyles({
@@ -325,65 +315,6 @@ const ObjectDetailPanel = ({
     setLongFileOpen(false);
   };
 
-  const downloadObject = (object: IFileInfo) => {
-    const identityDownload = encodeURLString(
-      `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
-    );
-
-    if (
-      object.name.length > 200 &&
-      getClientOS().toLowerCase().includes("win")
-    ) {
-      setLongFileOpen(true);
-      return;
-    }
-
-    const ID = makeid(8);
-
-    const downloadCall = download(
-      bucketName,
-      internalPaths,
-      object.version_id,
-      parseInt(object.size || "0"),
-      null,
-      ID,
-      (progress) => {
-        dispatch(
-          updateProgress({
-            instanceID: identityDownload,
-            progress: progress,
-          })
-        );
-      },
-      () => {
-        dispatch(completeObject(identityDownload));
-      },
-      (msg: string) => {
-        dispatch(failObject({ instanceID: identityDownload, msg }));
-      },
-      () => {
-        dispatch(cancelObjectInList(identityDownload));
-      }
-    );
-
-    storeCallForObjectWithID(ID, downloadCall);
-    dispatch(
-      setNewObject({
-        ID,
-        bucketName,
-        done: false,
-        instanceID: identityDownload,
-        percentage: 0,
-        prefix: object.name,
-        type: "download",
-        waitingForFile: true,
-        failed: false,
-        cancelled: false,
-        errorMessage: "",
-      })
-    );
-  };
-
   const closeDeleteModal = (closeAndReload: boolean) => {
     setDeleteOpen(false);
 
@@ -482,7 +413,7 @@ const ObjectDetailPanel = ({
   const multiActionButtons = [
     {
       action: () => {
-        downloadObject(actualInfo);
+        downloadObject(dispatch, bucketName, internalPaths, actualInfo);
       },
       label: "Download",
       disabled: !!actualInfo.is_delete_marker || !canGetObject,

@@ -43,6 +43,8 @@ import {
   permissionTooltipHelper,
 } from "../../../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../../../common/SecureComponent";
+import { downloadObject } from "../../../../ObjectBrowser/utils";
+import { IFileInfo } from "../ObjectDetails/types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -77,7 +79,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ListObjectsTable = () => {
+interface IListObjectTable {
+  internalPaths: string | null;
+}
+
+const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
   const params = useParams();
@@ -111,7 +117,9 @@ const ListObjectsTable = () => {
   const selectedObjects = useSelector(
     (state: AppState) => state.objectBrowser.selectedObjects
   );
-
+  const anonymousMode = useSelector(
+    (state: AppState) => state.system.anonymousMode
+  );
   const displayListObjects = hasPermission(bucketName, [
     IAM_SCOPES.S3_LIST_BUCKET,
     IAM_SCOPES.S3_ALL_LIST_BUCKET,
@@ -141,29 +149,43 @@ const ListObjectsTable = () => {
     payload = sortASC.reverse();
   }
 
-  const openPath = (idElement: string) => {
-    dispatch(setSelectedObjects([]));
-
+  const openPath = (object: IFileInfo) => {
+    const idElement = object.name;
     const newPath = `/browser/${bucketName}${
       idElement ? `/${encodeURLString(idElement)}` : ``
     }`;
+
+    // for anonymous start download
+    if (anonymousMode && internalPaths !== null && !object.name.endsWith("/")) {
+      downloadObject(
+        dispatch,
+        bucketName,
+        `${encodeURLString(idElement)}`,
+        object
+      );
+      return;
+    }
+    dispatch(setSelectedObjects([]));
+
     navigate(newPath);
 
-    dispatch(setObjectDetailsView(true));
-    dispatch(setLoadingVersions(true));
+    if (!anonymousMode) {
+      dispatch(setObjectDetailsView(true));
+      dispatch(setLoadingVersions(true));
+      dispatch(setIsOpeningOD(true));
+    }
     dispatch(
       setSelectedObjectView(
         `${idElement ? `${encodeURLString(idElement)}` : ``}`
       )
     );
-    dispatch(setIsOpeningOD(true));
   };
   const tableActions: ItemActions[] = [
     {
       type: "view",
       label: "View",
       onClick: openPath,
-      sendOnlyId: true,
+      sendOnlyId: false,
     },
   ];
 
@@ -218,9 +240,9 @@ const ListObjectsTable = () => {
         obOnly ? "isEmbedded" : ""
       } ${detailsOpen ? "actionsPanelOpen" : ""}`}
       selectedItems={selectedObjects}
-      onSelect={selectListObjects}
+      onSelect={!anonymousMode ? selectListObjects : undefined}
       customEmptyMessage={
-        !displayListObjects
+        !displayListObjects && !anonymousMode
           ? permissionTooltipHelper(
               [IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET],
               "view Objects in this bucket"
