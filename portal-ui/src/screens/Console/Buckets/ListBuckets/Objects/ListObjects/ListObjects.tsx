@@ -144,6 +144,7 @@ import {
   getPolicyAllowedFileExtensions,
   getSessionGrantsWildCard,
 } from "../../UploadPermissionUtils";
+import HelpTip from "../../../../HelpTip";
 
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects"))
@@ -1064,8 +1065,9 @@ const ListObjects = () => {
             actions={
               <Fragment>
                 {!anonymousMode && (
-                  <TooltipWrapper tooltip={"Rewind Bucket"}>
+                  <Fragment>
                     <Button
+                      data-tooltip-id="rewind"
                       id={"rewind-objects-list"}
                       label={"Rewind"}
                       icon={
@@ -1100,7 +1102,8 @@ const ListObjects = () => {
                         ])
                       }
                     />
-                  </TooltipWrapper>
+                    <HelpTip helpTipID="rewind" position="top" />
+                  </Fragment>
                 )}
                 <TooltipWrapper tooltip={"Reload List"}>
                   <Button

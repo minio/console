@@ -260,7 +260,9 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <PanelTitle>Replication</PanelTitle>
+          <PanelTitle helpTipID="bucket_details_replication">
+            Replication
+          </PanelTitle>
           <div style={{ display: "flex" }}>
             <SecureComponent
               scopes={[
@@ -297,17 +299,15 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
               matchAll
               errorProps={{ disabled: true }}
             >
-              <TooltipWrapper tooltip={"Add Replication Rule"}>
-                <Button
-                  id={"add-bucket-replication-rule"}
-                  onClick={() => {
-                    setOpenReplicationOpen(true);
-                  }}
-                  label={"Add Replication Rule"}
-                  icon={<AddIcon />}
-                  variant={"callAction"}
-                />
-              </TooltipWrapper>
+              <Button
+                id={"add-bucket-replication-rule"}
+                onClick={() => {
+                  setOpenReplicationOpen(true);
+                }}
+                label={"Add Replication Rule"}
+                icon={<AddIcon />}
+                variant={"callAction"}
+              />
             </SecureComponent>
           </div>
         </Grid>

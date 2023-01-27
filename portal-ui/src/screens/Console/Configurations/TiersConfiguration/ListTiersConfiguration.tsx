@@ -73,6 +73,7 @@ import HelpMenu from "../../HelpMenu";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { Tier } from "api/consoleApi";
+import HelpTip from "../../HelpTip";
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );
@@ -508,7 +509,8 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                     alignContent={"center"}
                     alignItems={"center"}
                   >
-                    <Grid item xs={8}>
+                    <Grid item xs={8} data-tooltip-id="tiers_video">
+                      <HelpTip helpTipID="tiers_video" position="right" />
                       <HelpBox
                         title={"Tiers"}
                         iconComponent={<TiersIcon />}

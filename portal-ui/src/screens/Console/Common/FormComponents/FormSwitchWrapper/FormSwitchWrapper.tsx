@@ -24,6 +24,7 @@ import { actionsTray, fieldBasic } from "../common/styleLibrary";
 import { HelpIcon } from "mds";
 import clsx from "clsx";
 import { InputProps as StandardInputProps } from "@mui/material/Input/Input";
+import HelpTip from "../../../HelpTip";
 
 interface IFormSwitch {
   label?: string;
@@ -40,6 +41,7 @@ interface IFormSwitch {
   switchOnly?: boolean;
   indicatorLabels?: string[];
   extraInputProps?: StandardInputProps["inputProps"];
+  helpTipID?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -125,6 +127,7 @@ const FormSwitchWrapper = ({
   classes,
   indicatorLabels,
   extraInputProps = {},
+  helpTipID,
 }: IFormSwitch) => {
   const switchComponent = (
     <React.Fragment>
@@ -174,7 +177,7 @@ const FormSwitchWrapper = ({
         <Grid item xs={12} sm={8} md={8}>
           {label !== "" && (
             <InputLabel htmlFor={id} className={classes.inputLabel}>
-              <span>{label}</span>
+              <span data-tooltip-id={helpTipID}>{label}</span>
               {tooltip !== "" && (
                 <div className={classes.tooltipContainer}>
                   <Tooltip title={tooltip} placement="top-start">
@@ -187,6 +190,7 @@ const FormSwitchWrapper = ({
             </InputLabel>
           )}
         </Grid>
+        <HelpTip helpTipID={helpTipID} position="right" />
         <Grid
           item
           xs={12}

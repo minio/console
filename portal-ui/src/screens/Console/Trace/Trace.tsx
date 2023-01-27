@@ -46,6 +46,8 @@ import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 import { setHelpName } from "../../../systemSlice";
 
+import HelpTip from "../HelpTip";
+
 const styles = (theme: Theme) =>
   createStyles({
     sizeItem: {
@@ -174,7 +176,7 @@ const Trace = ({ classes }: ITrace) => {
 
   return (
     <Fragment>
-      <PageHeaderWrapper label={"Trace"} actions={<HelpMenu />} />
+      <PageHeaderWrapper label={"Trace"} />
 
       <PageLayout>
         <Grid container spacing={1} className={classes.formBox}>
@@ -197,9 +199,11 @@ const Trace = ({ classes }: ITrace) => {
                 fontWeight: 600,
                 padding: "20px 0px 20px 0",
               }}
+              data-tooltip-id="trace"
             >
               Calls to Trace
             </Box>
+            <HelpTip helpTipID="trace" position="top" />
             <Box
               className={`${traceStarted ? "inactive-state" : ""}`}
               sx={{

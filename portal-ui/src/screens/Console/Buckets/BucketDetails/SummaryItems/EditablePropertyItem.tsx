@@ -29,6 +29,7 @@ type EditablePropertyItemProps = {
   value: any;
   onEdit: () => void;
   secureCmpProps?: Record<any, any>;
+  helpTipID?: string;
 };
 
 const SecureAction = ({
@@ -62,6 +63,7 @@ const EditablePropertyItem = ({
   property = null,
   value = null,
   onEdit,
+  helpTipID,
 }: EditablePropertyItemProps) => {
   return (
     <Box
@@ -72,6 +74,7 @@ const EditablePropertyItem = ({
       }}
     >
       <LabelValuePair
+        helpTipID={helpTipID}
         label={property}
         value={
           <SecureAction

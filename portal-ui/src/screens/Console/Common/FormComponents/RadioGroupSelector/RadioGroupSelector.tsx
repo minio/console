@@ -27,6 +27,7 @@ import makeStyles from "@mui/styles/makeStyles";
 import { fieldBasic, radioIcons, tooltipHelper } from "../common/styleLibrary";
 import { HelpIcon } from "mds";
 import { ObjectRetentionMode, ObjectRetentionUnit } from "api/consoleApi";
+import HelpTip from "../../../HelpTip";
 
 export interface SelectorTypes {
   label: any;
@@ -49,6 +50,7 @@ interface RadioGroupProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   classes: any;
   displayInColumn?: boolean;
+  helpTipID?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -113,12 +115,13 @@ export const RadioGroupSelector = ({
   disableOptions = false,
   classes,
   displayInColumn = false,
+  helpTipID,
 }: RadioGroupProps) => {
   return (
     <Grid container spacing={1}>
       <Grid item fontSize={60}>
         <InputLabel htmlFor={id} className={classes.inputLabel}>
-          <span>{label}</span>
+          <span data-tooltip-id={helpTipID}>{label}</span>
           {tooltip !== "" && (
             <div className={classes.tooltipContainer}>
               <Tooltip title={tooltip} placement="top-start">
@@ -140,6 +143,7 @@ export const RadioGroupSelector = ({
           row={!displayInColumn}
           style={{ display: "flex", textAlign: "right" }}
         >
+          <HelpTip helpTipID={helpTipID} position="left" />
           {selectorOptions.map((selectorOption) => {
             return (
               <FormControlLabel

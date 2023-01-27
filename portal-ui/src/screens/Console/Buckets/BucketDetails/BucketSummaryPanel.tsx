@@ -462,6 +462,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                       setAccessPolicyScreenOpen(true);
                     }}
                     isLoading={bucketLoading}
+                    helpTipID="bucket_details_access_policy"
                   />
                 </SecureComponent>
 
@@ -484,6 +485,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                       setEnableEncryptionScreenOpen(true);
                     }}
                     isLoading={loadingEncryption}
+                    helpTipID="bucket_details_encryption"
                   />
                 </SecureComponent>
 
@@ -508,6 +510,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                         }
                       />
                     }
+                    helpTipID="bucket_details_replication"
                   />
                 </SecureComponent>
 
@@ -532,12 +535,14 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                         }
                       />
                     }
+                    helpTipID="bucket_details_object_locking"
                   />
                 </SecureComponent>
                 <Box className={classes.spacerTop}>
                   <LabelValuePair
                     label={"Tags:"}
                     value={<BucketTags bucketName={bucketName} />}
+                    helpTipID="bucket_details_tags"
                   />
                 </Box>
                 <EditablePropertyItem
@@ -547,6 +552,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   value={quotaEnabled ? "Enabled" : "Disabled"}
                   onEdit={setBucketQuota}
                   isLoading={loadingQuota}
+                  helpTipID="bucket_details_quota"
                 />
               </Box>
 
@@ -610,6 +616,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                     }
                     onEdit={setBucketVersioning}
                     isLoading={loadingVersioning}
+                    helpTipID="bucket_details_versioning"
                   />
 
                   {versioningInfo?.status === "Enabled" ? (
@@ -657,6 +664,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                       setRetentionConfigOpen(true);
                     }}
                     isLoading={loadingRetention}
+                    helpTipID="bucket_details_retention"
                   />
 
                   <LabelValuePair
@@ -671,6 +679,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                           : "-"}
                       </label>
                     }
+                    helpTipID="add_bucket_retention_mode"
                   />
                   <LabelValuePair
                     label={"Validity:"}
@@ -686,6 +695,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                             : retentionConfig.unit)}
                       </label>
                     }
+                    helpTipID="add_bucket_validity"
                   />
                 </Box>
 

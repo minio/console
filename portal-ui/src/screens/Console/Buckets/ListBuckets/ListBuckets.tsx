@@ -72,6 +72,7 @@ import {
 } from "../../../../api/consoleApi";
 import { errorToHandler } from "../../../../api/errors";
 import HelpMenu from "../../HelpMenu";
+import HelpTip from "../../HelpTip";
 
 const useStyles = makeStyles((theme: Theme) => ({
   bucketList: {
@@ -328,7 +329,7 @@ const ListBuckets = () => {
                       ? bulkSelect
                         ? "Please select at least one bucket on which to configure Lifecycle"
                         : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
-                      : "Set Lifecycle"
+                      : ""
                   }
                 >
                   <Button
@@ -339,9 +340,10 @@ const ListBuckets = () => {
                     icon={<LifecycleConfigIcon />}
                     variant={"regular"}
                     disabled={selectedBuckets.length === 0 || !canPutLifecycle}
+                    data-tooltip-id="bucket_details_lifecycle"
                   />
                 </TooltipWrapper>
-
+                <HelpTip helpTipID="bucket_details_lifecycle" position="top" />
                 <TooltipWrapper
                   tooltip={
                     !hasBuckets
@@ -350,7 +352,7 @@ const ListBuckets = () => {
                       ? bulkSelect
                         ? "Please select at least one bucket on which to configure Replication"
                         : "Use the Select Multiple Buckets button to choose buckets on which to configure Replication"
-                      : "Set Replication"
+                      : ""
                   }
                 >
                   <Button
@@ -361,6 +363,11 @@ const ListBuckets = () => {
                     icon={<MultipleBucketsIcon />}
                     variant={"regular"}
                     disabled={selectedBuckets.length === 0}
+                    data-tooltip-id="bucket_details_summary_replication"
+                  />
+                  <HelpTip
+                    helpTipID="bucket_details_summary_replication"
+                    position="top"
                   />
                 </TooltipWrapper>
               </Fragment>
@@ -397,7 +404,9 @@ const ListBuckets = () => {
                   variant={"callAction"}
                   disabled={!canCreateBucket}
                   label={"Create Bucket"}
+                  data-tooltip-id="bucket_docs"
                 />
+                <HelpTip helpTipID="bucket_docs" position="top" />
               </TooltipWrapper>
             )}
           </Grid>

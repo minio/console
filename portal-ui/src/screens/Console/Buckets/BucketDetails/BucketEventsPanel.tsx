@@ -133,7 +133,7 @@ const BucketEventsPanel = () => {
 
       <Grid container>
         <Grid item xs={12} sx={actionsTray.actionsTray}>
-          <PanelTitle>Events</PanelTitle>
+          <PanelTitle helpTipID="bucket_details_events">Events</PanelTitle>
           <SecureComponent
             scopes={[
               IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,

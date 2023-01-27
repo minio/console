@@ -37,6 +37,7 @@ import {
 } from "../common/styleLibrary";
 import { HelpIcon } from "mds";
 import clsx from "clsx";
+import HelpTip from "../../../HelpTip";
 
 interface InputBoxProps {
   label: string;
@@ -68,6 +69,7 @@ interface InputBoxProps {
   pattern?: string;
   autoFocus?: boolean;
   className?: string;
+  helpTipID?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -139,6 +141,7 @@ const InputBoxWrapper = ({
   onKeyPress,
   onFocus,
   onPaste,
+  helpTipID,
 }: InputBoxProps) => {
   let inputProps: any = { "data-index": index, ...extraInputProps };
   const [toggleTextInput, setToggleTextInput] = useState<boolean>(false);
@@ -183,7 +186,7 @@ const InputBoxWrapper = ({
               noLabelMinWidth ? classes.noMinWidthLabel : classes.inputLabel
             }
           >
-            <span>
+            <span data-tooltip-id={helpTipID}>
               {label}
               {required ? "*" : ""}
             </span>
@@ -220,6 +223,7 @@ const InputBoxWrapper = ({
             onFocus={onFocus}
             onPaste={onPaste}
           />
+          <HelpTip helpTipID={helpTipID} position="left" />
           {inputBoxWrapperIcon && (
             <div
               className={`${classes.overlayAction} ${

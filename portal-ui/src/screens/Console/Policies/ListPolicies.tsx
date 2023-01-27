@@ -15,6 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   AddIcon,
   Button,
@@ -56,6 +59,7 @@ import withSuspense from "../Common/Components/withSuspense";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import HelpTip from "../HelpTip";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -218,7 +222,9 @@ const ListPolicies = () => {
                     navigate(`${IAM_PAGES.POLICY_ADD}`);
                   }}
                   disabled={!canCreatePolicy}
+                  data-tooltip-id="list_policy1"
                 />
+                <HelpTip helpTipID="list_policy1" />
               </TooltipWrapper>
             </SecureComponent>
           </Grid>

@@ -37,6 +37,8 @@ import { emptyPolicy } from "./utils";
 import { api } from "../../../api";
 import { Error, HttpResponse, Policy } from "../../../api/consoleApi";
 
+import HelpTip from "../HelpTip";
+
 const AddPolicyScreen = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -106,6 +108,7 @@ const AddPolicyScreen = () => {
           }
           actions={<HelpMenu />}
         />
+
         <PageLayout>
           <FormLayout
             title={"Create Policy"}
@@ -120,8 +123,12 @@ const AddPolicyScreen = () => {
               }}
             >
               <Grid container>
-                <Grid item xs={12}>
+                <Grid item xs={12} >
+                <HelpTip helpTipID="add_policy0" position="top" />
                   <InputBox
+             
+                 
+                  
                     id="policy-name"
                     name="policy-name"
                     label="Policy Name"
@@ -133,7 +140,7 @@ const AddPolicyScreen = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} data-tooltip-id="add_policy2">
                   <CodeMirrorWrapper
                     label={"Write Policy"}
                     value={policyDefinition}
@@ -142,6 +149,7 @@ const AddPolicyScreen = () => {
                     }}
                     editorHeight={"350px"}
                   />
+                  <HelpTip helpTipID="add_policy2" position="bottom" />
                 </Grid>
                 <Grid item xs={12} sx={{ textAlign: "right" }}>
                   <Box

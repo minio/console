@@ -158,7 +158,10 @@ const AccessDetails = () => {
 
   return (
     <Fragment>
-      <PanelTitle>Access Audit</PanelTitle>
+      <PanelTitle helpTipID="bucket_details_access_audit">
+        Access Audit
+      </PanelTitle>
+
       <Tabs
         value={curTab}
         onChange={(e: React.ChangeEvent<{}>, newValue: number) => {

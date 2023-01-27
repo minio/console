@@ -282,7 +282,9 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <PanelTitle>Lifecycle Rules</PanelTitle>
+          <PanelTitle helpTipID="bucket_details_lifecycle">
+            Lifecycle Rules
+          </PanelTitle>
           <SecureComponent
             scopes={[
               IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,

@@ -45,6 +45,8 @@ import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
 
+import HelpTip from "../../HelpTip";
+
 export type ReplicationSite = {
   deploymentID: string;
   endpoint: string;
@@ -199,7 +201,7 @@ const SiteReplication = () => {
             alignContent={"center"}
             alignItems={"center"}
           >
-            <Grid item xs={8}>
+            <Grid item xs={8} data-tooltip-id="replication_tutorial">
               <HelpBox
                 title={"Site Replication"}
                 iconComponent={<ClustersIcon />}
@@ -233,10 +235,12 @@ const SiteReplication = () => {
                 }
               />
             </Grid>
+            <HelpTip helpTipID="replication_tutorial" />
           </Grid>
         ) : null}
         {hasSites && !isSiteInfoLoading ? (
           <HelpBox
+            data-tooltip-id="replication_tutorial"
             title={"Site Replication"}
             iconComponent={<ClustersIcon />}
             help={

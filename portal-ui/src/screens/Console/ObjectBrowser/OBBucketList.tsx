@@ -64,6 +64,7 @@ import { api } from "../../../api";
 import { errorToHandler } from "../../../api/errors";
 import { setLoadingObjects } from "./objectBrowserSlice";
 import HelpMenu from "../HelpMenu";
+import HelpTip from "../HelpTip";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -288,7 +289,8 @@ const OBListBuckets = () => {
                 alignContent={"center"}
                 alignItems={"center"}
               >
-                <Grid item xs={8}>
+                <Grid item xs={8} data-tooltip-id="bucket_docs">
+                  <HelpTip helpTipID="bucket_docs" />
                   <HelpBox
                     iconComponent={<BucketsIcon />}
                     title={"Buckets"}

@@ -1,5 +1,7 @@
 import React from "react";
 import { Stack } from "@mui/material";
+import HelpTip from "../../HelpTip";
+import { Grid } from "mds";
 
 type LabelValuePairProps = {
   label?: any;
@@ -8,6 +10,7 @@ type LabelValuePairProps = {
   stkProps?: any;
   lblProps?: any;
   valProps?: any;
+  helpTipID?: string;
 };
 
 const LabelValuePair = ({
@@ -17,15 +20,31 @@ const LabelValuePair = ({
   stkProps = {},
   lblProps = {},
   valProps = {},
+  helpTipID,
 }: LabelValuePairProps) => {
   return (
     <Stack direction={{ xs: "column", sm: orientation }} {...stkProps}>
-      <label style={{ marginRight: 5, fontWeight: 600 }} {...lblProps}>
-        {label}
-      </label>
-      <label style={{ marginRight: 5, fontWeight: 500 }} {...valProps}>
-        {value}
-      </label>
+      <Grid
+        container
+        direction="column"
+        sx={{
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "flex-start",
+        }}
+      >
+        <Grid item data-tooltip-id={helpTipID}>
+          <label style={{ marginRight: 5, fontWeight: 600 }} {...lblProps}>
+            {label}
+          </label>
+        </Grid>
+        <Grid item>
+          <label style={{ marginRight: 5, fontWeight: 500 }} {...valProps}>
+            {value}
+          </label>
+        </Grid>
+      </Grid>
+      <HelpTip helpTipID={helpTipID} position="right" />
     </Stack>
   );
 };

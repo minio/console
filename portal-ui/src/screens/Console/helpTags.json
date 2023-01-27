@@ -1,0 +1,167 @@
+{
+  "help": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Need help?](https://min.io/docs/minio/kubernetes/upstream/)  \nCheck out our documentation to learn more about MinIO"
+  ],
+  "add_policy2": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Identity and Access Management](https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management.html)  \nLearn how MinIO manages Authentication and  Authorization to protect data against  unwanted access "
+  ],
+  "policy_structure": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Policy Document Structure](https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#policy-document-structure)  \nExplore all of the available policy actions and conditions"
+  ],
+  "add_policy0": [
+    "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDIKCbSsTEa1rzpjwRr9ZMlpDsEIA[Creating Access Policies](https://www.youtube.com/watch?v=vdHv9wfhu24)  \nThis video introduces access management policies and shows how they are created and assigned using mc"
+  ],
+  "add_policy1": [
+    "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDIKCbSsTEa1rzpjwRr9ZMlpDsEIA[Creating Access Policies](https://www.youtube.com/watch?v=vdHv9wfhu24)  \nThis video introduces access management policies and shows how they are created and assigned using mc"
+  ],
+  "list_policy0": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Identity and Access Management](https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management.html)  \nLearn how authentication and authorization  \nare used to protect access to your data"
+  ],
+  "list_policy1": [
+    "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDIKCbSsTEa1rzpjwRr9ZMlpDsEIA[Creating Access Policies](https://www.youtube.com/watch?v=vdHv9wfhu24)  \nThis video introduces access management policies and shows how they are created and assigned using mc"
+  ],
+  "users_groups_video": [
+    "https://i.ytimg.com/an_webp/sJEFAVqoKr0/mqdefault_6s.webp?du=3000&sqp=CI2j-qIG&rs=AOn4CLAmMTLGuUkEvGMkiE0I0FVlV56R-Q[Using IDP to Manage Users And Groups](https://www.youtube.com/watch?v=sJEFAVqoKr0)  \nThis video is focused on using MinIO's built in Identity Provider policies to manage users and groups. "
+  ],
+  "create_service_account": [
+    "  https://min.io/resources/img/logo/MINIO_wordmark.png[Access Keys](https://min.io/docs/minio/windows/administration/console/security-and-access.html#minio-console-user-access-keys)  \nLearn about creating and working with Access Keys"
+  ],
+  "policy_actions": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Supported S3 Policy Actions](https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#supported-s3-policy-actions)  \nExplore all available S3 Actions"
+  ],
+  "policy_resources": [
+    "https://docs.aws.amazon.com/assets/r/images/aws_logo_dark.png[S3 Resources](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-arn-format.html)  \nLearn about the Amazon Resource Name (ARN) format used to identify resources in AWS"
+  ],
+  "users_docs": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Users](https://min.io/docs/minio/windows/administration/identity-access-management/minio-user-management.html)  \nLearn about how MinIO Users are used to manage access"
+  ],
+  "groups_docs": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Groups](https://min.io/docs/minio/windows/administration/identity-access-management/minio-group-management.html)  \nLearn how Groups are used to manage access"
+  ],
+  "bucket_docs": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Buckets](https://min.io/docs/minio/windows/administration/console/managing-objects.html#buckets)  \nWhat are Buckets?"
+  ],
+  "add_bucket_name": [
+    "https://i.ytimg.com/an_webp/zqjsw4O2-4U/mqdefault_6s.webp?du=3000&sqp=CLzt-qIG&rs=AOn4CLAywR9J1Qe4xlE8TySyjzfKa8P0oQ[Help Setting Advanced Bucket Features](https://min.io/docs/minio/linux/administration/object-management/object-retention.html#configure-bucket-default-object-retention)  \nSee how to create a Bucket with advanced features using the MinIO Console"
+  ],
+  "add_bucket_versioning": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Bucket Versioning](https://min.io/docs/minio/kubernetes/upstream/administration/object-management/object-versioning.html#minio-bucket-versioning)  \nLearn how Bucket versioning is used to enable advanced features"
+  ],
+  "add_bucket_object_locking": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Object Locking & Retention](https://min.io/docs/minio/windows/administration/object-management/object-retention.html)  \nLearn how Object Locking is used to protect Versioned Objects from deletion"
+  ],
+  "add_bucket_quota": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Bucket Quotas](https://min.io/docs/minio/linux/reference/minio-mc/mc-quota-set.html)  \nLearn about setting a hard quota on your Bucket capacity"
+  ],
+  "add_bucket_retention": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Setting Object Retention](https://min.io/docs/minio/linux/reference/minio-mc/mc-retention-set.html)  \nSee examples setting Retention using the MinIO Client"
+  ],
+  "add_bucket_retention_mode": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Retention Modes](https://min.io/docs/minio/linux/administration/object-management/object-retention.html#minio-object-locking-compliance)  \nLearn about the different retention modes available in MinIO"
+  ],
+  "add_bucket_validity": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[How long should the Object remain in the specified mode?](https://min.io/docs/minio/linux/reference/minio-mc/mc-retention-set.html#mc.retention.set.VALIDITY)  \nSet the time duration for which an Object is subject to the rules of its retention mode"
+  ],
+  "bucket_details_access_policy": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Bucket Access Policy](https://min.io/docs/minio/kubernetes/upstream/administration/console/managing-objects.html#buckets)  \nLearn about setting bucket access policies"
+  ],
+  "bucket_details_encryption": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Bucket Encryption](https://min.io/docs/minio/linux/reference/minio-mc/mc-encrypt-set.html#enable-automatic-server-side-bucket-encryption)  \nLearn about setting Bucket encryption"
+  ],
+  "bucket_details_summary_replication": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Bucket Replication](https://min.io/docs/minio/windows/administration/bucket-replication.html)  \nLearn about the different ways to configure bucket replication"
+  ],
+  "bucket_details_object_locking": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Object Locking & Retention](https://min.io/docs/minio/windows/administration/object-management/object-retention.html)  \nLearn how Object Locking is used to protect Versioned Objects from deletion"
+  ],
+
+  "bucket_details_quota": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Bucket Quotas](https://min.io/docs/minio/linux/reference/minio-mc/mc-quota-set.html)  \nLearn about setting a hard quota on your Bucket capacity"
+  ],
+
+  "bucket_details_tags": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Bucket Tagging](https://min.io/docs/minio/linux/reference/minio-mc/mc-tag.html#subcommands)  \nLearn about setting Tags on Buckets"
+  ],
+  "bucket_details_versioning": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Bucket Versioning](https://min.io/docs/minio/kubernetes/upstream/administration/object-management/object-versioning.html#minio-bucket-versioning)  \nLearn how Bucket versioning is used to enable advanced features"
+  ],
+  "bucket_details_events": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Notification Events](https://min.io/docs/minio/linux/reference/minio-mc/mc-event-add.html)  \nLearn about adding Notification Events to Buckets"
+  ],
+  "bucket_details_replication": [
+    "https://i.ytimg.com/vi/G4wQZEsIxcU/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBTPmOjC6YVBAmuyHwPK1OMfTrXoA[Bucket Replication Overview](https://www.youtube.com/watch?v=G4wQZEsIxcU)  \nWatch our video series to learn about the different ways to configure bucket replication"
+  ],
+
+  "bucket_details_lifecycle": [
+    "https://i.ytimg.com/vi/5fz3rE3wjGg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCq8mxi_s8tron8E3TPgTMfUbiiDw[Lifecycle Management Lab](https://www.youtube.com/watch?v=5fz3rE3wjGg)  \nWatch our video series demonstrating Object Lifcecycle Mangement"
+  ],
+  "bucket_details_access_audit": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Identity and Access Management](https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management.html)  \nSee which Policies and Users have access to this Bucket"
+  ],
+  "bucket_details_anonymous": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Anonymous Access](https://min.io/docs/minio/linux/reference/minio-mc/mc-anonymous-set.html)  \nLearn how to allow access to Buckets without requiring access credentials"
+  ],
+  "account_change_password": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Change your password](https://min.io/docs/minio/macos/administration/identity-access-management/minio-user-management.html)  \nUse this feature to change the password of the currently logged in user"
+  ],
+  "config_0": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Region](https://min.io/docs/minio/linux/reference/minio-mc/mc-mb.html#create-a-new-bucket-in-a-specific-region)  \n"
+  ],
+  "config_1": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Compression](https://min.io/docs/minio/linux/reference/minio-mc/mc-sql.html#parameters)  \n"
+  ],
+  "config_2": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[API](https://min.io/docs/minio/macos/administration/bucket-replication.html#minio-replication-process)  \n"
+  ],
+  "config_3": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Heal](https://min.io/docs/minio/macos/operations/concepts.html#minio-automatically-heals-corrupt-or-missing-data-on-the-fly)  \n"
+  ],
+  "config_4": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Scanner](https://min.io/docs/minio/macos/administration/object-management/object-lifecycle-management.html#minio-lifecycle-management-scanner)  \n"
+  ],
+  "config_5": [
+    "https://www.linuxfoundation.org/hs-fs/hubfs/trademark-kubernetes-icon-correct-140x140-1.png?width=124&name=trademark-kubernetes-icon-correct-140x140-1.png[etcd](https://etcd.io/)  \n"
+  ],
+  "config_6": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Logger Webhook](https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-config.html#minio-server-configuration-settings)  \n"
+  ],
+  "config_7": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Audit Webhook](https://min.io/docs/minio/linux/operations/monitoring/minio-logging.html#minio-logging-publish-audit-logs)  \n"
+  ],
+  "config_8": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Audit Kafka](https://min.io/docs/minio/linux/administration/monitoring/publish-events-to-kafka.html#minio-bucket-notifications-publish-kafka)  \n"
+  ],
+  "add_service_account_0": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[What are Access Keys?](https://min.io/docs/minio/windows/administration/identity-access-management/minio-user-management.html#minio-id-access-keys)  \nLearn how Access Keys (formerly Service Accounts) can be used to generate credentials allowing applications to access data as specified by policy"
+  ],
+  "rewind": [
+    "https://images.unsplash.com/photo-1428660285748-340f4e33d608?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDMzfHx0aW1lJTIwcmV3aW5kfGVufDB8fHx8MTYzMDM0NjAzMg&ixlib=rb-1.2.1&q=80&w=1000[Continuous Data protection with MinIO Versioning and Rewind](https://blog.min.io/continuous-data-protection-versioning-rewind/)  \nLearn how Object Versioning enables the Rewind feature, allowing you to return objects to their previous state"
+  ],
+  "policy": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Policy based access control](https://min.io/docs/minio/linux/administration/identity-access-management/policy-based-access-control.html#)  \n Learn how Policy-Based Access Control (PBAC) is used to define the authorized actions and resources to which an authenticated user has access"
+  ],
+  "groups": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Group Management](https://min.io/docs/minio/linux/administration/identity-access-management/minio-group-management.html)  \nLearn how to use Groups to simplify granting access to data to different Users"
+  ],
+  "idp_config": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[OpenIDP](https://min.io/docs/minio/linux/administration/identity-access-management/oidc-access-management.html)  \n Learn about configuring an external IDP to manage access to MinIO"
+  ],
+  "trace": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Trace](https://min.io/docs/minio/linux/administration/console/managing-deployment.html#trace)  \nUse Trace to display API operations occurring on the target MinIO deployment."
+  ],
+  "watch": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Watch](https://min.io/docs/minio/linux/reference/minio-mc/mc-watch.html)  \nUse Watch to watch for events on a specified bucket or local filesystem path"
+  ],
+  "event_destinations": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Event Notifications](https://min.io/docs/minio/linux/administration/monitoring/bucket-notifications.html#minio-bucket-notifications)  \nLearn about setting Event Notifications on Buckets "
+  ],
+  "tiers_video": [
+    "https://i.ytimg.com/vi/UuxqnUgowyg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA8R19exGswOv_yP8ZmSy1K6zmCbw[Tiering and Lifecycle Management](https://www.youtube.com/watch?v=Exg2KsfzHzI)  \nWatch our video series on Object Lifecycle Management to learn more about how tiering allows you to offload objects onto remote storage sites per your specification"
+  ],
+  "replication_tutorial": [
+    "https://min.io/resources/img/logo/MINIO_wordmark.png[Site Replication Tutorial](https://min.io/docs/minio/linux/operations/install-deploy-manage/multi-site-replication.html#tutorials)  \nSee how to configure replcation between sites"
+  ],
+  "replication_blog": [
+    "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg[Replication best practices](https://blog.min.io/minio-replication-best-practices/)  \nMinIO includes multiple data protection mechanisms,  \nand this blog post focuses on replication best practices"
+  ]
+}

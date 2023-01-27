@@ -58,6 +58,8 @@ import { api } from "api";
 import { errorToHandler } from "api/errors";
 import HelpMenu from "../HelpMenu";
 
+import HelpTip from "../HelpTip";
+
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
 );
@@ -204,6 +206,7 @@ const Account = () => {
               sx={{ marginRight: "auto", maxWidth: 380 }}
               value={filter}
             />
+            <HelpTip helpTipID="create_service_account" position="top" />
             <Box
               sx={{
                 display: "flex",
@@ -236,7 +239,9 @@ const Account = () => {
                   icon={<PasswordKeyIcon />}
                   variant={"regular"}
                   disabled={userIDP}
+                  data-tooltip-id="account_change_password"
                 />
+                <HelpTip helpTipID="account_change_password" position="top" />
               </SecureComponent>
               <SecureComponent
                 scopes={[IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT]}
@@ -253,7 +258,18 @@ const Account = () => {
                   icon={<AddIcon />}
                   variant={"callAction"}
                 />
+                <HelpTip helpTipID="account_change_password" position="top" />
               </SecureComponent>
+              <Button
+                id={"create-service-account"}
+                onClick={() => {
+                  navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
+                }}
+                label={`Create access key`}
+                icon={<AddIcon />}
+                variant={"callAction"}
+                data-tooltip-id="create_service_account"
+              />
             </Box>
           </Grid>
 

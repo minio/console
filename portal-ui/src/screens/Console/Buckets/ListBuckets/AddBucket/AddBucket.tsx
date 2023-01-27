@@ -373,6 +373,7 @@ const AddBucket = () => {
                       siteReplicationInfo.enabled ||
                       !versioningAllowed
                     }
+                    helpTipID="add_bucket_versioning"
                   />
                 </TooltipWrapper>
               </Grid>
@@ -411,6 +412,7 @@ const AddBucket = () => {
                       }
                     }}
                     label={"Object Locking"}
+                    helpTipID="add_bucket_object_locking"
                   />
                 </TooltipWrapper>
               </Grid>
@@ -426,6 +428,7 @@ const AddBucket = () => {
                   }}
                   label={"Quota"}
                   disabled={!distributedSetup}
+                  helpTipID="add_bucket_quota"
                 />
               </Grid>
               {quotaEnabled && distributedSetup && (
@@ -473,6 +476,7 @@ const AddBucket = () => {
                       dispatch(setRetention(event.target.checked));
                     }}
                     label={"Retention"}
+                    helpTipID="add_bucket_retention"
                   />
                 </Grid>
               )}
@@ -495,6 +499,7 @@ const AddBucket = () => {
                         { value: "compliance", label: "Compliance" },
                         { value: "governance", label: "Governance" },
                       ]}
+                      helpTipID="add_bucket_retention_mode"
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -522,6 +527,7 @@ const AddBucket = () => {
                           disabled={false}
                         />
                       }
+                      helpTipID="add_bucket_validity"
                     />
                   </Grid>
                 </React.Fragment>

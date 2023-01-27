@@ -16,12 +16,14 @@
 
 import React from "react";
 import Grid from "@mui/material/Grid";
+import HelpTip from "../HelpTip";
 
 type Props = {
   separator?: boolean;
   actions?: React.ReactNode;
   icon?: React.ReactNode;
   children: string;
+  helpTipID?: string;
 };
 
 const SectionTitle: React.FC<Props> = ({
@@ -29,6 +31,7 @@ const SectionTitle: React.FC<Props> = ({
   separator = true,
   actions,
   icon,
+  helpTipID,
 }) => {
   return (
     <Grid
@@ -54,12 +57,15 @@ const SectionTitle: React.FC<Props> = ({
               spacing={1}
             >
               <Grid item>{icon}</Grid>
-              <Grid item>{children}</Grid>
+              <Grid item data-tooltip-id={helpTipID}>
+                {children}
+              </Grid>
             </Grid>
           )}
-          {!icon && children}
+          {!icon && <Grid data-tooltip-id={helpTipID}>{children}</Grid>}
         </h3>
       </Grid>
+      <HelpTip helpTipID={helpTipID} />
       {actions && <Grid item> {actions}</Grid>}
     </Grid>
   );

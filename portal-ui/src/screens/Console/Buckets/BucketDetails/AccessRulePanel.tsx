@@ -197,7 +197,9 @@ const AccessRule = () => {
         />
       )}
       <Grid item xs={12} className={classes.actionsTray}>
-        <PanelTitle>Anonymous Access</PanelTitle>
+        <PanelTitle helpTipID="bucket_details_anonymous">
+          Anonymous Access
+        </PanelTitle>
         <SecureComponent
           scopes={[
             IAM_SCOPES.S3_GET_BUCKET_POLICY,

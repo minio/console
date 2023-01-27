@@ -14,31 +14,38 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Fragment } from "react";
 import { setIsDirty, setName } from "./addBucketsSlice";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../../store";
+import HelpTip from "../../../HelpTip";
+import { Grid } from "mds";
 
 const AddBucketName = ({ hasErrors }: { hasErrors: boolean }) => {
   const dispatch = useAppDispatch();
 
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
   return (
-    <InputBoxWrapper
-      id="bucket-name"
-      name="bucket-name"
-      error={hasErrors ? "Invalid bucket name" : ""}
-      onFocus={() => {
-        dispatch(setIsDirty(true));
-      }}
-      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setName(event.target.value));
-      }}
-      label="Bucket Name"
-      value={bucketName}
-      required
-    />
+    <Fragment>
+      <Grid data-tooltip-id="add_bucket_name">
+        <InputBoxWrapper
+          id="bucket-name"
+          name="bucket-name"
+          error={hasErrors ? "Invalid bucket name" : ""}
+          onFocus={() => {
+            dispatch(setIsDirty(true));
+          }}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            dispatch(setName(event.target.value));
+          }}
+          label="Bucket Name"
+          value={bucketName}
+          required
+        />
+        <HelpTip helpTipID="add_bucket_name" position="top" />
+      </Grid>
+    </Fragment>
   );
 };
 

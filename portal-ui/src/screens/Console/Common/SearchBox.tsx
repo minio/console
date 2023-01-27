@@ -26,6 +26,7 @@ type SearchBoxProps = {
   id?: string;
   label?: string;
   sx?: CSSObject;
+  helpTagID?: string;
 };
 
 const SearchBox = ({
@@ -36,9 +37,11 @@ const SearchBox = ({
   id = "search-resource",
   label = "",
   sx,
+  helpTagID,
 }: SearchBoxProps) => {
   return (
     <InputBox
+      data-tooltip-id={helpTagID}
       placeholder={placeholder}
       className={overrideClass ? overrideClass : ""}
       id={id}

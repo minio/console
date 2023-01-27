@@ -104,6 +104,7 @@ const BucketTags = ({ bucketName }: BucketTagProps) => {
             display: "flex",
             flexFlow: "column",
           }}
+          tooltip-data-id="bucket_details_tags"
         >
           <Box>
             {tagKeys &&
@@ -143,7 +144,6 @@ const BucketTags = ({ bucketName }: BucketTagProps) => {
                 return null;
               })}
           </Box>
-
           <SecureComponent
             scopes={[
               IAM_SCOPES.S3_PUT_BUCKET_TAGGING,

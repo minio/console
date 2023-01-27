@@ -179,7 +179,7 @@ const Watch = () => {
 
   return (
     <React.Fragment>
-      <PageHeaderWrapper label="Watch" actions={<HelpMenu />} />
+      <PageHeaderWrapper label="Watch" />
 
       <PageLayout>
         <Grid container spacing={1} item xs={12}>

@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "file-saver": "^2.0.5",
+    "react-markdown": "^8.0.5",
+    "testcafe": "^2.0.1"
+  }
+}

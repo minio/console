@@ -170,7 +170,7 @@ const AddIDPConfiguration = ({
       />
       <PageLayout>
         <FormLayout helpBox={helpBox}>
-          <SectionTitle icon={icon}>{title}</SectionTitle>
+          <SectionTitle icon={icon} >{title}</SectionTitle>
           <form
             noValidate
             autoComplete="off"

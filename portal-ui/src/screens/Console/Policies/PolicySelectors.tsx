@@ -30,6 +30,7 @@ import {
   HttpResponse,
   ListPoliciesResponse,
 } from "../../../api/consoleApi";
+import HelpTip from "../HelpTip";
 
 interface ISelectPolicyProps {
   selectedPolicy?: string[];

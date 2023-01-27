@@ -51,6 +51,8 @@ import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { Error, HttpResponse } from "api/consoleApi";
 
+import HelpTip from "../../HelpTip";
+
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
@@ -344,7 +346,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
           sx={{
             border: "1px solid #eaeaea",
             padding: "25px",
-          }}
+          }} 
         >
           <form noValidate onSubmit={submitForm}>
             {type !== "" && targetElement ? (
@@ -372,12 +374,16 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                   </Box>
                 ) : null}
 
-                <div className={classes.lambdaNotifTitle}>
+                <div
+                  className={classes.lambdaNotifTitle}
+                  data-tooltip-id="tiers_video"
+                >
                   <b>
                     {titleSelection ? titleSelection : ""} - Add Tier
                     Configuration
                   </b>
                 </div>
+                <HelpTip helpTipID="tiers_video" />
               </Grid>
             ) : null}
 

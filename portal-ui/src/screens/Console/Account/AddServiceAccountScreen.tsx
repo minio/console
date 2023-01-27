@@ -44,6 +44,7 @@ import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import HelpTip from "../HelpTip";
 
 const AddServiceAccount = () => {
   const dispatch = useAppDispatch();
