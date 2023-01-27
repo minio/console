@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
 import {
@@ -28,13 +28,14 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import { emptyPolicy } from "./utils";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { api } from "../../../api";
 import { Error, HttpResponse, Policy } from "../../../api/consoleApi";
+import HelpMenu from "../HelpMenu";
 
 const AddPolicyScreen = () => {
   const dispatch = useAppDispatch();
@@ -89,6 +90,10 @@ const AddPolicyScreen = () => {
     policyName.indexOf(" ") === -1 &&
     policyDefinition.trim() !== "";
 
+  useEffect(() => {
+    dispatch(setHelpName("add_policy"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Fragment>
       <Grid item xs={12}>
@@ -99,6 +104,7 @@ const AddPolicyScreen = () => {
               onClick={() => navigate(IAM_PAGES.POLICIES)}
             />
           }
+          actions={<HelpMenu />}
         />
         <PageLayout>
           <FormLayout

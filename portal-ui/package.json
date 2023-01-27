@@ -26,6 +26,7 @@
     "react-dom": "^18.1.0",
     "react-dropzone": "^14.2.3",
     "react-grid-layout": "^1.2.0",
+    "react-markdown": "8.0.7",
     "react-redux": "^8.0.7",
     "react-router-dom": "6.11.2",
     "react-virtualized": "^9.22.5",

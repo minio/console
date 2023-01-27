@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Theme } from "@mui/material/styles";
 import { BackLink, Button, CreateUserIcon, FormLayout, PageLayout } from "mds";
 import createStyles from "@mui/styles/createStyles";
@@ -36,7 +36,7 @@ import GroupsSelectors from "./GroupsSelectors";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { useNavigate } from "react-router-dom";
 import AddUserHelpBox from "./AddUserHelpBox";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import {
@@ -45,6 +45,7 @@ import {
   setSendEnabled,
 } from "./AddUsersSlice";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 interface IAddUserProps {
   classes: any;
@@ -97,6 +98,11 @@ const AddUser = ({ classes }: IAddUserProps) => {
       .then(() => navigate(`${IAM_PAGES.USERS}`));
   };
 
+  useEffect(() => {
+    dispatch(setHelpName("add_user"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       <Grid item xs={12}>
@@ -107,6 +113,7 @@ const AddUser = ({ classes }: IAddUserProps) => {
               onClick={() => navigate(IAM_PAGES.USERS)}
             />
           }
+          actions={<HelpMenu />}
         />
         <PageLayout>
           <FormLayout

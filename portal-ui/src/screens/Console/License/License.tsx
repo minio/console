@@ -27,6 +27,9 @@ import RegistrationStatusBanner from "../Support/RegistrationStatusBanner";
 import withSuspense from "../Common/Components/withSuspense";
 import { getLicenseConsent } from "./utils";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
+import { setHelpName } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 const LicenseConsentModal = withSuspense(
   React.lazy(() => import("./LicenseConsentModal"))
@@ -52,6 +55,12 @@ const License = () => {
     setActivateProductModal(false);
     fetchLicenseInfo();
   };
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setHelpName("license"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const isRegistered = licenseInfo && clusterRegistered;
 
@@ -135,6 +144,7 @@ const License = () => {
                 Register your cluster
               </Button>
             )}
+            <HelpMenu />
           </Fragment>
         }
       />

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -31,12 +31,14 @@ import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
 import {
   setErrorSnackMessage,
+  setHelpName,
   setServerNeedsRestart,
 } from "../../../systemSlice";
 import useApi from "../Common/Hooks/useApi";
 import SectionTitle from "../Common/SectionTitle";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 type AddIDPConfigurationProps = {
   classes?: any;
@@ -164,10 +166,16 @@ const AddIDPConfiguration = ({
     }
   };
 
+  useEffect(() => {
+    dispatch(setHelpName("add_idp_config"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Grid item xs={12}>
       <PageHeaderWrapper
         label={<BackLink onClick={() => navigate(backLink)} label={header} />}
+        actions={<HelpMenu />}
       />
       <PageLayout>
         <Box

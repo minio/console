@@ -64,10 +64,11 @@ import withSuspense from "../Common/Components/withSuspense";
 
 import { encodeURLString } from "../../../common/utils";
 
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const SetPolicy = withSuspense(
@@ -110,6 +111,11 @@ const Groups = ({ classes }: IGroupsProps) => {
 
   useEffect(() => {
     isLoading(true);
+  }, []);
+
+  useEffect(() => {
+    dispatch(setHelpName("groups"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const displayGroups = hasPermission(
@@ -222,7 +228,7 @@ const Groups = ({ classes }: IGroupsProps) => {
           }}
         />
       )}
-      <PageHeaderWrapper label={"Groups"} />
+      <PageHeaderWrapper label={"Groups"} actions={<HelpMenu />} />
 
       <PageLayout>
         <Grid container spacing={1}>
