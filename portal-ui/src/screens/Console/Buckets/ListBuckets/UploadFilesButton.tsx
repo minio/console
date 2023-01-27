@@ -14,21 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { Menu, MenuItem } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import { UploadFolderIcon, UploadIcon } from "mds";
+import { Button, UploadFolderIcon, UploadIcon } from "mds";
 import {
   IAM_SCOPES,
   permissionTooltipHelper,
 } from "../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../common/SecureComponent";
-import { Button } from "mds";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import { useSelector } from "react-redux";
+import { AppState } from "../../../../store";
 
 interface IUploadFilesButton {
   uploadPath: string;
@@ -58,7 +59,10 @@ const UploadFilesButton = ({
   uploadFolderFunction,
   classes,
 }: IUploadFilesButton) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const anonymousMode = useSelector(
+    (state: AppState) => state.system.anonymousMode
+  );
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openUploadMenu = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -67,10 +71,11 @@ const UploadFilesButton = ({
     setAnchorEl(null);
   };
 
-  const uploadObjectAllowed = hasPermission(uploadPath, [
-    IAM_SCOPES.S3_PUT_OBJECT,
-    IAM_SCOPES.S3_PUT_ACTIONS,
-  ]);
+  const uploadObjectAllowed =
+    hasPermission(uploadPath, [
+      IAM_SCOPES.S3_PUT_OBJECT,
+      IAM_SCOPES.S3_PUT_ACTIONS,
+    ]) || anonymousMode;
   const uploadFolderAllowed = hasPermission(
     bucketName,
     [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],

@@ -48,7 +48,6 @@ import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import LabelValuePair from "../Common/UsageBarWrapper/LabelValuePair";
-
 type IDPConfigurationDetailsProps = {
   classes?: any;
   formFields: object;
@@ -384,9 +383,6 @@ const IDPConfigurationDetails = ({
       <PageLayout className={classes.pageContainer}>
         <Box>
           <ScreenTitle
-            classes={{
-              screenTitle: classes.screenTitle,
-            }}
             icon={icon}
             title={configurationName === "_" ? "Default" : configurationName}
             actions={

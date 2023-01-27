@@ -534,6 +534,10 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 			return middleware.NotImplemented("operation user.UpdateUserInfo has not yet been implemented")
 		}),
 
+		// Applies when the "X-Anonymous" header is set
+		AnonymousAuth: func(token string) (*models.Principal, error) {
+			return nil, errors.NotImplemented("api key auth (anonymous) X-Anonymous from header param [X-Anonymous] has not yet been implemented")
+		},
 		KeyAuth: func(token string, scopes []string) (*models.Principal, error) {
 			return nil, errors.NotImplemented("oauth2 bearer auth (key) has not yet been implemented")
 		},
@@ -583,6 +587,10 @@ type ConsoleAPI struct {
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
+
+	// AnonymousAuth registers a function that takes a token and returns a principal
+	// it performs authentication based on an api key X-Anonymous provided in the header
+	AnonymousAuth func(string) (*models.Principal, error)
 
 	// KeyAuth registers a function that takes an access token and a collection of required scopes and returns a principal
 	// it performs authentication based on an oauth2 bearer token provided in the request
@@ -975,6 +983,9 @@ func (o *ConsoleAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.AnonymousAuth == nil {
+		unregistered = append(unregistered, "XAnonymousAuth")
+	}
 	if o.KeyAuth == nil {
 		unregistered = append(unregistered, "KeyAuth")
 	}
@@ -1444,6 +1455,12 @@ func (o *ConsoleAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) m
 	result := make(map[string]runtime.Authenticator)
 	for name := range schemes {
 		switch name {
+		case "anonymous":
+			scheme := schemes[name]
+			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, func(token string) (interface{}, error) {
+				return o.AnonymousAuth(token)
+			})
+
 		case "key":
 			result[name] = o.BearerAuthenticator(name, func(token string, scopes []string) (interface{}, error) {
 				return o.KeyAuth(token, scopes)

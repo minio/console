@@ -20,12 +20,28 @@ import { useSelector } from "react-redux";
 import CommandBar from "./CommandBar";
 import { selFeatures } from "./consoleSlice";
 import TrafficMonitor from "./Common/ObjectManager/TrafficMonitor";
+import { AppState } from "../../store";
+import AnonymousAccess from "../AnonymousAccess/AnonymousAccess";
+import { Fragment } from "react";
 
 const ConsoleKBar = () => {
   const features = useSelector(selFeatures);
+  const anonymousMode = useSelector(
+    (state: AppState) => state.system.anonymousMode
+  );
+
   // if we are hiding the menu also disable the k-bar so just return console
   if (features?.includes("hide-menu")) {
     return <Console />;
+  }
+  // for anonymous mode, we don't load Console, only AnonymousAccess
+  if (anonymousMode) {
+    return (
+      <Fragment>
+        <TrafficMonitor />
+        <AnonymousAccess />
+      </Fragment>
+    );
   }
 
   return (

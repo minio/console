@@ -241,9 +241,6 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
       <PageLayout className={classes.pageContainer}>
         <Grid item xs={12}>
           <ScreenTitle
-            classes={{
-              screenTitle: classes.screenTitle,
-            }}
             icon={
               <Fragment>
                 <BucketsIcon width={40} />

@@ -35,6 +35,7 @@ import (
 type ListObjectsURL struct {
 	BucketName string
 
+	Limit        *int32
 	Prefix       *string
 	Recursive    *bool
 	WithMetadata *bool
@@ -80,6 +81,14 @@ func (o *ListObjectsURL) Build() (*url.URL, error) {
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
+
+	var limitQ string
+	if o.Limit != nil {
+		limitQ = swag.FormatInt32(*o.Limit)
+	}
+	if limitQ != "" {
+		qs.Set("limit", limitQ)
+	}
 
 	var prefixQ string
 	if o.Prefix != nil {

@@ -20,13 +20,23 @@ import { clearSession } from "../utils";
 import { ErrorResponseHandler } from "../types";
 import { baseUrl } from "../../history";
 
+type RequestHeaders = { [name: string]: string };
+
 export class API {
-  invoke(method: string, url: string, data?: object) {
+  invoke(method: string, url: string, data?: object, headers?: RequestHeaders) {
     let targetURL = url;
     if (targetURL[0] === "/") {
       targetURL = targetURL.slice(1);
     }
-    return request(method, targetURL)
+    let req = request(method, targetURL);
+
+    if (headers) {
+      for (let k in headers) {
+        req.set(k, headers[k]);
+      }
+    }
+
+    return req
       .send(data)
       .then((res) => res.body)
       .catch((err) => {
