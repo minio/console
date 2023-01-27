@@ -2034,7 +2034,10 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 	if err != nil {
 		return false, restapi.ErrorWithContext(ctx, err, restapi.ErrUnableToGetTenantUsage)
 	}
+	return setTenantMonitoring(ctx, minTenant, opClient, params)
+}
 
+func setTenantMonitoring(ctx context.Context, minTenant *miniov2.Tenant, opClient OperatorClientI, params operator_api.SetTenantMonitoringParams) (bool, *models.Error) {
 	if params.Data.Toggle {
 		if params.Data.PrometheusEnabled {
 			minTenant.Spec.Prometheus = nil
@@ -2046,7 +2049,7 @@ func setTenantMonitoringResponse(session *models.Principal, params operator_api.
 				Image:          promImage,
 			}
 		}
-		_, err = opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
+		_, err := opClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 		if err != nil {
 			return false, restapi.ErrorWithContext(ctx, err)
 		}
