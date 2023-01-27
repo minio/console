@@ -16,26 +16,15 @@
 
 import React, { Fragment, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Grid } from "@mui/material";
 import { AppState, useAppDispatch } from "../../../../store";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
-import PageHeader from "../../Common/PageHeader/PageHeader";
-import { SettingsIcon } from "mds";
-
-import { SecureComponent } from "../../../../common/SecureComponent";
-import {
-  IAM_PAGES,
-  IAM_PERMISSIONS,
-  IAM_ROLES,
-  IAM_SCOPES,
-} from "../../../../common/SecureComponent/permissions";
-import BackLink from "../../../../common/BackLink";
+import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import {
   newMessage,
   resetMessages,
@@ -50,17 +39,10 @@ import {
   setLockingEnabled,
   setObjectDetailsView,
   setRecords,
-  setSearchObjects,
-  setSearchVersions,
   setSelectedObjectView,
   setSimplePathHandler,
   setVersionsModeEnabled,
 } from "../../ObjectBrowser/objectBrowserSlice";
-import SearchBox from "../../Common/SearchBox";
-import { selFeatures } from "../../consoleSlice";
-import AutoColorIcon from "../../Common/Components/AutoColorIcon";
-import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import { Button } from "mds";
 import hasPermission from "../../../../common/SecureComponent/accessControl";
 import { IMessageEvent } from "websocket";
 import { wsProtocol } from "../../../../utils/wsUtils";
@@ -74,6 +56,7 @@ import { setErrorSnackMessage } from "../../../../systemSlice";
 import api from "../../../../common/api";
 import { BucketObjectLocking, BucketVersioning } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
+import OBHeader from "../../ObjectBrowser/OBHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -145,7 +128,6 @@ const initWSConnection = (
 
 const BrowserHandler = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
 
@@ -153,18 +135,6 @@ const BrowserHandler = () => {
     (state: AppState) => state.objectBrowser.loadingVersioning
   );
 
-  const versionsMode = useSelector(
-    (state: AppState) => state.objectBrowser.versionsMode
-  );
-  const searchObjects = useSelector(
-    (state: AppState) => state.objectBrowser.searchObjects
-  );
-  const versionedFile = useSelector(
-    (state: AppState) => state.objectBrowser.versionedFile
-  );
-  const searchVersions = useSelector(
-    (state: AppState) => state.objectBrowser.searchVersions
-  );
   const rewindEnabled = useSelector(
     (state: AppState) => state.objectBrowser.rewind.rewindEnabled
   );
@@ -195,14 +165,13 @@ const BrowserHandler = () => {
   const isOpeningOD = useSelector(
     (state: AppState) => state.objectBrowser.isOpeningObjectDetail
   );
-
-  const features = useSelector(selFeatures);
+  const anonymousMode = useSelector(
+    (state: AppState) => state.system.anonymousMode
+  );
 
   const bucketName = params.bucketName || "";
   const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
   const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
-
-  const obOnly = !!features?.includes("object-browser-only");
 
   /*WS Request Handlers*/
   const onMessageCallBack = useCallback(
@@ -297,7 +266,6 @@ const BrowserHandler = () => {
         const dupRequest = () => {
           initWSRequest(path, date);
         };
-
         initWSConnection(dupRequest, onMessageCallBack);
       }
     },
@@ -377,10 +345,11 @@ const BrowserHandler = () => {
     simplePath,
   ]);
 
-  const displayListObjects = hasPermission(bucketName, [
-    IAM_SCOPES.S3_LIST_BUCKET,
-    IAM_SCOPES.S3_ALL_LIST_BUCKET,
-  ]);
+  const displayListObjects =
+    hasPermission(bucketName, [
+      IAM_SCOPES.S3_LIST_BUCKET,
+      IAM_SCOPES.S3_ALL_LIST_BUCKET,
+    ]) || anonymousMode;
 
   // Common objects list
   useEffect(() => {
@@ -408,7 +377,6 @@ const BrowserHandler = () => {
       if (rewindEnabled && rewindDate) {
         requestDate = rewindDate;
       }
-
       initWSRequest(pathPrefix, requestDate);
     } else {
       dispatch(setLoadingObjects(false));
@@ -429,7 +397,7 @@ const BrowserHandler = () => {
   }, [internalPaths, dispatch]);
 
   useEffect(() => {
-    if (loadingVersioning) {
+    if (loadingVersioning && !anonymousMode) {
       if (displayListObjects) {
         api
           .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
@@ -449,7 +417,13 @@ const BrowserHandler = () => {
         dispatch(resetMessages());
       }
     }
-  }, [bucketName, loadingVersioning, dispatch, displayListObjects]);
+  }, [
+    bucketName,
+    loadingVersioning,
+    dispatch,
+    displayListObjects,
+    anonymousMode,
+  ]);
 
   useEffect(() => {
     if (loadingLocking) {
@@ -497,127 +471,10 @@ const BrowserHandler = () => {
     }
   }, [bucketName, loadingLocking, dispatch, displayListObjects]);
 
-  const openBucketConfiguration = () => {
-    navigate(`/buckets/${bucketName}/admin`);
-  };
-
-  const configureBucketAllowed = hasPermission(bucketName, [
-    IAM_SCOPES.S3_GET_BUCKET_POLICY,
-    IAM_SCOPES.S3_PUT_BUCKET_POLICY,
-    IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
-    IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
-    IAM_SCOPES.S3_GET_BUCKET_ENCRYPTION_CONFIGURATION,
-    IAM_SCOPES.S3_PUT_BUCKET_ENCRYPTION_CONFIGURATION,
-    IAM_SCOPES.S3_DELETE_BUCKET,
-    IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
-    IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
-    IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
-    IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
-    IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
-    IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
-    IAM_SCOPES.ADMIN_GET_BUCKET_QUOTA,
-    IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA,
-    IAM_SCOPES.S3_PUT_BUCKET_TAGGING,
-    IAM_SCOPES.S3_GET_BUCKET_TAGGING,
-    IAM_SCOPES.S3_LIST_BUCKET_VERSIONS,
-    IAM_SCOPES.S3_GET_BUCKET_POLICY_STATUS,
-    IAM_SCOPES.S3_DELETE_BUCKET_POLICY,
-    IAM_SCOPES.S3_GET_ACTIONS,
-    IAM_SCOPES.S3_PUT_ACTIONS,
-  ]);
-
-  const searchBar = (
-    <Fragment>
-      {!versionsMode ? (
-        <SecureComponent
-          scopes={[IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET]}
-          resource={bucketName}
-          errorProps={{ disabled: true }}
-        >
-          <SearchBox
-            placeholder={"Start typing to filter objects in the bucket"}
-            onChange={(value) => {
-              dispatch(setSearchObjects(value));
-            }}
-            value={searchObjects}
-          />
-        </SecureComponent>
-      ) : (
-        <Fragment>
-          <SearchBox
-            placeholder={`Start typing to filter versions of ${versionedFile}`}
-            onChange={(value) => {
-              dispatch(setSearchVersions(value));
-            }}
-            value={searchVersions}
-          />
-        </Fragment>
-      )}
-    </Fragment>
-  );
-
   return (
     <Fragment>
-      {!obOnly ? (
-        <PageHeader
-          label={
-            <BackLink
-              label={"Object Browser"}
-              to={IAM_PAGES.OBJECT_BROWSER_VIEW}
-            />
-          }
-          actions={
-            <SecureComponent
-              scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
-              resource={bucketName}
-              errorProps={{ disabled: true }}
-            >
-              <TooltipWrapper
-                tooltip={
-                  configureBucketAllowed
-                    ? "Configure Bucket"
-                    : "You do not have the required permissions to configure this bucket. Please contact your MinIO administrator to request " +
-                      IAM_ROLES.BUCKET_ADMIN +
-                      " permisions."
-                }
-              >
-                <Button
-                  id={"configure-bucket-main"}
-                  color="primary"
-                  aria-label="Configure Bucket"
-                  onClick={openBucketConfiguration}
-                  icon={
-                    <SettingsIcon
-                      style={{ width: 20, height: 20, marginTop: -3 }}
-                    />
-                  }
-                  style={{
-                    padding: "0 10px",
-                  }}
-                />
-              </TooltipWrapper>
-            </SecureComponent>
-          }
-          middleComponent={searchBar}
-        />
-      ) : (
-        <Grid
-          container
-          sx={{
-            padding: "20px 32px 0",
-          }}
-        >
-          <Grid>
-            <AutoColorIcon marginRight={30} marginTop={10} />
-          </Grid>
-          <Grid item xs>
-            {searchBar}
-          </Grid>
-        </Grid>
-      )}
-      <Grid>
-        <ListObjects />
-      </Grid>
+      {!anonymousMode && <OBHeader bucketName={bucketName} />}
+      <ListObjects />
     </Fragment>
   );
 };

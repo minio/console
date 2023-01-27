@@ -51,6 +51,7 @@ export const consoleSlice = createSlice({
 
 export const { saveSessionResponse, resetSession } = consoleSlice.actions;
 export const selSession = (state: AppState) => state.console.session;
-export const selFeatures = (state: AppState) => state.console.session.features;
+export const selFeatures = (state: AppState) =>
+  state.console.session ? state.console.session.features : [];
 
 export default consoleSlice.reducer;

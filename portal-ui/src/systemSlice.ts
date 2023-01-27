@@ -43,6 +43,7 @@ export interface SystemState {
   siteReplicationInfo: SRInfoStateType;
   licenseInfo: null | SubnetInfo;
   overrideStyles: null | IEmbeddedCustomStyles;
+  anonymousMode: boolean;
 }
 
 const initialState: SystemState = {
@@ -72,6 +73,7 @@ const initialState: SystemState = {
   distributedSetup: false,
   licenseInfo: null,
   overrideStyles: null,
+  anonymousMode: false,
 };
 
 export const systemSlice = createSlice({
@@ -159,6 +161,13 @@ export const systemSlice = createSlice({
     ) => {
       state.overrideStyles = action.payload;
     },
+    setAnonymousMode: (state) => {
+      state.anonymousMode = true;
+      state.loggedIn = true;
+    },
+    resetSystem: () => {
+      return initialState;
+    },
   },
 });
 
@@ -181,6 +190,8 @@ export const {
   setSiteReplicationInfo,
   setLicenseInfo,
   setOverrideStyles,
+  setAnonymousMode,
+  resetSystem,
 } = systemSlice.actions;
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;

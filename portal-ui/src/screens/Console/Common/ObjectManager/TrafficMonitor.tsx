@@ -33,8 +33,8 @@ const TrafficMonitor = () => {
     (state: AppState) => state.objectBrowser.objectManager.objectsToManage
   );
 
-  const limitVars = useSelector(
-    (state: AppState) => state.console.session.envConstants
+  const limitVars = useSelector((state: AppState) =>
+    state.console.session ? state.console.session.envConstants : null
   );
 
   const currentDIP = useSelector(

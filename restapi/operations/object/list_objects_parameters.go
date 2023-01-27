@@ -57,6 +57,10 @@ type ListObjectsParams struct {
 	/*
 	  In: query
 	*/
+	Limit *int32
+	/*
+	  In: query
+	*/
 	Prefix *string
 	/*
 	  In: query
@@ -85,6 +89,11 @@ func (o *ListObjectsParams) BindRequest(r *http.Request, route *middleware.Match
 
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qLimit, qhkLimit, _ := qs.GetOK("limit")
+	if err := o.bindLimit(qLimit, qhkLimit, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -123,6 +132,29 @@ func (o *ListObjectsParams) bindBucketName(rawData []string, hasKey bool, format
 	// Required: true
 	// Parameter is provided by construction from the route
 	o.BucketName = raw
+
+	return nil
+}
+
+// bindLimit binds and validates parameter Limit from query.
+func (o *ListObjectsParams) bindLimit(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	value, err := swag.ConvertInt32(raw)
+	if err != nil {
+		return errors.InvalidType("limit", "query", "int32", raw)
+	}
+	o.Limit = &value
 
 	return nil
 }

@@ -1458,6 +1458,14 @@ func init() {
     },
     "/buckets/{bucket_name}/objects": {
       "get": {
+        "security": [
+          {
+            "key": []
+          },
+          {
+            "anonymous": []
+          }
+        ],
         "tags": [
           "Object"
         ],
@@ -1488,6 +1496,12 @@ func init() {
           {
             "type": "boolean",
             "name": "with_metadata",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
             "in": "query"
           }
         ],
@@ -1566,6 +1580,14 @@ func init() {
     },
     "/buckets/{bucket_name}/objects/download": {
       "get": {
+        "security": [
+          {
+            "key": []
+          },
+          {
+            "anonymous": []
+          }
+        ],
         "produces": [
           "application/octet-stream"
         ],
@@ -1930,6 +1952,14 @@ func init() {
     },
     "/buckets/{bucket_name}/objects/upload": {
       "post": {
+        "security": [
+          {
+            "key": []
+          },
+          {
+            "anonymous": []
+          }
+        ],
         "consumes": [
           "multipart/form-data"
         ],
@@ -8469,6 +8499,11 @@ func init() {
     }
   },
   "securityDefinitions": {
+    "anonymous": {
+      "type": "apiKey",
+      "name": "X-Anonymous",
+      "in": "header"
+    },
     "key": {
       "type": "oauth2",
       "flow": "accessCode",
@@ -9906,6 +9941,14 @@ func init() {
     },
     "/buckets/{bucket_name}/objects": {
       "get": {
+        "security": [
+          {
+            "key": []
+          },
+          {
+            "anonymous": []
+          }
+        ],
         "tags": [
           "Object"
         ],
@@ -9936,6 +9979,12 @@ func init() {
           {
             "type": "boolean",
             "name": "with_metadata",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
             "in": "query"
           }
         ],
@@ -10014,6 +10063,14 @@ func init() {
     },
     "/buckets/{bucket_name}/objects/download": {
       "get": {
+        "security": [
+          {
+            "key": []
+          },
+          {
+            "anonymous": []
+          }
+        ],
         "produces": [
           "application/octet-stream"
         ],
@@ -10378,6 +10435,14 @@ func init() {
     },
     "/buckets/{bucket_name}/objects/upload": {
       "post": {
+        "security": [
+          {
+            "key": []
+          },
+          {
+            "anonymous": []
+          }
+        ],
         "consumes": [
           "multipart/form-data"
         ],
@@ -17043,6 +17108,11 @@ func init() {
     }
   },
   "securityDefinitions": {
+    "anonymous": {
+      "type": "apiKey",
+      "name": "X-Anonymous",
+      "in": "header"
+    },
     "key": {
       "type": "oauth2",
       "flow": "accessCode",

@@ -93,6 +93,7 @@ export interface ObjectBrowserState {
   shareFileModalOpen: boolean;
   isOpeningObjectDetail: boolean;
   retentionConfig: IRetentionConfig | null;
+  longFileOpen: boolean;
 }
 
 export interface ObjectManager {

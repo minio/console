@@ -18,7 +18,7 @@ package restapi
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -30,7 +30,7 @@ import (
 
 	"github.com/minio/console/pkg/utils"
 
-	"github.com/go-openapi/errors"
+	errorsApi "github.com/go-openapi/errors"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth"
 	"github.com/minio/websocket"
@@ -139,15 +139,15 @@ func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 // Request should come like ws://<host>:<port>/ws/<api>
 func serveWS(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	wsPath := strings.TrimPrefix(req.URL.Path, wsBasePath)
 	// Perform authentication before upgrading to a Websocket Connection
 	// authenticate WS connection with Console
 	session, err := auth.GetClaimsFromTokenInRequest(req)
-	if err != nil {
+	if err != nil && (errors.Is(err, auth.ErrReadingToken) && !strings.HasPrefix(wsPath, `/objectManager`)) {
 		ErrorWithContext(ctx, err)
-		errors.ServeError(w, req, errors.New(http.StatusUnauthorized, err.Error()))
+		errorsApi.ServeError(w, req, errorsApi.New(http.StatusUnauthorized, err.Error()))
 		return
 	}
-
 	// Development mode validation
 	if getConsoleDevMode() {
 		upgrader.CheckOrigin = func(r *http.Request) bool {
@@ -159,11 +159,10 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		ErrorWithContext(ctx, err)
-		errors.ServeError(w, req, err)
+		errorsApi.ServeError(w, req, err)
 		return
 	}
 
-	wsPath := strings.TrimPrefix(req.URL.Path, wsBasePath)
 	switch {
 	case strings.HasPrefix(wsPath, `/trace`):
 		wsAdminClient, err := newWebSocketAdminClient(conn, session)
@@ -537,227 +536,6 @@ func (wsc *wsAdminClient) profile(ctx context.Context, opts *profileOptions) {
 	err := startProfiling(ctx, wsc.conn, wsc.client, opts)
 
 	sendWsCloseMessage(wsc.conn, err)
-}
-
-func (wsc *wsMinioClient) objectManager(session *models.Principal) {
-	// Storage of Cancel Contexts for this connection
-	cancelContexts := make(map[int64]context.CancelFunc)
-
-	// Initial goroutine
-	defer func() {
-		// We close socket at the end of requests
-		wsc.conn.close()
-		for _, c := range cancelContexts {
-			// invoke cancel
-			c()
-		}
-	}()
-
-	writeChannel := make(chan WSResponse)
-	done := make(chan interface{})
-
-	// Read goroutine
-	go func() {
-		for {
-			mType, message, err := wsc.conn.readMessage()
-			if err != nil {
-				LogInfo("Error while reading objectManager message", err)
-				close(done)
-				return
-			}
-
-			if mType == websocket.TextMessage {
-				// We get request data & review information
-				var messageRequest ObjectsRequest
-
-				err := json.Unmarshal(message, &messageRequest)
-				if err != nil {
-					LogInfo("Error on message request unmarshal")
-					close(done)
-					return
-				}
-
-				// new message, new context
-				ctx, cancel := context.WithCancel(context.Background())
-
-				// We store the cancel func associated with this request
-				cancelContexts[messageRequest.RequestID] = cancel
-
-				const itemsPerBatch = 1000
-				switch messageRequest.Mode {
-				case "close":
-					close(done)
-					return
-				case "cancel":
-					// if we have that request id, cancel it
-					if cancelFunc, ok := cancelContexts[messageRequest.RequestID]; ok {
-						cancelFunc()
-						delete(cancelContexts, messageRequest.RequestID)
-					}
-				case "objects":
-					// cancel all previous open objects requests for listing
-					for rid, c := range cancelContexts {
-						if rid < messageRequest.RequestID {
-							// invoke cancel
-							c()
-						}
-					}
-
-					// start listing and writing to web socket
-					go func() {
-						objectRqConfigs, err := getObjectsOptionsFromReq(messageRequest)
-						if err != nil {
-							LogInfo(fmt.Sprintf("Error during Objects OptionsParse %s", err.Error()))
-							return
-						}
-						var buffer []ObjectResponse
-						for lsObj := range startObjectsListing(ctx, wsc.client, objectRqConfigs) {
-							if cancelContexts[messageRequest.RequestID] == nil {
-								return
-							}
-							if lsObj.Err != nil {
-								writeChannel <- WSResponse{
-									RequestID: messageRequest.RequestID,
-									Error:     lsObj.Err.Error(),
-									Prefix:    messageRequest.Prefix,
-								}
-
-								continue
-							}
-							objItem := ObjectResponse{
-								Name:         lsObj.Key,
-								Size:         lsObj.Size,
-								LastModified: lsObj.LastModified.Format(time.RFC3339),
-								VersionID:    lsObj.VersionID,
-								IsLatest:     lsObj.IsLatest,
-								DeleteMarker: lsObj.IsDeleteMarker,
-							}
-							buffer = append(buffer, objItem)
-
-							if len(buffer) >= itemsPerBatch {
-								writeChannel <- WSResponse{
-									RequestID: messageRequest.RequestID,
-									Data:      buffer,
-								}
-								buffer = nil
-							}
-						}
-						if len(buffer) > 0 {
-							writeChannel <- WSResponse{
-								RequestID: messageRequest.RequestID,
-								Data:      buffer,
-							}
-						}
-
-						writeChannel <- WSResponse{
-							RequestID:  messageRequest.RequestID,
-							RequestEnd: true,
-						}
-
-						// remove the cancellation context
-						delete(cancelContexts, messageRequest.RequestID)
-					}()
-				case "rewind":
-					// cancel all previous open objects requests for listing
-					for rid, c := range cancelContexts {
-						if rid < messageRequest.RequestID {
-							// invoke cancel
-							c()
-						}
-					}
-
-					// start listing and writing to web socket
-					go func() {
-						objectRqConfigs, err := getObjectsOptionsFromReq(messageRequest)
-						if err != nil {
-							LogInfo(fmt.Sprintf("Error during Objects OptionsParse %s", err.Error()))
-							cancel()
-							return
-						}
-
-						s3Client, err := newS3BucketClient(session, objectRqConfigs.BucketName, objectRqConfigs.Prefix)
-						if err != nil {
-							LogError("error creating S3Client:", err)
-							close(done)
-							cancel()
-							return
-						}
-
-						mcS3C := mcClient{client: s3Client}
-
-						var buffer []ObjectResponse
-
-						for lsObj := range startRewindListing(ctx, mcS3C, objectRqConfigs) {
-							if lsObj.Err != nil {
-								writeChannel <- WSResponse{
-									RequestID: messageRequest.RequestID,
-									Error:     lsObj.Err.String(),
-									Prefix:    messageRequest.Prefix,
-								}
-
-								continue
-							}
-
-							name := strings.ReplaceAll(lsObj.URL.Path, fmt.Sprintf("/%s/", objectRqConfigs.BucketName), "")
-
-							objItem := ObjectResponse{
-								Name:         name,
-								Size:         lsObj.Size,
-								LastModified: lsObj.Time.Format(time.RFC3339),
-								VersionID:    lsObj.VersionID,
-								IsLatest:     lsObj.IsLatest,
-								DeleteMarker: lsObj.IsDeleteMarker,
-							}
-							buffer = append(buffer, objItem)
-
-							if len(buffer) >= itemsPerBatch {
-								writeChannel <- WSResponse{
-									RequestID: messageRequest.RequestID,
-									Data:      buffer,
-								}
-								buffer = nil
-							}
-
-						}
-						if len(buffer) > 0 {
-							writeChannel <- WSResponse{
-								RequestID: messageRequest.RequestID,
-								Data:      buffer,
-							}
-						}
-
-						writeChannel <- WSResponse{
-							RequestID:  messageRequest.RequestID,
-							RequestEnd: true,
-						}
-
-						// remove the cancellation context
-						delete(cancelContexts, messageRequest.RequestID)
-					}()
-				}
-			}
-		}
-	}()
-
-	// Write goroutine
-	go func() {
-		for writeM := range writeChannel {
-			jsonData, err := json.Marshal(writeM)
-			if err != nil {
-				LogInfo("Error while parsing the response", err)
-				return
-			}
-
-			err = wsc.conn.writeMessage(websocket.TextMessage, jsonData)
-
-			if err != nil {
-				LogInfo("Error while writing the message", err)
-				return
-			}
-		}
-	}()
-
-	<-done
 }
 
 // sendWsCloseMessage sends Websocket Connection Close Message indicating the Status Code

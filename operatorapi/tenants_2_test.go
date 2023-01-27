@@ -1179,6 +1179,99 @@ func (suite *TenantTestSuite) TestSetTenantMonitoringHandlerWithError() {
 	suite.assert.True(ok)
 }
 
+func (suite *TenantTestSuite) TestSetTenantMonitoringWithTogglePrometheusError() {
+	opClientTenantUpdateMock = func(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error) {
+		return nil, errors.New("mock-tenant-update-error")
+	}
+	params, _ := suite.initSetTenantMonitoringRequest()
+	params.Data = &models.TenantMonitoringInfo{
+		Toggle: true,
+	}
+	tenant := &miniov2.Tenant{}
+	ok, err := setTenantMonitoring(context.Background(), tenant, suite.opClient, params)
+	suite.assert.False(ok)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestSetTenantMonitoringWithTogglePrometheusNoError() {
+	opClientTenantUpdateMock = func(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error) {
+		return nil, nil
+	}
+	params, _ := suite.initSetTenantMonitoringRequest()
+	params.Data = &models.TenantMonitoringInfo{
+		Toggle: true,
+	}
+	tenant := &miniov2.Tenant{}
+	ok, err := setTenantMonitoring(context.Background(), tenant, suite.opClient, params)
+	suite.assert.True(ok)
+	suite.assert.Nil(err)
+}
+
+func (suite *TenantTestSuite) TestSetTenantMonitoringWithTenantUpdateError() {
+	opClientTenantUpdateMock = func(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error) {
+		return nil, errors.New("mock-tenant-update-error")
+	}
+	runAsUser := "1000"
+	runAsGroup := "1000"
+	fsGroup := "1000"
+	params, _ := suite.initSetTenantMonitoringRequest()
+	params.Data = &models.TenantMonitoringInfo{
+		Labels: []*models.Label{{
+			Key:   "mock-label",
+			Value: "mock-value",
+		}},
+		Annotations: []*models.Annotation{{
+			Key:   "mock-annotation",
+			Value: "mock-value",
+		}},
+		NodeSelector: []*models.NodeSelector{{
+			Key:   "mock-annotation",
+			Value: "mock-value",
+		}},
+		MonitoringCPURequest: "1",
+		MonitoringMemRequest: "1Gi",
+		DiskCapacityGB:       "1Gi",
+		SecurityContext: &models.SecurityContext{
+			RunAsUser:  &runAsUser,
+			RunAsGroup: &runAsGroup,
+			FsGroup:    fsGroup,
+		},
+	}
+	tenant := &miniov2.Tenant{
+		Spec: miniov2.TenantSpec{
+			Prometheus: &miniov2.PrometheusConfig{},
+		},
+	}
+	ok, err := setTenantMonitoring(context.Background(), tenant, suite.opClient, params)
+	suite.assert.False(ok)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestSetTenantMonitoringWithoutError() {
+	opClientTenantUpdateMock = func(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error) {
+		return nil, nil
+	}
+	runAsUser := "1000"
+	runAsGroup := "1000"
+	fsGroup := "1000"
+	params, _ := suite.initSetTenantMonitoringRequest()
+	params.Data = &models.TenantMonitoringInfo{
+		SecurityContext: &models.SecurityContext{
+			RunAsUser:  &runAsUser,
+			RunAsGroup: &runAsGroup,
+			FsGroup:    fsGroup,
+		},
+	}
+	tenant := &miniov2.Tenant{
+		Spec: miniov2.TenantSpec{
+			Prometheus: &miniov2.PrometheusConfig{},
+		},
+	}
+	ok, err := setTenantMonitoring(context.Background(), tenant, suite.opClient, params)
+	suite.assert.True(ok)
+	suite.assert.Nil(err)
+}
+
 func (suite *TenantTestSuite) initSetTenantMonitoringRequest() (params operator_api.SetTenantMonitoringParams, api operations.OperatorAPI) {
 	registerTenantHandlers(&api)
 	params.HTTPRequest = &http.Request{}
@@ -1362,7 +1455,9 @@ func (suite *TenantTestSuite) TestUpdateTenantPoolsWithoutError() {
 								}},
 							},
 							PreferredDuringSchedulingIgnoredDuringExecution: []corev1.PreferredSchedulingTerm{{
-								Preference: corev1.NodeSelectorTerm{},
+								Preference: corev1.NodeSelectorTerm{
+									MatchFields: []corev1.NodeSelectorRequirement{{}},
+								},
 							}},
 						},
 						PodAffinity: &corev1.PodAffinity{

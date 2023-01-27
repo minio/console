@@ -456,12 +456,6 @@ export const objectBrowserCommon = {
       flexDirection: "row" as const,
     },
   },
-  actionsSection: {
-    display: "flex",
-    justifyContent: "space-between",
-    width: "100%",
-    marginTop: 15,
-  },
 };
 
 // ** According to W3 spec, default minimum values for flex width flex-grow is "auto" (https://drafts.csswg.org/css-flexbox/#min-size-auto). So in this case we need to enforce the use of an absolute width.
