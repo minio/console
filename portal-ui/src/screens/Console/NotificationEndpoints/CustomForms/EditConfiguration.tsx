@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { Button } from "mds";
+import { Button, Loader } from "mds";
 import { useLocation, useNavigate } from "react-router-dom";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -36,18 +36,20 @@ import {
 } from "../../Configurations/utils";
 import {
   IConfigurationElement,
+  IConfigurationSys,
   IElementValue,
 } from "../../Configurations/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ResetConfigurationModal from "./ResetConfigurationModal";
 import {
+  configurationIsLoading,
   setErrorSnackMessage,
   setServerNeedsRestart,
   setSnackBarMessage,
 } from "../../../../systemSlice";
-import { useAppDispatch } from "../../../../store";
-import { Loader } from "mds";
-import EndpointDisplay from "./EndpointDisplay";
+import { AppState, useAppDispatch } from "../../../../store";
+import WebhookSettings from "../WebhookSettings/WebhookSettings";
+import { useSelector } from "react-redux";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -81,15 +83,20 @@ const EditConfiguration = ({
   //Local States
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
-  const [loadingConfig, setLoadingConfig] = useState<boolean>(true);
   const [configValues, setConfigValues] = useState<IElementValue[]>([]);
-  const [configSubsysList, setConfigSubsysList] = useState<any>([]);
+  const [configSubsysList, setConfigSubsysList] = useState<IConfigurationSys[]>(
+    []
+  );
   const [resetConfigurationOpen, setResetConfigurationOpen] =
     useState<boolean>(false);
 
+  const loadingConfig = useSelector(
+    (state: AppState) => state.system.loadingConfigurations
+  );
+
   useEffect(() => {
-    setLoadingConfig(true);
-  }, [selConfigTab]);
+    dispatch(configurationIsLoading(true));
+  }, [selConfigTab, dispatch]);
 
   useEffect(() => {
     if (loadingConfig) {
@@ -102,16 +109,16 @@ const EditConfiguration = ({
             setConfigSubsysList(res);
             const keyVals = get(res[0], "key_values", []);
             setConfigValues(keyVals);
-            setLoadingConfig(false);
+            dispatch(configurationIsLoading(false));
           })
           .catch((err: ErrorResponseHandler) => {
-            setLoadingConfig(false);
+            dispatch(configurationIsLoading(false));
             dispatch(setErrorSnackMessage(err));
           });
 
         return;
       }
-      setLoadingConfig(false);
+      dispatch(configurationIsLoading(false));
     }
   }, [loadingConfig, selectedConfiguration, dispatch]);
 
@@ -129,6 +136,7 @@ const EditConfiguration = ({
         .then((res) => {
           setSaving(false);
           dispatch(setServerNeedsRestart(res.restart));
+          dispatch(configurationIsLoading(true));
           if (!res.restart) {
             dispatch(setSnackBarMessage("Configuration saved successfully"));
           }
@@ -157,8 +165,12 @@ const EditConfiguration = ({
     setResetConfigurationOpen(false);
     dispatch(setServerNeedsRestart(restart));
     if (restart) {
-      setLoadingConfig(true);
+      dispatch(configurationIsLoading(true));
     }
+  };
+
+  const resetConfigurationMOpen = () => {
+    setResetConfigurationOpen(true);
   };
 
   return (
@@ -181,62 +193,66 @@ const EditConfiguration = ({
             height: "100%",
           }}
         >
-          <form
-            noValidate
-            onSubmit={submitForm}
-            className={className}
-            style={{
-              height: "100%",
-              display: "flex",
-              flexFlow: "column",
-            }}
-          >
-            <Grid item xs={12} className={classes.settingsFormContainer}>
-              <ConfTargetGeneric
-                fields={
-                  fieldsConfigurations[selectedConfiguration.configuration_id]
-                }
-                onChange={onValueChange}
-                defaultVals={configValues}
-              />
-              {(selectedConfiguration.configuration_id === "logger_webhook" ||
-                selectedConfiguration.configuration_id === "audit_webhook") && (
-                <EndpointDisplay
-                  classes={classes}
-                  configSubsysList={configSubsysList}
-                />
-              )}
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{
-                paddingTop: "15px ",
-                textAlign: "right" as const,
-                maxHeight: "60px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Button
-                id={"restore-defaults"}
-                variant="secondary"
-                onClick={() => {
-                  setResetConfigurationOpen(true);
+          {selectedConfiguration.configuration_id === "logger_webhook" ||
+          selectedConfiguration.configuration_id === "audit_webhook" ? (
+            <WebhookSettings
+              WebhookSettingslist={configSubsysList}
+              setResetConfigurationOpen={resetConfigurationMOpen}
+              type={selectedConfiguration.configuration_id}
+            />
+          ) : (
+            <Fragment>
+              <form
+                noValidate
+                onSubmit={submitForm}
+                className={className}
+                style={{
+                  height: "100%",
+                  display: "flex",
+                  flexFlow: "column",
                 }}
-                label={"Restore Defaults"}
-              />
-              &nbsp; &nbsp;
-              <Button
-                id={"save"}
-                type="submit"
-                variant="callAction"
-                disabled={saving}
-                label={"Save"}
-              />
-            </Grid>
-          </form>
+              >
+                <Grid item xs={12} className={classes.settingsFormContainer}>
+                  <ConfTargetGeneric
+                    fields={
+                      fieldsConfigurations[
+                        selectedConfiguration.configuration_id
+                      ]
+                    }
+                    onChange={onValueChange}
+                    defaultVals={configValues}
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    paddingTop: "15px ",
+                    textAlign: "right" as const,
+                    maxHeight: "60px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <Button
+                    id={"restore-defaults"}
+                    variant="secondary"
+                    onClick={resetConfigurationMOpen}
+                    label={"Restore Defaults"}
+                  />
+                  &nbsp; &nbsp;
+                  <Button
+                    id={"save"}
+                    type="submit"
+                    variant="callAction"
+                    disabled={saving}
+                    label={"Save"}
+                  />
+                </Grid>
+              </form>
+            </Fragment>
+          )}
         </Box>
       )}
     </Fragment>

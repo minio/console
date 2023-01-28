@@ -35,6 +35,7 @@ export interface SystemState {
   userName: string;
   serverNeedsRestart: boolean;
   serverIsLoading: boolean;
+  loadingConfigurations: boolean;
   loadingProgress: number;
   snackBar: snackBarMessage;
   modalSnackBar: snackBarMessage;
@@ -58,6 +59,7 @@ const initialState: SystemState = {
   siteReplicationInfo: { siteName: "", curSite: false, enabled: false },
   serverNeedsRestart: false,
   serverIsLoading: false,
+  loadingConfigurations: true,
   loadingProgress: 100,
   snackBar: {
     message: "",
@@ -105,6 +107,9 @@ export const systemSlice = createSlice({
     },
     serverIsLoading: (state, action: PayloadAction<boolean>) => {
       state.serverIsLoading = action.payload;
+    },
+    configurationIsLoading: (state, action: PayloadAction<boolean>) => {
+      state.loadingConfigurations = action.payload;
     },
     setLoadingProgress: (state, action: PayloadAction<number>) => {
       state.loadingProgress = action.payload;
@@ -192,6 +197,7 @@ export const {
   setOverrideStyles,
   setAnonymousMode,
   resetSystem,
+  configurationIsLoading,
 } = systemSlice.actions;
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;
