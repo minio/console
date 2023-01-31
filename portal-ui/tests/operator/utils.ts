@@ -34,10 +34,7 @@ export const createTenant = async (tenantName: string) => {
 
 export const createTenantWithoutAuditLog = async (tenantName: string) => {
   await fillTenantInformation(tenantName);
-  await t
-    .click("#wizard-step-audit-log")
-    .click("#enableLogging")
-    .click("#wizard-button-Create");
+  await t.click("#wizard-step-audit-log").click("#wizard-button-Create");
   await checkTenantExists(tenantName);
 };
 
