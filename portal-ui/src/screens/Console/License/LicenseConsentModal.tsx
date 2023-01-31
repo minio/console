@@ -49,7 +49,6 @@ const LicenseConsentModal = ({
           flexFlow: "column",
           "& .link-text": {
             color: "#2781B0",
-            fontSize: "16px",
             fontWeight: 600,
           },
         }}

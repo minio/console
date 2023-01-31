@@ -571,6 +571,7 @@ const TableWrapper = ({
     <Grid item xs={12} className={parentClassName}>
       <TooltipWrapper tooltip={tooltip ? tooltip : ""}>
         <Paper
+          style={{ overflow: "hidden" }}
           className={`${classes.paper} ${
             noBackground ? classes.noBackground : ""
           }

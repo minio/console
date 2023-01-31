@@ -15,8 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
+import makeStyles from "@mui/styles/makeStyles";
+
+const useStyles = makeStyles((theme) => ({
+  linkText: {
+    color: "#2781B0",
+    fontWeight: 600,
+  },
+}));
 
 const LicenseFAQ = () => {
+  const classes = useStyles();
   return (
     <Fragment>
       <h2>What is the GNU AGPL v3?</h2>
@@ -25,7 +34,11 @@ const LicenseFAQ = () => {
         It is a common open source license certified by the Free Software
         Foundation and the Open Source Initiative. You can get a copy of the GNU
         AGPL v3 license with MinIO source code or at&nbsp;
-        <a href={"https://min.io/compliance?ref=con"} target={"_blank"}>
+        <a
+          href={"https://min.io/compliance?ref=con"}
+          target={"_blank"}
+          className={classes.linkText}
+        >
           https://www.gnu.org/licenses/agpl-3.0.en.html
         </a>
         .

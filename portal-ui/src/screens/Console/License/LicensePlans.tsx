@@ -595,6 +595,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
                 if (isHeader) {
                   return getCommunityPlanHeader();
                 }
+
                 if (featureTitleRow) {
                   return (
                     <FeatureTitleRowCmp
@@ -638,6 +639,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
               if (isHeader) {
                 return getStandardPlanHeader();
               }
+
               if (featureTitleRow) {
                 return (
                   <FeatureTitleRowCmp
