@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
 import {
   ICloseEvent,
@@ -23,7 +23,7 @@ import {
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button } from "mds";
+import { Button, HelpBox } from "mds";
 import {
   DiagStatError,
   DiagStatInProgress,
@@ -49,7 +49,6 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
-import HelpBox from "../../../common/HelpBox";
 import { WarnIcon } from "mds";
 import { Loader } from "mds";
 import { setServerDiagStat } from "../../../systemSlice";

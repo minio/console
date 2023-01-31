@@ -18,7 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { BucketsIcon, Button, RefreshIcon } from "mds";
+import { BucketsIcon, Button, HelpBox, RefreshIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -32,7 +32,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
 
-import HelpBox from "../../../common/HelpBox";
 import { SecureComponent } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,

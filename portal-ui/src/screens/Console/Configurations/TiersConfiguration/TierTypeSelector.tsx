@@ -23,8 +23,7 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
 import TierTypeCard from "./TierTypeCard";
-import HelpBox from "../../../../common/HelpBox";
-import { TiersIcon } from "mds";
+import { HelpBox, TiersIcon } from "mds";
 import FormLayout from "../../Common/FormLayout";
 
 const TierTypeSelector = () => {
