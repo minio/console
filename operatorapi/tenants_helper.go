@@ -236,10 +236,7 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 		return err
 	}
 	_, err = operatorClient.TenantUpdate(ctx, tenant, metav1.UpdateOptions{})
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // getTenantDeleteEncryptionResponse is a wrapper for tenantDeleteEncryption
@@ -898,10 +895,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		},
 	}
 	_, err = clientSet.createSecret(ctx, ns, &kesConfigurationSecret, metav1.CreateOptions{})
-	if err != nil {
-		return nil, nil, err
-	}
 	return &corev1.LocalObjectReference{
 		Name: kesConfigurationSecretName,
-	}, clientCertSecretReference, nil
+	}, clientCertSecretReference, err
 }
