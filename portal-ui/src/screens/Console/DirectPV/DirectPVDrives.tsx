@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
-import { Button, HelpBox } from "mds";
+import { Button, HelpBox, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, InputAdornment, TextField } from "@mui/material";
@@ -40,7 +40,6 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { RefreshIcon, SearchIcon } from "mds";
 
 import withSuspense from "../Common/Components/withSuspense";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 
 const FormatDrives = withSuspense(React.lazy(() => import("./FormatDrives")));

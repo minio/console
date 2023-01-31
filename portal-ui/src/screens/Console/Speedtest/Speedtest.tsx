@@ -21,10 +21,9 @@ import { Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { AppState } from "../../../store";
-import { Button, HelpBox } from "mds";
+import { Button, HelpBox, PageHeader } from "mds";
 import { DateTime } from "luxon";
 import createStyles from "@mui/styles/createStyles";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import {
   actionsTray,
   advancedFilterToggleStyles,

@@ -16,7 +16,7 @@
 
 import { Grid, Theme } from "@mui/material";
 import { createStyles, withStyles } from "@mui/styles";
-import { AddIcon, Button, RefreshIcon, UploadIcon } from "mds";
+import { AddIcon, Button, PageHeader, RefreshIcon, UploadIcon } from "mds";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../common/api";
@@ -38,7 +38,6 @@ import {
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import PageLayout from "../Common/Layout/PageLayout";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import SearchBox from "../Common/SearchBox";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";

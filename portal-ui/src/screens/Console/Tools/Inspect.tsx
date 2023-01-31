@@ -16,9 +16,8 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, DialogContentText } from "@mui/material";
-import { Button, HelpBox } from "mds";
+import { Button, HelpBox, PageHeader } from "mds";
 import { useNavigate } from "react-router-dom";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";

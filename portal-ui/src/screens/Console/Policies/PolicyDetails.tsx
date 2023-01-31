@@ -17,7 +17,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button } from "mds";
+import { Button, PageHeader } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -32,7 +32,6 @@ import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
-import PageHeader from "../Common/PageHeader/PageHeader";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";

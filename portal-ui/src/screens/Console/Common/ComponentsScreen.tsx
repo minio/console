@@ -20,10 +20,9 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { DialogContentText, Grid } from "@mui/material";
-import PageHeader from "./PageHeader/PageHeader";
 import PageLayout from "./Layout/PageLayout";
 import SectionTitle from "./SectionTitle";
-import { Button } from "mds";
+import { Button, PageHeader } from "mds";
 import { ConfirmDeleteIcon } from "mds";
 import ConfirmDialog from "./ModalWrapper/ConfirmDialog";
 

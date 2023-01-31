@@ -1,10 +1,10 @@
 import React, { Fragment } from "react";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import BackLink from "../../../common/BackLink";
+import { PageHeader } from "mds";
 
 const styles = (theme: Theme) => createStyles({});
 

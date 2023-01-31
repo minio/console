@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import BackLink from "../../../common/BackLink";
 import {
   IAM_PAGES,
@@ -25,7 +24,7 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { Button, SettingsIcon } from "mds";
+import { Button, PageHeader, SettingsIcon } from "mds";
 import { Grid } from "@mui/material";
 import AutoColorIcon from "../Common/Components/AutoColorIcon";
 import { useSelector } from "react-redux";

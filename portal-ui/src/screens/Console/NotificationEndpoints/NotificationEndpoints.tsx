@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { PageHeader } from "mds";
 import React, { Fragment } from "react";
-import PageHeader from "../Common/PageHeader/PageHeader";
 
 import withSuspense from "../Common/Components/withSuspense";
 

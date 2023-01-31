@@ -25,8 +25,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
-import { Button } from "mds";
-import PageHeader from "../Common/PageHeader/PageHeader";
+import { Button, PageHeader } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddGroupHelpBox from "./AddGroupHelpBox";

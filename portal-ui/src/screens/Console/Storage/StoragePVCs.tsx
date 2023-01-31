@@ -32,9 +32,9 @@ import { IPVCsResponse, IStoragePVCs } from "./types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DeletePVC from "../Tenants/TenantDetails/DeletePVC";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
+import { PageHeader } from "mds";
 
 interface IStorageVolumesProps {
   classes: any;

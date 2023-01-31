@@ -16,8 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, Grid } from "@mui/material";
-import { Button } from "mds";
-import PageHeader from "../../Common/PageHeader/PageHeader";
+import { Button, PageHeader } from "mds";
 import PageLayout from "../../Common/Layout/PageLayout";
 import useApi from "../../Common/Hooks/useApi";
 import BackLink from "../../../../common/BackLink";

@@ -25,13 +25,12 @@ import {
 import Grid from "@mui/material/Grid";
 import { niceBytes } from "../../../../../../common/utils";
 import { LinearProgress } from "@mui/material";
-import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import GenericWizard from "../../../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../../../Common/GenericWizard/types";
 import PoolResources from "./PoolResources";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import { TenantsIcon } from "mds";
+import { PageHeader, TenantsIcon } from "mds";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { useSelector } from "react-redux";

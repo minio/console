@@ -16,7 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import PrDashboard from "./Prometheus/PrDashboard";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import Grid from "@mui/material/Grid";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { Theme } from "@mui/material/styles";
@@ -26,6 +25,7 @@ import { LinearProgress } from "@mui/material";
 import { AppState, useAppDispatch } from "../../../store";
 import { getUsageAsync } from "./dashboardThunks";
 import { useSelector } from "react-redux";
+import { PageHeader } from "mds";
 
 interface IDashboardSimple {
   classes: any;

@@ -24,13 +24,13 @@ import {
   settingsCommon,
   typesSelection,
 } from "../Common/FormComponents/common/styleLibrary";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import ContentBox from "../Common/ContentBox";
 import { Box } from "@mui/material";
 import NotificationEndpointTypeSelectorHelpBox from "../Account/NotificationEndpointTypeSelectorHelpBox";
+import { PageHeader } from "mds";
 
 interface INotificationTypeSelector {
   classes: any;
