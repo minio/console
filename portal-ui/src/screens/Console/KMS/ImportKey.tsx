@@ -18,8 +18,7 @@ import React, { Fragment, useState } from "react";
 import { Box } from "@mui/material";
 
 import Grid from "@mui/material/Grid";
-import { AddAccessRuleIcon, Button } from "mds";
-import PageHeader from "../Common/PageHeader/PageHeader";
+import { AddAccessRuleIcon, Button, PageHeader } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import BackLink from "../../../common/BackLink";

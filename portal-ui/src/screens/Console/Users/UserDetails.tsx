@@ -17,7 +17,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
@@ -37,7 +37,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { IPolicyItem } from "./types";
 import { ErrorResponseHandler } from "../../../common/types";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import ChangeUserGroups from "./ChangeUserGroups";

@@ -18,7 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { Button, HelpBox } from "mds";
+import { Button, HelpBox, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../common/api";
@@ -35,7 +35,6 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import { encodeURLString } from "../../../common/utils";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";

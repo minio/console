@@ -25,7 +25,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
 import { Box } from "@mui/material";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import api from "../../../common/api";
 
@@ -36,6 +35,7 @@ import Tab from "@mui/material/Tab";
 import { TabPanel } from "../../shared/tabs";
 import { ClusterRegistered } from "./utils";
 import ApiKeyRegister from "./ApiKeyRegister";
+import { PageHeader } from "mds";
 
 interface IRegister {
   classes: any;

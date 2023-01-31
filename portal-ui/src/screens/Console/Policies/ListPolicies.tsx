@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Button, HelpBox } from "mds";
+import { Button, HelpBox, PageHeader } from "mds";
 import { useNavigate } from "react-router-dom";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -33,7 +33,6 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import PageLayout from "../Common/Layout/PageLayout";
 import {

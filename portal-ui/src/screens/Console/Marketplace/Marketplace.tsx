@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import SetEmailModal from "./SetEmailModal";
 import PageLayout from "../Common/Layout/PageLayout";
 import { selFeatures } from "../consoleSlice";
@@ -25,6 +24,7 @@ import { resourcesConfigurations } from "../Tenants/AddTenant/Steps/TenantResour
 import { selShowMarketplace, showMarketplace } from "../../../systemSlice";
 import { Navigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
+import { PageHeader } from "mds";
 
 const Marketplace = () => {
   const dispatch = useAppDispatch();

@@ -23,7 +23,7 @@ import {
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, HelpBox } from "mds";
+import { Button, HelpBox, PageHeader } from "mds";
 import {
   DiagStatError,
   DiagStatInProgress,
@@ -45,7 +45,6 @@ import {
   containerForHeader,
 } from "../Common/FormComponents/common/styleLibrary";
 import { Grid } from "@mui/material";
-import PageHeader from "../Common/PageHeader/PageHeader";
 
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import PageLayout from "../Common/Layout/PageLayout";

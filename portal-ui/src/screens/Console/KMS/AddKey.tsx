@@ -17,7 +17,6 @@
 import React, { Fragment } from "react";
 
 import Grid from "@mui/material/Grid";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import BackLink from "../../../common/BackLink";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -25,6 +24,7 @@ import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import AddKeyForm from "./AddKeyForm";
+import { PageHeader } from "mds";
 
 const AddKey = () => {
   const dispatch = useAppDispatch();

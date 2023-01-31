@@ -29,7 +29,7 @@ import {
   pageContentStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { EditIcon, RefreshIcon, TrashIcon } from "mds";
+import { EditIcon, PageHeader, RefreshIcon, TrashIcon } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button } from "mds";
 import { useNavigate, useParams } from "react-router-dom";
@@ -42,7 +42,6 @@ import {
 import useApi from "../Common/Hooks/useApi";
 import api from "../../../common/api";
 import PageLayout from "../Common/Layout/PageLayout";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import BackLink from "../../../common/BackLink";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";

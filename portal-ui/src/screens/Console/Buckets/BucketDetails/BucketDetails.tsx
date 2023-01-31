@@ -23,7 +23,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { Button } from "mds";
+import { Button, PageHeader } from "mds";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -39,7 +39,6 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
-import PageHeader from "../../Common/PageHeader/PageHeader";
 
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { Box } from "@mui/material";

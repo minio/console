@@ -16,7 +16,7 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import {
   actionsTray,
@@ -26,7 +26,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
 import { Box, Link } from "@mui/material";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import { CopyIcon, UsersIcon } from "mds";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
