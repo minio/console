@@ -21,7 +21,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box, LinearProgress } from "@mui/material";
-import { Button } from "mds";
+import { Button, HelpBox } from "mds";
 import Grid from "@mui/material/Grid";
 import {
   actionsTray,
@@ -40,7 +40,6 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 
 import { RefreshIcon } from "mds";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import HelpBox from "../../../../common/HelpBox";
 import AButton from "../../Common/AButton/AButton";
 import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";

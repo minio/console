@@ -18,14 +18,13 @@ import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Button } from "mds";
+import { Button, HelpBox } from "mds";
 import useApi from "../../Common/Hooks/useApi";
 import { ClustersIcon } from "mds";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BackLink from "../../../../common/BackLink";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
-import HelpBox from "../../../../common/HelpBox";
 import SectionTitle from "../../Common/SectionTitle";
 import {
   setErrorSnackMessage,

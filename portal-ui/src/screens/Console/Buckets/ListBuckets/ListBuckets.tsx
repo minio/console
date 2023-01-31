@@ -18,7 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, HelpBox } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
@@ -42,7 +42,6 @@ import api from "../../../../common/api";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
-import HelpBox from "../../../../common/HelpBox";
 import { SecureComponent } from "../../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,

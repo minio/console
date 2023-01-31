@@ -16,7 +16,7 @@
 
 import React, { Fragment } from "react";
 import { Grid } from "@mui/material";
-import HelpBox from "../../../../common/HelpBox";
+import { HelpBox } from "mds";
 
 interface IMissingIntegration {
   iconComponent: any;

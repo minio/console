@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, HelpBox } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
@@ -40,7 +40,6 @@ import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import { AddIcon, BucketsIcon, TrashIcon } from "mds";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import withSuspense from "../../Common/Components/withSuspense";
 import EditReplicationModal from "./EditReplicationModal";

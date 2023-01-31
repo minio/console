@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, HelpBox } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, InputAdornment, TextField } from "@mui/material";
@@ -38,7 +38,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { RefreshIcon, SearchIcon } from "mds";
-import HelpBox from "../../../common/HelpBox";
 
 import withSuspense from "../Common/Components/withSuspense";
 import PageHeader from "../Common/PageHeader/PageHeader";

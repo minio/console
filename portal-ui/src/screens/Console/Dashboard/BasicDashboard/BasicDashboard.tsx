@@ -27,8 +27,8 @@ import {
   UptimeIcon,
   FormatDrivesIcon,
   StorageIcon,
+  HelpBox,
 } from "mds";
-import HelpBox from "../../../../common/HelpBox";
 import { calculateBytes, representationNumber } from "../../../../common/utils";
 import { IDriveInfo, Usage } from "../types";
 import StatusCountCard from "./StatusCountCard";
