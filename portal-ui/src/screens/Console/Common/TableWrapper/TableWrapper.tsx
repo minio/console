@@ -636,7 +636,7 @@ const TableWrapper = ({
                         disableHeader={false}
                         headerClassName={"headerItem"}
                         headerHeight={40}
-                        height={height}
+                        height={height + 8}
                         noRowsRenderer={() => (
                           <Fragment>
                             {customEmptyMessage !== ""
