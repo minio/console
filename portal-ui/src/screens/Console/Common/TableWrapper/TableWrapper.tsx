@@ -571,6 +571,7 @@ const TableWrapper = ({
     <Grid item xs={12} className={parentClassName}>
       <TooltipWrapper tooltip={tooltip ? tooltip : ""}>
         <Paper
+          style={{ overflow: "hidden" }}
           className={`${classes.paper} ${
             noBackground ? classes.noBackground : ""
           }
@@ -635,7 +636,7 @@ const TableWrapper = ({
                         disableHeader={false}
                         headerClassName={"headerItem"}
                         headerHeight={40}
-                        height={height}
+                        height={height + 8}
                         noRowsRenderer={() => (
                           <Fragment>
                             {customEmptyMessage !== ""

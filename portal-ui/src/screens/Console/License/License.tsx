@@ -16,21 +16,17 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import { Box, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { SubnetInfo } from "./types";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
-import { ArrowRightLink, ThemedLogo } from "mds";
+import { ArrowIcon, Button } from "mds";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import LicensePlans from "./LicensePlans";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PageLayout from "../Common/Layout/PageLayout";
 import RegistrationStatusBanner from "../Support/RegistrationStatusBanner";
-import makeStyles from "@mui/styles/makeStyles";
 import { selOpMode } from "../../../systemSlice";
 import withSuspense from "../Common/Components/withSuspense";
 import { getLicenseConsent } from "./utils";
@@ -39,78 +35,8 @@ const LicenseConsentModal = withSuspense(
   React.lazy(() => import("./LicenseConsentModal"))
 );
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    pageTitle: {
-      backgroundColor: "rgb(250,250,252)",
-      marginTop: 40,
-      border: "1px solid #E5E5E5",
-      paddingTop: 33,
-      paddingLeft: 28,
-      paddingBottom: 30,
-      paddingRight: 28,
-      fontSize: 16,
-      fontWeight: "bold",
-      "& ul": {
-        marginLeft: "-8px",
-        listStyleType: "square",
-        color: "#1C5A8D",
-        fontSize: "16px",
-        "& li": {
-          float: "left",
-          fontSize: 14,
-          marginRight: 40,
-        },
-        "& li::before": {
-          color: "red",
-          content: "•",
-        },
-      },
-    },
-    licDet: {
-      fontSize: 11,
-      color: "#5E5E5E",
-    },
-    linkMore: {
-      marginTop: 10,
-      marginBottom: 20,
-    },
-    link: {
-      textDecoration: "underline !important",
-      color: theme.palette.info.main,
-    },
-    linkButton: {
-      fontFamily: '"Inter", sans-serif',
-      fontWeight: "normal",
-      textTransform: "none",
-      fontSize: "inherit",
-      height: 0,
-      padding: 0,
-      margin: 0,
-    },
-
-    openSourcePolicy: {
-      fontSize: 14,
-      color: "#1C5A8D",
-      fontWeight: "bold",
-    },
-    ...containerForHeader(theme.spacing(4)),
-    icon: {
-      color: theme.palette.primary.main,
-      fontSize: 16,
-      fontWeight: "bold",
-      marginBottom: 20,
-      "& .min-icon": {
-        width: 44,
-        height: 44,
-        marginRight: 15,
-      },
-    },
-  })
-);
-
 const License = () => {
-  const classes = useStyles();
+  const navigate = useNavigate();
   const operatorMode = useSelector(selOpMode);
   const [activateProductModal, setActivateProductModal] =
     useState<boolean>(false);
@@ -193,7 +119,29 @@ const License = () => {
 
   return (
     <Fragment>
-      <PageHeader label="License" />
+      <PageHeader
+        label="MinIO License and Support plans"
+        actions={
+          <Fragment>
+            {!isRegistered && (
+              <Button
+                id={"login-with-subnet"}
+                onClick={() => navigate(IAM_PAGES.REGISTER_SUPPORT)}
+                style={{
+                  fontSize: "14px",
+                  display: "flex",
+                  alignItems: "center",
+                  textDecoration: "none",
+                }}
+                icon={<ArrowIcon />}
+                variant={"callAction"}
+              >
+                Register your cluster
+              </Button>
+            )}
+          </Fragment>
+        }
+      />
 
       <PageLayout>
         <Grid item xs={12}>
@@ -201,74 +149,6 @@ const License = () => {
             <RegistrationStatusBanner email={licenseInfo?.email} />
           )}
         </Grid>
-        {!isRegistered && (
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              flexFlow: "column",
-            }}
-          >
-            <Box
-              sx={{
-                padding: "25px",
-                border: "1px solid #eaeaea",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Box
-                sx={{
-                  marginRight: "8px",
-                  fontSize: "16px",
-                  fontWeight: 600,
-                  display: "flex",
-                  alignItems: "center",
-
-                  "& svg": {
-                    width: "83px",
-                    height: "14px",
-                    marginLeft: "8px",
-                    marginRight: "5px",
-                  },
-                }}
-              >
-                Are you already a customer of <ThemedLogo />?
-              </Box>
-              <Link
-                to={IAM_PAGES.REGISTER_SUPPORT}
-                className={classes.link}
-                style={{
-                  fontSize: "14px",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                Register this cluster{" "}
-                <ArrowRightLink
-                  style={{
-                    width: "13px",
-                    height: "8px",
-                    marginLeft: "5px",
-                    marginTop: "3px",
-                  }}
-                />
-              </Link>
-            </Box>
-
-            <Box
-              sx={{
-                padding: "40px 0px 40px 0px",
-                fontSize: "16px",
-                fontWeight: 600,
-              }}
-            >
-              MinIO License and Support plans
-            </Box>
-          </Grid>
-        )}
 
         <LicensePlans
           activateProductModal={activateProductModal}
