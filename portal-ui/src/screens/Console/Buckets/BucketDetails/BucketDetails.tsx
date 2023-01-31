@@ -23,7 +23,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -54,7 +54,7 @@ import {
 } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
-import BackLink from "../../../../common/BackLink";
+
 import {
   hasPermission,
   SecureComponent,
@@ -208,7 +208,9 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
         />
       )}
       <PageHeader
-        label={<BackLink to={"/buckets"} label={"Buckets"} />}
+        label={
+          <BackLink label={"Buckets"} onClick={() => navigate("/buckets")} />
+        }
         actions={
           <TooltipWrapper
             tooltip={
