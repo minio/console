@@ -31,7 +31,6 @@ import {
   actionsTray,
   containerForHeader,
   hrClass,
-  searchField,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";

@@ -26,7 +26,7 @@ import {
   TextField,
 } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { styled, Theme } from "@mui/material/styles";
+import { Theme } from "@mui/material/styles";
 import { Button, HealIcon, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
