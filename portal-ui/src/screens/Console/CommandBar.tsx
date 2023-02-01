@@ -39,7 +39,7 @@ import { useSelector } from "react-redux";
 import useApi from "./Common/Hooks/useApi";
 import { Bucket, BucketList } from "./Buckets/types";
 import { selFeatures } from "./consoleSlice";
-import { selOpMode, selDirectPVMode } from "../../systemSlice";
+import { selDirectPVMode, selOpMode } from "../../systemSlice";
 
 const useStyles = makeStyles((theme: Theme) => ({
   resultItem: {

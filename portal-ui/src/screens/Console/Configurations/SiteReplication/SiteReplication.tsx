@@ -21,11 +21,14 @@ import { Box, DialogContentText, Grid } from "@mui/material";
 import PageLayout from "../../Common/Layout/PageLayout";
 import useApi from "../../Common/Hooks/useApi";
 import ReplicationSites from "./ReplicationSites";
-import { Button, HelpBox, Loader, PageHeader } from "mds";
 import {
   AddIcon,
+  Button,
   ClustersIcon,
   ConfirmDeleteIcon,
+  HelpBox,
+  Loader,
+  PageHeader,
   RecoverIcon,
   TrashIcon,
 } from "mds";

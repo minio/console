@@ -14,10 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { Button } from "mds";
-import { OnlineRegistrationIcon } from "mds";
+import { Button, OnlineRegistrationIcon } from "mds";
 import { FormTitle } from "./utils";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import GetApiKeyModal from "./GetApiKeyModal";
@@ -27,7 +26,6 @@ import api from "../../../common/api";
 import { useAppDispatch } from "../../../store";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { ErrorResponseHandler } from "../../../common/types";
-import { useCallback } from "react";
 import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";

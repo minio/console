@@ -17,15 +17,18 @@
 import React from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import {
+  Button,
+  DownloadIcon,
+  ServiceAccountCredentialsIcon,
+  WarnIcon,
+} from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { NewServiceAccount } from "./types";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
 import Grid from "@mui/material/Grid";
 import CredentialItem from "./CredentialItem";
-import { WarnIcon } from "mds";
-import { DownloadIcon, ServiceAccountCredentialsIcon } from "mds";
 import TooltipWrapper from "../TooltipWrapper/TooltipWrapper";
 
 const styles = (theme: Theme) =>

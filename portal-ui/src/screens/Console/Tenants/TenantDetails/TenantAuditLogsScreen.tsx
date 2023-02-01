@@ -31,32 +31,31 @@ import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { ITenantLogsStruct } from "../ListTenants/types";
-import { IKeyValue } from "../ListTenants/types";
+import { IKeyValue, ITenantLogsStruct } from "../ListTenants/types";
 
 import LoggingDetails from "./LoggingDetails";
 import LoggingDBDetails from "./LoggingDBDetails";
 import {
+  resetAuditLogForm,
   setAuditLoggingEnabled,
+  setCPURequest,
+  setDBCPURequest,
+  setDBFSGroup,
   setDBImage,
   setDBInitImage,
-  setDBServiceAccountName,
-  setDBCPURequest,
   setDBMemRequest,
-  setDBRunAsUser,
-  setDBFSGroup,
   setDBRunAsGroup,
   setDBRunAsNonRoot,
-  setImage,
+  setDBRunAsUser,
+  setDBServiceAccountName,
   setDiskCapacityGB,
-  setServiceAccountName,
-  setCPURequest,
-  setMemRequest,
-  setRunAsUser,
   setFSGroup,
+  setImage,
+  setMemRequest,
   setRunAsGroup,
   setRunAsNonRoot,
-  resetAuditLogForm,
+  setRunAsUser,
+  setServiceAccountName,
 } from "../TenantDetails/tenantAuditLogSlice";
 
 import { HelpBox, WarnIcon } from "mds";
@@ -101,6 +100,7 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
   const auditLoggingEnabled = useSelector(
     (state: AppState) => state.editTenantLogging.auditLoggingEnabled
   );
+
   function a11yProps(index: any) {
     return {
       id: `simple-tab-${index}`,

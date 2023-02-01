@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "mds";
+import { Button, CreateNewPathIcon } from "mds";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import { Grid } from "@mui/material";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -30,7 +30,6 @@ import { connect, useSelector } from "react-redux";
 import { encodeURLString } from "../../../../../../common/utils";
 
 import { BucketObjectItem } from "./types";
-import { CreateNewPathIcon } from "mds";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";

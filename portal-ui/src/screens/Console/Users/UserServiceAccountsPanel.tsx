@@ -18,7 +18,7 @@ import React, { useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Button } from "mds";
+import { AddIcon, Button, DeleteIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -34,7 +34,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import AddUserServiceAccount from "./AddUserServiceAccount";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import { AddIcon, DeleteIcon } from "mds";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";

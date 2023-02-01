@@ -36,8 +36,7 @@ import PageLayout from "../Common/Layout/PageLayout";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { Grid } from "@mui/material";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { Button, PageHeader } from "mds";
-import { AddIcon, RefreshIcon } from "mds";
+import { AddIcon, Button, PageHeader, RefreshIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 

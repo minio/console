@@ -40,10 +40,10 @@ import {
 } from "../../../../../utils/validationFunctions";
 import SectionH1 from "../../../Common/SectionH1";
 import {
-  addFileMinIOMTLSCert,
   addFileKESServerCert,
   addFileKMSCa,
   addFileKMSMTLSCert,
+  addFileMinIOMTLSCert,
   isPageValid,
   updateAddField,
 } from "../createTenantSlice";

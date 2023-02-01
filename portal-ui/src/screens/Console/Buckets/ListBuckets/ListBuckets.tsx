@@ -18,21 +18,23 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { Button, HelpBox, PageHeader } from "mds";
+import {
+  AddIcon,
+  BucketsIcon,
+  Button,
+  HelpBox,
+  LifecycleConfigIcon,
+  MultipleBucketsIcon,
+  PageHeader,
+  RefreshIcon,
+  SelectAllIcon,
+  SelectMultipleIcon,
+} from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Bucket, BucketList } from "../types";
-import {
-  AddIcon,
-  BucketsIcon,
-  LifecycleConfigIcon,
-  SelectAllIcon,
-  RefreshIcon,
-  MultipleBucketsIcon,
-  SelectMultipleIcon,
-} from "mds";
 import {
   containerForHeader,
   searchField,

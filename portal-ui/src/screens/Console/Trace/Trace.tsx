@@ -18,7 +18,7 @@ import React, { Fragment, useState } from "react";
 import { DateTime } from "luxon";
 import { Box, Grid } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { Button, PageHeader } from "mds";
+import { Button, FilterIcon, PageHeader } from "mds";
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import { TraceMessage } from "./types";
@@ -38,7 +38,6 @@ import {
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
-import { FilterIcon } from "mds";
 
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import {

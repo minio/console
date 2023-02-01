@@ -25,7 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
-import { BackCaretIcon, CopyIcon, NewPathIcon } from "mds";
+import { BackCaretIcon, Button, CopyIcon, NewPathIcon } from "mds";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   IAM_SCOPES,
@@ -35,7 +35,6 @@ import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { setVersionsModeEnabled } from "./objectBrowserSlice";
-import { Button } from "mds";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 const CreatePathModal = withSuspense(

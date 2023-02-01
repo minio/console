@@ -16,8 +16,7 @@
 
 import React from "react";
 import { Box } from "@mui/material";
-import { SuccessIcon } from "mds";
-import { Loader } from "mds";
+import { Loader, SuccessIcon } from "mds";
 
 const TimeStatItem = ({
   icon,

@@ -18,7 +18,7 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect, useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import { DialogContentText, IconButton } from "@mui/material";
-import { Button } from "mds";
+import { AddIcon, Button, ConfirmModalIcon, Loader, RemoveIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
@@ -40,24 +40,21 @@ import {
 import { KeyPair } from "../ListTenants/utils";
 import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { AddIcon, ConfirmModalIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import { Loader } from "mds";
 import TLSCertificate from "../../Common/TLSCertificate/TLSCertificate";
 import SecurityContextSelector from "../securityContextSelector";
 import {
-  setRunAsUser,
   setFSGroup,
+  setFSGroupChangePolicy,
   setRunAsGroup,
   setRunAsNonRoot,
-  setFSGroupChangePolicy,
+  setRunAsUser,
 } from "../tenantSecurityContextSlice";
 import TLSHelpBox from "../HelpBox/TLSHelpBox";
-import { RemoveIcon } from "mds";
 
 interface ITenantSecurity {
   classes: any;

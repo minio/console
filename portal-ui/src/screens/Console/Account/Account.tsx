@@ -15,7 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Button, HelpBox, PageHeader } from "mds";
+import {
+  AccountIcon,
+  AddIcon,
+  Button,
+  DeleteIcon,
+  HelpBox,
+  PageHeader,
+  PasswordKeyIcon,
+} from "mds";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
@@ -23,8 +31,6 @@ import createStyles from "@mui/styles/createStyles";
 import Grid from "@mui/material/Grid";
 import api from "../../../common/api";
 import { Box } from "@mui/material";
-
-import { AccountIcon, AddIcon, DeleteIcon, PasswordKeyIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import {

@@ -16,8 +16,7 @@
 
 import React from "react";
 import { Box } from "@mui/material";
-import { Loader } from "mds";
-import { NetworkGetIcon } from "mds";
+import { Loader, NetworkGetIcon } from "mds";
 
 const NetworkGetItem = ({
   value,

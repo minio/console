@@ -16,7 +16,7 @@
 
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
-import { BackLink, Button, PageHeader } from "mds";
+import { BackLink, Button, CreateUserIcon, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import UserSelector from "./UserSelector";
@@ -28,7 +28,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
-import { CreateUserIcon } from "mds";
 
 import PageLayout from "../Common/Layout/PageLayout";
 
@@ -41,14 +40,14 @@ import { useNavigate } from "react-router-dom";
 import FormLayout from "../Common/FormLayout";
 import AddUserHelpBox from "./AddUserHelpBox";
 import { setErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
+import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
-import { AppState } from "../../../store";
 import {
-  setSelectedGroups,
   setAddLoading,
+  setSelectedGroups,
   setSendEnabled,
 } from "./AddUsersSlice";
+
 interface IAddUserProps {
   classes: any;
 }

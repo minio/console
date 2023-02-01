@@ -3,7 +3,7 @@ import UsersSelectors from "./UsersSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import Grid from "@mui/material/Grid";
-import { Button } from "mds";
+import { AddMembersToGroupIcon, Button } from "mds";
 import api from "../../../common/api";
 import { ErrorResponseHandler } from "../../../common/types";
 
@@ -15,7 +15,6 @@ import {
   modalStyleUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
-import { AddMembersToGroupIcon } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";

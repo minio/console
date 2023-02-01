@@ -27,7 +27,7 @@ import {
 } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
-import { Button, PageHeader } from "mds";
+import { Button, HealIcon, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { wsProtocol } from "../../../utils/wsUtils";
@@ -45,7 +45,6 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
-import { HealIcon } from "mds";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import api from "../../../common/api";
 import PageLayout from "../Common/Layout/PageLayout";

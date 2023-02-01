@@ -23,8 +23,7 @@ import Grid from "@mui/material/Grid";
 import LabelValuePair from "../../../../Common/UsageBarWrapper/LabelValuePair";
 import { niceBytesInt } from "../../../../../../common/utils";
 import StackRow from "../../../../Common/UsageBarWrapper/StackRow";
-import { Button } from "mds";
-import { EditTenantIcon } from "mds";
+import { Button, EditTenantIcon } from "mds";
 
 const stylingLayout = {
   border: "#EAEAEA 1px solid",

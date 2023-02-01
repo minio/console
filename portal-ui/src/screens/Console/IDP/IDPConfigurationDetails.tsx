@@ -29,9 +29,15 @@ import {
   pageContentStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { BackLink, EditIcon, PageHeader, RefreshIcon, TrashIcon } from "mds";
+import {
+  BackLink,
+  Button,
+  EditIcon,
+  PageHeader,
+  RefreshIcon,
+  TrashIcon,
+} from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { Button } from "mds";
 import { useNavigate, useParams } from "react-router-dom";
 import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
@@ -46,6 +52,7 @@ import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import LabelValuePair from "../Common/UsageBarWrapper/LabelValuePair";
+
 type IDPConfigurationDetailsProps = {
   classes?: any;
   formFields: object;
