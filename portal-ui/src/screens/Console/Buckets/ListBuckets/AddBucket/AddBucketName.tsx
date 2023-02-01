@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { setName, setIsDirty } from "./addBucketsSlice";
+import { setIsDirty, setName } from "./addBucketsSlice";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../../store";

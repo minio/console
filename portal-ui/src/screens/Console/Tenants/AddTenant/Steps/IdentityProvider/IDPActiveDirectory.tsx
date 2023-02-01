@@ -28,14 +28,14 @@ import {
   wizardCommon,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import {
+  addIDPADGroupAtIndex,
   addIDPADUsrAtIndex,
   isPageValid,
+  removeIDPADGroupAtIndex,
   removeIDPADUsrAtIndex,
+  setIDPADGroupAtIndex,
   setIDPADUsrAtIndex,
   updateAddField,
-  addIDPADGroupAtIndex,
-  removeIDPADGroupAtIndex,
-  setIDPADGroupAtIndex,
 } from "../../createTenantSlice";
 import { useSelector } from "react-redux";
 import { clearValidationError } from "../../../utils";

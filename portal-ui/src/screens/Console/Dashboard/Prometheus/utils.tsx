@@ -25,7 +25,7 @@ import {
   textToRGBColor,
   units,
 } from "../../../../common/utils";
-import { HealIcon, DiagnosticsIcon, UptimeIcon } from "mds";
+import { DiagnosticsIcon, HealIcon, UptimeIcon } from "mds";
 
 const colorsMain = [
   "#C4D4E9",

@@ -16,7 +16,7 @@
 
 import React from "react";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, OpenListIcon, SyncIcon } from "mds";
 import { Box, Grid } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -24,8 +24,6 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import { actionsTray, widgetContainerCommon } from "../common/styleLibrary";
 import DateTimePickerWrapper from "../DateTimePickerWrapper/DateTimePickerWrapper";
-import { SyncIcon } from "mds";
-import { OpenListIcon } from "mds";
 
 interface IDateRangeSelector {
   classes: any;

@@ -34,14 +34,14 @@ import AddIcon from "@mui/icons-material/Add";
 import { RemoveIcon } from "mds";
 import {
   addCaCertificate,
-  deleteCaCertificate,
+  addClientKeyPair,
   addFileToCaCertificates,
+  addFileToClientKeyPair,
   addFileToKeyPair,
   addKeyPair,
-  deleteKeyPair,
-  addClientKeyPair,
+  deleteCaCertificate,
   deleteClientKeyPair,
-  addFileToClientKeyPair,
+  deleteKeyPair,
   isPageValid,
   updateAddField,
 } from "../createTenantSlice";

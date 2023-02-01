@@ -14,6 +14,7 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import * as React from "react";
+import { Fragment } from "react";
 import { KBarProvider } from "kbar";
 import Console from "./Console";
 import { useSelector } from "react-redux";
@@ -22,7 +23,6 @@ import { selFeatures } from "./consoleSlice";
 import TrafficMonitor from "./Common/ObjectManager/TrafficMonitor";
 import { AppState } from "../../store";
 import AnonymousAccess from "../AnonymousAccess/AnonymousAccess";
-import { Fragment } from "react";
 
 const ConsoleKBar = () => {
   const features = useSelector(selFeatures);

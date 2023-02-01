@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, RemoveIcon } from "mds";
 import { Grid, IconButton } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -32,7 +32,6 @@ import {
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../../common/api";
-import { RemoveIcon } from "mds";
 import {
   setModalErrorSnackMessage,
   setSnackBarMessage,

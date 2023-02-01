@@ -17,7 +17,15 @@ import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { BackLink, Button, PageHeader } from "mds";
+import {
+  BackLink,
+  Button,
+  IAMPoliciesIcon,
+  PageHeader,
+  RefreshIcon,
+  SearchIcon,
+  TrashIcon,
+} from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -38,7 +46,6 @@ import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMi
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import { IAMPoliciesIcon, RefreshIcon, SearchIcon, TrashIcon } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 

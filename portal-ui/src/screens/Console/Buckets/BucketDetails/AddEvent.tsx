@@ -17,7 +17,7 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import Grid from "@mui/material/Grid";
-import { Button } from "mds";
+import { Button, EventSubscriptionIcon } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -38,7 +38,6 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper/AutocompleteWrapper";
-import { EventSubscriptionIcon } from "mds";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 

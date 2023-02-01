@@ -42,24 +42,23 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../systemSlice";
-import { IKeyValue } from "../ListTenants/types";
+import { IKeyValue, ITenantMonitoringStruct } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import { ITenantMonitoringStruct } from "../ListTenants/types";
 import {
-  setPrometheusEnabled,
-  setImage,
-  setSidecarImage,
-  setInitImage,
-  setStorageClassName,
-  setDiskCapacityGB,
-  setServiceAccountName,
   setCPURequest,
-  setMemRequest,
-  setRunAsGroup,
+  setDiskCapacityGB,
   setFSGroup,
-  setRunAsUser,
+  setImage,
+  setInitImage,
+  setMemRequest,
+  setPrometheusEnabled,
+  setRunAsGroup,
   setRunAsNonRoot,
+  setRunAsUser,
+  setServiceAccountName,
+  setSidecarImage,
+  setStorageClassName,
 } from "../TenantDetails/tenantMonitoringSlice";
 import { clearValidationError, imagePattern, numericPattern } from "../utils";
 import SecurityContextSelector from "../securityContextSelector";

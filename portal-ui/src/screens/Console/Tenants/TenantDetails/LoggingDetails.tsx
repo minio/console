@@ -46,16 +46,16 @@ import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMe
 import SecurityContextSelector from "../securityContextSelector";
 import { clearValidationError, imagePattern, numericPattern } from "../utils";
 import {
-  setImage,
-  setDiskCapacityGB,
-  setServiceAccountName,
   setCPURequest,
-  setMemRequest,
-  setRunAsUser,
+  setDiskCapacityGB,
   setFSGroup,
+  setImage,
+  setMemRequest,
+  setRefreshLoggingInfo,
   setRunAsGroup,
   setRunAsNonRoot,
-  setRefreshLoggingInfo,
+  setRunAsUser,
+  setServiceAccountName,
 } from "../TenantDetails/tenantAuditLogSlice";
 import { setFSGroupChangePolicy } from "../tenantSecurityContextSlice";
 import { fsGroupChangePolicyType } from "../types";

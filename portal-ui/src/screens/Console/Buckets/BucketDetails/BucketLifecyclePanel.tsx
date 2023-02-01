@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { LifeCycleItem } from "../types";
-import { AddIcon, HelpBox, TiersIcon } from "mds";
+import { AddIcon, Button, HelpBox, TiersIcon } from "mds";
 import {
   actionsTray,
   searchField,
@@ -42,7 +42,6 @@ import DeleteBucketLifecycleRule from "./DeleteBucketLifecycleRule";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useParams } from "react-router-dom";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import { Button } from "mds";
 
 const styles = (theme: Theme) =>
   createStyles({

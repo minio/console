@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Button, HelpBox } from "mds";
+import { AddIcon, Button, HelpBox, LambdaIcon, RefreshIcon } from "mds";
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -30,7 +30,6 @@ import {
   TransformedEndpointItem,
 } from "./types";
 import { getNotificationConfigKey, notificationTransform } from "./utils";
-import { AddIcon, LambdaIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 import {
@@ -42,7 +41,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
-import { RefreshIcon } from "mds";
 import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";

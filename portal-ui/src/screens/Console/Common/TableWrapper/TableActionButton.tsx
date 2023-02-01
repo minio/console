@@ -24,12 +24,12 @@ import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
 import DisableIcon from "./TableActionIcons/DisableIcon";
 import FormatDriveIcon from "./TableActionIcons/FormatDriveIcon";
 import {
+  DownloadIcon,
+  EditIcon,
   IAMPoliciesIcon,
   PreviewIcon,
   ShareIcon,
-  EditIcon,
   TrashIcon,
-  DownloadIcon,
 } from "mds";
 
 const styles = () =>

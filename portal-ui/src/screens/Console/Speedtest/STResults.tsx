@@ -17,12 +17,8 @@
 import React, { Fragment, useState } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import { Grid } from "@mui/material";
-import { IndvServerMetric, SpeedTestResponse, STServer } from "./types";
-import { calculateBytes, prettyNumber } from "../../../common/utils";
 import {
+  Button,
   ComputerLineIcon,
   DownloadIcon,
   DownloadStatIcon,
@@ -31,6 +27,10 @@ import {
   UploadStatIcon,
   VersionIcon,
 } from "mds";
+import createStyles from "@mui/styles/createStyles";
+import { Grid } from "@mui/material";
+import { IndvServerMetric, SpeedTestResponse, STServer } from "./types";
+import { calculateBytes, prettyNumber } from "../../../common/utils";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer } from "recharts";
 import { cleanMetrics } from "./utils";

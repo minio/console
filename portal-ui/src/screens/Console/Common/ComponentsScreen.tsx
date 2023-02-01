@@ -22,8 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import { DialogContentText, Grid } from "@mui/material";
 import PageLayout from "./Layout/PageLayout";
 import SectionTitle from "./SectionTitle";
-import { Button, PageHeader } from "mds";
-import { ConfirmDeleteIcon } from "mds";
+import { Button, ConfirmDeleteIcon, PageHeader } from "mds";
 import ConfirmDialog from "./ModalWrapper/ConfirmDialog";
 
 interface IComponentsScreen {

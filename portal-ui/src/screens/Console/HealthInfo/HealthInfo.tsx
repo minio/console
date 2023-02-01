@@ -23,7 +23,7 @@ import {
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, HelpBox, PageHeader } from "mds";
+import { Button, HelpBox, Loader, PageHeader, WarnIcon } from "mds";
 import {
   DiagStatError,
   DiagStatInProgress,
@@ -48,8 +48,6 @@ import { Grid } from "@mui/material";
 
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
-import { WarnIcon } from "mds";
-import { Loader } from "mds";
 import { setServerDiagStat } from "../../../systemSlice";
 import {
   healthInfoMessageReceived,

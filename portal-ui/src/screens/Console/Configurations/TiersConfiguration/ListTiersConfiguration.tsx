@@ -21,7 +21,17 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box, LinearProgress } from "@mui/material";
-import { Button, HelpBox, PageHeader } from "mds";
+import {
+  AddIcon,
+  Button,
+  HelpBox,
+  PageHeader,
+  RefreshIcon,
+  TierOfflineIcon,
+  TierOnlineIcon,
+  TiersIcon,
+  TiersNotAvailableIcon,
+} from "mds";
 import Grid from "@mui/material/Grid";
 import {
   actionsTray,
@@ -31,14 +41,11 @@ import {
   tableStyles,
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { AddIcon, TiersIcon, TiersNotAvailableIcon } from "mds";
 
 import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-
-import { RefreshIcon } from "mds";
 import AButton from "../../Common/AButton/AButton";
 import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
@@ -50,15 +57,17 @@ import {
   IAM_PAGES,
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
-import { SecureComponent } from "../../../../common/SecureComponent";
+import {
+  hasPermission,
+  SecureComponent,
+} from "../../../../common/SecureComponent";
 import { tierTypes } from "./utils";
 
 import { selDistSet, setErrorSnackMessage } from "../../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
-import { hasPermission } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import { TierOnlineIcon, TierOfflineIcon } from "mds";
+
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );

@@ -19,10 +19,9 @@ import SetEmailModal from "./SetEmailModal";
 import PageLayout from "../Common/Layout/PageLayout";
 import { selFeatures } from "../consoleSlice";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { resourcesConfigurations } from "../Tenants/AddTenant/Steps/TenantResources/utils";
 import { selShowMarketplace, showMarketplace } from "../../../systemSlice";
-import { Navigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import { PageHeader } from "mds";
 
