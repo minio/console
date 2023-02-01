@@ -15,9 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { Box, Grid } from "@mui/material";
 import PageLayout from "../Common/Layout/PageLayout";
 import api from "../../../common/api";
@@ -50,8 +47,6 @@ import {
   YAxis,
 } from "recharts";
 import { DisabledIcon, EnabledIcon, PageHeader } from "mds";
-
-const styles = (theme: Theme) => createStyles({});
 
 const Status = () => {
   const dispatch = useAppDispatch();
@@ -431,4 +426,4 @@ const Status = () => {
   );
 };
 
-export default withStyles(styles)(Status);
+export default Status;

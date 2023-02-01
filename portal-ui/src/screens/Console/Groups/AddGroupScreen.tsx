@@ -25,12 +25,11 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddGroupHelpBox from "./AddGroupHelpBox";
 import UsersSelectors from "./UsersSelectors";
-import BackLink from "../../../common/BackLink";
 
 import { CreateGroupIcon } from "mds";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
@@ -114,7 +113,12 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
     <Fragment>
       <Grid item xs={12}>
         <PageHeader
-          label={<BackLink to={IAM_PAGES.GROUPS} label={"Groups"} />}
+          label={
+            <BackLink
+              label={"Groups"}
+              onClick={() => navigate(IAM_PAGES.GROUPS)}
+            />
+          }
         />
         <PageLayout>
           <FormLayout

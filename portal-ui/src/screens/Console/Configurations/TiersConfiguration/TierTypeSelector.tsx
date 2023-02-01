@@ -19,10 +19,9 @@ import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { tierTypes } from "./utils";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
-import BackLink from "../../../../common/BackLink";
 import PageLayout from "../../Common/Layout/PageLayout";
 import TierTypeCard from "./TierTypeCard";
-import { HelpBox, PageHeader, TiersIcon } from "mds";
+import { BackLink, HelpBox, PageHeader, TiersIcon } from "mds";
 import FormLayout from "../../Common/FormLayout";
 
 const TierTypeSelector = () => {
@@ -37,7 +36,10 @@ const TierTypeSelector = () => {
       <PageHeader
         label={
           <Fragment>
-            <BackLink to={IAM_PAGES.TIERS} label="Tier Types" />
+            <BackLink
+              label="Tier Types"
+              onClick={() => navigate(IAM_PAGES.TIERS)}
+            />
           </Fragment>
         }
         actions={<React.Fragment />}

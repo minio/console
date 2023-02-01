@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import {
   Link,
   Navigate,
@@ -41,7 +41,7 @@ import { niceBytes } from "../../../../common/utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { EditIcon, RefreshIcon, TenantsIcon } from "mds";
 import PageLayout from "../../Common/Layout/PageLayout";
-import BackLink from "../../../../common/BackLink";
+
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 import withSuspense from "../../Common/Components/withSuspense";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
@@ -265,7 +265,10 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
       <PageHeader
         label={
           <Fragment>
-            <BackLink to={IAM_PAGES.TENANTS} label="Tenants" />
+            <BackLink
+              label="Tenants"
+              onClick={() => navigate(IAM_PAGES.TENANTS)}
+            />
           </Fragment>
         }
         actions={<React.Fragment />}

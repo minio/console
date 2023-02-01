@@ -17,14 +17,13 @@
 import React, { Fragment } from "react";
 
 import Grid from "@mui/material/Grid";
-import BackLink from "../../../common/BackLink";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import AddKeyForm from "./AddKeyForm";
-import { PageHeader } from "mds";
+import { BackLink, PageHeader } from "mds";
 
 const AddKey = () => {
   const dispatch = useAppDispatch();
@@ -39,7 +38,12 @@ const AddKey = () => {
     <Fragment>
       <Grid item xs={12}>
         <PageHeader
-          label={<BackLink to={IAM_PAGES.KMS_KEYS} label={"Keys"} />}
+          label={
+            <BackLink
+              label={"Keys"}
+              onClick={() => navigate(IAM_PAGES.KMS_KEYS)}
+            />
+          }
         />
         <AddKeyForm onError={onError} onSuccess={onSuccess} />
       </Grid>

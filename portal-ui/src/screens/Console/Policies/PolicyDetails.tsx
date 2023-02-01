@@ -17,7 +17,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -41,7 +41,7 @@ import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import { IAMPoliciesIcon, RefreshIcon, SearchIcon, TrashIcon } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
-import BackLink from "../../../common/BackLink";
+
 import {
   CONSOLE_UI_RESOURCE,
   createPolicyPermissions,
@@ -360,7 +360,10 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
       <PageHeader
         label={
           <Fragment>
-            <BackLink to={IAM_PAGES.POLICIES} label={"Policy"} />
+            <BackLink
+              label={"Policy"}
+              onClick={() => navigate(IAM_PAGES.POLICIES)}
+            />
           </Fragment>
         }
       />

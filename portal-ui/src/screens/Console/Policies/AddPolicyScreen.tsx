@@ -17,12 +17,12 @@
 import React, { Fragment, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import BackLink from "../../../common/BackLink";
+
 import { AddAccessRuleIcon } from "mds";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -82,7 +82,12 @@ const AddPolicyScreen = () => {
     <Fragment>
       <Grid item xs={12}>
         <PageHeader
-          label={<BackLink to={IAM_PAGES.POLICIES} label={"Policies"} />}
+          label={
+            <BackLink
+              label={"Policies"}
+              onClick={() => navigate(IAM_PAGES.POLICIES)}
+            />
+          }
         />
         <PageLayout>
           <FormLayout

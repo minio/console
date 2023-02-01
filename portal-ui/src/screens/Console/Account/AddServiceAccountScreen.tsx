@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -36,7 +36,7 @@ import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
-import BackLink from "../../../common/BackLink";
+
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -153,7 +153,12 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
       )}
       <Grid item xs={12}>
         <PageHeader
-          label={<BackLink to={IAM_PAGES.ACCOUNT} label={"Access Keys"} />}
+          label={
+            <BackLink
+              label={"Access Keys"}
+              onClick={() => navigate(IAM_PAGES.ACCOUNT)}
+            />
+          }
         />
         <PageLayout>
           <Box

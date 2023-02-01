@@ -16,10 +16,10 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, Grid } from "@mui/material";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import PageLayout from "../../Common/Layout/PageLayout";
 import useApi from "../../Common/Hooks/useApi";
-import BackLink from "../../../../common/BackLink";
+
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import StatusCountCard from "../../Dashboard/BasicDashboard/StatusCountCard";
@@ -33,6 +33,7 @@ import {
 import EntityReplicationLookup from "./EntityReplicationLookup";
 import { Loader } from "mds";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import { useNavigate } from "react-router-dom";
 
 export type StatsResponseType = {
   maxBuckets?: number;
@@ -81,6 +82,8 @@ const SREntityStatus = ({
 };
 
 const SiteReplicationStatus = () => {
+  const navigate = useNavigate();
+
   const [stats, setStats] = useState<StatsResponseType>({});
 
   const [isStatsLoading, invokeSiteStatsApi] = useApi(
@@ -118,8 +121,8 @@ const SiteReplicationStatus = () => {
       <PageHeader
         label={
           <BackLink
-            to={IAM_PAGES.SITE_REPLICATION}
             label={"Site Replication"}
+            onClick={() => navigate(IAM_PAGES.SITE_REPLICATION)}
           />
         }
       />

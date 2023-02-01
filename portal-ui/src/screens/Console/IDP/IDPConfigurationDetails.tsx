@@ -29,7 +29,7 @@ import {
   pageContentStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { EditIcon, PageHeader, RefreshIcon, TrashIcon } from "mds";
+import { BackLink, EditIcon, PageHeader, RefreshIcon, TrashIcon } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button } from "mds";
 import { useNavigate, useParams } from "react-router-dom";
@@ -42,7 +42,6 @@ import {
 import useApi from "../Common/Hooks/useApi";
 import api from "../../../common/api";
 import PageLayout from "../Common/Layout/PageLayout";
-import BackLink from "../../../common/BackLink";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -378,7 +377,9 @@ const IDPConfigurationDetails = ({
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <PageHeader label={<BackLink to={backLink} label={header} />} />
+      <PageHeader
+        label={<BackLink onClick={() => navigate(backLink)} label={header} />}
+      />
       <PageLayout className={classes.pageContainer}>
         <Box>
           <ScreenTitle

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import BackLink from "../../../common/BackLink";
 import {
   IAM_PAGES,
   IAM_PERMISSIONS,
@@ -24,7 +23,7 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { Button, PageHeader, SettingsIcon } from "mds";
+import { BackLink, Button, PageHeader, SettingsIcon } from "mds";
 import { Grid } from "@mui/material";
 import AutoColorIcon from "../Common/Components/AutoColorIcon";
 import { useSelector } from "react-redux";
@@ -83,10 +82,6 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
     IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
 
-  const openBucketConfiguration = () => {
-    navigate(`/buckets/${bucketName}/admin`);
-  };
-
   const searchBar = (
     <Fragment>
       {!versionsMode ? (
@@ -118,7 +113,10 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
           label={
             <BackLink
               label={"Object Browser"}
-              to={IAM_PAGES.OBJECT_BROWSER_VIEW}
+              onClick={() => {
+                console.log("clicke");
+                navigate(IAM_PAGES.OBJECT_BROWSER_VIEW);
+              }}
             />
           }
           actions={
@@ -140,7 +138,7 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
                   id={"configure-bucket-main"}
                   color="primary"
                   aria-label="Configure Bucket"
-                  onClick={openBucketConfiguration}
+                  onClick={() => navigate(`/buckets/${bucketName}/admin`)}
                   icon={
                     <SettingsIcon
                       style={{ width: 20, height: 20, marginTop: -3 }}

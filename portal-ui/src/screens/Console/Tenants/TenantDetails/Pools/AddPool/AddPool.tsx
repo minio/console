@@ -30,13 +30,13 @@ import GenericWizard from "../../../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../../../Common/GenericWizard/types";
 import PoolResources from "./PoolResources";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import { PageHeader, TenantsIcon } from "mds";
+import { BackLink, PageHeader, TenantsIcon } from "mds";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { useSelector } from "react-redux";
 import PoolConfiguration from "./PoolConfiguration";
 import PoolPodPlacement from "./PoolPodPlacement";
-import BackLink from "../../../../../../common/BackLink";
+
 import { resetPoolForm } from "./addPoolSlice";
 import AddPoolCreateButton from "./AddPoolCreateButton";
 import makeStyles from "@mui/styles/makeStyles";
@@ -130,7 +130,10 @@ const AddPool = () => {
         <PageHeader
           label={
             <Fragment>
-              <BackLink to={poolsURL} label={`Tenant Pools`} />
+              <BackLink
+                label={`Tenant Pools`}
+                onClick={() => navigate(poolsURL)}
+              />
             </Fragment>
           }
         />

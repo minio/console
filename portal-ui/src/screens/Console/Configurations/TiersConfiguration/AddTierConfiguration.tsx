@@ -20,7 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box } from "@mui/material";
@@ -41,7 +41,7 @@ import {
   s3ServiceName,
   tierTypes,
 } from "./utils";
-import BackLink from "../../../../common/BackLink";
+
 import PageLayout from "../../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
@@ -314,7 +314,10 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
       <PageHeader
         label={
           <Fragment>
-            <BackLink to={IAM_PAGES.TIERS_ADD} label={"Add Tier"} />
+            <BackLink
+              label={"Add Tier"}
+              onClick={() => navigate(IAM_PAGES.TIERS_ADD)}
+            />
           </Fragment>
         }
         actions={<React.Fragment />}

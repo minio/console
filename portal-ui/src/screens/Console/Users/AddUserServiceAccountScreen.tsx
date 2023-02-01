@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -35,7 +35,7 @@ import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMi
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import BackLink from "../../../common/BackLink";
+
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
@@ -175,7 +175,9 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
         <PageHeader
           label={
             <BackLink
-              to={`${IAM_PAGES.USERS}/${encodeURLString(userName)}`}
+              onClick={() =>
+                navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`)
+              }
               label={"User Details - " + userName}
             />
           }

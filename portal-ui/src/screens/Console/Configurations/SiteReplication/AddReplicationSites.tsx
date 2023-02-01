@@ -18,10 +18,9 @@ import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Button, HelpBox, PageHeader } from "mds";
+import { BackLink, Button, HelpBox, PageHeader } from "mds";
 import useApi from "../../Common/Hooks/useApi";
 import { ClustersIcon } from "mds";
-import BackLink from "../../../../common/BackLink";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import SectionTitle from "../../Common/SectionTitle";
@@ -397,8 +396,8 @@ const AddReplicationSites = () => {
       <PageHeader
         label={
           <BackLink
-            to={IAM_PAGES.SITE_REPLICATION}
             label={"Add Replication Site"}
+            onClick={() => navigate(IAM_PAGES.SITE_REPLICATION)}
           />
         }
       />

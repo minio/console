@@ -23,8 +23,7 @@ import Grid from "@mui/material/Grid";
 import PageLayout from "../../../../Common/Layout/PageLayout";
 import GenericWizard from "../../../../Common/GenericWizard/GenericWizard";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import { PageHeader, TenantsIcon } from "mds";
-import BackLink from "../../../../../../common/BackLink";
+import { BackLink, PageHeader, TenantsIcon } from "mds";
 import EditPoolResources from "./EditPoolResources";
 import EditPoolConfiguration from "./EditPoolConfiguration";
 import EditPoolPlacement from "./EditPoolPlacement";
@@ -153,7 +152,10 @@ const EditPool = () => {
         <PageHeader
           label={
             <Fragment>
-              <BackLink to={poolsURL} label={`Pool Details`} />
+              <BackLink
+                label={`Pool Details`}
+                onClick={() => navigate(poolsURL)}
+              />
             </Fragment>
           }
         />

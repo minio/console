@@ -40,7 +40,7 @@ import Encryption from "./Steps/Encryption";
 import Affinity from "./Steps/Affinity";
 import Images from "./Steps/Images";
 import PageLayout from "../../Common/Layout/PageLayout";
-import BackLink from "../../../../common/BackLink";
+
 import TenantResources from "./Steps/TenantResources/TenantResources";
 import ConfigLogSearch from "./Steps/ConfigLogSearch";
 import ConfigPrometheus from "./Steps/ConfigPrometheus";
@@ -48,7 +48,7 @@ import {
   IMkEnvs,
   resourcesConfigurations,
 } from "./Steps/TenantResources/utils";
-import { HelpBox, PageHeader, StorageIcon } from "mds";
+import { BackLink, HelpBox, PageHeader, StorageIcon } from "mds";
 import { selFeatures } from "../../consoleSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { resetAddTenantForm } from "./createTenantSlice";
@@ -178,11 +178,11 @@ const AddTenant = () => {
       <PageHeader
         label={
           <BackLink
-            to={"/tenants"}
-            label={"Tenants"}
-            executeOnClick={() => {
+            onClick={() => {
               dispatch(resetAddTenantForm());
+              navigate("/tenants");
             }}
+            label={"Tenants"}
           />
         }
       />

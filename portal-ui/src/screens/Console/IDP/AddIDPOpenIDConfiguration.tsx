@@ -15,25 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { LockIcon } from "mds";
 import AddIDPConfiguration from "./AddIDPConfiguration";
 import { openIDFormFields, openIDHelpBoxContents } from "./utils";
 import AddIDPConfigurationHelpBox from "./AddIDPConfigurationHelpbox";
 
-type AddIDPOpenIDConfigurationProps = {
-  classes?: any;
-};
-
-const styles = (theme: Theme) => createStyles({});
-
-const AddIDPOpenIDConfiguration = ({
-  classes,
-}: AddIDPOpenIDConfigurationProps) => {
+const AddIDPOpenIDConfiguration = () => {
   return (
     <AddIDPConfiguration
       icon={<LockIcon />}
@@ -56,4 +44,4 @@ const AddIDPOpenIDConfiguration = ({
   );
 };
 
-export default withStyles(styles)(AddIDPOpenIDConfiguration);
+export default AddIDPOpenIDConfiguration;

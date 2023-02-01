@@ -25,7 +25,7 @@ import {
   modalBasic,
 } from "../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import { useNavigate } from "react-router-dom";
 import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
@@ -34,7 +34,6 @@ import {
   setServerNeedsRestart,
 } from "../../../systemSlice";
 import useApi from "../Common/Hooks/useApi";
-import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 import SectionTitle from "../Common/SectionTitle";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -167,7 +166,9 @@ const AddIDPConfiguration = ({
 
   return (
     <Grid item xs={12}>
-      <PageHeader label={<BackLink to={backLink} label={header} />} />
+      <PageHeader
+        label={<BackLink onClick={() => navigate(backLink)} label={header} />}
+      />
       <PageLayout>
         <Box
           sx={{

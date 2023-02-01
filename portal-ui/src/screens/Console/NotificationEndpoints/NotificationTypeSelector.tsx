@@ -24,13 +24,12 @@ import {
   settingsCommon,
   typesSelection,
 } from "../Common/FormComponents/common/styleLibrary";
-import BackLink from "../../../common/BackLink";
 import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import ContentBox from "../Common/ContentBox";
 import { Box } from "@mui/material";
 import NotificationEndpointTypeSelectorHelpBox from "../Account/NotificationEndpointTypeSelectorHelpBox";
-import { PageHeader } from "mds";
+import { BackLink, PageHeader } from "mds";
 
 interface INotificationTypeSelector {
   classes: any;
@@ -52,8 +51,8 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
         label={
           <Fragment>
             <BackLink
-              to={IAM_PAGES.NOTIFICATIONS_ENDPOINTS}
-              label="Notification Targets"
+              label={"Notification Targets"}
+              onClick={() => navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS)}
             />
           </Fragment>
         }

@@ -17,7 +17,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
@@ -49,7 +49,6 @@ import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import BackLink from "../../../common/BackLink";
 
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
@@ -235,7 +234,10 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
       <PageHeader
         label={
           <Fragment>
-            <BackLink label={"Users"} to={IAM_PAGES.USERS} />
+            <BackLink
+              label={"Users"}
+              onClick={() => navigate(IAM_PAGES.USERS)}
+            />
           </Fragment>
         }
         actions={<React.Fragment></React.Fragment>}

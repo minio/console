@@ -17,7 +17,7 @@
 import React, { Fragment } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -32,8 +32,9 @@ import { AppState, useAppDispatch } from "../../../../store";
 
 import PoolsListing from "./Pools/Details/PoolsListing";
 import PoolDetails from "./Pools/Details/PoolDetails";
-import BackLink from "../../../../common/BackLink";
+
 import { setOpenPoolDetails } from "../tenantsSlice";
+import { BackLink } from "mds";
 
 interface IPoolsSummary {
   classes: any;
@@ -49,6 +50,8 @@ const styles = (theme: Theme) =>
 
 const PoolsSummary = ({ classes }: IPoolsSummary) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const { pathname = "" } = useLocation();
 
   const selectedPool = useSelector(
@@ -63,11 +66,11 @@ const PoolsSummary = ({ classes }: IPoolsSummary) => {
       {poolDetailsOpen && (
         <Grid item xs={12}>
           <BackLink
-            executeOnClick={() => {
+            label={"Pools list"}
+            onClick={() => {
+              navigate(pathname);
               dispatch(setOpenPoolDetails(false));
             }}
-            label={"Pools list"}
-            to={pathname}
           />
         </Grid>
       )}

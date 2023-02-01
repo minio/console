@@ -21,7 +21,7 @@ import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 
 import api from "../../../common/api";
 import {
@@ -40,7 +40,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import { IElementValue } from "../Configurations/types";
 
 import withSuspense from "../Common/Components/withSuspense";
-import BackLink from "../../../common/BackLink";
+
 import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import {
@@ -185,8 +185,8 @@ const AddNotificationEndpoint = ({
         label={
           <Fragment>
             <BackLink
-              to={IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}
               label="Notification Endpoint"
+              onClick={() => navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD)}
             />
           </Fragment>
         }

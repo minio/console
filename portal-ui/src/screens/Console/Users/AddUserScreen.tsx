@@ -16,7 +16,7 @@
 
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
-import { Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import UserSelector from "./UserSelector";
@@ -33,7 +33,7 @@ import { CreateUserIcon } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 
 import PolicySelectors from "../Policies/PolicySelectors";
-import BackLink from "../../../common/BackLink";
+
 import GroupsSelectors from "./GroupsSelectors";
 
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
@@ -116,7 +116,14 @@ const AddUser = ({ classes }: IAddUserProps) => {
   return (
     <Fragment>
       <Grid item xs={12}>
-        <PageHeader label={<BackLink to={IAM_PAGES.USERS} label={"Users"} />} />
+        <PageHeader
+          label={
+            <BackLink
+              label={"Users"}
+              onClick={() => navigate(IAM_PAGES.USERS)}
+            />
+          }
+        />
         <PageLayout>
           <FormLayout
             title={"Create User"}

@@ -1,23 +1,18 @@
 import React, { Fragment } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import BackLink from "../../../common/BackLink";
-import { PageHeader } from "mds";
+import { BackLink, PageHeader } from "mds";
+import { useNavigate } from "react-router-dom";
 
-const styles = (theme: Theme) => createStyles({});
-
-type DetailsHeaderProps = {
-  classes: any;
-};
-
-const GroupDetailsHeader = ({ classes }: DetailsHeaderProps) => {
+const GroupDetailsHeader = () => {
+  const navigate = useNavigate();
   return (
     <PageHeader
       label={
         <Fragment>
-          <BackLink to={IAM_PAGES.GROUPS} label={"Groups"} />
+          <BackLink
+            label={"Groups"}
+            onClick={() => navigate(IAM_PAGES.GROUPS)}
+          />
         </Fragment>
       }
       actions={<React.Fragment />}
@@ -25,4 +20,4 @@ const GroupDetailsHeader = ({ classes }: DetailsHeaderProps) => {
   );
 };
 
-export default withStyles(styles)(GroupDetailsHeader);
+export default GroupDetailsHeader;

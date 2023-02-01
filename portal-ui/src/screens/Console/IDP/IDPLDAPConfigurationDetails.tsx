@@ -15,25 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { ldapFormFields, ldapHelpBoxContents } from "./utils";
 import LoginIcon from "@mui/icons-material/Login";
 import IDPConfigurationDetails from "./IDPConfigurationDetails";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import AddIDPConfigurationHelpBox from "./AddIDPConfigurationHelpbox";
 
-type IDPLDAPConfigurationDetailsProps = {
-  classes?: any;
-};
-
-const styles = (theme: Theme) => createStyles({});
-
-const IDPLDAPConfigurationDetails = ({
-  classes,
-}: IDPLDAPConfigurationDetailsProps) => {
+const IDPLDAPConfigurationDetails = () => {
   return (
     <IDPConfigurationDetails
       backLink={IAM_PAGES.IDP_LDAP_CONFIGURATIONS}
@@ -56,4 +44,4 @@ const IDPLDAPConfigurationDetails = ({
   );
 };
 
-export default withStyles(styles)(IDPLDAPConfigurationDetails);
+export default IDPLDAPConfigurationDetails;

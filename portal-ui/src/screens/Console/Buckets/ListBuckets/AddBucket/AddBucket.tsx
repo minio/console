@@ -19,7 +19,14 @@ import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { Button, HelpBox, PageHeader } from "mds";
+import {
+  BackLink,
+  BucketsIcon,
+  Button,
+  HelpBox,
+  InfoIcon,
+  PageHeader,
+} from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
@@ -29,9 +36,11 @@ import { k8sScalarUnitsExcluding } from "../../../../../common/utils";
 import { AppState, useAppDispatch } from "../../../../../store";
 import { useSelector } from "react-redux";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import BackLink from "../../../../../common/BackLink";
-import { BucketsIcon, InfoIcon } from "mds";
-import { setErrorSnackMessage } from "../../../../../systemSlice";
+import {
+  selDistSet,
+  selSiteRep,
+  setErrorSnackMessage,
+} from "../../../../../systemSlice";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { BucketList } from "../../types";
 import api from "../../../../../common/api";
@@ -40,7 +49,6 @@ import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUni
 import FormLayout from "../../../Common/FormLayout";
 import TooltipWrapper from "../../../Common/TooltipWrapper/TooltipWrapper";
 import SectionTitle from "../../../Common/SectionTitle";
-import { selDistSet, selSiteRep } from "../../../../../systemSlice";
 import {
   resetForm,
   setEnableObjectLocking,
@@ -233,7 +241,11 @@ const AddBucket = ({ classes }: IsetProps) => {
 
   return (
     <Fragment>
-      <PageHeader label={<BackLink to={"/buckets"} label={"Buckets"} />} />
+      <PageHeader
+        label={
+          <BackLink label={"Buckets"} onClick={() => navigate("/buckets")} />
+        }
+      />
       <PageLayout>
         <FormLayout
           title={"Create Bucket"}

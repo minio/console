@@ -18,10 +18,9 @@ import React, { Fragment, useState } from "react";
 import { Box } from "@mui/material";
 
 import Grid from "@mui/material/Grid";
-import { AddAccessRuleIcon, Button, PageHeader } from "mds";
+import { BackLink, AddAccessRuleIcon, Button, PageHeader } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import BackLink from "../../../common/BackLink";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
 import FormLayout from "../Common/FormLayout";
@@ -70,7 +69,12 @@ const ImportKey = () => {
     <Fragment>
       <Grid item xs={12}>
         <PageHeader
-          label={<BackLink to={IAM_PAGES.KMS_KEYS} label={"Keys"} />}
+          label={
+            <BackLink
+              onClick={() => navigate(IAM_PAGES.KMS_KEYS)}
+              label={"Keys"}
+            />
+          }
         />
         <PageLayout>
           <FormLayout
