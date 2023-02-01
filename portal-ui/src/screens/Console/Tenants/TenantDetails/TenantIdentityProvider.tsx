@@ -85,33 +85,10 @@ const styles = (theme: Theme) =>
         background: "#EAEAEA",
       },
     },
-    overlayAction: {
-      marginLeft: 10,
-      "& svg": {
-        maxWidth: 15,
-        maxHeight: 15,
-      },
-      "& button": {
-        background: "#EAEAEA",
-      },
-    },
     ...tenantDetailsStyles,
     ...spacingUtils,
     loaderAlign: {
       textAlign: "center",
-    },
-    bold: { fontWeight: "bold" },
-    italic: { fontStyle: "italic" },
-    fileItem: {
-      marginRight: 10,
-      display: "flex",
-      "& div label": {
-        minWidth: 50,
-      },
-
-      "@media (max-width: 900px)": {
-        flexFlow: "column",
-      },
     },
     ...containerForHeader(theme.spacing(4)),
     ...createTenantCommon,

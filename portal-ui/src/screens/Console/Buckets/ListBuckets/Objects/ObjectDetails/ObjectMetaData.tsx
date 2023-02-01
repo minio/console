@@ -33,20 +33,6 @@ interface IObjectMetadata {
 
 const styles = (theme: Theme) =>
   createStyles({
-    propertiesIcon: {
-      marginLeft: 5,
-      "& .min-icon": {
-        height: 12,
-      },
-    },
-
-    capitalizeFirst: {
-      textTransform: "capitalize",
-      "& .min-icon": {
-        width: 16,
-        height: 16,
-      },
-    },
     titleItem: {
       width: "35%",
     },

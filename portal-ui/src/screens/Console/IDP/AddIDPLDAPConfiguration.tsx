@@ -29,20 +29,7 @@ import AddIDPConfiguration from "./AddIDPConfiguration";
 import { ldapFormFields, ldapHelpBoxContents } from "./utils";
 import AddIDPConfigurationHelpBox from "./AddIDPConfigurationHelpbox";
 
-type AddIDPLDAPConfigurationProps = {
-  classes?: any;
-};
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    formFieldRow: {
-      ...formFieldStyles.formFieldRow,
-    },
-    ...modalBasic,
-  });
-
-const AddIDPLDAPConfiguration = ({ classes }: AddIDPLDAPConfigurationProps) => {
+const AddIDPLDAPConfiguration = () => {
   return (
     <AddIDPConfiguration
       icon={<LoginIcon />}
@@ -65,4 +52,4 @@ const AddIDPLDAPConfiguration = ({ classes }: AddIDPLDAPConfigurationProps) => {
   );
 };
 
-export default withStyles(styles)(AddIDPLDAPConfiguration);
+export default AddIDPLDAPConfiguration;

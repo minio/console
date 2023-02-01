@@ -68,12 +68,6 @@ const styles = (theme: Theme) =>
       },
     },
 
-    logSearchEnabledFields: {
-      marginLeft: 20, // 2nd Level(15+15)
-      padding: 10,
-      width: "90%",
-      margin: "auto",
-    },
     fieldSpaceTop: {
       marginTop: 15,
     },

@@ -34,9 +34,6 @@ interface IFormatErrorsProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     errorsList: {
       height: "calc(100vh - 280px)",
     },

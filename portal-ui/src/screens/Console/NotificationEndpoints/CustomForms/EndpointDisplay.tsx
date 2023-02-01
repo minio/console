@@ -31,11 +31,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...settingsCommon,
-    settingsFormContainer: {
-      display: "grid",
-      gridTemplateColumns: "1fr",
-      gridGap: "10px",
-    },
   });
 
 interface IEndpointDisplayProps {

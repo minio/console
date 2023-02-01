@@ -71,12 +71,6 @@ const styles = (theme: Theme) =>
     fieldSpaceTop: {
       marginTop: 15,
     },
-    prometheusEnabledFields: {
-      marginLeft: 20, // 2nd Level(15+15)
-      padding: 10,
-      width: "90%",
-      margin: "auto",
-    },
     ...modalBasic,
     ...wizardCommon,
   });

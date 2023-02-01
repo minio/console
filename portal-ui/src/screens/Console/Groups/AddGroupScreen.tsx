@@ -44,19 +44,6 @@ interface IAddGroupProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    bottomContainer: {
-      display: "flex",
-      flexGrow: 1,
-      alignItems: "center",
-      margin: "auto",
-      justifyContent: "center",
-      "& div": {
-        width: 150,
-        "@media (max-width: 900px)": {
-          flexFlow: "column",
-        },
-      },
-    },
     ...formFieldStyles,
     ...modalStyleUtils,
   });

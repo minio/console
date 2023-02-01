@@ -77,25 +77,6 @@ const styles = (theme: Theme) =>
         marginRight: 4,
       },
     },
-    detailSection: {
-      "& div": {
-        "& b,i": {
-          minWidth: 80,
-          display: "block",
-          float: "left",
-        },
-        "& i": {
-          fontStyle: "normal",
-          wordWrap: "break-word",
-          overflowWrap: "break-word",
-        },
-        "& div": {
-          clear: "both",
-        },
-        clear: "both",
-        marginBottom: 2,
-      },
-    },
     linkedSection: {
       color: theme.palette.info.main,
       fontFamily: "'Inter', sans-serif",

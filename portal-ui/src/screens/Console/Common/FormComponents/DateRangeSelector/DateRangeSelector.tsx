@@ -15,18 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Theme } from "@mui/material/styles";
 import { Button, OpenListIcon, SyncIcon } from "mds";
 import { Box, Grid } from "@mui/material";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
-import { actionsTray, widgetContainerCommon } from "../common/styleLibrary";
 import DateTimePickerWrapper from "../DateTimePickerWrapper/DateTimePickerWrapper";
 
 interface IDateRangeSelector {
-  classes: any;
   timeStart: any;
   setTimeStart: (date: any) => void;
   timeEnd: any;
@@ -36,27 +31,6 @@ interface IDateRangeSelector {
   startLabel?: string;
   endLabel?: string;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...actionsTray,
-    ...widgetContainerCommon,
-    schedulerIcon: {
-      opacity: 0.4,
-      fontSize: 10,
-      "& svg": {
-        width: 18,
-        height: 18,
-      },
-    },
-    selectorLabel: {
-      color: "#9D9E9D",
-      fontWeight: "bold",
-      whiteSpace: "nowrap",
-      marginLeft: 10,
-      fontSize: 12,
-    },
-  });
 
 const DateFilterAdornIcon = () => {
   return (
@@ -76,7 +50,6 @@ const DateFilterAdornIcon = () => {
 };
 
 const DateRangeSelector = ({
-  classes,
   timeStart,
   setTimeStart,
   timeEnd,
@@ -279,4 +252,4 @@ const DateRangeSelector = ({
   );
 };
 
-export default withStyles(styles)(DateRangeSelector);
+export default DateRangeSelector;

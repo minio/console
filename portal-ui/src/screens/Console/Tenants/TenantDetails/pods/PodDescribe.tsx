@@ -15,15 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  actionsTray,
-  buttonsStyles,
-  hrClass,
-  searchField,
-} from "../../../Common/FormComponents/common/styleLibrary";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
@@ -44,7 +35,6 @@ import { AppState, useAppDispatch } from "../../../../../store";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface IPodEventsProps {
-  classes: any;
   tenant: string;
   namespace: string;
   podName: string;
@@ -165,18 +155,6 @@ interface IPodDescribeTableProps {
   columnsLabels: string[];
   items: any[];
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...actionsTray,
-    ...buttonsStyles,
-    ...searchField,
-    ...hrClass,
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      padding: "15px 0 0",
-    },
-  });
 
 const twoColCssGridLayoutConfig = {
   display: "grid",
@@ -398,7 +376,6 @@ const PodDescribeContainers = ({ containers }: IPodDescribeContainersProps) => {
 };
 
 const PodDescribe = ({
-  classes,
   tenant,
   namespace,
   podName,
@@ -493,4 +470,4 @@ const PodDescribe = ({
   );
 };
 
-export default withStyles(styles)(PodDescribe);
+export default PodDescribe;

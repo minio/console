@@ -25,30 +25,7 @@ import SectionTitle from "./SectionTitle";
 import { Button, ConfirmDeleteIcon, PageHeader } from "mds";
 import ConfirmDialog from "./ModalWrapper/ConfirmDialog";
 
-interface IComponentsScreen {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...containerForHeader(theme.spacing(4)),
-    root: {
-      fontSize: 12,
-      wordWrap: "break-word",
-      "& .min-loader": {
-        width: 45,
-        height: 45,
-      },
-    },
-    def: {},
-    red: {
-      "& .min-icon": {
-        color: "red",
-      },
-    },
-  });
-
-const ComponentsScreen = ({ classes }: IComponentsScreen) => {
+const ComponentsScreen = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   return (
     <Fragment>
@@ -97,4 +74,4 @@ const ComponentsScreen = ({ classes }: IComponentsScreen) => {
   );
 };
 
-export default withStyles(styles)(ComponentsScreen);
+export default ComponentsScreen;

@@ -90,8 +90,6 @@ const styles = (theme: Theme) =>
     loaderAlign: {
       textAlign: "center",
     },
-    bold: { fontWeight: "bold" },
-    italic: { fontStyle: "italic" },
     fileItem: {
       marginRight: 10,
       display: "flex",

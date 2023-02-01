@@ -96,15 +96,6 @@ const styles = (theme: Theme) =>
       padding: "15px 15px 15px 50px",
       minHeight: "450px",
     },
-    statement: {
-      border: "1px solid #DADADA",
-      padding: 8,
-      marginBottom: 8,
-      borderRadius: 4,
-    },
-    labelCol: {
-      fontWeight: "bold",
-    },
     ...actionsTray,
     ...searchField,
     ...modalBasic,

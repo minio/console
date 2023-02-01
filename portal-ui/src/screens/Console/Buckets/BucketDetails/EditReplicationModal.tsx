@@ -48,14 +48,6 @@ interface IEditReplicationModal {
 
 const styles = (theme: Theme) =>
   createStyles({
-    sizeFactorContainer: {
-      "& label": {
-        display: "none",
-      },
-      "& div:first-child": {
-        marginBottom: 0,
-      },
-    },
     ...spacingUtils,
     ...createTenantCommon,
     ...formFieldStyles,

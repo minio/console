@@ -66,11 +66,6 @@ const useStyles = makeStyles((theme: Theme) =>
     nodeField: {
       width: "100%",
     },
-    highlight: {
-      "& span": {
-        backgroundColor: "#082F5238",
-      },
-    },
     ...actionsTray,
     actionsTray: {
       ...actionsTray.actionsTray,
