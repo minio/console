@@ -23,7 +23,15 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { BackLink, Button, PageHeader } from "mds";
+import {
+  BackLink,
+  BucketsIcon,
+  Button,
+  FolderIcon,
+  PageHeader,
+  RefreshIcon,
+  TrashIcon,
+} from "mds";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -42,15 +50,13 @@ import { ErrorResponseHandler } from "../../../../common/types";
 
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { Box } from "@mui/material";
-
-import { RefreshIcon, BucketsIcon, FolderIcon } from "mds";
 import {
-  IAM_SCOPES,
+  browseBucketPermissions,
+  deleteBucketPermissions,
   IAM_PERMISSIONS,
   IAM_ROLES,
+  IAM_SCOPES,
   permissionTooltipHelper,
-  deleteBucketPermissions,
-  browseBucketPermissions,
 } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
@@ -61,7 +67,6 @@ import {
 } from "../../../../common/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
-import { TrashIcon } from "mds";
 import {
   selDistSet,
   selSiteRep,

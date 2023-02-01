@@ -17,19 +17,17 @@
 import React, { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { Button } from "mds";
-import { Theme, useTheme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import { SubnetInfo } from "./types";
-import withStyles from "@mui/styles/withStyles";
-import { Box } from "@mui/material";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   AGPLV3Logo,
+  Button,
   ConsoleEnterprise,
   ConsoleStandard,
   LicenseDocIcon,
 } from "mds";
+import { useTheme } from "@mui/material/styles";
+import { SubnetInfo } from "./types";
+import { Box } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   COMMUNITY_PLAN_FEATURES,
   ENTERPRISE_PLAN_FEATURES,
