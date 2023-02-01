@@ -16,7 +16,7 @@
 
 import React from "react";
 import { Box, Grid } from "@mui/material";
-import HelpBox from "../../../../common/HelpBox";
+import { HelpBox } from "mds";
 
 interface IDistributedOnly {
   iconComponent: any;

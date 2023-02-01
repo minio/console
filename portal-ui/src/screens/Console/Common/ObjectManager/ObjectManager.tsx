@@ -27,6 +27,7 @@ import {
   cleanList,
   deleteFromList,
 } from "../../ObjectBrowser/objectBrowserSlice";
+import clsx from "clsx";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -36,7 +37,7 @@ const styles = (theme: Theme) =>
       backgroundColor: "#fff",
       position: "absolute",
       right: 20,
-      top: 60,
+      top: 62,
       width: 400,
       overflowY: "hidden",
       overflowX: "hidden",
@@ -50,6 +51,9 @@ const styles = (theme: Theme) =>
         visibility: "visible",
         minHeight: 400,
       },
+    },
+    downloadContainerAnonymous: {
+      top: 70,
     },
     title: {
       fontSize: 16,
@@ -94,13 +98,17 @@ const ObjectManager = ({ classes }: IObjectManager) => {
   const managerOpen = useSelector(
     (state: AppState) => state.objectBrowser.objectManager.managerOpen
   );
+  const anonymousMode = useSelector(
+    (state: AppState) => state.system.anonymousMode
+  );
   return (
     <Fragment>
       {managerOpen && (
         <div
-          className={`${classes.downloadContainer} ${
-            managerOpen ? "open" : ""
-          }`}
+          className={clsx(classes.downloadContainer, {
+            [classes.downloadContainerAnonymous]: anonymousMode,
+            open: managerOpen,
+          })}
         >
           <div className={classes.cleanIcon}>
             <Tooltip title={"Clean Completed Objects"} placement="bottom-start">

@@ -45,8 +45,8 @@ import (
 // Session token errors
 var (
 	ErrNoAuthToken  = errors.New("session token missing")
-	errTokenExpired = errors.New("session token has expired")
-	errReadingToken = errors.New("session token internal data is malformed")
+	ErrTokenExpired = errors.New("session token has expired")
+	ErrReadingToken = errors.New("session token internal data is malformed")
 )
 
 // derivedKey is the key used to encrypt the session token claims, its derived using pbkdf on CONSOLE_PBKDF_PASSPHRASE with CONSOLE_PBKDF_SALT
@@ -101,12 +101,12 @@ func SessionTokenAuthenticate(token string) (*TokenClaims, error) {
 	decryptedToken, err := DecryptToken(token)
 	if err != nil {
 		// fail decrypting token
-		return nil, errReadingToken
+		return nil, ErrReadingToken
 	}
 	claimTokens, err := ParseClaimsFromToken(string(decryptedToken))
 	if err != nil {
 		// fail unmarshalling token into data structure
-		return nil, errReadingToken
+		return nil, ErrReadingToken
 	}
 	// claimsTokens contains the decrypted JWT for Console
 	return claimTokens, nil
@@ -321,7 +321,7 @@ func GetTokenFromRequest(r *http.Request) (string, error) {
 	}
 	currentTime := time.Now()
 	if tokenCookie.Expires.After(currentTime) {
-		return "", errTokenExpired
+		return "", ErrTokenExpired
 	}
 	return strings.TrimSpace(tokenCookie.Value), nil
 }

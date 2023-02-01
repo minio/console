@@ -93,7 +93,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Read .nvmrc
         id: node_version
-        run: echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -230,9 +230,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_OUTPUT
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -1542,7 +1539,7 @@ jobs:
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
           result=${result%\%}
-          threshold=65.4
+          threshold=68.5
           echo "Result:"
           echo "$result%"
           if (( $(echo "$result >= $threshold" |bc -l) )); then

@@ -33,8 +33,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import { SearchIcon } from "mds";
-import PageHeader from "../Common/PageHeader/PageHeader";
+import { PageHeader, SearchIcon } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 
 interface IDirectPVVolumesProps {

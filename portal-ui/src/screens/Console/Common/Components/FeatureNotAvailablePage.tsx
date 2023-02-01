@@ -1,7 +1,7 @@
-import PageHeader from "../PageHeader/PageHeader";
 import React from "react";
 import FeatureNotAvailable from "./FeatureNotAvailable";
 import PageLayout from "../Layout/PageLayout";
+import { PageHeader } from "mds";
 
 const FeatureNotAvailablePage = ({
   pageHeaderText = "",

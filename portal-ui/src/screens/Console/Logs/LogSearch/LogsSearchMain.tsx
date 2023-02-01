@@ -16,7 +16,7 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button } from "mds";
+import { Button, PageHeader } from "mds";
 import { Theme } from "@mui/material/styles";
 import { Grid } from "@mui/material";
 import get from "lodash/get";
@@ -37,7 +37,6 @@ import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/F
 import LogSearchFullModal from "./LogSearchFullModal";
 import { LogSearchColumnLabels } from "./utils";
 import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
-import PageHeader from "../../Common/PageHeader/PageHeader";
 import PageLayout from "../../Common/Layout/PageLayout";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {

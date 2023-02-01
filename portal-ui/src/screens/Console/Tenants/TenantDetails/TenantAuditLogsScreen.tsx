@@ -58,8 +58,8 @@ import {
   setRunAsNonRoot,
   resetAuditLogForm,
 } from "../TenantDetails/tenantAuditLogSlice";
-import HelpBox from "../../../../common/HelpBox";
-import { WarnIcon } from "mds";
+
+import { HelpBox, WarnIcon } from "mds";
 
 interface ILoggingScreenProps {
   classes: any;

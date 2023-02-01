@@ -18,12 +18,11 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { BucketsIcon, Button, HelpBox, PageHeader, RefreshIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Bucket, BucketList } from "../Buckets/types";
-import { BucketsIcon } from "mds";
 import {
   actionsTray,
   containerForHeader,
@@ -31,10 +30,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
-import PageHeader from "../Common/PageHeader/PageHeader";
 
-import HelpBox from "../../../common/HelpBox";
-import { RefreshIcon } from "mds";
 import { SecureComponent } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
@@ -205,7 +201,22 @@ const OBListBuckets = () => {
                     label: "Name",
                     elementKey: "name",
                     renderFunction: (label) => (
-                      <span id={`browse-${label}`}>{label}</span>
+                      <div style={{ display: "flex" }}>
+                        <BucketsIcon
+                          style={{ width: 15, marginRight: 5, minWidth: 15 }}
+                        />
+                        <span
+                          id={`browse-${label}`}
+                          style={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            minWidth: 0,
+                          }}
+                        >
+                          {label}
+                        </span>
+                      </div>
                     ),
                   },
                   {
@@ -220,6 +231,7 @@ const OBListBuckets = () => {
                   },
                   {
                     label: "Access",
+                    elementKey: "rw_access",
                     renderFullObject: true,
                     renderFunction: (bucket: Bucket) => {
                       let access = [];

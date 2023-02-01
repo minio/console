@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Button } from "mds";
+import { Button, HelpBox, PageHeader } from "mds";
 import Grid from "@mui/material/Grid";
 import { LinearProgress, SelectChangeEvent } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -34,9 +34,7 @@ import { AddIcon, TenantsIcon } from "mds";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import { RefreshIcon } from "mds";
-import PageHeader from "../../Common/PageHeader/PageHeader";
 import TenantListItem from "./TenantListItem";
-import HelpBox from "../../../../common/HelpBox";
 import AButton from "../../Common/AButton/AButton";
 
 import withSuspense from "../../Common/Components/withSuspense";

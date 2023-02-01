@@ -18,11 +18,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Box, DialogContentText, Grid } from "@mui/material";
-import PageHeader from "../../Common/PageHeader/PageHeader";
 import PageLayout from "../../Common/Layout/PageLayout";
 import useApi from "../../Common/Hooks/useApi";
 import ReplicationSites from "./ReplicationSites";
-import { Button, Loader } from "mds";
+import { Button, HelpBox, Loader, PageHeader } from "mds";
 import {
   AddIcon,
   ClustersIcon,
@@ -31,7 +30,6 @@ import {
   TrashIcon,
 } from "mds";
 import { ErrorResponseHandler } from "../../../../common/types";
-import HelpBox from "../../../../common/HelpBox";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import {

@@ -18,8 +18,7 @@ import React, { Fragment } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { WarnIcon } from "mds";
-import HelpBox from "../../../common/HelpBox";
+import { HelpBox, WarnIcon } from "mds";
 
 interface IRegisterCluster {
   compactMode?: boolean;

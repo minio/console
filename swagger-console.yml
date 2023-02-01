@@ -17,6 +17,10 @@ securityDefinitions:
     flow: accessCode
     authorizationUrl: http://min.io
     tokenUrl: http://min.io
+  anonymous:
+    name: X-Anonymous
+    in: header
+    type: apiKey
 # Apply the key security definition to all APIs
 security:
   - key: [ ]
@@ -290,6 +294,9 @@ paths:
   /buckets/{bucket_name}/objects:
     get:
       summary: List Objects
+      security:
+        - key: [ ]
+        - anonymous: [ ]
       operationId: ListObjects
       parameters:
         - name: bucket_name
@@ -312,6 +319,11 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
       responses:
         200:
           description: A successful response.
@@ -402,6 +414,9 @@ paths:
   /buckets/{bucket_name}/objects/upload:
     post:
       summary: Uploads an Object.
+      security:
+        - key: [ ]
+        - anonymous: [ ]
       consumes:
         - multipart/form-data
       parameters:
@@ -426,6 +441,9 @@ paths:
     get:
       summary: Download Object
       operationId: Download Object
+      security:
+        - key: [ ]
+        - anonymous: [ ]
       produces:
         - application/octet-stream
       parameters:
@@ -5679,7 +5697,7 @@ definitions:
       latencyHistogram:
         type: array
         items:
-          $ref:  "#/definitions/kmsLatencyHistogram"
+          $ref: "#/definitions/kmsLatencyHistogram"
       uptime:
         type: integer
       cpus:

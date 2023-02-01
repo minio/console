@@ -14,21 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, Suspense, useEffect } from "react";
-import { ApplicationLogo } from "mds";
-
-import { VersionIcon } from "mds";
+import React, { Fragment, Suspense } from "react";
+import { ApplicationLogo, VersionIcon } from "mds";
 import { Box, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useSelector } from "react-redux";
-import useApi from "../Common/Hooks/useApi";
-import {
-  selDirectPVMode,
-  selOpMode,
-  setLicenseInfo,
-} from "../../../systemSlice";
-import { AppState, useAppDispatch } from "../../../store";
+import { selDirectPVMode, selOpMode } from "../../../systemSlice";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import { getLogoVar } from "../../../config";
 
 type MenuToggleProps = {
   isOpen: boolean;
@@ -37,43 +30,10 @@ type MenuToggleProps = {
 const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
   const stateClsName = isOpen ? "wide" : "mini";
 
-  const dispatch = useAppDispatch();
-
-  const licenseInfo = useSelector(
-    (state: AppState) => state?.system?.licenseInfo
-  );
   const operatorMode = useSelector(selOpMode);
-
   const directPVMode = useSelector(selDirectPVMode);
 
-  const [isLicenseLoading, invokeLicenseInfoApi] = useApi(
-    (res: any) => {
-      dispatch(setLicenseInfo(res));
-    },
-    () => {
-      dispatch(setLicenseInfo(null));
-    }
-  );
-
-  //Get License info from SUBNET
-  useEffect(() => {
-    if (!operatorMode) {
-      invokeLicenseInfoApi("GET", `/api/v1/subnet/info`);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const { plan = "" } = licenseInfo || {};
-
-  let logoPlan = "simple";
-
-  if (!isLicenseLoading) {
-    if (plan === "STANDARD" || plan === "ENTERPRISE") {
-      logoPlan = plan.toLowerCase();
-    } else {
-      logoPlan = "AGPL";
-    }
-  }
+  let logoPlan = getLogoVar();
 
   return (
     <Box
@@ -151,14 +111,7 @@ const MenuToggle = ({ isOpen, onToggle }: MenuToggleProps) => {
                 <Fragment>
                   <ApplicationLogo
                     applicationName={"console"}
-                    subVariant={
-                      logoPlan as
-                        | "AGPL"
-                        | "simple"
-                        | "standard"
-                        | "enterprise"
-                        | undefined
-                    }
+                    subVariant={logoPlan}
                     inverse
                   />
                 </Fragment>

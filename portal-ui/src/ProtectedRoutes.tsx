@@ -27,6 +27,7 @@ import {
   globalSetDistributedSetup,
   operatorMode,
   selOpMode,
+  setAnonymousMode,
   setOverrideStyles,
   setSiteReplicationInfo,
   userLogged,
@@ -48,13 +49,18 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
 
   const [sessionLoading, setSessionLoading] = useState<boolean>(true);
   const userLoggedIn = useSelector((state: AppState) => state.system.loggedIn);
-
+  const anonymousMode = useSelector(
+    (state: AppState) => state.system.anonymousMode
+  );
   const { pathname = "" } = useLocation();
 
   const StorePathAndRedirect = () => {
     localStorage.setItem("redirect-path", pathname);
     return <Navigate to={{ pathname: `login` }} />;
   };
+
+  const pathnameParts = pathname.split("/");
+  const screen = pathnameParts.length > 2 ? pathnameParts[1] : "";
 
   useEffect(() => {
     api
@@ -81,8 +87,37 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
           }
         }
       })
-      .catch(() => setSessionLoading(false));
-  }, [dispatch]);
+      .catch(() => {
+        // if we are trying to browse, probe access to the requested prefix
+        if (screen === "browser") {
+          const bucket = pathnameParts.length >= 3 ? pathnameParts[2] : "";
+          // no bucket, no business
+          if (bucket === "") {
+            setSessionLoading(false);
+            return;
+          }
+          // before marking the session as done, let's check if the bucket is publicly accessible
+          api
+            .invoke(
+              "GET",
+              `/api/v1/buckets/${bucket}/objects?limit=1`,
+              undefined,
+              {
+                "X-Anonymous": "1",
+              }
+            )
+            .then((value) => {
+              dispatch(setAnonymousMode());
+              setSessionLoading(false);
+            })
+            .catch(() => {
+              setSessionLoading(false);
+            });
+        } else {
+          setSessionLoading(false);
+        }
+      });
+  }, [dispatch, screen, pathnameParts]);
 
   const [, invokeSRInfoApi] = useApi(
     (res: any) => {
@@ -112,7 +147,7 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   );
 
   useEffect(() => {
-    if (userLoggedIn && !sessionLoading && !isOperatorMode) {
+    if (userLoggedIn && !sessionLoading && !isOperatorMode && !anonymousMode) {
       invokeSRInfoApi("GET", `api/v1/admin/site-replication`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

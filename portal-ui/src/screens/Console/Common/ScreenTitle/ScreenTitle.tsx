@@ -17,12 +17,9 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
-
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import makeStyles from "@mui/styles/makeStyles";
 
 interface IScreenTitle {
-  classes: any;
   icon?: any;
   title?: any;
   subTitle?: any;
@@ -30,80 +27,79 @@ interface IScreenTitle {
   className?: any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    headerBarIcon: {
-      marginRight: ".7rem",
-      color: theme.palette.primary.main,
-      "& .min-icon": {
-        width: 44,
-        height: 44,
-      },
-      "@media (max-width: 600px)": {
-        display: "none",
-      },
+const useStyles = makeStyles((theme: Theme) => ({
+  headerBarIcon: {
+    marginRight: ".7rem",
+    color: theme.palette.primary.main,
+    "& .min-icon": {
+      width: 44,
+      height: 44,
     },
-    headerBarSubheader: {
-      color: "grey",
-      "@media (max-width: 900px)": {
-        maxWidth: 200,
-      },
+    "@media (max-width: 600px)": {
+      display: "none",
     },
-    screenTitle: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "1rem",
+  },
+  headerBarSubheader: {
+    color: "grey",
+    "@media (max-width: 900px)": {
+      maxWidth: 200,
+    },
+  },
+  stContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 8,
 
-      borderBottom: "1px solid #EAEAEA",
-      "@media (max-width: 600px)": {
-        flexFlow: "column",
-      },
-    },
-    titleColumn: {
-      height: "auto",
-      justifyContent: "center",
-      display: "flex",
+    borderBottom: "1px solid #EAEAEA",
+    "@media (max-width: 600px)": {
       flexFlow: "column",
-      alignItems: "flex-start",
-      "& h1": {
-        fontSize: 19,
-      },
     },
-    leftItems: {
-      display: "flex",
-      alignItems: "center",
-      "@media (max-width: 600px)": {
-        flexFlow: "column",
-        width: "100%",
-      },
+  },
+  titleColumn: {
+    height: "auto",
+    justifyContent: "center",
+    display: "flex",
+    flexFlow: "column",
+    alignItems: "flex-start",
+    "& h1": {
+      fontSize: 19,
     },
-    rightItems: {
-      display: "flex",
-      alignItems: "center",
-      "& button": {
-        marginLeft: 8,
-      },
-      "@media (max-width: 600px)": {
-        width: "100%",
-      },
+  },
+  leftItems: {
+    display: "flex",
+    alignItems: "center",
+    "@media (max-width: 600px)": {
+      flexFlow: "column",
+      width: "100%",
     },
-  });
+  },
+  rightItems: {
+    display: "flex",
+    alignItems: "center",
+    "& button": {
+      marginLeft: 8,
+    },
+    "@media (max-width: 600px)": {
+      width: "100%",
+    },
+  },
+}));
 
 const ScreenTitle = ({
-  classes,
   icon,
   title,
   subTitle,
   actions,
   className,
 }: IScreenTitle) => {
+  const classes = useStyles();
   return (
     <Grid container>
       <Grid
         item
         xs={12}
-        className={`${classes.screenTitle} ${className ? className : ""}`}
+        className={`${classes.stContainer} ${className ? className : ""}`}
       >
         <div className={classes.leftItems}>
           {icon ? <div className={classes.headerBarIcon}>{icon}</div> : null}
@@ -119,4 +115,4 @@ const ScreenTitle = ({
   );
 };
 
-export default withStyles(styles)(ScreenTitle);
+export default ScreenTitle;

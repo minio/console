@@ -1,11 +1,10 @@
 import React, { Fragment, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import { wsProtocol } from "../../../utils/wsUtils";

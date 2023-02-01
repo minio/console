@@ -47,7 +47,7 @@ func (suite *AdminSubnetTestSuite) SetupSuite() {
 	minioGetConfigKVMock = func(key string) ([]byte, error) {
 		return []byte("subnet license=mock api_key=mock proxy=http://mock.com"), nil
 	}
-	minioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
+	MinioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
 		return madmin.InfoMessage{Servers: []madmin.ServerProperties{{}}}, nil
 	}
 }

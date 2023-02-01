@@ -19,7 +19,6 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box, Grid } from "@mui/material";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import PageLayout from "../Common/Layout/PageLayout";
 import api from "../../../common/api";
 
@@ -50,7 +49,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { DisabledIcon, EnabledIcon } from "mds";
+import { DisabledIcon, EnabledIcon, PageHeader } from "mds";
 
 const styles = (theme: Theme) => createStyles({});
 

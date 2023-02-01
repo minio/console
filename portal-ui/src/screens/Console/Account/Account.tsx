@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Button } from "mds";
+import { Button, HelpBox, PageHeader } from "mds";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
@@ -27,7 +27,6 @@ import { Box } from "@mui/material";
 import { AccountIcon, AddIcon, DeleteIcon, PasswordKeyIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import {
   actionsTray,
   containerForHeader,
@@ -37,7 +36,6 @@ import {
 
 import { ErrorResponseHandler } from "../../../common/types";
 import ChangePasswordModal from "./ChangePasswordModal";
-import HelpBox from "../../../common/HelpBox";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";

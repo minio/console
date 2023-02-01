@@ -318,16 +318,17 @@ const TenantSummary = ({ classes }: ITenantsSummary) => {
                     </Fragment>
                   )}
 
-                  {tenant?.domains?.console && tenant?.domains?.console !== "" && (
-                    <a
-                      href={tenant?.domains?.console || ""}
-                      target="_blank"
-                      rel="noopener"
-                      className={classes.linkedSection}
-                    >
-                      {tenant?.domains?.console || ""}
-                    </a>
-                  )}
+                  {tenant?.domains?.console &&
+                    tenant?.domains?.console !== "" && (
+                      <a
+                        href={tenant?.domains?.console || ""}
+                        target="_blank"
+                        rel="noopener"
+                        className={classes.linkedSection}
+                      >
+                        {tenant?.domains?.console || ""}
+                      </a>
+                    )}
                 </Fragment>
               }
             />

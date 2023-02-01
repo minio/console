@@ -22,7 +22,7 @@ import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { LifeCycleItem } from "../types";
-import { AddIcon, TiersIcon } from "mds";
+import { AddIcon, HelpBox, TiersIcon } from "mds";
 import {
   actionsTray,
   searchField,
@@ -32,7 +32,6 @@ import api from "../../../../common/api";
 import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
 import AddLifecycleModal from "./AddLifecycleModal";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import HelpBox from "../../../../common/HelpBox";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
   hasPermission,

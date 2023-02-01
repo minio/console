@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button } from "mds";
+import { Button, PageHeader } from "mds";
 import {
   Link,
   Navigate,
@@ -36,7 +36,6 @@ import {
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { AppState, useAppDispatch } from "../../../../store";
-import PageHeader from "../../Common/PageHeader/PageHeader";
 import { CircleIcon, MinIOTierIconXs, TrashIcon } from "mds";
 import { niceBytes } from "../../../../common/utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";

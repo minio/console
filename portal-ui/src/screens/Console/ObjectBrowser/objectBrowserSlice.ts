@@ -71,6 +71,7 @@ const initialState: ObjectBrowserState = {
     unit: "",
     validity: 0,
   },
+  longFileOpen: false,
 };
 
 export const objectBrowserSlice = createSlice({
@@ -356,6 +357,9 @@ export const objectBrowserSlice = createSlice({
     setSelectedBucket: (state, action: PayloadAction<string>) => {
       state.selectedBucket = action.payload;
     },
+    setLongFileOpen: (state, action: PayloadAction<boolean>) => {
+      state.longFileOpen = action.payload;
+    },
   },
 });
 export const {
@@ -401,6 +405,7 @@ export const {
   setIsOpeningOD,
   setRetentionConfig,
   setSelectedBucket,
+  setLongFileOpen,
 } = objectBrowserSlice.actions;
 
 export default objectBrowserSlice.reducer;

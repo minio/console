@@ -20,10 +20,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box, IconButton } from "@mui/material";
-import PageHeader from "../../../Common/PageHeader/PageHeader";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import { RefreshIcon } from "mds";
+import { PageHeader, RefreshIcon } from "mds";
 import { Loader } from "mds";
 
 interface IHopSimple {

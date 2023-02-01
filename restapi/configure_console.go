@@ -83,6 +83,9 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
 		// we are validating the session token by decrypting the claims inside, if the operation succeed that means the jwt
 		// was generated and signed by us in the first place
+		if token == "Anonymous" {
+			return &models.Principal{}, nil
+		}
 		claims, err := auth.ParseClaimsFromToken(token)
 		if err != nil {
 			api.Logger("Unable to validate the session token %s: %v", token, err)
@@ -97,6 +100,9 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 			Ob:                 claims.ObjectBrowser,
 			CustomStyleOb:      claims.CustomStyleOB,
 		}, nil
+	}
+	api.AnonymousAuth = func(s string) (*models.Principal, error) {
+		return &models.Principal{}, nil
 	}
 
 	// Register login handlers
@@ -163,6 +169,9 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	api.PreServerShutdown = func() {}
 
 	api.ServerShutdown = func() {}
+
+	// do an initial subnet plan caching
+	fetchLicensePlan()
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }
@@ -288,6 +297,8 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 		// handle it appropriately.
 		if len(sessionToken) > 0 {
 			r.Header.Add("Authorization", fmt.Sprintf("Bearer  %s", string(sessionToken)))
+		} else {
+			r.Header.Add("Authorization", fmt.Sprintf("Bearer %s", "Anonymous"))
 		}
 		ctx := r.Context()
 		claims, _ := auth.ParseClaimsFromToken(string(sessionToken))
@@ -408,6 +419,7 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 	} else if getSubPath() != "/" {
 		indexPageBytes = replaceBaseInIndex(indexPageBytes, getSubPath())
 	}
+	indexPageBytes = replaceLicense(indexPageBytes)
 
 	mimeType := mimedb.TypeByExtension(filepath.Ext(r.URL.Path))
 
@@ -487,6 +499,14 @@ func replaceBaseInIndex(indexPageBytes []byte, basePath string) []byte {
 		indexPageBytes = []byte(indexPageStr)
 
 	}
+	return indexPageBytes
+}
+
+func replaceLicense(indexPageBytes []byte) []byte {
+	indexPageStr := string(indexPageBytes)
+	newPlan := fmt.Sprintf("<meta name=\"minio-license\" content=\"%s\" />", InstanceLicensePlan.String())
+	indexPageStr = strings.Replace(indexPageStr, "<meta name=\"minio-license\" content=\"apgl\"/>", newPlan, 1)
+	indexPageBytes = []byte(indexPageStr)
 	return indexPageBytes
 }
 
