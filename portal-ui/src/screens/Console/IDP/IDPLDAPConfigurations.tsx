@@ -21,14 +21,8 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import IDPConfigurations from "./IDPConfigurations";
 
-type IDPLDAPConfigurationsProps = {
-  classes?: any;
-};
-
-const styles = (theme: Theme) => createStyles({});
-
-const IDPLDAPConfigurations = ({ classes }: IDPLDAPConfigurationsProps) => {
+const IDPLDAPConfigurations = () => {
   return <IDPConfigurations idpType={"ldap"} />;
 };
 
-export default withStyles(styles)(IDPLDAPConfigurations);
+export default IDPLDAPConfigurations;

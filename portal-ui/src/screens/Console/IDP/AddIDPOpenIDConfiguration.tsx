@@ -25,15 +25,7 @@ import AddIDPConfiguration from "./AddIDPConfiguration";
 import { openIDFormFields, openIDHelpBoxContents } from "./utils";
 import AddIDPConfigurationHelpBox from "./AddIDPConfigurationHelpbox";
 
-type AddIDPOpenIDConfigurationProps = {
-  classes?: any;
-};
-
-const styles = (theme: Theme) => createStyles({});
-
-const AddIDPOpenIDConfiguration = ({
-  classes,
-}: AddIDPOpenIDConfigurationProps) => {
+const AddIDPOpenIDConfiguration = () => {
   return (
     <AddIDPConfiguration
       icon={<LockIcon />}
@@ -56,4 +48,4 @@ const AddIDPOpenIDConfiguration = ({
   );
 };
 
-export default withStyles(styles)(AddIDPOpenIDConfiguration);
+export default AddIDPOpenIDConfiguration;

@@ -25,15 +25,7 @@ import { openIDFormFields, openIDHelpBoxContents } from "./utils";
 import IDPConfigurationDetails from "./IDPConfigurationDetails";
 import AddIDPConfigurationHelpBox from "./AddIDPConfigurationHelpbox";
 
-type IDPOpenIDConfigurationDetailsProps = {
-  classes?: any;
-};
-
-const styles = (theme: Theme) => createStyles({});
-
-const IDPOpenIDConfigurationDetails = ({
-  classes,
-}: IDPOpenIDConfigurationDetailsProps) => {
+const IDPOpenIDConfigurationDetails = () => {
   return (
     <IDPConfigurationDetails
       backLink={IAM_PAGES.IDP_OPENID_CONFIGURATIONS}
@@ -56,4 +48,4 @@ const IDPOpenIDConfigurationDetails = ({
   );
 };
 
-export default withStyles(styles)(IDPOpenIDConfigurationDetails);
+export default IDPOpenIDConfigurationDetails;

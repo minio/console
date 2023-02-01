@@ -51,8 +51,6 @@ import {
 } from "recharts";
 import { DisabledIcon, EnabledIcon, PageHeader } from "mds";
 
-const styles = (theme: Theme) => createStyles({});
-
 const Status = () => {
   const dispatch = useAppDispatch();
   const [curTab, setCurTab] = useState<number>(0);
@@ -431,4 +429,4 @@ const Status = () => {
   );
 };
 
-export default withStyles(styles)(Status);
+export default Status;

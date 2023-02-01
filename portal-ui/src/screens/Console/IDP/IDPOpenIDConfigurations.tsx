@@ -21,14 +21,8 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import IDPConfigurations from "./IDPConfigurations";
 
-type IDPOpenIDConfigurationsProps = {
-  classes?: any;
-};
-
-const styles = (theme: Theme) => createStyles({});
-
-const IDPOpenIDConfigurations = ({ classes }: IDPOpenIDConfigurationsProps) => {
+const IDPOpenIDConfigurations = () => {
   return <IDPConfigurations idpType={"openid"} />;
 };
 
-export default withStyles(styles)(IDPOpenIDConfigurations);
+export default IDPOpenIDConfigurations;

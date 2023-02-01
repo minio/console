@@ -25,15 +25,7 @@ import IDPConfigurationDetails from "./IDPConfigurationDetails";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import AddIDPConfigurationHelpBox from "./AddIDPConfigurationHelpbox";
 
-type IDPLDAPConfigurationDetailsProps = {
-  classes?: any;
-};
-
-const styles = (theme: Theme) => createStyles({});
-
-const IDPLDAPConfigurationDetails = ({
-  classes,
-}: IDPLDAPConfigurationDetailsProps) => {
+const IDPLDAPConfigurationDetails = () => {
   return (
     <IDPConfigurationDetails
       backLink={IAM_PAGES.IDP_LDAP_CONFIGURATIONS}
@@ -56,4 +48,4 @@ const IDPLDAPConfigurationDetails = ({
   );
 };
 
-export default withStyles(styles)(IDPLDAPConfigurationDetails);
+export default IDPLDAPConfigurationDetails;

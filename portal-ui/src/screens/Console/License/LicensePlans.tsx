@@ -40,10 +40,7 @@ import {
   STANDARD_PLAN_FEATURES,
 } from "./utils";
 
-const styles = (theme: Theme) => createStyles({});
-
 interface IRegisterStatus {
-  classes: any;
   activateProductModal: any;
   closeModalAndFetchLicenseInfo: any;
   licenseInfo: SubnetInfo | undefined;
@@ -732,4 +729,4 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
   );
 };
 
-export default withStyles(styles)(LicensePlans);
+export default LicensePlans;
