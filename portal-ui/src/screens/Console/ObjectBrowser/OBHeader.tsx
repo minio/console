@@ -23,7 +23,7 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { BackLink,Button, PageHeader, SettingsIcon } from "mds";
+import { BackLink, Button, PageHeader, SettingsIcon } from "mds";
 import { Grid } from "@mui/material";
 import AutoColorIcon from "../Common/Components/AutoColorIcon";
 import { useSelector } from "react-redux";

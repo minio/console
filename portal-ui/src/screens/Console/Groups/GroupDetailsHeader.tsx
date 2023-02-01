@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { BackLink, PageHeader} from "mds";
+import { BackLink, PageHeader } from "mds";
 import { useNavigate } from "react-router-dom";
 
 const GroupDetailsHeader = () => {

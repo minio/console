@@ -17,7 +17,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { BackLink,Button, PageHeader } from "mds";
+import { BackLink, Button, PageHeader } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";

@@ -23,7 +23,7 @@ import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import AddKeyForm from "./AddKeyForm";
-import { BackLink,PageHeader } from "mds";
+import { BackLink, PageHeader } from "mds";
 
 const AddKey = () => {
   const dispatch = useAppDispatch();

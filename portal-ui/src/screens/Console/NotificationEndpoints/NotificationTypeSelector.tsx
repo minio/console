@@ -29,7 +29,7 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import ContentBox from "../Common/ContentBox";
 import { Box } from "@mui/material";
 import NotificationEndpointTypeSelectorHelpBox from "../Account/NotificationEndpointTypeSelectorHelpBox";
-import { BackLink,PageHeader } from "mds";
+import { BackLink, PageHeader } from "mds";
 
 interface INotificationTypeSelector {
   classes: any;

@@ -29,7 +29,7 @@ import {
   pageContentStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { BackLink,EditIcon, PageHeader, RefreshIcon, TrashIcon } from "mds";
+import { BackLink, EditIcon, PageHeader, RefreshIcon, TrashIcon } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button } from "mds";
 import { useNavigate, useParams } from "react-router-dom";

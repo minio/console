@@ -48,7 +48,7 @@ import {
   IMkEnvs,
   resourcesConfigurations,
 } from "./Steps/TenantResources/utils";
-import { BackLink,HelpBox, PageHeader, StorageIcon } from "mds";
+import { BackLink, HelpBox, PageHeader, StorageIcon } from "mds";
 import { selFeatures } from "../../consoleSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { resetAddTenantForm } from "./createTenantSlice";
