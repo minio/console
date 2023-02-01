@@ -71,6 +71,8 @@ const initialState: IAddPool = {
       fsGroupChangePolicy: "Always",
       runAsNonRoot: true,
     },
+    customRuntime: false,
+    runtimeClassName: "",
   },
   nodeSelectorPairs: [{ key: "", value: "" }],
   tolerations: [

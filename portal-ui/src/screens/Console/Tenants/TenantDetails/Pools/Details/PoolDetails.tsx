@@ -79,6 +79,8 @@ const PoolDetails = () => {
     );
   };
 
+  console.log(poolInformation);
+
   return (
     <Fragment>
       <Grid item xs={12} sx={{ ...stylingLayout }}>
@@ -108,6 +110,10 @@ const PoolDetails = () => {
             value={poolInformation.volumes_per_server}
           />
           <LabelValuePair label={"Capacity"} value={poolInformation.capacity} />
+          <LabelValuePair
+            label={"Runtime Class Name"}
+            value={poolInformation.runtimeClassName}
+          />
         </Box>
         <HeaderSection title={"Resources"} />
         <Box sx={{ ...twoColCssGridLayoutConfig }}>

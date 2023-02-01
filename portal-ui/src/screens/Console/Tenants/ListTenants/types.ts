@@ -53,6 +53,7 @@ export interface IPool {
   affinity?: IAffinityModel;
   tolerations?: ITolerationModel[];
   securityContext?: ISecurityContext | null;
+  runtimeClassName: string;
 }
 
 export interface IPodListElement {
