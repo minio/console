@@ -56,6 +56,7 @@ import {
   healthInfoResetMessage,
 } from "./healthInfoSlice";
 import RegisterCluster from "../Support/RegisterCluster";
+import { registeredCluster } from "../../../config";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -104,12 +105,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
 
   const message = useSelector((state: AppState) => state.healthInfo.message);
 
-  const licenseInfo = useSelector(
-    (state: AppState) => state?.system?.licenseInfo
-  );
-
-  const { plan = "" } = licenseInfo || {};
-  const registeredCluster = plan === "STANDARD" || plan === "ENTERPRISE";
+  const clusterRegistered = registeredCluster();
 
   const serverDiagnosticStatus = useSelector(
     (state: AppState) => state.system.serverDiagnosticStatus
@@ -258,7 +254,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
   }, [startDiagnostic, dispatch]);
 
   const startDiagnosticAction = () => {
-    if (plan !== "STANDARD" && plan !== "ENTERPRISE") {
+    if (!clusterRegistered) {
       navigate("/support/register");
       return;
     }
@@ -269,7 +265,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
     <Fragment>
       <PageHeader label="Health" />
       <PageLayout>
-        {!registeredCluster && <RegisterCluster compactMode />}
+        {!clusterRegistered && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>
           <TestWrapper title={title} advancedVisible={false}>
             <Grid container className={classes.buttons}>
@@ -307,7 +303,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                       <Button
                         id="start-new-diagnostic"
                         type="submit"
-                        variant={!registeredCluster ? "regular" : "callAction"}
+                        variant={!clusterRegistered ? "regular" : "callAction"}
                         disabled={startDiagnostic}
                         onClick={startDiagnosticAction}
                         label={buttonStartText}
@@ -319,7 +315,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
             </Grid>
           </TestWrapper>
         </Grid>
-        {!startDiagnostic && registeredCluster && (
+        {!startDiagnostic && clusterRegistered && (
           <Fragment>
             <br />
             <HelpBox

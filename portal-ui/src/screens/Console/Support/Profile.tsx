@@ -13,10 +13,9 @@ import {
   containerForHeader,
   inlineCheckboxes,
 } from "../Common/FormComponents/common/styleLibrary";
-import { useSelector } from "react-redux";
-import { AppState } from "../../../store";
 import { useNavigate } from "react-router-dom";
 import RegisterCluster from "./RegisterCluster";
+import { registeredCluster } from "../../../config";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,13 +59,7 @@ interface IProfileProps {
 var c: any = null;
 
 const Profile = ({ classes }: IProfileProps) => {
-  const licenseInfo = useSelector(
-    (state: AppState) => state?.system?.licenseInfo
-  );
   const navigate = useNavigate();
-
-  const { plan = "" } = licenseInfo || {};
-  const registeredCluster = plan === "STANDARD" || plan === "ENTERPRISE";
 
   const [profilingStarted, setProfilingStarted] = useState<boolean>(false);
   const [types, setTypes] = useState<string[]>([
@@ -76,7 +69,7 @@ const Profile = ({ classes }: IProfileProps) => {
     "mutex",
     "goroutines",
   ]);
-
+  const clusterRegistered = registeredCluster();
   const typesList = [
     { label: "cpu", value: "cpu" },
     { label: "mem", value: "mem" },
@@ -149,7 +142,7 @@ const Profile = ({ classes }: IProfileProps) => {
     <Fragment>
       <PageHeader label="Profile" />
       <PageLayout>
-        {!registeredCluster && <RegisterCluster compactMode />}
+        {!clusterRegistered && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>
           <Grid item xs={12} className={classes.dropdown}>
             <Grid
@@ -178,10 +171,10 @@ const Profile = ({ classes }: IProfileProps) => {
             <Button
               id={"start-profiling"}
               type="submit"
-              variant={registeredCluster ? "callAction" : "regular"}
+              variant={clusterRegistered ? "callAction" : "regular"}
               disabled={profilingStarted || types.length < 1}
               onClick={() => {
-                if (!registeredCluster) {
+                if (!clusterRegistered) {
                   navigate("/support/register");
                   return;
                 }
