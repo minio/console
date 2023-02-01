@@ -16,7 +16,7 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, PageHeader } from "mds";
+import { Button, PageHeader, SearchIcon } from "mds";
 import { Theme } from "@mui/material/styles";
 import { Grid } from "@mui/material";
 import get from "lodash/get";
@@ -44,7 +44,6 @@ import {
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../common/SecureComponent";
-import { SearchIcon } from "mds";
 import MissingIntegration from "../../Common/MissingIntegration/MissingIntegration";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selFeatures } from "../../consoleSlice";

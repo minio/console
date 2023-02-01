@@ -18,14 +18,21 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { Button, HelpBox, PageHeader } from "mds";
+import {
+  AddIcon,
+  Button,
+  DeleteIcon,
+  GroupsIcon,
+  HelpBox,
+  PageHeader,
+  UsersIcon,
+} from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../common/api";
 import { Grid, LinearProgress } from "@mui/material";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
-import { AddIcon, DeleteIcon, GroupsIcon, UsersIcon } from "mds";
 import {
   actionsTray,
   containerForHeader,

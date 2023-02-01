@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { DialogContentText } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { ErrorResponseHandler } from "../../../common/types";
-import { ConfirmDeleteIcon } from "mds";
+import { ConfirmDeleteIcon, Loader } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import useApi from "../Common/Hooks/useApi";
@@ -28,7 +28,6 @@ import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import WarningMessage from "../Common/WarningMessage/WarningMessage";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
-import { Loader } from "mds";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;

@@ -18,7 +18,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { AddMembersToGroupIcon, Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
@@ -29,7 +29,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import { AddMembersToGroupIcon } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";

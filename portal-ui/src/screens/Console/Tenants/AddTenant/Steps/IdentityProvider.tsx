@@ -32,9 +32,9 @@ import IDPOpenID from "./IdentityProvider/IDPOpenID";
 import makeStyles from "@mui/styles/makeStyles";
 import IDPBuiltIn from "./IdentityProvider/IDPBuiltIn";
 import {
-  OIDCLogoElement,
-  LDAPLogoElement,
   BuiltInLogoElement,
+  LDAPLogoElement,
+  OIDCLogoElement,
 } from "../../LogoComponents";
 
 const useStyles = makeStyles((theme: Theme) =>

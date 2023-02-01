@@ -23,7 +23,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, ConfirmModalIcon, Loader } from "mds";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -43,23 +43,21 @@ import {
   ITenantSetAdministratorsRequest,
 } from "../types";
 import {
-  OIDCLogoElement,
-  LDAPLogoElement,
   BuiltInLogoElement,
+  LDAPLogoElement,
+  OIDCLogoElement,
 } from "../LogoComponents";
 import { clearValidationError } from "../utils";
 import {
   commonFormValidation,
   IValidation,
 } from "../../../../utils/validationFunctions";
-import { ConfirmModalIcon } from "mds";
 import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { Loader } from "mds";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";

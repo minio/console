@@ -47,12 +47,10 @@ import MergedWidgetsRenderer from "./Widgets/MergedWidgetsRenderer";
 import PageLayout from "../../Common/Layout/PageLayout";
 import { Usage } from "../types";
 import BasicDashboard from "../BasicDashboard/BasicDashboard";
-import { HelpBox, SyncIcon } from "mds";
-import { Button } from "mds";
+import { Button, HelpBox, PrometheusErrorIcon, SyncIcon } from "mds";
 import { ITabOption } from "../../Common/TabSelector/types";
 import { getUsageAsync } from "../dashboardThunks";
 import { reloadWidgets } from "../dashboardSlice";
-import { PrometheusErrorIcon } from "mds";
 
 interface IPrDashboard {
   classes?: any;

@@ -26,6 +26,7 @@ import {
   FileLockIcon,
   FileMissingIcon,
   FileMusicIcon,
+  FileNonType,
   FilePdfIcon,
   FilePptIcon,
   FileTxtIcon,
@@ -33,7 +34,6 @@ import {
   FileXlsIcon,
   FileZipIcon,
   FolderBrowserIcon,
-  FileNonType,
 } from "mds";
 import IconWithLabel from "./IconWithLabel";
 

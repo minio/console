@@ -49,6 +49,7 @@ import RestoreFileVersion from "./RestoreFileVersion";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
+  Button,
   DeleteIcon,
   DeleteNonCurrentIcon,
   SelectMultipleIcon,
@@ -79,7 +80,6 @@ import {
   updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
 import { List, ListRowProps } from "react-virtualized";
-import { Button } from "mds";
 import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 
 const styles = (theme: Theme) =>

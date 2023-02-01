@@ -16,14 +16,13 @@
 
 import React from "react";
 import { Grid, Theme } from "@mui/material";
-import { Button } from "mds";
+import { Button, DriveFormatErrorsIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { IDirectPVFormatResItem } from "./types";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { DriveFormatErrorsIcon } from "mds";
 import { encodeURLString } from "../../../common/utils";
 
 interface IFormatErrorsProps {

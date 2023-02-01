@@ -21,7 +21,14 @@ import { Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { AppState } from "../../../store";
-import { Button, HelpBox, PageHeader } from "mds";
+import {
+  Button,
+  HelpBox,
+  Loader,
+  PageHeader,
+  SpeedtestIcon,
+  WarnIcon,
+} from "mds";
 import { DateTime } from "luxon";
 import createStyles from "@mui/styles/createStyles";
 import {
@@ -33,7 +40,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { wsProtocol } from "../../../utils/wsUtils";
 import { SpeedTestResponse } from "./types";
-import { SpeedtestIcon } from "mds";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
@@ -45,8 +51,6 @@ import InputUnitMenu from "../Common/FormComponents/InputUnitMenu/InputUnitMenu"
 import PageLayout from "../Common/Layout/PageLayout";
 import { SecureComponent } from "../../../common/SecureComponent";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
-import { WarnIcon } from "mds";
-import { Loader } from "mds";
 import { selDistSet } from "../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import RegisterCluster from "../Support/RegisterCluster";

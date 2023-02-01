@@ -17,7 +17,7 @@
 import React, { useState } from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Grid } from "@mui/material";
-import { Button } from "mds";
+import { AddAccessRuleIcon, Button } from "mds";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -30,7 +30,6 @@ import {
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { AddAccessRuleIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 

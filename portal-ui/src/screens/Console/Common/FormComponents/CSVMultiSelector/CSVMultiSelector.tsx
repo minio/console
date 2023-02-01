@@ -16,10 +16,10 @@
 import React, {
   ChangeEvent,
   createRef,
+  useCallback,
   useEffect,
   useRef,
   useState,
-  useCallback,
 } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
@@ -28,7 +28,7 @@ import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { InputLabel, Tooltip } from "@mui/material";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import { HelpIcon, AddIcon } from "mds";
+import { AddIcon, HelpIcon } from "mds";
 import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
 
 interface ICSVMultiSelector {

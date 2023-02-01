@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -37,11 +37,11 @@ import api from "../../../../../common/api";
 import { AppState, useAppDispatch } from "../../../../../store";
 import LabelValuePair from "../../../Common/UsageBarWrapper/LabelValuePair";
 import {
-  IPVCDescribeProps,
   DescribeResponse,
-  IPVCDescribeSummaryProps,
   IPVCDescribeAnnotationsProps,
   IPVCDescribeLabelsProps,
+  IPVCDescribeProps,
+  IPVCDescribeSummaryProps,
 } from "./pvcTypes";
 
 const styles = (theme: Theme) =>

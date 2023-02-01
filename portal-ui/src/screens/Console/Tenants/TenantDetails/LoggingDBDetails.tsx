@@ -44,15 +44,15 @@ import { IKeyValue, ITenantAuditLogs } from "../ListTenants/types";
 import KeyPairEdit from "./KeyPairEdit";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import {
-  setDBImage,
-  setDBInitImage,
   setDBCPURequest,
-  setDBMemRequest,
-  setDBRunAsUser,
   setDBFSGroup,
   setDBFSGroupChangePolicy,
+  setDBImage,
+  setDBInitImage,
+  setDBMemRequest,
   setDBRunAsGroup,
   setDBRunAsNonRoot,
+  setDBRunAsUser,
   setRefreshLoggingInfo,
 } from "./tenantAuditLogSlice";
 

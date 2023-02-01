@@ -16,14 +16,12 @@
 
 import React, { useState } from "react";
 import { Box, Grid } from "@mui/material";
-import { Button } from "mds";
+import { Button, ClustersIcon, Loader } from "mds";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { ClustersIcon } from "mds";
 import useApi from "../../Common/Hooks/useApi";
 import { StatsResponseType } from "./SiteReplicationStatus";
 import BucketEntityStatus from "./LookupStatus/BucketEntityStatus";
-import { Loader } from "mds";
 import PolicyEntityStatus from "./LookupStatus/PolicyEntityStatus";
 import GroupEntityStatus from "./LookupStatus/GroupEntityStatus";
 import UserEntityStatus from "./LookupStatus/UserEntityStatus";

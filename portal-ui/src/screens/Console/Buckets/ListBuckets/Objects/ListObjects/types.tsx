@@ -47,6 +47,7 @@ export interface WebsocketResponse {
   data?: ObjectResponse[];
   prefix?: string;
 }
+
 export interface ObjectResponse {
   name: string;
   last_modified: string;

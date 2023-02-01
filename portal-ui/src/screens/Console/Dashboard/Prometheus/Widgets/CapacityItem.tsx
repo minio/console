@@ -27,8 +27,7 @@ import {
   niceBytesInt,
 } from "../../../../../common/utils";
 import { Cell, Pie, PieChart } from "recharts";
-import { ReportedUsageIcon } from "mds";
-import { Loader } from "mds";
+import { Loader, ReportedUsageIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../store";
 import { useSelector } from "react-redux";

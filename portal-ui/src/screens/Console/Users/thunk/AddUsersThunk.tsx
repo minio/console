@@ -16,12 +16,12 @@
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
-  setSelectedGroups,
-  setUserName,
+  setAddLoading,
   setSecretKey,
+  setSelectedGroups,
   setSelectedPolicies,
   setShowPassword,
-  setAddLoading,
+  setUserName,
 } from "../AddUsersSlice";
 import { AppState } from "../../../../store";
 import api from "../../../../common/api";

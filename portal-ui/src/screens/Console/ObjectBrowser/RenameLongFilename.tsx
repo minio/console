@@ -17,10 +17,9 @@
 import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
-import { Button } from "mds";
+import { Button, EditIcon } from "mds";
 import makeStyles from "@mui/styles/makeStyles";
 import { Theme } from "@mui/material/styles";
-import { EditIcon } from "mds";
 import {
   containerForHeader,
   formFieldStyles,

@@ -16,7 +16,14 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
-import { Button, PageHeader } from "mds";
+import {
+  Button,
+  CopyIcon,
+  OfflineRegistrationIcon,
+  OnlineRegistrationIcon,
+  PageHeader,
+  UsersIcon,
+} from "mds";
 import createStyles from "@mui/styles/createStyles";
 import {
   actionsTray,
@@ -27,10 +34,8 @@ import {
 import withStyles from "@mui/styles/withStyles";
 import { Box, Link } from "@mui/material";
 import PageLayout from "../Common/Layout/PageLayout";
-import { CopyIcon, UsersIcon } from "mds";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { OnlineRegistrationIcon, OfflineRegistrationIcon } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../common/api";
 
@@ -64,6 +69,7 @@ import { ClusterRegistered, FormTitle, ProxyConfiguration } from "./utils";
 import ApiKeyRegister from "./ApiKeyRegister";
 import CopyToClipboard from "react-copy-to-clipboard";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+
 interface IRegister {
   classes: any;
 }

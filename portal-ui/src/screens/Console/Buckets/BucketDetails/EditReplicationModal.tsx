@@ -17,13 +17,12 @@
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { BucketReplicationIcon, Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
-import { BucketReplicationIcon } from "mds";
 import {
   createTenantCommon,
   formFieldStyles,

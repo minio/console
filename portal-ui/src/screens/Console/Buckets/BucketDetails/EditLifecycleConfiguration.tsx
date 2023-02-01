@@ -24,7 +24,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, LifecycleConfigIcon } from "mds";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
@@ -38,7 +38,6 @@ import {
 
 import { LifeCycleItem } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { LifecycleConfigIcon } from "mds";
 import { ITiersDropDown } from "./AddLifecycleModal";
 import {
   ITierElement,

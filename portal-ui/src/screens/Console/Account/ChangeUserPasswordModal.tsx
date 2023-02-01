@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { Button } from "mds";
+import { Button, ChangePasswordIcon } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -33,7 +33,6 @@ import { ChangeUserPasswordRequest } from "../Buckets/types";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
-import { ChangePasswordIcon } from "mds";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 

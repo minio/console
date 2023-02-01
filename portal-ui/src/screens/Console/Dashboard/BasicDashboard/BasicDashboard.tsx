@@ -19,15 +19,17 @@ import { Box, Grid } from "@mui/material";
 import {
   ArrowRightIcon,
   BucketsIcon,
+  Button,
+  DiagnosticsMenuIcon,
   DrivesIcon,
+  FormatDrivesIcon,
   HealIcon,
+  HelpBox,
   PrometheusErrorIcon,
   ServersIcon,
+  StorageIcon,
   TotalObjectsIcon,
   UptimeIcon,
-  FormatDrivesIcon,
-  StorageIcon,
-  HelpBox,
 } from "mds";
 import { calculateBytes, representationNumber } from "../../../../common/utils";
 import { IDriveInfo, Usage } from "../types";
@@ -36,8 +38,6 @@ import groupBy from "lodash/groupBy";
 import ServersList from "./ServersList";
 import CounterCard from "./CounterCard";
 import ReportedUsage from "./ReportedUsage";
-import { DiagnosticsMenuIcon } from "mds";
-import { Button } from "mds";
 import { Link } from "react-router-dom";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import TimeStatItem from "../TimeStatItem";

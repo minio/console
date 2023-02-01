@@ -16,13 +16,20 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
-import { Button, HelpBox, PageHeader } from "mds";
+import {
+  AddIcon,
+  Button,
+  HelpBox,
+  PageHeader,
+  RefreshIcon,
+  SearchIcon,
+  StorageIcon,
+} from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, InputAdornment, TextField } from "@mui/material";
 import get from "lodash/get";
 import GroupIcon from "@mui/icons-material/Group";
-import { AddIcon, StorageIcon } from "mds";
 import {
   actionsTray,
   containerForHeader,
@@ -37,7 +44,6 @@ import { niceBytes } from "../../../common/utils";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import { RefreshIcon, SearchIcon } from "mds";
 
 import withSuspense from "../Common/Components/withSuspense";
 import PageLayout from "../Common/Layout/PageLayout";

@@ -15,9 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Grid } from "@mui/material";
-import { LDAPIcon } from "mds";
-import { OIDCIcon } from "mds";
-import { UsersIcon } from "mds";
+import { LDAPIcon, OIDCIcon, UsersIcon } from "mds";
 
 export const OIDCLogoElement = () => {
   return (

@@ -18,9 +18,14 @@ import React, { useState } from "react";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import { Box, DialogContentText, Tooltip } from "@mui/material";
-import { Button } from "mds";
+import {
+  Button,
+  CircleIcon,
+  ConfirmDeleteIcon,
+  EditIcon,
+  TrashIcon,
+} from "mds";
 import { ReplicationSite } from "./SiteReplication";
-import { CircleIcon, ConfirmDeleteIcon, EditIcon, TrashIcon } from "mds";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";

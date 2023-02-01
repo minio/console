@@ -16,12 +16,17 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, DialogContentText } from "@mui/material";
-import { Button, HelpBox, PageHeader } from "mds";
+import {
+  Button,
+  HelpBox,
+  InspectMenuIcon,
+  PageHeader,
+  PasswordKeyIcon,
+} from "mds";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { PasswordKeyIcon } from "mds";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -38,7 +43,6 @@ import {
   performDownload,
 } from "../../../common/utils";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
-import { InspectMenuIcon } from "mds";
 import KeyRevealer from "./KeyRevealer";
 import { selDistSet, setErrorSnackMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";

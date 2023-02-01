@@ -16,10 +16,9 @@
 
 import Grid from "@mui/material/Grid";
 import React, { Fragment } from "react";
-import { Button } from "mds";
+import { Button, LockFilledIcon, PasswordKeyIcon, UserFilledIcon } from "mds";
 import { setAccessKey, setSecretKey, setSTS, setUseSTS } from "./loginSlice";
 import { Box, InputAdornment, LinearProgress } from "@mui/material";
-import { UserFilledIcon, LockFilledIcon } from "mds";
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import { LoginField } from "./LoginField";
@@ -28,7 +27,6 @@ import { Theme, useTheme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 import { doLoginAsync } from "./loginThunks";
-import { PasswordKeyIcon } from "mds";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

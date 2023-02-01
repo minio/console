@@ -16,7 +16,17 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { BackLink, Button, PageHeader } from "mds";
+import {
+  BackLink,
+  Button,
+  CircleIcon,
+  EditIcon,
+  MinIOTierIconXs,
+  PageHeader,
+  RefreshIcon,
+  TenantsIcon,
+  TrashIcon,
+} from "mds";
 import {
   Link,
   Navigate,
@@ -36,10 +46,8 @@ import {
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { AppState, useAppDispatch } from "../../../../store";
-import { CircleIcon, MinIOTierIconXs, TrashIcon } from "mds";
 import { niceBytes } from "../../../../common/utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
-import { EditIcon, RefreshIcon, TenantsIcon } from "mds";
 import PageLayout from "../../Common/Layout/PageLayout";
 
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";

@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import { Button } from "mds";
+import { Button, ChangeAccessPolicyIcon } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,7 +30,6 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import { ChangeAccessPolicyIcon } from "mds";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";

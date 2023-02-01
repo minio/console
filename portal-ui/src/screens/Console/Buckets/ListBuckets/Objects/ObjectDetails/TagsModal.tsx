@@ -18,7 +18,7 @@ import React, { Fragment, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
 import { Box, Grid } from "@mui/material";
-import { Button } from "mds";
+import { AddNewTagIcon, Button, DisabledIcon, EditTagIcon } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -32,7 +32,6 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { AddNewTagIcon, DisabledIcon, EditTagIcon } from "mds";
 import { IFileInfo } from "./types";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../../../common/SecureComponent";

@@ -19,8 +19,7 @@ import { Box } from "@mui/material";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@mui/material/Grid";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import { Button } from "mds";
-import { AddIcon, RemoveIcon } from "mds";
+import { AddIcon, Button, RemoveIcon } from "mds";
 import { SiteInputRow } from "./Types";
 
 const SRSiteInputRow = ({

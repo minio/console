@@ -17,18 +17,20 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { Button, HelpBox, PageHeader } from "mds";
+import {
+  AddIcon,
+  Button,
+  DeleteIcon,
+  GroupsIcon,
+  HelpBox,
+  IAMPoliciesIcon,
+  PageHeader,
+  UsersIcon,
+} from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { Box, LinearProgress } from "@mui/material";
-import {
-  AddIcon,
-  DeleteIcon,
-  GroupsIcon,
-  IAMPoliciesIcon,
-  UsersIcon,
-} from "mds";
 
 import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";
@@ -45,14 +47,14 @@ import AButton from "../Common/AButton/AButton";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import {
+  applyPolicyPermissions,
   CONSOLE_UI_RESOURCE,
+  createGroupPermissions,
+  deleteGroupPermissions,
+  displayGroupsPermissions,
+  getGroupPermissions,
   IAM_PAGES,
   permissionTooltipHelper,
-  applyPolicyPermissions,
-  displayGroupsPermissions,
-  deleteGroupPermissions,
-  getGroupPermissions,
-  createGroupPermissions,
 } from "../../../common/SecureComponent/permissions";
 import {
   hasPermission,
