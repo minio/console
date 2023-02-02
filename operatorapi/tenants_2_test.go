@@ -28,11 +28,13 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
+	"github.com/minio/console/pkg/kes"
 	"github.com/minio/console/restapi"
 	"github.com/minio/madmin-go/v2"
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/yaml.v2"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
@@ -1126,9 +1128,6 @@ func (suite *TenantTestSuite) TestGetTenantMonitoringWithoutPrometheus() {
 func (suite *TenantTestSuite) TestGetTenantMonitoringWithPrometheus() {
 	stn := "mock-storage-class"
 	dc := 10
-	runAsUser := int64(1000)
-	runAsGroup := int64(1000)
-	fsGroup := int64(1000)
 	tenant := &miniov2.Tenant{
 		Spec: miniov2.TenantSpec{
 			Prometheus: &miniov2.PrometheusConfig{
@@ -1153,11 +1152,7 @@ func (suite *TenantTestSuite) TestGetTenantMonitoringWithPrometheus() {
 				InitImage:          "mock-init-image",
 				ServiceAccountName: "mock-service-account-name",
 				SideCarImage:       "mock-sidecar-image",
-				SecurityContext: &corev1.PodSecurityContext{
-					RunAsUser:  &runAsUser,
-					RunAsGroup: &runAsGroup,
-					FSGroup:    &fsGroup,
-				},
+				SecurityContext:    suite.createTenantPodSecurityContext(),
 			},
 		},
 	}
@@ -1390,7 +1385,6 @@ func (suite *TenantTestSuite) TestUpdateTenantPoolsWithPatchError() {
 }
 
 func (suite *TenantTestSuite) TestUpdateTenantPoolsWithoutError() {
-	fscp := corev1.PodFSGroupChangePolicy("OnRootMismatch")
 	seconds := int64(10)
 	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
 		return &miniov2.Tenant{}, nil
@@ -1408,12 +1402,7 @@ func (suite *TenantTestSuite) TestUpdateTenantPoolsWithoutError() {
 							},
 						},
 					},
-					SecurityContext: &corev1.PodSecurityContext{
-						RunAsUser:           &[]int64{1000}[0],
-						RunAsGroup:          &[]int64{1000}[0],
-						FSGroup:             &[]int64{1000}[0],
-						FSGroupChangePolicy: &fscp,
-					},
+					SecurityContext: suite.createTenantPodSecurityContext(),
 					Tolerations: []corev1.Toleration{{
 						TolerationSeconds: &seconds,
 					}},
@@ -1699,6 +1688,241 @@ func (suite *TenantTestSuite) TestTenantEncryptionInfoHandlerWithError() {
 	suite.assert.True(ok)
 }
 
+func (suite *TenantTestSuite) TestTenantEncryptionInfoWitNoKesError() {
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{Spec: miniov2.TenantSpec{}}, nil
+	}
+	params, _ := suite.initTenantEncryptionInfoRequest()
+	res, err := tenantEncryptionInfo(context.Background(), suite.opClient, suite.k8sclient, params.Namespace, params)
+	suite.assert.Nil(res)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestTenantEncryptionInfoWithExtCertError() {
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{
+			Spec: miniov2.TenantSpec{
+				KES: &miniov2.KESConfig{
+					ExternalCertSecret: &miniov2.LocalCertificateReference{
+						Name: "mock-crt",
+					},
+					SecurityContext: suite.createTenantPodSecurityContext(),
+				},
+			},
+		}, nil
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		return nil, errors.New("mock-get-error")
+	}
+	params, _ := suite.initTenantEncryptionInfoRequest()
+	res, err := tenantEncryptionInfo(context.Background(), suite.opClient, suite.k8sclient, params.Namespace, params)
+	suite.assert.Nil(res)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestTenantEncryptionInfoWithClientCertError() {
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{
+			Spec: miniov2.TenantSpec{
+				KES: &miniov2.KESConfig{},
+				ExternalClientCertSecret: &miniov2.LocalCertificateReference{
+					Name: "mock-crt",
+				},
+			},
+		}, nil
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		return nil, errors.New("mock-get-error")
+	}
+	params, _ := suite.initTenantEncryptionInfoRequest()
+	res, err := tenantEncryptionInfo(context.Background(), suite.opClient, suite.k8sclient, params.Namespace, params)
+	suite.assert.Nil(res)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestTenantEncryptionInfoWithKesClientCertError() {
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{
+			Spec: miniov2.TenantSpec{
+				KES: &miniov2.KESConfig{
+					ClientCertSecret: &miniov2.LocalCertificateReference{
+						Name: "mock-kes-crt",
+					},
+					Configuration: &corev1.LocalObjectReference{
+						Name: "mock-kes-config",
+					},
+				},
+			},
+		}, nil
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		if secretName == "mock-kes-config" {
+			return &corev1.Secret{
+				Data: map[string][]byte{
+					"server-config.yaml": suite.getKesYamlMock(false),
+				},
+			}, nil
+		}
+		if secretName == "mock-kes-crt" {
+			return &corev1.Secret{
+				Data: map[string][]byte{
+					"client.crt": []byte("mock-client-crt"),
+				},
+			}, nil
+		}
+		return nil, errors.New("mock-get-error")
+	}
+	params, _ := suite.initTenantEncryptionInfoRequest()
+	res, err := tenantEncryptionInfo(context.Background(), suite.opClient, suite.k8sclient, params.Namespace, params)
+	suite.assert.Nil(res)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestTenantEncryptionInfoWithKesClientCACertError() {
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{
+			Spec: miniov2.TenantSpec{
+				KES: &miniov2.KESConfig{
+					ClientCertSecret: &miniov2.LocalCertificateReference{
+						Name: "mock-kes-crt",
+					},
+					Configuration: &corev1.LocalObjectReference{
+						Name: "mock-kes-config",
+					},
+				},
+			},
+		}, nil
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		if secretName == "mock-kes-config" {
+			return &corev1.Secret{
+				Data: map[string][]byte{
+					"server-config.yaml": suite.getKesYamlMock(false),
+				},
+			}, nil
+		}
+		if secretName == "mock-kes-crt" {
+			return &corev1.Secret{
+				Data: map[string][]byte{
+					"ca.crt": []byte("mock-client-crt"),
+				},
+			}, nil
+		}
+		return nil, errors.New("mock-get-error")
+	}
+	params, _ := suite.initTenantEncryptionInfoRequest()
+	res, err := tenantEncryptionInfo(context.Background(), suite.opClient, suite.k8sclient, params.Namespace, params)
+	suite.assert.Nil(res)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestTenantEncryptionInfoWithGemaltoError() {
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{
+			Spec: miniov2.TenantSpec{
+				KES: &miniov2.KESConfig{
+					ClientCertSecret: &miniov2.LocalCertificateReference{
+						Name: "mock-kes-crt",
+					},
+					Configuration: &corev1.LocalObjectReference{
+						Name: "mock-kes-config",
+					},
+				},
+			},
+		}, nil
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		if secretName == "mock-kes-config" {
+			return &corev1.Secret{
+				Data: map[string][]byte{
+					"server-config.yaml": suite.getKesYamlMock(true),
+				},
+			}, nil
+		}
+		if secretName == "mock-kes-crt" {
+			return &corev1.Secret{
+				Data: map[string][]byte{
+					"ca.crt": []byte("mock-client-crt"),
+				},
+			}, nil
+		}
+		return nil, errors.New("mock-get-error")
+	}
+	params, _ := suite.initTenantEncryptionInfoRequest()
+	res, err := tenantEncryptionInfo(context.Background(), suite.opClient, suite.k8sclient, params.Namespace, params)
+	suite.assert.Nil(res)
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestTenantEncryptionInfoWithoutError() {
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{
+			Spec: miniov2.TenantSpec{
+				KES: &miniov2.KESConfig{
+					Configuration: &corev1.LocalObjectReference{
+						Name: "mock-kes-config",
+					},
+				},
+			},
+		}, nil
+	}
+	k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+		if secretName == "mock-kes-config" {
+			return &corev1.Secret{
+				Data: map[string][]byte{
+					"server-config.yaml": suite.getKesYamlMock(false),
+				},
+			}, nil
+		}
+		return nil, errors.New("mock-get-error")
+	}
+	params, _ := suite.initTenantEncryptionInfoRequest()
+	res, err := tenantEncryptionInfo(context.Background(), suite.opClient, suite.k8sclient, params.Namespace, params)
+	suite.assert.NotNil(res)
+	suite.assert.Nil(err)
+}
+
+func (suite *TenantTestSuite) getKesYamlMock(noVault bool) []byte {
+	kesConfig := &kes.ServerConfig{
+		Keys: kes.Keys{
+			Vault: &kes.Vault{
+				Prefix:     "mock-prefix",
+				Namespace:  "mock-namespace",
+				EnginePath: "mock-engine-path",
+				Endpoint:   "mock-endpoint",
+				Status: &kes.VaultStatus{
+					Ping: 5 * time.Second,
+				},
+				AppRole: &kes.AppRole{
+					EnginePath: "mock-engine-path",
+					ID:         "mock-id",
+					Retry:      5 * time.Second,
+					Secret:     "mock-secret",
+				},
+			},
+			Aws: &kes.Aws{},
+			Gcp: &kes.Gcp{},
+			Gemalto: &kes.Gemalto{
+				KeySecure: &kes.GemaltoKeySecure{
+					Endpoint: "mock-endpoint",
+					Credentials: &kes.GemaltoCredentials{
+						Domain: "mock-domain",
+						Retry:  5 * time.Second,
+						Token:  "mock-token",
+					},
+					TLS: &kes.GemaltoTLS{},
+				},
+			},
+			Azure: &kes.Azure{},
+		},
+	}
+	if noVault {
+		kesConfig.Keys.Vault = nil
+	}
+	kesConfigBytes, _ := yaml.Marshal(kesConfig)
+	return kesConfigBytes
+}
+
 func (suite *TenantTestSuite) initTenantEncryptionInfoRequest() (params operator_api.TenantEncryptionInfoParams, api operations.OperatorAPI) {
 	registerTenantHandlers(&api)
 	params.HTTPRequest = &http.Request{}
@@ -1785,5 +2009,18 @@ func (suite *TenantTestSuite) createMockModelsSecurityContext() *models.Security
 		RunAsUser:  &runAsUser,
 		RunAsGroup: &runAsGroup,
 		FsGroup:    fsGroup,
+	}
+}
+
+func (suite *TenantTestSuite) createTenantPodSecurityContext() *corev1.PodSecurityContext {
+	runAsUser := int64(1000)
+	runAsGroup := int64(1000)
+	fsGroup := int64(1000)
+	fscp := corev1.PodFSGroupChangePolicy("OnRootMismatch")
+	return &corev1.PodSecurityContext{
+		RunAsUser:           &runAsUser,
+		RunAsGroup:          &runAsGroup,
+		FSGroup:             &fsGroup,
+		FSGroupChangePolicy: &fscp,
 	}
 }
