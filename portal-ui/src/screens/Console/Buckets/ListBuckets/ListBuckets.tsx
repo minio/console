@@ -68,15 +68,6 @@ import { setLoadingObjects } from "../../ObjectBrowser/objectBrowserSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
-    bulkSelect: {
-      marginLeft: 8,
-      "&:hover": {
-        backgroundColor: theme.palette.primary.main,
-      },
-      "&.MuiButton-contained": {
-        backgroundColor: theme.palette.primary.main,
-      },
-    },
     bucketList: {
       marginTop: 25,
       height: "calc(100vh - 211px)",

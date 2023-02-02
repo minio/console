@@ -56,21 +56,6 @@ import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
-    dateSelector: {
-      "& div": {
-        borderBottom: 0,
-        marginBottom: 0,
-
-        "& div:nth-child(2)": {
-          border: "1px solid #EAEAEA",
-          paddingLeft: 5,
-
-          "& div": {
-            border: 0,
-          },
-        },
-      },
-    },
     formFieldRowAccordion: {
       "& .MuiPaper-root": { padding: 0 },
     },

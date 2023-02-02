@@ -50,17 +50,6 @@ interface ITenantSizeAWSProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    compositeAddOn: {
-      marginLeft: 10,
-      "& div": {
-        marginBottom: 0,
-      },
-      "@media (max-width: 900px)": {
-        "& div": {
-          marginTop: 5,
-        },
-      },
-    },
     ...formFieldStyles,
     ...modalBasic,
     ...wizardCommon,

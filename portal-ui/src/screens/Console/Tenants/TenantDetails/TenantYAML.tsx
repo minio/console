@@ -42,16 +42,6 @@ const styles = (theme: Theme) =>
       fontSize: 14,
       fontWeight: "bold",
     },
-    codeMirrorContainer: {
-      marginBottom: 20,
-      paddingLeft: 15,
-      "& label": {
-        marginBottom: ".5rem",
-      },
-      "& label + div": {
-        display: "none",
-      },
-    },
     ...modalStyleUtils,
     ...fieldBasic,
   });

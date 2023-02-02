@@ -20,7 +20,6 @@ import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { AppState } from "../../../store";
 import {
   Button,
   HelpBox,
@@ -54,6 +53,7 @@ import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 import { selDistSet } from "../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import RegisterCluster from "../Support/RegisterCluster";
+import { registeredCluster } from "../../../config";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -85,13 +85,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Speedtest = () => {
   const distributedSetup = useSelector(selDistSet);
-  const licenseInfo = useSelector(
-    (state: AppState) => state?.system?.licenseInfo
-  );
-  const navigate = useNavigate();
 
-  const { plan = "" } = licenseInfo || {};
-  const registeredCluster = plan === "STANDARD" || plan === "ENTERPRISE";
+  const navigate = useNavigate();
 
   const classes = useStyles();
   const [start, setStart] = useState<boolean>(false);
@@ -108,6 +103,7 @@ const Speedtest = () => {
   const [currentValue, setCurrentValue] = useState<number>(0);
   const [totalSeconds, setTotalSeconds] = useState<number>(0);
   const [speedometerValue, setSpeedometerValue] = useState<number>(0);
+  const clusterRegistered = registeredCluster();
 
   useEffect(() => {
     // begin watch if bucketName in bucketList and start pressed
@@ -199,7 +195,7 @@ const Speedtest = () => {
   const buttonLabel = start ? "Start" : stoppedLabel;
 
   const startSpeedtestButton = () => {
-    if (plan !== "STANDARD" && plan !== "ENTERPRISE") {
+    if (!clusterRegistered) {
       navigate("/support/register");
       return;
     }
@@ -212,7 +208,7 @@ const Speedtest = () => {
     <Fragment>
       <PageHeader label="Performance" />
       <PageLayout>
-        {!registeredCluster && <RegisterCluster compactMode />}
+        {!clusterRegistered && <RegisterCluster compactMode />}
         {!distributedSetup ? (
           <DistributedOnly
             iconComponent={<SpeedtestIcon />}
@@ -313,7 +309,7 @@ const Speedtest = () => {
                     type="button"
                     id={"start-speed-test"}
                     variant={
-                      registeredCluster && currStatus !== null && !start
+                      clusterRegistered && currStatus !== null && !start
                         ? "callAction"
                         : "regular"
                     }
@@ -340,7 +336,7 @@ const Speedtest = () => {
               </Grid>
             </Grid>
 
-            {!start && !currStatus && registeredCluster && (
+            {!start && !currStatus && clusterRegistered && (
               <Fragment>
                 <br />
                 <HelpBox

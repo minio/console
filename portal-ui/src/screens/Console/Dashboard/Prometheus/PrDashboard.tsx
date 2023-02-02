@@ -62,12 +62,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
     ...widgetContainerCommon,
-    dashboardRow: {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      flexWrap: "wrap",
-    },
   });
 
 const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {

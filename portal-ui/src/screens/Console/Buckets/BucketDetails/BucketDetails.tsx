@@ -108,10 +108,6 @@ const styles = (theme: Theme) =>
     pageContainer: {
       height: "100%",
     },
-    screenTitle: {
-      border: 0,
-      paddingTop: 0,
-    },
     ...pageContentStyles,
     ...searchField,
     capitalize: {

@@ -15,9 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import { IEvent } from "../../ListTenants/types";
 import Table from "@mui/material/Table";
@@ -34,24 +31,9 @@ import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
 
 interface IEventsListProps {
-  classes: any;
   events: IEvent[];
   loading: boolean;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    events: {
-      "& .MuiTypography-root": {
-        fontSize: 14,
-      },
-      "& .Mui-expanded": {
-        "& .eventMessage": {
-          display: "none",
-        },
-      },
-    },
-  });
 
 const Event = (props: { event: IEvent }) => {
   const { event } = props;
@@ -97,7 +79,7 @@ const Event = (props: { event: IEvent }) => {
   );
 };
 
-const EventsList = ({ classes, events, loading }: IEventsListProps) => {
+const EventsList = ({ events, loading }: IEventsListProps) => {
   if (loading) {
     return <LinearProgress />;
   }
@@ -123,4 +105,4 @@ const EventsList = ({ classes, events, loading }: IEventsListProps) => {
   );
 };
 
-export default withStyles(styles)(EventsList);
+export default EventsList;

@@ -31,8 +31,6 @@ import {
   actionsTray,
   containerForHeader,
   hrClass,
-  inlineCheckboxes,
-  searchField,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -56,31 +54,11 @@ const styles = (theme: Theme) =>
       width: 100,
     },
     ...actionsTray,
-    ...searchField,
     ...hrClass,
 
     ...tableStyles,
-    searchField: {
-      ...searchField.searchField,
-      margin: "0 5px",
-      "&:first-of-type": {
-        marginLeft: 0,
-      },
-      "&:last-of-type": {
-        marginRight: 0,
-      },
-    },
     tableWrapper: {
       height: "calc(100vh - 292px)",
-    },
-    inlineCheckboxes: {
-      ...inlineCheckboxes.inlineCheckboxes,
-      alignItems: "center",
-
-      "@media (max-width: 900px)": {
-        flexFlow: "column",
-        alignItems: "flex-start",
-      },
     },
     formBox: {
       border: "1px solid #EAEAEA",
@@ -95,14 +73,6 @@ const styles = (theme: Theme) =>
     unCheckedIcon: {
       width: "14px",
       height: "14px",
-    },
-    separatorBar: {
-      fontSize: 16,
-      fontWeight: 700,
-      paddingTop: 19,
-      "@media (max-width: 900px)": {
-        display: "none",
-      },
     },
     ...containerForHeader(theme.spacing(4)),
   });
