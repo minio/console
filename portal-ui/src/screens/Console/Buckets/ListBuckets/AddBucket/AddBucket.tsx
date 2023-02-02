@@ -102,14 +102,6 @@ const styles = (theme: Theme) =>
         marginRight: 10,
       },
     },
-    title: {
-      marginBottom: 8,
-    },
-    headTitle: {
-      fontWeight: "bold",
-      fontSize: 16,
-      paddingLeft: 8,
-    },
     h6title: {
       fontWeight: "bold",
       color: "#000000",

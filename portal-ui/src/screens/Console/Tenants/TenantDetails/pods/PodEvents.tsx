@@ -16,15 +16,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  actionsTray,
-  buttonsStyles,
-  hrClass,
-  searchField,
-} from "../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { IEvent } from "../../ListTenants/types";
 import { niceDays } from "../../../../../common/utils";
@@ -35,27 +26,13 @@ import EventsList from "../events/EventsList";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 
 interface IPodEventsProps {
-  classes: any;
   tenant: string;
   namespace: string;
   podName: string;
   propLoading: boolean;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...actionsTray,
-    ...buttonsStyles,
-    ...searchField,
-    ...hrClass,
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      padding: "15px 0 0",
-    },
-  });
-
 const PodEvents = ({
-  classes,
   tenant,
   namespace,
   podName,
@@ -112,4 +89,4 @@ const PodEvents = ({
   );
 };
 
-export default withStyles(styles)(PodEvents);
+export default PodEvents;

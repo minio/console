@@ -26,15 +26,6 @@ interface IKeyPairEditProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    bottomContainer: {
-      display: "flex",
-      flexGrow: 1,
-      alignItems: "center",
-      "& div": {
-        flexGrow: 1,
-        width: "100%",
-      },
-    },
     shortened: {
       gridTemplateColumns: "auto auto 20px 20px",
       display: "grid",

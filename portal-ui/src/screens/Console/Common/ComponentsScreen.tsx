@@ -15,40 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { DialogContentText, Grid } from "@mui/material";
 import PageLayout from "./Layout/PageLayout";
 import SectionTitle from "./SectionTitle";
 import { Button, ConfirmDeleteIcon, PageHeader } from "mds";
 import ConfirmDialog from "./ModalWrapper/ConfirmDialog";
 
-interface IComponentsScreen {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...containerForHeader(theme.spacing(4)),
-    root: {
-      fontSize: 12,
-      wordWrap: "break-word",
-      "& .min-loader": {
-        width: 45,
-        height: 45,
-      },
-    },
-    def: {},
-    red: {
-      "& .min-icon": {
-        color: "red",
-      },
-    },
-  });
-
-const ComponentsScreen = ({ classes }: IComponentsScreen) => {
+const ComponentsScreen = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   return (
     <Fragment>
@@ -97,4 +70,4 @@ const ComponentsScreen = ({ classes }: IComponentsScreen) => {
   );
 };
 
-export default withStyles(styles)(ComponentsScreen);
+export default ComponentsScreen;

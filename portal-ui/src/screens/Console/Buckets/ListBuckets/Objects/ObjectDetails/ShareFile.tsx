@@ -64,14 +64,6 @@ const styles = (theme: Theme) =>
         minWidth: 250,
       },
     },
-    copyShareLinkBtn: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      "@media (max-width: 900px)": {
-        marginTop: 10,
-      },
-    },
     ...modalStyleUtils,
     ...formFieldStyles,
   });

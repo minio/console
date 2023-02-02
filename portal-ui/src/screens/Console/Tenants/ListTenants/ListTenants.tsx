@@ -64,28 +64,6 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
-    theaderSearch: {
-      borderColor: theme.palette.grey["200"],
-      "& .MuiInputBase-input": {
-        paddingTop: 10,
-        paddingBottom: 10,
-      },
-      "& .MuiInputBase-root": {
-        "& .MuiInputAdornment-root": {
-          "& .min-icon": {
-            color: theme.palette.grey["400"],
-            height: 14,
-          },
-        },
-      },
-      actionHeaderItems: {
-        "@media (min-width: 320px)": {
-          marginTop: 8,
-        },
-      },
-      marginRight: 10,
-      marginLeft: 10,
-    },
     tenantsList: {
       height: "calc(100vh - 195px)",
     },

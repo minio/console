@@ -74,15 +74,8 @@ const styles = (theme: Theme) =>
     pageContainer: {
       height: "100%",
     },
-    screenTitle: {
-      border: 0,
-      paddingTop: 0,
-    },
     ...pageContentStyles,
     ...searchField,
-    capitalize: {
-      textTransform: "capitalize",
-    },
     ...hrClass,
     ...buttonsStyles,
     ...containerForHeader(theme.spacing(4)),

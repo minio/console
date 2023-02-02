@@ -36,14 +36,6 @@ import { Box } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
-    pageTitle: {
-      fontSize: 18,
-      marginBottom: 20,
-      textAlign: "center",
-    },
-    pageSubTitle: {
-      textAlign: "center",
-    },
     sizedLabel: {
       minWidth: "75px",
     },

@@ -31,14 +31,6 @@ import { euTimezones } from "./euTimezones";
 
 const styles = (theme: Theme) =>
   createStyles({
-    pageTitle: {
-      fontSize: 18,
-      marginBottom: 20,
-      textAlign: "center",
-    },
-    pageSubTitle: {
-      textAlign: "center",
-    },
     ...containerForHeader(theme.spacing(4)),
   });
 

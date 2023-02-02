@@ -65,19 +65,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
     ...spacingUtils,
-    bold: { fontWeight: "bold" },
-    italic: { fontStyle: "italic" },
-    fileItem: {
-      marginRight: 10,
-      display: "flex",
-      "& div label": {
-        minWidth: 50,
-      },
-
-      "@media (max-width: 900px)": {
-        flexFlow: "column",
-      },
-    },
     ...containerForHeader(theme.spacing(4)),
     ...createTenantCommon,
     ...formFieldStyles,

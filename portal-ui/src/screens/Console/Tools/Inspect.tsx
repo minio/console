@@ -45,8 +45,9 @@ import {
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 import KeyRevealer from "./KeyRevealer";
 import { selDistSet, setErrorSnackMessage } from "../../../systemSlice";
-import { AppState, useAppDispatch } from "../../../store";
+import { useAppDispatch } from "../../../store";
 import RegisterCluster from "../Support/RegisterCluster";
+import { registeredCluster } from "../../../config";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -100,12 +101,6 @@ const Inspect = ({ classes }: { classes: any }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const distributedSetup = useSelector(selDistSet);
-  const licenseInfo = useSelector(
-    (state: AppState) => state?.system?.licenseInfo
-  );
-
-  const { plan = "" } = licenseInfo || {};
-  const registeredCluster = plan === "STANDARD" || plan === "ENTERPRISE";
 
   const [volumeName, setVolumeName] = useState<string>("");
   const [inspectPath, setInspectPath] = useState<string>("");
@@ -118,7 +113,7 @@ const Inspect = ({ classes }: { classes: any }) => {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [volumeError, setVolumeError] = useState<string>("");
   const [pathError, setPathError] = useState<string>("");
-
+  const clusterRegistered = registeredCluster();
   /**
    * Validation Effect
    */
@@ -205,7 +200,7 @@ const Inspect = ({ classes }: { classes: any }) => {
     <Fragment>
       <PageHeader label={"Inspect"} />
       <PageLayout>
-        {!registeredCluster && <RegisterCluster compactMode />}
+        {!clusterRegistered && <RegisterCluster compactMode />}
         {!distributedSetup ? (
           <DistributedOnly
             iconComponent={<InspectMenuIcon />}
@@ -259,7 +254,7 @@ const Inspect = ({ classes }: { classes: any }) => {
                 autoComplete="off"
                 onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                   e.preventDefault();
-                  if (plan !== "STANDARD" && plan !== "ENTERPRISE") {
+                  if (!clusterRegistered) {
                     navigate("/support/register");
                     return;
                   }
@@ -349,7 +344,7 @@ const Inspect = ({ classes }: { classes: any }) => {
                   <Button
                     id={"inspect-start"}
                     type="submit"
-                    variant={!registeredCluster ? "regular" : "callAction"}
+                    variant={!clusterRegistered ? "regular" : "callAction"}
                     data-test-id="inspect-submit-button"
                     disabled={!isFormValid}
                     label={"Inspect"}

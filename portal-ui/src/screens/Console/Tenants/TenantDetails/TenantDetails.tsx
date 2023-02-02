@@ -150,27 +150,6 @@ const styles = (theme: Theme) =>
       top: 4,
     },
     ...containerForHeader(theme.spacing(4)),
-    tenantActionButton: {
-      "& span": {
-        fontSize: 14,
-        "@media (max-width: 900px)": {
-          display: "none",
-        },
-      },
-      "& .min-icon": {
-        width: 12,
-        marginLeft: 5,
-
-        "@media (max-width: 900px)": {
-          width: 16,
-          marginLeft: 0,
-        },
-      },
-    },
-    deleteBtn: {
-      color: "#f44336",
-      border: "1px solid rgba(244, 67, 54, 0.5)",
-    },
   });
 
 const TenantDetails = ({ classes }: ITenantDetailsProps) => {

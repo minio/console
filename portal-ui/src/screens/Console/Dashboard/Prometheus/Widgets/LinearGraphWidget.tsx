@@ -61,9 +61,6 @@ interface ILinearGraphWidget {
 const styles = (theme: Theme) =>
   createStyles({
     ...widgetCommon,
-    verticalAlignment: {
-      flexDirection: "column",
-    },
     chartCont: {
       position: "relative",
       height: 140,
