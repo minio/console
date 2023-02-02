@@ -88,6 +88,12 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
   const securityContext = useSelector(
     (state: AppState) => state.editPool.fields.configuration.securityContext
   );
+  const customRuntime = useSelector(
+    (state: AppState) => state.editPool.fields.configuration.customRuntime
+  );
+  const runtimeClassName = useSelector(
+    (state: AppState) => state.editPool.fields.configuration.runtimeClassName
+  );
 
   const [validationErrors, setValidationErrors] = useState<any>({});
 
@@ -269,6 +275,52 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
                     });
                   }}
                   label={"Do not run as Root"}
+                />
+              </div>
+            </Grid>
+          </fieldset>
+        </Grid>
+      )}
+      <Grid
+        item
+        xs={12}
+        className={classes.configSectionItem}
+        sx={{ marginTop: "10px" }}
+      >
+        <FormSwitchWrapper
+          value="customRuntime"
+          id="tenant_custom_runtime"
+          name="tenant_custom_runtime"
+          checked={customRuntime}
+          onChange={(e) => {
+            const targetD = e.target;
+            const checked = targetD.checked;
+
+            updateField("customRuntime", checked);
+          }}
+          label={"Custom Runtime Configurations"}
+        />
+      </Grid>
+      {customRuntime && (
+        <Grid item xs={12} className={classes.tenantCustomizationFields}>
+          <fieldset className={classes.fieldGroup}>
+            <legend className={classes.descriptionText}>
+              Custom Runtime Configurations
+            </legend>
+            <Grid item xs={12} className={`${classes.configSectionItem}`}>
+              <div className={classes.containerItem}>
+                <InputBoxWrapper
+                  id="tenant_runtime_runtimeClassName"
+                  name="tenant_runtime_runtimeClassName"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("runtimeClassName", e.target.value);
+                    cleanValidation("tenant_runtime_runtimeClassName");
+                  }}
+                  label="Runtime Class Name"
+                  value={runtimeClassName}
+                  error={
+                    validationErrors["tenant_runtime_runtimeClassName"] || ""
+                  }
                 />
               </div>
             </Grid>

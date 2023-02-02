@@ -124,7 +124,7 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
   return (
     <Fragment>
       <Grid container>
-        <Grid item sx={{ width: "calc(100% - 300px)" }}>
+        <Grid item sx={{ width: "calc(100% - 320px)" }}>
           <Paper className={classes.paperWrapper} sx={{ minHeight: 550 }}>
             <Grid container>
               <Grid item xs={12}>

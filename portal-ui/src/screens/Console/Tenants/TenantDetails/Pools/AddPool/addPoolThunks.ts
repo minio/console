@@ -42,6 +42,9 @@ export const addPoolAsync = createAsyncThunk(
     const securityContextEnabled =
       state.addPool.configuration.securityContextEnabled;
     const securityContext = state.addPool.configuration.securityContext;
+    const customRuntime = state.addPool.configuration.customRuntime;
+    const runtimeClassName = state.addPool.configuration.runtimeClassName;
+
     if (tenant === null) {
       return;
     }
@@ -72,6 +75,14 @@ export const addPoolAsync = createAsyncThunk(
       (toleration) => toleration.key.trim() !== ""
     );
 
+    let runtimeClass = {};
+
+    if (customRuntime) {
+      runtimeClass = {
+        runtimeClassName,
+      };
+    }
+
     const data: IAddPoolRequest = {
       name: poolName,
       servers: numberOfNodes,
@@ -84,6 +95,7 @@ export const addPoolAsync = createAsyncThunk(
       tolerations: tolerationValues,
       securityContext: securityContextEnabled ? securityContext : null,
       ...affinityObject,
+      ...runtimeClass,
     };
     const poolsURL = `/namespaces/${tenant?.namespace || ""}/tenants/${
       tenant?.name || ""

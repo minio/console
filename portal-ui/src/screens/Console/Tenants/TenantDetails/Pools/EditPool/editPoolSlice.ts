@@ -53,6 +53,8 @@ const initialState: IEditPool = {
         fsGroupChangePolicy: "Always",
         runAsNonRoot: true,
       },
+      customRuntime: false,
+      runtimeClassName: "",
     },
     nodeSelectorPairs: [{ key: "", value: "" }],
     tolerations: [
@@ -156,6 +158,8 @@ export const editPoolSlice = createSlice({
               action.payload.securityContext?.fsGroupChangePolicy || "Always",
             runAsNonRoot: !!action.payload.securityContext?.runAsNonRoot,
           },
+          customRuntime: !!action.payload.runtimeClassName,
+          runtimeClassName: action.payload.runtimeClassName,
         },
         affinity: {
           podAffinity,

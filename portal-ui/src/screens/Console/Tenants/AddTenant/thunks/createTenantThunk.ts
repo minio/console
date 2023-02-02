@@ -139,6 +139,8 @@ export const createTenantAsync = createAsyncThunk(
     const minioDomains = fields.configure.minioDomains;
     const consoleDomain = fields.configure.consoleDomain;
     const environmentVariables = fields.configure.envVars;
+    const customRuntime = fields.configure.customRuntime;
+    const runtimeClassName = fields.configure.runtimeClassName;
 
     let tolerations = state.createTenant.tolerations;
     let namespace = state.createTenant.fields.nameTenant.namespace;
@@ -171,6 +173,14 @@ export const createTenantAsync = createAsyncThunk(
 
     const erasureCode = ecParity.split(":")[1];
 
+    let runtimeClass = {};
+
+    if (customRuntime) {
+      runtimeClass = {
+        runtimeClassName,
+      };
+    }
+
     let dataSend: ITenantCreator = {
       name: tenantName,
       namespace: namespace,
@@ -195,8 +205,9 @@ export const createTenantAsync = createAsyncThunk(
             storage_class_name: selectedStorageClass,
           },
           securityContext: tenantCustom ? tenantSecurityContext : null,
-          ...affinityObject,
           tolerations: tolerationValues,
+          ...affinityObject,
+          ...runtimeClass,
         },
       ],
       erasureCodingParity: parseInt(erasureCode, 10),

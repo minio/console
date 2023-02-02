@@ -45,6 +45,10 @@ export const editPoolAsync = createAsyncThunk(
     const securityContextEnabled =
       state.editPool.fields.configuration.securityContextEnabled;
     const securityContext = state.editPool.fields.configuration.securityContext;
+    const customRuntime = state.editPool.fields.configuration.customRuntime;
+    const runtimeClassName =
+      state.editPool.fields.configuration.runtimeClassName;
+
     if (!tenant) {
       return;
     }
@@ -98,6 +102,14 @@ export const editPoolAsync = createAsyncThunk(
         return request;
       });
 
+    let runtimeClass = {};
+
+    if (customRuntime) {
+      runtimeClass = {
+        runtimeClassName,
+      };
+    }
+
     const data: IEditPoolRequest = {
       pools: [
         ...cleanPools,
@@ -113,6 +125,7 @@ export const editPoolAsync = createAsyncThunk(
           tolerations: tolerationValues,
           securityContext: securityContextEnabled ? securityContext : null,
           ...affinityObject,
+          ...runtimeClass,
         },
       ],
     };
