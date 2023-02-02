@@ -76,9 +76,6 @@ const styles = (theme: Theme) =>
         flex: 1,
       },
     },
-    minioCertsContainer: {
-      marginBottom: 15,
-    },
     minioCACertsRow: {
       display: "flex",
       alignItems: "center",
@@ -116,8 +113,6 @@ const styles = (theme: Theme) =>
     loaderAlign: {
       textAlign: "center",
     },
-    bold: { fontWeight: "bold" },
-    italic: { fontStyle: "italic" },
     fileItem: {
       marginRight: 10,
       display: "flex",

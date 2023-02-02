@@ -66,10 +66,6 @@ interface ILoggingScreenProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    breadcrumLink: {
-      textDecoration: "none",
-      color: "black",
-    },
     ...containerForHeader(theme.spacing(4)),
   });
 

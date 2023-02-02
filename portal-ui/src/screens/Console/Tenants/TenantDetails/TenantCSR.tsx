@@ -44,9 +44,6 @@ interface ITenantCSRProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    tableWrapper: {
-      height: "450px",
-    },
     ...actionsTray,
     ...searchField,
     ...tableStyles,

@@ -43,63 +43,9 @@ interface IRegister {
 
 const styles = (theme: Theme) =>
   createStyles({
-    registerActivationIcon: {
-      color: theme.palette.primary.main,
-      fontSize: 16,
-      fontWeight: "bold",
-      marginBottom: 20,
-      "& .min-icon": {
-        width: 32.12,
-        height: 25,
-        marginRight: 10,
-        verticalAlign: "middle",
-      },
-    },
-    registerActivationMode: {
-      textAlign: "right",
-      "& a": {
-        cursor: "pointer",
-      },
-    },
-    subnetDescription: {
-      textAlign: "left",
-      Font: "normal normal normal 14px/17px Inter",
-      letterSpacing: 0,
-      color: "#000000",
-      "& span": {
-        fontWeight: "bold",
-      },
-    },
-    registeredStatus: {
-      border: "1px solid #E2E2E2",
-      padding: "24px 24px 24px 24px",
-      borderRadius: 2,
-      marginBottom: 25,
-      backgroundColor: "#FBFAFA",
-      "& .min-icon": {
-        width: 20,
-        height: 20,
-        marginLeft: 48,
-        marginRight: 13,
-        verticalAlign: "middle",
-        marginTop: -3,
-      },
-      "& span": {
-        fontWeight: "bold",
-      },
-    },
-    copyInputBox: {
-      "& button": {
-        border: "1px solid #5E5E5E",
-        borderRadius: 2,
-      },
-    },
     link: {
       color: "#2781B0",
       cursor: "pointer",
-    },
-    sizedLabel: {
-      minWidth: "75px",
     },
     ...actionsTray,
     ...searchField,

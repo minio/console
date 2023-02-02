@@ -68,7 +68,6 @@ const styles = (theme: Theme) =>
         marginRight: 4,
       },
     },
-    tenantIcon: { width: 40, height: 40, position: "relative" },
     tenantItem: {
       border: "1px solid #EAEAEA",
       marginBottom: 16,

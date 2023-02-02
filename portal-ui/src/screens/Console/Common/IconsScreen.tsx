@@ -48,7 +48,6 @@ const styles = (theme: Theme) =>
         height: 45,
       },
     },
-    def: {},
     red: {
       "& .min-icon": {
         color: "red",

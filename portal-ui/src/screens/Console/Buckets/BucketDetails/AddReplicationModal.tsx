@@ -58,17 +58,6 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
     },
-    sizeFactorContainer: {
-      "& label": {
-        display: "none",
-      },
-      "& div:first-child": {
-        marginBottom: 0,
-        "@media (max-width: 600px)": {
-          marginTop: "7px",
-        },
-      },
-    },
     ...spacingUtils,
     ...createTenantCommon,
     ...formFieldStyles,

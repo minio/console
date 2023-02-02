@@ -50,10 +50,6 @@ const styles = (theme: Theme) =>
     ...buttonsStyles,
     ...searchField,
     ...hrClass,
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      padding: "15px 0 0",
-    },
   });
 
 const twoColCssGridLayoutConfig = {

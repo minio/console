@@ -36,9 +36,6 @@ import Box from "@mui/material/Box";
 
 const styles = (theme: Theme) =>
   createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
     ...spacingUtils,
     ...modalBasic,
   });

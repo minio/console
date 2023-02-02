@@ -46,12 +46,6 @@ const styles = (theme: Theme) =>
         borderRadius: 8,
       },
     },
-    submit: {
-      margin: "30px 0px 16px",
-      height: 40,
-      boxShadow: "none",
-      padding: "16px 30px",
-    },
     mainContainer: {
       position: "relative",
       height: 424,
