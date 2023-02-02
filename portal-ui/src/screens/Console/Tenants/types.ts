@@ -155,6 +155,8 @@ export interface IConfigureFields {
   exposeConsole: boolean;
   prometheusEnabled: boolean;
   tenantCustom: boolean;
+  customRuntime: boolean;
+  runtimeClassName: string;
   envVars: LabelKeyPair[];
   logSearchEnabled: boolean;
   logSearchVolumeSize: string;
@@ -324,6 +326,8 @@ export interface IAddPoolSetup {
 export interface IPoolConfiguration {
   securityContextEnabled: boolean;
   securityContext: ISecurityContext;
+  customRuntime: boolean;
+  runtimeClassName: string;
 }
 
 export interface ITenantIdentityProviderResponse {

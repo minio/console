@@ -103,6 +103,8 @@ const initialState: ICreateTenant = {
       exposeMinIO: true,
       exposeConsole: true,
       tenantCustom: false,
+      customRuntime: false,
+      runtimeClassName: "",
       envVars: [{ key: "", value: "" }],
       logSearchEnabled: false,
       prometheusEnabled: false,
