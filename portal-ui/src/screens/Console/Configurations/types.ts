@@ -54,6 +54,11 @@ export interface IElementValue {
   value: string;
 }
 
+export interface IConfigurationSys {
+  name?: string;
+  key_values: IElementValue[];
+}
+
 export interface IElement {
   configuration_id: string;
   configuration_label: string;
