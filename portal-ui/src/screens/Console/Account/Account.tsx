@@ -35,7 +35,6 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import {
   actionsTray,
-  containerForHeader,
   searchField,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
@@ -75,7 +74,6 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: 380,
     },
     ...tableStyles,
-    ...containerForHeader(theme.spacing(4)),
   })
 );
 

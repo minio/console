@@ -63,7 +63,7 @@ const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
     ...searchField,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
     tenantsList: {
       height: "calc(100vh - 195px)",
     },

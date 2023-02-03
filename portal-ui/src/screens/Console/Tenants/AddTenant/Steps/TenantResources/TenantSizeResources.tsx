@@ -34,6 +34,7 @@ import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapp
 import { floor } from "lodash";
 import InputUnitMenu from "../../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { isPageValid, updateAddField } from "../../createTenantSlice";
+import H3Section from "../../../../Common/H3Section";
 
 interface ITenantSizeResourcesProps {
   classes: any;
@@ -220,7 +221,7 @@ ITenantSizeResourcesProps) => {
     <Fragment>
       <Grid item xs={12}>
         <div className={classes.headerElement}>
-          <h3 className={classes.h3Section}>Resources</h3>
+          <H3Section>Resources</H3Section>
           <span className={classes.descriptionText}>
             You may specify the amount of CPU and Memory that MinIO servers
             should reserve on each node.

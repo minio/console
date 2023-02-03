@@ -46,6 +46,7 @@ import {
   updateAddField,
 } from "../createTenantSlice";
 import TLSHelpBox from "../../HelpBox/TLSHelpBox";
+import H3Section from "../../../Common/H3Section";
 
 interface ISecurityProps {
   classes: any;
@@ -172,7 +173,7 @@ const Security = ({ classes }: ISecurityProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Security</h3>
+        <H3Section>Security</H3Section>
       </div>
       <Grid container spacing={1}>
         <Grid item xs={12}>

@@ -36,6 +36,7 @@ import {
   LDAPLogoElement,
   OIDCLogoElement,
 } from "../../LogoComponents";
+import H3Section from "../../../Common/H3Section";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,7 +72,7 @@ const IdentityProvider = () => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Identity Provider</h3>
+        <H3Section>Identity Provider</H3Section>
         <span className={classes.descriptionText}>
           Access to the tenant can be controlled via an external Identity
           Manager.

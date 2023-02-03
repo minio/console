@@ -44,6 +44,7 @@ import { setErrorSnackMessage } from "../../../../systemSlice";
 import api from "../../../../common/api";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { MinIOEnvVarsSettings } from "../../../../common/utils";
+import FormHr from "../../Common/FormHr";
 
 interface ITenantConfiguration {
   classes: any;
@@ -101,7 +102,7 @@ const styles = (theme: Theme) =>
         flexFlow: "column",
       },
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
     ...createTenantCommon,
     ...formFieldStyles,
     ...modalBasic,
@@ -191,7 +192,7 @@ const TenantConfiguration = ({ classes }: ITenantConfiguration) => {
         <Grid container spacing={1}>
           <Grid item xs={12}>
             <h1 className={classes.sectionTitle}>Configuration</h1>
-            <hr className={classes.hrClass} />
+            <FormHr />
           </Grid>
           <Grid container spacing={1}>
             {envVars.map((envVar, index) => (

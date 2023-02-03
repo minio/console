@@ -56,6 +56,7 @@ import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWr
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import CodeMirrorWrapper from "../../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import FormHr from "../../../Common/FormHr";
 
 interface IEncryptionProps {
   classes: any;
@@ -326,7 +327,7 @@ const Encryption = ({ classes }: IEncryptionProps) => {
           </span>
         </Grid>
         <Grid xs={12}>
-          <hr className={classes.hrClass} />
+          <FormHr />
         </Grid>
 
         {enableEncryption && (

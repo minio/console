@@ -48,6 +48,7 @@ import {
   setTolerationInfo,
   updateAddField,
 } from "../createTenantSlice";
+import H3Section from "../../../Common/H3Section";
 
 interface IAffinityProps {
   classes: any;
@@ -255,7 +256,7 @@ const Affinity = ({ classes }: IAffinityProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Pod Placement</h3>
+        <H3Section>Pod Placement</H3Section>
         <span className={classes.descriptionText}>
           Configure how pods will be assigned to nodes
         </span>

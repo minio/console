@@ -42,6 +42,7 @@ import {
   mkPanelConfigurations,
 } from "./utils";
 import { isPageValid, updateAddField } from "../../createTenantSlice";
+import H3Section from "../../../../Common/H3Section";
 
 interface ITenantSizeAWSProps {
   classes: any;
@@ -300,7 +301,7 @@ const TenantSizeMK = ({
     <Fragment>
       <Grid item xs={12}>
         <div className={classes.headerElement}>
-          <h3 className={classes.h3Section}>Tenant Size</h3>
+          <H3Section>Tenant Size</H3Section>
           <span className={classes.descriptionText}>
             Please select the desired capacity
           </span>

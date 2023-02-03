@@ -39,7 +39,7 @@ interface IIconsScreenSimple {
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
     root: {
       fontSize: 12,
       wordWrap: "break-word",

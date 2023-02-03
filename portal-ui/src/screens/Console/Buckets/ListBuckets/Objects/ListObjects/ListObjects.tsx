@@ -196,7 +196,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     ...objectBrowserExtras,
     ...objectBrowserCommon,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   })
 );
 

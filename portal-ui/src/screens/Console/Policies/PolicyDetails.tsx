@@ -99,7 +99,7 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...modalBasic,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 interface IPolicyDetailsProps {

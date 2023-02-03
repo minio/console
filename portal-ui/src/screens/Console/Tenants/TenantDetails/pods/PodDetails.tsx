@@ -38,7 +38,7 @@ const styles = (theme: Theme) =>
       textDecoration: "none",
       color: "black",
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 const PodDetails = ({ classes }: IPodDetailsProps) => {

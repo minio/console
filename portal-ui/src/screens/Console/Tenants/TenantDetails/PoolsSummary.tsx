@@ -45,7 +45,7 @@ const styles = (theme: Theme) =>
     ...tenantDetailsStyles,
     ...actionsTray,
     ...tableStyles,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 const PoolsSummary = ({ classes }: IPoolsSummary) => {

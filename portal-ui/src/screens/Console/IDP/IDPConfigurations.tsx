@@ -47,7 +47,7 @@ type IDPConfigurationsProps = {
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {

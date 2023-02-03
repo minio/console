@@ -30,7 +30,6 @@ import { wsProtocol } from "../../../utils/wsUtils";
 import {
   actionsTray,
   containerForHeader,
-  hrClass,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -54,7 +53,6 @@ const styles = (theme: Theme) =>
       width: 100,
     },
     ...actionsTray,
-    ...hrClass,
 
     ...tableStyles,
     tableWrapper: {
@@ -74,7 +72,7 @@ const styles = (theme: Theme) =>
       width: "14px",
       height: "14px",
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 interface ITrace {

@@ -65,7 +65,7 @@ const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
     ...spacingUtils,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
     ...createTenantCommon,
     ...formFieldStyles,
     ...modalBasic,

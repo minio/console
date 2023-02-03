@@ -59,6 +59,7 @@ import { setErrorSnackMessage } from "../../../../systemSlice";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import FormHr from "../../Common/FormHr";
 
 interface ITenantEncryption {
   classes: any;
@@ -68,7 +69,7 @@ const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
     ...spacingUtils,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
     ...createTenantCommon,
     ...formFieldStyles,
     ...modalBasic,
@@ -677,7 +678,7 @@ const TenantEncryption = ({ classes }: ITenantEncryption) => {
           />
         </Grid>
         <Grid xs={12}>
-          <hr className={classes.hrClass} />
+          <FormHr />
         </Grid>
         {encryptionEnabled && (
           <Fragment>

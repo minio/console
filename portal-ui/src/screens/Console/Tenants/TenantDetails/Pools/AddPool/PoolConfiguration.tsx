@@ -34,6 +34,7 @@ import {
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { isPoolPageValid, setPoolField } from "./addPoolSlice";
+import H3Section from "../../../../Common/H3Section";
 
 interface IConfigureProps {
   classes: any;
@@ -164,7 +165,7 @@ const PoolConfiguration = ({ classes }: IConfigureProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Configure</h3>
+        <H3Section>Configure</H3Section>
         <span className={classes.descriptionText}>
           Aditional Configurations for the new Pool
         </span>

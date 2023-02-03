@@ -33,7 +33,7 @@ interface IDashboardSimple {
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 const Dashboard = ({ classes }: IDashboardSimple) => {

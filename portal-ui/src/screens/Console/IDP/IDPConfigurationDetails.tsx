@@ -21,10 +21,8 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box, Grid } from "@mui/material";
 import {
-  buttonsStyles,
   containerForHeader,
   formFieldStyles,
-  hrClass,
   modalBasic,
   pageContentStyles,
   searchField,
@@ -76,9 +74,8 @@ const styles = (theme: Theme) =>
     },
     ...pageContentStyles,
     ...searchField,
-    ...hrClass,
-    ...buttonsStyles,
-    ...containerForHeader(theme.spacing(4)),
+
+    ...containerForHeader,
   });
 
 const IDPConfigurationDetails = ({
