@@ -22,7 +22,7 @@ import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import CallToActionIcon from "@mui/icons-material/CallToAction";
-import { IElement, IElementValue } from "./types";
+import { IElement, IElementValue, IOverrideEnv, OverrideValue } from "./types";
 
 export const configurationElements: IElement[] = [
   {
@@ -308,4 +308,22 @@ export const selectSAs = (
   }
   setSelectedSAs(elements);
   return elements;
+};
+
+export const overrideFields = (formFields: IElementValue[]): IOverrideEnv => {
+  let overrideReturn: IOverrideEnv = {};
+
+  formFields.forEach((envItem) => {
+    // it has override values, we construct the value
+    if (envItem.env_override) {
+      const value: OverrideValue = {
+        value: envItem.env_override.value,
+        overrideEnv: envItem.env_override.name,
+      };
+
+      overrideReturn = { ...overrideReturn, [envItem.key]: value };
+    }
+  });
+
+  return overrideReturn;
 };

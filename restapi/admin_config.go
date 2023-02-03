@@ -129,9 +129,16 @@ func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.C
 		}
 		var confkv []*models.ConfigurationKV
 		for _, kv := range scfg.KV {
-			// FIXME: Ignoring env-overrides for now as support for this
-			// needs to be added for presentation.
-			confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value})
+			var envOverride *models.EnvOverride
+
+			if kv.EnvOverride != nil {
+				envOverride = &models.EnvOverride{
+					Name:  kv.EnvOverride.Name,
+					Value: kv.EnvOverride.Value,
+				}
+			}
+
+			confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value, EnvOverride: envOverride})
 		}
 		if len(confkv) == 0 {
 			continue

@@ -16,7 +16,14 @@
 
 import React, { Fragment, useState } from "react";
 import { IConfigurationSys, IElementValue } from "../../Configurations/types";
-import { Button, DataTable, Grid, TierOfflineIcon, TierOnlineIcon } from "mds";
+import {
+  Button,
+  ConsoleIcon,
+  DataTable,
+  Grid,
+  TierOfflineIcon,
+  TierOnlineIcon,
+} from "mds";
 import AddEndpointModal from "./AddEndpointModal";
 import DeleteWebhookEndpoint from "./DeleteWebhookEndpoint";
 import EditWebhookEndpoint from "./EditWebhookEndpoint";
@@ -43,6 +50,10 @@ const WebhookSettings = ({
     const endpointFilter = item.find((itm) => itm.key === "endpoint");
 
     if (endpointFilter) {
+      if (endpointFilter.env_override) {
+        return endpointFilter.env_override.value;
+      }
+
       return endpointFilter.value;
     }
 
@@ -52,8 +63,32 @@ const WebhookSettings = ({
   const renderWebhookStatus = (item: IElementValue[]) => {
     const EnableFilter = item.find((itm) => itm.key === "enable");
 
+    if (EnableFilter?.env_override) {
+      const overrideEnabled =
+        !EnableFilter?.env_override.value ||
+        EnableFilter?.env_override.value === "on" ||
+        !EnableFilter?.env_override.value
+          ? "Enabled"
+          : "Disabled";
+      return (
+        <Grid
+          container
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyItems: "start",
+            fontSize: "8px",
+          }}
+        >
+          <ConsoleIcon style={{ fill: "#052F51", width: "14px" }} />
+          {overrideEnabled ? "Enabled" : "Disabled"}
+        </Grid>
+      );
+    }
+
     // If enable is not set, then enabled by default
-    if (!EnableFilter || EnableFilter.value === "on") {
+    if (!EnableFilter || EnableFilter.value === "on" || !EnableFilter.value) {
       return (
         <Grid
           container
@@ -116,9 +151,27 @@ const WebhookSettings = ({
           setSelectedARN(item.name);
         }
       },
+      disableButtonFunction: (item: string) => {
+        const wHook = WebhookSettingslist.find(
+          (element) => element.name === item
+        );
+
+        if (wHook) {
+          const hasOverride = wHook.key_values.filter(
+            (itm) => !!itm.env_override
+          );
+
+          // Has override values, we cannot delete.
+          if (hasOverride.length > 0) {
+            return true;
+          }
+
+          return false;
+        }
+        return false;
+      },
     },
   ];
-
   return (
     <Grid container>
       {newEndpointOpen && (
@@ -187,5 +240,4 @@ const WebhookSettings = ({
     </Grid>
   );
 };
-
 export default WebhookSettings;

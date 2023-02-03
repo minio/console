@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Button, Grid } from "mds";
+import { Button, ConsoleIcon, Grid, Tooltip } from "mds";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Webhook } from "@mui/icons-material";
@@ -34,6 +34,8 @@ import { useAppDispatch } from "../../../../store";
 import { LinearProgress } from "@mui/material";
 import { IConfigurationSys } from "../../Configurations/types";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
+import { overrideFields } from "../../Configurations/utils";
 
 interface IEndpointModal {
   open: boolean;
@@ -166,6 +168,11 @@ const EditEndpointModal = ({
   };
 
   const defaultWH = !name.includes(":");
+  const hasOverride = endpointInfo.key_values.filter(
+    (itm) => !!itm.env_override
+  );
+
+  const overrideValues = overrideFields(hasOverride);
 
   let title = "Edit Webhook";
   let icon = <Webhook />;
@@ -181,6 +188,10 @@ const EditEndpointModal = ({
       break;
   }
 
+  if (hasOverride.length > 0) {
+    title = "View env variable Webhook";
+  }
+
   return (
     <Fragment>
       <ModalWrapper
@@ -189,89 +200,179 @@ const EditEndpointModal = ({
         onClose={onCloseEndpoint}
         titleIcon={icon}
       >
-        <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-          <FormSwitchWrapper
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const value = e.target.checked ? "on" : "off";
-              setEndpointState(value);
-            }}
-            id={"endpoint_enabled"}
-            name={"endpoint_enabled"}
-            label={"Enabled"}
-            value={"switch_on"}
-            checked={endpointState === "on"}
-          />
-        </Grid>
-        <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-          <InputBoxWrapper
-            id="endpoint"
-            name="endpoint"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setEndpoint(event.target.value);
-              validateInput("endpoint", event.target.validity.valid);
-            }}
-            error={
-              invalidInputs.includes("endpoint") ? "Invalid Endpoint set" : ""
-            }
-            label="Endpoint"
-            value={endpoint}
-            pattern={
-              "^(https?):\\/\\/([a-zA-Z0-9\\-.]+)(:[0-9]+)?(\\/[a-zA-Z0-9\\-.\\/]*)?$"
-            }
-            required
-          />
-        </Grid>
-        <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-          <InputBoxWrapper
-            id="auth-token"
-            name="auth-token"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setAuthToken(event.target.value);
-            }}
-            label="Auth Token"
-            value={authToken}
-          />
-        </Grid>
-        {saving && (
-          <Grid
-            item
-            xs={12}
-            sx={{
-              marginBottom: 10,
-            }}
-          >
-            <LinearProgress />
-          </Grid>
+        {hasOverride.length > 0 ? (
+          <Fragment>
+            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
+              <PredefinedList
+                label={"Enabled"}
+                content={overrideValues.enable?.value || "-"}
+                actionButton={
+                  <Grid
+                    item
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      paddingRight: "10px",
+                    }}
+                  >
+                    <Tooltip
+                      tooltip={
+                        overrideValues.enable
+                          ? `This value is set from the ${overrideValues.enable.overrideEnv} environment variable`
+                          : ""
+                      }
+                      placement={"left"}
+                    >
+                      <ConsoleIcon style={{ width: 20 }} />
+                    </Tooltip>
+                  </Grid>
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
+              <PredefinedList
+                label={"Endpoint"}
+                content={overrideValues.endpoint?.value || "-"}
+                actionButton={
+                  <Grid
+                    item
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      paddingRight: "10px",
+                    }}
+                  >
+                    <Tooltip
+                      tooltip={
+                        overrideValues.enable
+                          ? `This value is set from the ${overrideValues.endpoint.overrideEnv} environment variable`
+                          : ""
+                      }
+                      placement={"left"}
+                    >
+                      <ConsoleIcon style={{ width: 20 }} />
+                    </Tooltip>
+                  </Grid>
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
+              <PredefinedList
+                label={"Auth Token"}
+                content={overrideValues.auth_token?.value || "-"}
+                actionButton={
+                  <Grid
+                    item
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      paddingRight: "10px",
+                    }}
+                  >
+                    <Tooltip
+                      tooltip={
+                        overrideValues.enable
+                          ? `This value is set from the ${overrideValues.auth_token.overrideEnv} environment variable`
+                          : ""
+                      }
+                      placement={"left"}
+                    >
+                      <ConsoleIcon style={{ width: 20 }} />
+                    </Tooltip>
+                  </Grid>
+                }
+              />
+            </Grid>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
+              <FormSwitchWrapper
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.checked ? "on" : "off";
+                  setEndpointState(value);
+                }}
+                id={"endpoint_enabled"}
+                name={"endpoint_enabled"}
+                label={"Enabled"}
+                value={"switch_on"}
+                checked={endpointState === "on"}
+              />
+            </Grid>
+            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
+              <InputBoxWrapper
+                id="endpoint"
+                name="endpoint"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setEndpoint(event.target.value);
+                  validateInput("endpoint", event.target.validity.valid);
+                }}
+                error={
+                  invalidInputs.includes("endpoint")
+                    ? "Invalid Endpoint set"
+                    : ""
+                }
+                label="Endpoint"
+                value={endpoint}
+                pattern={
+                  "^(https?):\\/\\/([a-zA-Z0-9\\-.]+)(:[0-9]+)?(\\/[a-zA-Z0-9\\-.\\/]*)?$"
+                }
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
+              <InputBoxWrapper
+                id="auth-token"
+                name="auth-token"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setAuthToken(event.target.value);
+                }}
+                label="Auth Token"
+                value={authToken}
+              />
+            </Grid>
+            {saving && (
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  marginBottom: 10,
+                }}
+              >
+                <LinearProgress />
+              </Grid>
+            )}
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button
+                id={"reset"}
+                type="button"
+                variant="regular"
+                disabled={saving}
+                onClick={onCloseEndpoint}
+                label={"Cancel"}
+                sx={{
+                  marginRight: 10,
+                }}
+              />
+              <Button
+                id={"save-lifecycle"}
+                type="submit"
+                variant="callAction"
+                color="primary"
+                disabled={saving || invalidInputs.length !== 0}
+                label={"Update"}
+                onClick={updateWebhook}
+              />
+            </Grid>
+          </Fragment>
         )}
-        <Grid
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Button
-            id={"reset"}
-            type="button"
-            variant="regular"
-            disabled={saving}
-            onClick={onCloseEndpoint}
-            label={"Cancel"}
-            sx={{
-              marginRight: 10,
-            }}
-          />
-          <Button
-            id={"save-lifecycle"}
-            type="submit"
-            variant="callAction"
-            color="primary"
-            disabled={saving || invalidInputs.length !== 0}
-            label={"Update"}
-            onClick={updateWebhook}
-          />
-        </Grid>
       </ModalWrapper>
     </Fragment>
   );
