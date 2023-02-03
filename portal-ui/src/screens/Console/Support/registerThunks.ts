@@ -73,7 +73,9 @@ export const fetchLicenseInfo = createAsyncThunk(
         .catch((err: ErrorResponseHandler) => {
           if (
             err.detailedError.toLowerCase() !==
-            "License is not present".toLowerCase()
+              "License is not present".toLowerCase() &&
+            err.detailedError.toLowerCase() !==
+              "license not found".toLowerCase()
           ) {
             dispatch(setErrorSnackMessage(err));
           }

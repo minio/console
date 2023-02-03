@@ -62,7 +62,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	})
 	// Get subnet info
 	api.SubnetSubnetInfoHandler = subnetApi.SubnetInfoHandlerFunc(func(params subnetApi.SubnetInfoParams, session *models.Principal) middleware.Responder {
-		resp, err := GetSubnetInfoResponse(params)
+		resp, err := GetSubnetInfoResponse(session, params)
 		if err != nil {
 			return subnetApi.NewSubnetInfoDefault(int(err.Code)).WithPayload(err)
 		}
@@ -318,14 +318,47 @@ func subnetRegisterResponse(ctx context.Context, minioClient MinioAdmin, params 
 	return nil
 }
 
-func GetSubnetInfoResponse(params subnetApi.SubnetInfoParams) (*models.License, *models.Error) {
+var ErrSubnetLicenseNotFound = errors.New("license not found")
+
+func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInfoParams) (*models.License, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	client := &xhttp.Client{
 		Client: GetConsoleHTTPClient(""),
 	}
+	// license gets seeded to us by MinIO
+	seededLicense := os.Getenv(EnvSubnetLicense)
+	// if it's missing, we will gracefully fallback to attempt to fetch it from MinIO
+	if seededLicense == "" {
+		mAdmin, err := NewMinioAdminClient(session)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+		adminClient := AdminClient{Client: mAdmin}
 
-	licenseInfo, err := subnet.ParseLicense(client, os.Getenv(EnvSubnetLicense))
+		configBytes, err := adminClient.getConfigKV(params.HTTPRequest.Context(), "subnet")
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+		subSysConfigs, err := madmin.ParseServerConfigOutput(string(configBytes))
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+		// search for licese
+		for _, v := range subSysConfigs {
+			for _, sv := range v.KV {
+				if sv.Key == "license" {
+					seededLicense = sv.Value
+				}
+			}
+		}
+	}
+	// still empty means not found
+	if seededLicense == "" {
+		return nil, ErrorWithContext(ctx, ErrSubnetLicenseNotFound)
+	}
+
+	licenseInfo, err := subnet.ParseLicense(client, seededLicense)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

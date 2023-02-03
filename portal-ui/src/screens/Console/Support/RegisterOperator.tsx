@@ -82,10 +82,7 @@ const RegisterOperator = ({ classes }: IRegister) => {
         {apiKeyRegistered ? (
           <ClusterRegistered email={"Operator"} />
         ) : (
-          <ApiKeyRegister
-            registerEndpoint={"/api/v1/subnet/apikey/register"}
-            afterRegister={fetchAPIKeyInfo}
-          />
+          <ApiKeyRegister registerEndpoint={"/api/v1/subnet/apikey/register"} />
         )}
       </Box>
     </Fragment>

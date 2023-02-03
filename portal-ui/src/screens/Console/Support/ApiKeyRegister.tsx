@@ -30,11 +30,12 @@ import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
+import { useNavigate } from "react-router-dom";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 
 interface IApiKeyRegister {
   classes: any;
   registerEndpoint: string;
-  afterRegister: () => void;
 }
 
 const styles = (theme: Theme) =>
@@ -45,11 +46,9 @@ const styles = (theme: Theme) =>
     ...spacingUtils,
   });
 
-const ApiKeyRegister = ({
-  classes,
-  registerEndpoint,
-  afterRegister,
-}: IApiKeyRegister) => {
+const ApiKeyRegister = ({ classes, registerEndpoint }: IApiKeyRegister) => {
+  const navigate = useNavigate();
+
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [loading, setLoading] = useState(false);
@@ -67,8 +66,7 @@ const ApiKeyRegister = ({
       .then((resp: SubnetLoginResponse) => {
         setLoading(false);
         if (resp && resp.registered) {
-          reset();
-          afterRegister();
+          navigate(IAM_PAGES.LICENSE);
         }
       })
       .catch((err: ErrorResponseHandler) => {
@@ -76,7 +74,7 @@ const ApiKeyRegister = ({
         setLoading(false);
         reset();
       });
-  }, [afterRegister, apiKey, dispatch, loading, registerEndpoint]);
+  }, [apiKey, dispatch, loading, registerEndpoint, navigate]);
 
   useEffect(() => {
     if (fromModal) {

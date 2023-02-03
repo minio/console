@@ -148,12 +148,7 @@ const Register = ({ classes }: IRegister) => {
         {clusterRegistered && licenseInfo ? (
           <ClusterRegistered email={licenseInfo.email} />
         ) : (
-          <ApiKeyRegister
-            afterRegister={() => {
-              dispatch(fetchLicenseInfo());
-            }}
-            registerEndpoint={"/api/v1/subnet/login"}
-          />
+          <ApiKeyRegister registerEndpoint={"/api/v1/subnet/login"} />
         )}
       </Box>
       <ProxyConfiguration />
