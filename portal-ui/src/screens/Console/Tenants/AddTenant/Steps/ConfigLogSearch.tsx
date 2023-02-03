@@ -37,6 +37,7 @@ import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWr
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import SectionH1 from "../../../Common/SectionH1";
 import { isPageValid, updateAddField } from "../createTenantSlice";
+import FormHr from "../../../Common/FormHr";
 
 interface IConfigureProps {
   classes: any;
@@ -289,7 +290,7 @@ const ConfigLogSearch = ({ classes }: IConfigureProps) => {
           </span>
         </Grid>
         <Grid xs={12}>
-          <hr className={classes.hrClass} />
+          <FormHr />
         </Grid>
         {logSearchEnabled && (
           <Fragment>

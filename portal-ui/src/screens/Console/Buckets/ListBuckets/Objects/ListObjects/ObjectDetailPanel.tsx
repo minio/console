@@ -38,7 +38,6 @@ import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import {
   actionsTray,
-  buttonsStyles,
   detailsPanel,
   spacingUtils,
   textStyleUtils,
@@ -117,7 +116,7 @@ const styles = () =>
     capitalizeFirst: {
       textTransform: "capitalize",
     },
-    ...buttonsStyles,
+
     ...actionsTray,
     ...spacingUtils,
     ...textStyleUtils,

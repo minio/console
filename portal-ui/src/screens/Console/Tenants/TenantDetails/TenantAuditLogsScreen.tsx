@@ -59,6 +59,7 @@ import {
 } from "../TenantDetails/tenantAuditLogSlice";
 
 import { HelpBox, WarnIcon } from "mds";
+import FormHr from "../../Common/FormHr";
 
 interface ILoggingScreenProps {
   classes: any;
@@ -66,7 +67,7 @@ interface ILoggingScreenProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
@@ -336,7 +337,7 @@ const LoggingScreen = ({ classes }: ILoggingScreenProps) => {
               </Tabs>
             </Grid>
             <Grid item xs={12}>
-              <hr className={classes.hrClass} />
+              <FormHr />
             </Grid>
             {curTab === 0 && (
               <LoggingDetails

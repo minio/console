@@ -44,6 +44,7 @@ import {
   setEditPoolField,
   setEditPoolStorageClasses,
 } from "./editPoolSlice";
+import H3Section from "../../../../Common/H3Section";
 
 interface IPoolResourcesProps {
   classes: any;
@@ -197,7 +198,7 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Pool Resources</h3>
+        <H3Section>Pool Resources</H3Section>
       </div>
 
       <Grid item xs={12} className={classes.formFieldRow}>

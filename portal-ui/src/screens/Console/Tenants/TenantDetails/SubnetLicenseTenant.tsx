@@ -88,7 +88,7 @@ const styles = (theme: Theme) =>
     noUnderLine: {
       textDecoration: "none",
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 const SubnetLicenseTenant = ({

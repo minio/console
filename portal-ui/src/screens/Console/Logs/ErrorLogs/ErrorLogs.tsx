@@ -32,7 +32,6 @@ import {
   actionsTray,
   containerForHeader,
   inlineCheckboxes,
-  logsCommon,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import PageLayout from "../../Common/Layout/PageLayout";
@@ -72,9 +71,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: 0,
     },
     ...searchField,
-    ...logsCommon,
+
     ...inlineCheckboxes,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   })
 );
 

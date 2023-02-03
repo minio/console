@@ -22,7 +22,6 @@ import withStyles from "@mui/styles/withStyles";
 import { Grid, Paper } from "@mui/material";
 import {
   formFieldStyles,
-  modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
 import { AppState, useAppDispatch } from "../../../../../store";
@@ -34,6 +33,7 @@ import {
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { isPageValid, updateAddField } from "../createTenantSlice";
+import H3Section from "../../../Common/H3Section";
 
 interface IImagesProps {
   classes: any;
@@ -42,7 +42,6 @@ interface IImagesProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...formFieldStyles,
-    ...modalBasic,
     ...wizardCommon,
   });
 
@@ -307,7 +306,7 @@ const Images = ({ classes }: IImagesProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Container Images</h3>
+        <H3Section>Container Images</H3Section>
         <span className={classes.descriptionText}>
           Specify the container images used by the Tenant and it's features.
         </span>

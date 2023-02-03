@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...formFieldStyles,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   })
 );
 

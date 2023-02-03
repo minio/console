@@ -42,7 +42,7 @@ const styles = (theme: Theme) =>
     ...modalStyleUtils,
     ...formFieldStyles,
     ...spacingUtils,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 interface IChangePasswordProps {

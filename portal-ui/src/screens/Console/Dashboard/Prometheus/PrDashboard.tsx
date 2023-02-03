@@ -21,10 +21,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box, LinearProgress } from "@mui/material";
-import {
-  actionsTray,
-  widgetContainerCommon,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
 import { IDashboardPanel } from "./types";
 import { panelsConfiguration } from "./utils";
 import { TabPanel } from "../../../shared/tabs";
@@ -61,7 +58,6 @@ interface IPrDashboard {
 const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
-    ...widgetContainerCommon,
   });
 
 const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {

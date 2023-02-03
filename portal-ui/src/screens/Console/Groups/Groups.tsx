@@ -90,7 +90,7 @@ const styles = (theme: Theme) =>
       ...searchField.searchField,
       maxWidth: 380,
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 const Groups = ({ classes }: IGroupsProps) => {

@@ -44,7 +44,7 @@ const styles = (theme: Theme) =>
       textDecoration: "none",
       color: "black",
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 const TenantVolumes = ({ classes }: IPVCDetailsProps) => {

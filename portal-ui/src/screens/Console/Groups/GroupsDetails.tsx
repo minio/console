@@ -93,7 +93,7 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 interface IGroupDetailsProps {

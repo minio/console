@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...objectBrowserCommon,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   })
 );
 

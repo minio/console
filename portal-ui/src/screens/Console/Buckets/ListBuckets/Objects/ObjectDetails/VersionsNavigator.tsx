@@ -25,9 +25,7 @@ import Grid from "@mui/material/Grid";
 import ShareFile from "./ShareFile";
 import {
   actionsTray,
-  buttonsStyles,
   containerForHeader,
-  hrClass,
   objectBrowserCommon,
   objectBrowserExtras,
   spacingUtils,
@@ -129,15 +127,13 @@ const styles = (theme: Theme) =>
         display: "none",
       },
     },
-    ...hrClass,
-    ...buttonsStyles,
     ...actionsTray,
     ...tableStyles,
     ...spacingUtils,
     ...textStyleUtils,
     ...objectBrowserCommon,
     ...objectBrowserExtras,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 interface IVersionsNavigatorProps {

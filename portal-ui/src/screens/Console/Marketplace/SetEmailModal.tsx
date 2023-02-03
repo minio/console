@@ -31,7 +31,7 @@ import { euTimezones } from "./euTimezones";
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 const reEmail =

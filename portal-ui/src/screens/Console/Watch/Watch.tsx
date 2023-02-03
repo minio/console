@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...tableStyles,
     ...actionsTray,
     ...searchField,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   })
 );
 

@@ -60,7 +60,7 @@ import OBHeader from "../../ObjectBrowser/OBHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 let objectsWS: WebSocket;

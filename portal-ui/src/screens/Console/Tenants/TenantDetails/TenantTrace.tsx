@@ -39,7 +39,7 @@ const styles = (theme: Theme) =>
       minHeight: "800px",
       width: "100%",
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
   });
 
 const TenantTrace = ({ classes }: ITenantTrace) => {

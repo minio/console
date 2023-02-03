@@ -64,6 +64,7 @@ import { clearValidationError, imagePattern, numericPattern } from "../utils";
 import SecurityContextSelector from "../securityContextSelector";
 import { setFSGroupChangePolicy } from "../tenantSecurityContextSlice";
 import { fsGroupChangePolicyType } from "../types";
+import FormHr from "../../Common/FormHr";
 
 interface ITenantMonitoring {
   classes: any;
@@ -73,7 +74,7 @@ const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
     ...spacingUtils,
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
     ...createTenantCommon,
     ...formFieldStyles,
     ...modalBasic,
@@ -332,7 +333,7 @@ const TenantMonitoring = ({ classes }: ITenantMonitoring) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <hr className={classes.hrClass} />
+          <FormHr />
         </Grid>
       </Grid>
 

@@ -45,6 +45,7 @@ import TenantSizeResources from "./TenantSizeResources";
 import InputUnitMenu from "../../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { IMkEnvs } from "./utils";
 import { isPageValid, updateAddField } from "../../createTenantSlice";
+import H3Section from "../../../../Common/H3Section";
 
 interface ITenantSizeProps {
   classes: any;
@@ -311,7 +312,7 @@ const TenantSize = ({ classes, formToRender }: ITenantSizeProps) => {
     <Fragment>
       <Grid item xs={12}>
         <div className={classes.headerElement}>
-          <h3 className={classes.h3Section}>Capacity</h3>
+          <H3Section>Capacity</H3Section>
           <span className={classes.descriptionText}>
             Please select the desired capacity
           </span>

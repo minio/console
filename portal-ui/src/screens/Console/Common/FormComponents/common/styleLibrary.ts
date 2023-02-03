@@ -71,9 +71,6 @@ export const modalBasic = {
     overflowY: "auto" as const,
     marginBottom: 25,
   },
-  formSlider: {
-    marginLeft: 0,
-  },
   clearButton: {
     fontFamily: "Inter, sans-serif",
     border: "0",
@@ -86,12 +83,6 @@ export const modalBasic = {
     padding: "16px 25px 16px 25px",
     cursor: "pointer",
   },
-  floatingEnabled: {
-    position: "absolute" as const,
-    right: 58,
-    zIndex: 1000,
-    marginTop: -38,
-  },
   configureString: {
     border: "#EAEAEA 1px solid",
     borderRadius: 4,
@@ -99,11 +90,6 @@ export const modalBasic = {
     overflowY: "auto" as const,
     height: 170,
     backgroundColor: "#FBFAFA",
-  },
-  moduleDescription: {
-    color: "#848484",
-    fontSize: 12,
-    fontStyle: "italic" as string,
   },
 };
 
@@ -171,7 +157,7 @@ export const radioIcons = {
   },
 };
 
-export const containerForHeader = (bottomSpacing: any) => ({
+export const containerForHeader = {
   container: {
     position: "relative" as const,
     padding: "20px 35px 0",
@@ -190,27 +176,15 @@ export const containerForHeader = (bottomSpacing: any) => ({
     marginBottom: ".8rem",
     fontSize: "1.3rem",
   },
-  topSpacer: {
-    height: "8px",
-  },
   boxy: {
     border: "#E5E5E5 1px solid",
     borderRadius: 2,
     padding: 40,
     backgroundColor: "#fff",
   },
-});
+};
 
 export const actionsTray = {
-  filterTitle: {
-    color: "#848484",
-    fontSize: 13,
-    alignSelf: "center" as const,
-    whiteSpace: "nowrap" as const,
-    "&:not(:first-of-type)": {
-      marginLeft: 10,
-    },
-  },
   label: {
     color: "#07193E",
     fontSize: 13,
@@ -218,19 +192,6 @@ export const actionsTray = {
     whiteSpace: "nowrap" as const,
     "&:not(:first-of-type)": {
       marginLeft: 10,
-    },
-  },
-  timeContainers: {
-    display: "flex" as const,
-    "& button": {
-      flexGrow: 0,
-      marginLeft: 15,
-    },
-    height: 40,
-    marginBottom: 15,
-    justifyContent: "flex-start" as const,
-    "& > *": {
-      marginRight: 15,
     },
   },
   actionsTray: {
@@ -242,19 +203,6 @@ export const actionsTray = {
       flexGrow: 0,
       marginLeft: 8,
     },
-  },
-  filterContainer: {
-    backgroundColor: "#fff",
-    border: "#EEF1F4 2px solid",
-    borderRadius: 2,
-    display: "flex",
-    alignItems: "center",
-    padding: "0 12px",
-  },
-  divisorLine: {
-    borderRight: "#EEF1F4 1px solid",
-    height: 20,
-    margin: "0 15px",
   },
 };
 
@@ -356,19 +304,6 @@ export const predefinedList = {
 };
 
 export const objectBrowserCommon = {
-  obTitleSection: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    color: "#000",
-    fontWeight: 600,
-    height: 40,
-    lineHeight: "40px",
-  },
   breadcrumbsMain: {
     display: "flex",
   },
@@ -401,10 +336,6 @@ export const objectBrowserCommon = {
     "@media (max-width: 1060px)": {
       display: "none",
     },
-  },
-  smallLabel: {
-    color: "#9C9C9C",
-    fontSize: 15,
   },
   bucketDetails: {
     marginLeft: 10,
@@ -468,15 +399,6 @@ export const selectorsCommon = {
 };
 
 export const settingsCommon: any = {
-  customTitle: {
-    fontSize: 18,
-    color: "#000",
-    fontWeight: 600,
-    padding: "12px 0",
-    borderBottom: "#eaedee 1px solid",
-    marginBottom: 10,
-    margin: "15px 38px 27px",
-  },
   settingsFormContainer: {
     padding: 38,
     overflowY: "auto" as const,
@@ -490,48 +412,12 @@ export const settingsCommon: any = {
     display: "flex",
     justifyContent: "flex-end",
   },
-  innerSettingsButtonContainer: {
-    maxWidth: 840,
-    textAlign: "right" as const,
-  },
   settingsOptionsContainer: {
     height: "calc(100vh - 244px)",
     backgroundColor: "#fff",
     border: "#EAEDEE 1px solid",
     borderRadius: 3,
     marginTop: 15,
-  },
-  backButton: {
-    cursor: "pointer",
-    fontSize: 10,
-    fontWeight: 600,
-    color: "#000",
-    backgroundColor: "transparent",
-    border: 0,
-    padding: 0,
-    display: "flex",
-    alignItems: "center",
-    "&:active, &:focus": {
-      outline: 0,
-    },
-    "& svg": {
-      width: 10,
-      marginRight: 4,
-    },
-  },
-  backContainer: {
-    margin: "20px 38px 0",
-  },
-  mainCont: {
-    paddingLeft: 50,
-    paddingRight: 50,
-  },
-  mainTitle: {
-    fontSize: 18,
-    color: "#000",
-    fontWeight: 600,
-    marginBottom: 10,
-    marginTop: 10,
   },
 };
 
@@ -543,26 +429,6 @@ export const typesSelection = {
     justifyContent: "start" as const,
     flexWrap: "wrap" as const,
     width: "100%",
-  },
-  nonIconContainer: {
-    marginBottom: 16,
-    width: 455,
-    marginTop: 15,
-    "& button": {
-      marginRight: 16,
-    },
-  },
-  pickTitle: {
-    fontWeight: 600,
-    color: "#393939",
-    fontSize: 14,
-    marginBottom: 16,
-  },
-  centerElements: {
-    display: "flex" as const,
-    flexDirection: "column" as const,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
   },
   logoButton: {
     height: "80px",
@@ -607,13 +473,6 @@ export const typesSelection = {
   },
 };
 
-export const logsCommon = {
-  logsSubContainer: {
-    height: "calc(100vh - 230px)",
-    padding: "15px 0",
-  },
-};
-
 export const widgetCommon = {
   singleValueContainer: {
     height: 200,
@@ -638,18 +497,6 @@ export const widgetCommon = {
     width: "100%",
     height: 140,
   },
-  contentContainerWithLabel: {
-    height: "calc(100% - 25px)",
-  },
-  legendBlock: {
-    position: "absolute" as const,
-    bottom: 5,
-    display: "flex" as const,
-    width: "100%",
-    height: 15,
-    flexWrap: "wrap" as const,
-    overflowY: "auto" as const,
-  },
   singleLegendContainer: {
     display: "flex",
     alignItems: "center",
@@ -673,33 +520,6 @@ export const widgetCommon = {
     position: "relative" as const,
     height: 340,
     width: "100%",
-  },
-  zoomChartIcon: {
-    backgroundColor: "transparent",
-    border: 0,
-    padding: 0,
-    cursor: "pointer",
-    "& svg": {
-      color: "#D0D0D0",
-      height: 16,
-    },
-    "&:hover": {
-      "& svg": {
-        color: "#404143",
-      },
-    },
-  },
-};
-
-export const widgetContainerCommon = {
-  widgetPanelDelimiter: {
-    padding: 10,
-  },
-  dashboardRow: {
-    display: "flex" as const,
-    flexDirection: "row" as const,
-    justifyContent: "flex-start" as const,
-    flexWrap: "wrap" as const,
   },
 };
 
@@ -806,10 +626,6 @@ export const wizardCommon = {
       flexDirection: "column",
     },
   },
-  sizeFactorContainer: {
-    marginLeft: 8,
-    alignSelf: "flex-start" as const,
-  },
   headerElement: {
     position: "sticky" as const,
     top: 0,
@@ -818,22 +634,9 @@ export const wizardCommon = {
     zIndex: 500,
     backgroundColor: "#fff",
   },
-  tableTitle: {
-    fontWeight: 700,
-    width: "30%",
-  },
-  poolError: {
-    color: "#dc1f2e",
-    fontSize: "0.75rem",
-    paddingLeft: 120,
-  },
   error: {
     color: "#dc1f2e",
     fontSize: "0.75rem",
-  },
-  h3Section: {
-    marginTop: 0,
-    margin: 0,
   },
   descriptionText: {
     fontSize: 14,
@@ -856,31 +659,6 @@ export const wizardCommon = {
   },
 };
 
-export const buttonsStyles = {
-  anchorButton: {
-    textDecoration: "underline" as const,
-    textTransform: "unset" as const,
-    fontWeight: "normal" as const,
-    padding: 0,
-    lineHeight: "unset" as const,
-    height: "unset" as const,
-    width: "unset" as const,
-    textAlign: "left" as const,
-    border: 0,
-    minWidth: "unset" as const,
-  },
-};
-
-export const hrClass = {
-  hrClass: {
-    borderTop: 0,
-    borderLeft: 0,
-    borderRight: 0,
-    borderColor: "#999999",
-    backgroundColor: "transparent" as const,
-  },
-};
-
 export const tenantDetailsStyles = {
   buttonContainer: {
     display: "flex",
@@ -891,70 +669,17 @@ export const tenantDetailsStyles = {
     alignItems: "center" as const,
     justifyContent: "flex-start" as const,
   },
-  sizeFactorContainer: {
-    marginLeft: 8,
-  },
-  containerHeader: {
-    display: "flex" as const,
-    justifyContent: "space-between" as const,
-  },
   paperContainer: {
     padding: "15px 15px 15px 50px",
-  },
-  infoGrid: {
-    display: "grid" as const,
-    gridTemplateColumns: "auto auto auto auto",
-    gridGap: 8,
-    "& div": {
-      display: "flex" as const,
-      alignItems: "center" as const,
-    },
-    "& div:nth-child(odd)": {
-      justifyContent: "flex-end" as const,
-      fontWeight: 700,
-    },
-    "& div:nth-child(2n)": {
-      paddingRight: 35,
-    },
-  },
-  masterActions: {
-    width: "25%",
-    minWidth: "120px",
-    "& div": {
-      margin: "5px 0px",
-    },
-  },
-  updateButton: {
-    backgroundColor: "transparent" as const,
-    border: 0,
-    padding: "0 6px",
-    cursor: "pointer" as const,
-    "&:focus, &:active": {
-      outline: "none",
-    },
-    "& svg": {
-      height: 12,
-    },
-  },
-  poolLabel: {
-    color: "#666666",
-  },
-  titleCol: {
-    fontWeight: 700,
   },
   breadcrumLink: {
     textDecoration: "none",
     color: "black",
   },
-  healthCol: {
-    fontWeight: 700,
-    paddingRight: "10px",
-  },
   ...modalBasic,
   ...actionsTray,
-  ...buttonsStyles,
+
   ...searchField,
-  ...hrClass,
   actionsTray: {
     ...actionsTray.actionsTray,
     padding: "15px 0 0",
@@ -1020,31 +745,6 @@ const commonStateIcon = {
 };
 
 export const commonDashboardInfocard: any = {
-  cardIconContainer: {
-    display: "flex" as const,
-    position: "relative" as const,
-    alignItems: "center" as const,
-  },
-  stateContainer: {
-    display: "flex" as const,
-    flexWrap: "wrap" as const,
-    justifyContent: "flex-start" as const,
-  },
-  infoValue: {
-    fontWeight: 500,
-    color: "#07193E",
-    fontSize: 16,
-    margin: "8px 40px 5px 0",
-    display: "inline-flex" as const,
-    "& strong": {
-      marginRight: 4,
-    },
-    "& .min-icon": {
-      width: 20,
-      height: 20,
-    },
-    alignItems: "center" as const,
-  },
   redState: {
     color: "#F55B5B",
     ...commonStateIcon,
@@ -1073,44 +773,6 @@ export const commonDashboardInfocard: any = {
       height: 5,
     },
   },
-  innerState: {
-    fontSize: 8,
-    display: "flex" as const,
-    alignItems: "center" as const,
-    marginTop: -3,
-    "& .min-icon": {
-      marginTop: 5,
-      width: 10,
-      height: 10,
-    },
-  },
-  cardContainer: {
-    borderRadius: 10,
-    boxShadow: "0 0 15px #00000029",
-    marginBottom: 30,
-  },
-  cardHeader: {
-    "& .MuiCardHeader-title": {
-      fontWeight: "bolder" as const,
-    },
-  },
-  cardNumber: {
-    color: "#848484",
-    fontSize: 16,
-    fontWeight: 400,
-    marginBottom: 10,
-  },
-  referenceTitle: {
-    display: "flex",
-    alignItems: "center" as const,
-    lineHeight: 1,
-    fontWeight: "bold" as const,
-    "& .min-icon": {
-      width: 10,
-      height: 10,
-      marginTop: -5,
-    },
-  },
 };
 
 export const pageContentStyles = {
@@ -1119,34 +781,10 @@ export const pageContentStyles = {
   },
 };
 
-export const linkStyles = (color: string) => ({
-  link: {
-    textDecoration: "underline",
-    color,
-    backgroundColor: "transparent",
-    border: 0,
-    cursor: "pointer",
-  },
-});
-
 export const serviceAccountStyles: any = {
-  jsonPolicyEditor: {
-    minHeight: 400,
-    width: "100%",
-  },
   buttonContainer: {
     display: "flex",
     justifyContent: "flex-end",
-  },
-  infoDetails: {
-    color: "#393939",
-    fontSize: 12,
-    fontStyle: "italic",
-    marginBottom: "8px",
-  },
-  containerScrollable: {
-    maxHeight: "calc(100vh - 200px)" as const,
-    overflowY: "auto" as const,
   },
   codeMirrorContainer: {
     marginBottom: 20,
@@ -1375,22 +1013,6 @@ export const detailsPanel: any = {
     fontSize: 14,
     maxHeight: 180,
     overflowY: "auto",
-  },
-  hrClass: {
-    borderTop: 0,
-    borderLeft: 0,
-    borderRight: 0,
-    borderColor: "#E2E2E2",
-    backgroundColor: "transparent",
-  },
-  sectionTitle: {
-    fontSize: 18,
-    color: "#000",
-    fontWeight: "bold",
-    borderBottom: "#E2E2E2 1px solid",
-    margin: "10px 22px",
-    paddingBottom: 18,
-    width: "100%",
   },
   detailContainer: {
     padding: "0 22px",

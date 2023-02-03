@@ -90,12 +90,16 @@ const styles = (theme: Theme) =>
     loaderAlign: {
       textAlign: "center",
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader,
     ...createTenantCommon,
     ...formFieldStyles,
     ...modalBasic,
     ...wizardCommon,
   });
+
+function FormHr() {
+  return null;
+}
 
 const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
   const dispatch = useAppDispatch();
@@ -349,7 +353,7 @@ const TenantIdentityProvider = ({ classes }: ITenantIdentityProvider) => {
         <Fragment>
           <Grid item xs={12}>
             <h1 className={classes.sectionTitle}>Identity Provider</h1>
-            <hr className={classes.hrClass} />
+            <FormHr />
           </Grid>
           <Grid
             item
