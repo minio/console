@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { DateTime } from "luxon";
+import { DateTime, Duration } from "luxon";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -34,6 +34,7 @@ import {
   Typography,
 } from "@mui/material";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { CertificateIcon } from "mds";
 
 const styles = (theme: Theme) =>
@@ -97,6 +98,18 @@ const styles = (theme: Theme) =>
         fontSize: 12,
       },
     },
+    certificateExpiring: {
+      color: "orange",
+      "& .label": {
+        fontWeight: "bold",
+      },
+    },
+    certificateExpired: {
+      color: "red",
+      "& .label": {
+        fontWeight: "bold",
+      },
+    },
   });
 
 interface ITLSCertificate {
@@ -113,6 +126,34 @@ const TLSCertificate = ({
   const certificates = certificateInfo.domains || [];
 
   const expiry = DateTime.fromISO(certificateInfo.expiry);
+  const now = DateTime.utc();
+  // Expose error on Tenant if certificate is near expiration or expired
+  let daysToExpiry: number = 0;
+  let daysToExpiryHuman: string = "";
+  let certificateExpiration: string = "";
+  if (expiry) {
+    let durationToExpiry = expiry.diff(now);
+    daysToExpiry = durationToExpiry.as("days");
+    daysToExpiryHuman = durationToExpiry
+      .minus(Duration.fromObject({ days: 1 }))
+      .shiftTo("days")
+      .toHuman({ listStyle: "long", maximumFractionDigits: 0 });
+    if (daysToExpiry >= 10 && daysToExpiry < 30) {
+      certificateExpiration = classes.certificateExpiring;
+    }
+    if (daysToExpiry < 10) {
+      certificateExpiration = classes.certificateExpired;
+      if (daysToExpiry < 2) {
+        daysToExpiryHuman = durationToExpiry
+          .minus(Duration.fromObject({ minutes: 1 }))
+          .shiftTo("hours", "minutes")
+          .toHuman({ listStyle: "long", maximumFractionDigits: 0 });
+        if (durationToExpiry.as("minutes") <= 1) {
+          daysToExpiryHuman = "EXPIRED";
+        }
+      }
+    }
+  }
 
   return (
     <Chip
@@ -134,6 +175,12 @@ const TLSCertificate = ({
               &nbsp;
               <span className={"label"}>Expiry:&nbsp;</span>
               <span>{expiry.toFormat("yyyy/MM/dd")}</span>
+            </Box>
+            <Box className={classes.certificateExpiry}>
+              <AccessTimeIcon color="inherit" fontSize="small" />
+              &nbsp;
+              <span className={"label"}>Expires in:&nbsp;</span>
+              <span className={certificateExpiration}>{daysToExpiryHuman}</span>
             </Box>
             <Divider />
             <br />
