@@ -43,10 +43,6 @@ interface IRegister {
 
 const styles = (theme: Theme) =>
   createStyles({
-    link: {
-      color: "#2781B0",
-      cursor: "pointer",
-    },
     ...actionsTray,
     ...searchField,
     ...spacingUtils,
@@ -84,7 +80,7 @@ const RegisterOperator = ({ classes }: IRegister) => {
         }}
       >
         {apiKeyRegistered ? (
-          <ClusterRegistered email={"Operator"} linkClass={classes.link} />
+          <ClusterRegistered email={"Operator"} />
         ) : (
           <ApiKeyRegister
             registerEndpoint={"/api/v1/subnet/apikey/register"}

@@ -26,13 +26,7 @@ export const FormTitle = ({
   );
 };
 
-export const ClusterRegistered = ({
-  email,
-  linkClass,
-}: {
-  email: string;
-  linkClass: string;
-}) => {
+export const ClusterRegistered = ({ email }: { email: string }) => {
   return (
     <Fragment>
       <RegistrationStatusBanner email={email} />
@@ -50,7 +44,10 @@ export const ClusterRegistered = ({
           <Link
             href="https://subnet.min.io"
             target="_blank"
-            className={linkClass}
+            style={{
+              color: "#2781B0",
+              cursor: "pointer",
+            }}
           >
             SUBNET
           </Link>{" "}

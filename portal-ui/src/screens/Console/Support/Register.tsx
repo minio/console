@@ -76,10 +76,6 @@ interface IRegister {
 
 const styles = (theme: Theme) =>
   createStyles({
-    link: {
-      color: "#2781B0",
-      cursor: "pointer",
-    },
     sizedLabel: {
       minWidth: "75px",
     },
@@ -560,10 +556,7 @@ const Register = ({ classes }: IRegister) => {
         }}
       >
         {clusterRegistered && licenseInfo ? (
-          <ClusterRegistered
-            email={licenseInfo.email}
-            linkClass={classes.link}
-          />
+          <ClusterRegistered email={licenseInfo.email} />
         ) : (
           <ApiKeyRegister
             afterRegister={fetchLicenseInfo}
@@ -588,10 +581,7 @@ const Register = ({ classes }: IRegister) => {
         }}
       >
         {clusterRegistered && licenseInfo ? (
-          <ClusterRegistered
-            email={licenseInfo.email}
-            linkClass={classes.link}
-          />
+          <ClusterRegistered email={licenseInfo.email} />
         ) : null}
         <Box
           sx={{
@@ -706,10 +696,7 @@ const Register = ({ classes }: IRegister) => {
         }}
       >
         {clusterRegistered && licenseInfo ? (
-          <ClusterRegistered
-            email={licenseInfo.email}
-            linkClass={classes.link}
-          />
+          <ClusterRegistered email={licenseInfo.email} />
         ) : (
           clusterRegistrationForm
         )}
