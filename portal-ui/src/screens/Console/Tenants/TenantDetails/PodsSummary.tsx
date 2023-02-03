@@ -45,7 +45,7 @@ const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
     ...tableStyles,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const PodsSummary = ({ classes }: IPodsSummary) => {

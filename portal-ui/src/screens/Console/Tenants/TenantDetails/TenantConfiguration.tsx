@@ -102,7 +102,7 @@ const styles = (theme: Theme) =>
         flexFlow: "column",
       },
     },
-    ...containerForHeader(),
+    ...containerForHeader,
     ...createTenantCommon,
     ...formFieldStyles,
     ...modalBasic,

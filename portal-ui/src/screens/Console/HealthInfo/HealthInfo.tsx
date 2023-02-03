@@ -88,7 +88,7 @@ const styles = (theme: Theme) =>
       marginTop: 0,
     },
     ...actionsTray,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface IHealthInfo {

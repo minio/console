@@ -67,7 +67,7 @@ const styles = (theme: Theme) =>
       ...searchField.searchField,
       maxWidth: 380,
     },
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface IPoliciesProps {

@@ -40,7 +40,7 @@ const styles = (theme: Theme) =>
     listHeight: {
       height: "50",
     },
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const KeyPairView = ({ classes, records, recordName }: IKeyPairView) => {

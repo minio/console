@@ -57,7 +57,7 @@ const styles = (theme: Theme) =>
       borderBottom: "1px solid #dedede",
     },
 
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const Hop = ({ classes }: IHopSimple) => {

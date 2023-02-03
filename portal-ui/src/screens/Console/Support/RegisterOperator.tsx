@@ -50,7 +50,7 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...spacingUtils,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const RegisterOperator = ({ classes }: IRegister) => {

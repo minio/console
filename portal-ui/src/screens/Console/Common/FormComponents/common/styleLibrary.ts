@@ -157,7 +157,7 @@ export const radioIcons = {
   },
 };
 
-export const containerForHeader = () => ({
+export const containerForHeader = {
   container: {
     position: "relative" as const,
     padding: "20px 35px 0",
@@ -182,7 +182,7 @@ export const containerForHeader = () => ({
     padding: 40,
     backgroundColor: "#fff",
   },
-});
+};
 
 export const actionsTray = {
   label: {

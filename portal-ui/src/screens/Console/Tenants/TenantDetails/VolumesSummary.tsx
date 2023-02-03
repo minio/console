@@ -47,7 +47,7 @@ const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
     ...tableStyles,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const TenantVolumes = ({ classes }: ITenantVolumesProps) => {

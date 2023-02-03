@@ -49,7 +49,7 @@ const styles = (theme: Theme) =>
       },
     },
     ...actionsTray,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface IProfileProps {

@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...modalStyleUtils,
     ...formFieldStyles,
     ...spacingUtils,
-    ...containerForHeader(),
+    ...containerForHeader,
   })
 );
 

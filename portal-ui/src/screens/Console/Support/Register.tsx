@@ -86,7 +86,7 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...spacingUtils,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const Register = ({ classes }: IRegister) => {

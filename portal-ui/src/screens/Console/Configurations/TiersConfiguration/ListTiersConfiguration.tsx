@@ -82,7 +82,7 @@ const styles = (theme: Theme) =>
     ...searchField,
     ...settingsCommon,
     ...typesSelection,
-    ...containerForHeader(),
+    ...containerForHeader,
     customConfigurationPage: {
       minHeight: 400,
     },

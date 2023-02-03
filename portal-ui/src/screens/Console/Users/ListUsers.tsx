@@ -80,7 +80,7 @@ const styles = (theme: Theme) =>
       maxWidth: 380,
     },
     ...tableStyles,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface IUsersProps {

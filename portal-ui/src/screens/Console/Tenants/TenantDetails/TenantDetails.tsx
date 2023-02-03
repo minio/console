@@ -149,7 +149,7 @@ const styles = (theme: Theme) =>
       height: 10,
       top: 4,
     },
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const TenantDetails = ({ classes }: ITenantDetailsProps) => {

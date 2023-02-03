@@ -67,7 +67,7 @@ interface ILoggingScreenProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const LoggingScreen = ({ classes }: ILoggingScreenProps) => {

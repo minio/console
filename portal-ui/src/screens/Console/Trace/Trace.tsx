@@ -72,7 +72,7 @@ const styles = (theme: Theme) =>
       width: "14px",
       height: "14px",
     },
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface ITrace {

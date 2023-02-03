@@ -107,7 +107,7 @@ const styles = (theme: Theme) =>
       color: "#000000",
       fontSize: 20,
     },
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface IsetProps {

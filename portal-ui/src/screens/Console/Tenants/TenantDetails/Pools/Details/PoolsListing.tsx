@@ -46,7 +46,7 @@ const styles = (theme: Theme) =>
     ...tenantDetailsStyles,
     ...actionsTray,
     ...tableStyles,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const PoolsListing = ({ classes, setPoolDetailsView }: IPoolsSummary) => {

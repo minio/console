@@ -38,7 +38,7 @@ const styles = (theme: Theme) =>
       textDecoration: "none",
       color: "black",
     },
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const PodDetails = ({ classes }: IPodDetailsProps) => {

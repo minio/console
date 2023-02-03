@@ -89,7 +89,7 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...tableStyles,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface IUserDetailsProps {

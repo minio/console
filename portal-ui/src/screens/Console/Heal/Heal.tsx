@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     ...inlineCheckboxes,
     ...searchField,
-    ...containerForHeader(),
+    ...containerForHeader,
   })
 );
 

@@ -39,7 +39,7 @@ const styles = (theme: Theme) =>
     sizedLabel: {
       minWidth: "75px",
     },
-    ...containerForHeader(),
+    ...containerForHeader,
     ...spacingUtils,
   });
 

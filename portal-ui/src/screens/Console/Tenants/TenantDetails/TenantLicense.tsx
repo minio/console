@@ -43,7 +43,7 @@ const styles = (theme: Theme) =>
     loaderAlign: {
       textAlign: "center",
     },
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const TenantLicense = ({ classes }: ITenantLicense) => {

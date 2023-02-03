@@ -47,7 +47,7 @@ const styles = (theme: Theme) =>
     },
     ...actionsTray,
     ...searchField,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const DirectPVVolumes = ({ classes }: IDirectPVVolumesProps) => {

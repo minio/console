@@ -112,7 +112,7 @@ const styles = (theme: Theme) =>
       textTransform: "capitalize",
     },
 
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface IBucketDetailsProps {

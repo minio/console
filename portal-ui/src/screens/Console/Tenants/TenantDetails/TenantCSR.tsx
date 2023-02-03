@@ -47,7 +47,7 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...tableStyles,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const TenantCSR = ({ classes }: ITenantCSRProps) => {

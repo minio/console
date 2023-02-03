@@ -82,7 +82,7 @@ const styles = (theme: Theme) =>
         minWidth: 220,
       },
     },
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface IListBucketsProps {

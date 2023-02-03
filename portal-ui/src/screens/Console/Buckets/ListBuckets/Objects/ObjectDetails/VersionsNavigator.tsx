@@ -133,7 +133,7 @@ const styles = (theme: Theme) =>
     ...textStyleUtils,
     ...objectBrowserCommon,
     ...objectBrowserExtras,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface IVersionsNavigatorProps {

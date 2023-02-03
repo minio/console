@@ -51,7 +51,7 @@ const styles = (theme: Theme) =>
     },
     ...searchField,
     ...actionsTray,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const getRoutePath = (path: string) => {

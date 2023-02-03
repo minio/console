@@ -196,7 +196,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     ...objectBrowserExtras,
     ...objectBrowserCommon,
-    ...containerForHeader(),
+    ...containerForHeader,
   })
 );
 

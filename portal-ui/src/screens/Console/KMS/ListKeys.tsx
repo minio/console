@@ -49,7 +49,7 @@ const DeleteKMSModal = withSuspense(
 const styles = (theme: Theme) =>
   createStyles({
     ...searchField,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 interface IKeysProps {

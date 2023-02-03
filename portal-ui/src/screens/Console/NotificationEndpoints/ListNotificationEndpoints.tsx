@@ -62,7 +62,7 @@ const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
     ...settingsCommon,
-    ...containerForHeader(),
+    ...containerForHeader,
     twHeight: {
       minHeight: 400,
     },

@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...searchField,
 
     ...inlineCheckboxes,
-    ...containerForHeader(),
+    ...containerForHeader,
   })
 );
 

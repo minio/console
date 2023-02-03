@@ -31,7 +31,7 @@ interface IConfirmationDialog {
 const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
-    ...containerForHeader(),
+    ...containerForHeader,
   });
 
 const ConfirmationDialog = ({
