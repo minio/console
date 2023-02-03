@@ -78,7 +78,10 @@ function RegisterStatus({ classes, showHelp }: IRegisterStatus) {
               <Link
                 href="https://subnet.min.io"
                 target="_blank"
-                className={classes.link}
+                style={{
+                  color: "#2781B0",
+                  cursor: "pointer",
+                }}
               >
                 SUBNET
               </Link>{" "}

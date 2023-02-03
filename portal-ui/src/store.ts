@@ -37,6 +37,7 @@ import editTenantAuditLoggingReducer from "./screens/Console/Tenants/TenantDetai
 import editTenantSecurityContextReducer from "./screens/Console/Tenants/tenantSecurityContextSlice";
 import directPVReducer from "./screens/Console/DirectPV/directPVSlice";
 import licenseReducer from "./screens/Console/License/licenseSlice";
+import registerReducer from "./screens/Console/Support/registerSlice";
 
 const rootReducer = combineReducers({
   system: systemReducer,
@@ -50,6 +51,7 @@ const rootReducer = combineReducers({
   objectBrowser: objectBrowserReducer,
   healthInfo: healthInfoReducer,
   dashboard: dashboardReducer,
+  register: registerReducer,
   // Operator Reducers
   tenants: tenantsReducer,
   createTenant: createTenantReducer,
