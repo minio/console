@@ -55,6 +55,7 @@ import {
   setRunAsUser,
 } from "../tenantSecurityContextSlice";
 import TLSHelpBox from "../HelpBox/TLSHelpBox";
+import FormHr from "../../Common/FormHr";
 
 interface ITenantSecurity {
   classes: any;
@@ -492,7 +493,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
         <Grid container spacing={1}>
           <Grid item xs={12}>
             <h1 className={classes.sectionTitle}>Security</h1>
-            <hr className={classes.hrClass} />
+            <FormHr />
           </Grid>
           <Grid container spacing={1}>
             <Grid item xs={12}>
@@ -794,7 +795,7 @@ const TenantSecurity = ({ classes }: ITenantSecurity) => {
             )}
             <Grid item xs={12} className={classes.formFieldRow}>
               <h1 className={classes.sectionTitle}>Security Context</h1>
-              <hr className={classes.hrClass} />
+              <FormHr />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>
               <SecurityContextSelector

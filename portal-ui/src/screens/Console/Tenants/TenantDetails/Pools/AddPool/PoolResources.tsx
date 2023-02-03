@@ -44,6 +44,7 @@ import {
   setPoolField,
   setPoolStorageClasses,
 } from "./addPoolSlice";
+import H3Section from "../../../../Common/H3Section";
 
 interface IPoolResourcesProps {
   classes: any;
@@ -197,7 +198,7 @@ const PoolResources = ({ classes }: IPoolResourcesProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>New Pool Configuration</h3>
+        <H3Section>New Pool Configuration</H3Section>
         <span className={classes.descriptionText}>
           Configure a new Pool to expand MinIO storage
         </span>

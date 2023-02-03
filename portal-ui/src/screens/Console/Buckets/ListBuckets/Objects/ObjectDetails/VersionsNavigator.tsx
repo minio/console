@@ -26,7 +26,6 @@ import ShareFile from "./ShareFile";
 import {
   actionsTray,
   containerForHeader,
-  hrClass,
   objectBrowserCommon,
   objectBrowserExtras,
   spacingUtils,
@@ -128,8 +127,6 @@ const styles = (theme: Theme) =>
         display: "none",
       },
     },
-    ...hrClass,
-
     ...actionsTray,
     ...tableStyles,
     ...spacingUtils,

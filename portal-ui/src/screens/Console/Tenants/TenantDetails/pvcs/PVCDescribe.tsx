@@ -21,7 +21,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
   actionsTray,
-  hrClass,
   searchField,
 } from "../../../Common/FormComponents/common/styleLibrary";
 import { Box } from "@mui/material";
@@ -48,7 +47,6 @@ const styles = (theme: Theme) =>
     ...actionsTray,
 
     ...searchField,
-    ...hrClass,
   });
 
 const twoColCssGridLayoutConfig = {

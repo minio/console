@@ -51,6 +51,7 @@ import {
   updateAddField,
 } from "../createTenantSlice";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import H3Section from "../../../Common/H3Section";
 
 interface IConfigureProps {
   classes: any;
@@ -285,7 +286,7 @@ const Configure = ({ classes }: IConfigureProps) => {
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Configure</h3>
+        <H3Section>Configure</H3Section>
         <span className={classes.descriptionText}>
           Basic configurations for tenant management
         </span>
@@ -611,7 +612,7 @@ const Configure = ({ classes }: IConfigureProps) => {
       <Divider />
 
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Additional Environment Variables</h3>
+        <H3Section>Additional Environment Variables</H3Section>
         <span className={classes.descriptionText}>
           Define additional environment variables to be used by your MinIO pods
         </span>

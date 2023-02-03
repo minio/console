@@ -41,6 +41,7 @@ import {
 } from "../../createTenantSlice";
 import { selFeatures } from "../../../../consoleSlice";
 import NamespaceSelector from "./NamespaceSelector";
+import H3Section from "../../../../Common/H3Section";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -129,7 +130,7 @@ const NameTenantMain = ({ classes, formToRender }: INameTenantMainScreen) => {
             <Grid container>
               <Grid item xs={12}>
                 <div className={classes.headerElement}>
-                  <h3 className={classes.h3Section}>Name</h3>
+                  <H3Section>Name</H3Section>
                   <span className={classes.descriptionText}>
                     How would you like to name this new tenant?
                   </span>

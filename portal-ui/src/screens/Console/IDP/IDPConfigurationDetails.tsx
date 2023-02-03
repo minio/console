@@ -23,7 +23,6 @@ import { Box, Grid } from "@mui/material";
 import {
   containerForHeader,
   formFieldStyles,
-  hrClass,
   modalBasic,
   pageContentStyles,
   searchField,
@@ -75,7 +74,6 @@ const styles = (theme: Theme) =>
     },
     ...pageContentStyles,
     ...searchField,
-    ...hrClass,
 
     ...containerForHeader(theme.spacing(4)),
   });

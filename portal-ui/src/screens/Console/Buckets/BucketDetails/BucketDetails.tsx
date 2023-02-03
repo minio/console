@@ -41,7 +41,6 @@ import api from "../../../../common/api";
 import { BucketInfo } from "../types";
 import {
   containerForHeader,
-  hrClass,
   pageContentStyles,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
@@ -112,7 +111,6 @@ const styles = (theme: Theme) =>
     capitalize: {
       textTransform: "capitalize",
     },
-    ...hrClass,
 
     ...containerForHeader(theme.spacing(4)),
   });

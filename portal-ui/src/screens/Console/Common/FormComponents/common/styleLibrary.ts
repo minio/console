@@ -304,13 +304,6 @@ export const predefinedList = {
 };
 
 export const objectBrowserCommon = {
-  sectionTitle: {
-    fontSize: 22,
-    color: "#000",
-    fontWeight: 600,
-    height: 40,
-    lineHeight: "40px",
-  },
   breadcrumbsMain: {
     display: "flex",
   },
@@ -645,10 +638,6 @@ export const wizardCommon = {
     color: "#dc1f2e",
     fontSize: "0.75rem",
   },
-  h3Section: {
-    marginTop: 0,
-    margin: 0,
-  },
   descriptionText: {
     fontSize: 14,
   },
@@ -667,16 +656,6 @@ export const wizardCommon = {
   paperWrapper: {
     padding: 12,
     border: 0,
-  },
-};
-
-export const hrClass = {
-  hrClass: {
-    borderTop: 0,
-    borderLeft: 0,
-    borderRight: 0,
-    borderColor: "#999999",
-    backgroundColor: "transparent" as const,
   },
 };
 
@@ -701,7 +680,6 @@ export const tenantDetailsStyles = {
   ...actionsTray,
 
   ...searchField,
-  ...hrClass,
   actionsTray: {
     ...actionsTray.actionsTray,
     padding: "15px 0 0",
@@ -733,6 +711,18 @@ export const inputFieldStyles = {
       borderColor: "#e5e5e5",
       borderBottomStyle: "solid" as const,
       borderRadius: 3,
+    },
+  },
+  input: {
+    height: 38,
+    padding: "0 35px 0 15px",
+    color: "#07193E",
+    fontSize: 13,
+    fontWeight: 600,
+    "&:placeholder": {
+      color: "#858585",
+      opacity: 1,
+      fontWeight: 400,
     },
   },
   error: {
@@ -1023,22 +1013,6 @@ export const detailsPanel: any = {
     fontSize: 14,
     maxHeight: 180,
     overflowY: "auto",
-  },
-  hrClass: {
-    borderTop: 0,
-    borderLeft: 0,
-    borderRight: 0,
-    borderColor: "#E2E2E2",
-    backgroundColor: "transparent",
-  },
-  sectionTitle: {
-    fontSize: 18,
-    color: "#000",
-    fontWeight: "bold",
-    borderBottom: "#E2E2E2 1px solid",
-    margin: "10px 22px",
-    paddingBottom: 18,
-    width: "100%",
   },
   detailContainer: {
     padding: "0 22px",
