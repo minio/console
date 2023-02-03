@@ -79,7 +79,7 @@ const styles = (theme: Theme) =>
         backgroundColor: "#082F5238",
       },
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader(),
   });
 
 const PodLogs = ({

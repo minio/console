@@ -90,7 +90,7 @@ const styles = (theme: Theme) =>
     loaderAlign: {
       textAlign: "center",
     },
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader(),
     ...createTenantCommon,
     ...formFieldStyles,
     ...modalBasic,

@@ -75,7 +75,7 @@ const styles = (theme: Theme) =>
     ...pageContentStyles,
     ...searchField,
 
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader(),
   });
 
 const IDPConfigurationDetails = ({

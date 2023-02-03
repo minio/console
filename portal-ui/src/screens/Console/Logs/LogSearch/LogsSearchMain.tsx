@@ -115,7 +115,7 @@ const styles = (theme: Theme) =>
       justifyContent: "flex-start",
     },
 
-    ...containerForHeader(theme.spacing(4)),
+    ...containerForHeader(),
   });
 
 const LogsSearchMain = ({ classes }: ILogSearchProps) => {
