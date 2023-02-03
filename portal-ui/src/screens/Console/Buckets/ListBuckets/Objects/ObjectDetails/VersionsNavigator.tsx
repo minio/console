@@ -25,7 +25,6 @@ import Grid from "@mui/material/Grid";
 import ShareFile from "./ShareFile";
 import {
   actionsTray,
-  buttonsStyles,
   containerForHeader,
   hrClass,
   objectBrowserCommon,
@@ -130,7 +129,7 @@ const styles = (theme: Theme) =>
       },
     },
     ...hrClass,
-    ...buttonsStyles,
+
     ...actionsTray,
     ...tableStyles,
     ...spacingUtils,

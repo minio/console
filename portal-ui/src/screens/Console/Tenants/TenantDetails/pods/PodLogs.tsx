@@ -33,7 +33,6 @@ import api from "../../../../../common/api";
 import { SearchIcon } from "mds";
 import {
   actionsTray,
-  buttonsStyles,
   containerForHeader,
   searchField,
 } from "../../../Common/FormComponents/common/styleLibrary";
@@ -61,7 +60,7 @@ const styles = (theme: Theme) =>
       border: "1px solid #EAEDEE",
       borderRadius: 4,
     },
-    ...buttonsStyles,
+
     ...searchField,
     actionsTray: {
       ...actionsTray.actionsTray,

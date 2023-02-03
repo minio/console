@@ -18,14 +18,13 @@ import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
 import CopyToClipboard from "react-copy-to-clipboard";
 import Grid from "@mui/material/Grid";
-import withStyles from "@mui/styles/withStyles";
 import createStyles from "@mui/styles/createStyles";
 import { Theme } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
-import { BackCaretIcon, Button, CopyIcon, NewPathIcon } from "mds";
+import { BackCaretIcon, Button, CopyIcon, NewPathIcon, Tooltip } from "mds";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   IAM_SCOPES,
@@ -35,7 +34,7 @@ import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { setVersionsModeEnabled } from "./objectBrowserSlice";
-import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import makeStyles from "@mui/styles/makeStyles";
 
 const CreatePathModal = withSuspense(
   React.lazy(
@@ -43,16 +42,16 @@ const CreatePathModal = withSuspense(
   )
 );
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...objectBrowserCommon,
     slashSpacingStyle: {
       margin: "0 5px",
     },
-  });
+  })
+);
 
 interface IObjectBrowser {
-  classes: any;
   bucketName: string;
   internalPaths: string;
   hidePathButton?: boolean;
@@ -60,7 +59,6 @@ interface IObjectBrowser {
 }
 
 const BrowserBreadcrumbs = ({
-  classes,
   bucketName,
   internalPaths,
   hidePathButton,
@@ -68,6 +66,7 @@ const BrowserBreadcrumbs = ({
 }: IObjectBrowser) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const classes = useStyles();
 
   const rewindEnabled = useSelector(
     (state: AppState) => state.objectBrowser.rewind.rewindEnabled
@@ -228,7 +227,7 @@ const BrowserBreadcrumbs = ({
           <div className={classes.additionalOptions}>{additionalOptions}</div>
         </Grid>
         {!hidePathButton && (
-          <TooltipWrapper
+          <Tooltip
             tooltip={
               canCreatePath
                 ? "Choose or create a new path"
@@ -251,7 +250,7 @@ const BrowserBreadcrumbs = ({
               variant={"regular"}
               label={"Create new path"}
             />
-          </TooltipWrapper>
+          </Tooltip>
         )}
       </div>
       <div className={classes.breadcrumbsSecond}>{additionalOptions}</div>
@@ -259,4 +258,4 @@ const BrowserBreadcrumbs = ({
   );
 };
 
-export default withStyles(styles)(BrowserBreadcrumbs);
+export default BrowserBreadcrumbs;

@@ -40,7 +40,6 @@ import Grid from "@mui/material/Grid";
 import api from "../../../../common/api";
 import { BucketInfo } from "../types";
 import {
-  buttonsStyles,
   containerForHeader,
   hrClass,
   pageContentStyles,
@@ -114,7 +113,7 @@ const styles = (theme: Theme) =>
       textTransform: "capitalize",
     },
     ...hrClass,
-    ...buttonsStyles,
+
     ...containerForHeader(theme.spacing(4)),
   });
 

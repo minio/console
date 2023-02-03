@@ -25,7 +25,6 @@ import withStyles from "@mui/styles/withStyles";
 import {
   advancedFilterToggleStyles,
   containerForHeader,
-  logsCommon,
   tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IReqInfoSearchResults, ISearchResponse } from "./types";
@@ -115,7 +114,7 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       justifyContent: "flex-start",
     },
-    ...logsCommon,
+
     ...containerForHeader(theme.spacing(4)),
   });
 

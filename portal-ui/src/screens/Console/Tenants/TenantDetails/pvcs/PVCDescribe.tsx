@@ -21,7 +21,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import {
   actionsTray,
-  buttonsStyles,
   hrClass,
   searchField,
 } from "../../../Common/FormComponents/common/styleLibrary";
@@ -47,7 +46,7 @@ import {
 const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
-    ...buttonsStyles,
+
     ...searchField,
     ...hrClass,
   });
