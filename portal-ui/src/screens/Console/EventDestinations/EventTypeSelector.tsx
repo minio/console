@@ -19,14 +19,13 @@ import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { servicesList } from "./utils";
+import { destinationList, DestType } from "./utils";
 import {
   settingsCommon,
   typesSelection,
 } from "../Common/FormComponents/common/styleLibrary";
 import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import ContentBox from "../Common/ContentBox";
 import { Box } from "@mui/material";
 import NotificationEndpointTypeSelectorHelpBox from "../Account/NotificationEndpointTypeSelectorHelpBox";
 import { BackLink, PageHeader } from "mds";
@@ -35,7 +34,16 @@ interface INotificationTypeSelector {
   classes: any;
 }
 
-const withLogos = servicesList.filter((elService) => elService.logo !== "");
+const withLogos = destinationList.filter((elService) => elService.logo !== "");
+const database = withLogos.filter(
+  (elService) => elService.category === DestType.DB
+);
+const queue = withLogos.filter(
+  (elService) => elService.category === DestType.Queue
+);
+const functions = withLogos.filter(
+  (elService) => elService.category === DestType.Func
+);
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -43,7 +51,7 @@ const styles = (theme: Theme) =>
     ...typesSelection,
   });
 
-const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
+const EventTypeSelector = ({ classes }: INotificationTypeSelector) => {
   const navigate = useNavigate();
   return (
     <Fragment>
@@ -51,8 +59,8 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
         label={
           <Fragment>
             <BackLink
-              label={"Notification Targets"}
-              onClick={() => navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS)}
+              label={"Event Destinations"}
+              onClick={() => navigate(IAM_PAGES.EVENT_DESTINATIONS)}
             />
           </Fragment>
         }
@@ -62,8 +70,8 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
         <Box
           sx={{
             display: "grid",
-            padding: "25px",
-            gap: "25px",
+            padding: "16px",
+            gap: "8px",
             gridTemplateColumns: {
               md: "2fr 1.2fr",
               xs: "1fr",
@@ -71,19 +79,19 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
             border: "1px solid #eaeaea",
           }}
         >
-          <ContentBox>
+          <div>
             <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
-              Select Target Type
+              Queue
             </div>
             <div className={classes.iconContainer}>
-              {withLogos.map((item) => {
+              {queue.map((item) => {
                 return (
                   <button
                     key={`icon-${item.targetTitle}`}
                     className={classes.lambdaNotif}
                     onClick={() => {
                       navigate(
-                        `${IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD}/${item.actionTrigger}`
+                        `${IAM_PAGES.EVENT_DESTINATIONS_ADD}/${item.actionTrigger}`
                       );
                     }}
                   >
@@ -102,7 +110,67 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
                 );
               })}
             </div>
-          </ContentBox>
+            <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
+              Database
+            </div>
+            <div className={classes.iconContainer}>
+              {database.map((item) => {
+                return (
+                  <button
+                    key={`icon-${item.targetTitle}`}
+                    className={classes.lambdaNotif}
+                    onClick={() => {
+                      navigate(
+                        `${IAM_PAGES.EVENT_DESTINATIONS_ADD}/${item.actionTrigger}`
+                      );
+                    }}
+                  >
+                    <div className={classes.lambdaNotifIcon}>
+                      <img
+                        src={item.logo}
+                        className={classes.logoButton}
+                        alt={item.targetTitle}
+                      />
+                    </div>
+
+                    <div className={classes.lambdaNotifTitle}>
+                      <b>{item.targetTitle}</b>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 600, paddingBottom: 15 }}>
+              Functions
+            </div>
+            <div className={classes.iconContainer}>
+              {functions.map((item) => {
+                return (
+                  <button
+                    key={`icon-${item.targetTitle}`}
+                    className={classes.lambdaNotif}
+                    onClick={() => {
+                      navigate(
+                        `${IAM_PAGES.EVENT_DESTINATIONS_ADD}/${item.actionTrigger}`
+                      );
+                    }}
+                  >
+                    <div className={classes.lambdaNotifIcon}>
+                      <img
+                        src={item.logo}
+                        className={classes.logoButton}
+                        alt={item.targetTitle}
+                      />
+                    </div>
+
+                    <div className={classes.lambdaNotifTitle}>
+                      <b>{item.targetTitle}</b>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           <NotificationEndpointTypeSelectorHelpBox />
         </Box>
       </PageLayout>
@@ -110,4 +178,4 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
   );
 };
 
-export default withStyles(styles)(NotificationTypeSelector);
+export default withStyles(styles)(EventTypeSelector);

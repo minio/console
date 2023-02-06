@@ -25,7 +25,6 @@ import {
   monitoringElement,
   notificationEndpointsElement,
   serviceAcctsElement,
-  supportElement,
   tiersElement,
   usersElement,
 } from "../utils/elements-menu";
@@ -61,9 +60,6 @@ test("All sidebar items exist", async (t) => {
     .ok()
     .expect(tiersElement.exists)
     .ok()
-    .expect(supportElement.exists)
-    .ok()
-    .click(supportElement)
     .expect(elements.diagnosticsElement.exists)
     .ok()
     .expect(elements.performanceElement.exists)

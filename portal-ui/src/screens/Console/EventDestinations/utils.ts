@@ -42,56 +42,72 @@ export const notificationTransform = (
   });
 };
 
-export const servicesList = [
+export class DestType {
+  static DB: string = "database";
+  static Queue: string = "queue";
+  static Func: string = "functions";
+}
+
+export const destinationList = [
   {
     actionTrigger: notifyPostgres,
     targetTitle: "PostgreSQL",
     logo: "/postgres-logo.svg",
+    category: DestType.DB,
   },
   {
     actionTrigger: notifyKafka,
     targetTitle: "Kafka",
     logo: "/kafka-logo.svg",
+    category: DestType.Queue,
   },
   {
     actionTrigger: notifyAmqp,
     targetTitle: "AMQP",
     logo: "/amqp-logo.svg",
+    category: DestType.Queue,
   },
   {
     actionTrigger: notifyMqtt,
     targetTitle: "MQTT",
     logo: "/mqtt-logo.svg",
+    category: DestType.Queue,
   },
   {
     actionTrigger: notifyRedis,
     targetTitle: "Redis",
     logo: "/redis-logo.svg",
+    category: DestType.Queue,
   },
   {
     actionTrigger: notifyNats,
     targetTitle: "NATS",
     logo: "/nats-logo.svg",
+    category: DestType.Queue,
   },
   {
     actionTrigger: notifyMysql,
     targetTitle: "Mysql",
     logo: "/mysql-logo.svg",
+    category: DestType.DB,
   },
   {
     actionTrigger: notifyElasticsearch,
     targetTitle: "Elastic Search",
     logo: "/elasticsearch-logo.svg",
+    category: DestType.DB,
   },
   {
     actionTrigger: notifyWebhooks,
     targetTitle: "Webhook",
     logo: "/webhooks-logo.svg",
+    category: DestType.Func,
   },
   {
     actionTrigger: notifyNsq,
     targetTitle: "NSQ",
     logo: "/nsq-logo.svg",
+    category: DestType.Queue,
   },
 ];
 

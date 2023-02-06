@@ -29,15 +29,15 @@ test("Notification Endpoints sidebar item exists", async (t) => {
 });
 
 test("Add Notification Target button exists", async (t) => {
-  const addNotifTargetButtonExists = elements.addNotifTargetButton.exists;
+  const addNotifTargetButtonExists = elements.addEventDestination.exists;
   await t
-    .navigateTo("http://localhost:9090/settings/notification-endpoints")
+    .navigateTo("http://localhost:9090/settings/event-destinations")
     .expect(addNotifTargetButtonExists)
     .ok();
 });
 
 test("Add Notification Target button is clickable", async (t) => {
   await t
-    .navigateTo("http://localhost:9090/settings/notification-endpoints")
-    .click(elements.addNotifTargetButton);
+    .navigateTo("http://localhost:9090/settings/event-destinations")
+    .click(elements.addEventDestination);
 });
