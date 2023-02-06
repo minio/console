@@ -158,13 +158,13 @@ const AddTenant = () => {
     },
     {
       label: "Audit Log",
-      advancedOnly: true,
+      advancedOnly: false,
       componentRender: <ConfigLogSearch />,
       buttons: [cancelButton, createButton],
     },
     {
       label: "Monitoring",
-      advancedOnly: true,
+      advancedOnly: false,
       componentRender: <ConfigPrometheus />,
       buttons: [cancelButton, createButton],
     },
