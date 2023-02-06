@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { IDashboardPanel } from "./Prometheus/types";
-
 export interface Usage {
   usage: number;
   buckets: number;
@@ -58,9 +56,4 @@ export interface IDriveInfo {
   totalSpace: number;
   usedSpace?: number;
   availableSpace: number;
-}
-
-export interface zoomState {
-  openZoom: boolean;
-  widgetRender: null | IDashboardPanel;
 }

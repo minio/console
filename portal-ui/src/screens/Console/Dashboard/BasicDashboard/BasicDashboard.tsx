@@ -329,7 +329,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
           <Box>
             <HelpBox
               iconComponent={<PrometheusErrorIcon />}
-              title={"We can’t retrieve advanced metrics at this time."}
+              title={"Advanced Metrics are available"}
               help={
                 <Box>
                   <Box
@@ -337,11 +337,9 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                       fontSize: "14px",
                     }}
                   >
-                    MinIO Dashboard will display basic metrics as we couldn’t
-                    connect to Prometheus successfully. Please try again in a
-                    few minutes. If the problem persists, you can review your
-                    configuration and confirm that Prometheus server is up and
-                    running.
+                    MinIO display basic metrics but we also expose more advanced
+                    Prometheus metrics metrics that include usage, traffic and
+                    resource utilization.
                   </Box>
                   <Box
                     sx={{

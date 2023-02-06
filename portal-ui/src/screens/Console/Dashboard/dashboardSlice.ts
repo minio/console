@@ -14,23 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Usage, zoomState } from "./types";
-import { IDashboardPanel } from "./Prometheus/types";
+import { createSlice } from "@reduxjs/toolkit";
+import { Usage } from "./types";
 import { getUsageAsync } from "./dashboardThunks";
 
 export interface DashboardState {
-  zoom: zoomState;
   usage: Usage | null;
   loadingUsage: boolean;
   widgetLoadVersion: number;
 }
 
 const initialState: DashboardState = {
-  zoom: {
-    openZoom: false,
-    widgetRender: null,
-  },
   usage: null,
   loadingUsage: true,
   widgetLoadVersion: 0,
@@ -39,14 +33,6 @@ export const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
   reducers: {
-    openZoomPage: (state, action: PayloadAction<IDashboardPanel>) => {
-      state.zoom.openZoom = true;
-      state.zoom.widgetRender = action.payload;
-    },
-    closeZoomPage: (state) => {
-      state.zoom.openZoom = false;
-      state.zoom.widgetRender = null;
-    },
     reloadWidgets: (state) => {
       state.widgetLoadVersion++;
     },
@@ -65,7 +51,6 @@ export const dashboardSlice = createSlice({
       });
   },
 });
-export const { openZoomPage, closeZoomPage, reloadWidgets } =
-  dashboardSlice.actions;
+export const { reloadWidgets } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

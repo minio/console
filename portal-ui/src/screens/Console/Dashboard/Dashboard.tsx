@@ -15,28 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import PrDashboard from "./Prometheus/PrDashboard";
-import Grid from "@mui/material/Grid";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import InfoDashboard from "./InfoDashboard";
 import { LinearProgress } from "@mui/material";
 import { AppState, useAppDispatch } from "../../../store";
 import { getUsageAsync } from "./dashboardThunks";
 import { useSelector } from "react-redux";
 import { PageHeader } from "mds";
 
-interface IDashboardSimple {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...containerForHeader,
-  });
-
-const Dashboard = ({ classes }: IDashboardSimple) => {
+const Dashboard = () => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -52,17 +38,9 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
   return (
     <Fragment>
       <PageHeader label="Metrics" />
-      {loading ? (
-        <Grid container>
-          <Grid item xs={12} className={classes.container}>
-            <LinearProgress />
-          </Grid>
-        </Grid>
-      ) : (
-        <PrDashboard usage={usage} />
-      )}
+      {loading ? <LinearProgress /> : <InfoDashboard usage={usage} />}
     </Fragment>
   );
 };
 
-export default withStyles(styles)(Dashboard);
+export default Dashboard;
