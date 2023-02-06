@@ -14,61 +14,37 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
-import {
-  Button,
-  CopyIcon,
-  OfflineRegistrationIcon,
-  OnlineRegistrationIcon,
-  PageHeader,
-  UsersIcon,
-} from "mds";
+import { PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-  spacingUtils,
-} from "../Common/FormComponents/common/styleLibrary";
+import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Link } from "@mui/material";
+import { Box } from "@mui/material";
 import PageLayout from "../Common/Layout/PageLayout";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../common/api";
 
-import {
-  SubnetInfo,
-  SubnetLoginRequest,
-  SubnetLoginResponse,
-  SubnetLoginWithMFARequest,
-  SubnetOrganization,
-  SubnetRegisterRequest,
-  SubnetRegTokenResponse,
-} from "../License/types";
+import { SubnetRegTokenResponse } from "../License/types";
 import { ErrorResponseHandler } from "../../../common/types";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import SelectWrapper from "../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { hasPermission } from "../../../common/SecureComponent";
-import {
-  CONSOLE_UI_RESOURCE,
-  IAM_PAGES,
-  IAM_PAGES_PERMISSIONS,
-} from "../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
-
-import RegisterHelpBox from "./RegisterHelpBox";
-import { selOpMode, setErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
+import { setErrorSnackMessage } from "../../../systemSlice";
+import { AppState, useAppDispatch } from "../../../store";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { TabPanel } from "../../shared/tabs";
-import { ClusterRegistered, FormTitle, ProxyConfiguration } from "./utils";
+import { ClusterRegistered, ProxyConfiguration } from "./utils";
 import ApiKeyRegister from "./ApiKeyRegister";
-import CopyToClipboard from "react-copy-to-clipboard";
-import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import { fetchLicenseInfo } from "./registerThunks";
+import {
+  resetRegisterForm,
+  setCurTab,
+  setLoading,
+  setSubnetRegToken,
+} from "./registerSlice";
+import OfflineRegistration from "./OfflineRegistration";
+import SubnetMFAToken from "./SubnetMFAToken";
+import ClusterRegistrationForm from "./ClusterRegistrationForm";
+import OnlineRegistration from "./OnlineRegistration";
 
 interface IRegister {
   classes: any;
@@ -79,469 +55,83 @@ const styles = (theme: Theme) =>
     sizedLabel: {
       minWidth: "75px",
     },
-    ...actionsTray,
-    ...searchField,
     ...spacingUtils,
-    ...containerForHeader,
   });
 
 const Register = ({ classes }: IRegister) => {
   const dispatch = useAppDispatch();
-  const operatorMode = useSelector(selOpMode);
-  const [license, setLicense] = useState<string>("");
-  const [subnetPassword, setSubnetPassword] = useState<string>("");
-  const [subnetEmail, setSubnetEmail] = useState<string>("");
-  const [subnetMFAToken, setSubnetMFAToken] = useState<string>("");
-  const [subnetOTP, setSubnetOTP] = useState<string>("");
-  const [subnetAccessToken, setSubnetAccessToken] = useState<string>("");
-  const [selectedSubnetOrganization, setSelectedSubnetOrganization] =
-    useState<string>("");
-  const [subnetRegToken, setSubnetRegToken] = useState<string>("");
-  const [subnetOrganizations, setSubnetOrganizations] = useState<
-    SubnetOrganization[]
-  >([]);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(false);
-  const [clusterRegistered, setClusterRegistered] = useState<boolean>(false);
-  const [licenseInfo, setLicenseInfo] = useState<SubnetInfo | undefined>();
-  const [curTab, setCurTab] = useState<number>(0);
+
+  const subnetMFAToken = useSelector(
+    (state: AppState) => state.register.subnetMFAToken
+  );
+  const subnetAccessToken = useSelector(
+    (state: AppState) => state.register.subnetAccessToken
+  );
+
+  const subnetRegToken = useSelector(
+    (state: AppState) => state.register.subnetRegToken
+  );
+  const subnetOrganizations = useSelector(
+    (state: AppState) => state.register.subnetOrganizations
+  );
+
+  const loading = useSelector((state: AppState) => state.register.loading);
+  const loadingLicenseInfo = useSelector(
+    (state: AppState) => state.register.loadingLicenseInfo
+  );
+  const clusterRegistered = useSelector(
+    (state: AppState) => state.register.clusterRegistered
+  );
+  const licenseInfo = useSelector(
+    (state: AppState) => state.register.licenseInfo
+  );
+  const curTab = useSelector((state: AppState) => state.register.curTab);
 
   const [initialLicenseLoading, setInitialLicenseLoading] =
     useState<boolean>(true);
-  const clearForm = () => {
-    setSubnetAccessToken("");
-    setSelectedSubnetOrganization("");
-    setSubnetRegToken("");
-    setShowPassword(false);
-    setSubnetOrganizations([]);
-    setLicense("");
-    setSubnetPassword("");
-    setSubnetEmail("");
-    setSubnetMFAToken("");
-    setSubnetOTP("");
-  };
 
-  const getSubnetInfo = hasPermission(
-    CONSOLE_UI_RESOURCE,
-    IAM_PAGES_PERMISSIONS[IAM_PAGES.LICENSE],
-    true
-  );
-
-  const fetchLicenseInfo = useCallback(() => {
-    if (loadingLicenseInfo) {
-      return;
-    }
-    if (getSubnetInfo) {
-      setLoadingLicenseInfo(true);
-      api
-        .invoke("GET", `/api/v1/subnet/info`)
-        .then((res: SubnetInfo) => {
-          setLicenseInfo(res);
-          setClusterRegistered(true);
-          setLoadingLicenseInfo(false);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          if (
-            err.detailedError.toLowerCase() !==
-            "License is not present".toLowerCase()
-          ) {
-            dispatch(setErrorSnackMessage(err));
-          }
-          setClusterRegistered(false);
-          setLoadingLicenseInfo(false);
-        });
-    } else {
-      setLoadingLicenseInfo(false);
-    }
-  }, [loadingLicenseInfo, getSubnetInfo, dispatch]);
+  useEffect(() => {
+    // when unmounted, reset
+    return () => {
+      dispatch(resetRegisterForm());
+    };
+  }, [dispatch]);
 
   const fetchSubnetRegToken = () => {
     if (loading || subnetRegToken) {
       return;
     }
-    setLoading(true);
+    dispatch(setLoading(true));
     api
       .invoke("GET", "/api/v1/subnet/registration-token")
       .then((resp: SubnetRegTokenResponse) => {
-        setLoading(false);
+        dispatch(setLoading(false));
         if (resp && resp.regToken) {
-          setSubnetRegToken(resp.regToken);
+          dispatch(setSubnetRegToken(resp.regToken));
         }
       })
       .catch((err: ErrorResponseHandler) => {
         console.error(err);
         dispatch(setErrorSnackMessage(err));
-        setLoading(false);
-      });
-  };
-
-  const callRegister = (token: string, account_id: string) => {
-    const request: SubnetRegisterRequest = {
-      token: token,
-      account_id: account_id,
-    };
-    api
-      .invoke("POST", "/api/v1/subnet/register", request)
-      .then(() => {
-        setLoading(false);
-        clearForm();
-        fetchLicenseInfo();
-      })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
-        setLoading(false);
-      });
-  };
-  const subnetRegister = () => {
-    if (loading) {
-      return;
-    }
-    setLoading(true);
-    if (subnetAccessToken && selectedSubnetOrganization) {
-      callRegister(subnetAccessToken, selectedSubnetOrganization);
-    }
-  };
-
-  const subnetLoginWithMFA = () => {
-    if (loading) {
-      return;
-    }
-    setLoading(true);
-    const request: SubnetLoginWithMFARequest = {
-      username: subnetEmail,
-      otp: subnetOTP,
-      mfa_token: subnetMFAToken,
-    };
-    api
-      .invoke("POST", "/api/v1/subnet/login/mfa", request)
-      .then((resp: SubnetLoginResponse) => {
-        setLoading(false);
-        if (resp && resp.access_token && resp.organizations.length > 0) {
-          if (resp.organizations.length === 1) {
-            callRegister(
-              resp.access_token,
-              resp.organizations[0].accountId.toString()
-            );
-          } else {
-            setSubnetAccessToken(resp.access_token);
-            setSubnetOrganizations(resp.organizations);
-            setSelectedSubnetOrganization(
-              resp.organizations[0].accountId.toString()
-            );
-          }
-        }
-      })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
-        setLoading(false);
-        setSubnetOTP("");
-      });
-  };
-
-  const subnetLogin = () => {
-    if (loading) {
-      return;
-    }
-    setLoading(true);
-    let request: SubnetLoginRequest = {
-      username: subnetEmail,
-      password: subnetPassword,
-      apiKey: license,
-    };
-    api
-      .invoke("POST", "/api/v1/subnet/login", request)
-      .then((resp: SubnetLoginResponse) => {
-        setLoading(false);
-        if (resp && resp.registered) {
-          clearForm();
-          fetchLicenseInfo();
-        } else if (resp && resp.mfa_token) {
-          setSubnetMFAToken(resp.mfa_token);
-        } else if (resp && resp.access_token && resp.organizations.length > 0) {
-          setSubnetAccessToken(resp.access_token);
-          setSubnetOrganizations(resp.organizations);
-          setSelectedSubnetOrganization(
-            resp.organizations[0].accountId.toString()
-          );
-        }
-      })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
-        setLoading(false);
-        clearForm();
+        dispatch(setLoading(false));
       });
   };
 
   useEffect(() => {
     if (initialLicenseLoading) {
-      fetchLicenseInfo();
+      dispatch(fetchLicenseInfo());
       setInitialLicenseLoading(false);
     }
-  }, [fetchLicenseInfo, initialLicenseLoading, setInitialLicenseLoading]);
+  }, [initialLicenseLoading, setInitialLicenseLoading, dispatch]);
 
   let clusterRegistrationForm: JSX.Element = <Fragment />;
 
   if (subnetAccessToken && subnetOrganizations.length > 0) {
-    clusterRegistrationForm = (
-      <Box
-        sx={{
-          display: "flex",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexFlow: "column",
-            flex: "2",
-          }}
-        >
-          <Box
-            sx={{
-              marginTop: "15px",
-              marginBottom: "15px",
-              "& .title-text": {
-                marginLeft: "0px",
-              },
-            }}
-          >
-            <FormTitle title={`Register MinIO cluster`} />
-          </Box>
-          <Box>
-            <SelectWrapper
-              id="subnet-organization"
-              name="subnet-organization"
-              onChange={(e) =>
-                setSelectedSubnetOrganization(e.target.value as string)
-              }
-              label="Select an organization"
-              value={selectedSubnetOrganization}
-              options={subnetOrganizations.map((organization) => ({
-                label: organization.company,
-                value: organization.accountId.toString(),
-              }))}
-            />
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                marginTop: "15px",
-              }}
-            >
-              <Button
-                id={"register-cluster"}
-                onClick={() => subnetRegister()}
-                disabled={loading || subnetAccessToken.trim().length === 0}
-                variant="callAction"
-                label={"Register"}
-              />
-            </Box>
-          </Box>
-        </Box>
-        <RegisterHelpBox />
-      </Box>
-    );
+    clusterRegistrationForm = <ClusterRegistrationForm />;
   } else if (subnetMFAToken) {
-    clusterRegistrationForm = (
-      <Box
-        sx={{
-          display: "flex",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexFlow: "column",
-            flex: "2",
-          }}
-        >
-          <Box
-            sx={{
-              fontSize: "16px",
-              display: "flex",
-              flexFlow: "column",
-              marginTop: "30px",
-              marginBottom: "30px",
-            }}
-          >
-            Two-Factor Authentication
-          </Box>
-
-          <Box>
-            Please enter the 6-digit verification code that was sent to your
-            email address. This code will be valid for 5 minutes.
-          </Box>
-
-          <Box
-            sx={{
-              flex: "1",
-              marginTop: "30px",
-            }}
-          >
-            <InputBoxWrapper
-              overlayIcon={<LockOutlinedIcon />}
-              id="subnet-otp"
-              name="subnet-otp"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setSubnetOTP(event.target.value)
-              }
-              placeholder=""
-              label=""
-              value={subnetOTP}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button
-              id={"verify"}
-              onClick={() => subnetLoginWithMFA()}
-              disabled={
-                loading ||
-                subnetOTP.trim().length === 0 ||
-                subnetMFAToken.trim().length === 0
-              }
-              variant="callAction"
-              label={"Verify"}
-            />
-          </Box>
-        </Box>
-
-        <RegisterHelpBox />
-      </Box>
-    );
+    clusterRegistrationForm = <SubnetMFAToken />;
   } else {
-    clusterRegistrationForm = (
-      <Fragment>
-        <Box
-          sx={{
-            "& .title-text": {
-              marginLeft: "27px",
-              fontWeight: 600,
-            },
-          }}
-        >
-          <FormTitle
-            icon={<OnlineRegistrationIcon />}
-            title={`Online activation of MinIO Subscription Network License`}
-          />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexFlow: {
-              xs: "column",
-              md: "row",
-            },
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexFlow: "column",
-              flex: "2",
-            }}
-          >
-            <Box
-              sx={{
-                fontSize: "16px",
-                display: "flex",
-                flexFlow: "column",
-                marginTop: "30px",
-                marginBottom: "30px",
-              }}
-            >
-              Use your MinIO Subscription Network login credentials to register
-              this cluster.
-            </Box>
-            <Box
-              sx={{
-                flex: "1",
-              }}
-            >
-              <InputBoxWrapper
-                className={classes.spacerBottom}
-                classes={{
-                  inputLabel: classes.sizedLabel,
-                }}
-                id="subnet-email"
-                name="subnet-email"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setSubnetEmail(event.target.value)
-                }
-                label="Email"
-                value={subnetEmail}
-                overlayIcon={<UsersIcon />}
-              />
-              <InputBoxWrapper
-                className={classes.spacerBottom}
-                classes={{
-                  inputLabel: classes.sizedLabel,
-                }}
-                id="subnet-password"
-                name="subnet-password"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setSubnetPassword(event.target.value)
-                }
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                value={subnetPassword}
-                overlayIcon={
-                  showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
-                }
-                overlayAction={() => setShowPassword(!showPassword)}
-              />
-
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  "& button": {
-                    marginLeft: "8px",
-                  },
-                }}
-              >
-                <Button
-                  id={"sign-up"}
-                  type="submit"
-                  className={classes.spacerRight}
-                  variant="regular"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.open(
-                      `https://min.io/signup?ref=${
-                        operatorMode ? "op" : "con"
-                      }`,
-                      "_blank"
-                    );
-                  }}
-                  label={"Sign up"}
-                />
-                <Button
-                  id={"register-credentials"}
-                  type="submit"
-                  variant="callAction"
-                  disabled={
-                    loading ||
-                    subnetEmail.trim().length === 0 ||
-                    subnetPassword.trim().length === 0
-                  }
-                  onClick={() => subnetLogin()}
-                  label={"Register"}
-                />
-              </Box>
-            </Box>
-          </Box>
-          <RegisterHelpBox />
-        </Box>
-      </Fragment>
-    );
+    clusterRegistrationForm = <OnlineRegistration />;
   }
 
   const apiKeyRegistration = (
@@ -558,131 +148,14 @@ const Register = ({ classes }: IRegister) => {
         {clusterRegistered && licenseInfo ? (
           <ClusterRegistered email={licenseInfo.email} />
         ) : (
-          <ApiKeyRegister
-            afterRegister={fetchLicenseInfo}
-            registerEndpoint={"/api/v1/subnet/login"}
-          />
+          <ApiKeyRegister registerEndpoint={"/api/v1/subnet/login"} />
         )}
       </Box>
-      <ProxyConfiguration linkClass={classes.link} />
+      <ProxyConfiguration />
     </Fragment>
   );
 
-  const offlineRegUrl = `https://subnet.min.io/cluster/register?token=${subnetRegToken}`;
-  const offlineRegistration = (
-    <Fragment>
-      <Box
-        sx={{
-          border: "1px solid #eaeaea",
-          borderRadius: "2px",
-          display: "flex",
-          flexFlow: "column",
-          padding: "43px",
-        }}
-      >
-        {clusterRegistered && licenseInfo ? (
-          <ClusterRegistered email={licenseInfo.email} />
-        ) : null}
-        <Box
-          sx={{
-            "& .title-text": {
-              marginLeft: "27px",
-              fontWeight: 600,
-            },
-          }}
-        >
-          <FormTitle
-            icon={<OfflineRegistrationIcon />}
-            title={`Register cluster in an Airgap environment`}
-          />
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexFlow: "column",
-              flex: "2",
-              marginTop: "15px",
-              "& .step-number": {
-                color: "#ffffff",
-                height: "25px",
-                width: "25px",
-                background: "#081C42",
-                marginRight: "10px",
-                textAlign: "center",
-                fontWeight: 600,
-                borderRadius: "50%",
-              },
-
-              "& .step-row": {
-                fontSize: "16px",
-                display: "flex",
-                marginTop: "15px",
-                marginBottom: "15px",
-              },
-            }}
-          >
-            <Box>
-              <Box className="step-row">
-                <div className="step-text">
-                  Click on the link to register this cluster in SUBNET
-                </div>
-              </Box>
-
-              <Box
-                sx={{
-                  flex: "1",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 3,
-                }}
-              >
-                <Link
-                  className={classes.link}
-                  color="inherit"
-                  href={offlineRegUrl}
-                  target="_blank"
-                >
-                  https://subnet.min.io/cluster/register
-                </Link>
-
-                <TooltipWrapper tooltip={"Copy to Clipboard"}>
-                  <CopyToClipboard text={offlineRegUrl}>
-                    <Button
-                      type={"button"}
-                      id={"copy-ult-to-clip-board"}
-                      icon={<CopyIcon />}
-                      color={"primary"}
-                      variant={"regular"}
-                    />
-                  </CopyToClipboard>
-                </TooltipWrapper>
-              </Box>
-
-              <div
-                style={{
-                  marginTop: "25px",
-                  fontSize: "14px",
-                  fontStyle: "italic",
-                  color: "#5E5E5E",
-                }}
-              >
-                If this machine does not have internet connection, Copy paste
-                the following URL in a browser where you access SUBNET and
-                follow the instructions to complete the registration
-              </div>
-            </Box>
-          </Box>
-          <RegisterHelpBox />
-        </Box>
-      </Box>
-    </Fragment>
-  );
+  const offlineRegistration = <OfflineRegistration />;
 
   const regUi = (
     <Fragment>
@@ -702,7 +175,7 @@ const Register = ({ classes }: IRegister) => {
         )}
       </Box>
 
-      {!clusterRegistered && <ProxyConfiguration linkClass={classes.link} />}
+      {!clusterRegistered && <ProxyConfiguration />}
     </Fragment>
   );
 
@@ -720,7 +193,7 @@ const Register = ({ classes }: IRegister) => {
         <Tabs
           value={curTab}
           onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-            setCurTab(newValue);
+            dispatch(setCurTab(newValue));
           }}
           indicatorColor="primary"
           textColor="primary"
@@ -731,17 +204,17 @@ const Register = ({ classes }: IRegister) => {
           <Tab
             label="Credentials"
             id="simple-tab-0"
-            aria-controls="simple-tabpanel-0"
+            aria-controls="simple-tab-panel-0"
           />
           <Tab
             label="API Key"
             id="simple-tab-1"
-            aria-controls="simple-tabpanel-1"
+            aria-controls="simple-tab-panel-1"
           />
           <Tab
-            label="Airgap"
+            label="Air-Gap"
             id="simple-tab-2"
-            aria-controls="simple-tabpanel-2"
+            aria-controls="simple-tab-panel-2"
             onClick={() => fetchSubnetRegToken()}
           />
         </Tabs>

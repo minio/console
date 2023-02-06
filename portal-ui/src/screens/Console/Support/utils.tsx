@@ -58,7 +58,7 @@ export const ClusterRegistered = ({ email }: { email: string }) => {
   );
 };
 
-export const ProxyConfiguration = ({ linkClass }: { linkClass: string }) => {
+export const ProxyConfiguration = () => {
   const proxyConfigurationCommand =
     "mc admin config set {alias} subnet proxy={proxy}";
   const [displaySubnetProxy, setDisplaySubnetProxy] = useState(false);
@@ -104,7 +104,10 @@ export const ProxyConfiguration = ({ linkClass }: { linkClass: string }) => {
           >
             For airgap/firewalled environments it is possible to{" "}
             <Link
-              className={linkClass}
+              style={{
+                color: "#2781B0",
+                cursor: "pointer",
+              }}
               href="https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-config.html?ref=con"
               target="_blank"
             >
