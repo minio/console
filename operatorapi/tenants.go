@@ -17,6 +17,7 @@
 package operatorapi
 
 import (
+	"archive/zip"
 	"bytes"
 	"context"
 	"crypto/x509"
@@ -27,12 +28,14 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
 	utils2 "github.com/minio/console/pkg/http"
+	"gopkg.in/yaml.v2"
 
 	"github.com/minio/madmin-go/v2"
 
@@ -343,6 +346,14 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 			return operator_api.NewUpdateTenantDomainsDefault(int(err.Code)).WithPayload(err)
 		}
 		return operator_api.NewUpdateTenantDomainsNoContent()
+	})
+	// Get tenant log report
+	api.OperatorAPIGetTenantLogReportHandler = operator_api.GetTenantLogReportHandlerFunc(func(params operator_api.GetTenantLogReportParams, principal *models.Principal) middleware.Responder {
+		payload, err := getTenantLogReportResponse(principal, params)
+		if err != nil {
+			return operator_api.NewGetTenantLogReportDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewGetTenantLogReportOK().WithPayload(payload)
 	})
 }
 
@@ -1598,6 +1609,7 @@ func getPodLogsResponse(session *models.Principal, params operator_api.GetPodLog
 	if err != nil {
 		return "", restapi.ErrorWithContext(ctx, err)
 	}
+
 	return string(buff), nil
 }
 
@@ -2808,4 +2820,109 @@ func updateTenantDomains(ctx context.Context, operatorClient OperatorClientI, na
 	_, err = operatorClient.TenantUpdate(ctx, minTenant, metav1.UpdateOptions{})
 
 	return err
+}
+
+func getTenantLogReportResponse(session *models.Principal, params operator_api.GetTenantLogReportParams) (*models.TenantLogReport, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+
+	payload := &models.TenantLogReport{}
+	if session.AccountAccessKey == "this" {
+		fakeError := fmt.Errorf("fake error")
+		return payload, restapi.ErrorWithContext(ctx, fakeError)
+	}
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return payload, restapi.ErrorWithContext(ctx, err)
+	}
+	operatorCli, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return payload, restapi.ErrorWithContext(ctx, err)
+	}
+	opClient := &operatorClient{
+		client: operatorCli,
+	}
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return payload, restapi.ErrorWithContext(ctx, err)
+	}
+	reportError := generateTenantLogReport(ctx, clientset.CoreV1(), params.Tenant, params.Namespace, minTenant)
+	if reportError != nil {
+		return payload, restapi.ErrorWithContext(ctx, reportError)
+	}
+	payload.Filename = params.Tenant + "-report.zip"
+	bytes, err := os.ReadFile(params.Tenant + "-report.zip")
+	if err != nil {
+		return nil, restapi.ErrorWithContext(ctx, err)
+	}
+	sEnc := base64.StdEncoding.EncodeToString(bytes)
+	payload.Blob = sEnc
+	os.Remove(payload.Filename)
+	return payload, nil
+}
+
+func generateTenantLogReport(ctx context.Context, coreInterface v1.CoreV1Interface, tenantName string, namespace string, tenant *miniov2.Tenant) *models.Error {
+	if tenantName == "" || namespace == "" {
+		return restapi.ErrorWithContext(ctx, errors.New("Namespace and Tenant name cannot be empty"))
+	}
+	podListOpts := metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("v1.min.io/tenant=%s", tenantName),
+	}
+	pods, err := coreInterface.Pods(namespace).List(ctx, podListOpts)
+	if err != nil {
+		return restapi.ErrorWithContext(ctx, err)
+	}
+	events := coreInterface.Events(namespace)
+	w, err := os.Create(tenantName + "-report.zip")
+	if err != nil {
+		return restapi.ErrorWithContext(ctx, err)
+	}
+	zipw := zip.NewWriter(w)
+
+	tenantAsYaml, err := yaml.Marshal(tenant)
+	if err == nil {
+		f, err := zipw.Create(tenantName + ".yaml")
+		if err == nil {
+			f.Write(tenantAsYaml)
+		}
+	} else {
+		return restapi.ErrorWithContext(ctx, err)
+	}
+	for i := 0; i < len(pods.Items); i++ {
+		listOpts := &corev1.PodLogOptions{}
+		toWrite, err := coreInterface.Pods(namespace).GetLogs(pods.Items[i].Name, listOpts).DoRaw(ctx)
+		if err == nil {
+			f, err := zipw.Create(pods.Items[i].Name + ".log")
+			if err == nil {
+				f.Write(toWrite)
+			}
+		} else {
+			return restapi.ErrorWithContext(ctx, err)
+		}
+		podEvents, err := events.List(ctx, metav1.ListOptions{FieldSelector: fmt.Sprintf("involvedObject.uid=%s", pods.Items[i].UID)})
+		if err == nil {
+			podEventsJSON, err := json.Marshal(podEvents)
+			if err == nil {
+				f, err := zipw.Create(pods.Items[i].Name + "-events.txt")
+				if err == nil {
+					f.Write(podEventsJSON)
+				}
+			}
+		} else {
+			return restapi.ErrorWithContext(ctx, err)
+		}
+		status := pods.Items[i].Status
+		statusJSON, err := json.Marshal(status)
+		if err == nil {
+			f, err := zipw.Create(pods.Items[i].Name + "-status.txt")
+			if err == nil {
+				f.Write(statusJSON)
+			}
+		} else {
+			return restapi.ErrorWithContext(ctx, err)
+		}
+	}
+	zipw.Close()
+	fmt.Println("Data stored in " + tenantName + "-report.zip")
+	return nil
 }

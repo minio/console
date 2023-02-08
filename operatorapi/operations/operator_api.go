@@ -130,6 +130,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIGetTenantEventsHandler: operator_api.GetTenantEventsHandlerFunc(func(params operator_api.GetTenantEventsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetTenantEvents has not yet been implemented")
 		}),
+		OperatorAPIGetTenantLogReportHandler: operator_api.GetTenantLogReportHandlerFunc(func(params operator_api.GetTenantLogReportParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.GetTenantLogReport has not yet been implemented")
+		}),
 		OperatorAPIGetTenantLogsHandler: operator_api.GetTenantLogsHandlerFunc(func(params operator_api.GetTenantLogsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetTenantLogs has not yet been implemented")
 		}),
@@ -358,6 +361,8 @@ type OperatorAPI struct {
 	OperatorAPIGetResourceQuotaHandler operator_api.GetResourceQuotaHandler
 	// OperatorAPIGetTenantEventsHandler sets the operation handler for the get tenant events operation
 	OperatorAPIGetTenantEventsHandler operator_api.GetTenantEventsHandler
+	// OperatorAPIGetTenantLogReportHandler sets the operation handler for the get tenant log report operation
+	OperatorAPIGetTenantLogReportHandler operator_api.GetTenantLogReportHandler
 	// OperatorAPIGetTenantLogsHandler sets the operation handler for the get tenant logs operation
 	OperatorAPIGetTenantLogsHandler operator_api.GetTenantLogsHandler
 	// OperatorAPIGetTenantMonitoringHandler sets the operation handler for the get tenant monitoring operation
@@ -594,6 +599,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIGetTenantEventsHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetTenantEventsHandler")
+	}
+	if o.OperatorAPIGetTenantLogReportHandler == nil {
+		unregistered = append(unregistered, "operator_api.GetTenantLogReportHandler")
 	}
 	if o.OperatorAPIGetTenantLogsHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetTenantLogsHandler")
@@ -916,6 +924,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/events"] = operator_api.NewGetTenantEvents(o.context, o.OperatorAPIGetTenantEventsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/log-report"] = operator_api.NewGetTenantLogReport(o.context, o.OperatorAPIGetTenantLogReportHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

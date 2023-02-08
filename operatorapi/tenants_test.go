@@ -21,6 +21,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -65,6 +66,7 @@ func (ac opClientMock) TenantDelete(ctx context.Context, namespace string, tenan
 
 // mock function of TenantGet()
 func (ac opClientMock) TenantGet(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+	fmt.Println("mocktenantget")
 	return opClientTenantGetMock(ctx, namespace, tenantName, options)
 }
 
@@ -1839,6 +1841,56 @@ func Test_updateTenantConfigurationFile(t *testing.T) {
 			err := updateTenantConfigurationFile(tt.args.ctx, tt.args.operatorClient, tt.args.client, tt.args.namespace, tt.args.params)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("updateTenantConfigurationFile(%v, %v, %v, %v, %v)", tt.args.ctx, tt.args.operatorClient, tt.args.client, tt.args.namespace, tt.args.params)
+			}
+		})
+	}
+}
+
+func Test_getTenantLogReport(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	opClient := opClientMock{}
+	type args struct {
+		ctx            context.Context
+		operatorClient OperatorClientI
+		namespace      string
+		tenantName     string
+		objs           []runtime.Object
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name:    "no error getting tenant log report",
+			wantErr: false,
+			args: args{
+				ctx:            ctx,
+				operatorClient: opClient,
+				namespace:      "default",
+				tenantName:     "test",
+				objs: []runtime.Object{
+					&corev1.PodList{
+						Items: []corev1.Pod{},
+					},
+					&corev1.EventList{
+						Items: []corev1.Event{},
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			kubeClient := fake.NewSimpleClientset()
+			fakeTenant, e := opClientTenantGetMock(ctx, tt.args.namespace, tt.args.tenantName, metav1.GetOptions{})
+			if e != nil {
+				t.Errorf("error making mock tenant generateTenantLogReport(%v, %v, %v, %v)", tt.args.ctx, tt.args.operatorClient, tt.args.namespace, tt.args.tenantName)
+			}
+			err := generateTenantLogReport(tt.args.ctx, kubeClient.CoreV1(), tt.args.tenantName, tt.args.namespace, fakeTenant)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("generateTenantLogReport(%v, %v, %v, %v) err %v", tt.args.ctx, tt.args.operatorClient, tt.args.namespace, tt.args.tenantName, err)
 			}
 		})
 	}

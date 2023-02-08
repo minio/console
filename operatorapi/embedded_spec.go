@@ -1275,6 +1275,43 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/log-report": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Tenant Log Report",
+        "operationId": "GetTenantLogReport",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantLogReport"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/monitoring": {
       "get": {
         "tags": [
@@ -4684,6 +4721,17 @@ func init() {
         }
       }
     },
+    "tenantLogReport": {
+      "type": "object",
+      "properties": {
+        "blob": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "string"
+        }
+      }
+    },
     "tenantLogs": {
       "type": "object",
       "properties": {
@@ -6469,6 +6517,43 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/log-report": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Tenant Log Report",
+        "operationId": "GetTenantLogReport",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantLogReport"
             }
           },
           "default": {
@@ -10548,6 +10633,17 @@ func init() {
         },
         "volume_count": {
           "type": "integer"
+        }
+      }
+    },
+    "tenantLogReport": {
+      "type": "object",
+      "properties": {
+        "blob": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "string"
         }
       }
     },

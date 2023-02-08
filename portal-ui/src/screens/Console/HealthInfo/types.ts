@@ -26,6 +26,12 @@ export interface HealthInfoMessage {
   sys: sysHealthInfo;
 }
 
+export interface TenantLogReportMessage {
+  timestamp: Date;
+  error: string;
+  logReport: any;
+}
+
 export interface ReportMessage {
   encoded: string;
   serverHealthInfo: HealthInfoMessage;

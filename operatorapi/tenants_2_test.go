@@ -40,8 +40,10 @@ import (
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	types "k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/kubernetes/fake"
 )
 
 type TenantTestSuite struct {
@@ -110,6 +112,7 @@ func (suite *TenantTestSuite) assertHandlersAreNil(api *operations.OperatorAPI) 
 	suite.assert.Nil(api.OperatorAPIPutTenantYAMLHandler)
 	suite.assert.Nil(api.OperatorAPIGetTenantEventsHandler)
 	suite.assert.Nil(api.OperatorAPIUpdateTenantDomainsHandler)
+	suite.assert.Nil(api.OperatorAPIGetTenantLogReportHandler)
 }
 
 func (suite *TenantTestSuite) assertHandlersAreNotNil(api *operations.OperatorAPI) {
@@ -1951,6 +1954,60 @@ func (suite *TenantTestSuite) TestPutTenantYAMLHandlerWithError() {
 	response := api.OperatorAPIPutTenantYAMLHandler.Handle(params, &models.Principal{})
 	_, ok := response.(*operator_api.PutTenantYAMLDefault)
 	suite.assert.True(ok)
+}
+
+func (suite *TenantTestSuite) TestGetTenantLogReportWithError() {
+	objs := []runtime.Object{}
+
+	kubeClient := fake.NewSimpleClientset(objs...)
+
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return nil, nil
+	}
+
+	fakeTenant, _ := opClientTenantGetMock(context.Background(), "", "", metav1.GetOptions{})
+	err := generateTenantLogReport(context.Background(), kubeClient.CoreV1(), "", "", fakeTenant)
+
+	suite.assert.NotNil(err)
+}
+
+func (suite *TenantTestSuite) TestGetTenantLogReportWithoutError() {
+	objs := []runtime.Object{
+		&corev1.PersistentVolumeClaim{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "PVC1",
+				Namespace: "minio-tenant",
+				Labels: map[string]string{
+					miniov2.TenantLabel: "tenant1",
+					miniov2.PoolLabel:   "pool-1",
+				},
+			},
+		},
+		&corev1.PodList{},
+	}
+
+	kubeClient := fake.NewSimpleClientset(objs...)
+
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{
+			Spec: miniov2.TenantSpec{},
+		}, nil
+	}
+
+	params, _ := suite.initGetLogReportRequest()
+	fakeTenant, _ := opClientTenantGetMock(context.Background(), params.Namespace, params.Tenant, metav1.GetOptions{})
+	err := generateTenantLogReport(context.Background(), kubeClient.CoreV1(), params.Tenant, params.Namespace, fakeTenant)
+
+	suite.assert.Nil(err)
+}
+
+func (suite *TenantTestSuite) initGetLogReportRequest() (params operator_api.GetTenantLogReportParams, api operations.OperatorAPI) {
+	registerTenantHandlers(&api)
+	params.HTTPRequest = &http.Request{}
+	params.Namespace = "mock-namespace"
+	params.Tenant = "mock-tenant"
+
+	return params, api
 }
 
 func (suite *TenantTestSuite) initPutTenantYAMLRequest() (params operator_api.PutTenantYAMLParams, api operations.OperatorAPI) {

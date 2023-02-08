@@ -34,8 +34,9 @@ import { AppState, useAppDispatch } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import DeletePod from "./DeletePod";
 import { Grid, InputAdornment, TextField } from "@mui/material";
-import { SearchIcon } from "mds";
+import { Button, SearchIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 interface IPodsSummary {
   classes: any;
@@ -62,6 +63,10 @@ const PodsSummary = ({ classes }: IPodsSummary) => {
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedPod, setSelectedPod] = useState<any>(null);
   const [filter, setFilter] = useState("");
+  const [logReportFileContent, setLogReportFileContent] = useState<string>("");
+  const [startLogReport, setStartLogReport] = useState<boolean>(false);
+  const [downloadReport, setDownloadReport] = useState<boolean>(false);
+  const [filename, setFilename] = useState<string>("");
 
   const podViewAction = (pod: IPodListElement) => {
     navigate(
@@ -71,6 +76,25 @@ const PodsSummary = ({ classes }: IPodsSummary) => {
     );
     return;
   };
+
+  useEffect(() => {
+    if (downloadReport) {
+      let element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        `data:application/gzip;base64,${logReportFileContent}`
+      );
+      element.setAttribute("download", filename);
+
+      element.style.display = "none";
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+      setDownloadReport(false);
+    }
+  }, [downloadReport, filename, logReportFileContent]);
 
   const closeDeleteModalAndRefresh = (reloadData: boolean) => {
     setDeleteOpen(false);
@@ -129,6 +153,36 @@ const PodsSummary = ({ classes }: IPodsSummary) => {
     }
   }, [loadingPods, tenantName, tenantNamespace, dispatch]);
 
+  useEffect(() => {
+    if (startLogReport) {
+      setLogReportFileContent("");
+
+      api
+        .invoke(
+          "GET",
+          `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/log-report`
+        )
+        .then(async (res: any) => {
+          setLogReportFileContent(decodeURIComponent(res.blob));
+          //@ts-ignore
+          setFilename(res.filename || "tenant-log-report.zip");
+          setStartLogReport(false);
+          setDownloadReport(true);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          dispatch(setErrorSnackMessage(err));
+          setStartLogReport(false);
+        });
+    } else {
+      // reset start status
+      setStartLogReport(false);
+    }
+  }, [tenantName, tenantNamespace, startLogReport, dispatch]);
+
+  const generateTenantLogReport = () => {
+    setStartLogReport(true);
+  };
+
   return (
     <Fragment>
       {deleteOpen && (
@@ -138,7 +192,22 @@ const PodsSummary = ({ classes }: IPodsSummary) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <h1 className={classes.sectionTitle}>Pods</h1>
+      <Grid container>
+        <Grid item xs={6}>
+          <h1 className={classes.sectionTitle}>Pods</h1>
+        </Grid>
+        <Grid item xs={6} display={"flex"} justifyContent={"flex-end"}>
+          <TooltipWrapper tooltip="A report of all tenant logs will be generated as a .zip file and downloaded for analysis. This report can be uploaded to SUBNET to enable our team to best assist you in troubleshooting.">
+            <Button
+              id="log_report"
+              onClick={generateTenantLogReport}
+              disabled={pods.length === 0}
+            >
+              Download Log Report
+            </Button>
+          </TooltipWrapper>
+        </Grid>
+      </Grid>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
           placeholder="Search Pods"
