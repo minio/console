@@ -16,23 +16,13 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
-import { diagnosticsElement, supportElement } from "../utils/elements-menu";
+import { diagnosticsElement } from "../utils/elements-menu";
 import { ClientFunction } from "testcafe";
 
 fixture("For user with Diagnostics permissions").page("http://localhost:9090");
 
-test("Support sidebar item exists", async (t) => {
-  await t.useRole(roles.diagnostics).expect(supportElement.exists).ok();
-});
-
 test("Diagnostics link exists in Tools page", async (t) => {
-  await t
-    .useRole(roles.diagnostics)
-    .expect(supportElement.exists)
-    .ok()
-    .click(supportElement)
-    .expect(diagnosticsElement.exists)
-    .ok();
+  await t.useRole(roles.diagnostics).expect(diagnosticsElement.exists).ok();
 });
 
 test("Diagnostics page can be opened", async (t) => {

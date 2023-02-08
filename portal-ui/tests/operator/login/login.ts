@@ -16,7 +16,6 @@
 
 import * as roles from "../../utils/roles";
 import * as elements from "../../utils/elements";
-import { diagnosticsElement, supportElement } from "../../utils/elements-menu";
 
 fixture("For user with default permissions").page("http://localhost:9090");
 
