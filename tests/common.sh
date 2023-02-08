@@ -43,12 +43,12 @@ function install_operator() {
 	try kubectl apply -k github.com/minio/operator/
     echo "Waiting for k8s api"
     sleep 10
-    echo "Waiting for Operator Pods to come online (5m timeout)"
+    echo "Waiting for Operator Pods to come online (2m timeout)"
 
     try kubectl wait --namespace minio-operator \
 	--for=condition=ready pod \
 	--selector=name=minio-operator \
-	--timeout=300s
+	--timeout=120s
 }
 
 function destroy_kind() {
