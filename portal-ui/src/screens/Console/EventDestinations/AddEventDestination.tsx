@@ -185,7 +185,7 @@ const AddEventDestination = ({
         label={
           <Fragment>
             <BackLink
-              label="Event Destination"
+              label="Event Destinations"
               onClick={() => navigate(IAM_PAGES.EVENT_DESTINATIONS_ADD)}
             />
           </Fragment>
