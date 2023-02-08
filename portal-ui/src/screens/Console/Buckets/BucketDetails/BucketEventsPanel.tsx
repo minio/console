@@ -206,7 +206,7 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
           <Grid item xs={12}>
             <br />
             <HelpBox
-              title={"Lambda Notifications"}
+              title={"Event Notifications"}
               iconComponent={<LambdaIcon />}
               help={
                 <Fragment>

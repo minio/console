@@ -232,14 +232,14 @@ const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
                     ]}
                     isLoading={isLoading}
                     records={filteredRecords}
-                    entityName="Notification Endpoints"
+                    entityName="Event Destinations"
                     idField="service_name"
                     customPaperHeight={classes.twHeight}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <HelpBox
-                    title={"Notification Endpoints"}
+                    title={"Event Destinations"}
                     iconComponent={<LambdaIcon />}
                     help={
                       <Fragment>

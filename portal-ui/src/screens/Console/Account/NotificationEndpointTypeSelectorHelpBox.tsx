@@ -75,13 +75,13 @@ const NotificationEndpointTypeSelectorHelpBox = () => {
         }}
       >
         <HelpIconFilled />
-        <div>Learn more about Notification Endpoints</div>
+        <div>Learn more about Event Destinations</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
         <Box sx={{ paddingBottom: "20px" }}>
           <FeatureItem
             icon={<LambdaNotificationsIcon />}
-            description={`What are Lambda Endpoint Notifications?`}
+            description={`What are Event Destinations?`}
           />
           <Box sx={{ paddingTop: "20px" }}>
             MinIO bucket notifications allow administrators to send

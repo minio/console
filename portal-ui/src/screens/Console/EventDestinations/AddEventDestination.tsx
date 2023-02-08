@@ -185,7 +185,7 @@ const AddEventDestination = ({
         label={
           <Fragment>
             <BackLink
-              label="Notification Endpoint"
+              label="Event Destination"
               onClick={() => navigate(IAM_PAGES.EVENT_DESTINATIONS_ADD)}
             />
           </Fragment>
@@ -213,8 +213,8 @@ const AddEventDestination = ({
 
                     <div className={classes.lambdaNotifTitle}>
                       <b>
-                        {targetElement ? targetElement.targetTitle : ""}
-                        Notification Endpoint
+                        {targetElement ? targetElement.targetTitle : ""} Event
+                        Destination
                       </b>
                     </div>
                   </div>
