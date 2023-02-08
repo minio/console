@@ -16,11 +16,7 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
-import {
-  logsElement,
-  monitoringElement,
-  supportElement,
-} from "../utils/elements-menu";
+import { logsElement, monitoringElement } from "../utils/elements-menu";
 
 fixture("For user with Logs permissions")
   .page("http://localhost:9090")

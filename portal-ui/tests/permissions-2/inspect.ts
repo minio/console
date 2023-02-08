@@ -94,17 +94,9 @@ fixture("For user with Inspect permissions")
 test("Inspect page can be opened", async (t) => {
   await t.navigateTo(inspectScreenUrl);
 });
-test("Inspect sidebar item exists", async (t) => {
-  await t.expect(supportSidebarEl.exists).ok();
-});
 
 test("Inspect link exists in Menu list", async (t) => {
-  await t
-    .expect(supportSidebarEl.exists)
-    .ok()
-    .click(supportSidebarEl)
-    .expect(inspectEl.exists)
-    .ok();
+  await t.expect(inspectEl.exists).ok();
 });
 
 test("Form Input states verification", async (t) => {

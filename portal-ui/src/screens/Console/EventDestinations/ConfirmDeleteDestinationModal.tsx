@@ -3,7 +3,7 @@ import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "mds";
 import { DialogContentText } from "@mui/material";
 
-const ConfirmDeleteTargetModal = ({
+const ConfirmDeleteDestinationModal = ({
   onConfirm,
   onClose,
   serviceName,
@@ -36,4 +36,4 @@ const ConfirmDeleteTargetModal = ({
   );
 };
 
-export default ConfirmDeleteTargetModal;
+export default ConfirmDeleteDestinationModal;

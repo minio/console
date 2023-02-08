@@ -18,7 +18,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import { configurationElements } from "../utils";
-import EditConfiguration from "../../NotificationEndpoints/CustomForms/EditConfiguration";
+import EditConfiguration from "../../EventDestinations/CustomForms/EditConfiguration";
 
 const ConfigurationsList = () => {
   const { pathname = "" } = useLocation();

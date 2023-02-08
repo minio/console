@@ -51,7 +51,7 @@ import {
   setServerNeedsRestart,
 } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-import ConfirmDeleteTargetModal from "./ConfirmDeleteTargetModal";
+import ConfirmDeleteDestinationModal from "./ConfirmDeleteDestinationModal";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 interface IListNotificationEndpoints {
@@ -82,7 +82,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
+const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   //Local States
@@ -191,7 +191,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
           <div className={classes.rightActionItems}>
             <TooltipWrapper tooltip={"Refresh List"}>
               <Button
-                id={"reload-notification-endpoints"}
+                id={"reload-event-destinations"}
                 label={"Refresh"}
                 variant="regular"
                 icon={<RefreshIcon />}
@@ -200,14 +200,14 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                 }}
               />
             </TooltipWrapper>
-            <TooltipWrapper tooltip={"Add Notification Target"}>
+            <TooltipWrapper tooltip={"Add Event Destination"}>
               <Button
                 id={"add-notification-target"}
-                label={" Add Notification Target"}
+                label={"Add Event Destination"}
                 variant="callAction"
                 icon={<AddIcon />}
                 onClick={() => {
-                  navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
+                  navigate(IAM_PAGES.EVENT_DESTINATIONS_ADD);
                 }}
               />
             </TooltipWrapper>
@@ -274,7 +274,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
               >
                 <Grid item xs={8}>
                   <HelpBox
-                    title={"Notification Targets"}
+                    title={"Event Destinations"}
                     iconComponent={<LambdaIcon />}
                     help={
                       <Fragment>
@@ -288,10 +288,10 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                         To get started,{" "}
                         <AButton
                           onClick={() => {
-                            navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD);
+                            navigate(IAM_PAGES.EVENT_DESTINATIONS_ADD);
                           }}
                         >
-                          Add a Notification Target
+                          Add an Event Destination
                         </AButton>
                         .
                       </Fragment>
@@ -304,7 +304,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
         )}
 
         {isDelConfirmOpen ? (
-          <ConfirmDeleteTargetModal
+          <ConfirmDeleteDestinationModal
             onConfirm={() => {
               resetNotificationConfig(selNotifyEndPoint);
             }}
@@ -320,4 +320,4 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
   );
 };
 
-export default withStyles(styles)(ListNotificationEndpoints);
+export default withStyles(styles)(ListEventDestinations);

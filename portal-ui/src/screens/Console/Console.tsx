@@ -69,14 +69,14 @@ const RegisterOperator = React.lazy(() => import("./Support/RegisterOperator"));
 
 const AddTenant = React.lazy(() => import("./Tenants/AddTenant/AddTenant"));
 
-const NotificationEndpoints = React.lazy(
-  () => import("./NotificationEndpoints/NotificationEndpoints")
+const EventDestinations = React.lazy(
+  () => import("./EventDestinations/EventDestinations")
 );
-const AddNotificationEndpoint = React.lazy(
-  () => import("./NotificationEndpoints/AddNotificationEndpoint")
+const AddEventDestination = React.lazy(
+  () => import("./EventDestinations/AddEventDestination")
 );
-const NotificationTypeSelector = React.lazy(
-  () => import("./NotificationEndpoints/NotificationTypeSelector")
+const EventTypeSelector = React.lazy(
+  () => import("./EventDestinations/EventTypeSelector")
 );
 
 const ListTiersConfiguration = React.lazy(
@@ -425,16 +425,16 @@ const Console = ({ classes }: IConsoleProps) => {
       path: IAM_PAGES.SETTINGS,
     },
     {
-      component: AddNotificationEndpoint,
-      path: IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD_SERVICE,
+      component: AddEventDestination,
+      path: IAM_PAGES.EVENT_DESTINATIONS_ADD_SERVICE,
     },
     {
-      component: NotificationTypeSelector,
-      path: IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD,
+      component: EventTypeSelector,
+      path: IAM_PAGES.EVENT_DESTINATIONS_ADD,
     },
     {
-      component: NotificationEndpoints,
-      path: IAM_PAGES.NOTIFICATIONS_ENDPOINTS,
+      component: EventDestinations,
+      path: IAM_PAGES.EVENT_DESTINATIONS,
     },
     {
       component: AddTierConfiguration,

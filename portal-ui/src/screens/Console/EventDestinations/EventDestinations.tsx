@@ -20,16 +20,16 @@ import React, { Fragment } from "react";
 import withSuspense from "../Common/Components/withSuspense";
 
 const ListNotificationEndpoints = withSuspense(
-  React.lazy(() => import("./ListNotificationEndpoints"))
+  React.lazy(() => import("./ListEventDestinations"))
 );
 
-const NotificationEndpoints = () => {
+const EventDestinations = () => {
   return (
     <Fragment>
-      <PageHeader label="Notification Endpoints" />
+      <PageHeader label="Event Destinations" />
       <ListNotificationEndpoints />
     </Fragment>
   );
 };
 
-export default NotificationEndpoints;
+export default EventDestinations;
