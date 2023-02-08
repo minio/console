@@ -26,7 +26,7 @@ const ConfirmDeleteDestinationModal = ({
       confirmationContent={
         <React.Fragment>
           <DialogContentText>
-            Are you sure you want to delete the notification endpoint ?
+            Are you sure you want to delete the event destination ?
             <br />
             <b>{serviceName}</b> which is <b>{status}</b>
           </DialogContentText>
