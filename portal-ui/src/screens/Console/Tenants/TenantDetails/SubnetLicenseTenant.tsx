@@ -99,7 +99,7 @@ const SubnetLicenseTenant = ({
   licenseInfo,
   activateProduct,
 }: ISubnetLicenseTenant) => {
-  const expiryTime = tenant
+  const expiryTime = tenant?.subnet_license
     ? DateTime.fromISO(tenant.subnet_license.expires_at)
     : DateTime.now();
 
