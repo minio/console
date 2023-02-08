@@ -16,13 +16,9 @@
 
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
-import * as functions from "../utils/functions";
-import {
-  watchElement,
-  monitoringElement,
-  supportElement,
-} from "../utils/elements-menu";
 import { bucketDropdownOptionFor } from "../utils/elements";
+import * as functions from "../utils/functions";
+import { monitoringElement, watchElement } from "../utils/elements-menu";
 
 fixture("For user with Watch permissions")
   .page("http://localhost:9090")

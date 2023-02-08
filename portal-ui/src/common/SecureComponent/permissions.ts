@@ -204,10 +204,9 @@ export const IAM_PAGES = {
   /* Documentation **/
   DOCUMENTATION: "/documentation",
   /* TBD ? */
-  NOTIFICATIONS_ENDPOINTS: "/settings/notification-endpoints",
-  NOTIFICATIONS_ENDPOINTS_ADD: "/settings/notification-endpoints/add",
-  NOTIFICATIONS_ENDPOINTS_ADD_SERVICE:
-    "/settings/notification-endpoints/add/:service",
+  EVENT_DESTINATIONS: "/settings/event-destinations",
+  EVENT_DESTINATIONS_ADD: "/settings/event-destinations/add",
+  EVENT_DESTINATIONS_ADD_SERVICE: "/settings/event-destinations/add/:service",
   TIERS: "/settings/tiers",
   TIERS_ADD: "/settings/tiers/add",
   TIERS_ADD_SERVICE: "/settings/tiers/add/:service",
@@ -412,15 +411,15 @@ export const IAM_PAGES_PERMISSIONS = {
   [IAM_PAGES.SETTINGS_VIEW]: [
     IAM_SCOPES.ADMIN_CONFIG_UPDATE, // displays configuration list
   ],
-  [IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD_SERVICE]: [
+  [IAM_PAGES.EVENT_DESTINATIONS_ADD_SERVICE]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
   ],
-  [IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD]: [
+  [IAM_PAGES.EVENT_DESTINATIONS_ADD]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
   ],
-  [IAM_PAGES.NOTIFICATIONS_ENDPOINTS]: [
+  [IAM_PAGES.EVENT_DESTINATIONS]: [
     IAM_SCOPES.ADMIN_SERVER_INFO, // displays notifications endpoints
     IAM_SCOPES.ADMIN_CONFIG_UPDATE, // displays create notification button
   ],

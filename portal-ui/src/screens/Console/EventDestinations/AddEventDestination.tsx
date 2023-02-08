@@ -29,7 +29,7 @@ import {
   notifyMysql,
   notifyPostgres,
   removeEmptyFields,
-  servicesList,
+  destinationList,
 } from "./utils";
 import {
   modalBasic,
@@ -110,7 +110,7 @@ interface IAddNotificationEndpointProps {
   classes: any;
 }
 
-const AddNotificationEndpoint = ({
+const AddEventDestination = ({
   saveAndRefresh,
   classes,
 }: IAddNotificationEndpointProps) => {
@@ -134,7 +134,7 @@ const AddNotificationEndpoint = ({
         .then(() => {
           setSaving(false);
           dispatch(setServerNeedsRestart(true));
-          navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS);
+          navigate(IAM_PAGES.EVENT_DESTINATIONS);
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
@@ -175,7 +175,7 @@ const AddNotificationEndpoint = ({
     }
   }
 
-  const targetElement = servicesList.find(
+  const targetElement = destinationList.find(
     (element) => element.actionTrigger === service
   );
 
@@ -185,8 +185,8 @@ const AddNotificationEndpoint = ({
         label={
           <Fragment>
             <BackLink
-              label="Notification Endpoint"
-              onClick={() => navigate(IAM_PAGES.NOTIFICATIONS_ENDPOINTS_ADD)}
+              label="Event Destinations"
+              onClick={() => navigate(IAM_PAGES.EVENT_DESTINATIONS_ADD)}
             />
           </Fragment>
         }
@@ -213,8 +213,8 @@ const AddNotificationEndpoint = ({
 
                     <div className={classes.lambdaNotifTitle}>
                       <b>
-                        {targetElement ? targetElement.targetTitle : ""}
-                        Notification Endpoint
+                        {targetElement ? targetElement.targetTitle : ""} Event
+                        Destination
                       </b>
                     </div>
                   </div>
@@ -230,7 +230,7 @@ const AddNotificationEndpoint = ({
                     type="submit"
                     variant="callAction"
                     disabled={saving}
-                    label={"Save Notification Target"}
+                    label={"Save Event Destination"}
                   />
                 </Grid>
               </div>
@@ -242,4 +242,4 @@ const AddNotificationEndpoint = ({
   );
 };
 
-export default withStyles(styles)(AddNotificationEndpoint);
+export default withStyles(styles)(AddEventDestination);

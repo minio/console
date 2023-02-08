@@ -3,7 +3,7 @@ import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "mds";
 import { DialogContentText } from "@mui/material";
 
-const ConfirmDeleteTargetModal = ({
+const ConfirmDeleteDestinationModal = ({
   onConfirm,
   onClose,
   serviceName,
@@ -26,7 +26,7 @@ const ConfirmDeleteTargetModal = ({
       confirmationContent={
         <React.Fragment>
           <DialogContentText>
-            Are you sure you want to delete the notification endpoint ?
+            Are you sure you want to delete the event destination ?
             <br />
             <b>{serviceName}</b> which is <b>{status}</b>
           </DialogContentText>
@@ -36,4 +36,4 @@ const ConfirmDeleteTargetModal = ({
   );
 };
 
-export default ConfirmDeleteTargetModal;
+export default ConfirmDeleteDestinationModal;

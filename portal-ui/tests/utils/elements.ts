@@ -16,7 +16,6 @@
 
 import * as constants from "./constants";
 import { Selector } from "testcafe";
-import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 //----------------------------------------------------
 // Buttons
 //----------------------------------------------------
@@ -32,35 +31,16 @@ export const createPolicyButton =
   Selector("button:enabled").withText("Create Policy");
 export const saveButton = Selector("button:enabled").withText("Save");
 export const deleteButton = Selector("button:enabled").withExactText("Delete");
-export const deleteIconButton = Selector("button:enabled").withAttribute(
-  "aria-label",
-  "Delete"
-);
-export const deleteIconButtonAlt = Selector("button:enabled").withAttribute(
-  "aria-label",
-  "delete"
-);
-export const configureBucketButton = Selector(
-  'span[class*="MuiIconButton-root"]'
-).withAttribute("aria-label", "Configure Bucket");
-export const addNotifTargetButton = Selector("button:enabled").withText(
-  "Add Notification Target"
+
+export const addEventDestination = Selector("button:enabled").withText(
+  "Add Event Destination"
 );
 export const createTierButton =
   Selector("button:enabled").withText("Create Tier");
-export const createBucketButton =
-  Selector("button:enabled").withText("Create Bucket");
-export const deleteBucketButton =
-  Selector("button:enabled").withText("Delete Bucket");
 export const createUserButton =
   Selector("button:enabled").withText("Create User");
 export const createGroupButton =
   Selector("button:enabled").withText("Create Group");
-export const deleteGroupIconButton = Selector("span")
-  .withAttribute("aria-label", "Delete Group")
-  .find("button:enabled");
-export const editMembersButton =
-  Selector("button:enabled").withText("Edit Members");
 export const addAccessRuleButton =
   Selector("button:enabled").withText("Add Access Rule");
 export const startDiagnosticButton =
@@ -68,17 +48,8 @@ export const startDiagnosticButton =
 export const startNewDiagnosticButton = Selector("#start-new-diagnostic");
 export const downloadButton = Selector("button:enabled").withText("Download");
 export const startButton = Selector("button:enabled").withText("Start");
-export const stopButton = Selector("button:enabled").withText("Stop");
 export const assignPoliciesButton =
   Selector("button:enabled").withText("Assign Policies");
-//----------------------------------------------------
-// Links
-//----------------------------------------------------
-export const logsLink = Selector("a").withText("Logs");
-export const watchLink = Selector("a").withText("Watch");
-export const traceLink = Selector("a").withText("Trace");
-export const healLink = Selector("a").withText("Heal");
-export const diagnosticsLink = Selector("a").withText("Diagnostics");
 
 //----------------------------------------------------
 // Switches

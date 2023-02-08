@@ -82,22 +82,14 @@ export const tiersElement = Selector(".MuiPaper-root")
   .find("ul")
   .child("#tiers");
 
-export const supportElement = Selector(".MuiPaper-root")
+export const diagnosticsElement = Selector(".MuiPaper-root")
   .find("ul")
-  .child("#support");
-export const supportChildren = Selector("#support-children");
-
-export const diagnosticsElement = supportChildren
-  .find("a")
-  .withAttribute("href", "/support/diagnostics");
-export const performanceElement = supportChildren
-  .find("a")
-  .withAttribute("href", "/support/speedtest");
-export const callHomeElement = supportChildren
-  .find("a")
-  .withAttribute("href", "/support/call-home");
-export const profileElement = supportChildren
-  .find("a")
-  .withAttribute("href", "/support/profile");
+  .child("#diagnostics");
+export const performanceElement = Selector(".MuiPaper-root")
+  .find("ul")
+  .child("#performance");
+export const profileElement = Selector(".MuiPaper-root")
+  .find("ul")
+  .child("#profile");
 
 export const licenseElement = sidebarItem.withAttribute("href", "/license");
