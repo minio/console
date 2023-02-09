@@ -57,8 +57,8 @@ func GetReleaseListResponse(session *models.Principal, params release.ListReleas
 }
 
 func releaseList(ctx context.Context, repo, currentRelease string) (*models.ReleaseListResponse, *models.Error) {
-	serviceUrl := getReleaseServiceURL()
-	releases, err := getReleases(serviceUrl, repo, currentRelease)
+	serviceURL := getReleaseServiceURL()
+	releases, err := getReleases(serviceURL, repo, currentRelease)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
