@@ -37,10 +37,17 @@ function setup_kind() {
 	try kubectl get nodes
 }
 
+function get_latest_release() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" |
+  grep '"tag_name":' |
+  sed -E 's/.*"([^"]+)".*/\1/'
+}
+
 function install_operator() {
 
-    echo "  Load minio/operator image to the cluster"
-	try kubectl apply -k github.com/minio/operator/
+  OPR_LATEST=$(get_latest_release minio/operator)
+    echo "  Load minio/operator image ($OPR_LATEST) to the cluster"
+	try kubectl apply -k github.com/minio/operator/\?ref\=$OPR_LATEST
     echo "Waiting for k8s api"
     sleep 10
     echo "Waiting for Operator Pods to come online (2m timeout)"

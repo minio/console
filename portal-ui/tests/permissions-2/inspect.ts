@@ -48,14 +48,9 @@ const inspectScreenUrl = `${testDomainUrl}${IAM_PAGES.SUPPORT_INSPECT}`;
 
 const loginSubmitBtn = Selector("form button");
 
-export const supportSidebarEl = Selector(".MuiPaper-root")
+export const inspectEl = Selector(".MuiPaper-root")
   .find("ul")
-  .child("#support");
-
-export const supportChildren = Selector("#support-children");
-export const inspectEl = supportChildren
-  .find("a")
-  .withAttribute("href", IAM_PAGES.SUPPORT_INSPECT);
+  .child("#inspect");
 
 export const inspect_volume_input = Selector('[data-test-id="inspect_volume"]');
 export const inspect_path_input = Selector('[data-test-id="inspect_path"]');
