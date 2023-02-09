@@ -91,5 +91,9 @@ export const performanceElement = Selector(".MuiPaper-root")
 export const profileElement = Selector(".MuiPaper-root")
   .find("ul")
   .child("#profile");
+export const inspectElement = sidebarItem.withAttribute(
+  "href",
+  "/support/inspect"
+);
 
 export const licenseElement = sidebarItem.withAttribute("href", "/license");
