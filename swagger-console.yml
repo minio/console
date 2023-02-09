@@ -3418,6 +3418,31 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - idp
+  /releases:
+    get:
+      summary: Get repo releases for a given version
+      operationId: ListReleases
+      parameters:
+        - name: repo
+          description: repo name
+          in: query
+          type: string
+          required: true
+        - name: current
+          description: Current Release
+          in: query
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/releaseListResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - release
 
 definitions:
   accountChangePasswordRequest:
@@ -5798,3 +5823,27 @@ definitions:
     properties:
       restart:
         type: boolean
+  releaseListResponse:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/releaseInfo"
+  releaseInfo:
+    type: object
+    properties:
+      tag:
+        type: string
+      name:
+        type: string
+      notesContent:
+        type: string
+      securityContent:
+        type: string
+      breakingChangesContent:
+        type: string
+      contextContent:
+        type: string
+      newFeaturesContent:
+        type: string

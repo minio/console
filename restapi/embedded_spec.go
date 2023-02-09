@@ -4056,6 +4056,44 @@ func init() {
         }
       }
     },
+    "/releases/": {
+      "get": {
+        "tags": [
+          "release"
+        ],
+        "summary": "Get repo releases for a given version",
+        "operationId": "ListReleases",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "repo name",
+            "name": "repo",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Current Release",
+            "name": "current",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/releaseListResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/remote-buckets": {
       "get": {
         "tags": [
@@ -7369,6 +7407,43 @@ func init() {
         },
         "redirect": {
           "type": "string"
+        }
+      }
+    },
+    "releaseInfo": {
+      "type": "object",
+      "properties": {
+        "breakingChangesContent": {
+          "type": "string"
+        },
+        "contextContent": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "newFeaturesContent": {
+          "type": "string"
+        },
+        "notesContent": {
+          "type": "string"
+        },
+        "securityContent": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "releaseListResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/releaseInfo"
+          }
         }
       }
     },
@@ -12539,6 +12614,44 @@ func init() {
         }
       }
     },
+    "/releases/": {
+      "get": {
+        "tags": [
+          "release"
+        ],
+        "summary": "Get repo releases for a given version",
+        "operationId": "ListReleases",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "repo name",
+            "name": "repo",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Current Release",
+            "name": "current",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/releaseListResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/remote-buckets": {
       "get": {
         "tags": [
@@ -15978,6 +16091,43 @@ func init() {
         },
         "redirect": {
           "type": "string"
+        }
+      }
+    },
+    "releaseInfo": {
+      "type": "object",
+      "properties": {
+        "breakingChangesContent": {
+          "type": "string"
+        },
+        "contextContent": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "newFeaturesContent": {
+          "type": "string"
+        },
+        "notesContent": {
+          "type": "string"
+        },
+        "securityContent": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "releaseListResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/releaseInfo"
+          }
         }
       }
     },
