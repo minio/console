@@ -64,7 +64,7 @@ func (suite *ReleasesTestSuite) getHandler(
 		w.WriteHeader(200)
 		response := []*models.ReleaseListResponse{{}}
 		bytes, _ := json.Marshal(response)
-		fmt.Fprintf(w, string(bytes))
+		fmt.Fprint(w, string(bytes))
 	}
 }
 
@@ -98,75 +98,6 @@ func (suite *ReleasesTestSuite) TestGetReleasesWithoutError() {
 	_, ok := response.(*release.ListReleasesOK)
 	suite.assert.True(ok)
 }
-
-// func (suite *ReleasesTestSuite) TestPostMPIntegrationHandlerWithError() {
-// 	api := &operations.OperatorAPI{}
-// 	registerMarketplaceHandlers(api)
-// 	params := operator_api.NewPostMPIntegrationParams()
-// 	params.Body = &models.MpIntegration{Email: ""}
-// 	params.HTTPRequest = &http.Request{}
-// 	params.HTTPRequest.Header = map[string][]string{}
-// 	params.HTTPRequest.AddCookie(&http.Cookie{Value: "token", Name: "token"})
-// 	response := api.OperatorAPIPostMPIntegrationHandler.Handle(params, &models.Principal{})
-// 	_, ok := response.(*operator_api.PostMPIntegrationDefault)
-// 	suite.assert.True(ok)
-// }
-
-// func (suite *ReleasesTestSuite) TestGetMPEmailWithError() {
-// 	testWithError = true
-// 	ctx, cancel := context.WithCancel(context.Background())
-// 	defer cancel()
-// 	email, err := getMPEmail(ctx, &suite.kClient)
-// 	suite.assert.NotNil(err)
-// 	suite.assert.Empty(email)
-// }
-
-// func (suite *ReleasesTestSuite) TestGetMPEmailNoError() {
-// 	testWithError = false
-// 	ctx, cancel := context.WithCancel(context.Background())
-// 	defer cancel()
-// 	isSet, err := getMPEmail(ctx, &suite.kClient)
-// 	suite.assert.Nil(err)
-// 	suite.assert.True(isSet)
-// }
-
-// func (suite *ReleasesTestSuite) TestSetMPIntegrationNoEmail() {
-// 	ctx, cancel := context.WithCancel(context.Background())
-// 	defer cancel()
-// 	err := setMPIntegration(ctx, "", false, &suite.kClient)
-// 	suite.assert.NotNil(err)
-// }
-
-// func (suite *ReleasesTestSuite) TestSetMPIntegrationWithError() {
-// 	testWithError = true
-// 	ctx, cancel := context.WithCancel(context.Background())
-// 	defer cancel()
-// 	os.Setenv(mpHostEnvVar, "  ")
-// 	err := setMPIntegration(ctx, "mock@mock.com", false, &suite.kClient)
-// 	suite.assert.NotNil(err)
-// 	os.Unsetenv(mpHostEnvVar)
-// }
-
-// func (suite *ReleasesTestSuite) TestSetMPIntegrationNoError() {
-// 	testWithError = false
-// 	ctx, cancel := context.WithCancel(context.Background())
-// 	defer cancel()
-// 	os.Setenv(mpHostEnvVar, suite.getServer.URL)
-// 	err := setMPIntegration(ctx, "mock@mock.com", false, &suite.kClient)
-// 	suite.assert.Nil(err)
-// 	os.Unsetenv(mpHostEnvVar)
-// }
-
-// func (suite *ReleasesTestSuite) TestSetMPIntegrationWithRequestError() {
-// 	testWithError = false
-// 	testServerWithError = true
-// 	ctx, cancel := context.WithCancel(context.Background())
-// 	defer cancel()
-// 	os.Setenv(mpHostEnvVar, suite.getServer.URL)
-// 	err := setMPIntegration(ctx, "mock@mock.com", false, &suite.kClient)
-// 	suite.assert.NotNil(err)
-// 	os.Unsetenv(mpHostEnvVar)
-// }
 
 func TestReleases(t *testing.T) {
 	suite.Run(t, new(ReleasesTestSuite))

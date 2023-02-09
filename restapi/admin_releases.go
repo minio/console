@@ -96,5 +96,4 @@ func getReleases(url, repo, currentRelease string) ([]*models.ReleaseInfo, error
 		return nil, err
 	}
 	return releases, nil
-
 }
