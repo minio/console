@@ -17,7 +17,7 @@
 import { Role, Selector } from "testcafe";
 import { readFileSync } from "fs";
 import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
-import { monitoringElement } from "../utils/elements-menu";
+import { inspectElement, monitoringElement } from "../utils/elements-menu";
 
 const data = readFileSync(__dirname + "/../constants/timestamp.txt", "utf-8");
 const $TIMESTAMP = data.trim();
@@ -96,7 +96,7 @@ test("Inspect page can be opened", async (t) => {
 });
 
 test("Inspect link exists in Menu list", async (t) => {
-  await t.expect(inspectEl.exists).ok();
+  await t.useRole(inspectAllowedRole).expect(inspectElement.exists).ok();
 });
 
 test("Form Input states verification", async (t) => {
