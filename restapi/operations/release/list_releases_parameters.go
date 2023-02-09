@@ -58,6 +58,10 @@ type ListReleasesParams struct {
 	  In: query
 	*/
 	Repo string
+	/*search content
+	  In: query
+	*/
+	Search *string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -78,6 +82,11 @@ func (o *ListReleasesParams) BindRequest(r *http.Request, route *middleware.Matc
 
 	qRepo, qhkRepo, _ := qs.GetOK("repo")
 	if err := o.bindRepo(qRepo, qhkRepo, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qSearch, qhkSearch, _ := qs.GetOK("search")
+	if err := o.bindSearch(qSearch, qhkSearch, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -121,6 +130,24 @@ func (o *ListReleasesParams) bindRepo(rawData []string, hasKey bool, formats str
 		return err
 	}
 	o.Repo = raw
+
+	return nil
+}
+
+// bindSearch binds and validates parameter Search from query.
+func (o *ListReleasesParams) bindSearch(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+	o.Search = &raw
 
 	return nil
 }

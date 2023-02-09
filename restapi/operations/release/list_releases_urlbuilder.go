@@ -32,6 +32,7 @@ import (
 type ListReleasesURL struct {
 	Current *string
 	Repo    string
+	Search  *string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -57,7 +58,7 @@ func (o *ListReleasesURL) SetBasePath(bp string) {
 func (o *ListReleasesURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/releases/"
+	var _path = "/releases"
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -78,6 +79,14 @@ func (o *ListReleasesURL) Build() (*url.URL, error) {
 	repoQ := o.Repo
 	if repoQ != "" {
 		qs.Set("repo", repoQ)
+	}
+
+	var searchQ string
+	if o.Search != nil {
+		searchQ = *o.Search
+	}
+	if searchQ != "" {
+		qs.Set("search", searchQ)
 	}
 
 	_result.RawQuery = qs.Encode()
