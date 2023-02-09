@@ -166,6 +166,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	// Register Account handlers
 	registerAccountHandlers(api)
 
+	registerReleasesHandlers(api)
+
 	api.PreServerShutdown = func() {}
 
 	api.ServerShutdown = func() {}
