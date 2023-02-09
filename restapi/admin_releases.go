@@ -57,12 +57,16 @@ func GetReleaseListResponse(session *models.Principal, params release.ListReleas
 	if params.Search != nil {
 		search = *params.Search
 	}
-	return releaseList(ctx, repo, currentRelease, search)
+	filter := ""
+	if params.Filter != nil {
+		filter = *params.Filter
+	}
+	return releaseList(ctx, repo, currentRelease, search, filter)
 }
 
-func releaseList(ctx context.Context, repo, currentRelease, search string) (*models.ReleaseListResponse, *models.Error) {
+func releaseList(ctx context.Context, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, *models.Error) {
 	serviceURL := getReleaseServiceURL()
-	releases, err := getReleases(serviceURL, repo, currentRelease, search)
+	releases, err := getReleases(serviceURL, repo, currentRelease, search, filter)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -74,7 +78,7 @@ func getReleaseServiceURL() string {
 	return fmt.Sprintf("%s/releases", host)
 }
 
-func getReleases(url, repo, currentRelease, search string) (*models.ReleaseListResponse, error) {
+func getReleases(url, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, error) {
 	rl := &models.ReleaseListResponse{}
 	client := &http.Client{Timeout: time.Second * 5}
 	req, err := http.NewRequest("GET", url, nil)
@@ -82,6 +86,7 @@ func getReleases(url, repo, currentRelease, search string) (*models.ReleaseListR
 	q.Add("repo", repo)
 	q.Add("current", currentRelease)
 	q.Add("search", search)
+	q.Add("filter", filter)
 	req.URL.RawQuery = q.Encode()
 	if err != nil {
 		return nil, err

@@ -53,6 +53,10 @@ type ListReleasesParams struct {
 	  In: query
 	*/
 	Current *string
+	/*filter releases
+	  In: query
+	*/
+	Filter *string
 	/*repo name
 	  Required: true
 	  In: query
@@ -77,6 +81,11 @@ func (o *ListReleasesParams) BindRequest(r *http.Request, route *middleware.Matc
 
 	qCurrent, qhkCurrent, _ := qs.GetOK("current")
 	if err := o.bindCurrent(qCurrent, qhkCurrent, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qFilter, qhkFilter, _ := qs.GetOK("filter")
+	if err := o.bindFilter(qFilter, qhkFilter, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -109,6 +118,24 @@ func (o *ListReleasesParams) bindCurrent(rawData []string, hasKey bool, formats 
 		return nil
 	}
 	o.Current = &raw
+
+	return nil
+}
+
+// bindFilter binds and validates parameter Filter from query.
+func (o *ListReleasesParams) bindFilter(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+	o.Filter = &raw
 
 	return nil
 }

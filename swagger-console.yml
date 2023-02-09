@@ -3436,6 +3436,10 @@ paths:
           description: search content
           in: query
           type: string
+        - name: filter
+          description: filter releases
+          in: query
+          type: string
       responses:
         200:
           description: A successful response.

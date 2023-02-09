@@ -4082,6 +4082,12 @@ func init() {
             "description": "search content",
             "name": "search",
             "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "filter releases",
+            "name": "filter",
+            "in": "query"
           }
         ],
         "responses": {
@@ -12754,6 +12760,12 @@ func init() {
             "type": "string",
             "description": "search content",
             "name": "search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "filter releases",
+            "name": "filter",
             "in": "query"
           }
         ],

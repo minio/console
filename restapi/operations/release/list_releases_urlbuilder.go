@@ -31,6 +31,7 @@ import (
 // ListReleasesURL generates an URL for the list releases operation
 type ListReleasesURL struct {
 	Current *string
+	Filter  *string
 	Repo    string
 	Search  *string
 
@@ -74,6 +75,14 @@ func (o *ListReleasesURL) Build() (*url.URL, error) {
 	}
 	if currentQ != "" {
 		qs.Set("current", currentQ)
+	}
+
+	var filterQ string
+	if o.Filter != nil {
+		filterQ = *o.Filter
+	}
+	if filterQ != "" {
+		qs.Set("filter", filterQ)
 	}
 
 	repoQ := o.Repo
