@@ -50,6 +50,7 @@ import (
 	"github.com/minio/console/restapi/operations/object"
 	"github.com/minio/console/restapi/operations/policy"
 	"github.com/minio/console/restapi/operations/profile"
+	"github.com/minio/console/restapi/operations/release"
 	"github.com/minio/console/restapi/operations/service"
 	"github.com/minio/console/restapi/operations/service_account"
 	"github.com/minio/console/restapi/operations/site_replication"
@@ -370,6 +371,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		BucketListPoliciesWithBucketHandler: bucket.ListPoliciesWithBucketHandlerFunc(func(params bucket.ListPoliciesWithBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.ListPoliciesWithBucket has not yet been implemented")
+		}),
+		ReleaseListReleasesHandler: release.ListReleasesHandlerFunc(func(params release.ListReleasesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation release.ListReleases has not yet been implemented")
 		}),
 		BucketListRemoteBucketsHandler: bucket.ListRemoteBucketsHandlerFunc(func(params bucket.ListRemoteBucketsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.ListRemoteBuckets has not yet been implemented")
@@ -789,6 +793,8 @@ type ConsoleAPI struct {
 	PolicyListPoliciesHandler policy.ListPoliciesHandler
 	// BucketListPoliciesWithBucketHandler sets the operation handler for the list policies with bucket operation
 	BucketListPoliciesWithBucketHandler bucket.ListPoliciesWithBucketHandler
+	// ReleaseListReleasesHandler sets the operation handler for the list releases operation
+	ReleaseListReleasesHandler release.ListReleasesHandler
 	// BucketListRemoteBucketsHandler sets the operation handler for the list remote buckets operation
 	BucketListRemoteBucketsHandler bucket.ListRemoteBucketsHandler
 	// ServiceAccountListUserServiceAccountsHandler sets the operation handler for the list user service accounts operation
@@ -1274,6 +1280,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.BucketListPoliciesWithBucketHandler == nil {
 		unregistered = append(unregistered, "bucket.ListPoliciesWithBucketHandler")
+	}
+	if o.ReleaseListReleasesHandler == nil {
+		unregistered = append(unregistered, "release.ListReleasesHandler")
 	}
 	if o.BucketListRemoteBucketsHandler == nil {
 		unregistered = append(unregistered, "bucket.ListRemoteBucketsHandler")
@@ -1927,6 +1936,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/bucket-policy/{bucket}"] = bucket.NewListPoliciesWithBucket(o.context, o.BucketListPoliciesWithBucketHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/releases"] = release.NewListReleases(o.context, o.ReleaseListReleasesHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
