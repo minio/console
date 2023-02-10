@@ -49,7 +49,7 @@ func NewListReleases(ctx *middleware.Context, handler ListReleasesHandler) *List
 }
 
 /*
-	ListReleases swagger:route GET /releases/ release listReleases
+	ListReleases swagger:route GET /releases release listReleases
 
 Get repo releases for a given version
 */

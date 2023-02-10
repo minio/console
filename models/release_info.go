@@ -25,6 +25,7 @@ package models
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -40,8 +41,8 @@ type ReleaseInfo struct {
 	// context content
 	ContextContent string `json:"contextContent,omitempty"`
 
-	// name
-	Name string `json:"name,omitempty"`
+	// metadata
+	Metadata *ReleaseMetadata `json:"metadata,omitempty"`
 
 	// new features content
 	NewFeaturesContent string `json:"newFeaturesContent,omitempty"`
@@ -51,18 +52,68 @@ type ReleaseInfo struct {
 
 	// security content
 	SecurityContent string `json:"securityContent,omitempty"`
-
-	// tag
-	Tag string `json:"tag,omitempty"`
 }
 
 // Validate validates this release info
 func (m *ReleaseInfo) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateMetadata(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this release info based on context it is used
+func (m *ReleaseInfo) validateMetadata(formats strfmt.Registry) error {
+	if swag.IsZero(m.Metadata) { // not required
+		return nil
+	}
+
+	if m.Metadata != nil {
+		if err := m.Metadata.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("metadata")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("metadata")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this release info based on the context it is used
 func (m *ReleaseInfo) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMetadata(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ReleaseInfo) contextValidateMetadata(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Metadata != nil {
+		if err := m.Metadata.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("metadata")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("metadata")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

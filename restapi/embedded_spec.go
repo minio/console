@@ -4056,7 +4056,7 @@ func init() {
         }
       }
     },
-    "/releases/": {
+    "/releases": {
       "get": {
         "tags": [
           "release"
@@ -4075,6 +4075,18 @@ func init() {
             "type": "string",
             "description": "Current Release",
             "name": "current",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content",
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "filter releases",
+            "name": "filter",
             "in": "query"
           }
         ],
@@ -7424,6 +7436,65 @@ func init() {
         }
       }
     },
+    "releaseAuthor": {
+      "type": "object",
+      "properties": {
+        "avatar_url": {
+          "type": "string"
+        },
+        "events_url": {
+          "type": "string"
+        },
+        "followers_url": {
+          "type": "string"
+        },
+        "following_url": {
+          "type": "string"
+        },
+        "gists_url": {
+          "type": "string"
+        },
+        "gravatar_id": {
+          "type": "string"
+        },
+        "html_url": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "login": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "organizations_url": {
+          "type": "string"
+        },
+        "receivedEvents_url": {
+          "type": "string"
+        },
+        "repos_url": {
+          "type": "string"
+        },
+        "site_admin": {
+          "type": "boolean"
+        },
+        "starred_url": {
+          "type": "string"
+        },
+        "subscriptions_url": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "releaseInfo": {
       "type": "object",
       "properties": {
@@ -7433,8 +7504,8 @@ func init() {
         "contextContent": {
           "type": "string"
         },
-        "name": {
-          "type": "string"
+        "metadata": {
+          "$ref": "#/definitions/releaseMetadata"
         },
         "newFeaturesContent": {
           "type": "string"
@@ -7443,9 +7514,6 @@ func init() {
           "type": "string"
         },
         "securityContent": {
-          "type": "string"
-        },
-        "tag": {
           "type": "string"
         }
       }
@@ -7458,6 +7526,59 @@ func init() {
           "items": {
             "$ref": "#/definitions/releaseInfo"
           }
+        }
+      }
+    },
+    "releaseMetadata": {
+      "type": "object",
+      "properties": {
+        "assets_url": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/releaseAuthor"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "draft": {
+          "type": "boolean"
+        },
+        "html_url": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "prerelease": {
+          "type": "boolean"
+        },
+        "published_at": {
+          "type": "string"
+        },
+        "tag_name": {
+          "type": "string"
+        },
+        "tarball_url": {
+          "type": "string"
+        },
+        "target_commitish": {
+          "type": "string"
+        },
+        "upload_url": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "zipball_url": {
+          "type": "string"
         }
       }
     },
@@ -12628,7 +12749,7 @@ func init() {
         }
       }
     },
-    "/releases/": {
+    "/releases": {
       "get": {
         "tags": [
           "release"
@@ -12647,6 +12768,18 @@ func init() {
             "type": "string",
             "description": "Current Release",
             "name": "current",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content",
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "filter releases",
+            "name": "filter",
             "in": "query"
           }
         ],
@@ -16122,6 +16255,65 @@ func init() {
         }
       }
     },
+    "releaseAuthor": {
+      "type": "object",
+      "properties": {
+        "avatar_url": {
+          "type": "string"
+        },
+        "events_url": {
+          "type": "string"
+        },
+        "followers_url": {
+          "type": "string"
+        },
+        "following_url": {
+          "type": "string"
+        },
+        "gists_url": {
+          "type": "string"
+        },
+        "gravatar_id": {
+          "type": "string"
+        },
+        "html_url": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "login": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "organizations_url": {
+          "type": "string"
+        },
+        "receivedEvents_url": {
+          "type": "string"
+        },
+        "repos_url": {
+          "type": "string"
+        },
+        "site_admin": {
+          "type": "boolean"
+        },
+        "starred_url": {
+          "type": "string"
+        },
+        "subscriptions_url": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "releaseInfo": {
       "type": "object",
       "properties": {
@@ -16131,8 +16323,8 @@ func init() {
         "contextContent": {
           "type": "string"
         },
-        "name": {
-          "type": "string"
+        "metadata": {
+          "$ref": "#/definitions/releaseMetadata"
         },
         "newFeaturesContent": {
           "type": "string"
@@ -16141,9 +16333,6 @@ func init() {
           "type": "string"
         },
         "securityContent": {
-          "type": "string"
-        },
-        "tag": {
           "type": "string"
         }
       }
@@ -16156,6 +16345,59 @@ func init() {
           "items": {
             "$ref": "#/definitions/releaseInfo"
           }
+        }
+      }
+    },
+    "releaseMetadata": {
+      "type": "object",
+      "properties": {
+        "assets_url": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/releaseAuthor"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "draft": {
+          "type": "boolean"
+        },
+        "html_url": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "prerelease": {
+          "type": "boolean"
+        },
+        "published_at": {
+          "type": "string"
+        },
+        "tag_name": {
+          "type": "string"
+        },
+        "tarball_url": {
+          "type": "string"
+        },
+        "target_commitish": {
+          "type": "string"
+        },
+        "upload_url": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "zipball_url": {
+          "type": "string"
         }
       }
     },

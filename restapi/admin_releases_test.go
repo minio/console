@@ -62,7 +62,7 @@ func (suite *ReleasesTestSuite) getHandler(
 		w.WriteHeader(400)
 	} else {
 		w.WriteHeader(200)
-		response := []*models.ReleaseListResponse{{}}
+		response := &models.ReleaseListResponse{}
 		bytes, _ := json.Marshal(response)
 		fmt.Fprint(w, string(bytes))
 	}
