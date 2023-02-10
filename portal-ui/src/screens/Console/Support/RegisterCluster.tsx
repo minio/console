@@ -15,10 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import Grid from "@mui/material/Grid";
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { HelpBox, WarnIcon } from "mds";
+import { HelpBox, WarnIcon, Grid } from "mds";
 
 interface IRegisterCluster {
   compactMode?: boolean;
@@ -44,22 +43,30 @@ const RegisterCluster = ({ compactMode = false }: IRegisterCluster) => {
   if (compactMode) {
     return (
       <Fragment>
-        <HelpBox
-          title={
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexGrow: 1,
-              }}
-            >
-              <span>{registerMessage}</span> {redirectButton}
-            </div>
-          }
-          iconComponent={<WarnIcon />}
-          help={<Fragment />}
-        />
+        <Grid
+          sx={{
+            "& div.leftItems": {
+              marginBottom: 0,
+            },
+          }}
+        >
+          <HelpBox
+            title={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexGrow: 1,
+                }}
+              >
+                <span>{registerMessage}</span> {redirectButton}
+              </div>
+            }
+            iconComponent={<WarnIcon />}
+            help={<Fragment />}
+          />
+        </Grid>
         <br />
       </Fragment>
     );
