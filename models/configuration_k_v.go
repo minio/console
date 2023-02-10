@@ -25,6 +25,7 @@ package models
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -33,6 +34,9 @@ import (
 //
 // swagger:model configurationKV
 type ConfigurationKV struct {
+
+	// env override
+	EnvOverride *EnvOverride `json:"env_override,omitempty"`
 
 	// key
 	Key string `json:"key,omitempty"`
@@ -43,11 +47,64 @@ type ConfigurationKV struct {
 
 // Validate validates this configuration k v
 func (m *ConfigurationKV) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateEnvOverride(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this configuration k v based on context it is used
+func (m *ConfigurationKV) validateEnvOverride(formats strfmt.Registry) error {
+	if swag.IsZero(m.EnvOverride) { // not required
+		return nil
+	}
+
+	if m.EnvOverride != nil {
+		if err := m.EnvOverride.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("env_override")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("env_override")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this configuration k v based on the context it is used
 func (m *ConfigurationKV) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEnvOverride(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ConfigurationKV) contextValidateEnvOverride(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.EnvOverride != nil {
+		if err := m.EnvOverride.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("env_override")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("env_override")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

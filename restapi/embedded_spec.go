@@ -5882,6 +5882,9 @@ func init() {
     "configurationKV": {
       "type": "object",
       "properties": {
+        "env_override": {
+          "$ref": "#/definitions/envOverride"
+        },
         "key": {
           "type": "string"
         },
@@ -5947,6 +5950,17 @@ func init() {
           "type": "boolean"
         },
         "versionID": {
+          "type": "string"
+        }
+      }
+    },
+    "envOverride": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
           "type": "string"
         }
       }
@@ -14687,6 +14701,9 @@ func init() {
     "configurationKV": {
       "type": "object",
       "properties": {
+        "env_override": {
+          "$ref": "#/definitions/envOverride"
+        },
         "key": {
           "type": "string"
         },
@@ -14752,6 +14769,17 @@ func init() {
           "type": "boolean"
         },
         "versionID": {
+          "type": "string"
+        }
+      }
+    },
+    "envOverride": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
           "type": "string"
         }
       }
