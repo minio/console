@@ -48,9 +48,6 @@ import { Grid } from "@mui/material";
 
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
-import HelpBox from "../../../common/HelpBox";
-import { WarnIcon } from "mds";
-import { Loader } from "mds";
 import { setServerDiagStat } from "../../../systemSlice";
 import {
   healthInfoMessageReceived,
@@ -117,6 +114,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
   const [title, setTitle] = useState<string>("New Diagnostic");
   const [diagFileContent, setDiagFileContent] = useState<string>("");
   const [subnetResponse, setSubnetResponse] = useState<string>("");
+  const clusterRegistered = registeredCluster();
 
   const download = () => {
     let element = document.createElement("a");
