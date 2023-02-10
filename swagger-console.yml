@@ -3894,6 +3894,15 @@ definitions:
         type: string
       value:
         type: string
+      env_override:
+          $ref: "#/definitions/envOverride"
+  envOverride:
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: string
   configuration:
     type: object
     properties:

@@ -49,9 +49,15 @@ export interface IConfigurationElement {
   url?: string;
 }
 
+export interface IEnvOverride {
+  name: string;
+  value: string;
+}
+
 export interface IElementValue {
   key: string;
   value: string;
+  env_override?: IEnvOverride;
 }
 
 export interface IConfigurationSys {
@@ -64,4 +70,13 @@ export interface IElement {
   configuration_label: string;
   icon?: any;
   disabled?: boolean;
+}
+
+export interface OverrideValue {
+  value: string;
+  overrideEnv: string;
+}
+
+export interface IOverrideEnv {
+  [key: string]: OverrideValue;
 }

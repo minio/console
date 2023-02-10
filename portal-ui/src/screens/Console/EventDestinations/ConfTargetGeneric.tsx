@@ -19,7 +19,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import { IElementValue, KVField } from "../Configurations/types";
+import { IElementValue, IOverrideEnv, KVField } from "../Configurations/types";
 import {
   formFieldStyles,
   modalBasic,
@@ -28,11 +28,14 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import CSVMultiSelector from "../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";
 import CommentBoxWrapper from "../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
+import { ConsoleIcon, Tooltip } from "mds";
 
 interface IConfGenericProps {
   onChange: (newValue: IElementValue[]) => void;
   fields: KVField[];
   defaultVals?: IElementValue[];
+  overrideEnv?: IOverrideEnv;
   classes: any;
 }
 
@@ -69,6 +72,7 @@ const ConfTargetGeneric = ({
   onChange,
   fields,
   defaultVals,
+  overrideEnv,
   classes,
 }: IConfGenericProps) => {
   const [valueHolder, setValueHolder] = useState<IElementValue[]>([]);
@@ -102,9 +106,42 @@ const ConfTargetGeneric = ({
   };
 
   const fieldDefinition = (field: KVField, item: number) => {
+    const holderItem = valueHolder[item];
+
+    if (holderItem) {
+      // Override Value with env var, we display generic string component
+      const override = overrideEnv?.[`${holderItem.key}`];
+
+      if (override) {
+        return (
+          <PredefinedList
+            label={field.label}
+            content={override.value}
+            actionButton={
+              <Grid
+                item
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  paddingRight: "10px",
+                }}
+              >
+                <Tooltip
+                  tooltip={`This value is set from the ${override.overrideEnv} environment variable`}
+                  placement={"left"}
+                >
+                  <ConsoleIcon style={{ width: 20 }} />
+                </Tooltip>
+              </Grid>
+            }
+          />
+        );
+      }
+    }
+
     switch (field.type) {
       case "on|off":
-        const value = valueHolder[item] ? valueHolder[item].value : "off";
+        const value = holderItem ? holderItem.value : "off";
 
         return (
           <FormSwitchWrapper
@@ -123,7 +160,7 @@ const ConfTargetGeneric = ({
       case "csv":
         return (
           <CSVMultiSelector
-            elements={valueHolder[item] ? valueHolder[item].value : ""}
+            elements={holderItem ? holderItem.value : ""}
             label={field.label}
             name={field.name}
             onChange={(value: string) => {
@@ -141,7 +178,7 @@ const ConfTargetGeneric = ({
             name={field.name}
             label={field.label}
             tooltip={field.tooltip}
-            value={valueHolder[item] ? valueHolder[item].value : ""}
+            value={holderItem ? holderItem.value : ""}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setValueElement(field.name, e.target.value, item)
             }
@@ -155,7 +192,7 @@ const ConfTargetGeneric = ({
             name={field.name}
             label={field.label}
             tooltip={field.tooltip}
-            value={valueHolder[item] ? valueHolder[item].value : ""}
+            value={holderItem ? holderItem.value : ""}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setValueElement(field.name, e.target.value, item)
             }

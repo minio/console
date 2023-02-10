@@ -32,12 +32,14 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import {
   fieldsConfigurations,
+  overrideFields,
   removeEmptyFields,
 } from "../../Configurations/utils";
 import {
   IConfigurationElement,
   IConfigurationSys,
   IElementValue,
+  IOverrideEnv,
 } from "../../Configurations/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ResetConfigurationModal from "./ResetConfigurationModal";
@@ -89,6 +91,7 @@ const EditConfiguration = ({
   );
   const [resetConfigurationOpen, setResetConfigurationOpen] =
     useState<boolean>(false);
+  const [overrideEnvs, setOverrideEnvs] = useState<IOverrideEnv>({});
 
   const loadingConfig = useSelector(
     (state: AppState) => state.system.loadingConfigurations
@@ -109,6 +112,7 @@ const EditConfiguration = ({
             setConfigSubsysList(res);
             const keyVals = get(res[0], "key_values", []);
             setConfigValues(keyVals);
+            setOverrideEnvs(overrideFields(keyVals));
             dispatch(configurationIsLoading(false));
           })
           .catch((err: ErrorResponseHandler) => {
@@ -221,6 +225,7 @@ const EditConfiguration = ({
                     }
                     onChange={onValueChange}
                     defaultVals={configValues}
+                    overrideEnv={overrideEnvs}
                   />
                 </Grid>
                 <Grid
