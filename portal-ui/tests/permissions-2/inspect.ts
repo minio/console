@@ -17,7 +17,7 @@
 import { Role, Selector } from "testcafe";
 import { readFileSync } from "fs";
 import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
-import { monitoringElement } from "../utils/elements-menu";
+import { inspectElement, monitoringElement } from "../utils/elements-menu";
 
 const data = readFileSync(__dirname + "/../constants/timestamp.txt", "utf-8");
 const $TIMESTAMP = data.trim();
@@ -48,14 +48,9 @@ const inspectScreenUrl = `${testDomainUrl}${IAM_PAGES.SUPPORT_INSPECT}`;
 
 const loginSubmitBtn = Selector("form button");
 
-export const supportSidebarEl = Selector(".MuiPaper-root")
+export const inspectEl = Selector(".MuiPaper-root")
   .find("ul")
-  .child("#support");
-
-export const supportChildren = Selector("#support-children");
-export const inspectEl = supportChildren
-  .find("a")
-  .withAttribute("href", IAM_PAGES.SUPPORT_INSPECT);
+  .child("#inspect");
 
 export const inspect_volume_input = Selector('[data-test-id="inspect_volume"]');
 export const inspect_path_input = Selector('[data-test-id="inspect_path"]');
@@ -96,7 +91,7 @@ test("Inspect page can be opened", async (t) => {
 });
 
 test("Inspect link exists in Menu list", async (t) => {
-  await t.expect(inspectEl.exists).ok();
+  await t.useRole(inspectAllowedRole).expect(inspectElement.exists).ok();
 });
 
 test("Form Input states verification", async (t) => {
