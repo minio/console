@@ -86,6 +86,7 @@ type MinioAdmin interface {
 	helpConfigKVGlobal(ctx context.Context, envOnly bool) (madmin.Help, error)
 	setConfigKV(ctx context.Context, kv string) (restart bool, err error)
 	delConfigKV(ctx context.Context, kv string) (err error)
+	serverUpdate(ctx context.Context, updateURL string) (madmin.ServerUpdateStatus, error)
 
 	serviceRestart(ctx context.Context) error
 	serverInfo(ctx context.Context) (madmin.InfoMessage, error)
@@ -293,6 +294,10 @@ func (ac AdminClient) delConfigKV(ctx context.Context, kv string) (err error) {
 // implements madmin.ServiceRestart()
 func (ac AdminClient) serviceRestart(ctx context.Context) (err error) {
 	return ac.Client.ServiceRestart(ctx)
+}
+
+func (ac AdminClient) serverUpdate(ctx context.Context, updateURL string) (us madmin.ServerUpdateStatus, err error) {
+	return ac.Client.ServerUpdate(ctx, updateURL)
 }
 
 // implements madmin.ServerInfo()

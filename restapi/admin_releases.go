@@ -49,25 +49,16 @@ func registerReleasesHandlers(api *operations.ConsoleAPI) {
 func GetReleaseListResponse(_ *models.Principal, params release.ListReleasesParams) (*models.ReleaseListResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	repo := params.Repo
 	currentRelease := ""
 	if params.Current != nil {
 		currentRelease = *params.Current
 	}
-	search := ""
-	if params.Search != nil {
-		search = *params.Search
-	}
-	filter := ""
-	if params.Filter != nil {
-		filter = *params.Filter
-	}
-	return releaseList(ctx, repo, currentRelease, search, filter)
+	return releaseList(ctx, currentRelease)
 }
 
-func releaseList(ctx context.Context, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, *models.Error) {
+func releaseList(ctx context.Context, currentRelease string) (*models.ReleaseListResponse, *models.Error) {
 	serviceURL := getReleaseServiceURL()
-	releases, err := getReleases(serviceURL, repo, currentRelease, search, filter)
+	releases, err := getReleases(serviceURL, currentRelease)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -76,22 +67,21 @@ func releaseList(ctx context.Context, repo, currentRelease, search, filter strin
 
 func getReleaseServiceURL() string {
 	host := env.Get(releaseServiceHostEnvVar, defaultReleaseServiceHost)
-	return fmt.Sprintf("%s/releases", host)
+	return fmt.Sprintf("%s/api/v1/latest", host)
 }
 
-func getReleases(endpoint, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, error) {
-	rl := &models.ReleaseListResponse{}
+func getReleases(endpoint, currentRelease string) (*models.ReleaseListResponse, error) {
+	rl := &models.ReleaseInfo{}
 	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	q := &url.Values{}
-	q.Add("repo", repo)
-	q.Add("search", search)
-	q.Add("filter", filter)
-	q.Add("current", currentRelease)
+	q.Add("since", currentRelease)
 	req.URL.RawQuery = q.Encode()
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer token")
 
 	client := GetConsoleHTTPClient("")
 	client.Timeout = time.Second * 5
@@ -108,5 +98,16 @@ func getReleases(endpoint, repo, currentRelease, search, filter string) (*models
 	if err != nil {
 		return nil, err
 	}
-	return rl, nil
+
+	var retData []*models.ReleaseInfo
+
+	if rl != nil {
+		retData = append(retData, rl)
+	}
+
+	retVar := &models.ReleaseListResponse{
+		Results: retData,
+	}
+
+	return retVar, nil
 }

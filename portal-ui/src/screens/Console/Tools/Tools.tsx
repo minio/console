@@ -22,6 +22,7 @@ import NotFoundPage from "../../NotFoundPage";
 import CallHome from "../Support/CallHome";
 
 const Inspect = withSuspense(React.lazy(() => import("./Inspect")));
+const Upgrade = withSuspense(React.lazy(() => import("../Upgrade/Upgrade")));
 const Register = withSuspense(React.lazy(() => import("../Support/Register")));
 const Profile = withSuspense(React.lazy(() => import("../Support/Profile")));
 
@@ -32,6 +33,7 @@ const Tools = () => {
       <Route path={"profile"} element={<Profile />} />
       <Route path={"call-home"} element={<CallHome />} />
       <Route path={"inspect"} element={<Inspect />} />
+      <Route path={"upgrade"} element={<Upgrade />} />
       <Route path={"*"} element={<NotFoundPage />} />
     </Routes>
   );

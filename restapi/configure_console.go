@@ -153,6 +153,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerInspectHandler(api)
 	// Register nodes handlers
 	registerNodesHandler(api)
+	// Register upgrade instance handlers
+	registerUpgradeHandlers(api)
 
 	registerSiteReplicationHandler(api)
 	registerSiteReplicationStatusHandler(api)

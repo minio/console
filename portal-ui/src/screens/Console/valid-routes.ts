@@ -257,6 +257,17 @@ export const validRoutes = (features: string[] | null | undefined) => {
     },
     {
       group: "Administrator",
+      name: "Update",
+      id: "releaseDiff",
+      to: IAM_PAGES.UPGRADE,
+      // TODO: change icon
+      icon: InspectMenuIcon,
+      component: NavLink,
+      // TODO: Add Component to validate current version and show notification
+      //badge: LicenseBadge,
+    },
+    {
+      group: "Administrator",
       component: NavLink,
       to: IAM_PAGES.SETTINGS,
       name: "Settings",

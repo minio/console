@@ -190,6 +190,7 @@ export const IAM_PAGES = {
   CALL_HOME: "/support/call-home",
   PROFILE: "/support/profile",
   SUPPORT_INSPECT: "/support/inspect",
+  UPGRADE: "/support/upgrade",
 
   /** License **/
   LICENSE: "/license",
@@ -414,6 +415,10 @@ export const IAM_PAGES_PERMISSIONS = {
   [IAM_PAGES.LICENSE]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
+  ],
+  [IAM_PAGES.UPGRADE]: [
+    // Use same permissions as license page for the moment
+    IAM_SCOPES.ADMIN_SERVER_INFO,
   ],
   [IAM_PAGES.SITE_REPLICATION]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,

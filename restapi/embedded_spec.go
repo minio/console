@@ -636,6 +636,39 @@ func init() {
         }
       }
     },
+    "/admin/upgrade": {
+      "put": {
+        "tags": [
+          "Upgrade"
+        ],
+        "summary": "Upgrades MinIO instance",
+        "operationId": "UpgradeInstance",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/upgradeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/upgradeResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/bucket-policy/{bucket}": {
       "get": {
         "tags": [
@@ -7745,61 +7778,16 @@ func init() {
         }
       }
     },
-    "releaseAuthor": {
+    "releaseChanges": {
       "type": "object",
       "properties": {
-        "avatar_url": {
-          "type": "string"
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
-        "events_url": {
-          "type": "string"
-        },
-        "followers_url": {
-          "type": "string"
-        },
-        "following_url": {
-          "type": "string"
-        },
-        "gists_url": {
-          "type": "string"
-        },
-        "gravatar_id": {
-          "type": "string"
-        },
-        "html_url": {
-          "type": "string"
-        },
-        "id": {
-          "type": "integer"
-        },
-        "login": {
-          "type": "string"
-        },
-        "node_id": {
-          "type": "string"
-        },
-        "organizations_url": {
-          "type": "string"
-        },
-        "receivedEvents_url": {
-          "type": "string"
-        },
-        "repos_url": {
-          "type": "string"
-        },
-        "site_admin": {
-          "type": "boolean"
-        },
-        "starred_url": {
-          "type": "string"
-        },
-        "subscriptions_url": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        },
-        "url": {
+        "title": {
           "type": "string"
         }
       }
@@ -7807,22 +7795,19 @@ func init() {
     "releaseInfo": {
       "type": "object",
       "properties": {
-        "breakingChangesContent": {
+        "changes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/releaseChanges"
+          }
+        },
+        "metrics": {
+          "$ref": "#/definitions/releaseMetrics"
+        },
+        "name": {
           "type": "string"
         },
-        "contextContent": {
-          "type": "string"
-        },
-        "metadata": {
-          "$ref": "#/definitions/releaseMetadata"
-        },
-        "newFeaturesContent": {
-          "type": "string"
-        },
-        "notesContent": {
-          "type": "string"
-        },
-        "securityContent": {
+        "release_notes": {
           "type": "string"
         }
       }
@@ -7838,56 +7823,23 @@ func init() {
         }
       }
     },
-    "releaseMetadata": {
+    "releaseMetrics": {
       "type": "object",
       "properties": {
-        "assets_url": {
-          "type": "string"
+        "bug_fixes": {
+          "type": "number"
         },
-        "author": {
-          "$ref": "#/definitions/releaseAuthor"
+        "changes": {
+          "type": "number"
         },
-        "created_at": {
-          "type": "string"
+        "new_feature": {
+          "type": "number"
         },
-        "draft": {
-          "type": "boolean"
+        "releases": {
+          "type": "number"
         },
-        "html_url": {
-          "type": "string"
-        },
-        "id": {
-          "type": "integer"
-        },
-        "name": {
-          "type": "string"
-        },
-        "node_id": {
-          "type": "string"
-        },
-        "prerelease": {
-          "type": "boolean"
-        },
-        "published_at": {
-          "type": "string"
-        },
-        "tag_name": {
-          "type": "string"
-        },
-        "tarball_url": {
-          "type": "string"
-        },
-        "target_commitish": {
-          "type": "string"
-        },
-        "upload_url": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "zipball_url": {
-          "type": "string"
+        "security": {
+          "type": "number"
         }
       }
     },
@@ -8860,6 +8812,25 @@ func init() {
         }
       }
     },
+    "upgradeRequest": {
+      "type": "object",
+      "properties": {
+        "customURL": {
+          "type": "string"
+        }
+      }
+    },
+    "upgradeResponse": {
+      "type": "object",
+      "properties": {
+        "currentVersion": {
+          "type": "string"
+        },
+        "updatedVersion": {
+          "type": "string"
+        }
+      }
+    },
     "user": {
       "type": "object",
       "properties": {
@@ -9628,6 +9599,39 @@ func init() {
         "responses": {
           "200": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/upgrade": {
+      "put": {
+        "tags": [
+          "Upgrade"
+        ],
+        "summary": "Upgrades MinIO instance",
+        "operationId": "UpgradeInstance",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/upgradeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/upgradeResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -16876,61 +16880,16 @@ func init() {
         }
       }
     },
-    "releaseAuthor": {
+    "releaseChanges": {
       "type": "object",
       "properties": {
-        "avatar_url": {
-          "type": "string"
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
-        "events_url": {
-          "type": "string"
-        },
-        "followers_url": {
-          "type": "string"
-        },
-        "following_url": {
-          "type": "string"
-        },
-        "gists_url": {
-          "type": "string"
-        },
-        "gravatar_id": {
-          "type": "string"
-        },
-        "html_url": {
-          "type": "string"
-        },
-        "id": {
-          "type": "integer"
-        },
-        "login": {
-          "type": "string"
-        },
-        "node_id": {
-          "type": "string"
-        },
-        "organizations_url": {
-          "type": "string"
-        },
-        "receivedEvents_url": {
-          "type": "string"
-        },
-        "repos_url": {
-          "type": "string"
-        },
-        "site_admin": {
-          "type": "boolean"
-        },
-        "starred_url": {
-          "type": "string"
-        },
-        "subscriptions_url": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        },
-        "url": {
+        "title": {
           "type": "string"
         }
       }
@@ -16938,22 +16897,19 @@ func init() {
     "releaseInfo": {
       "type": "object",
       "properties": {
-        "breakingChangesContent": {
+        "changes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/releaseChanges"
+          }
+        },
+        "metrics": {
+          "$ref": "#/definitions/releaseMetrics"
+        },
+        "name": {
           "type": "string"
         },
-        "contextContent": {
-          "type": "string"
-        },
-        "metadata": {
-          "$ref": "#/definitions/releaseMetadata"
-        },
-        "newFeaturesContent": {
-          "type": "string"
-        },
-        "notesContent": {
-          "type": "string"
-        },
-        "securityContent": {
+        "release_notes": {
           "type": "string"
         }
       }
@@ -16969,56 +16925,23 @@ func init() {
         }
       }
     },
-    "releaseMetadata": {
+    "releaseMetrics": {
       "type": "object",
       "properties": {
-        "assets_url": {
-          "type": "string"
+        "bug_fixes": {
+          "type": "number"
         },
-        "author": {
-          "$ref": "#/definitions/releaseAuthor"
+        "changes": {
+          "type": "number"
         },
-        "created_at": {
-          "type": "string"
+        "new_feature": {
+          "type": "number"
         },
-        "draft": {
-          "type": "boolean"
+        "releases": {
+          "type": "number"
         },
-        "html_url": {
-          "type": "string"
-        },
-        "id": {
-          "type": "integer"
-        },
-        "name": {
-          "type": "string"
-        },
-        "node_id": {
-          "type": "string"
-        },
-        "prerelease": {
-          "type": "boolean"
-        },
-        "published_at": {
-          "type": "string"
-        },
-        "tag_name": {
-          "type": "string"
-        },
-        "tarball_url": {
-          "type": "string"
-        },
-        "target_commitish": {
-          "type": "string"
-        },
-        "upload_url": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "zipball_url": {
-          "type": "string"
+        "security": {
+          "type": "number"
         }
       }
     },
@@ -17988,6 +17911,25 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "upgradeRequest": {
+      "type": "object",
+      "properties": {
+        "customURL": {
+          "type": "string"
+        }
+      }
+    },
+    "upgradeResponse": {
+      "type": "object",
+      "properties": {
+        "currentVersion": {
+          "type": "string"
+        },
+        "updatedVersion": {
+          "type": "string"
         }
       }
     },

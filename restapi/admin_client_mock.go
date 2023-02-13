@@ -86,6 +86,8 @@ var (
 	minioInfoServiceAccountMock    func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
 	minioUpdateServiceAccountMock  func(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error
 	minioGetLDAPPolicyEntitiesMock func(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error)
+
+	minioServerUpdateMock func(ctx context.Context, updateURL string) (madmin.ServerUpdateStatus, error)
 )
 
 func (ac AdminClientMock) serverInfo(ctx context.Context) (madmin.InfoMessage, error) {
@@ -395,4 +397,8 @@ func (ac AdminClientMock) updateServiceAccount(ctx context.Context, serviceAccou
 
 func (ac AdminClientMock) getLDAPPolicyEntities(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error) {
 	return minioGetLDAPPolicyEntitiesMock(ctx, query)
+}
+
+func (ac AdminClientMock) serverUpdate(ctx context.Context, customURL string) (madmin.ServerUpdateStatus, error) {
+	return minioServerUpdateMock(ctx, customURL)
 }

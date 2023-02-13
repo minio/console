@@ -24,6 +24,7 @@ package models
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -35,30 +36,28 @@ import (
 // swagger:model releaseInfo
 type ReleaseInfo struct {
 
-	// breaking changes content
-	BreakingChangesContent string `json:"breakingChangesContent,omitempty"`
+	// changes
+	Changes []*ReleaseChanges `json:"changes"`
 
-	// context content
-	ContextContent string `json:"contextContent,omitempty"`
+	// metrics
+	Metrics *ReleaseMetrics `json:"metrics,omitempty"`
 
-	// metadata
-	Metadata *ReleaseMetadata `json:"metadata,omitempty"`
+	// name
+	Name string `json:"name,omitempty"`
 
-	// new features content
-	NewFeaturesContent string `json:"newFeaturesContent,omitempty"`
-
-	// notes content
-	NotesContent string `json:"notesContent,omitempty"`
-
-	// security content
-	SecurityContent string `json:"securityContent,omitempty"`
+	// release notes
+	ReleaseNotes string `json:"release_notes,omitempty"`
 }
 
 // Validate validates this release info
 func (m *ReleaseInfo) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateMetadata(formats); err != nil {
+	if err := m.validateChanges(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMetrics(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -68,17 +67,43 @@ func (m *ReleaseInfo) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ReleaseInfo) validateMetadata(formats strfmt.Registry) error {
-	if swag.IsZero(m.Metadata) { // not required
+func (m *ReleaseInfo) validateChanges(formats strfmt.Registry) error {
+	if swag.IsZero(m.Changes) { // not required
 		return nil
 	}
 
-	if m.Metadata != nil {
-		if err := m.Metadata.Validate(formats); err != nil {
+	for i := 0; i < len(m.Changes); i++ {
+		if swag.IsZero(m.Changes[i]) { // not required
+			continue
+		}
+
+		if m.Changes[i] != nil {
+			if err := m.Changes[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("changes" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("changes" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ReleaseInfo) validateMetrics(formats strfmt.Registry) error {
+	if swag.IsZero(m.Metrics) { // not required
+		return nil
+	}
+
+	if m.Metrics != nil {
+		if err := m.Metrics.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("metadata")
+				return ve.ValidateName("metrics")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("metadata")
+				return ce.ValidateName("metrics")
 			}
 			return err
 		}
@@ -91,7 +116,11 @@ func (m *ReleaseInfo) validateMetadata(formats strfmt.Registry) error {
 func (m *ReleaseInfo) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateMetadata(ctx, formats); err != nil {
+	if err := m.contextValidateChanges(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMetrics(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -101,14 +130,34 @@ func (m *ReleaseInfo) ContextValidate(ctx context.Context, formats strfmt.Regist
 	return nil
 }
 
-func (m *ReleaseInfo) contextValidateMetadata(ctx context.Context, formats strfmt.Registry) error {
+func (m *ReleaseInfo) contextValidateChanges(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.Metadata != nil {
-		if err := m.Metadata.ContextValidate(ctx, formats); err != nil {
+	for i := 0; i < len(m.Changes); i++ {
+
+		if m.Changes[i] != nil {
+			if err := m.Changes[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("changes" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("changes" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ReleaseInfo) contextValidateMetrics(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Metrics != nil {
+		if err := m.Metrics.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("metadata")
+				return ve.ValidateName("metrics")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("metadata")
+				return ce.ValidateName("metrics")
 			}
 			return err
 		}

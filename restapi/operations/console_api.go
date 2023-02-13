@@ -58,6 +58,7 @@ import (
 	"github.com/minio/console/restapi/operations/support"
 	"github.com/minio/console/restapi/operations/system"
 	"github.com/minio/console/restapi/operations/tiering"
+	"github.com/minio/console/restapi/operations/upgrade"
 	"github.com/minio/console/restapi/operations/user"
 )
 
@@ -553,6 +554,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserUpdateUserInfoHandler: user.UpdateUserInfoHandlerFunc(func(params user.UpdateUserInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user.UpdateUserInfo has not yet been implemented")
 		}),
+		UpgradeUpgradeInstanceHandler: upgrade.UpgradeInstanceHandlerFunc(func(params upgrade.UpgradeInstanceParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation upgrade.UpgradeInstance has not yet been implemented")
+		}),
 
 		// Applies when the "X-Anonymous" header is set
 		AnonymousAuth: func(token string) (*models.Principal, error) {
@@ -929,6 +933,8 @@ type ConsoleAPI struct {
 	UserUpdateUserGroupsHandler user.UpdateUserGroupsHandler
 	// UserUpdateUserInfoHandler sets the operation handler for the update user info operation
 	UserUpdateUserInfoHandler user.UpdateUserInfoHandler
+	// UpgradeUpgradeInstanceHandler sets the operation handler for the upgrade instance operation
+	UpgradeUpgradeInstanceHandler upgrade.UpgradeInstanceHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -1486,6 +1492,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserUpdateUserInfoHandler == nil {
 		unregistered = append(unregistered, "user.UpdateUserInfoHandler")
+	}
+	if o.UpgradeUpgradeInstanceHandler == nil {
+		unregistered = append(unregistered, "upgrade.UpgradeInstanceHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -2217,6 +2226,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/user/{name}"] = user.NewUpdateUserInfo(o.context, o.UserUpdateUserInfoHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/admin/upgrade"] = upgrade.NewUpgradeInstance(o.context, o.UpgradeUpgradeInstanceHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP
