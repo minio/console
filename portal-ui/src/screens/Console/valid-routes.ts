@@ -22,16 +22,16 @@ import {
   IAM_PAGES,
   IAM_PAGES_PERMISSIONS,
   IAM_SCOPES,
-  S3_ALL_RESOURCES,
+  S3_ALL_RESOURCES
 } from "../../common/SecureComponent/permissions";
 import {
   AccessMenuIcon,
   AccountsMenuIcon,
   AuditLogsMenuIcon,
   BucketsMenuIcon,
+  CallHomeMenuIcon,
   ClustersIcon,
   DocumentationIcon,
-  CallHomeMenuIcon,
   DrivesMenuIcon,
   GroupsMenuIcon,
   HealthMenuIcon,
@@ -53,7 +53,7 @@ import {
   TiersIcon,
   TraceMenuIcon,
   UsersMenuIcon,
-  WatchIcon,
+  WatchIcon
 } from "mds";
 import { hasPermission } from "../../common/SecureComponent";
 import React from "react";
@@ -78,7 +78,7 @@ export const validRoutes = (
       to: IAM_PAGES.OBJECT_BROWSER_VIEW,
       icon: ObjectBrowserIcon,
       forceDisplay: true,
-      children: [],
+      children: []
     },
     {
       group: "User",
@@ -87,7 +87,7 @@ export const validRoutes = (
       to: IAM_PAGES.ACCOUNT,
       name: "Access Keys",
       icon: AccountsMenuIcon,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       group: "User",
@@ -108,7 +108,7 @@ export const validRoutes = (
           "https://min.io/docs/minio/linux/index.html?ref=con",
           "_blank"
         );
-      },
+      }
     },
     {
       group: "Administrator",
@@ -118,7 +118,7 @@ export const validRoutes = (
       to: IAM_PAGES.BUCKETS,
       icon: BucketsMenuIcon,
       forceDisplay: true,
-      children: [],
+      children: []
     },
     {
       group: "Administrator",
@@ -126,7 +126,7 @@ export const validRoutes = (
       component: NavLink,
       id: "policies",
       to: IAM_PAGES.POLICIES,
-      icon: AccessMenuIcon,
+      icon: AccessMenuIcon
     },
     {
       group: "Administrator",
@@ -144,7 +144,7 @@ export const validRoutes = (
             hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_ALL_ACTIONS]),
           name: "Users",
           icon: UsersMenuIcon,
-          fsHidden: ldapIsEnabled,
+          fsHidden: ldapIsEnabled
         },
         {
           component: NavLink,
@@ -152,23 +152,23 @@ export const validRoutes = (
           to: IAM_PAGES.GROUPS,
           name: "Groups",
           icon: GroupsMenuIcon,
-          fsHidden: ldapIsEnabled,
+          fsHidden: ldapIsEnabled
         },
         {
           name: "OpenID",
           component: NavLink,
           id: "openID",
           to: IAM_PAGES.IDP_OPENID_CONFIGURATIONS,
-          icon: LockOpen,
+          icon: LockOpen
         },
         {
           name: "LDAP",
           component: NavLink,
           id: "ldap",
           to: IAM_PAGES.IDP_LDAP_CONFIGURATIONS,
-          icon: Login,
-        },
-      ],
+          icon: Login
+        }
+      ]
     },
 
     {
@@ -182,42 +182,42 @@ export const validRoutes = (
           id: "monitorMetrics",
           to: IAM_PAGES.DASHBOARD,
           icon: MetricsMenuIcon,
-          component: NavLink,
+          component: NavLink
         },
         {
           name: "Logs ",
           id: "monitorLogs",
           to: IAM_PAGES.TOOLS_LOGS,
           icon: LogsMenuIcon,
-          component: NavLink,
+          component: NavLink
         },
         {
           name: "Audit",
           id: "monitorAudit",
           to: IAM_PAGES.TOOLS_AUDITLOGS,
           icon: AuditLogsMenuIcon,
-          component: NavLink,
+          component: NavLink
         },
         {
           name: "Trace",
           id: "monitorTrace",
           to: IAM_PAGES.TOOLS_TRACE,
           icon: TraceMenuIcon,
-          component: NavLink,
+          component: NavLink
         },
         {
           name: "Watch",
           id: "watch",
           component: NavLink,
           icon: WatchIcon,
-          to: IAM_PAGES.TOOLS_WATCH,
+          to: IAM_PAGES.TOOLS_WATCH
         },
         {
           name: "Drives",
           id: "monitorDrives",
           to: IAM_PAGES.TOOLS_HEAL,
           icon: DrivesMenuIcon,
-          component: NavLink,
+          component: NavLink
         },
         {
           name: "Encryption",
@@ -225,9 +225,9 @@ export const validRoutes = (
           to: IAM_PAGES.KMS_STATUS,
           icon: EncryptionStatusIcon,
           component: NavLink,
-          fsHidden: !kmsIsEnabled,
-        },
-      ],
+          fsHidden: !kmsIsEnabled
+        }
+      ]
     },
     {
       group: "Administrator",
@@ -235,7 +235,7 @@ export const validRoutes = (
       to: IAM_PAGES.EVENT_DESTINATIONS,
       name: "Events",
       icon: LambdaIcon,
-      id: "lambda",
+      id: "lambda"
     },
     {
       group: "Administrator",
@@ -243,7 +243,7 @@ export const validRoutes = (
       to: IAM_PAGES.TIERS,
       name: "Tiering",
       icon: TiersIcon,
-      id: "tiers",
+      id: "tiers"
     },
     {
       group: "Administrator",
@@ -251,7 +251,7 @@ export const validRoutes = (
       to: IAM_PAGES.SITE_REPLICATION,
       name: "Site Replication",
       icon: RecoverIcon,
-      id: "sitereplication",
+      id: "sitereplication"
     },
     {
       group: "Administrator",
@@ -260,7 +260,7 @@ export const validRoutes = (
       name: "Encryption",
       icon: EncryptionIcon,
       id: "encryption",
-      fsHidden: !kmsIsEnabled,
+      fsHidden: !kmsIsEnabled
     },
     {
       group: "Administrator",
@@ -268,7 +268,7 @@ export const validRoutes = (
       to: IAM_PAGES.SETTINGS,
       name: "Settings",
       id: "configurations",
-      icon: SettingsIcon,
+      icon: SettingsIcon
     },
     {
       group: "Subscription",
@@ -278,7 +278,7 @@ export const validRoutes = (
       id: "license",
       icon: LicenseIcon,
       badge: LicenseBadge,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       group: "Subscription",
@@ -286,7 +286,7 @@ export const validRoutes = (
       id: "diagnostics",
       component: NavLink,
       icon: HealthMenuIcon,
-      to: IAM_PAGES.TOOLS_DIAGNOSTICS,
+      to: IAM_PAGES.TOOLS_DIAGNOSTICS
     },
     {
       group: "Subscription",
@@ -294,7 +294,7 @@ export const validRoutes = (
       id: "performance",
       component: NavLink,
       icon: PerformanceMenuIcon,
-      to: IAM_PAGES.TOOLS_SPEEDTEST,
+      to: IAM_PAGES.TOOLS_SPEEDTEST
     },
     {
       group: "Subscription",
@@ -302,7 +302,7 @@ export const validRoutes = (
       id: "profile",
       component: NavLink,
       icon: ProfileMenuIcon,
-      to: IAM_PAGES.PROFILE,
+      to: IAM_PAGES.PROFILE
     },
     {
       group: "Subscription",
@@ -310,7 +310,7 @@ export const validRoutes = (
       id: "inspectObjects",
       to: IAM_PAGES.SUPPORT_INSPECT,
       icon: InspectMenuIcon,
-      component: NavLink,
+      component: NavLink
     },
     {
       group: "Subscription",
@@ -318,8 +318,18 @@ export const validRoutes = (
       id: "callhome",
       component: NavLink,
       icon: CallHomeMenuIcon,
-      to: IAM_PAGES.CALL_HOME,
+      to: IAM_PAGES.CALL_HOME
     },
+
+    {
+      group: "Subscription",
+      name: "Releases",
+      id: "releaseDiff",
+      to: IAM_PAGES.RELEASES,
+      // TODO: change icon
+      icon: InspectMenuIcon,
+      component: NavLink
+    }
   ];
 
   let operatorMenus: IMenuItem[] = [
@@ -331,7 +341,7 @@ export const validRoutes = (
       to: IAM_PAGES.TENANTS,
       name: "Tenants",
       icon: TenantsOutlineIcon,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       group: "Operator",
@@ -341,7 +351,7 @@ export const validRoutes = (
       to: IAM_PAGES.LICENSE,
       name: "License",
       icon: LicenseIcon,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       group: "Operator",
@@ -351,7 +361,7 @@ export const validRoutes = (
       to: IAM_PAGES.REGISTER_SUPPORT,
       name: "Register",
       icon: RegisterMenuIcon,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       group: "Operator",
@@ -373,8 +383,8 @@ export const validRoutes = (
           "https://min.io/docs/minio/linux/index.html?ref=op",
           "_blank"
         );
-      },
-    },
+      }
+    }
   ];
 
   let directPVMenus: IMenuItem[] = [
@@ -386,7 +396,7 @@ export const validRoutes = (
       to: IAM_PAGES.DIRECTPV_STORAGE,
       name: "PVCs",
       icon: ClustersIcon,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       name: "Drives",
@@ -395,7 +405,7 @@ export const validRoutes = (
       component: NavLink,
       icon: DrivesMenuIcon,
       to: IAM_PAGES.DIRECTPV_DRIVES,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       name: "Volumes",
@@ -404,7 +414,7 @@ export const validRoutes = (
       component: NavLink,
       icon: StorageIcon,
       to: IAM_PAGES.DIRECTPV_VOLUMES,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       group: "DirectPV",
@@ -414,7 +424,7 @@ export const validRoutes = (
       to: IAM_PAGES.LICENSE,
       name: "License",
       icon: LicenseIcon,
-      forceDisplay: true,
+      forceDisplay: true
     },
     {
       group: "DirectPV",
@@ -436,8 +446,8 @@ export const validRoutes = (
           "https://min.io/docs/minio/linux/index.html?ref=op",
           "_blank"
         );
-      },
-    },
+      }
+    }
   ];
 
   let menus = consoleMenus;
@@ -453,8 +463,8 @@ export const validRoutes = (
       const c = item.children?.filter((childItem: IMenuItem) => {
         return (
           ((childItem.customPermissionFnc
-            ? childItem.customPermissionFnc()
-            : hasPermission(
+              ? childItem.customPermissionFnc()
+              : hasPermission(
                 CONSOLE_UI_RESOURCE,
                 IAM_PAGES_PERMISSIONS[childItem.to ?? ""]
               )) ||
@@ -467,8 +477,8 @@ export const validRoutes = (
 
     const res =
       ((item.customPermissionFnc
-        ? item.customPermissionFnc()
-        : hasPermission(
+          ? item.customPermissionFnc()
+          : hasPermission(
             CONSOLE_UI_RESOURCE,
             IAM_PAGES_PERMISSIONS[item.to ?? ""]
           )) ||
