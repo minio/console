@@ -60,6 +60,10 @@ func subnetAPIKeyURL() string {
 	return subnetBaseURL() + "/api/auth/api-key"
 }
 
+func LogWebhookURL() string {
+	return subnetBaseURL() + "/api/logs"
+}
+
 func GenerateRegToken(clusterRegInfo mc.ClusterRegistrationInfo) (string, error) {
 	token, e := json.Marshal(clusterRegInfo)
 	if e != nil {

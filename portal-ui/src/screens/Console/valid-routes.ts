@@ -31,6 +31,7 @@ import {
   BucketsMenuIcon,
   ClustersIcon,
   DocumentationIcon,
+  CallHomeMenuIcon,
   DrivesMenuIcon,
   GroupsMenuIcon,
   HealthMenuIcon,
@@ -48,7 +49,6 @@ import {
   RegisterMenuIcon,
   SettingsIcon,
   StorageIcon,
-  SupportMenuIcon,
   TenantsOutlineIcon,
   TiersIcon,
   TraceMenuIcon,
@@ -282,12 +282,6 @@ export const validRoutes = (
     },
     {
       group: "Subscription",
-      name: "Support",
-      id: "support",
-      icon: SupportMenuIcon,
-    },
-    {
-      group: "Subscription",
       name: "Health",
       id: "diagnostics",
       component: NavLink,
@@ -317,6 +311,14 @@ export const validRoutes = (
       to: IAM_PAGES.SUPPORT_INSPECT,
       icon: InspectMenuIcon,
       component: NavLink,
+    },
+    {
+      group: "Subscription",
+      name: "Call Home",
+      id: "callhome",
+      component: NavLink,
+      icon: CallHomeMenuIcon,
+      to: IAM_PAGES.CALL_HOME,
     },
   ];
 
