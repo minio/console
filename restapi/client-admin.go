@@ -86,7 +86,6 @@ type MinioAdmin interface {
 	helpConfigKVGlobal(ctx context.Context, envOnly bool) (madmin.Help, error)
 	setConfigKV(ctx context.Context, kv string) (restart bool, err error)
 	delConfigKV(ctx context.Context, kv string) (err error)
-
 	serviceRestart(ctx context.Context) error
 	serverInfo(ctx context.Context) (madmin.InfoMessage, error)
 	startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
