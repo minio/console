@@ -32,7 +32,7 @@ import (
 
 var (
 	releaseServiceHostEnvVar  = "RELEASE_SERVICE_HOST"
-	defaultReleaseServiceHost = "https://release-service.apps.min.dev"
+	defaultReleaseServiceHost = "https://enterprise-updates.ic.min.dev"
 )
 
 func registerReleasesHandlers(api *operations.ConsoleAPI) {
