@@ -55,6 +55,7 @@ import (
 	"github.com/minio/console/restapi/operations/service_account"
 	"github.com/minio/console/restapi/operations/site_replication"
 	"github.com/minio/console/restapi/operations/subnet"
+	"github.com/minio/console/restapi/operations/support"
 	"github.com/minio/console/restapi/operations/system"
 	"github.com/minio/console/restapi/operations/tiering"
 	"github.com/minio/console/restapi/operations/user"
@@ -242,6 +243,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		BucketGetBucketVersioningHandler: bucket.GetBucketVersioningHandlerFunc(func(params bucket.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.GetBucketVersioning has not yet been implemented")
+		}),
+		SupportGetCallHomeOptionValueHandler: support.GetCallHomeOptionValueHandlerFunc(func(params support.GetCallHomeOptionValueParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation support.GetCallHomeOptionValue has not yet been implemented")
 		}),
 		IdpGetConfigurationHandler: idp.GetConfigurationHandlerFunc(func(params idp.GetConfigurationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation idp.GetConfiguration has not yet been implemented")
@@ -470,6 +474,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		BucketSetBucketVersioningHandler: bucket.SetBucketVersioningHandlerFunc(func(params bucket.SetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.SetBucketVersioning has not yet been implemented")
+		}),
+		SupportSetCallHomeStatusHandler: support.SetCallHomeStatusHandlerFunc(func(params support.SetCallHomeStatusParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation support.SetCallHomeStatus has not yet been implemented")
 		}),
 		ConfigurationSetConfigHandler: configuration.SetConfigHandlerFunc(func(params configuration.SetConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation configuration.SetConfig has not yet been implemented")
@@ -707,6 +714,8 @@ type ConsoleAPI struct {
 	BucketGetBucketRewindHandler bucket.GetBucketRewindHandler
 	// BucketGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
 	BucketGetBucketVersioningHandler bucket.GetBucketVersioningHandler
+	// SupportGetCallHomeOptionValueHandler sets the operation handler for the get call home option value operation
+	SupportGetCallHomeOptionValueHandler support.GetCallHomeOptionValueHandler
 	// IdpGetConfigurationHandler sets the operation handler for the get configuration operation
 	IdpGetConfigurationHandler idp.GetConfigurationHandler
 	// ObjectGetObjectMetadataHandler sets the operation handler for the get object metadata operation
@@ -859,6 +868,8 @@ type ConsoleAPI struct {
 	BucketSetBucketRetentionConfigHandler bucket.SetBucketRetentionConfigHandler
 	// BucketSetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
 	BucketSetBucketVersioningHandler bucket.SetBucketVersioningHandler
+	// SupportSetCallHomeStatusHandler sets the operation handler for the set call home status operation
+	SupportSetCallHomeStatusHandler support.SetCallHomeStatusHandler
 	// ConfigurationSetConfigHandler sets the operation handler for the set config operation
 	ConfigurationSetConfigHandler configuration.SetConfigHandler
 	// BucketSetMultiBucketReplicationHandler sets the operation handler for the set multi bucket replication operation
@@ -1152,6 +1163,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.BucketGetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "bucket.GetBucketVersioningHandler")
 	}
+	if o.SupportGetCallHomeOptionValueHandler == nil {
+		unregistered = append(unregistered, "support.GetCallHomeOptionValueHandler")
+	}
 	if o.IdpGetConfigurationHandler == nil {
 		unregistered = append(unregistered, "idp.GetConfigurationHandler")
 	}
@@ -1379,6 +1393,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.BucketSetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "bucket.SetBucketVersioningHandler")
+	}
+	if o.SupportSetCallHomeStatusHandler == nil {
+		unregistered = append(unregistered, "support.SetCallHomeStatusHandler")
 	}
 	if o.ConfigurationSetConfigHandler == nil {
 		unregistered = append(unregistered, "configuration.SetConfigHandler")
@@ -1767,6 +1784,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/support/callhome"] = support.NewGetCallHomeOptionValue(o.context, o.SupportGetCallHomeOptionValueHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/idp/{type}/{name}"] = idp.NewGetConfiguration(o.context, o.IdpGetConfigurationHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -2068,6 +2089,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/buckets/{bucket_name}/versioning"] = bucket.NewSetBucketVersioning(o.context, o.BucketSetBucketVersioningHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/support/callhome"] = support.NewSetCallHomeStatus(o.context, o.SupportSetCallHomeStatusHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
