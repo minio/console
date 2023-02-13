@@ -3432,6 +3432,14 @@ paths:
           description: Current Release
           in: query
           type: string
+        - name: search
+          description: search content
+          in: query
+          type: string
+        - name: filter
+          description: filter releases
+          in: query
+          type: string
       responses:
         200:
           description: A successful response.
@@ -3443,6 +3451,41 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - release
+
+  /support/callhome:
+    get:
+      summary: Get Callhome current status
+      operationId: GetCallHomeOptionValue
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/callHomeGetResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Support
+
+    put:
+      summary: Sets callhome status
+      operationId: SetCallHomeStatus
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/callHomeSetStatus"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Support
 
 definitions:
   accountChangePasswordRequest:
@@ -3891,6 +3934,15 @@ definitions:
     type: object
     properties:
       key:
+        type: string
+      value:
+        type: string
+      env_override:
+          $ref: "#/definitions/envOverride"
+  envOverride:
+    type: object
+    properties:
+      name:
         type: string
       value:
         type: string
@@ -5823,6 +5875,7 @@ definitions:
     properties:
       restart:
         type: boolean
+
   releaseListResponse:
     type: object
     properties:
@@ -5833,10 +5886,8 @@ definitions:
   releaseInfo:
     type: object
     properties:
-      tag:
-        type: string
-      name:
-        type: string
+      metadata:
+        $ref: "#/definitions/releaseMetadata"
       notesContent:
         type: string
       securityContent:
@@ -5847,3 +5898,97 @@ definitions:
         type: string
       newFeaturesContent:
         type: string
+
+  releaseMetadata:
+    type: object
+    properties:
+      tag_name:
+        type: string
+      target_commitish:
+        type: string
+      name:
+        type: string
+      draft:
+        type: boolean
+      prerelease:
+        type: boolean
+      id:
+        type: integer
+      created_at:
+        type: string
+      published_at:
+        type: string
+      url:
+        type: string
+      html_url:
+        type: string
+      assets_url:
+        type: string
+      upload_url:
+        type: string
+      zipball_url:
+        type: string
+      tarball_url:
+        type: string
+      author:
+        $ref: "#/definitions/releaseAuthor"
+      node_id:
+        type: string
+  releaseAuthor:
+    type: object
+    properties:
+      login:
+        type: string
+      id:
+        type: integer
+      node_id:
+        type: string
+      avatar_url:
+        type: string
+      html_url:
+        type: string
+      gravatar_id:
+        type: string
+      type:
+        type: string
+      site_admin:
+        type: boolean
+      url:
+        type: string
+      events_url:
+        type: string
+      following_url:
+        type: string
+      followers_url:
+        type: string
+      gists_url:
+        type: string
+      organizations_url:
+        type: string
+      receivedEvents_url:
+        type: string
+      repos_url:
+        type: string
+      starred_url:
+        type: string
+      subscriptions_url:
+        type: string
+
+  callHomeGetResponse:
+    type: object
+    properties:
+      diagnosticsStatus:
+        type: boolean
+      logsStatus:
+        type: boolean
+
+  callHomeSetStatus:
+    type: object
+    required:
+      - diagState
+      - logsState
+    properties:
+      diagState:
+        type: boolean
+      logsState:
+        type: boolean

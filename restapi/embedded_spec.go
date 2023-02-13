@@ -4056,7 +4056,7 @@ func init() {
         }
       }
     },
-    "/releases/": {
+    "/releases": {
       "get": {
         "tags": [
           "release"
@@ -4075,6 +4075,18 @@ func init() {
             "type": "string",
             "description": "Current Release",
             "name": "current",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content",
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "filter releases",
+            "name": "filter",
             "in": "query"
           }
         ],
@@ -4703,6 +4715,57 @@ func init() {
             "schema": {
               "$ref": "#/definitions/SubnetRegTokenResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/support/callhome": {
+      "get": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Get Callhome current status",
+        "operationId": "GetCallHomeOptionValue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/callHomeGetResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Sets callhome status",
+        "operationId": "SetCallHomeStatus",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callHomeSetStatus"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -5816,6 +5879,32 @@ func init() {
         }
       }
     },
+    "callHomeGetResponse": {
+      "type": "object",
+      "properties": {
+        "diagnosticsStatus": {
+          "type": "boolean"
+        },
+        "logsStatus": {
+          "type": "boolean"
+        }
+      }
+    },
+    "callHomeSetStatus": {
+      "type": "object",
+      "required": [
+        "diagState",
+        "logsState"
+      ],
+      "properties": {
+        "diagState": {
+          "type": "boolean"
+        },
+        "logsState": {
+          "type": "boolean"
+        }
+      }
+    },
     "changeUserPasswordRequest": {
       "type": "object",
       "required": [
@@ -5870,6 +5959,9 @@ func init() {
     "configurationKV": {
       "type": "object",
       "properties": {
+        "env_override": {
+          "$ref": "#/definitions/envOverride"
+        },
         "key": {
           "type": "string"
         },
@@ -5935,6 +6027,17 @@ func init() {
           "type": "boolean"
         },
         "versionID": {
+          "type": "string"
+        }
+      }
+    },
+    "envOverride": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
           "type": "string"
         }
       }
@@ -7410,6 +7513,65 @@ func init() {
         }
       }
     },
+    "releaseAuthor": {
+      "type": "object",
+      "properties": {
+        "avatar_url": {
+          "type": "string"
+        },
+        "events_url": {
+          "type": "string"
+        },
+        "followers_url": {
+          "type": "string"
+        },
+        "following_url": {
+          "type": "string"
+        },
+        "gists_url": {
+          "type": "string"
+        },
+        "gravatar_id": {
+          "type": "string"
+        },
+        "html_url": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "login": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "organizations_url": {
+          "type": "string"
+        },
+        "receivedEvents_url": {
+          "type": "string"
+        },
+        "repos_url": {
+          "type": "string"
+        },
+        "site_admin": {
+          "type": "boolean"
+        },
+        "starred_url": {
+          "type": "string"
+        },
+        "subscriptions_url": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "releaseInfo": {
       "type": "object",
       "properties": {
@@ -7419,8 +7581,8 @@ func init() {
         "contextContent": {
           "type": "string"
         },
-        "name": {
-          "type": "string"
+        "metadata": {
+          "$ref": "#/definitions/releaseMetadata"
         },
         "newFeaturesContent": {
           "type": "string"
@@ -7429,9 +7591,6 @@ func init() {
           "type": "string"
         },
         "securityContent": {
-          "type": "string"
-        },
-        "tag": {
           "type": "string"
         }
       }
@@ -7444,6 +7603,59 @@ func init() {
           "items": {
             "$ref": "#/definitions/releaseInfo"
           }
+        }
+      }
+    },
+    "releaseMetadata": {
+      "type": "object",
+      "properties": {
+        "assets_url": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/releaseAuthor"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "draft": {
+          "type": "boolean"
+        },
+        "html_url": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "prerelease": {
+          "type": "boolean"
+        },
+        "published_at": {
+          "type": "string"
+        },
+        "tag_name": {
+          "type": "string"
+        },
+        "tarball_url": {
+          "type": "string"
+        },
+        "target_commitish": {
+          "type": "string"
+        },
+        "upload_url": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "zipball_url": {
+          "type": "string"
         }
       }
     },
@@ -12614,7 +12826,7 @@ func init() {
         }
       }
     },
-    "/releases/": {
+    "/releases": {
       "get": {
         "tags": [
           "release"
@@ -12633,6 +12845,18 @@ func init() {
             "type": "string",
             "description": "Current Release",
             "name": "current",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "search content",
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "filter releases",
+            "name": "filter",
             "in": "query"
           }
         ],
@@ -13261,6 +13485,57 @@ func init() {
             "schema": {
               "$ref": "#/definitions/SubnetRegTokenResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/support/callhome": {
+      "get": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Get Callhome current status",
+        "operationId": "GetCallHomeOptionValue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/callHomeGetResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Sets callhome status",
+        "operationId": "SetCallHomeStatus",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callHomeSetStatus"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -14500,6 +14775,32 @@ func init() {
         }
       }
     },
+    "callHomeGetResponse": {
+      "type": "object",
+      "properties": {
+        "diagnosticsStatus": {
+          "type": "boolean"
+        },
+        "logsStatus": {
+          "type": "boolean"
+        }
+      }
+    },
+    "callHomeSetStatus": {
+      "type": "object",
+      "required": [
+        "diagState",
+        "logsState"
+      ],
+      "properties": {
+        "diagState": {
+          "type": "boolean"
+        },
+        "logsState": {
+          "type": "boolean"
+        }
+      }
+    },
     "changeUserPasswordRequest": {
       "type": "object",
       "required": [
@@ -14554,6 +14855,9 @@ func init() {
     "configurationKV": {
       "type": "object",
       "properties": {
+        "env_override": {
+          "$ref": "#/definitions/envOverride"
+        },
         "key": {
           "type": "string"
         },
@@ -14619,6 +14923,17 @@ func init() {
           "type": "boolean"
         },
         "versionID": {
+          "type": "string"
+        }
+      }
+    },
+    "envOverride": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
           "type": "string"
         }
       }
@@ -16094,6 +16409,65 @@ func init() {
         }
       }
     },
+    "releaseAuthor": {
+      "type": "object",
+      "properties": {
+        "avatar_url": {
+          "type": "string"
+        },
+        "events_url": {
+          "type": "string"
+        },
+        "followers_url": {
+          "type": "string"
+        },
+        "following_url": {
+          "type": "string"
+        },
+        "gists_url": {
+          "type": "string"
+        },
+        "gravatar_id": {
+          "type": "string"
+        },
+        "html_url": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "login": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "organizations_url": {
+          "type": "string"
+        },
+        "receivedEvents_url": {
+          "type": "string"
+        },
+        "repos_url": {
+          "type": "string"
+        },
+        "site_admin": {
+          "type": "boolean"
+        },
+        "starred_url": {
+          "type": "string"
+        },
+        "subscriptions_url": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "releaseInfo": {
       "type": "object",
       "properties": {
@@ -16103,8 +16477,8 @@ func init() {
         "contextContent": {
           "type": "string"
         },
-        "name": {
-          "type": "string"
+        "metadata": {
+          "$ref": "#/definitions/releaseMetadata"
         },
         "newFeaturesContent": {
           "type": "string"
@@ -16113,9 +16487,6 @@ func init() {
           "type": "string"
         },
         "securityContent": {
-          "type": "string"
-        },
-        "tag": {
           "type": "string"
         }
       }
@@ -16128,6 +16499,59 @@ func init() {
           "items": {
             "$ref": "#/definitions/releaseInfo"
           }
+        }
+      }
+    },
+    "releaseMetadata": {
+      "type": "object",
+      "properties": {
+        "assets_url": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/releaseAuthor"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "draft": {
+          "type": "boolean"
+        },
+        "html_url": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "prerelease": {
+          "type": "boolean"
+        },
+        "published_at": {
+          "type": "string"
+        },
+        "tag_name": {
+          "type": "string"
+        },
+        "tarball_url": {
+          "type": "string"
+        },
+        "target_commitish": {
+          "type": "string"
+        },
+        "upload_url": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "zipball_url": {
+          "type": "string"
         }
       }
     },

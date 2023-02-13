@@ -53,18 +53,24 @@ func GetReleaseListResponse(session *models.Principal, params release.ListReleas
 	if params.Current != nil {
 		currentRelease = *params.Current
 	}
-	return releaseList(ctx, repo, currentRelease)
+	search := ""
+	if params.Search != nil {
+		search = *params.Search
+	}
+	filter := ""
+	if params.Filter != nil {
+		filter = *params.Filter
+	}
+	return releaseList(ctx, repo, currentRelease, search, filter)
 }
 
-func releaseList(ctx context.Context, repo, currentRelease string) (*models.ReleaseListResponse, *models.Error) {
+func releaseList(ctx context.Context, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, *models.Error) {
 	serviceURL := getReleaseServiceURL()
-	releases, err := getReleases(serviceURL, repo, currentRelease)
+	releases, err := getReleases(serviceURL, repo, currentRelease, search, filter)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
-	return &models.ReleaseListResponse{
-		Results: releases,
-	}, nil
+	return releases, nil
 }
 
 func getReleaseServiceURL() string {
@@ -72,12 +78,16 @@ func getReleaseServiceURL() string {
 	return fmt.Sprintf("%s/releases", host)
 }
 
-func getReleases(url, repo, currentRelease string) ([]*models.ReleaseInfo, error) {
+func getReleases(url, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, error) {
+	rl := &models.ReleaseListResponse{}
 	client := &http.Client{Timeout: time.Second * 5}
 	req, err := http.NewRequest("GET", url, nil)
 	q := req.URL.Query()
 	q.Add("repo", repo)
 	q.Add("current", currentRelease)
+	q.Add("search", search)
+	q.Add("filter", filter)
+	req.URL.RawQuery = q.Encode()
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +100,9 @@ func getReleases(url, repo, currentRelease string) ([]*models.ReleaseInfo, error
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("error getting releases: %s", resp.Status)
 	}
-	var releases []*models.ReleaseInfo
-	err = json.NewDecoder(resp.Body).Decode(&releases)
+	err = json.NewDecoder(resp.Body).Decode(&rl)
 	if err != nil {
 		return nil, err
 	}
-	return releases, nil
+	return rl, nil
 }

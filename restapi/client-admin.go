@@ -83,8 +83,10 @@ type MinioAdmin interface {
 	setPolicy(ctx context.Context, policyName, entityName string, isGroup bool) error
 	getConfigKV(ctx context.Context, key string) ([]byte, error)
 	helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error)
+	helpConfigKVGlobal(ctx context.Context, envOnly bool) (madmin.Help, error)
 	setConfigKV(ctx context.Context, kv string) (restart bool, err error)
 	delConfigKV(ctx context.Context, kv string) (err error)
+
 	serviceRestart(ctx context.Context) error
 	serverInfo(ctx context.Context) (madmin.InfoMessage, error)
 	startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
@@ -267,6 +269,11 @@ func (ac AdminClient) getConfigKV(ctx context.Context, key string) ([]byte, erro
 // implements madmin.HelpConfigKV()
 func (ac AdminClient) helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error) {
 	return ac.Client.HelpConfigKV(ctx, subSys, key, envOnly)
+}
+
+// implements madmin.helpConfigKVGlobal()
+func (ac AdminClient) helpConfigKVGlobal(ctx context.Context, envOnly bool) (madmin.Help, error) {
+	return ac.Client.HelpConfigKV(ctx, "", "", envOnly)
 }
 
 // implements madmin.SetConfigKV()
