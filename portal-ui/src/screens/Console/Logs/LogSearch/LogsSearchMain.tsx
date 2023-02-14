@@ -47,6 +47,7 @@ import MissingIntegration from "../../Common/MissingIntegration/MissingIntegrati
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selFeatures } from "../../consoleSlice";
 import { useAppDispatch } from "../../../../store";
+import { DateTime } from "luxon";
 
 interface ILogSearchProps {
   classes: any;
@@ -123,8 +124,8 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
   const features = useSelector(selFeatures);
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [timeStart, setTimeStart] = useState<any>(null);
-  const [timeEnd, setTimeEnd] = useState<any>(null);
+  const [timeStart, setTimeStart] = useState<DateTime | null>(null);
+  const [timeEnd, setTimeEnd] = useState<DateTime | null>(null);
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [records, setRecords] = useState<IReqInfoSearchResults[]>([]);
   const [bucket, setBucket] = useState<string>("");
@@ -182,9 +183,9 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
             queryParams !== "" ? `${queryParams}` : ""
           }&pageSize=100&pageNo=${nextPage}&order=${
             sortOrder === "DESC" ? "timeDesc" : "timeAsc"
-          }${
-            timeStart !== null ? `&timeStart=${timeStart.toISOString()}` : ""
-          }${timeEnd !== null ? `&timeEnd=${timeEnd.toISOString()}` : ""}`
+          }${timeStart !== null ? `&timeStart=${timeStart.toISO()}` : ""}${
+            timeEnd !== null ? `&timeEnd=${timeEnd.toISO()}` : ""
+          }`
         )
         .then((res: ISearchResponse) => {
           const fetchedResults = res.results || [];
@@ -295,12 +296,12 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
         ) : (
           <Fragment>
             {" "}
-            <Grid xs={12} className={classes.formBox}>
+            <Grid item xs={12} className={classes.formBox}>
               <Grid item xs={12} className={`${classes.searchOptions}`}>
                 <div className={classes.dateRangePicker}>
                   <DateRangeSelector
-                    setTimeEnd={setTimeEnd}
-                    setTimeStart={setTimeStart}
+                    setTimeEnd={(time) => setTimeEnd(time)}
+                    setTimeStart={(time) => setTimeStart(time)}
                     timeEnd={timeEnd}
                     timeStart={timeStart}
                   />
