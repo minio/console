@@ -28,6 +28,7 @@ import {
   setLoadingObjects,
   setRewindEnable,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
+import { DateTime } from "luxon";
 
 interface IRewindEnable {
   closeModalAndRefresh: () => void;
@@ -51,12 +52,14 @@ const RewindEnable = ({
 
   const [rewindEnabling, setRewindEnabling] = useState<boolean>(false);
   const [rewindEnableButton, setRewindEnableButton] = useState<boolean>(true);
-  const [dateSelected, setDateSelected] = useState<any>(null);
+  const [dateSelected, setDateSelected] = useState<DateTime>(
+    DateTime.fromJSDate(new Date())
+  );
 
   useEffect(() => {
     if (rewindEnabled) {
       setRewindEnableButton(true);
-      setDateSelected(new Date(dateRewind));
+      setDateSelected(DateTime.fromISO(dateRewind || DateTime.now().toISO()));
     }
   }, [rewindEnabled, dateRewind]);
 
@@ -69,7 +72,7 @@ const RewindEnable = ({
         setRewindEnable({
           state: true,
           bucket: bucketName,
-          dateRewind: dateSelected,
+          dateRewind: dateSelected.toISO(),
         })
       );
     }
@@ -89,7 +92,7 @@ const RewindEnable = ({
       <Grid item xs={12}>
         <DateTimePickerWrapper
           value={dateSelected}
-          onChange={setDateSelected}
+          onChange={(dateTime) => (dateTime ? setDateSelected(dateTime) : null)}
           id="rewind-selector"
           label="Rewind to"
           disabled={!rewindEnableButton}

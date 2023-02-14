@@ -15,6 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
+import { DateTime } from "luxon";
+import { HelpIcon, OpenListIcon } from "mds";
 import { Grid, InputLabel, TextField, Tooltip } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
@@ -23,12 +25,11 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { HelpIcon, OpenListIcon } from "mds";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 
 interface IDateTimePicker {
-  value: any;
-  onChange: (value: any) => any;
+  value: DateTime | null;
+  onChange: (value: DateTime | null) => void;
   classes: any;
   forSearchBlock?: boolean;
   forFilterContained?: boolean;
@@ -298,6 +299,7 @@ const DateTimePickerWrapper = ({
         PopperProps={{
           className: classes.paperOverride,
         }}
+        inputFormat={"LL/dd/yyyy HH:mm"}
       />
     </LocalizationProvider>
   );
@@ -312,7 +314,7 @@ const DateTimePickerWrapper = ({
       <Grid
         item
         xs={12}
-        className={`${containerCls} ${classNamePrefix}input-field-container `}
+        className={`${containerCls} ${classNamePrefix}input-field-container`}
       >
         {label !== "" && (
           <InputLabel
@@ -336,7 +338,7 @@ const DateTimePickerWrapper = ({
         )}
 
         <div
-          className={`${classes.textBoxContainer} ${classNamePrefix}input-wrapper  `}
+          className={`${classes.textBoxContainer} ${classNamePrefix}input-wrapper`}
         >
           {inputItem}
         </div>
