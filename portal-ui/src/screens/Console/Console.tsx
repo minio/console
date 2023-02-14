@@ -99,7 +99,6 @@ const LogsSearchMain = React.lazy(
 const GroupsDetails = React.lazy(() => import("./Groups/GroupsDetails"));
 
 const Tools = React.lazy(() => import("./Tools/Tools"));
-const Health = React.lazy(() => import("./Health"));
 const IconsScreen = React.lazy(() => import("./Common/IconsScreen"));
 
 const Speedtest = React.lazy(() => import("./Speedtest/Speedtest"));
@@ -411,10 +410,6 @@ const Console = ({ classes }: IConsoleProps) => {
     {
       component: LogsSearchMain,
       path: IAM_PAGES.TOOLS_AUDITLOGS,
-    },
-    {
-      component: Health,
-      path: IAM_PAGES.HEALTH,
     },
     {
       component: Tools,
