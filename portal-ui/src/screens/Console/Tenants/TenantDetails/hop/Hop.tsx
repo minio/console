@@ -22,7 +22,8 @@ import withStyles from "@mui/styles/withStyles";
 import { Box, IconButton } from "@mui/material";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import { Loader, PageHeader, RefreshIcon } from "mds";
+import { Loader, RefreshIcon } from "mds";
+import PageHeaderWrapper from "../../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface IHopSimple {
   classes: any;
@@ -73,7 +74,7 @@ const Hop = ({ classes }: IHopSimple) => {
   return (
     <Fragment>
       <Box className={classes.pageHeader}>
-        <PageHeader
+        <PageHeaderWrapper
           label={
             <Fragment>
               <Link to={"/tenants"} className={classes.breadcrumLink}>

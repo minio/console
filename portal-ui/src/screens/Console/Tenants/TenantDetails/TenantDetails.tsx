@@ -22,7 +22,6 @@ import {
   CircleIcon,
   EditIcon,
   MinIOTierIconXs,
-  PageHeader,
   RefreshIcon,
   TenantsIcon,
   TrashIcon,
@@ -59,6 +58,7 @@ import { setTenantName } from "../tenantsSlice";
 import { getTenantAsync } from "../thunks/tenantDetailsAsync";
 import { LinearProgress } from "@mui/material";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const TenantYAML = withSuspense(React.lazy(() => import("./TenantYAML")));
 const TenantSummary = withSuspense(React.lazy(() => import("./TenantSummary")));
@@ -249,7 +249,7 @@ const TenantDetails = ({ classes }: ITenantDetailsProps) => {
         />
       )}
 
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <Fragment>
             <BackLink

@@ -33,8 +33,9 @@ import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import { PageHeader, SearchIcon } from "mds";
+import { SearchIcon } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface IDirectPVVolumesProps {
   classes: any;
@@ -100,7 +101,7 @@ const DirectPVVolumes = ({ classes }: IDirectPVVolumesProps) => {
 
   return (
     <Fragment>
-      <PageHeader label="Volumes" />
+      <PageHeaderWrapper label="Volumes" />
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField

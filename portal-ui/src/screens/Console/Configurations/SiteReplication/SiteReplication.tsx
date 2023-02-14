@@ -28,7 +28,6 @@ import {
   ConfirmDeleteIcon,
   HelpBox,
   Loader,
-  PageHeader,
   RecoverIcon,
   TrashIcon,
 } from "mds";
@@ -42,6 +41,7 @@ import {
 import AButton from "../../Common/AButton/AButton";
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 export type ReplicationSite = {
   deploymentID: string;
@@ -112,7 +112,7 @@ const SiteReplication = () => {
 
   return (
     <Fragment>
-      <PageHeader label={"Site Replication"} />
+      <PageHeaderWrapper label={"Site Replication"} />
       <PageLayout>
         <Box
           sx={{

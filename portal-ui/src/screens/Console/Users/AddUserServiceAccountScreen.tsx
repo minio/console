@@ -21,7 +21,6 @@ import {
   BackLink,
   Button,
   IAMPoliciesIcon,
-  PageHeader,
   PasswordKeyIcon,
   ServiceAccountCredentialsIcon,
 } from "mds";
@@ -52,6 +51,7 @@ import AddUserServiceAccountHelpBox from "./AddUserServiceAccountHelpBox";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -161,7 +161,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
         />
       )}
       <Grid item xs={12}>
-        <PageHeader
+        <PageHeaderWrapper
           label={
             <BackLink
               onClick={() =>

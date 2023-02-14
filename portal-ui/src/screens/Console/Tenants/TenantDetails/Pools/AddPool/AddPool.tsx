@@ -30,7 +30,7 @@ import GenericWizard from "../../../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../../../Common/GenericWizard/types";
 import PoolResources from "./PoolResources";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import { BackLink, PageHeader, TenantsIcon } from "mds";
+import { BackLink, TenantsIcon } from "mds";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { useSelector } from "react-redux";
@@ -40,6 +40,7 @@ import PoolPodPlacement from "./PoolPodPlacement";
 import { resetPoolForm } from "./addPoolSlice";
 import AddPoolCreateButton from "./AddPoolCreateButton";
 import makeStyles from "@mui/styles/makeStyles";
+import PageHeaderWrapper from "../../../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -127,7 +128,7 @@ const AddPool = () => {
   return (
     <Fragment>
       <Grid item xs={12}>
-        <PageHeader
+        <PageHeaderWrapper
           label={
             <Fragment>
               <BackLink

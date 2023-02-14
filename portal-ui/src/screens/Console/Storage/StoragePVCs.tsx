@@ -34,7 +34,7 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DeletePVC from "../Tenants/TenantDetails/DeletePVC";
 import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
-import { PageHeader } from "mds";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface IStorageVolumesProps {
   classes: any;
@@ -105,7 +105,7 @@ const StorageVolumes = ({ classes }: IStorageVolumesProps) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <PageHeader
+      <PageHeaderWrapper
         label="Persistent Volumes Claims"
         middleComponent={
           <SearchBox

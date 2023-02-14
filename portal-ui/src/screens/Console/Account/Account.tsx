@@ -21,7 +21,6 @@ import {
   Button,
   DeleteIcon,
   HelpBox,
-  PageHeader,
   PasswordKeyIcon,
 } from "mds";
 import { useSelector } from "react-redux";
@@ -59,6 +58,7 @@ import makeStyles from "@mui/styles/makeStyles";
 import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
@@ -203,7 +203,7 @@ const Account = () => {
         open={changePasswordModalOpen}
         closeModal={() => setChangePasswordModalOpen(false)}
       />
-      <PageHeader label="Access Keys" />
+      <PageHeaderWrapper label="Access Keys" />
       <PageLayout>
         <Grid item={true} xs={12} className={classes.actionsTray}>
           <SearchBox

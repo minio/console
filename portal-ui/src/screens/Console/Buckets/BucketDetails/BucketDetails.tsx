@@ -28,7 +28,6 @@ import {
   BucketsIcon,
   Button,
   FolderIcon,
-  PageHeader,
   RefreshIcon,
   TrashIcon,
 } from "mds";
@@ -78,6 +77,7 @@ import {
 } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const DeleteBucket = withSuspense(
   React.lazy(() => import("../ListBuckets/DeleteBucket"))
@@ -205,7 +205,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
           }}
         />
       )}
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <BackLink label={"Buckets"} onClick={() => navigate("/buckets")} />
         }

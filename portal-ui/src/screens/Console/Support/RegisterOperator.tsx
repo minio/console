@@ -35,7 +35,7 @@ import Tab from "@mui/material/Tab";
 import { TabPanel } from "../../shared/tabs";
 import { ClusterRegistered } from "./utils";
 import ApiKeyRegister from "./ApiKeyRegister";
-import { PageHeader } from "mds";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface IRegister {
   classes: any;
@@ -90,7 +90,7 @@ const RegisterOperator = ({ classes }: IRegister) => {
 
   return (
     <Fragment>
-      <PageHeader
+      <PageHeaderWrapper
         label="Register to MinIO Subscription Network"
         actions={<React.Fragment />}
       />

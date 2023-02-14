@@ -18,7 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { BucketsIcon, Button, HelpBox, PageHeader, RefreshIcon } from "mds";
+import { BucketsIcon, Button, HelpBox, RefreshIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -52,6 +52,7 @@ import { setLoadingObjects } from "../ObjectBrowser/objectBrowserSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { niceBytesInt } from "../../../common/utils";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -132,7 +133,7 @@ const OBListBuckets = () => {
 
   return (
     <Fragment>
-      {!obOnly && <PageHeader label={"Object Browser"} />}
+      {!obOnly && <PageHeaderWrapper label={"Object Browser"} />}
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray} display="flex">
           {obOnly && (

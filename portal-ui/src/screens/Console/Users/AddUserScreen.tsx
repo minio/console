@@ -16,7 +16,7 @@
 
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
-import { BackLink, Button, CreateUserIcon, PageHeader } from "mds";
+import { BackLink, Button, CreateUserIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import UserSelector from "./UserSelector";
@@ -47,6 +47,7 @@ import {
   setSelectedGroups,
   setSendEnabled,
 } from "./AddUsersSlice";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface IAddUserProps {
   classes: any;
@@ -102,7 +103,7 @@ const AddUser = ({ classes }: IAddUserProps) => {
   return (
     <Fragment>
       <Grid item xs={12}>
-        <PageHeader
+        <PageHeaderWrapper
           label={
             <BackLink
               label={"Users"}

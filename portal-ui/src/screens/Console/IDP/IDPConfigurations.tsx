@@ -36,9 +36,10 @@ import PageLayout from "../Common/Layout/PageLayout";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { Grid } from "@mui/material";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { AddIcon, Button, PageHeader, RefreshIcon } from "mds";
+import { AddIcon, Button, RefreshIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 type IDPConfigurationsProps = {
   classes?: any;
@@ -147,7 +148,7 @@ const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <PageHeader label={`${idpType.toUpperCase()} Configurations`} />
+      <PageHeaderWrapper label={`${idpType.toUpperCase()} Configurations`} />
       <PageLayout className={classes.pageContainer}>
         <Grid container spacing={1}>
           <Grid
