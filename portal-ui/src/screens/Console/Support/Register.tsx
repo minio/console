@@ -16,7 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
-import { PageHeader } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
@@ -45,6 +44,7 @@ import OfflineRegistration from "./OfflineRegistration";
 import SubnetMFAToken from "./SubnetMFAToken";
 import ClusterRegistrationForm from "./ClusterRegistrationForm";
 import OnlineRegistration from "./OnlineRegistration";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface IRegister {
   classes: any;
@@ -184,7 +184,7 @@ const Register = ({ classes }: IRegister) => {
 
   return (
     <Fragment>
-      <PageHeader
+      <PageHeaderWrapper
         label="Register to MinIO Subscription Network"
         actions={<React.Fragment />}
       />

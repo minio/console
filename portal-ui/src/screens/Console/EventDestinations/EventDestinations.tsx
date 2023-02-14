@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { PageHeader } from "mds";
 import React, { Fragment } from "react";
 
 import withSuspense from "../Common/Components/withSuspense";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const ListNotificationEndpoints = withSuspense(
   React.lazy(() => import("./ListEventDestinations"))
@@ -26,7 +26,7 @@ const ListNotificationEndpoints = withSuspense(
 const EventDestinations = () => {
   return (
     <Fragment>
-      <PageHeader label="Event Destinations" />
+      <PageHeaderWrapper label="Event Destinations" />
       <ListNotificationEndpoints />
     </Fragment>
   );

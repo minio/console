@@ -50,8 +50,14 @@ const DeleteObject = ({
 }: IDeleteObjectProps) => {
   const dispatch = useAppDispatch();
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) =>
+  const onDelError = (err: ErrorResponseHandler) => {
     dispatch(setErrorSnackMessage(err));
+
+    // We close the modal box on access denied.
+    if (err.detailedError === "Access Denied.") {
+      closeDeleteModalAndRefresh(true);
+    }
+  };
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);

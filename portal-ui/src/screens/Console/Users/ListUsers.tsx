@@ -24,7 +24,6 @@ import {
   DeleteIcon,
   GroupsIcon,
   HelpBox,
-  PageHeader,
   UsersIcon,
 } from "mds";
 import createStyles from "@mui/styles/createStyles";
@@ -66,6 +65,7 @@ import {
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const DeleteUser = withSuspense(React.lazy(() => import("./DeleteUser")));
 const AddToGroup = withSuspense(React.lazy(() => import("./BulkAddToGroup")));
@@ -209,7 +209,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
           }}
         />
       )}
-      <PageHeader label={"Users"} />
+      <PageHeaderWrapper label={"Users"} />
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <SearchBox

@@ -16,7 +16,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
-import { Button, PageHeader } from "mds";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { useSelector } from "react-redux";
@@ -47,6 +47,7 @@ import {
   setLogsStarted,
 } from "../logsSlice";
 import makeStyles from "@mui/styles/makeStyles";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -240,7 +241,7 @@ const ErrorLogs = () => {
 
   return (
     <Fragment>
-      <PageHeader label="Logs" />
+      <PageHeaderWrapper label="Logs" />
       <PageLayout>
         <Grid container spacing={1}>
           <Grid item xs={4}>

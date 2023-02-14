@@ -17,7 +17,7 @@
 import React, { Fragment, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
-import { AddAccessRuleIcon, BackLink, Button, PageHeader } from "mds";
+import { AddAccessRuleIcon, BackLink, Button } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
@@ -30,6 +30,7 @@ import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import { emptyPolicy } from "./utils";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const AddPolicyScreen = () => {
   const dispatch = useAppDispatch();
@@ -79,7 +80,7 @@ const AddPolicyScreen = () => {
   return (
     <Fragment>
       <Grid item xs={12}>
-        <PageHeader
+        <PageHeaderWrapper
           label={
             <BackLink
               label={"Policies"}

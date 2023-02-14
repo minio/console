@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
-import { Button, PageHeader } from "mds";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
@@ -16,6 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import RegisterCluster from "./RegisterCluster";
 import { registeredCluster } from "../../../config";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -140,7 +141,7 @@ const Profile = ({ classes }: IProfileProps) => {
 
   return (
     <Fragment>
-      <PageHeader label="Profile" />
+      <PageHeaderWrapper label="Profile" />
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>

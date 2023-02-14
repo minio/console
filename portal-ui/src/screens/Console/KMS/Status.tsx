@@ -46,7 +46,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { DisabledIcon, EnabledIcon, PageHeader } from "mds";
+import { DisabledIcon, EnabledIcon } from "mds";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const Status = () => {
   const dispatch = useAppDispatch();
@@ -350,7 +351,10 @@ const Status = () => {
 
   return (
     <Fragment>
-      <PageHeader label="Key Management Service" actions={<React.Fragment />} />
+      <PageHeaderWrapper
+        label="Key Management Service"
+        actions={<React.Fragment />}
+      />
 
       <PageLayout>
         <Tabs

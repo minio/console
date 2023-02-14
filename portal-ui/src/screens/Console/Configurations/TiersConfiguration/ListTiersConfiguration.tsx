@@ -25,7 +25,6 @@ import {
   AddIcon,
   Button,
   HelpBox,
-  PageHeader,
   RefreshIcon,
   TierOfflineIcon,
   TierOnlineIcon,
@@ -67,6 +66,7 @@ import { selDistSet, setErrorSnackMessage } from "../../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
@@ -311,7 +311,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
           closeModalAndRefresh={closeTierCredentials}
         />
       )}
-      <PageHeader label="Tiers" />
+      <PageHeaderWrapper label="Tiers" />
       <PageLayout>
         {!distributedSetup ? (
           <DistributedOnly

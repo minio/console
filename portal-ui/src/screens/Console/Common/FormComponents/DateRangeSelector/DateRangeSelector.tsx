@@ -16,16 +16,17 @@
 
 import React from "react";
 import { Button, OpenListIcon, SyncIcon } from "mds";
+import { DateTime } from "luxon";
 import { Box, Grid } from "@mui/material";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import DateTimePickerWrapper from "../DateTimePickerWrapper/DateTimePickerWrapper";
 
 interface IDateRangeSelector {
-  timeStart: any;
-  setTimeStart: (date: any) => void;
-  timeEnd: any;
-  setTimeEnd: (date: any) => void;
+  timeStart: DateTime | null;
+  setTimeStart: (value: DateTime | null) => void;
+  timeEnd: DateTime | null;
+  setTimeEnd: (value: DateTime | null) => void;
   triggerSync?: () => void;
   label?: string;
   startLabel?: string;

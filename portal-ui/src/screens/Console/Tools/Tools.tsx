@@ -16,11 +16,10 @@
 
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import FeatureNotAvailablePage from "../Common/Components/FeatureNotAvailablePage";
-import { SupportMenuIcon } from "mds";
 
 import withSuspense from "../Common/Components/withSuspense";
 import NotFoundPage from "../../NotFoundPage";
+import CallHome from "../Support/CallHome";
 
 const Inspect = withSuspense(React.lazy(() => import("./Inspect")));
 const Register = withSuspense(React.lazy(() => import("../Support/Register")));
@@ -31,17 +30,7 @@ const Tools = () => {
     <Routes>
       <Route path={"register"} element={<Register />} />
       <Route path={"profile"} element={<Profile />} />
-      <Route
-        path={"call-home"}
-        element={
-          <FeatureNotAvailablePage
-            icon={<SupportMenuIcon />}
-            pageHeaderText={"Support"}
-            title={"Call Home"}
-            message={<div>This feature is currently not available.</div>}
-          />
-        }
-      />
+      <Route path={"call-home"} element={<CallHome />} />
       <Route path={"inspect"} element={<Inspect />} />
       <Route path={"*"} element={<NotFoundPage />} />
     </Routes>

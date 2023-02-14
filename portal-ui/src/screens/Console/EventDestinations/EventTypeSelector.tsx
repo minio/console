@@ -28,7 +28,8 @@ import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { Box } from "@mui/material";
 import NotificationEndpointTypeSelectorHelpBox from "../Account/NotificationEndpointTypeSelectorHelpBox";
-import { BackLink, PageHeader } from "mds";
+import { BackLink } from "mds";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface INotificationTypeSelector {
   classes: any;
@@ -55,7 +56,7 @@ const EventTypeSelector = ({ classes }: INotificationTypeSelector) => {
   const navigate = useNavigate();
   return (
     <Fragment>
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <Fragment>
             <BackLink

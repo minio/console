@@ -20,7 +20,6 @@ import {
   AddIcon,
   Button,
   HelpBox,
-  PageHeader,
   RefreshIcon,
   SearchIcon,
   StorageIcon,
@@ -47,6 +46,7 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 import withSuspense from "../Common/Components/withSuspense";
 import PageLayout from "../Common/Layout/PageLayout";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const FormatDrives = withSuspense(React.lazy(() => import("./FormatDrives")));
 const FormatErrorsResult = withSuspense(
@@ -223,7 +223,7 @@ const DirectPVMain = ({ classes }: IDirectPVMain) => {
           }}
         />
       )}
-      <PageHeader label="Local Drives" />
+      <PageHeaderWrapper label="Local Drives" />
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField

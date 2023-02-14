@@ -375,7 +375,7 @@ const BrowserHandler = () => {
       let requestDate = new Date();
 
       if (rewindEnabled && rewindDate) {
-        requestDate = rewindDate;
+        requestDate = new Date(rewindDate);
       }
       initWSRequest(pathPrefix, requestDate);
     } else {

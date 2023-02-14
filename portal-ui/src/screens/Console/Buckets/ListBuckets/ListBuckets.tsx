@@ -25,7 +25,6 @@ import {
   HelpBox,
   LifecycleConfigIcon,
   MultipleBucketsIcon,
-  PageHeader,
   RefreshIcon,
   SelectAllIcon,
   SelectMultipleIcon,
@@ -65,6 +64,7 @@ import AutoColorIcon from "../../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import AButton from "../../Common/AButton/AButton";
 import { setLoadingObjects } from "../../ObjectBrowser/objectBrowserSlice";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -232,7 +232,7 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
           open={lifecycleModalOpen}
         />
       )}
-      {!obOnly && <PageHeader label={"Buckets"} />}
+      {!obOnly && <PageHeaderWrapper label={"Buckets"} />}
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray} display="flex">
           {obOnly && (

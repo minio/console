@@ -16,7 +16,7 @@
 
 import { Grid, Theme } from "@mui/material";
 import { createStyles, withStyles } from "@mui/styles";
-import { AddIcon, Button, PageHeader, RefreshIcon, UploadIcon } from "mds";
+import { AddIcon, Button, RefreshIcon, UploadIcon } from "mds";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../common/api";
@@ -41,6 +41,7 @@ import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const DeleteKMSModal = withSuspense(
   React.lazy(() => import("./DeleteKMSModal"))
@@ -139,7 +140,7 @@ const ListKeys = ({ classes }: IKeysProps) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <PageHeader label="Key Management Service Keys" />
+      <PageHeaderWrapper label="Key Management Service Keys" />
       <PageLayout className={classes.pageContainer}>
         <Grid container spacing={1}>
           <Grid

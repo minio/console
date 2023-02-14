@@ -20,14 +20,7 @@ import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import {
-  Button,
-  HelpBox,
-  Loader,
-  PageHeader,
-  SpeedtestIcon,
-  WarnIcon,
-} from "mds";
+import { Button, HelpBox, Loader, SpeedtestIcon, WarnIcon } from "mds";
 import { DateTime } from "luxon";
 import createStyles from "@mui/styles/createStyles";
 import {
@@ -54,6 +47,7 @@ import { selDistSet } from "../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import RegisterCluster from "../Support/RegisterCluster";
 import { registeredCluster } from "../../../config";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -206,7 +200,7 @@ const Speedtest = () => {
 
   return (
     <Fragment>
-      <PageHeader label="Performance" />
+      <PageHeaderWrapper label="Performance" />
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
         {!distributedSetup ? (

@@ -23,7 +23,6 @@ import {
   GroupsIcon,
   IAMPoliciesIcon,
   Loader,
-  PageHeader,
   RefreshIcon,
   UsersIcon,
 } from "mds";
@@ -36,6 +35,7 @@ import StatusCountCard from "../../Dashboard/BasicDashboard/StatusCountCard";
 import EntityReplicationLookup from "./EntityReplicationLookup";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import { useNavigate } from "react-router-dom";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 export type StatsResponseType = {
   maxBuckets?: number;
@@ -120,7 +120,7 @@ const SiteReplicationStatus = () => {
 
   return (
     <Fragment>
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <BackLink
             label={"Site Replication"}
