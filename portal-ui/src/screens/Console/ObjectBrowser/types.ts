@@ -61,7 +61,7 @@ export interface Route {
 export interface RewindItem {
   rewindEnabled: boolean;
   bucketToRewind: string;
-  dateToRewind: any;
+  dateToRewind: string | null;
 }
 
 export interface ObjectBrowserState {
