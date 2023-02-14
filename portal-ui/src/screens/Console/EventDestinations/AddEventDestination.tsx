@@ -21,7 +21,7 @@ import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { BackLink, Button, PageHeader } from "mds";
+import { BackLink, Button } from "mds";
 
 import api from "../../../common/api";
 import {
@@ -49,6 +49,7 @@ import {
 } from "../../../systemSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const ConfMySql = withSuspense(
   React.lazy(() => import("./CustomForms/ConfMySql"))
@@ -181,7 +182,7 @@ const AddEventDestination = ({
 
   return (
     <Fragment>
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <Fragment>
             <BackLink

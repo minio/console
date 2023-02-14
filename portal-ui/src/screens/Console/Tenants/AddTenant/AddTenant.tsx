@@ -48,13 +48,14 @@ import {
   IMkEnvs,
   resourcesConfigurations,
 } from "./Steps/TenantResources/utils";
-import { BackLink, HelpBox, PageHeader, StorageIcon } from "mds";
+import { BackLink, HelpBox, StorageIcon } from "mds";
 import { selFeatures } from "../../consoleSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { resetAddTenantForm } from "./createTenantSlice";
 import CreateTenantButton from "./CreateTenantButton";
 import NewTenantCredentials from "./NewTenantCredentials";
 import { useNavigate } from "react-router-dom";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -175,7 +176,7 @@ const AddTenant = () => {
   return (
     <Fragment>
       <NewTenantCredentials />
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <BackLink
             onClick={() => {

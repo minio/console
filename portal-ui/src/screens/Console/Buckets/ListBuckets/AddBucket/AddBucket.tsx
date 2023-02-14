@@ -19,14 +19,7 @@ import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import {
-  BackLink,
-  BucketsIcon,
-  Button,
-  HelpBox,
-  InfoIcon,
-  PageHeader,
-} from "mds";
+import { BackLink, BucketsIcon, Button, HelpBox, InfoIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
@@ -71,6 +64,7 @@ import {
 } from "../../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../../common/SecureComponent";
 import BucketNamingRules from "./BucketNamingRules";
+import PageHeaderWrapper from "../../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -233,7 +227,7 @@ const AddBucket = ({ classes }: IsetProps) => {
 
   return (
     <Fragment>
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <BackLink label={"Buckets"} onClick={() => navigate("/buckets")} />
         }

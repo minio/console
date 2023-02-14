@@ -21,7 +21,6 @@ import {
   BackLink,
   Button,
   IAMPoliciesIcon,
-  PageHeader,
   RefreshIcon,
   SearchIcon,
   TrashIcon,
@@ -75,6 +74,7 @@ import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -355,7 +355,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <Fragment>
             <BackLink

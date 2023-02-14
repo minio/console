@@ -20,7 +20,7 @@ import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { SubnetInfo } from "./types";
 import api from "../../../common/api";
-import { ArrowIcon, Button, PageHeader } from "mds";
+import { ArrowIcon, Button } from "mds";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import LicensePlans from "./LicensePlans";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +29,7 @@ import RegistrationStatusBanner from "../Support/RegistrationStatusBanner";
 import { selOpMode } from "../../../systemSlice";
 import withSuspense from "../Common/Components/withSuspense";
 import { getLicenseConsent } from "./utils";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const LicenseConsentModal = withSuspense(
   React.lazy(() => import("./LicenseConsentModal"))
@@ -118,7 +119,7 @@ const License = () => {
 
   return (
     <Fragment>
-      <PageHeader
+      <PageHeaderWrapper
         label="MinIO License and Support plans"
         actions={
           <Fragment>

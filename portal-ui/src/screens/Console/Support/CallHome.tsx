@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { Button, CallHomeMenuIcon, HelpBox, Loader, PageHeader } from "mds";
+import { Button, CallHomeMenuIcon, HelpBox, Loader } from "mds";
 import { Link, useNavigate } from "react-router-dom";
 import PageLayout from "../Common/Layout/PageLayout";
 import api from "../../../common/api";
@@ -28,6 +28,7 @@ import { registeredCluster } from "../../../config";
 import CallHomeConfirmation from "./CallHomeConfirmation";
 import RegisterCluster from "./RegisterCluster";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const PromoLabels = ({ title, text }: { title: string; text: string }) => {
   return (
@@ -115,7 +116,7 @@ const CallHome = () => {
           disable={disableMode}
         />
       )}
-      <PageHeader label="Call Home" />
+      <PageHeaderWrapper label="Call Home" />
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
         <Box

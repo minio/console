@@ -15,14 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import {
-  AddIcon,
-  Button,
-  HelpBox,
-  PageHeader,
-  RefreshIcon,
-  TenantsIcon,
-} from "mds";
+import { AddIcon, Button, HelpBox, RefreshIcon, TenantsIcon } from "mds";
 import Grid from "@mui/material/Grid";
 import { LinearProgress, SelectChangeEvent } from "@mui/material";
 import { Theme } from "@mui/material/styles";
@@ -50,6 +43,7 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const CredentialsPrompt = withSuspense(
   React.lazy(() => import("../../Common/CredentialsPrompt/CredentialsPrompt"))
@@ -237,7 +231,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
           entity="Tenant"
         />
       )}
-      <PageHeader
+      <PageHeaderWrapper
         label="Tenants"
         middleComponent={
           <SearchBox

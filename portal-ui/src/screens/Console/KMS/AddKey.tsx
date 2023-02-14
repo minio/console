@@ -23,7 +23,8 @@ import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import AddKeyForm from "./AddKeyForm";
-import { BackLink, PageHeader } from "mds";
+import { BackLink } from "mds";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const AddKey = () => {
   const dispatch = useAppDispatch();
@@ -37,7 +38,7 @@ const AddKey = () => {
   return (
     <Fragment>
       <Grid item xs={12}>
-        <PageHeader
+        <PageHeaderWrapper
           label={
             <BackLink
               label={"Keys"}

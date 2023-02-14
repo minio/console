@@ -25,7 +25,7 @@ import { LinearProgress } from "@mui/material";
 import { AppState, useAppDispatch } from "../../../store";
 import { getUsageAsync } from "./dashboardThunks";
 import { useSelector } from "react-redux";
-import { PageHeader } from "mds";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface IDashboardSimple {
   classes: any;
@@ -51,7 +51,7 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
 
   return (
     <Fragment>
-      <PageHeader label="Metrics" />
+      <PageHeaderWrapper label="Metrics" />
       {loading ? (
         <Grid container>
           <Grid item xs={12} className={classes.container}>

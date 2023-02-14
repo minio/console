@@ -18,7 +18,7 @@ import React, { Fragment, useState } from "react";
 import { DateTime } from "luxon";
 import { Box, Grid } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { Button, FilterIcon, PageHeader } from "mds";
+import { Button, FilterIcon } from "mds";
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import { TraceMessage } from "./types";
@@ -43,6 +43,7 @@ import {
   traceResetMessages,
 } from "./traceSlice";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -167,7 +168,7 @@ const Trace = ({ classes }: ITrace) => {
 
   return (
     <Fragment>
-      <PageHeader label={"Trace"} />
+      <PageHeaderWrapper label={"Trace"} />
       <PageLayout>
         <Grid className={classes.formBox}>
           <Grid

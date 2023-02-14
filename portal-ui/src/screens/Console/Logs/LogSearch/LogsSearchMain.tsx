@@ -16,9 +16,10 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, PageHeader, SearchIcon } from "mds";
+import { Button, SearchIcon } from "mds";
 import { Theme } from "@mui/material/styles";
 import { Grid } from "@mui/material";
+import { DateTime } from "luxon";
 import get from "lodash/get";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -47,7 +48,7 @@ import MissingIntegration from "../../Common/MissingIntegration/MissingIntegrati
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selFeatures } from "../../consoleSlice";
 import { useAppDispatch } from "../../../../store";
-import { DateTime } from "luxon";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface ILogSearchProps {
   classes: any;
@@ -285,7 +286,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
         />
       )}
 
-      <PageHeader label="Audit Logs" />
+      <PageHeaderWrapper label="Audit Logs" />
       <PageLayout>
         {!logSearchEnabled ? (
           <MissingIntegration

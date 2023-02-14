@@ -23,7 +23,7 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { BackLink, Button, PageHeader, SettingsIcon } from "mds";
+import { BackLink, Button, SettingsIcon } from "mds";
 import { Grid } from "@mui/material";
 import AutoColorIcon from "../Common/Components/AutoColorIcon";
 import { useSelector } from "react-redux";
@@ -34,6 +34,7 @@ import SearchBox from "../Common/SearchBox";
 import { setSearchVersions } from "./objectBrowserSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import FilterObjectsSB from "./FilterObjectsSB";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface IOBHeader {
   bucketName: string;
@@ -109,7 +110,7 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
   return (
     <Fragment>
       {!obOnly ? (
-        <PageHeader
+        <PageHeaderWrapper
           label={
             <BackLink
               label={"Object Browser"}

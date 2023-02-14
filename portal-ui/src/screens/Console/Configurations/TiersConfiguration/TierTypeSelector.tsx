@@ -21,8 +21,9 @@ import { tierTypes } from "./utils";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import TierTypeCard from "./TierTypeCard";
-import { BackLink, HelpBox, PageHeader, TiersIcon } from "mds";
+import { BackLink, HelpBox, TiersIcon } from "mds";
 import FormLayout from "../../Common/FormLayout";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const TierTypeSelector = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const TierTypeSelector = () => {
 
   return (
     <Fragment>
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <Fragment>
             <BackLink

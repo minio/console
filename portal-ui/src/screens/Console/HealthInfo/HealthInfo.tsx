@@ -23,7 +23,7 @@ import {
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, HelpBox, Loader, PageHeader, WarnIcon } from "mds";
+import { Button, HelpBox, Loader, WarnIcon } from "mds";
 import {
   DiagStatError,
   DiagStatInProgress,
@@ -55,6 +55,7 @@ import {
 } from "./healthInfoSlice";
 import RegisterCluster from "../Support/RegisterCluster";
 import { registeredCluster } from "../../../config";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -261,7 +262,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
 
   return (
     <Fragment>
-      <PageHeader label="Health" />
+      <PageHeaderWrapper label="Health" />
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>
