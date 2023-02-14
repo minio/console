@@ -25,7 +25,7 @@ import {
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
-import { Button, PageHeader } from "mds";
+import { Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { AppState, useAppDispatch } from "../../../store";
@@ -44,6 +44,7 @@ import api from "../../../common/api";
 import PageLayout from "../Common/Layout/PageLayout";
 import makeStyles from "@mui/styles/makeStyles";
 import { watchMessageReceived, watchResetMessages } from "./watchSlice";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -172,7 +173,7 @@ const Watch = () => {
 
   return (
     <React.Fragment>
-      <PageHeader label="Watch" />
+      <PageHeaderWrapper label="Watch" />
       <PageLayout>
         <Grid item xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>

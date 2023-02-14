@@ -18,14 +18,15 @@ import React, { Fragment, useState } from "react";
 import { DialogContentText, Grid } from "@mui/material";
 import PageLayout from "./Layout/PageLayout";
 import SectionTitle from "./SectionTitle";
-import { Button, ConfirmDeleteIcon, PageHeader } from "mds";
+import { Button, ConfirmDeleteIcon } from "mds";
 import ConfirmDialog from "./ModalWrapper/ConfirmDialog";
+import PageHeaderWrapper from "./PageHeaderWrapper/PageHeaderWrapper";
 
 const ComponentsScreen = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   return (
     <Fragment>
-      <PageHeader label={"Components"} />
+      <PageHeaderWrapper label={"Components"} />
       <PageLayout>
         <Grid container spacing={1}>
           <Grid item xs={12}>

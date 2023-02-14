@@ -23,7 +23,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { resourcesConfigurations } from "../Tenants/AddTenant/Steps/TenantResources/utils";
 import { selShowMarketplace, showMarketplace } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-import { PageHeader } from "mds";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const Marketplace = () => {
   const dispatch = useAppDispatch();
@@ -69,7 +69,7 @@ const Marketplace = () => {
   if (features) {
     return (
       <Fragment>
-        <PageHeader label="Operator Marketplace" />
+        <PageHeaderWrapper label="Operator Marketplace" />
         <PageLayout>
           <SetEmailModal open={true} closeModal={closeModal} />
         </PageLayout>

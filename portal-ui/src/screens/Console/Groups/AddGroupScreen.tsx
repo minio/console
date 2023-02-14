@@ -25,7 +25,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
-import { BackLink, Button, CreateGroupIcon, PageHeader } from "mds";
+import { BackLink, Button, CreateGroupIcon } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddGroupHelpBox from "./AddGroupHelpBox";
@@ -37,6 +37,7 @@ import api from "../../../../src/common/api";
 import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 interface IAddGroupProps {
   classes: any;
@@ -97,7 +98,7 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
   return (
     <Fragment>
       <Grid item xs={12}>
-        <PageHeader
+        <PageHeaderWrapper
           label={
             <BackLink
               label={"Groups"}

@@ -15,21 +15,32 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
+import { PageHeader } from "mds";
+import ObjectManagerButton from "../ObjectManager/ObjectManagerButton";
 
-import withSuspense from "../Common/Components/withSuspense";
-import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+interface IPageHeaderWrapper {
+  label: React.ReactNode;
+  middleComponent?: React.ReactNode;
+  actions?: React.ReactNode;
+}
 
-const ListNotificationEndpoints = withSuspense(
-  React.lazy(() => import("./ListEventDestinations"))
-);
-
-const EventDestinations = () => {
+const PageHeaderWrapper = ({
+  label,
+  actions,
+  middleComponent,
+}: IPageHeaderWrapper) => {
   return (
-    <Fragment>
-      <PageHeaderWrapper label="Event Destinations" />
-      <ListNotificationEndpoints />
-    </Fragment>
+    <PageHeader
+      label={label}
+      actions={
+        <Fragment>
+          {actions}
+          <ObjectManagerButton />
+        </Fragment>
+      }
+      middleComponent={middleComponent}
+    />
   );
 };
 
-export default EventDestinations;
+export default PageHeaderWrapper;

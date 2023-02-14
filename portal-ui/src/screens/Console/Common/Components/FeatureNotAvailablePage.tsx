@@ -1,7 +1,7 @@
 import React from "react";
 import FeatureNotAvailable from "./FeatureNotAvailable";
 import PageLayout from "../Layout/PageLayout";
-import { PageHeader } from "mds";
+import PageHeaderWrapper from "../PageHeaderWrapper/PageHeaderWrapper";
 
 const FeatureNotAvailablePage = ({
   pageHeaderText = "",
@@ -16,7 +16,7 @@ const FeatureNotAvailablePage = ({
 }) => {
   return (
     <React.Fragment>
-      <PageHeader label={pageHeaderText} />
+      <PageHeaderWrapper label={pageHeaderText} />
       <PageLayout>
         <FeatureNotAvailable
           iconComponent={icon}

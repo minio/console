@@ -1,12 +1,13 @@
 import React, { Fragment } from "react";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { BackLink, PageHeader } from "mds";
+import { BackLink } from "mds";
 import { useNavigate } from "react-router-dom";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const GroupDetailsHeader = () => {
   const navigate = useNavigate();
   return (
-    <PageHeader
+    <PageHeaderWrapper
       label={
         <Fragment>
           <BackLink

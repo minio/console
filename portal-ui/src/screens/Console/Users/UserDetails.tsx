@@ -22,7 +22,6 @@ import {
   BackLink,
   Button,
   IAMPoliciesIcon,
-  PageHeader,
   PasswordKeyIcon,
   TrashIcon,
   UsersIcon,
@@ -71,6 +70,7 @@ import { hasPermission } from "../../../common/SecureComponent";
 import { useAppDispatch } from "../../../store";
 import { policyDetailsSort } from "../../../utils/sortFunctions";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -233,7 +233,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
 
   return (
     <Fragment>
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <Fragment>
             <BackLink

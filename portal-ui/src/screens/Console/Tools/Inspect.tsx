@@ -16,13 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, DialogContentText } from "@mui/material";
-import {
-  Button,
-  HelpBox,
-  InspectMenuIcon,
-  PageHeader,
-  PasswordKeyIcon,
-} from "mds";
+import { Button, HelpBox, InspectMenuIcon, PasswordKeyIcon } from "mds";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -48,6 +42,7 @@ import { selDistSet, setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import RegisterCluster from "../Support/RegisterCluster";
 import { registeredCluster } from "../../../config";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -198,7 +193,7 @@ const Inspect = ({ classes }: { classes: any }) => {
 
   return (
     <Fragment>
-      <PageHeader label={"Inspect"} />
+      <PageHeaderWrapper label={"Inspect"} />
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
         {!distributedSetup ? (

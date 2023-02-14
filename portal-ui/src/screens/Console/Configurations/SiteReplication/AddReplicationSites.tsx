@@ -18,7 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { BackLink, Button, ClustersIcon, HelpBox, PageHeader } from "mds";
+import { BackLink, Button, ClustersIcon, HelpBox } from "mds";
 import useApi from "../../Common/Hooks/useApi";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
@@ -32,6 +32,7 @@ import { useSelector } from "react-redux";
 import { selSession } from "../../consoleSlice";
 import SRSiteInputRow from "./SRSiteInputRow";
 import { SiteInputRow } from "./Types";
+import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const isValidEndPoint = (ep: string) => {
   let isValidEndPointUrl = false;
@@ -392,7 +393,7 @@ const AddReplicationSites = () => {
 
   return (
     <Fragment>
-      <PageHeader
+      <PageHeaderWrapper
         label={
           <BackLink
             label={"Add Replication Site"}

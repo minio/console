@@ -24,7 +24,6 @@ import {
   GroupsIcon,
   HelpBox,
   IAMPoliciesIcon,
-  PageHeader,
   UsersIcon,
 } from "mds";
 import createStyles from "@mui/styles/createStyles";
@@ -68,6 +67,7 @@ import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const SetPolicy = withSuspense(
@@ -222,7 +222,7 @@ const Groups = ({ classes }: IGroupsProps) => {
           }}
         />
       )}
-      <PageHeader label={"Groups"} />
+      <PageHeaderWrapper label={"Groups"} />
 
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray}>
