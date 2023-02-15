@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, DownloadIcon } from "mds";
+import {Button,  UploadIcon} from "mds";
 import useApi from "../../Common/Hooks/useApi";
 import { performDownload } from "../../../../common/utils";
 import { DateTime } from "luxon";
@@ -31,7 +31,7 @@ const ExportConfigButton = () => {
         onClick={() => {
           invokeApi("GET", `api/v1/configs/export`);
         }}
-        icon={<DownloadIcon />}
+        icon={<UploadIcon />}
         label={"Export"}
         variant={"regular"}
         disabled={isReqLoading}

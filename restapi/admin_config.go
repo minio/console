@@ -72,6 +72,13 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 		}
 		return cfgApi.NewExportConfigOK().WithPayload(resp)
 	})
+	api.ConfigurationPostConfigsImportHandler = cfgApi.PostConfigsImportHandlerFunc(func(params cfgApi.PostConfigsImportParams, session *models.Principal) middleware.Responder {
+		_, err := importConfigResponse(session, params)
+		if err != nil {
+			return cfgApi.NewPostConfigsImportDefault((int(err.Code))).WithPayload(err)
+		}
+		return cfgApi.NewPostConfigsImportDefault(200)
+	})
 }
 
 // listConfig gets all configurations' names and their descriptions
@@ -292,4 +299,24 @@ func exportConfigResponse(session *models.Principal, params cfgApi.ExportConfigP
 		Status: "success",
 		Value:  base64.StdEncoding.EncodeToString(configRes),
 	}, nil
+}
+
+func importConfigResponse(session *models.Principal, params cfgApi.PostConfigsImportParams) (*cfgApi.PostConfigsImportDefault, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	file, _, err := params.HTTPRequest.FormFile("file")
+	defer file.Close()
+
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	err = mAdmin.SetConfig(ctx, file)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &cfgApi.PostConfigsImportDefault{}, nil
 }
