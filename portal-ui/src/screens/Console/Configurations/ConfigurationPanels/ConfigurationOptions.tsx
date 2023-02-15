@@ -34,6 +34,7 @@ import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import ConfigurationForm from "./ConfigurationForm";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import ExportConfigButton from "./ExportConfigButton";
 
 interface IConfigurationOptions {
   classes: any;
@@ -78,6 +79,7 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
             <ScreenTitle
               icon={<SettingsIcon />}
               title={"MinIO Configuration:"}
+              actions={<ExportConfigButton />}
             />
             <VerticalTabs
               selectedTab={selConfigTab}

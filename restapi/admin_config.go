@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -62,6 +63,14 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 			return cfgApi.NewResetConfigDefault(int(err.Code)).WithPayload(err)
 		}
 		return cfgApi.NewResetConfigOK().WithPayload(resp)
+	})
+	// Export Configuration as base64 string.
+	api.ConfigurationExportConfigHandler = cfgApi.ExportConfigHandlerFunc(func(params cfgApi.ExportConfigParams, session *models.Principal) middleware.Responder {
+		resp, err := exportConfigResponse(session, params)
+		if err != nil {
+			return cfgApi.NewExportConfigDefault((int(err.Code))).WithPayload(err)
+		}
+		return cfgApi.NewExportConfigOK().WithPayload(resp)
 	})
 }
 
@@ -264,4 +273,23 @@ func resetConfigResponse(session *models.Principal, params cfgApi.ResetConfigPar
 	}
 
 	return &models.SetConfigResponse{Restart: true}, nil
+}
+
+func exportConfigResponse(session *models.Principal, params cfgApi.ExportConfigParams) (*models.ConfigExportResponse, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	configRes, err := mAdmin.GetConfig(ctx)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	// may contain sensitive information so unpack only when required.
+	return &models.ConfigExportResponse{
+		Status: "success",
+		Value:  base64.StdEncoding.EncodeToString(configRes),
+	}, nil
 }

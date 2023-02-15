@@ -217,6 +217,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BucketEnableBucketEncryptionHandler: bucket.EnableBucketEncryptionHandlerFunc(func(params bucket.EnableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.EnableBucketEncryption has not yet been implemented")
 		}),
+		ConfigurationExportConfigHandler: configuration.ExportConfigHandlerFunc(func(params configuration.ExportConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation configuration.ExportConfig has not yet been implemented")
+		}),
 		BucketGetBucketEncryptionInfoHandler: bucket.GetBucketEncryptionInfoHandlerFunc(func(params bucket.GetBucketEncryptionInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.GetBucketEncryptionInfo has not yet been implemented")
 		}),
@@ -696,6 +699,8 @@ type ConsoleAPI struct {
 	TieringEditTierCredentialsHandler tiering.EditTierCredentialsHandler
 	// BucketEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
 	BucketEnableBucketEncryptionHandler bucket.EnableBucketEncryptionHandler
+	// ConfigurationExportConfigHandler sets the operation handler for the export config operation
+	ConfigurationExportConfigHandler configuration.ExportConfigHandler
 	// BucketGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
 	BucketGetBucketEncryptionInfoHandler bucket.GetBucketEncryptionInfoHandler
 	// BucketGetBucketLifecycleHandler sets the operation handler for the get bucket lifecycle operation
@@ -1135,6 +1140,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.BucketEnableBucketEncryptionHandler == nil {
 		unregistered = append(unregistered, "bucket.EnableBucketEncryptionHandler")
+	}
+	if o.ConfigurationExportConfigHandler == nil {
+		unregistered = append(unregistered, "configuration.ExportConfigHandler")
 	}
 	if o.BucketGetBucketEncryptionInfoHandler == nil {
 		unregistered = append(unregistered, "bucket.GetBucketEncryptionInfoHandler")
@@ -1745,6 +1753,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets/{bucket_name}/encryption/enable"] = bucket.NewEnableBucketEncryption(o.context, o.BucketEnableBucketEncryptionHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/configs/export"] = configuration.NewExportConfig(o.context, o.ConfigurationExportConfigHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
