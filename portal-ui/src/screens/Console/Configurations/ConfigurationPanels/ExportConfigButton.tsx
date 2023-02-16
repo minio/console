@@ -1,5 +1,5 @@
 import React from "react";
-import {Button,  UploadIcon} from "mds";
+import { Button, UploadIcon } from "mds";
 import useApi from "../../Common/Hooks/useApi";
 import { performDownload } from "../../../../common/utils";
 import { DateTime } from "luxon";

@@ -2288,7 +2288,7 @@ paths:
         - Configuration
   /configs/import:
     post:
-      summary: Uploads an Object.
+      summary: Uploads a file to import MinIO server config.
       consumes:
         - multipart/form-data
       parameters:

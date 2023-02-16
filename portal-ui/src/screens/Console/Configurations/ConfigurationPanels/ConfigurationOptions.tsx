@@ -36,7 +36,7 @@ import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import ExportConfigButton from "./ExportConfigButton";
 import ImportConfigButton from "./ImportConfigButton";
-import {Box} from "@mui/material";
+import { Box } from "@mui/material";
 
 interface IConfigurationOptions {
   classes: any;
@@ -81,14 +81,17 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
             <ScreenTitle
               icon={<SettingsIcon />}
               title={"MinIO Configuration:"}
-              actions={<Box sx={{
-                  display:"flex",
-                  gap:2
-              }}>
-                  <ImportConfigButton/>
+              actions={
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                  }}
+                >
+                  <ImportConfigButton />
                   <ExportConfigButton />
-
-              </Box>}
+                </Box>
+              }
             />
             <VerticalTabs
               selectedTab={selConfigTab}
