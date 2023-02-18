@@ -34,7 +34,7 @@ const PromoLabels = ({ title, text }: { title: string; text: string }) => {
   return (
     <div style={{ marginTop: 15 }}>
       <div style={{ marginBottom: 10, fontWeight: "bold" }}>{title}</div>
-      <div style={{ color: "#969696", fontSize: 14, marginBottom: 40 }}>
+      <div style={{ color: "#969696", fontSize: 12, marginBottom: 40 }}>
         {text}
       </div>
     </div>
@@ -176,14 +176,13 @@ const CallHome = () => {
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       setDiagEnabled(event.target.checked);
                     }}
-                    label={"Send Diagnostics information"}
+                    label={"Daily Health Report"}
                     disabled={!clusterRegistered}
                   />
                   <PromoLabels
                     title={"When you enable diagnostics"}
                     text={
-                      "Understand your storage with MinIO and unlock the potential of efficient health diagnostics. Ensure\n" +
-                      "                  seamless performance and identify potential issues before they escalate."
+                      "Daily Health Report enables you to proactively identify potential issues in your deployment before they escalate."
                     }
                   />
                 </div>
@@ -196,14 +195,13 @@ const CallHome = () => {
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       setLogsEnabled(event.target.checked);
                     }}
-                    label={"Send Logs information"}
+                    label={"Live Error Logs"}
                     disabled={!clusterRegistered}
                   />
                   <PromoLabels
                     title={"When you enable logs"}
                     text={
-                      "Streamline your log management with MinIO's SUBNET! Upload your logs and easily access them from your\n" +
-                      "                  SUBNET account. Get real-time insights and troubleshoot issues quickly."
+                      "Live Error Logs will enable MinIO's support team and automatic diagnostics system to catch failures early."
                     }
                   />
                 </div>
