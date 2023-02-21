@@ -1983,7 +1983,7 @@ func (suite *TenantTestSuite) TestGetTenantLogReportWithoutError() {
 				},
 			},
 		},
-		&corev1.PodList{},
+		&corev1.PodList{Items: []v1.Pod{{}, {}, {}}},
 	}
 
 	kubeClient := fake.NewSimpleClientset(objs...)
