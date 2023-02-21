@@ -100,7 +100,7 @@ const WebhookSettings = ({
             fontSize: "8px",
           }}
         >
-          <TierOnlineIcon style={{ fill: "#4CCB92" }} />
+          <TierOnlineIcon style={{ fill: "#4CCB92", width: 14, height: 14 }} />
           Enabled
         </Grid>
       );
@@ -117,7 +117,7 @@ const WebhookSettings = ({
           fontSize: "8px",
         }}
       >
-        <TierOfflineIcon style={{ fill: "#C83B51" }} />
+        <TierOfflineIcon style={{ fill: "#C83B51", width: 14, height: 14 }} />
         Disabled
       </Grid>
     );
