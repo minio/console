@@ -23,7 +23,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
 interface ICallHomeConfirmation {
   onClose: (refresh: boolean) => any;
@@ -43,7 +42,6 @@ const CallHomeConfirmation = ({
   const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [confirmText, setConfirmText] = useState<string>("");
 
   const onConfirmAction = () => {
     setLoading(true);
@@ -157,18 +155,6 @@ const CallHomeConfirmation = ({
             available in your SUBNET Account and it will not be shared to other
             persons or entities besides MinIO team and you.
           </Grid>
-          To continue please type <b>CONFIRM</b> in the box.
-          <Grid item xs={12} sx={{ marginBottom: 10 }}>
-            <InputBoxWrapper
-              id="retype-tenant"
-              name="retype-tenant"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setConfirmText(event.target.value);
-              }}
-              label=""
-              value={confirmText}
-            />
-          </Grid>
           {loading && (
             <Grid
               item
@@ -204,7 +190,7 @@ const CallHomeConfirmation = ({
               type="submit"
               variant={"callAction"}
               color="primary"
-              disabled={loading || confirmText !== "CONFIRM"}
+              disabled={loading}
               label={"Yes, Save this Configuration"}
               onClick={onConfirmAction}
             />
