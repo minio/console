@@ -236,23 +236,6 @@ const Heal = () => {
     }
   }, [start, bucketName, forceStart, forceStop, prefix, recursive]);
 
-  // let data = [
-  //   {
-  //     label: "After Healing",
-  //     data: hStatus.afterHeal,
-  //     backgroundColor: "rgba(0, 0, 255, 0.2)",
-  //     borderColor: "rgba(54, 162, 235, 1)",
-  //     borderWidth: 1,
-  //   },
-  //   {
-  //     label: "Before Healing",
-  //     data: hStatus.beforeHeal,
-  //     backgroundColor: "rgba(153, 102, 255, 0.2)",
-  //     borderColor: "rgba(153, 102, 255, 1)",
-  //     borderWidth: 1,
-  //   },
-  // ];
-
   let data = [
     {
       name: "Green",
