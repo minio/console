@@ -217,6 +217,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BucketEnableBucketEncryptionHandler: bucket.EnableBucketEncryptionHandlerFunc(func(params bucket.EnableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.EnableBucketEncryption has not yet been implemented")
 		}),
+		ConfigurationExportConfigHandler: configuration.ExportConfigHandlerFunc(func(params configuration.ExportConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation configuration.ExportConfig has not yet been implemented")
+		}),
 		BucketGetBucketEncryptionInfoHandler: bucket.GetBucketEncryptionInfoHandlerFunc(func(params bucket.GetBucketEncryptionInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.GetBucketEncryptionInfo has not yet been implemented")
 		}),
@@ -420,6 +423,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		ObjectPostBucketsBucketNameObjectsUploadHandler: object.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params object.PostBucketsBucketNameObjectsUploadParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.PostBucketsBucketNameObjectsUpload has not yet been implemented")
+		}),
+		ConfigurationPostConfigsImportHandler: configuration.PostConfigsImportHandlerFunc(func(params configuration.PostConfigsImportParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation configuration.PostConfigsImport has not yet been implemented")
 		}),
 		ProfileProfilingStartHandler: profile.ProfilingStartHandlerFunc(func(params profile.ProfilingStartParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation profile.ProfilingStart has not yet been implemented")
@@ -696,6 +702,8 @@ type ConsoleAPI struct {
 	TieringEditTierCredentialsHandler tiering.EditTierCredentialsHandler
 	// BucketEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
 	BucketEnableBucketEncryptionHandler bucket.EnableBucketEncryptionHandler
+	// ConfigurationExportConfigHandler sets the operation handler for the export config operation
+	ConfigurationExportConfigHandler configuration.ExportConfigHandler
 	// BucketGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
 	BucketGetBucketEncryptionInfoHandler bucket.GetBucketEncryptionInfoHandler
 	// BucketGetBucketLifecycleHandler sets the operation handler for the get bucket lifecycle operation
@@ -832,6 +840,8 @@ type ConsoleAPI struct {
 	PolicyPolicyInfoHandler policy.PolicyInfoHandler
 	// ObjectPostBucketsBucketNameObjectsUploadHandler sets the operation handler for the post buckets bucket name objects upload operation
 	ObjectPostBucketsBucketNameObjectsUploadHandler object.PostBucketsBucketNameObjectsUploadHandler
+	// ConfigurationPostConfigsImportHandler sets the operation handler for the post configs import operation
+	ConfigurationPostConfigsImportHandler configuration.PostConfigsImportHandler
 	// ProfileProfilingStartHandler sets the operation handler for the profiling start operation
 	ProfileProfilingStartHandler profile.ProfilingStartHandler
 	// ProfileProfilingStopHandler sets the operation handler for the profiling stop operation
@@ -1136,6 +1146,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.BucketEnableBucketEncryptionHandler == nil {
 		unregistered = append(unregistered, "bucket.EnableBucketEncryptionHandler")
 	}
+	if o.ConfigurationExportConfigHandler == nil {
+		unregistered = append(unregistered, "configuration.ExportConfigHandler")
+	}
 	if o.BucketGetBucketEncryptionInfoHandler == nil {
 		unregistered = append(unregistered, "bucket.GetBucketEncryptionInfoHandler")
 	}
@@ -1339,6 +1352,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.ObjectPostBucketsBucketNameObjectsUploadHandler == nil {
 		unregistered = append(unregistered, "object.PostBucketsBucketNameObjectsUploadHandler")
+	}
+	if o.ConfigurationPostConfigsImportHandler == nil {
+		unregistered = append(unregistered, "configuration.PostConfigsImportHandler")
 	}
 	if o.ProfileProfilingStartHandler == nil {
 		unregistered = append(unregistered, "profile.ProfilingStartHandler")
@@ -1748,6 +1764,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/configs/export"] = configuration.NewExportConfig(o.context, o.ConfigurationExportConfigHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/buckets/{bucket_name}/encryption/info"] = bucket.NewGetBucketEncryptionInfo(o.context, o.BucketGetBucketEncryptionInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -2017,6 +2037,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets/{bucket_name}/objects/upload"] = object.NewPostBucketsBucketNameObjectsUpload(o.context, o.ObjectPostBucketsBucketNameObjectsUploadHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/configs/import"] = configuration.NewPostConfigsImport(o.context, o.ConfigurationPostConfigsImportHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

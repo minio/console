@@ -2566,6 +2566,59 @@ func init() {
         }
       }
     },
+    "/configs/export": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Export the current config from MinIO server",
+        "operationId": "ExportConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/configExportResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/configs/import": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Uploads an Object.",
+        "parameters": [
+          {
+            "type": "file",
+            "name": "file",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/configs/{name}": {
       "get": {
         "tags": [
@@ -5938,6 +5991,18 @@ func init() {
           "type": "string"
         },
         "key": {
+          "type": "string"
+        }
+      }
+    },
+    "configExportResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "value": {
+          "description": "Returns base64 encoded value",
           "type": "string"
         }
       }
@@ -11336,6 +11401,59 @@ func init() {
         }
       }
     },
+    "/configs/export": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Export the current config from MinIO server",
+        "operationId": "ExportConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/configExportResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/configs/import": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Uploads an Object.",
+        "parameters": [
+          {
+            "type": "file",
+            "name": "file",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/configs/{name}": {
       "get": {
         "tags": [
@@ -14834,6 +14952,18 @@ func init() {
           "type": "string"
         },
         "key": {
+          "type": "string"
+        }
+      }
+    },
+    "configExportResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "value": {
+          "description": "Returns base64 encoded value",
           "type": "string"
         }
       }

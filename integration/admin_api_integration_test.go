@@ -22,8 +22,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path"
 	"testing"
 	"time"
 
@@ -155,33 +159,33 @@ func NotifyPostgres() (*http.Response, error) {
 
 func TestNotifyPostgres(t *testing.T) {
 	// Variables
-	assert := assert.New(t)
+	asserter := assert.New(t)
 
 	// Test
 	response, err := NotifyPostgres()
 	finalResponse := inspectHTTPResponse(response)
-	assert.Nil(err)
+	asserter.Nil(err)
 	if err != nil {
 		log.Println(err)
-		assert.Fail(finalResponse)
+		asserter.Fail(finalResponse)
 		return
 	}
 	if response != nil {
-		assert.Equal(200, response.StatusCode, finalResponse)
+		asserter.Equal(200, response.StatusCode, finalResponse)
 	}
 }
 
 func TestRestartService(t *testing.T) {
-	assert := assert.New(t)
+	asserter := assert.New(t)
 	restartResponse, restartError := RestartService()
-	assert.Nil(restartError)
+	asserter.Nil(restartError)
 	if restartError != nil {
 		log.Println(restartError)
 		return
 	}
 	addObjRsp := inspectHTTPResponse(restartResponse)
 	if restartResponse != nil {
-		assert.Equal(
+		asserter.Equal(
 			204,
 			restartResponse.StatusCode,
 			addObjRsp,
@@ -212,18 +216,18 @@ func ListPoliciesWithBucket(bucketName string) (*http.Response, error) {
 func TestListPoliciesWithBucket(t *testing.T) {
 	// Test Variables
 	bucketName := "testlistpolicieswithbucket"
-	assert := assert.New(t)
+	asserter := assert.New(t)
 
 	// Test
 	response, err := ListPoliciesWithBucket(bucketName)
-	assert.Nil(err)
+	asserter.Nil(err)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	parsedResponse := inspectHTTPResponse(response)
 	if response != nil {
-		assert.Equal(
+		asserter.Equal(
 			200,
 			response.StatusCode,
 			parsedResponse,
@@ -254,18 +258,18 @@ func ListUsersWithAccessToBucket(bucketName string) (*http.Response, error) {
 func TestListUsersWithAccessToBucket(t *testing.T) {
 	// Test Variables
 	bucketName := "testlistuserswithaccesstobucket1"
-	assert := assert.New(t)
+	asserter := assert.New(t)
 
 	// Test
 	response, err := ListUsersWithAccessToBucket(bucketName)
-	assert.Nil(err)
+	asserter.Nil(err)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	parsedResponse := inspectHTTPResponse(response)
 	if response != nil {
-		assert.Equal(
+		asserter.Equal(
 			200,
 			response.StatusCode,
 			parsedResponse,
@@ -274,16 +278,16 @@ func TestListUsersWithAccessToBucket(t *testing.T) {
 }
 
 func TestGetNodes(t *testing.T) {
-	assert := assert.New(t)
+	asserter := assert.New(t)
 	getNodesResponse, getNodesError := GetNodes()
-	assert.Nil(getNodesError)
+	asserter.Nil(getNodesError)
 	if getNodesError != nil {
 		log.Println(getNodesError)
 		return
 	}
 	addObjRsp := inspectHTTPResponse(getNodesResponse)
 	if getNodesResponse != nil {
-		assert.Equal(
+		asserter.Equal(
 			200,
 			getNodesResponse.StatusCode,
 			addObjRsp,
@@ -312,16 +316,89 @@ func ArnList() (*http.Response, error) {
 }
 
 func TestArnList(t *testing.T) {
-	assert := assert.New(t)
+	asserter := assert.New(t)
 	resp, err := ArnList()
-	assert.Nil(err)
+	asserter.Nil(err)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	objRsp := inspectHTTPResponse(resp)
 	if resp != nil {
-		assert.Equal(
+		asserter.Equal(
+			200,
+			resp.StatusCode,
+			objRsp,
+		)
+	}
+}
+
+func ExportConfig() (*http.Response, error) {
+	request, err := http.NewRequest(
+		"GET", "http://localhost:9090/api/v1/configs/export", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func ImportConfig() (*http.Response, error) {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	formFile, _ := writer.CreateFormFile("file", "sample-import-config.txt")
+	fileDir, _ := os.Getwd()
+	fileName := "sample-import-config.txt"
+	filePath := path.Join(fileDir, fileName)
+	file, _ := os.Open(filePath)
+	io.Copy(formFile, file)
+	writer.Close()
+	request, err := http.NewRequest(
+		"POST", "http://localhost:9090/api/v1/configs/import",
+		bytes.NewReader(body.Bytes()),
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Set("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+
+	rsp, _ := client.Do(request)
+	if rsp.StatusCode != http.StatusOK {
+		log.Printf("Request failed with response code: %d", rsp.StatusCode)
+	}
+	return rsp, err
+}
+
+func TestExportConfig(t *testing.T) {
+	asserter := assert.New(t)
+	resp, err := ExportConfig()
+	asserter.Nil(err)
+	objRsp := inspectHTTPResponse(resp)
+	if resp != nil {
+		asserter.Equal(
+			200,
+			resp.StatusCode,
+			objRsp,
+		)
+	}
+}
+
+func TestImportConfig(t *testing.T) {
+	asserter := assert.New(t)
+	resp, err := ImportConfig()
+	asserter.Nil(err)
+	objRsp := inspectHTTPResponse(resp)
+	if resp != nil {
+		asserter.Equal(
 			200,
 			resp.StatusCode,
 			objRsp,

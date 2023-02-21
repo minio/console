@@ -2271,6 +2271,40 @@ paths:
       tags:
         - Configuration
 
+  /configs/export:
+    get:
+      summary: Export the current config from MinIO server
+      operationId: ExportConfig
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/configExportResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Configuration
+  /configs/import:
+    post:
+      summary: Uploads a file to import MinIO server config.
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: file
+          in: formData
+          required: true
+          type: file
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Configuration
   /service/restart:
     post:
       summary: Restart Service
@@ -5222,6 +5256,15 @@ definitions:
       restart:
         description: Returns wheter server needs to restart to apply changes or not
         type: boolean
+
+  configExportResponse:
+    type: object
+    properties:
+      value:
+        description: Returns base64 encoded value
+        type: string
+      status:
+        type: string
 
   license:
     type: object
