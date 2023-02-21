@@ -205,7 +205,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
           flexDirection={"column"}
           display={"flex"}
         >
-          <TierOnlineIcon />
+          <TierOnlineIcon style={{ fill: "#4CCB92", width: 14, height: 14 }} />
           ONLINE
         </Grid>
       );
@@ -222,7 +222,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
         flexDirection={"column"}
         display={"flex"}
       >
-        <TierOfflineIcon />
+        <TierOfflineIcon style={{ fill: "#C83B51", width: 14, height: 14 }} />
         OFFLINE
       </Grid>
     );
