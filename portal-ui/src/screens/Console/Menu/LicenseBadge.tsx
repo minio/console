@@ -20,6 +20,7 @@ import { AppState } from "../../../store";
 import { Box } from "@mui/material";
 import { CircleIcon } from "mds";
 import { getLicenseConsent } from "../License/utils";
+import { registeredCluster } from "../../../config";
 
 const LicenseBadge = () => {
   const licenseInfo = useSelector(
@@ -27,10 +28,11 @@ const LicenseBadge = () => {
   );
 
   const isAgplAckDone = getLicenseConsent();
+  const clusterRegistered = registeredCluster();
 
   const { plan = "" } = licenseInfo || {};
 
-  if (plan || isAgplAckDone) {
+  if (plan || isAgplAckDone || clusterRegistered) {
     return null;
   }
 
