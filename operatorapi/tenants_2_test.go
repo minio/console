@@ -1977,7 +1977,7 @@ func (suite *TenantTestSuite) TestGetTenantLogReportWithError() {
 
 func (suite *TenantTestSuite) TestGetTenantLogReportWithoutError() {
 	fmt.Println("testing TestGetTenantLogReportWithoutError")
-	var fakePods = []v1.Pod{{ObjectMeta: metav1.ObjectMeta{Name: "pod1"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod2"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod3"}}}
+	fakePods := []v1.Pod{{ObjectMeta: metav1.ObjectMeta{Name: "pod1"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod2"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod3"}}}
 	objs := []runtime.Object{
 		&corev1.PersistentVolumeClaim{
 			ObjectMeta: metav1.ObjectMeta{
