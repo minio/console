@@ -1662,6 +1662,18 @@ func (suite *TenantTestSuite) prepareEncryptionUpdateMocksNoError() {
 	}
 }
 
+func (suite *TenantTestSuite) prepareLogReportMocksNoError() {
+	k8sClientCreateSecretMock = func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
+		return nil, nil
+	}
+	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+		return &miniov2.Tenant{Spec: miniov2.TenantSpec{}}, nil
+	}
+	opClientTenantUpdateMock = func(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error) {
+		return nil, nil
+	}
+}
+
 func (suite *TenantTestSuite) initTenantUpdateEncryptionRequest() (params operator_api.TenantUpdateEncryptionParams, api operations.OperatorAPI) {
 	registerTenantHandlers(&api)
 	params.HTTPRequest = &http.Request{}
@@ -1988,19 +2000,20 @@ func (suite *TenantTestSuite) TestGetTenantLogReportWithError() {
 }
 
 func (suite *TenantTestSuite) TestGetTenantLogReportWithoutError() {
-	fakePods := []v1.Pod{{ObjectMeta: metav1.ObjectMeta{Name: "pod1"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod2"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod3"}}}
+	// fakePods := []v1.Pod{{ObjectMeta: metav1.ObjectMeta{Name: "pod1"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod2"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod3"}}}
 	objs := []runtime.Object{
-		&corev1.PersistentVolumeClaim{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "PVC1",
-				Namespace: "minio-tenant",
-				Labels: map[string]string{
-					miniov2.TenantLabel: "tenant1",
-					miniov2.PoolLabel:   "pool-1",
+		&v1.PodList{Items: []v1.Pod{
+			{
+				Status: corev1.PodStatus{
+					ContainerStatuses: []corev1.ContainerStatus{{}},
+				},
+				ObjectMeta: metav1.ObjectMeta{
+					Name:              "Pod1",
+					DeletionTimestamp: &metav1.Time{Time: time.Now()},
 				},
 			},
-		},
-		&corev1.PodList{Items: fakePods},
+		}},
+		&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "mock-namespace"}},
 	}
 
 	kubeClient := fake.NewSimpleClientset(objs...)

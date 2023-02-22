@@ -349,7 +349,6 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 	})
 	// Get tenant log report
 	api.OperatorAPIGetTenantLogReportHandler = operator_api.GetTenantLogReportHandlerFunc(func(params operator_api.GetTenantLogReportParams, principal *models.Principal) middleware.Responder {
-		fmt.Println("this is the handler")
 		payload, err := getTenantLogReportResponse(principal, params)
 		if err != nil {
 			return operator_api.NewGetTenantLogReportDefault(int(err.Code)).WithPayload(err)
@@ -2824,15 +2823,11 @@ func updateTenantDomains(ctx context.Context, operatorClient OperatorClientI, na
 }
 
 func getTenantLogReportResponse(session *models.Principal, params operator_api.GetTenantLogReportParams) (*models.TenantLogReport, *models.Error) {
-	fmt.Println("in getTenantLogReportResponse")
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
 	payload := &models.TenantLogReport{}
-	if session.AccountAccessKey == "this" {
-		fakeError := fmt.Errorf("fake error")
-		return payload, restapi.ErrorWithContext(ctx, fakeError)
-	}
+
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return payload, restapi.ErrorWithContext(ctx, err)
@@ -2844,6 +2839,9 @@ func getTenantLogReportResponse(session *models.Principal, params operator_api.G
 	opClient := &operatorClient{
 		client: operatorCli,
 	}
+	limit := int32(10)
+	tenantList, err := listTenants(ctx, opClient, params.Namespace, &limit)
+	fmt.Println("what tenants do I havd?", tenantList)
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
 		return payload, restapi.ErrorWithContext(ctx, err)
@@ -2871,7 +2869,8 @@ func generateTenantLogReport(ctx context.Context, coreInterface v1.CoreV1Interfa
 	podListOpts := metav1.ListOptions{
 		LabelSelector: fmt.Sprintf("v1.min.io/tenant=%s", tenantName),
 	}
-	fmt.Println("coreInerface: ", &coreInterface)
+	fmt.Println("namespace: ", namespace)
+	fmt.Println("coreInerface.Pods(namespace): ", coreInterface.Pods(namespace))
 	pods, err := coreInterface.Pods(namespace).List(ctx, podListOpts)
 	if err != nil {
 		return restapi.ErrorWithContext(ctx, err)
