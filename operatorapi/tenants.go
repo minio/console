@@ -2839,9 +2839,9 @@ func getTenantLogReportResponse(session *models.Principal, params operator_api.G
 	opClient := &operatorClient{
 		client: operatorCli,
 	}
-	limit := int32(10)
-	tenantList, err := listTenants(ctx, opClient, params.Namespace, &limit)
-	fmt.Println("what tenants do I havd?", tenantList)
+	if err != nil {
+		return payload, restapi.ErrorWithContext(ctx, err)
+	}
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
 		return payload, restapi.ErrorWithContext(ctx, err)

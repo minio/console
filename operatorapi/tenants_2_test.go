@@ -1662,18 +1662,19 @@ func (suite *TenantTestSuite) prepareEncryptionUpdateMocksNoError() {
 	}
 }
 
-func (suite *TenantTestSuite) prepareLogReportMocksNoError() {
-	k8sClientCreateSecretMock = func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
-		return nil, nil
+/*
+	func (suite *TenantTestSuite) prepareLogReportMocksNoError() {
+		k8sClientCreateSecretMock = func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
+			return nil, nil
+		}
+		opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+			return &miniov2.Tenant{Spec: miniov2.TenantSpec{}}, nil
+		}
+		opClientTenantUpdateMock = func(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error) {
+			return nil, nil
+		}
 	}
-	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
-		return &miniov2.Tenant{Spec: miniov2.TenantSpec{}}, nil
-	}
-	opClientTenantUpdateMock = func(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error) {
-		return nil, nil
-	}
-}
-
+*/
 func (suite *TenantTestSuite) initTenantUpdateEncryptionRequest() (params operator_api.TenantUpdateEncryptionParams, api operations.OperatorAPI) {
 	registerTenantHandlers(&api)
 	params.HTTPRequest = &http.Request{}
