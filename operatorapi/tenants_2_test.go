@@ -112,7 +112,6 @@ func (suite *TenantTestSuite) assertHandlersAreNil(api *operations.OperatorAPI) 
 	suite.assert.Nil(api.OperatorAPIPutTenantYAMLHandler)
 	suite.assert.Nil(api.OperatorAPIGetTenantEventsHandler)
 	suite.assert.Nil(api.OperatorAPIUpdateTenantDomainsHandler)
-	fmt.Println("testing suite.assert.Nil(api.OperatorAPIGetTenantLogReportHandler)")
 	suite.assert.Nil(api.OperatorAPIGetTenantLogReportHandler)
 }
 
@@ -148,7 +147,6 @@ func (suite *TenantTestSuite) assertHandlersAreNotNil(api *operations.OperatorAP
 	suite.assert.NotNil(api.OperatorAPIPutTenantYAMLHandler)
 	suite.assert.NotNil(api.OperatorAPIGetTenantEventsHandler)
 	suite.assert.NotNil(api.OperatorAPIUpdateTenantDomainsHandler)
-	fmt.Println("testing NotNil")
 	suite.assert.NotNil(api.OperatorAPIGetTenantLogReportHandler)
 }
 
@@ -1694,6 +1692,13 @@ func (suite *TenantTestSuite) TestTenantEncryptionInfoHandlerWithError() {
 	suite.assert.True(ok)
 }
 
+func (suite *TenantTestSuite) TestTenantLogReportHandlerWithError() {
+	params, api := suite.initTenantLogReportRequest()
+	response := api.OperatorAPIGetTenantLogReportHandler.Handle(params, &models.Principal{})
+	_, ok := response.(*operator_api.GetTenantLogReportDefault)
+	suite.assert.True(ok)
+}
+
 func (suite *TenantTestSuite) TestTenantEncryptionInfoWitNoKesError() {
 	opClientTenantGetMock = func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
 		return &miniov2.Tenant{Spec: miniov2.TenantSpec{}}, nil
@@ -1937,6 +1942,14 @@ func (suite *TenantTestSuite) initTenantEncryptionInfoRequest() (params operator
 	return params, api
 }
 
+func (suite *TenantTestSuite) initTenantLogReportRequest() (params operator_api.GetTenantLogReportParams, api operations.OperatorAPI) {
+	registerTenantHandlers(&api)
+	params.HTTPRequest = &http.Request{}
+	params.Namespace = "mock-namespace"
+	params.Tenant = "mock-tenant"
+	return params, api
+}
+
 func (suite *TenantTestSuite) TestGetTenantYAMLHandlerWithError() {
 	params, api := suite.initGetTenantYAMLRequest()
 	response := api.OperatorAPIGetTenantYAMLHandler.Handle(params, &models.Principal{})
@@ -1960,7 +1973,6 @@ func (suite *TenantTestSuite) TestPutTenantYAMLHandlerWithError() {
 }
 
 func (suite *TenantTestSuite) TestGetTenantLogReportWithError() {
-	fmt.Println("testing TestGetTenantLogReportWithError")
 	objs := []runtime.Object{}
 
 	kubeClient := fake.NewSimpleClientset(objs...)
@@ -1976,7 +1988,6 @@ func (suite *TenantTestSuite) TestGetTenantLogReportWithError() {
 }
 
 func (suite *TenantTestSuite) TestGetTenantLogReportWithoutError() {
-	fmt.Println("testing TestGetTenantLogReportWithoutError")
 	fakePods := []v1.Pod{{ObjectMeta: metav1.ObjectMeta{Name: "pod1"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod2"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod3"}}}
 	objs := []runtime.Object{
 		&corev1.PersistentVolumeClaim{
