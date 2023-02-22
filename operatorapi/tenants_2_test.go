@@ -112,6 +112,7 @@ func (suite *TenantTestSuite) assertHandlersAreNil(api *operations.OperatorAPI) 
 	suite.assert.Nil(api.OperatorAPIPutTenantYAMLHandler)
 	suite.assert.Nil(api.OperatorAPIGetTenantEventsHandler)
 	suite.assert.Nil(api.OperatorAPIUpdateTenantDomainsHandler)
+	fmt.Println("testing suite.assert.Nil(api.OperatorAPIGetTenantLogReportHandler)")
 	suite.assert.Nil(api.OperatorAPIGetTenantLogReportHandler)
 }
 
@@ -147,6 +148,8 @@ func (suite *TenantTestSuite) assertHandlersAreNotNil(api *operations.OperatorAP
 	suite.assert.NotNil(api.OperatorAPIPutTenantYAMLHandler)
 	suite.assert.NotNil(api.OperatorAPIGetTenantEventsHandler)
 	suite.assert.NotNil(api.OperatorAPIUpdateTenantDomainsHandler)
+	fmt.Println("testing NotNil")
+	suite.assert.NotNil(api.OperatorAPIGetTenantLogReportHandler)
 }
 
 func (suite *TenantTestSuite) TestCreateTenantHandlerWithError() {
@@ -1957,6 +1960,7 @@ func (suite *TenantTestSuite) TestPutTenantYAMLHandlerWithError() {
 }
 
 func (suite *TenantTestSuite) TestGetTenantLogReportWithError() {
+	fmt.Println("testing TestGetTenantLogReportWithError")
 	objs := []runtime.Object{}
 
 	kubeClient := fake.NewSimpleClientset(objs...)
@@ -1972,6 +1976,8 @@ func (suite *TenantTestSuite) TestGetTenantLogReportWithError() {
 }
 
 func (suite *TenantTestSuite) TestGetTenantLogReportWithoutError() {
+	fmt.Println("testing TestGetTenantLogReportWithoutError")
+	var fakePods = []v1.Pod{{ObjectMeta: metav1.ObjectMeta{Name: "pod1"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod2"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod3"}}}
 	objs := []runtime.Object{
 		&corev1.PersistentVolumeClaim{
 			ObjectMeta: metav1.ObjectMeta{
@@ -1983,7 +1989,7 @@ func (suite *TenantTestSuite) TestGetTenantLogReportWithoutError() {
 				},
 			},
 		},
-		&corev1.PodList{Items: []v1.Pod{{ObjectMeta: metav1.ObjectMeta{Name: "pod1"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod2"}}, {ObjectMeta: metav1.ObjectMeta{Name: "pod3"}}}},
+		&corev1.PodList{Items: fakePods},
 	}
 
 	kubeClient := fake.NewSimpleClientset(objs...)

@@ -21,7 +21,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -66,7 +65,6 @@ func (ac opClientMock) TenantDelete(ctx context.Context, namespace string, tenan
 
 // mock function of TenantGet()
 func (ac opClientMock) TenantGet(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
-	fmt.Println("mocktenantget")
 	return opClientTenantGetMock(ctx, namespace, tenantName, options)
 }
 

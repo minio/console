@@ -349,6 +349,7 @@ func registerTenantHandlers(api *operations.OperatorAPI) {
 	})
 	// Get tenant log report
 	api.OperatorAPIGetTenantLogReportHandler = operator_api.GetTenantLogReportHandlerFunc(func(params operator_api.GetTenantLogReportParams, principal *models.Principal) middleware.Responder {
+		fmt.Println("this is the handler")
 		payload, err := getTenantLogReportResponse(principal, params)
 		if err != nil {
 			return operator_api.NewGetTenantLogReportDefault(int(err.Code)).WithPayload(err)
@@ -2823,6 +2824,7 @@ func updateTenantDomains(ctx context.Context, operatorClient OperatorClientI, na
 }
 
 func getTenantLogReportResponse(session *models.Principal, params operator_api.GetTenantLogReportParams) (*models.TenantLogReport, *models.Error) {
+	fmt.Println("in getTenantLogReportResponse")
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -2862,12 +2864,14 @@ func getTenantLogReportResponse(session *models.Principal, params operator_api.G
 }
 
 func generateTenantLogReport(ctx context.Context, coreInterface v1.CoreV1Interface, tenantName string, namespace string, tenant *miniov2.Tenant) *models.Error {
+	fmt.Println("in generateTenantReport")
 	if tenantName == "" || namespace == "" {
 		return restapi.ErrorWithContext(ctx, errors.New("Namespace and Tenant name cannot be empty"))
 	}
 	podListOpts := metav1.ListOptions{
 		LabelSelector: fmt.Sprintf("v1.min.io/tenant=%s", tenantName),
 	}
+	fmt.Println("coreInerface: ", &coreInterface)
 	pods, err := coreInterface.Pods(namespace).List(ctx, podListOpts)
 	if err != nil {
 		return restapi.ErrorWithContext(ctx, err)
@@ -2888,7 +2892,9 @@ func generateTenantLogReport(ctx context.Context, coreInterface v1.CoreV1Interfa
 	} else {
 		return restapi.ErrorWithContext(ctx, err)
 	}
+	fmt.Println("do the loop! pods:", pods)
 	for i := 0; i < len(pods.Items); i++ {
+		fmt.Println("In the loop!")
 		listOpts := &corev1.PodLogOptions{}
 		toWrite, err := coreInterface.Pods(namespace).GetLogs(pods.Items[i].Name, listOpts).DoRaw(ctx)
 		if err == nil {
