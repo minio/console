@@ -1,0 +1,28 @@
+subnet license= api_key= proxy=
+# callhome enable=off frequency=24h
+# site name= region=
+# api requests_max=0 requests_deadline=10s cluster_deadline=10s cors_allow_origin=* remote_transport_deadline=2h list_quorum=strict replication_priority=auto transition_workers=100 stale_uploads_cleanup_interval=6h stale_uploads_expiry=24h delete_cleanup_interval=5m disable_odirect=off gzip_objects=off
+# scanner speed=default
+# compression enable=off allow_encryption=off extensions=.txt,.log,.csv,.json,.tar,.xml,.bin mime_types=text/*,application/json,application/xml,binary/octet-stream
+# identity_openid enable= display_name= config_url= client_id= client_secret= claim_name=policy claim_userinfo= role_policy= claim_prefix= redirect_uri= redirect_uri_dynamic=off scopes= vendor= keycloak_realm= keycloak_admin_url=
+# identity_ldap server_addr= srv_record_name= user_dn_search_base_dn= user_dn_search_filter= group_search_filter= group_search_base_dn= tls_skip_verify=off server_insecure=off server_starttls=off lookup_bind_dn= lookup_bind_password=
+# identity_tls skip_verify=off
+# identity_plugin url= auth_token= role_policy= role_id=
+# policy_plugin url= auth_token= enable_http2=off
+# logger_webhook enable=off endpoint= auth_token= client_cert= client_key= queue_size=100000
+# audit_webhook enable=off endpoint= auth_token= client_cert= client_key= queue_size=100000
+# audit_kafka enable=off topic= brokers= sasl_username= sasl_password= sasl_mechanism=plain client_tls_cert= client_tls_key= tls_client_auth=0 sasl=off tls=off tls_skip_verify=off version=
+# notify_webhook enable=off endpoint= auth_token= queue_limit=0 queue_dir= client_cert= client_key=
+# notify_amqp enable=off url= exchange= exchange_type= routing_key= mandatory=off durable=off no_wait=off internal=off auto_deleted=off delivery_mode=0 publisher_confirms=off queue_limit=0 queue_dir=
+# notify_kafka enable=off topic= brokers= sasl_username= sasl_password= sasl_mechanism=plain client_tls_cert= client_tls_key= tls_client_auth=0 sasl=off tls=off tls_skip_verify=off queue_limit=0 queue_dir= version=
+# notify_mqtt enable=off broker= topic= password= username= qos=0 keep_alive_interval=0s reconnect_interval=0s queue_dir= queue_limit=0
+# notify_nats enable=off address= subject= username= password= token= tls=off tls_skip_verify=off cert_authority= client_cert= client_key= ping_interval=0 jetstream=off streaming=off streaming_async=off streaming_max_pub_acks_in_flight=0 streaming_cluster_id= queue_dir= queue_limit=0
+# notify_nsq enable=off nsqd_address= topic= tls=off tls_skip_verify=off queue_dir= queue_limit=0
+# notify_mysql enable=off format=namespace dsn_string= table= queue_dir= queue_limit=0 max_open_connections=2
+# notify_postgres enable=off format=namespace connection_string= table= queue_dir= queue_limit=0 max_open_connections=2
+# notify_elasticsearch enable=off url= format=namespace index= queue_dir= queue_limit=0 username= password=
+# notify_redis enable=off format=namespace address= key= password= queue_dir= queue_limit=0
+# etcd endpoints= path_prefix= coredns_path=/skydns client_cert= client_cert_key=
+# cache drives= exclude= expiry=90 quota=80 after=0 watermark_low=70 watermark_high=80 range=on commit=
+# storage_class standard= rrs=EC:1
+# heal bitrotscan=off max_sleep=1s max_io=100

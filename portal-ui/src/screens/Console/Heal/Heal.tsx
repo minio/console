@@ -16,7 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { HorizontalBar } from "react-chartjs-2";
 import {
   FormControl,
   Grid,
@@ -53,6 +52,16 @@ import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 import { selDistSet } from "../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { Legend } from "recharts";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -227,25 +236,32 @@ const Heal = () => {
     }
   }, [start, bucketName, forceStart, forceStop, prefix, recursive]);
 
-  let data = {
-    labels: ["Green", "Yellow", "Red", "Grey"],
-    datasets: [
-      {
-        label: "After Healing",
-        data: hStatus.afterHeal,
-        backgroundColor: "rgba(0, 0, 255, 0.2)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Before Healing",
-        data: hStatus.beforeHeal,
-        backgroundColor: "rgba(153, 102, 255, 0.2)",
-        borderColor: "rgba(153, 102, 255, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
+  let data = [
+    {
+      name: "Green",
+      ah: hStatus.afterHeal[0],
+      bh: hStatus.beforeHeal[0],
+      amt: 100,
+    },
+    {
+      name: "Yellow",
+      ah: hStatus.afterHeal[1],
+      bh: hStatus.beforeHeal[1],
+      amt: 100,
+    },
+    {
+      name: "Red",
+      ah: hStatus.afterHeal[2],
+      bh: hStatus.beforeHeal[2],
+      amt: 100,
+    },
+    {
+      name: "Grey",
+      ah: hStatus.afterHeal[3],
+      bh: hStatus.beforeHeal[3],
+      amt: 100,
+    },
+  ];
   const bucketNames = bucketList.map((bucketName) => ({
     label: bucketName.name,
     value: bucketName.name,
@@ -352,22 +368,37 @@ const Heal = () => {
               </Grid>
             </Grid>
             <Grid item xs={12} className={classes.graphContainer}>
-              <HorizontalBar
-                data={data}
-                width={80}
-                height={30}
-                options={{
-                  title: {
-                    display: true,
-                    text: "Item's Health Status [%]",
-                    fontSize: 20,
-                  },
-                  legend: {
-                    display: true,
-                    position: "right",
-                  },
-                }}
-              />
+              <ResponsiveContainer width={"90%"} height={400}>
+                <BarChart
+                  width={600}
+                  height={400}
+                  data={data}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend verticalAlign={"top"} layout={"vertical"} />
+                  <Bar
+                    dataKey="ah"
+                    name={"After Healing"}
+                    fill="rgba(0, 0, 255, 0.2)"
+                    stroke="rgba(0, 0, 255, 1)"
+                  />
+                  <Bar
+                    dataKey="bh"
+                    name={"Before Healing"}
+                    fill="rgba(153, 102, 255, 0.2)"
+                    stroke="rgba(153, 102, 255, 1)"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
               <Grid item xs={12} className={classes.scanInfo}>
                 <div className={classes.scanData}>
                   <strong>Size scanned:</strong> {hStatus.sizeScanned}

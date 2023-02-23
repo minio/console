@@ -29,30 +29,30 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// EnvOverride env override
+// ConfigExportResponse config export response
 //
-// swagger:model envOverride
-type EnvOverride struct {
+// swagger:model configExportResponse
+type ConfigExportResponse struct {
 
-	// name
-	Name string `json:"name,omitempty"`
+	// status
+	Status string `json:"status,omitempty"`
 
-	// value
+	// Returns base64 encoded value
 	Value string `json:"value,omitempty"`
 }
 
-// Validate validates this env override
-func (m *EnvOverride) Validate(formats strfmt.Registry) error {
+// Validate validates this config export response
+func (m *ConfigExportResponse) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this env override based on context it is used
-func (m *EnvOverride) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this config export response based on context it is used
+func (m *ConfigExportResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *EnvOverride) MarshalBinary() ([]byte, error) {
+func (m *ConfigExportResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -60,8 +60,8 @@ func (m *EnvOverride) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *EnvOverride) UnmarshalBinary(b []byte) error {
-	var res EnvOverride
+func (m *ConfigExportResponse) UnmarshalBinary(b []byte) error {
+	var res ConfigExportResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

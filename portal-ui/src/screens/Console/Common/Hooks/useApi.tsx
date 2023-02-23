@@ -12,10 +12,10 @@ const useApi = (
 ): [IsApiInProgress, ApiMethodToInvoke] => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const callApi = (method: string, url: string, data?: any) => {
+  const callApi = (method: string, url: string, data?: any, headers?: any) => {
     setIsLoading(true);
     api
-      .invoke(method, url, data)
+      .invoke(method, url, data, headers)
       .then((res: any) => {
         setIsLoading(false);
         onSuccess(res);
