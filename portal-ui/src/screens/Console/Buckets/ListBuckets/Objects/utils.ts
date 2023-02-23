@@ -138,7 +138,7 @@ export const extensionPreview = (
     "png",
     "heic",
   ];
-  const textExtensions = ["pdf", "txt", "json"];
+  const textExtensions = ["pdf"];
   const audioExtensions = ["wav", "mp3", "alac", "aiff", "dsd", "pcm"];
   const videoExtensions = [
     "mp4",
