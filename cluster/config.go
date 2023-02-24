@@ -19,11 +19,11 @@ package cluster
 import (
 	"io/ioutil"
 	"net"
-	"net/http"
 	"strings"
 	"time"
 
 	xhttp "github.com/minio/console/pkg/http"
+	"github.com/minio/console/restapi"
 
 	"github.com/minio/console/pkg/utils"
 
@@ -69,11 +69,11 @@ func GetMinioImage() (*string, error) {
 	if image != "" {
 		return &image, nil
 	}
+	client := restapi.GetConsoleHTTPClient("")
+	client.Timeout = 5 * time.Second
 	latestMinIOImage, errLatestMinIOImage := utils.GetLatestMinIOImage(
 		&xhttp.Client{
-			Client: &http.Client{
-				Timeout: 5 * time.Second,
-			},
+			Client: client,
 		})
 
 	if errLatestMinIOImage != nil {
