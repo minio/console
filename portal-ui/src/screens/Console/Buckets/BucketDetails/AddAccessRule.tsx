@@ -102,7 +102,7 @@ const AddAccessRule = ({
               setPrefix(e.target.value);
             }}
             tooltip={
-              "Leave this field blank to apply the rule to all prefixes and objects at the bucket root. Do not include the wildcard asterisk ``*`` as part of the prefix *unless* it is an explicit part of the prefix name. The Console automatically appends an asterisk to the appropriate sections of the resulting IAM policy."
+              "Enter '/' to apply the rule to all prefixes and objects at the bucket root. Do not include the wildcard asterisk '*' as part of the prefix *unless* it is an explicit part of the prefix name. The Console automatically appends an asterisk to the appropriate sections of the resulting IAM policy."
             }
           />
         </Grid>
