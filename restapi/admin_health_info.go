@@ -81,7 +81,7 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 		SubnetResponse:   subnetResp,
 	}
 	if err != nil {
-		report.SubnetResponse = "ERROR"
+		report.SubnetResponse = fmt.Sprintf("Error: %s", err.Error())
 	}
 
 	message, err := json.Marshal(report)
