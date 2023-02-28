@@ -32,6 +32,7 @@ import (
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
 	"github.com/minio/console/pkg"
+	"github.com/minio/console/restapi"
 	errors "github.com/minio/console/restapi"
 	"github.com/minio/pkg/env"
 	corev1 "k8s.io/api/core/v1"
@@ -147,7 +148,8 @@ func makePostRequestToMP(url, email string) error {
 	if err != nil {
 		return err
 	}
-	client := &http.Client{Timeout: 3 * time.Second}
+	client := restapi.GetConsoleHTTPClient("")
+	client.Timeout = 3 * time.Second
 	if res, err := client.Do(request); err != nil {
 		return err
 	} else if res.StatusCode >= http.StatusBadRequest {

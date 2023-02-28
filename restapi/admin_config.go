@@ -124,11 +124,6 @@ func getListConfigResponse(session *models.Principal, params cfgApi.ListConfigPa
 }
 
 // getConfig gets the key values for a defined configuration.
-//
-// FIXME: This currently only returns config parameters in the default target
-// `madmin.Default`. Some configuration sub-systems are multi-target and since
-// this function does not accept a target argument, it ignores all non-default
-// targets.
 func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.Configuration, error) {
 	configBytes, err := client.getConfigKV(ctx, name)
 	if err != nil {
