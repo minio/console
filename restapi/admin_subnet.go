@@ -195,23 +195,17 @@ func SubnetLoginWithMFA(client xhttp.ClientI, username, mfaToken, otp string) (*
 
 // GetSubnetHTTPClient will return a client with proxy if configured, otherwise will return the default console http client
 func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*xhttp.Client, error) {
-	var subnetHTTPClient *http.Client
-	var proxy string
-	envProxy := getSubnetProxy()
+	subnetHTTPClient := GetConsoleHTTPClient("")
 	subnetKey, err := GetSubnetKeyFromMinIOConfig(ctx, minioClient)
 	if err != nil {
 		return nil, err
 	}
+
+	proxy := getSubnetProxy()
 	if subnetKey.Proxy != "" {
 		proxy = subnetKey.Proxy
-	} else if envProxy != "" {
-		proxy = envProxy
 	}
 	if proxy != "" {
-		transport := PrepareSTSClientTransport(false)
-		subnetHTTPClient = &http.Client{
-			Transport: transport,
-		}
 		subnetProxyURL, err := url.Parse(proxy)
 		if err != nil {
 			return nil, err

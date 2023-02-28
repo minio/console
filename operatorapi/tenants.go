@@ -26,7 +26,6 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"net/http"
 	"sort"
 	"strconv"
 	"strings"
@@ -1440,10 +1439,10 @@ func getUpdateTenantResponse(session *models.Principal, params operator_api.Upda
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
+	client := restapi.GetConsoleHTTPClient("")
+	client.Timeout = 4 * time.Second
 	httpC := &utils2.Client{
-		Client: &http.Client{
-			Timeout: 4 * time.Second,
-		},
+		Client: client,
 	}
 	if err := updateTenantAction(ctx, opClient, k8sClient, httpC, params.Namespace, params); err != nil {
 		return restapi.ErrorWithContext(ctx, err, errors.New("unable to update tenant"))

@@ -19,7 +19,6 @@ package restapi
 import (
 	"os"
 
-	"github.com/minio/console/pkg/http"
 	"github.com/minio/console/pkg/subnet"
 )
 
@@ -45,10 +44,7 @@ func (sp SubnetPlan) String() string {
 var InstanceLicensePlan = PlanAGPL
 
 func fetchLicensePlan() {
-	client := &http.Client{
-		Client: GetConsoleHTTPClient(""),
-	}
-	licenseInfo, err := subnet.ParseLicense(client, os.Getenv(EnvSubnetLicense))
+	licenseInfo, err := subnet.ParseLicense(GetConsoleHTTPClient(""), os.Getenv(EnvSubnetLicense))
 	if err != nil {
 		return
 	}

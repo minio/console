@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-	"net/http"
 	"time"
 
 	xhttp "github.com/minio/console/pkg/http"
@@ -44,10 +43,12 @@ func registerVersionHandlers(api *operations.ConsoleAPI) {
 func getVersionResponse(params systemApi.CheckMinIOVersionParams) (*models.CheckVersionResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
+
+	client := GetConsoleHTTPClient("")
+	client.Timeout = 15 * time.Second
+
 	ver, err := utils.GetLatestMinIOImage(&xhttp.Client{
-		Client: &http.Client{
-			Timeout: 15 * time.Second,
-		},
+		Client: client,
 	})
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
