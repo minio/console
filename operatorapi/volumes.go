@@ -23,7 +23,7 @@ import (
 
 	errors "github.com/minio/console/restapi"
 
-	miniov1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/cluster"
@@ -98,7 +98,7 @@ func getPVCsResponse(session *models.Principal, params operator_api.ListPVCsPara
 
 	// Filter Tenant PVCs. They keep their v1 tenant annotation
 	listOpts := metav1.ListOptions{
-		LabelSelector: miniov1.TenantLabel,
+		LabelSelector: miniov2.TenantLabel,
 	}
 
 	// List all PVCs
