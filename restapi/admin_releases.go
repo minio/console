@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -78,20 +79,23 @@ func getReleaseServiceURL() string {
 	return fmt.Sprintf("%s/releases", host)
 }
 
-func getReleases(url, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, error) {
+func getReleases(endpoint, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, error) {
 	rl := &models.ReleaseListResponse{}
-	client := &http.Client{Timeout: time.Second * 5}
-	req, err := http.NewRequest("GET", url, nil)
-	q := req.URL.Query()
-	q.Add("repo", repo)
-	q.Add("current", currentRelease)
-	q.Add("search", search)
-	q.Add("filter", filter)
-	req.URL.RawQuery = q.Encode()
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
 		return nil, err
 	}
+	q := &url.Values{}
+	q.Add("repo", repo)
+	q.Add("search", search)
+	q.Add("filter", filter)
+	q.Add("current", currentRelease)
+	req.URL.RawQuery = q.Encode()
 	req.Header.Set("Content-Type", "application/json")
+
+	client := GetConsoleHTTPClient("")
+	client.Timeout = time.Second * 5
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err

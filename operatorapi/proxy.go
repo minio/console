@@ -19,7 +19,6 @@ package operatorapi
 import (
 	"bytes"
 	"crypto/sha1"
-	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -38,6 +37,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/minio/console/cluster"
+	"github.com/minio/console/restapi"
 
 	"github.com/minio/console/pkg/auth"
 )
@@ -148,12 +148,8 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 		}
 		loginReq.Header.Add("Content-Type", "application/json")
 
-		// FIXME: in the future we should use restapi.GetConsoleHTTPClient()
-		tr := &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		}
-		client := &http.Client{Transport: tr}
-
+		// use localhost to ensure 'InsecureSkipVerify'
+		client := restapi.GetConsoleHTTPClient("http://127.0.0.1")
 		loginResp, err := client.Do(loginReq)
 		if err != nil {
 			log.Println(err)
@@ -222,16 +218,11 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 }
 
 func handleHTTPRequest(responseWriter http.ResponseWriter, req *http.Request, proxyCookieJar *cookiejar.Jar, tenantBase string, targetURL *url2.URL) {
-	tr := &http.Transport{
-		// FIXME: use restapi.GetConsoleHTTPClient()
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-	client := &http.Client{
-		Transport: tr,
-		Jar:       proxyCookieJar,
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
+	// use localhost to ensure 'InsecureSkipVerify'
+	client := restapi.GetConsoleHTTPClient("http://127.0.0.1")
+	client.Jar = proxyCookieJar
+	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
 	}
 
 	// are we proxying something with cp=y? (console proxy) then add cpb (console proxy base) so the console
