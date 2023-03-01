@@ -69,3 +69,7 @@ export const commonFormValidation = (fieldsValidate: IValidation[]) => {
 
   return returnErrors;
 };
+
+export const isVersionedMode = (status: string | undefined) => {
+  return status === "Enabled" || status === "Suspended";
+};

@@ -2597,7 +2597,7 @@ func init() {
         "tags": [
           "Configuration"
         ],
-        "summary": "Uploads an Object.",
+        "summary": "Uploads a file to import MinIO server config.",
         "parameters": [
           {
             "type": "file",
@@ -5906,8 +5906,25 @@ func init() {
     "bucketVersioningResponse": {
       "type": "object",
       "properties": {
-        "is_versioned": {
+        "ExcludeFolders": {
           "type": "boolean"
+        },
+        "ExcludedPrefixes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Prefix": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "MFADelete": {
+          "type": "string"
+        },
+        "Status": {
+          "type": "string"
         }
       }
     },
@@ -11432,7 +11449,7 @@ func init() {
         "tags": [
           "Configuration"
         ],
-        "summary": "Uploads an Object.",
+        "summary": "Uploads a file to import MinIO server config.",
         "parameters": [
           {
             "type": "file",
@@ -14172,6 +14189,14 @@ func init() {
         }
       }
     },
+    "BucketVersioningResponseExcludedPrefixesItems0": {
+      "type": "object",
+      "properties": {
+        "Prefix": {
+          "type": "string"
+        }
+      }
+    },
     "LoginRequestFeatures": {
       "type": "object",
       "properties": {
@@ -14867,8 +14892,20 @@ func init() {
     "bucketVersioningResponse": {
       "type": "object",
       "properties": {
-        "is_versioned": {
+        "ExcludeFolders": {
           "type": "boolean"
+        },
+        "ExcludedPrefixes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BucketVersioningResponseExcludedPrefixesItems0"
+          }
+        },
+        "MFADelete": {
+          "type": "string"
+        },
+        "Status": {
+          "type": "string"
         }
       }
     },

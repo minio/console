@@ -81,6 +81,13 @@ export interface BucketVersioning {
   is_versioned: boolean;
 }
 
+export interface BucketVersioningInfo {
+  ExcludeFolders?: boolean;
+  ExcludedPrefixes?: Record<"Prefix", string>[];
+  MFADelete?: string;
+  Status?: "Enabled" | "Suspended" | "";
+}
+
 export interface BucketObjectLocking {
   object_locking_enabled: boolean;
 }

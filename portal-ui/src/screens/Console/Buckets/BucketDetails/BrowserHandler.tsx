@@ -54,7 +54,7 @@ import { decodeURLString, encodeURLString } from "../../../../common/utils";
 import { permissionItems } from "../ListBuckets/Objects/utils";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import api from "../../../../common/api";
-import { BucketObjectLocking, BucketVersioning } from "../types";
+import { BucketObjectLocking, BucketVersioningInfo } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import OBHeader from "../../ObjectBrowser/OBHeader";
 
@@ -401,8 +401,8 @@ const BrowserHandler = () => {
       if (displayListObjects) {
         api
           .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-          .then((res: BucketVersioning) => {
-            dispatch(setIsVersioned(res.is_versioned));
+          .then((res: BucketVersioningInfo) => {
+            dispatch(setIsVersioned(res));
             dispatch(setLoadingVersioning(false));
           })
           .catch((err: ErrorResponseHandler) => {

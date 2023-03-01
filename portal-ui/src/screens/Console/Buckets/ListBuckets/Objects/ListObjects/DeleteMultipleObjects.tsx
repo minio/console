@@ -28,6 +28,7 @@ import { AppState, useAppDispatch } from "../../../../../../store";
 import { hasPermission } from "../../../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
+import { BucketVersioningInfo } from "../../../types";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -35,7 +36,7 @@ interface IDeleteObjectProps {
   selectedObjects: string[];
   selectedBucket: string;
 
-  versioning: boolean;
+  versioning: BucketVersioningInfo;
 }
 
 const DeleteObject = ({
@@ -99,6 +100,9 @@ const DeleteObject = ({
     }
   };
 
+  const isVersionedDelete =
+    versioning?.Status === "Enabled" || versioning?.Status === "Suspended";
+
   return (
     <ConfirmDialog
       title={`Delete Objects`}
@@ -112,7 +116,7 @@ const DeleteObject = ({
         <DialogContentText>
           Are you sure you want to delete the selected {selectedObjects.length}{" "}
           objects?{" "}
-          {versioning && (
+          {isVersionedDelete && (
             <Fragment>
               <br />
               <br />
