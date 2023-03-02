@@ -3050,7 +3050,7 @@ func TestSetBucketVersioning(t *testing.T) {
 		return
 	}
 
-	// 2. Set versioning as False
+	// 2. Set versioning as False i.e Suspend versioning
 	response, err := SetBucketVersioning(bucket, false, nil, nil)
 	assert.Nil(err)
 	if err != nil {
@@ -3085,7 +3085,7 @@ func TestSetBucketVersioning(t *testing.T) {
 		log.Println(err)
 		assert.Nil(err)
 	}
-	assert.Equal("", result.Status, result)
+	assert.Equal("Suspended", result.Status, result)
 }
 
 func EnableBucketEncryption(bucketName, encType, kmsKeyID string) (*http.Response, error) {
