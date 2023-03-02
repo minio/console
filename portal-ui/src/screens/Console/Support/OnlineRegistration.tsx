@@ -27,7 +27,6 @@ import createStyles from "@mui/styles/createStyles";
 import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
 import makeStyles from "@mui/styles/makeStyles";
 import { useSelector } from "react-redux";
-import { selOpMode } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import {
   setShowPassword,
@@ -49,7 +48,6 @@ const OnlineRegistration = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
 
-  const operatorMode = useSelector(selOpMode);
   const subnetPassword = useSelector(
     (state: AppState) => state.register.subnetPassword
   );
@@ -159,10 +157,7 @@ const OnlineRegistration = () => {
                 variant="regular"
                 onClick={(e) => {
                   e.preventDefault();
-                  window.open(
-                    `https://min.io/signup?ref=${operatorMode ? "op" : "con"}`,
-                    "_blank"
-                  );
+                  window.open(`https://min.io/signup?ref=con`, "_blank");
                 }}
                 label={"Sign up"}
               />

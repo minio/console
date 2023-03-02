@@ -210,53 +210,6 @@ export const IAM_PAGES = {
   SITE_REPLICATION: "/settings/site-replication",
   SITE_REPLICATION_STATUS: "/settings/site-replication/status",
   SITE_REPLICATION_ADD: "/settings/site-replication/add",
-
-  /* Operator */
-  TENANTS: "/tenants",
-  TENANTS_ADD: "/tenants/add",
-  NAMESPACE_TENANT: "/namespaces/:tenantNamespace/tenants/:tenantName",
-  NAMESPACE_TENANT_HOP: "/namespaces/:tenantNamespace/tenants/:tenantName/hop",
-  NAMESPACE_TENANT_PODS:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName",
-  NAMESPACE_TENANT_PVCS:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/pvcs/:PVCName",
-  NAMESPACE_TENANT_PODS_LIST:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/pods",
-  NAMESPACE_TENANT_SUMMARY:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/summary",
-  NAMESPACE_TENANT_METRICS:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/metrics",
-  NAMESPACE_TENANT_TRACE:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/trace",
-  NAMESPACE_TENANT_POOLS:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/pools",
-  NAMESPACE_TENANT_POOLS_ADD:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/add-pool",
-  NAMESPACE_TENANT_POOLS_EDIT:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/edit-pool",
-  NAMESPACE_TENANT_VOLUMES:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/volumes",
-  NAMESPACE_TENANT_LICENSE:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/license",
-  NAMESPACE_TENANT_IDENTITY_PROVIDER:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/identity-provider",
-  NAMESPACE_TENANT_SECURITY:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/security",
-  NAMESPACE_TENANT_ENCRYPTION:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/encryption",
-  NAMESPACE_TENANT_MONITORING:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/monitoring",
-  NAMESPACE_TENANT_LOGGING:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/logging",
-  NAMESPACE_TENANT_EVENTS:
-    "/namespaces/:tenantNamespace/tenants/:tenantName/events",
-  NAMESPACE_TENANT_CSR: "/namespaces/:tenantNamespace/tenants/:tenantName/csr",
-  OPERATOR_MARKETPLACE: "/marketplace",
-
-  /* DirectPV */
-  DIRECTPV_STORAGE: "/storage",
-  DIRECTPV_DRIVES: "/drives",
-  DIRECTPV_VOLUMES: "/volumes",
 };
 
 // roles

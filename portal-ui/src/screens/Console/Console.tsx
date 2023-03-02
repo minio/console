@@ -50,9 +50,7 @@ import LoadingComponent from "../../common/LoadingComponent";
 import ComponentsScreen from "./Common/ComponentsScreen";
 import {
   menuOpen,
-  selDirectPVMode,
   selDistSet,
-  selOpMode,
   serverIsLoading,
   setServerNeedsRestart,
   setSnackBarMessage,
@@ -63,7 +61,6 @@ const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
 const Watch = React.lazy(() => import("./Watch/Watch"));
 const HealthInfo = React.lazy(() => import("./HealthInfo/HealthInfo"));
-const RegisterOperator = React.lazy(() => import("./Support/RegisterOperator"));
 
 const EventDestinations = React.lazy(
   () => import("./EventDestinations/EventDestinations")
