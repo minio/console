@@ -357,9 +357,19 @@ func getBucketVersionedResponse(session *models.Principal, params bucketApi.GetB
 		ErrorWithContext(ctx, fmt.Errorf("error versioning bucket: %v", err))
 	}
 
+	excludedPrefixes := make([]*models.BucketVersioningResponseExcludedPrefixesItems0, len(res.ExcludedPrefixes))
+	for i, v := range res.ExcludedPrefixes {
+		excludedPrefixes[i] = &models.BucketVersioningResponseExcludedPrefixesItems0{
+			Prefix: v.Prefix,
+		}
+	}
+
 	// serialize output
 	bucketVResponse := &models.BucketVersioningResponse{
-		IsVersioned: res.Status == "Enabled",
+		ExcludeFolders:   res.ExcludeFolders,
+		ExcludedPrefixes: excludedPrefixes,
+		MFADelete:        res.MFADelete,
+		Status:           res.Status,
 	}
 	return bucketVResponse, nil
 }

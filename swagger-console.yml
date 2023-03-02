@@ -4908,8 +4908,20 @@ definitions:
   bucketVersioningResponse:
     type: object
     properties:
-      is_versioned:
+      Status:
+        type: string
+      MFADelete:
+        type: string
+      ExcludedPrefixes:
+        type: array
+        items:
+          type: object
+          properties:
+            Prefix:
+              type: string
+      ExcludeFolders:
         type: boolean
+
   setBucketVersioning:
     type: object
     properties:

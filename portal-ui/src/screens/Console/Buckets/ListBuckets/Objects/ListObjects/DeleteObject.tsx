@@ -29,6 +29,8 @@ import { AppState, useAppDispatch } from "../../../../../../store";
 import { hasPermission } from "../../../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
+import { BucketVersioningInfo } from "../../../types";
+import { isVersionedMode } from "../../../../../../utils/validationFunctions";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -36,7 +38,7 @@ interface IDeleteObjectProps {
   selectedObject: string;
   selectedBucket: string;
 
-  versioning: boolean;
+  versioningInfo: BucketVersioningInfo | undefined;
   selectedVersion?: string;
 }
 
@@ -45,7 +47,7 @@ const DeleteObject = ({
   deleteOpen,
   selectedBucket,
   selectedObject,
-  versioning,
+  versioningInfo,
   selectedVersion = "",
 }: IDeleteObjectProps) => {
   const dispatch = useAppDispatch();
@@ -120,22 +122,23 @@ const DeleteObject = ({
           )}
           ? <br />
           <br />
-          {versioning && selectedVersion === "" && (
-            <Fragment>
-              <FormSwitchWrapper
-                label={"Delete All Versions"}
-                indicatorLabels={["Yes", "No"]}
-                checked={deleteVersions}
-                value={"delete_versions"}
-                id="delete-versions"
-                name="delete-versions"
-                onChange={(e) => {
-                  setDeleteVersions(!deleteVersions);
-                }}
-                description=""
-              />
-            </Fragment>
-          )}
+          {isVersionedMode(versioningInfo?.Status) &&
+            selectedVersion === "" && (
+              <Fragment>
+                <FormSwitchWrapper
+                  label={"Delete All Versions"}
+                  indicatorLabels={["Yes", "No"]}
+                  checked={deleteVersions}
+                  value={"delete_versions"}
+                  id="delete-versions"
+                  name="delete-versions"
+                  onChange={(e) => {
+                    setDeleteVersions(!deleteVersions);
+                  }}
+                  description=""
+                />
+              </Fragment>
+            )}
           {canBypass && (deleteVersions || selectedVersion !== "") && (
             <Fragment>
               <div

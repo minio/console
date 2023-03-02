@@ -16,6 +16,7 @@
 
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import { IRetentionConfig } from "../../../common/types";
+import { BucketVersioningInfo } from "../Buckets/types";
 
 export const REWIND_SET_ENABLE = "REWIND/SET_ENABLE";
 export const REWIND_RESET_REWIND = "REWIND/RESET_REWIND";
@@ -83,7 +84,7 @@ export interface ObjectBrowserState {
   records: BucketObjectItem[];
   loadRecords: boolean;
   loadingVersioning: boolean;
-  isVersioned: boolean;
+  versionInfo: BucketVersioningInfo;
   lockingEnabled: boolean;
   loadingLocking: boolean;
   selectedObjects: string[];

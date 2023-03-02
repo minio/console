@@ -253,7 +253,7 @@ const ListObjects = () => {
   );
 
   const isVersioned = useSelector(
-    (state: AppState) => state.objectBrowser.isVersioned
+    (state: AppState) => state.objectBrowser.versionInfo
   );
   const lockingEnabled = useSelector(
     (state: AppState) => state.objectBrowser.lockingEnabled
@@ -1132,7 +1132,7 @@ const ListObjects = () => {
                       internalPaths={selectedInternalPaths}
                       bucketName={bucketName}
                       onClosePanel={onClosePanel}
-                      versioning={isVersioned}
+                      versioningInfo={isVersioned}
                       locking={lockingEnabled}
                     />
                   )}
