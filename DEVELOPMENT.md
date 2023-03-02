@@ -50,7 +50,7 @@ make build
 
 # Testing on Kubernetes
 
-If you want to test console on kubernets, you can perform all the steps from `Building with MinIO`, but change `Step 3`
+If you want to test console on kubernetes, you can perform all the steps from `Building with MinIO`, but change `Step 3`
 to the following:
 
 ```shell
