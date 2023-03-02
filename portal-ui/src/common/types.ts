@@ -14,96 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import {
-  ILabelKeyPair,
-  ISecurityContext,
-} from "../screens/Console/Tenants/types";
-
-export interface ITenantsObject {
-  tenants: ITenant[];
-}
-
-export interface ITenant {
-  creation_date: string;
-  deletion_date: string;
-  currentState: string;
-  image: string;
-  instance_count: string;
-  name: string;
-  namespace?: string;
-  total_size: string;
-  used_size: string;
-  volume_count: string;
-  volume_size: string;
-  volumes_per_server?: string;
-  pool_count: string;
-  pools?: IPoolModel[];
-  used_capacity?: string;
-  endpoint?: string;
-  storage_class?: string;
-  enable_prometheus: boolean;
-}
-
-export interface IVolumeConfiguration {
-  size: string;
-  storage_class_name: string;
-  labels?: any;
-}
-
-export interface IDomainsRequest {
-  console?: string;
-  minio?: string[];
-}
-
-export interface ITenantCreator {
-  name: string;
-  service_name: string;
-  enable_console: boolean;
-  enable_prometheus: boolean;
-  enable_tls: boolean;
-  access_key: string;
-  secret_key: string;
-  access_keys: string[];
-  secret_keys: string[];
-  image: string;
-  expose_minio: boolean;
-  expose_console: boolean;
-  pools: IPoolModel[];
-  namespace: string;
-  erasureCodingParity: number;
-  tls?: ITLSTenantConfiguration;
-  encryption?: IEncryptionConfiguration;
-  idp?: IIDPConfiguration;
-  annotations?: Object;
-  image_registry?: ImageRegistry;
-  logSearchConfiguration?: LogSearchConfiguration;
-  prometheusConfiguration?: PrometheusConfiguration;
-  affinity?: AffinityConfiguration;
-  domains?: IDomainsRequest;
-}
-
-export interface ImageRegistry {
-  registry: string;
-  username: string;
-  password: string;
-}
-
-export interface ITenantUpdateObject {
-  image: string;
-  image_registry?: IRegistryObject;
-}
-
-export interface IRegistryObject {
-  registry: string;
-  username: string;
-  password: string;
-}
-
-export interface ITenantUsage {
-  used: string;
-  disk_used: string;
-}
-
 export interface IAffinityModel {
   podAntiAffinity?: IPodAntiAffinityModel;
   nodeAffinity?: INodeAffinityModel;
@@ -322,94 +232,11 @@ export interface IActiveDirectoryConfiguration {
   user_dn_search_filter: string;
 }
 
-export interface IStorageDistribution {
-  error: number | string;
-  nodes: number;
-  persistentVolumes: number;
-  disks: number;
-  pvSize: number;
-}
-
 export interface IStorageFactors {
   erasureCode: string;
   storageFactor: number;
   maxCapacity: string;
   maxFailureTolerations: number;
-}
-
-export interface ITenantHealthInList {
-  name: string;
-  namespace: string;
-  status?: string;
-  message?: string;
-}
-
-export interface ITenantsListHealthRequest {
-  tenants: ITenantHealthInList[];
-}
-
-export interface IMaxAllocatableMemoryRequest {
-  num_nodes: number;
-}
-
-export interface IMaxAllocatableMemoryResponse {
-  max_memory: number;
-}
-
-export interface IEncryptionUpdateRequest {
-  encryption: IEncryptionConfiguration;
-}
-
-export interface IArchivedTenantsList {
-  tenants: IArchivedTenant[];
-}
-
-export interface IArchivedTenant {
-  namespace: string;
-  tenant: string;
-  number_volumes: number;
-  capacity: number;
-}
-
-export interface IPoolModel {
-  name?: string;
-  servers: number;
-  volumes_per_server: number;
-  volume_configuration: IVolumeConfiguration;
-  affinity?: IAffinityModel;
-  tolerations?: ITolerationModel[];
-  resources?: IResourceModel;
-  securityContext?: ISecurityContext | null;
-}
-
-export interface IUpdatePool {
-  pools: IPoolModel[];
-}
-
-export interface INode {
-  name: string;
-  freeSpace: string;
-  totalSpace: string;
-  disks: IDisk[];
-}
-
-export interface IStorageType {
-  freeSpace: string;
-  totalSpace: string;
-  storageClasses: string[];
-  nodes: INode[];
-  schedulableNodes: INode[];
-}
-
-export interface IDisk {
-  name: string;
-  freeSpace: string;
-  totalSpace: string;
-}
-
-export interface ICapacity {
-  value: string;
-  unit: string;
 }
 
 export interface IErasureCodeCalc {
@@ -419,31 +246,6 @@ export interface IErasureCodeCalc {
   rawCapacity: string;
   defaultEC: string;
   storageFactors: IStorageFactors[];
-}
-
-export interface LogSearchConfiguration {
-  storageClass?: string;
-  storageSize?: number;
-  image: string;
-  postgres_image: string;
-  postgres_init_image: string;
-  securityContext?: ISecurityContext;
-  postgres_securityContext?: ISecurityContext;
-}
-
-export interface PrometheusConfiguration {
-  storageClass?: string;
-  storageSize?: number;
-  image: string;
-  sidecar_image: string;
-  init_image: string;
-  securityContext?: ISecurityContext;
-}
-
-export interface AffinityConfiguration {
-  affinityType: "default" | "nodeSelector" | "none";
-  nodeSelectorLabels?: ILabelKeyPair[];
-  withPodAntiAffinity?: boolean;
 }
 
 export interface ErrorResponseHandler {

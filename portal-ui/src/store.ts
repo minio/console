@@ -26,16 +26,8 @@ import consoleReducer from "./screens/Console/consoleSlice";
 import bucketsReducer from "./screens/Console/Buckets/ListBuckets/AddBucket/addBucketsSlice";
 import bucketDetailsReducer from "./screens/Console/Buckets/BucketDetails/bucketDetailsSlice";
 import objectBrowserReducer from "./screens/Console/ObjectBrowser/objectBrowserSlice";
-import tenantsReducer from "./screens/Console/Tenants/tenantsSlice";
 import dashboardReducer from "./screens/Console/Dashboard/dashboardSlice";
-import createTenantReducer from "./screens/Console/Tenants/AddTenant/createTenantSlice";
 import createUserReducer from "./screens/Console/Users/AddUsersSlice";
-import addPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/AddPool/addPoolSlice";
-import editPoolReducer from "./screens/Console/Tenants/TenantDetails/Pools/EditPool/editPoolSlice";
-import editTenantMonitoringReducer from "./screens/Console/Tenants/TenantDetails/tenantMonitoringSlice";
-import editTenantAuditLoggingReducer from "./screens/Console/Tenants/TenantDetails/tenantAuditLogSlice";
-import editTenantSecurityContextReducer from "./screens/Console/Tenants/tenantSecurityContextSlice";
-import directPVReducer from "./screens/Console/DirectPV/directPVSlice";
 import licenseReducer from "./screens/Console/License/licenseSlice";
 import registerReducer from "./screens/Console/Support/registerSlice";
 
@@ -52,16 +44,7 @@ const rootReducer = combineReducers({
   healthInfo: healthInfoReducer,
   dashboard: dashboardReducer,
   register: registerReducer,
-  // Operator Reducers
-  tenants: tenantsReducer,
-  createTenant: createTenantReducer,
   createUser: createUserReducer,
-  addPool: addPoolReducer,
-  editPool: editPoolReducer,
-  editTenantMonitoring: editTenantMonitoringReducer,
-  editTenantLogging: editTenantAuditLoggingReducer,
-  editTenantSecurityContext: editTenantSecurityContextReducer,
-  directPV: directPVReducer,
   license: licenseReducer,
 });
 

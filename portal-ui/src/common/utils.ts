@@ -15,22 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import storage from "local-storage-fallback";
-import {
-  IBytesCalc,
-  ICapacity,
-  IErasureCodeCalc,
-  IStorageDistribution,
-  IStorageFactors,
-} from "./types";
-import { IPool } from "../screens/Console/Tenants/ListTenants/types";
-import {
-  IMkEnvs,
-  IntegrationConfiguration,
-  mkPanelConfigurations,
-} from "../screens/Console/Tenants/AddTenant/Steps/TenantResources/utils";
+import { IBytesCalc, IErasureCodeCalc, IStorageFactors } from "./types";
+
 import get from "lodash/get";
 
-const minStReq = 1073741824; // Minimal Space required for MinIO
 const minMemReq = 2147483648; // Minimal Memory required for MinIO in bytes
 
 export const units = [
@@ -228,204 +216,6 @@ export const setMemoryResource = (
   };
 };
 
-export const calculateDistribution = (
-  capacityToUse: ICapacity,
-  forcedNodes: number = 0,
-  limitSize: number = 0,
-  drivesPerServer: number = 0,
-  marketplaceIntegration?: IMkEnvs,
-  selectedStorageType?: string
-): IStorageDistribution => {
-  const requestedSizeBytes = getBytes(
-    capacityToUse.value,
-    capacityToUse.unit,
-    true
-  );
-
-  if (parseInt(requestedSizeBytes, 10) < minStReq) {
-    return {
-      error: "The pool size must be greater than 1Gi",
-      nodes: 0,
-      persistentVolumes: 0,
-      disks: 0,
-      pvSize: 0,
-    };
-  }
-
-  if (drivesPerServer <= 0) {
-    return {
-      error: "Number of drives must be at least 1",
-      nodes: 0,
-      persistentVolumes: 0,
-      disks: 0,
-      pvSize: 0,
-    };
-  }
-
-  let numberOfNodes = calculateStorage(
-    requestedSizeBytes,
-    forcedNodes,
-    limitSize,
-    drivesPerServer,
-    marketplaceIntegration,
-    selectedStorageType
-  );
-
-  return numberOfNodes;
-};
-
-const calculateStorage = (
-  requestedBytes: string,
-  forcedNodes: number,
-  limitSize: number,
-  drivesPerServer: number,
-  marketplaceIntegration?: IMkEnvs,
-  selectedStorageType?: string
-): IStorageDistribution => {
-  // Size validation
-  const intReqBytes = parseInt(requestedBytes, 10);
-  const maxDiskSize = minStReq * 256; // 256 GiB
-
-  // We get the distribution
-  return structureCalc(
-    forcedNodes,
-    intReqBytes,
-    maxDiskSize,
-    limitSize,
-    drivesPerServer,
-    marketplaceIntegration,
-    selectedStorageType
-  );
-};
-
-const structureCalc = (
-  nodes: number,
-  desiredCapacity: number,
-  maxDiskSize: number,
-  maxClusterSize: number,
-  disksPerNode: number = 0,
-  marketplaceIntegration?: IMkEnvs,
-  selectedStorageType?: string
-): IStorageDistribution => {
-  if (
-    isNaN(nodes) ||
-    isNaN(desiredCapacity) ||
-    isNaN(maxDiskSize) ||
-    isNaN(maxClusterSize)
-  ) {
-    return {
-      error: "Some provided data is invalid, please try again.",
-      nodes: 0,
-      persistentVolumes: 0,
-      disks: 0,
-      pvSize: 0,
-    }; // Invalid Data
-  }
-
-  let persistentVolumeSize = 0;
-  let numberPersistentVolumes = 0;
-  let volumesPerServer = 0;
-
-  if (disksPerNode === 0) {
-    persistentVolumeSize = Math.floor(
-      Math.min(desiredCapacity / Math.max(4, nodes), maxDiskSize)
-    ); // pVS = min((desiredCapacity / max(4 | nodes)) | maxDiskSize)
-
-    numberPersistentVolumes = desiredCapacity / persistentVolumeSize; // nPV = dC / pVS
-    volumesPerServer = numberPersistentVolumes / nodes; // vPS = nPV / n
-  }
-
-  if (disksPerNode) {
-    volumesPerServer = disksPerNode;
-    numberPersistentVolumes = volumesPerServer * nodes;
-    persistentVolumeSize = Math.floor(
-      desiredCapacity / numberPersistentVolumes
-    );
-  }
-
-  // Volumes are not exact, we force the volumes number & minimize the volume size
-  if (volumesPerServer % 1 > 0) {
-    volumesPerServer = Math.ceil(volumesPerServer); // Increment of volumes per server
-    numberPersistentVolumes = volumesPerServer * nodes; // nPV = vPS * n
-    persistentVolumeSize = Math.floor(
-      desiredCapacity / numberPersistentVolumes
-    ); // pVS = dC / nPV
-
-    const limitSize = persistentVolumeSize * volumesPerServer * nodes; // lS = pVS * vPS * n
-
-    if (limitSize > maxClusterSize) {
-      return {
-        error: "We were not able to allocate this server.",
-        nodes: 0,
-        persistentVolumes: 0,
-        disks: 0,
-        pvSize: 0,
-      }; // Cannot allocate this server
-    }
-  }
-
-  if (persistentVolumeSize < minStReq) {
-    return {
-      error:
-        "Disk Size with this combination would be less than 1Gi, please try another combination",
-      nodes: 0,
-      persistentVolumes: 0,
-      disks: 0,
-      pvSize: 0,
-    }; // Cannot allocate this volume size
-  }
-  // validate for integrations
-  if (marketplaceIntegration !== undefined) {
-    const setConfigs = mkPanelConfigurations[marketplaceIntegration];
-    const keyCount = Object.keys(setConfigs).length;
-
-    //Configuration is filled
-    if (keyCount > 0) {
-      const configs: IntegrationConfiguration[] = get(
-        setConfigs,
-        "configurations",
-        []
-      );
-      const mainSelection = configs.find(
-        (item) => item.typeSelection === selectedStorageType
-      );
-
-      if (mainSelection !== undefined && mainSelection.minimumVolumeSize) {
-        const minimumPvSize = getBytesNumber(
-          mainSelection.minimumVolumeSize?.driveSize,
-          mainSelection.minimumVolumeSize?.sizeUnit,
-          true
-        );
-        const storageTypeLabel = setConfigs.variantSelectorValues!.find(
-          (item) => item.value === selectedStorageType
-        );
-
-        if (persistentVolumeSize < minimumPvSize) {
-          return {
-            error: `For the ${
-              storageTypeLabel!.label
-            } storage type the mininum volume size is ${
-              mainSelection.minimumVolumeSize.driveSize
-            }${mainSelection.minimumVolumeSize.sizeUnit}`,
-            nodes: 0,
-            persistentVolumes: 0,
-            disks: 0,
-            pvSize: 0,
-          };
-        }
-      }
-    }
-  }
-
-  return {
-    error: "",
-    nodes,
-    persistentVolumes: numberPersistentVolumes,
-    disks: volumesPerServer,
-    pvSize: persistentVolumeSize,
-  };
-};
-
 // Erasure Code Parity Calc
 export const erasureCodeCalc = (
   parityValidValues: string[],
@@ -485,13 +275,6 @@ export const erasureCodeCalc = (
     erasureCodeSet: erasureStripeSet,
     defaultEC,
   };
-};
-
-// Pool Name Generator
-export const generatePoolName = (pools: IPool[]) => {
-  const poolCounter = pools.length;
-
-  return `pool-${poolCounter}`;
 };
 
 // seconds / minutes /hours / Days / Years calculator
@@ -917,3 +700,15 @@ export const MinIOEnvironmentVariables = [
   "MINIO_STORAGE_CLASS_RRS",
   "MINIO_STORAGE_CLASS_STANDARD",
 ];
+
+// Generates a valid access/secret key string
+export const getRandomString = function (length = 16): string {
+  let retval = "";
+  let legalcharacters =
+    "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for (let i = 0; i < length; i++) {
+    retval +=
+      legalcharacters[Math.floor(Math.random() * legalcharacters.length)];
+  }
+  return retval;
+};
