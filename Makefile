@@ -15,11 +15,6 @@ console:
 	@echo "Building Console binary to './console'"
 	@(GO111MODULE=on CGO_ENABLED=0 go build -trimpath --tags=kqueue --ldflags "-s -w" -o console ./cmd/console)
 
-k8sdev:
-	@docker build -t $(TAG) --build-arg build_version=$(BUILD_VERSION) --build-arg build_time='$(BUILD_TIME)' --build-arg NODE_VERSION='$(NODE_VERSION)' .
-	@kind load docker-image $(TAG)
-	@echo "Done, now restart your console deployment"
-
 getdeps:
 	@mkdir -p ${GOPATH}/bin
 	@echo "Installing golangci-lint" && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH)/bin
