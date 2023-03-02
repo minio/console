@@ -16,6 +16,7 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LogMessage } from "./types";
+import { DateTime } from "luxon";
 
 export interface LogState {
   logMessages: LogMessage[];
@@ -33,10 +34,17 @@ export const logsSlice = createSlice({
   reducers: {
     logMessageReceived: (state, action: PayloadAction<LogMessage>) => {
       let msgs = state.logMessages;
+      const logTime = DateTime.fromFormat(
+        action.payload.time.toString(),
+        "HH:mm:ss z MM/dd/yyyy",
+        {
+          zone: "UTC",
+        }
+      ).toJSDate();
 
       if (
         msgs.length > 0 &&
-        action.payload.time.getFullYear() === 1 &&
+        logTime.getFullYear() === 1 &&
         action.payload.ConsoleMsg !== ""
       ) {
         for (let m in msgs) {

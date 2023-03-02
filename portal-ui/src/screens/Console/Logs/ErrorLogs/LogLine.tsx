@@ -25,6 +25,7 @@ import { BoxArrowDown, BoxArrowUp, WarnFilledIcon } from "mds";
 
 import getByKey from "lodash/get";
 
+const timestampDisplayFmt = "HH:mm:ss ZZZZ MM/dd/yyyy"; //make this same as server logs format.
 const messageForConsoleMsg = (log: LogMessage) => {
   // regex for terminal colors like e.g. `[31;4m `
   const tColorRegex = /((\[[0-9;]+m))/g;
@@ -77,6 +78,13 @@ const messageForError = (log: LogMessage) => {
     return getByKey(log, keyPath, "");
   };
 
+  const logTime = DateTime.fromFormat(
+    log.time.toString(),
+    "HH:mm:ss z MM/dd/yyyy",
+    {
+      zone: "UTC",
+    }
+  );
   return (
     <Fragment>
       <div>
@@ -85,7 +93,7 @@ const messageForError = (log: LogMessage) => {
       </div>
       <div>
         <b style={labelStyle}>Time:&nbsp;</b>
-        <span style={dataStyle}>{getLogEntryKey("time").toString()}</span>
+        <span style={dataStyle}>{logTime.toFormat(timestampDisplayFmt)}</span>
       </div>
       <div>
         <b style={labelStyle}>DeploymentID:&nbsp;</b>
@@ -157,18 +165,23 @@ const LogLine = (props: { log: LogMessage }) => {
 
   titleLogMessage = (titleLogMessage || "").replace(tColorRegex, "");
 
-  const logTime = DateTime.fromJSDate(log.time);
-
-  let dateStr = (
-    <Fragment>{logTime.toFormat("yyyy/MM/dd HH:mm:ss (ZZZZ)")}</Fragment>
+  const logTime = DateTime.fromFormat(
+    log.time.toString(),
+    "HH:mm:ss z MM/dd/yyyy",
+    {
+      zone: "UTC",
+    }
   );
+  const dateOfLine = logTime.toJSDate(); //DateTime.fromJSDate(log.time);
 
-  if (log.time.getFullYear() === 1) {
+  let dateStr = <Fragment>{logTime.toFormat(timestampDisplayFmt)}</Fragment>;
+
+  if (dateOfLine.getFullYear() === 1) {
     dateStr = <Fragment>n/a</Fragment>;
   }
 
   return (
-    <React.Fragment key={log.time.toString()}>
+    <React.Fragment key={logTime.toString()}>
       <TableRow
         sx={{
           "& > *": { borderBottom: "unset" },
@@ -180,17 +193,21 @@ const LogLine = (props: { log: LogMessage }) => {
       >
         <TableCell
           onClick={() => setOpen(!open)}
-          style={{ width: 200, color: "#989898", fontSize: 12 }}
+          style={{ width: 280, color: "#989898", fontSize: 12 }}
         >
           <Box
             sx={{
+              display: "flex",
+              gap: 1,
+              alignItems: "center",
+
               "& .min-icon": { width: 12, marginRight: 1 },
               fontWeight: "bold",
               lineHeight: 1,
             }}
           >
             <WarnFilledIcon />
-            {dateStr}
+            <div>{dateStr}</div>
           </Box>
         </TableCell>
         <TableCell
