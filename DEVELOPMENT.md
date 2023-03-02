@@ -8,7 +8,7 @@ you to do that.
 If you are performing changes in the UI components of console and want to test inside the MinIO binary, you need to
 build assets first.
 
-On the console folder run
+In the console folder run
 
 ```shell
 make assets
