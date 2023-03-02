@@ -21,7 +21,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { useSelector } from "react-redux";
 import { FormControl, Grid, InputBase, MenuItem, Select } from "@mui/material";
-import { DateTime } from "luxon";
 
 import { ErrorResponseHandler } from "../../../../../src/common/types";
 import api from "../../../../../src/common/api";
@@ -155,12 +154,6 @@ const ErrorLogs = () => {
           isValidEntry = false;
         }
 
-        const logTime = DateTime.fromFormat(
-          m.time,
-          "HH:mm:ss UTC MM/dd/yyyy"
-        ).toJSDate();
-
-        m.time = logTime;
         m.key = Math.random();
         if (userAgents.indexOf(m.userAgent) < 0 && m.userAgent !== undefined) {
           userAgents.push(m.userAgent);
