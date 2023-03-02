@@ -1,6 +1,6 @@
 # Building with MinIO
 
-To test console in it's shipping format, you need to build it from the MinIO repository, the following step will guide
+To test console in its shipping format, you need to build it from the MinIO repository, the following step will guide
 you to do that.
 
 ### 0. Building with UI Changes
