@@ -717,154 +717,6 @@ jobs:
         run: |
           make cleanup-permissions
 
-  all-operator-tests-1:
-    name: Operator UI Tests Part 1
-    needs:
-      - compile-binary
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.19.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      # To build operator image, we need to clone the repository first
-      - name: clone https://github.com/minio/operator
-        uses: actions/checkout@master
-        with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
-          repository: minio/operator
-
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
-          path: 'operator_repository'
-
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      # Runs a set of commands using the runners shell
-      - name: Start Kind for Operator UI
-        run: |
-          "${GITHUB_WORKSPACE}/portal-ui/tests/scripts/operator.sh"
-
-      - name: Run TestCafe Tests
-        uses: DevExpress/testcafe-action@latest
-        with:
-          args: '"chrome:headless" portal-ui/tests/operator/login --skip-js-errors -c 3'
-  all-operator-tests-2:
-    name: Operator UI Tests Part 2
-    needs:
-      - compile-binary
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.19.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      # To build operator image, we need to clone the repository first
-      - name: clone https://github.com/minio/operator
-        uses: actions/checkout@master
-        with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
-          repository: minio/operator
-
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
-          path: 'operator_repository'
-
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      # Runs a set of commands using the runners shell
-      - name: Start Kind for Operator UI
-        run: |
-          "${GITHUB_WORKSPACE}/portal-ui/tests/scripts/operator.sh"
-
-      - name: Run TestCafe Tests
-        uses: DevExpress/testcafe-action@latest
-        with:
-          args: '"chrome:headless" portal-ui/tests/operator/tenant/test-1 --skip-js-errors -c 3'
-  all-operator-tests-3:
-    name: Operator UI Tests Part 3
-    needs:
-      - compile-binary
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.19.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      # To build operator image, we need to clone the repository first
-      - name: clone https://github.com/minio/operator
-        uses: actions/checkout@master
-        with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
-          repository: minio/operator
-
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
-          path: 'operator_repository'
-
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      # Runs a set of commands using the runners shell
-      - name: Start Kind for Operator UI
-        run: |
-          "${GITHUB_WORKSPACE}/portal-ui/tests/scripts/operator.sh"
-
-      - name: Run TestCafe Tests
-        uses: DevExpress/testcafe-action@latest
-        with:
-          args: '"chrome:headless" portal-ui/tests/operator/tenant/test-2 --skip-js-errors -c 3'
-
   cross-compile-1:
     name: Cross compile
     needs:
@@ -1094,44 +946,6 @@ jobs:
           path: |
             ./restapi/coverage/
           key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
-  test-operatorapi-on-go:
-    name: Test Operatorapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs:
-      - lint-job
-      - ui-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.19.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make test-unit-test-operator
-
-      - uses: actions/cache@v3
-        id: coverage-cache-unittest-operatorapi
-        name: Coverage Cache unit test operatorAPI
-        with:
-          path: |
-            ./operatorapi/coverage/
-          key: ${{ runner.os }}-coverage-unittest-operatorapi-2-${{ github.run_id }}
   b-integration-tests:
     name: Integration Tests with Latest Distributed MinIO
     needs:
@@ -1351,68 +1165,11 @@ jobs:
           path: |
             ./sso-integration/coverage/
           key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
-  c-operator-api-tests:
-
-    name: Operator API Tests
-    needs:
-      - lint-job
-      - ui-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        go-version: [ 1.19.x ]
-
-    steps:
-
-      - uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      # To build operator image, we need to clone the repository first
-      - name: clone https://github.com/minio/operator
-        uses: actions/checkout@master
-        with:
-
-          # Repository name with owner. For example, actions/checkout
-          # Default: ${{ github.repository }}
-          repository: minio/operator
-
-          # Relative path under $GITHUB_WORKSPACE to place the repository
-          # To have two repositories under the same test
-          path: 'operator_repository'
-
-
-      - name: Operator API Tests
-        run: |
-          curl -sLO "https://dl.k8s.io/release/v1.23.1/bin/linux/amd64/kubectl" -o kubectl
-          chmod +x kubectl
-          mv kubectl /usr/local/bin
-          "${GITHUB_WORKSPACE}/tests/deploy-tenant.sh"
-          echo "start ---> make test-operator-integration";
-          make test-operator-integration;
-
-      - uses: actions/cache@v3
-        id: coverage-cache-operator
-        name: Coverage Cache Operator
-        with:
-          path: |
-            ./operator-integration/coverage/
-          key: ${{ runner.os }}-coverage-2-operator-${{ github.run_id }}
   coverage:
     name: "Coverage Limit Check"
     needs:
       - b-integration-tests
       - test-restapi-on-go
-      - test-operatorapi-on-go
-      - c-operator-api-tests
       - test-pkg-on-go
       - sso-integration
       - replication
@@ -1461,28 +1218,12 @@ jobs:
           key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
 
       - uses: actions/cache@v3
-        id: coverage-cache-operator
-        name: Coverage Cache Operator
-        with:
-          path: |
-            ./operator-integration/coverage/
-          key: ${{ runner.os }}-coverage-2-operator-${{ github.run_id }}
-
-      - uses: actions/cache@v3
         id: coverage-cache-restapi
         name: Coverage Cache RestAPI
         with:
           path: |
             ./restapi/coverage/
           key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
-
-      - uses: actions/cache@v3
-        id: coverage-cache-unittest-operatorapi
-        name: Coverage Cache unit test operatorAPI
-        with:
-          path: |
-            ./operatorapi/coverage/
-          key: ${{ runner.os }}-coverage-unittest-operatorapi-2-${{ github.run_id }}
 
       - uses: actions/cache@v3
         id: coverage-cache-pkg
@@ -1509,7 +1250,7 @@ jobs:
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
-          ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out ../operator-integration/coverage/operator-api.out ../operatorapi/coverage/coverage-unit-test-operatorapi.out > all.out
+          ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
           echo "Download mc for Ubuntu"
           wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
           echo "Change the permissions to execute mc command"

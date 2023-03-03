@@ -39,7 +39,6 @@ import { useSelector } from "react-redux";
 import useApi from "./Common/Hooks/useApi";
 import { Bucket, BucketList } from "./Buckets/types";
 import { selFeatures } from "./consoleSlice";
-import { selDirectPVMode, selOpMode } from "../../systemSlice";
 
 const useStyles = makeStyles((theme: Theme) => ({
   resultItem: {
@@ -127,8 +126,6 @@ const KBarStateChangeMonitor = ({
 };
 
 const CommandBar = () => {
-  const operatorMode = useSelector(selOpMode);
-  const directPVMode = useSelector(selDirectPVMode);
   const features = useSelector(selFeatures);
   const navigate = useNavigate();
 
@@ -148,13 +145,11 @@ const CommandBar = () => {
 
   const initialActions: Action[] = routesAsKbarActions(
     features,
-    operatorMode,
-    directPVMode,
     buckets,
     navigate
   );
 
-  useRegisterActions(initialActions, [operatorMode, buckets, features]);
+  useRegisterActions(initialActions, [buckets, features]);
 
   //fetch buckets everytime the kbar is shown so that new buckets created elsewhere , within first page is also shown
 

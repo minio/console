@@ -15,16 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { useSelector } from "react-redux";
-import { selOpMode } from "../../../systemSlice";
 
 const LicenseLink = () => {
-  const isOperatorMode = useSelector(selOpMode);
-
-  const refFrom = isOperatorMode ? "op" : "con";
-
   return (
-    <a className="link-text" href={`https://min.io/compliance?ref=${refFrom}`}>
+    <a className="link-text" href={`https://min.io/compliance?ref=con`}>
       GNU AGPL v3
     </a>
   );

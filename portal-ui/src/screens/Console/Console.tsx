@@ -47,13 +47,10 @@ import {
 import { hasPermission } from "../../common/SecureComponent";
 import { IRouteRule } from "./Menu/types";
 import LoadingComponent from "../../common/LoadingComponent";
-import EditPool from "./Tenants/TenantDetails/Pools/EditPool/EditPool";
 import ComponentsScreen from "./Common/ComponentsScreen";
 import {
   menuOpen,
-  selDirectPVMode,
   selDistSet,
-  selOpMode,
   serverIsLoading,
   setServerNeedsRestart,
   setSnackBarMessage,
@@ -64,10 +61,6 @@ const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
 const Watch = React.lazy(() => import("./Watch/Watch"));
 const HealthInfo = React.lazy(() => import("./HealthInfo/HealthInfo"));
-const Hop = React.lazy(() => import("./Tenants/TenantDetails/hop/Hop"));
-const RegisterOperator = React.lazy(() => import("./Support/RegisterOperator"));
-
-const AddTenant = React.lazy(() => import("./Tenants/AddTenant/AddTenant"));
 
 const EventDestinations = React.lazy(
   () => import("./EventDestinations/EventDestinations")
@@ -87,9 +80,6 @@ const TierTypeSelector = React.lazy(
 );
 const AddTierConfiguration = React.lazy(
   () => import("./Configurations/TiersConfiguration/AddTierConfiguration")
-);
-const ListTenants = React.lazy(
-  () => import("./Tenants/ListTenants/ListTenants")
 );
 
 const ErrorLogs = React.lazy(() => import("./Logs/ErrorLogs/ErrorLogs"));
@@ -142,17 +132,11 @@ const IDPOpenIDConfigurationDetails = React.lazy(
   () => import("./IDP/IDPOpenIDConfigurationDetails")
 );
 
-const TenantDetails = React.lazy(
-  () => import("./Tenants/TenantDetails/TenantDetails")
-);
 const License = React.lazy(() => import("./License/License"));
-const Marketplace = React.lazy(() => import("./Marketplace/Marketplace"));
 const ConfigurationOptions = React.lazy(
   () => import("./Configurations/ConfigurationPanels/ConfigurationOptions")
 );
-const AddPool = React.lazy(
-  () => import("./Tenants/TenantDetails/Pools/AddPool/AddPool")
-);
+
 const AddGroupScreen = React.lazy(() => import("./Groups/AddGroupScreen"));
 const SiteReplication = React.lazy(
   () => import("./Configurations/SiteReplication/SiteReplication")
@@ -164,12 +148,6 @@ const SiteReplicationStatus = React.lazy(
 const AddReplicationSites = React.lazy(
   () => import("./Configurations/SiteReplication/AddReplicationSites")
 );
-
-const StoragePVCs = React.lazy(() => import("./Storage/StoragePVCs"));
-
-const DirectPVDrives = React.lazy(() => import("./DirectPV/DirectPVDrives"));
-
-const DirectPVVolumes = React.lazy(() => import("./DirectPV/DirectPVVolumes"));
 
 const KMSRoutes = React.lazy(() => import("./KMS/KMSRoutes"));
 
@@ -219,8 +197,6 @@ const Console = ({ classes }: IConsoleProps) => {
   const session = useSelector(selSession);
   const features = useSelector(selFeatures);
   const distributedSetup = useSelector(selDistSet);
-  const operatorMode = useSelector(selOpMode);
-  const directPVMode = useSelector(selDirectPVMode);
   const snackBarMessage = useSelector(
     (state: AppState) => state.system.snackBar
   );
@@ -480,84 +456,7 @@ const Console = ({ classes }: IConsoleProps) => {
     },
   ];
 
-  const operatorConsoleRoutes: IRouteRule[] = [
-    {
-      component: ListTenants,
-      path: IAM_PAGES.TENANTS,
-      forceDisplay: true,
-    },
-    {
-      component: AddTenant,
-      path: IAM_PAGES.TENANTS_ADD,
-      forceDisplay: true,
-    },
-    {
-      component: TenantDetails,
-      path: IAM_PAGES.NAMESPACE_TENANT,
-      forceDisplay: true,
-    },
-    {
-      component: Hop,
-      path: IAM_PAGES.NAMESPACE_TENANT_HOP,
-      forceDisplay: true,
-    },
-    {
-      component: AddPool,
-      path: IAM_PAGES.NAMESPACE_TENANT_POOLS_ADD,
-      forceDisplay: true,
-    },
-    {
-      component: EditPool,
-      path: IAM_PAGES.NAMESPACE_TENANT_POOLS_EDIT,
-      forceDisplay: true,
-    },
-    {
-      component: License,
-      path: IAM_PAGES.LICENSE,
-      forceDisplay: true,
-    },
-    {
-      component: RegisterOperator,
-      path: IAM_PAGES.REGISTER_SUPPORT,
-      forceDisplay: true,
-    },
-    {
-      component: Marketplace,
-      path: IAM_PAGES.OPERATOR_MARKETPLACE,
-      forceDisplay: true,
-    },
-  ];
-
-  const directPVRoutes: IRouteRule[] = [
-    {
-      component: StoragePVCs,
-      path: IAM_PAGES.DIRECTPV_STORAGE,
-      forceDisplay: true,
-    },
-    {
-      component: DirectPVDrives,
-      path: IAM_PAGES.DIRECTPV_DRIVES,
-      forceDisplay: true,
-    },
-    {
-      component: DirectPVVolumes,
-      path: IAM_PAGES.DIRECTPV_VOLUMES,
-      forceDisplay: true,
-    },
-    {
-      component: License,
-      path: IAM_PAGES.LICENSE,
-      forceDisplay: true,
-    },
-  ];
-
   let routes = consoleAdminRoutes;
-
-  if (directPVMode) {
-    routes = directPVRoutes;
-  } else if (operatorMode) {
-    routes = operatorConsoleRoutes;
-  }
 
   const allowedRoutes = routes.filter((route: any) =>
     obOnly
