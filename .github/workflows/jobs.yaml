@@ -990,7 +990,13 @@ jobs:
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
           echo "Create MinIO image";
-          cp ../minio .
+          if [ ! -f ../minio ]; then
+              echo "minio binary not found!, so compiling..."
+              make docker VERSION=$VERSION;
+          else
+              echo "Using binary from cache"
+              cp ../minio .
+          fi
           docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
@@ -1076,7 +1082,13 @@ jobs:
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
           echo "Create MinIO image";
-          cp ../minio .
+          if [ ! -f ../minio ]; then
+              echo "minio binary not found!, so compiling..."
+              make docker VERSION=$VERSION;
+          else
+              echo "Using binary from cache"
+              cp ../minio .
+          fi
           docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
@@ -1150,7 +1162,13 @@ jobs:
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
           echo "Create MinIO image";
-          cp ../minio .
+          if [ ! -f ../minio ]; then
+              echo "minio binary not found!, so compiling..."
+              make docker VERSION=$VERSION;
+          else
+              echo "Using binary from cache"
+              cp ../minio .
+          fi
           docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
