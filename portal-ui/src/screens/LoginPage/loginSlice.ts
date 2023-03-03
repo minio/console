@@ -28,8 +28,6 @@ export interface LoginState {
   sts: string;
   useSTS: boolean;
 
-  jwt: string;
-
   loginStrategy: ILoginDetails;
 
   loginSending: boolean;
@@ -48,7 +46,6 @@ const initialState: LoginState = {
   secretKey: "",
   sts: "",
   useSTS: false,
-  jwt: "",
   loginStrategy: {
     loginStrategy: loginStrategyType.unknown,
     redirectRules: [],
@@ -78,9 +75,6 @@ export const loginSlice = createSlice({
     },
     setSTS: (state, action: PayloadAction<string>) => {
       state.sts = action.payload;
-    },
-    setJwt: (state, action: PayloadAction<string>) => {
-      state.jwt = action.payload;
     },
     setNavigateTo: (state, action: PayloadAction<string>) => {
       state.navigateTo = action.payload;
@@ -133,7 +127,6 @@ export const {
   setSecretKey,
   setUseSTS,
   setSTS,
-  setJwt,
   setNavigateTo,
   resetForm,
 } = loginSlice.actions;

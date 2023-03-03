@@ -18,75 +18,41 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AppState } from "../../store";
 import api from "../../common/api";
 import { ErrorResponseHandler } from "../../common/types";
-import {
-  setErrorSnackMessage,
-  showMarketplace,
-  userLogged,
-} from "../../systemSlice";
-import { ILoginDetails, loginStrategyType } from "./types";
+import { setErrorSnackMessage, userLogged } from "../../systemSlice";
+import { ILoginDetails } from "./types";
 import { setNavigateTo } from "./loginSlice";
-import {
-  getTargetPath,
-  loginStrategyEndpoints,
-  LoginStrategyPayload,
-} from "./LoginPage";
+import { getTargetPath, LoginStrategyPayload } from "./LoginPage";
 
 export const doLoginAsync = createAsyncThunk(
   "login/doLoginAsync",
   async (_, { getState, rejectWithValue, dispatch }) => {
     const state = getState() as AppState;
-    const loginStrategy = state.login.loginStrategy;
     const accessKey = state.login.accessKey;
     const secretKey = state.login.secretKey;
-    const jwt = state.login.jwt;
     const sts = state.login.sts;
     const useSTS = state.login.useSTS;
 
-    const isOperator =
-      loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
-      loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount;
-
     let loginStrategyPayload: LoginStrategyPayload = {
-      form: { accessKey, secretKey },
-      "service-account": { jwt },
+      accessKey,
+      secretKey,
     };
     if (useSTS) {
       loginStrategyPayload = {
-        form: { accessKey, secretKey, sts },
+        accessKey,
+        secretKey,
+        sts,
       };
     }
 
+    console.log("PAYLOAD:", loginStrategyPayload);
+
     return api
-      .invoke(
-        "POST",
-        loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login",
-        loginStrategyPayload[loginStrategy.loginStrategy]
-      )
+      .invoke("POST", "/api/v1/login", loginStrategyPayload)
       .then((res) => {
         // We set the state in redux
         dispatch(userLogged(true));
-        if (loginStrategy.loginStrategy === loginStrategyType.form) {
-          localStorage.setItem("userLoggedIn", accessKey);
-        }
-        // if it's in operator mode, check the Marketplace integration
-        if (isOperator) {
-          api
-            .invoke("GET", "/api/v1/mp-integration/")
-            .then((res: any) => {
-              dispatch(setNavigateTo(getTargetPath())); // Email already set, continue with normal flow
-            })
-            .catch((err: ErrorResponseHandler) => {
-              if (err.statusCode === 404) {
-                dispatch(showMarketplace(true));
-                dispatch(setNavigateTo("/marketplace"));
-              } else {
-                // Unexpected error, continue with normal flow
-                dispatch(setNavigateTo(getTargetPath()));
-              }
-            });
-        } else {
-          dispatch(setNavigateTo(getTargetPath()));
-        }
+        localStorage.setItem("userLoggedIn", accessKey);
+        dispatch(setNavigateTo(getTargetPath()));
       })
       .catch((err) => {
         dispatch(setErrorSnackMessage(err));
@@ -124,23 +90,7 @@ export const getVersionAsync = createAsyncThunk(
         }
       )
       .catch((err: ErrorResponseHandler) => {
-        // try the operator version
-        api
-          .invoke("GET", "/api/v1/check-operator-version")
-          .then(
-            ({
-              current_version,
-              latest_version,
-            }: {
-              current_version: string;
-              latest_version: string;
-            }) => {
-              return latest_version;
-            }
-          )
-          .catch((err: ErrorResponseHandler) => {
-            return err;
-          });
+        return err.errorMessage;
       });
   }
 );

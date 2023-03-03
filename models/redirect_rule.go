@@ -39,6 +39,9 @@ type RedirectRule struct {
 
 	// redirect
 	Redirect string `json:"redirect,omitempty"`
+
+	// service type
+	ServiceType string `json:"serviceType,omitempty"`
 }
 
 // Validate validates this redirect rule

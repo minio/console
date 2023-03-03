@@ -20,7 +20,9 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -186,15 +188,25 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 				Client:  oauth2Client,
 			}
 
-			displayName := "Login with SSO"
+			displayName := fmt.Sprintf("Login with SSO (%s)", name)
+			serviceType := ""
 
 			if provider.DisplayName != "" {
 				displayName = provider.DisplayName
 			}
 
+			if provider.RoleArn != "" {
+				splitRoleArn := strings.Split(provider.RoleArn, ":")
+
+				if len(splitRoleArn) > 2 {
+					serviceType = splitRoleArn[2]
+				}
+			}
+
 			redirectRule := models.RedirectRule{
 				Redirect:    identityProvider.GenerateLoginURL(),
 				DisplayName: displayName,
+				ServiceType: serviceType,
 			}
 
 			redirectRules = append(redirectRules, &redirectRule)

@@ -16,38 +16,18 @@
 
 import React, { Fragment, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  InputAdornment,
-  LinearProgress,
-  MenuItem,
-  Select,
-} from "@mui/material";
-import {
-  Button,
-  Loader,
-  LockIcon,
-  LoginWrapper,
-  LogoutIcon,
-  RefreshIcon,
-} from "mds";
+import { Button, Loader, LoginWrapper, RefreshIcon } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
-import Grid from "@mui/material/Grid";
 import { loginStrategyType, redirectRule } from "./types";
 import MainError from "../Console/Common/MainError/MainError";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
-import clsx from "clsx";
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
-import {
-  doLoginAsync,
-  getFetchConfigurationAsync,
-  getVersionAsync,
-} from "./loginThunks";
-import { resetForm, setJwt } from "./loginSlice";
+import { getFetchConfigurationAsync, getVersionAsync } from "./loginThunks";
+import { resetForm } from "./loginSlice";
 import StrategyForm from "./StrategyForm";
-import { LoginField } from "./LoginField";
 import { redirectRules } from "../../utils/sortFunctions";
 import { getLogoVar } from "../../config";
 
@@ -250,18 +230,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export interface LoginStrategyRoutes {
-  [key: string]: string;
-}
-
 export interface LoginStrategyPayload {
-  [key: string]: any;
+  accessKey: string;
+  secretKey: string;
+  sts?: string;
 }
-
-export const loginStrategyEndpoints: LoginStrategyRoutes = {
-  form: "/api/v1/login",
-  "service-account": "/api/v1/login/operator",
-};
 
 export const getTargetPath = () => {
   let targetPath = "/";
@@ -280,12 +253,8 @@ const Login = () => {
   const navigate = useNavigate();
   const classes = useStyles();
 
-  const jwt = useSelector((state: AppState) => state.login.jwt);
   const loginStrategy = useSelector(
     (state: AppState) => state.login.loginStrategy
-  );
-  const loginSending = useSelector(
-    (state: AppState) => state.login.loginSending
   );
   const loadingFetchConfiguration = useSelector(
     (state: AppState) => state.login.loadingFetchConfiguration
@@ -295,12 +264,7 @@ const Login = () => {
   );
   const navigateTo = useSelector((state: AppState) => state.login.navigateTo);
 
-  const isDirectPV = useSelector((state: AppState) => state.login.isDirectPV);
   const isK8S = useSelector((state: AppState) => state.login.isK8S);
-
-  const isOperator =
-    loginStrategy.loginStrategy === loginStrategyType.serviceAccount ||
-    loginStrategy.loginStrategy === loginStrategyType.redirectServiceAccount;
 
   useEffect(() => {
     if (navigateTo !== "") {
@@ -308,11 +272,6 @@ const Login = () => {
       navigate(navigateTo);
     }
   }, [navigateTo, dispatch, navigate]);
-
-  const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    dispatch(doLoginAsync());
-  };
 
   useEffect(() => {
     if (loadingFetchConfiguration) {
@@ -329,12 +288,8 @@ const Login = () => {
   let loginComponent;
 
   switch (loginStrategy.loginStrategy) {
-    case loginStrategyType.form: {
-      loginComponent = <StrategyForm />;
-      break;
-    }
     case loginStrategyType.redirect:
-    case loginStrategyType.redirectServiceAccount: {
+    case loginStrategyType.form: {
       let redirectItems: redirectRule[] = [];
 
       if (
@@ -344,111 +299,7 @@ const Login = () => {
         redirectItems = [...loginStrategy.redirectRules].sort(redirectRules);
       }
 
-      if (
-        loginStrategy.redirectRules &&
-        loginStrategy.redirectRules.length > 1
-      ) {
-        loginComponent = (
-          <Fragment>
-            <div className={classes.loginSsoText}>Login with SSO:</div>
-            <Select
-              id="ssoLogin"
-              name="ssoLogin"
-              data-test-id="sso-login"
-              onChange={(e) => {
-                if (e.target.value) {
-                  window.location.href = e.target.value as string;
-                }
-              }}
-              displayEmpty
-              className={classes.ssoSelect}
-              renderValue={() => "Select Provider"}
-            >
-              {redirectItems.map((r, idx) => (
-                <MenuItem
-                  value={r.redirect}
-                  key={`sso-login-option-${idx}`}
-                  className={classes.ssoMenuItem}
-                  divider={true}
-                >
-                  <LogoutIcon className={classes.ssoLoginIcon} />
-                  {r.displayName}
-                </MenuItem>
-              ))}
-            </Select>
-          </Fragment>
-        );
-      } else if (redirectItems.length === 1) {
-        loginComponent = (
-          <div className={clsx(classes.submit, classes.ssoSubmit)}>
-            <Button
-              key={`login-button`}
-              variant="callAction"
-              id="sso-login"
-              label={
-                redirectItems[0].displayName === ""
-                  ? "Login with SSO"
-                  : redirectItems[0].displayName
-              }
-              onClick={() => (window.location.href = redirectItems[0].redirect)}
-              fullWidth
-            />
-          </div>
-        );
-      } else {
-        loginComponent = (
-          <div className={classes.loginStrategyMessage}>
-            Cannot retrieve redirect from login strategy
-          </div>
-        );
-      }
-      break;
-    }
-    case loginStrategyType.serviceAccount: {
-      loginComponent = (
-        <Fragment>
-          <form className={classes.form} noValidate onSubmit={formSubmit}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <LoginField
-                  required
-                  className={classes.inputField}
-                  fullWidth
-                  id="jwt"
-                  value={jwt}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    dispatch(setJwt(e.target.value))
-                  }
-                  name="jwt"
-                  autoComplete="off"
-                  disabled={loginSending}
-                  placeholder={"Enter JWT"}
-                  variant={"outlined"}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LockIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-            </Grid>
-            <Grid item xs={12} className={classes.submitContainer}>
-              <Button
-                variant="callAction"
-                id="do-login"
-                disabled={jwt === "" || loginSending}
-                label={"Login"}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.linearPredef}>
-              {loginSending && <LinearProgress />}
-            </Grid>
-          </form>
-        </Fragment>
-      );
+      loginComponent = <StrategyForm redirectRules={redirectItems} />;
       break;
     }
     default:
@@ -483,16 +334,6 @@ const Login = () => {
       );
   }
 
-  let modeLogo: "console" | "directpv" | "operator" | "kes" | "subnet" =
-    "console";
-  const logoVar = getLogoVar();
-
-  if (isDirectPV) {
-    modeLogo = "directpv";
-  } else if (isOperator) {
-    modeLogo = "operator";
-  }
-
   let docsURL = "https://min.io/docs/minio/linux/index.html?ref=con";
   if (isK8S) {
     docsURL =
@@ -503,7 +344,7 @@ const Login = () => {
     <Fragment>
       <MainError />
       <LoginWrapper
-        logoProps={{ applicationName: modeLogo, subVariant: logoVar }}
+        logoProps={{ applicationName: "console", subVariant: getLogoVar() }}
         form={loginComponent}
         formFooter={
           <Fragment>
