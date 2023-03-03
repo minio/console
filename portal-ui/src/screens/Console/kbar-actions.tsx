@@ -22,13 +22,11 @@ import { Bucket } from "./Buckets/types";
 
 export const routesAsKbarActions = (
   features: string[] | null,
-  operatorMode: boolean,
-  directPVMode: boolean,
   buckets: Bucket[],
   navigate: (url: string) => void
 ) => {
   const initialActions: Action[] = [];
-  const allowedMenuItems = validRoutes(features, operatorMode, directPVMode);
+  const allowedMenuItems = validRoutes(features);
   for (const i of allowedMenuItems) {
     if (i.children && i.children.length > 0) {
       for (const childI of i.children) {
@@ -52,30 +50,30 @@ export const routesAsKbarActions = (
       initialActions.push(a);
     }
   }
-  if (!operatorMode) {
-    // Add additional actions
-    const a: Action = {
-      id: `create-bucket`,
-      name: "Create Bucket",
-      section: "Buckets",
-      perform: () => navigate(IAM_PAGES.ADD_BUCKETS),
-      icon: <BucketsIcon />,
-    };
-    initialActions.push(a);
 
-    if (buckets) {
-      buckets.map((buck) => [
-        initialActions.push({
-          id: buck.name,
-          name: buck.name,
-          section: "List of Buckets",
-          perform: () => {
-            navigate(`/browser/${buck.name}`);
-          },
-          icon: <BucketsIcon />,
-        }),
-      ]);
-    }
+  // Add additional actions
+  const a: Action = {
+    id: `create-bucket`,
+    name: "Create Bucket",
+    section: "Buckets",
+    perform: () => navigate(IAM_PAGES.ADD_BUCKETS),
+    icon: <BucketsIcon />,
+  };
+  initialActions.push(a);
+
+  if (buckets) {
+    buckets.map((buck) => [
+      initialActions.push({
+        id: buck.name,
+        name: buck.name,
+        section: "List of Buckets",
+        perform: () => {
+          navigate(`/browser/${buck.name}`);
+        },
+        icon: <BucketsIcon />,
+      }),
+    ]);
   }
+
   return initialActions;
 };

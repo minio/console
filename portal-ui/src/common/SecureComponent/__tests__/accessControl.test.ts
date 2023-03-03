@@ -47,7 +47,6 @@ const setPolicy1 = () => {
         ],
         "console-ui": ["admin:CreateServiceAccount", "admin:CreateUser"],
       },
-      operator: false,
       status: "ok",
     })
   );
@@ -56,7 +55,6 @@ const setPolicy2 = () => {
   store.dispatch(
     saveSessionResponse({
       distributedMode: true,
-      operator: false,
       features: [],
       permissions: {
         "arn:aws:s3:::bucket-svc": [
@@ -108,7 +106,6 @@ const setPolicy3 = () => {
         "console-ui": ["admin:CreateServiceAccount", "admin:CreateUser"],
       },
       status: "ok",
-      operator: false,
     })
   );
 };
@@ -124,7 +121,6 @@ const setPolicy4 = () => {
         "arn:aws:s3:::test/digitalinsights/xref_cust_guid_actd*": ["s3:*"],
       },
       status: "ok",
-      operator: false,
     })
   );
 };

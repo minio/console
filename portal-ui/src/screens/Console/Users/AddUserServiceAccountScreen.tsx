@@ -46,9 +46,13 @@ import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import SectionTitle from "../Common/SectionTitle";
-import { getRandomString } from "../../../screens/Console/Tenants/utils";
+
 import AddUserServiceAccountHelpBox from "./AddUserServiceAccountHelpBox";
-import { decodeURLString, encodeURLString } from "../../../common/utils";
+import {
+  decodeURLString,
+  encodeURLString,
+  getRandomString,
+} from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";

@@ -21,6 +21,7 @@ import {
   IRestoreLocalObjectList,
 } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import { IRetentionConfig } from "../../../common/types";
+import { BucketVersioningInfo } from "../Buckets/types";
 
 const defaultRewind = {
   rewindEnabled: false,
@@ -57,7 +58,7 @@ const initialState: ObjectBrowserState = {
   records: [],
   loadRecords: true,
   loadingVersioning: true,
-  isVersioned: false,
+  versionInfo: {},
   lockingEnabled: false,
   loadingLocking: false,
   selectedObjects: [],
@@ -290,8 +291,8 @@ export const objectBrowserSlice = createSlice({
     setLoadingVersioning: (state, action: PayloadAction<boolean>) => {
       state.loadingVersioning = action.payload;
     },
-    setIsVersioned: (state, action: PayloadAction<boolean>) => {
-      state.isVersioned = action.payload;
+    setIsVersioned: (state, action: PayloadAction<BucketVersioningInfo>) => {
+      state.versionInfo = action.payload;
     },
     setLockingEnabled: (state, action: PayloadAction<boolean>) => {
       state.lockingEnabled = action.payload;

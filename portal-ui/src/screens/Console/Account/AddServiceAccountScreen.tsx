@@ -47,12 +47,12 @@ import api from "../../../../src/common/api";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 
 import SectionTitle from "../Common/SectionTitle";
-import { getRandomString } from "../../../screens/Console/Tenants/utils";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { getRandomString } from "../../../common/utils";
 
 interface IAddServiceAccountProps {
   classes: any;

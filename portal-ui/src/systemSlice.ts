@@ -28,8 +28,6 @@ export interface SystemState {
   value: number;
   loggedIn: boolean;
   showMarketplace: boolean;
-  operatorMode: boolean;
-  directPVMode: boolean;
   sidebarOpen: boolean;
   session: string;
   userName: string;
@@ -51,8 +49,6 @@ const initialState: SystemState = {
   value: 0,
   loggedIn: false,
   showMarketplace: false,
-  operatorMode: false,
-  directPVMode: false,
   session: "",
   userName: "",
   sidebarOpen: initSideBarOpen,
@@ -87,12 +83,6 @@ export const systemSlice = createSlice({
     },
     showMarketplace: (state, action: PayloadAction<boolean>) => {
       state.showMarketplace = action.payload;
-    },
-    operatorMode: (state, action: PayloadAction<boolean>) => {
-      state.operatorMode = action.payload;
-    },
-    directPVMode: (state, action: PayloadAction<boolean>) => {
-      state.directPVMode = action.payload;
     },
     menuOpen: (state, action: PayloadAction<boolean>) => {
       // persist preference to local storage
@@ -180,8 +170,6 @@ export const systemSlice = createSlice({
 export const {
   userLogged,
   showMarketplace,
-  operatorMode,
-  directPVMode,
   menuOpen,
   setServerNeedsRestart,
   serverIsLoading,
@@ -202,9 +190,5 @@ export const {
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;
 export const selSiteRep = (state: AppState) => state.system.siteReplicationInfo;
-export const selOpMode = (state: AppState) => state.system.operatorMode;
-export const selDirectPVMode = (state: AppState) => state.system.directPVMode;
-export const selShowMarketplace = (state: AppState) =>
-  state.system.showMarketplace;
 
 export default systemSlice.reducer;

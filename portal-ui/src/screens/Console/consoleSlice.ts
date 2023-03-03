@@ -24,7 +24,6 @@ export interface ConsoleState {
 
 const initialState: ConsoleState = {
   session: {
-    operator: false,
     status: "",
     features: [],
     distributedMode: false,

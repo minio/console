@@ -1,6 +1,3 @@
-//go:build operator
-// +build operator
-
 // This file is part of MinIO Console Server
 // Copyright (c) 2021 MinIO, Inc.
 //
@@ -22,7 +19,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 	"strconv"
 	"time"
 
@@ -35,12 +31,10 @@ import (
 var appCmds = []cli.Command{
 	serverCmd,
 	updateCmd,
-	operatorCmd,
 }
 
 // StartServer starts the console service
 func StartServer(ctx *cli.Context) error {
-	// Load all certificates
 	if err := loadAllCerts(ctx); err != nil {
 		// Log this as a warning and continue running console without TLS certificates
 		restapi.LogError("Unable to load certs: %v", err)
@@ -56,10 +50,6 @@ func StartServer(ctx *cli.Context) error {
 	restapi.LogInfo = logger.Info
 	restapi.LogError = logger.Error
 	restapi.LogIf = logger.LogIf
-
-	if os.Getenv("CONSOLE_OPERATOR_MODE") != "" && os.Getenv("CONSOLE_OPERATOR_MODE") == "on" {
-		return startOperatorServer(ctx)
-	}
 
 	var rctx restapi.Context
 	if err := rctx.Load(ctx); err != nil {

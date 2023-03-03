@@ -23,10 +23,7 @@ import { ErrorResponseHandler } from "./common/types";
 import { ReplicationSite } from "./screens/Console/Configurations/SiteReplication/SiteReplication";
 import { useSelector } from "react-redux";
 import {
-  directPVMode,
   globalSetDistributedSetup,
-  operatorMode,
-  selOpMode,
   setAnonymousMode,
   setOverrideStyles,
   setSiteReplicationInfo,
@@ -44,8 +41,6 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   const dispatch = useAppDispatch();
-
-  const isOperatorMode = useSelector(selOpMode);
 
   const [sessionLoading, setSessionLoading] = useState<boolean>(true);
   const userLoggedIn = useSelector((state: AppState) => state.system.loggedIn);
@@ -70,12 +65,6 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
         dispatch(userLogged(true));
         setSessionLoading(false);
         dispatch(globalSetDistributedSetup(res.distributedMode || false));
-        // check for tenants presence, that indicates we are in operator mode
-        if (res.operator) {
-          dispatch(operatorMode(true));
-          dispatch(directPVMode(!!res.directPV));
-          document.title = "MinIO Operator";
-        }
 
         if (res.customStyles && res.customStyles !== "") {
           const overrideColorVariants = getOverrideColorVariants(
@@ -147,7 +136,7 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   );
 
   useEffect(() => {
-    if (userLoggedIn && !sessionLoading && !isOperatorMode && !anonymousMode) {
+    if (userLoggedIn && !sessionLoading && !anonymousMode) {
       invokeSRInfoApi("GET", `api/v1/admin/site-replication`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

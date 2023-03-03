@@ -1,3 +1,72 @@
+# Building with MinIO
+
+To test console in its shipping format, you need to build it from the MinIO repository, the following step will guide
+you to do that.
+
+### 0. Building with UI Changes
+
+If you are performing changes in the UI components of console and want to test inside the MinIO binary, you need to
+build assets first.
+
+In the console folder run
+
+```shell
+make assets
+```
+
+This will regenerate all the static assets that will be served by MinIO.
+
+### 1. Clone the `MinIO` repository
+
+In the parent folder of where you cloned this `console` repository, clone the MinIO Repository
+
+```shell
+git clone https://github.com/minio/minio.git
+```
+
+### 2. Update `go.mod` to use your local version
+
+In the MinIO repository open `go.mod` and after the first `require()` directive add a `replace()` directive
+
+```
+...
+)
+
+replace (
+github.com/minio/console => "../console"
+)
+
+require (
+...
+```
+
+### 3. Build `MinIO`
+
+Still in the MinIO folder, run
+
+```shell
+make build
+```
+
+# Testing on Kubernetes
+
+If you want to test console on kubernetes, you can perform all the steps from `Building with MinIO`, but change `Step 3`
+to the following:
+
+```shell
+TAG=miniodev/console:dev make docker
+```
+
+This will build a docker container image that can be used to test with your local kubernetes environment.
+
+For example, if you are using kind:
+
+```shell
+kind load docker-image miniodev/console:dev
+```
+
+and then deploy any `Tenant` that uses this image
+
 # LDAP authentication with Console
 
 ## Setup
@@ -15,7 +84,8 @@ $ docker cp console/docs/ldap/billy.ldif my-openldap-container:/container/servic
 $ docker exec my-openldap-container ldapadd -x -D "cn=admin,dc=example,dc=org" -w admin -f /container/service/slapd/assets/test/billy.ldif -H ldap://localhost
 ```
 
-Query the ldap server to check the user billy was created correctly and got assigned to the consoleAdmin group, you should get a list 
+Query the ldap server to check the user billy was created correctly and got assigned to the consoleAdmin group, you
+should get a list
 containing ldap users and groups.
 
 ```
@@ -30,7 +100,7 @@ $ docker exec my-openldap-container ldapsearch -x -H ldap://localhost -b uid=bil
 
 ### Change the password for user billy
 
-Set the new password for `billy` to `minio123` and enter `admin` as the default `LDAP Password` 
+Set the new password for `billy` to `minio123` and enter `admin` as the default `LDAP Password`
 
 ```
 $ docker exec -it my-openldap-container /bin/bash
@@ -41,6 +111,7 @@ Enter LDAP Password:
 ```
 
 ### Add the consoleAdmin policy to user billy on MinIO
+
 ```
 $ cat > consoleAdmin.json << EOF
 {

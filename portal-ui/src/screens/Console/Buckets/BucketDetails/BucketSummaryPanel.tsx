@@ -27,7 +27,7 @@ import {
   BucketObjectLocking,
   BucketQuota,
   BucketReplication,
-  BucketVersioning,
+  BucketVersioningInfo,
 } from "../types";
 import { BucketList } from "../../Watch/types";
 import {
@@ -61,6 +61,7 @@ import {
   setBucketDetailsLoad,
 } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
+import VersioningInfo from "../VersioningInfo";
 
 const SetAccessPolicy = withSuspense(
   React.lazy(() => import("./SetAccessPolicy"))
@@ -121,7 +122,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
   const [loadingQuota, setLoadingQuota] = useState<boolean>(true);
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [loadingRetention, setLoadingRetention] = useState<boolean>(true);
-  const [isVersioned, setIsVersioned] = useState<boolean>(false);
+  const [versioningInfo, setVersioningInfo] = useState<BucketVersioningInfo>();
   const [quotaEnabled, setQuotaEnabled] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
@@ -203,8 +204,8 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
     if (loadingVersioning && distributedSetup) {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-        .then((res: BucketVersioning) => {
-          setIsVersioned(res.is_versioned);
+        .then((res: BucketVersioningInfo) => {
+          setVersioningInfo(res);
           setLoadingVersioning(false);
         })
         .catch((err: ErrorResponseHandler) => {
@@ -370,6 +371,15 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
       loadAllBucketData();
     }
   };
+
+  let versioningStatus = versioningInfo?.Status;
+  let versioningText = "Unversioned (Default)";
+  if (versioningStatus === "Enabled") {
+    versioningText = "Versioned";
+  } else if (versioningStatus === "Suspended") {
+    versioningText = "Suspended";
+  }
+
   // @ts-ignore
   return (
     <Fragment>
@@ -412,7 +422,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
           closeVersioningModalAndRefresh={closeEnableVersioning}
           modalOpen={enableVersioningOpen}
           selectedBucket={bucketName}
-          versioningCurrentState={isVersioned}
+          versioningInfo={versioningInfo}
         />
       )}
 
@@ -576,10 +586,27 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                     ]}
                     resourceName={bucketName}
                     property={"Current Status:"}
-                    value={isVersioned ? "Versioned" : "Unversioned (Default)"}
+                    value={
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          textDecorationStyle: "normal",
+                          placeItems: "flex-start",
+                          justifyItems: "flex-start",
+                          gap: 3,
+                        }}
+                      >
+                        <div> {versioningText}</div>
+                      </Box>
+                    }
                     onEdit={setBucketVersioning}
                     isLoading={loadingVersioning}
                   />
+
+                  {versioningInfo?.Status === "Enabled" ? (
+                    <VersioningInfo versioningState={versioningInfo} />
+                  ) : null}
                 </Box>
               </Box>
             </Grid>

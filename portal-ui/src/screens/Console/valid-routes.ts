@@ -29,9 +29,8 @@ import {
   AccountsMenuIcon,
   AuditLogsMenuIcon,
   BucketsMenuIcon,
-  ClustersIcon,
-  DocumentationIcon,
   CallHomeMenuIcon,
+  DocumentationIcon,
   DrivesMenuIcon,
   GroupsMenuIcon,
   HealthMenuIcon,
@@ -46,10 +45,7 @@ import {
   PerformanceMenuIcon,
   ProfileMenuIcon,
   RecoverIcon,
-  RegisterMenuIcon,
   SettingsIcon,
-  StorageIcon,
-  TenantsOutlineIcon,
   TiersIcon,
   TraceMenuIcon,
   UsersMenuIcon,
@@ -62,11 +58,7 @@ import EncryptionIcon from "../../icons/SidebarMenus/EncryptionIcon";
 import EncryptionStatusIcon from "../../icons/SidebarMenus/EncryptionStatusIcon";
 import { LockOpen, Login } from "@mui/icons-material";
 
-export const validRoutes = (
-  features: string[] | null | undefined,
-  operatorMode: boolean,
-  directPVMode: boolean
-) => {
+export const validRoutes = (features: string[] | null | undefined) => {
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
   const kmsIsEnabled = (features && features.includes("kms")) || false;
   let consoleMenus: IMenuItem[] = [
@@ -322,133 +314,7 @@ export const validRoutes = (
     },
   ];
 
-  let operatorMenus: IMenuItem[] = [
-    {
-      group: "Operator",
-      type: "item",
-      id: "Tenants",
-      component: NavLink,
-      to: IAM_PAGES.TENANTS,
-      name: "Tenants",
-      icon: TenantsOutlineIcon,
-      forceDisplay: true,
-    },
-    {
-      group: "Operator",
-      type: "item",
-      id: "License",
-      component: NavLink,
-      to: IAM_PAGES.LICENSE,
-      name: "License",
-      icon: LicenseIcon,
-      forceDisplay: true,
-    },
-    {
-      group: "Operator",
-      type: "item",
-      id: "Register",
-      component: NavLink,
-      to: IAM_PAGES.REGISTER_SUPPORT,
-      name: "Register",
-      icon: RegisterMenuIcon,
-      forceDisplay: true,
-    },
-    {
-      group: "Operator",
-      type: "item",
-      id: "Documentation",
-      component: NavLink,
-      to: IAM_PAGES.DOCUMENTATION,
-      name: "Documentation",
-      icon: DocumentationIcon,
-      forceDisplay: true,
-      onClick: (
-        e:
-          | React.MouseEvent<HTMLLIElement>
-          | React.MouseEvent<HTMLAnchorElement>
-          | React.MouseEvent<HTMLDivElement>
-      ) => {
-        e.preventDefault();
-        window.open(
-          "https://min.io/docs/minio/linux/index.html?ref=op",
-          "_blank"
-        );
-      },
-    },
-  ];
-
-  let directPVMenus: IMenuItem[] = [
-    {
-      group: "Storage",
-      type: "item",
-      id: "StoragePVCs",
-      component: NavLink,
-      to: IAM_PAGES.DIRECTPV_STORAGE,
-      name: "PVCs",
-      icon: ClustersIcon,
-      forceDisplay: true,
-    },
-    {
-      name: "Drives",
-      type: "item",
-      id: "drives",
-      component: NavLink,
-      icon: DrivesMenuIcon,
-      to: IAM_PAGES.DIRECTPV_DRIVES,
-      forceDisplay: true,
-    },
-    {
-      name: "Volumes",
-      type: "item",
-      id: "volumes",
-      component: NavLink,
-      icon: StorageIcon,
-      to: IAM_PAGES.DIRECTPV_VOLUMES,
-      forceDisplay: true,
-    },
-    {
-      group: "DirectPV",
-      type: "item",
-      id: "License",
-      component: NavLink,
-      to: IAM_PAGES.LICENSE,
-      name: "License",
-      icon: LicenseIcon,
-      forceDisplay: true,
-    },
-    {
-      group: "DirectPV",
-      type: "item",
-      id: "Documentation",
-      component: NavLink,
-      to: IAM_PAGES.DOCUMENTATION,
-      name: "Documentation",
-      icon: DocumentationIcon,
-      forceDisplay: true,
-      onClick: (
-        e:
-          | React.MouseEvent<HTMLLIElement>
-          | React.MouseEvent<HTMLAnchorElement>
-          | React.MouseEvent<HTMLDivElement>
-      ) => {
-        e.preventDefault();
-        window.open(
-          "https://min.io/docs/minio/linux/index.html?ref=op",
-          "_blank"
-        );
-      },
-    },
-  ];
-
-  let menus = consoleMenus;
-
-  if (directPVMode) {
-    menus = directPVMenus;
-  } else if (operatorMode) {
-    menus = operatorMenus;
-  }
-
-  const allowedItems = menus.filter((item: IMenuItem) => {
+  const allowedItems = consoleMenus.filter((item: IMenuItem) => {
     if (item.children && item.children.length > 0) {
       const c = item.children?.filter((childItem: IMenuItem) => {
         return (
