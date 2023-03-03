@@ -2289,16 +2289,21 @@ func TestBucketVersioning(t *testing.T) {
 			200, getVersioningResult.StatusCode, "Status Code is incorrect")
 	}
 	bodyBytes, _ := ioutil.ReadAll(getVersioningResult.Body)
-	structBucketRepl := models.BucketVersioningResponse{}
+	structBucketRepl := models.BucketVersioningResponse{
+		ExcludeFolders:   false,
+		ExcludedPrefixes: nil,
+		MFADelete:        "",
+		Status:           "",
+	}
 	err = json.Unmarshal(bodyBytes, &structBucketRepl)
 	if err != nil {
 		log.Println(err)
 		assert.Nil(err)
 	}
 	assert.Equal(
-		structBucketRepl.IsVersioned,
-		true,
-		structBucketRepl.IsVersioned,
+		structBucketRepl.Status,
+		"Enabled",
+		structBucketRepl.Status,
 	)
 
 	fmt.Println("Versioned bucket creation test status:", response.Status)
@@ -3045,7 +3050,7 @@ func TestSetBucketVersioning(t *testing.T) {
 		return
 	}
 
-	// 2. Set versioning as False
+	// 2. Set versioning as False i.e Suspend versioning
 	response, err := SetBucketVersioning(bucket, false, nil, nil)
 	assert.Nil(err)
 	if err != nil {
@@ -3069,13 +3074,18 @@ func TestSetBucketVersioning(t *testing.T) {
 			200, getVersioningResult.StatusCode, "Status Code is incorrect")
 	}
 	bodyBytes, _ := ioutil.ReadAll(getVersioningResult.Body)
-	result := models.BucketVersioningResponse{}
+	result := models.BucketVersioningResponse{
+		ExcludeFolders:   false,
+		ExcludedPrefixes: nil,
+		MFADelete:        "",
+		Status:           "",
+	}
 	err = json.Unmarshal(bodyBytes, &result)
 	if err != nil {
 		log.Println(err)
 		assert.Nil(err)
 	}
-	assert.Equal(false, result.IsVersioned, result)
+	assert.Equal("Suspended", result.Status, result)
 }
 
 func EnableBucketEncryption(bucketName, encType, kmsKeyID string) (*http.Response, error) {

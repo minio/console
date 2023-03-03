@@ -42,7 +42,6 @@ interface IRegisterStatus {
   activateProductModal: any;
   closeModalAndFetchLicenseInfo: any;
   licenseInfo: SubnetInfo | undefined;
-  operatorMode: boolean;
   currentPlanID: number;
   setActivateProductModal: any;
 }
@@ -205,7 +204,7 @@ const PricingFeatureItem = (props: {
   );
 };
 
-const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
+const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -307,10 +306,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
         onClick={(e) => {
           e.preventDefault();
 
-          window.open(
-            `${linkToNav}?ref=${operatorMode ? "op" : "con"}`,
-            "_blank"
-          );
+          window.open(`${linkToNav}?ref=con`, "_blank");
         }}
         label={btnText}
       />
@@ -329,7 +325,7 @@ const LicensePlans = ({ licenseInfo, operatorMode }: IRegisterStatus) => {
     }
   }, [isSmallScreen, currentPlan]);
 
-  const linkTracker = `?ref=${operatorMode ? "op" : "con"}`;
+  const linkTracker = `?ref=con`;
 
   const featureList = FEATURE_ITEMS;
   return (

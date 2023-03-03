@@ -24,20 +24,24 @@ import { ConfirmModalIcon } from "mds";
 
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { BucketVersioningInfo } from "../types";
+import VersioningInfo from "../VersioningInfo";
 
 interface IVersioningEventProps {
   closeVersioningModalAndRefresh: (refresh: boolean) => void;
   modalOpen: boolean;
   selectedBucket: string;
-  versioningCurrentState: boolean;
+  versioningInfo: BucketVersioningInfo | undefined;
 }
 
 const EnableVersioningModal = ({
   closeVersioningModalAndRefresh,
   modalOpen,
   selectedBucket,
-  versioningCurrentState,
+  versioningInfo = {},
 }: IVersioningEventProps) => {
+  const isVersioningEnabled = versioningInfo.Status === "Enabled";
+
   const dispatch = useAppDispatch();
   const [versioningLoading, setVersioningLoading] = useState<boolean>(false);
 
@@ -49,7 +53,7 @@ const EnableVersioningModal = ({
 
     api
       .invoke("PUT", `/api/v1/buckets/${selectedBucket}/versioning`, {
-        versioning: !versioningCurrentState,
+        versioning: !isVersioningEnabled,
       })
       .then(() => {
         setVersioningLoading(false);
@@ -64,7 +68,7 @@ const EnableVersioningModal = ({
   return (
     <ConfirmDialog
       title={`Versioning on Bucket`}
-      confirmText={versioningCurrentState ? "Disable" : "Enable"}
+      confirmText={isVersioningEnabled ? "Suspend" : "Enable"}
       isOpen={modalOpen}
       isLoading={versioningLoading}
       titleIcon={<ConfirmModalIcon />}
@@ -78,15 +82,24 @@ const EnableVersioningModal = ({
       confirmationContent={
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to{" "}
-          <strong>{versioningCurrentState ? "disable" : "enable"}</strong>{" "}
+          <strong>{isVersioningEnabled ? "suspend" : "enable"}</strong>{" "}
           versioning for this bucket?
-          {versioningCurrentState && (
+          {isVersioningEnabled && (
             <Fragment>
               <br />
               <br />
               <strong>File versions won't be automatically deleted.</strong>
             </Fragment>
           )}
+          <div
+            style={{
+              paddingTop: "20px",
+            }}
+          >
+            {isVersioningEnabled ? (
+              <VersioningInfo versioningState={versioningInfo} />
+            ) : null}
+          </div>
         </DialogContentText>
       }
     />

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { SubnetInfo } from "./types";
@@ -26,7 +25,6 @@ import LicensePlans from "./LicensePlans";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../Common/Layout/PageLayout";
 import RegistrationStatusBanner from "../Support/RegistrationStatusBanner";
-import { selOpMode } from "../../../systemSlice";
 import withSuspense from "../Common/Components/withSuspense";
 import { getLicenseConsent } from "./utils";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
@@ -37,7 +35,6 @@ const LicenseConsentModal = withSuspense(
 
 const License = () => {
   const navigate = useNavigate();
-  const operatorMode = useSelector(selOpMode);
   const [activateProductModal, setActivateProductModal] =
     useState<boolean>(false);
 
@@ -154,7 +151,6 @@ const License = () => {
           activateProductModal={activateProductModal}
           closeModalAndFetchLicenseInfo={closeModalAndFetchLicenseInfo}
           licenseInfo={licenseInfo}
-          operatorMode={operatorMode}
           currentPlanID={currentPlanID}
           setActivateProductModal={setActivateProductModal}
         />
