@@ -1307,3 +1307,45 @@ jobs:
             echo "It is smaller than threshold ($threshold%) value, failed!"
             exit 1
           fi
+
+  playwright:
+    needs:
+      - compile-binary
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - name: Install dependencies
+      run: |
+        echo "Run tests under playwright folder only"
+        echo "package-lock.json required"
+        cd $GITHUB_WORKSPACE/playwright
+        npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - uses: actions/cache@v3
+      name: Console Binary Cache
+      with:
+        path: |
+          ./console
+        key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+    - name: Start Console, front-end app and initialize users/policies
+      run: |
+        (./console server) & (make initialize-permissions)
+
+    - name: Run Playwright tests
+      run: |
+        echo "Run tests under playwright folder only"
+        cd $GITHUB_WORKSPACE/playwright
+        npx playwright test
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
