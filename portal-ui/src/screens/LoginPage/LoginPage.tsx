@@ -543,7 +543,14 @@ const Login = () => {
             under GNU AGPL v3 and is available on every cloud - public, private
             and edge. For more information on the terms of the license or to
             learn more about commercial licensing options visit the{" "}
-            <a href={"https://min.io/pricing"}>pricing page</a>.
+            <a
+              href={"https://min.io/pricing?ref=con"}
+              target="_blank"
+              rel="noopener"
+            >
+              pricing page
+            </a>
+            .
           </Fragment>
         }
       />
