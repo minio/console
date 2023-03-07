@@ -98,7 +98,8 @@ export const validRoutes = (features: string[] | null | undefined) => {
         e.preventDefault();
         window.open(
           "https://min.io/docs/minio/linux/index.html?ref=con",
-          "_blank"
+          "_blank",
+          "noopener"
         );
       },
     },

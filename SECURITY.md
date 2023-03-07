@@ -18,9 +18,10 @@ you need access credentials for a successful exploit).
 
 If you have not received a reply to your email within 48 hours or you have not heard from the security team
 for the past five days please contact the security team directly:
-  - Primary security coordinator: lenin@min.io
-  - Secondary coordinator: security@min.io
-  - If you receive no response: dev@min.io
+
+- Primary security coordinator: daniel@min.io
+- Secondary coordinator: security@min.io
+- If you receive no response: dev@min.io
 
 ### Disclosure Process
 
