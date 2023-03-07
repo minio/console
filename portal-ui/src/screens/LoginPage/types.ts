@@ -24,6 +24,11 @@ export interface ILoginDetails {
 export interface redirectRule {
   redirect: string;
   displayName: string;
+  serviceType?: string;
+}
+
+export interface IStrategyForm {
+  redirectRules: redirectRule[];
 }
 
 export enum loginStrategyType {

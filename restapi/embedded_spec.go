@@ -7592,6 +7592,9 @@ func init() {
         },
         "redirect": {
           "type": "string"
+        },
+        "serviceType": {
+          "type": "string"
         }
       }
     },
@@ -16572,6 +16575,9 @@ func init() {
           "type": "string"
         },
         "redirect": {
+          "type": "string"
+        },
+        "serviceType": {
           "type": "string"
         }
       }

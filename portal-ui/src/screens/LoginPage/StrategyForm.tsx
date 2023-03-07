@@ -15,18 +15,31 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import Grid from "@mui/material/Grid";
-import React, { Fragment } from "react";
-import { Button, LockFilledIcon, PasswordKeyIcon, UserFilledIcon } from "mds";
+import React from "react";
+import {
+  Button,
+  LockFilledIcon,
+  LogoutIcon,
+  PasswordKeyIcon,
+  UserFilledIcon,
+} from "mds";
 import { setAccessKey, setSecretKey, setSTS, setUseSTS } from "./loginSlice";
-import { Box, InputAdornment, LinearProgress } from "@mui/material";
+import {
+  InputAdornment,
+  LinearProgress,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import { LoginField } from "./LoginField";
 import makeStyles from "@mui/styles/makeStyles";
-import { Theme, useTheme } from "@mui/material/styles";
+import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { spacingUtils } from "../Console/Common/FormComponents/common/styleLibrary";
 import { doLoginAsync } from "./loginThunks";
+import { IStrategyForm } from "./types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,10 +72,9 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const StrategyForm = () => {
+const StrategyForm = ({ redirectRules }: IStrategyForm) => {
   const dispatch = useAppDispatch();
   const classes = useStyles();
-  const theme = useTheme();
 
   const accessKey = useSelector((state: AppState) => state.login.accessKey);
   const secretKey = useSelector((state: AppState) => state.login.secretKey);
@@ -76,6 +88,42 @@ const StrategyForm = () => {
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(doLoginAsync());
+  };
+
+  let ssoOptions: React.ReactNode = null;
+
+  if (redirectRules.length > 0) {
+    ssoOptions = redirectRules.map((r, idx) => (
+      <MenuItem
+        value={r.redirect}
+        key={`sso-login-option-${idx}`}
+        className={classes.ssoMenuItem}
+        divider={true}
+      >
+        <LogoutIcon
+          className={classes.ssoLoginIcon}
+          style={{ width: 16, height: 16, marginRight: 8 }}
+        />
+        {r.displayName}
+        {r.serviceType ? ` - ${r.serviceType}` : ""}
+      </MenuItem>
+    ));
+  }
+
+  const extraActionSelector = (e: SelectChangeEvent) => {
+    const value = e.target.value;
+
+    if (value) {
+      console.log(value);
+      if (value.includes("use-sts")) {
+        console.log("si");
+        dispatch(setUseSTS(!useSTS));
+
+        return;
+      }
+
+      window.location.href = e.target.value as string;
+    }
   };
 
   return (
@@ -184,42 +232,32 @@ const StrategyForm = () => {
         <Grid item xs={12} className={classes.linearPredef}>
           {loginSending && <LinearProgress />}
         </Grid>
-        <Grid item xs={12} className={classes.linearPredef}>
-          <Box
-            style={{
-              textAlign: "center",
-              marginTop: 20,
+        <Grid
+          item
+          xs={12}
+          className={classes.linearPredef}
+          sx={{ marginTop: "16px" }}
+        >
+          <Select
+            id="alternativeMethods"
+            name="alternativeMethods"
+            onChange={extraActionSelector}
+            displayEmpty
+            className={classes.ssoSelect}
+            renderValue={() => "Other Authentication Methods"}
+            sx={{
+              width: "100%",
             }}
           >
-            <span
-              onClick={() => {
-                dispatch(setUseSTS(!useSTS));
-              }}
-              style={{
-                color: theme.colors.link,
-                font: "normal normal normal 14px Inter",
-                textDecoration: "underline",
-                cursor: "pointer",
-              }}
+            <MenuItem
+              value={useSTS ? "use-sts-cred" : "use-sts"}
+              className={classes.ssoMenuItem}
+              divider={redirectRules.length > 0}
             >
-              {!useSTS && <Fragment>Use STS</Fragment>}
-              {useSTS && <Fragment>Use Credentials</Fragment>}
-            </span>
-            <span
-              onClick={() => {
-                dispatch(setUseSTS(!useSTS));
-              }}
-              style={{
-                color: theme.colors.link,
-                font: "normal normal normal 12px/15px Inter",
-                textDecoration: "none",
-                fontWeight: "bold",
-                paddingLeft: 4,
-              }}
-            >
-              ➔
-            </span>
-          </Box>
+              {useSTS ? "Use Credentials" : "Use STS"}
+            </MenuItem>
+            {ssoOptions}
+          </Select>
         </Grid>
       </form>
     </React.Fragment>

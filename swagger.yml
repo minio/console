@@ -5891,6 +5891,8 @@ definitions:
         type: string
       displayName:
         type: string
+      serviceType:
+        type: string
 
   idpServerConfiguration:
     type: object
