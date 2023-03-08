@@ -20,6 +20,7 @@ package restapi
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -65,6 +66,13 @@ func registerIDPHandlers(api *operations.ConsoleAPI) {
 			return idp.NewGetConfigurationDefault(int(err.Code)).WithPayload(err)
 		}
 		return idp.NewGetConfigurationOK().WithPayload(response)
+	})
+	api.IdpGetLDAPEntitiesHandler = idp.GetLDAPEntitiesHandlerFunc(func(params idp.GetLDAPEntitiesParams, session *models.Principal) middleware.Responder {
+		response, err := getLDAPEntitiesResponse(session, params)
+		if err != nil {
+			return idp.NewGetLDAPEntitiesDefault(int(err.Code)).WithPayload(err)
+		}
+		return idp.NewGetLDAPEntitiesOK().WithPayload(response)
 	})
 }
 
@@ -207,4 +215,74 @@ func parseIDPConfigurationsInfo(infoList []madmin.IDPCfgInfo) (results []*models
 		})
 	}
 	return results
+}
+
+func getLDAPEntitiesResponse(session *models.Principal, params idp.GetLDAPEntitiesParams) (*models.LdapEntities, *models.Error) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	mAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+
+	result, err := getEntitiesResult(ctx, AdminClient{Client: mAdmin}, params.Body.Users, params.Body.Groups, params.Body.Policies)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+
+	return result, nil
+}
+
+func getEntitiesResult(ctx context.Context, client MinioAdmin, users, groups, policies []string) (*models.LdapEntities, error) {
+	entities, err := client.getLDAPPolicyEntities(ctx, madmin.PolicyEntitiesQuery{
+		Users:  users,
+		Groups: groups,
+		Policy: policies,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var result models.LdapEntities
+	var usersEntity []*models.LdapUserPolicyEntity
+	var groupsEntity []*models.LdapGroupPolicyEntity
+	var policiesEntity []*models.LdapPolicyEntity
+
+	result.Timestamp = entities.Timestamp.Format(time.RFC3339)
+
+	for _, userMapping := range entities.UserMappings {
+		mapItem := models.LdapUserPolicyEntity{
+			User:     userMapping.User,
+			Policies: userMapping.Policies,
+		}
+
+		usersEntity = append(usersEntity, &mapItem)
+	}
+
+	result.Users = usersEntity
+
+	for _, groupsMapping := range entities.GroupMappings {
+		mapItem := models.LdapGroupPolicyEntity{
+			Group:    groupsMapping.Group,
+			Policies: groupsMapping.Policies,
+		}
+
+		groupsEntity = append(groupsEntity, &mapItem)
+	}
+
+	result.Groups = groupsEntity
+
+	for _, policyMapping := range entities.PolicyMappings {
+		mapItem := models.LdapPolicyEntity{
+			Policy: policyMapping.Policy,
+			Users:  policyMapping.Users,
+			Groups: policyMapping.Groups,
+		}
+
+		policiesEntity = append(policiesEntity, &mapItem)
+	}
+
+	result.Policies = policiesEntity
+
+	return &result, nil
 }
