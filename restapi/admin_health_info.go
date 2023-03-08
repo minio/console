@@ -171,12 +171,12 @@ func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client 
 	}
 	apiKey := subnetTokenConfig.APIKey
 	headers := subnet.UploadAuthHeaders(apiKey)
-	resp, e := subnet.UploadFileToSubnet(subnetHTTPClient, filename, subnetUploadURL, headers)
+	resp, e := subnet.UploadFileToSubnet(healthInfo, subnetHTTPClient, filename, subnetUploadURL, headers)
 	if e != nil {
 		return "", e
 	}
 	// Delete the file after successful upload
-	e = os.Remove(filename)
+	//e = os.Remove(filename)
 	if e != nil {
 		return "", e
 	}

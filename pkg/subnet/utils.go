@@ -18,6 +18,7 @@ package subnet
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -26,7 +27,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	xhttp "github.com/minio/console/pkg/http"
 
@@ -74,8 +74,8 @@ func UploadAuthHeaders(apiKey string) map[string]string {
 	return map[string]string{"x-subnet-api-key": apiKey}
 }
 
-func UploadFileToSubnet(client *xhttp.Client, filename string, reqURL string, headers map[string]string) (string, error) {
-	req, e := subnetUploadReq(reqURL, filename)
+func UploadFileToSubnet(info interface{}, client *xhttp.Client, filename string, reqURL string, headers map[string]string) (string, error) {
+	req, e := subnetUploadReq(info, reqURL, filename)
 	if e != nil {
 		return "", e
 	}
@@ -83,7 +83,7 @@ func UploadFileToSubnet(client *xhttp.Client, filename string, reqURL string, he
 	return resp, e
 }
 
-func subnetUploadReq(url string, filename string) (*http.Request, error) {
+func subnetUploadReq(info interface{}, url string, filename string) (*http.Request, error) {
 	file, e := os.Open(filename)
 	if e != nil {
 		return nil, e
@@ -92,14 +92,39 @@ func subnetUploadReq(url string, filename string) (*http.Request, error) {
 
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
-	part, e := writer.CreateFormFile("file", filepath.Base(file.Name()))
+	zipWriter := gzip.NewWriter(&body)
+	version := "3"
+	enc := json.NewEncoder(zipWriter)
+
+	header := struct {
+		Version string `json:"version"`
+	}{Version: version}
+
+	if e := enc.Encode(header); e != nil {
+		return nil, e
+	}
+
+	if e := enc.Encode(info); e != nil {
+		return nil, e
+	}
+	zipWriter.Close()
+	temp := body
+	part, e := writer.CreateFormFile("file", filename)
 	if e != nil {
 		return nil, e
 	}
-	if _, e = io.Copy(part, file); e != nil {
+	if _, e = io.Copy(part, &temp); e != nil {
 		return nil, e
 	}
+
 	writer.Close()
+	fmt.Println("body: ", body)
+
+	//f, e := os.OpenFile("lookatthis", os.O_CREATE|os.O_RDWR, 0o666)
+	//if e != nil {
+	//	return nil, e
+	//}
+	//defer f.Close()
 
 	r, e := http.NewRequest(http.MethodPost, url, &body)
 	if e != nil {
