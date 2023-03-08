@@ -26,7 +26,6 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
-	"os"
 
 	xhttp "github.com/minio/console/pkg/http"
 
@@ -84,11 +83,11 @@ func UploadFileToSubnet(info interface{}, client *xhttp.Client, filename string,
 }
 
 func subnetUploadReq(info interface{}, url string, filename string) (*http.Request, error) {
-	file, e := os.Open(filename)
-	if e != nil {
-		return nil, e
-	}
-	defer file.Close()
+	//	file, e := os.Open(filename)
+	//	if e != nil {
+	//		return nil, e
+	//}
+	//	defer file.Close()
 
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
