@@ -42,6 +42,7 @@ import { useSelector } from "react-redux";
 interface ISelectPolicyProps {
   classes: any;
   selectedPolicy?: string[];
+  noTitle?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -75,10 +76,7 @@ const styles = (theme: Theme) =>
     ...selectorsCommon,
   });
 
-const PolicySelectors = ({
-  classes,
-  selectedPolicy = [],
-}: ISelectPolicyProps) => {
+const PolicySelectors = ({ classes, noTitle = false }: ISelectPolicyProps) => {
   const dispatch = useAppDispatch();
   // Local State
   const [records, setRecords] = useState<any[]>([]);
@@ -147,7 +145,9 @@ const PolicySelectors = ({
         {records.length > 0 ? (
           <React.Fragment>
             <Grid item xs={12} className={classes.filterBox}>
-              <span className={classes.fieldLabel}>Assign Policies</span>
+              {!noTitle && (
+                <span className={classes.fieldLabel}>Assign Policies</span>
+              )}
               <div className={classes.searchBox}>
                 <SearchBox
                   placeholder="Start typing to search for a Policy"

@@ -168,6 +168,7 @@ const IDPConfigurationDetails = ({
           setLoading(false);
         });
     };
+
     if (loading) {
       loadRecord();
     }
