@@ -274,19 +274,21 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                 <div className={classes.localMessage}>{localMessage}</div>
                 <div className={classes.progressResult}>
                   {" "}
-                  {subnetResponse !== "" && subnetResponse !== "ERROR" && (
-                    <Grid item xs={12} className={classes.serversData}>
-                      <strong>
-                        Health report uploaded to Subnet successfully!
-                      </strong>
-                      &nbsp;{" "}
-                      <strong>
-                        See the results on your{" "}
-                        <a href={subnetResponse}>Subnet Dashboard</a>{" "}
-                      </strong>
-                    </Grid>
-                  )}
-                  {(subnetResponse === "" || subnetResponse === "ERROR") &&
+                  {subnetResponse !== "" &&
+                    !subnetResponse.toLowerCase().includes("error") && (
+                      <Grid item xs={12} className={classes.serversData}>
+                        <strong>
+                          Health report uploaded to Subnet successfully!
+                        </strong>
+                        &nbsp;{" "}
+                        <strong>
+                          See the results on your{" "}
+                          <a href={subnetResponse}>Subnet Dashboard</a>{" "}
+                        </strong>
+                      </Grid>
+                    )}
+                  {(subnetResponse === "" ||
+                    subnetResponse.toLowerCase().includes("error")) &&
                     serverDiagnosticStatus === DiagStatSuccess && (
                       <Grid item xs={12} className={classes.serversData}>
                         <strong>
