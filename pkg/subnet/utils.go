@@ -83,11 +83,6 @@ func UploadFileToSubnet(info interface{}, client *xhttp.Client, filename string,
 }
 
 func subnetUploadReq(info interface{}, url string, filename string) (*http.Request, error) {
-	//	file, e := os.Open(filename)
-	//	if e != nil {
-	//		return nil, e
-	//}
-	//	defer file.Close()
 
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
@@ -117,13 +112,6 @@ func subnetUploadReq(info interface{}, url string, filename string) (*http.Reque
 	}
 
 	writer.Close()
-	fmt.Println("body: ", body)
-
-	//f, e := os.OpenFile("lookatthis", os.O_CREATE|os.O_RDWR, 0o666)
-	//if e != nil {
-	//	return nil, e
-	//}
-	//defer f.Close()
 
 	r, e := http.NewRequest(http.MethodPost, url, &body)
 	if e != nil {

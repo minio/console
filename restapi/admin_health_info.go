@@ -158,11 +158,6 @@ func getHealthInfoOptionsFromReq(req *http.Request) (*time.Duration, error) {
 func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client MinioAdmin) (string, error) {
 	filename := fmt.Sprintf("health_%d.json", time.Now().Unix())
 
-	//e := saveHealthInfo(healthInfo, filename)
-	//if e != nil {
-	//	return "", e
-	//}
-
 	subnetUploadURL := subnet.UploadURL("health", filename)
 	subnetHTTPClient := &xhttp.Client{Client: GetConsoleHTTPClient("")}
 	subnetTokenConfig, e := GetSubnetKeyFromMinIOConfig(ctx, client)
@@ -172,11 +167,6 @@ func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client 
 	apiKey := subnetTokenConfig.APIKey
 	headers := subnet.UploadAuthHeaders(apiKey)
 	resp, e := subnet.UploadFileToSubnet(healthInfo, subnetHTTPClient, filename, subnetUploadURL, headers)
-	if e != nil {
-		return "", e
-	}
-	// Delete the file after successful upload
-	//e = os.Remove(filename)
 	if e != nil {
 		return "", e
 	}
