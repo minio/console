@@ -293,13 +293,13 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                       <Grid item xs={12} className={classes.serversData}>
                         <strong>
                           Something went wrong uploading your Health report to
-                          Subnet
+                          Subnet.
                         </strong>
                         &nbsp;{" "}
                         <strong>
                           Log into your{" "}
                           <a href="https://subnet.min.io">Subnet Account</a> to
-                          manually upload your Health report
+                          manually upload your Health report.
                         </strong>
                       </Grid>
                     )}
