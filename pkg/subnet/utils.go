@@ -65,6 +65,7 @@ func subnetAPIKeyURL() string {
 func LogWebhookURL() string {
 	return subnetBaseURL() + "/api/logs"
 }
+
 func UploadURL(uploadType string, filename string) string {
 	return fmt.Sprintf("%s/api/%s/upload?filename=%s", subnetBaseURL(), uploadType, filename)
 }
@@ -83,7 +84,6 @@ func UploadFileToSubnet(info interface{}, client *xhttp.Client, filename string,
 }
 
 func subnetUploadReq(info interface{}, url string, filename string) (*http.Request, error) {
-
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
 	zipWriter := gzip.NewWriter(&body)

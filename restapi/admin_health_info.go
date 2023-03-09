@@ -24,7 +24,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -116,33 +115,6 @@ func tarGZ(healthInfo interface{}, version string) ([]byte, error) {
 		return nil, err
 	}
 	return buffer.Bytes(), nil
-}
-
-func saveHealthInfo(healthInfo interface{}, filename string) error {
-	f, e := os.OpenFile(filename, os.O_CREATE|os.O_RDWR, 0o666)
-	if e != nil {
-		return e
-	}
-	defer f.Close()
-
-	gzWriter := gzip.NewWriter(f)
-	defer gzWriter.Close()
-	version := "3"
-	enc := json.NewEncoder(gzWriter)
-
-	header := struct {
-		Version string `json:"version"`
-	}{Version: version}
-
-	if e := enc.Encode(header); e != nil {
-		return e
-	}
-
-	if e := enc.Encode(healthInfo); e != nil {
-		return e
-	}
-
-	return nil
 }
 
 // getHealthInfoOptionsFromReq gets duration for startHealthInfo request
