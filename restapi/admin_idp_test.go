@@ -18,10 +18,14 @@ package restapi
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/minio/madmin-go/v2"
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
@@ -231,4 +235,85 @@ func (suite *IDPTestSuite) TestGetIDPConfigurationWithWrongType() {
 
 func TestIDP(t *testing.T) {
 	suite.Run(t, new(IDPTestSuite))
+}
+
+func TestGetEntitiesResult(t *testing.T) {
+	assert := assert.New(t)
+	// mock minIO client
+	client := AdminClientMock{}
+	function := "getEntitiesResult()"
+
+	usersList := []string{"user1", "user2", "user3"}
+	policiesList := []string{"policy1", "policy2", "policy3"}
+	groupsList := []string{"group1", "group3", "group5"}
+
+	policyMap := []madmin.PolicyEntities{
+		{Policy: "testPolicy0", Groups: groupsList, Users: usersList},
+		{Policy: "testPolicy1", Groups: groupsList, Users: usersList},
+	}
+
+	usersMap := []madmin.UserPolicyEntities{
+		{User: "testUser0", Policies: policiesList},
+		{User: "testUser1", Policies: policiesList},
+	}
+
+	groupsMap := []madmin.GroupPolicyEntities{
+		{Group: "group0", Policies: policiesList},
+		{Group: "group1", Policies: policiesList},
+	}
+
+	// Test-1: getEntitiesResult list all information provided
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	mockResponse := madmin.PolicyEntitiesResult{
+		PolicyMappings: policyMap,
+		GroupMappings:  groupsMap,
+		UserMappings:   usersMap,
+	}
+	minioGetLDAPPolicyEntitiesMock = func(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error) {
+		return mockResponse, nil
+	}
+
+	entities, err := getEntitiesResult(ctx, client, usersList, groupsList, policiesList)
+	if err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	for i, groupIt := range entities.Groups {
+		assert.Equal(fmt.Sprintf("group%d", i), groupIt.Group)
+
+		for i, polItm := range groupIt.Policies {
+			assert.Equal(policiesList[i], polItm)
+		}
+	}
+
+	for i, usrIt := range entities.Users {
+		assert.Equal(fmt.Sprintf("testUser%d", i), usrIt.User)
+
+		for i, polItm := range usrIt.Policies {
+			assert.Equal(policiesList[i], polItm)
+		}
+	}
+
+	for i, policyIt := range entities.Policies {
+		assert.Equal(fmt.Sprintf("testPolicy%d", i), policyIt.Policy)
+
+		for i, userItm := range policyIt.Users {
+			assert.Equal(usersList[i], userItm)
+		}
+
+		for i, grItm := range policyIt.Groups {
+			assert.Equal(groupsList[i], grItm)
+		}
+	}
+
+	// Test-2: getEntitiesResult error is returned from getLDAPPolicyEntities()
+	minioGetLDAPPolicyEntitiesMock = func(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error) {
+		return madmin.PolicyEntitiesResult{}, errors.New("error")
+	}
+
+	_, err = getEntitiesResult(ctx, client, usersList, groupsList, policiesList)
+	if assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
 }
