@@ -1,0 +1,232 @@
+name: Workflow
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+# This ensures that previous jobs for the PR are canceled when the PR is
+# updated.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-job:
+    name: Checking Lint
+    runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        go-version: [1.19.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        id: go
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make verifiers
+
+  ui-assets:
+    name: "React Code Has No Warnings & Prettified"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.19.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+          cache: "yarn"
+          cache-dependency-path: portal-ui/yarn.lock
+      - uses: actions/cache@v3
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+      - name: Install Dependencies
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          yarn install --frozen-lockfile --immutable
+      - name: Check for Warnings in build output
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          ./check-warnings.sh
+      - name: Check if Files are Prettified
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          ./check-prettier.sh
+
+  reuse-golang-dependencies:
+    name: reuse golang dependencies
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.19.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        id: go
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          go mod download
+
+  semgrep-static-code-analysis:
+    name: "semgrep checks"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v3
+      - name: Scanning code on ${{ matrix.os }}
+        continue-on-error: false
+        run: |
+          # Install semgrep rather than using a container due to:
+          # https://github.com/actions/checkout/issues/334
+          sudo apt install -y python3-pip || apt install -y python3-pip
+          pip3 install semgrep
+          semgrep --config semgrep.yaml $(pwd)/portal-ui --error
+
+  compile-binary:
+    name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+    needs:
+      - lint-job
+      - ui-assets
+      - reuse-golang-dependencies
+      - semgrep-static-code-analysis
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [1.19.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        id: go
+      - uses: actions/cache@v3
+        name: Console Binary Cache
+        with:
+          path: |
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
+      - uses: actions/cache@v3
+        id: assets-cache
+        name: Assets Cache
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-${{ github.run_id }}
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make console
+
+  playwright:
+    needs:
+      - compile-binary
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: |
+          echo "Install dependencies"
+          cd $GITHUB_WORKSPACE/portal-ui
+          yarn add -D playwright
+          yarn add -D babel-plugin-istanbul
+          yarn add -D nyc
+          yarn add -D react-app-rewired
+          yarn add -D create-react-app
+          yarn init -y
+          yarn add --dev @playwright/test
+          echo "yarn install"
+          yarn install
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - uses: actions/cache@v3
+        name: Console Binary Cache
+        with:
+          path: |
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+      - name: Start Console, front-end app and initialize users/policies
+        run: |
+          (./console server) & (make initialize-permissions)
+
+      - name: Start Browser at port 5005
+        run: |
+          echo "yarn playwright"
+          (cd $GITHUB_WORKSPACE/portal-ui; yarn playwright) & (sleep 120) # To start port 5005 with Istanbul Plugin Injected
+
+      - name: Run Playwright tests
+        run: |
+          echo "Run tests under playwright folder only"
+          cd $GITHUB_WORKSPACE/portal-ui
+          echo "npx playwright test"
+          npx playwright test # To run the tests
+          echo "npx nyc report"
+          npx nyc report # To see report printed in logs as text
+          echo "npx nyc report --reporter=html"
+          npx nyc report --reporter=html # to see report in ./coverage/index.html
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 30
