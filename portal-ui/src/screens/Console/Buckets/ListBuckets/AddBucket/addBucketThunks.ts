@@ -14,14 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { MakeBucketRequest } from "../../types";
 import { getBytes } from "../../../../../common/utils";
-import api from "../../../../../common/api";
-import { ErrorResponseHandler } from "../../../../../common/types";
-import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AppState } from "../../../../../store";
-import { resetForm } from "./addBucketsSlice";
+import { api } from "../../../../../api";
+import {
+  MakeBucketRequest,
+  ObjectRetentionMode,
+  ObjectRetentionUnit,
+} from "../../../../../api/consoleApi";
 
 export const addBucketAsync = createAsyncThunk(
   "buckets/addBucketAsync",
@@ -62,23 +63,13 @@ export const addBucketAsync = createAsyncThunk(
 
       if (retentionEnabled) {
         request.retention = {
-          mode: retentionMode,
-          unit: retentionUnit,
+          mode: retentionMode as ObjectRetentionMode,
+          unit: retentionUnit as ObjectRetentionUnit,
           validity: retentionValidity,
         };
       }
     }
 
-    return api
-      .invoke("POST", "/api/v1/buckets", request)
-      .then((res) => {
-        const newBucketName = `${bucketName}`;
-        dispatch(resetForm());
-        return newBucketName;
-      })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
-        return rejectWithValue(err);
-      });
+    return api.buckets.makeBucket(request);
   }
 );

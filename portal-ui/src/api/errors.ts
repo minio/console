@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,13 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface IAMStatement {
-  Effect: string;
-  Action: string[];
-  Resource: string[];
-}
+import { ErrorResponseHandler } from "../common/types";
+import { Error } from "./consoleApi";
 
-export interface IAMPolicy {
-  Version: string;
-  Statement: IAMStatement[];
-}
+// errorToHandler translates a swagger error to a ErrorResponseHandler which
+// is legacy, when all API calls are using the swagger API, we can remove this.
+export const errorToHandler = (e: Error): ErrorResponseHandler => {
+  if (!e) {
+    return {
+      statusCode: 0,
+      errorMessage: "",
+      detailedError: "",
+    };
+  }
+  return {
+    statusCode: e.code,
+    errorMessage: e.message,
+    detailedError: e.detailedMessage,
+  };
+};
