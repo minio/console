@@ -24,7 +24,6 @@ import {
   containerForHeader,
   formFieldStyles,
   modalBasic,
-  pageContentStyles,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { BackLink, Button, EditIcon, RefreshIcon, TrashIcon } from "mds";
@@ -66,7 +65,6 @@ const styles = (theme: Theme) =>
     pageContainer: {
       height: "100%",
     },
-    ...pageContentStyles,
     ...searchField,
 
     ...containerForHeader,
