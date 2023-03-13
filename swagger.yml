@@ -3452,6 +3452,29 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - idp
+
+  /ldap-entities:
+    post:
+      summary: Get LDAP Entities
+      operationId: GetLDAPEntities
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ldapEntitiesRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/ldapEntities"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - idp
+
   /releases:
     get:
       summary: Get repo releases for a given version
@@ -6049,3 +6072,71 @@ definitions:
         type: boolean
       logsState:
         type: boolean
+
+  ldapEntitiesRequest:
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          type: string
+      groups:
+        type: array
+        items:
+          type: string
+      policies:
+        type: array
+        items:
+          type: string
+
+  ldapEntities:
+    type: object
+    properties:
+      timestamp:
+        type: string
+      users:
+        type: array
+        items:
+          $ref: "#/definitions/ldapUserPolicyEntity"
+      groups:
+        type: array
+        items:
+          $ref: "#/definitions/ldapGroupPolicyEntity"
+      policies:
+        type: array
+        items:
+          $ref: "#/definitions/ldapPolicyEntity"
+
+  ldapUserPolicyEntity:
+    type: object
+    properties:
+      user:
+        type: string
+      policies:
+        type: array
+        items:
+          type: string
+
+  ldapGroupPolicyEntity:
+    type: object
+    properties:
+      group:
+        type: string
+      policies:
+        type: array
+        items:
+          type: string
+
+  ldapPolicyEntity:
+    type: object
+    properties:
+      policy:
+        type: string
+      users:
+        type: array
+        items:
+          type: string
+      groups:
+        type: array
+        items:
+          type: string

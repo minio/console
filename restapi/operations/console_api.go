@@ -253,6 +253,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		IdpGetConfigurationHandler: idp.GetConfigurationHandlerFunc(func(params idp.GetConfigurationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation idp.GetConfiguration has not yet been implemented")
 		}),
+		IdpGetLDAPEntitiesHandler: idp.GetLDAPEntitiesHandlerFunc(func(params idp.GetLDAPEntitiesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation idp.GetLDAPEntities has not yet been implemented")
+		}),
 		ObjectGetObjectMetadataHandler: object.GetObjectMetadataHandlerFunc(func(params object.GetObjectMetadataParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.GetObjectMetadata has not yet been implemented")
 		}),
@@ -726,6 +729,8 @@ type ConsoleAPI struct {
 	SupportGetCallHomeOptionValueHandler support.GetCallHomeOptionValueHandler
 	// IdpGetConfigurationHandler sets the operation handler for the get configuration operation
 	IdpGetConfigurationHandler idp.GetConfigurationHandler
+	// IdpGetLDAPEntitiesHandler sets the operation handler for the get l d a p entities operation
+	IdpGetLDAPEntitiesHandler idp.GetLDAPEntitiesHandler
 	// ObjectGetObjectMetadataHandler sets the operation handler for the get object metadata operation
 	ObjectGetObjectMetadataHandler object.GetObjectMetadataHandler
 	// PolicyGetSAUserPolicyHandler sets the operation handler for the get s a user policy operation
@@ -1181,6 +1186,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.IdpGetConfigurationHandler == nil {
 		unregistered = append(unregistered, "idp.GetConfigurationHandler")
+	}
+	if o.IdpGetLDAPEntitiesHandler == nil {
+		unregistered = append(unregistered, "idp.GetLDAPEntitiesHandler")
 	}
 	if o.ObjectGetObjectMetadataHandler == nil {
 		unregistered = append(unregistered, "object.GetObjectMetadataHandler")
@@ -1809,6 +1817,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/idp/{type}/{name}"] = idp.NewGetConfiguration(o.context, o.IdpGetConfigurationHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/ldap-entities"] = idp.NewGetLDAPEntities(o.context, o.IdpGetLDAPEntitiesHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

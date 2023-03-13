@@ -157,6 +157,9 @@ type MinioAdmin interface {
 	listIDPConfig(ctx context.Context, idpType string) ([]madmin.IDPListItem, error)
 	deleteIDPConfig(ctx context.Context, idpType, cfgName string) (restart bool, err error)
 	getIDPConfig(ctx context.Context, cfgType, cfgName string) (c madmin.IDPConfig, err error)
+
+	// LDAP
+	getLDAPPolicyEntities(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error)
 }
 
 // Interface implementation
@@ -724,4 +727,8 @@ func (ac AdminClient) deleteIDPConfig(ctx context.Context, idpType, cfgName stri
 
 func (ac AdminClient) getIDPConfig(ctx context.Context, idpType, cfgName string) (c madmin.IDPConfig, err error) {
 	return ac.Client.GetIDPConfig(ctx, idpType, cfgName)
+}
+
+func (ac AdminClient) getLDAPPolicyEntities(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error) {
+	return ac.Client.GetLDAPPolicyEntities(ctx, query)
 }

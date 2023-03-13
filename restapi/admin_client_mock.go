@@ -79,12 +79,13 @@ var (
 	minioGetUserInfoMock   func(accessKey string) (madmin.UserInfo, error)
 	minioSetUserStatusMock func(accessKey string, status madmin.AccountStatus) error
 
-	minioAccountInfoMock          func(ctx context.Context) (madmin.AccountInfo, error)
-	minioAddServiceAccountMock    func(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error)
-	minioListServiceAccountsMock  func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
-	minioDeleteServiceAccountMock func(ctx context.Context, serviceAccount string) error
-	minioInfoServiceAccountMock   func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
-	minioUpdateServiceAccountMock func(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error
+	minioAccountInfoMock           func(ctx context.Context) (madmin.AccountInfo, error)
+	minioAddServiceAccountMock     func(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error)
+	minioListServiceAccountsMock   func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
+	minioDeleteServiceAccountMock  func(ctx context.Context, serviceAccount string) error
+	minioInfoServiceAccountMock    func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
+	minioUpdateServiceAccountMock  func(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error
+	minioGetLDAPPolicyEntitiesMock func(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error)
 )
 
 func (ac AdminClientMock) serverInfo(ctx context.Context) (madmin.InfoMessage, error) {
@@ -390,4 +391,8 @@ func (ac AdminClientMock) infoServiceAccount(ctx context.Context, serviceAccount
 
 func (ac AdminClientMock) updateServiceAccount(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error {
 	return minioUpdateServiceAccountMock(ctx, serviceAccount, opts)
+}
+
+func (ac AdminClientMock) getLDAPPolicyEntities(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error) {
+	return minioGetLDAPPolicyEntitiesMock(ctx, query)
 }
