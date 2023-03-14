@@ -456,7 +456,11 @@ export interface SetBucketQuota {
 }
 
 export interface LoginDetails {
-  loginStrategy?: "form" | "redirect" | "service-account" | "redirect-service-account";
+  loginStrategy?:
+    | "form"
+    | "redirect"
+    | "service-account"
+    | "redirect-service-account";
   redirectRules?: RedirectRule[];
   isDirectPV?: boolean;
   isK8S?: boolean;
@@ -1506,16 +1510,22 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   cancelToken?: CancelToken;
 }
 
-export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
+export type RequestParams = Omit<
+  FullRequestParams,
+  "body" | "method" | "query" | "path"
+>;
 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (
+    securityData: SecurityDataType | null
+  ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown>
+  extends Response {
   data: D;
   error: E;
 }
@@ -1534,7 +1544,8 @@ export class HttpClient<SecurityDataType = unknown> {
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
+    fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: "same-origin",
@@ -1553,7 +1564,9 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected encodeQueryParam(key: string, value: any) {
     const encodedKey = encodeURIComponent(key);
-    return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
+    return `${encodedKey}=${encodeURIComponent(
+      typeof value === "number" ? value : `${value}`
+    )}`;
   }
 
   protected addQueryParam(query: QueryParamsType, key: string) {
@@ -1567,9 +1580,15 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected toQueryString(rawQuery?: QueryParamsType): string {
     const query = rawQuery || {};
-    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
+    const keys = Object.keys(query).filter(
+      (key) => "undefined" !== typeof query[key]
+    );
     return keys
-      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
+      .map((key) =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key)
+      )
       .join("&");
   }
 
@@ -1580,8 +1599,13 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== "string" ? JSON.stringify(input) : input),
+      input !== null && (typeof input === "object" || typeof input === "string")
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== "string"
+        ? JSON.stringify(input)
+        : input,
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
@@ -1591,14 +1615,17 @@ export class HttpClient<SecurityDataType = unknown> {
             ? property
             : typeof property === "object" && property !== null
             ? JSON.stringify(property)
-            : `${property}`,
+            : `${property}`
         );
         return formData;
       }, new FormData()),
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams
+  ): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -1611,7 +1638,9 @@ export class HttpClient<SecurityDataType = unknown> {
     };
   }
 
-  protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
+  protected createAbortSignal = (
+    cancelToken: CancelToken
+  ): AbortSignal | undefined => {
     if (this.abortControllers.has(cancelToken)) {
       const abortController = this.abortControllers.get(cancelToken);
       if (abortController) {
@@ -1655,15 +1684,27 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
-      },
-      signal: cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal,
-      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ""}${path}${
+        queryString ? `?${queryString}` : ""
+      }`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData
+            ? { "Content-Type": type }
+            : {}),
+        },
+        signal: cancelToken
+          ? this.createAbortSignal(cancelToken)
+          : requestParams.signal,
+        body:
+          typeof body === "undefined" || body === null
+            ? null
+            : payloadFormatter(body),
+      }
+    ).then(async (response) => {
       const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -1699,7 +1740,9 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version 0.1.0
  * @baseUrl /api/v1
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+export class Api<
+  SecurityDataType extends unknown
+> extends HttpClient<SecurityDataType> {
   login = {
     /**
      * No description
@@ -1742,7 +1785,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Identity Provider oauth2 callback endpoint.
      * @request POST:/login/oauth2/auth
      */
-    loginOauth2Auth: (body: LoginOauth2AuthRequest, params: RequestParams = {}) =>
+    loginOauth2Auth: (
+      body: LoginOauth2AuthRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/login/oauth2/auth`,
         method: "POST",
@@ -1817,7 +1863,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/account/change-password
      * @secure
      */
-    accountChangePassword: (body: AccountChangePasswordRequest, params: RequestParams = {}) =>
+    accountChangePassword: (
+      body: AccountChangePasswordRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/account/change-password`,
         method: "POST",
@@ -1836,7 +1885,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/account/change-user-password
      * @secure
      */
-    changeUserPassword: (body: ChangeUserPasswordRequest, params: RequestParams = {}) =>
+    changeUserPassword: (
+      body: ChangeUserPasswordRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/account/change-user-password`,
         method: "POST",
@@ -1928,7 +1980,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/buckets/{bucket_name}/retention
      * @secure
      */
-    getBucketRetentionConfig: (bucketName: string, params: RequestParams = {}) =>
+    getBucketRetentionConfig: (
+      bucketName: string,
+      params: RequestParams = {}
+    ) =>
       this.request<GetBucketRetentionConfig, Error>({
         path: `/buckets/${bucketName}/retention`,
         method: "GET",
@@ -1946,7 +2001,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/buckets/{bucket_name}/retention
      * @secure
      */
-    setBucketRetentionConfig: (bucketName: string, body: PutBucketRetentionRequest, params: RequestParams = {}) =>
+    setBucketRetentionConfig: (
+      bucketName: string,
+      body: PutBucketRetentionRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/retention`,
         method: "PUT",
@@ -1975,7 +2034,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ListObjectsResponse, Error>({
         path: `/buckets/${bucketName}/objects`,
@@ -2005,7 +2064,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         non_current_versions?: boolean;
         bypass?: boolean;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects`,
@@ -2031,7 +2090,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         all_versions?: boolean;
         bypass?: boolean;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/delete-objects`,
@@ -2058,7 +2117,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         prefix?: string;
       },
       data?: any,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/upload`,
@@ -2089,7 +2148,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @default "" */
         override_file_name?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<File, Error>({
         path: `/buckets/${bucketName}/objects/download`,
@@ -2115,7 +2174,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         version_id: string;
         expires?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<IamEntity, Error>({
         path: `/buckets/${bucketName}/objects/share`,
@@ -2142,7 +2201,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         version_id: string;
       },
       body: PutObjectLegalHoldRequest,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/legalhold`,
@@ -2170,7 +2229,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         version_id: string;
       },
       body: PutObjectRetentionRequest,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/retention`,
@@ -2197,7 +2256,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         prefix: string;
         version_id: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/retention`,
@@ -2223,7 +2282,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         version_id: string;
       },
       body: PutObjectTagsRequest,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/tags`,
@@ -2250,7 +2309,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         prefix: string;
         version_id: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/restore`,
@@ -2274,7 +2333,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: {
         prefix: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<Metadata, Error>({
         path: `/buckets/${bucketName}/objects/metadata`,
@@ -2294,7 +2353,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/buckets/{bucket_name}/tags
      * @secure
      */
-    putBucketTags: (bucketName: string, body: PutBucketTagsRequest, params: RequestParams = {}) =>
+    putBucketTags: (
+      bucketName: string,
+      body: PutBucketTagsRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/tags`,
         method: "PUT",
@@ -2313,7 +2376,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/buckets/{name}/set-policy
      * @secure
      */
-    bucketSetPolicy: (name: string, body: SetBucketPolicyRequest, params: RequestParams = {}) =>
+    bucketSetPolicy: (
+      name: string,
+      body: SetBucketPolicyRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<Bucket, Error>({
         path: `/buckets/${name}/set-policy`,
         method: "PUT",
@@ -2351,7 +2418,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/buckets/{name}/quota
      * @secure
      */
-    setBucketQuota: (name: string, body: SetBucketQuota, params: RequestParams = {}) =>
+    setBucketQuota: (
+      name: string,
+      body: SetBucketQuota,
+      params: RequestParams = {}
+    ) =>
       this.request<Bucket, Error>({
         path: `/buckets/${name}/quota`,
         method: "PUT",
@@ -2379,7 +2450,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ListBucketEventsResponse, Error>({
         path: `/buckets/${bucketName}/events`,
@@ -2399,7 +2470,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/buckets/{bucket_name}/events
      * @secure
      */
-    createBucketEvent: (bucketName: string, body: BucketEventRequest, params: RequestParams = {}) =>
+    createBucketEvent: (
+      bucketName: string,
+      body: BucketEventRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/events`,
         method: "POST",
@@ -2418,7 +2493,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/buckets/{bucket_name}/events/{arn}
      * @secure
      */
-    deleteBucketEvent: (bucketName: string, arn: string, body: NotificationDeleteRequest, params: RequestParams = {}) =>
+    deleteBucketEvent: (
+      bucketName: string,
+      arn: string,
+      body: NotificationDeleteRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/events/${arn}`,
         method: "DELETE",
@@ -2455,7 +2535,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/buckets/{bucket_name}/replication/{rule_id}
      * @secure
      */
-    getBucketReplicationRule: (bucketName: string, ruleId: string, params: RequestParams = {}) =>
+    getBucketReplicationRule: (
+      bucketName: string,
+      ruleId: string,
+      params: RequestParams = {}
+    ) =>
       this.request<BucketReplicationRule, Error>({
         path: `/buckets/${bucketName}/replication/${ruleId}`,
         method: "GET",
@@ -2477,7 +2561,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       bucketName: string,
       ruleId: string,
       body: MultiBucketReplicationEdit,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/replication/${ruleId}`,
@@ -2497,7 +2581,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/buckets/{bucket_name}/replication/{rule_id}
      * @secure
      */
-    deleteBucketReplicationRule: (bucketName: string, ruleId: string, params: RequestParams = {}) =>
+    deleteBucketReplicationRule: (
+      bucketName: string,
+      ruleId: string,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/replication/${ruleId}`,
         method: "DELETE",
@@ -2514,7 +2602,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/buckets/{bucket_name}/delete-all-replication-rules
      * @secure
      */
-    deleteAllReplicationRules: (bucketName: string, params: RequestParams = {}) =>
+    deleteAllReplicationRules: (
+      bucketName: string,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/delete-all-replication-rules`,
         method: "DELETE",
@@ -2534,7 +2625,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     deleteSelectedReplicationRules: (
       bucketName: string,
       rules: BucketReplicationRuleList,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/delete-selected-replication-rules`,
@@ -2572,7 +2663,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/buckets/{bucket_name}/versioning
      * @secure
      */
-    setBucketVersioning: (bucketName: string, body: SetBucketVersioning, params: RequestParams = {}) =>
+    setBucketVersioning: (
+      bucketName: string,
+      body: SetBucketVersioning,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/versioning`,
         method: "PUT",
@@ -2591,7 +2686,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/buckets/{bucket_name}/object-locking
      * @secure
      */
-    getBucketObjectLockingStatus: (bucketName: string, params: RequestParams = {}) =>
+    getBucketObjectLockingStatus: (
+      bucketName: string,
+      params: RequestParams = {}
+    ) =>
       this.request<BucketObLockingResponse, Error>({
         path: `/buckets/${bucketName}/object-locking`,
         method: "GET",
@@ -2609,7 +2707,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/buckets/{bucket_name}/encryption/enable
      * @secure
      */
-    enableBucketEncryption: (bucketName: string, body: BucketEncryptionRequest, params: RequestParams = {}) =>
+    enableBucketEncryption: (
+      bucketName: string,
+      body: BucketEncryptionRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/encryption/enable`,
         method: "POST",
@@ -2681,7 +2783,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/buckets/{bucket_name}/lifecycle
      * @secure
      */
-    addBucketLifecycle: (bucketName: string, body: AddBucketLifecycle, params: RequestParams = {}) =>
+    addBucketLifecycle: (
+      bucketName: string,
+      body: AddBucketLifecycle,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/lifecycle`,
         method: "POST",
@@ -2700,7 +2806,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/buckets/multi-lifecycle
      * @secure
      */
-    addMultiBucketLifecycle: (body: AddMultiBucketLifecycle, params: RequestParams = {}) =>
+    addMultiBucketLifecycle: (
+      body: AddMultiBucketLifecycle,
+      params: RequestParams = {}
+    ) =>
       this.request<MultiLifecycleResult, Error>({
         path: `/buckets/multi-lifecycle`,
         method: "POST",
@@ -2724,7 +2833,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       bucketName: string,
       lifecycleId: string,
       body: UpdateBucketLifecycle,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/lifecycle/${lifecycleId}`,
@@ -2744,7 +2853,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/buckets/{bucket_name}/lifecycle/{lifecycle_id}
      * @secure
      */
-    deleteBucketLifecycleRule: (bucketName: string, lifecycleId: string, params: RequestParams = {}) =>
+    deleteBucketLifecycleRule: (
+      bucketName: string,
+      lifecycleId: string,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/lifecycle/${lifecycleId}`,
         method: "DELETE",
@@ -2767,7 +2880,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query?: {
         prefix?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<RewindResponse, Error>({
         path: `/buckets/${bucketName}/rewind/${date}`,
@@ -2788,7 +2901,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/list-external-buckets
      * @secure
      */
-    listExternalBuckets: (body: ListExternalBucketsParams, params: RequestParams = {}) =>
+    listExternalBuckets: (
+      body: ListExternalBucketsParams,
+      params: RequestParams = {}
+    ) =>
       this.request<ListBucketsResponse, Error>({
         path: `/list-external-buckets`,
         method: "POST",
@@ -2809,7 +2925,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/buckets-replication
      * @secure
      */
-    setMultiBucketReplication: (body: MultiBucketReplication, params: RequestParams = {}) =>
+    setMultiBucketReplication: (
+      body: MultiBucketReplication,
+      params: RequestParams = {}
+    ) =>
       this.request<MultiBucketResponseState, Error>({
         path: `/buckets-replication`,
         method: "POST",
@@ -2837,7 +2956,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ServiceAccounts, Error>({
         path: `/service-accounts`,
@@ -2857,7 +2976,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/service-accounts
      * @secure
      */
-    createServiceAccount: (body: ServiceAccountRequest, params: RequestParams = {}) =>
+    createServiceAccount: (
+      body: ServiceAccountRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<ServiceAccountCreds, Error>({
         path: `/service-accounts`,
         method: "POST",
@@ -2893,7 +3015,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/service-accounts/delete-multi
      * @secure
      */
-    deleteMultipleServiceAccounts: (selectedSA: string[], params: RequestParams = {}) =>
+    deleteMultipleServiceAccounts: (
+      selectedSA: string[],
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/service-accounts/delete-multi`,
         method: "DELETE",
@@ -2929,7 +3054,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/service-accounts/{access_key}/policy
      * @secure
      */
-    setServiceAccountPolicy: (accessKey: string, policy: AddServiceAccountPolicyRequest, params: RequestParams = {}) =>
+    setServiceAccountPolicy: (
+      accessKey: string,
+      policy: AddServiceAccountPolicyRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/service-accounts/${accessKey}/policy`,
         method: "PUT",
@@ -2949,7 +3078,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/service-account-credentials
      * @secure
      */
-    createServiceAccountCreds: (body: ServiceAccountRequestCreds, params: RequestParams = {}) =>
+    createServiceAccountCreds: (
+      body: ServiceAccountRequestCreds,
+      params: RequestParams = {}
+    ) =>
       this.request<ServiceAccountCreds, Error>({
         path: `/service-account-credentials`,
         method: "POST",
@@ -2976,7 +3108,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ListUsersResponse, Error>({
         path: `/users`,
@@ -3016,7 +3148,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/users/service-accounts
      * @secure
      */
-    checkUserServiceAccounts: (selectedUsers: string[], params: RequestParams = {}) =>
+    checkUserServiceAccounts: (
+      selectedUsers: string[],
+      params: RequestParams = {}
+    ) =>
       this.request<UserServiceAccountSummary, Error>({
         path: `/users/service-accounts`,
         method: "POST",
@@ -3054,7 +3189,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/user/{name}
      * @secure
      */
-    updateUserInfo: (name: string, body: UpdateUser, params: RequestParams = {}) =>
+    updateUserInfo: (
+      name: string,
+      body: UpdateUser,
+      params: RequestParams = {}
+    ) =>
       this.request<User, Error>({
         path: `/user/${name}`,
         method: "PUT",
@@ -3091,7 +3230,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/user/{name}/groups
      * @secure
      */
-    updateUserGroups: (name: string, body: UpdateUserGroups, params: RequestParams = {}) =>
+    updateUserGroups: (
+      name: string,
+      body: UpdateUserGroups,
+      params: RequestParams = {}
+    ) =>
       this.request<User, Error>({
         path: `/user/${name}/groups`,
         method: "PUT",
@@ -3165,7 +3308,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/user/{name}/service-accounts
      * @secure
      */
-    createAUserServiceAccount: (name: string, body: ServiceAccountRequest, params: RequestParams = {}) =>
+    createAUserServiceAccount: (
+      name: string,
+      body: ServiceAccountRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<ServiceAccountCreds, Error>({
         path: `/user/${name}/service-accounts`,
         method: "POST",
@@ -3184,7 +3331,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/user/{name}/service-account-credentials
      * @secure
      */
-    createServiceAccountCredentials: (name: string, body: ServiceAccountRequestCreds, params: RequestParams = {}) =>
+    createServiceAccountCredentials: (
+      name: string,
+      body: ServiceAccountRequestCreds,
+      params: RequestParams = {}
+    ) =>
       this.request<ServiceAccountCreds, Error>({
         path: `/user/${name}/service-account-credentials`,
         method: "POST",
@@ -3231,7 +3382,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ListGroupsResponse, Error>({
         path: `/groups`,
@@ -3306,7 +3457,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/group/{name}
      * @secure
      */
-    updateGroup: (name: string, body: UpdateGroupRequest, params: RequestParams = {}) =>
+    updateGroup: (
+      name: string,
+      body: UpdateGroupRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<Group, Error>({
         path: `/group/${name}`,
         method: "PUT",
@@ -3334,7 +3489,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ListPoliciesResponse, Error>({
         path: `/policies`,
@@ -3419,7 +3574,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ListPoliciesResponse, Error>({
         path: `/bucket-policy/${bucket}`,
@@ -3440,7 +3595,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/bucket/{bucket}/access-rules
      * @secure
      */
-    setAccessRuleWithBucket: (bucket: string, prefixaccess: PrefixAccessPair, params: RequestParams = {}) =>
+    setAccessRuleWithBucket: (
+      bucket: string,
+      prefixaccess: PrefixAccessPair,
+      params: RequestParams = {}
+    ) =>
       this.request<boolean, Error>({
         path: `/bucket/${bucket}/access-rules`,
         method: "PUT",
@@ -3468,7 +3627,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ListAccessRulesResponse, Error>({
         path: `/bucket/${bucket}/access-rules`,
@@ -3488,7 +3647,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/bucket/{bucket}/access-rules
      * @secure
      */
-    deleteAccessRuleWithBucket: (bucket: string, prefix: PrefixWrapper, params: RequestParams = {}) =>
+    deleteAccessRuleWithBucket: (
+      bucket: string,
+      prefix: PrefixWrapper,
+      params: RequestParams = {}
+    ) =>
       this.request<boolean, Error>({
         path: `/bucket/${bucket}/access-rules`,
         method: "DELETE",
@@ -3517,7 +3680,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ServiceAccounts, Error>({
         path: `/bucket-users/${bucket}`,
@@ -3581,7 +3744,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ListConfigResponse, Error>({
         path: `/configs`,
@@ -3619,7 +3782,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/configs/{name}
      * @secure
      */
-    setConfig: (name: string, body: SetConfigRequest, params: RequestParams = {}) =>
+    setConfig: (
+      name: string,
+      body: SetConfigRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<SetConfigResponse, Error>({
         path: `/configs/${name}`,
         method: "PUT",
@@ -3680,7 +3847,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format binary */
         file: File;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/configs/import`,
@@ -3721,7 +3888,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/set-policy-multi
      * @secure
      */
-    setPolicyMultiple: (body: SetPolicyMultipleNameRequest, params: RequestParams = {}) =>
+    setPolicyMultiple: (
+      body: SetPolicyMultipleNameRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/set-policy-multi`,
         method: "PUT",
@@ -3837,7 +4007,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: {
         token: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ApiKey, Error>({
         path: `/subnet/apikey`,
@@ -3922,7 +4092,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @default false */
         defaultOnly?: boolean;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<AdminInfoResponse, Error>({
         path: `/admin/info`,
@@ -3950,7 +4120,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @format int32 */
         step?: number;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<WidgetDetails, Error>({
         path: `/admin/info/widgets/${widgetId}`,
@@ -4006,7 +4176,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/admin/notification_endpoints
      * @secure
      */
-    addNotificationEndpoint: (body: NotificationEndpoint, params: RequestParams = {}) =>
+    addNotificationEndpoint: (
+      body: NotificationEndpoint,
+      params: RequestParams = {}
+    ) =>
       this.request<SetNotificationEndpointResponse, Error>({
         path: `/admin/notification_endpoints`,
         method: "POST",
@@ -4044,7 +4217,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/admin/site-replication
      * @secure
      */
-    siteReplicationInfoAdd: (body: SiteReplicationAddRequest, params: RequestParams = {}) =>
+    siteReplicationInfoAdd: (
+      body: SiteReplicationAddRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<SiteReplicationAddResponse, Error>({
         path: `/admin/site-replication`,
         method: "POST",
@@ -4131,7 +4307,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Entity Value to lookup */
         entityValue?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<SiteReplicationStatusResponse, Error>({
         path: `/admin/site-replication/status`,
@@ -4188,7 +4364,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/admin/tiers/{type}/{name}
      * @secure
      */
-    getTier: (type: "s3" | "gcs" | "azure" | "minio", name: string, params: RequestParams = {}) =>
+    getTier: (
+      type: "s3" | "gcs" | "azure" | "minio",
+      name: string,
+      params: RequestParams = {}
+    ) =>
       this.request<Tier, Error>({
         path: `/admin/tiers/${type}/${name}`,
         method: "GET",
@@ -4210,7 +4390,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       type: "s3" | "gcs" | "azure" | "minio",
       name: string,
       body: TierCredentialsRequest,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, Error>({
         path: `/admin/tiers/${type}/${name}/credentials`,
@@ -4236,7 +4416,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         volume: string;
         encrypt?: boolean;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<File, Error>({
         path: `/admin/inspect`,
@@ -4330,7 +4510,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/remote-buckets/{source-bucket-name}/{arn}
      * @secure
      */
-    deleteRemoteBucket: (sourceBucketName: string, arn: string, params: RequestParams = {}) =>
+    deleteRemoteBucket: (
+      sourceBucketName: string,
+      arn: string,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/remote-buckets/${sourceBucketName}/${arn}`,
         method: "DELETE",
@@ -4366,7 +4550,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         order?: "timeDesc" | "timeAsc";
         timeStart?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<LogSearchResponse, Error>({
         path: `/logs/search`,
@@ -4483,7 +4667,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** pattern to retrieve keys */
         pattern?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<KmsListKeysResponse, Error>({
         path: `/kms/keys`,
@@ -4538,7 +4722,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/kms/keys/{name}/import
      * @secure
      */
-    kmsImportKey: (name: string, body: KmsImportKeyRequest, params: RequestParams = {}) =>
+    kmsImportKey: (
+      name: string,
+      body: KmsImportKeyRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/kms/keys/${name}/import`,
         method: "POST",
@@ -4581,7 +4769,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** pattern to retrieve policies */
         pattern?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<KmsListPoliciesResponse, Error>({
         path: `/kms/policies`,
@@ -4636,7 +4824,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/kms/policies/{name}/assign
      * @secure
      */
-    kmsAssignPolicy: (name: string, body: KmsAssignPolicyRequest, params: RequestParams = {}) =>
+    kmsAssignPolicy: (
+      name: string,
+      body: KmsAssignPolicyRequest,
+      params: RequestParams = {}
+    ) =>
       this.request<void, Error>({
         path: `/kms/policies/${name}/assign`,
         method: "POST",
@@ -4731,7 +4923,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** pattern to retrieve identities */
         pattern?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<KmsListIdentitiesResponse, Error>({
         path: `/kms/identities`,
@@ -4752,7 +4944,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/idp/{type}
      * @secure
      */
-    createConfiguration: (type: string, body: IdpServerConfiguration, params: RequestParams = {}) =>
+    createConfiguration: (
+      type: string,
+      body: IdpServerConfiguration,
+      params: RequestParams = {}
+    ) =>
       this.request<SetIDPResponse, Error>({
         path: `/idp/${type}`,
         method: "POST",
@@ -4789,7 +4985,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/idp/{type}/{name}
      * @secure
      */
-    getConfiguration: (name: string, type: string, params: RequestParams = {}) =>
+    getConfiguration: (
+      name: string,
+      type: string,
+      params: RequestParams = {}
+    ) =>
       this.request<IdpServerConfiguration, Error>({
         path: `/idp/${type}/${name}`,
         method: "GET",
@@ -4807,7 +5007,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/idp/{type}/{name}
      * @secure
      */
-    deleteConfiguration: (name: string, type: string, params: RequestParams = {}) =>
+    deleteConfiguration: (
+      name: string,
+      type: string,
+      params: RequestParams = {}
+    ) =>
       this.request<SetIDPResponse, Error>({
         path: `/idp/${type}/${name}`,
         method: "DELETE",
@@ -4825,7 +5029,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/idp/{type}/{name}
      * @secure
      */
-    updateConfiguration: (name: string, type: string, body: IdpServerConfiguration, params: RequestParams = {}) =>
+    updateConfiguration: (
+      name: string,
+      type: string,
+      body: IdpServerConfiguration,
+      params: RequestParams = {}
+    ) =>
       this.request<SetIDPResponse, Error>({
         path: `/idp/${type}/${name}`,
         method: "PUT",
@@ -4877,7 +5086,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** filter releases */
         filter?: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<ReleaseListResponse, Error>({
         path: `/releases`,
