@@ -1,31 +1,26 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { pageContentStyles } from "../FormComponents/common/styleLibrary";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...pageContentStyles,
-  });
 
 type PageLayoutProps = {
   className?: string;
-  classes?: any;
   variant?: "constrained" | "full";
   children: any;
+  noPadding?: boolean;
 };
 
 const PageLayout = ({
-  classes,
   className = "",
   children,
   variant = "constrained",
+  noPadding = false,
 }: PageLayoutProps) => {
   let style = variant === "constrained" ? { maxWidth: 1220 } : {};
   return (
-    <div className={classes.contentSpacer}>
+    <div
+      style={{
+        padding: noPadding ? 0 : "2rem",
+      }}
+    >
       <Grid container>
         <Grid item xs={12} className={className} style={style}>
           {children}
@@ -35,4 +30,4 @@ const PageLayout = ({
   );
 };
 
-export default withStyles(styles)(PageLayout);
+export default PageLayout;
