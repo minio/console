@@ -1552,8 +1552,8 @@ export class HttpClient<SecurityDataType = unknown> {
   };
 
   protected encodeQueryParam(key: string, value: any) {
-    const encodedKey = encodeURLString(key);
-    return `${encodedKey}=${encodeURLString(typeof value === "number" ? value : `${value}`)}`;
+    const encodedKey = encodeURIComponent(key);
+    return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
   }
 
   protected addQueryParam(query: QueryParamsType, key: string) {
