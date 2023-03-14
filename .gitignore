@@ -1,3 +1,13 @@
+# Playwright Data
+portal-ui/storage/
+portal-ui/playwright/.auth/admin.json
+
+# Report from Playwright
+portal-ui/playwright-report/
+
+# Coverage from Playwright
+portal-ui/.nyc_output/
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
