@@ -775,12 +775,6 @@ export const commonDashboardInfocard: any = {
   },
 };
 
-export const pageContentStyles = {
-  contentSpacer: {
-    padding: "2rem",
-  },
-};
-
 export const serviceAccountStyles: any = {
   buttonContainer: {
     display: "flex",
