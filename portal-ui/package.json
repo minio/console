@@ -39,7 +39,8 @@
     "start": "PORT=5005 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "playwright": "PORT=5005 USE_BABEL_PLUGIN_ISTANBUL=1 react-app-rewired start"
   },
   "eslintConfig": {
     "extends": "react-app",
@@ -61,11 +62,9 @@
   },
   "proxy": "http://localhost:9090/",
   "devDependencies": {
-    "@types/luxon": "^3.2.0",
-    "@types/react-window": "^1.8.5",
-    "@types/react-window-infinite-loader": "^1.0.6",
-    "@types/recharts": "^1.8.24",
+    "@playwright/test": "^1.31.2",
     "@types/lodash": "^4.14.191",
+    "@types/luxon": "^3.2.0",
     "@types/minio": "^7.0.17",
     "@types/node": "18.14.6",
     "@types/react": "18.0.28",
@@ -74,10 +73,19 @@
     "@types/react-grid-layout": "^1.1.1",
     "@types/react-redux": "^7.1.25",
     "@types/react-virtualized": "^9.21.21",
+    "@types/react-window": "^1.8.5",
+    "@types/react-window-infinite-loader": "^1.0.6",
+    "@types/recharts": "^1.8.24",
     "@types/superagent": "^4.1.16",
     "@types/webpack-env": "^1.14.1",
     "@types/websocket": "^1.0.0",
+    "babel-plugin-istanbul": "^6.1.1",
+    "customize-cra": "^1.0.0",
+    "nyc": "^15.1.0",
+    "playwright": "^1.31.2",
     "prettier": "2.8.4",
+    "react-app-rewire-hot-loader": "^2.0.1",
+    "react-app-rewired": "^2.2.1",
     "react-scripts": "5.0.1",
     "testcafe": "^2.3.0",
     "typescript": "^4.4.3"
@@ -96,5 +104,7 @@
     "react-scripts/**/debug": "^3.1.0",
     "recharts/**/d3-color": "^3.1.0",
     "websocket/debug": "^3.1.0"
-  }
+  },
+  "main": "index.js",
+  "license": "MIT"
 }

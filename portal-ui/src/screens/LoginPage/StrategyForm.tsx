@@ -247,6 +247,9 @@ const StrategyForm = ({ redirectRules }: IStrategyForm) => {
             renderValue={() => "Other Authentication Methods"}
             sx={{
               width: "100%",
+              height: "38px",
+              fontSize: "14px",
+              borderRadius: "4px",
             }}
           >
             <MenuItem

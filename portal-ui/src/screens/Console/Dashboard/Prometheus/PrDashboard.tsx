@@ -48,6 +48,7 @@ import { Button, HelpBox, PrometheusErrorIcon, SyncIcon } from "mds";
 import { ITabOption } from "../../Common/TabSelector/types";
 import { getUsageAsync } from "../dashboardThunks";
 import { reloadWidgets } from "../dashboardSlice";
+import { selFeatures } from "../../consoleSlice";
 
 interface IPrDashboard {
   classes?: any;
@@ -68,6 +69,14 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
   const zoomWidget = useSelector(
     (state: AppState) => state.dashboard.zoom.widgetRender
   );
+  const features = useSelector(selFeatures);
+  const obOnly = !!features?.includes("object-browser-only");
+  let hideMenu = false;
+  if (features?.includes("hide-menu")) {
+    hideMenu = true;
+  } else if (obOnly) {
+    hideMenu = true;
+  }
 
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
@@ -168,7 +177,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
   }
 
   return (
-    <PageLayout>
+    <PageLayout noPadding={hideMenu}>
       {zoomOpen && (
         <ZoomWidget
           modalOpen={zoomOpen}

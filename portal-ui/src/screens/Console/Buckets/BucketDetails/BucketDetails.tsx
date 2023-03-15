@@ -40,7 +40,6 @@ import api from "../../../../common/api";
 import { BucketInfo } from "../types";
 import {
   containerForHeader,
-  pageContentStyles,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -106,7 +105,6 @@ const styles = (theme: Theme) =>
     pageContainer: {
       height: "100%",
     },
-    ...pageContentStyles,
     ...searchField,
     capitalize: {
       textTransform: "capitalize",
@@ -312,7 +310,11 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             selectedTab={activeTab}
             isRouteTabs
             routes={
-              <div className={classes.contentSpacer}>
+              <div
+                style={{
+                  padding: "2rem",
+                }}
+              >
                 <Routes>
                   <Route path="summary" element={<BucketSummaryPanel />} />
                   <Route path="events" element={<BucketEventsPanel />} />

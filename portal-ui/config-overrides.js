@@ -8,3 +8,12 @@ module.exports = function override(config, env) {
   config = rewireReactHotLoader(config, env);
   return config;
 };
+
+const { override, addBabelPlugins } = require("customize-cra");
+
+console.log("add babel plugin");
+
+module.exports = override(
+  process.env.USE_BABEL_PLUGIN_ISTANBUL &&
+    addBabelPlugins("babel-plugin-istanbul")
+);

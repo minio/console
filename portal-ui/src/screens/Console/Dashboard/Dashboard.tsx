@@ -26,6 +26,7 @@ import { AppState, useAppDispatch } from "../../../store";
 import { getUsageAsync } from "./dashboardThunks";
 import { useSelector } from "react-redux";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { selFeatures } from "../consoleSlice";
 
 interface IDashboardSimple {
   classes: any;
@@ -41,6 +42,14 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const usage = useSelector((state: AppState) => state.dashboard.usage);
+  const features = useSelector(selFeatures);
+  const obOnly = !!features?.includes("object-browser-only");
+  let hideMenu = false;
+  if (features?.includes("hide-menu")) {
+    hideMenu = true;
+  } else if (obOnly) {
+    hideMenu = true;
+  }
 
   useEffect(() => {
     if (loading) {
@@ -51,7 +60,7 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
 
   return (
     <Fragment>
-      <PageHeaderWrapper label="Metrics" />
+      {!hideMenu && <PageHeaderWrapper label="Metrics" />}
       {loading ? (
         <Grid container>
           <Grid item xs={12} className={classes.container}>
