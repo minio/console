@@ -18,6 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
 import { withStyles } from "@mui/styles";
+import { CSSObject } from "styled-components";
 import {
   Button,
   DeleteIcon,
@@ -164,6 +165,9 @@ const ObjectDetailPanel = ({
   );
   const loadingObjectInfo = useSelector(
     (state: AppState) => state.objectBrowser.loadingObjectInfo
+  );
+  const colorVariants = useSelector(
+    (state: AppState) => state.system.overrideStyles
   );
 
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
@@ -582,6 +586,14 @@ const ObjectDetailPanel = ({
     return formatTime.trim() !== "" ? `${formatTime} ago` : "Just now";
   };
 
+  let regularButtonOverride: CSSObject = {};
+
+  if (colorVariants) {
+    regularButtonOverride = {
+      backgroundColor: "transparent",
+    };
+  }
+
   return (
     <Fragment>
       {shareFileModalOpen && actualInfo && (
@@ -714,9 +726,10 @@ const ObjectDetailPanel = ({
                   disabled={
                     selectedVersion === "" && actualInfo.is_delete_marker
                   }
-                  style={{
+                  sx={{
                     width: "calc(100% - 44px)",
                     margin: "8px 0",
+                    ...regularButtonOverride,
                   }}
                   label={`Delete${selectedVersion !== "" ? " version" : ""}`}
                 />
