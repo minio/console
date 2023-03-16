@@ -18,6 +18,7 @@ import { SelectorTypes } from "../Common/FormComponents/RadioGroupSelector/Radio
 
 export type KVFieldType =
   | "string"
+  | "password"
   | "number"
   | "on|off"
   | "enum"
@@ -41,6 +42,7 @@ export interface KVField {
   multiline?: boolean;
   placeholder?: string;
   withBorder?: boolean;
+  customValueProcess?: (value: string) => string;
 }
 
 export interface IConfigurationElement {

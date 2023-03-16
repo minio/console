@@ -40,6 +40,7 @@ import {
   IConfigurationSys,
   IElementValue,
   IOverrideEnv,
+  KVField,
 } from "../../Configurations/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import ResetConfigurationModal from "./ResetConfigurationModal";
@@ -110,7 +111,24 @@ const EditConfiguration = ({
           .invoke("GET", `/api/v1/configs/${configId}`)
           .then((res) => {
             setConfigSubsysList(res);
-            const keyVals = get(res[0], "key_values", []);
+            let values: IElementValue[] = get(res[0], "key_values", []);
+
+            const fieldsConfig: KVField[] = fieldsConfigurations[configId];
+
+            const keyVals = fieldsConfig.map((field) => {
+              const includedValue = values.find(
+                (element: IElementValue) => element.key === field.name
+              );
+              const customValue = includedValue?.value || "";
+
+              return {
+                key: field.name,
+                value: field.customValueProcess
+                  ? field.customValueProcess(customValue)
+                  : customValue,
+              };
+            });
+
             setConfigValues(keyVals);
             setOverrideEnvs(overrideFields(keyVals));
             dispatch(configurationIsLoading(false));
