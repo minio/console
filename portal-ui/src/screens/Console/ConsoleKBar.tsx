@@ -32,7 +32,12 @@ const ConsoleKBar = () => {
 
   // if we are hiding the menu also disable the k-bar so just return console
   if (features?.includes("hide-menu")) {
-    return <Console />;
+    return (
+      <Fragment>
+        <TrafficMonitor />
+        <Console />
+      </Fragment>
+    );
   }
   // for anonymous mode, we don't load Console, only AnonymousAccess
   if (anonymousMode) {

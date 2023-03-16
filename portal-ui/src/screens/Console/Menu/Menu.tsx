@@ -114,7 +114,11 @@ const Menu = ({ classes }: IMenuProps) => {
         isOpen={sidebarOpen}
       />
 
-      <ConsoleMenuList menuItems={allowedMenuItems} isOpen={sidebarOpen} />
+      <ConsoleMenuList
+        menuItems={allowedMenuItems}
+        isOpen={sidebarOpen}
+        displayHeaders
+      />
     </Drawer>
   );
 };

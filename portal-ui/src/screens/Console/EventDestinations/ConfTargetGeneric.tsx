@@ -163,8 +163,16 @@ const ConfTargetGeneric = ({
             elements={holderItem ? holderItem.value : ""}
             label={field.label}
             name={field.name}
-            onChange={(value: string) => {
-              setValueElement(field.name, value, item);
+            onChange={(value: string | string[]) => {
+              let valCh = "";
+
+              if (Array.isArray(value)) {
+                valCh = value.join(",");
+              } else {
+                valCh = value;
+              }
+
+              setValueElement(field.name, valCh, item);
             }}
             tooltip={field.tooltip}
             commonPlaceholder={field.placeholder}

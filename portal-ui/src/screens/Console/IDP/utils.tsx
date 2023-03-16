@@ -147,6 +147,16 @@ export const openIDFormFields = {
 };
 
 export const ldapFormFields = {
+  server_insecure: {
+    required: true,
+    hasError: (s: string, editMode: boolean) => {
+      return !s && editMode ? "Server Address is required" : "";
+    },
+    label: "Server Insecure",
+    tooltip: "disable SSL certificate verification ",
+    placeholder: "myldapserver.com:636",
+    type: "toggle",
+  },
   server_addr: {
     required: true,
     hasError: (s: string, editMode: boolean) => {
@@ -198,14 +208,6 @@ export const ldapFormFields = {
     tooltip: "",
     placeholder: "(sAMAcountName=%s)",
     type: "text",
-  },
-  display_name: {
-    required: false,
-    label: "Display Name",
-    tooltip: "",
-    placeholder: "Enter Display Name",
-    type: "text",
-    hasError: (s: string, editMode: boolean) => "",
   },
   group_search_base_dn: {
     required: false,

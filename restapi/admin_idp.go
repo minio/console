@@ -244,6 +244,7 @@ func getEntitiesResult(ctx context.Context, client MinioAdmin, users, groups, po
 	}
 
 	var result models.LdapEntities
+
 	var usersEntity []*models.LdapUserPolicyEntity
 	var groupsEntity []*models.LdapGroupPolicyEntity
 	var policiesEntity []*models.LdapPolicyEntity

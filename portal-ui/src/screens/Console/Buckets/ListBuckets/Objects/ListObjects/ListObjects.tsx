@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
+import { CSSObject } from "styled-components";
 import {
   BucketsIcon,
   Button,
@@ -275,6 +276,9 @@ const ListObjects = () => {
   );
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
+  );
+  const colorVariants = useSelector(
+    (state: AppState) => state.system.overrideStyles
   );
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
@@ -784,6 +788,40 @@ const ListObjects = () => {
     createdTime = DateTime.fromISO(bucketInfo.creation_date);
   }
 
+  let regularButtonOverride: CSSObject = {};
+  let callActionButtonOverride: CSSObject = {};
+
+  if (colorVariants) {
+    regularButtonOverride = {
+      backgroundColor: "transparent",
+    };
+
+    callActionButtonOverride = {
+      color: get(colorVariants, "buttonStyles.textColor", "#fff"),
+      backgroundColor: get(
+        colorVariants,
+        "buttonStyles.backgroundColor",
+        "#07193E"
+      ),
+      "&:hover": {
+        color: get(colorVariants, "buttonStyles.hoverText", "#fff"),
+        backgroundColor: get(
+          colorVariants,
+          "buttonStyles.hoverColor",
+          "#0D2453"
+        ),
+      },
+      "&:active": {
+        color: get(colorVariants, "buttonStyles.activeText", "#fff"),
+        backgroundColor: get(
+          colorVariants,
+          "buttonStyles.activeColor",
+          "#05132F"
+        ),
+      },
+    };
+  }
+
   const multiActionButtons = [
     {
       action: () => {
@@ -983,6 +1021,7 @@ const ListObjects = () => {
                           IAM_SCOPES.S3_GET_ACTIONS,
                         ])
                       }
+                      sx={regularButtonOverride}
                     />
                   </TooltipWrapper>
                 )}
@@ -1009,6 +1048,7 @@ const ListObjects = () => {
                             IAM_SCOPES.S3_ALL_LIST_BUCKET,
                           ]) || rewindEnabled
                     }
+                    sx={regularButtonOverride}
                   />
                 </TooltipWrapper>
                 <input
@@ -1040,6 +1080,7 @@ const ListObjects = () => {
                     }
                     closeMenu();
                   }}
+                  overrideStyles={callActionButtonOverride}
                 />
               </div>
             }

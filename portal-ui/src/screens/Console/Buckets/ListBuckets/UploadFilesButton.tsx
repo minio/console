@@ -16,6 +16,7 @@
 
 import React, { Fragment, useState } from "react";
 import { Theme } from "@mui/material/styles";
+import { CSSObject } from "styled-components";
 import { Menu, MenuItem } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -38,6 +39,7 @@ interface IUploadFilesButton {
   uploadFileFunction: (closeFunction: () => void) => void;
   uploadFolderFunction: (closeFunction: () => void) => void;
   classes: any;
+  overrideStyles?: CSSObject;
 }
 
 const styles = (theme: Theme) =>
@@ -58,6 +60,7 @@ const UploadFilesButton = ({
   uploadFileFunction,
   uploadFolderFunction,
   classes,
+  overrideStyles = {},
 }: IUploadFilesButton) => {
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
@@ -107,6 +110,7 @@ const UploadFilesButton = ({
           icon={<UploadIcon />}
           variant={"callAction"}
           disabled={forceDisable || !uploadEnabled}
+          sx={overrideStyles}
         />
       </TooltipWrapper>
       <Menu

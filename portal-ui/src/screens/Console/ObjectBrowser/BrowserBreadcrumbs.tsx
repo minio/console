@@ -16,9 +16,11 @@
 
 import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
+import { CSSObject } from "styled-components";
 import CopyToClipboard from "react-copy-to-clipboard";
 import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import { Theme } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
 import { IconButton } from "@mui/material";
@@ -34,7 +36,6 @@ import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { setVersionsModeEnabled } from "./objectBrowserSlice";
-import makeStyles from "@mui/styles/makeStyles";
 
 const CreatePathModal = withSuspense(
   React.lazy(
@@ -79,6 +80,9 @@ const BrowserBreadcrumbs = ({
   );
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
+  );
+  const colorVariants = useSelector(
+    (state: AppState) => state.system.overrideStyles
   );
 
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
@@ -169,6 +173,14 @@ const BrowserBreadcrumbs = ({
     }
   };
 
+  let regularButtonOverride: CSSObject = {};
+
+  if (colorVariants) {
+    regularButtonOverride = {
+      backgroundColor: "transparent",
+    };
+  }
+
   return (
     <Fragment>
       <div className={classes.breadcrumbsMain}>
@@ -249,6 +261,7 @@ const BrowserBreadcrumbs = ({
               }}
               variant={"regular"}
               label={"Create new path"}
+              sx={regularButtonOverride}
             />
           </Tooltip>
         )}

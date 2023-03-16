@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2022 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,11 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import IDPConfigurations from "./IDPConfigurations";
+export interface LDAPEntitiesRequest {
+  users?: string[];
+  groups?: string[];
+  policies?: string[];
+}
 
-const IDPLDAPConfigurations = () => {
-  return <IDPConfigurations idpType={"ldap"} />;
-};
+export interface LDAPEntitiesResponse {
+  timestamp: string;
+  users?: LDAPUsersResponse[];
+  groups?: LDAPGroupsResponse[];
+  policies?: LDAPPoliciesResponse[];
+}
 
-export default IDPLDAPConfigurations;
+export interface LDAPUsersResponse {
+  user: string;
+  policies: string[];
+}
+
+export interface LDAPGroupsResponse {
+  group: string;
+  policies: string[];
+}
+
+export interface LDAPPoliciesResponse {
+  policy: string;
+  users: string[];
+  groups: string[];
+}

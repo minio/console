@@ -31,6 +31,7 @@
     "react-window": "^1.8.8",
     "react-window-infinite-loader": "^1.0.7",
     "recharts": "^2.4.3",
+    "styled-components": "^5.3.6",
     "superagent": "^8.0.8",
     "tinycolor2": "^1.6.0",
     "websocket": "^1.0.31"

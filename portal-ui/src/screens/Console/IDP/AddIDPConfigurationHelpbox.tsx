@@ -80,8 +80,8 @@ const AddIDPConfigurationHelpBox = ({
         <div>{helpText}</div>
       </Box>
       <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-        {contents.map((content) => (
-          <Fragment>
+        {contents.map((content, index) => (
+          <Fragment key={`feature-item-${index}`}>
             {content.icon && (
               <Box sx={{ paddingBottom: "20px" }}>
                 <FeatureItem

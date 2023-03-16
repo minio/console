@@ -23,8 +23,7 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { BackLink, Button, SettingsIcon } from "mds";
-import { Grid } from "@mui/material";
+import { BackLink, Button, SettingsIcon, Grid } from "mds";
 import AutoColorIcon from "../Common/Components/AutoColorIcon";
 import { useSelector } from "react-redux";
 import { selFeatures } from "../consoleSlice";
@@ -35,6 +34,7 @@ import { setSearchVersions } from "./objectBrowserSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import FilterObjectsSB from "./FilterObjectsSB";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import ObjectManagerButton from "../Common/ObjectManager/ObjectManagerButton";
 
 interface IOBHeader {
   bucketName: string;
@@ -164,8 +164,16 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
           <Grid>
             <AutoColorIcon marginRight={30} marginTop={10} />
           </Grid>
-          <Grid item xs>
+          <Grid
+            item
+            xs
+            sx={{
+              display: "flex",
+              gap: 10,
+            }}
+          >
             {searchBar}
+            <ObjectManagerButton />
           </Grid>
         </Grid>
       )}

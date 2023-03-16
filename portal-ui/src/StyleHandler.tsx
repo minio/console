@@ -54,8 +54,10 @@ const StyleHandler = ({ children }: IStyleHandler) => {
   if (colorVariants) {
     thm = generateOverrideTheme(colorVariants);
 
-    globalBody = { backgroundColor: colorVariants.backgroundColor };
-    rowColor = { color: colorVariants.fontColor };
+    globalBody = {
+      backgroundColor: `${colorVariants.backgroundColor}!important`,
+    };
+    rowColor = { color: `${colorVariants.fontColor}!important` };
     detailsListPanel = {
       backgroundColor: colorVariants.backgroundColor,
       color: colorVariants.fontColor,

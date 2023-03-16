@@ -44,8 +44,6 @@ export const doLoginAsync = createAsyncThunk(
       };
     }
 
-    console.log("PAYLOAD:", loginStrategyPayload);
-
     return api
       .invoke("POST", "/api/v1/login", loginStrategyPayload)
       .then((res) => {
