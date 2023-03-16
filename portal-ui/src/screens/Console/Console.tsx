@@ -113,20 +113,14 @@ const AccountCreate = React.lazy(
 
 const Users = React.lazy(() => import("./Users/Users"));
 const Groups = React.lazy(() => import("./Groups/Groups"));
-const IDPLDAPConfigurations = React.lazy(
-  () => import("./IDP/IDPLDAPConfigurations")
-);
 const IDPOpenIDConfigurations = React.lazy(
   () => import("./IDP/IDPOpenIDConfigurations")
-);
-const AddIDPLDAPConfiguration = React.lazy(
-  () => import("./IDP/AddIDPLDAPConfiguration")
 );
 const AddIDPOpenIDConfiguration = React.lazy(
   () => import("./IDP/AddIDPOpenIDConfiguration")
 );
 const IDPLDAPConfigurationDetails = React.lazy(
-  () => import("./IDP/IDPLDAPConfigurationDetails")
+  () => import("./IDP/LDAP/IDPLDAPConfigurationDetails")
 );
 const IDPOpenIDConfigurationDetails = React.lazy(
   () => import("./IDP/IDPOpenIDConfigurationDetails")
@@ -344,7 +338,7 @@ const Console = ({ classes }: IConsoleProps) => {
       path: IAM_PAGES.POLICIES,
     },
     {
-      component: IDPLDAPConfigurations,
+      component: IDPLDAPConfigurationDetails,
       path: IAM_PAGES.IDP_LDAP_CONFIGURATIONS,
     },
     {
@@ -352,16 +346,8 @@ const Console = ({ classes }: IConsoleProps) => {
       path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS,
     },
     {
-      component: AddIDPLDAPConfiguration,
-      path: IAM_PAGES.IDP_LDAP_CONFIGURATIONS_ADD,
-    },
-    {
       component: AddIDPOpenIDConfiguration,
       path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS_ADD,
-    },
-    {
-      component: IDPLDAPConfigurationDetails,
-      path: IAM_PAGES.IDP_LDAP_CONFIGURATIONS_VIEW,
     },
     {
       component: IDPOpenIDConfigurationDetails,

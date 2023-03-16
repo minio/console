@@ -157,9 +157,7 @@ export const IAM_PAGES = {
   USER_SA_ACCOUNT_ADD: "/identity/users/new-user-sa/:userName",
 
   /* IDP */
-  IDP_LDAP_CONFIGURATIONS: "/identity/idp/ldap/configurations",
-  IDP_LDAP_CONFIGURATIONS_VIEW: "/identity/idp/ldap/configurations/:idpName",
-  IDP_LDAP_CONFIGURATIONS_ADD: "/identity/idp/ldap/configurations/add-idp",
+  IDP_LDAP_CONFIGURATIONS: "/identity/ldap/configuration",
 
   IDP_OPENID_CONFIGURATIONS: "/identity/idp/openid/configurations",
   IDP_OPENID_CONFIGURATIONS_VIEW:
@@ -448,14 +446,6 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.KMS_IMPORT_KEY,
   ],
   [IAM_PAGES.IDP_LDAP_CONFIGURATIONS]: [
-    IAM_SCOPES.ADMIN_ALL_ACTIONS,
-    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
-  ],
-  [IAM_PAGES.IDP_LDAP_CONFIGURATIONS_ADD]: [
-    IAM_SCOPES.ADMIN_ALL_ACTIONS,
-    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
-  ],
-  [IAM_PAGES.IDP_LDAP_CONFIGURATIONS_VIEW]: [
     IAM_SCOPES.ADMIN_ALL_ACTIONS,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
   ],
