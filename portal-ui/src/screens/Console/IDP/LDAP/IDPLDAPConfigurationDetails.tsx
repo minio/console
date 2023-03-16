@@ -186,15 +186,9 @@ const IDPLDAPConfigurationDetails = () => {
     }
   };
 
-  /*
-    TODO: Review enable / disable functionality for LDAP and enable this module
-
-    const toggleConfiguration = (value: boolean) => {
-    const input: any[] = [];
-
+  const toggleConfiguration = (value: boolean) => {
     const payload = {
       key_values: [
-        ...input,
         {
           key: "enable",
           value: value ? "on" : "off",
@@ -214,7 +208,7 @@ const IDPLDAPConfigurationDetails = () => {
       .catch((err: ErrorResponseHandler) => {
         dispatch(setErrorSnackMessage(err));
       });
-  };*/
+  };
 
   const renderFormField = (key: string, value: any) => {
     switch (value.type) {
@@ -281,7 +275,7 @@ const IDPLDAPConfigurationDetails = () => {
             { label: "Configuration" },
             {
               label: "Entities",
-              disabled: !hasConfiguration,
+              disabled: !hasConfiguration || !isEnabled,
             },
           ]}
         />
@@ -300,13 +294,14 @@ const IDPLDAPConfigurationDetails = () => {
                     label={"Edit Configuration"}
                     disabled={loading}
                   />
-                  {/*<Button
-                  id={"is-configuration-enabled"}
-                  onClick={() => toggleConfiguration(!isEnabled)}
-                  label={isEnabled ? "Disable LDAP" : "Enable LDAP"}
-                  disabled={loadingEnabledSave}
-                  variant={isEnabled ? "secondary" : "regular"}
-                />*/}
+                  {hasConfiguration && (
+                    <Button
+                      id={"is-configuration-enabled"}
+                      onClick={() => toggleConfiguration(!isEnabled)}
+                      label={isEnabled ? "Disable LDAP" : "Enable LDAP"}
+                      variant={isEnabled ? "secondary" : "regular"}
+                    />
+                  )}
                   <Button
                     id={"refresh-idp-config"}
                     onClick={() => setLoading(true)}
