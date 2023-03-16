@@ -388,13 +388,15 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 		sf.HideMenu = true
 		sf.ObjectBrowser = true
 
-		err := ValidateEncodedStyles(overridenStyles)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		if overridenStyles != "" {
+			err := ValidateEncodedStyles(overridenStyles)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 
-		sf.CustomStyleOB = overridenStyles
+			sf.CustomStyleOB = overridenStyles
+		}
 
 		sessionID, err := login(consoleCreds, sf)
 		if err != nil {

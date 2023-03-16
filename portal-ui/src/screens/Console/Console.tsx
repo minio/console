@@ -460,7 +460,7 @@ const Console = ({ classes }: IConsoleProps) => {
 
   const allowedRoutes = routes.filter((route: any) =>
     obOnly
-      ? route.path.includes("buckets")
+      ? route.path.includes("browser")
       : (route.forceDisplay ||
           (route.customPermissionFnc
             ? route.customPermissionFnc()
@@ -488,11 +488,7 @@ const Console = ({ classes }: IConsoleProps) => {
   }, [snackBarMessage]);
 
   let hideMenu = false;
-  if (features?.includes("hide-menu")) {
-    hideMenu = true;
-  } else if (pathname.endsWith("/hop")) {
-    hideMenu = true;
-  } else if (obOnly) {
+  if (features?.includes("hide-menu") || pathname.endsWith("/hop") || obOnly) {
     hideMenu = true;
   }
 
