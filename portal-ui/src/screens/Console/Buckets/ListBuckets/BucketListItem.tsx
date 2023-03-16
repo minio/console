@@ -271,7 +271,7 @@ const BucketListItem = ({
       <Grid item xs={12} className={classes.bucketStats}>
         <Grid container justifyContent={"flex-start"} spacing={4}>
           <Grid item className={classes.bucketIcon}>
-            <Link to={`/buckets/${bucket.name}/browse`}>
+            <Link to={`/buckets/${bucket.name}/admin`}>
               <BucketsIcon />
             </Link>
           </Grid>
