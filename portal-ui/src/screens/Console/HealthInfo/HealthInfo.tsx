@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { Fragment, useEffect, useState } from "react";
-import clsx from "clsx";
+
 import {
   ICloseEvent,
   IMessageEvent,
@@ -72,7 +72,7 @@ const styles = (theme: Theme) =>
       color: "#07193E",
       fontWeight: "bold",
       textAlign: "center",
-      marginBottom: 10,
+      marginBottom: 20,
     },
     progressResult: {
       textAlign: "center",
@@ -94,8 +94,6 @@ const styles = (theme: Theme) =>
 
 interface IHealthInfo {
   classes: any;
-  namespace: string;
-  tenant: string;
 }
 
 const HealthInfo = ({ classes }: IHealthInfo) => {
@@ -104,22 +102,19 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
 
   const message = useSelector((state: AppState) => state.healthInfo.message);
 
-  const clusterRegistered = registeredCluster();
-
   const serverDiagnosticStatus = useSelector(
     (state: AppState) => state.system.serverDiagnosticStatus
   );
   const [startDiagnostic, setStartDiagnostic] = useState(false);
+
   const [downloadDisabled, setDownloadDisabled] = useState(true);
   const [localMessage, setMessage] = useState<string>("");
   const [buttonStartText, setButtonStartText] =
     useState<string>("Start Diagnostic");
   const [title, setTitle] = useState<string>("New Diagnostic");
   const [diagFileContent, setDiagFileContent] = useState<string>("");
-
-  const isDiagnosticComplete =
-    serverDiagnosticStatus === DiagStatSuccess ||
-    serverDiagnosticStatus === DiagStatError;
+  const [subnetResponse, setSubnetResponse] = useState<string>("");
+  const clusterRegistered = registeredCluster();
 
   const download = () => {
     let element = document.createElement("a");
@@ -195,7 +190,6 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
       const c = new W3CWebSocket(
         `${wsProt}://${url.hostname}:${port}${baseUrl}ws/health-info?deadline=1h`
       );
-
       let interval: any | null = null;
       if (c !== null) {
         c.onopen = () => {
@@ -219,6 +213,9 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
           }
           if (m.encoded !== "") {
             setDiagFileContent(m.encoded);
+          }
+          if (m.subnetResponse) {
+            setSubnetResponse(m.subnetResponse);
           }
         };
         c.onerror = (error: Error) => {
@@ -275,38 +272,70 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                 className={classes.progressResult}
               >
                 <div className={classes.localMessage}>{localMessage}</div>
+                <div className={classes.progressResult}>
+                  {" "}
+                  {subnetResponse !== "" &&
+                    !subnetResponse.toLowerCase().includes("error") && (
+                      <Grid item xs={12} className={classes.serversData}>
+                        <strong>
+                          Health report uploaded to Subnet successfully!
+                        </strong>
+                        &nbsp;{" "}
+                        <strong>
+                          See the results on your{" "}
+                          <a href={subnetResponse}>Subnet Dashboard</a>{" "}
+                        </strong>
+                      </Grid>
+                    )}
+                  {(subnetResponse === "" ||
+                    subnetResponse.toLowerCase().includes("error")) &&
+                    serverDiagnosticStatus === DiagStatSuccess && (
+                      <Grid item xs={12} className={classes.serversData}>
+                        <strong>
+                          Something went wrong uploading your Health report to
+                          Subnet.
+                        </strong>
+                        &nbsp;{" "}
+                        <strong>
+                          Log into your{" "}
+                          <a href="https://subnet.min.io">Subnet Account</a> to
+                          manually upload your Health report.
+                        </strong>
+                      </Grid>
+                    )}
+                </div>
                 {serverDiagnosticStatus === DiagStatInProgress ? (
                   <div className={classes.loading}>
                     <Loader style={{ width: 25, height: 25 }} />
                   </div>
                 ) : (
                   <Fragment>
-                    {serverDiagnosticStatus !== DiagStatError &&
-                      !downloadDisabled && (
+                    <Grid container justifyItems={"flex-start"}>
+                      <Grid item xs={6}>
+                        {serverDiagnosticStatus !== DiagStatError &&
+                          !downloadDisabled && (
+                            <Button
+                              id={"download"}
+                              type="submit"
+                              variant="callAction"
+                              onClick={() => download()}
+                              disabled={downloadDisabled}
+                              label={"Download"}
+                            />
+                          )}
+                      </Grid>
+                      <Grid item xs={6}>
                         <Button
-                          id={"download"}
+                          id="start-new-diagnostic"
                           type="submit"
-                          variant="callAction"
-                          onClick={() => download()}
-                          disabled={downloadDisabled}
-                          label={"Download"}
+                          variant={
+                            !clusterRegistered ? "regular" : "callAction"
+                          }
+                          disabled={startDiagnostic}
+                          onClick={startDiagnosticAction}
+                          label={buttonStartText}
                         />
-                      )}
-                    <Grid
-                      item
-                      xs={12}
-                      className={clsx(classes.startDiagnostic, {
-                        [classes.startDiagnosticCenter]: !isDiagnosticComplete,
-                      })}
-                    >
-                      <Button
-                        id="start-new-diagnostic"
-                        type="submit"
-                        variant={!clusterRegistered ? "regular" : "callAction"}
-                        disabled={startDiagnostic}
-                        onClick={startDiagnosticAction}
-                        label={buttonStartText}
-                      />
+                      </Grid>
                     </Grid>
                   </Fragment>
                 )}
@@ -322,7 +351,12 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                 "During the health diagnostics run, all production traffic will be suspended."
               }
               iconComponent={<WarnIcon />}
-              help={<Fragment />}
+              help={
+                <Fragment>
+                  Cluster Health Report will be uploaded to Subnet, and is
+                  viewable from your Subnet Diagnostics dashboard.
+                </Fragment>
+              }
             />
           </Fragment>
         )}

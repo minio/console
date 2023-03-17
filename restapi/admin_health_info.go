@@ -22,11 +22,14 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/klauspost/compress/gzip"
-
+	xhttp "github.com/minio/console/pkg/http"
+	subnet "github.com/minio/console/pkg/subnet"
 	"github.com/minio/madmin-go/v2"
 	"github.com/minio/websocket"
 )
@@ -51,7 +54,6 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 		madmin.HealthDataTypeSysNet,
 		madmin.HealthDataTypeSysProcess,
 	}
-
 	var err error
 	// Fetch info of all servers (cluster or single server)
 	healthInfo, version, err := client.serverHealthInfo(ctx, healthDataTypes, *deadline)
@@ -68,12 +70,19 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 	type messageReport struct {
 		Encoded          string      `json:"encoded"`
 		ServerHealthInfo interface{} `json:"serverHealthInfo"`
+		SubnetResponse   string      `json:"subnetResponse"`
 	}
 
+	subnetResp, err := sendHealthInfoToSubnet(ctx, healthInfo, client)
 	report := messageReport{
 		Encoded:          encodedDiag,
 		ServerHealthInfo: healthInfo,
+		SubnetResponse:   subnetResp,
 	}
+	if err != nil {
+		report.SubnetResponse = fmt.Sprintf("Error: %s", err.Error())
+	}
+
 	message, err := json.Marshal(report)
 	if err != nil {
 		return err
@@ -116,4 +125,36 @@ func getHealthInfoOptionsFromReq(req *http.Request) (*time.Duration, error) {
 		return nil, err
 	}
 	return &deadlineDuration, nil
+}
+
+func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client MinioAdmin) (string, error) {
+	filename := fmt.Sprintf("health_%d.json", time.Now().Unix())
+
+	subnetUploadURL := subnet.UploadURL("health", filename)
+	subnetHTTPClient := &xhttp.Client{Client: GetConsoleHTTPClient("")}
+	subnetTokenConfig, e := GetSubnetKeyFromMinIOConfig(ctx, client)
+	if e != nil {
+		return "", e
+	}
+	apiKey := subnetTokenConfig.APIKey
+	headers := subnet.UploadAuthHeaders(apiKey)
+	resp, e := subnet.UploadFileToSubnet(healthInfo, subnetHTTPClient, filename, subnetUploadURL, headers)
+	if e != nil {
+		return "", e
+	}
+	type SubnetResponse struct {
+		ClusterURL string `json:"cluster_url,omitempty"`
+	}
+
+	var subnetResp SubnetResponse
+	e = json.Unmarshal([]byte(resp), &subnetResp)
+	if e != nil {
+		return "", e
+	}
+	if len(subnetResp.ClusterURL) != 0 {
+		subnetClusterURL := strings.ReplaceAll(subnetResp.ClusterURL, "%2f", "/")
+		return subnetClusterURL, nil
+	}
+
+	return "", ErrSubnetUploadFail
 }

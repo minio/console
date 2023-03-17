@@ -71,6 +71,7 @@ var (
 	ErrEncryptionConfigNotFound         = errors.New("encryption configuration not found")
 	ErrPolicyNotFound                   = errors.New("policy does not exist")
 	ErrLoginNotAllowed                  = errors.New("login not allowed")
+	ErrSubnetUploadFail                 = errors.New("Subnet upload failed")
 )
 
 // ErrorWithContext :

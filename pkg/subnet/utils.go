@@ -18,11 +18,13 @@ package subnet
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 
 	xhttp "github.com/minio/console/pkg/http"
@@ -62,6 +64,62 @@ func subnetAPIKeyURL() string {
 
 func LogWebhookURL() string {
 	return subnetBaseURL() + "/api/logs"
+}
+
+func UploadURL(uploadType string, filename string) string {
+	return fmt.Sprintf("%s/api/%s/upload?filename=%s", subnetBaseURL(), uploadType, filename)
+}
+
+func UploadAuthHeaders(apiKey string) map[string]string {
+	return map[string]string{"x-subnet-api-key": apiKey}
+}
+
+func UploadFileToSubnet(info interface{}, client *xhttp.Client, filename string, reqURL string, headers map[string]string) (string, error) {
+	req, e := subnetUploadReq(info, reqURL, filename)
+	if e != nil {
+		return "", e
+	}
+	resp, e := subnetReqDo(client, req, headers)
+	return resp, e
+}
+
+func subnetUploadReq(info interface{}, url string, filename string) (*http.Request, error) {
+	var body bytes.Buffer
+	writer := multipart.NewWriter(&body)
+	zipWriter := gzip.NewWriter(&body)
+	version := "3"
+	enc := json.NewEncoder(zipWriter)
+
+	header := struct {
+		Version string `json:"version"`
+	}{Version: version}
+
+	if e := enc.Encode(header); e != nil {
+		return nil, e
+	}
+
+	if e := enc.Encode(info); e != nil {
+		return nil, e
+	}
+	zipWriter.Close()
+	temp := body
+	part, e := writer.CreateFormFile("file", filename)
+	if e != nil {
+		return nil, e
+	}
+	if _, e = io.Copy(part, &temp); e != nil {
+		return nil, e
+	}
+
+	writer.Close()
+
+	r, e := http.NewRequest(http.MethodPost, url, &body)
+	if e != nil {
+		return nil, e
+	}
+	r.Header.Add("Content-Type", writer.FormDataContentType())
+
+	return r, nil
 }
 
 func GenerateRegToken(clusterRegInfo mc.ClusterRegistrationInfo) (string, error) {
