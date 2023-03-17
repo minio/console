@@ -201,8 +201,10 @@ paths:
           schema:
             $ref: "#/definitions/makeBucketRequest"
       responses:
-        201:
+        200:
           description: A successful response.
+          schema:
+            $ref: "#/definitions/makeBucketsResponse"
         default:
           description: Generic error response.
           schema:
@@ -4290,6 +4292,13 @@ definitions:
         type: string
       destination_bucket:
         type: string
+
+  makeBucketsResponse:
+    type: object
+    properties:
+      bucketName:
+        type: string
+
   listBucketEventsResponse:
     type: object
     properties:

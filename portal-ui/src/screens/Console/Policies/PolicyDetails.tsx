@@ -22,7 +22,9 @@ import {
   IAMPoliciesIcon,
   RefreshIcon,
   SearchIcon,
+  SectionTitle,
   TrashIcon,
+  Grid,
 } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -34,7 +36,6 @@ import {
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
@@ -425,7 +426,9 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
             tabConfig: { label: "Summary", disabled: !displayPolicy },
             content: (
               <Fragment>
-                <div className={classes.sectionTitle}>Policy Summary</div>
+                <SectionTitle separator sx={{ marginBottom: 15 }}>
+                  Policy Summary
+                </SectionTitle>
                 <Paper className={classes.paperContainer}>
                   <PolicyView policyStatements={policyStatements} />
                 </Paper>
@@ -439,7 +442,9 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
             },
             content: (
               <Fragment>
-                <div className={classes.sectionTitle}>Users</div>
+                <SectionTitle separator sx={{ marginBottom: 15 }}>
+                  Users
+                </SectionTitle>
                 <Grid container>
                   {userList.length > 0 && (
                     <Grid item xs={12} className={classes.actionsTray}>
@@ -482,7 +487,9 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
             },
             content: (
               <Fragment>
-                <div className={classes.sectionTitle}>Groups</div>
+                <SectionTitle separator sx={{ marginBottom: 15 }}>
+                  Groups
+                </SectionTitle>
                 <Grid container>
                   {groupList.length > 0 && (
                     <Grid item xs={12} className={classes.actionsTray}>
@@ -522,7 +529,9 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
             tabConfig: { label: "Raw Policy", disabled: !displayPolicy },
             content: (
               <Fragment>
-                <div className={classes.sectionTitle}>Raw Policy</div>
+                <SectionTitle separator sx={{ marginBottom: 15 }}>
+                  Raw Policy
+                </SectionTitle>
                 <form
                   noValidate
                   autoComplete="off"
