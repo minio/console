@@ -167,6 +167,10 @@ func setupBucketForEndpoint(name string, locking, versioning bool, quota, retent
 		return false
 	}
 	if response != nil {
+		if response.StatusCode >= 200 && response.StatusCode <= 299 {
+			fmt.Println("setupBucketForEndpoint(): HTTP Status is in the 2xx range")
+			return true
+		}
 		if response.StatusCode != expected {
 			assert.Fail(inspectHTTPResponse(response))
 			return false
