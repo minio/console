@@ -29,17 +29,14 @@ import {
   SelectAllIcon,
   SelectMultipleIcon,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { Bucket, BucketList } from "../types";
 import {
+  actionsTray,
   containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
+
 import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import { SecureComponent } from "../../../../common/SecureComponent";
@@ -65,33 +62,39 @@ import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import AButton from "../../Common/AButton/AButton";
 import { setLoadingObjects } from "../../ObjectBrowser/objectBrowserSlice";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import makeStyles from "@mui/styles/makeStyles";
+import { api } from "../../../../api";
+import {
+  Bucket,
+  Error,
+  HttpResponse,
+  ListBucketsResponse,
+} from "../../../../api/consoleApi";
+import { errorToHandler } from "../../../../api/errors";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    bucketList: {
-      marginTop: 25,
-      height: "calc(100vh - 211px)",
-      "&.isEmbedded": {
-        height: "calc(100vh - 128px)",
-      },
+const useStyles = makeStyles((theme: Theme) => ({
+  bucketList: {
+    marginTop: 25,
+    height: "calc(100vh - 211px)",
+    "&.isEmbedded": {
+      height: "calc(100vh - 128px)",
     },
-    searchField: {
-      ...searchField.searchField,
-      minWidth: 380,
-      "@media (max-width: 900px)": {
-        minWidth: 220,
-      },
+  },
+  searchField: {
+    ...searchField.searchField,
+    minWidth: 380,
+    "@media (max-width: 900px)": {
+      minWidth: 220,
     },
-    ...containerForHeader,
-  });
+  },
+  ...containerForHeader,
+  ...actionsTray,
+}));
 
-interface IListBucketsProps {
-  classes: any;
-}
-
-const ListBuckets = ({ classes }: IListBucketsProps) => {
+const ListBuckets = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const classes = useStyles();
 
   const [records, setRecords] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -110,16 +113,17 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
     if (loading) {
       const fetchRecords = () => {
         setLoading(true);
-        api
-          .invoke("GET", `/api/v1/buckets`)
-          .then((res: BucketList) => {
-            setLoading(false);
-            setRecords(res.buckets || []);
-            dispatch(setLoadingObjects(true));
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setLoading(false);
-            dispatch(setErrorSnackMessage(err));
+        api.buckets
+          .listBuckets()
+          .then((res: HttpResponse<ListBucketsResponse, Error>) => {
+            if (res.data) {
+              setLoading(false);
+              setRecords(res.data.buckets || []);
+              dispatch(setLoadingObjects(true));
+            } else if (res.error) {
+              setLoading(false);
+              dispatch(setErrorSnackMessage(errorToHandler(res.error)));
+            }
           });
       };
       fetchRecords();
@@ -483,4 +487,4 @@ const ListBuckets = ({ classes }: IListBucketsProps) => {
   );
 };
 
-export default withStyles(styles)(ListBuckets);
+export default ListBuckets;

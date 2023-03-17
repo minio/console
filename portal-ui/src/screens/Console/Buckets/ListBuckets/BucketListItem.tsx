@@ -18,7 +18,6 @@ import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import { BucketsIcon, ReportedUsageIcon, TotalObjectsIcon } from "mds";
-import { Bucket } from "../types";
 import { Box, Grid, Typography } from "@mui/material";
 import {
   calculateBytes,
@@ -34,6 +33,7 @@ import {
 import { hasPermission } from "../../../../common/SecureComponent";
 import clsx from "clsx";
 import makeStyles from "@mui/styles/makeStyles";
+import { Bucket } from "../../../../api/consoleApi";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -248,7 +248,10 @@ const BucketListItem = ({
                 <Grid container className={classes.bucketInfo}>
                   <Grid item xs={12} sm paddingRight={5}>
                     <Typography variant="body2">
-                      Created: {new Date(bucket.creation_date).toString()}
+                      Created:{" "}
+                      {bucket.creation_date
+                        ? new Date(bucket.creation_date).toString()
+                        : "n/a"}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm>

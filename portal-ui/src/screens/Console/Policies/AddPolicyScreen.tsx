@@ -24,13 +24,14 @@ import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../../src/common/api";
 import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import { emptyPolicy } from "./utils";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { api } from "../../../api";
+import { Error, HttpResponse, Policy } from "../../../api/consoleApi";
 
 const AddPolicyScreen = () => {
   const dispatch = useAppDispatch();
@@ -46,12 +47,12 @@ const AddPolicyScreen = () => {
       return;
     }
     setAddLoading(true);
-    api
-      .invoke("POST", "/api/v1/policies", {
+    api.policies
+      .addPolicy({
         name: policyName,
         policy: policyDefinition,
       })
-      .then((res) => {
+      .then((res: HttpResponse<Policy, Error>) => {
         setAddLoading(false);
         navigate(`${IAM_PAGES.POLICIES}`);
       })

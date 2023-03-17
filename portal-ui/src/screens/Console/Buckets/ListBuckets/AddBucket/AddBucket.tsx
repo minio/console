@@ -20,9 +20,10 @@ import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { BackLink, BucketsIcon, Button, HelpBox, InfoIcon } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
+import {
+  containerForHeader,
+  modalBasic,
+} from "../../../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { k8sScalarUnitsExcluding } from "../../../../../common/utils";
@@ -34,9 +35,6 @@ import {
   selSiteRep,
   setErrorSnackMessage,
 } from "../../../../../systemSlice";
-import { ErrorResponseHandler } from "../../../../../common/types";
-import { BucketList } from "../../types";
-import api from "../../../../../common/api";
 import PageLayout from "../../../Common/Layout/PageLayout";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import FormLayout from "../../../Common/FormLayout";
@@ -65,52 +63,57 @@ import {
 import { hasPermission } from "../../../../../common/SecureComponent";
 import BucketNamingRules from "./BucketNamingRules";
 import PageHeaderWrapper from "../../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { api } from "../../../../../api";
+import {
+  Error,
+  HttpResponse,
+  ListBucketsResponse,
+} from "../../../../../api/consoleApi";
+import { errorToHandler } from "../../../../../api/errors";
+import makeStyles from "@mui/styles/makeStyles";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      marginTop: 24,
-      display: "flex",
-      justifyContent: "flex-end",
-      "& button": {
-        marginLeft: 8,
-      },
+const useStyles = makeStyles((theme: Theme) => ({
+  buttonContainer: {
+    marginTop: 24,
+    display: "flex",
+    justifyContent: "flex-end",
+    "& button": {
+      marginLeft: 8,
     },
-    error: {
-      color: "#b53b4b",
-      border: "1px solid #b53b4b",
-      padding: 8,
-      borderRadius: 3,
+  },
+  error: {
+    color: "#b53b4b",
+    border: "1px solid #b53b4b",
+    padding: 8,
+    borderRadius: 3,
+  },
+  alertVersioning: {
+    border: "#E2E2E2 1px solid",
+    backgroundColor: "#FBFAFA",
+    borderRadius: 3,
+    display: "flex",
+    alignItems: "center",
+    padding: "10px",
+    color: "#767676",
+    "& > .min-icon ": {
+      width: 20,
+      height: 20,
+      marginRight: 10,
     },
-    alertVersioning: {
-      border: "#E2E2E2 1px solid",
-      backgroundColor: "#FBFAFA",
-      borderRadius: 3,
-      display: "flex",
-      alignItems: "center",
-      padding: "10px",
-      color: "#767676",
-      "& > .min-icon ": {
-        width: 20,
-        height: 20,
-        marginRight: 10,
-      },
-    },
-    h6title: {
-      fontWeight: "bold",
-      color: "#000000",
-      fontSize: 20,
-    },
-    ...containerForHeader,
-  });
+  },
+  h6title: {
+    fontWeight: "bold",
+    color: "#000000",
+    fontSize: 20,
+  },
+  ...containerForHeader,
+  ...modalBasic,
+}));
 
-interface IsetProps {
-  classes: any;
-}
-
-const AddBucket = ({ classes }: IsetProps) => {
+const AddBucket = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const classes = useStyles();
 
   const validBucketCharacters = new RegExp(
     `^[a-z0-9][a-z0-9\\.\\-]{1,61}[a-z0-9]$`
@@ -195,19 +198,23 @@ const AddBucket = ({ classes }: IsetProps) => {
     dispatch(setName(""));
     dispatch(setIsDirty(false));
     const fetchRecords = () => {
-      api
-        .invoke("GET", `/api/v1/buckets`)
-        .then((res: BucketList) => {
-          var bucketList: string[] = [];
-          if (res.buckets != null && res.buckets.length > 0) {
-            res.buckets.forEach((bucket) => {
-              bucketList.push(bucket.name);
-            });
+      api.buckets
+        .listBuckets()
+        .then((res: HttpResponse<ListBucketsResponse, Error>) => {
+          if (res.data) {
+            var bucketList: string[] = [];
+            if (res.data.buckets != null && res.data.buckets.length > 0) {
+              res.data.buckets.forEach((bucket) => {
+                bucketList.push(bucket.name);
+              });
+            }
+            setRecords(bucketList);
+          } else if (res.error) {
+            dispatch(setErrorSnackMessage(errorToHandler(res.error)));
           }
-          setRecords(bucketList);
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err)));
         });
     };
     fetchRecords();
@@ -544,4 +551,4 @@ const AddBucket = ({ classes }: IsetProps) => {
   );
 };
 
-export default withStyles(styles)(AddBucket);
+export default AddBucket;

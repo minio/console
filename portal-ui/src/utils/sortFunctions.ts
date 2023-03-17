@@ -14,14 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { Policy } from "../api/consoleApi";
 import { redirectRule } from "../screens/LoginPage/types";
 
 interface userInterface {
   accessKey: string;
-}
-
-interface policyInterface {
-  name: string;
 }
 
 interface policyDetailsInterface {
@@ -39,11 +36,11 @@ export const usersSort = (a: userInterface, b: userInterface) => {
   return 0;
 };
 
-export const policySort = (a: policyInterface, b: policyInterface) => {
-  if (a.name > b.name) {
+export const policySort = (a: Policy, b: Policy) => {
+  if (a.name! > b.name!) {
     return 1;
   }
-  if (a.name < b.name) {
+  if (a.name! < b.name!) {
     return -1;
   }
   // a must be equal to b

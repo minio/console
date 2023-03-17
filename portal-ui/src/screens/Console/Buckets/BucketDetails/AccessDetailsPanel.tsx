@@ -22,7 +22,6 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 import { TabPanel } from "../../../shared/tabs";
-import { Policy } from "../../Policies/types";
 import { User } from "../../Users/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
@@ -41,6 +40,7 @@ import { encodeURLString } from "../../../../common/utils";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
+import { Policy } from "../../../../api/consoleApi";
 
 function a11yProps(index: any) {
   return {
