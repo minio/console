@@ -881,8 +881,11 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful response."
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/makeBucketsResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -7119,6 +7122,14 @@ func init() {
         }
       }
     },
+    "makeBucketsResponse": {
+      "type": "object",
+      "properties": {
+        "bucketName": {
+          "type": "string"
+        }
+      }
+    },
     "metadata": {
       "type": "object",
       "properties": {
@@ -9866,8 +9877,11 @@ func init() {
           }
         ],
         "responses": {
-          "201": {
-            "description": "A successful response."
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/makeBucketsResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -16230,6 +16244,14 @@ func init() {
         },
         "versioning": {
           "type": "boolean"
+        }
+      }
+    },
+    "makeBucketsResponse": {
+      "type": "object",
+      "properties": {
+        "bucketName": {
+          "type": "string"
         }
       }
     },
