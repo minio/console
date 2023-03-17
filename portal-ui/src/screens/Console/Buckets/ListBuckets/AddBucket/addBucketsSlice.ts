@@ -175,7 +175,7 @@ export const addBucketsSlice = createSlice({
       })
       .addCase(addBucketAsync.fulfilled, (state, action) => {
         state.loading = false;
-        state.navigateTo = `/buckets/${action.payload}/browse`;
+        state.navigateTo = `/buckets/${action.payload}/admin`;
       });
   },
 });
