@@ -17,12 +17,10 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { AddIcon, Button, HelpBox, IAMPoliciesIcon } from "mds";
 import { useNavigate } from "react-router-dom";
-import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import { Policy, PolicyList } from "./types";
 
 import {
   actionsTray,
@@ -32,7 +30,6 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import api from "../../../common/api";
 import PageLayout from "../Common/Layout/PageLayout";
 import {
   CONSOLE_UI_RESOURCE,
@@ -57,6 +54,13 @@ import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { api } from "../../../api";
+import {
+  Error,
+  HttpResponse,
+  ListPoliciesResponse,
+  Policy,
+} from "../../../api/consoleApi";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -115,17 +119,17 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
   useEffect(() => {
     if (loading) {
       if (canDisplayPolicies) {
-        api
-          .invoke("GET", `/api/v1/policies`)
-          .then((res: PolicyList) => {
-            const policies = get(res, "policies", []);
+        api.policies
+          .listPolicies()
+          .then((res: HttpResponse<ListPoliciesResponse, Error>) => {
+            const policies = res.data.policies ?? [];
 
             policies.sort((pa, pb) => {
-              if (pa.name > pb.name) {
+              if (pa.name! > pb.name!) {
                 return 1;
               }
 
-              if (pa.name < pb.name) {
+              if (pa.name! < pb.name!) {
                 return -1;
               }
 
@@ -181,7 +185,7 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
   ];
 
   const filteredRecords = records.filter((elementItem) =>
-    elementItem.name.includes(filterPolicies)
+    elementItem.name?.includes(filterPolicies)
   );
 
   return (

@@ -53,6 +53,8 @@ clean-swagger:
 swagger-console:
 	@echo "Generating swagger server code from yaml"
 	@swagger generate server -A console --main-package=management --server-package=restapi --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
+	@echo "Generating typescript api"
+	@npx swagger-typescript-api -p ./swagger.yml -o ./portal-ui/src/api -n consoleApi.ts
 
 
 assets:

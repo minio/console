@@ -14,7 +14,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -38,7 +37,6 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import api from "../../../common/api";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
@@ -75,6 +73,14 @@ import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import {
+  Error,
+  HttpResponse,
+  Policy,
+  ServiceAccounts,
+} from "../../../api/consoleApi";
+import { api } from "../../../api";
+import { IAMPolicy, IAMStatement } from "./types";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -180,8 +186,8 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
     }
     setAddLoading(true);
     if (canEditPolicy) {
-      api
-        .invoke("POST", "/api/v1/policies", {
+      api.policies
+        .addPolicy({
           name: policyName,
           policy: policyDefinition,
         })
@@ -203,13 +209,10 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
     const loadUsersForPolicy = () => {
       if (loadingUsers) {
         if (displayUsers && !ldapIsEnabled) {
-          api
-            .invoke(
-              "GET",
-              `/api/v1/policies/${encodeURLString(policyName)}/users`
-            )
-            .then((result: any) => {
-              setUserList(result);
+          api.policies
+            .listUsersForPolicy(encodeURLString(policyName))
+            .then((result: HttpResponse<ServiceAccounts, Error>) => {
+              setUserList(result.data ?? []);
               setLoadingUsers(false);
             })
             .catch((err: ErrorResponseHandler) => {
@@ -225,13 +228,10 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
     const loadGroupsForPolicy = () => {
       if (loadingGroups) {
         if (displayGroups && !ldapIsEnabled) {
-          api
-            .invoke(
-              "GET",
-              `/api/v1/policies/${encodeURLString(policyName)}/groups`
-            )
-            .then((result: any) => {
-              setGroupList(result);
+          api.policies
+            .listGroupsForPolicy(encodeURLString(policyName))
+            .then((result: HttpResponse<ServiceAccounts, Error>) => {
+              setGroupList(result.data ?? []);
               setLoadingGroups(false);
             })
             .catch((err: ErrorResponseHandler) => {
@@ -246,17 +246,17 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
     const loadPolicyDetails = () => {
       if (loadingPolicy) {
         if (displayPolicy) {
-          api
-            .invoke("GET", `/api/v1/policy/${encodeURLString(policyName)}`)
-            .then((result: any) => {
-              if (result) {
-                setPolicy(result);
+          api.policy
+            .policyInfo(encodeURLString(policyName))
+            .then((result: HttpResponse<Policy, Error>) => {
+              if (result.data) {
+                setPolicy(result.data);
                 setPolicyDefinition(
                   result
-                    ? JSON.stringify(JSON.parse(result.policy), null, 4)
+                    ? JSON.stringify(JSON.parse(result.data?.policy!), null, 4)
                     : ""
                 );
-                const pol: IAMPolicy = JSON.parse(result.policy);
+                const pol: IAMPolicy = JSON.parse(result.data?.policy!);
                 setPolicyStatements(pol.Statement);
               }
               setLoadingPolicy(false);

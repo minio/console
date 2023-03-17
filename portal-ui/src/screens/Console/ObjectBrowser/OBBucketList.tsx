@@ -22,14 +22,11 @@ import { BucketsIcon, Button, HelpBox, RefreshIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { Bucket, BucketList } from "../Buckets/types";
 import {
   actionsTray,
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
 
 import { SecureComponent } from "../../../common/SecureComponent";
 import {
@@ -48,11 +45,19 @@ import { selFeatures } from "../consoleSlice";
 import AutoColorIcon from "../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import AButton from "../Common/AButton/AButton";
-import { setLoadingObjects } from "../ObjectBrowser/objectBrowserSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { niceBytesInt } from "../../../common/utils";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import {
+  Bucket,
+  HttpResponse,
+  ListBucketsResponse,
+  Error,
+} from "../../../api/consoleApi";
+import { api } from "../../../api";
+import { errorToHandler } from "../../../api/errors";
+import { setLoadingObjects } from "./objectBrowserSlice";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -91,16 +96,18 @@ const OBListBuckets = () => {
     if (loading) {
       const fetchRecords = () => {
         setLoading(true);
-        api
-          .invoke("GET", `/api/v1/buckets`)
-          .then((res: BucketList) => {
-            setLoading(false);
-            setRecords(res.buckets || []);
-            dispatch(setLoadingObjects(true));
+        api.buckets
+          .listBuckets()
+          .then((res: HttpResponse<ListBucketsResponse, Error>) => {
+            if (res.data) {
+              setLoading(false);
+              setRecords(res.data.buckets || []);
+              dispatch(setLoadingObjects(true));
+            }
           })
-          .catch((err: ErrorResponseHandler) => {
+          .catch((err) => {
             setLoading(false);
-            dispatch(setErrorSnackMessage(err));
+            dispatch(setErrorSnackMessage(errorToHandler(err)));
           });
       };
       fetchRecords();

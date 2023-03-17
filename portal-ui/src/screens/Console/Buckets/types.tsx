@@ -14,21 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface RwAccess {
-  write: boolean;
-  read: boolean;
-}
-
-export interface Bucket {
-  name: string;
-  creation_date: string;
-  size?: number;
-  objects?: number;
-  rw_access?: RwAccess;
-  manage?: boolean;
-  details?: Details;
-}
-
 export interface BucketEncryptionInfo {
   algorithm: string;
   kmsMasterKeyID: string;
@@ -50,11 +35,6 @@ export interface BucketInfo {
   size?: number;
 }
 
-export interface BucketList {
-  buckets: Bucket[];
-  total: number;
-}
-
 export interface BucketEvent {
   id: string;
   arn: string;
@@ -66,11 +46,6 @@ export interface BucketEvent {
 export interface BucketEventList {
   events: BucketEvent[];
   total: number;
-}
-
-export interface BucketPolicy {
-  name: string;
-  body: string;
 }
 
 export interface ArnList {
@@ -90,10 +65,6 @@ export interface BucketVersioningInfo {
 
 export interface BucketObjectLocking {
   object_locking_enabled: boolean;
-}
-
-export interface BucketReplicationRuleDeleteMarker {
-  status: string;
 }
 
 export interface BucketReplicationDestination {
@@ -124,26 +95,6 @@ export interface BucketQuota {
   type: string;
 }
 
-export interface QuotaRequest {
-  enabled: boolean;
-  quota_type: string;
-  amount: number;
-}
-
-export interface RetentionRequest {
-  mode: string;
-  unit: string;
-  validity: number;
-}
-
-export interface MakeBucketRequest {
-  name: string;
-  versioning: boolean;
-  locking: boolean;
-  quota?: QuotaRequest;
-  retention?: RetentionRequest;
-}
-
 export interface ChangePasswordRequest {
   current_secret_key: string;
   new_secret_key: string;
@@ -152,27 +103,6 @@ export interface ChangePasswordRequest {
 export interface ChangeUserPasswordRequest {
   selectedUser: string;
   newSecretKey: string;
-}
-
-export interface IRemoteBucket {
-  name: string;
-  accessKey: string;
-  secretKey: string;
-  sourceBucket: string;
-  targetURL: string;
-  targetBucket: string;
-  remoteARN: string;
-  status: string;
-  service: string;
-}
-
-export interface PermissionAction {
-  id: string;
-  can: boolean;
-}
-
-export interface HasPermissionResponse {
-  permissions: PermissionAction[];
 }
 
 export interface BulkReplicationResponse {

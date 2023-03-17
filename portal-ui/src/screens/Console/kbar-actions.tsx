@@ -18,7 +18,7 @@ import { Action } from "kbar/lib/types";
 import { BucketsIcon } from "mds";
 import { validRoutes } from "./valid-routes";
 import { IAM_PAGES } from "../../common/SecureComponent/permissions";
-import { Bucket } from "./Buckets/types";
+import { Bucket } from "../../api/consoleApi";
 
 export const routesAsKbarActions = (
   features: string[] | null,

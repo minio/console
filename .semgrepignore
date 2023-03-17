@@ -31,3 +31,5 @@ tests/
 *.code-workspace
 *~
 .eslintcache
+
+consoleApi.ts

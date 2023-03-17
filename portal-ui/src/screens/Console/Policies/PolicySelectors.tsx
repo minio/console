@@ -28,16 +28,20 @@ import {
   selectorsCommon,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
-import { PolicyList } from "./types";
 
 import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SearchBox from "../Common/SearchBox";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "../Users/AddUsersSlice";
 import { useSelector } from "react-redux";
+import { api } from "../../../api";
+import {
+  HttpResponse,
+  ListPoliciesResponse,
+  Error,
+} from "../../../api/consoleApi";
 
 interface ISelectPolicyProps {
   classes: any;
@@ -90,10 +94,10 @@ const PolicySelectors = ({ classes, noTitle = false }: ISelectPolicyProps) => {
   const fetchPolicies = useCallback(() => {
     isLoading(true);
 
-    api
-      .invoke("GET", `/api/v1/policies?limit=1000`)
-      .then((res: PolicyList) => {
-        const policies = res.policies === null ? [] : res.policies;
+    api.policies
+      .listPolicies()
+      .then((res: HttpResponse<ListPoliciesResponse, Error>) => {
+        const policies = res.data.policies ?? [];
         isLoading(false);
         setRecords(policies.sort(policySort));
       })

@@ -36,9 +36,14 @@ import { routesAsKbarActions } from "./kbar-actions";
 import { Box } from "@mui/material";
 import { MenuExpandedIcon } from "mds";
 import { useSelector } from "react-redux";
-import useApi from "./Common/Hooks/useApi";
-import { Bucket, BucketList } from "./Buckets/types";
 import { selFeatures } from "./consoleSlice";
+import {
+  Bucket,
+  Error,
+  HttpResponse,
+  ListBucketsResponse,
+} from "../../api/consoleApi";
+import { api } from "../../api";
 
 const useStyles = makeStyles((theme: Theme) => ({
   resultItem: {
@@ -131,15 +136,18 @@ const CommandBar = () => {
 
   const [buckets, setBuckets] = useState<Bucket[]>([]);
 
-  const [, invokeListBucketsApi] = useApi(
-    (res: BucketList) => {
-      setBuckets(res.buckets);
-    },
-    () => {}
-  );
+  const invokeListBucketsApi = () => {
+    api.buckets
+      .listBuckets()
+      .then((res: HttpResponse<ListBucketsResponse, Error>) => {
+        if (res.data !== undefined) {
+          setBuckets(res.data.buckets || []);
+        }
+      });
+  };
 
   const fetchBuckets = useCallback(() => {
-    invokeListBucketsApi("GET", `/api/v1/buckets`);
+    invokeListBucketsApi();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

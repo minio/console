@@ -13,25 +13,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
-import { IAMStatement } from "./types";
+import React, { Fragment, useState } from "react";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import SearchBox from "../Common/SearchBox";
 import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
 import { searchField } from "../Common/FormComponents/common/styleLibrary";
-import withStyles from "@mui/styles/withStyles";
 import { DisabledIcon, EnabledIcon } from "mds";
 import { STATUS_COLORS } from "../Dashboard/BasicDashboard/Utils";
+import makeStyles from "@mui/styles/makeStyles";
+import { IAMStatement } from "./types";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    searchField: {
-      ...searchField.searchField,
-      maxWidth: 380,
-    },
-  });
+const useStyles = makeStyles((theme: Theme) => ({
+  searchField: {
+    ...searchField.searchField,
+    maxWidth: 380,
+  },
+}));
 
 const rowGridStyle = {
   display: "grid",
@@ -57,11 +55,11 @@ const Highlight = ({ search = "", children = "" }): any => {
 
 const PolicyView = ({
   policyStatements,
-  classes = {},
 }: {
   policyStatements: IAMStatement[];
-  classes?: any;
 }) => {
+  const classes = useStyles();
+
   const [filter, setFilter] = useState<string>("");
 
   return (
@@ -88,104 +86,107 @@ const PolicyView = ({
           />
         </Box>
       </Grid>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          "& .policy-row": {
-            borderBottom: "1px solid #eaeaea",
-          },
-          "& .policy-row:first-child": {
-            borderTop: "1px solid #eaeaea",
-          },
-          "& .policy-row:last-child": {
-            borderBottom: "0px",
-          },
-          paddingTop: "15px",
-          "& mark": {
-            color: "#000000",
-            fontWeight: 500,
-          },
-        }}
-      >
-        {policyStatements.map((stmt, i) => {
-          const effect = stmt.Effect;
-          const isAllow = effect === "Allow";
-          return (
-            <Box
-              className="policy-row"
-              key={`${i}`}
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "1fr",
-                gap: "15px",
-                fontSize: "14px",
-                padding: "10px 0 10px 0",
-                "& .label": {
-                  fontWeight: 600,
-                },
-              }}
-            >
-              <Box sx={rowGridStyle}>
-                <Box className="label">Effect:</Box>
-                <Box
-                  sx={{
-                    display: "flex",
-
-                    alignItems: "center",
-                    "& .min-icon": {
-                      marginRight: "5px",
-                      fill: isAllow ? STATUS_COLORS.GREEN : STATUS_COLORS.RED,
-                      height: "14px",
-                      width: "14px",
-                    },
-                  }}
-                >
-                  {isAllow ? <EnabledIcon /> : <DisabledIcon />}
-                  {effect}
-                </Box>
-              </Box>
-
+      {!policyStatements && <Fragment>Policy has no statements</Fragment>}
+      {policyStatements && (
+        <Grid
+          item
+          xs={12}
+          sx={{
+            "& .policy-row": {
+              borderBottom: "1px solid #eaeaea",
+            },
+            "& .policy-row:first-child": {
+              borderTop: "1px solid #eaeaea",
+            },
+            "& .policy-row:last-child": {
+              borderBottom: "0px",
+            },
+            paddingTop: "15px",
+            "& mark": {
+              color: "#000000",
+              fontWeight: 500,
+            },
+          }}
+        >
+          {policyStatements.map((stmt, i) => {
+            const effect = stmt.Effect;
+            const isAllow = effect === "Allow";
+            return (
               <Box
+                className="policy-row"
+                key={`${i}`}
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: {
-                    sm: "1fr 1fr",
-                    xs: "1fr",
-                  },
+                  gridTemplateColumns: "1fr",
                   gap: "15px",
+                  fontSize: "14px",
+                  padding: "10px 0 10px 0",
+                  "& .label": {
+                    fontWeight: 600,
+                  },
                 }}
               >
                 <Box sx={rowGridStyle}>
-                  <Box className="label">Actions:</Box>
-                  <Box>
-                    {stmt.Action &&
-                      stmt.Action.map((act, actIndex) => (
-                        <div key={`${i}-r-${actIndex}`}>
-                          <Highlight search={filter}>{act}</Highlight>
-                        </div>
-                      ))}
+                  <Box className="label">Effect:</Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+
+                      alignItems: "center",
+                      "& .min-icon": {
+                        marginRight: "5px",
+                        fill: isAllow ? STATUS_COLORS.GREEN : STATUS_COLORS.RED,
+                        height: "14px",
+                        width: "14px",
+                      },
+                    }}
+                  >
+                    {isAllow ? <EnabledIcon /> : <DisabledIcon />}
+                    {effect}
                   </Box>
                 </Box>
-                <Box sx={rowGridStyle}>
-                  <Box className="label">Resources:</Box>
-                  <Box>
-                    {stmt.Resource &&
-                      stmt.Resource.map((res, resIndex) => (
-                        <div key={`${i}-r-${resIndex}`}>
-                          {" "}
-                          <Highlight search={filter}>{res}</Highlight>
-                        </div>
-                      ))}
+
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      sm: "1fr 1fr",
+                      xs: "1fr",
+                    },
+                    gap: "15px",
+                  }}
+                >
+                  <Box sx={rowGridStyle}>
+                    <Box className="label">Actions:</Box>
+                    <Box>
+                      {stmt.Action &&
+                        stmt.Action.map((act, actIndex) => (
+                          <div key={`${i}-r-${actIndex}`}>
+                            <Highlight search={filter}>{act}</Highlight>
+                          </div>
+                        ))}
+                    </Box>
+                  </Box>
+                  <Box sx={rowGridStyle}>
+                    <Box className="label">Resources:</Box>
+                    <Box>
+                      {stmt.Resource &&
+                        stmt.Resource.map((res, resIndex) => (
+                          <div key={`${i}-r-${resIndex}`}>
+                            {" "}
+                            <Highlight search={filter}>{res}</Highlight>
+                          </div>
+                        ))}
+                    </Box>
                   </Box>
                 </Box>
               </Box>
-            </Box>
-          );
-        })}
-      </Grid>
+            );
+          })}
+        </Grid>
+      )}
     </Grid>
   );
 };
 
-export default withStyles(styles)(PolicyView);
+export default PolicyView;
