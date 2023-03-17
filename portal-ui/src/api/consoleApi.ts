@@ -430,6 +430,10 @@ export interface AddBucketReplication {
   destination_bucket?: string;
 }
 
+export interface MakeBucketsResponse {
+  bucketName?: string;
+}
+
 export interface ListBucketEventsResponse {
   events?: NotificationConfig[];
   /**
@@ -1927,12 +1931,13 @@ export class Api<
      * @secure
      */
     makeBucket: (body: MakeBucketRequest, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<MakeBucketsResponse, Error>({
         path: `/buckets`,
         method: "POST",
         body: body,
         secure: true,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 

@@ -752,7 +752,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	status := "enabled"
 
 	// 1. Create bucket
-	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 200) {
 		return
 	}
 
@@ -839,7 +839,7 @@ func TestGetBucketQuota(t *testing.T) {
 	validBucket := "testgetbucketquota"
 
 	// 1. Create bucket
-	if !setupBucket(validBucket, true, true, nil, nil, assert, 201) {
+	if !setupBucket(validBucket, true, true, nil, nil, assert, 200) {
 		return
 	}
 
@@ -916,7 +916,7 @@ func TestPutBucketQuota(t *testing.T) {
 	validBucket := "testputbucketquota"
 
 	// 1. Create bucket
-	if !setupBucket(validBucket, true, true, nil, nil, assert, 201) {
+	if !setupBucket(validBucket, true, true, nil, nil, assert, 200) {
 		return
 	}
 
@@ -975,7 +975,7 @@ func TestListBucketEvents(t *testing.T) {
 	validBucket := "testlistbucketevents"
 
 	// 1. Create bucket
-	if !setupBucket(validBucket, true, true, nil, nil, assert, 201) {
+	if !setupBucket(validBucket, true, true, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1033,7 +1033,7 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 	validPrefix := encodeBase64(fileName)
 
 	// 1. Create bucket
-	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1140,7 +1140,7 @@ func TestBucketSetPolicy(t *testing.T) {
 	validBucketName := "testbucketsetpolicy"
 
 	// 1. Create bucket
-	if !setupBucket(validBucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(validBucketName, true, true, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1201,7 +1201,7 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 	validPrefix := encodeBase64(fileName)
 
 	// 1. Create bucket
-	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1289,7 +1289,7 @@ func TestPutBucketsTags(t *testing.T) {
 	// 1. Create the bucket
 	assert := assert.New(t)
 	validBucketName := "testputbuckettags1"
-	if !setupBucket(validBucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(validBucketName, false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1347,7 +1347,7 @@ func TestGetsTheMetadataOfAnObject(t *testing.T) {
 	tags["tag"] = "testputobjecttagbucketonetagone"
 
 	// 1. Create the bucket
-	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1418,7 +1418,7 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 	prefix := encodeBase64(fileName)
 
 	// 1. Create bucket
-	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1516,7 +1516,7 @@ func TestShareObjectOnURL(t *testing.T) {
 	versionID := "null"
 
 	// 1. Create the bucket
-	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1590,7 +1590,7 @@ func TestListObjects(t *testing.T) {
 	fileName := "testlistobjecttobucket1.txt"
 
 	// 1. Create the bucket
-	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1638,7 +1638,7 @@ func TestDeleteObject(t *testing.T) {
 	numberOfFiles := 2
 
 	// 1. Create bucket
-	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1704,7 +1704,7 @@ func TestUploadObjectToBucket(t *testing.T) {
 	fileName := "sample.txt"
 
 	// 1. Create the bucket
-	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1739,7 +1739,7 @@ func TestDownloadObject(t *testing.T) {
 	}
 
 	// 1. Create the bucket
-	if !setupBucket(bucketName, true, true, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, true, true, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1801,7 +1801,7 @@ func TestDeleteMultipleObjects(t *testing.T) {
 	fileName := "testdeletemultipleobjs"
 
 	// 1. Create a bucket for this particular test
-	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1878,7 +1878,7 @@ func TestPutObjectTag(t *testing.T) {
 	versionID := "null"
 
 	// 1. Create the bucket
-	if !setupBucket(bucketName, false, false, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -1952,7 +1952,7 @@ func TestBucketRetention(t *testing.T) {
 	retention["mode"] = "compliance"
 	retention["unit"] = "years"
 	retention["validity"] = 2
-	if !setupBucket("setbucketretention1", true, true, nil, retention, assert, 201) {
+	if !setupBucket("setbucketretention1", true, true, nil, retention, assert, 200) {
 		return
 	}
 
@@ -2003,7 +2003,7 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 
 	// 1. Create the bucket
 	assert := assert.New(t)
-	if !setupBucket("bucketinformation2", false, false, nil, nil, assert, 201) {
+	if !setupBucket("bucketinformation2", false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -2048,7 +2048,7 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 
 	// 1. Create the bucket
 	assert := assert.New(t)
-	if !setupBucket("bucketinformation1", false, false, nil, nil, assert, 201) {
+	if !setupBucket("bucketinformation1", false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -2161,7 +2161,7 @@ func TestListBuckets(t *testing.T) {
 	// 1. Create buckets
 	numberOfBuckets := 3
 	for i := 1; i <= numberOfBuckets; i++ {
-		if !setupBucket("testlistbuckets"+strconv.Itoa(i), false, false, nil, nil, assert, 201) {
+		if !setupBucket("testlistbuckets"+strconv.Itoa(i), false, false, nil, nil, assert, 200) {
 			return
 		}
 	}
@@ -2277,7 +2277,7 @@ func TestBucketVersioning(t *testing.T) {
 
 	requestDataBody := bytes.NewReader(requestDataJSON)
 
-	if !setupBucket("test2", true, false, nil, nil, assert, 201) {
+	if !setupBucket("test2", true, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -2314,7 +2314,7 @@ func TestBucketVersioning(t *testing.T) {
 	if distributedSystem {
 		assert.Equal(200, response.StatusCode, "Versioning test Status Code is incorrect - bucket failed to create")
 	} else {
-		assert.NotEqual(201, response.StatusCode, "Versioning test Status Code is incorrect -  versioned bucket created on non-distributed system")
+		assert.NotEqual(200, response.StatusCode, "Versioning test Status Code is incorrect -  versioned bucket created on non-distributed system")
 	}
 
 	request, error := http.NewRequest("DELETE", "http://localhost:9090/api/v1/buckets/test2", requestDataBody)
@@ -2345,7 +2345,7 @@ func TestSetBucketTags(t *testing.T) {
 	}
 
 	// put bucket
-	if !setupBucket("test4", false, false, nil, nil, assert, 201) {
+	if !setupBucket("test4", false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -2412,7 +2412,7 @@ func TestGetBucket(t *testing.T) {
 		Timeout: 2 * time.Second,
 	}
 
-	if !setupBucket("test3", false, false, nil, nil, assert, 201) {
+	if !setupBucket("test3", false, false, nil, nil, assert, 200) {
 		return
 	}
 
@@ -2450,7 +2450,7 @@ func TestAddBucket(t *testing.T) {
 	}{
 		{
 			name:           "Add Bucket with valid name",
-			expectedStatus: 201,
+			expectedStatus: 200,
 			args: args{
 				bucketName: "test1",
 			},
@@ -3050,7 +3050,7 @@ func TestSetBucketVersioning(t *testing.T) {
 	versioning := true
 
 	// 1. Create bucket with versioning as true and locking as false
-	if !setupBucket(bucket, locking, versioning, nil, nil, assert, 201) {
+	if !setupBucket(bucket, locking, versioning, nil, nil, assert, 200) {
 		return
 	}
 
@@ -3133,7 +3133,7 @@ func TestEnableBucketEncryption(t *testing.T) {
 	kmsKeyID := ""
 
 	// 1. Add bucket
-	if !setupBucket(bucketName, locking, versioning, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, locking, versioning, nil, nil, assert, 200) {
 		return
 	}
 
@@ -3402,7 +3402,7 @@ func TestBucketLifeCycle(t *testing.T) {
 	var noncurrentversionExpirationDays int64
 
 	// 1. Add bucket
-	if !setupBucket(bucketName, locking, versioning, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, locking, versioning, nil, nil, assert, 200) {
 		return
 	}
 
@@ -3612,7 +3612,7 @@ func TestAccessRule(t *testing.T) {
 	access := "readonly"
 
 	// 1. Add bucket
-	if !setupBucket(bucketName, locking, versioning, nil, nil, assert, 201) {
+	if !setupBucket(bucketName, locking, versioning, nil, nil, assert, 200) {
 		return
 	}
 
@@ -3856,13 +3856,13 @@ func TestAddRemoteBucket(t *testing.T) {
 	fmt.Println("targetBucket: ", targetBucket)
 
 	// 1. Create bucket
-	if !setupBucket("source", true, true, nil, nil, assert, 201) {
+	if !setupBucket("source", true, true, nil, nil, assert, 200) {
 		return
 	}
 	// 1.1. Create target bucket
 	targetEndpoint := "http://localhost:9092"
 	targetToken := getTokenForEndpoint(targetEndpoint)
-	if !setupBucketForEndpoint(targetBucket, true, true, nil, nil, assert, 201, &targetEndpoint, &targetToken) {
+	if !setupBucketForEndpoint(targetBucket, true, true, nil, nil, assert, 200, &targetEndpoint, &targetToken) {
 		log.Println("bucket already exists")
 	}
 	_, err := SetBucketVersioning(targetBucket, false, &targetURL, &targetToken)
@@ -3915,13 +3915,13 @@ func TestDeleteRemoteBucket(t *testing.T) {
 	fmt.Println("targetBucket: ", targetBucket)
 
 	// 1. Create bucket
-	if !setupBucket("deletesource", true, true, nil, nil, assert, 201) {
+	if !setupBucket("deletesource", true, true, nil, nil, assert, 200) {
 		return
 	}
 	// 1.1. Create target bucket
 	targetEndpoint := "http://localhost:9092"
 	targetToken := getTokenForEndpoint(targetEndpoint)
-	if !setupBucketForEndpoint(targetBucket, true, true, nil, nil, assert, 201, &targetEndpoint, &targetToken) {
+	if !setupBucketForEndpoint(targetBucket, true, true, nil, nil, assert, 200, &targetEndpoint, &targetToken) {
 		log.Println("bucket already exists")
 	}
 	_, err := SetBucketVersioning(targetBucket, false, &targetURL, &targetToken)

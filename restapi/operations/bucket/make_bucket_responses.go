@@ -30,29 +30,49 @@ import (
 	"github.com/minio/console/models"
 )
 
-// MakeBucketCreatedCode is the HTTP code returned for type MakeBucketCreated
-const MakeBucketCreatedCode int = 201
+// MakeBucketOKCode is the HTTP code returned for type MakeBucketOK
+const MakeBucketOKCode int = 200
 
 /*
-MakeBucketCreated A successful response.
+MakeBucketOK A successful response.
 
-swagger:response makeBucketCreated
+swagger:response makeBucketOK
 */
-type MakeBucketCreated struct {
+type MakeBucketOK struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.MakeBucketsResponse `json:"body,omitempty"`
 }
 
-// NewMakeBucketCreated creates MakeBucketCreated with default headers values
-func NewMakeBucketCreated() *MakeBucketCreated {
+// NewMakeBucketOK creates MakeBucketOK with default headers values
+func NewMakeBucketOK() *MakeBucketOK {
 
-	return &MakeBucketCreated{}
+	return &MakeBucketOK{}
+}
+
+// WithPayload adds the payload to the make bucket o k response
+func (o *MakeBucketOK) WithPayload(payload *models.MakeBucketsResponse) *MakeBucketOK {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the make bucket o k response
+func (o *MakeBucketOK) SetPayload(payload *models.MakeBucketsResponse) {
+	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *MakeBucketCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *MakeBucketOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
-	rw.WriteHeader(201)
+	rw.WriteHeader(200)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
 /*
