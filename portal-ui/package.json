@@ -1,6 +1,7 @@
 {
   "name": "portal-ui",
   "version": "0.1.0",
+  "license": "AGPL-3.0-or-later",
   "homepage": ".",
   "private": true,
   "dependencies": {
@@ -106,6 +107,5 @@
     "recharts/**/d3-color": "^3.1.0",
     "websocket/debug": "^3.1.0"
   },
-  "main": "index.js",
-  "license": "MIT"
+  "main": "index.js"
 }
