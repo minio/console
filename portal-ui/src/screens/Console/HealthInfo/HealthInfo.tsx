@@ -23,7 +23,7 @@ import {
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, HelpBox, Loader, WarnIcon } from "mds";
+import { Box, Button, Grid, HelpBox, Loader, WarnIcon } from "mds";
 import {
   DiagStatError,
   DiagStatInProgress,
@@ -44,7 +44,6 @@ import {
   actionsTray,
   containerForHeader,
 } from "../Common/FormComponents/common/styleLibrary";
-import { Grid } from "@mui/material";
 
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import PageLayout from "../Common/Layout/PageLayout";
@@ -54,8 +53,8 @@ import {
   healthInfoResetMessage,
 } from "./healthInfoSlice";
 import RegisterCluster from "../Support/RegisterCluster";
-import { registeredCluster } from "../../../config";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { registeredCluster } from "../../../config";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -310,8 +309,15 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                   </div>
                 ) : (
                   <Fragment>
-                    <Grid container justifyItems={"flex-start"}>
-                      <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 10,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Box>
                         {serverDiagnosticStatus !== DiagStatError &&
                           !downloadDisabled && (
                             <Button
@@ -323,8 +329,8 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                               label={"Download"}
                             />
                           )}
-                      </Grid>
-                      <Grid item xs={6}>
+                      </Box>
+                      <Box>
                         <Button
                           id="start-new-diagnostic"
                           type="submit"
@@ -335,8 +341,8 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                           onClick={startDiagnosticAction}
                           label={buttonStartText}
                         />
-                      </Grid>
-                    </Grid>
+                      </Box>
+                    </Box>
                   </Fragment>
                 )}
               </Grid>
