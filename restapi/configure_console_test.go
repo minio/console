@@ -76,7 +76,7 @@ func Test_parseSubPath(t *testing.T) {
 	}
 }
 
-func Test_getSubPath(t *testing.T) {
+func Test_GetSubPath(t *testing.T) {
 	type args struct {
 		envValue string
 	}
@@ -104,14 +104,14 @@ func Test_getSubPath(t *testing.T) {
 			args: args{
 				envValue: "/subpath/",
 			},
-			want: "/subpath/",
+			want: "/subpath",
 		},
 		{
 			name: "No starting slash",
 			args: args{
 				envValue: "subpath/",
 			},
-			want: "/subpath/",
+			want: "/subpath",
 		},
 	}
 	for _, tt := range tests {
@@ -119,7 +119,7 @@ func Test_getSubPath(t *testing.T) {
 			t.Setenv(SubPath, tt.args.envValue)
 			defer os.Unsetenv(SubPath)
 			subPathOnce = sync.Once{}
-			assert.Equalf(t, tt.want, getSubPath(), "getSubPath()")
+			assert.Equalf(t, tt.want, GetSubPath(), "GetSubPath()")
 		})
 	}
 }

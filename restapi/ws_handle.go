@@ -43,7 +43,7 @@ var upgrader = websocket.Upgrader{
 
 const (
 	// websocket base path
-	wsBasePath = "/ws"
+	wsBasePath = "ws"
 )
 
 // ConsoleWebsocketAdmin interface of a Websocket Client
@@ -139,7 +139,7 @@ func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 // Request should come like ws://<host>:<port>/ws/<api>
 func serveWS(w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	wsPath := strings.TrimPrefix(req.URL.Path, wsBasePath)
+	wsPath := strings.TrimPrefix(req.URL.Path, GetSubPath()+wsBasePath)
 	// Perform authentication before upgrading to a Websocket Connection
 	// authenticate WS connection with Console
 	session, err := auth.GetClaimsFromTokenInRequest(req)

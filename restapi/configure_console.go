@@ -318,17 +318,18 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 func FileServerMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Server", globalAppName) // do not add version information
+		basePath := GetSubPath()
 		switch {
-		case strings.HasPrefix(r.URL.Path, "/ws"):
+		case strings.HasPrefix(r.URL.Path, basePath+"ws"):
 			serveWS(w, r)
-		case strings.HasPrefix(r.URL.Path, "/api"):
+		case strings.HasPrefix(r.URL.Path, basePath+"api"):
 			next.ServeHTTP(w, r)
 		default:
 			buildFs, err := fs.Sub(portal_ui.GetStaticAssets(), "build")
 			if err != nil {
 				panic(err)
 			}
-			wrapHandlerSinglePageApplication(requestBounce(http.FileServer(http.FS(buildFs)))).ServeHTTP(w, r)
+			wrapHandlerSinglePageApplication(requestBounce(http.StripPrefix(basePath, http.FileServer(http.FS(buildFs))))).ServeHTTP(w, r)
 		}
 	})
 }
@@ -354,7 +355,7 @@ func (w *notFoundRedirectRespWr) Write(p []byte) (int, error) {
 
 // handleSPA handles the serving of the React Single Page Application
 func handleSPA(w http.ResponseWriter, r *http.Request) {
-	basePath := "/"
+	basePath := GetSubPath()
 	// For SPA mode we will replace root base with a sub path if configured unless we received cp=y and cpb=/NEW/BASE
 	if v := r.URL.Query().Get("cp"); v == "y" {
 		if base := r.URL.Query().Get("cpb"); base != "" {
@@ -419,11 +420,11 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// if we have a seeded basePath. This should override CONSOLE_SUBPATH every time, thus the `if else`
-	if basePath != "/" {
+	if basePath != GetSubPath() {
 		indexPageBytes = replaceBaseInIndex(indexPageBytes, basePath)
 		// if we have a custom subpath replace it in
-	} else if getSubPath() != "/" {
-		indexPageBytes = replaceBaseInIndex(indexPageBytes, getSubPath())
+	} else if GetSubPath() != "/" {
+		indexPageBytes = replaceBaseInIndex(indexPageBytes, GetSubPath())
 	}
 	indexPageBytes = replaceLicense(indexPageBytes)
 
@@ -440,7 +441,7 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 // wrapHandlerSinglePageApplication handles a http.FileServer returning a 404 and overrides it with index.html
 func wrapHandlerSinglePageApplication(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" {
+		if match, _ := regexp.MatchString(fmt.Sprintf("^%s/?$", GetSubPath()), r.URL.Path); match {
 			handleSPA(w, r)
 			return
 		}
@@ -469,7 +470,7 @@ func configureServer(s *http.Server, _, _ string) {
 	s.ErrorLog = log.New(&nullWriter{}, "", 0)
 }
 
-func getSubPath() string {
+func GetSubPath() string {
 	subPathOnce.Do(func() {
 		subPath = parseSubPath(env.Get(SubPath, ""))
 	})
