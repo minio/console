@@ -56,7 +56,7 @@ const AddPolicyScreen = () => {
         setAddLoading(false);
         navigate(`${IAM_PAGES.POLICIES}`);
       })
-      .catch((err: any) => {
+      .catch((err: HttpResponse<Policy, Error>) => {
         setAddLoading(false);
         dispatch(
           setErrorSnackMessage({
