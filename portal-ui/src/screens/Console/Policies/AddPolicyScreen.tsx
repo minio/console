@@ -56,9 +56,17 @@ const AddPolicyScreen = () => {
         setAddLoading(false);
         navigate(`${IAM_PAGES.POLICIES}`);
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err: any) => {
         setAddLoading(false);
-        dispatch(setErrorSnackMessage(err));
+        dispatch(
+          setErrorSnackMessage({
+            errorMessage: "There was an error creating a Policy ",
+            detailedError:
+              "There was an error creating a Policy: " +
+              (err.error.detailedMessage || "") +
+              " Please check Policy syntax.",
+          })
+        );
       });
   };
 
