@@ -115,7 +115,6 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
             <BackLink
               label={"Object Browser"}
               onClick={() => {
-                console.log("clicke");
                 navigate(IAM_PAGES.OBJECT_BROWSER_VIEW);
               }}
             />

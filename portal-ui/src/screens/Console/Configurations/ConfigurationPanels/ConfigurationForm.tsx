@@ -16,7 +16,7 @@
 
 import React from "react";
 import { useLocation } from "react-router-dom";
-import Grid from "@mui/material/Grid";
+import { Grid } from "mds";
 import { configurationElements } from "../utils";
 import EditConfiguration from "../../EventDestinations/CustomForms/EditConfiguration";
 
