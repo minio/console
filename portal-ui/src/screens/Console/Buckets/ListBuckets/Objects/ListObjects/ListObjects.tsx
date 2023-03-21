@@ -416,7 +416,7 @@ const ListObjects = () => {
 
   // bucket info
   useEffect(() => {
-    if (loadingObjects || (loadingBucket && !anonymousMode)) {
+    if ((loadingObjects || loadingBucket) && !anonymousMode) {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}`)
         .then((res: BucketInfo) => {
