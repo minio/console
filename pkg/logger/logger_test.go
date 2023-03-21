@@ -25,6 +25,8 @@ import (
 )
 
 func testServer(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(w)
+	fmt.Println(r)
 }
 
 func TestInitializeLogger(t *testing.T) {

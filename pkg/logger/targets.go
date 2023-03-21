@@ -98,7 +98,6 @@ func initSystemTargets(cfgMap map[string]http.Config) (tgts []Target, err error)
 			if err = t.Init(); err != nil {
 				return tgts, err
 			}
-			tgts = append(tgts, t)
 		}
 	}
 	return tgts, err
