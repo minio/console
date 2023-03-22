@@ -23,7 +23,6 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../common/types";
 import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
@@ -56,9 +55,17 @@ const AddPolicyScreen = () => {
         setAddLoading(false);
         navigate(`${IAM_PAGES.POLICIES}`);
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err: HttpResponse<Policy, Error>) => {
         setAddLoading(false);
-        dispatch(setErrorSnackMessage(err));
+        dispatch(
+          setErrorSnackMessage({
+            errorMessage: "There was an error creating a Policy ",
+            detailedError:
+              "There was an error creating a Policy: " +
+              (err.error.detailedMessage || "") +
+              ". Please check Policy syntax.",
+          })
+        );
       });
   };
 
