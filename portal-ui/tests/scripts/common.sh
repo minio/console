@@ -86,29 +86,29 @@ create_buckets() {
 }
 
 assign_policies() {
-  mc admin policy attach minio bucketassignpolicy-$TIMESTAMP user=bucketassignpolicy-$TIMESTAMP
-  mc admin policy attach minio bucketread-$TIMESTAMP user=bucketread-$TIMESTAMP
-  mc admin policy attach minio bucketwrite-$TIMESTAMP user=bucketwrite-$TIMESTAMP
-  mc admin policy attach minio bucketreadwrite-$TIMESTAMP user=bucketreadwrite-$TIMESTAMP
-  mc admin policy attach minio bucketreadwrite-$TIMESTAMP user=bucketobjecttags-$TIMESTAMP
-  mc admin policy attach minio bucketcannottag-$TIMESTAMP user=bucketcannottag-$TIMESTAMP
-  mc admin policy attach minio bucketspecific-$TIMESTAMP user=bucketspecific-$TIMESTAMP
-  mc admin policy attach minio dashboard-$TIMESTAMP user=dashboard-$TIMESTAMP
-  mc admin policy attach minio diagnostics-$TIMESTAMP user=diagnostics-$TIMESTAMP
-  mc admin policy attach minio groups-$TIMESTAMP user=groups-$TIMESTAMP
-  mc admin policy attach minio heal-$TIMESTAMP user=heal-$TIMESTAMP
-  mc admin policy attach minio iampolicies-$TIMESTAMP user=iampolicies-$TIMESTAMP
-  mc admin policy attach minio logs-$TIMESTAMP user=logs-$TIMESTAMP
-  mc admin policy attach minio notificationendpoints-$TIMESTAMP user=notificationendpoints-$TIMESTAMP
-  mc admin policy attach minio settings-$TIMESTAMP user=settings-$TIMESTAMP
-  mc admin policy attach minio tiers-$TIMESTAMP user=tiers-$TIMESTAMP
-  mc admin policy attach minio trace-$TIMESTAMP user=trace-$TIMESTAMP
-  mc admin policy attach minio users-$TIMESTAMP user=users-$TIMESTAMP
-  mc admin policy attach minio watch-$TIMESTAMP user=watch-$TIMESTAMP
-  mc admin policy attach minio bucketwriteprefixonlypolicy-$TIMESTAMP user=bucketwriteprefixonlypolicy-$TIMESTAMP
-  mc admin policy attach minio inspect-allowed-$TIMESTAMP user=inspect-allowed-$TIMESTAMP
-  mc admin policy attach minio inspect-not-allowed-$TIMESTAMP user=inspect-not-allowed-$TIMESTAMP
-  mc admin policy attach minio delete-object-with-prefix-$TIMESTAMP user=delete-object-with-prefix-$TIMESTAMP
-  mc admin policy attach minio conditions-policy-$TIMESTAMP user=conditions-$TIMESTAMP
-  mc admin policy attach minio conditions-policy-2-$TIMESTAMP user=conditions-2-$TIMESTAMP
+  mc admin policy attach minio bucketassignpolicy-$TIMESTAMP --user bucketassignpolicy-$TIMESTAMP
+  mc admin policy attach minio bucketread-$TIMESTAMP --user bucketread-$TIMESTAMP
+  mc admin policy attach minio bucketwrite-$TIMESTAMP --user bucketwrite-$TIMESTAMP
+  mc admin policy attach minio bucketreadwrite-$TIMESTAMP --user bucketreadwrite-$TIMESTAMP
+  mc admin policy attach minio bucketreadwrite-$TIMESTAMP --user bucketobjecttags-$TIMESTAMP
+  mc admin policy attach minio bucketcannottag-$TIMESTAMP --user bucketcannottag-$TIMESTAMP
+  mc admin policy attach minio bucketspecific-$TIMESTAMP --user bucketspecific-$TIMESTAMP
+  mc admin policy attach minio dashboard-$TIMESTAMP --user dashboard-$TIMESTAMP
+  mc admin policy attach minio diagnostics-$TIMESTAMP --user diagnostics-$TIMESTAMP
+  mc admin policy attach minio groups-$TIMESTAMP --user groups-$TIMESTAMP
+  mc admin policy attach minio heal-$TIMESTAMP --user heal-$TIMESTAMP
+  mc admin policy attach minio iampolicies-$TIMESTAMP --user iampolicies-$TIMESTAMP
+  mc admin policy attach minio logs-$TIMESTAMP --user logs-$TIMESTAMP
+  mc admin policy attach minio notificationendpoints-$TIMESTAMP --user notificationendpoints-$TIMESTAMP
+  mc admin policy attach minio settings-$TIMESTAMP --user settings-$TIMESTAMP
+  mc admin policy attach minio tiers-$TIMESTAMP --user tiers-$TIMESTAMP
+  mc admin policy attach minio trace-$TIMESTAMP --user trace-$TIMESTAMP
+  mc admin policy attach minio users-$TIMESTAMP --user users-$TIMESTAMP
+  mc admin policy attach minio watch-$TIMESTAMP --user watch-$TIMESTAMP
+  mc admin policy attach minio bucketwriteprefixonlypolicy-$TIMESTAMP --user bucketwriteprefixonlypolicy-$TIMESTAMP
+  mc admin policy attach minio inspect-allowed-$TIMESTAMP --user inspect-allowed-$TIMESTAMP
+  mc admin policy attach minio inspect-not-allowed-$TIMESTAMP --user inspect-not-allowed-$TIMESTAMP
+  mc admin policy attach minio delete-object-with-prefix-$TIMESTAMP --user delete-object-with-prefix-$TIMESTAMP
+  mc admin policy attach minio conditions-policy-$TIMESTAMP --user conditions-$TIMESTAMP
+  mc admin policy attach minio conditions-policy-2-$TIMESTAMP --user conditions-2-$TIMESTAMP
 }
