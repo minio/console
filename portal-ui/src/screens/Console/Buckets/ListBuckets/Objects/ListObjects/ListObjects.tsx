@@ -416,7 +416,7 @@ const ListObjects = () => {
 
   // bucket info
   useEffect(() => {
-    if (loadingBucket && !anonymousMode) {
+    if ((loadingObjects || loadingBucket) && !anonymousMode) {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}`)
         .then((res: BucketInfo) => {
@@ -429,7 +429,7 @@ const ListObjects = () => {
           dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [bucketName, loadingBucket, dispatch, anonymousMode]);
+  }, [bucketName, loadingBucket, dispatch, anonymousMode, loadingObjects]);
 
   // Load retention Config
 
