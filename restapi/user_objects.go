@@ -708,7 +708,7 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params objectApi.
 func deleteObjects(ctx context.Context, client MCClient, bucket string, path string, versionID string, recursive, allVersions, nonCurrentVersionsOnly, bypass bool) error {
 	// Delete All non-Current versions only.
 	if nonCurrentVersionsOnly {
-		return deleteNonCurrentVersions(ctx, client, bucket, path, bypass)
+		return deleteNonCurrentVersions(ctx, client, bypass)
 	}
 
 	if recursive || allVersions {
@@ -785,7 +785,7 @@ func deleteSingleObject(ctx context.Context, client MCClient, bucket, object str
 	return nil
 }
 
-func deleteNonCurrentVersions(ctx context.Context, client MCClient, bucket, path string, isBypass bool) error {
+func deleteNonCurrentVersions(ctx context.Context, client MCClient, isBypass bool) error {
 	lctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 

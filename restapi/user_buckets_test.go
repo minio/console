@@ -73,12 +73,12 @@ func (mc minioClientMock) setBucketPolicyWithContext(ctx context.Context, bucket
 }
 
 // mock function of removeBucket()
-func (mc minioClientMock) removeBucket(ctx context.Context, bucketName string) error {
+func (mc minioClientMock) removeBucket(_ context.Context, bucketName string) error {
 	return minioRemoveBucketMock(bucketName)
 }
 
 // mock function of getBucketPolicy()
-func (mc minioClientMock) getBucketPolicy(ctx context.Context, bucketName string) (string, error) {
+func (mc minioClientMock) getBucketPolicy(_ context.Context, bucketName string) (string, error) {
 	return minioGetBucketPolicyMock(bucketName)
 }
 

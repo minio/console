@@ -164,7 +164,7 @@ func (i infoMsg) json(msg string, args ...interface{}) {
 	fmt.Println(string(logJSON))
 }
 
-func (i infoMsg) quiet(msg string, args ...interface{}) {
+func (i infoMsg) quiet(_ string, _ ...interface{}) {
 }
 
 func (i infoMsg) pretty(msg string, args ...interface{}) {

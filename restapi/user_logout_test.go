@@ -24,6 +24,6 @@ func (ac consoleCredentialsMock) Expire() {
 	// Implementing this method for the consoleCredentials interface
 }
 
-func TestLogout(t *testing.T) {
+func TestLogout(_ *testing.T) {
 	// There's nothing to test right now
 }

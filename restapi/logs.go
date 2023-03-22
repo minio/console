@@ -39,7 +39,7 @@ func logError(msg string, data ...interface{}) {
 	errorLog.Printf(msg+"\n", data...)
 }
 
-func logIf(ctx context.Context, err error, errKind ...interface{}) {
+func logIf(_ context.Context, _ error, _ ...interface{}) {
 }
 
 // globally changeable logger styles

@@ -50,7 +50,7 @@ func (suite *KMSTestSuite) SetupTest() {
 	os.Setenv(ConsoleMinIOServer, suite.server.URL)
 }
 
-func (suite *KMSTestSuite) serverHandler(w http.ResponseWriter, r *http.Request) {
+func (suite *KMSTestSuite) serverHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(400)
 }
 

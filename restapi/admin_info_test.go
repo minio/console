@@ -64,7 +64,7 @@ func (suite *AdminInfoTestSuite) SetupTest() {
 	os.Setenv(ConsoleMinIOServer, suite.server.URL)
 }
 
-func (suite *AdminInfoTestSuite) serverHandler(w http.ResponseWriter, r *http.Request) {
+func (suite *AdminInfoTestSuite) serverHandler(w http.ResponseWriter, _ *http.Request) {
 	if suite.isPrometheusRequest {
 		w.WriteHeader(200)
 	} else {
