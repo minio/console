@@ -46,7 +46,7 @@ func registerReleasesHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
-func GetReleaseListResponse(session *models.Principal, params release.ListReleasesParams) (*models.ReleaseListResponse, *models.Error) {
+func GetReleaseListResponse(_ *models.Principal, params release.ListReleasesParams) (*models.ReleaseListResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	repo := params.Repo

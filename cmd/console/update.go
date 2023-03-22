@@ -96,7 +96,7 @@ var updateCmd = cli.Command{
 	Action: updateInplace,
 }
 
-func updateInplace(ctx *cli.Context) error {
+func updateInplace(_ *cli.Context) error {
 	transport := getUpdateTransport(30 * time.Second)
 	rel, err := getLatestRelease(transport)
 	if err != nil {

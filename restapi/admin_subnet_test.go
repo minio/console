@@ -58,7 +58,7 @@ func (suite *AdminSubnetTestSuite) SetupTest() {
 	os.Setenv(ConsoleMinIOServer, suite.server.URL)
 }
 
-func (suite *AdminSubnetTestSuite) serverHandler(w http.ResponseWriter, r *http.Request) {
+func (suite *AdminSubnetTestSuite) serverHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(400)
 }
 

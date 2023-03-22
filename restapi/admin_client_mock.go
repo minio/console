@@ -92,19 +92,19 @@ func (ac AdminClientMock) serverInfo(ctx context.Context) (madmin.InfoMessage, e
 	return MinioServerInfoMock(ctx)
 }
 
-func (ac AdminClientMock) listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error) {
+func (ac AdminClientMock) listRemoteBuckets(_ context.Context, _, _ string) (targets []madmin.BucketTarget, err error) {
 	return nil, nil
 }
 
-func (ac AdminClientMock) getRemoteBucket(ctx context.Context, bucket, arnType string) (targets *madmin.BucketTarget, err error) {
+func (ac AdminClientMock) getRemoteBucket(_ context.Context, _, _ string) (targets *madmin.BucketTarget, err error) {
 	return nil, nil
 }
 
-func (ac AdminClientMock) removeRemoteBucket(ctx context.Context, bucket, arn string) error {
+func (ac AdminClientMock) removeRemoteBucket(_ context.Context, _, _ string) error {
 	return nil
 }
 
-func (ac AdminClientMock) addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error) {
+func (ac AdminClientMock) addRemoteBucket(_ context.Context, _ string, _ *madmin.BucketTarget) (string, error) {
 	return "", nil
 }
 
@@ -112,35 +112,35 @@ func (ac AdminClientMock) changePassword(ctx context.Context, accessKey, secretK
 	return minioChangePasswordMock(ctx, accessKey, secretKey)
 }
 
-func (ac AdminClientMock) speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error) {
+func (ac AdminClientMock) speedtest(_ context.Context, _ madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error) {
 	return nil, nil
 }
 
-func (ac AdminClientMock) verifyTierStatus(ctx context.Context, tierName string) error {
+func (ac AdminClientMock) verifyTierStatus(_ context.Context, _ string) error {
 	return nil
 }
 
 // mock function helpConfigKV()
-func (ac AdminClientMock) helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error) {
+func (ac AdminClientMock) helpConfigKV(_ context.Context, subSys, key string, envOnly bool) (madmin.Help, error) {
 	return minioHelpConfigKVMock(subSys, key, envOnly)
 }
 
 // mock function getConfigKV()
-func (ac AdminClientMock) getConfigKV(ctx context.Context, name string) ([]byte, error) {
+func (ac AdminClientMock) getConfigKV(_ context.Context, name string) ([]byte, error) {
 	return minioGetConfigKVMock(name)
 }
 
 // mock function setConfigKV()
-func (ac AdminClientMock) setConfigKV(ctx context.Context, kv string) (restart bool, err error) {
+func (ac AdminClientMock) setConfigKV(_ context.Context, kv string) (restart bool, err error) {
 	return minioSetConfigKVMock(kv)
 }
 
 // mock function helpConfigKV()
-func (ac AdminClientMock) helpConfigKVGlobal(ctx context.Context, envOnly bool) (madmin.Help, error) {
+func (ac AdminClientMock) helpConfigKVGlobal(_ context.Context, envOnly bool) (madmin.Help, error) {
 	return minioHelpConfigKVGlobalMock(envOnly)
 }
 
-func (ac AdminClientMock) delConfigKV(ctx context.Context, name string) (err error) {
+func (ac AdminClientMock) delConfigKV(_ context.Context, name string) (err error) {
 	return minioDelConfigKVMock(name)
 }
 
@@ -148,19 +148,19 @@ func (ac AdminClientMock) getLogs(ctx context.Context, node string, lineCnt int,
 	return minioGetLogsMock(ctx, node, lineCnt, logKind)
 }
 
-func (ac AdminClientMock) listGroups(ctx context.Context) ([]string, error) {
+func (ac AdminClientMock) listGroups(_ context.Context) ([]string, error) {
 	return minioListGroupsMock()
 }
 
-func (ac AdminClientMock) updateGroupMembers(ctx context.Context, req madmin.GroupAddRemove) error {
+func (ac AdminClientMock) updateGroupMembers(_ context.Context, req madmin.GroupAddRemove) error {
 	return minioUpdateGroupMembersMock(req)
 }
 
-func (ac AdminClientMock) getGroupDescription(ctx context.Context, group string) (*madmin.GroupDesc, error) {
+func (ac AdminClientMock) getGroupDescription(_ context.Context, group string) (*madmin.GroupDesc, error) {
 	return minioGetGroupDescriptionMock(group)
 }
 
-func (ac AdminClientMock) setGroupStatus(ctx context.Context, group string, status madmin.GroupStatus) error {
+func (ac AdminClientMock) setGroupStatus(_ context.Context, group string, status madmin.GroupStatus) error {
 	return minioSetGroupStatusMock(group, status)
 }
 
@@ -174,133 +174,133 @@ func (ac AdminClientMock) serverHealthInfo(ctx context.Context, healthDataTypes 
 	return minioServerHealthInfoMock(ctx, healthDataTypes, deadline)
 }
 
-func (ac AdminClientMock) addOrUpdateIDPConfig(ctx context.Context, idpType, cfgName, cfgData string, update bool) (restart bool, err error) {
+func (ac AdminClientMock) addOrUpdateIDPConfig(_ context.Context, _, _, _ string, _ bool) (restart bool, err error) {
 	return true, nil
 }
 
-func (ac AdminClientMock) listIDPConfig(ctx context.Context, idpType string) ([]madmin.IDPListItem, error) {
+func (ac AdminClientMock) listIDPConfig(_ context.Context, _ string) ([]madmin.IDPListItem, error) {
 	return []madmin.IDPListItem{{Name: "mock"}}, nil
 }
 
-func (ac AdminClientMock) deleteIDPConfig(ctx context.Context, idpType, cfgName string) (restart bool, err error) {
+func (ac AdminClientMock) deleteIDPConfig(_ context.Context, _, _ string) (restart bool, err error) {
 	return true, nil
 }
 
-func (ac AdminClientMock) getIDPConfig(ctx context.Context, cfgType, cfgName string) (c madmin.IDPConfig, err error) {
+func (ac AdminClientMock) getIDPConfig(_ context.Context, _, _ string) (c madmin.IDPConfig, err error) {
 	return madmin.IDPConfig{Info: []madmin.IDPCfgInfo{{Key: "mock", Value: "mock"}}}, nil
 }
 
-func (ac AdminClientMock) kmsStatus(ctx context.Context) (madmin.KMSStatus, error) {
+func (ac AdminClientMock) kmsStatus(_ context.Context) (madmin.KMSStatus, error) {
 	return madmin.KMSStatus{Name: "name", DefaultKeyID: "key", Endpoints: map[string]madmin.ItemState{"localhost": madmin.ItemState("online")}}, nil
 }
 
-func (ac AdminClientMock) kmsAPIs(ctx context.Context) ([]madmin.KMSAPI, error) {
+func (ac AdminClientMock) kmsAPIs(_ context.Context) ([]madmin.KMSAPI, error) {
 	return []madmin.KMSAPI{{Method: "GET", Path: "/mock"}}, nil
 }
 
-func (ac AdminClientMock) kmsMetrics(ctx context.Context) (*madmin.KMSMetrics, error) {
+func (ac AdminClientMock) kmsMetrics(_ context.Context) (*madmin.KMSMetrics, error) {
 	return &madmin.KMSMetrics{}, nil
 }
 
-func (ac AdminClientMock) kmsVersion(ctx context.Context) (*madmin.KMSVersion, error) {
+func (ac AdminClientMock) kmsVersion(_ context.Context) (*madmin.KMSVersion, error) {
 	return &madmin.KMSVersion{Version: "test-version"}, nil
 }
 
-func (ac AdminClientMock) createKey(ctx context.Context, key string) error {
+func (ac AdminClientMock) createKey(_ context.Context, _ string) error {
 	return nil
 }
 
-func (ac AdminClientMock) importKey(ctx context.Context, key string, content []byte) error {
+func (ac AdminClientMock) importKey(_ context.Context, _ string, _ []byte) error {
 	return nil
 }
 
-func (ac AdminClientMock) listKeys(ctx context.Context, pattern string) ([]madmin.KMSKeyInfo, error) {
+func (ac AdminClientMock) listKeys(_ context.Context, _ string) ([]madmin.KMSKeyInfo, error) {
 	return []madmin.KMSKeyInfo{{
 		Name:      "name",
 		CreatedBy: "by",
 	}}, nil
 }
 
-func (ac AdminClientMock) keyStatus(ctx context.Context, key string) (*madmin.KMSKeyStatus, error) {
+func (ac AdminClientMock) keyStatus(_ context.Context, _ string) (*madmin.KMSKeyStatus, error) {
 	return &madmin.KMSKeyStatus{KeyID: "key"}, nil
 }
 
-func (ac AdminClientMock) deleteKey(ctx context.Context, key string) error {
+func (ac AdminClientMock) deleteKey(_ context.Context, _ string) error {
 	return nil
 }
 
-func (ac AdminClientMock) setKMSPolicy(ctx context.Context, policy string, content []byte) error {
+func (ac AdminClientMock) setKMSPolicy(_ context.Context, _ string, _ []byte) error {
 	return nil
 }
 
-func (ac AdminClientMock) assignPolicy(ctx context.Context, policy string, content []byte) error {
+func (ac AdminClientMock) assignPolicy(_ context.Context, _ string, _ []byte) error {
 	return nil
 }
 
-func (ac AdminClientMock) describePolicy(ctx context.Context, policy string) (*madmin.KMSDescribePolicy, error) {
+func (ac AdminClientMock) describePolicy(_ context.Context, _ string) (*madmin.KMSDescribePolicy, error) {
 	return &madmin.KMSDescribePolicy{Name: "name"}, nil
 }
 
-func (ac AdminClientMock) getKMSPolicy(ctx context.Context, policy string) (*madmin.KMSPolicy, error) {
+func (ac AdminClientMock) getKMSPolicy(_ context.Context, _ string) (*madmin.KMSPolicy, error) {
 	return &madmin.KMSPolicy{Allow: []string{""}, Deny: []string{""}}, nil
 }
 
-func (ac AdminClientMock) listKMSPolicies(ctx context.Context, pattern string) ([]madmin.KMSPolicyInfo, error) {
+func (ac AdminClientMock) listKMSPolicies(_ context.Context, _ string) ([]madmin.KMSPolicyInfo, error) {
 	return []madmin.KMSPolicyInfo{{
 		Name:      "name",
 		CreatedBy: "by",
 	}}, nil
 }
 
-func (ac AdminClientMock) deletePolicy(ctx context.Context, policy string) error {
+func (ac AdminClientMock) deletePolicy(_ context.Context, _ string) error {
 	return nil
 }
 
-func (ac AdminClientMock) describeIdentity(ctx context.Context, identity string) (*madmin.KMSDescribeIdentity, error) {
+func (ac AdminClientMock) describeIdentity(_ context.Context, _ string) (*madmin.KMSDescribeIdentity, error) {
 	return &madmin.KMSDescribeIdentity{}, nil
 }
 
-func (ac AdminClientMock) describeSelfIdentity(ctx context.Context) (*madmin.KMSDescribeSelfIdentity, error) {
+func (ac AdminClientMock) describeSelfIdentity(_ context.Context) (*madmin.KMSDescribeSelfIdentity, error) {
 	return &madmin.KMSDescribeSelfIdentity{
 		Policy: &madmin.KMSPolicy{Allow: []string{}, Deny: []string{}},
 	}, nil
 }
 
-func (ac AdminClientMock) deleteIdentity(ctx context.Context, identity string) error {
+func (ac AdminClientMock) deleteIdentity(_ context.Context, _ string) error {
 	return nil
 }
 
-func (ac AdminClientMock) listIdentities(ctx context.Context, pattern string) ([]madmin.KMSIdentityInfo, error) {
+func (ac AdminClientMock) listIdentities(_ context.Context, _ string) ([]madmin.KMSIdentityInfo, error) {
 	return []madmin.KMSIdentityInfo{{Identity: "identity"}}, nil
 }
 
-func (ac AdminClientMock) listPolicies(ctx context.Context) (map[string]*iampolicy.Policy, error) {
+func (ac AdminClientMock) listPolicies(_ context.Context) (map[string]*iampolicy.Policy, error) {
 	return minioListPoliciesMock()
 }
 
-func (ac AdminClientMock) getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error) {
+func (ac AdminClientMock) getPolicy(_ context.Context, name string) (*iampolicy.Policy, error) {
 	return minioGetPolicyMock(name)
 }
 
-func (ac AdminClientMock) removePolicy(ctx context.Context, name string) error {
+func (ac AdminClientMock) removePolicy(_ context.Context, name string) error {
 	return minioRemovePolicyMock(name)
 }
 
-func (ac AdminClientMock) addPolicy(ctx context.Context, name string, policy *iampolicy.Policy) error {
+func (ac AdminClientMock) addPolicy(_ context.Context, name string, policy *iampolicy.Policy) error {
 	return minioAddPolicyMock(name, policy)
 }
 
-func (ac AdminClientMock) setPolicy(ctx context.Context, policyName, entityName string, isGroup bool) error {
+func (ac AdminClientMock) setPolicy(_ context.Context, policyName, entityName string, isGroup bool) error {
 	return minioSetPolicyMock(policyName, entityName, isGroup)
 }
 
 // mock function for startProfiling()
-func (ac AdminClientMock) startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
+func (ac AdminClientMock) startProfiling(_ context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
 	return minioStartProfiling(profiler)
 }
 
 // mock function for stopProfiling()
-func (ac AdminClientMock) stopProfiling(ctx context.Context) (io.ReadCloser, error) {
+func (ac AdminClientMock) stopProfiling(_ context.Context) (io.ReadCloser, error) {
 	return minioStopProfiling()
 }
 
@@ -349,23 +349,23 @@ func (ac AdminClientMock) serviceTrace(ctx context.Context, threshold int64, s3,
 	return minioServiceTraceMock(ctx, threshold, s3, internal, storage, os, errTrace)
 }
 
-func (ac AdminClientMock) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
+func (ac AdminClientMock) listUsers(_ context.Context) (map[string]madmin.UserInfo, error) {
 	return minioListUsersMock()
 }
 
-func (ac AdminClientMock) addUser(ctx context.Context, accessKey, secretKey string) error {
+func (ac AdminClientMock) addUser(_ context.Context, accessKey, secretKey string) error {
 	return minioAddUserMock(accessKey, secretKey)
 }
 
-func (ac AdminClientMock) removeUser(ctx context.Context, accessKey string) error {
+func (ac AdminClientMock) removeUser(_ context.Context, accessKey string) error {
 	return minioRemoveUserMock(accessKey)
 }
 
-func (ac AdminClientMock) getUserInfo(ctx context.Context, accessKey string) (madmin.UserInfo, error) {
+func (ac AdminClientMock) getUserInfo(_ context.Context, accessKey string) (madmin.UserInfo, error) {
 	return minioGetUserInfoMock(accessKey)
 }
 
-func (ac AdminClientMock) setUserStatus(ctx context.Context, accessKey string, status madmin.AccountStatus) error {
+func (ac AdminClientMock) setUserStatus(_ context.Context, accessKey string, status madmin.AccountStatus) error {
 	return minioSetUserStatusMock(accessKey, status)
 }
 
