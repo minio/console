@@ -5301,6 +5301,12 @@ func init() {
         "backendType": {
           "type": "string"
         },
+        "offlineDrives": {
+          "type": "integer"
+        },
+        "onlineDrives": {
+          "type": "integer"
+        },
         "rrSCParity": {
           "type": "integer"
         },
@@ -14296,6 +14302,12 @@ func init() {
       "properties": {
         "backendType": {
           "type": "string"
+        },
+        "offlineDrives": {
+          "type": "integer"
+        },
+        "onlineDrives": {
+          "type": "integer"
         },
         "rrSCParity": {
           "type": "integer"

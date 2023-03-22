@@ -34,6 +34,8 @@ export interface Backend {
   backendType: string;
   standardSCParity: number;
   rrSCParity: number;
+  onlineDrives: number;
+  offlineDrives: number;
 }
 
 export interface ServerInfo {
