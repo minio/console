@@ -194,7 +194,7 @@ func New(config Config) *Target {
 }
 
 // Send log message 'e' to http target.
-func (h *Target) Send(entry interface{}, errKind string) error {
+func (h *Target) Send(entry interface{}, _ string) error {
 	if atomic.LoadInt32(&h.status) == 0 {
 		// Channel was closed or used before init.
 		return nil

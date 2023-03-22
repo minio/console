@@ -105,6 +105,6 @@ func TestContext_Load(t *testing.T) {
 	}
 }
 
-func Test_logInfo(t *testing.T) {
+func Test_logInfo(_ *testing.T) {
 	logInfo("message", nil)
 }

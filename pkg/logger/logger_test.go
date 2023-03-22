@@ -24,7 +24,7 @@ import (
 	"testing"
 )
 
-func testServer(w http.ResponseWriter, r *http.Request) {
+func testServer(_ http.ResponseWriter, _ *http.Request) {
 }
 
 func TestInitializeLogger(t *testing.T) {

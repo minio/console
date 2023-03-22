@@ -2317,9 +2317,9 @@ func TestBucketVersioning(t *testing.T) {
 		assert.NotEqual(200, response.StatusCode, "Versioning test Status Code is incorrect -  versioned bucket created on non-distributed system")
 	}
 
-	request, error := http.NewRequest("DELETE", "http://localhost:9090/api/v1/buckets/test2", requestDataBody)
-	if error != nil {
-		log.Println(error)
+	request, err = http.NewRequest("DELETE", "http://localhost:9090/api/v1/buckets/test2", requestDataBody)
+	if err != nil {
+		log.Println(err)
 		return
 	}
 

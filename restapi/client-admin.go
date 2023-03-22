@@ -311,7 +311,7 @@ func (ac AdminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) 
 }
 
 // implements madmin.ServiceTrace()
-func (ac AdminClient) serviceTrace(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo {
+func (ac AdminClient) serviceTrace(ctx context.Context, threshold int64, _, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo {
 	thresholdT := time.Duration(threshold)
 
 	tracingOptions := madmin.ServiceTraceOpts{
