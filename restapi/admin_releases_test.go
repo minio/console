@@ -56,7 +56,7 @@ func (suite *ReleasesTestSuite) TearDownSuite() {
 }
 
 func (suite *ReleasesTestSuite) getHandler(
-	w http.ResponseWriter, r *http.Request,
+	w http.ResponseWriter, _ *http.Request,
 ) {
 	if suite.withError {
 		w.WriteHeader(400)

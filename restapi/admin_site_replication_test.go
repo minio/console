@@ -77,9 +77,7 @@ func TestGetSiteReplicationInfo(t *testing.T) {
 	}
 
 	srInfo, err := adminClient.getSiteReplicationInfo(ctx)
-	if err != nil {
-	}
-
+	assert.Nil(err)
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
 }
 
@@ -126,9 +124,7 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 	}
 
 	srInfo, err := adminClient.addSiteReplicationInfo(ctx, sites)
-	if err != nil {
-	}
-
+	assert.Nil(err)
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
 }
 
@@ -164,9 +160,7 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 	}
 
 	srInfo, err := adminClient.editSiteReplicationInfo(ctx, site)
-	if err != nil {
-	}
-
+	assert.Nil(err)
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
 }
 
@@ -201,9 +195,7 @@ func TestDeleteSiteReplicationInfo(t *testing.T) {
 	}
 
 	srInfo, err := adminClient.deleteSiteReplicationInfo(ctx, remReq)
-	if err != nil {
-	}
-
+	assert.Nil(err)
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
 }
 

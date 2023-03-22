@@ -46,7 +46,7 @@ func (c mockConn) close() error {
 	return nil
 }
 
-func TestWSHandle(t *testing.T) {
+func TestWSHandle(_ *testing.T) {
 	// assert := assert.New(t)
 	mockWSConn := mockConn{}
 

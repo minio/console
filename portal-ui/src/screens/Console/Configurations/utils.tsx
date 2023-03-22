@@ -23,6 +23,7 @@ import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import CallToActionIcon from "@mui/icons-material/CallToAction";
 import { IElement, IElementValue, IOverrideEnv, OverrideValue } from "./types";
+import { LogsIcon } from "mds";
 
 export const configurationElements: IElement[] = [
   {
@@ -64,6 +65,17 @@ export const configurationElements: IElement[] = [
     icon: <PendingActionsIcon />,
     configuration_id: "audit_webhook",
     configuration_label: "Audit Webhook",
+  },
+  {
+    icon: (
+      <LogsIcon
+        className={
+          "MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
+        }
+      />
+    ),
+    configuration_id: "audit_kafka",
+    configuration_label: "Audit Kafka",
   },
 ];
 
@@ -279,6 +291,109 @@ export const fieldsConfigurations: any = {
       label: "Auth Token",
       type: "string",
       placeholder: "Enter Auth Token",
+    },
+  ],
+  audit_kafka: [
+    {
+      name: "enable",
+      required: false,
+      label: "Enable",
+      tooltip: "Enable audit_kafka target",
+      type: "on|off",
+      customValueProcess: (origValue: string) => {
+        return origValue === "" || origValue === "on" ? "on" : "off";
+      },
+    },
+    {
+      name: "brokers",
+      required: true,
+      label: "Brokers",
+      type: "csv",
+      placeholder: "Enter Kafka broker",
+    },
+    {
+      name: "topic",
+      required: false,
+      label: "Topic",
+      type: "string",
+      placeholder: "Enter Kafka Topic",
+      tooltip: "Kafka topic used for bucket notifications",
+    },
+    {
+      name: "sasl",
+      required: false,
+      label: "Use SASL",
+      tooltip: "Enable SASL authentication",
+      type: "on|off",
+    },
+    {
+      name: "sasl_username",
+      required: false,
+      label: "SASL Username",
+      type: "string",
+      placeholder: "Enter SASL Username",
+      tooltip: "Username for SASL/PLAIN or SASL/SCRAM authentication",
+    },
+    {
+      name: "sasl_password",
+      required: false,
+      label: "SASL Password",
+      type: "password",
+      placeholder: "Enter SASL Password",
+      tooltip: "Password for SASL/PLAIN or SASL/SCRAM authentication",
+    },
+    {
+      name: "sasl_mechanism",
+      required: false,
+      label: "SASL Mechanism",
+      type: "string",
+      placeholder: "Enter SASL Mechanism",
+      tooltip: "SASL authentication mechanism",
+    },
+    {
+      name: "tls",
+      required: false,
+      label: "Use TLS",
+      tooltip: "Enable TLS",
+      type: "on|off",
+    },
+    {
+      name: "tls_skip_verify",
+      required: false,
+      label: "Skip TLS Verification",
+      tooltip: "Trust server TLS without verification",
+      type: "on|off",
+    },
+    {
+      name: "client_tls_cert",
+      required: false,
+      label: "Client Cert",
+      tooltip: "Client cert for mTLS authentication",
+      type: "string",
+      placeholder: "Enter Client Cert",
+    },
+    {
+      name: "client_tls_key",
+      required: false,
+      label: "Client Cert Key",
+      tooltip: "Client cert key for mTLS authentication",
+      type: "string",
+      placeholder: "Enter Client Cert Key",
+    },
+    {
+      name: "tls_client_auth",
+      required: false,
+      label: "TLS Client Auth",
+      tooltip:
+        "ClientAuth determines the Kafka server's policy for TLS client auth",
+      type: "string",
+    },
+    {
+      name: "version",
+      required: false,
+      label: "Version",
+      tooltip: "Specify the version of the Kafka cluster",
+      type: "string",
     },
   ],
 };
