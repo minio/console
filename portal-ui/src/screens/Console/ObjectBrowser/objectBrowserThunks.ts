@@ -24,6 +24,7 @@ import {
   cancelObjectInList,
   completeObject,
   failObject,
+  setAnonymousAccessOpen,
   setDownloadRenameModal,
   setNewObject,
   setPreviewOpen,
@@ -152,6 +153,20 @@ export const openShare = createAsyncThunk(
         dispatch(setSelectedPreview(fileObject));
         dispatch(setShareFileModalOpen(true));
       }
+    }
+  }
+);
+
+export const openAnonymousAccess = createAsyncThunk(
+  "objectBrowser/openAnonymousAccess",
+  async (_, { getState, dispatch }) => {
+    const state = getState() as AppState;
+
+    if (
+      state.objectBrowser.selectedObjects.length === 1 &&
+      state.objectBrowser.selectedObjects[0].endsWith("/")
+    ) {
+      dispatch(setAnonymousAccessOpen(true));
     }
   }
 );

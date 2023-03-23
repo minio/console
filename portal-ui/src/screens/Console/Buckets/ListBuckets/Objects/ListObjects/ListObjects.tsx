@@ -28,6 +28,7 @@ import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
 import { CSSObject } from "styled-components";
 import {
+  AccessRuleIcon,
   BucketsIcon,
   Button,
   DeleteIcon,
@@ -103,6 +104,7 @@ import {
   openList,
   resetMessages,
   resetRewind,
+  setAnonymousAccessOpen,
   setDownloadRenameModal,
   setLoadingObjects,
   setLoadingRecords,
@@ -133,11 +135,13 @@ import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 import ListObjectsTable from "./ListObjectsTable";
 import {
   downloadSelected,
+  openAnonymousAccess,
   openPreview,
   openShare,
 } from "../../../../ObjectBrowser/objectBrowserThunks";
 
 import FilterObjectsSB from "../../../../ObjectBrowser/FilterObjectsSB";
+import AddAccessRule from "../../../BucketDetails/AddAccessRule";
 
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects"))
@@ -280,6 +284,9 @@ const ListObjects = () => {
   const colorVariants = useSelector(
     (state: AppState) => state.system.overrideStyles
   );
+  const anonymousAccessOpen = useSelector(
+    (state: AppState) => state.objectBrowser.anonymousAccessOpen
+  );
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
   const bucketInfo = useSelector(selBucketDetailsInfo);
@@ -323,6 +330,13 @@ const ListObjects = () => {
   const displayDeleteObject = hasPermission(bucketName, [
     IAM_SCOPES.S3_DELETE_OBJECT,
   ]);
+  const canSetAnonymousAccess = hasPermission(bucketName, [
+    IAM_SCOPES.S3_GET_BUCKET_POLICY,
+    IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+    IAM_SCOPES.S3_GET_ACTIONS,
+    IAM_SCOPES.S3_PUT_ACTIONS,
+  ]);
+
   const selectedObjects = useSelector(
     (state: AppState) => state.objectBrowser.selectedObjects
   );
@@ -782,6 +796,10 @@ const ListObjects = () => {
     dispatch(setDownloadRenameModal(null));
   };
 
+  const closeAddAccessRule = () => {
+    dispatch(setAnonymousAccessOpen(false));
+  };
+
   let createdTime = DateTime.now();
 
   if (bucketInfo?.creation_date) {
@@ -857,6 +875,21 @@ const ListObjects = () => {
     },
     {
       action: () => {
+        dispatch(openAnonymousAccess());
+      },
+      label: "Anonymous Access",
+      disabled:
+        selectedObjects.length !== 1 ||
+        !selectedObjects[0].endsWith("/") ||
+        !canSetAnonymousAccess,
+      icon: <AccessRuleIcon />,
+      tooltip:
+        selectedObjects.length === 1 && selectedObjects[0].endsWith("/")
+          ? "Set Anonymous Access to this Folder"
+          : "Anonymous Access unavailable",
+    },
+    {
+      action: () => {
         setDeleteMultipleOpen(true);
       },
       label: "Delete",
@@ -923,6 +956,14 @@ const ListObjects = () => {
             version_id: downloadRenameModal.version_id,
             size: downloadRenameModal.size.toString(),
           }}
+        />
+      )}
+      {anonymousAccessOpen && (
+        <AddAccessRule
+          onClose={closeAddAccessRule}
+          bucket={bucketName}
+          modalOpen={anonymousAccessOpen}
+          prefilledRoute={`${selectedObjects[0]}*`}
         />
       )}
 

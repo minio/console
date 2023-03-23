@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Grid } from "@mui/material";
 import { AddAccessRuleIcon, Button } from "mds";
@@ -30,7 +30,10 @@ import {
 import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 
 interface IAddAccessRule {
@@ -38,6 +41,7 @@ interface IAddAccessRule {
   modalOpen: boolean;
   onClose: () => any;
   bucket: string;
+  prefilledRoute?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -51,11 +55,18 @@ const AddAccessRule = ({
   onClose,
   classes,
   bucket,
+  prefilledRoute,
 }: IAddAccessRule) => {
   const dispatch = useAppDispatch();
 
   const [prefix, setPrefix] = useState("");
   const [selectedAccess, setSelectedAccess] = useState<any>("readonly");
+
+  useEffect(() => {
+    if (prefilledRoute) {
+      setPrefix(prefilledRoute);
+    }
+  }, [prefilledRoute]);
 
   const accessOptions = [
     { label: "readonly", value: "readonly" },
@@ -75,6 +86,7 @@ const AddAccessRule = ({
         access: selectedAccess,
       })
       .then((res: any) => {
+        dispatch(setSnackBarMessage("Access Rule added successfully"));
         onClose();
       })
       .catch((err: ErrorResponseHandler) => {
@@ -86,7 +98,7 @@ const AddAccessRule = ({
   return (
     <ModalWrapper
       modalOpen={modalOpen}
-      title="Add Access Rule"
+      title="Add Anonymous Access Rule"
       onClose={onClose}
       titleIcon={<AddAccessRuleIcon />}
     >
