@@ -37,6 +37,12 @@ type BackendProperties struct {
 	// backend type
 	BackendType string `json:"backendType,omitempty"`
 
+	// offline drives
+	OfflineDrives int64 `json:"offlineDrives,omitempty"`
+
+	// online drives
+	OnlineDrives int64 `json:"onlineDrives,omitempty"`
+
 	// rr s c parity
 	RrSCParity int64 `json:"rrSCParity,omitempty"`
 

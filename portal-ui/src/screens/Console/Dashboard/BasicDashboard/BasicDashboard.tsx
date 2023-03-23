@@ -201,8 +201,10 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             </BoxItem>
             <BoxItem>
               <StatusCountCard
-                offlineCount={offlineDrives.length}
-                onlineCount={onlineDrives.length}
+                offlineCount={
+                  usage?.backend.offlineDrives || offlineDrives.length
+                }
+                onlineCount={usage?.backend.onlineDrives || onlineDrives.length}
                 label={"Drives"}
                 icon={<DrivesIcon />}
               />

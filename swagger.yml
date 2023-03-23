@@ -4616,6 +4616,10 @@ definitions:
         type: integer
       standardSCParity:
         type: integer
+      onlineDrives:
+        type: integer
+      offlineDrives:
+        type: integer    
   arnsResponse:
     type: object
     properties:

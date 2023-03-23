@@ -609,6 +609,8 @@ export interface BackendProperties {
   backendType?: string;
   rrSCParity?: number;
   standardSCParity?: number;
+  onlineDrives?: number;
+  offlineDrives?: number;
 }
 
 export interface ArnsResponse {

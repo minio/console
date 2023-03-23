@@ -76,6 +76,8 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 	var backendType string
 	var rrSCParity float64
 	var standardSCParity float64
+	var onlineDrives float64
+	var offlineDrives float64
 
 	if v, success := serverInfo.Backend.(map[string]interface{}); success {
 		bt, ok := v["backendType"]
@@ -89,6 +91,14 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 		sp, ok := v["standardSCParity"]
 		if ok {
 			standardSCParity = sp.(float64)
+		}
+		onDrives, ok := v["onlineDisks"]
+		if ok {
+			onlineDrives = onDrives.(float64)
+		}
+		offDrives, ok := v["offlineDisks"]
+		if ok {
+			offlineDrives = offDrives.(float64)
 		}
 	}
 
@@ -132,8 +142,9 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 		BackendType:      backendType,
 		RrSCParity:       int64(rrSCParity),
 		StandardSCParity: int64(standardSCParity),
+		OnlineDrives:     int64(onlineDrives),
+		OfflineDrives:    int64(offlineDrives),
 	}
-
 	return &UsageInfo{
 		Buckets:    int64(serverInfo.Buckets.Count),
 		Objects:    int64(serverInfo.Objects.Count),
