@@ -67,6 +67,7 @@ const initialState: ObjectBrowserState = {
   previewOpen: false,
   shareFileModalOpen: false,
   isOpeningObjectDetail: false,
+  anonymousAccessOpen: false,
   retentionConfig: {
     mode: "",
     unit: "",
@@ -361,6 +362,9 @@ export const objectBrowserSlice = createSlice({
     setLongFileOpen: (state, action: PayloadAction<boolean>) => {
       state.longFileOpen = action.payload;
     },
+    setAnonymousAccessOpen: (state, action: PayloadAction<boolean>) => {
+      state.anonymousAccessOpen = action.payload;
+    },
   },
 });
 export const {
@@ -407,6 +411,7 @@ export const {
   setRetentionConfig,
   setSelectedBucket,
   setLongFileOpen,
+  setAnonymousAccessOpen,
 } = objectBrowserSlice.actions;
 
 export default objectBrowserSlice.reducer;

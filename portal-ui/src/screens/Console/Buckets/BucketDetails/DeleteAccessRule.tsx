@@ -61,7 +61,7 @@ const DeleteAccessRule = ({
 
   return (
     <ConfirmDialog
-      title={`Delete Access Rule`}
+      title={`Delete Anonymous Access Rule`}
       confirmText={"Delete"}
       isOpen={modalOpen}
       isLoading={deleteLoading}

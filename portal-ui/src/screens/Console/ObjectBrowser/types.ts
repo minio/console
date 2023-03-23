@@ -95,6 +95,7 @@ export interface ObjectBrowserState {
   isOpeningObjectDetail: boolean;
   retentionConfig: IRetentionConfig | null;
   longFileOpen: boolean;
+  anonymousAccessOpen: boolean;
 }
 
 export interface ObjectManager {
