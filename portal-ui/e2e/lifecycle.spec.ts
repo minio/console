@@ -17,11 +17,12 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures/baseFixture";
 import { minioadminFile } from "./consts";
+import { pagePort } from "./consts";
 
 test.use({ storageState: minioadminFile });
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("http://localhost:5005/buckets");
+  await page.goto(pagePort);
 });
 
 test("Test if Object Version selector is present in Lifecycle rule modal", async ({

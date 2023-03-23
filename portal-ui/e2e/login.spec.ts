@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { pagePort } from "./consts";
 
 test("Basic `minioadmin` Login", async ({ page, context }) => {
-  await page.goto("http://localhost:5005");
+  await page.goto(pagePort);
   await page.getByPlaceholder("Username").click();
   await page.getByPlaceholder("Username").fill("minioadmin");
   await page.getByPlaceholder("Password").click();

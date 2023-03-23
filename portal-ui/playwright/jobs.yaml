@@ -40,8 +40,8 @@ jobs:
         run: |
           make verifiers
 
-  ui-assets:
-    name: "React Code Has No Warnings & Prettified"
+  ui-assets-istanbul-coverage:
+    name: "Assets with Istanbul Plugin for coverage"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -59,12 +59,12 @@ jobs:
           cache: "yarn"
           cache-dependency-path: portal-ui/yarn.lock
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        id: assets-cache-istanbul-coverage
+        name: Assets Cache Istanbul Coverage
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
       - name: Install Dependencies
         working-directory: ./portal-ui
         continue-on-error: false
@@ -74,7 +74,7 @@ jobs:
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
-          ./check-warnings.sh
+          ./check-warnings-istanbul-coverage.sh
       - name: Check if Files are Prettified
         working-directory: ./portal-ui
         continue-on-error: false
@@ -122,11 +122,11 @@ jobs:
           pip3 install semgrep
           semgrep --config semgrep.yaml $(pwd)/portal-ui --error
 
-  compile-binary:
-    name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+  compile-binary-istanbul-coverage:
+    name: "Compile Console Binary with Istanbul Plugin for Coverage"
     needs:
       - lint-job
-      - ui-assets
+      - ui-assets-istanbul-coverage
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
@@ -145,18 +145,18 @@ jobs:
           cache: true
         id: go
       - uses: actions/cache@v3
-        name: Console Binary Cache
+        name: Console Binary Cache Istanbul Coverage
         with:
           path: |
             ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
+          key: ${{ runner.os }}-binary-istanbul-coverage-${{ github.run_id }}
       - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
+        id: assets-cache-istanbul-coverage
+        name: Assets Cache Istanbul Coverage
         with:
           path: |
             ./portal-ui/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
+          key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
       - name: Build on ${{ matrix.os }}
         env:
           GO111MODULE: on
@@ -166,7 +166,7 @@ jobs:
 
   playwright:
     needs:
-      - compile-binary
+      - compile-binary-istanbul-coverage
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -193,20 +193,15 @@ jobs:
         run: npx playwright install --with-deps
 
       - uses: actions/cache@v3
-        name: Console Binary Cache
+        name: Console Binary Cache Istanbul Coverage
         with:
           path: |
             ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
+          key: ${{ runner.os }}-binary-istanbul-coverage-${{ github.run_id }}
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
-
-      - name: Start Browser at port 5005
-        run: |
-          echo "yarn playwright"
-          (cd $GITHUB_WORKSPACE/portal-ui; yarn playwright) & (sleep 120) # To start port 5005 with Istanbul Plugin Injected
 
       - name: Run Playwright tests
         run: |
