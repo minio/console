@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Grid } from "@mui/material";
 import {
   ArrowRightIcon,
@@ -201,7 +201,9 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             </BoxItem>
             <BoxItem>
               <StatusCountCard
-                offlineCount={usage?.backend.offlineDrives || offlineDrives.length}
+                offlineCount={
+                  usage?.backend.offlineDrives || offlineDrives.length
+                }
                 onlineCount={usage?.backend.onlineDrives || onlineDrives.length}
                 label={"Drives"}
                 icon={<DrivesIcon />}
