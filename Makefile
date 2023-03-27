@@ -173,7 +173,7 @@ test-sso-integration:
 	@(docker run --name minio-client --network my-net -dit --entrypoint=/bin/sh minio/mc)
 	@(docker exec minio-client mc alias set myminio/ http://minio:9000 minio minio123)
 	@echo "adding policy to Dillon Harper to be able to login:"
-	@(cd sso-integration && docker cp allaccess.json minio-client:/ && docker exec minio-client mc admin policy add myminio "Dillon Harper" allaccess.json)
+	@(cd sso-integration && docker cp allaccess.json minio-client:/ && docker exec minio-client mc admin policy create myminio "Dillon Harper" allaccess.json)
 	@echo "starting bash script"
 	@(env bash $(PWD)/sso-integration/set-sso.sh)
 	@echo "add python module"

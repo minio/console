@@ -107,13 +107,13 @@ EOF
 ```
 
 ```sh
-mc admin policy add myminio/ consoleAdmin admin.json
+mc admin policy create myminio/ consoleAdmin admin.json
 ```
 
 ### 3. Set the policy for the new `console` user
 
 ```sh
-mc admin policy set myminio consoleAdmin user=console
+mc admin policy attach myminio consoleAdmin --user=console
 ```
 
 > NOTE: Additionally, you can create policies to limit the privileges for other `console` users, for example, if you

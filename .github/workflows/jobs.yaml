@@ -22,7 +22,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.19 ]
+        go-version: [ 1.20.x ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -126,7 +126,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -149,7 +149,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
     steps:
       # To build minio image, we need to clone the repository first
       - name: Clone github.com/minio/minio
@@ -184,7 +184,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -225,7 +225,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -249,7 +249,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -296,7 +296,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -342,7 +342,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -389,7 +389,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -429,7 +429,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -469,7 +469,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -509,7 +509,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -549,7 +549,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -589,7 +589,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -634,7 +634,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -679,7 +679,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -727,7 +727,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -758,7 +758,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -788,7 +788,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -819,7 +819,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -850,7 +850,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -881,7 +881,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -918,7 +918,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -958,7 +958,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
 
     steps:
       - name: Check out code
@@ -1048,7 +1048,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
 
     steps:
       - name: Check out code
@@ -1123,7 +1123,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
 
     steps:
       - name: Check out code
@@ -1194,7 +1194,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.19.x ]
+        go-version: [ 1.20.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
