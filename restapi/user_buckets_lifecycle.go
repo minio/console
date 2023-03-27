@@ -231,9 +231,9 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 		return errors.New("no valid lifecycle configuration requested")
 	}
 
-	newRule, err2 := opts.ToILMRule(lfcCfg)
-	if err2.ToGoError() != nil {
-		return err2.ToGoError()
+	newRule, merr := opts.ToILMRule()
+	if merr != nil {
+		return merr.ToGoError()
 	}
 
 	lfcCfg.Rules = append(lfcCfg.Rules, newRule)
