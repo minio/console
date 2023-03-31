@@ -24,7 +24,10 @@ import RegisterHelpBox from "./RegisterHelpBox";
 import { SubnetLoginRequest, SubnetLoginResponse } from "../License/types";
 import api from "../../../common/api";
 import { useAppDispatch } from "../../../store";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setServerNeedsRestart,
+} from "../../../systemSlice";
 import { ErrorResponseHandler } from "../../../common/types";
 import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
 import { Theme } from "@mui/material/styles";
@@ -66,6 +69,7 @@ const ApiKeyRegister = ({ classes, registerEndpoint }: IApiKeyRegister) => {
       .then((resp: SubnetLoginResponse) => {
         setLoading(false);
         if (resp && resp.registered) {
+          dispatch(setServerNeedsRestart(true));
           navigate(IAM_PAGES.LICENSE);
         }
       })
