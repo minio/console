@@ -35,7 +35,10 @@ import {
   SubnetRegisterRequest,
 } from "../License/types";
 import { ErrorResponseHandler } from "../../../common/types";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setServerNeedsRestart,
+} from "../../../systemSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AppState } from "../../../store";
 import { hasPermission } from "../../../common/SecureComponent";
@@ -104,6 +107,7 @@ export const callRegister = createAsyncThunk(
       .invoke("POST", "/api/v1/subnet/register", request)
       .then(() => {
         dispatch(setLoading(false));
+        dispatch(setServerNeedsRestart(true));
         dispatch(resetRegisterForm());
         dispatch(fetchLicenseInfo());
       })

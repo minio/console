@@ -26,7 +26,10 @@ import { useSelector } from "react-redux";
 import CommentBoxWrapper from "../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
 import useApi from "../Common/Hooks/useApi";
 import { fetchLicenseInfo } from "./registerThunks";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setServerNeedsRestart,
+} from "../../../systemSlice";
 
 const OfflineRegistration = () => {
   const dispatch = useAppDispatch();
@@ -47,6 +50,7 @@ const OfflineRegistration = () => {
   const [isSaving, invokeApplyLicenseApi] = useApi(
     () => {
       dispatch(fetchLicenseInfo());
+      dispatch(setServerNeedsRestart(true));
     },
     (err) => {
       dispatch(setErrorSnackMessage(err));
