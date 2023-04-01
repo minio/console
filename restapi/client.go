@@ -361,7 +361,16 @@ func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 				Options:     opts,
 			}
 			consoleSTSWrapper := consoleSTSAssumeRole{stsAssumeRole: stsAssumeRole}
-			return credentials.New(consoleSTSWrapper), nil
+
+			creds := credentials.New(consoleSTSWrapper)
+
+			gtCreds, err := creds.Get()
+
+			if gtCreds.AccessKeyID == "" && gtCreds.SecretAccessKey == "" && gtCreds.SessionToken == "" && err != nil {
+				return nil, ErrInvalidCredentials
+			}
+
+			return creds, nil
 		}
 	}
 }
