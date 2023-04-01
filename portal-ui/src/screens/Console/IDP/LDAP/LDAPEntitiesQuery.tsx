@@ -27,13 +27,15 @@ import {
   InputBox,
   Loader,
   RemoveIcon,
+  SearchIcon,
   SectionTitle,
-  UptimeIcon,
+  TimeIcon,
 } from "mds";
 import PolicySelectors from "../../Policies/PolicySelectors";
 import { useSelector } from "react-redux";
 import { LDAPEntitiesResponse } from "./types";
 import { DateTime } from "luxon";
+import LDAPResultsBlock from "./LDAPResultsBlock";
 
 const LDAPEntitiesQuery = () => {
   const dispatch = useAppDispatch();
@@ -107,90 +109,128 @@ const LDAPEntitiesQuery = () => {
   };
 
   return (
-    <Box sx={{ marginTop: 15, paddingTop: 0 }} withBorders>
+    <Box sx={{ marginTop: 15, paddingTop: 0 }}>
       <Grid container sx={{ marginTop: 5 }}>
         <Grid item sm={12} md={6} lg={5} sx={{ padding: 10, paddingTop: 0 }}>
-          <SectionTitle separator>Query Filters</SectionTitle>
+          <SectionTitle>Query Filters</SectionTitle>
 
-          <Box sx={{ padding: "0 10px" }}>
-            <h4>Users</h4>
-            <Box
-              sx={{
-                overflowY: "auto",
-                minHeight: 220,
-                maxHeight: 250,
-                "& > div > div": {
-                  width: "100%",
-                },
-              }}
-            >
-              {users.map((userDat, index) => {
-                return (
-                  <InputBox
-                    id={`search-user-${index}`}
-                    key={`search-user-${index}`}
-                    value={userDat}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      const usersElements = [...users];
-                      usersElements[index] = e.target.value;
-                      setUsers(usersElements);
-                    }}
-                    overlayIcon={
-                      users.length === index + 1 ? <AddIcon /> : <RemoveIcon />
-                    }
-                    overlayAction={() => {
-                      alterUsersList(users.length === index + 1, index);
-                    }}
-                  />
-                );
-              })}
+          <Box
+            sx={{
+              padding: "0 10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 40,
+            }}
+          >
+            <Box sx={{ padding: "10px 26px" }} withBorders>
+              <Box sx={{ display: "flex" }}>
+                <h4 style={{ margin: 0, marginBottom: 10, fontSize: 14 }}>
+                  Users
+                </h4>
+              </Box>
+              <Box
+                sx={{
+                  overflowY: "auto",
+                  minHeight: 50,
+                  maxHeight: 250,
+                  "& > div > div": {
+                    width: "100%",
+                  },
+                }}
+              >
+                {users.map((userDat, index) => {
+                  return (
+                    <InputBox
+                      id={`search-user-${index}`}
+                      key={`search-user-${index}`}
+                      value={userDat}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const usersElements = [...users];
+                        usersElements[index] = e.target.value;
+                        setUsers(usersElements);
+                      }}
+                      overlayIcon={
+                        users.length === index + 1 ? (
+                          <AddIcon />
+                        ) : (
+                          <RemoveIcon />
+                        )
+                      }
+                      overlayAction={() => {
+                        alterUsersList(users.length === index + 1, index);
+                      }}
+                    />
+                  );
+                })}
+              </Box>
             </Box>
-
-            <h4>Groups</h4>
-            <Box
-              sx={{
-                overflowY: "auto",
-                minHeight: 220,
-                maxHeight: 250,
-                "& > div > div": {
-                  width: "100%",
-                },
-              }}
-            >
-              {groups.map((groupDat, index) => {
-                return (
-                  <InputBox
-                    id={`search-group-${index}`}
-                    key={`search-group-${index}`}
-                    value={groupDat}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      const groupsElements = [...groups];
-                      groupsElements[index] = e.target.value;
-                      setGroups(groupsElements);
-                    }}
-                    overlayIcon={
-                      groups.length === index + 1 ? <AddIcon /> : <RemoveIcon />
-                    }
-                    overlayAction={() => {
-                      alterGroupsList(groups.length === index + 1, index);
-                    }}
-                  />
-                );
-              })}
+            <Box sx={{ padding: "10px 26px" }} withBorders>
+              <h4 style={{ margin: 0, marginBottom: 10, fontSize: 14 }}>
+                Groups
+              </h4>
+              <Box
+                sx={{
+                  overflowY: "auto",
+                  minHeight: 50,
+                  maxHeight: "calc(100vh - 340px)",
+                  "& > div > div": {
+                    width: "100%",
+                  },
+                }}
+              >
+                {groups.map((groupDat, index) => {
+                  return (
+                    <InputBox
+                      id={`search-group-${index}`}
+                      key={`search-group-${index}`}
+                      value={groupDat}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const groupsElements = [...groups];
+                        groupsElements[index] = e.target.value;
+                        setGroups(groupsElements);
+                      }}
+                      overlayIcon={
+                        groups.length === index + 1 ? (
+                          <AddIcon />
+                        ) : (
+                          <RemoveIcon />
+                        )
+                      }
+                      overlayAction={() => {
+                        alterGroupsList(groups.length === index + 1, index);
+                      }}
+                    />
+                  );
+                })}
+              </Box>
             </Box>
-
-            <h4>Policies</h4>
-            <Box
-              sx={{
-                minHeight: 220,
-                maxHeight: "calc(100vh - 740px)",
-              }}
-            >
-              <PolicySelectors selectedPolicy={selectedPolicies} noTitle />
+            <Box sx={{ padding: "10px 26px" }} withBorders>
+              <h4 style={{ margin: 0, marginBottom: 10, fontSize: 14 }}>
+                Policies
+              </h4>
+              <Box
+                sx={{
+                  minHeight: 265,
+                  maxHeight: "calc(100vh - 740px)",
+                }}
+              >
+                <PolicySelectors selectedPolicy={selectedPolicies} noTitle />
+              </Box>
             </Box>
           </Box>
         </Grid>
-        <Grid item sm={12} md={6} lg={7} sx={{ padding: 10, paddingTop: 0 }}>
+        <Grid
+          item
+          sm={12}
+          md={6}
+          lg={7}
+          sx={{
+            padding: 10,
+            paddingTop: 0,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           {loading ? (
             <Box sx={{ textAlign: "center" }}>
               <Loader />
@@ -198,8 +238,6 @@ const LDAPEntitiesQuery = () => {
           ) : (
             <Fragment>
               <SectionTitle
-                separator
-                sx={{ marginBottom: 15 }}
                 actions={
                   <Box
                     sx={{
@@ -211,8 +249,13 @@ const LDAPEntitiesQuery = () => {
                   >
                     {results?.timestamp ? (
                       <Fragment>
-                        <UptimeIcon
-                          style={{ width: 18, height: 18, marginRight: 5 }}
+                        <TimeIcon
+                          style={{
+                            width: 14,
+                            height: 14,
+                            marginRight: 5,
+                            fill: "#BEBFBF",
+                          }}
                         />
                         {DateTime.fromISO(results.timestamp).toFormat(
                           "D HH:mm:ss"
@@ -224,114 +267,30 @@ const LDAPEntitiesQuery = () => {
                   </Box>
                 }
               >
-                Results
+                Query Results
               </SectionTitle>
               {results ? (
-                <Box>
+                <Box
+                  sx={{
+                    backgroundColor: "#FBFAFA",
+                    padding: "8px 22px",
+                    flexGrow: 1,
+                    overflowY: "auto",
+                  }}
+                >
                   {!results.groups && !results.users && !results.policies && (
                     <Box sx={{ textAlign: "center" }}>
                       <h4>No Results Available</h4>
                     </Box>
                   )}
                   {!!results.groups && (
-                    <Box className={"resultElement"}>
-                      <SectionTitle separator sx={{ fontSize: 12 }}>
-                        Group Mappings
-                      </SectionTitle>
-                      <Box sx={{ padding: "0 15px" }}>
-                        {results.groups.map((groupData, index) => {
-                          return (
-                            <Fragment key={`policy-res-${index}`}>
-                              <h4>{groupData.group}</h4>
-                              {groupData.policies && (
-                                <Fragment>
-                                  Policies:
-                                  <ul>
-                                    {groupData.policies.map(
-                                      (policy, index2) => (
-                                        <li key={`policy-group-${index2}`}>
-                                          {policy}
-                                        </li>
-                                      )
-                                    )}
-                                  </ul>
-                                </Fragment>
-                              )}
-                            </Fragment>
-                          );
-                        })}
-                      </Box>
-                    </Box>
+                    <LDAPResultsBlock results={results} entityName={"Group"} />
                   )}
                   {!!results.users && (
-                    <Box className={"resultElement"}>
-                      <SectionTitle separator sx={{ fontSize: 12 }}>
-                        User Mappings
-                      </SectionTitle>
-                      <Box sx={{ padding: "0 15px" }}>
-                        {results.users.map((groupData, index) => {
-                          return (
-                            <Fragment key={`users-res-${index}`}>
-                              <h4>{groupData.user}</h4>
-                              {groupData.policies && (
-                                <Fragment>
-                                  Policies:
-                                  <ul>
-                                    {groupData.policies.map(
-                                      (policy, index2) => (
-                                        <li key={`policy-users-${index2}`}>
-                                          {policy}
-                                        </li>
-                                      )
-                                    )}
-                                  </ul>
-                                </Fragment>
-                              )}
-                            </Fragment>
-                          );
-                        })}
-                      </Box>
-                    </Box>
+                    <LDAPResultsBlock results={results} entityName={"User"} />
                   )}
                   {!!results.policies && (
-                    <Box className={"resultElement"}>
-                      <SectionTitle separator sx={{ fontSize: 12 }}>
-                        Policy Mappings
-                      </SectionTitle>
-                      <Box sx={{ padding: "0 15px" }}>
-                        {results.policies.map((groupData, index) => {
-                          return (
-                            <Fragment key={`policy-map-${index}`}>
-                              <h4>{groupData.policy}</h4>
-                              {groupData.groups && (
-                                <Fragment>
-                                  Groups:
-                                  <ul>
-                                    {groupData.groups.map((group, index2) => (
-                                      <li key={`policy-map-group-${index}`}>
-                                        {group}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </Fragment>
-                              )}
-                              {groupData.users && (
-                                <Fragment>
-                                  Users:
-                                  <ul>
-                                    {groupData.users.map((user, index3) => (
-                                      <li key={`policy-map-user-${index}`}>
-                                        {user}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </Fragment>
-                              )}
-                            </Fragment>
-                          );
-                        })}
-                      </Box>
-                    </Box>
+                    <LDAPResultsBlock results={results} entityName={"Policy"} />
                   )}
                 </Box>
               ) : (
@@ -342,12 +301,22 @@ const LDAPEntitiesQuery = () => {
         </Grid>
       </Grid>
       <Grid container>
-        <Grid item xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            justifyContent: "flex-start",
+            marginTop: 45,
+            padding: "0 20px",
+          }}
+        >
           <Button
             id={"search-entity"}
             type={"button"}
             variant={"callAction"}
             onClick={searchEntities}
+            icon={<SearchIcon />}
           >
             Search
           </Button>
