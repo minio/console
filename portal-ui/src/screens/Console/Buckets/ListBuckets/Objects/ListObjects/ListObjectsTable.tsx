@@ -117,9 +117,13 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
   const selectedObjects = useSelector(
     (state: AppState) => state.objectBrowser.selectedObjects
   );
+  const connectionError = useSelector(
+    (state: AppState) => state.objectBrowser.connectionError
+  );
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
   );
+
   const displayListObjects = hasPermission(bucketName, [
     IAM_SCOPES.S3_LIST_BUCKET,
     IAM_SCOPES.S3_ALL_LIST_BUCKET,
@@ -228,6 +232,21 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
     return elements;
   };
 
+  let errorMessage =
+    !displayListObjects && !anonymousMode
+      ? permissionTooltipHelper(
+          [IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET],
+          "view Objects in this bucket"
+        )
+      : `This location is empty${
+          !rewindEnabled ? ", please try uploading a new file" : ""
+        }`;
+
+  if (connectionError) {
+    errorMessage =
+      "Objects List unavailable. Please review your WebSockets configuration and try again";
+  }
+
   return (
     <TableWrapper
       itemActions={tableActions}
@@ -241,16 +260,7 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
       } ${detailsOpen ? "actionsPanelOpen" : ""}`}
       selectedItems={selectedObjects}
       onSelect={!anonymousMode ? selectListObjects : undefined}
-      customEmptyMessage={
-        !displayListObjects && !anonymousMode
-          ? permissionTooltipHelper(
-              [IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET],
-              "view Objects in this bucket"
-            )
-          : `This location is empty${
-              !rewindEnabled ? ", please try uploading a new file" : ""
-            }`
-      }
+      customEmptyMessage={errorMessage}
       sortConfig={{
         currentSort: currentSortField,
         currentDirection: sortDirection,
