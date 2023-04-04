@@ -36,6 +36,7 @@ const initialState: ObjectBrowserState = {
   objectDetailsOpen: false,
   loadingVersions: true,
   loadingObjectInfo: true,
+  connectionError: false,
   rewind: {
     ...defaultRewind,
   },
@@ -365,6 +366,14 @@ export const objectBrowserSlice = createSlice({
     setAnonymousAccessOpen: (state, action: PayloadAction<boolean>) => {
       state.anonymousAccessOpen = action.payload;
     },
+    errorInConnection: (state, action: PayloadAction<boolean>) => {
+      state.connectionError = action.payload;
+      if (action.payload) {
+        state.loadingObjects = false;
+        state.loadingObjectInfo = false;
+        state.objectDetailsOpen = false;
+      }
+    },
   },
 });
 export const {
@@ -412,6 +421,7 @@ export const {
   setSelectedBucket,
   setLongFileOpen,
   setAnonymousAccessOpen,
+  errorInConnection,
 } = objectBrowserSlice.actions;
 
 export default objectBrowserSlice.reducer;

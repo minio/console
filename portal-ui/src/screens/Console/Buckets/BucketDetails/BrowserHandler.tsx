@@ -26,6 +26,7 @@ import { containerForHeader } from "../../Common/FormComponents/common/styleLibr
 import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import {
+  errorInConnection,
   newMessage,
   resetMessages,
   setIsOpeningOD,
@@ -70,7 +71,8 @@ let wsInFlight: boolean = false;
 
 const initWSConnection = (
   openCallback?: () => void,
-  onMessageCallback?: (message: IMessageEvent) => void
+  onMessageCallback?: (message: IMessageEvent) => void,
+  connErrorCallback?: (message: string) => void
 ) => {
   if (wsInFlight) {
     return;
@@ -104,10 +106,17 @@ const initWSConnection = (
 
   const reconnectFn = () => {
     if (errorCounter <= 5) {
-      initWSConnection(() => {}, onMessageCallback);
+      initWSConnection(() => {}, onMessageCallback, connErrorCallback);
       errorCounter += 1;
     } else {
-      console.error("Websocket not available.");
+      console.error(
+        "Websocket not available. Please review that your environment settings are enabled to allow websocket connections and that requests are made from the same origin."
+      );
+      if (connErrorCallback) {
+        connErrorCallback(
+          "Couldn't establish WebSocket connection. Please review your configuration and try again."
+        );
+      }
     }
   };
 
@@ -245,6 +254,7 @@ const BrowserHandler = () => {
         try {
           const newRequestID = currentRequestID + 1;
           dispatch(resetMessages());
+          dispatch(errorInConnection(false));
 
           const request: WebsocketRequest = {
             bucket_name: bucketName,
@@ -266,7 +276,18 @@ const BrowserHandler = () => {
         const dupRequest = () => {
           initWSRequest(path, date);
         };
-        initWSConnection(dupRequest, onMessageCallBack);
+
+        const fatalWSError = (message: string) => {
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage: message,
+              detailedError: message,
+            })
+          );
+          dispatch(errorInConnection(true));
+        };
+
+        initWSConnection(dupRequest, onMessageCallBack, fatalWSError);
       }
     },
     [bucketName, rewindEnabled, showDeleted, dispatch, onMessageCallBack]
