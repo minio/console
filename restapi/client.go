@@ -329,6 +329,25 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 	return s.stsAssumeRole.IsExpired()
 }
 
+func stsCredentials(minioURL, accessKey, secretKey, location string) (*credentials.Credentials, error) {
+	if accessKey == "" || secretKey == "" {
+		return nil, errors.New("credentials endpoint, access and secret key are mandatory for AssumeRoleSTS")
+	}
+	opts := credentials.STSAssumeRoleOptions{
+		AccessKey:       accessKey,
+		SecretKey:       secretKey,
+		Location:        location,
+		DurationSeconds: int(xjwt.GetConsoleSTSDuration().Seconds()),
+	}
+	stsAssumeRole := &credentials.STSAssumeRole{
+		Client:      GetConsoleHTTPClient(minioURL),
+		STSEndpoint: minioURL,
+		Options:     opts,
+	}
+	consoleSTSWrapper := consoleSTSAssumeRole{stsAssumeRole: stsAssumeRole}
+	return credentials.New(consoleSTSWrapper), nil
+}
+
 func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
 	minioURL := getMinIOServer()
 
@@ -341,27 +360,37 @@ func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 			if err != nil {
 				return nil, err
 			}
+
+			// We verify if LDAP credentials are correct and no error is returned
+			_, err = creds.Get()
+
+			if err != nil && strings.Contains(strings.ToLower(err.Error()), "not found") {
+				// We try to use STS Credentials in case LDAP credentials are incorrect.
+				stsCreds, errSTS := stsCredentials(minioURL, accessKey, secretKey, location)
+
+				// If there is an error with STS too, then we return the original LDAP error
+				if errSTS != nil {
+					LogError("error in STS credentials for LDAP case: %v ", errSTS)
+
+					// We return LDAP result
+					return creds, nil
+				}
+
+				_, err := stsCreds.Get()
+				// There is an error with STS credentials, We return the result of LDAP as STS is not a priority in this case.
+				if err != nil {
+					return creds, nil
+				}
+
+				return stsCreds, nil
+			}
+
 			return creds, nil
 		}
 	// default authentication for Console is via STS (Security Token Service) against MinIO
 	default:
 		{
-			if accessKey == "" || secretKey == "" {
-				return nil, errors.New("credentials endpoint, access and secret key are mandatory for AssumeRoleSTS")
-			}
-			opts := credentials.STSAssumeRoleOptions{
-				AccessKey:       accessKey,
-				SecretKey:       secretKey,
-				Location:        location,
-				DurationSeconds: int(xjwt.GetConsoleSTSDuration().Seconds()),
-			}
-			stsAssumeRole := &credentials.STSAssumeRole{
-				Client:      GetConsoleHTTPClient(minioURL),
-				STSEndpoint: minioURL,
-				Options:     opts,
-			}
-			consoleSTSWrapper := consoleSTSAssumeRole{stsAssumeRole: stsAssumeRole}
-			return credentials.New(consoleSTSWrapper), nil
+			return stsCredentials(minioURL, accessKey, secretKey, location)
 		}
 	}
 }
