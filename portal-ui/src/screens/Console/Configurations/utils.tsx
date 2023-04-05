@@ -72,6 +72,7 @@ export const configurationElements: IElement[] = [
         className={
           "MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
         }
+        style={{ width: 24, height: 24 }}
       />
     ),
     configuration_id: "audit_kafka",
