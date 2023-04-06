@@ -24,49 +24,98 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const makeLink = (text: string, link: string, className: string) => {
+  return (
+    <a href={link} target={"_blank"} className={className}>
+      {text}
+    </a>
+  );
+};
+
 const LicenseFAQ = () => {
   const classes = useStyles();
   return (
     <Fragment>
       <h2>What is the GNU AGPL v3?</h2>
       <p>
-        The GNU AGPL v3 is short for the "GNU Affero General Public License v3."
-        It is a common open source license certified by the Free Software
-        Foundation and the Open Source Initiative. You can get a copy of the GNU
-        AGPL v3 license with MinIO source code or at&nbsp;
-        <a
-          href={"https://min.io/compliance?ref=con"}
-          target={"_blank"}
-          className={classes.linkText}
-        >
-          https://www.gnu.org/licenses/agpl-3.0.en.html
-        </a>
+        The GNU AGPL v3 is short for the "GNU Affero General Public License v3".
+        It is a{" "}
+        {makeLink(
+          "FOSS",
+          "https://en.wikipedia.org/wiki/Free_and_open-source_software",
+          classes.linkText
+        )}{" "}
+        license certified by the{" "}
+        {makeLink(
+          "Free Software Foundation",
+          "https://www.fsf.org/",
+          classes.linkText
+        )}{" "}
+        and the Open Source Initiative. You can get a copy of the GNU AGPL v3
+        license with MinIO source code or at{" "}
+        {makeLink(
+          "https://www.gnu.org/licenses/agpl-3.0.en.html",
+          "https://min.io/compliance?ref=con",
+          classes.linkText
+        )}
         .
       </p>
       <h2>What does it mean for me to comply with the GNU AGPL v3?</h2>
       <p>
         When you host or distribute MinIO over a network, the AGPL v3 applies to
         you. Any distribution or copying of MinIO software modified or not has
-        to comply with the obligations specified in the AGPL v3. Otherwise, you
-        may risk infringing MinIO’s copyrights.
+        to comply with the obligations specified in the AGPL v3 license. You
+        must include the source code, full license text and the original
+        copyright notice along with the object code.
+      </p>
+
+      <p>
+        We recommend the{" "}
+        {makeLink(
+          "Free Software Foundation’s interpretation",
+          "https://www.gnu.org/licenses/agpl-3.0.en.html",
+          classes.linkText
+        )}{" "}
+        of the GNU AGPL v3 license.
       </p>
       <h2>Making combined or derivative works of MinIO</h2>
       <p>
-        Combining MinIO software as part of a larger software stack triggers
-        your GNU AGPL v3 obligations.
+        Creating combined or derivative works of MinIO requires all such works
+        to be released under the same license.
       </p>
       <p>
-        The method of combining does not matter. When MinIO is linked to a
-        larger software stack in any form, including statically, dynamically,
-        pipes, or containerized and invoked remotely, the AGPL v3 applies to
-        your use. What triggers the AGPL v3 obligations is the exchanging data
-        between the larger stack and MinIO.
+        If MinIO source code is included in the same executable file, they are
+        definitely combined in one program. If modules are designed to run
+        linked together in a shared address space, that almost surely means
+        combining them into one program.
       </p>
+      <p>
+        By contrast, pipes, sockets, RESTful APIs, and command-line arguments
+        are communication mechanisms normally used between two separate
+        programs. So when they are used for communication, the modules normally
+        are separate programs. But if the semantics of the communication are
+        intimate enough, exchanging complex internal data structures, that too
+        could be a basis to consider the two parts as combined into a larger
+        program.
+      </p>
+
+      <p>
+        Merely aggregating MinIO software into your distribution does not
+        constitute derivative works. For more information, please refer to the{" "}
+        {makeLink(
+          "GPL FAQ",
+          "https://www.gnu.org/licenses/gpl-faq.en.html#MereAggregation",
+          classes.linkText
+        )}
+        .
+      </p>
+      <p></p>
+
       <h2>Talking to your Legal Counsel</h2>
       <p>
         If you have questions, we recommend that you talk to your own attorney
         for legal advice. Purchasing a commercial license from MinIO removes the
-        AGPL v3 obligations from MinIO software.
+        GNU AGPL v3 obligations from MinIO software.
       </p>
     </Fragment>
   );
