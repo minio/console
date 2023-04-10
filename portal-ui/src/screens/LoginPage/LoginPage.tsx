@@ -357,7 +357,7 @@ const Login = () => {
               target="_blank"
               rel="noopener"
             >
-              Github
+              GitHub
             </a>
             <span className={classes.separator}>|</span>
             <a

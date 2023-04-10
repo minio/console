@@ -180,7 +180,7 @@ export const COMMUNITY_PLAN_FEATURES = [
   {
     id: "com_support",
     label: "Community:",
-    detail: "Slack + Github",
+    detail: "Slack + GitHub",
   },
   {
     id: "com_security",
