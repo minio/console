@@ -40,12 +40,11 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { ErrorResponseHandler } from "../../../../common/types";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
-import { ITiersDropDown } from "../BucketDetails/AddLifecycleModal";
 import {
   ITierElement,
   ITierResponse,
 } from "../../Configurations/TiersConfiguration/types";
-import { MultiBucketResult } from "../types";
+import { ITiersDropDown, MultiBucketResult } from "../types";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 

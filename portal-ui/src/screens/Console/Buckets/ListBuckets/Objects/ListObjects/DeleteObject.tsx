@@ -122,7 +122,7 @@ const DeleteObject = ({
           )}
           ? <br />
           <br />
-          {isVersionedMode(versioningInfo?.Status) &&
+          {isVersionedMode(versioningInfo?.status) &&
             selectedVersion === "" && (
               <Fragment>
                 <FormSwitchWrapper

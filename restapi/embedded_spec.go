@@ -5948,24 +5948,24 @@ func init() {
     "bucketVersioningResponse": {
       "type": "object",
       "properties": {
-        "ExcludeFolders": {
+        "MFADelete": {
+          "type": "string"
+        },
+        "excludeFolders": {
           "type": "boolean"
         },
-        "ExcludedPrefixes": {
+        "excludedPrefixes": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "Prefix": {
+              "prefix": {
                 "type": "string"
               }
             }
           }
         },
-        "MFADelete": {
-          "type": "string"
-        },
-        "Status": {
+        "status": {
           "type": "string"
         }
       }
@@ -14384,7 +14384,7 @@ func init() {
     "BucketVersioningResponseExcludedPrefixesItems0": {
       "type": "object",
       "properties": {
-        "Prefix": {
+        "prefix": {
           "type": "string"
         }
       }
@@ -15084,19 +15084,19 @@ func init() {
     "bucketVersioningResponse": {
       "type": "object",
       "properties": {
-        "ExcludeFolders": {
+        "MFADelete": {
+          "type": "string"
+        },
+        "excludeFolders": {
           "type": "boolean"
         },
-        "ExcludedPrefixes": {
+        "excludedPrefixes": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/BucketVersioningResponseExcludedPrefixesItems0"
           }
         },
-        "MFADelete": {
-          "type": "string"
-        },
-        "Status": {
+        "status": {
           "type": "string"
         }
       }

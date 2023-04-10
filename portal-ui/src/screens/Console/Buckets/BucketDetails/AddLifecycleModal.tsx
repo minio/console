@@ -49,21 +49,16 @@ import {
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import { BucketVersioning } from "../types";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { selDistSet, setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { BucketVersioningInfo, ITiersDropDown } from "../types";
 
 interface IReplicationModal {
   open: boolean;
   closeModalAndRefresh: (refresh: boolean) => any;
   classes: any;
   bucketName: string;
-}
-
-export interface ITiersDropDown {
-  label: string;
-  value: string;
 }
 
 const styles = (theme: Theme) =>
@@ -88,7 +83,8 @@ const AddLifecycleModal = ({
   const [loadingTiers, setLoadingTiers] = useState<boolean>(true);
   const [tiersList, setTiersList] = useState<ITiersDropDown[]>([]);
   const [addLoading, setAddLoading] = useState(false);
-  const [isVersioned, setIsVersioned] = useState<boolean>(false);
+  const [versioningInfo, setVersioningInfo] =
+    useState<BucketVersioningInfo | null>(null);
   const [prefix, setPrefix] = useState("");
   const [tags, setTags] = useState<string>("");
   const [storageClass, setStorageClass] = useState("");
@@ -146,8 +142,8 @@ const AddLifecycleModal = ({
     if (loadingVersioning && distributedSetup) {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-        .then((res: BucketVersioning) => {
-          setIsVersioned(res.is_versioned);
+        .then((res: BucketVersioningInfo) => {
+          setVersioningInfo(res);
           setLoadingVersioning(false);
         })
         .catch((err: ErrorResponseHandler) => {
@@ -258,7 +254,7 @@ const AddLifecycleModal = ({
                       ]}
                     />
                   </Grid>
-                  {isVersioned && (
+                  {versioningInfo?.status === "Enabled" && (
                     <Grid item xs={12}>
                       <SelectWrapper
                         value={targetVersion}

@@ -101,7 +101,7 @@ const DeleteObject = ({
   };
 
   const isVersionedDelete =
-    versioning?.Status === "Enabled" || versioning?.Status === "Suspended";
+    versioning?.status === "Enabled" || versioning?.status === "Suspended";
 
   return (
     <ConfirmDialog

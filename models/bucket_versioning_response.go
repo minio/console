@@ -36,17 +36,17 @@ import (
 // swagger:model bucketVersioningResponse
 type BucketVersioningResponse struct {
 
-	// exclude folders
-	ExcludeFolders bool `json:"ExcludeFolders,omitempty"`
-
-	// excluded prefixes
-	ExcludedPrefixes []*BucketVersioningResponseExcludedPrefixesItems0 `json:"ExcludedPrefixes"`
-
 	// m f a delete
 	MFADelete string `json:"MFADelete,omitempty"`
 
+	// exclude folders
+	ExcludeFolders bool `json:"excludeFolders,omitempty"`
+
+	// excluded prefixes
+	ExcludedPrefixes []*BucketVersioningResponseExcludedPrefixesItems0 `json:"excludedPrefixes"`
+
 	// status
-	Status string `json:"Status,omitempty"`
+	Status string `json:"status,omitempty"`
 }
 
 // Validate validates this bucket versioning response
@@ -76,9 +76,9 @@ func (m *BucketVersioningResponse) validateExcludedPrefixes(formats strfmt.Regis
 		if m.ExcludedPrefixes[i] != nil {
 			if err := m.ExcludedPrefixes[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("ExcludedPrefixes" + "." + strconv.Itoa(i))
+					return ve.ValidateName("excludedPrefixes" + "." + strconv.Itoa(i))
 				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("ExcludedPrefixes" + "." + strconv.Itoa(i))
+					return ce.ValidateName("excludedPrefixes" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -110,9 +110,9 @@ func (m *BucketVersioningResponse) contextValidateExcludedPrefixes(ctx context.C
 		if m.ExcludedPrefixes[i] != nil {
 			if err := m.ExcludedPrefixes[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("ExcludedPrefixes" + "." + strconv.Itoa(i))
+					return ve.ValidateName("excludedPrefixes" + "." + strconv.Itoa(i))
 				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("ExcludedPrefixes" + "." + strconv.Itoa(i))
+					return ce.ValidateName("excludedPrefixes" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -147,7 +147,7 @@ func (m *BucketVersioningResponse) UnmarshalBinary(b []byte) error {
 type BucketVersioningResponseExcludedPrefixesItems0 struct {
 
 	// prefix
-	Prefix string `json:"Prefix,omitempty"`
+	Prefix string `json:"prefix,omitempty"`
 }
 
 // Validate validates this bucket versioning response excluded prefixes items0

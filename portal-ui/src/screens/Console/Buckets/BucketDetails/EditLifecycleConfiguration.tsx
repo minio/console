@@ -36,9 +36,8 @@ import {
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 
-import { LifeCycleItem } from "../types";
+import { ITiersDropDown, LifeCycleItem } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
-import { ITiersDropDown } from "./AddLifecycleModal";
 import {
   ITierElement,
   ITierResponse,

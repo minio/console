@@ -52,15 +52,11 @@ export interface ArnList {
   arns: string[];
 }
 
-export interface BucketVersioning {
-  is_versioned: boolean;
-}
-
 export interface BucketVersioningInfo {
-  ExcludeFolders?: boolean;
-  ExcludedPrefixes?: Record<"Prefix", string>[];
+  excludeFolders?: boolean;
+  excludedPrefixes?: Record<"Prefix", string>[];
   MFADelete?: string;
-  Status?: "Enabled" | "Suspended" | "";
+  status?: "Enabled" | "Suspended" | "";
 }
 
 export interface BucketObjectLocking {
@@ -146,4 +142,9 @@ export interface MultiBucketResult {
 
 export interface MultiBucketResult {
   results: MultiBucketResult[];
+}
+
+export interface ITiersDropDown {
+  label: string;
+  value: string;
 }

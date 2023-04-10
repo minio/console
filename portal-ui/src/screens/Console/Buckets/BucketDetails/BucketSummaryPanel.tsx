@@ -372,7 +372,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
     }
   };
 
-  let versioningStatus = versioningInfo?.Status;
+  let versioningStatus = versioningInfo?.status;
   let versioningText = "Unversioned (Default)";
   if (versioningStatus === "Enabled") {
     versioningText = "Versioned";
@@ -604,7 +604,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                     isLoading={loadingVersioning}
                   />
 
-                  {versioningInfo?.Status === "Enabled" ? (
+                  {versioningInfo?.status === "Enabled" ? (
                     <VersioningInfo versioningState={versioningInfo} />
                   ) : null}
                 </Box>

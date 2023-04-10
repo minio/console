@@ -791,12 +791,12 @@ export interface ListRemoteBucketsResponse {
 }
 
 export interface BucketVersioningResponse {
-  Status?: string;
+  status?: string;
   MFADelete?: string;
-  ExcludedPrefixes?: {
-    Prefix?: string;
+  excludedPrefixes?: {
+    prefix?: string;
   }[];
-  ExcludeFolders?: boolean;
+  excludeFolders?: boolean;
 }
 
 export interface SetBucketVersioning {
