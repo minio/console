@@ -27,20 +27,11 @@ import {
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "../Buckets/ListBuckets/Objects/ObjectDetails/types";
-import { encodeURLString } from "../../../common/utils";
-import { download } from "../Buckets/ListBuckets/Objects/utils";
-import {
-  cancelObjectInList,
-  completeObject,
-  failObject,
-  setNewObject,
-  updateProgress,
-} from "./objectBrowserSlice";
-import { makeid, storeCallForObjectWithID } from "./transferManager";
 import { useAppDispatch } from "../../../store";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { downloadObject } from "./utils";
 
 interface IRenameLongFilename {
   open: boolean;
@@ -76,57 +67,7 @@ const RenameLongFileName = ({
 
   const doDownload = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const identityDownload = encodeURLString(
-      `${bucketName}-${
-        actualInfo.name
-      }-${new Date().getTime()}-${Math.random()}`
-    );
-
-    const ID = makeid(8);
-
-    const downloadCall = download(
-      bucketName,
-      internalPaths,
-      actualInfo.version_id,
-      parseInt(actualInfo.size || "0"),
-      newFileName,
-      ID,
-      (progress) => {
-        dispatch(
-          updateProgress({
-            instanceID: identityDownload,
-            progress: progress,
-          })
-        );
-      },
-      () => {
-        dispatch(completeObject(identityDownload));
-      },
-      (msg: string) => {
-        dispatch(failObject({ instanceID: identityDownload, msg }));
-      },
-      () => {
-        dispatch(cancelObjectInList(identityDownload));
-      }
-    );
-
-    storeCallForObjectWithID(ID, downloadCall);
-    dispatch(
-      setNewObject({
-        ID,
-        bucketName,
-        done: false,
-        instanceID: identityDownload,
-        percentage: 0,
-        prefix: newFileName,
-        type: "download",
-        waitingForFile: true,
-        failed: false,
-        cancelled: false,
-        errorMessage: "",
-      })
-    );
+    downloadObject(dispatch, bucketName, internalPaths, actualInfo);
     closeModal();
   };
 

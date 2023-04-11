@@ -667,9 +667,7 @@ const ListObjects = () => {
                   errorMessage: "",
                 })
               );
-
               storeFormDataWithID(ID, formData);
-              storeCallForObjectWithID(ID, xhr);
             }
           });
         };
