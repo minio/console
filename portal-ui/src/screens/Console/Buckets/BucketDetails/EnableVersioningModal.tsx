@@ -40,7 +40,7 @@ const EnableVersioningModal = ({
   selectedBucket,
   versioningInfo = {},
 }: IVersioningEventProps) => {
-  const isVersioningEnabled = versioningInfo.Status === "Enabled";
+  const isVersioningEnabled = versioningInfo.status === "Enabled";
 
   const dispatch = useAppDispatch();
   const [versioningLoading, setVersioningLoading] = useState<boolean>(false);

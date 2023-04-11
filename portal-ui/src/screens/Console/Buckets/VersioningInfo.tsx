@@ -18,10 +18,10 @@ const VersioningInfo = ({
       }}
     >
       <Box sx={{ fontWeight: "medium", display: "flex", gap: 2 }}>
-        {versioningState.ExcludeFolders ? (
+        {versioningState.excludeFolders ? (
           <LabelWithIcon
             icon={
-              versioningState.ExcludeFolders ? (
+              versioningState.excludeFolders ? (
                 <EnabledIcon style={{ color: "green" }} />
               ) : (
                 <DisabledIcon />
@@ -35,7 +35,7 @@ const VersioningInfo = ({
           />
         ) : null}
       </Box>
-      {versioningState.ExcludedPrefixes?.length ? (
+      {versioningState.excludedPrefixes?.length ? (
         <Box
           sx={{
             fontWeight: "medium",
@@ -57,7 +57,7 @@ const VersioningInfo = ({
               display: "flex",
             }}
           >
-            {versioningState.ExcludedPrefixes?.map((it) => (
+            {versioningState.excludedPrefixes?.map((it) => (
               <div>
                 <strong>{it.Prefix}</strong>
               </div>

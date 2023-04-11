@@ -4944,18 +4944,18 @@ definitions:
   bucketVersioningResponse:
     type: object
     properties:
-      Status:
+      status:
         type: string
       MFADelete:
         type: string
-      ExcludedPrefixes:
+      excludedPrefixes:
         type: array
         items:
           type: object
           properties:
-            Prefix:
+            prefix:
               type: string
-      ExcludeFolders:
+      excludeFolders:
         type: boolean
 
   setBucketVersioning:
