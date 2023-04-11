@@ -310,6 +310,24 @@ const EditLifecycleConfiguration = ({
     }
   };
 
+  let objectVersion = "";
+
+  if (lifecycleRule.expiration) {
+    if (lifecycleRule.expiration.days > 0) {
+      objectVersion = "Current Version";
+    } else if (lifecycleRule.expiration.noncurrent_expiration_days) {
+      objectVersion = "Non-Current Version";
+    }
+  }
+
+  if (lifecycleRule.transition) {
+    if (lifecycleRule.transition.days > 0) {
+      objectVersion = "Current Version";
+    } else if (lifecycleRule.transition.noncurrent_transition_days) {
+      objectVersion = "Non-Current Version";
+    }
+  }
+
   return (
     <ModalWrapper
       onClose={() => {
@@ -329,17 +347,7 @@ const EditLifecycleConfiguration = ({
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
             <Grid container spacing={1}>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="id"
-                  name="id"
-                  label="Id"
-                  value={lifecycleRule.id}
-                  onChange={() => {}}
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} sx={{ marginTop: "5px" }}>
                 <FormSwitchWrapper
                   label="Status"
                   indicatorLabels={["Enabled", "Disabled"]}
@@ -350,6 +358,16 @@ const EditLifecycleConfiguration = ({
                   onChange={(e) => {
                     setEnabled(e.target.checked);
                   }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="id"
+                  name="id"
+                  label="Id"
+                  value={lifecycleRule.id}
+                  onChange={() => {}}
+                  disabled
                 />
               </Grid>
               <Grid item xs={12}>
@@ -364,6 +382,16 @@ const EditLifecycleConfiguration = ({
                   ]}
                   onChange={() => {}}
                   disableOptions
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="object-version"
+                  name="object-version"
+                  label="Object Version"
+                  value={objectVersion}
+                  onChange={() => {}}
+                  disabled
                 />
               </Grid>
               {ilmType === "expiry" && lifecycleRule.expiration?.days && (
