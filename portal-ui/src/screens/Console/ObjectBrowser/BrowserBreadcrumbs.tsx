@@ -169,7 +169,21 @@ const BrowserBreadcrumbs = ({
     if (versionsMode) {
       dispatch(setVersionsModeEnabled({ status: false, objectName: "" }));
     } else {
-      navigate(-1);
+      if (splitPaths.length === 0) {
+        navigate("/browser");
+
+        return;
+      }
+
+      const prevPath = splitPaths.slice(0, -1);
+
+      navigate(
+        `/browser/${bucketName}${
+          prevPath.length > 0
+            ? `/${encodeURLString(`${prevPath.join("/")}/`)}`
+            : ""
+        }`
+      );
     }
   };
 
