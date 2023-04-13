@@ -104,11 +104,15 @@ class DownloadHelper {
   }
 
   send(): void {
-    this.download({
-      url: this.path,
-      chunkSize: 1024 * 1024 * 1024 * 2,
-      poolLimit: 1,
-    });
+    let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    if (isSafari && this.fileSize > 1024 * 1024 * 1024 * 4) {
+      this.downloadSafari();
+    } else {
+      this.download({
+        url: this.path,
+        chunkSize: 1024 * 1024 * 1024 * 1.5,
+      });
+    }
   }
 
   async getRangeContent(url: string, start: number, end: number) {
@@ -155,7 +159,7 @@ class DownloadHelper {
     return "download";
   }
 
-  async download({ url, chunkSize, poolLimit = 1, abort }: any) {
+  async download({ url, chunkSize }: any) {
     const numberOfChunks = Math.ceil(this.fileSize / chunkSize);
     try {
       for (let i = 0; i < numberOfChunks; i++) {
@@ -174,6 +178,16 @@ class DownloadHelper {
     } catch (e: any) {
       this.errorCallback(e.message);
     }
+  }
+
+  downloadSafari() {
+    const link = document.createElement("a");
+    link.href = this.path;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    this.completeCallback();
+    removeTrace(this.id);
   }
 }
 
