@@ -346,6 +346,7 @@ const Login = () => {
       <LoginWrapper
         logoProps={{ applicationName: "console", subVariant: getLogoVar() }}
         form={loginComponent}
+        disableAnimation={true}
         formFooter={
           <Fragment>
             <a href={docsURL} target="_blank" rel="noopener">
