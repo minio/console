@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { IEmbeddedCustomStyles } from "../common/types";
-import { createTheme } from "@mui/material";
 
 export const getOverrideColorVariants: (
   customStyles: string
@@ -29,124 +28,250 @@ export const getOverrideColorVariants: (
 };
 
 export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
-  const theme = createTheme({
-    palette: {
-      primary: {
-        light: overrideVars.buttonStyles.hoverColor || "#073052",
-        main: overrideVars.buttonStyles.backgroundColor || "#081C42",
-        dark: overrideVars.buttonStyles.activeColor || "#05122B",
-        contrastText: overrideVars.buttonStyles.textColor || "#fff",
-      },
-      secondary: {
-        light: "#ff7961",
-        main: "#f44336",
-        dark: "#ba000d",
-        contrastText: "#000",
-      },
-      background: {
-        default: overrideVars.backgroundColor,
-      },
-      success: {
-        main: "#4ccb92",
-      },
-      warning: {
-        main: "#FFBD62",
-      },
-      error: {
-        light: "#e03a48",
-        main: "#C83B51",
-        contrastText: "#fff",
-      },
-    },
-    typography: {
-      fontFamily: ["Inter", "sans-serif"].join(","),
-      h1: {
-        fontWeight: "bold",
-        color: overrideVars.fontColor,
-      },
-      h2: {
-        fontWeight: "bold",
-        color: overrideVars.fontColor,
-      },
-      h3: {
-        fontWeight: "bold",
-        color: overrideVars.fontColor,
-      },
-      h4: {
-        fontWeight: "bold",
-        color: overrideVars.fontColor,
-      },
-      h5: {
-        fontWeight: "bold",
-        color: overrideVars.fontColor,
-      },
-      h6: {
-        fontWeight: "bold",
-        color: overrideVars.fontColor,
-      },
-    },
-    components: {
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            textTransform: "none",
-            borderRadius: 3,
-            height: 40,
-            padding: "0 20px",
-            fontSize: 14,
-            fontWeight: 600,
-            boxShadow: "none",
-            "& .min-icon": {
-              maxHeight: 18,
-            },
-            "&.MuiButton-contained.Mui-disabled": {
-              backgroundColor: "#EAEDEE",
-              fontWeight: 600,
-              color: "#767676",
-            },
-            "& .MuiButton-iconSizeMedium > *:first-of-type": {
-              fontSize: 12,
-            },
-          },
-        },
-      },
-      MuiPaper: {
-        styleOverrides: {
-          root: {
-            backgroundColor: overrideVars.backgroundColor,
-            color: overrideVars.fontColor,
-          },
-          elevation1: {
-            boxShadow: "none",
-            border: "#EAEDEE 1px solid",
-            borderRadius: 3,
-          },
-        },
-      },
-      MuiListItem: {
-        styleOverrides: {
-          root: {
-            "&.MuiListItem-root.Mui-selected": {
-              background: "inherit",
-              "& .MuiTypography-root": {
-                fontWeight: "bold",
-              },
-            },
-          },
-        },
-      },
-      MuiTab: {
-        styleOverrides: {
-          root: {
-            textTransform: "none",
-          },
-        },
-      },
-    },
-    colors: {
-      link: "#2781B0",
-    },
-  });
+  let retVal = undefined;
 
-  return theme;
+  try {
+    retVal = {
+      bgColor: overrideVars.backgroundColor,
+      fontColor: overrideVars.fontColor,
+      borderColor: overrideVars.borderColor,
+      bulletColor: overrideVars.fontColor,
+      logoColor: "#C51B3F",
+      logoLabelColor: overrideVars.fontColor,
+      logoLabelInverse: "#FFF",
+      loaderColor: overrideVars.loaderColor,
+      boxBackground: overrideVars.boxBackground,
+      buttons: {
+        regular: {
+          enabled: {
+            border: overrideVars.regularButtonStyles.textColor,
+            text: overrideVars.regularButtonStyles.textColor,
+            background: "transparent",
+            iconColor: overrideVars.regularButtonStyles.textColor,
+          },
+          disabled: {
+            border: overrideVars.regularButtonStyles.disabledText,
+            text: overrideVars.regularButtonStyles.disabledText,
+            background: "transparent",
+            iconColor: overrideVars.regularButtonStyles.disabledText,
+          },
+          hover: {
+            border: overrideVars.regularButtonStyles.hoverText,
+            text: overrideVars.regularButtonStyles.hoverText,
+            background: "transparent",
+            iconColor: overrideVars.regularButtonStyles.hoverText,
+          },
+          pressed: {
+            border: overrideVars.regularButtonStyles.activeText,
+            text: overrideVars.regularButtonStyles.activeText,
+            background: "transparent",
+            iconColor: overrideVars.regularButtonStyles.activeText,
+          },
+        },
+        callAction: {
+          enabled: {
+            border: overrideVars.buttonStyles.backgroundColor,
+            text: overrideVars.buttonStyles.textColor,
+            background: overrideVars.buttonStyles.backgroundColor,
+            iconColor: overrideVars.buttonStyles.textColor,
+          },
+          disabled: {
+            border: overrideVars.buttonStyles.disabledColor,
+            text: overrideVars.buttonStyles.disabledText,
+            background: overrideVars.buttonStyles.disabledColor,
+            iconColor: overrideVars.buttonStyles.disabledText,
+          },
+          hover: {
+            border: overrideVars.buttonStyles.hoverColor,
+            text: overrideVars.buttonStyles.hoverText,
+            background: overrideVars.buttonStyles.hoverColor,
+            iconColor: overrideVars.buttonStyles.hoverText,
+          },
+          pressed: {
+            border: overrideVars.buttonStyles.activeColor,
+            text: overrideVars.buttonStyles.activeText,
+            background: overrideVars.buttonStyles.activeColor,
+            iconColor: overrideVars.buttonStyles.activeText,
+          },
+        },
+        secondary: {
+          enabled: {
+            border: overrideVars.secondaryButtonStyles.textColor,
+            text: overrideVars.secondaryButtonStyles.textColor,
+            background: "transparent",
+            iconColor: overrideVars.secondaryButtonStyles.textColor,
+          },
+          disabled: {
+            border: overrideVars.secondaryButtonStyles.disabledText,
+            text: overrideVars.secondaryButtonStyles.disabledText,
+            background: "transparent",
+            iconColor: overrideVars.secondaryButtonStyles.disabledText,
+          },
+          hover: {
+            border: overrideVars.secondaryButtonStyles.hoverText,
+            text: overrideVars.secondaryButtonStyles.hoverText,
+            background: "transparent",
+            iconColor: overrideVars.secondaryButtonStyles.hoverText,
+          },
+          pressed: {
+            border: overrideVars.secondaryButtonStyles.activeText,
+            text: overrideVars.secondaryButtonStyles.activeText,
+            background: "transparent",
+            iconColor: overrideVars.secondaryButtonStyles.activeText,
+          },
+        },
+        text: {
+          enabled: {
+            border: "transparent",
+            text: overrideVars.fontColor,
+            background: "transparent",
+            iconColor: overrideVars.fontColor,
+          },
+          disabled: {
+            border: "transparent",
+            text: overrideVars.fontColor,
+            background: "transparent",
+            iconColor: overrideVars.fontColor,
+          },
+          hover: {
+            border: "transparent",
+            text: overrideVars.fontColor,
+            background: "transparent",
+            iconColor: overrideVars.fontColor,
+          },
+          pressed: {
+            border: "transparent",
+            text: overrideVars.fontColor,
+            background: "transparent",
+            iconColor: overrideVars.fontColor,
+          },
+        },
+      },
+      login: {
+        formBG: "#fff",
+        bgFilter: "none",
+        promoBG: "#000110",
+        promoHeader: "#fff",
+        promoText: "#A6DFEF",
+        footerElements: "#2781B0",
+        footerDivider: "#F2F2F2",
+      },
+      pageHeader: {
+        background: overrideVars.boxBackground,
+        border: overrideVars.borderColor,
+        color: overrideVars.fontColor,
+      },
+      tooltip: {
+        background: overrideVars.boxBackground,
+        color: overrideVars.fontColor,
+      },
+      commonInput: {
+        labelColor: overrideVars.fontColor,
+      },
+      checkbox: {
+        checkBoxBorder: overrideVars.borderColor,
+        checkBoxColor: overrideVars.okColor,
+        disabledBorder: overrideVars.buttonStyles.disabledColor,
+        disabledColor: overrideVars.buttonStyles.disabledColor,
+      },
+      iconButton: {
+        buttonBG: overrideVars.buttonStyles.backgroundColor,
+        activeBG: overrideVars.buttonStyles.activeColor,
+        hoverBG: overrideVars.buttonStyles.hoverColor,
+        disabledBG: overrideVars.buttonStyles.disabledColor,
+        color: overrideVars.buttonStyles.textColor,
+      },
+      dataTable: {
+        border: overrideVars.tableColors.border,
+        disabledBorder: overrideVars.tableColors.disabledBorder,
+        disabledBG: overrideVars.tableColors.disabledBG,
+        selected: overrideVars.tableColors.selected,
+        deletedDisabled: overrideVars.tableColors.deletedDisabled,
+        hoverColor: overrideVars.tableColors.hoverColor,
+      },
+      backLink: {
+        color: overrideVars.linkColor,
+        arrow: overrideVars.linkColor,
+        hover: overrideVars.hoverLinkColor,
+      },
+      inputBox: {
+        border: overrideVars.inputBox.border,
+        hoverBorder: overrideVars.inputBox.hoverBorder,
+        color: overrideVars.inputBox.textColor,
+        backgroundColor: overrideVars.inputBox.backgroundColor,
+        error: overrideVars.errorColor,
+        placeholderColor: overrideVars.inputBox.textColor,
+        disabledBorder: overrideVars.buttonStyles.disabledColor,
+        disabledBackground: overrideVars.inputBox.backgroundColor,
+        disabledPlaceholder: overrideVars.buttonStyles.disabledColor,
+        disabledText: overrideVars.buttonStyles.disabledColor,
+      },
+      breadcrumbs: {
+        border: overrideVars.borderColor,
+        linksColor: overrideVars.linkColor,
+        textColor: overrideVars.fontColor,
+        backgroundColor: overrideVars.boxBackground,
+        backButton: {
+          border: overrideVars.borderColor,
+          backgroundColor: overrideVars.boxBackground,
+        },
+      },
+      actionsList: {
+        containerBorderColor: overrideVars.boxBackground,
+        backgroundColor: overrideVars.boxBackground,
+        disabledOptionsTextColor: overrideVars.disabledLinkColor,
+        optionsBorder: overrideVars.borderColor,
+        optionsHoverTextColor: overrideVars.hoverLinkColor,
+        optionsTextColor: overrideVars.linkColor,
+        titleColor: overrideVars.fontColor,
+      },
+      screenTitle: {
+        border: overrideVars.borderColor,
+        subtitleColor: overrideVars.secondaryFontColor,
+        iconColor: overrideVars.fontColor,
+      },
+      modalBox: {
+        closeColor: overrideVars.regularButtonStyles.textColor,
+        closeHoverBG: overrideVars.regularButtonStyles.hoverColor,
+        closeHoverColor: overrideVars.regularButtonStyles.hoverText,
+        containerColor: overrideVars.backgroundColor,
+        overlayColor: "#00000050",
+        titleColor: overrideVars.fontColor,
+        iconColor: {
+          default: overrideVars.fontColor,
+          accept: overrideVars.okColor,
+          delete: overrideVars.errorColor,
+        },
+      },
+      switchButton: {
+        bulletBGColor: overrideVars.switch.bulletBGColor,
+        bulletBorderColor: overrideVars.switch.bulletBorderColor,
+        disabledBulletBGColor: overrideVars.switch.disabledBulletBGColor,
+        disabledBulletBorderColor:
+          overrideVars.switch.disabledBulletBorderColor,
+        offLabelColor: overrideVars.secondaryFontColor,
+        onLabelColor: overrideVars.fontColor,
+        onBackgroundColor: overrideVars.okColor,
+        switchBackground: overrideVars.switch.switchBackground,
+        disabledBackground: overrideVars.switch.disabledBackground,
+      },
+      dropdownSelector: {
+        hoverText: overrideVars.buttonStyles.hoverText,
+        backgroundColor: overrideVars.boxBackground,
+        hoverBG: overrideVars.buttonStyles.hoverColor,
+        selectedBGColor: overrideVars.buttonStyles.hoverColor,
+        selectedTextColor: overrideVars.buttonStyles.hoverText,
+        optionTextColor: overrideVars.fontColor,
+      },
+      readBox: {
+        borderColor: overrideVars.borderColor,
+        backgroundColor: overrideVars.boxBackground,
+        textColor: overrideVars.fontColor,
+      },
+    };
+  } catch (e) {
+    console.warn("Invalid theme provided. Fallback to original theme.");
+  }
+
+  return retVal;
 };

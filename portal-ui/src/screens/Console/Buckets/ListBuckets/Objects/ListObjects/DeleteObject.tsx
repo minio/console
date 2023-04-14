@@ -15,15 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { DialogContentText } from "@mui/material";
-
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import { decodeURLString } from "../../../../../../common/utils";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../../../../Common/Hooks/useApi";
-import { ConfirmDeleteIcon } from "mds";
-import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-
+import { ConfirmDeleteIcon, Switch } from "mds";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { hasPermission } from "../../../../../../common/SecureComponent";
@@ -102,11 +98,7 @@ const DeleteObject = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText
-          sx={{
-            width: "430px",
-          }}
-        >
+        <Fragment>
           Are you sure you want to delete: <br />
           <b>{decodeURLString(selectedObject)}</b>{" "}
           {selectedVersion !== "" ? (
@@ -125,7 +117,7 @@ const DeleteObject = ({
           {isVersionedMode(versioningInfo?.status) &&
             selectedVersion === "" && (
               <Fragment>
-                <FormSwitchWrapper
+                <Switch
                   label={"Delete All Versions"}
                   indicatorLabels={["Yes", "No"]}
                   checked={deleteVersions}
@@ -146,7 +138,7 @@ const DeleteObject = ({
                   marginTop: 10,
                 }}
               >
-                <FormSwitchWrapper
+                <Switch
                   label={"Bypass Governance Mode"}
                   indicatorLabels={["Yes", "No"]}
                   checked={bypassGovernance}
@@ -181,7 +173,7 @@ const DeleteObject = ({
               Are you sure you want to continue?
             </Fragment>
           )}
-        </DialogContentText>
+        </Fragment>
       }
     />
   );

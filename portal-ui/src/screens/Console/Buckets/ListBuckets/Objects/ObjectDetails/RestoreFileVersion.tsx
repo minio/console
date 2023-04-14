@@ -15,18 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { DialogContentText } from "@mui/material";
 import { Theme } from "@mui/material/styles";
-
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
-
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import { encodeURLString } from "../../../../../../common/utils";
 import api from "../../../../../../common/api";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
-import { RecoverIcon } from "mds";
+import { Box, RecoverIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
 import { IFileInfo } from "./types";
@@ -68,7 +65,6 @@ const RestoreFileVersion = ({
         )}&version_id=${versionToRestore.version_id}`
       )
       .then((res: any) => {
-        console.log("REStORE", res);
         setRestoreLoading(false);
         onCloseAndUpdate(true);
         dispatch(
@@ -100,12 +96,12 @@ const RestoreFileVersion = ({
         onCloseAndUpdate(false);
       }}
       confirmationContent={
-        <DialogContentText id="alert-dialog-description">
+        <Box id="alert-dialog-description">
           Are you sure you want to restore <br />
           <b>{objectPath}</b> <br /> with Version ID:
           <br />
           <b className={classes.wrapText}>{versionToRestore.version_id}</b>?
-        </DialogContentText>
+        </Box>
       }
     />
   );

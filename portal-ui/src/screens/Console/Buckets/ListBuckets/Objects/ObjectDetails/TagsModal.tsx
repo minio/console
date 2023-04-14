@@ -18,12 +18,18 @@ import React, { Fragment, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
 import { Box, Grid } from "@mui/material";
-import { AddNewTagIcon, Button, DisabledIcon, EditTagIcon } from "mds";
+import {
+  AddNewTagIcon,
+  Button,
+  DisabledIcon,
+  EditTagIcon,
+  InputBox,
+  SectionTitle,
+} from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { ErrorResponseHandler } from "../../../../../../common/types";
-import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../../../common/api";
 import { encodeURLString } from "../../../../../../common/utils";
@@ -186,13 +192,7 @@ const AddTagModal = ({
     <Fragment>
       <ModalWrapper
         modalOpen={modalOpen}
-        title={
-          deleteEnabled ? (
-            <span style={{ color: "#C83B51" }}>Delete Tag</span>
-          ) : (
-            `Edit Tags`
-          )
-        }
+        title={deleteEnabled ? "Delete Tag" : `Edit Tags`}
         onClose={() => {
           onCloseAndUpdate(true);
         }}
@@ -304,11 +304,11 @@ const AddTagModal = ({
               errorProps={{ disabled: true, onClick: null }}
             >
               <Grid container>
-                <Grid item xs={12} className={classes.newTileHeader}>
-                  <AddNewTagIcon /> Add New Tag
-                </Grid>
+                <SectionTitle icon={<AddNewTagIcon />} separator={false}>
+                  Add New Tag
+                </SectionTitle>
                 <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
+                  <InputBox
                     value={newKey}
                     label={"Tag Key"}
                     id={"newTagKey"}
@@ -320,7 +320,7 @@ const AddTagModal = ({
                   />
                 </Grid>
                 <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
+                  <InputBox
                     value={newLabel}
                     label={"Tag Label"}
                     id={"newTagLabel"}

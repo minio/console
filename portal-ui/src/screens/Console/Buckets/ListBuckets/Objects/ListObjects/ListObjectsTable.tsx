@@ -15,9 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
-import TableWrapper, {
-  ItemActions,
-} from "../../../../Common/TableWrapper/TableWrapper";
+import { ItemActions } from "../../../../Common/TableWrapper/TableWrapper";
 import React, { useState } from "react";
 import makeStyles from "@mui/styles/makeStyles";
 import { Theme } from "@mui/material/styles";
@@ -45,18 +43,12 @@ import {
 import { hasPermission } from "../../../../../../common/SecureComponent";
 import { downloadObject } from "../../../../ObjectBrowser/utils";
 import { IFileInfo } from "../ObjectDetails/types";
+import { DataTable } from "mds";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     browsePaper: {
       border: 0,
-      height: "calc(100vh - 290px)",
-      "&.isEmbedded": {
-        height: "calc(100vh - 315px)",
-      },
-      "&.actionsPanelOpen": {
-        minHeight: "100%",
-      },
       "@media (max-width: 800px)": {
         width: 800,
       },
@@ -66,6 +58,9 @@ const useStyles = makeStyles((theme: Theme) =>
       height: "calc(100% - 60px)",
       "@media (max-width: 800px)": {
         overflowX: "auto",
+      },
+      "@media (max-width: 1060px)": {
+        height: "calc(100% - 115px)",
       },
     },
     "@global": {
@@ -247,17 +242,21 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
       "Objects List unavailable. Please review your WebSockets configuration and try again";
   }
 
+  let customPaperHeight = "calc(100vh - 290px)";
+
+  if (obOnly) {
+    customPaperHeight = "calc(100vh - 315px)";
+  }
+
   return (
-    <TableWrapper
+    <DataTable
       itemActions={tableActions}
       columns={rewindEnabled ? rewindModeColumns : listModeColumns}
       isLoading={loadingObjects}
       entityName="Objects"
       idField="name"
       records={payload}
-      customPaperHeight={`${classes.browsePaper} ${
-        obOnly ? "isEmbedded" : ""
-      } ${detailsOpen ? "actionsPanelOpen" : ""}`}
+      customPaperHeight={customPaperHeight}
       selectedItems={selectedObjects}
       onSelect={!anonymousMode ? selectListObjects : undefined}
       customEmptyMessage={errorMessage}
@@ -275,6 +274,10 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
         return "";
       }}
       parentClassName={classes.parentWrapper}
+      sx={{
+        minHeight: detailsOpen ? "100%" : "initial",
+      }}
+      noBackground
     />
   );
 };

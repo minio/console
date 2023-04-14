@@ -16,8 +16,8 @@
 
 import React, { Fragment } from "react";
 import { DateTime } from "luxon";
-import { HelpIcon, OpenListIcon } from "mds";
-import { Grid, InputLabel, TextField, Tooltip } from "@mui/material";
+import { HelpIcon, OpenListIcon, Grid, InputLabel, Tooltip, Box } from "mds";
+import { TextField } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -108,7 +108,7 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     textBoxContainer: {
-      flexGrow: 1,
+      width: "calc(100% - 190px)",
     },
     openListIcon: {
       color: "#9D9E9D",
@@ -315,19 +315,20 @@ const DateTimePickerWrapper = ({
         item
         xs={12}
         className={`${containerCls} ${classNamePrefix}input-field-container`}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
       >
         {label !== "" && (
-          <InputLabel
-            htmlFor={id}
-            className={`${classes.inputLabel} ${classNamePrefix}input-label`}
-          >
+          <InputLabel htmlFor={id}>
             <span>
               {label}
               {required ? "*" : ""}
             </span>
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>
-                <Tooltip title={tooltip} placement="top-start">
+                <Tooltip tooltip={tooltip} placement="top">
                   <div className={classes.tooltip}>
                     <HelpIcon />
                   </div>
@@ -337,11 +338,11 @@ const DateTimePickerWrapper = ({
           </InputLabel>
         )}
 
-        <div
+        <Box
           className={`${classes.textBoxContainer} ${classNamePrefix}input-wrapper`}
         >
           {inputItem}
-        </div>
+        </Box>
       </Grid>
     </Fragment>
   );

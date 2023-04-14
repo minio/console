@@ -26,9 +26,9 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
-import { CSSObject } from "styled-components";
 import {
   AccessRuleIcon,
+  ActionsList,
   BucketsIcon,
   Button,
   DeleteIcon,
@@ -37,6 +37,7 @@ import {
   PageLayout,
   PreviewIcon,
   RefreshIcon,
+  ScreenTitle,
   ShareIcon,
 } from "mds";
 import { DateTime } from "luxon";
@@ -67,8 +68,6 @@ import {
   IRetentionConfig,
 } from "../../../../../../common/types";
 
-import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   IAM_SCOPES,
@@ -82,7 +81,6 @@ import withSuspense from "../../../../Common/Components/withSuspense";
 import UploadFilesButton from "../../UploadFilesButton";
 import DetailsListPanel from "./DetailsListPanel";
 import ObjectDetailPanel from "./ObjectDetailPanel";
-import ActionsListSection from "./ActionsListSection";
 import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
 import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
@@ -175,6 +173,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     screenTitleContainer: {
       border: "#EAEDEE 1px solid",
+      padding: "0 5px",
     },
     labelStyle: {
       color: "#969FA8",
@@ -184,9 +183,12 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: "12px 14px 5px",
     },
     fullContainer: {
+      width: "100%",
       position: "relative",
-      "@media (max-width: 799px)": {
-        width: 0,
+      "&.detailsOpen": {
+        "@media (max-width: 799px)": {
+          display: "none",
+        },
       },
     },
     hideListOnSmall: {
@@ -280,9 +282,6 @@ const ListObjects = () => {
   );
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
-  );
-  const colorVariants = useSelector(
-    (state: AppState) => state.system.overrideStyles
   );
   const anonymousAccessOpen = useSelector(
     (state: AppState) => state.objectBrowser.anonymousAccessOpen
@@ -806,40 +805,6 @@ const ListObjects = () => {
     createdTime = DateTime.fromISO(bucketInfo.creation_date);
   }
 
-  let regularButtonOverride: CSSObject = {};
-  let callActionButtonOverride: CSSObject = {};
-
-  if (colorVariants) {
-    regularButtonOverride = {
-      backgroundColor: "transparent",
-    };
-
-    callActionButtonOverride = {
-      color: get(colorVariants, "buttonStyles.textColor", "#fff"),
-      backgroundColor: get(
-        colorVariants,
-        "buttonStyles.backgroundColor",
-        "#07193E"
-      ),
-      "&:hover": {
-        color: get(colorVariants, "buttonStyles.hoverText", "#fff"),
-        backgroundColor: get(
-          colorVariants,
-          "buttonStyles.hoverColor",
-          "#0D2453"
-        ),
-      },
-      "&:active": {
-        color: get(colorVariants, "buttonStyles.activeText", "#fff"),
-        backgroundColor: get(
-          colorVariants,
-          "buttonStyles.activeColor",
-          "#05132F"
-        ),
-      },
-    };
-  }
-
   const multiActionButtons = [
     {
       action: () => {
@@ -968,277 +933,263 @@ const ListObjects = () => {
       )}
 
       <PageLayout variant={"full"}>
-        <Grid container spacing={1}>
-          {anonymousMode && (
-            <div style={{ paddingBottom: 16 }}>
-              <FilterObjectsSB />
-            </div>
-          )}
-          <Grid item xs={12} className={classes.screenTitleContainer}>
-            <ScreenTitle
-              icon={
-                <span>
-                  <BucketsIcon style={{ width: 30 }} />
-                </span>
-              }
-              title={<span className={classes.titleSpacer}>{bucketName}</span>}
-              subTitle={
-                !anonymousMode ? (
-                  <Fragment>
-                    <Grid item xs={12} className={classes.bucketDetails}>
+        {anonymousMode && (
+          <div style={{ paddingBottom: 16 }}>
+            <FilterObjectsSB />
+          </div>
+        )}
+        <Grid item xs={12} className={classes.screenTitleContainer}>
+          <ScreenTitle
+            icon={
+              <span>
+                <BucketsIcon style={{ width: 30 }} />
+              </span>
+            }
+            title={bucketName}
+            subTitle={
+              !anonymousMode ? (
+                <Fragment>
+                  <span className={classes.detailsSpacer}>
+                    Created on:&nbsp;&nbsp;
+                    <strong>
+                      {bucketInfo?.creation_date
+                        ? createdTime.toFormat(
+                            "ccc, LLL dd yyyy HH:mm:ss (ZZZZ)"
+                          )
+                        : ""}
+                    </strong>
+                  </span>
+                  <span className={classes.detailsSpacer}>
+                    Access:&nbsp;&nbsp;&nbsp;
+                    <strong>{bucketInfo?.access || ""}</strong>
+                  </span>
+                  {bucketInfo && (
+                    <Fragment>
                       <span className={classes.detailsSpacer}>
-                        Created on:&nbsp;&nbsp;
-                        <strong>
-                          {bucketInfo?.creation_date
-                            ? createdTime.toFormat(
-                                "ccc, LLL dd yyyy HH:mm:ss (ZZZZ)"
-                              )
-                            : ""}
-                        </strong>
+                        {bucketInfo.size && (
+                          <Fragment>{niceBytesInt(bucketInfo.size)}</Fragment>
+                        )}
+                        {bucketInfo.size && quota && (
+                          <Fragment> / {niceBytesInt(quota.quota)}</Fragment>
+                        )}
+                        {bucketInfo.size && bucketInfo.objects ? " - " : ""}
+                        {bucketInfo.objects && (
+                          <Fragment>
+                            {bucketInfo.objects}&nbsp;Object
+                            {bucketInfo.objects && bucketInfo.objects !== 1
+                              ? "s"
+                              : ""}
+                          </Fragment>
+                        )}
                       </span>
-                      <span className={classes.detailsSpacer}>
-                        Access:&nbsp;&nbsp;&nbsp;
-                        <strong>{bucketInfo?.access || ""}</strong>
-                      </span>
-                      {bucketInfo && (
-                        <Fragment>
-                          <span className={classes.detailsSpacer}>
-                            {bucketInfo.size && (
-                              <Fragment>
-                                {niceBytesInt(bucketInfo.size)}
-                              </Fragment>
-                            )}
-                            {bucketInfo.size && quota && (
-                              <Fragment>
-                                {" "}
-                                / {niceBytesInt(quota.quota)}
-                              </Fragment>
-                            )}
-                            {bucketInfo.size && bucketInfo.objects ? " - " : ""}
-                            {bucketInfo.objects && (
-                              <Fragment>
-                                {bucketInfo.objects}&nbsp;Object
-                                {bucketInfo.objects && bucketInfo.objects !== 1
-                                  ? "s"
-                                  : ""}
-                              </Fragment>
-                            )}
-                          </span>
-                        </Fragment>
-                      )}
-                    </Grid>
-                  </Fragment>
-                ) : null
-              }
-              actions={
-                <div className={classes.actionsSection}>
-                  {!anonymousMode && (
-                    <TooltipWrapper tooltip={"Rewind Bucket"}>
-                      <Button
-                        id={"rewind-objects-list"}
-                        label={"Rewind"}
-                        icon={
-                          <Badge
-                            badgeContent=" "
-                            color="secondary"
-                            variant="dot"
-                            invisible={!rewindEnabled}
-                            className={classes.badgeOverlap}
-                            sx={{ height: 16 }}
-                          >
-                            <HistoryIcon
-                              style={{
-                                minWidth: 16,
-                                minHeight: 16,
-                                width: 16,
-                                height: 16,
-                                marginTop: -3,
-                              }}
-                            />
-                          </Badge>
-                        }
-                        variant={"regular"}
-                        onClick={() => {
-                          setRewindSelect(true);
-                        }}
-                        disabled={
-                          !isVersioned ||
-                          !hasPermission(bucketName, [
-                            IAM_SCOPES.S3_GET_OBJECT,
-                            IAM_SCOPES.S3_GET_ACTIONS,
-                          ])
-                        }
-                        sx={regularButtonOverride}
-                      />
-                    </TooltipWrapper>
+                    </Fragment>
                   )}
-                  <TooltipWrapper tooltip={"Reload List"}>
+                </Fragment>
+              ) : null
+            }
+            actions={
+              <Fragment>
+                {!anonymousMode && (
+                  <TooltipWrapper tooltip={"Rewind Bucket"}>
                     <Button
-                      id={"refresh-objects-list"}
-                      label={"Refresh"}
-                      icon={<RefreshIcon />}
+                      id={"rewind-objects-list"}
+                      label={"Rewind"}
+                      icon={
+                        <Badge
+                          badgeContent=" "
+                          color="secondary"
+                          variant="dot"
+                          invisible={!rewindEnabled}
+                          className={classes.badgeOverlap}
+                          sx={{ height: 16 }}
+                        >
+                          <HistoryIcon
+                            style={{
+                              minWidth: 16,
+                              minHeight: 16,
+                              width: 16,
+                              height: 16,
+                              marginTop: -3,
+                            }}
+                          />
+                        </Badge>
+                      }
                       variant={"regular"}
                       onClick={() => {
-                        if (versionsMode) {
-                          dispatch(setLoadingVersions(true));
-                        } else {
-                          dispatch(resetMessages());
-                          dispatch(setLoadingRecords(true));
-                          dispatch(setLoadingObjects(true));
-                        }
+                        setRewindSelect(true);
                       }}
                       disabled={
-                        anonymousMode
-                          ? false
-                          : !hasPermission(bucketName, [
-                              IAM_SCOPES.S3_LIST_BUCKET,
-                              IAM_SCOPES.S3_ALL_LIST_BUCKET,
-                            ]) || rewindEnabled
+                        !isVersioned ||
+                        !hasPermission(bucketName, [
+                          IAM_SCOPES.S3_GET_OBJECT,
+                          IAM_SCOPES.S3_GET_ACTIONS,
+                        ])
                       }
-                      sx={regularButtonOverride}
                     />
                   </TooltipWrapper>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleUploadButton}
-                    style={{ display: "none" }}
-                    ref={fileUpload}
-                  />
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleUploadButton}
-                    style={{ display: "none" }}
-                    ref={folderUpload}
-                  />
-                  <UploadFilesButton
-                    bucketName={bucketName}
-                    uploadPath={uploadPath.join("/")}
-                    uploadFileFunction={(closeMenu) => {
-                      if (fileUpload && fileUpload.current) {
-                        fileUpload.current.click();
-                      }
-                      closeMenu();
-                    }}
-                    uploadFolderFunction={(closeMenu) => {
-                      if (folderUpload && folderUpload.current) {
-                        folderUpload.current.click();
-                      }
-                      closeMenu();
-                    }}
-                    overrideStyles={callActionButtonOverride}
-                  />
-                </div>
-              }
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <div
-              id="object-list-wrapper"
-              {...getRootProps({ style: { ...dndStyles } })}
-            >
-              <input {...getInputProps()} />
-              <Grid
-                item
-                xs={12}
-                className={classes.tableBlock}
-                sx={{ border: "#EAEDEE 1px solid", borderTop: 0 }}
-              >
-                {versionsMode ? (
-                  <Fragment>
-                    {selectedInternalPaths !== null && (
-                      <VersionsNavigator
-                        internalPaths={selectedInternalPaths}
-                        bucketName={bucketName}
-                      />
-                    )}
-                  </Fragment>
-                ) : (
-                  <SecureComponent
-                    scopes={[
-                      IAM_SCOPES.S3_LIST_BUCKET,
-                      IAM_SCOPES.S3_ALL_LIST_BUCKET,
-                    ]}
-                    resource={bucketName}
-                    errorProps={{ disabled: true }}
-                  >
-                    <Grid item xs={12} className={classes.fullContainer}>
-                      {!anonymousMode && (
-                        <Grid
-                          item
-                          xs={12}
-                          className={classes.breadcrumbsContainer}
-                        >
-                          <BrowserBreadcrumbs
-                            bucketName={bucketName}
-                            internalPaths={pageTitle}
-                            additionalOptions={
-                              !isVersioned || rewindEnabled ? null : (
-                                <div>
-                                  <CheckboxWrapper
-                                    name={"deleted_objects"}
-                                    id={"showDeletedObjects"}
-                                    value={"deleted_on"}
-                                    label={"Show deleted objects"}
-                                    onChange={setDeletedAction}
-                                    checked={showDeleted}
-                                    overrideLabelClasses={classes.labelStyle}
-                                    className={classes.overrideShowDeleted}
-                                    noTopMargin
-                                  />
-                                </div>
-                              )
-                            }
-                            hidePathButton={false}
-                          />
-                        </Grid>
-                      )}
-                      <ListObjectsTable internalPaths={selectedInternalPaths} />
-                    </Grid>
-                  </SecureComponent>
                 )}
-                {!anonymousMode && (
-                  <SecureComponent
-                    scopes={[
-                      IAM_SCOPES.S3_LIST_BUCKET,
-                      IAM_SCOPES.S3_ALL_LIST_BUCKET,
-                    ]}
-                    resource={bucketName}
-                    errorProps={{ disabled: true }}
-                  >
-                    <DetailsListPanel
-                      open={detailsOpen}
-                      closePanel={() => {
-                        onClosePanel(false);
-                      }}
-                      className={`${
-                        versionsMode ? classes.hideListOnSmall : ""
-                      }`}
-                    >
-                      {selectedObjects.length > 0 && (
-                        <ActionsListSection
-                          items={multiActionButtons}
-                          title={"Selected Objects:"}
-                        />
-                      )}
-                      {selectedInternalPaths !== null && (
-                        <ObjectDetailPanel
-                          internalPaths={selectedInternalPaths}
-                          bucketName={bucketName}
-                          onClosePanel={onClosePanel}
-                          versioningInfo={isVersioned}
-                          locking={lockingEnabled}
-                        />
-                      )}
-                    </DetailsListPanel>
-                  </SecureComponent>
-                )}
-              </Grid>
-            </div>
-          </Grid>
+                <TooltipWrapper tooltip={"Reload List"}>
+                  <Button
+                    id={"refresh-objects-list"}
+                    label={"Refresh"}
+                    icon={<RefreshIcon />}
+                    variant={"regular"}
+                    onClick={() => {
+                      if (versionsMode) {
+                        dispatch(setLoadingVersions(true));
+                      } else {
+                        dispatch(resetMessages());
+                        dispatch(setLoadingRecords(true));
+                        dispatch(setLoadingObjects(true));
+                      }
+                    }}
+                    disabled={
+                      anonymousMode
+                        ? false
+                        : !hasPermission(bucketName, [
+                            IAM_SCOPES.S3_LIST_BUCKET,
+                            IAM_SCOPES.S3_ALL_LIST_BUCKET,
+                          ]) || rewindEnabled
+                    }
+                  />
+                </TooltipWrapper>
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleUploadButton}
+                  style={{ display: "none" }}
+                  ref={fileUpload}
+                />
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleUploadButton}
+                  style={{ display: "none" }}
+                  ref={folderUpload}
+                />
+                <UploadFilesButton
+                  bucketName={bucketName}
+                  uploadPath={uploadPath.join("/")}
+                  uploadFileFunction={(closeMenu) => {
+                    if (fileUpload && fileUpload.current) {
+                      fileUpload.current.click();
+                    }
+                    closeMenu();
+                  }}
+                  uploadFolderFunction={(closeMenu) => {
+                    if (folderUpload && folderUpload.current) {
+                      folderUpload.current.click();
+                    }
+                    closeMenu();
+                  }}
+                />
+              </Fragment>
+            }
+            bottomBorder={false}
+          />
         </Grid>
+        <div
+          id="object-list-wrapper"
+          {...getRootProps({ style: { ...dndStyles } })}
+        >
+          <input {...getInputProps()} />
+          <Grid
+            item
+            xs={12}
+            className={classes.tableBlock}
+            sx={{ border: "#EAEDEE 1px solid", borderTop: 0 }}
+          >
+            {versionsMode ? (
+              <Fragment>
+                {selectedInternalPaths !== null && (
+                  <VersionsNavigator
+                    internalPaths={selectedInternalPaths}
+                    bucketName={bucketName}
+                  />
+                )}
+              </Fragment>
+            ) : (
+              <SecureComponent
+                scopes={[
+                  IAM_SCOPES.S3_LIST_BUCKET,
+                  IAM_SCOPES.S3_ALL_LIST_BUCKET,
+                ]}
+                resource={bucketName}
+                errorProps={{ disabled: true }}
+              >
+                <Grid
+                  item
+                  xs={12}
+                  className={`${classes.fullContainer} ${
+                    detailsOpen ? "detailsOpen" : ""
+                  } `}
+                >
+                  {!anonymousMode && (
+                    <Grid item xs={12} className={classes.breadcrumbsContainer}>
+                      <BrowserBreadcrumbs
+                        bucketName={bucketName}
+                        internalPaths={pageTitle}
+                        additionalOptions={
+                          !isVersioned || rewindEnabled ? null : (
+                            <div>
+                              <CheckboxWrapper
+                                name={"deleted_objects"}
+                                id={"showDeletedObjects"}
+                                value={"deleted_on"}
+                                label={"Show deleted objects"}
+                                onChange={setDeletedAction}
+                                checked={showDeleted}
+                                overrideLabelClasses={classes.labelStyle}
+                                className={classes.overrideShowDeleted}
+                                noTopMargin
+                              />
+                            </div>
+                          )
+                        }
+                        hidePathButton={false}
+                      />
+                    </Grid>
+                  )}
+                  <ListObjectsTable internalPaths={selectedInternalPaths} />
+                </Grid>
+              </SecureComponent>
+            )}
+            {!anonymousMode && (
+              <SecureComponent
+                scopes={[
+                  IAM_SCOPES.S3_LIST_BUCKET,
+                  IAM_SCOPES.S3_ALL_LIST_BUCKET,
+                ]}
+                resource={bucketName}
+                errorProps={{ disabled: true }}
+              >
+                <DetailsListPanel
+                  open={detailsOpen}
+                  closePanel={() => {
+                    onClosePanel(false);
+                  }}
+                  className={`${versionsMode ? classes.hideListOnSmall : ""}`}
+                >
+                  {selectedObjects.length > 0 && (
+                    <ActionsList
+                      items={multiActionButtons}
+                      title={"Selected Objects:"}
+                    />
+                  )}
+                  {selectedInternalPaths !== null && (
+                    <ObjectDetailPanel
+                      internalPaths={selectedInternalPaths}
+                      bucketName={bucketName}
+                      onClosePanel={onClosePanel}
+                      versioningInfo={isVersioned}
+                      locking={lockingEnabled}
+                    />
+                  )}
+                </DetailsListPanel>
+              </SecureComponent>
+            )}
+          </Grid>
+        </div>
       </PageLayout>
     </Fragment>
   );

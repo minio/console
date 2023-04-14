@@ -22,12 +22,11 @@ import React, {
   useState,
 } from "react";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, MainContainer } from "mds";
 import debounce from "lodash/debounce";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
-import CssBaseline from "@mui/material/CssBaseline";
 import Snackbar from "@mui/material/Snackbar";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -481,110 +480,101 @@ const Console = ({ classes }: IConsoleProps) => {
   return (
     <Fragment>
       {session && session.status === "ok" ? (
-        <div className={classes.root}>
-          <CssBaseline />
-          {!hideMenu && <Menu />}
-
-          <main className={classes.content}>
-            {needsRestart && (
-              <div className={classes.warningBar}>
-                {isServerLoading ? (
-                  <Fragment>
-                    The server is restarting.
-                    <LinearProgress className={classes.progress} />
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    The instance needs to be restarted for configuration changes
-                    to take effect.{" "}
-                    <Button
-                      id={"restart-server"}
-                      variant="secondary"
-                      onClick={() => {
-                        restartServer();
-                      }}
-                      label={"Restart"}
-                    />
-                  </Fragment>
-                )}
-              </div>
-            )}
-            {loadingProgress < 100 && (
-              <LinearProgress
-                className={classes.progress}
-                variant="determinate"
-                value={loadingProgress}
-              />
-            )}
-            <MainError />
-            <div className={classes.snackDiv}>
-              <Snackbar
-                open={openSnackbar}
-                onClose={() => {
-                  closeSnackBar();
-                }}
-                autoHideDuration={
-                  snackBarMessage.type === "error" ? 10000 : 5000
-                }
-                message={snackBarMessage.message}
-                className={classes.snackBarExternal}
-                ContentProps={{
-                  className: `${classes.snackBar} ${
-                    snackBarMessage.type === "error"
-                      ? classes.errorSnackBar
-                      : ""
-                  }`,
-                }}
-              />
+        <MainContainer menu={!hideMenu ? <Menu /> : null}>
+          {needsRestart && (
+            <div className={classes.warningBar}>
+              {isServerLoading ? (
+                <Fragment>
+                  The server is restarting.
+                  <LinearProgress className={classes.progress} />
+                </Fragment>
+              ) : (
+                <Fragment>
+                  The instance needs to be restarted for configuration changes
+                  to take effect.{" "}
+                  <Button
+                    id={"restart-server"}
+                    variant="secondary"
+                    onClick={() => {
+                      restartServer();
+                    }}
+                    label={"Restart"}
+                  />
+                </Fragment>
+              )}
             </div>
-            <Suspense fallback={<LoadingComponent />}>
-              <ObjectManager />
-            </Suspense>
-            <Routes>
-              {allowedRoutes.map((route: any) => (
-                <Route
-                  key={route.path}
-                  path={`${route.path}/*`}
-                  element={
-                    <Suspense fallback={<LoadingComponent />}>
-                      <route.component {...route.props} />
-                    </Suspense>
-                  }
-                />
-              ))}
+          )}
+          {loadingProgress < 100 && (
+            <LinearProgress
+              className={classes.progress}
+              variant="determinate"
+              value={loadingProgress}
+            />
+          )}
+          <MainError />
+          <div className={classes.snackDiv}>
+            <Snackbar
+              open={openSnackbar}
+              onClose={() => {
+                closeSnackBar();
+              }}
+              autoHideDuration={snackBarMessage.type === "error" ? 10000 : 5000}
+              message={snackBarMessage.message}
+              className={classes.snackBarExternal}
+              ContentProps={{
+                className: `${classes.snackBar} ${
+                  snackBarMessage.type === "error" ? classes.errorSnackBar : ""
+                }`,
+              }}
+            />
+          </div>
+          <Suspense fallback={<LoadingComponent />}>
+            <ObjectManager />
+          </Suspense>
+          <Routes>
+            {allowedRoutes.map((route: any) => (
               <Route
-                key={"icons"}
-                path={"icons"}
+                key={route.path}
+                path={`${route.path}/*`}
                 element={
                   <Suspense fallback={<LoadingComponent />}>
-                    <IconsScreen />
+                    <route.component {...route.props} />
                   </Suspense>
                 }
               />
-              <Route
-                key={"components"}
-                path={"components"}
-                element={
-                  <Suspense fallback={<LoadingComponent />}>
-                    <ComponentsScreen />
-                  </Suspense>
-                }
-              />
-              <Route
-                path={"*"}
-                element={
-                  <Fragment>
-                    {allowedRoutes.length > 0 ? (
-                      <Navigate to={allowedRoutes[0].path} />
-                    ) : (
-                      <Fragment />
-                    )}
-                  </Fragment>
-                }
-              />
-            </Routes>
-          </main>
-        </div>
+            ))}
+            <Route
+              key={"icons"}
+              path={"icons"}
+              element={
+                <Suspense fallback={<LoadingComponent />}>
+                  <IconsScreen />
+                </Suspense>
+              }
+            />
+            <Route
+              key={"components"}
+              path={"components"}
+              element={
+                <Suspense fallback={<LoadingComponent />}>
+                  <ComponentsScreen />
+                </Suspense>
+              }
+            />
+            <Route
+              path={"*"}
+              element={
+                <Fragment>
+                  {allowedRoutes.length > 0 ? (
+                    <Navigate to={allowedRoutes[0].path} />
+                  ) : (
+                    <Fragment />
+                  )}
+                </Fragment>
+              }
+            />
+          </Routes>
+        </MainContainer>
       ) : null}
     </Fragment>
   );
