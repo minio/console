@@ -32,6 +32,7 @@ import {
   setShareFileModalOpen,
   updateProgress,
 } from "./objectBrowserSlice";
+import { setSnackBarMessage } from "../../../systemSlice";
 
 export const downloadSelected = createAsyncThunk(
   "objectBrowser/downloadSelected",
@@ -68,6 +69,13 @@ export const downloadSelected = createAsyncThunk(
         },
         () => {
           dispatch(cancelObjectInList(identityDownload));
+        },
+        () => {
+          dispatch(
+            setSnackBarMessage(
+              "File exceeds size limit (8GB), progress won't be shown and download will be handled directly by the browse"
+            )
+          );
         }
       );
       storeCallForObjectWithID(ID, downloadCall);

@@ -31,7 +31,8 @@ export const download = (
   progressCallback: (progress: number) => void,
   completeCallback: () => void,
   errorCallback: (msg: string) => void,
-  abortCallback: () => void
+  abortCallback: () => void,
+  toastCallback: () => void
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
@@ -57,7 +58,8 @@ export const download = (
     progressCallback,
     completeCallback,
     errorCallback,
-    abortCallback
+    abortCallback,
+    toastCallback
   );
 };
 
@@ -73,6 +75,7 @@ class DownloadHelper {
   completeCallback: () => void;
   errorCallback: (msg: string) => void;
   abortCallback: () => void;
+  toastCallback: () => void;
 
   constructor(
     path: string,
@@ -82,7 +85,8 @@ class DownloadHelper {
     progressCallback: (progress: number) => void,
     completeCallback: () => void,
     errorCallback: (msg: string) => void,
-    abortCallback: () => void
+    abortCallback: () => void,
+    toastCallback: () => void
   ) {
     this.aborter = new AbortController();
     this.path = path;
@@ -93,6 +97,7 @@ class DownloadHelper {
     this.completeCallback = completeCallback;
     this.errorCallback = errorCallback;
     this.abortCallback = abortCallback;
+    this.toastCallback = toastCallback;
   }
 
   abort(): void {
@@ -105,7 +110,8 @@ class DownloadHelper {
 
   send(): void {
     let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    if (isSafari && this.fileSize > 1024 * 1024 * 1024 * 8) {
+    if (isSafari && this.fileSize > (1024 * 1024 * 1024 * 8)) {
+      this.toastCallback();
       this.downloadSafari();
     } else {
       this.download({
@@ -161,6 +167,7 @@ class DownloadHelper {
 
   async download({ url, chunkSize }: any) {
     const numberOfChunks = Math.ceil(this.fileSize / chunkSize);
+    this.progressCallback(0);
     try {
       for (let i = 0; i < numberOfChunks; i++) {
         let start = i * chunkSize;
