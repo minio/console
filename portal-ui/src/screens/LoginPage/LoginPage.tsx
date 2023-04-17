@@ -29,7 +29,7 @@ import { getFetchConfigurationAsync, getVersionAsync } from "./loginThunks";
 import { resetForm } from "./loginSlice";
 import StrategyForm from "./StrategyForm";
 import { redirectRules } from "../../utils/sortFunctions";
-import { getLogoVar } from "../../config";
+import {Config, getLogoVar} from "../../config";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -340,13 +340,15 @@ const Login = () => {
       "https://min.io/docs/minio/kubernetes/upstream/index.html?ref=con";
   }
 
+  console.log("disable animation" + Config.disableAnimation);
+
   return (
     <Fragment>
       <MainError />
       <LoginWrapper
         logoProps={{ applicationName: "console", subVariant: getLogoVar() }}
         form={loginComponent}
-        disableAnimation={true}
+        disableAnimation={Config.disableAnimation}
         formFooter={
           <Fragment>
             <a href={docsURL} target="_blank" rel="noopener">

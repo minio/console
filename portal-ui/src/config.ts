@@ -43,3 +43,8 @@ export const registeredCluster = (): boolean => {
   const plan = getLogoVar();
   return plan === "standard" || plan === "enterprise";
 };
+
+const envSettings = window as any;
+export class Config {
+  static disableAnimation = envSettings.DISABLE_ANIMATION;
+}

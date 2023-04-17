@@ -1,0 +1,1 @@
+window.DISABLE_ANIMATION = false
