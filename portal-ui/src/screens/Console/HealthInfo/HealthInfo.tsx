@@ -23,7 +23,7 @@ import {
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Grid, HelpBox, Loader } from "mds";
+import { Box, Button, Grid, HelpBox, InfoIcon, Loader } from "mds";
 import {
   DiagStatError,
   DiagStatInProgress,
@@ -353,14 +353,11 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
           <Fragment>
             <br />
             <HelpBox
-              title={""}
-              iconComponent={null}
-              help={
-                <Fragment>
-                  Cluster Health Report will be uploaded to Subnet, and is
-                  viewable from your Subnet Diagnostics dashboard.
-                </Fragment>
+              title={
+                "Cluster Health Report will be uploaded to Subnet, and is viewable from your Subnet Diagnostics dashboard."
               }
+              iconComponent={<InfoIcon />}
+              help={""}
             />
           </Fragment>
         )}
