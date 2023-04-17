@@ -340,8 +340,6 @@ const Login = () => {
       "https://min.io/docs/minio/kubernetes/upstream/index.html?ref=con";
   }
 
-  console.log("disable animation" + Config.disableAnimation);
-
   return (
     <Fragment>
       <MainError />
