@@ -1,6 +1,6 @@
 # Developing Console
 
-Console requires to have the [MinIo](https://github.com/minio/minio) server, Console server and the Console web app running.
+Console requires to have the [MinIO](https://github.com/minio/minio) server, Console server and the Console web app running.
 
 ## Running Server
 
