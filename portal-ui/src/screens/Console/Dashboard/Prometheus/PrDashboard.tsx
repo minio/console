@@ -63,7 +63,9 @@ const styles = (theme: Theme) =>
 
 const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
   const dispatch = useAppDispatch();
-  const loadingUsage = useSelector((state: AppState) => state.dashboard.loadingUsage);
+  const loadingUsage = useSelector(
+    (state: AppState) => state.dashboard.loadingUsage
+  );
   const zoomOpen = useSelector(
     (state: AppState) => state.dashboard.zoom.openZoom
   );
