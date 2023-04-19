@@ -1,3 +1,28 @@
+# Developing Console
+
+Console requires to have the [MinIO](https://github.com/minio/minio) server, Console server and the Console web app running.
+
+## Running Server
+
+Build the server in the main folder by running:
+```
+make
+```
+> Note: If it's the first time running the server, you might need to run `go mod tidy` to ensure you have all modules required.
+
+To start the server run:
+```
+CONSOLE_ACCESS_KEY=<your-access-key>
+CONSOLE_SECRET_KEY=<your-secret-key>
+CONSOLE_MINIO_SERVER=<minio-endpoint>
+CONSOLE_DEV_MODE=on
+./console server
+```
+
+## Running Web app
+Refer to `/portal-ui` [instructions](/portal-ui/README.md) to run the web app locally.
+
+
 # Building with MinIO
 
 To test console in its shipping format, you need to build it from the MinIO repository, the following step will guide
