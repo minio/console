@@ -94,6 +94,7 @@
   },
   "resolutions": {
     "nth-check": "^2.0.1",
+    "yaml": "^2.2.2",
     "postcss": "^8.2.13",
     "react-scripts/**/node-forge": "^1.3.0",
     "react-scripts/**/async": "^2.6.4",
