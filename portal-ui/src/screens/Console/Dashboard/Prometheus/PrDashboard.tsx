@@ -63,6 +63,9 @@ const styles = (theme: Theme) =>
 
 const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
   const dispatch = useAppDispatch();
+  const loadingUsage = useSelector(
+    (state: AppState) => state.dashboard.loadingUsage
+  );
   const zoomOpen = useSelector(
     (state: AppState) => state.dashboard.zoom.openZoom
   );
@@ -237,6 +240,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
                       onClick={() => {
                         dispatch(getUsageAsync());
                       }}
+                      disabled={loadingUsage}
                       icon={<SyncIcon />}
                       label={"Sync"}
                     />
@@ -328,8 +332,8 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
           index={usage?.advancedMetricsStatus === "not configured" ? 0 : 3}
           value={curTab}
         >
-          {!usage && <LinearProgress />}
-          {usage && <BasicDashboard usage={usage} />}
+          {(!usage || loadingUsage) && <LinearProgress />}
+          {usage && !loadingUsage && <BasicDashboard usage={usage} />}
         </TabPanel>
       </Grid>
     </PageLayout>
