@@ -18,12 +18,11 @@ import React, { Fragment, useState } from "react";
 import { Box } from "@mui/material";
 
 import Grid from "@mui/material/Grid";
-import { AddAccessRuleIcon, BackLink, Button } from "mds";
+import { AddAccessRuleIcon, BackLink, Button, FormLayout } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
-import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
@@ -81,7 +80,7 @@ const ImportKey = () => {
           <FormLayout
             title={"Import Key"}
             icon={<AddAccessRuleIcon />}
-            helpbox={
+            helpBox={
               <KMSHelpBox
                 helpText={"Encryption Key"}
                 contents={[
