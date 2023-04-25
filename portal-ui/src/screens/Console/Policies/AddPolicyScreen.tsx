@@ -17,13 +17,12 @@
 import React, { Fragment, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
-import { AddAccessRuleIcon, BackLink, Button } from "mds";
+import { AddAccessRuleIcon, BackLink, Button, FormLayout } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
@@ -100,7 +99,7 @@ const AddPolicyScreen = () => {
           <FormLayout
             title={"Create Policy"}
             icon={<AddAccessRuleIcon />}
-            helpbox={<AddPolicyHelpBox />}
+            helpBox={<AddPolicyHelpBox />}
           >
             <form
               noValidate

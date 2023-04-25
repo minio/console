@@ -19,7 +19,14 @@ import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { BackLink, BucketsIcon, Button, HelpBox, InfoIcon } from "mds";
+import {
+  BackLink,
+  BucketsIcon,
+  Button,
+  FormLayout,
+  HelpBox,
+  InfoIcon,
+} from "mds";
 import {
   containerForHeader,
   modalBasic,
@@ -37,7 +44,6 @@ import {
 } from "../../../../../systemSlice";
 import PageLayout from "../../../Common/Layout/PageLayout";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import FormLayout from "../../../Common/FormLayout";
 import TooltipWrapper from "../../../Common/TooltipWrapper/TooltipWrapper";
 import SectionTitle from "../../../Common/SectionTitle";
 import {
@@ -243,7 +249,7 @@ const AddBucket = () => {
         <FormLayout
           title={"Create Bucket"}
           icon={<BucketsIcon />}
-          helpbox={
+          helpBox={
             <HelpBox
               iconComponent={<BucketsIcon />}
               title={"Buckets"}
