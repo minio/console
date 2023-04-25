@@ -16,11 +16,12 @@
 import { expect } from "@playwright/test";
 import { generateUUID, test } from "./fixtures/baseFixture";
 import { minioadminFile } from "./consts";
+import { pagePort } from "./consts";
 
 test.use({ storageState: minioadminFile });
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("http://localhost:5005/");
+  await page.goto(pagePort);
 });
 
 test("Can create a policy", async ({ page }) => {

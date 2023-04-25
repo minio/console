@@ -15,3 +15,4 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export const minioadminFile = "playwright/.auth/admin.json";
+export const pagePort = "http://localhost:9090/buckets";

@@ -15,10 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { test as setup } from "@playwright/test";
 import { minioadminFile } from "./consts";
+import { pagePort } from "./consts";
 
 setup("authenticate as admin", async ({ page }) => {
   // Perform authentication steps. Replace these actions with your own.
-  await page.goto("http://localhost:5005");
+  await page.goto(pagePort);
   await page.getByPlaceholder("Username").click();
   await page.getByPlaceholder("Username").fill("minioadmin");
   await page.getByPlaceholder("Password").click();
