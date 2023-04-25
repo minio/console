@@ -59,7 +59,9 @@ const RewindEnable = ({
   useEffect(() => {
     if (rewindEnabled) {
       setRewindEnableButton(true);
-      setDateSelected(DateTime.fromISO(dateRewind || DateTime.now().toISO()));
+      setDateSelected(
+        DateTime.fromISO(dateRewind || DateTime.now().toISO() || "")
+      );
     }
   }, [rewindEnabled, dateRewind]);
 
