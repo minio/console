@@ -18,11 +18,10 @@ import React, { useState } from "react";
 import { Box } from "@mui/material";
 
 import Grid from "@mui/material/Grid";
-import { AddAccessRuleIcon, Button } from "mds";
+import { AddAccessRuleIcon, Button, FormLayout } from "mds";
 import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { ErrorResponseHandler } from "../../../common/types";
-import FormLayout from "../Common/FormLayout";
 import useApi from "../Common/Hooks/useApi";
 import KMSHelpBox from "./KMSHelpbox";
 
@@ -57,7 +56,7 @@ const AddKeyForm = ({ onSuccess, onError }: IAddKeyFormProps) => {
       <FormLayout
         title={"Create Key"}
         icon={<AddAccessRuleIcon />}
-        helpbox={
+        helpBox={
           <KMSHelpBox
             helpText={"Encryption Key"}
             contents={[

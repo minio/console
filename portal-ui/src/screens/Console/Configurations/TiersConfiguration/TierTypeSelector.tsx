@@ -21,8 +21,7 @@ import { tierTypes } from "./utils";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import PageLayout from "../../Common/Layout/PageLayout";
 import TierTypeCard from "./TierTypeCard";
-import { BackLink, HelpBox, TiersIcon } from "mds";
-import FormLayout from "../../Common/FormLayout";
+import { BackLink, FormLayout, HelpBox, TiersIcon } from "mds";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const TierTypeSelector = () => {
@@ -50,7 +49,7 @@ const TierTypeSelector = () => {
         <FormLayout
           title={"Select Tier Type"}
           icon={<TiersIcon />}
-          helpbox={
+          helpBox={
             <HelpBox
               iconComponent={<TiersIcon />}
               title={"Tier Types"}
