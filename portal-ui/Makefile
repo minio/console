@@ -5,6 +5,11 @@ build-static:
 	@if [ -f "${NVM_DIR}/nvm.sh" ]; then \. "${NVM_DIR}/nvm.sh" && nvm install && nvm use; fi && \
 	  NODE_OPTIONS=--openssl-legacy-provider yarn build
 
+build-static-istanbul-coverage:
+	@echo "Building frontend static assets to 'build'"
+	@if [ -f "${NVM_DIR}/nvm.sh" ]; then \. "${NVM_DIR}/nvm.sh" && nvm install && nvm use; fi && \
+	  NODE_OPTIONS=--openssl-legacy-provider yarn buildistanbulcoverage
+
 test-warnings:
 	./check-warnings.sh
 

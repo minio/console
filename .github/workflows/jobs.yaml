@@ -1308,9 +1308,92 @@ jobs:
             exit 1
           fi
 
+  ui-assets-istanbul-coverage:
+    name: "Assets with Istanbul Plugin for coverage"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.19.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+          cache: "yarn"
+          cache-dependency-path: portal-ui/yarn.lock
+      - uses: actions/cache@v3
+        id: assets-cache-istanbul-coverage
+        name: Assets Cache Istanbul Coverage
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
+      - name: Install Dependencies
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          yarn install --frozen-lockfile --immutable
+      - name: Check for Warnings in build output
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          ./check-warnings-istanbul-coverage.sh
+      - name: Check if Files are Prettified
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          ./check-prettier.sh
+
+  compile-binary-istanbul-coverage:
+    name: "Compile Console Binary with Istanbul Plugin for Coverage"
+    needs:
+      - lint-job
+      - ui-assets-istanbul-coverage
+      - reuse-golang-dependencies
+      - semgrep-static-code-analysis
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [1.19.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        id: go
+      - uses: actions/cache@v3
+        name: Console Binary Cache Istanbul Coverage
+        with:
+          path: |
+            ./console
+          key: ${{ runner.os }}-binary-istanbul-coverage-${{ github.run_id }}
+      - uses: actions/cache@v3
+        id: assets-cache-istanbul-coverage
+        name: Assets Cache Istanbul Coverage
+        with:
+          path: |
+            ./portal-ui/build/
+          key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make console
+
   playwright:
     needs:
-      - compile-binary
+      - compile-binary-istanbul-coverage
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -1337,20 +1420,15 @@ jobs:
         run: npx playwright install --with-deps
 
       - uses: actions/cache@v3
-        name: Console Binary Cache
+        name: Console Binary Cache Istanbul Coverage
         with:
           path: |
             ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
+          key: ${{ runner.os }}-binary-istanbul-coverage-${{ github.run_id }}
 
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
-
-      - name: Start Browser at port 5005
-        run: |
-          echo "yarn playwright"
-          (cd $GITHUB_WORKSPACE/portal-ui; yarn playwright) & (sleep 120) # To start port 5005 with Istanbul Plugin Injected
 
       - name: Run Playwright tests
         run: |
