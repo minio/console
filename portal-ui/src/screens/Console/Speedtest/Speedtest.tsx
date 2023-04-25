@@ -20,7 +20,14 @@ import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Grid } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { Button, HelpBox, Loader, SpeedtestIcon, WarnIcon } from "mds";
+import {
+  Button,
+  HelpBox,
+  Loader,
+  PageLayout,
+  SpeedtestIcon,
+  WarnIcon,
+} from "mds";
 import { DateTime } from "luxon";
 import createStyles from "@mui/styles/createStyles";
 import {
@@ -40,7 +47,6 @@ import STResults from "./STResults";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ProgressBarWrapper from "../Common/ProgressBarWrapper/ProgressBarWrapper";
 import InputUnitMenu from "../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import PageLayout from "../Common/Layout/PageLayout";
 import { SecureComponent } from "../../../common/SecureComponent";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 import { selDistSet } from "../../../systemSlice";

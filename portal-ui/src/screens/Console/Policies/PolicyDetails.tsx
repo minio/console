@@ -25,6 +25,7 @@ import {
   SectionTitle,
   TrashIcon,
   Grid,
+  PageLayout,
 } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -44,7 +45,6 @@ import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMi
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 
 import {

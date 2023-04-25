@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { AddIcon, Button, HelpBox, IAMPoliciesIcon } from "mds";
+import { AddIcon, Button, HelpBox, IAMPoliciesIcon, PageLayout } from "mds";
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -30,7 +30,6 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import PageLayout from "../Common/Layout/PageLayout";
 import {
   CONSOLE_UI_RESOURCE,
   createPolicyPermissions,

@@ -34,6 +34,7 @@ import {
   DeleteIcon,
   DownloadIcon,
   HistoryIcon,
+  PageLayout,
   PreviewIcon,
   RefreshIcon,
   ShareIcon,
@@ -69,7 +70,6 @@ import {
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
-import PageLayout from "../../../../Common/Layout/PageLayout";
 import {
   IAM_SCOPES,
   permissionTooltipHelper,

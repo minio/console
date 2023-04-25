@@ -16,7 +16,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, PageLayout } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { useSelector } from "react-redux";
@@ -33,7 +33,6 @@ import {
   inlineCheckboxes,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";

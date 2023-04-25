@@ -21,7 +21,7 @@ import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { BackLink, Button } from "mds";
+import { BackLink, Button, PageLayout } from "mds";
 
 import api from "../../../common/api";
 import {
@@ -41,7 +41,6 @@ import { IElementValue } from "../Configurations/types";
 
 import withSuspense from "../Common/Components/withSuspense";
 
-import PageLayout from "../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import {
   setErrorSnackMessage,

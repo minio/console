@@ -24,6 +24,7 @@ import {
   GroupsIcon,
   HelpBox,
   IAMPoliciesIcon,
+  PageLayout,
   UsersIcon,
 } from "mds";
 import createStyles from "@mui/styles/createStyles";
@@ -43,7 +44,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AButton from "../Common/AButton/AButton";
-import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import {
   applyPolicyPermissions,

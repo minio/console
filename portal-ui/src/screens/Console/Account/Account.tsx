@@ -21,6 +21,7 @@ import {
   Button,
   DeleteIcon,
   HelpBox,
+  PageLayout,
   PasswordKeyIcon,
 } from "mds";
 import { useSelector } from "react-redux";
@@ -40,7 +41,6 @@ import {
 
 import { ErrorResponseHandler } from "../../../common/types";
 import ChangePasswordModal from "./ChangePasswordModal";
-import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import {

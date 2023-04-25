@@ -22,6 +22,7 @@ import {
   BackLink,
   Button,
   IAMPoliciesIcon,
+  PageLayout,
   PasswordKeyIcon,
   TrashIcon,
   UsersIcon,
@@ -47,7 +48,6 @@ import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUser from "./DeleteUser";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
-import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 

@@ -24,6 +24,7 @@ import {
   DeleteIcon,
   GroupsIcon,
   HelpBox,
+  PageLayout,
   UsersIcon,
 } from "mds";
 import createStyles from "@mui/styles/createStyles";
@@ -43,7 +44,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { encodeURLString } from "../../../common/utils";
 import AButton from "../Common/AButton/AButton";
-import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import {

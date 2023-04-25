@@ -25,6 +25,7 @@ import {
   AddIcon,
   Button,
   HelpBox,
+  PageLayout,
   RefreshIcon,
   TierOfflineIcon,
   TierOnlineIcon,
@@ -46,7 +47,6 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AButton from "../../Common/AButton/AButton";
-import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
 
 import withSuspense from "../../Common/Components/withSuspense";

@@ -1,7 +1,14 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import { useNavigate, useParams } from "react-router-dom";
-import { AddIcon, Button, GroupsIcon, IAMPoliciesIcon, TrashIcon } from "mds";
+import {
+  AddIcon,
+  Button,
+  GroupsIcon,
+  IAMPoliciesIcon,
+  PageLayout,
+  TrashIcon,
+} from "mds";
 import createStyles from "@mui/styles/createStyles";
 import {
   actionsTray,
@@ -22,7 +29,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import DeleteGroup from "./DeleteGroup";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import PageLayout from "../Common/Layout/PageLayout";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import SearchBox from "../Common/SearchBox";
 import {
