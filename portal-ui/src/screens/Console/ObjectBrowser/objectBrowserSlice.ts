@@ -61,7 +61,7 @@ const initialState: ObjectBrowserState = {
   loadingVersioning: true,
   versionInfo: {},
   lockingEnabled: false,
-  loadingLocking: false,
+  loadingLocking: true,
   selectedObjects: [],
   downloadRenameModal: null,
   selectedPreview: null,
