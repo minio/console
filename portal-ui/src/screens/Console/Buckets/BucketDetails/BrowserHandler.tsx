@@ -317,6 +317,7 @@ const BrowserHandler = () => {
       dispatch(
         setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths)
       );
+      dispatch(setLoadingLocking(true));
     } else {
       dispatch(setLoadingObjectInfo(true));
       dispatch(setObjectDetailsView(true));
