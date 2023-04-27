@@ -169,7 +169,7 @@ const Trace = ({ classes }: ITrace) => {
     <Fragment>
       <PageHeaderWrapper label={"Trace"} />
       <PageLayout>
-        <Grid className={classes.formBox}>
+        <Grid container spacing={1} className={classes.formBox}>
           <Grid
             item
             xs={12}

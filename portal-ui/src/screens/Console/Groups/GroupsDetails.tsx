@@ -249,7 +249,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
         </SecureComponent>
       </div>
 
-      <div className={classes.tableBlock}>
+      <Grid item xs={12}>
         <SecureComponent
           resource={CONSOLE_UI_RESOURCE}
           scopes={listUsersPermissions}
@@ -281,7 +281,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
             }
           />
         </SecureComponent>
-      </div>
+      </Grid>
     </React.Fragment>
   );
 
@@ -311,7 +311,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           />
         </TooltipWrapper>
       </div>
-      <div className={classes.tableBlock}>
+      <Grid item xs={12}>
         <TableWrapper
           itemActions={[
             {
@@ -336,7 +336,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                 )
           }
         />
-      </div>
+      </Grid>
     </React.Fragment>
   );
   return (
