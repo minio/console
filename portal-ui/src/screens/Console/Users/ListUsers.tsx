@@ -24,6 +24,7 @@ import {
   DeleteIcon,
   GroupsIcon,
   HelpBox,
+  PageLayout,
   UsersIcon,
 } from "mds";
 import createStyles from "@mui/styles/createStyles";
@@ -43,7 +44,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { encodeURLString } from "../../../common/utils";
 import AButton from "../Common/AButton/AButton";
-import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import {
@@ -211,119 +211,89 @@ const ListUsers = ({ classes }: IUsersProps) => {
       )}
       <PageHeaderWrapper label={"Users"} />
       <PageLayout>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <SearchBox
-            placeholder={"Search Users"}
-            onChange={setFilter}
-            overrideClass={classes.searchField}
-            value={filter}
-          />
-          <SecureComponent
-            resource={CONSOLE_UI_RESOURCE}
-            scopes={[IAM_SCOPES.ADMIN_DELETE_USER]}
-            matchAll
-            errorProps={{ disabled: true }}
-          >
-            <TooltipWrapper
-              tooltip={
-                hasPermission("console", [IAM_SCOPES.ADMIN_DELETE_USER])
-                  ? checkedUsers.length === 0
-                    ? "Select Users to delete"
-                    : "Delete Selected"
-                  : permissionTooltipHelper(
-                      [IAM_SCOPES.ADMIN_DELETE_USER],
-                      "delete users"
-                    )
-              }
+        <Grid container spacing={1}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <SearchBox
+              placeholder={"Search Users"}
+              onChange={setFilter}
+              overrideClass={classes.searchField}
+              value={filter}
+            />
+            <SecureComponent
+              resource={CONSOLE_UI_RESOURCE}
+              scopes={[IAM_SCOPES.ADMIN_DELETE_USER]}
+              matchAll
+              errorProps={{ disabled: true }}
             >
-              <Button
-                id={"delete-selected-users"}
-                onClick={() => {
-                  setDeleteOpen(true);
-                }}
-                label={"Delete Selected"}
-                icon={<DeleteIcon />}
-                disabled={checkedUsers.length === 0}
-                variant={"secondary"}
-                aria-label="delete-selected-users"
-              />
-            </TooltipWrapper>
-          </SecureComponent>
-          <SecureComponent
-            scopes={[IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP]}
-            resource={CONSOLE_UI_RESOURCE}
-            errorProps={{ disabled: true }}
-          >
-            <TooltipWrapper
-              tooltip={
-                hasPermission("console", [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP])
-                  ? checkedUsers.length === 0
-                    ? "Select Users to group"
-                    : "Add to Group"
-                  : permissionTooltipHelper(
-                      [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP],
-                      "add users to groups"
-                    )
-              }
+              <TooltipWrapper
+                tooltip={
+                  hasPermission("console", [IAM_SCOPES.ADMIN_DELETE_USER])
+                    ? checkedUsers.length === 0
+                      ? "Select Users to delete"
+                      : "Delete Selected"
+                    : permissionTooltipHelper(
+                        [IAM_SCOPES.ADMIN_DELETE_USER],
+                        "delete users"
+                      )
+                }
+              >
+                <Button
+                  id={"delete-selected-users"}
+                  onClick={() => {
+                    setDeleteOpen(true);
+                  }}
+                  label={"Delete Selected"}
+                  icon={<DeleteIcon />}
+                  disabled={checkedUsers.length === 0}
+                  variant={"secondary"}
+                  aria-label="delete-selected-users"
+                />
+              </TooltipWrapper>
+            </SecureComponent>
+            <SecureComponent
+              scopes={[IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP]}
+              resource={CONSOLE_UI_RESOURCE}
+              errorProps={{ disabled: true }}
             >
-              <Button
-                id={"add-to-group"}
-                label={"Add to Group"}
-                icon={<GroupsIcon />}
-                disabled={checkedUsers.length <= 0}
-                onClick={() => {
-                  if (checkedUsers.length > 0) {
-                    setAddGroupOpen(true);
-                  }
-                }}
-                variant={"regular"}
-              />
-            </TooltipWrapper>
-          </SecureComponent>
-          <SecureComponent
-            scopes={[
-              IAM_SCOPES.ADMIN_CREATE_USER,
-              IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-              IAM_SCOPES.ADMIN_LIST_GROUPS,
-            ]}
-            resource={S3_ALL_RESOURCES}
-            matchAll
-            errorProps={{ disabled: true }}
-          >
-            <TooltipWrapper
-              tooltip={
-                hasPermission(
-                  "console",
-                  [
-                    IAM_SCOPES.ADMIN_CREATE_USER,
-                    IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-                    IAM_SCOPES.ADMIN_LIST_GROUPS,
-                    IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-                  ],
-                  true
-                )
-                  ? "Create User"
-                  : permissionTooltipHelper(
-                      [
-                        IAM_SCOPES.ADMIN_CREATE_USER,
-                        IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-                        IAM_SCOPES.ADMIN_LIST_GROUPS,
-                        IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-                      ],
-                      "create users"
-                    )
-              }
+              <TooltipWrapper
+                tooltip={
+                  hasPermission("console", [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP])
+                    ? checkedUsers.length === 0
+                      ? "Select Users to group"
+                      : "Add to Group"
+                    : permissionTooltipHelper(
+                        [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP],
+                        "add users to groups"
+                      )
+                }
+              >
+                <Button
+                  id={"add-to-group"}
+                  label={"Add to Group"}
+                  icon={<GroupsIcon />}
+                  disabled={checkedUsers.length <= 0}
+                  onClick={() => {
+                    if (checkedUsers.length > 0) {
+                      setAddGroupOpen(true);
+                    }
+                  }}
+                  variant={"regular"}
+                />
+              </TooltipWrapper>
+            </SecureComponent>
+            <SecureComponent
+              scopes={[
+                IAM_SCOPES.ADMIN_CREATE_USER,
+                IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+                IAM_SCOPES.ADMIN_LIST_GROUPS,
+              ]}
+              resource={S3_ALL_RESOURCES}
+              matchAll
+              errorProps={{ disabled: true }}
             >
-              <Button
-                id={"create-user"}
-                label={"Create User"}
-                icon={<AddIcon />}
-                onClick={() => {
-                  navigate(`${IAM_PAGES.USER_ADD}`);
-                }}
-                variant={"callAction"}
-                disabled={
-                  !hasPermission(
+              <TooltipWrapper
+                tooltip={
+                  hasPermission(
                     "console",
                     [
                       IAM_SCOPES.ADMIN_CREATE_USER,
@@ -333,27 +303,48 @@ const ListUsers = ({ classes }: IUsersProps) => {
                     ],
                     true
                   )
+                    ? "Create User"
+                    : permissionTooltipHelper(
+                        [
+                          IAM_SCOPES.ADMIN_CREATE_USER,
+                          IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+                          IAM_SCOPES.ADMIN_LIST_GROUPS,
+                          IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+                        ],
+                        "create users"
+                      )
                 }
-              />
-            </TooltipWrapper>
-          </SecureComponent>
-        </Grid>
-
-        {loading && <LinearProgress />}
-        {!loading && (
-          <Fragment>
-            {records.length > 0 && (
-              <Fragment>
-                <TooltipWrapper
-                  tooltip={
-                    viewUser
-                      ? ""
-                      : permissionTooltipHelper(
-                          [IAM_SCOPES.ADMIN_GET_USER],
-                          "view user details"
-                        )
+              >
+                <Button
+                  id={"create-user"}
+                  label={"Create User"}
+                  icon={<AddIcon />}
+                  onClick={() => {
+                    navigate(`${IAM_PAGES.USER_ADD}`);
+                  }}
+                  variant={"callAction"}
+                  disabled={
+                    !hasPermission(
+                      "console",
+                      [
+                        IAM_SCOPES.ADMIN_CREATE_USER,
+                        IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+                        IAM_SCOPES.ADMIN_LIST_GROUPS,
+                        IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
+                      ],
+                      true
+                    )
                   }
-                >
+                />
+              </TooltipWrapper>
+            </SecureComponent>
+          </Grid>
+
+          {loading && <LinearProgress />}
+          {!loading && (
+            <Fragment>
+              {records.length > 0 && (
+                <Fragment>
                   <Grid
                     item
                     xs={12}
@@ -383,60 +374,6 @@ const ListUsers = ({ classes }: IUsersProps) => {
                       />
                     </SecureComponent>
                   </Grid>
-                </TooltipWrapper>
-                <HelpBox
-                  title={"Users"}
-                  iconComponent={<UsersIcon />}
-                  help={
-                    <Fragment>
-                      A MinIO user consists of a unique access key (username)
-                      and corresponding secret key (password). Clients must
-                      authenticate their identity by specifying both a valid
-                      access key (username) and the corresponding secret key
-                      (password) of an existing MinIO user.
-                      <br />
-                      Groups provide a simplified method for managing shared
-                      permissions among users with common access patterns and
-                      workloads.
-                      <br />
-                      <br />
-                      Users inherit access permissions to data and resources
-                      through the groups they belong to.
-                      <br />
-                      MinIO uses Policy-Based Access Control (PBAC) to define
-                      the authorized actions and resources to which an
-                      authenticated user has access. Each policy describes one
-                      or more actions and conditions that outline the
-                      permissions of a user or group of users.
-                      <br />
-                      <br />
-                      Each user can access only those resources and operations
-                      which are explicitly granted by the built-in role. MinIO
-                      denies access to any other resource or action by default.
-                      <br />
-                      <br />
-                      You can learn more at our{" "}
-                      <a
-                        href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/minio-user-management.html?ref=con"
-                        target="_blank"
-                        rel="noopener"
-                      >
-                        documentation
-                      </a>
-                      .
-                    </Fragment>
-                  }
-                />
-              </Fragment>
-            )}
-            {records.length === 0 && (
-              <Grid
-                container
-                justifyContent={"center"}
-                alignContent={"center"}
-                alignItems={"start"}
-              >
-                <Grid item xs={8}>
                   <HelpBox
                     title={"Users"}
                     iconComponent={<UsersIcon />}
@@ -467,35 +404,91 @@ const ListUsers = ({ classes }: IUsersProps) => {
                         which are explicitly granted by the built-in role. MinIO
                         denies access to any other resource or action by
                         default.
-                        <SecureComponent
-                          scopes={[
-                            IAM_SCOPES.ADMIN_CREATE_USER,
-                            IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-                            IAM_SCOPES.ADMIN_LIST_GROUPS,
-                          ]}
-                          matchAll
-                          resource={CONSOLE_UI_RESOURCE}
+                        <br />
+                        <br />
+                        You can learn more at our{" "}
+                        <a
+                          href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/minio-user-management.html?ref=con"
+                          target="_blank"
+                          rel="noopener"
                         >
-                          <br />
-                          <br />
-                          To get started,{" "}
-                          <AButton
-                            onClick={() => {
-                              navigate(`${IAM_PAGES.USER_ADD}`);
-                            }}
-                          >
-                            Create a User
-                          </AButton>
-                          .
-                        </SecureComponent>
+                          documentation
+                        </a>
+                        .
                       </Fragment>
                     }
                   />
+                </Fragment>
+              )}
+              {records.length === 0 && (
+                <Grid
+                  container
+                  justifyContent={"center"}
+                  alignContent={"center"}
+                  alignItems={"start"}
+                >
+                  <Grid item xs={8}>
+                    <HelpBox
+                      title={"Users"}
+                      iconComponent={<UsersIcon />}
+                      help={
+                        <Fragment>
+                          A MinIO user consists of a unique access key
+                          (username) and corresponding secret key (password).
+                          Clients must authenticate their identity by specifying
+                          both a valid access key (username) and the
+                          corresponding secret key (password) of an existing
+                          MinIO user.
+                          <br />
+                          Groups provide a simplified method for managing shared
+                          permissions among users with common access patterns
+                          and workloads.
+                          <br />
+                          <br />
+                          Users inherit access permissions to data and resources
+                          through the groups they belong to.
+                          <br />
+                          MinIO uses Policy-Based Access Control (PBAC) to
+                          define the authorized actions and resources to which
+                          an authenticated user has access. Each policy
+                          describes one or more actions and conditions that
+                          outline the permissions of a user or group of users.
+                          <br />
+                          <br />
+                          Each user can access only those resources and
+                          operations which are explicitly granted by the
+                          built-in role. MinIO denies access to any other
+                          resource or action by default.
+                          <SecureComponent
+                            scopes={[
+                              IAM_SCOPES.ADMIN_CREATE_USER,
+                              IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
+                              IAM_SCOPES.ADMIN_LIST_GROUPS,
+                            ]}
+                            matchAll
+                            resource={CONSOLE_UI_RESOURCE}
+                          >
+                            <br />
+                            <br />
+                            To get started,{" "}
+                            <AButton
+                              onClick={() => {
+                                navigate(`${IAM_PAGES.USER_ADD}`);
+                              }}
+                            >
+                              Create a User
+                            </AButton>
+                            .
+                          </SecureComponent>
+                        </Fragment>
+                      }
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-            )}
-          </Fragment>
-        )}
+              )}
+            </Fragment>
+          )}
+        </Grid>
       </PageLayout>
     </Fragment>
   );

@@ -16,9 +16,8 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { Button, CallHomeMenuIcon, HelpBox, Loader } from "mds";
+import { Button, CallHomeMenuIcon, HelpBox, Loader, PageLayout } from "mds";
 import { Link, useNavigate } from "react-router-dom";
-import PageLayout from "../Common/Layout/PageLayout";
 import api from "../../../common/api";
 import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage } from "../../../systemSlice";

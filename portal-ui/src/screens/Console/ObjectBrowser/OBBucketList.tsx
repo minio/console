@@ -18,7 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
-import { BucketsIcon, Button, HelpBox, RefreshIcon } from "mds";
+import { BucketsIcon, Button, HelpBox, PageLayout, RefreshIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -35,7 +35,6 @@ import {
   IAM_SCOPES,
   permissionTooltipHelper,
 } from "../../../common/SecureComponent/permissions";
-import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import hasPermission from "../../../common/SecureComponent/accessControl";
 import { setErrorSnackMessage } from "../../../systemSlice";

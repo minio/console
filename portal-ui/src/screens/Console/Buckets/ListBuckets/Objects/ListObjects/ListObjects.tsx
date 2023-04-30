@@ -34,6 +34,7 @@ import {
   DeleteIcon,
   DownloadIcon,
   HistoryIcon,
+  PageLayout,
   PreviewIcon,
   RefreshIcon,
   ShareIcon,
@@ -69,7 +70,6 @@ import {
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
-import PageLayout from "../../../../Common/Layout/PageLayout";
 import {
   IAM_SCOPES,
   permissionTooltipHelper,
@@ -968,261 +968,277 @@ const ListObjects = () => {
       )}
 
       <PageLayout variant={"full"}>
-        {anonymousMode && (
-          <div style={{ paddingBottom: 16 }}>
-            <FilterObjectsSB />
-          </div>
-        )}
-        <Grid item xs={12} className={classes.screenTitleContainer}>
-          <ScreenTitle
-            icon={
-              <span>
-                <BucketsIcon style={{ width: 30 }} />
-              </span>
-            }
-            title={<span className={classes.titleSpacer}>{bucketName}</span>}
-            subTitle={
-              !anonymousMode ? (
-                <Fragment>
-                  <Grid item xs={12} className={classes.bucketDetails}>
-                    <span className={classes.detailsSpacer}>
-                      Created on:&nbsp;&nbsp;
-                      <strong>
-                        {bucketInfo?.creation_date
-                          ? createdTime.toFormat(
-                              "ccc, LLL dd yyyy HH:mm:ss (ZZZZ)"
-                            )
-                          : ""}
-                      </strong>
-                    </span>
-                    <span className={classes.detailsSpacer}>
-                      Access:&nbsp;&nbsp;&nbsp;
-                      <strong>{bucketInfo?.access || ""}</strong>
-                    </span>
-                    {bucketInfo && (
-                      <Fragment>
-                        <span className={classes.detailsSpacer}>
-                          {bucketInfo.size && (
-                            <Fragment>{niceBytesInt(bucketInfo.size)}</Fragment>
-                          )}
-                          {bucketInfo.size && quota && (
-                            <Fragment> / {niceBytesInt(quota.quota)}</Fragment>
-                          )}
-                          {bucketInfo.size && bucketInfo.objects ? " - " : ""}
-                          {bucketInfo.objects && (
-                            <Fragment>
-                              {bucketInfo.objects}&nbsp;Object
-                              {bucketInfo.objects && bucketInfo.objects !== 1
-                                ? "s"
-                                : ""}
-                            </Fragment>
-                          )}
-                        </span>
-                      </Fragment>
-                    )}
-                  </Grid>
-                </Fragment>
-              ) : null
-            }
-            actions={
-              <div className={classes.actionsSection}>
-                {!anonymousMode && (
-                  <TooltipWrapper tooltip={"Rewind Bucket"}>
+        <Grid container spacing={1}>
+          {anonymousMode && (
+            <div style={{ paddingBottom: 16 }}>
+              <FilterObjectsSB />
+            </div>
+          )}
+          <Grid item xs={12} className={classes.screenTitleContainer}>
+            <ScreenTitle
+              icon={
+                <span>
+                  <BucketsIcon style={{ width: 30 }} />
+                </span>
+              }
+              title={<span className={classes.titleSpacer}>{bucketName}</span>}
+              subTitle={
+                !anonymousMode ? (
+                  <Fragment>
+                    <Grid item xs={12} className={classes.bucketDetails}>
+                      <span className={classes.detailsSpacer}>
+                        Created on:&nbsp;&nbsp;
+                        <strong>
+                          {bucketInfo?.creation_date
+                            ? createdTime.toFormat(
+                                "ccc, LLL dd yyyy HH:mm:ss (ZZZZ)"
+                              )
+                            : ""}
+                        </strong>
+                      </span>
+                      <span className={classes.detailsSpacer}>
+                        Access:&nbsp;&nbsp;&nbsp;
+                        <strong>{bucketInfo?.access || ""}</strong>
+                      </span>
+                      {bucketInfo && (
+                        <Fragment>
+                          <span className={classes.detailsSpacer}>
+                            {bucketInfo.size && (
+                              <Fragment>
+                                {niceBytesInt(bucketInfo.size)}
+                              </Fragment>
+                            )}
+                            {bucketInfo.size && quota && (
+                              <Fragment>
+                                {" "}
+                                / {niceBytesInt(quota.quota)}
+                              </Fragment>
+                            )}
+                            {bucketInfo.size && bucketInfo.objects ? " - " : ""}
+                            {bucketInfo.objects && (
+                              <Fragment>
+                                {bucketInfo.objects}&nbsp;Object
+                                {bucketInfo.objects && bucketInfo.objects !== 1
+                                  ? "s"
+                                  : ""}
+                              </Fragment>
+                            )}
+                          </span>
+                        </Fragment>
+                      )}
+                    </Grid>
+                  </Fragment>
+                ) : null
+              }
+              actions={
+                <div className={classes.actionsSection}>
+                  {!anonymousMode && (
+                    <TooltipWrapper tooltip={"Rewind Bucket"}>
+                      <Button
+                        id={"rewind-objects-list"}
+                        label={"Rewind"}
+                        icon={
+                          <Badge
+                            badgeContent=" "
+                            color="secondary"
+                            variant="dot"
+                            invisible={!rewindEnabled}
+                            className={classes.badgeOverlap}
+                            sx={{ height: 16 }}
+                          >
+                            <HistoryIcon
+                              style={{
+                                minWidth: 16,
+                                minHeight: 16,
+                                width: 16,
+                                height: 16,
+                                marginTop: -3,
+                              }}
+                            />
+                          </Badge>
+                        }
+                        variant={"regular"}
+                        onClick={() => {
+                          setRewindSelect(true);
+                        }}
+                        disabled={
+                          !isVersioned ||
+                          !hasPermission(bucketName, [
+                            IAM_SCOPES.S3_GET_OBJECT,
+                            IAM_SCOPES.S3_GET_ACTIONS,
+                          ])
+                        }
+                        sx={regularButtonOverride}
+                      />
+                    </TooltipWrapper>
+                  )}
+                  <TooltipWrapper tooltip={"Reload List"}>
                     <Button
-                      id={"rewind-objects-list"}
-                      label={"Rewind"}
-                      icon={
-                        <Badge
-                          badgeContent=" "
-                          color="secondary"
-                          variant="dot"
-                          invisible={!rewindEnabled}
-                          className={classes.badgeOverlap}
-                          sx={{ height: 16 }}
-                        >
-                          <HistoryIcon
-                            style={{
-                              minWidth: 16,
-                              minHeight: 16,
-                              width: 16,
-                              height: 16,
-                              marginTop: -3,
-                            }}
-                          />
-                        </Badge>
-                      }
+                      id={"refresh-objects-list"}
+                      label={"Refresh"}
+                      icon={<RefreshIcon />}
                       variant={"regular"}
                       onClick={() => {
-                        setRewindSelect(true);
+                        if (versionsMode) {
+                          dispatch(setLoadingVersions(true));
+                        } else {
+                          dispatch(resetMessages());
+                          dispatch(setLoadingRecords(true));
+                          dispatch(setLoadingObjects(true));
+                        }
                       }}
                       disabled={
-                        !isVersioned ||
-                        !hasPermission(bucketName, [
-                          IAM_SCOPES.S3_GET_OBJECT,
-                          IAM_SCOPES.S3_GET_ACTIONS,
-                        ])
+                        anonymousMode
+                          ? false
+                          : !hasPermission(bucketName, [
+                              IAM_SCOPES.S3_LIST_BUCKET,
+                              IAM_SCOPES.S3_ALL_LIST_BUCKET,
+                            ]) || rewindEnabled
                       }
                       sx={regularButtonOverride}
                     />
                   </TooltipWrapper>
-                )}
-                <TooltipWrapper tooltip={"Reload List"}>
-                  <Button
-                    id={"refresh-objects-list"}
-                    label={"Refresh"}
-                    icon={<RefreshIcon />}
-                    variant={"regular"}
-                    onClick={() => {
-                      if (versionsMode) {
-                        dispatch(setLoadingVersions(true));
-                      } else {
-                        dispatch(resetMessages());
-                        dispatch(setLoadingRecords(true));
-                        dispatch(setLoadingObjects(true));
-                      }
-                    }}
-                    disabled={
-                      anonymousMode
-                        ? false
-                        : !hasPermission(bucketName, [
-                            IAM_SCOPES.S3_LIST_BUCKET,
-                            IAM_SCOPES.S3_ALL_LIST_BUCKET,
-                          ]) || rewindEnabled
-                    }
-                    sx={regularButtonOverride}
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleUploadButton}
+                    style={{ display: "none" }}
+                    ref={fileUpload}
                   />
-                </TooltipWrapper>
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleUploadButton}
-                  style={{ display: "none" }}
-                  ref={fileUpload}
-                />
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleUploadButton}
-                  style={{ display: "none" }}
-                  ref={folderUpload}
-                />
-                <UploadFilesButton
-                  bucketName={bucketName}
-                  uploadPath={uploadPath.join("/")}
-                  uploadFileFunction={(closeMenu) => {
-                    if (fileUpload && fileUpload.current) {
-                      fileUpload.current.click();
-                    }
-                    closeMenu();
-                  }}
-                  uploadFolderFunction={(closeMenu) => {
-                    if (folderUpload && folderUpload.current) {
-                      folderUpload.current.click();
-                    }
-                    closeMenu();
-                  }}
-                  overrideStyles={callActionButtonOverride}
-                />
-              </div>
-            }
-          />
-        </Grid>
-        <div
-          id="object-list-wrapper"
-          {...getRootProps({ style: { ...dndStyles } })}
-        >
-          <input {...getInputProps()} />
-          <Grid
-            item
-            xs={12}
-            className={classes.tableBlock}
-            sx={{ border: "#EAEDEE 1px solid", borderTop: 0 }}
-          >
-            {versionsMode ? (
-              <Fragment>
-                {selectedInternalPaths !== null && (
-                  <VersionsNavigator
-                    internalPaths={selectedInternalPaths}
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleUploadButton}
+                    style={{ display: "none" }}
+                    ref={folderUpload}
+                  />
+                  <UploadFilesButton
                     bucketName={bucketName}
+                    uploadPath={uploadPath.join("/")}
+                    uploadFileFunction={(closeMenu) => {
+                      if (fileUpload && fileUpload.current) {
+                        fileUpload.current.click();
+                      }
+                      closeMenu();
+                    }}
+                    uploadFolderFunction={(closeMenu) => {
+                      if (folderUpload && folderUpload.current) {
+                        folderUpload.current.click();
+                      }
+                      closeMenu();
+                    }}
+                    overrideStyles={callActionButtonOverride}
                   />
-                )}
-              </Fragment>
-            ) : (
-              <SecureComponent
-                scopes={[
-                  IAM_SCOPES.S3_LIST_BUCKET,
-                  IAM_SCOPES.S3_ALL_LIST_BUCKET,
-                ]}
-                resource={bucketName}
-                errorProps={{ disabled: true }}
-              >
-                <Grid item xs={12} className={classes.fullContainer}>
-                  {!anonymousMode && (
-                    <Grid item xs={12} className={classes.breadcrumbsContainer}>
-                      <BrowserBreadcrumbs
-                        bucketName={bucketName}
-                        internalPaths={pageTitle}
-                        additionalOptions={
-                          !isVersioned || rewindEnabled ? null : (
-                            <div>
-                              <CheckboxWrapper
-                                name={"deleted_objects"}
-                                id={"showDeletedObjects"}
-                                value={"deleted_on"}
-                                label={"Show deleted objects"}
-                                onChange={setDeletedAction}
-                                checked={showDeleted}
-                                overrideLabelClasses={classes.labelStyle}
-                                className={classes.overrideShowDeleted}
-                                noTopMargin
-                              />
-                            </div>
-                          )
-                        }
-                        hidePathButton={false}
-                      />
-                    </Grid>
-                  )}
-                  <ListObjectsTable internalPaths={selectedInternalPaths} />
-                </Grid>
-              </SecureComponent>
-            )}
-            {!anonymousMode && (
-              <SecureComponent
-                scopes={[
-                  IAM_SCOPES.S3_LIST_BUCKET,
-                  IAM_SCOPES.S3_ALL_LIST_BUCKET,
-                ]}
-                resource={bucketName}
-                errorProps={{ disabled: true }}
-              >
-                <DetailsListPanel
-                  open={detailsOpen}
-                  closePanel={() => {
-                    onClosePanel(false);
-                  }}
-                  className={`${versionsMode ? classes.hideListOnSmall : ""}`}
-                >
-                  {selectedObjects.length > 0 && (
-                    <ActionsListSection
-                      items={multiActionButtons}
-                      title={"Selected Objects:"}
-                    />
-                  )}
-                  {selectedInternalPaths !== null && (
-                    <ObjectDetailPanel
-                      internalPaths={selectedInternalPaths}
-                      bucketName={bucketName}
-                      onClosePanel={onClosePanel}
-                      versioningInfo={isVersioned}
-                      locking={lockingEnabled}
-                    />
-                  )}
-                </DetailsListPanel>
-              </SecureComponent>
-            )}
+                </div>
+              }
+            />
           </Grid>
-        </div>
+
+          <Grid item xs={12}>
+            <div
+              id="object-list-wrapper"
+              {...getRootProps({ style: { ...dndStyles } })}
+            >
+              <input {...getInputProps()} />
+              <Grid
+                item
+                xs={12}
+                className={classes.tableBlock}
+                sx={{ border: "#EAEDEE 1px solid", borderTop: 0 }}
+              >
+                {versionsMode ? (
+                  <Fragment>
+                    {selectedInternalPaths !== null && (
+                      <VersionsNavigator
+                        internalPaths={selectedInternalPaths}
+                        bucketName={bucketName}
+                      />
+                    )}
+                  </Fragment>
+                ) : (
+                  <SecureComponent
+                    scopes={[
+                      IAM_SCOPES.S3_LIST_BUCKET,
+                      IAM_SCOPES.S3_ALL_LIST_BUCKET,
+                    ]}
+                    resource={bucketName}
+                    errorProps={{ disabled: true }}
+                  >
+                    <Grid item xs={12} className={classes.fullContainer}>
+                      {!anonymousMode && (
+                        <Grid
+                          item
+                          xs={12}
+                          className={classes.breadcrumbsContainer}
+                        >
+                          <BrowserBreadcrumbs
+                            bucketName={bucketName}
+                            internalPaths={pageTitle}
+                            additionalOptions={
+                              !isVersioned || rewindEnabled ? null : (
+                                <div>
+                                  <CheckboxWrapper
+                                    name={"deleted_objects"}
+                                    id={"showDeletedObjects"}
+                                    value={"deleted_on"}
+                                    label={"Show deleted objects"}
+                                    onChange={setDeletedAction}
+                                    checked={showDeleted}
+                                    overrideLabelClasses={classes.labelStyle}
+                                    className={classes.overrideShowDeleted}
+                                    noTopMargin
+                                  />
+                                </div>
+                              )
+                            }
+                            hidePathButton={false}
+                          />
+                        </Grid>
+                      )}
+                      <ListObjectsTable internalPaths={selectedInternalPaths} />
+                    </Grid>
+                  </SecureComponent>
+                )}
+                {!anonymousMode && (
+                  <SecureComponent
+                    scopes={[
+                      IAM_SCOPES.S3_LIST_BUCKET,
+                      IAM_SCOPES.S3_ALL_LIST_BUCKET,
+                    ]}
+                    resource={bucketName}
+                    errorProps={{ disabled: true }}
+                  >
+                    <DetailsListPanel
+                      open={detailsOpen}
+                      closePanel={() => {
+                        onClosePanel(false);
+                      }}
+                      className={`${
+                        versionsMode ? classes.hideListOnSmall : ""
+                      }`}
+                    >
+                      {selectedObjects.length > 0 && (
+                        <ActionsListSection
+                          items={multiActionButtons}
+                          title={"Selected Objects:"}
+                        />
+                      )}
+                      {selectedInternalPaths !== null && (
+                        <ObjectDetailPanel
+                          internalPaths={selectedInternalPaths}
+                          bucketName={bucketName}
+                          onClosePanel={onClosePanel}
+                          versioningInfo={isVersioned}
+                          locking={lockingEnabled}
+                        />
+                      )}
+                    </DetailsListPanel>
+                  </SecureComponent>
+                )}
+              </Grid>
+            </div>
+          </Grid>
+        </Grid>
       </PageLayout>
     </Fragment>
   );

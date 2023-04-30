@@ -18,7 +18,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Box, DialogContentText, Grid } from "@mui/material";
-import PageLayout from "../../Common/Layout/PageLayout";
 import useApi from "../../Common/Hooks/useApi";
 import ReplicationSites from "./ReplicationSites";
 import {
@@ -28,6 +27,7 @@ import {
   ConfirmDeleteIcon,
   HelpBox,
   Loader,
+  PageLayout,
   RecoverIcon,
   TrashIcon,
 } from "mds";

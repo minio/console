@@ -16,9 +16,14 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, DialogContentText } from "@mui/material";
-import { Button, HelpBox, InspectMenuIcon, PasswordKeyIcon } from "mds";
+import {
+  Button,
+  HelpBox,
+  InspectMenuIcon,
+  PageLayout,
+  PasswordKeyIcon,
+} from "mds";
 import { useNavigate } from "react-router-dom";
-import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";

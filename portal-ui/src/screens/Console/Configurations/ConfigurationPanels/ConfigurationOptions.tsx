@@ -26,10 +26,9 @@ import {
   containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { HelpBox, SettingsIcon } from "mds";
+import { HelpBox, PageLayout, SettingsIcon } from "mds";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
-import PageLayout from "../../Common/Layout/PageLayout";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import ConfigurationForm from "./ConfigurationForm";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";

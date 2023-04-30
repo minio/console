@@ -25,6 +25,7 @@ import {
   HelpBox,
   LifecycleConfigIcon,
   MultipleBucketsIcon,
+  PageLayout,
   RefreshIcon,
   SelectAllIcon,
   SelectMultipleIcon,
@@ -48,7 +49,6 @@ import {
   IAM_SCOPES,
   permissionTooltipHelper,
 } from "../../../../common/SecureComponent/permissions";
-import PageLayout from "../../Common/Layout/PageLayout";
 import SearchBox from "../../Common/SearchBox";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
 import BulkLifecycleModal from "./BulkLifecycleModal";

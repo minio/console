@@ -32,11 +32,10 @@ import {
 import api from "../../../common/api";
 import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage } from "../../../systemSlice";
-import PageLayout from "../Common/Layout/PageLayout";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { Grid } from "@mui/material";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { AddIcon, Button, RefreshIcon } from "mds";
+import { AddIcon, Button, PageLayout, RefreshIcon } from "mds";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";

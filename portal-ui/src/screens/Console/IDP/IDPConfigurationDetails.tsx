@@ -26,7 +26,14 @@ import {
   modalBasic,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { BackLink, Button, EditIcon, RefreshIcon, TrashIcon } from "mds";
+import {
+  BackLink,
+  Button,
+  EditIcon,
+  PageLayout,
+  RefreshIcon,
+  TrashIcon,
+} from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { useNavigate, useParams } from "react-router-dom";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -37,7 +44,6 @@ import {
 } from "../../../systemSlice";
 import useApi from "../Common/Hooks/useApi";
 import api from "../../../common/api";
-import PageLayout from "../Common/Layout/PageLayout";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";

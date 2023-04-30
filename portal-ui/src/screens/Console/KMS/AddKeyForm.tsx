@@ -18,8 +18,7 @@ import React, { useState } from "react";
 import { Box } from "@mui/material";
 
 import Grid from "@mui/material/Grid";
-import { AddAccessRuleIcon, Button, FormLayout } from "mds";
-import PageLayout from "../Common/Layout/PageLayout";
+import { AddAccessRuleIcon, Button, FormLayout, PageLayout } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../Common/Hooks/useApi";
