@@ -51,7 +51,8 @@ export const assignPoliciesButton =
 // Switches
 //----------------------------------------------------
 export const switchInput = Selector(".MuiSwitch-input");
-export const deleteAllVersions = Selector("#delete-versions").sibling('span.switchRail')
+export const deleteAllVersions =
+  Selector("#delete-versions").sibling("span.switchRail");
 
 //----------------------------------------------------
 // Inputs
