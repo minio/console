@@ -23,10 +23,10 @@ import {
   GroupsIcon,
   IAMPoliciesIcon,
   Loader,
+  PageLayout,
   RefreshIcon,
   UsersIcon,
 } from "mds";
-import PageLayout from "../../Common/Layout/PageLayout";
 import useApi from "../../Common/Hooks/useApi";
 
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";

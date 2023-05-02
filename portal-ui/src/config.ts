@@ -25,11 +25,11 @@ type LogoVar = "simple" | "AGPL" | "standard" | "enterprise";
 
 export const getLogoVar = (): LogoVar => {
   let logoVar: LogoVar = "AGPL";
-  switch (MinIOPlan) {
+  switch (MinIOPlan.toLowerCase()) {
     case "enterprise":
       logoVar = "enterprise";
       break;
-    case "STANDARD":
+    case "standard":
       logoVar = "standard";
       break;
     default:

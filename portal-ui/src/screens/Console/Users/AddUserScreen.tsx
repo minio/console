@@ -16,7 +16,7 @@
 
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
-import { BackLink, Button, CreateUserIcon, FormLayout } from "mds";
+import { BackLink, Button, CreateUserIcon, FormLayout, PageLayout } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import UserSelector from "./UserSelector";
@@ -28,8 +28,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
-
-import PageLayout from "../Common/Layout/PageLayout";
 
 import PolicySelectors from "../Policies/PolicySelectors";
 

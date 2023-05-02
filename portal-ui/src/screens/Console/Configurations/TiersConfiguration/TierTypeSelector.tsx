@@ -19,9 +19,8 @@ import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { tierTypes } from "./utils";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
-import PageLayout from "../../Common/Layout/PageLayout";
 import TierTypeCard from "./TierTypeCard";
-import { BackLink, FormLayout, HelpBox, TiersIcon } from "mds";
+import { BackLink, FormLayout, HelpBox, PageLayout, TiersIcon } from "mds";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const TierTypeSelector = () => {

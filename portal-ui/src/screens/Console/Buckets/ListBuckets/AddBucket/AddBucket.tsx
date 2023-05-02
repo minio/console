@@ -26,6 +26,7 @@ import {
   FormLayout,
   HelpBox,
   InfoIcon,
+  PageLayout,
 } from "mds";
 import {
   containerForHeader,
@@ -42,7 +43,6 @@ import {
   selSiteRep,
   setErrorSnackMessage,
 } from "../../../../../systemSlice";
-import PageLayout from "../../../Common/Layout/PageLayout";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import TooltipWrapper from "../../../Common/TooltipWrapper/TooltipWrapper";
 import SectionTitle from "../../../Common/SectionTitle";

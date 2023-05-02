@@ -20,7 +20,6 @@ import createStyles from "@mui/styles/createStyles";
 import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
 import withStyles from "@mui/styles/withStyles";
 import { Box } from "@mui/material";
-import PageLayout from "../Common/Layout/PageLayout";
 import api from "../../../common/api";
 
 import { SubnetRegTokenResponse } from "../License/types";
@@ -45,6 +44,7 @@ import SubnetMFAToken from "./SubnetMFAToken";
 import ClusterRegistrationForm from "./ClusterRegistrationForm";
 import OnlineRegistration from "./OnlineRegistration";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { PageLayout } from "mds";
 
 interface IRegister {
   classes: any;

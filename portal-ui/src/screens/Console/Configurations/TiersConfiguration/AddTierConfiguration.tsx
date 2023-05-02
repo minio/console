@@ -20,7 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
-import { BackLink, Button } from "mds";
+import { BackLink, Button, PageLayout } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box } from "@mui/material";
@@ -42,7 +42,6 @@ import {
   tierTypes,
 } from "./utils";
 
-import PageLayout from "../../Common/Layout/PageLayout";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 import RegionSelectWrapper from "./RegionSelectWrapper";

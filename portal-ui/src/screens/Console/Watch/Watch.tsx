@@ -25,7 +25,7 @@ import {
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, PageLayout } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { AppState, useAppDispatch } from "../../../store";
@@ -41,7 +41,6 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
-import PageLayout from "../Common/Layout/PageLayout";
 import makeStyles from "@mui/styles/makeStyles";
 import { watchMessageReceived, watchResetMessages } from "./watchSlice";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
@@ -175,7 +174,7 @@ const Watch = () => {
     <React.Fragment>
       <PageHeaderWrapper label="Watch" />
       <PageLayout>
-        <Grid item xs={12}>
+        <Grid container spacing={1} item xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>
             <FormControl variant="outlined" className={classes.bucketField}>
               <Select
@@ -251,7 +250,7 @@ const Watch = () => {
             )}
           </Grid>
 
-          <div className={classes.tableBlock}>
+          <Grid item xs={12} className={classes.tableBlock}>
             <TableWrapper
               columns={[
                 {
@@ -274,7 +273,7 @@ const Watch = () => {
               isLoading={false}
               customPaperHeight={classes.watchTableHeight}
             />
-          </div>
+          </Grid>
         </Grid>
       </PageLayout>
     </React.Fragment>

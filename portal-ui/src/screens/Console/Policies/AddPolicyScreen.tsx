@@ -17,8 +17,13 @@
 import React, { Fragment, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
-import { AddAccessRuleIcon, BackLink, Button, FormLayout } from "mds";
-import PageLayout from "../Common/Layout/PageLayout";
+import {
+  AddAccessRuleIcon,
+  BackLink,
+  Button,
+  FormLayout,
+  PageLayout,
+} from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";

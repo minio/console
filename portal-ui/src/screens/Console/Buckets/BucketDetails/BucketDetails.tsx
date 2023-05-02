@@ -28,6 +28,7 @@ import {
   BucketsIcon,
   Button,
   FolderIcon,
+  PageLayout,
   RefreshIcon,
   TrashIcon,
 } from "mds";
@@ -54,7 +55,6 @@ import {
   IAM_SCOPES,
   permissionTooltipHelper,
 } from "../../../../common/SecureComponent/permissions";
-import PageLayout from "../../Common/Layout/PageLayout";
 import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
 
 import {

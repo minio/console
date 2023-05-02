@@ -41,10 +41,15 @@ import {
   trafficPanelsLayout,
 } from "./Widgets/LayoutUtil";
 import MergedWidgetsRenderer from "./Widgets/MergedWidgetsRenderer";
-import PageLayout from "../../Common/Layout/PageLayout";
 import { Usage } from "../types";
 import BasicDashboard from "../BasicDashboard/BasicDashboard";
-import { Button, HelpBox, PrometheusErrorIcon, SyncIcon } from "mds";
+import {
+  Button,
+  HelpBox,
+  PageLayout,
+  PrometheusErrorIcon,
+  SyncIcon,
+} from "mds";
 import { ITabOption } from "../../Common/TabSelector/types";
 import { getUsageAsync } from "../dashboardThunks";
 import { reloadWidgets } from "../dashboardSlice";
@@ -180,7 +185,11 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
   }
 
   return (
-    <PageLayout noPadding={hideMenu}>
+    <PageLayout
+      sx={{
+        padding: hideMenu ? 0 : "2rem",
+      }}
+    >
       {zoomOpen && (
         <ZoomWidget
           modalOpen={zoomOpen}
