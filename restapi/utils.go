@@ -20,6 +20,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strings"
@@ -202,6 +203,10 @@ func ValidateEncodedStyles(encodedStyles string) error {
 
 	if err != nil {
 		return err
+	}
+
+	if styleElements.BackgroundColor == nil || styleElements.FontColor == nil || styleElements.ButtonStyles == nil || styleElements.BorderColor == nil || styleElements.OkColor == nil {
+		return errors.New("specified style is not in the correct format")
 	}
 
 	return nil
