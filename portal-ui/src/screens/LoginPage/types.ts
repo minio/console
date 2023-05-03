@@ -19,6 +19,7 @@ export interface ILoginDetails {
   redirectRules: redirectRule[];
   isDirectPV?: boolean;
   isK8S?: boolean;
+  animatedLogin?: boolean;
 }
 
 export interface redirectRule {
