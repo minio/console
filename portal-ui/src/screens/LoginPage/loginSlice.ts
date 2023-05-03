@@ -27,6 +27,7 @@ export interface LoginState {
   secretKey: string;
   sts: string;
   useSTS: boolean;
+  backgroundAnimation: boolean;
 
   loginStrategy: ILoginDetails;
 
@@ -56,6 +57,7 @@ const initialState: LoginState = {
   loadingVersion: true,
   isDirectPV: false,
   isK8S: false,
+  backgroundAnimation: false,
 
   navigateTo: "",
 };
@@ -107,6 +109,7 @@ export const loginSlice = createSlice({
           state.loginStrategy = action.payload;
           state.isDirectPV = !!action.payload.isDirectPV;
           state.isK8S = !!action.payload.isK8S;
+          state.backgroundAnimation = !!action.payload.animatedLogin;
         }
       })
       .addCase(doLoginAsync.pending, (state, action) => {
