@@ -17,8 +17,7 @@
 import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import { Grid, IconButton } from "@mui/material";
-import { ClosePanelIcon } from "mds";
+import { Button, ClosePanelIcon, Grid } from "mds";
 import makeStyles from "@mui/styles/makeStyles";
 
 interface IDetailsListPanel {
@@ -58,14 +57,6 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
-    closePanel: {
-      position: "absolute",
-      right: 0,
-      top: 8,
-      "& .min-icon": {
-        width: 14,
-      },
-    },
   })
 );
 
@@ -80,13 +71,24 @@ const DetailsListPanel = ({
   return (
     <Grid
       item
-      className={`${classes.detailsList} ${
-        open ? "open" : ""
-      } ${className} detailsListPanel`}
+      className={`${classes.detailsList} ${open ? "open" : ""} ${className}`}
     >
-      <IconButton onClick={closePanel} className={classes.closePanel}>
-        <ClosePanelIcon />
-      </IconButton>
+      <Button
+        variant={"text"}
+        id={"close-details-list"}
+        onClick={closePanel}
+        icon={<ClosePanelIcon />}
+        sx={{
+          position: "absolute",
+          right: 5,
+          top: 18,
+          padding: 0,
+          height: 14,
+          "&:hover:not(:disabled)": {
+            backgroundColor: "transparent",
+          },
+        }}
+      />
       {children}
     </Grid>
   );

@@ -19,8 +19,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import { Button } from "mds";
+import { Button, Grid, RadioGroup, Switch } from "mds";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -31,34 +30,18 @@ import { IFileInfo } from "./types";
 import { twoDigitDate } from "../../../../Common/FormComponents/DateSelector/utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import RadioGroupSelector from "../../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import api from "../../../../../../common/api";
 import { encodeURLString } from "../../../../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../../store";
+import { AppState, useAppDispatch } from "../../../../../../store";
+import { useSelector } from "react-redux";
 
 const styles = (theme: Theme) =>
   createStyles({
     ...formFieldStyles,
     ...modalStyleUtils,
     ...spacingUtils,
-    dateSelector: {
-      "& div": {
-        borderBottom: 0,
-        marginBottom: 0,
-
-        "& div:nth-child(2)": {
-          border: "1px solid #EAEAEA",
-          paddingLeft: 5,
-
-          "& div": {
-            border: 0,
-          },
-        },
-      },
-    },
   });
 
 interface ISetRetentionProps {
@@ -83,6 +66,10 @@ const SetRetention = ({
   bucketName,
 }: ISetRetentionProps) => {
   const dispatch = useAppDispatch();
+  const retentionConfig = useSelector(
+    (state: AppState) => state.objectBrowser.retentionConfig
+  );
+
   const [statusEnabled, setStatusEnabled] = useState<boolean>(true);
   const [type, setType] = useState<string>("");
   const [date, setDate] = useState<string>("");
@@ -92,7 +79,7 @@ const SetRetention = ({
 
   useEffect(() => {
     if (objectInfo.retention_mode) {
-      setType(objectInfo.retention_mode.toLowerCase());
+      setType(retentionConfig?.mode || "governance");
       setAlreadyConfigured(true);
     }
     // get retention_until_date if defined
@@ -108,7 +95,7 @@ const SetRetention = ({
       }
       setAlreadyConfigured(true);
     }
-  }, [objectInfo]);
+  }, [objectInfo, retentionConfig?.mode]);
 
   const dateElement = useRef<IRefObject>(null);
 
@@ -122,7 +109,7 @@ const SetRetention = ({
 
   const resetForm = () => {
     setStatusEnabled(false);
-    setType("");
+    setType("governance");
     if (dateElement.current) {
       dateElement.current.resetDate();
     }
@@ -216,7 +203,7 @@ const SetRetention = ({
       >
         {showSwitcher && (
           <Grid item xs={12} className={classes.formFieldRow}>
-            <FormSwitchWrapper
+            <Switch
               value="status"
               id="status"
               name="status"
@@ -230,8 +217,8 @@ const SetRetention = ({
           </Grid>
         )}
         <Grid item xs={12} className={classes.formFieldRow}>
-          <RadioGroupSelector
-            currentSelection={type}
+          <RadioGroup
+            currentValue={type}
             id="type"
             name="type"
             label="Type"

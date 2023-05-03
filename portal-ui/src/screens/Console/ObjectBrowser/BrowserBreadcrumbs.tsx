@@ -16,17 +16,14 @@
 
 import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
-import { CSSObject } from "styled-components";
 import CopyToClipboard from "react-copy-to-clipboard";
-import Grid from "@mui/material/Grid";
 import createStyles from "@mui/styles/createStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import { Theme } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
-import { IconButton } from "@mui/material";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
-import { BackCaretIcon, Button, CopyIcon, NewPathIcon, Tooltip } from "mds";
+import { Button, CopyIcon, NewPathIcon, Tooltip, Breadcrumbs } from "mds";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   IAM_SCOPES,
@@ -80,9 +77,6 @@ const BrowserBreadcrumbs = ({
   );
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
-  );
-  const colorVariants = useSelector(
-    (state: AppState) => state.system.overrideStyles
   );
 
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
@@ -187,14 +181,6 @@ const BrowserBreadcrumbs = ({
     }
   };
 
-  let regularButtonOverride: CSSObject = {};
-
-  if (colorVariants) {
-    regularButtonOverride = {
-      backgroundColor: "transparent",
-    };
-  }
-
   return (
     <Fragment>
       <div className={classes.breadcrumbsMain}>
@@ -206,52 +192,44 @@ const BrowserBreadcrumbs = ({
             onClose={closeAddFolderModal}
           />
         )}
-        <Grid item xs={12} className={`${classes.breadcrumbs}`}>
-          <IconButton
-            onClick={goBackFunction}
-            sx={{
-              border: "#EAEDEE 1px solid",
-              backgroundColor: "#fff",
-              borderLeft: 0,
-              borderRadius: 0,
-              width: 38,
-              height: 38,
-              marginRight: "10px",
-            }}
-          >
-            <BackCaretIcon />
-          </IconButton>
-          <div className={classes.breadcrumbsList} dir="rtl">
-            {listBreadcrumbs}
-          </div>
-          <CopyToClipboard text={`${bucketName}/${splitPaths.join("/")}`}>
-            <Button
-              id={"copy-path"}
-              icon={
-                <CopyIcon
+        <Breadcrumbs
+          goBackFunction={goBackFunction}
+          additionalOptions={
+            <Fragment>
+              <CopyToClipboard text={`${bucketName}/${splitPaths.join("/")}`}>
+                <Button
+                  id={"copy-path"}
+                  icon={
+                    <CopyIcon
+                      style={{
+                        width: "12px",
+                        height: "12px",
+                        fill: "#969FA8",
+                        marginTop: -1,
+                      }}
+                    />
+                  }
+                  variant={"regular"}
+                  onClick={() => {
+                    dispatch(setSnackBarMessage("Path copied to clipboard"));
+                  }}
                   style={{
-                    width: "12px",
-                    height: "12px",
-                    fill: "#969FA8",
-                    marginTop: -1,
+                    width: "28px",
+                    height: "28px",
+                    color: "#969FA8",
+                    border: "#969FA8 1px solid",
+                    marginRight: 5,
                   }}
                 />
-              }
-              variant={"regular"}
-              onClick={() => {
-                dispatch(setSnackBarMessage("Path copied to clipboard"));
-              }}
-              style={{
-                width: "28px",
-                height: "28px",
-                color: "#969FA8",
-                border: "#969FA8 1px solid",
-                marginRight: 5,
-              }}
-            />
-          </CopyToClipboard>
-          <div className={classes.additionalOptions}>{additionalOptions}</div>
-        </Grid>
+              </CopyToClipboard>
+              <div className={classes.additionalOptions}>
+                {additionalOptions}
+              </div>
+            </Fragment>
+          }
+        >
+          {listBreadcrumbs}
+        </Breadcrumbs>
         {!hidePathButton && (
           <Tooltip
             tooltip={
@@ -275,7 +253,6 @@ const BrowserBreadcrumbs = ({
               }}
               variant={"regular"}
               label={"Create new path"}
-              sx={regularButtonOverride}
             />
           </Tooltip>
         )}

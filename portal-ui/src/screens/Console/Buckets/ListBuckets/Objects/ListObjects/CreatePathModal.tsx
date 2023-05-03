@@ -16,10 +16,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, CreateNewPathIcon } from "mds";
+import { Button, CreateNewPathIcon, InputBox, Grid } from "mds";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import { Grid } from "@mui/material";
-import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import {
@@ -155,7 +153,7 @@ const CreatePathModal = ({
             </div>
           </Grid>
           <Grid item xs={12} className={classes.formFieldRow}>
-            <InputBoxWrapper
+            <InputBox
               value={pathUrl}
               label={"New Folder Path"}
               id={"folderPath"}

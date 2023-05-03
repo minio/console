@@ -15,15 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
-import InputLabel from "@mui/material/InputLabel";
 import { DateTime } from "luxon";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
-import { LinkIcon } from "mds";
+import { LinkIcon, InputLabel, InputBox, Grid } from "mds";
 
 interface IDaysSelector {
   classes: any;
@@ -53,13 +50,11 @@ const styles = (theme: Theme) =>
       marginTop: 11,
       marginBottom: 6,
     },
-    dateInputContainer: {
-      margin: "0 10px",
-    },
     durationInputs: {
       display: "flex",
-      alignItems: "center",
+      alignItems: "flex-start",
       justifyContent: "flex-start",
+      gap: 10,
     },
 
     validityIndicator: {
@@ -192,33 +187,31 @@ const DaysSelector = ({
     selectedMinutes,
   ]);
 
-  const extraInputProps = {
-    style: {
+  const extraStyles = {
+    "& .textBoxContainer": {
+      minWidth: 0,
+    },
+    "& input": {
       textAlign: "center" as const,
       paddingRight: 10,
       paddingLeft: 10,
-      width: 25,
+      width: 40,
     },
-    className: "removeArrows" as const,
   };
 
   return (
     <Fragment>
       <Grid container className={classes.fieldContainer}>
         <Grid item xs={12} className={classes.labelContainer}>
-          <InputLabel
-            htmlFor={id}
-            className={classes.inputLabel}
-            sx={{ marginLeft: "10px" }}
-          >
-            <span>{label}</span>
+          <InputLabel htmlFor={id} sx={{ marginLeft: "10px" }}>
+            {label}
           </InputLabel>
         </Grid>
         <Grid item xs={12} className={classes.durationInputs}>
-          <Grid item className={classes.dateInputContainer}>
-            <InputBoxWrapper
+          <Grid item xs className={classes.dateInputContainer}>
+            <InputBox
               id={id}
-              className={classes.reverseInput}
+              className={`${classes.reverseInput} removeArrows`}
               type="number"
               min="0"
               max={maxDays ? maxDays.toString() : "999"}
@@ -228,14 +221,14 @@ const DaysSelector = ({
                 setSelectedDays(parseInt(e.target.value));
               }}
               value={selectedDays.toString()}
-              extraInputProps={extraInputProps}
+              sx={extraStyles}
               noLabelMinWidth
             />
           </Grid>
-          <Grid item className={classes.dateInputContainer}>
-            <InputBoxWrapper
+          <Grid item xs className={classes.dateInputContainer}>
+            <InputBox
               id={id}
-              className={classes.reverseInput}
+              className={`${classes.reverseInput} removeArrows`}
               type="number"
               min="0"
               max="23"
@@ -245,14 +238,14 @@ const DaysSelector = ({
                 setSelectedHours(parseInt(e.target.value));
               }}
               value={selectedHours.toString()}
-              extraInputProps={extraInputProps}
+              sx={extraStyles}
               noLabelMinWidth
             />
           </Grid>
-          <Grid item className={classes.dateInputContainer}>
-            <InputBoxWrapper
+          <Grid item xs className={classes.dateInputContainer}>
+            <InputBox
               id={id}
-              className={classes.reverseInput}
+              className={`${classes.reverseInput} removeArrows`}
               type="number"
               min="0"
               max="59"
@@ -262,7 +255,7 @@ const DaysSelector = ({
                 setSelectedMinutes(parseInt(e.target.value));
               }}
               value={selectedMinutes.toString()}
-              extraInputProps={extraInputProps}
+              sx={extraStyles}
               noLabelMinWidth
             />
           </Grid>

@@ -15,15 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
-import { Button } from "mds";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
+import { Button, ModalBox, Box } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -71,41 +63,22 @@ const ConfirmDialog = ({
   confirmationButtonSimple = false,
 }: ConfirmDialogProps) => {
   return (
-    <Dialog
+    <ModalBox
+      title={title}
+      titleIcon={titleIcon}
+      onClose={onClose}
       open={isOpen}
-      onClose={(event, reason) => {
-        if (reason !== "backdropClick") {
-          onClose(); // close on Esc but not on click outside
-        }
-      }}
-      className={classes.root}
-      sx={{
-        "& .MuiPaper-root": {
-          padding: "1rem 2rem 2rem 1rem",
-        },
-      }}
+      customMaxWidth={510}
     >
-      <DialogTitle className={classes.title}>
-        <div className={classes.titleText}>
-          {titleIcon} {title}
-        </div>
-        <div className={classes.closeContainer}>
-          <IconButton
-            aria-label="close"
-            className={classes.closeButton}
-            onClick={onClose}
-            disableRipple
-            size="small"
-          >
-            <CloseIcon />
-          </IconButton>
-        </div>
-      </DialogTitle>
-
-      <DialogContent className={classes.content}>
-        {confirmationContent}
-      </DialogContent>
-      <DialogActions className={classes.actions}>
+      <Box className={classes.content}>{confirmationContent}</Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 10,
+          marginTop: 20,
+        }}
+      >
         <Button
           onClick={onCancel || onClose}
           disabled={isLoading}
@@ -124,8 +97,8 @@ const ConfirmDialog = ({
           variant={"secondary"}
           {...confirmButtonProps}
         />
-      </DialogActions>
-    </Dialog>
+      </Box>
+    </ModalBox>
   );
 };
 

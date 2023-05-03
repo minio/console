@@ -17,11 +17,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { LinearProgress } from "@mui/material";
-import { Button } from "mds";
-import Grid from "@mui/material/Grid";
+import { Button, Grid, Switch } from "mds";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DateTimePickerWrapper from "../../../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
-import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   resetRewind,
@@ -103,7 +101,7 @@ const RewindEnable = ({
       <Grid container>
         {rewindEnabled && (
           <Grid item xs={12} sx={{ marginBottom: "10px" }}>
-            <FormSwitchWrapper
+            <Switch
               value="status"
               id="status"
               name="status"

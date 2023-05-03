@@ -207,41 +207,7 @@ export const actionsTray = {
 };
 
 export const searchField = {
-  searchField: {
-    flexGrow: 1,
-    height: 38,
-    background: "#FFFFFF",
-    borderRadius: 3,
-    border: "#EAEDEE 1px solid",
-    display: "flex",
-    justifyContent: "center",
-    padding: "0 16px",
-    "& label, & label.MuiInputLabel-shrink": {
-      fontSize: 10,
-      transform: "translate(5px, 2px)",
-      transformOrigin: "top left",
-    },
-    "& input": {
-      fontSize: 12,
-      fontWeight: 700,
-      color: "#000",
-      "&::placeholder": {
-        color: "#858585",
-        opacity: 1,
-        fontWeight: 400,
-      },
-    },
-    "&:hover": {
-      borderColor: "#000",
-    },
-    "& .min-icon": {
-      width: 16,
-      height: 16,
-    },
-    "&:focus-within": {
-      borderColor: "rgba(0, 0, 0, 0.87)",
-    },
-  },
+  searchField: {},
 };
 
 export const predefinedList = {
@@ -659,33 +625,6 @@ export const wizardCommon = {
   },
 };
 
-export const tenantDetailsStyles = {
-  buttonContainer: {
-    display: "flex",
-    justifyContent: "flex-end",
-  },
-  multiContainer: {
-    display: "flex" as const,
-    alignItems: "center" as const,
-    justifyContent: "flex-start" as const,
-  },
-  paperContainer: {
-    padding: "15px 15px 15px 50px",
-  },
-  breadcrumLink: {
-    textDecoration: "none",
-    color: "black",
-  },
-  ...modalBasic,
-  ...actionsTray,
-
-  ...searchField,
-  actionsTray: {
-    ...actionsTray.actionsTray,
-    padding: "15px 0 0",
-  },
-};
-
 export const inputFieldStyles = {
   root: {
     borderRadius: 3,
@@ -806,17 +745,6 @@ export const tableStyles: any = {
   tableBlock: {
     display: "flex",
     flexDirection: "row",
-    "& .ReactVirtualized__Table__headerRow.rowLine, .ReactVirtualized__Table__row.rowLine":
-      {
-        borderBottom: "1px solid #EAEAEA",
-      },
-
-    "& .rowLine:hover:not(.ReactVirtualized__Table__headerRow)": {
-      backgroundColor: "#F8F8F8",
-    },
-    "& .ReactVirtualized__Table__row.rowLine": {
-      fontSize: ".8rem",
-    },
     "& .optionsAlignment ": {
       textAlign: "right",
 

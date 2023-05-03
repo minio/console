@@ -12,12 +12,15 @@ code {
 
 /* Chrome, Safari, Edge, Opera */
 input.removeArrows::-webkit-outer-spin-button,
-input.removeArrows::-webkit-inner-spin-button {
+input.removeArrows::-webkit-inner-spin-button,
+.removeArrows input::-webkit-outer-spin-button,
+.removeArrows input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 /* Firefox */
-input.removeArrows[type="number"] {
+input.removeArrows[type="number"],
+.removeArrows input[type="number"] {
   -moz-appearance: textfield;
 }

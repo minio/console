@@ -19,14 +19,10 @@ import { Selector } from "testcafe";
 //----------------------------------------------------
 // Buttons
 //----------------------------------------------------
-export const loginSubmitButton = Selector("form button");
-export const closeAlertButton = Selector(
-  'button[class*="ModalError-closeButton"]'
+export const uploadButton = Selector("button:enabled").withAttribute(
+  "id",
+  "upload-main"
 );
-
-export const uploadButton = Selector("span")
-  .withAttribute("aria-label", "Upload Files")
-  .child("button:enabled");
 export const createPolicyButton =
   Selector("button:enabled").withText("Create Policy");
 export const saveButton = Selector("button:enabled").withText("Save");
@@ -55,6 +51,8 @@ export const assignPoliciesButton =
 // Switches
 //----------------------------------------------------
 export const switchInput = Selector(".MuiSwitch-input");
+export const deleteAllVersions =
+  Selector("#delete-versions").sibling("span.switchRail");
 
 //----------------------------------------------------
 // Inputs
@@ -109,11 +107,9 @@ export const groupStatusText = Selector("#group-status");
 // Tables, table headers and content
 //----------------------------------------------------
 export const table = Selector(".ReactVirtualized__Table");
-export const bucketsTableDisabled = Selector("#object-list-wrapper")
-  .find(".MuiPaper-root")
-  .withText(
-    "You require additional permissions in order to view Objects in this bucket. Please ask your MinIO administrator to grant you"
-  );
+export const bucketsTableDisabled = Selector("#empty-results").withText(
+  "You require additional permissions in order to view Objects in this bucket. Please ask your MinIO administrator to grant you"
+);
 export const createGroupUserTable = Selector(
   ".MuiDialog-container .ReactVirtualized__Table"
 );

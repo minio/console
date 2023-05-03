@@ -16,17 +16,13 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 
-import { DialogContentText } from "@mui/material";
-import Grid from "@mui/material/Grid";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import { decodeURLString } from "../../../../../../common/utils";
-import { ConfirmDeleteIcon } from "mds";
+import { ConfirmDeleteIcon, Switch, Grid, InputBox } from "mds";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import api from "../../../../../../common/api";
-import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../../store";
-import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { hasPermission } from "../../../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
@@ -105,7 +101,7 @@ const DeleteNonCurrentVersions = ({
         disabled: typeConfirm !== "YES, PROCEED" || deleteLoading,
       }}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           Are you sure you want to delete all the non-current versions for:{" "}
           <b>{decodeURLString(selectedObject)}</b>? <br />
           {canBypass && (
@@ -115,7 +111,7 @@ const DeleteNonCurrentVersions = ({
                   marginTop: 10,
                 }}
               >
-                <FormSwitchWrapper
+                <Switch
                   label={"Bypass Governance Mode"}
                   indicatorLabels={["Yes", "No"]}
                   checked={bypassGovernance}
@@ -132,8 +128,10 @@ const DeleteNonCurrentVersions = ({
           )}
           <br />
           To continue please type <b>YES, PROCEED</b> in the box.
+          <br />
+          <br />
           <Grid item xs={12}>
-            <InputBoxWrapper
+            <InputBox
               id="type-confirm"
               name="retype-tenant"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,7 +141,7 @@ const DeleteNonCurrentVersions = ({
               value={typeConfirm}
             />
           </Grid>
-        </DialogContentText>
+        </Fragment>
       }
     />
   );
