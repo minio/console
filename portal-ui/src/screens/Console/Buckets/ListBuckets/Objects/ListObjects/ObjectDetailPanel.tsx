@@ -18,8 +18,8 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
 import { withStyles } from "@mui/styles";
-import { CSSObject } from "styled-components";
 import {
+  ActionsList,
   Button,
   DeleteIcon,
   DownloadIcon,
@@ -31,6 +31,7 @@ import {
   PreviewIcon,
   RetentionIcon,
   ShareIcon,
+  SimpleHeader,
   TagsIcon,
   VersionsIcon,
 } from "mds";
@@ -69,7 +70,6 @@ import {
 } from "../../../../../../common/SecureComponent";
 import PreviewFileModal from "../Preview/PreviewFileModal";
 import ObjectMetaData from "../ObjectDetails/ObjectMetaData";
-import ActionsListSection from "./ActionsListSection";
 import { displayFileIconName } from "./utils";
 import TagsModal from "../ObjectDetails/TagsModal";
 import InspectObject from "./InspectObject";
@@ -103,17 +103,6 @@ const styles = () =>
       overflow: "hidden",
       alignItems: "center",
       marginLeft: 10,
-    },
-    headerForSection: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingBottom: 15,
-      borderBottom: "#E2E2E2 2px solid",
-      fontWeight: "bold",
-      fontSize: 18,
-      color: "#000",
-      margin: "20px 22px",
     },
     capitalizeFirst: {
       textTransform: "capitalize",
@@ -165,9 +154,6 @@ const ObjectDetailPanel = ({
   );
   const loadingObjectInfo = useSelector(
     (state: AppState) => state.objectBrowser.loadingObjectInfo
-  );
-  const colorVariants = useSelector(
-    (state: AppState) => state.system.overrideStyles
   );
 
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
@@ -586,14 +572,6 @@ const ObjectDetailPanel = ({
     return formatTime.trim() !== "" ? `${formatTime} ago` : "Just now";
   };
 
-  let regularButtonOverride: CSSObject = {};
-
-  if (colorVariants) {
-    regularButtonOverride = {
-      backgroundColor: "transparent",
-    };
-  }
-
   return (
     <Fragment>
       {shareFileModalOpen && actualInfo && (
@@ -679,7 +657,7 @@ const ObjectDetailPanel = ({
         <Fragment>{loaderForContainer}</Fragment>
       ) : (
         <Fragment>
-          <ActionsListSection
+          <ActionsList
             title={
               <div className={classes.ObjectDetailsTitle}>
                 {displayFileIconName(objectName, true)}
@@ -729,17 +707,13 @@ const ObjectDetailPanel = ({
                   sx={{
                     width: "calc(100% - 44px)",
                     margin: "8px 0",
-                    ...regularButtonOverride,
                   }}
                   label={`Delete${selectedVersion !== "" ? " version" : ""}`}
                 />
               </SecureComponent>
             </Grid>
           </TooltipWrapper>
-          <Grid item xs={12} className={classes.headerForSection}>
-            <span>Object Info</span>
-            <ObjectInfoIcon />
-          </Grid>
+          <SimpleHeader icon={<ObjectInfoIcon />} label={"Object Info"} />
           <Box className={classes.detailContainer}>
             <strong>Name:</strong>
             <br />
@@ -839,10 +813,7 @@ const ObjectDetailPanel = ({
           </Box>
           {!actualInfo.is_delete_marker && (
             <Fragment>
-              <Grid item xs={12} className={classes.headerForSection}>
-                <span>Metadata</span>
-                <MetadataIcon />
-              </Grid>
+              <SimpleHeader label={"Metadata"} icon={<MetadataIcon />} />
               <Box className={classes.detailContainer}>
                 {actualInfo && metaData ? (
                   <ObjectMetaData metaData={metaData} linear />

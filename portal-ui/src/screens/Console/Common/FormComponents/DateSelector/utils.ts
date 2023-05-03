@@ -29,14 +29,17 @@ export const months = [
   { value: "12", label: "December" },
 ];
 
-export const days = Array.from(Array(31), (_, num) => num + 1);
+export const days = Array.from(Array(31), (_, num) => ({
+  value: (num + 1).toString(),
+  label: (num + 1).toString(),
+}));
 
 const currentYear = new Date().getFullYear();
 
-export const years = Array.from(
-  Array(25),
-  (_, numYear) => numYear + currentYear
-);
+export const years = Array.from(Array(50), (_, numYear) => ({
+  value: (numYear + currentYear).toString(),
+  label: (numYear + currentYear).toString(),
+}));
 
 export const validDate = (year: string, month: string, day: string): any[] => {
   const currentDate = Date.parse(`${year}-${month}-${day}`);

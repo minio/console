@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Theme } from "@mui/material/styles";
-import { Button, CopyIcon, ShareIcon } from "mds";
+import { Button, CopyIcon, ReadBox, ShareIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import CopyToClipboard from "react-copy-to-clipboard";
@@ -32,7 +32,6 @@ import { IFileInfo } from "./types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
 import { encodeURLString } from "../../../../../../common/utils";
 import {
@@ -231,34 +230,31 @@ const ShareFile = ({
               xs={12}
               className={`${classes.copyShareLink} ${classes.formFieldRow} `}
             >
-              <Grid item xs={12} className={classes.copyShareLinkInput}>
-                <PredefinedList
-                  content={shareURL}
-                  actionButton={
-                    <CopyToClipboard text={shareURL}>
-                      <Button
-                        id={"copy-path"}
-                        variant="regular"
-                        onClick={() => {
-                          dispatch(
-                            setModalSnackMessage(
-                              "Share URL Copied to clipboard"
-                            )
-                          );
-                        }}
-                        disabled={shareURL === "" || isLoadingFile}
-                        style={{
-                          marginRight: "5px",
-                          width: "28px",
-                          height: "28px",
-                          padding: "0px",
-                        }}
-                        icon={<CopyIcon />}
-                      />
-                    </CopyToClipboard>
-                  }
-                />
-              </Grid>
+              <ReadBox
+                actionButton={
+                  <CopyToClipboard text={shareURL}>
+                    <Button
+                      id={"copy-path"}
+                      variant="regular"
+                      onClick={() => {
+                        dispatch(
+                          setModalSnackMessage("Share URL Copied to clipboard")
+                        );
+                      }}
+                      disabled={shareURL === "" || isLoadingFile}
+                      style={{
+                        marginRight: "5px",
+                        width: "28px",
+                        height: "28px",
+                        padding: "0px",
+                      }}
+                      icon={<CopyIcon />}
+                    />
+                  </CopyToClipboard>
+                }
+              >
+                {shareURL}
+              </ReadBox>
             </Grid>
           </Fragment>
         )}

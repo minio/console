@@ -15,16 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-
-import { DialogContentText } from "@mui/material";
-
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmDeleteIcon } from "mds";
+import { ConfirmDeleteIcon, Switch } from "mds";
 import api from "../../../../../../common/api";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../../store";
-import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { hasPermission } from "../../../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
@@ -116,7 +112,7 @@ const DeleteObject = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           Are you sure you want to delete the selected {selectedVersions.length}{" "}
           versions for <strong>{selectedObject}</strong>?
           {canBypass && (
@@ -126,7 +122,7 @@ const DeleteObject = ({
                   marginTop: 10,
                 }}
               >
-                <FormSwitchWrapper
+                <Switch
                   label={"Bypass Governance Mode"}
                   indicatorLabels={["Yes", "No"]}
                   checked={bypassGovernance}
@@ -141,7 +137,7 @@ const DeleteObject = ({
               </div>
             </Fragment>
           )}
-        </DialogContentText>
+        </Fragment>
       }
     />
   );

@@ -60,7 +60,6 @@ const styles = (theme: Theme) =>
       },
     },
     headItem: {
-      color: "#000",
       fontSize: 14,
       fontWeight: "bold",
       width: "100%",

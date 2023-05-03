@@ -51,7 +51,9 @@ const ZoomWidget = ({
       }}
       modalOpen={modalOpen}
       wideLimit={false}
-      noContentPadding
+      sx={{
+        padding: 0,
+      }}
     >
       <Fragment>
         {componentToUse(value, timeStart, timeEnd, true, apiPrefix, true)}

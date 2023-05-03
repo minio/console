@@ -15,7 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { Button, InspectMenuIcon, PasswordKeyIcon } from "mds";
+import {
+  Button,
+  InspectMenuIcon,
+  PasswordKeyIcon,
+  Switch,
+  Grid,
+  Box,
+} from "mds";
 import withStyles from "@mui/styles/withStyles";
 import {
   decodeURLString,
@@ -24,9 +31,7 @@ import {
   getCookieValue,
   performDownload,
 } from "../../../../../../common/utils";
-import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import {
@@ -34,7 +39,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { Box, DialogContentText } from "@mui/material";
+import { DialogContentText } from "@mui/material";
 import KeyRevealer from "../../../../Tools/KeyRevealer";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
@@ -139,7 +144,7 @@ const InspectObject = ({
           >
             Would you like to encrypt <b>{decodeURLString(inspectPath)}</b>?{" "}
             <br />
-            <FormSwitchWrapper
+            <Switch
               label={"Encrypt"}
               indicatorLabels={["Yes", "No"]}
               checked={isEncrypt}

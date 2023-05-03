@@ -160,7 +160,6 @@ const UsersSelectors = ({
                 <div className={classes.searchBox}>
                   <SearchBox
                     placeholder="Filter Users"
-                    adornmentPosition="end"
                     onChange={setFilter}
                     value={filter}
                   />
