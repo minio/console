@@ -69,8 +69,8 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
   const navigate = useNavigate();
 
   const [addSending, setAddSending] = useState<boolean>(false);
-  const [accessKey, setAccessKey] = useState<string>(getRandomString(16));
-  const [secretKey, setSecretKey] = useState<string>(getRandomString(32));
+  const [accessKey, setAccessKey] = useState<string>(getRandomString(20));
+  const [secretKey, setSecretKey] = useState<string>(getRandomString(40));
   const [isRestrictedByPolicy, setIsRestrictedByPolicy] =
     useState<boolean>(false);
   const [newServiceAccount, setNewServiceAccount] =
