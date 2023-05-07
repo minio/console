@@ -241,6 +241,9 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 				LogInfo("Error while writing the message", err)
 				return
 			}
+			if writeM.RequestEnd {
+				return
+			}
 		}
 	}()
 
