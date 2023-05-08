@@ -16,7 +16,7 @@
 
 import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
-import { BackLink, Button, CreateUserIcon } from "mds";
+import { BackLink, Button, CreateUserIcon, FormLayout, PageLayout } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import UserSelector from "./UserSelector";
@@ -29,15 +29,12 @@ import {
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
 
-import PageLayout from "../Common/Layout/PageLayout";
-
 import PolicySelectors from "../Policies/PolicySelectors";
 
 import GroupsSelectors from "./GroupsSelectors";
 
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { useNavigate } from "react-router-dom";
-import FormLayout from "../Common/FormLayout";
 import AddUserHelpBox from "./AddUserHelpBox";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
@@ -115,7 +112,7 @@ const AddUser = ({ classes }: IAddUserProps) => {
           <FormLayout
             title={"Create User"}
             icon={<CreateUserIcon />}
-            helpbox={<AddUserHelpBox />}
+            helpBox={<AddUserHelpBox />}
           >
             <form
               noValidate

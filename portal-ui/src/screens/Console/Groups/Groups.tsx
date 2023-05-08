@@ -24,6 +24,7 @@ import {
   GroupsIcon,
   HelpBox,
   IAMPoliciesIcon,
+  PageLayout,
   UsersIcon,
 } from "mds";
 import createStyles from "@mui/styles/createStyles";
@@ -43,7 +44,6 @@ import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AButton from "../Common/AButton/AButton";
-import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import {
   applyPolicyPermissions,
@@ -225,119 +225,110 @@ const Groups = ({ classes }: IGroupsProps) => {
       <PageHeaderWrapper label={"Groups"} />
 
       <PageLayout>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <SecureComponent
-            resource={CONSOLE_UI_RESOURCE}
-            scopes={displayGroupsPermissions}
-            errorProps={{ disabled: true }}
-          >
-            <SearchBox
-              placeholder={"Search Groups"}
-              onChange={setFilter}
-              overrideClass={classes.searchField}
-              value={filter}
-            />
-          </SecureComponent>
-          <Box
-            sx={{
-              display: "flex",
-            }}
-          >
+        <Grid container spacing={1}>
+          <Grid item xs={12} className={classes.actionsTray}>
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
-              scopes={applyPolicyPermissions}
-              matchAll
+              scopes={displayGroupsPermissions}
               errorProps={{ disabled: true }}
             >
-              <TooltipWrapper
-                tooltip={
-                  checkedGroups.length < 1
-                    ? "Please select Groups on which you want to apply Policies"
-                    : applyPolicy
-                    ? "Select Policy"
-                    : permissionTooltipHelper(
-                        applyPolicyPermissions,
-                        "apply policies to Groups"
-                      )
-                }
+              <SearchBox
+                placeholder={"Search Groups"}
+                onChange={setFilter}
+                overrideClass={classes.searchField}
+                value={filter}
+              />
+            </SecureComponent>
+            <Box
+              sx={{
+                display: "flex",
+              }}
+            >
+              <SecureComponent
+                resource={CONSOLE_UI_RESOURCE}
+                scopes={applyPolicyPermissions}
+                matchAll
+                errorProps={{ disabled: true }}
               >
-                <Button
-                  id={"assign-policy"}
-                  onClick={() => {
-                    setPolicyOpen(true);
-                  }}
-                  label={"Assign Policy"}
-                  icon={<IAMPoliciesIcon />}
-                  disabled={checkedGroups.length < 1 || !applyPolicy}
-                  variant={"regular"}
-                />
-              </TooltipWrapper>
-            </SecureComponent>
-            <SecureComponent
-              resource={CONSOLE_UI_RESOURCE}
-              scopes={deleteGroupPermissions}
-              matchAll
-              errorProps={{ disabled: true }}
-            >
-              <TooltipWrapper
-                tooltip={
-                  checkedGroups.length === 0
-                    ? "Select Groups to delete"
-                    : getGroup
-                    ? "Delete Selected"
-                    : permissionTooltipHelper(
-                        getGroupPermissions,
-                        "delete Groups"
-                      )
-                }
-              >
-                <Button
-                  id="delete-selected-groups"
-                  onClick={() => {
-                    setDeleteOpen(true);
-                  }}
-                  label={"Delete Selected"}
-                  icon={<DeleteIcon />}
-                  variant="secondary"
-                  disabled={checkedGroups.length === 0 || !getGroup}
-                />
-              </TooltipWrapper>
-            </SecureComponent>
-            <SecureComponent
-              resource={CONSOLE_UI_RESOURCE}
-              scopes={createGroupPermissions}
-              matchAll
-              errorProps={{ disabled: true }}
-            >
-              <TooltipWrapper tooltip={"Create Group"}>
-                <Button
-                  id={"create-group"}
-                  label={"Create Group"}
-                  variant="callAction"
-                  icon={<AddIcon />}
-                  onClick={() => {
-                    navigate(`${IAM_PAGES.GROUPS_ADD}`);
-                  }}
-                />
-              </TooltipWrapper>
-            </SecureComponent>
-          </Box>
-        </Grid>
-        {loading && <LinearProgress />}
-        {!loading && (
-          <Fragment>
-            {records.length > 0 && (
-              <Fragment>
                 <TooltipWrapper
                   tooltip={
-                    getGroup
-                      ? ""
+                    checkedGroups.length < 1
+                      ? "Please select Groups on which you want to apply Policies"
+                      : applyPolicy
+                      ? "Select Policy"
                       : permissionTooltipHelper(
-                          getGroupPermissions,
-                          "view Group details"
+                          applyPolicyPermissions,
+                          "apply policies to Groups"
                         )
                   }
                 >
+                  <Button
+                    id={"assign-policy"}
+                    onClick={() => {
+                      setPolicyOpen(true);
+                    }}
+                    label={"Assign Policy"}
+                    icon={<IAMPoliciesIcon />}
+                    disabled={checkedGroups.length < 1 || !applyPolicy}
+                    variant={"regular"}
+                  />
+                </TooltipWrapper>
+              </SecureComponent>
+              <SecureComponent
+                resource={CONSOLE_UI_RESOURCE}
+                scopes={deleteGroupPermissions}
+                matchAll
+                errorProps={{ disabled: true }}
+              >
+                <TooltipWrapper
+                  tooltip={
+                    checkedGroups.length === 0
+                      ? "Select Groups to delete"
+                      : getGroup
+                      ? "Delete Selected"
+                      : permissionTooltipHelper(
+                          getGroupPermissions,
+                          "delete Groups"
+                        )
+                  }
+                >
+                  <Button
+                    id="delete-selected-groups"
+                    onClick={() => {
+                      setDeleteOpen(true);
+                    }}
+                    label={"Delete Selected"}
+                    icon={<DeleteIcon />}
+                    variant="secondary"
+                    disabled={checkedGroups.length === 0 || !getGroup}
+                  />
+                </TooltipWrapper>
+              </SecureComponent>
+              <SecureComponent
+                resource={CONSOLE_UI_RESOURCE}
+                scopes={createGroupPermissions}
+                matchAll
+                errorProps={{ disabled: true }}
+              >
+                <TooltipWrapper tooltip={"Create Group"}>
+                  <Button
+                    id={"create-group"}
+                    label={"Create Group"}
+                    variant="callAction"
+                    icon={<AddIcon />}
+                    onClick={() => {
+                      navigate(`${IAM_PAGES.GROUPS_ADD}`);
+                    }}
+                  />
+                </TooltipWrapper>
+              </SecureComponent>
+            </Box>
+          </Grid>
+          {loading && <LinearProgress />}
+          {!loading && (
+            <Fragment>
+              {records.length > 0 && (
+                <Fragment>
                   <Grid item xs={12} className={classes.tableBlock}>
                     <SecureComponent
                       resource={CONSOLE_UI_RESOURCE}
@@ -358,76 +349,76 @@ const Groups = ({ classes }: IGroupsProps) => {
                       />
                     </SecureComponent>
                   </Grid>
-                </TooltipWrapper>
-                <Grid item xs={12} marginTop={"25px"}>
-                  <HelpBox
-                    title={"Groups"}
-                    iconComponent={<GroupsIcon />}
-                    help={
-                      <Fragment>
-                        A group can have one attached IAM policy, where all
-                        users with membership in that group inherit that policy.
-                        Groups support more simplified management of user
-                        permissions on the MinIO Tenant.
-                        <br />
-                        <br />
-                        You can learn more at our{" "}
-                        <a
-                          href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-group-management.html?ref=con"
-                          target="_blank"
-                          rel="noopener"
-                        >
-                          documentation
-                        </a>
-                        .
-                      </Fragment>
-                    }
-                  />
-                </Grid>
-              </Fragment>
-            )}
-            {records.length === 0 && (
-              <Grid
-                container
-                justifyContent={"center"}
-                alignContent={"center"}
-                alignItems={"center"}
-              >
-                <Grid item xs={8}>
-                  <HelpBox
-                    title={"Groups"}
-                    iconComponent={<UsersIcon />}
-                    help={
-                      <Fragment>
-                        A group can have one attached IAM policy, where all
-                        users with membership in that group inherit that policy.
-                        Groups support more simplified management of user
-                        permissions on the MinIO Tenant.
-                        <SecureComponent
-                          resource={CONSOLE_UI_RESOURCE}
-                          scopes={createGroupPermissions}
-                          matchAll
-                        >
+                  <Grid item xs={12} marginTop={"25px"}>
+                    <HelpBox
+                      title={"Groups"}
+                      iconComponent={<GroupsIcon />}
+                      help={
+                        <Fragment>
+                          A group can have one attached IAM policy, where all
+                          users with membership in that group inherit that
+                          policy. Groups support more simplified management of
+                          user permissions on the MinIO Tenant.
                           <br />
                           <br />
-                          To get started,{" "}
-                          <AButton
-                            onClick={() => {
-                              navigate(`${IAM_PAGES.GROUPS_ADD}`);
-                            }}
+                          You can learn more at our{" "}
+                          <a
+                            href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-group-management.html?ref=con"
+                            target="_blank"
+                            rel="noopener"
                           >
-                            Create a Group
-                          </AButton>
+                            documentation
+                          </a>
                           .
-                        </SecureComponent>
-                      </Fragment>
-                    }
-                  />
+                        </Fragment>
+                      }
+                    />
+                  </Grid>
+                </Fragment>
+              )}
+              {records.length === 0 && (
+                <Grid
+                  container
+                  justifyContent={"center"}
+                  alignContent={"center"}
+                  alignItems={"center"}
+                >
+                  <Grid item xs={8}>
+                    <HelpBox
+                      title={"Groups"}
+                      iconComponent={<UsersIcon />}
+                      help={
+                        <Fragment>
+                          A group can have one attached IAM policy, where all
+                          users with membership in that group inherit that
+                          policy. Groups support more simplified management of
+                          user permissions on the MinIO Tenant.
+                          <SecureComponent
+                            resource={CONSOLE_UI_RESOURCE}
+                            scopes={createGroupPermissions}
+                            matchAll
+                          >
+                            <br />
+                            <br />
+                            To get started,{" "}
+                            <AButton
+                              onClick={() => {
+                                navigate(`${IAM_PAGES.GROUPS_ADD}`);
+                              }}
+                            >
+                              Create a Group
+                            </AButton>
+                            .
+                          </SecureComponent>
+                        </Fragment>
+                      }
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-            )}
-          </Fragment>
-        )}
+              )}
+            </Fragment>
+          )}
+        </Grid>
       </PageLayout>
     </Fragment>
   );

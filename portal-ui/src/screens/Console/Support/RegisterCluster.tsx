@@ -15,9 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { HelpBox, WarnIcon, Grid } from "mds";
+import { Box } from "@mui/material";
+import { Button, Grid, HelpBox, WarnIcon } from "mds";
 
 interface IRegisterCluster {
   compactMode?: boolean;
@@ -28,8 +28,9 @@ const RegisterCluster = ({ compactMode = false }: IRegisterCluster) => {
 
   const redirectButton = (
     <Button
+      id={"go-to-register"}
       type="submit"
-      variant="contained"
+      variant="callAction"
       color="primary"
       onClick={() => navigate("/support/register")}
     >

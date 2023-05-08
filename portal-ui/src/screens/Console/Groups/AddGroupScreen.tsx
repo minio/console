@@ -25,8 +25,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Grid from "@mui/material/Grid";
 import { LinearProgress } from "@mui/material";
-import { BackLink, Button, CreateGroupIcon } from "mds";
-import PageLayout from "../Common/Layout/PageLayout";
+import { BackLink, Button, CreateGroupIcon, FormLayout, PageLayout } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddGroupHelpBox from "./AddGroupHelpBox";
 import UsersSelectors from "./UsersSelectors";
@@ -34,7 +33,6 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 
-import FormLayout from "../Common/FormLayout";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
@@ -110,7 +108,7 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
           <FormLayout
             title={"Create Group"}
             icon={<CreateGroupIcon />}
-            helpbox={<AddGroupHelpBox />}
+            helpBox={<AddGroupHelpBox />}
           >
             <form noValidate autoComplete="off" onSubmit={setSaving}>
               <Grid container>

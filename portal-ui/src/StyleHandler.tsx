@@ -20,7 +20,6 @@ import {
   Theme,
   ThemeProvider,
 } from "@mui/material/styles";
-import withStyles from "@mui/styles/withStyles";
 import theme from "./theme/main";
 import "react-virtualized/styles.css";
 import "react-grid-layout/css/styles.css";
@@ -46,48 +45,19 @@ const StyleHandler = ({ children }: IStyleHandler) => {
     (state: AppState) => state.system.overrideStyles
   );
 
-  let thm = theme;
-  let globalBody: any = {};
-  let rowColor: any = { color: "#393939" };
-  let detailsListPanel: any = { backgroundColor: "#fff" };
+  let thm = undefined;
 
   if (colorVariants) {
     thm = generateOverrideTheme(colorVariants);
-
-    globalBody = {
-      backgroundColor: `${colorVariants.backgroundColor}!important`,
-    };
-    rowColor = { color: `${colorVariants.fontColor}!important` };
-    detailsListPanel = {
-      backgroundColor: colorVariants.backgroundColor,
-      color: colorVariants.fontColor,
-    };
   }
-
-  // Kept for Compatibility purposes. Once mds migration is complete then this will be removed
-  const GlobalCss = withStyles({
-    // @global is handled by jss-plugin-global.
-    "@global": {
-      body: {
-        ...globalBody,
-      },
-      ".rowLine": {
-        ...rowColor,
-      },
-      ".detailsListPanel": {
-        ...detailsListPanel,
-      },
-    },
-  })(() => null);
 
   // ThemeHandler is needed for MDS components theming. Eventually we will remove Theme Provider & use only mds themes.
   return (
     <Fragment>
       <GlobalStyles />
-      <GlobalCss />
       <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={thm}>
-          <ThemeHandler>{children}</ThemeHandler>
+        <ThemeProvider theme={theme}>
+          <ThemeHandler customTheme={thm}>{children}</ThemeHandler>
         </ThemeProvider>
       </StyledEngineProvider>
     </Fragment>

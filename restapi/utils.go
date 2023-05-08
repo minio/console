@@ -50,12 +50,54 @@ type CustomButtonStyle struct {
 	HoverText       *string `json:"hoverText"`
 	ActiveColor     *string `json:"activeColor"`
 	ActiveText      *string `json:"activeText"`
+	DisabledColor   *string `json:"disabledColor"`
+	DisabledText    *string `json:"disdabledText"`
+}
+
+type CustomTableStyle struct {
+	Border          *string `json:"border"`
+	DisabledBorder  *string `json:"disabledBorder"`
+	DisabledBG      *string `json:"disabledBG"`
+	Selected        *string `json:"selected"`
+	DeletedDisabled *string `json:"deletedDisabled"`
+	HoverColor      *string `json:"hoverColor"`
+}
+
+type CustomInputStyle struct {
+	Border          *string `json:"border"`
+	HoverBorder     *string `json:"hoverBorder"`
+	TextColor       *string `json:"textColor"`
+	BackgroundColor *string `json:"backgroundColor"`
+}
+
+type CustomSwitchStyle struct {
+	SwitchBackground          *string `json:"switchBackground"`
+	BulletBorderColor         *string `json:"bulletBorderColor"`
+	BulletBGColor             *string `json:"bulletBGColor"`
+	DisabledBackground        *string `json:"disabledBackground"`
+	DisabledBulletBorderColor *string `json:"disabledBulletBorderColor"`
+	DisabledBulletBGColor     *string `json:"disabledBulletBGColor"`
 }
 
 type CustomStyles struct {
-	BackgroundColor *string            `json:"backgroundColor"`
-	FontColor       *string            `json:"fontColor"`
-	ButtonStyles    *CustomButtonStyle `json:"buttonStyles"`
+	BackgroundColor       *string            `json:"backgroundColor"`
+	FontColor             *string            `json:"fontColor"`
+	SecondaryFontColor    *string            `json:"secondaryFontColor"`
+	BorderColor           *string            `json:"borderColor"`
+	LoaderColor           *string            `json:"loaderColor"`
+	BoxBackground         *string            `json:"boxBackground"`
+	OkColor               *string            `json:"okColor"`
+	ErrorColor            *string            `json:"errorColor"`
+	WarnColor             *string            `json:"warnColor"`
+	LinkColor             *string            `json:"linkColor"`
+	DisabledLinkColor     *string            `json:"disabledLinkColor"`
+	HoverLinkColor        *string            `json:"hoverLinkColor"`
+	ButtonStyles          *CustomButtonStyle `json:"buttonStyles"`
+	SecondaryButtonStyles *CustomButtonStyle `json:"secondaryButtonStyles"`
+	RegularButtonStyles   *CustomButtonStyle `json:"regularButtonStyles"`
+	TableColors           *CustomTableStyle  `json:"tableColors"`
+	InputBox              *CustomInputStyle  `json:"inputBox"`
+	Switch                *CustomSwitchStyle `json:"switch"`
 }
 
 func RandomCharStringWithAlphabet(n int, alphabet string) string {
@@ -163,7 +205,7 @@ func ValidateEncodedStyles(encodedStyles string) error {
 		return err
 	}
 
-	if styleElements.BackgroundColor == nil || styleElements.FontColor == nil || styleElements.ButtonStyles == nil {
+	if styleElements.BackgroundColor == nil || styleElements.FontColor == nil || styleElements.ButtonStyles == nil || styleElements.BorderColor == nil || styleElements.OkColor == nil {
 		return errors.New("specified style is not in the correct format")
 	}
 

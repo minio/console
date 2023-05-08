@@ -127,10 +127,6 @@ export const testBucketBrowseButtonFor = (modifier) => {
   );
 };
 
-export const uploadFilesButton = () => {
-  return Selector("button").withText("Upload Files");
-};
-
 export const cleanUpNamedBucketAndUploads = (t, bucket) => {
   return new Promise((resolve, reject) => {
     const minioClient = new Minio.Client({

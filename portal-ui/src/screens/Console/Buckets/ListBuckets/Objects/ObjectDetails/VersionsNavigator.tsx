@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 import { withStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import { LinearProgress, SelectChangeEvent } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import ShareFile from "./ShareFile";
 import {
@@ -36,8 +36,11 @@ import { IFileInfo } from "./types";
 import api from "../../../../../../common/api";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
-import { decodeURLString, niceBytesInt } from "../../../../../../common/utils";
-import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
+import {
+  decodeURLString,
+  encodeURLString,
+  niceBytesInt,
+} from "../../../../../../common/utils";
 import RestoreFileVersion from "./RestoreFileVersion";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
@@ -45,11 +48,12 @@ import {
   Button,
   DeleteIcon,
   DeleteNonCurrentIcon,
+  Select,
   SelectMultipleIcon,
   VersionsIcon,
+  ScreenTitle,
 } from "mds";
 import FileVersionItem from "./FileVersionItem";
-import SelectWrapper from "../../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import PreviewFileModal from "../Preview/PreviewFileModal";
 import DeleteNonCurrent from "../ListObjects/DeleteNonCurrent";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
@@ -88,16 +92,6 @@ const styles = (theme: Theme) =>
     },
     screenTitleContainer: {
       position: "relative",
-      "&::before": {
-        content: "' '",
-        display: "block",
-        position: "absolute",
-        width: "2px",
-        backgroundColor: "#F8F8F8",
-        left: "24px",
-        height: "40px",
-        bottom: 0,
-      },
       "@media (max-width: 799px)": {
         "&::before": {
           display: "none",
@@ -456,27 +450,22 @@ const VersionsNavigator = ({
                     <VersionsIcon />
                   </span>
                 }
-                title={
-                  <span className={classes.titleSpacer}>
-                    {objectNameArray.length > 0
-                      ? objectNameArray[objectNameArray.length - 1]
-                      : actualInfo.name}{" "}
-                    Versions
-                  </span>
-                }
+                title={`${
+                  objectNameArray.length > 0
+                    ? objectNameArray[objectNameArray.length - 1]
+                    : actualInfo.name
+                } Versions`}
                 subTitle={
                   <Fragment>
-                    <Grid item xs={12} className={classes.bucketDetails}>
-                      <span className={classes.detailsSpacer}>
-                        <strong>
-                          {versions.length} Version
-                          {versions.length === 1 ? "" : "s"}&nbsp;&nbsp;&nbsp;
-                        </strong>
-                      </span>
-                      <span className={classes.detailsSpacer}>
-                        <strong>{niceBytesInt(totalSpace)}</strong>
-                      </span>
-                    </Grid>
+                    <span className={classes.detailsSpacer}>
+                      <strong>
+                        {versions.length} Version
+                        {versions.length === 1 ? "" : "s"}&nbsp;&nbsp;&nbsp;
+                      </strong>
+                    </span>
+                    <span className={classes.detailsSpacer}>
+                      <strong>{niceBytesInt(totalSpace)}</strong>
+                    </span>
                   </Fragment>
                 }
                 actions={
@@ -518,15 +507,8 @@ const VersionsNavigator = ({
                         disabled={versions.length <= 1}
                       />
                     </TooltipWrapper>
-                    <span className={classes.sortByLabel}>Sort by</span>
-                    <SelectWrapper
+                    <Select
                       id={"sort-by"}
-                      label={""}
-                      value={sortValue}
-                      onChange={(e: SelectChangeEvent<string>) => {
-                        setSortValue(e.target.value as string);
-                      }}
-                      name={"sort-by"}
                       options={[
                         { label: "Date", value: "date" },
                         {
@@ -534,10 +516,16 @@ const VersionsNavigator = ({
                           value: "size",
                         },
                       ]}
+                      value={sortValue}
+                      label={"Sort by"}
+                      onChange={(newValue) => {
+                        setSortValue(newValue);
+                      }}
+                      noLabelMinWidth
                     />
                   </Fragment>
                 }
-                className={classes.noBottomBorder}
+                bottomBorder={false}
               />
             </Grid>
             <Grid item xs={12} className={classes.versionsVirtualPanel}>

@@ -54,6 +54,7 @@ const (
 	ConsoleMaxConcurrentUploads                  = "CONSOLE_MAX_CONCURRENT_UPLOADS"
 	ConsoleMaxConcurrentDownloads                = "CONSOLE_MAX_CONCURRENT_DOWNLOADS"
 	ConsoleDevMode                               = "CONSOLE_DEV_MODE"
+	ConsoleAnimatedLogin                         = "CONSOLE_ANIMATED_LOGIN"
 	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
 	SlashSeparator                               = "/"
 )

@@ -21,6 +21,7 @@ import {
   BackLink,
   Button,
   IAMPoliciesIcon,
+  PageLayout,
   PasswordKeyIcon,
   ServiceAccountCredentialsIcon,
 } from "mds";
@@ -33,7 +34,6 @@ import {
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import PageLayout from "../Common/Layout/PageLayout";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
@@ -73,8 +73,8 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
   const navigate = useNavigate();
 
   const [addSending, setAddSending] = useState<boolean>(false);
-  const [accessKey, setAccessKey] = useState<string>(getRandomString(16));
-  const [secretKey, setSecretKey] = useState<string>(getRandomString(32));
+  const [accessKey, setAccessKey] = useState<string>(getRandomString(20));
+  const [secretKey, setSecretKey] = useState<string>(getRandomString(40));
   const [isRestrictedByPolicy, setIsRestrictedByPolicy] =
     useState<boolean>(false);
   const [newServiceAccount, setNewServiceAccount] =

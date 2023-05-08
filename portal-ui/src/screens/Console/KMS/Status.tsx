@@ -16,7 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, Grid } from "@mui/material";
-import PageLayout from "../Common/Layout/PageLayout";
 import api from "../../../common/api";
 
 import { ErrorResponseHandler } from "../../../common/types";
@@ -46,7 +45,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { DisabledIcon, EnabledIcon } from "mds";
+import { DisabledIcon, EnabledIcon, PageLayout } from "mds";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 const Status = () => {

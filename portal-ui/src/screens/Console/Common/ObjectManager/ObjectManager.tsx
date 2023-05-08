@@ -21,7 +21,7 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IconButton, Tooltip } from "@mui/material";
 import { AppState, useAppDispatch } from "../../../../store";
-import { RemoveAllIcon } from "mds";
+import { Box, RemoveAllIcon } from "mds";
 import ObjectHandled from "./ObjectHandled";
 import {
   cleanList,
@@ -32,9 +32,7 @@ import clsx from "clsx";
 const styles = (theme: Theme) =>
   createStyles({
     downloadContainer: {
-      border: "#EAEDEE 1px solid",
       boxShadow: "rgba(0, 0, 0, 0.08) 0 2px 10px",
-      backgroundColor: "#fff",
       position: "absolute",
       right: 20,
       top: 62,
@@ -62,7 +60,6 @@ const styles = (theme: Theme) =>
       paddingBottom: 20,
       borderBottom: "#E2E2E2 1px solid",
       margin: "25px 30px 5px 30px",
-      color: "#000",
     },
     actionsContainer: {
       overflowY: "auto",
@@ -104,11 +101,13 @@ const ObjectManager = ({ classes }: IObjectManager) => {
   return (
     <Fragment>
       {managerOpen && (
-        <div
+        <Box
           className={clsx(classes.downloadContainer, {
             [classes.downloadContainerAnonymous]: anonymousMode,
             open: managerOpen,
           })}
+          useBackground
+          withBorders
         >
           <div className={classes.cleanIcon}>
             <Tooltip title={"Clean Completed Objects"} placement="bottom-start">
@@ -134,7 +133,7 @@ const ObjectManager = ({ classes }: IObjectManager) => {
               />
             ))}
           </div>
-        </div>
+        </Box>
       )}
     </Fragment>
   );

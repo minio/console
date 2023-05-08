@@ -21,6 +21,7 @@ import {
   Button,
   DeleteIcon,
   HelpBox,
+  PageLayout,
   PasswordKeyIcon,
 } from "mds";
 import { useSelector } from "react-redux";
@@ -40,7 +41,6 @@ import {
 
 import { ErrorResponseHandler } from "../../../common/types";
 import ChangePasswordModal from "./ChangePasswordModal";
-import PageLayout from "../Common/Layout/PageLayout";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 import {
@@ -205,102 +205,104 @@ const Account = () => {
       />
       <PageHeaderWrapper label="Access Keys" />
       <PageLayout>
-        <Grid item={true} xs={12} className={classes.actionsTray}>
-          <SearchBox
-            placeholder={"Search Access Keys"}
-            onChange={setFilter}
-            overrideClass={classes.searchField}
-            value={filter}
-          />
-
-          <Box
-            sx={{
-              display: "flex",
-            }}
-          >
-            {" "}
-            <TooltipWrapper tooltip={"Delete Selected"}>
-              <Button
-                id={"delete-selected-accounts"}
-                onClick={() => {
-                  setDeleteMultipleOpen(true);
-                }}
-                label={"Delete Selected"}
-                icon={<DeleteIcon />}
-                disabled={selectedSAs.length === 0}
-                variant={"secondary"}
-              />
-            </TooltipWrapper>
-            <SecureComponent
-              scopes={[IAM_SCOPES.ADMIN_CREATE_USER]}
-              resource={CONSOLE_UI_RESOURCE}
-              matchAll
-              errorProps={{ disabled: true }}
-            >
-              <Button
-                id={"change-password"}
-                onClick={() => setChangePasswordModalOpen(true)}
-                label={`Change Password`}
-                icon={<PasswordKeyIcon />}
-                variant={"regular"}
-                disabled={userIDP}
-              />
-            </SecureComponent>
-            <Button
-              id={"create-service-account"}
-              onClick={() => {
-                navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
-              }}
-              label={`Create access key`}
-              icon={<AddIcon />}
-              variant={"callAction"}
+        <Grid container spacing={1}>
+          <Grid item={true} xs={12} className={classes.actionsTray}>
+            <SearchBox
+              placeholder={"Search Access Keys"}
+              onChange={setFilter}
+              overrideClass={classes.searchField}
+              value={filter}
             />
-          </Box>
-        </Grid>
 
-        <Grid item xs={12} className={classes.tableBlock}>
-          <TableWrapper
-            isLoading={loading}
-            records={filteredRecords}
-            entityName={"Access Keys"}
-            idField={""}
-            columns={[{ label: "Access Key", elementKey: "" }]}
-            itemActions={tableActions}
-            selectedItems={selectedSAs}
-            onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
-            onSelectAll={selectAllItems}
-          />
-        </Grid>
-        <Grid item xs={12} marginTop={"15px"}>
-          <HelpBox
-            title={"Learn more about ACCESS KEYS"}
-            iconComponent={<AccountIcon />}
-            help={
-              <Fragment>
-                MinIO access keys are child identities of an authenticated MinIO
-                user, including externally managed identities. Each access key
-                inherits its privileges based on the policies attached to it’s
-                parent user or those groups in which the parent user has
-                membership. Access Keys also support an optional inline policy
-                which further restricts access to a subset of actions and
-                resources available to the parent user.
-                <br />
-                <br />
-                You can learn more at our{" "}
-                {
-                  // TODO: Change this link once it is called access keys
-                }
-                <a
-                  href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html?ref=con#service-accounts"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  documentation
-                </a>
-                .
-              </Fragment>
-            }
-          />
+            <Box
+              sx={{
+                display: "flex",
+              }}
+            >
+              {" "}
+              <TooltipWrapper tooltip={"Delete Selected"}>
+                <Button
+                  id={"delete-selected-accounts"}
+                  onClick={() => {
+                    setDeleteMultipleOpen(true);
+                  }}
+                  label={"Delete Selected"}
+                  icon={<DeleteIcon />}
+                  disabled={selectedSAs.length === 0}
+                  variant={"secondary"}
+                />
+              </TooltipWrapper>
+              <SecureComponent
+                scopes={[IAM_SCOPES.ADMIN_CREATE_USER]}
+                resource={CONSOLE_UI_RESOURCE}
+                matchAll
+                errorProps={{ disabled: true }}
+              >
+                <Button
+                  id={"change-password"}
+                  onClick={() => setChangePasswordModalOpen(true)}
+                  label={`Change Password`}
+                  icon={<PasswordKeyIcon />}
+                  variant={"regular"}
+                  disabled={userIDP}
+                />
+              </SecureComponent>
+              <Button
+                id={"create-service-account"}
+                onClick={() => {
+                  navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
+                }}
+                label={`Create access key`}
+                icon={<AddIcon />}
+                variant={"callAction"}
+              />
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} className={classes.tableBlock}>
+            <TableWrapper
+              isLoading={loading}
+              records={filteredRecords}
+              entityName={"Access Keys"}
+              idField={""}
+              columns={[{ label: "Access Key", elementKey: "" }]}
+              itemActions={tableActions}
+              selectedItems={selectedSAs}
+              onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
+              onSelectAll={selectAllItems}
+            />
+          </Grid>
+          <Grid item xs={12} marginTop={"15px"}>
+            <HelpBox
+              title={"Learn more about ACCESS KEYS"}
+              iconComponent={<AccountIcon />}
+              help={
+                <Fragment>
+                  MinIO access keys are child identities of an authenticated
+                  MinIO user, including externally managed identities. Each
+                  access key inherits its privileges based on the policies
+                  attached to it’s parent user or those groups in which the
+                  parent user has membership. Access Keys also support an
+                  optional inline policy which further restricts access to a
+                  subset of actions and resources available to the parent user.
+                  <br />
+                  <br />
+                  You can learn more at our{" "}
+                  {
+                    // TODO: Change this link once it is called access keys
+                  }
+                  <a
+                    href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html?ref=con#service-accounts"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    documentation
+                  </a>
+                  .
+                </Fragment>
+              }
+            />
+          </Grid>
         </Grid>
       </PageLayout>
     </React.Fragment>

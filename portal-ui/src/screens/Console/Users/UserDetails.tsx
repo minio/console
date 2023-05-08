@@ -22,6 +22,7 @@ import {
   BackLink,
   Button,
   IAMPoliciesIcon,
+  PageLayout,
   PasswordKeyIcon,
   TrashIcon,
   UsersIcon,
@@ -47,7 +48,6 @@ import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUser from "./DeleteUser";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
-import PageLayout from "../Common/Layout/PageLayout";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
@@ -282,217 +282,219 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
         />
       )}
       <PageLayout className={classes.pageContainer}>
-        <Grid item xs={12}>
-          <ScreenTitle
-            icon={
-              <Fragment>
-                <UsersIcon width={40} />
-              </Fragment>
-            }
-            title={userName}
-            actions={
-              <Fragment>
-                <span className={classes.statusLabel}>User Status:</span>
-                <span className={classes.statusValue}>
-                  {enabled ? "Enabled" : "Disabled"}
-                </span>
-                <TooltipWrapper
-                  tooltip={
-                    enableEnabled || disableEnabled
-                      ? ""
-                      : hasPermission(
-                          CONSOLE_UI_RESOURCE,
-                          enableUserPermissions
-                        )
-                      ? permissionTooltipHelper(
-                          disableUserPermissions,
-                          "disable users"
-                        )
-                      : hasPermission(
-                          CONSOLE_UI_RESOURCE,
-                          disableUserPermissions
-                        )
-                      ? permissionTooltipHelper(
-                          enableUserPermissions,
-                          "enable users"
-                        )
-                      : permissionTooltipHelper(
-                          enableDisableUserPermissions,
-                          "enable or disable users"
-                        )
-                  }
-                >
-                  <FormSwitchWrapper
-                    indicatorLabels={["Enabled", "Disabled"]}
-                    checked={enabled}
-                    value={"group_enabled"}
-                    id="group-status"
-                    name="group-status"
-                    onChange={() => {
-                      setEnabled(!enabled);
-                      saveRecord(!enabled);
-                    }}
-                    switchOnly
-                    disabled={!enableEnabled && !disableEnabled}
-                  />
-                </TooltipWrapper>
-                <TooltipWrapper
-                  tooltip={
-                    hasPermission(CONSOLE_UI_RESOURCE, deleteUserPermissions)
-                      ? userLoggedIn === userName
-                        ? "You cannot delete the currently logged in User"
-                        : "Delete User"
-                      : permissionTooltipHelper(
-                          deleteUserPermissions,
-                          "delete user"
-                        )
-                  }
-                >
-                  <Button
-                    id={"delete-user"}
-                    onClick={deleteUser}
-                    icon={<TrashIcon />}
-                    variant={"secondary"}
-                    disabled={
-                      !hasPermission(
-                        CONSOLE_UI_RESOURCE,
-                        deleteUserPermissions
-                      ) || userLoggedIn === userName
-                    }
-                  />
-                </TooltipWrapper>
-
-                <TooltipWrapper tooltip={"Change Password"}>
-                  <Button
-                    id={"change-user-password"}
-                    onClick={changeUserPassword}
-                    icon={<PasswordKeyIcon />}
-                    variant={"regular"}
-                  />
-                </TooltipWrapper>
-              </Fragment>
-            }
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <VerticalTabs>
-            {{
-              tabConfig: {
-                label: "Groups",
-                disabled: !canAssignGroup,
-              },
-              content: (
-                <React.Fragment>
-                  <div className={classes.actionsTray}>
-                    <PanelTitle>Groups</PanelTitle>
-                    <TooltipWrapper
-                      tooltip={
-                        canAssignGroup
-                          ? "Assign groups"
-                          : permissionTooltipHelper(
-                              assignGroupPermissions,
-                              "add users to groups"
-                            )
-                      }
-                    >
-                      <Button
-                        id={"add-groups"}
-                        label={"Add to Groups"}
-                        onClick={() => {
-                          setAddGroupOpen(true);
-                        }}
-                        icon={<AddIcon />}
-                        variant={"callAction"}
-                        disabled={!canAssignGroup}
-                      />
-                    </TooltipWrapper>
-                  </div>
-                  <div className={classes.tableBlock}>
-                    <TableWrapper
-                      itemActions={groupTableActions}
-                      columns={[{ label: "Name", elementKey: "group" }]}
-                      isLoading={loading}
-                      records={currentGroups}
-                      entityName="Groups"
-                      idField="group"
-                    />
-                  </div>
-                </React.Fragment>
-              ),
-            }}
-            {{
-              tabConfig: {
-                label: "Service Accounts",
-                disabled: !hasPermission(
-                  CONSOLE_UI_RESOURCE,
-                  editServiceAccountPermissions
-                ),
-              },
-              content: (
-                <UserServiceAccountsPanel
-                  user={userName}
-                  hasPolicy={hasPolicy}
-                />
-              ),
-            }}
-            {{
-              tabConfig: {
-                label: "Policies",
-                disabled: !canAssignPolicy,
-              },
-              content: (
+        <Grid container spacing={1}>
+          <Grid item xs={12}>
+            <ScreenTitle
+              icon={
                 <Fragment>
-                  <div className={classes.actionsTray}>
-                    <PanelTitle>Policies</PanelTitle>
-
-                    <TooltipWrapper
-                      tooltip={
-                        canAssignPolicy
-                          ? "Assign Policies"
-                          : permissionTooltipHelper(
-                              assignIAMPolicyPermissions,
-                              "assign policies"
-                            )
-                      }
-                    >
-                      <Button
-                        id={"assign-policies"}
-                        label={"Assign Policies"}
-                        onClick={() => {
-                          setPolicyOpen(true);
-                        }}
-                        icon={<IAMPoliciesIcon />}
-                        variant={"callAction"}
-                        disabled={!canAssignPolicy}
-                      />
-                    </TooltipWrapper>
-                  </div>
-                  <div className={classes.tableBlock}>
-                    <TableWrapper
-                      itemActions={[
-                        {
-                          type: "view",
-                          onClick: (policy: IPolicyItem) => {
-                            navigate(
-                              `${IAM_PAGES.POLICIES}/${encodeURLString(
-                                policy.policy
-                              )}`
-                            );
-                          },
-                        },
-                      ]}
-                      columns={[{ label: "Name", elementKey: "policy" }]}
-                      isLoading={loading}
-                      records={currentPolicies}
-                      entityName="Policies"
-                      idField="policy"
-                    />
-                  </div>
+                  <UsersIcon width={40} />
                 </Fragment>
-              ),
-            }}
-          </VerticalTabs>
+              }
+              title={userName}
+              actions={
+                <Fragment>
+                  <span className={classes.statusLabel}>User Status:</span>
+                  <span className={classes.statusValue}>
+                    {enabled ? "Enabled" : "Disabled"}
+                  </span>
+                  <TooltipWrapper
+                    tooltip={
+                      enableEnabled || disableEnabled
+                        ? ""
+                        : hasPermission(
+                            CONSOLE_UI_RESOURCE,
+                            enableUserPermissions
+                          )
+                        ? permissionTooltipHelper(
+                            disableUserPermissions,
+                            "disable users"
+                          )
+                        : hasPermission(
+                            CONSOLE_UI_RESOURCE,
+                            disableUserPermissions
+                          )
+                        ? permissionTooltipHelper(
+                            enableUserPermissions,
+                            "enable users"
+                          )
+                        : permissionTooltipHelper(
+                            enableDisableUserPermissions,
+                            "enable or disable users"
+                          )
+                    }
+                  >
+                    <FormSwitchWrapper
+                      indicatorLabels={["Enabled", "Disabled"]}
+                      checked={enabled}
+                      value={"group_enabled"}
+                      id="group-status"
+                      name="group-status"
+                      onChange={() => {
+                        setEnabled(!enabled);
+                        saveRecord(!enabled);
+                      }}
+                      switchOnly
+                      disabled={!enableEnabled && !disableEnabled}
+                    />
+                  </TooltipWrapper>
+                  <TooltipWrapper
+                    tooltip={
+                      hasPermission(CONSOLE_UI_RESOURCE, deleteUserPermissions)
+                        ? userLoggedIn === userName
+                          ? "You cannot delete the currently logged in User"
+                          : "Delete User"
+                        : permissionTooltipHelper(
+                            deleteUserPermissions,
+                            "delete user"
+                          )
+                    }
+                  >
+                    <Button
+                      id={"delete-user"}
+                      onClick={deleteUser}
+                      icon={<TrashIcon />}
+                      variant={"secondary"}
+                      disabled={
+                        !hasPermission(
+                          CONSOLE_UI_RESOURCE,
+                          deleteUserPermissions
+                        ) || userLoggedIn === userName
+                      }
+                    />
+                  </TooltipWrapper>
+
+                  <TooltipWrapper tooltip={"Change Password"}>
+                    <Button
+                      id={"change-user-password"}
+                      onClick={changeUserPassword}
+                      icon={<PasswordKeyIcon />}
+                      variant={"regular"}
+                    />
+                  </TooltipWrapper>
+                </Fragment>
+              }
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <VerticalTabs>
+              {{
+                tabConfig: {
+                  label: "Groups",
+                  disabled: !canAssignGroup,
+                },
+                content: (
+                  <React.Fragment>
+                    <div className={classes.actionsTray}>
+                      <PanelTitle>Groups</PanelTitle>
+                      <TooltipWrapper
+                        tooltip={
+                          canAssignGroup
+                            ? "Assign groups"
+                            : permissionTooltipHelper(
+                                assignGroupPermissions,
+                                "add users to groups"
+                              )
+                        }
+                      >
+                        <Button
+                          id={"add-groups"}
+                          label={"Add to Groups"}
+                          onClick={() => {
+                            setAddGroupOpen(true);
+                          }}
+                          icon={<AddIcon />}
+                          variant={"callAction"}
+                          disabled={!canAssignGroup}
+                        />
+                      </TooltipWrapper>
+                    </div>
+                    <Grid item xs={12} className={classes.tableBlock}>
+                      <TableWrapper
+                        itemActions={groupTableActions}
+                        columns={[{ label: "Name", elementKey: "group" }]}
+                        isLoading={loading}
+                        records={currentGroups}
+                        entityName="Groups"
+                        idField="group"
+                      />
+                    </Grid>
+                  </React.Fragment>
+                ),
+              }}
+              {{
+                tabConfig: {
+                  label: "Service Accounts",
+                  disabled: !hasPermission(
+                    CONSOLE_UI_RESOURCE,
+                    editServiceAccountPermissions
+                  ),
+                },
+                content: (
+                  <UserServiceAccountsPanel
+                    user={userName}
+                    hasPolicy={hasPolicy}
+                  />
+                ),
+              }}
+              {{
+                tabConfig: {
+                  label: "Policies",
+                  disabled: !canAssignPolicy,
+                },
+                content: (
+                  <Fragment>
+                    <div className={classes.actionsTray}>
+                      <PanelTitle>Policies</PanelTitle>
+
+                      <TooltipWrapper
+                        tooltip={
+                          canAssignPolicy
+                            ? "Assign Policies"
+                            : permissionTooltipHelper(
+                                assignIAMPolicyPermissions,
+                                "assign policies"
+                              )
+                        }
+                      >
+                        <Button
+                          id={"assign-policies"}
+                          label={"Assign Policies"}
+                          onClick={() => {
+                            setPolicyOpen(true);
+                          }}
+                          icon={<IAMPoliciesIcon />}
+                          variant={"callAction"}
+                          disabled={!canAssignPolicy}
+                        />
+                      </TooltipWrapper>
+                    </div>
+                    <div className={classes.tableBlock}>
+                      <TableWrapper
+                        itemActions={[
+                          {
+                            type: "view",
+                            onClick: (policy: IPolicyItem) => {
+                              navigate(
+                                `${IAM_PAGES.POLICIES}/${encodeURLString(
+                                  policy.policy
+                                )}`
+                              );
+                            },
+                          },
+                        ]}
+                        columns={[{ label: "Name", elementKey: "policy" }]}
+                        isLoading={loading}
+                        records={currentPolicies}
+                        entityName="Policies"
+                        idField="policy"
+                      />
+                    </div>
+                  </Fragment>
+                ),
+              }}
+            </VerticalTabs>
+          </Grid>
         </Grid>
       </PageLayout>
     </Fragment>

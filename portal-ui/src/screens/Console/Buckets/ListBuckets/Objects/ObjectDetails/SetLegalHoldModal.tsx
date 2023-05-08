@@ -19,8 +19,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
-import Grid from "@mui/material/Grid";
-import { Button } from "mds";
+import { Button, Grid, Switch } from "mds";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -30,7 +29,6 @@ import {
 import { IFileInfo } from "./types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../../../common/api";
 import { encodeURLString } from "../../../../../../common/utils";
 
@@ -118,7 +116,7 @@ const SetLegalHoldModal = ({
         }}
       >
         <Grid item xs={12} className={classes.formFieldRow}>
-          <FormSwitchWrapper
+          <Switch
             value="legalhold"
             id="legalhold"
             name="legalhold"

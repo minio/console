@@ -16,9 +16,8 @@
 
 import React, { Fragment, useState } from "react";
 import { DialogContentText, Grid } from "@mui/material";
-import PageLayout from "./Layout/PageLayout";
 import SectionTitle from "./SectionTitle";
-import { Button, ConfirmDeleteIcon } from "mds";
+import { Button, ConfirmDeleteIcon, PageLayout } from "mds";
 import ConfirmDialog from "./ModalWrapper/ConfirmDialog";
 import PageHeaderWrapper from "./PageHeaderWrapper/PageHeaderWrapper";
 

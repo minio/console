@@ -26,16 +26,18 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { Theme } from "@mui/material/styles";
-import { CSSObject } from "styled-components";
 import {
   AccessRuleIcon,
+  ActionsList,
   BucketsIcon,
   Button,
   DeleteIcon,
   DownloadIcon,
   HistoryIcon,
+  PageLayout,
   PreviewIcon,
   RefreshIcon,
+  ScreenTitle,
   ShareIcon,
 } from "mds";
 import { DateTime } from "luxon";
@@ -66,10 +68,7 @@ import {
   IRetentionConfig,
 } from "../../../../../../common/types";
 
-import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-
 import { AppState, useAppDispatch } from "../../../../../../store";
-import PageLayout from "../../../../Common/Layout/PageLayout";
 import {
   IAM_SCOPES,
   permissionTooltipHelper,
@@ -82,7 +81,6 @@ import withSuspense from "../../../../Common/Components/withSuspense";
 import UploadFilesButton from "../../UploadFilesButton";
 import DetailsListPanel from "./DetailsListPanel";
 import ObjectDetailPanel from "./ObjectDetailPanel";
-import ActionsListSection from "./ActionsListSection";
 import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
 import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
@@ -175,6 +173,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     screenTitleContainer: {
       border: "#EAEDEE 1px solid",
+      padding: "0 5px",
     },
     labelStyle: {
       color: "#969FA8",
@@ -184,9 +183,12 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: "12px 14px 5px",
     },
     fullContainer: {
+      width: "100%",
       position: "relative",
-      "@media (max-width: 799px)": {
-        width: 0,
+      "&.detailsOpen": {
+        "@media (max-width: 799px)": {
+          display: "none",
+        },
       },
     },
     hideListOnSmall: {
@@ -280,9 +282,6 @@ const ListObjects = () => {
   );
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
-  );
-  const colorVariants = useSelector(
-    (state: AppState) => state.system.overrideStyles
   );
   const anonymousAccessOpen = useSelector(
     (state: AppState) => state.objectBrowser.anonymousAccessOpen
@@ -804,40 +803,6 @@ const ListObjects = () => {
     createdTime = DateTime.fromISO(bucketInfo.creation_date);
   }
 
-  let regularButtonOverride: CSSObject = {};
-  let callActionButtonOverride: CSSObject = {};
-
-  if (colorVariants) {
-    regularButtonOverride = {
-      backgroundColor: "transparent",
-    };
-
-    callActionButtonOverride = {
-      color: get(colorVariants, "buttonStyles.textColor", "#fff"),
-      backgroundColor: get(
-        colorVariants,
-        "buttonStyles.backgroundColor",
-        "#07193E"
-      ),
-      "&:hover": {
-        color: get(colorVariants, "buttonStyles.hoverText", "#fff"),
-        backgroundColor: get(
-          colorVariants,
-          "buttonStyles.hoverColor",
-          "#0D2453"
-        ),
-      },
-      "&:active": {
-        color: get(colorVariants, "buttonStyles.activeText", "#fff"),
-        backgroundColor: get(
-          colorVariants,
-          "buttonStyles.activeColor",
-          "#05132F"
-        ),
-      },
-    };
-  }
-
   const multiActionButtons = [
     {
       action: () => {
@@ -978,52 +943,50 @@ const ListObjects = () => {
                 <BucketsIcon style={{ width: 30 }} />
               </span>
             }
-            title={<span className={classes.titleSpacer}>{bucketName}</span>}
+            title={bucketName}
             subTitle={
               !anonymousMode ? (
                 <Fragment>
-                  <Grid item xs={12} className={classes.bucketDetails}>
-                    <span className={classes.detailsSpacer}>
-                      Created on:&nbsp;&nbsp;
-                      <strong>
-                        {bucketInfo?.creation_date
-                          ? createdTime.toFormat(
-                              "ccc, LLL dd yyyy HH:mm:ss (ZZZZ)"
-                            )
-                          : ""}
-                      </strong>
-                    </span>
-                    <span className={classes.detailsSpacer}>
-                      Access:&nbsp;&nbsp;&nbsp;
-                      <strong>{bucketInfo?.access || ""}</strong>
-                    </span>
-                    {bucketInfo && (
-                      <Fragment>
-                        <span className={classes.detailsSpacer}>
-                          {bucketInfo.size && (
-                            <Fragment>{niceBytesInt(bucketInfo.size)}</Fragment>
-                          )}
-                          {bucketInfo.size && quota && (
-                            <Fragment> / {niceBytesInt(quota.quota)}</Fragment>
-                          )}
-                          {bucketInfo.size && bucketInfo.objects ? " - " : ""}
-                          {bucketInfo.objects && (
-                            <Fragment>
-                              {bucketInfo.objects}&nbsp;Object
-                              {bucketInfo.objects && bucketInfo.objects !== 1
-                                ? "s"
-                                : ""}
-                            </Fragment>
-                          )}
-                        </span>
-                      </Fragment>
-                    )}
-                  </Grid>
+                  <span className={classes.detailsSpacer}>
+                    Created on:&nbsp;&nbsp;
+                    <strong>
+                      {bucketInfo?.creation_date
+                        ? createdTime.toFormat(
+                            "ccc, LLL dd yyyy HH:mm:ss (ZZZZ)"
+                          )
+                        : ""}
+                    </strong>
+                  </span>
+                  <span className={classes.detailsSpacer}>
+                    Access:&nbsp;&nbsp;&nbsp;
+                    <strong>{bucketInfo?.access || ""}</strong>
+                  </span>
+                  {bucketInfo && (
+                    <Fragment>
+                      <span className={classes.detailsSpacer}>
+                        {bucketInfo.size && (
+                          <Fragment>{niceBytesInt(bucketInfo.size)}</Fragment>
+                        )}
+                        {bucketInfo.size && quota && (
+                          <Fragment> / {niceBytesInt(quota.quota)}</Fragment>
+                        )}
+                        {bucketInfo.size && bucketInfo.objects ? " - " : ""}
+                        {bucketInfo.objects && (
+                          <Fragment>
+                            {bucketInfo.objects}&nbsp;Object
+                            {bucketInfo.objects && bucketInfo.objects !== 1
+                              ? "s"
+                              : ""}
+                          </Fragment>
+                        )}
+                      </span>
+                    </Fragment>
+                  )}
                 </Fragment>
               ) : null
             }
             actions={
-              <div className={classes.actionsSection}>
+              <Fragment>
                 {!anonymousMode && (
                   <TooltipWrapper tooltip={"Rewind Bucket"}>
                     <Button
@@ -1060,7 +1023,6 @@ const ListObjects = () => {
                           IAM_SCOPES.S3_GET_ACTIONS,
                         ])
                       }
-                      sx={regularButtonOverride}
                     />
                   </TooltipWrapper>
                 )}
@@ -1087,7 +1049,6 @@ const ListObjects = () => {
                             IAM_SCOPES.S3_ALL_LIST_BUCKET,
                           ]) || rewindEnabled
                     }
-                    sx={regularButtonOverride}
                   />
                 </TooltipWrapper>
                 <input
@@ -1119,10 +1080,10 @@ const ListObjects = () => {
                     }
                     closeMenu();
                   }}
-                  overrideStyles={callActionButtonOverride}
                 />
-              </div>
+              </Fragment>
             }
+            bottomBorder={false}
           />
         </Grid>
         <div
@@ -1154,7 +1115,13 @@ const ListObjects = () => {
                 resource={bucketName}
                 errorProps={{ disabled: true }}
               >
-                <Grid item xs={12} className={classes.fullContainer}>
+                <Grid
+                  item
+                  xs={12}
+                  className={`${classes.fullContainer} ${
+                    detailsOpen ? "detailsOpen" : ""
+                  } `}
+                >
                   {!anonymousMode && (
                     <Grid item xs={12} className={classes.breadcrumbsContainer}>
                       <BrowserBreadcrumbs
@@ -1202,7 +1169,7 @@ const ListObjects = () => {
                   className={`${versionsMode ? classes.hideListOnSmall : ""}`}
                 >
                   {selectedObjects.length > 0 && (
-                    <ActionsListSection
+                    <ActionsList
                       items={multiActionButtons}
                       title={"Selected Objects:"}
                     />
