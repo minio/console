@@ -36,11 +36,7 @@ import { IFileInfo } from "./types";
 import api from "../../../../../../common/api";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
-import {
-  decodeURLString,
-  encodeURLString,
-  niceBytesInt,
-} from "../../../../../../common/utils";
+import { decodeURLString, niceBytesInt } from "../../../../../../common/utils";
 import RestoreFileVersion from "./RestoreFileVersion";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
