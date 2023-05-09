@@ -38,6 +38,9 @@ import (
 // swagger:model loginDetails
 type LoginDetails struct {
 
+	// animated login
+	AnimatedLogin bool `json:"animatedLogin,omitempty"`
+
 	// is direct p v
 	IsDirectPV bool `json:"isDirectPV,omitempty"`
 

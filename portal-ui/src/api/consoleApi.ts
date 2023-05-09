@@ -468,6 +468,7 @@ export interface LoginDetails {
   redirectRules?: RedirectRule[];
   isDirectPV?: boolean;
   isK8S?: boolean;
+  animatedLogin?: boolean;
 }
 
 export interface LoginOauth2AuthRequest {

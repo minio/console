@@ -4377,6 +4377,8 @@ definitions:
         type: boolean
       isK8S:
         type: boolean
+      animatedLogin:
+        type: boolean
   loginOauth2AuthRequest:
     type: object
     required:
