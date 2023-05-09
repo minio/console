@@ -49,11 +49,7 @@ func (suite *AdminInfoTestSuite) SetupSuite() {
 			Servers: []madmin.ServerProperties{{
 				Disks: []madmin.Disk{{}},
 			}},
-			Backend: map[string]interface{}{
-				"backendType":      "mock",
-				"rrSCParity":       0.0,
-				"standardSCParity": 0.0,
-			},
+			Backend: madmin.ErasureBackend{Type: "mock"},
 		}, nil
 	}
 }
