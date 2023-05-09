@@ -17,37 +17,113 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures/baseFixture";
 import { minioadminFile } from "./consts";
-import { pagePort } from "./consts";
+import { BUCKET_LIST_PAGE } from "./consts";
 
 test.use({ storageState: minioadminFile });
 
-test.beforeEach(async ({ page }) => {
-  await page.goto(pagePort);
-});
+const bucketListLocPrefix = "#manageBucket";
+const versionedBucketName = "versioned-bucket";
+const nonVersionedBucketName = "non-versioned-bucket";
 
-test("Test if Object Version selector is present in Lifecycle rule modal", async ({
-  page,
-}) => {
-  await page.locator("#create-bucket").click();
-  await page.getByLabel("Bucket Name*").click();
-  await page.getByLabel("Bucket Name*").fill("versioned-bucket");
-  await page.locator("#versioned").check();
-  await page.getByRole("button", { name: "Create Bucket" }).click();
-  await page.locator("#manageBucket-versioned-bucket").click();
-  await page.getByRole("tab", { name: "Lifecycle" }).click();
-  await page.getByRole("button", { name: "Add Lifecycle Rule" }).click();
-  await expect(await page.locator("#object_version")).toBeTruthy();
-});
+test.describe("Add Lifecycle Rule Modal in bucket settings tests for object version ", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(BUCKET_LIST_PAGE);
+  });
 
-test("Test if Object Version selector is not present when bucket is not versioned", async ({
-  page,
-}) => {
-  await page.locator("#create-bucket").click();
-  await page.getByLabel("Bucket Name*").click();
-  await page.getByLabel("Bucket Name*").fill("non-versioned-bucket");
-  await page.getByRole("button", { name: "Create Bucket" }).click();
-  await page.locator("#manageBucket-non-versioned-bucket").click();
-  await page.getByRole("tab", { name: "Lifecycle" }).click();
-  await page.getByRole("button", { name: "Add Lifecycle Rule" }).click();
-  await expect(await page.locator("#object_version").count()).toEqual(0);
+  test("Test if Object Version selector is present in Lifecycle rule modal", async ({
+    page,
+  }) => {
+    const bucketLocatorEl = `${bucketListLocPrefix}-${versionedBucketName}`;
+
+    await test.step(`Create bucket`, async () => {
+      await page.locator("#create-bucket").click();
+      await page.getByLabel("Bucket Name*").click();
+      await page.getByLabel("Bucket Name*").type(versionedBucketName);
+      await page.locator("#versioned").check();
+      await page.getByRole("button", { name: "Create Bucket" }).click();
+    });
+
+    await test.step("Navigate to manage bucket", async () => {
+      await page.locator(bucketLocatorEl).click();
+      await page.getByRole("tab", { name: "Lifecycle" }).click();
+    });
+
+    const result =
+      await test.step("Trigger Add Lifecycle Rule Modal and verify", async () => {
+        await page.getByRole("button", { name: "Add Lifecycle Rule" }).click();
+        return await page.locator("#object_version");
+      });
+
+    await expect(result).toBeTruthy();
+
+    await test.step("Close confirm Modal", async () => {
+      await page.locator("#close").click();
+    });
+
+    await test.step("List Bucket", async () => {
+      await page.goto(BUCKET_LIST_PAGE);
+      await page.locator(bucketLocatorEl).click();
+    });
+
+    await test.step("Click on delete bucket and confirm", async () => {
+      await page.locator("#delete-bucket-button").click();
+      await page.locator("#confirm-ok").click();
+    });
+
+    const bucketListItemCount =
+      await test.step("Verify the bucket deletion ", async () => {
+        const listItemsCount = await page.locator(bucketLocatorEl);
+        return listItemsCount.count();
+      });
+
+    await expect(bucketListItemCount).toEqual(0);
+  });
+
+  test("Test if Object Version selector is not present when bucket is not versioned", async ({
+    page,
+  }) => {
+    const bucketLocatorEl = `${bucketListLocPrefix}-${nonVersionedBucketName}`;
+
+    await test.step(`Create bucket`, async () => {
+      await page.locator("#create-bucket").click();
+      await page.getByLabel("Bucket Name*").click();
+      await page.getByLabel("Bucket Name*").type(nonVersionedBucketName);
+      await page.getByRole("button", { name: "Create Bucket" }).click();
+    });
+
+    await test.step("Navigate to manage bucket", async () => {
+      await page.locator(bucketLocatorEl).click();
+      await page.getByRole("tab", { name: "Lifecycle" }).click();
+    });
+
+    const result =
+      await test.step("Trigger Add Lifecycle Rule Modal and verify", async () => {
+        await page.getByRole("button", { name: "Add Lifecycle Rule" }).click();
+        return await page.locator("#object_version").count();
+      });
+
+    await expect(result).toEqual(0);
+
+    await test.step("Close confirm Modal", async () => {
+      await page.locator("#close").click();
+    });
+
+    await test.step("List bucket", async () => {
+      await page.goto(BUCKET_LIST_PAGE);
+      await page.locator(bucketLocatorEl).click();
+    });
+
+    await test.step("Delete bucket ", async () => {
+      await page.locator("#delete-bucket-button").click();
+      await page.locator("#confirm-ok").click();
+    });
+
+    const bucketListItemCount =
+      await test.step("Verify the bucket deletion ", async () => {
+        const listItemsCount = await page.locator(bucketLocatorEl);
+        return listItemsCount.count();
+      });
+
+    await expect(bucketListItemCount).toEqual(0);
+  });
 });
