@@ -294,6 +294,16 @@ const BrowserHandler = () => {
   );
 
   useEffect(() => {
+    // when a bucket param changes, (i.e /browser/:bucketName),  re-init e.g with KBar
+    if (bucketName) {
+      dispatch(resetMessages());
+      dispatch(setLoadingRecords(true));
+      dispatch(setLoadingObjects(true));
+      initWSRequest("", new Date());
+    }
+  }, [bucketName, dispatch, initWSRequest]);
+
+  useEffect(() => {
     return () => {
       const request: WebsocketRequest = {
         mode: "cancel",
@@ -333,7 +343,7 @@ const BrowserHandler = () => {
         )
       );
     }
-  }, [internalPaths, rewindDate, rewindEnabled, dispatch]);
+  }, [bucketName, internalPaths, rewindDate, rewindEnabled, dispatch]);
 
   // Direct file access effect / prefix
   useEffect(() => {
