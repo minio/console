@@ -110,7 +110,7 @@ class DownloadHelper {
 
   send(): void {
     let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    if (isSafari && this.fileSize > 1024 * 1024 * 1024 * 8) {
+    if (isSafari) {
       this.toastCallback();
       this.downloadSafari();
     } else {
