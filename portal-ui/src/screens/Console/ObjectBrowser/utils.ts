@@ -73,7 +73,7 @@ export const downloadObject = (
     () => {
       dispatch(
         setSnackBarMessage(
-          "File exceeds size limit (8GB), progress won't be shown and download will be handled directly by the browser."
+          "File download will be handled directly by the browser."
         )
       );
     }
