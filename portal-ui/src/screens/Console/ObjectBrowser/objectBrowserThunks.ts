@@ -73,7 +73,7 @@ export const downloadSelected = createAsyncThunk(
         () => {
           dispatch(
             setSnackBarMessage(
-              "File download will be handled directly by the browse"
+              "File download will be handled directly by the browser."
             )
           );
         }
