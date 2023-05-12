@@ -140,6 +140,7 @@ import {
 
 import FilterObjectsSB from "../../../../ObjectBrowser/FilterObjectsSB";
 import AddAccessRule from "../../../BucketDetails/AddAccessRule";
+import { isVersionedMode } from "../../../../../../utils/validationFunctions";
 
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects"))
@@ -259,7 +260,7 @@ const ListObjects = () => {
     (state: AppState) => state.objectBrowser.simplePath
   );
 
-  const isVersioned = useSelector(
+  const versioningConfig = useSelector(
     (state: AppState) => state.objectBrowser.versionInfo
   );
   const lockingEnabled = useSelector(
@@ -297,6 +298,7 @@ const ListObjects = () => {
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
 
+  const isVersioningApplied = isVersionedMode(versioningConfig.status);
   const bucketName = params.bucketName || "";
 
   const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
@@ -890,7 +892,7 @@ const ListObjects = () => {
           selectedBucket={bucketName}
           selectedObjects={selectedObjects}
           closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
-          versioning={isVersioned}
+          versioning={versioningConfig}
         />
       )}
       {rewindSelect && (
@@ -1019,7 +1021,7 @@ const ListObjects = () => {
                         setRewindSelect(true);
                       }}
                       disabled={
-                        !isVersioned ||
+                        !isVersioningApplied ||
                         !hasPermission(bucketName, [
                           IAM_SCOPES.S3_GET_OBJECT,
                           IAM_SCOPES.S3_GET_ACTIONS,
@@ -1130,7 +1132,7 @@ const ListObjects = () => {
                         bucketName={bucketName}
                         internalPaths={pageTitle}
                         additionalOptions={
-                          !isVersioned || rewindEnabled ? null : (
+                          !isVersioningApplied || rewindEnabled ? null : (
                             <div>
                               <CheckboxWrapper
                                 name={"deleted_objects"}
@@ -1181,7 +1183,7 @@ const ListObjects = () => {
                       internalPaths={selectedInternalPaths}
                       bucketName={bucketName}
                       onClosePanel={onClosePanel}
-                      versioningInfo={isVersioned}
+                      versioningInfo={versioningConfig}
                       locking={lockingEnabled}
                     />
                   )}

@@ -373,84 +373,86 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                         resource={CONSOLE_UI_RESOURCE}
                         errorProps={{ disabled: true }}
                       >
-                        <TableWrapper
-                          itemActions={[
-                            {
-                              type: "edit",
-                              onClick: (tierData: ITierElement) => {
-                                setSelectedTier(tierData);
-                                setUpdateCredentialsOpen(true);
+                        <Box sx={{ width: "100%" }}>
+                          <TableWrapper
+                            itemActions={[
+                              {
+                                type: "edit",
+                                onClick: (tierData: ITierElement) => {
+                                  setSelectedTier(tierData);
+                                  setUpdateCredentialsOpen(true);
+                                },
                               },
-                            },
-                          ]}
-                          columns={[
-                            {
-                              label: "Tier Name",
-                              elementKey: "type",
-                              renderFunction: renderTierName,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Status",
-                              elementKey: "status",
-                              renderFunction: renderTierStatus,
-                              width: 50,
-                            },
-                            {
-                              label: "Type",
-                              elementKey: "type",
-                              renderFunction: renderTierType,
-                              width: 50,
-                            },
-                            {
-                              label: "Endpoint",
-                              elementKey: "type",
-                              renderFunction: renderTierEndpoint,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Bucket",
-                              elementKey: "type",
-                              renderFunction: renderTierBucket,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Prefix",
-                              elementKey: "type",
-                              renderFunction: renderTierPrefix,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Region",
-                              elementKey: "type",
-                              renderFunction: renderTierRegion,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Usage",
-                              elementKey: "type",
-                              renderFunction: renderTierUsage,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Objects",
-                              elementKey: "type",
-                              renderFunction: renderTierObjects,
-                              renderFullObject: true,
-                            },
-                            {
-                              label: "Versions",
-                              elementKey: "type",
-                              renderFunction: renderTierVersions,
-                              renderFullObject: true,
-                            },
-                          ]}
-                          isLoading={isLoading}
-                          records={filteredRecords}
-                          entityName="Tiers"
-                          idField="service_name"
-                          customPaperHeight={classes.customConfigurationPage}
-                        />
+                            ]}
+                            columns={[
+                              {
+                                label: "Tier Name",
+                                elementKey: "type",
+                                renderFunction: renderTierName,
+                                renderFullObject: true,
+                              },
+                              {
+                                label: "Status",
+                                elementKey: "status",
+                                renderFunction: renderTierStatus,
+                                width: 50,
+                              },
+                              {
+                                label: "Type",
+                                elementKey: "type",
+                                renderFunction: renderTierType,
+                                width: 50,
+                              },
+                              {
+                                label: "Endpoint",
+                                elementKey: "type",
+                                renderFunction: renderTierEndpoint,
+                                renderFullObject: true,
+                              },
+                              {
+                                label: "Bucket",
+                                elementKey: "type",
+                                renderFunction: renderTierBucket,
+                                renderFullObject: true,
+                              },
+                              {
+                                label: "Prefix",
+                                elementKey: "type",
+                                renderFunction: renderTierPrefix,
+                                renderFullObject: true,
+                              },
+                              {
+                                label: "Region",
+                                elementKey: "type",
+                                renderFunction: renderTierRegion,
+                                renderFullObject: true,
+                              },
+                              {
+                                label: "Usage",
+                                elementKey: "type",
+                                renderFunction: renderTierUsage,
+                                renderFullObject: true,
+                              },
+                              {
+                                label: "Objects",
+                                elementKey: "type",
+                                renderFunction: renderTierObjects,
+                                renderFullObject: true,
+                              },
+                              {
+                                label: "Versions",
+                                elementKey: "type",
+                                renderFunction: renderTierVersions,
+                                renderFullObject: true,
+                              },
+                            ]}
+                            isLoading={isLoading}
+                            records={filteredRecords}
+                            entityName="Tiers"
+                            idField="service_name"
+                            customPaperHeight={classes.customConfigurationPage}
+                          />
+                        </Box>
                       </SecureComponent>
                     </Grid>
                     <Grid
