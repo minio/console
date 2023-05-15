@@ -16,16 +16,16 @@
 import { expect } from "@playwright/test";
 import { generateUUID, test } from "./fixtures/baseFixture";
 import { minioadminFile } from "./consts";
-import { pagePort } from "./consts";
+import { BUCKET_LIST_PAGE } from "./consts";
 
 test.use({ storageState: minioadminFile });
 
 test.beforeEach(async ({ page }) => {
-  await page.goto(pagePort);
+  await page.goto(BUCKET_LIST_PAGE);
 });
 
 test("Can create a policy", async ({ page }) => {
-  await page.getByRole("link", { name: "Policies Policies" }).click();
+  await page.getByRole("link", { name: "Policies" }).click();
   await page.getByRole("button", { name: "Create Policy" }).click();
   await page.getByLabel("Policy Name").click();
 

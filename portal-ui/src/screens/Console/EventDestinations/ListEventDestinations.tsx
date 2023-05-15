@@ -17,6 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import {
   AddIcon,
+  Box,
   Button,
   HelpBox,
   LambdaIcon,
@@ -225,23 +226,25 @@ const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
             {records.length > 0 && (
               <Fragment>
                 <Grid item xs={12} className={classes.tableBlock}>
-                  <TableWrapper
-                    itemActions={tableActions}
-                    columns={[
-                      {
-                        label: "Status",
-                        elementKey: "status",
-                        renderFunction: statusDisplay,
-                        width: 150,
-                      },
-                      { label: "Service", elementKey: "service_name" },
-                    ]}
-                    isLoading={isLoading}
-                    records={filteredRecords}
-                    entityName="Event Destinations"
-                    idField="service_name"
-                    customPaperHeight={classes.twHeight}
-                  />
+                  <Box sx={{ width: "100%" }}>
+                    <TableWrapper
+                      itemActions={tableActions}
+                      columns={[
+                        {
+                          label: "Status",
+                          elementKey: "status",
+                          renderFunction: statusDisplay,
+                          width: 150,
+                        },
+                        { label: "Service", elementKey: "service_name" },
+                      ]}
+                      isLoading={isLoading}
+                      records={filteredRecords}
+                      entityName="Event Destinations"
+                      idField="service_name"
+                      customPaperHeight={classes.twHeight}
+                    />
+                  </Box>
                 </Grid>
                 <Grid item xs={12}>
                   <HelpBox
