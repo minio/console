@@ -17,11 +17,11 @@
 let objectCalls: { [key: string]: XMLHttpRequest } = {};
 let formDataElements: { [key: string]: FormData } = {};
 
-export const storeCallForObjectWithID = (id: string, call: XMLHttpRequest) => {
+export const storeCallForObjectWithID = (id: string, call: any) => {
   objectCalls[id] = call;
 };
 
-export const callForObjectID = (id: string): XMLHttpRequest => {
+export const callForObjectID = (id: string): any => {
   return objectCalls[id];
 };
 
