@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { test as setup } from "@playwright/test";
-import { minioadminFile } from "./consts";
-import { pagePort } from "./consts";
+import { adminAccessKey, adminSecretKey, minioadminFile } from "./consts";
+import { BUCKET_LIST_PAGE } from "./consts";
 
 setup("authenticate as admin", async ({ page }) => {
   // Perform authentication steps. Replace these actions with your own.
-  await page.goto(pagePort);
+  await page.goto(BUCKET_LIST_PAGE);
   await page.getByPlaceholder("Username").click();
-  await page.getByPlaceholder("Username").fill("minioadmin");
+  await page.getByPlaceholder("Username").fill(adminAccessKey);
   await page.getByPlaceholder("Password").click();
-  await page.getByPlaceholder("Password").fill("minioadmin");
+  await page.getByPlaceholder("Password").fill(adminSecretKey);
   await page.getByRole("button", { name: "Login" }).click();
 
   // we need to give the browser time to store the cookies

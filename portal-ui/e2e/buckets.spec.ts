@@ -16,12 +16,12 @@
 import { expect } from "@playwright/test";
 import { generateUUID, test } from "./fixtures/baseFixture";
 import { minioadminFile } from "./consts";
-import { pagePort } from "./consts";
+import { BUCKET_LIST_PAGE } from "./consts";
 
 test.use({ storageState: minioadminFile });
 
 test.beforeEach(async ({ page }) => {
-  await page.goto(pagePort);
+  await page.goto(BUCKET_LIST_PAGE);
 });
 
 test("create a new bucket", async ({ page }) => {
@@ -34,6 +34,13 @@ test("create a new bucket", async ({ page }) => {
   await page.getByLabel("Bucket Name*").fill(bucketName);
   await page.getByRole("button", { name: "Create Bucket" }).click();
   await expect(page.locator(`#manageBucket-${bucketName}`)).toBeTruthy();
+  const bucketLocatorEl = `#manageBucket-${bucketName}`;
+  await page.locator(bucketLocatorEl).click();
+  await page.locator("#delete-bucket-button").click();
+  //confirm modal
+  await page.locator("#confirm-ok").click();
+  const listItemsCount = await page.locator(bucketLocatorEl).count();
+  await expect(listItemsCount).toEqual(0);
 });
 
 test("invalid bucket name", async ({ page }) => {

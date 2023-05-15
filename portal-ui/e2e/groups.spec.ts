@@ -17,12 +17,12 @@
 import { expect } from "@playwright/test";
 import { generateUUID, test } from "./fixtures/baseFixture";
 import { minioadminFile } from "./consts";
-import { pagePort } from "./consts";
+import { BUCKET_LIST_PAGE } from "./consts";
 
 test.use({ storageState: minioadminFile });
 
 test.beforeEach(async ({ page }) => {
-  await page.goto(pagePort);
+  await page.goto(BUCKET_LIST_PAGE);
 });
 
 test("Add a new group", async ({ page }) => {
