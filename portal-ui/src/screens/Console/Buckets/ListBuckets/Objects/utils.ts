@@ -18,6 +18,7 @@ import { BucketObjectItem } from "./ListObjects/types";
 import { IAllowResources } from "../../../types";
 import { encodeURLString } from "../../../../../common/utils";
 import { removeTrace } from "../../../ObjectBrowser/transferManager";
+import streamSaver from "streamsaver";
 import store from "../../../../../store";
 
 export const download = (
@@ -30,7 +31,8 @@ export const download = (
   progressCallback: (progress: number) => void,
   completeCallback: () => void,
   errorCallback: (msg: string) => void,
-  abortCallback: () => void
+  abortCallback: () => void,
+  toastCallback: () => void
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
@@ -48,75 +50,153 @@ export const download = (
   if (versionID) {
     path = path.concat(`&version_id=${versionID}`);
   }
-
-  var req = new XMLHttpRequest();
-  req.open("GET", path, true);
-  if (anonymousMode) {
-    req.setRequestHeader("X-Anonymous", "1");
-  }
-  req.addEventListener(
-    "progress",
-    function (evt) {
-      let percentComplete = Math.round((evt.loaded / fileSize) * 100);
-
-      if (progressCallback) {
-        progressCallback(percentComplete);
-      }
-    },
-    false
+  return new DownloadHelper(
+    path,
+    id,
+    anonymousMode,
+    fileSize,
+    progressCallback,
+    completeCallback,
+    errorCallback,
+    abortCallback,
+    toastCallback
   );
-
-  req.responseType = "blob";
-  req.onreadystatechange = () => {
-    if (req.readyState === 4) {
-      if (req.status === 200) {
-        const rspHeader = req.getResponseHeader("Content-Disposition");
-
-        let filename = "download";
-        if (rspHeader) {
-          let rspHeaderDecoded = decodeURIComponent(rspHeader);
-          filename = rspHeaderDecoded.split('"')[1];
-        }
-
-        if (completeCallback) {
-          completeCallback();
-        }
-
-        removeTrace(id);
-
-        var link = document.createElement("a");
-        link.href = window.URL.createObjectURL(req.response);
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        if (req.getResponseHeader("Content-Type") === "application/json") {
-          const rspBody: { detailedMessage?: string } = JSON.parse(
-            req.response
-          );
-          if (rspBody.detailedMessage) {
-            errorCallback(rspBody.detailedMessage);
-            return;
-          }
-        }
-        errorCallback(`Unexpected response status code (${req.status}).`);
-      }
-    }
-  };
-  req.onerror = () => {
-    if (errorCallback) {
-      errorCallback("A network error occurred.");
-    }
-  };
-  req.onabort = () => {
-    if (abortCallback) {
-      abortCallback();
-    }
-  };
-
-  return req;
 };
+
+class DownloadHelper {
+  aborter: AbortController;
+  path: string;
+  id: string;
+  filename: string = "";
+  anonymousMode: boolean;
+  fileSize: number = 0;
+  writer: any = null;
+  progressCallback: (progress: number) => void;
+  completeCallback: () => void;
+  errorCallback: (msg: string) => void;
+  abortCallback: () => void;
+  toastCallback: () => void;
+
+  constructor(
+    path: string,
+    id: string,
+    anonymousMode: boolean,
+    fileSize: number,
+    progressCallback: (progress: number) => void,
+    completeCallback: () => void,
+    errorCallback: (msg: string) => void,
+    abortCallback: () => void,
+    toastCallback: () => void
+  ) {
+    this.aborter = new AbortController();
+    this.path = path;
+    this.id = id;
+    this.anonymousMode = anonymousMode;
+    this.fileSize = fileSize;
+    this.progressCallback = progressCallback;
+    this.completeCallback = completeCallback;
+    this.errorCallback = errorCallback;
+    this.abortCallback = abortCallback;
+    this.toastCallback = toastCallback;
+  }
+
+  abort(): void {
+    this.aborter.abort();
+    this.abortCallback();
+    if (this.writer) {
+      this.writer.abort();
+    }
+  }
+
+  send(): void {
+    let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    if (isSafari) {
+      this.toastCallback();
+      this.downloadSafari();
+    } else {
+      this.download({
+        url: this.path,
+        chunkSize: 1024 * 1024 * 1024 * 1.5,
+      });
+    }
+  }
+
+  async getRangeContent(url: string, start: number, end: number) {
+    const info = this.getRequestInfo(start, end);
+    const response = await fetch(url, info);
+    if (response.ok && response.body) {
+      if (!this.filename) {
+        this.filename = this.getFilename(response);
+      }
+      if (!this.writer) {
+        this.writer = streamSaver.createWriteStream(this.filename).getWriter();
+      }
+      const reader = response.body.getReader();
+      let done, value;
+      while (!done) {
+        ({ value, done } = await reader.read());
+        if (done) {
+          break;
+        }
+        await this.writer.write(value);
+      }
+    } else {
+      throw new Error(`Unexpected response status code (${response.status}).`);
+    }
+  }
+
+  getRequestInfo(start: number, end: number) {
+    const info: RequestInit = {
+      signal: this.aborter.signal,
+      headers: { range: `bytes=${start}-${end}` },
+    };
+    if (this.anonymousMode) {
+      info.headers = { ...info.headers, "X-Anonymous": "1" };
+    }
+    return info;
+  }
+
+  getFilename(response: Response) {
+    const rspHeader = response.headers.get("Content-Disposition");
+    if (rspHeader) {
+      let rspHeaderDecoded = decodeURIComponent(rspHeader);
+      return rspHeaderDecoded.split('"')[1];
+    }
+    return "download";
+  }
+
+  async download({ url, chunkSize }: any) {
+    const numberOfChunks = Math.ceil(this.fileSize / chunkSize);
+    this.progressCallback(0);
+    try {
+      for (let i = 0; i < numberOfChunks; i++) {
+        let start = i * chunkSize;
+        let end =
+          i + 1 === numberOfChunks
+            ? this.fileSize - 1
+            : (i + 1) * chunkSize - 1;
+        await this.getRangeContent(url, start, end);
+        let percentComplete = Math.round(((i + 1) / numberOfChunks) * 100);
+        this.progressCallback(percentComplete);
+      }
+      this.writer.close();
+      this.completeCallback();
+      removeTrace(this.id);
+    } catch (e: any) {
+      this.errorCallback(e.message);
+    }
+  }
+
+  downloadSafari() {
+    const link = document.createElement("a");
+    link.href = this.path;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    this.completeCallback();
+    removeTrace(this.id);
+  }
+}
 
 // Review file extension by name & returns the type of preview browser that can be used
 export const extensionPreview = (

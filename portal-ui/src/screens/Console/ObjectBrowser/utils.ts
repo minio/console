@@ -27,6 +27,7 @@ import {
   updateProgress,
 } from "./objectBrowserSlice";
 import { AppDispatch } from "../../../store";
+import { setSnackBarMessage } from "../../../systemSlice";
 
 export const downloadObject = (
   dispatch: AppDispatch,
@@ -68,6 +69,13 @@ export const downloadObject = (
     },
     () => {
       dispatch(cancelObjectInList(identityDownload));
+    },
+    () => {
+      dispatch(
+        setSnackBarMessage(
+          "File download will be handled directly by the browser."
+        )
+      );
     }
   );
 
