@@ -33,15 +33,10 @@ import {
   textStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "./types";
-import { download } from "../utils";
 import api from "../../../../../../common/api";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
-import {
-  decodeURLString,
-  encodeURLString,
-  niceBytesInt,
-} from "../../../../../../common/utils";
+import { decodeURLString, niceBytesInt } from "../../../../../../common/utils";
 import RestoreFileVersion from "./RestoreFileVersion";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
@@ -64,21 +59,13 @@ import {
   setErrorSnackMessage,
 } from "../../../../../../systemSlice";
 import {
-  makeid,
-  storeCallForObjectWithID,
-} from "../../../../ObjectBrowser/transferManager";
-import {
-  cancelObjectInList,
-  completeObject,
-  failObject,
   setLoadingObjectInfo,
   setLoadingVersions,
-  setNewObject,
   setSelectedVersion,
-  updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
 import { List, ListRowProps } from "react-virtualized";
 import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
+import { downloadObject } from "../../../../ObjectBrowser/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -237,57 +224,6 @@ const VersionsNavigator = ({
     setPreviewOpen(false);
   };
 
-  const downloadObject = (object: IFileInfo) => {
-    const identityDownload = encodeURLString(
-      `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
-    );
-
-    const ID = makeid(8);
-
-    const downloadCall = download(
-      bucketName,
-      internalPaths,
-      object.version_id,
-      parseInt(object.size || "0"),
-      null,
-      ID,
-      (progress) => {
-        dispatch(
-          updateProgress({
-            instanceID: identityDownload,
-            progress: progress,
-          })
-        );
-      },
-      () => {
-        dispatch(completeObject(identityDownload));
-      },
-      (msg: string) => {
-        dispatch(failObject({ instanceID: identityDownload, msg }));
-      },
-      () => {
-        dispatch(cancelObjectInList(identityDownload));
-      }
-    );
-
-    storeCallForObjectWithID(ID, downloadCall);
-    dispatch(
-      setNewObject({
-        ID,
-        bucketName,
-        done: false,
-        instanceID: identityDownload,
-        percentage: 0,
-        prefix: object.name,
-        type: "download",
-        waitingForFile: true,
-        failed: false,
-        cancelled: false,
-        errorMessage: "",
-      })
-    );
-  };
-
   const onShareItem = (item: IFileInfo) => {
     setObjectToShare(item);
     shareObject();
@@ -304,7 +240,7 @@ const VersionsNavigator = ({
   };
 
   const onDownloadItem = (item: IFileInfo) => {
-    downloadObject(item);
+    downloadObject(dispatch, bucketName, internalPaths, item);
   };
 
   const onGlobalClick = (item: IFileInfo) => {
