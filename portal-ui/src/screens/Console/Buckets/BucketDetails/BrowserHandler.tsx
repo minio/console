@@ -294,14 +294,16 @@ const BrowserHandler = () => {
   );
 
   useEffect(() => {
-    // when a bucket param changes, (i.e /browser/:bucketName),  re-init e.g with KBar
-    if (bucketName) {
+    // when a bucket param changes, (i.e /browser/:bucketName),  re-init e.g with KBar, this should not apply for resources prefixes.
+    const permitItems = permissionItems(bucketName, "", allowResources || []);
+
+    if (bucketName && (!permitItems || permitItems.length === 0)) {
       dispatch(resetMessages());
       dispatch(setLoadingRecords(true));
       dispatch(setLoadingObjects(true));
       initWSRequest("", new Date());
     }
-  }, [bucketName, dispatch, initWSRequest]);
+  }, [bucketName, dispatch, initWSRequest, allowResources]);
 
   useEffect(() => {
     return () => {
