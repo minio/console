@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2022 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -13,25 +13,28 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React from "react";
 
-import { HelpBox, LambdaNotificationsIcon, Box } from "mds";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const NotificationEndpointTypeSelectorHelpBox = () => {
-  return (
-    <HelpBox
-      iconComponent={<LambdaNotificationsIcon />}
-      title={"What are Event Destinations?"}
-      help={
-        <Box sx={{ paddingTop: "20px" }}>
-          MinIO bucket notifications allow administrators to send notifications
-          to supported external services on certain object or bucket events.
-          MinIO supports bucket and object-level S3 events similar to the Amazon
-          S3 Event Notifications.
-        </Box>
-      }
-    />
-  );
+export interface DestinationState {
+  loading: boolean;
+}
+
+const initialState: DestinationState = {
+  loading: true,
 };
 
-export default NotificationEndpointTypeSelectorHelpBox;
+export const destinationSlice = createSlice({
+  name: "destination",
+  initialState,
+  reducers: {
+    setDestinationLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+  },
+});
+
+// Action creators are generated for each case reducer function
+export const { setDestinationLoading } = destinationSlice.actions;
+
+export default destinationSlice.reducer;
