@@ -18,18 +18,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { Box, Grid, InputBox, RadioGroup, ReadBox, Select, Switch } from "mds";
 import { IElementValue } from "../../Configurations/types";
 import {
   formFieldStyles,
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
 import CommentBoxWrapper from "../../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 
 interface IConfPostgresProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -205,8 +200,8 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
 
   return (
     <Grid container>
-      <Grid item xs={12}>
-        <FormSwitchWrapper
+      <Grid item xs={12} className={classes.formFieldRow}>
+        <Switch
           label={"Manually Configure String"}
           checked={useConnectionString}
           id="manualString"
@@ -220,7 +215,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
       {useConnectionString ? (
         <React.Fragment>
           <Grid item xs={12} className={classes.formFieldRow}>
-            <InputBoxWrapper
+            <InputBox
               id="connection-string"
               name="connection_string"
               label="Connection String"
@@ -234,9 +229,17 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
       ) : (
         <React.Fragment>
           <Grid item xs={12}>
-            <Grid item xs={12} className={classes.configureString}>
+            <Box
+              withBorders
+              useBackground
+              sx={{
+                overflowY: "auto",
+                height: 170,
+                marginBottom: 12,
+              }}
+            >
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
+                <InputBox
                   id="host"
                   name="host"
                   label=""
@@ -248,7 +251,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
+                <InputBox
                   id="db-name"
                   name="db-name"
                   label=""
@@ -260,7 +263,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
+                <InputBox
                   id="port"
                   name="port"
                   label=""
@@ -272,14 +275,14 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
-                <SelectWrapper
+                <Select
                   value={sslMode}
                   label=""
                   id="sslmode"
                   name="sslmode"
-                  onChange={(e): void => {
-                    if (e.target.value !== undefined) {
-                      setSslMode(e.target.value + "");
+                  onChange={(value): void => {
+                    if (value) {
+                      setSslMode(value + "");
                     }
                   }}
                   options={[
@@ -292,7 +295,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
+                <InputBox
                   id="user"
                   name="user"
                   label=""
@@ -304,7 +307,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
+                <InputBox
                   id="password"
                   name="password"
                   label=""
@@ -316,19 +319,17 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
                   }}
                 />
               </Grid>
-            </Grid>
+            </Box>
           </Grid>
-          <PredefinedList
-            label={"Connection String"}
-            content={connectionString}
-          />
-          <Grid item xs={12}>
-            <br />
+          <Grid item xs={12} className={classes.formFieldRow}>
+            <ReadBox label={"Connection String"} multiLine>
+              {connectionString}
+            </ReadBox>
           </Grid>
         </React.Fragment>
       )}
       <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBoxWrapper
+        <InputBox
           id="table"
           name="table"
           label="Table"
@@ -341,8 +342,8 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
-        <RadioGroupSelector
-          currentSelection={format}
+        <RadioGroup
+          currentValue={format}
           id="format"
           name="format"
           label="Format"
@@ -357,7 +358,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBoxWrapper
+        <InputBox
           id="queue-dir"
           name="queue_dir"
           label="Queue Dir"
@@ -370,7 +371,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBoxWrapper
+        <InputBox
           id="queue-limit"
           name="queue_limit"
           label="Queue Limit"

@@ -24,12 +24,10 @@ import {
   formFieldStyles,
   modalBasic,
 } from "../Common/FormComponents/common/styleLibrary";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import CSVMultiSelector from "../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";
 import CommentBoxWrapper from "../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
-import { ConsoleIcon, Tooltip } from "mds";
+import { ConsoleIcon, InputBox, Switch, Tooltip } from "mds";
 
 interface IConfGenericProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -144,7 +142,7 @@ const ConfTargetGeneric = ({
         const value = holderItem ? holderItem.value : "off";
 
         return (
-          <FormSwitchWrapper
+          <Switch
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const value = e.target.checked ? "on" : "off";
               setValueElement(field.name, value, item);
@@ -195,7 +193,7 @@ const ConfTargetGeneric = ({
         );
       default:
         return (
-          <InputBoxWrapper
+          <InputBox
             id={field.name}
             name={field.name}
             label={field.label}
@@ -204,7 +202,6 @@ const ConfTargetGeneric = ({
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setValueElement(field.name, e.target.value, item)
             }
-            multiline={!!field.multiline}
             placeholder={field.placeholder}
           />
         );

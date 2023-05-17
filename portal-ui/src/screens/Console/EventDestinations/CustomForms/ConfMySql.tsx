@@ -18,17 +18,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { IElementValue } from "../../Configurations/types";
 import {
   formFieldStyles,
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
 import CommentBoxWrapper from "../../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
+import { Switch, InputBox, Grid, Box, ReadBox, RadioGroup } from "mds";
 
 interface IConfMySqlProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -138,8 +134,8 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
 
   return (
     <Grid container>
-      <Grid item xs={12}>
-        <FormSwitchWrapper
+      <Grid item xs={12} className={classes.formFieldRow}>
+        <Switch
           label={"Enter DNS String"}
           checked={useDsnString}
           id="checkedB"
@@ -151,7 +147,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
       {useDsnString ? (
         <React.Fragment>
           <Grid item xs={12} className={classes.formFieldRow}>
-            <InputBoxWrapper
+            <InputBox
               id="dsn-string"
               name="dsn_string"
               label="DSN String"
@@ -165,9 +161,17 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
       ) : (
         <React.Fragment>
           <Grid item xs={12}>
-            <Grid item xs={12} className={classes.configureString}>
+            <Box
+              withBorders
+              useBackground
+              sx={{
+                overflowY: "auto",
+                height: 170,
+                marginBottom: 12,
+              }}
+            >
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
+                <InputBox
                   id="host"
                   name="host"
                   label=""
@@ -179,7 +183,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
+                <InputBox
                   id="db-name"
                   name="db-name"
                   label=""
@@ -191,7 +195,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
+                <InputBox
                   id="port"
                   name="port"
                   label=""
@@ -204,7 +208,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
               </Grid>
 
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
+                <InputBox
                   id="user"
                   name="user"
                   label=""
@@ -216,7 +220,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                 />
               </Grid>
               <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBoxWrapper
+                <InputBox
                   id="password"
                   name="password"
                   label=""
@@ -228,16 +232,17 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                   }}
                 />
               </Grid>
-            </Grid>
+            </Box>
           </Grid>
-          <PredefinedList label={"Connection String"} content={dsnString} />
-          <Grid item xs={12}>
-            <br />
+          <Grid item xs={12} sx={{ margin: "12px 0" }}>
+            <ReadBox label={"Connection String"} multiLine>
+              {dsnString}
+            </ReadBox>
           </Grid>
         </React.Fragment>
       )}
       <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBoxWrapper
+        <InputBox
           id="table"
           name="table"
           label="Table"
@@ -250,8 +255,8 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
-        <RadioGroupSelector
-          currentSelection={format}
+        <RadioGroup
+          currentValue={format}
           id="format"
           name="format"
           label="Format"
@@ -266,7 +271,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBoxWrapper
+        <InputBox
           id="queue-dir"
           name="queue_dir"
           label="Queue Dir"
@@ -279,7 +284,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBoxWrapper
+        <InputBox
           id="queue-limit"
           name="queue_limit"
           label="Queue Limit"

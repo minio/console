@@ -400,7 +400,7 @@ export const typesSelection = {
     height: "80px",
   },
   lambdaNotif: {
-    background: "#ffffff",
+    background: "#ffffff50",
     border: "#E5E5E5 1px solid",
     borderRadius: 5,
     width: 250,
