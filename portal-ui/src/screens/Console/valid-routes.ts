@@ -31,6 +31,7 @@ import {
   BucketsMenuIcon,
   CallHomeMenuIcon,
   DocumentationIcon,
+  DownloadStatIcon,
   DrivesMenuIcon,
   GroupsMenuIcon,
   HealthMenuIcon,
@@ -257,17 +258,6 @@ export const validRoutes = (features: string[] | null | undefined) => {
     },
     {
       group: "Administrator",
-      name: "Update",
-      id: "releaseDiff",
-      to: IAM_PAGES.UPGRADE,
-      // TODO: change icon
-      icon: InspectMenuIcon,
-      component: NavLink,
-      // TODO: Add Component to validate current version and show notification
-      //badge: LicenseBadge,
-    },
-    {
-      group: "Administrator",
       component: NavLink,
       to: IAM_PAGES.SETTINGS,
       name: "Settings",
@@ -283,6 +273,25 @@ export const validRoutes = (features: string[] | null | undefined) => {
       icon: LicenseIcon,
       badge: LicenseBadge,
       forceDisplay: true,
+    },
+    {
+      group: "Subscription",
+      name: "Update",
+      id: "updateRelease",
+      to: IAM_PAGES.UPGRADE,
+      // TODO: check if new icon is needed
+      icon: DownloadStatIcon,
+      component: NavLink,
+      // TODO: Add Component to validate current version and show notification
+      //badge: LicenseBadge,
+    },
+    {
+      group: "Subscription",
+      name: "Call Home",
+      id: "callhome",
+      component: NavLink,
+      icon: CallHomeMenuIcon,
+      to: IAM_PAGES.CALL_HOME,
     },
     {
       group: "Subscription",
@@ -315,15 +324,7 @@ export const validRoutes = (features: string[] | null | undefined) => {
       to: IAM_PAGES.SUPPORT_INSPECT,
       icon: InspectMenuIcon,
       component: NavLink,
-    },
-    {
-      group: "Subscription",
-      name: "Call Home",
-      id: "callhome",
-      component: NavLink,
-      icon: CallHomeMenuIcon,
-      to: IAM_PAGES.CALL_HOME,
-    },
+    }
   ];
 
   const allowedItems = consoleMenus.filter((item: IMenuItem) => {

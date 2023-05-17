@@ -47,6 +47,9 @@ type ReleaseInfo struct {
 
 	// release notes
 	ReleaseNotes string `json:"release_notes,omitempty"`
+
+	// release tag
+	ReleaseTag string `json:"release_tag,omitempty"`
 }
 
 // Validate validates this release info

@@ -33,7 +33,7 @@ import (
 
 var (
 	releaseServiceHostEnvVar  = "RELEASE_SERVICE_HOST"
-	defaultReleaseServiceHost = "https://updates.ic.min.dev"
+	defaultReleaseServiceHost = "http://localhost:9678"
 )
 
 func registerReleasesHandlers(api *operations.ConsoleAPI) {
@@ -46,19 +46,24 @@ func registerReleasesHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
-func GetReleaseListResponse(_ *models.Principal, params release.ListReleasesParams) (*models.ReleaseListResponse, *models.Error) {
+func GetReleaseListResponse(session *models.Principal, params release.ListReleasesParams) (*models.ReleaseListResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	currentRelease := ""
 	if params.Current != nil {
 		currentRelease = *params.Current
 	}
-	return releaseList(ctx, currentRelease)
+	license, err := getSubnetLicense(ctx, session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	token := fmt.Sprintf("%s|||%s", license.APIKey, license.DeploymentID)
+	return releaseList(ctx, currentRelease, string(token))
 }
 
-func releaseList(ctx context.Context, currentRelease string) (*models.ReleaseListResponse, *models.Error) {
+func releaseList(ctx context.Context, currentRelease, token string) (*models.ReleaseListResponse, *models.Error) {
 	serviceURL := getReleaseServiceURL()
-	releases, err := getReleases(serviceURL, currentRelease)
+	releases, err := getReleases(serviceURL, currentRelease, token)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -70,7 +75,7 @@ func getReleaseServiceURL() string {
 	return fmt.Sprintf("%s/api/v1/latest", host)
 }
 
-func getReleases(endpoint, currentRelease string) (*models.ReleaseListResponse, error) {
+func getReleases(endpoint, currentRelease, token string) (*models.ReleaseListResponse, error) {
 	rl := &models.ReleaseInfo{}
 	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
@@ -81,7 +86,7 @@ func getReleases(endpoint, currentRelease string) (*models.ReleaseListResponse, 
 	q.Add("since", currentRelease)
 	req.URL.RawQuery = q.Encode()
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer token")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 
 	client := GetConsoleHTTPClient("")
 	client.Timeout = time.Second * 5
@@ -92,7 +97,7 @@ func getReleases(endpoint, currentRelease string) (*models.ReleaseListResponse, 
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("error getting releases: %s", resp.Status)
+		return nil, fmt.Errorf("error getting releases %s", resp.Status)
 	}
 	err = json.NewDecoder(resp.Body).Decode(&rl)
 	if err != nil {

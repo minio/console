@@ -149,7 +149,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	// Development mode validation
-	if getConsoleDevMode() {
+	if true {
 		upgrader.CheckOrigin = func(r *http.Request) bool {
 			return true
 		}

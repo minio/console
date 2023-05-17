@@ -7812,6 +7812,9 @@ func init() {
         },
         "release_notes": {
           "type": "string"
+        },
+        "release_tag": {
+          "type": "string"
         }
       }
     },
@@ -16916,6 +16919,9 @@ func init() {
           "type": "string"
         },
         "release_notes": {
+          "type": "string"
+        },
+        "release_tag": {
           "type": "string"
         }
       }

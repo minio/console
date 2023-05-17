@@ -6014,6 +6014,8 @@ definitions:
         $ref: "#/definitions/releaseMetrics"
       release_notes:
         type: string
+      release_tag:
+        type: string
 
   releaseChanges:
     type: object

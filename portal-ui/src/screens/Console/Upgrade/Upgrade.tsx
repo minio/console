@@ -40,23 +40,39 @@ import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import UpgradeScreen from "./UpgradeScreen";
 import { IReleaseItem, IReleaseResponse } from "./types";
 import { DateTime } from "luxon";
+import { registeredCluster } from "../../../config";
+import { useNavigate } from "react-router-dom";
+import RegisterCluster from "../Support/RegisterCluster";
 
 const Upgrade = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const [releases, setReleases] = useState<IReleaseItem[]>([]);
-  const [loadingReleases, setLoadingReleases] = useState<boolean>(true);
+  const [release, setRelease] = useState<IReleaseItem | null>(null);
+  const [loadingReleases, setLoadingReleases] = useState<boolean>(false);
+  const [initialLoading, seInitialLoading] = useState<boolean>(true);
   const [loadingCurrentRelease, setLoadingCurrentRelease] =
     useState<boolean>(true);
   const [currentRelease, setCurrentRelease] = useState<string>("");
+
+  const clusterRegistered = registeredCluster();
 
   const canRetrieveReleases = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.ADMIN_SERVER_INFO,
   ]);
 
   const retrieveReleases = () => {
+    if (!clusterRegistered) {
+      navigate("/support/register");
+      return;
+    }
     setLoadingReleases(true);
   };
+
+  if (clusterRegistered && initialLoading) {
+    retrieveReleases();
+    seInitialLoading(false);
+  }
 
   useEffect(() => {
     if (loadingCurrentRelease) {
@@ -84,17 +100,10 @@ const Upgrade = () => {
             `/api/v1/releases?current=RELEASE.${currentRelease}&repo=minio`
           )
           .then((res: IReleaseResponse) => {
-            if (res.results) {
-              res.results = res.results.reverse();
-            }
+            const rel = res.results[0];
 
-            // TODO: Replace this code with the correct version variable
-            const forcedVersion = res.results[0].release_notes.split("...");
-            const gotVersion =
-              forcedVersion.length !== 2 ? "" : forcedVersion[1];
-            let parts = gotVersion.split(".");
+            let parts = rel.release_tag.split(".");
             let tag = parts.length > 1 ? parts[1] : "";
-            /// TODO: end
 
             const curReleaseSplit = currentRelease.split("T");
             const releaseUpdtSplit = tag.split("T");
@@ -115,9 +124,9 @@ const Upgrade = () => {
               currentTimeStamp.toUnixInteger() >=
               releaseToUpdate.toUnixInteger()
             ) {
-              setReleases([]);
+              setRelease(null);
             } else {
-              setReleases(res.results || []);
+              setRelease(rel);
             }
             setLoadingReleases(false);
           })
@@ -131,34 +140,24 @@ const Upgrade = () => {
     loadReleases();
   }, [loadingReleases, canRetrieveReleases, currentRelease, dispatch]);
 
-  const renderReleases = () => {
-    const release = releases[0];
-    // let metadata = release.metadata;
-    //let parts = metadata.tag_name.split(".");
-    //let tag = parts.length > 1 ? parts[1] : "";
-    //let filteredTabs = mdTabs.filter((tab) => release[tab.field]);
-
-    // TODO: Replace this code with the correct version variable
-    const forcedVersion = release.release_notes.split("...");
-    const gotVersion = forcedVersion.length !== 2 ? "" : forcedVersion[1];
-    let parts = gotVersion.split(".");
+  const renderReleases = (r: IReleaseItem) => {
+    let parts = r.release_tag.split(".");
     let tag = parts.length > 1 ? parts[1] : "";
-    /// TODO: end
 
     return (
       <Fragment>
         <p>There is a new version available!</p>
         <UpgradeScreen
-          name={release.name}
+          name={r.name}
           curatedDescription={""}
           releaseName={tag}
           releaseNotes={
             <Fragment>
-              <ReactMarkdown>{release.release_notes}</ReactMarkdown>
+              <ReactMarkdown>{r.release_notes}</ReactMarkdown>
             </Fragment>
           }
-          detailedInformation={release.metrics}
-          highlights={release.changes}
+          detailedInformation={r.metrics}
+          highlights={r.changes}
         />
       </Fragment>
     );
@@ -169,7 +168,7 @@ const Upgrade = () => {
       <PageHeader label={"Updates"} />
       <PageLayout>
         {loadingReleases || (loadingCurrentRelease && <Loader />)}
-
+        {!clusterRegistered && <RegisterCluster compactMode />}
         <Fragment>
           <Grid item xs={12}>
             <SectionTitle
@@ -209,9 +208,9 @@ const Upgrade = () => {
               <Loader />
             </Grid>
           ) : (
-            <Fragment>
-              {releases.length > 0 ? (
-                renderReleases()
+            clusterRegistered && <Fragment>
+              {release !== null ? (
+                renderReleases(release)
               ) : (
                 <Grid
                   item

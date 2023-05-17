@@ -26,6 +26,7 @@ import (
 	"os"
 
 	xhttp "github.com/minio/console/pkg/http"
+	"github.com/minio/pkg/licverifier"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -317,42 +318,8 @@ var ErrSubnetLicenseNotFound = errors.New("license not found")
 func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInfoParams) (*models.License, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	client := &xhttp.Client{
-		Client: GetConsoleHTTPClient(""),
-	}
-	// license gets seeded to us by MinIO
-	seededLicense := os.Getenv(EnvSubnetLicense)
-	// if it's missing, we will gracefully fallback to attempt to fetch it from MinIO
-	if seededLicense == "" {
-		mAdmin, err := NewMinioAdminClient(session)
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
-		}
-		adminClient := AdminClient{Client: mAdmin}
 
-		configBytes, err := adminClient.getConfigKV(params.HTTPRequest.Context(), "subnet")
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
-		}
-		subSysConfigs, err := madmin.ParseServerConfigOutput(string(configBytes))
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
-		}
-		// search for licese
-		for _, v := range subSysConfigs {
-			for _, sv := range v.KV {
-				if sv.Key == "license" {
-					seededLicense = sv.Value
-				}
-			}
-		}
-	}
-	// still empty means not found
-	if seededLicense == "" {
-		return nil, ErrorWithContext(ctx, ErrSubnetLicenseNotFound)
-	}
-
-	licenseInfo, err := subnet.ParseLicense(client, seededLicense)
+	licenseInfo, err := getSubnetLicense(ctx, session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -365,6 +332,44 @@ func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInf
 		Organization:    licenseInfo.Organization,
 	}
 	return license, nil
+}
+
+func getSubnetLicense(ctx context.Context, session *models.Principal) (*licverifier.LicenseInfo, error) {
+	client := &xhttp.Client{
+		Client: GetConsoleHTTPClient(""),
+	}
+	// license gets seeded to us by MinIO
+	seededLicense := os.Getenv(EnvSubnetLicense)
+	// if it's missing, we will gracefully fallback to attempt to fetch it from MinIO
+	if seededLicense == "" {
+		mAdmin, err := NewMinioAdminClient(session)
+		if err != nil {
+			return nil, err
+		}
+		adminClient := AdminClient{Client: mAdmin}
+
+		configBytes, err := adminClient.getConfigKV(ctx, "subnet")
+		if err != nil {
+			return nil, err
+		}
+		subSysConfigs, err := madmin.ParseServerConfigOutput(string(configBytes))
+		if err != nil {
+			return nil, err
+		}
+		// search for licese
+		for _, v := range subSysConfigs {
+			for _, sv := range v.KV {
+				if sv.Key == "license" {
+					seededLicense = sv.Value
+				}
+			}
+		}
+	}
+	// still empty means not found
+	if seededLicense == "" {
+		return nil, ErrSubnetLicenseNotFound
+	}
+	return subnet.ParseLicense(client, seededLicense)
 }
 
 func GetSubnetRegToken(ctx context.Context, minioClient MinioAdmin) (string, error) {

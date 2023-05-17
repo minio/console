@@ -1408,52 +1408,24 @@ export interface ReleaseListResponse {
 }
 
 export interface ReleaseInfo {
-  metadata?: ReleaseMetadata;
-  notesContent?: string;
-  securityContent?: string;
-  breakingChangesContent?: string;
-  contextContent?: string;
-  newFeaturesContent?: string;
-}
-
-export interface ReleaseMetadata {
-  tag_name?: string;
-  target_commitish?: string;
   name?: string;
-  draft?: boolean;
-  prerelease?: boolean;
-  id?: number;
-  created_at?: string;
-  published_at?: string;
-  url?: string;
-  html_url?: string;
-  assets_url?: string;
-  upload_url?: string;
-  zipball_url?: string;
-  tarball_url?: string;
-  author?: ReleaseAuthor;
-  node_id?: string;
+  changes?: ReleaseChanges[];
+  metrics?: ReleaseMetrics;
+  release_notes?: string;
+  release_tag?: string;
 }
 
-export interface ReleaseAuthor {
-  login?: string;
-  id?: number;
-  node_id?: string;
-  avatar_url?: string;
-  html_url?: string;
-  gravatar_id?: string;
-  type?: string;
-  site_admin?: boolean;
-  url?: string;
-  events_url?: string;
-  following_url?: string;
-  followers_url?: string;
-  gists_url?: string;
-  organizations_url?: string;
-  receivedEvents_url?: string;
-  repos_url?: string;
-  starred_url?: string;
-  subscriptions_url?: string;
+export interface ReleaseChanges {
+  tags?: string[];
+  title?: string;
+}
+
+export interface ReleaseMetrics {
+  bug_fixes?: number;
+  changes?: number;
+  new_feature?: number;
+  releases?: number;
+  security?: number;
 }
 
 export interface CallHomeGetResponse {
@@ -1493,6 +1465,15 @@ export interface LdapPolicyEntity {
   policy?: string;
   users?: string[];
   groups?: string[];
+}
+
+export interface UpgradeRequest {
+  customURL?: string;
+}
+
+export interface UpgradeResponse {
+  currentVersion?: string;
+  updatedVersion?: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -4406,6 +4387,26 @@ export class Api<
         body: body,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Upgrade
+     * @name UpgradeInstance
+     * @summary Upgrades MinIO instance
+     * @request PUT:/admin/upgrade
+     * @secure
+     */
+    upgradeInstance: (body: UpgradeRequest, params: RequestParams = {}) =>
+      this.request<UpgradeResponse, Error>({
+        path: `/admin/upgrade`,
+        method: "PUT",
+        body: body,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 

@@ -23,6 +23,7 @@ export interface IReleaseItem {
   metrics: IReleaseMetrics;
   release_notes: string;
   name: string;
+  release_tag: string;
 }
 
 export interface IReleaseChanges {
