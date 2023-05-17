@@ -324,7 +324,7 @@ export const validRoutes = (features: string[] | null | undefined) => {
       to: IAM_PAGES.SUPPORT_INSPECT,
       icon: InspectMenuIcon,
       component: NavLink,
-    }
+    },
   ];
 
   const allowedItems = consoleMenus.filter((item: IMenuItem) => {

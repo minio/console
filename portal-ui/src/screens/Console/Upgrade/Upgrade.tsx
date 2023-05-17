@@ -208,27 +208,29 @@ const Upgrade = () => {
               <Loader />
             </Grid>
           ) : (
-            clusterRegistered && <Fragment>
-              {release !== null ? (
-                renderReleases(release)
-              ) : (
-                <Grid
-                  item
-                  xs={12}
-                  sx={{
-                    marginTop: 15,
-                  }}
-                >
-                  <HelpBox
-                    iconComponent={<MinIOTierIcon style={{ height: 40 }} />}
-                    help={
-                      "Thank you for using the latest version of MinIO, This version includes the latest fixes and improvements for your deployment."
-                    }
-                    title={"Your MinIO is up to date"}
-                  />
-                </Grid>
-              )}
-            </Fragment>
+            clusterRegistered && (
+              <Fragment>
+                {release !== null ? (
+                  renderReleases(release)
+                ) : (
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      marginTop: 15,
+                    }}
+                  >
+                    <HelpBox
+                      iconComponent={<MinIOTierIcon style={{ height: 40 }} />}
+                      help={
+                        "Thank you for using the latest version of MinIO, This version includes the latest fixes and improvements for your deployment."
+                      }
+                      title={"Your MinIO is up to date"}
+                    />
+                  </Grid>
+                )}
+              </Fragment>
+            )
           )}
         </Fragment>
       </PageLayout>
