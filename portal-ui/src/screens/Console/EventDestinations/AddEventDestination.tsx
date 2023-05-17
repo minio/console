@@ -17,19 +17,18 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import get from "lodash/get";
-import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { BackLink, Button, PageLayout } from "mds";
+import { BackLink, Button, FormLayout, Grid, InputBox, PageLayout } from "mds";
 
 import api from "../../../common/api";
 import {
+  destinationList,
   notificationEndpointsFields,
   notifyMysql,
   notifyPostgres,
   removeEmptyFields,
-  destinationList,
 } from "./utils";
 import {
   modalBasic,
@@ -49,6 +48,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import TargetTitle from "./TargetTitle";
+import { setDestinationLoading } from "./destinationsSlice";
 
 const ConfMySql = withSuspense(
   React.lazy(() => import("./CustomForms/ConfMySql"))
@@ -66,43 +67,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
     ...settingsCommon,
-    lambdaNotif: {
-      background:
-        "linear-gradient(90deg, rgba(249,249,250,1) 0%, rgba(250,250,251,1) 68%, rgba(254,254,254,1) 100%)",
-      border: "#E5E5E5 1px solid",
-      borderRadius: 5,
-      height: 80,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "start",
-      marginBottom: 16,
-      cursor: "pointer",
-      padding: 0,
-      overflow: "hidden",
-    },
-    lambdaNotifIcon: {
-      backgroundColor: "#FEFEFE",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      width: 80,
-      height: 80,
-
-      "& img": {
-        maxWidth: 46,
-        maxHeight: 46,
-      },
-    },
-    lambdaNotifTitle: {
-      color: "#07193E",
-      fontSize: 16,
-      fontFamily: "Inter,sans-serif",
-      paddingLeft: 18,
-    },
-    formBox: {
-      border: "1px solid #EAEAEA",
-      padding: 15,
-    },
   });
 
 interface IAddNotificationEndpointProps {
@@ -120,20 +84,22 @@ const AddEventDestination = ({
 
   //Local States
   const [valuesArr, setValueArr] = useState<IElementValue[]>([]);
+  const [identifier, setIdentifier] = useState<string>("");
   const [saving, setSaving] = useState<boolean>(false);
   const service = params.service || "";
-  //Effects
 
+  //Effects
   useEffect(() => {
     if (saving) {
       const payload = {
         key_values: removeEmptyFields(valuesArr),
       };
       api
-        .invoke("PUT", `/api/v1/configs/${service}`, payload)
+        .invoke("PUT", `/api/v1/configs/${service}:${identifier}`, payload)
         .then(() => {
           setSaving(false);
           dispatch(setServerNeedsRestart(true));
+          dispatch(setDestinationLoading(true));
           navigate(IAM_PAGES.EVENT_DESTINATIONS);
         })
         .catch((err: ErrorResponseHandler) => {
@@ -141,7 +107,15 @@ const AddEventDestination = ({
           dispatch(setErrorSnackMessage(err));
         });
     }
-  }, [saving, service, valuesArr, saveAndRefresh, dispatch, navigate]);
+  }, [
+    saving,
+    service,
+    valuesArr,
+    saveAndRefresh,
+    dispatch,
+    navigate,
+    identifier,
+  ]);
 
   //Fetch Actions
   const submitForm = (event: React.FormEvent) => {
@@ -199,41 +173,54 @@ const AddEventDestination = ({
             <Fragment>
               <Grid item xs={12}>
                 {targetElement && (
-                  <div
-                    key={`icon-${targetElement.targetTitle}`}
-                    className={classes.lambdaNotif}
-                  >
-                    <div className={classes.lambdaNotifIcon}>
-                      <img
-                        src={targetElement.logo}
-                        className={classes.logoButton}
-                        alt={targetElement.targetTitle}
-                      />
-                    </div>
-
-                    <div className={classes.lambdaNotifTitle}>
-                      <b>
-                        {targetElement ? targetElement.targetTitle : ""} Event
-                        Destination
-                      </b>
-                    </div>
-                  </div>
+                  <TargetTitle
+                    logoSrc={targetElement.logo}
+                    title={`${
+                      targetElement ? targetElement.targetTitle : ""
+                    } Event
+                        Destination`}
+                  />
                 )}
               </Grid>
-              <div className={classes.formBox}>
-                <Grid item xs={12} className={classes.configForm}>
+              <FormLayout>
+                <Grid
+                  item
+                  xs={12}
+                  className={classes.formFieldRow}
+                  sx={{ marginBottom: "12px" }}
+                >
+                  <InputBox
+                    id={"identifier-field"}
+                    name={"identifier-field"}
+                    label={"Identifier"}
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    tooltip={"Unique descriptive string for this destination"}
+                    placeholder="Enter Destination Identifier"
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
                   {srvComponent}
                 </Grid>
-                <Grid item xs={12} className={classes.settingsButtonContainer}>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: 15,
+                  }}
+                >
                   <Button
                     id={"save-notification-target"}
                     type="submit"
                     variant="callAction"
-                    disabled={saving}
+                    disabled={saving || identifier.trim() === ""}
                     label={"Save Event Destination"}
                   />
                 </Grid>
-              </div>
+              </FormLayout>
             </Fragment>
           )}
         </form>

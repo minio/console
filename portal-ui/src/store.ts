@@ -30,6 +30,7 @@ import dashboardReducer from "./screens/Console/Dashboard/dashboardSlice";
 import createUserReducer from "./screens/Console/Users/AddUsersSlice";
 import licenseReducer from "./screens/Console/License/licenseSlice";
 import registerReducer from "./screens/Console/Support/registerSlice";
+import destinationSlice from "./screens/Console/EventDestinations/destinationsSlice";
 
 const rootReducer = combineReducers({
   system: systemReducer,
@@ -46,6 +47,7 @@ const rootReducer = combineReducers({
   register: registerReducer,
   createUser: createUserReducer,
   license: licenseReducer,
+  destination: destinationSlice,
 });
 
 export const store = configureStore({
