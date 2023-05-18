@@ -58,7 +58,7 @@ func GetReleaseListResponse(session *models.Principal, params release.ListReleas
 		return nil, ErrorWithContext(ctx, err)
 	}
 	token := fmt.Sprintf("%s|||%s", license.APIKey, license.DeploymentID)
-	return releaseList(ctx, currentRelease, string(token))
+	return releaseList(ctx, currentRelease, token)
 }
 
 func releaseList(ctx context.Context, currentRelease, token string) (*models.ReleaseListResponse, *models.Error) {
