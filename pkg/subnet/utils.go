@@ -80,7 +80,7 @@ func ProcessUploadInfo(info interface{}, uploadType string) ([]byte, string, err
 	var e error
 	switch uploadType {
 	case "health":
-		infoBody, formDataType, e = processHealthReport(info, "fakefilename")
+		infoBody, formDataType, e = processHealthReport(info)
 		if e != nil {
 			return nil, "", e
 		}
@@ -107,7 +107,7 @@ func UploadFileToSubnet(info []byte, client *xhttp.Client, reqURL string, header
 	return resp, e
 }
 
-func processHealthReport(info interface{}, filename string) ([]byte, string, error) {
+func processHealthReport(info interface{}) ([]byte, string, error) {
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
 	zipWriter := gzip.NewWriter(&body)
@@ -127,7 +127,7 @@ func processHealthReport(info interface{}, filename string) ([]byte, string, err
 	}
 	zipWriter.Close()
 	temp := body
-	part, e := writer.CreateFormFile("file", filename)
+	part, e := writer.CreateFormFile("file", "filename")
 	if e != nil {
 		return nil, "", e
 	}
