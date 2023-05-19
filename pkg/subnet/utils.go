@@ -73,6 +73,7 @@ func UploadURL(uploadType string, filename string) string {
 func UploadAuthHeaders(apiKey string) map[string]string {
 	return map[string]string{"x-subnet-api-key": apiKey}
 }
+
 func ProcessUploadInfo(info interface{}, uploadType string) ([]byte, string, error) {
 	var infoBody []byte
 	var formDataType string
@@ -83,13 +84,20 @@ func ProcessUploadInfo(info interface{}, uploadType string) ([]byte, string, err
 		if e != nil {
 			return nil, "", e
 		}
+	case "perf":
+		{
+			// placeholder for perf upload in switch
+		}
+	case "tenant_report":
+		{
+			// placeholder for perf upload in switch
+		}
 	}
 	return infoBody, formDataType, nil
 }
 
-func UploadFileToSubnet(info []byte, client *xhttp.Client, filename string, reqURL string, headers map[string]string, formDataType string) (string, error) {
-
-	req, e := subnetUploadReq(info, reqURL, filename, formDataType)
+func UploadFileToSubnet(info []byte, client *xhttp.Client, reqURL string, headers map[string]string, formDataType string) (string, error) {
+	req, e := subnetUploadReq(info, reqURL, formDataType)
 	if e != nil {
 		return "", e
 	}
@@ -129,7 +137,7 @@ func processHealthReport(info interface{}, filename string) ([]byte, string, err
 	return body.Bytes(), writer.FormDataContentType(), nil
 }
 
-func subnetUploadReq(body []byte, url string, filename string, formDataType string) (*http.Request, error) {
+func subnetUploadReq(body []byte, url string, formDataType string) (*http.Request, error) {
 	uploadDataBody := bytes.NewReader(body)
 
 	r, e := http.NewRequest(http.MethodPost, url, uploadDataBody)
