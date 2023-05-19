@@ -19,7 +19,6 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import { AddIcon, Button } from "mds";
-import { Paper } from "@mui/material";
 import createStyles from "@mui/styles/createStyles";
 import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
@@ -219,7 +218,7 @@ const AccessRule = () => {
           </TooltipWrapper>
         </SecureComponent>
       </Grid>
-      <Paper className={classes.tableBlock}>
+      <Grid item sx={{ border: "#EAEDEE 1px solid" }}>
         <SecureComponent
           scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY, IAM_SCOPES.S3_GET_ACTIONS]}
           resource={bucketName}
@@ -229,7 +228,13 @@ const AccessRule = () => {
             noBackground={true}
             itemActions={AccessRuleActions}
             columns={[
-              { label: "Prefix", elementKey: "prefix" },
+              {
+                label: "Prefix",
+                elementKey: "prefix",
+                renderFunction: (prefix: string) => {
+                  return prefix || "/";
+                },
+              },
               { label: "Access", elementKey: "access" },
             ]}
             isLoading={loadingAccessRules}
@@ -238,7 +243,7 @@ const AccessRule = () => {
             idField="prefix"
           />
         </SecureComponent>
-      </Paper>
+      </Grid>
     </Fragment>
   );
 };
