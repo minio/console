@@ -73,9 +73,23 @@ func UploadURL(uploadType string, filename string) string {
 func UploadAuthHeaders(apiKey string) map[string]string {
 	return map[string]string{"x-subnet-api-key": apiKey}
 }
+func ProcessUploadInfo(info interface{}, uploadType string) ([]byte, string, error) {
+	var infoBody []byte
+	var formDataType string
+	var e error
+	switch uploadType {
+	case "health":
+		infoBody, formDataType, e = processHealthReport(info, "fakefilename")
+		if e != nil {
+			return nil, "", e
+		}
+	}
+	return infoBody, formDataType, nil
+}
 
-func UploadFileToSubnet(info interface{}, client *xhttp.Client, filename string, reqURL string, headers map[string]string) (string, error) {
-	req, e := subnetUploadReq(info, reqURL, filename)
+func UploadFileToSubnet(info []byte, client *xhttp.Client, filename string, reqURL string, headers map[string]string, formDataType string) (string, error) {
+
+	req, e := subnetUploadReq(info, reqURL, filename, formDataType)
 	if e != nil {
 		return "", e
 	}
@@ -83,7 +97,7 @@ func UploadFileToSubnet(info interface{}, client *xhttp.Client, filename string,
 	return resp, e
 }
 
-func subnetUploadReq(info interface{}, url string, filename string) (*http.Request, error) {
+func processHealthReport(info interface{}, filename string) ([]byte, string, error) {
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
 	zipWriter := gzip.NewWriter(&body)
@@ -95,29 +109,34 @@ func subnetUploadReq(info interface{}, url string, filename string) (*http.Reque
 	}{Version: version}
 
 	if e := enc.Encode(header); e != nil {
-		return nil, e
+		return nil, "", e
 	}
 
 	if e := enc.Encode(info); e != nil {
-		return nil, e
+		return nil, "", e
 	}
 	zipWriter.Close()
 	temp := body
 	part, e := writer.CreateFormFile("file", filename)
 	if e != nil {
-		return nil, e
+		return nil, "", e
 	}
 	if _, e = io.Copy(part, &temp); e != nil {
-		return nil, e
+		return nil, "", e
 	}
 
 	writer.Close()
+	return body.Bytes(), writer.FormDataContentType(), nil
+}
 
-	r, e := http.NewRequest(http.MethodPost, url, &body)
+func subnetUploadReq(body []byte, url string, filename string, formDataType string) (*http.Request, error) {
+	uploadDataBody := bytes.NewReader(body)
+
+	r, e := http.NewRequest(http.MethodPost, url, uploadDataBody)
 	if e != nil {
 		return nil, e
 	}
-	r.Header.Add("Content-Type", writer.FormDataContentType())
+	r.Header.Add("Content-Type", formDataType)
 
 	return r, nil
 }

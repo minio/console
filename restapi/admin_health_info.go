@@ -138,7 +138,13 @@ func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client 
 	}
 	apiKey := subnetTokenConfig.APIKey
 	headers := subnet.UploadAuthHeaders(apiKey)
-	resp, e := subnet.UploadFileToSubnet(healthInfo, subnetHTTPClient, filename, subnetUploadURL, headers)
+
+	uploadInfo, formDataType, e := subnet.ProcessUploadInfo(healthInfo, "health")
+	if e != nil {
+		return "", e
+	}
+	resp, e := subnet.UploadFileToSubnet(uploadInfo, subnetHTTPClient, filename, subnetUploadURL, headers, formDataType)
+
 	if e != nil {
 		return "", e
 	}
