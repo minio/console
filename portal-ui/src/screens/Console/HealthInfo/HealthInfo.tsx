@@ -362,7 +362,9 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                 "Cluster Health Report will be uploaded to Subnet, and is viewable from your Subnet Diagnostics dashboard."
               }
               iconComponent={<InfoIcon />}
-              help={""}
+              help={
+                "If the Health report cannot be generated at this time, please wait a moment and try again."
+              }
             />
           </Fragment>
         )}

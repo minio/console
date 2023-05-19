@@ -392,9 +392,7 @@ func (ac AdminClient) serverHealthInfo(ctx context.Context, healthDataTypes []ma
 	if err != nil {
 		return nil, version, err
 	}
-
 	var healthInfo interface{}
-
 	decoder := json.NewDecoder(resp.Body)
 	switch version {
 	case madmin.HealthInfoVersion0:
@@ -413,7 +411,10 @@ func (ac AdminClient) serverHealthInfo(ctx context.Context, healthDataTypes []ma
 		} else {
 			info.Minio.Info = minioInfo
 		}
-
+		healthV1 := mcCmd.MapHealthInfoToV1(info, nil)
+		if healthV1.String() == "" {
+			return nil, "", ErrHealthReportFail
+		}
 		healthInfo = mcCmd.MapHealthInfoToV1(info, nil)
 		version = madmin.HealthInfoVersion1
 	case madmin.HealthInfoVersion:
@@ -423,9 +424,11 @@ func (ac AdminClient) serverHealthInfo(ctx context.Context, healthDataTypes []ma
 				break
 			}
 		}
+		if info.Version == "" {
+			return nil, "", ErrHealthReportFail
+		}
 		healthInfo = info
 	}
-
 	return healthInfo, version, nil
 }
 
