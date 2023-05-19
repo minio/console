@@ -86,10 +86,12 @@ func ProcessUploadInfo(info interface{}, uploadType string) ([]byte, string, err
 		}
 	case "perf":
 		{
+			fmt.Println("perf upload goes here")
 			// placeholder for perf upload in switch
 		}
 	case "tenant_report":
 		{
+			fmt.Println("tenant report upload goes here")
 			// placeholder for perf upload in switch
 		}
 	}

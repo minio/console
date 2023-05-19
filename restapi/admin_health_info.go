@@ -143,7 +143,7 @@ func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client 
 	if e != nil {
 		return "", e
 	}
-	resp, e := subnet.UploadFileToSubnet(uploadInfo, subnetHTTPClient, filename, subnetUploadURL, headers, formDataType)
+	resp, e := subnet.UploadFileToSubnet(uploadInfo, subnetHTTPClient, subnetUploadURL, headers, formDataType)
 
 	if e != nil {
 		return "", e
