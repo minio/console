@@ -308,7 +308,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                 icon={<FormatDrivesIcon />}
                 label={"Reduced redundancy storage class parity"}
                 value={
-                  usage?.backend?.standardSCParity
+                  usage?.backend?.rrSCParity
                     ? usage.backend.rrSCParity.toString()
                     : "n/a"
                 }
