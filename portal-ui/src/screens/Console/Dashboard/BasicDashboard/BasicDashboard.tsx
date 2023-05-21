@@ -286,9 +286,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                 icon={<StorageIcon />}
                 label={"Backend type"}
                 value={
-                  usage?.backend?.backendType
-                    ? usage.backend.backendType
-                    : "Unknown"
+                  usage?.backend?.backendType ?? "Unknown"
                 }
               />
             </Grid>
@@ -297,9 +295,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                 icon={<FormatDrivesIcon />}
                 label={"Standard storage class parity"}
                 value={
-                  usage?.backend?.standardSCParity
-                    ? usage.backend.standardSCParity.toString()
-                    : "n/a"
+                  usage?.backend?.standardSCParity?.toString() ?? "n/a"
                 }
               />
             </Grid>
@@ -308,9 +304,7 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                 icon={<FormatDrivesIcon />}
                 label={"Reduced redundancy storage class parity"}
                 value={
-                  usage?.backend?.rrSCParity
-                    ? usage.backend.rrSCParity.toString()
-                    : "n/a"
+                  usage?.backend?.rrSCParity?.toString() ?? "n/a"
                 }
               />
             </Grid>
