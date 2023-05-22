@@ -148,8 +148,11 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		errorsApi.ServeError(w, req, errorsApi.New(http.StatusUnauthorized, err.Error()))
 		return
 	}
-	// Development mode validation
-	if getConsoleDevMode() {
+
+	// If we are using a subpath we are most likely behind a reverse proxy so we most likely
+	// can't validate the proper Origin since we don't know the source domain, so we are going
+	// to allow the connection to be upgraded in this case.
+	if getSubPath() != "/" || getConsoleDevMode() {
 		upgrader.CheckOrigin = func(r *http.Request) bool {
 			return true
 		}
