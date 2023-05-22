@@ -46,7 +46,7 @@ insNotAllowedSeckey = "minio123";
 const loginUrl = `${testDomainUrl}/login`;
 const inspectScreenUrl = `${testDomainUrl}${IAM_PAGES.SUPPORT_INSPECT}`;
 
-const loginSubmitBtn = Selector("form button");
+const loginSubmitBtn = Selector("button").withAttribute("id", "do-login");
 
 export const inspectEl = Selector(".MuiPaper-root")
   .find("ul")

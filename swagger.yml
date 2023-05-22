@@ -4351,8 +4351,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/redirectRule"
-      isDirectPV:
-        type: boolean
       isK8S:
         type: boolean
       animatedLogin:

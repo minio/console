@@ -247,15 +247,22 @@ const Account = () => {
                   disabled={userIDP}
                 />
               </SecureComponent>
-              <Button
-                id={"create-service-account"}
-                onClick={() => {
-                  navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
-                }}
-                label={`Create access key`}
-                icon={<AddIcon />}
-                variant={"callAction"}
-              />
+              <SecureComponent
+                scopes={[IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT]}
+                resource={CONSOLE_UI_RESOURCE}
+                matchAll
+                errorProps={{ disabled: true }}
+              >
+                <Button
+                  id={"create-service-account"}
+                  onClick={() => {
+                    navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
+                  }}
+                  label={`Create access key`}
+                  icon={<AddIcon />}
+                  variant={"callAction"}
+                />
+              </SecureComponent>
             </Box>
           </Grid>
 
