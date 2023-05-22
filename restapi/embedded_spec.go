@@ -7029,9 +7029,6 @@ func init() {
         "animatedLogin": {
           "type": "boolean"
         },
-        "isDirectPV": {
-          "type": "boolean"
-        },
         "isK8S": {
           "type": "boolean"
         },
@@ -16161,9 +16158,6 @@ func init() {
       "type": "object",
       "properties": {
         "animatedLogin": {
-          "type": "boolean"
-        },
-        "isDirectPV": {
           "type": "boolean"
         },
         "isK8S": {
