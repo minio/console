@@ -63,16 +63,20 @@ test
         .useRole(roles.conditions2)
         .navigateTo(`http://localhost:9090/browser`)
         .click(test1BucketBrowseButton)
+        .wait(1500)
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText("firstlevel")
         )
+        .wait(1500)
         .expect(file.exists)
         .notOk()
+        .wait(1500)
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText(
             "secondlevel"
           )
         )
+        .wait(1500)
         .expect(file.exists)
         .notOk();
     }
@@ -113,19 +117,25 @@ test
       .useRole(roles.conditions1)
       .navigateTo(`http://localhost:9090/browser`)
       .click(test1BucketBrowseButton)
+      .wait(1500)
       .click(
         Selector(".ReactVirtualized__Table__rowColumn").withText("firstlevel")
       )
+      .wait(1500)
       .expect(file.exists)
       .ok()
+      .wait(1500)
       .click(
         Selector(".ReactVirtualized__Table__rowColumn").withText("secondlevel")
       )
+      .wait(1500)
       .expect(file.exists)
       .ok()
+      .wait(1500)
       .click(
         Selector(".ReactVirtualized__Table__rowColumn").withText("thirdlevel")
       )
+      .wait(1500)
       .expect(file.exists)
       .ok();
   })

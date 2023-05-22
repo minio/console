@@ -24,6 +24,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-openapi/errors"
+
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -89,6 +91,7 @@ func login(credentials ConsoleCredentialsI, sessionFeatures *auth.SessionFeature
 	if err != nil {
 		return nil, err
 	}
+
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
 	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), sessionFeatures)
 	if err != nil {
@@ -133,6 +136,13 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *model
 			ConsoleCredentials: creds,
 			AccountAccessKey:   lr.AccessKey,
 		}
+
+		credsVerificate, _ := creds.Get()
+
+		if credsVerificate.SessionToken == "" || credsVerificate.SecretAccessKey == "" || credsVerificate.AccessKeyID == "" {
+			return nil, ErrorWithContext(ctx, errors.New(401, "Invalid STS Params"))
+		}
+
 	} else {
 		// prepare console credentials
 		consoleCreds, err = getConsoleCredentials(lr.AccessKey, lr.SecretKey)

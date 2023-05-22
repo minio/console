@@ -64,7 +64,7 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
         dispatch(saveSessionResponse(res));
         dispatch(userLogged(true));
         setSessionLoading(false);
-        dispatch(globalSetDistributedSetup(res.distributedMode || false));
+        dispatch(globalSetDistributedSetup(res?.distributedMode || false));
 
         if (res.customStyles && res.customStyles !== "") {
           const overrideColorVariants = getOverrideColorVariants(

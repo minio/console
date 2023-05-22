@@ -37,7 +37,7 @@ insAllowedSeckey = "poluicrashfix1234";*/
 const loginUrl = `${testDomainUrl}/login`;
 const bucketsScreenUrl = `${testDomainUrl}/buckets`;
 
-const loginSubmitBtn = Selector("form button");
+const loginSubmitBtn = Selector("button").withAttribute("id", "do-login");
 
 export const bucketsSidebarEl = Selector(".MuiPaper-root")
   .find("ul")
