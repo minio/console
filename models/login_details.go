@@ -41,9 +41,6 @@ type LoginDetails struct {
 	// animated login
 	AnimatedLogin bool `json:"animatedLogin,omitempty"`
 
-	// is direct p v
-	IsDirectPV bool `json:"isDirectPV,omitempty"`
-
 	// is k8 s
 	IsK8S bool `json:"isK8S,omitempty"`
 

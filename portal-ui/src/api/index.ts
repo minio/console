@@ -1,6 +1,7 @@
 import { Api, HttpResponse, Error, FullRequestParams } from "./consoleApi";
 
 export let api = new Api();
+api.baseUrl = `${new URL(document.baseURI).pathname}api/v1`;
 const internalRequestFunc = api.request;
 api.request = async <T = any, E = any>({
   body,
