@@ -484,7 +484,7 @@ paths:
         - Object
 
   /buckets/{bucket_name}/objects/share:
-    get:
+    post:
       summary: Shares an Object on a url
       operationId: ShareObject
       parameters:
@@ -492,18 +492,11 @@ paths:
           in: path
           required: true
           type: string
-        - name: prefix
-          in: query
+        - name: body
+          in: body
           required: true
-          type: string
-        - name: version_id
-          in: query
-          required: true
-          type: string
-        - name: expires
-          in: query
-          required: false
-          type: string
+          schema:
+            $ref: "#/definitions/shareRequest"
       responses:
         200:
           description: A successful response.
@@ -6153,3 +6146,22 @@ definitions:
         type: array
         items:
           type: string
+
+  shareRequest:
+    type: object
+    required:
+      - prefix
+      - version_id
+      - access_key
+      - secret_key
+    properties:
+      prefix:
+        type: string
+      version_id:
+        type: string
+      expires:
+        type: string
+      access_key:
+        type: string
+      secret_key:
+        type: string

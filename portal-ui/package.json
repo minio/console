@@ -66,7 +66,7 @@
   },
   "proxy": "http://localhost:9090/",
   "devDependencies": {
-    "@playwright/test": "^1.32.3",
+    "@playwright/test": "^1.34.0",
     "@types/lodash": "^4.14.194",
     "@types/luxon": "^3.3.0",
     "@types/minio": "^7.0.18",
@@ -85,6 +85,7 @@
     "@types/websocket": "^1.0.0",
     "babel-plugin-istanbul": "^6.1.1",
     "customize-cra": "^1.0.0",
+    "minio": "^7.0.33",
     "nyc": "^15.1.0",
     "playwright": "^1.31.3",
     "prettier": "2.8.8",
@@ -92,8 +93,7 @@
     "react-app-rewired": "^2.2.1",
     "react-scripts": "5.0.1",
     "testcafe": "^2.5.0",
-    "typescript": "^4.4.3",
-    "minio": "^7.0.33"
+    "typescript": "^4.4.3"
   },
   "resolutions": {
     "nth-check": "^2.0.1",

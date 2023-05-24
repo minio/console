@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"path"
 	"strings"
 	"time"
@@ -219,6 +220,10 @@ func (c minioClient) setBucketLifecycle(ctx context.Context, bucketName string, 
 
 func (c minioClient) copyObject(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error) {
 	return c.client.CopyObject(ctx, dst, src)
+}
+
+func (c minioClient) presignedGetObject(ctx context.Context, bucketName, objectName string, expiry time.Duration, reqParams url.Values) (*url.URL, error) {
+	return c.client.PresignedGetObject(ctx, bucketName, objectName, expiry, reqParams)
 }
 
 // MCClient interface with all functions to be implemented

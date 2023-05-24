@@ -21,7 +21,10 @@ import { AppState, useAppDispatch } from "../../../../store";
 import { Box } from "@mui/material";
 import { AlertCloseIcon } from "mds";
 import { Portal } from "@mui/base";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setModalSnackMessage,
+} from "../../../../systemSlice";
 
 interface IMainErrorProps {
   isModal?: boolean;
@@ -51,6 +54,7 @@ const MainError = ({ isModal = false }: IMainErrorProps) => {
   useEffect(() => {
     if (!displayErrorMsg) {
       dispatch(setErrorSnackMessage({ detailedError: "", errorMessage: "" }));
+      dispatch(setModalSnackMessage(""));
       clearInterval(timerI);
     }
   }, [dispatch, displayErrorMsg]);
