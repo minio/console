@@ -179,18 +179,20 @@ jobs:
         run: |
           echo "Install dependencies"
           cd $GITHUB_WORKSPACE/portal-ui
+          yarn init -y
           yarn add -D playwright
           yarn add -D babel-plugin-istanbul
           yarn add -D nyc
           yarn add -D react-app-rewired
           yarn add -D create-react-app
-          yarn init -y
-          yarn add --dev @playwright/test
+          yarn add -D @playwright/test
           echo "yarn install"
           yarn install
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: |
+          yarn add @playwright/test
+          npx playwright install --with-deps
 
       - uses: actions/cache@v3
         name: Console Binary Cache Istanbul Coverage
