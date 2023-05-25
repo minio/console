@@ -21,6 +21,7 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -78,22 +79,13 @@ func ProcessUploadInfo(info interface{}, uploadType string) ([]byte, string, err
 	var infoBody []byte
 	var formDataType string
 	var e error
-	switch uploadType {
-	case "health":
+	if uploadType == "health" {
 		infoBody, formDataType, e = processHealthReport(info)
 		if e != nil {
 			return nil, "", e
 		}
-	case "perf":
-		{
-			fmt.Println("perf upload goes here")
-			// placeholder for perf upload in switch
-		}
-	case "tenant_report":
-		{
-			fmt.Println("tenant report upload goes here")
-			// placeholder for perf upload in switch
-		}
+	} else {
+		return nil, "", errors.New("Invalid Subnet upload type")
 	}
 	return infoBody, formDataType, nil
 }
