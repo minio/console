@@ -1436,6 +1436,7 @@ jobs:
         run: |
           echo "Run tests under playwright folder only"
           cd $GITHUB_WORKSPACE/portal-ui
+          yarn add -D @playwright/test
           echo "npx playwright test"
           npx playwright test # To run the tests
           echo "npx nyc report"
