@@ -20,7 +20,7 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import { LinkIcon, InputLabel, InputBox, Grid } from "mds";
+import { Grid, InputBox, InputLabel, LinkIcon } from "mds";
 
 interface IDaysSelector {
   classes: any;
@@ -177,6 +177,10 @@ const DaysSelector = ({
       valid = false;
     }
 
+    if (selectedDays <= 0 && selectedHours <= 0 && selectedMinutes <= 0) {
+      valid = false;
+    }
+
     setValidDate(valid);
   }, [
     dateSelected,
@@ -203,9 +207,7 @@ const DaysSelector = ({
     <Fragment>
       <Grid container className={classes.fieldContainer}>
         <Grid item xs={12} className={classes.labelContainer}>
-          <InputLabel htmlFor={id} sx={{ marginLeft: "10px" }}>
-            {label}
-          </InputLabel>
+          <InputLabel htmlFor={id}>{label}</InputLabel>
         </Grid>
         <Grid item xs={12} className={classes.durationInputs}>
           <Grid item xs className={classes.dateInputContainer}>

@@ -33,10 +33,6 @@ import (
 type ShareObjectURL struct {
 	BucketName string
 
-	Expires   *string
-	Prefix    string
-	VersionID string
-
 	_basePath string
 	// avoid unkeyed usage
 	_ struct{}
@@ -75,28 +71,6 @@ func (o *ShareObjectURL) Build() (*url.URL, error) {
 		_basePath = "/api/v1"
 	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
-
-	qs := make(url.Values)
-
-	var expiresQ string
-	if o.Expires != nil {
-		expiresQ = *o.Expires
-	}
-	if expiresQ != "" {
-		qs.Set("expires", expiresQ)
-	}
-
-	prefixQ := o.Prefix
-	if prefixQ != "" {
-		qs.Set("prefix", prefixQ)
-	}
-
-	versionIDQ := o.VersionID
-	if versionIDQ != "" {
-		qs.Set("version_id", versionIDQ)
-	}
-
-	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }
