@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { DialogContentText } from "@mui/material";
-
+import React, { Fragment } from "react";
 import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
@@ -29,24 +23,13 @@ import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    wrapText: {
-      maxWidth: "200px",
-      whiteSpace: "normal",
-      wordWrap: "break-word",
-    },
-  });
-
 interface IDeleteServiceAccountProps {
-  classes: any;
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedServiceAccount: string | null;
 }
 
 const DeleteServiceAccount = ({
-  classes,
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedServiceAccount,
@@ -80,13 +63,22 @@ const DeleteServiceAccount = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           Are you sure you want to delete Access Key{" "}
-          <b className={classes.wrapText}>{selectedServiceAccount}</b>?
-        </DialogContentText>
+          <b
+            style={{
+              maxWidth: "200px",
+              whiteSpace: "normal",
+              wordWrap: "break-word",
+            }}
+          >
+            {selectedServiceAccount}
+          </b>
+          ?
+        </Fragment>
       }
     />
   );
 };
 
-export default withStyles(styles)(DeleteServiceAccount);
+export default DeleteServiceAccount;
