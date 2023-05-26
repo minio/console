@@ -908,13 +908,7 @@ export const modalStyleUtils: any = {
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
-
-    "& button": {
-      marginRight: 10,
-    },
-    "& button:last-child": {
-      marginRight: 0,
-    },
+    gap: 10,
   },
   modalFormScrollable: {
     maxHeight: "calc(100vh - 300px)",
