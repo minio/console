@@ -13,13 +13,12 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React from "react";
 
-import { DialogContentText } from "@mui/material";
+import React, { Fragment } from "react";
+import { ConfirmDeleteIcon } from "mds";
 import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../../../screens/Console/Common/Hooks/useApi";
 import ConfirmDialog from "../../../screens/Console/Common/ModalWrapper/ConfirmDialog";
-import { ConfirmDeleteIcon } from "mds";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 
@@ -60,10 +59,10 @@ const DeleteMultipleSAs = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           Are you sure you want to delete the selected {selectedSAs.length}{" "}
           Access Keys?{" "}
-        </DialogContentText>
+        </Fragment>
       }
     />
   );
