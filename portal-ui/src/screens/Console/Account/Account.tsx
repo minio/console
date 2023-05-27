@@ -107,6 +107,7 @@ const Account = () => {
     setDeleteOpen(false);
 
     if (refresh) {
+      setSelectedSAs([]);
       fetchRecords();
     }
   };
