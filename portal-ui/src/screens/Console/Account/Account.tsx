@@ -31,10 +31,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import api from "../../../common/api";
 import { stringSort } from "../../../utils/sortFunctions";
-import {
-  actionsTray,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
+import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import ChangePasswordModal from "./ChangePasswordModal";
@@ -251,7 +248,7 @@ const Account = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} sx={{ ...tableStyles.tableBlock }}>
+          <Grid item xs={12}>
             <DataTable
               isLoading={loading}
               records={filteredRecords}
