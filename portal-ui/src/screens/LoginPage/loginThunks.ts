@@ -16,12 +16,18 @@
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AppState } from "../../store";
-import api from "../../common/api";
-import { ErrorResponseHandler } from "../../common/types";
 import { setErrorSnackMessage, userLogged } from "../../systemSlice";
-import { ILoginDetails } from "./types";
 import { setNavigateTo } from "./loginSlice";
-import { getTargetPath, LoginStrategyPayload } from "./LoginPage";
+import { getTargetPath } from "./Login";
+import { api } from "api";
+import {
+  CheckVersionResponse,
+  Error,
+  HttpResponse,
+  LoginDetails,
+  LoginRequest,
+} from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 export const doLoginAsync = createAsyncThunk(
   "login/doLoginAsync",
@@ -32,41 +38,47 @@ export const doLoginAsync = createAsyncThunk(
     const sts = state.login.sts;
     const useSTS = state.login.useSTS;
 
-    let loginStrategyPayload: LoginStrategyPayload = {
+    let payload: LoginRequest = {
       accessKey,
       secretKey,
     };
     if (useSTS) {
-      loginStrategyPayload = {
+      payload = {
         accessKey,
         secretKey,
         sts,
       };
     }
 
-    return api
-      .invoke("POST", "/api/v1/login", loginStrategyPayload)
-      .then((res) => {
+    return api.login
+      .login(payload)
+      .then((res: HttpResponse<void, Error>) => {
         // We set the state in redux
         dispatch(userLogged(true));
         localStorage.setItem("userLoggedIn", accessKey);
         dispatch(setNavigateTo(getTargetPath()));
       })
-      .catch((err) => {
-        dispatch(setErrorSnackMessage(err));
+      .catch(async (res: HttpResponse<void, Error>) => {
+        const err = (await res.json()) as Error;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
+        return rejectWithValue(false);
       });
   }
 );
 export const getFetchConfigurationAsync = createAsyncThunk(
   "login/getFetchConfigurationAsync",
-  async (_, { getState, rejectWithValue, dispatch }) => {
-    return api
-      .invoke("GET", "/api/v1/login")
-      .then((loginDetails: ILoginDetails) => {
-        return loginDetails;
+  async (_, { dispatch, rejectWithValue }) => {
+    return api.login
+      .loginDetail()
+      .then((res: HttpResponse<LoginDetails, Error>) => {
+        if (res.data) {
+          return res.data;
+        }
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
+      .catch(async (res: HttpResponse<LoginDetails, Error>) => {
+        const err = (await res.json()) as Error;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
+        return rejectWithValue(false);
       });
   }
 );
@@ -74,21 +86,17 @@ export const getFetchConfigurationAsync = createAsyncThunk(
 export const getVersionAsync = createAsyncThunk(
   "login/getVersionAsync",
   async (_, { getState, rejectWithValue, dispatch }) => {
-    return api
-      .invoke("GET", "/api/v1/check-version")
-      .then(
-        ({
-          current_version,
-          latest_version,
-        }: {
-          current_version: string;
-          latest_version: string;
-        }) => {
-          return latest_version;
+    return api.checkVersion
+      .checkMinIoVersion()
+      .then((res: HttpResponse<CheckVersionResponse, Error>) => {
+        if (res.data !== undefined) {
+          return res.data.latest_version;
         }
-      )
-      .catch((err: ErrorResponseHandler) => {
-        return err.errorMessage;
+      })
+      .catch(async (res: HttpResponse<CheckVersionResponse, Error>) => {
+        const err = (await res.json()) as Error;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
+        return rejectWithValue(false);
       });
   }
 );
