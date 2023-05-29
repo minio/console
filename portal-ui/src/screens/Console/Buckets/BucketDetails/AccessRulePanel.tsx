@@ -29,7 +29,6 @@ import {
   containerForHeader,
   objectBrowserCommon,
   searchField,
-  tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
@@ -65,7 +64,6 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundImage: "url(/images/ob_folder_filled.svg)",
       },
     },
-    ...tableStyles,
     ...actionsTray,
     ...searchField,
     ...objectBrowserCommon,
