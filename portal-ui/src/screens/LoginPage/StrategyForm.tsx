@@ -38,9 +38,9 @@ import { LinearProgress } from "@mui/material";
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import { doLoginAsync } from "./loginThunks";
-import { IStrategyForm } from "./types";
+import { RedirectRule } from "api/consoleApi";
 
-const StrategyForm = ({ redirectRules }: IStrategyForm) => {
+const StrategyForm = ({ redirectRules }: { redirectRules: RedirectRule[] }) => {
   const dispatch = useAppDispatch();
 
   const [ssoOptionsOpen, ssoOptionsSetOpen] = useState<boolean>(false);
@@ -137,7 +137,7 @@ const StrategyForm = ({ redirectRules }: IStrategyForm) => {
                   setAnchorEl(e.currentTarget);
                   return;
                 }
-                submitSSOInitRequest(redirectRules[0].redirect);
+                submitSSOInitRequest(`${redirectRules[0].redirect}`);
               }}
             />
             {redirectRules.length > 1 && (
