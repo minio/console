@@ -330,6 +330,7 @@ func (suite *RemoteBucketsTestSuite) initDeleteSelectedReplicationRulesRequest()
 
 	return params, api
 }
+
 func (suite *RemoteBucketsTestSuite) TestUpdateMultiBucketReplicationHandlerWithError() {
 	params, api := suite.initUpdateMultiBucketReplicationRequest()
 	response := api.BucketUpdateMultiBucketReplicationHandler.Handle(params, &models.Principal{})
