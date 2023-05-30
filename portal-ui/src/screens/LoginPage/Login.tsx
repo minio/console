@@ -17,21 +17,16 @@
 import React, { Fragment, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Loader, LoginWrapper, RefreshIcon } from "mds";
-import { loginStrategyType, redirectRule } from "./types";
+import { loginStrategyType } from "./login.types";
 import MainError from "../Console/Common/MainError/MainError";
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import { getFetchConfigurationAsync, getVersionAsync } from "./loginThunks";
 import { resetForm } from "./loginSlice";
 import StrategyForm from "./StrategyForm";
-import { redirectRules } from "../../utils/sortFunctions";
 import { getLogoVar } from "../../config";
-
-export interface LoginStrategyPayload {
-  accessKey: string;
-  secretKey: string;
-  sts?: string;
-}
+import { RedirectRule } from "api/consoleApi";
+import { redirectRules } from "./login.utils";
 
 export const getTargetPath = () => {
   let targetPath = "/";
@@ -90,7 +85,7 @@ const Login = () => {
   switch (loginStrategy.loginStrategy) {
     case loginStrategyType.redirect:
     case loginStrategyType.form: {
-      let redirectItems: redirectRule[] = [];
+      let redirectItems: RedirectRule[] = [];
 
       if (
         loginStrategy.redirectRules &&

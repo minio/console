@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ILoginDetails, loginStrategyType } from "./types";
+import { LoginDetails } from "api/consoleApi";
 import {
   doLoginAsync,
   getFetchConfigurationAsync,
@@ -28,7 +28,7 @@ export interface LoginState {
   sts: string;
   useSTS: boolean;
   backgroundAnimation: boolean;
-  loginStrategy: ILoginDetails;
+  loginStrategy: LoginDetails;
   loginSending: boolean;
   loadingFetchConfiguration: boolean;
   latestMinIOVersion: string;
@@ -44,7 +44,7 @@ const initialState: LoginState = {
   sts: "",
   useSTS: false,
   loginStrategy: {
-    loginStrategy: loginStrategyType.unknown,
+    loginStrategy: undefined,
     redirectRules: [],
   },
   loginSending: false,

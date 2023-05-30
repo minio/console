@@ -271,7 +271,7 @@ func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params
 		return nil, ErrorWithContext(ctx, err)
 	}
 	for i := 0; i < len(accounts.Accounts); i++ {
-		if accounts.Accounts[i] == serviceAccount.AccessKey {
+		if accounts.Accounts[i].AccessKey == serviceAccount.AccessKey {
 			return nil, ErrorWithContext(ctx, errors.New("Access Key already in use"))
 		}
 	}
@@ -304,7 +304,7 @@ func getCreateServiceAccountCredsResponse(session *models.Principal, params saAp
 	}
 
 	for i := 0; i < len(accounts.Accounts); i++ {
-		if accounts.Accounts[i] == serviceAccount.AccessKey {
+		if accounts.Accounts[i].AccessKey == serviceAccount.AccessKey {
 			return nil, ErrorWithContext(ctx, errors.New("Access Key already in use"))
 		}
 	}
@@ -324,7 +324,7 @@ func getUserServiceAccounts(ctx context.Context, userClient MinioAdmin, user str
 	}
 	serviceAccounts := models.ServiceAccounts{}
 	for _, acc := range listServAccs.Accounts {
-		serviceAccounts = append(serviceAccounts, acc)
+		serviceAccounts = append(serviceAccounts, acc.AccessKey)
 	}
 	return serviceAccounts, nil
 }

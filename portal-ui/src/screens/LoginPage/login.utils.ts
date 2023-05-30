@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,27 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface ILoginDetails {
-  loginStrategy: loginStrategyType;
-  redirectRules: redirectRule[];
-  isK8S?: boolean;
-  animatedLogin?: boolean;
-}
+import { RedirectRule } from "api/consoleApi";
 
-export interface redirectRule {
-  redirect: string;
-  displayName: string;
-  serviceType?: string;
-}
-
-export interface IStrategyForm {
-  redirectRules: redirectRule[];
-}
-
-export enum loginStrategyType {
-  unknown = "unknown",
-  form = "form",
-  redirect = "redirect",
-  serviceAccount = "service-account",
-  redirectServiceAccount = "redirect-service-account",
-}
+export const redirectRules = (a: RedirectRule, b: RedirectRule) => {
+  if (a.displayName && b.displayName) {
+    if (a.displayName > b.displayName) {
+      return 1;
+    }
+    if (a.displayName < b.displayName) {
+      return -1;
+    }
+  }
+  return 0;
+};
