@@ -49,10 +49,16 @@ import TabSelector from "../../Common/TabSelector/TabSelector";
 const enabledConfigLDAP = [
   "server_addr",
   "lookup_bind_dn",
-  "lookup_bind_password",
   "user_dn_search_base_dn",
   "user_dn_search_filter",
 ];
+
+const getFieldValue = (key: string, value: string) => {
+  if (key === "lookup_bind_password") {
+    return value ? "********" : "";
+  }
+  return value ? value : "";
+};
 
 const IDPLDAPConfigurationDetails = () => {
   const dispatch = useAppDispatch();
@@ -405,7 +411,7 @@ const IDPLDAPConfigurationDetails = () => {
                           <LabelValuePair
                             key={key}
                             label={value.label}
-                            value={fields[key] ? fields[key] : ""}
+                            value={getFieldValue(key, fields[key])}
                           />
                         ))}
                       </Fragment>
