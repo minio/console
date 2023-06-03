@@ -16,12 +16,14 @@
 
 import React from "react";
 import { InputBox, SearchIcon } from "mds";
+import { CSSObject } from "styled-components";
 
 type SearchBoxProps = {
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
   overrideClass?: any;
+  sx?: CSSObject;
 };
 
 const SearchBox = ({
@@ -29,6 +31,7 @@ const SearchBox = ({
   onChange,
   overrideClass,
   value,
+  sx,
 }: SearchBoxProps) => {
   return (
     <InputBox
@@ -45,6 +48,7 @@ const SearchBox = ({
           style={{ width: 16, height: 16, marginTop: 5, marginRight: 5 }}
         />
       }
+      sx={sx}
     />
   );
 };

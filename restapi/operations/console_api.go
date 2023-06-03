@@ -2149,10 +2149,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/service-accounts/{access_key}/policy"] = service_account.NewSetServiceAccountPolicy(o.context, o.ServiceAccountSetServiceAccountPolicyHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/objects/share"] = object.NewShareObject(o.context, o.ObjectShareObjectHandler)
+	o.handlers["POST"]["/buckets/{bucket_name}/objects/share"] = object.NewShareObject(o.context, o.ObjectShareObjectHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

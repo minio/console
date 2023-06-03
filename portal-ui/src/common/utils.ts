@@ -712,3 +712,9 @@ export const getRandomString = function (length = 16): string {
   }
   return retval;
 };
+
+// replaces bad unicode characters
+export const replaceUnicodeChar = (inputString: string): string => {
+  let unicodeChar = "\u202E";
+  return inputString.split(unicodeChar).join("<�202e>");
+};

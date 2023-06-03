@@ -1858,7 +1858,7 @@ func init() {
       }
     },
     "/buckets/{bucket_name}/objects/share": {
-      "get": {
+      "post": {
         "tags": [
           "Object"
         ],
@@ -1872,21 +1872,12 @@ func init() {
             "required": true
           },
           {
-            "type": "string",
-            "name": "prefix",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "version_id",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "expires",
-            "in": "query"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/shareRequest"
+            }
           }
         ],
         "responses": {
@@ -7029,9 +7020,6 @@ func init() {
         "animatedLogin": {
           "type": "boolean"
         },
-        "isDirectPV": {
-          "type": "boolean"
-        },
         "isK8S": {
           "type": "boolean"
         },
@@ -8319,6 +8307,32 @@ func init() {
         },
         "entityType": {
           "$ref": "#/definitions/policyEntity"
+        }
+      }
+    },
+    "shareRequest": {
+      "type": "object",
+      "required": [
+        "prefix",
+        "version_id",
+        "access_key",
+        "secret_key"
+      ],
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        },
+        "version_id": {
+          "type": "string"
         }
       }
     },
@@ -10863,7 +10877,7 @@ func init() {
       }
     },
     "/buckets/{bucket_name}/objects/share": {
-      "get": {
+      "post": {
         "tags": [
           "Object"
         ],
@@ -10877,21 +10891,12 @@ func init() {
             "required": true
           },
           {
-            "type": "string",
-            "name": "prefix",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "version_id",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "expires",
-            "in": "query"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/shareRequest"
+            }
           }
         ],
         "responses": {
@@ -16163,9 +16168,6 @@ func init() {
         "animatedLogin": {
           "type": "boolean"
         },
-        "isDirectPV": {
-          "type": "boolean"
-        },
         "isK8S": {
           "type": "boolean"
         },
@@ -17453,6 +17455,32 @@ func init() {
         },
         "entityType": {
           "$ref": "#/definitions/policyEntity"
+        }
+      }
+    },
+    "shareRequest": {
+      "type": "object",
+      "required": [
+        "prefix",
+        "version_id",
+        "access_key",
+        "secret_key"
+      ],
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        },
+        "version_id": {
+          "type": "string"
         }
       }
     },

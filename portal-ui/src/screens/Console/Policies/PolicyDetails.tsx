@@ -197,9 +197,17 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
           dispatch(setSnackBarMessage("Policy successfully updated"));
           refreshPolicyDetails();
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err: HttpResponse<Policy, Error>) => {
           setAddLoading(false);
-          dispatch(setErrorSnackMessage(err));
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage: "There was an error updating the Policy ",
+              detailedError:
+                "There was an error updating the Policy: " +
+                (err.error.detailedMessage || "") +
+                ". Please check Policy syntax.",
+            })
+          );
         });
     } else {
       setAddLoading(false);

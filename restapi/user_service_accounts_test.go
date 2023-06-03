@@ -87,7 +87,13 @@ func TestListServiceAccounts(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	mockResponse := madmin.ListServiceAccountsResp{
-		Accounts: []string{"accesskey1", "accesskey2"},
+		Accounts: []madmin.ServiceAccountInfo{
+			{
+				AccessKey: "accesskey1",
+			}, {
+				AccessKey: "accesskey2",
+			},
+		},
 	}
 	minioListServiceAccountsMock = func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
 		return mockResponse, nil
@@ -97,7 +103,7 @@ func TestListServiceAccounts(t *testing.T) {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	for i, sa := range serviceAccounts {
-		assert.Equal(mockResponse.Accounts[i], sa)
+		assert.Equal(mockResponse.Accounts[i].AccessKey, sa)
 	}
 
 	// Test-2: getUserServiceAccounts returns an error, handle it properly
