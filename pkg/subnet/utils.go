@@ -76,20 +76,18 @@ func UploadAuthHeaders(apiKey string) map[string]string {
 }
 
 func ProcessUploadInfo(info interface{}, uploadType string) ([]byte, string, error) {
-	var infoBody []byte
-	var formDataType string
-	var e error
 	if uploadType == "health" {
-		infoBody, formDataType, e = processHealthReport(info)
-		if e != nil {
-			return nil, "", e
+		infoBody, formDataType, err := processHealthReport(info)
+		if err != nil {
+			return nil, "", err
 		}
-	} else {
-		return nil, "", errors.New("Invalid Subnet upload type")
-	}
-	return infoBody, formDataType, nil
-}
+		return infoBody, formDataType, nil
 
+	} else {
+		return nil, "", errors.New("invalid Subnet upload type")
+	}
+
+}
 func UploadFileToSubnet(info []byte, client *xhttp.Client, reqURL string, headers map[string]string, formDataType string) (string, error) {
 	req, e := subnetUploadReq(info, reqURL, formDataType)
 	if e != nil {
