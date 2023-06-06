@@ -83,9 +83,8 @@ func ProcessUploadInfo(info interface{}, uploadType string) ([]byte, string, err
 		}
 		return infoBody, formDataType, nil
 
-	} else {
-		return nil, "", errors.New("invalid Subnet upload type")
 	}
+	return nil, "", errors.New("invalid Subnet upload type")
 }
 
 func UploadFileToSubnet(info []byte, client *xhttp.Client, reqURL string, headers map[string]string, formDataType string) (string, error) {
