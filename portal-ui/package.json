@@ -110,7 +110,8 @@
     "react-scripts/**/debug": "^3.1.0",
     "recharts/**/d3-color": "^3.1.0",
     "minio/xml2js": "^0.5.0",
-    "websocket/debug": "^3.1.0"
+    "websocket/debug": "^3.1.0",
+    "fast-xml-parser": "^4.2.4"
   },
   "main": "index.js"
 }
