@@ -145,7 +145,7 @@ const ShareFile = ({
               return;
             }
 
-            // Version couldn't ve retrieved, we default
+            // Version couldn't be retrieved, we default
             setVersionID("null");
           })
           .catch((error: ErrorResponseHandler) => {
@@ -324,7 +324,7 @@ const ShareFile = ({
         <Fragment>
           <Grid item xs={12} className={classes.shareLinkInfo}>
             To generate a temporary URL, please provide a set of credentials,
-            this link can ve valid up to 7 days.
+            this link can be valid up to 7 days.
             <br />
             <br />
           </Grid>
