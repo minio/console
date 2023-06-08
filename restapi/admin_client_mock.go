@@ -86,26 +86,30 @@ var (
 	minioInfoServiceAccountMock    func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
 	minioUpdateServiceAccountMock  func(ctx context.Context, serviceAccount string, opts madmin.UpdateServiceAccountReq) error
 	minioGetLDAPPolicyEntitiesMock func(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error)
+
+	minioListRemoteBucketsMock func(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error)
+	minioGetRemoteBucketMock   func(ctx context.Context, bucket, arnType string) (targets *madmin.BucketTarget, err error)
+	minioAddRemoteBucketMock   func(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error)
 )
 
 func (ac AdminClientMock) serverInfo(ctx context.Context) (madmin.InfoMessage, error) {
 	return MinioServerInfoMock(ctx)
 }
 
-func (ac AdminClientMock) listRemoteBuckets(_ context.Context, _, _ string) (targets []madmin.BucketTarget, err error) {
-	return nil, nil
+func (ac AdminClientMock) listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error) {
+	return minioListRemoteBucketsMock(ctx, bucket, arnType)
 }
 
-func (ac AdminClientMock) getRemoteBucket(_ context.Context, _, _ string) (targets *madmin.BucketTarget, err error) {
-	return nil, nil
+func (ac AdminClientMock) getRemoteBucket(ctx context.Context, bucket, arnType string) (targets *madmin.BucketTarget, err error) {
+	return minioGetRemoteBucketMock(ctx, bucket, arnType)
 }
 
 func (ac AdminClientMock) removeRemoteBucket(_ context.Context, _, _ string) error {
 	return nil
 }
 
-func (ac AdminClientMock) addRemoteBucket(_ context.Context, _ string, _ *madmin.BucketTarget) (string, error) {
-	return "", nil
+func (ac AdminClientMock) addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error) {
+	return minioAddRemoteBucketMock(ctx, bucket, target)
 }
 
 func (ac AdminClientMock) changePassword(ctx context.Context, accessKey, secretKey string) error {

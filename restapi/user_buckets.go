@@ -381,7 +381,7 @@ func getAccountBuckets(ctx context.Context, client MinioAdmin) ([]*models.Bucket
 	if err != nil {
 		return []*models.Bucket{}, err
 	}
-	var bucketInfos []*models.Bucket
+	bucketInfos := []*models.Bucket{}
 	for _, bucket := range info.Buckets {
 		bucketElem := &models.Bucket{
 			CreationDate: bucket.Created.Format(time.RFC3339),
