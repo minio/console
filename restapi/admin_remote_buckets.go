@@ -150,14 +150,7 @@ func getListRemoteBucketsResponse(session *models.Principal, params bucketApi.Li
 		return nil, ErrorWithContext(ctx, fmt.Errorf("error creating Madmin Client: %v", err))
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	buckets, err := listRemoteBuckets(ctx, adminClient)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, fmt.Errorf("error listing remote buckets: %v", err))
-	}
-	return &models.ListRemoteBucketsResponse{
-		Buckets: buckets,
-		Total:   int64(len(buckets)),
-	}, nil
+	return listRemoteBuckets(ctx, adminClient)
 }
 
 func getRemoteBucketDetailsResponse(session *models.Principal, params bucketApi.RemoteBucketDetailsParams) (*models.RemoteBucket, *models.Error) {
@@ -168,11 +161,7 @@ func getRemoteBucketDetailsResponse(session *models.Principal, params bucketApi.
 		return nil, ErrorWithContext(ctx, fmt.Errorf("error creating Madmin Client: %v", err))
 	}
 	adminClient := AdminClient{Client: mAdmin}
-	bucket, err := getRemoteBucket(ctx, adminClient, params.Name)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, fmt.Errorf("error getting remote bucket details: %v", err))
-	}
-	return bucket, nil
+	return getRemoteBucket(ctx, adminClient, params.Name)
 }
 
 func getDeleteRemoteBucketResponse(session *models.Principal, params bucketApi.DeleteRemoteBucketParams) *models.Error {
@@ -205,11 +194,11 @@ func getAddRemoteBucketResponse(session *models.Principal, params bucketApi.AddR
 	return nil
 }
 
-func listRemoteBuckets(ctx context.Context, client MinioAdmin) ([]*models.RemoteBucket, error) {
+func listRemoteBuckets(ctx context.Context, client MinioAdmin) (*models.ListRemoteBucketsResponse, *models.Error) {
 	var remoteBuckets []*models.RemoteBucket
 	buckets, err := client.listRemoteBuckets(ctx, "", "")
 	if err != nil {
-		return nil, err
+		return nil, ErrorWithContext(ctx, fmt.Errorf("error listing remote buckets: %v", err))
 	}
 	for _, bucket := range buckets {
 		remoteBucket := &models.RemoteBucket{
@@ -230,16 +219,20 @@ func listRemoteBuckets(ctx context.Context, client MinioAdmin) ([]*models.Remote
 		}
 		remoteBuckets = append(remoteBuckets, remoteBucket)
 	}
-	return remoteBuckets, nil
+
+	return &models.ListRemoteBucketsResponse{
+		Buckets: remoteBuckets,
+		Total:   int64(len(remoteBuckets)),
+	}, nil
 }
 
-func getRemoteBucket(ctx context.Context, client MinioAdmin, name string) (*models.RemoteBucket, error) {
+func getRemoteBucket(ctx context.Context, client MinioAdmin, name string) (*models.RemoteBucket, *models.Error) {
 	remoteBucket, err := client.getRemoteBucket(ctx, name, "")
 	if err != nil {
-		return nil, err
+		return nil, ErrorWithContext(ctx, fmt.Errorf("error getting remote bucket details: %v", err))
 	}
 	if remoteBucket == nil {
-		return nil, errors.New("bucket not found")
+		return nil, ErrorWithContext(ctx, "error getting remote bucket details: bucket not found")
 	}
 	return &models.RemoteBucket{
 		AccessKey:    &remoteBucket.Credentials.AccessKey,
@@ -556,20 +549,19 @@ func listExternalBucketsResponse(params bucketApi.ListExternalBucketsParams) (*m
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
-	// create a minioClient interface implementation
-	// defining the client to be used
-	remoteClient := AdminClient{Client: remoteAdmin}
-	buckets, err := getAccountBuckets(ctx, remoteClient)
+	return listExternalBuckets(ctx, AdminClient{Client: remoteAdmin})
+}
+
+func listExternalBuckets(ctx context.Context, client MinioAdmin) (*models.ListBucketsResponse, *models.Error) {
+	buckets, err := getAccountBuckets(ctx, client)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
 
-	// serialize output
-	listBucketsResponse := &models.ListBucketsResponse{
+	return &models.ListBucketsResponse{
 		Buckets: buckets,
 		Total:   int64(len(buckets)),
-	}
-	return listBucketsResponse, nil
+	}, nil
 }
 
 func getARNFromID(conf *replication.Config, rule string) string {
@@ -674,7 +666,7 @@ func deleteAllReplicationRules(ctx context.Context, session *models.Principal, b
 	err2 := mcClient.deleteAllReplicationRules(ctx)
 
 	if err2 != nil {
-		return err
+		return err2.ToGoError()
 	}
 
 	for i := range cfg.Rules {
