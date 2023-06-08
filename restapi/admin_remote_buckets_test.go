@@ -24,6 +24,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	bucketApi "github.com/minio/console/restapi/operations/bucket"
@@ -34,18 +35,49 @@ import (
 
 type RemoteBucketsTestSuite struct {
 	suite.Suite
-	assert        *assert.Assertions
-	currentServer string
-	isServerSet   bool
-	server        *httptest.Server
-	adminClient   AdminClientMock
-	minioClient   minioClientMock
+	assert           *assert.Assertions
+	currentServer    string
+	isServerSet      bool
+	server           *httptest.Server
+	adminClient      AdminClientMock
+	minioClient      minioClientMock
+	mockRemoteBucket *models.RemoteBucket
+	mockBucketTarget *madmin.BucketTarget
+	mockListBuckets  *models.ListBucketsResponse
 }
 
 func (suite *RemoteBucketsTestSuite) SetupSuite() {
 	suite.assert = assert.New(suite.T())
 	suite.adminClient = AdminClientMock{}
 	suite.minioClient = minioClientMock{}
+	suite.mockObjects()
+}
+
+func (suite *RemoteBucketsTestSuite) mockObjects() {
+	suite.mockListBuckets = &models.ListBucketsResponse{
+		Buckets: []*models.Bucket{},
+		Total:   0,
+	}
+	suite.mockRemoteBucket = &models.RemoteBucket{
+		AccessKey:    swag.String("accessKey"),
+		SecretKey:    "secretKey",
+		RemoteARN:    swag.String("remoteARN"),
+		Service:      "replication",
+		SourceBucket: swag.String("sourceBucket"),
+		TargetBucket: "targetBucket",
+		TargetURL:    "targetURL",
+		Status:       "",
+	}
+	suite.mockBucketTarget = &madmin.BucketTarget{
+		Credentials: &madmin.Credentials{
+			AccessKey: *suite.mockRemoteBucket.AccessKey,
+			SecretKey: suite.mockRemoteBucket.SecretKey,
+		},
+		Arn:          *suite.mockRemoteBucket.RemoteARN,
+		SourceBucket: *suite.mockRemoteBucket.SourceBucket,
+		TargetBucket: suite.mockRemoteBucket.TargetBucket,
+		Endpoint:     suite.mockRemoteBucket.TargetURL,
+	}
 }
 
 func (suite *RemoteBucketsTestSuite) SetupTest() {
@@ -146,16 +178,12 @@ func (suite *RemoteBucketsTestSuite) initRemoteBucketDetailsRequest() (params bu
 func (suite *RemoteBucketsTestSuite) TestGetRemoteBucketWithoutError() {
 	ctx := context.Background()
 	minioGetRemoteBucketMock = func(_ context.Context, _, _ string) (targets *madmin.BucketTarget, err error) {
-		return &madmin.BucketTarget{
-			Credentials: &madmin.Credentials{
-				AccessKey: "accessKey",
-				SecretKey: "secretKey",
-			},
-		}, nil
+		return suite.mockBucketTarget, nil
 	}
 	res, err := getRemoteBucket(ctx, &suite.adminClient, "bucketName")
-	suite.assert.NotNil(res)
 	suite.assert.Nil(err)
+	suite.assert.NotNil(res)
+	suite.assert.Equal(suite.mockRemoteBucket, res)
 }
 
 func (suite *RemoteBucketsTestSuite) TestDeleteRemoteBucketHandlerWithError() {
@@ -273,18 +301,21 @@ func (suite *RemoteBucketsTestSuite) TestListExternalBucketsWithError() {
 		return madmin.AccountInfo{}, errors.New("error")
 	}
 	res, err := listExternalBuckets(ctx, &suite.adminClient)
-	suite.assert.Nil(res)
 	suite.assert.NotNil(err)
+	suite.assert.Nil(res)
 }
 
 func (suite *RemoteBucketsTestSuite) TestListExternalBucketsWithoutError() {
 	ctx := context.Background()
 	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
-		return madmin.AccountInfo{}, nil
+		return madmin.AccountInfo{
+			Buckets: []madmin.BucketAccessInfo{},
+		}, nil
 	}
 	res, err := listExternalBuckets(ctx, &suite.adminClient)
-	suite.assert.NotNil(res)
 	suite.assert.Nil(err)
+	suite.assert.NotNil(res)
+	suite.assert.Equal(suite.mockListBuckets, res)
 }
 
 func (suite *RemoteBucketsTestSuite) TestDeleteBucketReplicationRuleHandlerWithError() {
