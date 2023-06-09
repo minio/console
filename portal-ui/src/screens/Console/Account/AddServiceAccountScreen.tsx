@@ -35,8 +35,6 @@ import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
 
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../../src/common/types";
-import api from "../../../../src/common/api";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
@@ -45,6 +43,8 @@ import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { getRandomString } from "../../../common/utils";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 const AddServiceAccount = () => {
   const dispatch = useAppDispatch();
@@ -61,8 +61,8 @@ const AddServiceAccount = () => {
 
   useEffect(() => {
     if (addSending) {
-      api
-        .invoke("POST", `/api/v1/service-account-credentials`, {
+      api.serviceAccountCredentials
+        .createServiceAccountCreds({
           policy: policyJSON,
           accessKey: accessKey,
           secretKey: secretKey,
@@ -70,23 +70,23 @@ const AddServiceAccount = () => {
         .then((res) => {
           setAddSending(false);
           setNewServiceAccount({
-            accessKey: res.accessKey || "",
-            secretKey: res.secretKey || "",
+            accessKey: res.data.accessKey || "",
+            secretKey: res.data.secretKey || "",
             url: res.url || "",
           });
         })
 
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setAddSending(false);
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         });
     }
   }, [addSending, setAddSending, dispatch, policyJSON, accessKey, secretKey]);
 
   useEffect(() => {
     if (isRestrictedByPolicy) {
-      api.invoke("GET", `/api/v1/user/policy`).then((res: string) => {
-        setPolicyJSON(JSON.stringify(JSON.parse(res), null, 4));
+      api.user.getUserPolicy().then((res) => {
+        setPolicyJSON(JSON.stringify(JSON.parse(res.data), null, 4));
       });
     }
   }, [isRestrictedByPolicy]);
