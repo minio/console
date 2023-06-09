@@ -296,7 +296,7 @@ export const permissionItems = (
     return null;
   }
 
-  const returnElements: BucketObjectItem[] = [];
+  let returnElements: BucketObjectItem[] = [];
 
   // We split current path
   const splitCurrentPath = currentPath.split("/");
@@ -354,6 +354,14 @@ export const permissionItems = (
 
           let pathToRouteElements: string[] = [];
 
+          // We verify if currentPath is contained in the path begin, if is not contained the  user has no access to this subpath
+          const cleanCurrPath = currentPath.replace(/\/$/, "");
+
+          if (!prefixItem.startsWith(cleanCurrPath) && currentPath !== "") {
+            return;
+          }
+
+          // For every split element we iterate and check if we can construct a URL
           splitItems.every((splitElement, index) => {
             if (!splitElement.includes("*") && splitElement !== "") {
               if (splitElement !== splitCurrentPath[index]) {
@@ -379,6 +387,21 @@ export const permissionItems = (
       });
     }
   });
+
+  // We clean duplicated name entries
+  if (returnElements.length > 0) {
+    let clElements: BucketObjectItem[] = [];
+    let keys: string[] = [];
+
+    returnElements.forEach((itm) => {
+      if (!keys.includes(itm.name)) {
+        clElements.push(itm);
+        keys.push(itm.name);
+      }
+    });
+
+    returnElements = clElements;
+  }
 
   return returnElements;
 };

@@ -25,10 +25,14 @@ import {
 fixture("Test resources policy").page("http://localhost:9090/");
 
 const bucket1 = "testcondition";
+const bucket3 = "my-company";
 const test1BucketBrowseButton = namedTestBucketBrowseButtonFor(bucket1);
+const test3BucketBrowseButton = namedTestBucketBrowseButtonFor(bucket3);
 export const file = Selector(".ReactVirtualized__Table__rowColumn").withText(
   "test.txt"
 );
+export const deniedError = Selector(".message-text").withText("Access Denied.");
+
 test
   .before(async (t) => {
     await functions.setUpNamedBucket(t, bucket1);
@@ -141,4 +145,72 @@ test
   })
   .after(async (t) => {
     await functions.cleanUpNamedBucketAndUploads(t, bucket1);
+  });
+
+test
+  .before(async (t) => {
+    await functions.setUpNamedBucket(t, bucket3);
+    await functions.uploadNamedObjectToBucket(
+      t,
+      bucket3,
+      "test.txt",
+      "portal-ui/tests/uploads/test.txt"
+    );
+    await functions.uploadNamedObjectToBucket(
+      t,
+      bucket3,
+      "home/UserY/test.txt",
+      "portal-ui/tests/uploads/test.txt"
+    );
+    await functions.uploadNamedObjectToBucket(
+      t,
+      bucket3,
+      "home/UserX/test.txt",
+      "portal-ui/tests/uploads/test.txt"
+    );
+    await functions.uploadNamedObjectToBucket(
+      t,
+      bucket3,
+      "home/User/test.txt",
+      "portal-ui/tests/uploads/test.txt"
+    );
+    await functions.uploadNamedObjectToBucket(
+      t,
+      bucket3,
+      "home/User/secondlevel/thirdlevel/test.txt",
+      "portal-ui/tests/uploads/test.txt"
+    );
+  })("User can browse from sub levels as policy has wildcard", async (t) => {
+    await t
+      .useRole(roles.conditions3)
+      .navigateTo(`http://localhost:9090/browser`)
+      .click(test3BucketBrowseButton)
+      .wait(1500)
+      .click(Selector(".ReactVirtualized__Table__rowColumn").withText("home"))
+      .wait(1500)
+      .click(Selector(".ReactVirtualized__Table__rowColumn").withText("User"))
+      .wait(1500)
+      .expect(file.exists)
+      .ok()
+      .click(
+        Selector(".ReactVirtualized__Table__rowColumn").withText("secondlevel")
+      )
+      .wait(1500)
+      .click(
+        Selector(".ReactVirtualized__Table__rowColumn").withText("thirdlevel")
+      )
+      .wait(1500)
+      .expect(file.exists)
+      .ok()
+      .navigateTo(`http://localhost:9090/browser`)
+      .click(test3BucketBrowseButton)
+      .wait(1500)
+      .click(Selector(".ReactVirtualized__Table__rowColumn").withText("home"))
+      .wait(1500)
+      .click(Selector(".ReactVirtualized__Table__rowColumn").withText("UserX"))
+      .expect(deniedError.exists)
+      .ok();
+  })
+  .after(async (t) => {
+    await functions.cleanUpNamedBucketAndUploads(t, bucket3);
   });

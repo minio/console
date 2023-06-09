@@ -25,7 +25,7 @@ const ExportConfigButton = () => {
   );
 
   return (
-    <TooltipWrapper tooltip="Warning!. The resulting file would contain server configuration information in plain text.">
+    <TooltipWrapper tooltip="Warning! The resulting file will contain server configuration information in plain text">
       <Button
         id={"export-config"}
         onClick={() => {
