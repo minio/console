@@ -28,8 +28,6 @@ import (
 
 	"github.com/minio/madmin-go/v2"
 
-	"github.com/minio/console/pkg/utils"
-
 	errorsApi "github.com/go-openapi/errors"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth"
@@ -374,34 +372,6 @@ func newWebSocketMinioClient(conn *websocket.Conn, claims *models.Principal) (*w
 func wsReadClientCtx(parentContext context.Context, conn WSConn) context.Context {
 	// a cancel context is needed to end all goroutines used
 	ctx, cancel := context.WithCancel(context.Background())
-
-	var requestID string
-	var SessionID string
-	var UserAgent string
-	var Host string
-	var RemoteHost string
-
-	if val, o := parentContext.Value(utils.ContextRequestID).(string); o {
-		requestID = val
-	}
-	if val, o := parentContext.Value(utils.ContextRequestUserID).(string); o {
-		SessionID = val
-	}
-	if val, o := parentContext.Value(utils.ContextRequestUserAgent).(string); o {
-		UserAgent = val
-	}
-	if val, o := parentContext.Value(utils.ContextRequestHost).(string); o {
-		Host = val
-	}
-	if val, o := parentContext.Value(utils.ContextRequestRemoteAddr).(string); o {
-		RemoteHost = val
-	}
-
-	ctx = context.WithValue(ctx, utils.ContextRequestID, requestID)
-	ctx = context.WithValue(ctx, utils.ContextRequestUserID, SessionID)
-	ctx = context.WithValue(ctx, utils.ContextRequestUserAgent, UserAgent)
-	ctx = context.WithValue(ctx, utils.ContextRequestHost, Host)
-	ctx = context.WithValue(ctx, utils.ContextRequestRemoteAddr, RemoteHost)
 
 	go func() {
 		defer cancel()
