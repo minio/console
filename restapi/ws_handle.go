@@ -371,7 +371,7 @@ func newWebSocketMinioClient(conn *websocket.Conn, claims *models.Principal) (*w
 // will return.
 func wsReadClientCtx(parentContext context.Context, conn WSConn) context.Context {
 	// a cancel context is needed to end all goroutines used
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(parentContext)
 
 	go func() {
 		defer cancel()
