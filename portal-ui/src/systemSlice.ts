@@ -29,7 +29,6 @@ export interface SystemState {
   loggedIn: boolean;
   showMarketplace: boolean;
   sidebarOpen: boolean;
-  session: string;
   userName: string;
   serverNeedsRestart: boolean;
   serverIsLoading: boolean;
@@ -51,7 +50,6 @@ const initialState: SystemState = {
   value: 0,
   loggedIn: false,
   showMarketplace: false,
-  session: "",
   userName: "",
   sidebarOpen: initSideBarOpen,
   siteReplicationInfo: { siteName: "", curSite: false, enabled: false },
@@ -155,7 +153,6 @@ export const systemSlice = createSlice({
       state.licenseInfo = action.payload;
     },
     setHelpName: (state, action: PayloadAction<string>) => {
-      console.log("setting helpName: ", action.payload);
       state.helpName = action.payload;
     },
     setHelpTabName: (state, action: PayloadAction<string>) => {

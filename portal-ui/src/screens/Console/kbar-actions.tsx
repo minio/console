@@ -21,9 +21,9 @@ import { IAM_PAGES } from "../../common/SecureComponent/permissions";
 import { Bucket } from "../../api/consoleApi";
 
 export const routesAsKbarActions = (
-  features: string[] | undefined,
   buckets: Bucket[],
-  navigate: (url: string) => void
+  navigate: (url: string) => void,
+  features?: string[]
 ) => {
   const initialActions: Action[] = [];
   const allowedMenuItems = validRoutes(features);
