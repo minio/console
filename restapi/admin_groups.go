@@ -75,7 +75,7 @@ func registerGroupsHandlers(api *operations.ConsoleAPI) {
 func getListGroupsResponse(session *models.Principal, params groupApi.ListGroupsParams) (*models.ListGroupsResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -110,7 +110,7 @@ func groupInfo(ctx context.Context, client MinioAdmin, group string) (*madmin.Gr
 func getGroupInfoResponse(session *models.Principal, params groupApi.GroupInfoParams) (*models.Group, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -161,7 +161,7 @@ func getAddGroupResponse(session *models.Principal, params groupApi.AddGroupPara
 		return ErrorWithContext(ctx, ErrGroupBodyNotInRequest)
 	}
 	groupRequest := params.Body
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -204,7 +204,7 @@ func getRemoveGroupResponse(session *models.Principal, params groupApi.RemoveGro
 	if params.Name == "" {
 		return ErrorWithContext(ctx, ErrGroupNameNotInRequest)
 	}
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -298,7 +298,7 @@ func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGro
 		return nil, ErrorWithContext(ctx, err)
 	}
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

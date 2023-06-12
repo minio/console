@@ -39,7 +39,7 @@ func registerNodesHandler(api *operations.ConsoleAPI) {
 func getListNodesResponse(session *models.Principal, params systemApi.ListNodesParams) ([]string, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

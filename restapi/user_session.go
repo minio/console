@@ -78,9 +78,8 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		return nil, ErrorWithContext(ctx, ErrInvalidSession)
 	}
 	tokenClaims, _ := getClaimsFromToken(session.STSSessionToken)
-
 	// initialize admin client
-	mAdminClient, err := NewMinioAdminClient(&models.Principal{
+	mAdminClient, err := NewMinioAdminClient(ctx, &models.Principal{
 		STSAccessKeyID:     session.STSAccessKeyID,
 		STSSecretAccessKey: session.STSSecretAccessKey,
 		STSSessionToken:    session.STSSessionToken,

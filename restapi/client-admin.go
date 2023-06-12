@@ -24,44 +24,20 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/minio/console/models"
-	"github.com/minio/console/pkg"
 	"github.com/minio/madmin-go/v2"
 	mcCmd "github.com/minio/mc/cmd"
-	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
 const globalAppName = "MinIO Console"
-
-// NewAdminClientWithInsecure gives a new madmin client interface either secure or insecure based on parameter
-func NewAdminClientWithInsecure(url, accessKey, secretKey, sessionToken string, insecure bool) (*madmin.AdminClient, *probe.Error) {
-	admClient, err := s3AdminNew(&mcCmd.Config{
-		HostURL:      url,
-		AccessKey:    accessKey,
-		SecretKey:    secretKey,
-		SessionToken: sessionToken,
-		AppName:      globalAppName,
-		AppVersion:   pkg.Version,
-		Insecure:     insecure,
-	})
-	if err != nil {
-		return nil, err.Trace(url)
-	}
-	stsClient := PrepareConsoleHTTPClient(insecure)
-	admClient.SetCustomTransport(stsClient.Transport)
-	// set user-agent to differentiate Console UI requests for auditing.
-	admClient.SetAppInfo("MinIO Console", pkg.Version)
-	return admClient, nil
-}
-
-// s3AdminNew returns an initialized minioAdmin structure. If debug is enabled,
-// it also enables an internal trace transport.
-var s3AdminNew = mcCmd.NewAdminFactory()
 
 // MinioAdmin interface with all functions to be implemented
 // by mock when testing, it should include all MinioAdmin respective api calls
@@ -86,7 +62,6 @@ type MinioAdmin interface {
 	helpConfigKVGlobal(ctx context.Context, envOnly bool) (madmin.Help, error)
 	setConfigKV(ctx context.Context, kv string) (restart bool, err error)
 	delConfigKV(ctx context.Context, kv string) (err error)
-
 	serviceRestart(ctx context.Context) error
 	serverInfo(ctx context.Context) (madmin.InfoMessage, error)
 	startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
@@ -347,7 +322,6 @@ func (ac AdminClient) addServiceAccount(ctx context.Context, policy *iampolicy.P
 
 // implements madmin.ListServiceAccounts()
 func (ac AdminClient) listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
-	// TODO: Fix this
 	return ac.Client.ListServiceAccounts(ctx, user)
 }
 
@@ -485,8 +459,9 @@ func (ac AdminClient) verifyTierStatus(ctx context.Context, tierName string) err
 	return ac.Client.VerifyTier(ctx, tierName)
 }
 
-func NewMinioAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {
-	adminClient, err := newAdminFromClaims(sessionClaims)
+func NewMinioAdminClient(ctx context.Context, sessionClaims *models.Principal) (*madmin.AdminClient, error) {
+	clientIP := utils.ClientIPFromContext(ctx)
+	adminClient, err := newAdminFromClaims(sessionClaims, clientIP)
 	if err != nil {
 		return nil, err
 	}
@@ -494,7 +469,7 @@ func NewMinioAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, 
 }
 
 // newAdminFromClaims creates a minio admin from Decrypted claims using Assume role credentials
-func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
+func newAdminFromClaims(claims *models.Principal, clientIP string) (*madmin.AdminClient, error) {
 	tlsEnabled := getMinIOEndpointIsSecure()
 	endpoint := getMinIOEndpoint()
 
@@ -505,7 +480,7 @@ func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	adminClient.SetCustomTransport(GetConsoleHTTPClient(getMinIOServer()).Transport)
+	adminClient.SetCustomTransport(GetConsoleHTTPClient(getMinIOServer(), clientIP).Transport)
 	return adminClient, nil
 }
 
@@ -554,7 +529,7 @@ func isLocalIPAddress(ipAddr string) bool {
 // GetConsoleHTTPClient caches different http clients depending on the target endpoint while taking
 // in consideration CA certs stored in ${HOME}/.console/certs/CAs and ${HOME}/.minio/certs/CAs
 // If the target endpoint points to a loopback device, skip the TLS verification.
-func GetConsoleHTTPClient(address string) *http.Client {
+func GetConsoleHTTPClient(address string, clientIP string) *http.Client {
 	u, err := url.Parse(address)
 	if err == nil {
 		address = u.Hostname()
@@ -567,11 +542,39 @@ func GetConsoleHTTPClient(address string) *http.Client {
 		return client
 	}
 
-	client = PrepareConsoleHTTPClient(isLocalIPAddress(address))
+	client = PrepareConsoleHTTPClient(isLocalIPAddress(address), clientIP)
 	httpClients.Lock()
 	httpClients.m[address] = client
 	httpClients.Unlock()
 	return client
+}
+
+func getClientIP(r *http.Request) string {
+	// Try to get the IP address from the X-Real-IP header
+	// If the X-Real-IP header is not present, then it will return an empty string
+	xRealIP := r.Header.Get("X-Real-IP")
+	if xRealIP != "" {
+		return xRealIP
+	}
+
+	// Try to get the IP address from the X-Forwarded-For header
+	// If the X-Forwarded-For header is not present, then it will return an empty string
+	xForwardedFor := r.Header.Get("X-Forwarded-For")
+	if xForwardedFor != "" {
+		// X-Forwarded-For can contain multiple addresses, we return the first one
+		split := strings.Split(xForwardedFor, ",")
+		if len(split) > 0 {
+			return strings.TrimSpace(split[0])
+		}
+	}
+
+	// If neither header is present (or they were empty), then fall back to the connection's remote address
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		// In case there's an error, return an empty string
+		return ""
+	}
+	return ip
 }
 
 func (ac AdminClient) speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error) {
