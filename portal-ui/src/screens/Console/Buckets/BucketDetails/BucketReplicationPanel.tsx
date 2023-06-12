@@ -42,7 +42,7 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import withSuspense from "../../Common/Components/withSuspense";
 import EditReplicationModal from "./EditReplicationModal";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useParams } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
@@ -94,6 +94,11 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
     IAM_SCOPES.S3_GET_ACTIONS,
   ]);
+
+  useEffect(() => {
+    dispatch(setHelpName("bucket_detail_replication"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (loadingBucket) {

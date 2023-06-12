@@ -46,6 +46,8 @@ import {
 } from "../logsSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../../HelpMenu";
+import { setHelpName } from "../../../../systemSlice";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -76,7 +78,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const SelectStyled = withStyles((theme: Theme) =>
+export const SelectStyled = withStyles((theme: Theme) =>
   createStyles({
     root: {
       lineHeight: "50px",
@@ -231,9 +233,15 @@ const ErrorLogs = () => {
       });
   }, []);
 
+  useEffect(() => {
+    dispatch(setHelpName("error_logs"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
-      <PageHeaderWrapper label="Logs" />
+      <PageHeaderWrapper label="Logs" actions={<HelpMenu />} />
+
       <PageLayout>
         <Grid container spacing={1}>
           <Grid item xs={4}>

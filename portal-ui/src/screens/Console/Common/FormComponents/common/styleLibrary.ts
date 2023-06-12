@@ -101,6 +101,13 @@ export const tooltipHelper = {
   },
 };
 
+export const helpMarkdown = {
+  markdown: {
+    whiteSpace: "pre-wrap",
+    display: "block",
+  },
+};
+
 const checkBoxBasic = {
   width: 16,
   height: 16,

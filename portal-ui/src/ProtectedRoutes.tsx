@@ -16,8 +16,6 @@
 
 import React, { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import api from "./common/api";
-import { ISessionResponse } from "./screens/Console/types";
 import useApi from "./screens/Console/Common/Hooks/useApi";
 import { ErrorResponseHandler } from "./common/types";
 import { ReplicationSite } from "./screens/Console/Configurations/SiteReplication/SiteReplication";
@@ -34,6 +32,7 @@ import { AppState, useAppDispatch } from "./store";
 import { saveSessionResponse } from "./screens/Console/consoleSlice";
 import { getOverrideColorVariants } from "./utils/stylesUtils";
 import LoadingComponent from "./common/LoadingComponent";
+import { api } from "api";
 
 interface ProtectedRouteProps {
   Component: any;
@@ -58,17 +57,17 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   const screen = pathnameParts.length > 2 ? pathnameParts[1] : "";
 
   useEffect(() => {
-    api
-      .invoke("GET", `/api/v1/session`)
-      .then((res: ISessionResponse) => {
-        dispatch(saveSessionResponse(res));
+    api.session
+      .sessionCheck()
+      .then((res) => {
+        dispatch(saveSessionResponse(res.data));
         dispatch(userLogged(true));
         setSessionLoading(false);
-        dispatch(globalSetDistributedSetup(res?.distributedMode || false));
+        dispatch(globalSetDistributedSetup(res.data?.distributedMode || false));
 
-        if (res.customStyles && res.customStyles !== "") {
+        if (res.data.customStyles && res.data.customStyles !== "") {
           const overrideColorVariants = getOverrideColorVariants(
-            res.customStyles
+            res.data.customStyles
           );
 
           if (overrideColorVariants !== false) {
@@ -86,16 +85,13 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
             return;
           }
           // before marking the session as done, let's check if the bucket is publicly accessible
-          api
-            .invoke(
-              "GET",
-              `/api/v1/buckets/${bucket}/objects?limit=1`,
-              undefined,
-              {
-                "X-Anonymous": "1",
-              }
+          api.buckets
+            .listObjects(
+              bucket,
+              { limit: 1 },
+              { headers: { "X-Anonymous": "1" } }
             )
-            .then((value) => {
+            .then(() => {
               dispatch(setAnonymousMode());
               setSessionLoading(false);
             })

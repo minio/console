@@ -41,10 +41,11 @@ import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { getRandomString } from "../../../common/utils";
+import HelpMenu from "../HelpMenu";
 
 const AddServiceAccount = () => {
   const dispatch = useAppDispatch();
@@ -58,6 +59,11 @@ const AddServiceAccount = () => {
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);
   const [policyJSON, setPolicyJSON] = useState<string>("");
+
+  useEffect(() => {
+    dispatch(setHelpName("add_service_account"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (addSending) {
@@ -128,6 +134,7 @@ const AddServiceAccount = () => {
               onClick={() => navigate(IAM_PAGES.ACCOUNT)}
             />
           }
+          actions={<HelpMenu />}
         />
         <PageLayout>
           <FormLayout

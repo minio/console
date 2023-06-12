@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackLink, Box, FormLayout, PageLayout } from "mds";
 import { destinationList, DestType } from "./utils";
@@ -23,6 +23,10 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import NotificationEndpointTypeSelectorHelpBox from "../Account/NotificationEndpointTypeSelectorHelpBox";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import DestinationButton from "./DestinationButton";
+
+import HelpMenu from "../HelpMenu";
+import { useAppDispatch } from "../../../store";
+import { setHelpName } from "../../../systemSlice";
 
 const withLogos = destinationList.filter((elService) => elService.logo !== "");
 const database = withLogos.filter(
@@ -37,6 +41,11 @@ const functions = withLogos.filter(
 
 const EventTypeSelector = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setHelpName("notification_type_selector"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Fragment>
       <PageHeaderWrapper
@@ -48,7 +57,7 @@ const EventTypeSelector = () => {
             />
           </Fragment>
         }
-        actions={<React.Fragment />}
+        actions={<HelpMenu />}
       />
       <PageLayout>
         <FormLayout helpBox={<NotificationEndpointTypeSelectorHelpBox />}>

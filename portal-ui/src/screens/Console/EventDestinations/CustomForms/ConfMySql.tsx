@@ -277,7 +277,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           label="Queue Dir"
           placeholder="Enter Queue Dir"
           value={queueDir}
-          tooltip="staging dir for undelivered messages e.g. '/home/events'"
+          tooltip="Staging directory for undelivered messages e.g. '/home/events'"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setQueueDir(e.target.value);
           }}
@@ -291,7 +291,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           placeholder="Enter Queue Limit"
           type="number"
           value={queueLimit}
-          tooltip="maximum limit for undelivered messages, defaults to '10000'"
+          tooltip="Maximum limit for undelivered messages, defaults to '10000'"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setQueueLimit(e.target.value);
           }}

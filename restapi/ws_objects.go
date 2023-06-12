@@ -104,9 +104,10 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 							}
 							if lsObj.Err != nil {
 								writeChannel <- WSResponse{
-									RequestID: messageRequest.RequestID,
-									Error:     lsObj.Err.Error(),
-									Prefix:    messageRequest.Prefix,
+									RequestID:  messageRequest.RequestID,
+									Error:      lsObj.Err.Error(),
+									Prefix:     messageRequest.Prefix,
+									BucketName: messageRequest.BucketName,
 								}
 
 								continue
@@ -177,9 +178,10 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 						for lsObj := range startRewindListing(ctx, mcS3C, objectRqConfigs) {
 							if lsObj.Err != nil {
 								writeChannel <- WSResponse{
-									RequestID: messageRequest.RequestID,
-									Error:     lsObj.Err.String(),
-									Prefix:    messageRequest.Prefix,
+									RequestID:  messageRequest.RequestID,
+									Error:      lsObj.Err.String(),
+									Prefix:     messageRequest.Prefix,
+									BucketName: messageRequest.BucketName,
 								}
 
 								continue

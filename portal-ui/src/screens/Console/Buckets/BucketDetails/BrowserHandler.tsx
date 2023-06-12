@@ -214,7 +214,7 @@ const BrowserHandler = () => {
           }
 
           const permitItems = permissionItems(
-            bucketName,
+            response.bucketName || bucketName,
             pathPrefix,
             allowResources || []
           );

@@ -19,13 +19,14 @@
     "local-storage-fallback": "^4.1.1",
     "lodash": "^4.17.21",
     "luxon": "^3.3.0",
-    "mds": "https://github.com/minio/mds.git#v0.5.1",
+    "mds": "https://github.com/minio/mds.git#v0.6.0",
     "react": "^18.1.0",
     "react-component-export-image": "^1.0.6",
     "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^18.1.0",
     "react-dropzone": "^14.2.3",
     "react-grid-layout": "^1.2.0",
+    "react-markdown": "8.0.7",
     "react-redux": "^8.0.7",
     "react-router-dom": "6.11.2",
     "react-virtualized": "^9.22.5",
@@ -110,7 +111,8 @@
     "react-scripts/**/debug": "^3.1.0",
     "recharts/**/d3-color": "^3.1.0",
     "minio/xml2js": "^0.5.0",
-    "websocket/debug": "^3.1.0"
+    "websocket/debug": "^3.1.0",
+    "fast-xml-parser": "^4.2.4"
   },
   "main": "index.js"
 }

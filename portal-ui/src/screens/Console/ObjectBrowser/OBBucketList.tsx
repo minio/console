@@ -44,7 +44,7 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import SearchBox from "../Common/SearchBox";
 import hasPermission from "../../../common/SecureComponent/accessControl";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import { selFeatures } from "../consoleSlice";
@@ -63,6 +63,7 @@ import {
 import { api } from "../../../api";
 import { errorToHandler } from "../../../api/errors";
 import { setLoadingObjects } from "./objectBrowserSlice";
+import HelpMenu from "../HelpMenu";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -143,9 +144,16 @@ const OBListBuckets = () => {
     },
   ];
 
+  useEffect(() => {
+    dispatch(setHelpName("object_browser"));
+  }, [dispatch]);
+
   return (
     <Fragment>
-      {!obOnly && <PageHeaderWrapper label={"Object Browser"} />}
+      {!obOnly && (
+        <PageHeaderWrapper label={"Object Browser"} actions={<HelpMenu />} />
+      )}
+
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray} display="flex">
           {obOnly && (

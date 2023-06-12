@@ -44,6 +44,7 @@ type WSResponse struct {
 	Error      string           `json:"error,omitempty"`
 	RequestEnd bool             `json:"request_end,omitempty"`
 	Prefix     string           `json:"prefix,omitempty"`
+	BucketName string           `json:"bucketName,omitempty"`
 	Data       []ObjectResponse `json:"data,omitempty"`
 }
 

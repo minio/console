@@ -48,6 +48,7 @@ const MenuItem = ({
   id = `${Math.random()}`,
   setPreviewMenuGroup,
   previewMenuGroup,
+  displayImage = false,
 }: {
   page: any;
   stateClsName?: string;
@@ -59,6 +60,7 @@ const MenuItem = ({
   id?: string;
   setPreviewMenuGroup: (value: string) => void;
   previewMenuGroup: string;
+  displayImage?: boolean;
 }) => {
   const childrenMenuList = page?.children?.filter(
     (item: any) =>

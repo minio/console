@@ -49,7 +49,7 @@ import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 
 import { encodeURLString } from "../../../common/utils";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
@@ -60,6 +60,7 @@ import {
   ListPoliciesResponse,
   Policy,
 } from "../../../api/consoleApi";
+import HelpMenu from "../HelpMenu";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -187,6 +188,11 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
     elementItem.name?.includes(filterPolicies)
   );
 
+  useEffect(() => {
+    dispatch(setHelpName("list_policies"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <React.Fragment>
       {deleteOpen && (
@@ -196,7 +202,8 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <PageHeaderWrapper label="IAM Policies" />
+      <PageHeaderWrapper label="IAM Policies" actions={<HelpMenu />} />
+
       <PageLayout className={classes.pageContainer}>
         <Grid container spacing={1}>
           <Grid item xs={12} className={classes.actionsTray}>

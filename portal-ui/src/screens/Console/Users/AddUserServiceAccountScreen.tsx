@@ -53,9 +53,10 @@ import {
   encodeURLString,
   getRandomString,
 } from "../../../common/utils";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 interface IAddServiceAccountProps {
   classes: any;
@@ -152,6 +153,11 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
     navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
   };
 
+  useEffect(() => {
+    dispatch(setHelpName("add_user_SA"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       {newServiceAccount && (
@@ -174,6 +180,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
               label={"User Details - " + userName}
             />
           }
+          actions={<HelpMenu />}
         />
         <PageLayout>
           <Box

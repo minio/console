@@ -43,6 +43,8 @@ export interface SystemState {
   licenseInfo: null | SubnetInfo;
   overrideStyles: null | IEmbeddedCustomStyles;
   anonymousMode: boolean;
+  helpName: string;
+  helpTabName: string;
 }
 
 const initialState: SystemState = {
@@ -72,6 +74,8 @@ const initialState: SystemState = {
   licenseInfo: null,
   overrideStyles: null,
   anonymousMode: false,
+  helpName: "help",
+  helpTabName: "docs",
 };
 
 export const systemSlice = createSlice({
@@ -150,6 +154,14 @@ export const systemSlice = createSlice({
     setSystemLicenseInfo: (state, action: PayloadAction<SubnetInfo | null>) => {
       state.licenseInfo = action.payload;
     },
+    setHelpName: (state, action: PayloadAction<string>) => {
+      console.log("setting helpName: ", action.payload);
+      state.helpName = action.payload;
+    },
+    setHelpTabName: (state, action: PayloadAction<string>) => {
+      state.helpTabName = action.payload;
+    },
+
     setOverrideStyles: (
       state,
       action: PayloadAction<IEmbeddedCustomStyles>
@@ -186,6 +198,8 @@ export const {
   setAnonymousMode,
   resetSystem,
   configurationIsLoading,
+  setHelpName,
+  setHelpTabName,
 } = systemSlice.actions;
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;

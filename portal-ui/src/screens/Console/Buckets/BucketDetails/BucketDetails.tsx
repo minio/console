@@ -67,6 +67,7 @@ import {
   selDistSet,
   selSiteRep,
   setErrorSnackMessage,
+  setHelpName,
 } from "../../../../systemSlice";
 import {
   selBucketDetailsInfo,
@@ -77,6 +78,7 @@ import {
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../../HelpMenu";
 
 const DeleteBucket = withSuspense(
   React.lazy(() => import("../ListBuckets/DeleteBucket"))
@@ -141,6 +143,11 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
   useEffect(() => {
     setActiveTab(selTab);
   }, [selTab]);
+
+  useEffect(() => {
+    dispatch(setHelpName("bucket_details"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!iniLoad) {
@@ -208,31 +215,36 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
           <BackLink label={"Buckets"} onClick={() => navigate("/buckets")} />
         }
         actions={
-          <TooltipWrapper
-            tooltip={
-              canBrowse
-                ? "Browse Bucket"
-                : permissionTooltipHelper(
-                    IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER],
-                    "browsing this bucket"
-                  )
-            }
-          >
-            <Button
-              id={"switch-browse-view"}
-              aria-label="Browse Bucket"
-              onClick={() => {
-                navigate(`/browser/${bucketName}`);
-              }}
-              icon={
-                <FolderIcon style={{ width: 20, height: 20, marginTop: -3 }} />
+          <Fragment>
+            <TooltipWrapper
+              tooltip={
+                canBrowse
+                  ? "Browse Bucket"
+                  : permissionTooltipHelper(
+                      IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER],
+                      "browsing this bucket"
+                    )
               }
-              style={{
-                padding: "0 10px",
-              }}
-              disabled={!canBrowse}
-            />
-          </TooltipWrapper>
+            >
+              <Button
+                id={"switch-browse-view"}
+                aria-label="Browse Bucket"
+                onClick={() => {
+                  navigate(`/browser/${bucketName}`);
+                }}
+                icon={
+                  <FolderIcon
+                    style={{ width: 20, height: 20, marginTop: -3 }}
+                  />
+                }
+                style={{
+                  padding: "0 10px",
+                }}
+                disabled={!canBrowse}
+              />
+            </TooltipWrapper>
+            <HelpMenu />
+          </Fragment>
         }
       />
       <PageLayout className={classes.pageContainer}>

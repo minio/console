@@ -272,3 +272,14 @@ export const conditions2 = Role(
   },
   { preserveUrl: true }
 );
+
+export const conditions3 = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "conditions-3-" + unixTimestamp)
+      .typeText("#secretKey", "conditions1234")
+      .click(submitButton);
+  },
+  { preserveUrl: true }
+);

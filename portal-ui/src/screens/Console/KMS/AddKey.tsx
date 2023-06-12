@@ -14,17 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import Grid from "@mui/material/Grid";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import AddKeyForm from "./AddKeyForm";
-import { BackLink } from "mds";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { BackLink } from "mds";
+import HelpMenu from "../HelpMenu";
 
 const AddKey = () => {
   const dispatch = useAppDispatch();
@@ -34,6 +35,11 @@ const AddKey = () => {
 
   const onError = (err: ErrorResponseHandler) =>
     dispatch(setErrorSnackMessage(err));
+
+  useEffect(() => {
+    dispatch(setHelpName("add_key"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Fragment>
@@ -45,6 +51,7 @@ const AddKey = () => {
               onClick={() => navigate(IAM_PAGES.KMS_KEYS)}
             />
           }
+          actions={<HelpMenu />}
         />
         <AddKeyForm onError={onError} onSuccess={onSuccess} />
       </Grid>

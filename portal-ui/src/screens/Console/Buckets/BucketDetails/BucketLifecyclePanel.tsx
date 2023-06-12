@@ -42,6 +42,8 @@ import DeleteBucketLifecycleRule from "./DeleteBucketLifecycleRule";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useParams } from "react-router-dom";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import { setHelpName } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -69,6 +71,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
   const [deleteLifecycleOpen, setDeleteLifecycleOpen] =
     useState<boolean>(false);
   const [selectedID, setSelectedID] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
 
   const bucketName = params.bucketName || "";
 
@@ -82,6 +85,11 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
       setLoadingLifecycle(true);
     }
   }, [loadingBucket, setLoadingLifecycle]);
+
+  useEffect(() => {
+    dispatch(setHelpName("bucket_detail_lifecycle"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (loadingLifecycle) {

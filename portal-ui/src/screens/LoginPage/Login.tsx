@@ -27,6 +27,13 @@ import StrategyForm from "./StrategyForm";
 import { getLogoVar } from "../../config";
 import { RedirectRule } from "api/consoleApi";
 import { redirectRules } from "./login.utils";
+import { setHelpName } from "../../systemSlice";
+
+export interface LoginStrategyPayload {
+  accessKey: string;
+  secretKey: string;
+  sts?: string;
+}
 
 export const getTargetPath = () => {
   let targetPath = "/";
@@ -147,6 +154,11 @@ const Login = () => {
     docsURL =
       "https://min.io/docs/minio/kubernetes/upstream/index.html?ref=con";
   }
+
+  useEffect(() => {
+    dispatch(setHelpName("login"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Fragment>

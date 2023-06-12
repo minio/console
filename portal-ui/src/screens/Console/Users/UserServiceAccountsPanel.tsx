@@ -45,7 +45,11 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
 import { encodeURLString } from "../../../common/utils";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setHelpName,
+  setSnackBarMessage,
+} from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
@@ -178,6 +182,11 @@ const UserServiceAccountsPanel = ({
     { type: "delete", onClick: confirmDeleteServiceAccount },
   ];
 
+  useEffect(() => {
+    dispatch(setHelpName("user_details_accounts"));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <React.Fragment>
       {addScreenOpen && (
