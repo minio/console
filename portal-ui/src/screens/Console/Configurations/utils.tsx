@@ -105,7 +105,7 @@ export const fieldsConfigurations: any = {
       required: false,
       label: "Extensions",
       tooltip:
-        'Extensions to compress e.g. ".txt",".log" or ".csv", you can write one per field',
+        'Extensions to compress e.g. ".txt", ".log" or ".csv" -  you can write one per field',
       type: "csv",
       placeholder: "Enter an Extension",
       withBorder: true,
@@ -115,7 +115,7 @@ export const fieldsConfigurations: any = {
       required: false,
       label: "Mime Types",
       tooltip:
-        'Mime types e.g. "text/*","application/json" or "application/xml", you can write one per field',
+        'Mime types e.g. "text/*", "application/json" or "application/xml" - you can write one per field',
       type: "csv",
       placeholder: "Enter a Mime Type",
       withBorder: true,
@@ -170,16 +170,16 @@ export const fieldsConfigurations: any = {
       required: false,
       label: "Max Sleep",
       tooltip:
-        "Maximum sleep duration between objects to slow down heal operation. eg. 2s",
+        "Maximum sleep duration between objects to slow down heal operation, e.g. 2s",
       type: "duration",
-      placeholder: "Enter Max Sleep duration",
+      placeholder: "Enter Max Sleep Duration",
     },
     {
       name: "max_io",
       required: false,
       label: "Max IO",
       tooltip:
-        "Maximum IO requests allowed between objects to slow down heal operation. eg. 3",
+        "Maximum IO requests allowed between objects to slow down heal operation, e.g. 3",
       type: "number",
       placeholder: "Enter Max IO",
     },
@@ -188,7 +188,7 @@ export const fieldsConfigurations: any = {
     {
       name: "delay",
       required: false,
-      label: "Delay multiplier",
+      label: "Delay Multiplier",
       tooltip: "Scanner delay multiplier, defaults to '10.0'",
       type: "number",
       placeholder: "Enter Delay",
@@ -216,7 +216,7 @@ export const fieldsConfigurations: any = {
       required: true,
       label: "Endpoints",
       tooltip:
-        'List of etcd endpoints e.g. "http://localhost:2379", you can write one per field',
+        'List of etcd endpoints e.g. "http://localhost:2379" - you can write one per field',
       type: "csv",
       placeholder: "Enter Endpoint",
     },
@@ -310,7 +310,7 @@ export const fieldsConfigurations: any = {
       required: true,
       label: "Brokers",
       type: "csv",
-      placeholder: "Enter Kafka broker",
+      placeholder: "Enter Kafka Broker",
     },
     {
       name: "topic",
@@ -324,7 +324,8 @@ export const fieldsConfigurations: any = {
       name: "sasl",
       required: false,
       label: "Use SASL",
-      tooltip: "Enable SASL authentication",
+      tooltip:
+        "Enable SASL (Simple Authentication and Security Layer) authentication",
       type: "on|off",
     },
     {
@@ -355,7 +356,7 @@ export const fieldsConfigurations: any = {
       name: "tls",
       required: false,
       label: "Use TLS",
-      tooltip: "Enable TLS",
+      tooltip: "Enable TLS (Transport Layer Security)",
       type: "on|off",
     },
     {
@@ -386,7 +387,7 @@ export const fieldsConfigurations: any = {
       required: false,
       label: "TLS Client Auth",
       tooltip:
-        "ClientAuth determines the Kafka server's policy for TLS client auth",
+        "ClientAuth determines the Kafka server's policy for TLS client authorization",
       type: "string",
     },
     {
