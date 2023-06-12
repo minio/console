@@ -15,22 +15,22 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ISessionResponse } from "./types";
 import { AppState } from "../../store";
+import { SessionResponse } from "api/consoleApi";
 
 export interface ConsoleState {
-  session: ISessionResponse;
+  session: SessionResponse;
 }
 
 const initialState: ConsoleState = {
   session: {
-    status: "",
+    status: undefined,
     features: [],
     distributedMode: false,
     permissions: {},
-    allowResources: null,
-    customStyles: null,
-    envConstants: null,
+    allowResources: undefined,
+    customStyles: undefined,
+    envConstants: undefined,
     serverEndPoint: "",
   },
 };
@@ -39,7 +39,7 @@ export const consoleSlice = createSlice({
   name: "console",
   initialState,
   reducers: {
-    saveSessionResponse: (state, action: PayloadAction<ISessionResponse>) => {
+    saveSessionResponse: (state, action: PayloadAction<SessionResponse>) => {
       state.session = action.payload;
     },
     resetSession: (state) => {

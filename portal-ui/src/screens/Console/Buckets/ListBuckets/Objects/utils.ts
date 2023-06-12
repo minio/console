@@ -15,11 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BucketObjectItem } from "./ListObjects/types";
-import { IAllowResources } from "../../../types";
 import { encodeURLString } from "../../../../../common/utils";
 import { removeTrace } from "../../../ObjectBrowser/transferManager";
 import streamSaver from "streamsaver";
 import store from "../../../../../store";
+import { PermissionResource } from "api/consoleApi";
 
 export const download = (
   bucketName: string,
@@ -278,7 +278,7 @@ export const sortListObjects = (fieldSort: string) => {
 export const permissionItems = (
   bucketName: string,
   currentPath: string,
-  permissionsArray: IAllowResources[]
+  permissionsArray: PermissionResource[]
 ): BucketObjectItem[] | null => {
   if (permissionsArray.length === 0) {
     return null;
@@ -287,8 +287,8 @@ export const permissionItems = (
   // We get permissions applied to the current bucket
   const filteredPermissionsForBucket = permissionsArray.filter(
     (permissionItem) =>
-      permissionItem.resource.endsWith(`:${bucketName}`) ||
-      permissionItem.resource.includes(`:${bucketName}/`)
+      permissionItem.resource?.endsWith(`:${bucketName}`) ||
+      permissionItem.resource?.includes(`:${bucketName}/`)
   );
 
   // No permissions for this bucket. we can throw the error message at this point
@@ -305,8 +305,8 @@ export const permissionItems = (
     // We review paths in resource address
 
     // We split ARN & get the last item to check the URL
-    const splitARN = permissionElement.resource.split(":");
-    const urlARN = splitARN.pop() || "";
+    const splitARN = permissionElement.resource?.split(":");
+    const urlARN = splitARN?.pop() || "";
 
     // We split the paths of the URL & compare against current location to see if there are more items to include. In case current level is a wildcard or is the last one, we omit this validation
 
@@ -347,7 +347,7 @@ export const permissionItems = (
       permissionElement.conditionOperator === "StringEquals" ||
       permissionElement.conditionOperator === "StringLike"
     ) {
-      permissionElement.prefixes.forEach((prefixItem) => {
+      permissionElement.prefixes?.forEach((prefixItem) => {
         // Prefix Item is not empty?
         if (prefixItem !== "") {
           const splitItems = prefixItem.split("/");

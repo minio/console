@@ -20,7 +20,15 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { deleteDialogStyles } from "../FormComponents/common/styleLibrary";
-import { ButtonProps } from "../../types";
+interface ButtonProps {
+  label?: string;
+  variant?: "regular" | "callAction" | "secondary";
+  icon?: React.ReactNode;
+  iconLocation?: "start" | "end";
+  fullWidth?: boolean;
+  disabled?: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+}
 
 const styles = (theme: Theme) =>
   createStyles({
