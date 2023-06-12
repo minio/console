@@ -25,12 +25,12 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import api from "../../../../common/api";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IBucketTagModal {
   modalOpen: boolean;
@@ -73,16 +73,16 @@ const AddBucketTagModal = ({
     newTag[newKey] = newLabel;
     const newTagList = { ...currentTags, ...newTag };
 
-    api
-      .invoke("PUT", `/api/v1/buckets/${bucketName}/tags`, {
+    api.buckets
+      .putBucketTags(bucketName, {
         tags: newTagList,
       })
-      .then((res: any) => {
+      .then(() => {
         setIsSending(false);
         onCloseAndUpdate(true);
       })
-      .catch((error: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(error));
+      .catch((error) => {
+        dispatch(setModalErrorSnackMessage(errorToHandler(error.error)));
         setIsSending(false);
       });
   };

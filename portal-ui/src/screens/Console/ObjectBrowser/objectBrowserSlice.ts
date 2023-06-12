@@ -20,8 +20,10 @@ import {
   BucketObjectItem,
   IRestoreLocalObjectList,
 } from "../Buckets/ListBuckets/Objects/ListObjects/types";
-import { IRetentionConfig } from "../../../common/types";
-import { BucketVersioningInfo } from "../Buckets/types";
+import {
+  BucketVersioningResponse,
+  GetBucketRetentionConfig,
+} from "api/consoleApi";
 
 const defaultRewind = {
   rewindEnabled: false,
@@ -70,8 +72,8 @@ const initialState: ObjectBrowserState = {
   isOpeningObjectDetail: false,
   anonymousAccessOpen: false,
   retentionConfig: {
-    mode: "",
-    unit: "",
+    mode: undefined,
+    unit: undefined,
     validity: 0,
   },
   longFileOpen: false,
@@ -293,10 +295,13 @@ export const objectBrowserSlice = createSlice({
     setLoadingVersioning: (state, action: PayloadAction<boolean>) => {
       state.loadingVersioning = action.payload;
     },
-    setIsVersioned: (state, action: PayloadAction<BucketVersioningInfo>) => {
+    setIsVersioned: (
+      state,
+      action: PayloadAction<BucketVersioningResponse>
+    ) => {
       state.versionInfo = action.payload;
     },
-    setLockingEnabled: (state, action: PayloadAction<boolean>) => {
+    setLockingEnabled: (state, action: PayloadAction<boolean | undefined>) => {
       state.lockingEnabled = action.payload;
     },
     setLoadingLocking: (state, action: PayloadAction<boolean>) => {
@@ -353,7 +358,7 @@ export const objectBrowserSlice = createSlice({
     },
     setRetentionConfig: (
       state,
-      action: PayloadAction<IRetentionConfig | null>
+      action: PayloadAction<GetBucketRetentionConfig | null>
     ) => {
       state.retentionConfig = action.payload;
     },
