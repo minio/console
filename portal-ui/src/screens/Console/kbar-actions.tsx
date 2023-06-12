@@ -21,7 +21,7 @@ import { IAM_PAGES } from "../../common/SecureComponent/permissions";
 import { Bucket } from "../../api/consoleApi";
 
 export const routesAsKbarActions = (
-  features: string[] | null,
+  features: string[] | undefined,
   buckets: Bucket[],
   navigate: (url: string) => void
 ) => {
