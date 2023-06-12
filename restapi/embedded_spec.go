@@ -1858,7 +1858,7 @@ func init() {
       }
     },
     "/buckets/{bucket_name}/objects/share": {
-      "post": {
+      "get": {
         "tags": [
           "Object"
         ],
@@ -1872,12 +1872,21 @@ func init() {
             "required": true
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/shareRequest"
-            }
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "expires",
+            "in": "query"
           }
         ],
         "responses": {
@@ -8310,32 +8319,6 @@ func init() {
         }
       }
     },
-    "shareRequest": {
-      "type": "object",
-      "required": [
-        "prefix",
-        "version_id",
-        "access_key",
-        "secret_key"
-      ],
-      "properties": {
-        "access_key": {
-          "type": "string"
-        },
-        "expires": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "secret_key": {
-          "type": "string"
-        },
-        "version_id": {
-          "type": "string"
-        }
-      }
-    },
     "siteReplicationAddRequest": {
       "type": "array",
       "items": {
@@ -10877,7 +10860,7 @@ func init() {
       }
     },
     "/buckets/{bucket_name}/objects/share": {
-      "post": {
+      "get": {
         "tags": [
           "Object"
         ],
@@ -10891,12 +10874,21 @@ func init() {
             "required": true
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/shareRequest"
-            }
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "expires",
+            "in": "query"
           }
         ],
         "responses": {
@@ -17455,32 +17447,6 @@ func init() {
         },
         "entityType": {
           "$ref": "#/definitions/policyEntity"
-        }
-      }
-    },
-    "shareRequest": {
-      "type": "object",
-      "required": [
-        "prefix",
-        "version_id",
-        "access_key",
-        "secret_key"
-      ],
-      "properties": {
-        "access_key": {
-          "type": "string"
-        },
-        "expires": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "secret_key": {
-          "type": "string"
-        },
-        "version_id": {
-          "type": "string"
         }
       }
     },

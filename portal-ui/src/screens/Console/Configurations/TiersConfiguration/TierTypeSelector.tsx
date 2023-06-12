@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { tierTypes } from "./utils";
@@ -22,6 +22,9 @@ import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import TierTypeCard from "./TierTypeCard";
 import { BackLink, FormLayout, HelpBox, PageLayout, TiersIcon } from "mds";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../../HelpMenu";
+import { setHelpName } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
 
 const TierTypeSelector = () => {
   const navigate = useNavigate();
@@ -29,6 +32,10 @@ const TierTypeSelector = () => {
   const typeSelect = (selectName: string) => {
     navigate(`${IAM_PAGES.TIERS_ADD}/${selectName}`);
   };
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setHelpName("tier-type-selector"));
+  }, [dispatch]);
 
   return (
     <Fragment>
@@ -41,7 +48,7 @@ const TierTypeSelector = () => {
             />
           </Fragment>
         }
-        actions={<React.Fragment />}
+        actions={<HelpMenu />}
       />
 
       <PageLayout>

@@ -62,12 +62,17 @@ import {
 } from "../../../../common/SecureComponent";
 import { tierTypes } from "./utils";
 
-import { selDistSet, setErrorSnackMessage } from "../../../../systemSlice";
+import {
+  selDistSet,
+  setErrorSnackMessage,
+  setHelpName,
+} from "../../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
+import HelpMenu from "../../HelpMenu";
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );
@@ -302,6 +307,11 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     setUpdateCredentialsOpen(false);
   };
 
+  useEffect(() => {
+    dispatch(setHelpName("list-tiers-configuration"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       {updateCredentialsOpen && (
@@ -311,7 +321,8 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
           closeModalAndRefresh={closeTierCredentials}
         />
       )}
-      <PageHeaderWrapper label="Tiers" />
+      <PageHeaderWrapper label="Tiers" actions={<HelpMenu />} />
+
       <PageLayout>
         {!distributedSetup ? (
           <DistributedOnly

@@ -42,6 +42,7 @@ import {
   selDistSet,
   selSiteRep,
   setErrorSnackMessage,
+  setHelpName,
 } from "../../../../../systemSlice";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import TooltipWrapper from "../../../Common/TooltipWrapper/TooltipWrapper";
@@ -77,6 +78,7 @@ import {
 } from "../../../../../api/consoleApi";
 import { errorToHandler } from "../../../../../api/errors";
 import makeStyles from "@mui/styles/makeStyles";
+import HelpMenu from "../../../HelpMenu";
 
 const useStyles = makeStyles((theme: Theme) => ({
   buttonContainer: {
@@ -238,12 +240,18 @@ const AddBucket = () => {
     }
   }, [navigateTo, navigate, dispatch]);
 
+  useEffect(() => {
+    dispatch(setHelpName("add_bucket"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       <PageHeaderWrapper
         label={
           <BackLink label={"Buckets"} onClick={() => navigate("/buckets")} />
         }
+        actions={<HelpMenu />}
       />
       <PageLayout>
         <FormLayout
@@ -323,7 +331,7 @@ const AddBucket = () => {
                   </Fragment>
                 )}
               </Grid>
-              <Grid item xs={12} spacing={2}>
+              <Grid item xs={12}>
                 {siteReplicationInfo.enabled && (
                   <Fragment>
                     <br />

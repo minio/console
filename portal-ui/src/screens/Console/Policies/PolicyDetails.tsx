@@ -14,6 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import { IAMPolicy, IAMStatement } from "./types";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -69,7 +70,11 @@ import withSuspense from "../Common/Components/withSuspense";
 
 import PolicyView from "./PolicyView";
 import { decodeURLString, encodeURLString } from "../../../common/utils";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setHelpName,
+  setSnackBarMessage,
+} from "../../../systemSlice";
 import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
@@ -81,7 +86,7 @@ import {
   ServiceAccounts,
 } from "../../../api/consoleApi";
 import { api } from "../../../api";
-import { IAMPolicy, IAMStatement } from "./types";
+import HelpMenu from "../HelpMenu";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -355,6 +360,12 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
     setLoadingPolicy(true);
   };
 
+  useEffect(() => {
+    dispatch(setHelpName("policy_details_summary"));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       {deleteOpen && (
@@ -373,8 +384,8 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
             />
           </Fragment>
         }
+        actions={<HelpMenu />}
       />
-
       <PageLayout className={classes.pageContainer}>
         <MUIGrid container spacing={1}>
           <Grid item xs={12}>
@@ -435,12 +446,18 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
               tabConfig: { label: "Summary", disabled: !displayPolicy },
               content: (
                 <Fragment>
-                  <SectionTitle separator sx={{ marginBottom: 15 }}>
-                    Policy Summary
-                  </SectionTitle>
-                  <Paper className={classes.paperContainer}>
-                    <PolicyView policyStatements={policyStatements} />
-                  </Paper>
+                  <Grid
+                    onMouseMove={() =>
+                      dispatch(setHelpName("policy_details_summary"))
+                    }
+                  >
+                    <SectionTitle separator sx={{ marginBottom: 15 }}>
+                      Policy Summary
+                    </SectionTitle>
+                    <Paper className={classes.paperContainer}>
+                      <PolicyView policyStatements={policyStatements} />
+                    </Paper>
+                  </Grid>
                 </Fragment>
               ),
             }}
@@ -451,40 +468,46 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
               },
               content: (
                 <Fragment>
-                  <SectionTitle separator sx={{ marginBottom: 15 }}>
-                    Users
-                  </SectionTitle>
-                  <Grid container>
-                    {userList.length > 0 && (
-                      <Grid item xs={12} className={classes.actionsTray}>
-                        <TextField
-                          placeholder="Search Users"
-                          className={classes.searchField}
-                          id="search-resource"
-                          label=""
-                          onChange={(val) => {
-                            setFilterUsers(val.target.value);
-                          }}
-                          InputProps={{
-                            disableUnderline: true,
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <SearchIcon />
-                              </InputAdornment>
-                            ),
-                          }}
-                          variant="standard"
-                        />
-                      </Grid>
-                    )}
-                    <TableWrapper
-                      itemActions={userTableActions}
-                      columns={[{ label: "Name", elementKey: "name" }]}
-                      isLoading={loadingUsers}
-                      records={filteredUsers}
-                      entityName="Users with this Policy associated"
-                      idField="name"
-                    />
+                  <Grid
+                    onMouseMove={() =>
+                      dispatch(setHelpName("policy_details_users"))
+                    }
+                  >
+                    <SectionTitle separator sx={{ marginBottom: 15 }}>
+                      Users
+                    </SectionTitle>
+                    <Grid container>
+                      {userList.length > 0 && (
+                        <Grid item xs={12} className={classes.actionsTray}>
+                          <TextField
+                            placeholder="Search Users"
+                            className={classes.searchField}
+                            id="search-resource"
+                            label=""
+                            onChange={(val) => {
+                              setFilterUsers(val.target.value);
+                            }}
+                            InputProps={{
+                              disableUnderline: true,
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <SearchIcon />
+                                </InputAdornment>
+                              ),
+                            }}
+                            variant="standard"
+                          />
+                        </Grid>
+                      )}
+                      <TableWrapper
+                        itemActions={userTableActions}
+                        columns={[{ label: "Name", elementKey: "name" }]}
+                        isLoading={loadingUsers}
+                        records={filteredUsers}
+                        entityName="Users with this Policy associated"
+                        idField="name"
+                      />
+                    </Grid>
                   </Grid>
                 </Fragment>
               ),
@@ -496,40 +519,46 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
               },
               content: (
                 <Fragment>
-                  <SectionTitle separator sx={{ marginBottom: 15 }}>
-                    Groups
-                  </SectionTitle>
-                  <Grid container>
-                    {groupList.length > 0 && (
-                      <Grid item xs={12} className={classes.actionsTray}>
-                        <TextField
-                          placeholder="Search Groups"
-                          className={classes.searchField}
-                          id="search-resource"
-                          label=""
-                          onChange={(val) => {
-                            setFilterGroups(val.target.value);
-                          }}
-                          InputProps={{
-                            disableUnderline: true,
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <SearchIcon />
-                              </InputAdornment>
-                            ),
-                          }}
-                          variant="standard"
-                        />
-                      </Grid>
-                    )}
-                    <TableWrapper
-                      itemActions={groupTableActions}
-                      columns={[{ label: "Name", elementKey: "name" }]}
-                      isLoading={loadingGroups}
-                      records={filteredGroups}
-                      entityName="Groups with this Policy associated"
-                      idField="name"
-                    />
+                  <Grid
+                    onMouseMove={() =>
+                      dispatch(setHelpName("policy_details_groups"))
+                    }
+                  >
+                    <SectionTitle separator sx={{ marginBottom: 15 }}>
+                      Groups
+                    </SectionTitle>
+                    <Grid container>
+                      {groupList.length > 0 && (
+                        <Grid item xs={12} className={classes.actionsTray}>
+                          <TextField
+                            placeholder="Search Groups"
+                            className={classes.searchField}
+                            id="search-resource"
+                            label=""
+                            onChange={(val) => {
+                              setFilterGroups(val.target.value);
+                            }}
+                            InputProps={{
+                              disableUnderline: true,
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <SearchIcon />
+                                </InputAdornment>
+                              ),
+                            }}
+                            variant="standard"
+                          />
+                        </Grid>
+                      )}
+                      <TableWrapper
+                        itemActions={groupTableActions}
+                        columns={[{ label: "Name", elementKey: "name" }]}
+                        isLoading={loadingGroups}
+                        records={filteredGroups}
+                        entityName="Groups with this Policy associated"
+                        idField="name"
+                      />
+                    </Grid>
                   </Grid>
                 </Fragment>
               ),
@@ -538,75 +567,81 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
               tabConfig: { label: "Raw Policy", disabled: !displayPolicy },
               content: (
                 <Fragment>
-                  <SectionTitle separator sx={{ marginBottom: 15 }}>
-                    Raw Policy
-                  </SectionTitle>
-                  <form
-                    noValidate
-                    autoComplete="off"
-                    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                      saveRecord(e);
-                    }}
+                  <Grid
+                    onMouseMove={() =>
+                      dispatch(setHelpName("policy_details_policy"))
+                    }
                   >
-                    <Grid container>
-                      <Grid item xs={12}>
-                        <CodeMirrorWrapper
-                          readOnly={!canEditPolicy}
-                          value={policyDefinition}
-                          onBeforeChange={(editor, data, value) => {
-                            setPolicyDefinition(value);
-                          }}
-                          editorHeight={"350px"}
-                        />
-                      </Grid>
-                      <Grid item xs={12} className={classes.buttonContainer}>
-                        {!policy && (
-                          <button
-                            type="button"
-                            color="primary"
-                            className={classes.clearButton}
-                            onClick={() => {
-                              resetForm();
-                            }}
-                          >
-                            Clear
-                          </button>
-                        )}
-                        <SecureComponent
-                          scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
-                          resource={CONSOLE_UI_RESOURCE}
-                          errorProps={{ disabled: true }}
-                        >
-                          <TooltipWrapper
-                            tooltip={
-                              canEditPolicy
-                                ? ""
-                                : permissionTooltipHelper(
-                                    createPolicyPermissions,
-                                    "edit a Policy"
-                                  )
-                            }
-                          >
-                            <Button
-                              id={"save"}
-                              type="submit"
-                              variant="callAction"
-                              color="primary"
-                              disabled={
-                                addLoading || !validSave || !canEditPolicy
-                              }
-                              label={"Save"}
-                            />
-                          </TooltipWrapper>
-                        </SecureComponent>
-                      </Grid>
-                      {addLoading && (
+                    <SectionTitle separator sx={{ marginBottom: 15 }}>
+                      Raw Policy
+                    </SectionTitle>
+                    <form
+                      noValidate
+                      autoComplete="off"
+                      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                        saveRecord(e);
+                      }}
+                    >
+                      <Grid container>
                         <Grid item xs={12}>
-                          <LinearProgress />
+                          <CodeMirrorWrapper
+                            readOnly={!canEditPolicy}
+                            value={policyDefinition}
+                            onBeforeChange={(editor, data, value) => {
+                              setPolicyDefinition(value);
+                            }}
+                            editorHeight={"350px"}
+                          />
                         </Grid>
-                      )}
-                    </Grid>
-                  </form>
+                        <Grid item xs={12} className={classes.buttonContainer}>
+                          {!policy && (
+                            <button
+                              type="button"
+                              color="primary"
+                              className={classes.clearButton}
+                              onClick={() => {
+                                resetForm();
+                              }}
+                            >
+                              Clear
+                            </button>
+                          )}
+                          <SecureComponent
+                            scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
+                            resource={CONSOLE_UI_RESOURCE}
+                            errorProps={{ disabled: true }}
+                          >
+                            <TooltipWrapper
+                              tooltip={
+                                canEditPolicy
+                                  ? ""
+                                  : permissionTooltipHelper(
+                                      createPolicyPermissions,
+                                      "edit a Policy"
+                                    )
+                              }
+                            >
+                              <Button
+                                id={"save"}
+                                type="submit"
+                                variant="callAction"
+                                color="primary"
+                                disabled={
+                                  addLoading || !validSave || !canEditPolicy
+                                }
+                                label={"Save"}
+                              />
+                            </TooltipWrapper>
+                          </SecureComponent>
+                        </Grid>
+                        {addLoading && (
+                          <Grid item xs={12}>
+                            <LinearProgress />
+                          </Grid>
+                        )}
+                      </Grid>
+                    </form>
+                  </Grid>
                 </Fragment>
               ),
             }}

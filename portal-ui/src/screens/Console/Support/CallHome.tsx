@@ -20,7 +20,7 @@ import { Button, CallHomeMenuIcon, HelpBox, Loader, PageLayout } from "mds";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../../common/api";
 import { ErrorResponseHandler } from "../../../common/types";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { ICallHomeResponse } from "./types";
 import { registeredCluster } from "../../../config";
@@ -28,6 +28,7 @@ import CallHomeConfirmation from "./CallHomeConfirmation";
 import RegisterCluster from "./RegisterCluster";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 const PromoLabels = ({ title, text }: { title: string; text: string }) => {
   return (
@@ -104,6 +105,11 @@ const CallHome = () => {
     mainVariant = "callAction";
   }
 
+  useEffect(() => {
+    dispatch(setHelpName("call_home"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       {showConfirmation && (
@@ -115,7 +121,7 @@ const CallHome = () => {
           disable={disableMode}
         />
       )}
-      <PageHeaderWrapper label="Call Home" />
+      <PageHeaderWrapper label="Call Home" actions={<HelpMenu />} />
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
         <Box

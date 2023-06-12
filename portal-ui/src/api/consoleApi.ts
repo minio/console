@@ -1494,14 +1494,6 @@ export interface LdapPolicyEntity {
   groups?: string[];
 }
 
-export interface ShareRequest {
-  prefix: string;
-  version_id: string;
-  expires?: string;
-  access_key: string;
-  secret_key: string;
-}
-
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -2179,20 +2171,23 @@ export class Api<
      * @tags Object
      * @name ShareObject
      * @summary Shares an Object on a url
-     * @request POST:/buckets/{bucket_name}/objects/share
+     * @request GET:/buckets/{bucket_name}/objects/share
      * @secure
      */
     shareObject: (
       bucketName: string,
-      body: ShareRequest,
+      query: {
+        prefix: string;
+        version_id: string;
+        expires?: string;
+      },
       params: RequestParams = {}
     ) =>
       this.request<IamEntity, Error>({
         path: `/buckets/${bucketName}/objects/share`,
-        method: "POST",
-        body: body,
+        method: "GET",
+        query: query,
         secure: true,
-        type: ContentType.Json,
         format: "json",
         ...params,
       }),
