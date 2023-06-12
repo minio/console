@@ -153,7 +153,7 @@ export const ldapFormFields = {
       return !s && editMode ? "Server Address is required" : "";
     },
     label: "Server Insecure",
-    tooltip: "disable SSL certificate verification ",
+    tooltip: "Disable SSL certificate verification ",
     placeholder: "myldapserver.com:636",
     type: "toggle",
   },
@@ -174,7 +174,7 @@ export const ldapFormFields = {
     },
     label: "Lookup Bind DN",
     tooltip:
-      "DN for LDAP read-only service account used to perform DN and group lookups",
+      "DN (Distinguished Name) for LDAP read-only service account used to perform DN and group lookups",
     placeholder: "cn=admin,dc=min,dc=io",
     type: "text",
   },
