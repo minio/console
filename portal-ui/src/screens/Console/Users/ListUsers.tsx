@@ -62,10 +62,11 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../common/SecureComponent";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 const DeleteUser = withSuspense(React.lazy(() => import("./DeleteUser")));
 const AddToGroup = withSuspense(React.lazy(() => import("./BulkAddToGroup")));
@@ -189,6 +190,11 @@ const ListUsers = ({ classes }: IUsersProps) => {
     },
   ];
 
+  useEffect(() => {
+    dispatch(setHelpName("list_users"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       {deleteOpen && (
@@ -209,7 +215,8 @@ const ListUsers = ({ classes }: IUsersProps) => {
           }}
         />
       )}
-      <PageHeaderWrapper label={"Users"} />
+      <PageHeaderWrapper label={"Users"} actions={<HelpMenu />} />
+
       <PageLayout>
         <Grid container spacing={1}>
           <Grid item xs={12} className={classes.actionsTray}>

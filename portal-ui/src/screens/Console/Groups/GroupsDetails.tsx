@@ -52,7 +52,7 @@ import {
 import GroupDetailsHeader from "./GroupDetailsHeader";
 
 import { decodeURLString, encodeURLString } from "../../../common/utils";
-import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { setHelpName, setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "../Users/AddUsersSlice";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
@@ -146,6 +146,11 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   );
 
   useEffect(() => {
+    dispatch(setHelpName("groups_members"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (groupName) {
       fetchGroupInfo();
     }
@@ -210,7 +215,12 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
 
   const groupsTabContent = (
     <React.Fragment>
-      <div className={classes.actionsTray}>
+      <div
+        className={classes.actionsTray}
+        onMouseMove={() => {
+          dispatch(setHelpName("groups_members"));
+        }}
+      >
         <PanelTitle>Members</PanelTitle>
         <SearchBox
           placeholder={"Search members"}
@@ -287,7 +297,12 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
 
   const policiesTabContent = (
     <React.Fragment>
-      <div className={classes.actionsTray}>
+      <div
+        className={classes.actionsTray}
+        onMouseMove={() => {
+          dispatch(setHelpName("groups_policies"));
+        }}
+      >
         <PanelTitle>Policies</PanelTitle>
         <TooltipWrapper
           tooltip={

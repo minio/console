@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import {
   IAM_PAGES,
   IAM_PERMISSIONS,
@@ -35,6 +35,8 @@ import { AppState, useAppDispatch } from "../../../store";
 import FilterObjectsSB from "./FilterObjectsSB";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import ObjectManagerButton from "../Common/ObjectManager/ObjectManagerButton";
+import HelpMenu from "../HelpMenu";
+import { setHelpName } from "../../../systemSlice";
 
 interface IOBHeader {
   bucketName: string;
@@ -107,6 +109,11 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
     </Fragment>
   );
 
+  useEffect(() => {
+    dispatch(setHelpName("object_browser"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       {!obOnly ? (
@@ -120,36 +127,39 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
             />
           }
           actions={
-            <SecureComponent
-              scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
-              resource={bucketName}
-              errorProps={{ disabled: true }}
-            >
-              <TooltipWrapper
-                tooltip={
-                  configureBucketAllowed
-                    ? "Configure Bucket"
-                    : "You do not have the required permissions to configure this bucket. Please contact your MinIO administrator to request " +
-                      IAM_ROLES.BUCKET_ADMIN +
-                      " permisions."
-                }
+            <Fragment>
+              <SecureComponent
+                scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
+                resource={bucketName}
+                errorProps={{ disabled: true }}
               >
-                <Button
-                  id={"configure-bucket-main"}
-                  color="primary"
-                  aria-label="Configure Bucket"
-                  onClick={() => navigate(`/buckets/${bucketName}/admin`)}
-                  icon={
-                    <SettingsIcon
-                      style={{ width: 20, height: 20, marginTop: -3 }}
-                    />
+                <TooltipWrapper
+                  tooltip={
+                    configureBucketAllowed
+                      ? "Configure Bucket"
+                      : "You do not have the required permissions to configure this bucket. Please contact your MinIO administrator to request " +
+                        IAM_ROLES.BUCKET_ADMIN +
+                        " permisions."
                   }
-                  style={{
-                    padding: "0 10px",
-                  }}
-                />
-              </TooltipWrapper>
-            </SecureComponent>
+                >
+                  <Button
+                    id={"configure-bucket-main"}
+                    color="primary"
+                    aria-label="Configure Bucket"
+                    onClick={() => navigate(`/buckets/${bucketName}/admin`)}
+                    icon={
+                      <SettingsIcon
+                        style={{ width: 20, height: 20, marginTop: -3 }}
+                      />
+                    }
+                    style={{
+                      padding: "0 10px",
+                    }}
+                  />
+                </TooltipWrapper>
+              </SecureComponent>
+              <HelpMenu />
+            </Fragment>
           }
           middleComponent={searchBar}
         />

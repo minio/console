@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -36,6 +36,10 @@ import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper"
 import ExportConfigButton from "./ExportConfigButton";
 import ImportConfigButton from "./ImportConfigButton";
 import { Box } from "@mui/material";
+import HelpMenu from "../../HelpMenu";
+import { setHelpName } from "../../../../systemSlice";
+import { AppState, useAppDispatch } from "../../../../store";
+import { useSelector } from "react-redux";
 
 interface IConfigurationOptions {
   classes: any;
@@ -66,11 +70,19 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
 
   let selConfigTab = pathname.substring(pathname.lastIndexOf("/") + 1);
   selConfigTab = selConfigTab === "settings" ? "region" : selConfigTab;
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setHelpName("settings_Region"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const systemHelpName = useSelector(
+    (state: AppState) => state.system.helpName
+  );
 
   return (
     <Fragment>
-      <PageHeaderWrapper label={"Settings"} />
-
+      <PageHeaderWrapper label={"Settings"} actions={<HelpMenu />} />
+      {systemHelpName}
       <PageLayout>
         <Grid item xs={12}>
           <div

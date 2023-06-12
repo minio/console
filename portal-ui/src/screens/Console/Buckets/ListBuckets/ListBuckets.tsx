@@ -53,7 +53,7 @@ import SearchBox from "../../Common/SearchBox";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
 import BulkLifecycleModal from "./BulkLifecycleModal";
 import hasPermission from "../../../../common/SecureComponent/accessControl";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { useSelector } from "react-redux";
 import { selFeatures } from "../../consoleSlice";
@@ -71,6 +71,7 @@ import {
   ListBucketsResponse,
 } from "../../../../api/consoleApi";
 import { errorToHandler } from "../../../../api/errors";
+import HelpMenu from "../../HelpMenu";
 
 const useStyles = makeStyles((theme: Theme) => ({
   bucketList: {
@@ -108,6 +109,10 @@ const ListBuckets = () => {
 
   const features = useSelector(selFeatures);
   const obOnly = !!features?.includes("object-browser-only");
+
+  useEffect(() => {
+    dispatch(setHelpName("ob_bucket_list"));
+  }, [dispatch]);
 
   useEffect(() => {
     if (loading) {
@@ -236,7 +241,10 @@ const ListBuckets = () => {
           open={lifecycleModalOpen}
         />
       )}
-      {!obOnly && <PageHeaderWrapper label={"Buckets"} />}
+      {!obOnly && (
+        <PageHeaderWrapper label={"Buckets"} actions={<HelpMenu />} />
+      )}
+
       <PageLayout>
         <Grid item xs={12} className={classes.actionsTray} display="flex">
           {obOnly && (

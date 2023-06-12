@@ -101,7 +101,6 @@ const VerticalTabs = ({
 
   const headerList: TabProps[] = [];
   const contentList: React.ReactNode[] = [];
-
   useEffect(() => {
     if (isRouteTabs) {
       const tabConfigElement = children.find(
