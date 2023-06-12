@@ -31,8 +31,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/minio-go/v7/pkg/credentials"
-
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/klauspost/compress/zip"
@@ -119,7 +117,7 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	})
 	// get share object url
 	api.ObjectShareObjectHandler = objectApi.ShareObjectHandlerFunc(func(params objectApi.ShareObjectParams, session *models.Principal) middleware.Responder {
-		resp, err := getShareObjectResponse(params)
+		resp, err := getShareObjectResponse(session, params)
 		if err != nil {
 			return objectApi.NewShareObjectDefault(int(err.Code)).WithPayload(err)
 		}
@@ -894,60 +892,34 @@ func uploadFiles(ctx context.Context, client MinioClient, params objectApi.PostB
 	return nil
 }
 
-// getShareObjectResponse returns a share object url, Session is omitted as we will sign the URl with a new static token
-func getShareObjectResponse(params objectApi.ShareObjectParams) (*string, *models.Error) {
+// getShareObjectResponse returns a share object url
+func getShareObjectResponse(session *models.Principal, params objectApi.ShareObjectParams) (*string, *models.Error) {
 	ctx := params.HTTPRequest.Context()
-	bodyPrefix := *params.Body.Prefix
-
-	accessKey := *params.Body.AccessKey
-	secretKey := *params.Body.SecretKey
-
-	creds := credentials.NewStaticV4(accessKey, secretKey, "")
-
-	mClient, err := minio.New(getMinIOEndpoint(), &minio.Options{
-		Creds:     creds,
-		Secure:    getMinIOEndpointIsSecure(),
-		Transport: GetConsoleHTTPClient(getMinIOServer()).Transport,
-	})
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-
-	minioClient := minioClient{client: mClient}
-
 	var prefix string
-	if bodyPrefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(bodyPrefix)
+	if params.Prefix != "" {
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
 		prefix = string(decodedPrefix)
 	}
-
-	expireDuration := time.Duration(604800) * time.Second
-
-	if params.Body.Expires != "" {
-		expireDuration, err = time.ParseDuration(params.Body.Expires)
-
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
-		}
-	}
-
-	reqParams := make(url.Values)
-	if *params.Body.VersionID != "" {
-		reqParams.Set("versionId", *params.Body.VersionID)
-	}
-
-	urlParams, err := minioClient.presignedGetObject(ctx, params.BucketName, prefix, expireDuration, reqParams)
+	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
-
-	stringURL := urlParams.String()
-
-	return &stringURL, nil
+	// create a mc S3Client interface implementation
+	// defining the client to be used
+	mcClient := mcClient{client: s3Client}
+	var expireDuration string
+	if params.Expires != nil {
+		expireDuration = *params.Expires
+	}
+	url, err := getShareObjectURL(ctx, mcClient, params.VersionID, expireDuration)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return url, nil
 }
 
 func getShareObjectURL(ctx context.Context, client MCClient, versionID string, duration string) (url *string, err error) {
