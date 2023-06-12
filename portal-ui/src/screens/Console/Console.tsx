@@ -480,100 +480,109 @@ const Console = ({ classes }: IConsoleProps) => {
   return (
     <Fragment>
       {session && session.status === "ok" ? (
-        <MainContainer menu={!hideMenu ? <Menu /> : null}>
-          {needsRestart && (
-            <div className={classes.warningBar}>
-              {isServerLoading ? (
-                <Fragment>
-                  The server is restarting.
-                  <LinearProgress className={classes.progress} />
-                </Fragment>
-              ) : (
-                <Fragment>
-                  The instance needs to be restarted for configuration changes
-                  to take effect.{" "}
-                  <Button
-                    id={"restart-server"}
-                    variant="secondary"
-                    onClick={() => {
-                      restartServer();
-                    }}
-                    label={"Restart"}
-                  />
-                </Fragment>
-              )}
+        <MainContainer
+          menu={!hideMenu ? <Menu /> : <Fragment />}
+          mobileModeAuto={false}
+        >
+          <Fragment>
+            {needsRestart && (
+              <div className={classes.warningBar}>
+                {isServerLoading ? (
+                  <Fragment>
+                    The server is restarting.
+                    <LinearProgress className={classes.progress} />
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    The instance needs to be restarted for configuration changes
+                    to take effect.{" "}
+                    <Button
+                      id={"restart-server"}
+                      variant="secondary"
+                      onClick={() => {
+                        restartServer();
+                      }}
+                      label={"Restart"}
+                    />
+                  </Fragment>
+                )}
+              </div>
+            )}
+            {loadingProgress < 100 && (
+              <LinearProgress
+                className={classes.progress}
+                variant="determinate"
+                value={loadingProgress}
+              />
+            )}
+            <MainError />
+            <div className={classes.snackDiv}>
+              <Snackbar
+                open={openSnackbar}
+                onClose={() => {
+                  closeSnackBar();
+                }}
+                autoHideDuration={
+                  snackBarMessage.type === "error" ? 10000 : 5000
+                }
+                message={snackBarMessage.message}
+                className={classes.snackBarExternal}
+                ContentProps={{
+                  className: `${classes.snackBar} ${
+                    snackBarMessage.type === "error"
+                      ? classes.errorSnackBar
+                      : ""
+                  }`,
+                }}
+              />
             </div>
-          )}
-          {loadingProgress < 100 && (
-            <LinearProgress
-              className={classes.progress}
-              variant="determinate"
-              value={loadingProgress}
-            />
-          )}
-          <MainError />
-          <div className={classes.snackDiv}>
-            <Snackbar
-              open={openSnackbar}
-              onClose={() => {
-                closeSnackBar();
-              }}
-              autoHideDuration={snackBarMessage.type === "error" ? 10000 : 5000}
-              message={snackBarMessage.message}
-              className={classes.snackBarExternal}
-              ContentProps={{
-                className: `${classes.snackBar} ${
-                  snackBarMessage.type === "error" ? classes.errorSnackBar : ""
-                }`,
-              }}
-            />
-          </div>
-          <Suspense fallback={<LoadingComponent />}>
-            <ObjectManager />
-          </Suspense>
-          <Routes>
-            {allowedRoutes.map((route: any) => (
+            <Suspense fallback={<LoadingComponent />}>
+              <ObjectManager />
+            </Suspense>
+            <Routes>
+              {allowedRoutes.map((route: any) => (
+                <Route
+                  key={route.path}
+                  path={`${route.path}/*`}
+                  element={
+                    <Suspense fallback={<LoadingComponent />}>
+                      <route.component {...route.props} />
+                    </Suspense>
+                  }
+                />
+              ))}
               <Route
-                key={route.path}
-                path={`${route.path}/*`}
+                key={"icons"}
+                path={"icons"}
                 element={
                   <Suspense fallback={<LoadingComponent />}>
-                    <route.component {...route.props} />
+                    <IconsScreen />
                   </Suspense>
                 }
               />
-            ))}
-            <Route
-              key={"icons"}
-              path={"icons"}
-              element={
-                <Suspense fallback={<LoadingComponent />}>
-                  <IconsScreen />
-                </Suspense>
-              }
-            />
-            <Route
-              key={"components"}
-              path={"components"}
-              element={
-                <Suspense fallback={<LoadingComponent />}>
-                  <ComponentsScreen />
-                </Suspense>
-              }
-            />
-            <Route
-              path={"*"}
-              element={
-                <Fragment>
-                  {allowedRoutes.length > 0 ? (
-                    <Navigate to={allowedRoutes[0].path} />
-                  ) : (
-                    <Fragment />
-                  )}
-                </Fragment>
-              }
-            />
-          </Routes>
+              <Route
+                key={"components"}
+                path={"components"}
+                element={
+                  <Suspense fallback={<LoadingComponent />}>
+                    <ComponentsScreen />
+                  </Suspense>
+                }
+              />
+              <Route
+                path={"*"}
+                element={
+                  <Fragment>
+                    {allowedRoutes.length > 0 ? (
+                      <Navigate to={allowedRoutes[0].path} />
+                    ) : (
+                      <Fragment />
+                    )}
+                  </Fragment>
+                }
+              />
+            </Routes>
+          </Fragment>
         </MainContainer>
       ) : null}
     </Fragment>

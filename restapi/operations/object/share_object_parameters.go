@@ -23,7 +23,6 @@ package object
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -31,8 +30,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
-
-	"github.com/minio/console/models"
 )
 
 // NewShareObjectParams creates a new ShareObjectParams object
@@ -54,14 +51,23 @@ type ShareObjectParams struct {
 
 	/*
 	  Required: true
-	  In: body
-	*/
-	Body *models.ShareRequest
-	/*
-	  Required: true
 	  In: path
 	*/
 	BucketName string
+	/*
+	  In: query
+	*/
+	Expires *string
+	/*
+	  Required: true
+	  In: query
+	*/
+	Prefix string
+	/*
+	  Required: true
+	  In: query
+	*/
+	VersionID string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -73,36 +79,25 @@ func (o *ShareObjectParams) BindRequest(r *http.Request, route *middleware.Match
 
 	o.HTTPRequest = r
 
-	if runtime.HasBody(r) {
-		defer r.Body.Close()
-		var body models.ShareRequest
-		if err := route.Consumer.Consume(r.Body, &body); err != nil {
-			if err == io.EOF {
-				res = append(res, errors.Required("body", "body", ""))
-			} else {
-				res = append(res, errors.NewParseError("body", "body", "", err))
-			}
-		} else {
-			// validate body object
-			if err := body.Validate(route.Formats); err != nil {
-				res = append(res, err)
-			}
-
-			ctx := validate.WithOperationRequest(r.Context())
-			if err := body.ContextValidate(ctx, route.Formats); err != nil {
-				res = append(res, err)
-			}
-
-			if len(res) == 0 {
-				o.Body = &body
-			}
-		}
-	} else {
-		res = append(res, errors.Required("body", "body", ""))
-	}
+	qs := runtime.Values(r.URL.Query())
 
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qExpires, qhkExpires, _ := qs.GetOK("expires")
+	if err := o.bindExpires(qExpires, qhkExpires, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qPrefix, qhkPrefix, _ := qs.GetOK("prefix")
+	if err := o.bindPrefix(qPrefix, qhkPrefix, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qVersionID, qhkVersionID, _ := qs.GetOK("version_id")
+	if err := o.bindVersionID(qVersionID, qhkVersionID, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -121,6 +116,66 @@ func (o *ShareObjectParams) bindBucketName(rawData []string, hasKey bool, format
 	// Required: true
 	// Parameter is provided by construction from the route
 	o.BucketName = raw
+
+	return nil
+}
+
+// bindExpires binds and validates parameter Expires from query.
+func (o *ShareObjectParams) bindExpires(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+	o.Expires = &raw
+
+	return nil
+}
+
+// bindPrefix binds and validates parameter Prefix from query.
+func (o *ShareObjectParams) bindPrefix(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	if !hasKey {
+		return errors.Required("prefix", "query", rawData)
+	}
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+	// AllowEmptyValue: false
+
+	if err := validate.RequiredString("prefix", "query", raw); err != nil {
+		return err
+	}
+	o.Prefix = raw
+
+	return nil
+}
+
+// bindVersionID binds and validates parameter VersionID from query.
+func (o *ShareObjectParams) bindVersionID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	if !hasKey {
+		return errors.Required("version_id", "query", rawData)
+	}
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+	// AllowEmptyValue: false
+
+	if err := validate.RequiredString("version_id", "query", raw); err != nil {
+		return err
+	}
+	o.VersionID = raw
 
 	return nil
 }
