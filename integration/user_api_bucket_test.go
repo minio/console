@@ -461,24 +461,12 @@ func ListObjects(bucketName, prefix, withVersions string) (*http.Response, error
 	return response, err
 }
 
-func SharesAnObjectOnAUrl(bucketName, prefix, versionID, expires, accessKey, secretKey string) (*http.Response, error) {
-	// Helper function to share an object on an url
-
-	requestDataAdd := map[string]interface{}{
-		"prefix":     prefix,
-		"version_id": versionID,
-		"expires":    expires,
-		"access_key": accessKey,
-		"secret_key": secretKey,
-	}
-
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-
+func SharesAnObjectOnAUrl(bucketName, prefix, versionID, expires string) (*http.Response, error) {
+	// Helper function to share an object on a url
 	request, err := http.NewRequest(
-		"POST",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/share",
-		requestDataBody,
+		"GET",
+		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/share?prefix="+prefix+"&version_id="+versionID+"&expires="+expires,
+		nil,
 	)
 	if err != nil {
 		log.Println(err)
@@ -743,39 +731,6 @@ func PutObjectsLegalholdStatus(bucketName, prefix, status, versionID string) (*h
 		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/legalhold?prefix="+prefix+"&version_id="+versionID,
 		requestDataBody,
 	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func PostServiceAccountCredentials(accessKey, secretKey, policy string) (*http.Response, error) {
-	/*
-		Helper function to create a service account
-		POST: {{baseUrl}}/service-account-credentials
-		{
-			"accessKey":"testsa",
-			"secretKey":"secretsa",
-			"policy":""
-		}
-	*/
-	requestDataAdd := map[string]interface{}{
-		"accessKey": accessKey,
-		"secretKey": secretKey,
-		"policy":    policy,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-
-	request, err := http.NewRequest("POST",
-		"http://localhost:9090/api/v1/service-account-credentials",
-		requestDataBody)
 	if err != nil {
 		log.Println(err)
 	}
@@ -1559,8 +1514,6 @@ func TestShareObjectOnURL(t *testing.T) {
 	tags := make(map[string]string)
 	tags["tag"] = "testputobjecttagbucketonetagone"
 	versionID := "null"
-	accessKey := "testaccesskey"
-	secretKey := "secretAccessKey"
 
 	// 1. Create the bucket
 	if !setupBucket(bucketName, false, false, nil, nil, assert, 200) {
@@ -1579,21 +1532,6 @@ func TestShareObjectOnURL(t *testing.T) {
 			200,
 			uploadResponse.StatusCode,
 			inspectHTTPResponse(uploadResponse),
-		)
-	}
-	// 2. Create Access Key
-	accKeyRsp, createError := PostServiceAccountCredentials(accessKey, secretKey, "")
-
-	if createError != nil {
-		log.Println(createError)
-		return
-	}
-
-	if accKeyRsp != nil {
-		assert.Equal(
-			201,
-			accKeyRsp.StatusCode,
-			inspectHTTPResponse(accKeyRsp),
 		)
 	}
 
@@ -1623,7 +1561,7 @@ func TestShareObjectOnURL(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 3. Share the object on a URL
-			shareResponse, shareError := SharesAnObjectOnAUrl(bucketName, tt.args.prefix, versionID, "604800s", accessKey, secretKey)
+			shareResponse, shareError := SharesAnObjectOnAUrl(bucketName, tt.args.prefix, versionID, "604800s")
 			assert.Nil(shareError)
 			if shareError != nil {
 				log.Println(shareError)
