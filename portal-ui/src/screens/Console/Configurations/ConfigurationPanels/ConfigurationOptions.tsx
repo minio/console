@@ -38,8 +38,7 @@ import ImportConfigButton from "./ImportConfigButton";
 import { Box } from "@mui/material";
 import HelpMenu from "../../HelpMenu";
 import { setHelpName } from "../../../../systemSlice";
-import { AppState, useAppDispatch } from "../../../../store";
-import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../../../store";
 
 interface IConfigurationOptions {
   classes: any;
