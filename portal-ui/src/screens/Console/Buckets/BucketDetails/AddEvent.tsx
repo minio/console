@@ -21,14 +21,12 @@ import { Button, EventSubscriptionIcon } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import api from "../../../../common/api";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import Checkbox from "@mui/material/Checkbox";
 import Table from "@mui/material/Table";
-import { ArnList } from "../types";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -40,6 +38,8 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper/AutocompleteWrapper";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { NotificationEventType } from "api/consoleApi";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -70,8 +70,10 @@ const AddEvent = ({
   const [prefix, setPrefix] = useState<string>("");
   const [suffix, setSuffix] = useState<string>("");
   const [arn, setArn] = useState<string>("");
-  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
-  const [arnList, setArnList] = useState<string[]>([]);
+  const [selectedEvents, setSelectedEvents] = useState<NotificationEventType[]>(
+    []
+  );
+  const [arnList, setArnList] = useState<string[] | undefined>([]);
 
   const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -79,8 +81,8 @@ const AddEvent = ({
       return;
     }
     setAddLoading(true);
-    api
-      .invoke("POST", `/api/v1/buckets/${selectedBucket}/events`, {
+    api.buckets
+      .createBucketEvent(selectedBucket, {
         configuration: {
           arn: arn,
           events: selectedEvents,
@@ -101,15 +103,13 @@ const AddEvent = ({
 
   const fetchArnList = useCallback(() => {
     setAddLoading(true);
-    api
-      .invoke("GET", `/api/v1/admin/arns`)
-      .then((res: ArnList) => {
-        let arns: string[] = [];
-        if (res.arns !== null) {
-          arns = res.arns;
+    api.admin
+      .arnList()
+      .then((res) => {
+        if (res.data.arns !== null) {
+          setArnList(res.data.arns);
         }
         setAddLoading(false);
-        setArnList(arns);
       })
       .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
@@ -122,17 +122,17 @@ const AddEvent = ({
   }, [fetchArnList]);
 
   const events = [
-    { label: "PUT - Object Uploaded", value: "put" },
-    { label: "GET - Object accessed", value: "get" },
-    { label: "DELETE - Object Deleted", value: "delete" },
+    { label: "PUT - Object Uploaded", value: NotificationEventType.Put },
+    { label: "GET - Object accessed", value: NotificationEventType.Get },
+    { label: "DELETE - Object Deleted", value: NotificationEventType.Delete },
   ];
 
   const handleClick = (
     event: React.MouseEvent<unknown> | ChangeEvent<unknown>,
-    name: string
+    name: NotificationEventType
   ) => {
     const selectedIndex = selectedEvents.indexOf(name);
-    let newSelected: string[] = [];
+    let newSelected: NotificationEventType[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selectedEvents, name);
@@ -149,7 +149,7 @@ const AddEvent = ({
     setSelectedEvents(newSelected);
   };
 
-  const arnValues = arnList.map((arnConstant) => ({
+  const arnValues = arnList?.map((arnConstant) => ({
     label: arnConstant,
     value: arnConstant,
   }));
@@ -185,7 +185,7 @@ const AddEvent = ({
                 name="select-access-policy"
                 label={"ARN"}
                 value={arn}
-                options={arnValues}
+                options={arnValues || []}
               />
             </Grid>
             <Grid item xs={12} className={classes.formFieldRow}>

@@ -19,11 +19,11 @@ import { Button, ChangePasswordIcon, InputBox, Grid, FormLayout } from "mds";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { LinearProgress } from "@mui/material";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { ChangePasswordRequest } from "../Buckets/types";
-import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import { api } from "api";
+import { AccountChangePasswordRequest } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 interface IChangePasswordProps {
   open: boolean;
@@ -67,13 +67,13 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
     }
     setLoading(true);
 
-    let request: ChangePasswordRequest = {
+    let request: AccountChangePasswordRequest = {
       current_secret_key: currentPassword,
       new_secret_key: newPassword,
     };
 
-    api
-      .invoke("POST", "/api/v1/account/change-password", request)
+    api.account
+      .accountChangePassword(request)
       .then(() => {
         setLoading(false);
         setNewPassword("");
@@ -81,12 +81,12 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
         setCurrentPassword("");
         closeModal();
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");
         setCurrentPassword("");
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err)));
       });
   };
 

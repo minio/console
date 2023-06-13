@@ -37,13 +37,10 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import api from "../../../../common/api";
-import { BucketInfo } from "../types";
 import {
   containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
 
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { Box } from "@mui/material";
@@ -78,6 +75,8 @@ import {
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 import HelpMenu from "../../HelpMenu";
 
 const DeleteBucket = withSuspense(
@@ -158,15 +157,15 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
 
   useEffect(() => {
     if (loadingBucket) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}`)
-        .then((res: BucketInfo) => {
+      api.buckets
+        .bucketInfo(bucketName)
+        .then((res) => {
           dispatch(setBucketDetailsLoad(false));
-          dispatch(setBucketInfo(res));
+          dispatch(setBucketInfo(res.data));
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           dispatch(setBucketDetailsLoad(false));
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err)));
         });
     }
   }, [bucketName, loadingBucket, dispatch]);
@@ -269,7 +268,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   className={classes.capitalize}
                   style={{ fontWeight: 600, fontSize: 15 }}
                 >
-                  {bucketInfo?.access.toLowerCase()}
+                  {bucketInfo?.access?.toLowerCase()}
                 </span>
               </SecureComponent>
             }

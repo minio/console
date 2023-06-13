@@ -32,8 +32,6 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../store";
 import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../common/types";
-import api from "../../common/api";
 import MainError from "./Common/MainError/MainError";
 import {
   CONSOLE_UI_RESOURCE,
@@ -54,6 +52,7 @@ import {
   setSnackBarMessage,
 } from "../../systemSlice";
 import { selFeatures, selSession } from "./consoleSlice";
+import { api } from "api";
 import MenuWrapper from "./Menu/MenuWrapper";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
@@ -211,20 +210,20 @@ const Console = ({ classes }: IConsoleProps) => {
 
   const restartServer = () => {
     dispatch(serverIsLoading(true));
-    api
-      .invoke("POST", "/api/v1/service/restart", {})
-      .then((res) => {
+    api.service
+      .restartService({})
+      .then(() => {
         console.log("success restarting service");
         dispatch(serverIsLoading(false));
         dispatch(setServerNeedsRestart(false));
       })
-      .catch((err: ErrorResponseHandler) => {
-        if (err.errorMessage === "Error 502") {
+      .catch((err) => {
+        if (err.error.errorMessage === "Error 502") {
           dispatch(setServerNeedsRestart(false));
         }
         dispatch(serverIsLoading(false));
         console.log("failure restarting service");
-        console.error(err);
+        console.error(err.error);
       });
   };
 

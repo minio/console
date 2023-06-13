@@ -15,13 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BucketInfo } from "../types";
 import { AppState } from "../../../../store";
+import { Bucket } from "api/consoleApi";
 
 export interface BucketDetailsState {
   selectedTab: string;
   loadingBucket: boolean;
-  bucketInfo: BucketInfo | null;
+  bucketInfo: Bucket | null;
 }
 
 const initialState: BucketDetailsState = {
@@ -40,7 +40,7 @@ export const bucketDetailsSlice = createSlice({
     setBucketDetailsLoad: (state, action: PayloadAction<boolean>) => {
       state.loadingBucket = action.payload;
     },
-    setBucketInfo: (state, action: PayloadAction<BucketInfo | null>) => {
+    setBucketInfo: (state, action: PayloadAction<Bucket | null>) => {
       state.bucketInfo = action.payload;
     },
   },

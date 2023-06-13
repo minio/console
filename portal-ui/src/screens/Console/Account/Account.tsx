@@ -29,11 +29,9 @@ import {
 } from "mds";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import api from "../../../common/api";
 import { stringSort } from "../../../utils/sortFunctions";
 import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 
-import { ErrorResponseHandler } from "../../../common/types";
 import ChangePasswordModal from "./ChangePasswordModal";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
@@ -56,6 +54,8 @@ import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 import HelpMenu from "../HelpMenu";
 
 const DeleteServiceAccount = withSuspense(
@@ -94,16 +94,16 @@ const Account = () => {
 
   useEffect(() => {
     if (loading) {
-      api
-        .invoke("GET", `/api/v1/service-accounts`)
-        .then((res: string[]) => {
-          const serviceAccounts = res.sort(stringSort);
+      api.serviceAccounts
+        .listUserServiceAccounts()
+        .then((res) => {
+          const serviceAccounts = res.data.sort(stringSort);
 
           setLoading(false);
           setRecords(serviceAccounts);
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           setLoading(false);
         });
     }
