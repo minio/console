@@ -75,9 +75,6 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
     dispatch(setHelpName("settings_Region"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const systemHelpName = useSelector(
-    (state: AppState) => state.system.helpName
-  );
 
   return (
     <Fragment>
