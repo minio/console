@@ -26,8 +26,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("Add a new group", async ({ page }) => {
-  await page.getByRole("button", { name: "Identity Identity" }).click();
-  await page.getByRole("link", { name: "Groups Groups" }).click();
+  await page.getByRole("button", { name: "Identity" }).click();
+  await page.getByRole("button", { name: "Groups" }).click();
   await page.getByRole("button", { name: "Create Group" }).click();
 
   const groupName = `new-group-${generateUUID()}`;
