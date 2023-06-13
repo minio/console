@@ -14,25 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import useApi from "./screens/Console/Common/Hooks/useApi";
 import { ErrorResponseHandler } from "./common/types";
 import { ReplicationSite } from "./screens/Console/Configurations/SiteReplication/SiteReplication";
 import { useSelector } from "react-redux";
-import {
-  globalSetDistributedSetup,
-  setAnonymousMode,
-  setOverrideStyles,
-  setSiteReplicationInfo,
-  userLogged,
-} from "./systemSlice";
 import { SRInfoStateType } from "./types";
 import { AppState, useAppDispatch } from "./store";
-import { saveSessionResponse } from "./screens/Console/consoleSlice";
-import { getOverrideColorVariants } from "./utils/stylesUtils";
 import LoadingComponent from "./common/LoadingComponent";
-import { api } from "api";
+import { fetchSession } from "./screens/LoginPage/sessionThunk";
+import { setSiteReplicationInfo, setLocationPath } from "./systemSlice";
+import { SessionCallStates } from "./screens/Console/consoleSlice.types";
 
 interface ProtectedRouteProps {
   Component: any;
@@ -41,8 +34,11 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   const dispatch = useAppDispatch();
 
-  const [sessionLoading, setSessionLoading] = useState<boolean>(true);
   const userLoggedIn = useSelector((state: AppState) => state.system.loggedIn);
+  const [componentLoading, setComponentLoading] = useState<boolean>(true);
+  const sessionLoadingState = useSelector(
+    (state: AppState) => state.console.sessionLoadingState
+  );
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
   );
@@ -53,56 +49,19 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
     return <Navigate to={{ pathname: `login` }} />;
   };
 
-  const pathnameParts = pathname.split("/");
-  const screen = pathnameParts.length > 2 ? pathnameParts[1] : "";
+  useEffect(() => {
+    dispatch(setLocationPath(pathname));
+  }, [dispatch, pathname]);
 
   useEffect(() => {
-    api.session
-      .sessionCheck()
-      .then((res) => {
-        dispatch(saveSessionResponse(res.data));
-        dispatch(userLogged(true));
-        setSessionLoading(false);
-        dispatch(globalSetDistributedSetup(res.data?.distributedMode || false));
+    dispatch(fetchSession());
+  }, [dispatch]);
 
-        if (res.data.customStyles && res.data.customStyles !== "") {
-          const overrideColorVariants = getOverrideColorVariants(
-            res.data.customStyles
-          );
-
-          if (overrideColorVariants !== false) {
-            dispatch(setOverrideStyles(overrideColorVariants));
-          }
-        }
-      })
-      .catch(() => {
-        // if we are trying to browse, probe access to the requested prefix
-        if (screen === "browser") {
-          const bucket = pathnameParts.length >= 3 ? pathnameParts[2] : "";
-          // no bucket, no business
-          if (bucket === "") {
-            setSessionLoading(false);
-            return;
-          }
-          // before marking the session as done, let's check if the bucket is publicly accessible
-          api.buckets
-            .listObjects(
-              bucket,
-              { limit: 1 },
-              { headers: { "X-Anonymous": "1" } }
-            )
-            .then(() => {
-              dispatch(setAnonymousMode());
-              setSessionLoading(false);
-            })
-            .catch(() => {
-              setSessionLoading(false);
-            });
-        } else {
-          setSessionLoading(false);
-        }
-      });
-  }, [dispatch, screen, pathnameParts]);
+  useEffect(() => {
+    if (sessionLoadingState === SessionCallStates.Done) {
+      setComponentLoading(false);
+    }
+  }, [dispatch, sessionLoadingState]);
 
   const [, invokeSRInfoApi] = useApi(
     (res: any) => {
@@ -132,16 +91,17 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   );
 
   useEffect(() => {
-    if (userLoggedIn && !sessionLoading && !anonymousMode) {
+    if (userLoggedIn && !componentLoading && !anonymousMode) {
       invokeSRInfoApi("GET", `api/v1/admin/site-replication`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userLoggedIn, sessionLoading]);
+  }, [userLoggedIn, componentLoading]);
 
   // if we're still trying to retrieve user session render nothing
-  if (sessionLoading) {
+  if (componentLoading) {
     return <LoadingComponent />;
   }
+
   // redirect user to the right page based on session status
   return userLoggedIn ? <Component /> : <StorePathAndRedirect />;
 };

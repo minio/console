@@ -23,7 +23,7 @@ import logReducer from "./screens/Console/Logs/logsSlice";
 import healthInfoReducer from "./screens/Console/HealthInfo/healthInfoSlice";
 import watchReducer from "./screens/Console/Watch/watchSlice";
 import consoleReducer from "./screens/Console/consoleSlice";
-import bucketsReducer from "./screens/Console/Buckets/ListBuckets/AddBucket/addBucketsSlice";
+import addBucketsReducer from "./screens/Console/Buckets/ListBuckets/AddBucket/addBucketsSlice";
 import bucketDetailsReducer from "./screens/Console/Buckets/BucketDetails/bucketDetailsSlice";
 import objectBrowserReducer from "./screens/Console/ObjectBrowser/objectBrowserSlice";
 import dashboardReducer from "./screens/Console/Dashboard/dashboardSlice";
@@ -39,7 +39,7 @@ const rootReducer = combineReducers({
   logs: logReducer,
   watch: watchReducer,
   console: consoleReducer,
-  addBucket: bucketsReducer,
+  addBucket: addBucketsReducer,
   bucketDetails: bucketDetailsReducer,
   objectBrowser: objectBrowserReducer,
   healthInfo: healthInfoReducer,
