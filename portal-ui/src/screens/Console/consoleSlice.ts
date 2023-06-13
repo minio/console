@@ -18,12 +18,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SessionResponse } from "../../api/consoleApi";
 import { AppState } from "../../store";
 import { fetchSession } from "../../screens/LoginPage/sessionThunk";
-
-export enum SessionCallStates {
-  Idle = "idle",
-  Loading = "loading",
-  Done = "done",
-}
+import { SessionCallStates } from "./consoleSlice.types";
 
 export interface ConsoleState {
   session: SessionResponse;
@@ -32,7 +27,7 @@ export interface ConsoleState {
 
 const initialState: ConsoleState = {
   session: {},
-  sessionLoadingState: SessionCallStates.Idle,
+  sessionLoadingState: SessionCallStates.Initial,
 };
 
 export const consoleSlice = createSlice({

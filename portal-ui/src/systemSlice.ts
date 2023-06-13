@@ -44,6 +44,7 @@ export interface SystemState {
   anonymousMode: boolean;
   helpName: string;
   helpTabName: string;
+  locationPath: string;
 }
 
 const initialState: SystemState = {
@@ -74,6 +75,7 @@ const initialState: SystemState = {
   anonymousMode: false,
   helpName: "help",
   helpTabName: "docs",
+  locationPath: "",
 };
 
 export const systemSlice = createSlice({
@@ -169,6 +171,9 @@ export const systemSlice = createSlice({
       state.anonymousMode = true;
       state.loggedIn = true;
     },
+    setLocationPath: (state, action: PayloadAction<string>) => {
+      state.locationPath = action.payload;
+    },
     resetSystem: () => {
       return initialState;
     },
@@ -197,6 +202,7 @@ export const {
   configurationIsLoading,
   setHelpName,
   setHelpTabName,
+  setLocationPath,
 } = systemSlice.actions;
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;

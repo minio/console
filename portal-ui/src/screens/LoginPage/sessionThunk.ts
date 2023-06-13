@@ -27,8 +27,9 @@ import { errorToHandler } from "api/errors";
 import {
   saveSessionResponse,
   setSessionLoadingState,
-  SessionCallStates,
 } from "../Console/consoleSlice";
+import { SessionCallStates } from "../Console/consoleSlice.types";
+
 import {
   globalSetDistributedSetup,
   setOverrideStyles,
@@ -36,11 +37,13 @@ import {
 } from "../../../src/systemSlice";
 import { getOverrideColorVariants } from "../../utils/stylesUtils";
 import { userLogged } from "../../../src/systemSlice";
+import { AppState } from "../../store";
 
 export const fetchSession = createAsyncThunk(
   "session/fetchSession",
-  async (location: string, { dispatch, rejectWithValue }) => {
-    const pathnameParts = location.split("/");
+  async (_, { getState, dispatch, rejectWithValue }) => {
+    const state = getState() as AppState;
+    const pathnameParts = state.system.locationPath.split("/");
     const screen = pathnameParts.length > 2 ? pathnameParts[1] : "";
 
     return api.session

@@ -36,7 +36,6 @@ export interface LoginStrategyPayload {
 }
 
 export const getTargetPath = () => {
-  // default to browser view to avoid redirecting first to "/" and then to "/browser" on login
   let targetPath = "/browser";
   if (
     localStorage.getItem("redirect-path") &&

@@ -24,8 +24,8 @@ import { SRInfoStateType } from "./types";
 import { AppState, useAppDispatch } from "./store";
 import LoadingComponent from "./common/LoadingComponent";
 import { fetchSession } from "./screens/LoginPage/sessionThunk";
-import { setSiteReplicationInfo } from "./systemSlice";
-import { SessionCallStates } from "./screens/Console/consoleSlice";
+import { setSiteReplicationInfo, setLocationPath } from "./systemSlice";
+import { SessionCallStates } from "./screens/Console/consoleSlice.types";
 
 interface ProtectedRouteProps {
   Component: any;
@@ -35,13 +35,10 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   const dispatch = useAppDispatch();
 
   const userLoggedIn = useSelector((state: AppState) => state.system.loggedIn);
-  // sessionLoading is used to control rendering this page, if we only use console.sessionLoadingState,
-  // since the state chages it triggers the reload of this component multiple times, causing duplicate queries.
-  const [sessionLoading, setSessionLoading] = useState<boolean>(true);
+  const [componentLoading, setComponentLoading] = useState<boolean>(true);
   const sessionLoadingState = useSelector(
     (state: AppState) => state.console.sessionLoadingState
   );
-
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
   );
@@ -52,14 +49,17 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
     return <Navigate to={{ pathname: `login` }} />;
   };
 
-  // update location path and store it
   useEffect(() => {
-    dispatch(fetchSession(pathname));
+    dispatch(setLocationPath(pathname));
   }, [dispatch, pathname]);
 
   useEffect(() => {
+    dispatch(fetchSession());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (sessionLoadingState === SessionCallStates.Done) {
-      setSessionLoading(false);
+      setComponentLoading(false);
     }
   }, [dispatch, sessionLoadingState]);
 
@@ -91,14 +91,14 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   );
 
   useEffect(() => {
-    if (userLoggedIn && !sessionLoading && !anonymousMode) {
+    if (userLoggedIn && !componentLoading && !anonymousMode) {
       invokeSRInfoApi("GET", `api/v1/admin/site-replication`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userLoggedIn, sessionLoading]);
+  }, [userLoggedIn, componentLoading]);
 
   // if we're still trying to retrieve user session render nothing
-  if (sessionLoading) {
+  if (componentLoading) {
     return <LoadingComponent />;
   }
 
