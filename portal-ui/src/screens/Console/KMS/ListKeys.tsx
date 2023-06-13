@@ -31,7 +31,7 @@ import {
 } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import withSuspense from "../Common/Components/withSuspense";
 import {
   containerForHeader,
@@ -41,6 +41,7 @@ import SearchBox from "../Common/SearchBox";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 const DeleteKMSModal = withSuspense(
   React.lazy(() => import("./DeleteKMSModal"))
@@ -128,6 +129,10 @@ const ListKeys = ({ classes }: IKeysProps) => {
     },
   ];
 
+  useEffect(() => {
+    dispatch(setHelpName("list_keys"));
+  }, [dispatch]);
+
   return (
     <React.Fragment>
       {deleteOpen && (
@@ -139,7 +144,11 @@ const ListKeys = ({ classes }: IKeysProps) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <PageHeaderWrapper label="Key Management Service Keys" />
+      <PageHeaderWrapper
+        label="Key Management Service Keys"
+        actions={<HelpMenu />}
+      />
+
       <PageLayout className={classes.pageContainer}>
         <Grid container spacing={1}>
           <Grid

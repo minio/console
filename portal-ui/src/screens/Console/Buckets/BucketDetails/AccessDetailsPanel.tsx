@@ -37,7 +37,7 @@ import {
   SecureComponent,
 } from "../../../../common/SecureComponent";
 import { encodeURLString } from "../../../../common/utils";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
 import { Policy } from "../../../../api/consoleApi";
@@ -132,6 +132,11 @@ const AccessDetails = () => {
       }
     }
   }, [loadingUsers, dispatch, bucketName, displayUsersList]);
+
+  useEffect(() => {
+    dispatch(setHelpName("bucket_detail_access"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (loadingPolicies) {

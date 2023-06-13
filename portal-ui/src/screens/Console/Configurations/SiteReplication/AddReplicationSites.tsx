@@ -24,6 +24,7 @@ import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import SectionTitle from "../../Common/SectionTitle";
 import {
   setErrorSnackMessage,
+  setHelpName,
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
@@ -32,6 +33,7 @@ import { selSession } from "../../consoleSlice";
 import SRSiteInputRow from "./SRSiteInputRow";
 import { SiteInputRow } from "./Types";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../../HelpMenu";
 
 const isValidEndPoint = (ep: string) => {
   let isValidEndPointUrl = false;
@@ -159,6 +161,11 @@ const AddReplicationSites = () => {
 
   useEffect(() => {
     getSites();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    dispatch(setHelpName("add-replication-sites"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -399,6 +406,7 @@ const AddReplicationSites = () => {
             onClick={() => navigate(IAM_PAGES.SITE_REPLICATION)}
           />
         }
+        actions={<HelpMenu />}
       />
       <PageLayout>
         <Box

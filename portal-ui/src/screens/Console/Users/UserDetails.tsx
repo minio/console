@@ -52,7 +52,7 @@ import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 import { decodeURLString, encodeURLString } from "../../../common/utils";
-import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { setHelpName, setModalErrorSnackMessage } from "../../../systemSlice";
 import {
   assignGroupPermissions,
   assignIAMPolicyPermissions,
@@ -71,6 +71,7 @@ import { useAppDispatch } from "../../../store";
 import { policyDetailsSort } from "../../../utils/sortFunctions";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -109,7 +110,6 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
   const [addLoading, setAddLoading] = useState<boolean>(false);
-
   const [enabled, setEnabled] = useState<boolean>(false);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [currentGroups, setCurrentGroups] = useState<IGroupItem[]>([]);
@@ -209,6 +209,11 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
   };
 
   useEffect(() => {
+    dispatch(setHelpName("user_details_groups"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     getUserInformation();
   }, [getUserInformation]);
 
@@ -242,7 +247,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
             />
           </Fragment>
         }
-        actions={<React.Fragment></React.Fragment>}
+        actions={<HelpMenu />}
       />
       {addGroupOpen && (
         <ChangeUserGroups
@@ -385,7 +390,12 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                 },
                 content: (
                   <React.Fragment>
-                    <div className={classes.actionsTray}>
+                    <div
+                      className={classes.actionsTray}
+                      onMouseMove={() =>
+                        dispatch(setHelpName("user_details_groups"))
+                      }
+                    >
                       <PanelTitle>Groups</PanelTitle>
                       <TooltipWrapper
                         tooltip={
@@ -409,7 +419,14 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                         />
                       </TooltipWrapper>
                     </div>
-                    <Grid item xs={12} className={classes.tableBlock}>
+                    <Grid
+                      item
+                      xs={12}
+                      className={classes.tableBlock}
+                      onMouseMove={() =>
+                        dispatch(setHelpName("user_details_groups"))
+                      }
+                    >
                       <TableWrapper
                         itemActions={groupTableActions}
                         columns={[{ label: "Name", elementKey: "group" }]}
@@ -444,7 +461,12 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                 },
                 content: (
                   <Fragment>
-                    <div className={classes.actionsTray}>
+                    <div
+                      className={classes.actionsTray}
+                      onMouseMove={() =>
+                        dispatch(setHelpName("user_details_policies"))
+                      }
+                    >
                       <PanelTitle>Policies</PanelTitle>
 
                       <TooltipWrapper

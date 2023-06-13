@@ -27,6 +27,8 @@ import { getUsageAsync } from "./dashboardThunks";
 import { useSelector } from "react-redux";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { selFeatures } from "../consoleSlice";
+import HelpMenu from "../HelpMenu";
+import { setHelpName } from "../../../systemSlice";
 
 interface IDashboardSimple {
   classes: any;
@@ -58,9 +60,16 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
     }
   }, [loading, dispatch]);
 
+  useEffect(() => {
+    dispatch(setHelpName("metrics"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
-      {!hideMenu && <PageHeaderWrapper label="Metrics" />}
+      {!hideMenu && (
+        <PageHeaderWrapper label="Metrics" actions={<HelpMenu />} />
+      )}
       {loading ? (
         <Grid container>
           <Grid item xs={12} className={classes.container}>

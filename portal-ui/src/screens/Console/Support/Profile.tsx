@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Theme } from "@mui/material/styles";
 import { Button, PageLayout } from "mds";
@@ -16,6 +16,9 @@ import { useNavigate } from "react-router-dom";
 import RegisterCluster from "./RegisterCluster";
 import { registeredCluster } from "../../../config";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
+import { useAppDispatch } from "../../../store";
+import { setHelpName } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -138,9 +141,16 @@ const Profile = ({ classes }: IProfileProps) => {
     setProfilingStarted(false);
   };
 
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setHelpName("profile"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
-      <PageHeaderWrapper label="Profile" />
+      <PageHeaderWrapper label="Profile" actions={<HelpMenu />} />
+
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>

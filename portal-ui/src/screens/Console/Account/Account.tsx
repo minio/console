@@ -47,11 +47,16 @@ import { SecureComponent } from "../../../common/SecureComponent";
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setHelpName,
+  setSnackBarMessage,
+} from "../../../systemSlice";
 import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
@@ -80,6 +85,11 @@ const Account = () => {
 
   useEffect(() => {
     fetchRecords();
+  }, []);
+
+  useEffect(() => {
+    dispatch(setHelpName("accessKeys"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -179,13 +189,12 @@ const Account = () => {
           closeModalAndRefresh={closePolicyModal}
         />
       )}
-      {changePasswordModalOpen && (
-        <ChangePasswordModal
-          open={changePasswordModalOpen}
-          closeModal={() => setChangePasswordModalOpen(false)}
-        />
-      )}
-      <PageHeaderWrapper label="Access Keys" />
+      <ChangePasswordModal
+        open={changePasswordModalOpen}
+        closeModal={() => setChangePasswordModalOpen(false)}
+      />
+      <PageHeaderWrapper label="Access Keys" actions={<HelpMenu />} />
+
       <PageLayout>
         <Grid container>
           <Grid item xs={12} sx={{ ...actionsTray.actionsTray }}>

@@ -47,6 +47,7 @@ import ResetConfigurationModal from "./ResetConfigurationModal";
 import {
   configurationIsLoading,
   setErrorSnackMessage,
+  setHelpName,
   setServerNeedsRestart,
   setSnackBarMessage,
 } from "../../../../systemSlice";
@@ -197,87 +198,95 @@ const EditConfiguration = ({
 
   return (
     <Fragment>
-      {resetConfigurationOpen && (
-        <ResetConfigurationModal
-          configurationName={selectedConfiguration.configuration_id}
-          closeResetModalAndRefresh={continueReset}
-          resetOpen={resetConfigurationOpen}
-        />
-      )}
-      {loadingConfig ? (
-        <Grid item xs={12} sx={{ textAlign: "center", paddingTop: "15px" }}>
-          <Loader />
-        </Grid>
-      ) : (
-        <Box
-          sx={{
-            padding: "15px",
-            height: "100%",
-          }}
-        >
-          {selectedConfiguration.configuration_id === "logger_webhook" ||
-          selectedConfiguration.configuration_id === "audit_webhook" ? (
-            <WebhookSettings
-              WebhookSettingslist={configSubsysList}
-              setResetConfigurationOpen={resetConfigurationMOpen}
-              type={selectedConfiguration.configuration_id}
-            />
-          ) : (
-            <Fragment>
-              <form
-                noValidate
-                onSubmit={submitForm}
-                className={className}
-                style={{
-                  height: "100%",
-                  display: "flex",
-                  flexFlow: "column",
-                }}
-              >
-                <Grid item xs={12} className={classes.settingsFormContainer}>
-                  <ConfTargetGeneric
-                    fields={
-                      fieldsConfigurations[
-                        selectedConfiguration.configuration_id
-                      ]
-                    }
-                    onChange={onValueChange}
-                    defaultVals={configValues}
-                    overrideEnv={overrideEnvs}
-                  />
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sx={{
-                    paddingTop: "15px ",
-                    textAlign: "right" as const,
-                    maxHeight: "60px",
+      <div
+        onMouseMove={() => {
+          dispatch(
+            setHelpName(`settings_${selectedConfiguration.configuration_label}`)
+          );
+        }}
+      >
+        {resetConfigurationOpen && (
+          <ResetConfigurationModal
+            configurationName={selectedConfiguration.configuration_id}
+            closeResetModalAndRefresh={continueReset}
+            resetOpen={resetConfigurationOpen}
+          />
+        )}
+        {loadingConfig ? (
+          <Grid item xs={12} sx={{ textAlign: "center", paddingTop: "15px" }}>
+            <Loader />
+          </Grid>
+        ) : (
+          <Box
+            sx={{
+              padding: "15px",
+              height: "100%",
+            }}
+          >
+            {selectedConfiguration.configuration_id === "logger_webhook" ||
+            selectedConfiguration.configuration_id === "audit_webhook" ? (
+              <WebhookSettings
+                WebhookSettingslist={configSubsysList}
+                setResetConfigurationOpen={resetConfigurationMOpen}
+                type={selectedConfiguration.configuration_id}
+              />
+            ) : (
+              <Fragment>
+                <form
+                  noValidate
+                  onSubmit={submitForm}
+                  className={className}
+                  style={{
+                    height: "100%",
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
+                    flexFlow: "column",
                   }}
                 >
-                  <Button
-                    id={"restore-defaults"}
-                    variant="secondary"
-                    onClick={resetConfigurationMOpen}
-                    label={"Restore Defaults"}
-                  />
-                  &nbsp; &nbsp;
-                  <Button
-                    id={"save"}
-                    type="submit"
-                    variant="callAction"
-                    disabled={saving}
-                    label={"Save"}
-                  />
-                </Grid>
-              </form>
-            </Fragment>
-          )}
-        </Box>
-      )}
+                  <Grid item xs={12} className={classes.settingsFormContainer}>
+                    <ConfTargetGeneric
+                      fields={
+                        fieldsConfigurations[
+                          selectedConfiguration.configuration_id
+                        ]
+                      }
+                      onChange={onValueChange}
+                      defaultVals={configValues}
+                      overrideEnv={overrideEnvs}
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      paddingTop: "15px ",
+                      textAlign: "right" as const,
+                      maxHeight: "60px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <Button
+                      id={"restore-defaults"}
+                      variant="secondary"
+                      onClick={resetConfigurationMOpen}
+                      label={"Restore Defaults"}
+                    />
+                    &nbsp; &nbsp;
+                    <Button
+                      id={"save"}
+                      type="submit"
+                      variant="callAction"
+                      disabled={saving}
+                      label={"Save"}
+                    />
+                  </Grid>
+                </form>
+              </Fragment>
+            )}
+          </Box>
+        )}
+      </div>
     </Fragment>
   );
 };

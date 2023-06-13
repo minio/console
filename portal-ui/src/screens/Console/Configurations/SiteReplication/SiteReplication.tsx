@@ -36,12 +36,14 @@ import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import {
   setErrorSnackMessage,
+  setHelpName,
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import AButton from "../../Common/AButton/AButton";
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../../HelpMenu";
 
 export type ReplicationSite = {
   deploymentID: string;
@@ -110,9 +112,15 @@ const SiteReplication = () => {
 
   const hasSites = sites?.length;
 
+  useEffect(() => {
+    dispatch(setHelpName("site-replication"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
-      <PageHeaderWrapper label={"Site Replication"} />
+      <PageHeaderWrapper label={"Site Replication"} actions={<HelpMenu />} />
+
       <PageLayout>
         <Box
           sx={{

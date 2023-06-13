@@ -14,18 +14,29 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { DialogContentText, Grid } from "@mui/material";
 import SectionTitle from "./SectionTitle";
 import { Button, ConfirmDeleteIcon, PageLayout } from "mds";
 import ConfirmDialog from "./ModalWrapper/ConfirmDialog";
 import PageHeaderWrapper from "./PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
+import { setHelpName } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
 
 const ComponentsScreen = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setHelpName("components"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
-      <PageHeaderWrapper label={"Components"} />
+      <PageHeaderWrapper label={"Components"} actions={<HelpMenu />} />
+
       <PageLayout>
         <Grid container spacing={1}>
           <Grid item xs={12}>

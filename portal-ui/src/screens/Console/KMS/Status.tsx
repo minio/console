@@ -25,7 +25,7 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -47,6 +47,8 @@ import {
 } from "recharts";
 import { DisabledIcon, EnabledIcon, PageLayout } from "mds";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+
+import HelpMenu from "../HelpMenu";
 
 const Status = () => {
   const dispatch = useAppDispatch();
@@ -348,11 +350,16 @@ const Status = () => {
     </Fragment>
   );
 
+  useEffect(() => {
+    dispatch(setHelpName("kms_status"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       <PageHeaderWrapper
         label="Key Management Service"
-        actions={<React.Fragment />}
+        actions={<HelpMenu />}
       />
 
       <PageLayout>
