@@ -1411,8 +1411,8 @@ jobs:
           yarn add -D nyc
           yarn add -D react-app-rewired
           yarn add -D create-react-app
+          yarn add -D @playwright/test
           yarn init -y
-          yarn add --dev @playwright/test
           echo "yarn install"
           yarn install
 
@@ -1434,6 +1434,8 @@ jobs:
         run: |
           echo "Run tests under playwright folder only"
           cd $GITHUB_WORKSPACE/portal-ui
+          yarn remove playwright
+          yarn add --dev @playwright/test
           echo "npx playwright test"
           npx playwright test # To run the tests
           echo "npx nyc report"
