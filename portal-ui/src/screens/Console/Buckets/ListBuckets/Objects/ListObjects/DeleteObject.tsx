@@ -25,8 +25,8 @@ import { AppState, useAppDispatch } from "../../../../../../store";
 import { hasPermission } from "../../../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
-import { BucketVersioningInfo } from "../../../types";
 import { isVersionedMode } from "../../../../../../utils/validationFunctions";
+import { BucketVersioningResponse } from "api/consoleApi";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -34,7 +34,7 @@ interface IDeleteObjectProps {
   selectedObject: string;
   selectedBucket: string;
 
-  versioningInfo: BucketVersioningInfo | undefined;
+  versioningInfo: BucketVersioningResponse | undefined;
   selectedVersion?: string;
 }
 

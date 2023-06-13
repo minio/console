@@ -25,7 +25,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("Can create a policy", async ({ page }) => {
-  await page.getByRole("link", { name: "Policies" }).click();
+  await page.getByRole("button", { name: "Policies" }).click();
   await page.getByRole("button", { name: "Create Policy" }).click();
   await page.getByLabel("Policy Name").click();
 

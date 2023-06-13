@@ -27,13 +27,13 @@ import {
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
 
-import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -73,39 +73,30 @@ const ServiceAccountPolicy = ({
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   useEffect(() => {
     if (loading) {
-      api
-        .invoke(
-          "GET",
-          `/api/v1/service-accounts/${encodeURLString(
-            selectedAccessKey
-          )}/policy`
-        )
+      api.serviceAccounts
+        .getServiceAccountPolicy(encodeURLString(selectedAccessKey))
         .then((res) => {
           setLoading(false);
-          setPolicyDefinition(res);
+          setPolicyDefinition(res.data);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setLoading(false);
-          dispatch(setModalErrorSnackMessage(err));
+          dispatch(setModalErrorSnackMessage(errorToHandler(err)));
         });
     }
   }, [loading, setLoading, dispatch, selectedAccessKey]);
 
   const setPolicy = (event: React.FormEvent, newPolicy: string) => {
     event.preventDefault();
-    api
-      .invoke(
-        "PUT",
-        `/api/v1/service-accounts/${encodeURLString(selectedAccessKey)}/policy`,
-        {
-          policy: newPolicy,
-        }
-      )
-      .then((res) => {
+    api.serviceAccounts
+      .setServiceAccountPolicy(encodeURLString(selectedAccessKey), {
+        policy: newPolicy,
+      })
+      .then(() => {
         closeModalAndRefresh();
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(err));
+      .catch((err) => {
+        dispatch(setModalErrorSnackMessage(errorToHandler(err)));
       });
   };
 

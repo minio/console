@@ -22,10 +22,11 @@ test.use({ storageState: minioadminFile });
 
 test.beforeEach(async ({ page }) => {
   await page.goto(BUCKET_LIST_PAGE);
+  await page.waitForTimeout(1000);
 });
 
 test("create a new bucket", async ({ page }) => {
-  await page.getByRole("link", { name: "Buckets Buckets" }).click();
+  await page.getByRole("button", { name: "Buckets" }).click();
   await page.getByRole("button", { name: "Create Bucket" }).click();
   await page.getByLabel("Bucket Name*").click();
 
@@ -33,6 +34,8 @@ test("create a new bucket", async ({ page }) => {
 
   await page.getByLabel("Bucket Name*").fill(bucketName);
   await page.getByRole("button", { name: "Create Bucket" }).click();
+  await page.getByPlaceholder("Search Buckets").fill(bucketName);
+
   await expect(page.locator(`#manageBucket-${bucketName}`)).toBeTruthy();
   const bucketLocatorEl = `#manageBucket-${bucketName}`;
   await page.locator(bucketLocatorEl).click();
@@ -44,7 +47,7 @@ test("create a new bucket", async ({ page }) => {
 });
 
 test("invalid bucket name", async ({ page }) => {
-  await page.getByRole("link", { name: "Buckets Buckets" }).click();
+  await page.getByRole("button", { name: "Buckets" }).click();
   await page.getByRole("button", { name: "Create Bucket" }).click();
   await page.getByLabel("Bucket Name*").click();
   await page.getByLabel("Bucket Name*").fill("invalid name");

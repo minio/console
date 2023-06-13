@@ -152,7 +152,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
   let accessPolicy = "n/a";
   let policyDefinition = "";
 
-  if (bucketInfo !== null) {
+  if (bucketInfo !== null && bucketInfo.access && bucketInfo.definition) {
     accessPolicy = bucketInfo.access;
     policyDefinition = bucketInfo.definition;
   }

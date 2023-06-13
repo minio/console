@@ -29,7 +29,6 @@ export interface SystemState {
   loggedIn: boolean;
   showMarketplace: boolean;
   sidebarOpen: boolean;
-  session: string;
   userName: string;
   serverNeedsRestart: boolean;
   serverIsLoading: boolean;
@@ -45,13 +44,13 @@ export interface SystemState {
   anonymousMode: boolean;
   helpName: string;
   helpTabName: string;
+  locationPath: string;
 }
 
 const initialState: SystemState = {
   value: 0,
   loggedIn: false,
   showMarketplace: false,
-  session: "",
   userName: "",
   sidebarOpen: initSideBarOpen,
   siteReplicationInfo: { siteName: "", curSite: false, enabled: false },
@@ -76,6 +75,7 @@ const initialState: SystemState = {
   anonymousMode: false,
   helpName: "help",
   helpTabName: "docs",
+  locationPath: "",
 };
 
 export const systemSlice = createSlice({
@@ -155,7 +155,6 @@ export const systemSlice = createSlice({
       state.licenseInfo = action.payload;
     },
     setHelpName: (state, action: PayloadAction<string>) => {
-      console.log("setting helpName: ", action.payload);
       state.helpName = action.payload;
     },
     setHelpTabName: (state, action: PayloadAction<string>) => {
@@ -171,6 +170,9 @@ export const systemSlice = createSlice({
     setAnonymousMode: (state) => {
       state.anonymousMode = true;
       state.loggedIn = true;
+    },
+    setLocationPath: (state, action: PayloadAction<string>) => {
+      state.locationPath = action.payload;
     },
     resetSystem: () => {
       return initialState;
@@ -200,6 +202,7 @@ export const {
   configurationIsLoading,
   setHelpName,
   setHelpTabName,
+  setLocationPath,
 } = systemSlice.actions;
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;

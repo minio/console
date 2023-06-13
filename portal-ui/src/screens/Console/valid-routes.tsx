@@ -14,8 +14,8 @@
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import React from "react";
 import { IMenuItem } from "./Menu/types";
-import { NavLink } from "react-router-dom";
 import {
   adminUserPermissions,
   CONSOLE_UI_RESOURCE,
@@ -52,296 +52,272 @@ import {
   WatchIcon,
 } from "mds";
 import { hasPermission } from "../../common/SecureComponent";
-import React from "react";
-import LicenseBadge from "./Menu/LicenseBadge";
 import EncryptionIcon from "../../icons/SidebarMenus/EncryptionIcon";
 import EncryptionStatusIcon from "../../icons/SidebarMenus/EncryptionStatusIcon";
 import { LockOpen, Login } from "@mui/icons-material";
 
-export const validRoutes = (features: string[] | null | undefined) => {
+const permissionsValidation = (item: IMenuItem) => {
+  return (
+    ((item.customPermissionFnc
+      ? item.customPermissionFnc()
+      : hasPermission(
+          CONSOLE_UI_RESOURCE,
+          IAM_PAGES_PERMISSIONS[item.path ?? ""]
+        )) ||
+      item.forceDisplay) &&
+    !item.fsHidden
+  );
+};
+
+const validateItem = (item: IMenuItem) => {
+  // We clean up child items first
+  if (item.children && item.children.length > 0) {
+    const childArray: IMenuItem[] = item.children.reduce(
+      (acc: IMenuItem[], item) => {
+        if (!validateItem(item)) {
+          return [...acc];
+        }
+
+        return [...acc, item];
+      },
+      []
+    );
+
+    const ret = { ...item, children: childArray };
+
+    return ret;
+  }
+
+  if (permissionsValidation(item)) {
+    return item;
+  }
+
+  return false;
+};
+
+export const validRoutes = (
+  features: string[] | null | undefined,
+  licenseNotification: boolean = false
+) => {
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
   const kmsIsEnabled = (features && features.includes("kms")) || false;
+
   let consoleMenus: IMenuItem[] = [
     {
       group: "User",
       name: "Object Browser",
       id: "object-browser",
-      component: NavLink,
-      to: IAM_PAGES.OBJECT_BROWSER_VIEW,
-      icon: ObjectBrowserIcon,
+      path: IAM_PAGES.OBJECT_BROWSER_VIEW,
+      icon: <ObjectBrowserIcon />,
       forceDisplay: true,
-      children: [],
     },
     {
       group: "User",
-      component: NavLink,
       id: "nav-accesskeys",
-      to: IAM_PAGES.ACCOUNT,
+      path: IAM_PAGES.ACCOUNT,
       name: "Access Keys",
-      icon: AccountsMenuIcon,
+      icon: <AccountsMenuIcon />,
       forceDisplay: true,
     },
     {
       group: "User",
-      type: "item",
-      component: NavLink,
-      to: IAM_PAGES.DOCUMENTATION,
+      path: "https://min.io/docs/minio/linux/index.html?ref=con",
       name: "Documentation",
-      icon: DocumentationIcon,
+      icon: <DocumentationIcon />,
       forceDisplay: true,
-      onClick: (
-        e:
-          | React.MouseEvent<HTMLLIElement>
-          | React.MouseEvent<HTMLAnchorElement>
-          | React.MouseEvent<HTMLDivElement>
-      ) => {
-        e.preventDefault();
-        window.open(
-          "https://min.io/docs/minio/linux/index.html?ref=con",
-          "_blank",
-          "noopener"
-        );
-      },
     },
     {
       group: "Administrator",
       name: "Buckets",
       id: "buckets",
-      component: NavLink,
-      to: IAM_PAGES.BUCKETS,
-      icon: BucketsMenuIcon,
+      path: IAM_PAGES.BUCKETS,
+      icon: <BucketsMenuIcon />,
       forceDisplay: true,
-      children: [],
     },
     {
       group: "Administrator",
       name: "Policies",
-      component: NavLink,
       id: "policies",
-      to: IAM_PAGES.POLICIES,
-      icon: AccessMenuIcon,
+      path: IAM_PAGES.POLICIES,
+      icon: <AccessMenuIcon />,
     },
     {
       group: "Administrator",
       name: "Identity",
       id: "identity",
-      icon: IdentityMenuIcon,
+      icon: <IdentityMenuIcon />,
       children: [
         {
-          component: NavLink,
           id: "users",
-          to: IAM_PAGES.USERS,
+          path: IAM_PAGES.USERS,
           customPermissionFnc: () =>
             hasPermission(CONSOLE_UI_RESOURCE, adminUserPermissions) ||
             hasPermission(S3_ALL_RESOURCES, adminUserPermissions) ||
             hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_ALL_ACTIONS]),
           name: "Users",
-          icon: UsersMenuIcon,
+          icon: <UsersMenuIcon />,
           fsHidden: ldapIsEnabled,
         },
         {
-          component: NavLink,
           id: "groups",
-          to: IAM_PAGES.GROUPS,
+          path: IAM_PAGES.GROUPS,
           name: "Groups",
-          icon: GroupsMenuIcon,
+          icon: <GroupsMenuIcon />,
           fsHidden: ldapIsEnabled,
         },
         {
           name: "OpenID",
-          component: NavLink,
           id: "openID",
-          to: IAM_PAGES.IDP_OPENID_CONFIGURATIONS,
-          icon: LockOpen,
+          path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS,
+          icon: <LockOpen />,
         },
         {
           name: "LDAP",
-          component: NavLink,
           id: "ldap",
-          to: IAM_PAGES.IDP_LDAP_CONFIGURATIONS,
-          icon: Login,
+          path: IAM_PAGES.IDP_LDAP_CONFIGURATIONS,
+          icon: <Login />,
         },
       ],
     },
-
     {
       group: "Administrator",
       name: "Monitoring",
       id: "tools",
-      icon: MonitoringMenuIcon,
+      icon: <MonitoringMenuIcon />,
       children: [
         {
           name: "Metrics",
           id: "monitorMetrics",
-          to: IAM_PAGES.DASHBOARD,
-          icon: MetricsMenuIcon,
-          component: NavLink,
+          path: IAM_PAGES.DASHBOARD,
+          icon: <MetricsMenuIcon />,
         },
         {
           name: "Logs ",
           id: "monitorLogs",
-          to: IAM_PAGES.TOOLS_LOGS,
-          icon: LogsMenuIcon,
-          component: NavLink,
+          path: IAM_PAGES.TOOLS_LOGS,
+          icon: <LogsMenuIcon />,
         },
         {
           name: "Audit",
           id: "monitorAudit",
-          to: IAM_PAGES.TOOLS_AUDITLOGS,
-          icon: AuditLogsMenuIcon,
-          component: NavLink,
+          path: IAM_PAGES.TOOLS_AUDITLOGS,
+          icon: <AuditLogsMenuIcon />,
         },
         {
           name: "Trace",
           id: "monitorTrace",
-          to: IAM_PAGES.TOOLS_TRACE,
-          icon: TraceMenuIcon,
-          component: NavLink,
+          path: IAM_PAGES.TOOLS_TRACE,
+          icon: <TraceMenuIcon />,
         },
         {
           name: "Watch",
-          id: "watch",
-          component: NavLink,
-          icon: WatchIcon,
-          to: IAM_PAGES.TOOLS_WATCH,
+          id: "monitorWatch",
+          icon: <WatchIcon />,
+          path: IAM_PAGES.TOOLS_WATCH,
         },
         {
           name: "Drives",
           id: "monitorDrives",
-          to: IAM_PAGES.TOOLS_HEAL,
-          icon: DrivesMenuIcon,
-          component: NavLink,
+          path: IAM_PAGES.TOOLS_HEAL,
+          icon: <DrivesMenuIcon />,
         },
         {
           name: "Encryption",
           id: "monitorEncryption",
-          to: IAM_PAGES.KMS_STATUS,
-          icon: EncryptionStatusIcon,
-          component: NavLink,
+          path: IAM_PAGES.KMS_STATUS,
+          icon: <EncryptionStatusIcon />,
           fsHidden: !kmsIsEnabled,
         },
       ],
     },
     {
       group: "Administrator",
-      component: NavLink,
-      to: IAM_PAGES.EVENT_DESTINATIONS,
+      path: IAM_PAGES.EVENT_DESTINATIONS,
       name: "Events",
-      icon: LambdaIcon,
+      icon: <LambdaIcon />,
       id: "lambda",
     },
     {
       group: "Administrator",
-      component: NavLink,
-      to: IAM_PAGES.TIERS,
+      path: IAM_PAGES.TIERS,
       name: "Tiering",
-      icon: TiersIcon,
+      icon: <TiersIcon />,
       id: "tiers",
     },
     {
       group: "Administrator",
-      component: NavLink,
-      to: IAM_PAGES.SITE_REPLICATION,
+      path: IAM_PAGES.SITE_REPLICATION,
       name: "Site Replication",
-      icon: RecoverIcon,
+      icon: <RecoverIcon />,
       id: "sitereplication",
     },
     {
       group: "Administrator",
-      component: NavLink,
-      to: IAM_PAGES.KMS_KEYS,
+      path: IAM_PAGES.KMS_KEYS,
       name: "Encryption",
-      icon: EncryptionIcon,
+      icon: <EncryptionIcon />,
       id: "encryption",
       fsHidden: !kmsIsEnabled,
     },
     {
       group: "Administrator",
-      component: NavLink,
-      to: IAM_PAGES.SETTINGS,
+      path: IAM_PAGES.SETTINGS,
       name: "Settings",
       id: "configurations",
-      icon: SettingsIcon,
+      icon: <SettingsIcon />,
     },
     {
       group: "Subscription",
-      component: NavLink,
-      to: IAM_PAGES.LICENSE,
+      path: IAM_PAGES.LICENSE,
       name: "License",
       id: "license",
-      icon: LicenseIcon,
-      badge: LicenseBadge,
+      icon: <LicenseIcon />,
+      badge: licenseNotification,
       forceDisplay: true,
     },
     {
       group: "Subscription",
       name: "Health",
       id: "diagnostics",
-      component: NavLink,
-      icon: HealthMenuIcon,
-      to: IAM_PAGES.TOOLS_DIAGNOSTICS,
+      icon: <HealthMenuIcon />,
+      path: IAM_PAGES.TOOLS_DIAGNOSTICS,
     },
     {
       group: "Subscription",
       name: "Performance",
       id: "performance",
-      component: NavLink,
-      icon: PerformanceMenuIcon,
-      to: IAM_PAGES.TOOLS_SPEEDTEST,
+      icon: <PerformanceMenuIcon />,
+      path: IAM_PAGES.TOOLS_SPEEDTEST,
     },
     {
       group: "Subscription",
       name: "Profile",
       id: "profile",
-      component: NavLink,
-      icon: ProfileMenuIcon,
-      to: IAM_PAGES.PROFILE,
+      icon: <ProfileMenuIcon />,
+      path: IAM_PAGES.PROFILE,
     },
     {
       group: "Subscription",
       name: "Inspect",
       id: "inspectObjects",
-      to: IAM_PAGES.SUPPORT_INSPECT,
-      icon: InspectMenuIcon,
-      component: NavLink,
+      path: IAM_PAGES.SUPPORT_INSPECT,
+      icon: <InspectMenuIcon />,
     },
     {
       group: "Subscription",
       name: "Call Home",
       id: "callhome",
-      component: NavLink,
-      icon: CallHomeMenuIcon,
-      to: IAM_PAGES.CALL_HOME,
+      icon: <CallHomeMenuIcon />,
+      path: IAM_PAGES.CALL_HOME,
     },
   ];
 
-  const allowedItems = consoleMenus.filter((item: IMenuItem) => {
-    if (item.children && item.children.length > 0) {
-      const c = item.children?.filter((childItem: IMenuItem) => {
-        return (
-          ((childItem.customPermissionFnc
-            ? childItem.customPermissionFnc()
-            : hasPermission(
-                CONSOLE_UI_RESOURCE,
-                IAM_PAGES_PERMISSIONS[childItem.to ?? ""]
-              )) ||
-            childItem.forceDisplay) &&
-          !childItem.fsHidden
-        );
-      });
-      return c.length > 0;
+  return consoleMenus.reduce((acc: IMenuItem[], item) => {
+    const validation = validateItem(item);
+    if (!validation) {
+      return [...acc];
     }
 
-    const res =
-      ((item.customPermissionFnc
-        ? item.customPermissionFnc()
-        : hasPermission(
-            CONSOLE_UI_RESOURCE,
-            IAM_PAGES_PERMISSIONS[item.to ?? ""]
-          )) ||
-        item.forceDisplay) &&
-      !item.fsHidden;
-    return res;
-  });
-  return allowedItems;
+    return [...acc, validation];
+  }, []);
 };

@@ -91,16 +91,6 @@ export interface BucketQuota {
   type: string;
 }
 
-export interface ChangePasswordRequest {
-  current_secret_key: string;
-  new_secret_key: string;
-}
-
-export interface ChangeUserPasswordRequest {
-  selectedUser: string;
-  newSecretKey: string;
-}
-
 export interface BulkReplicationResponse {
   replicationState: BulkReplicationItem[];
 }

@@ -27,14 +27,14 @@ import {
   modalStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 
-import api from "../../../../common/api";
-import { ErrorResponseHandler } from "../../../../common/types";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IAddAccessRule {
   classes: any;
@@ -80,8 +80,8 @@ const AddAccessRule = ({
   };
 
   const createProcess = () => {
-    api
-      .invoke("PUT", `/api/v1/bucket/${bucket}/access-rules`, {
+    api.bucket
+      .setAccessRuleWithBucket(bucket, {
         prefix: prefix,
         access: selectedAccess,
       })
@@ -89,8 +89,8 @@ const AddAccessRule = ({
         dispatch(setSnackBarMessage("Access Rule added successfully"));
         onClose();
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
+      .catch((err) => {
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
         onClose();
       });
   };

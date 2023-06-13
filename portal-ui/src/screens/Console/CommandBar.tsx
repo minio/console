@@ -152,9 +152,9 @@ const CommandBar = () => {
   }, []);
 
   const initialActions: Action[] = routesAsKbarActions(
-    features,
     buckets,
-    navigate
+    navigate,
+    features
   );
 
   useRegisterActions(initialActions, [buckets, features]);
