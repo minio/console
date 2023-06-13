@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,19 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { MenuItemProps } from "mds";
-
-export interface IMenuItem extends MenuItemProps {
-  forceDisplay?: boolean;
-  fsHidden?: boolean;
-  customPermissionFnc?: () => boolean;
-  children?: IMenuItem[];
-}
-
-export interface IRouteRule {
-  component: any;
-  path: string;
-  forceDisplay?: boolean;
-  fsHidden?: boolean;
-  customPermissionFnc?: any;
+export enum SessionCallStates {
+  Initial = "initial",
+  Loading = "loading",
+  Done = "done",
 }
