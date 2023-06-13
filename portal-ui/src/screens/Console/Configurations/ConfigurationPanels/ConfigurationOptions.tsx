@@ -38,8 +38,7 @@ import ImportConfigButton from "./ImportConfigButton";
 import { Box } from "@mui/material";
 import HelpMenu from "../../HelpMenu";
 import { setHelpName } from "../../../../systemSlice";
-import { AppState, useAppDispatch } from "../../../../store";
-import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../../../store";
 
 interface IConfigurationOptions {
   classes: any;
@@ -75,14 +74,10 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
     dispatch(setHelpName("settings_Region"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const systemHelpName = useSelector(
-    (state: AppState) => state.system.helpName
-  );
 
   return (
     <Fragment>
       <PageHeaderWrapper label={"Settings"} actions={<HelpMenu />} />
-      {systemHelpName}
       <PageLayout>
         <Grid item xs={12}>
           <div
