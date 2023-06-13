@@ -69,11 +69,14 @@ const AddServiceAccount = () => {
   useEffect(() => {
     if (addSending) {
       api.serviceAccountCredentials
-        .createServiceAccountCreds({
-          policy: policyJSON,
-          accessKey: accessKey,
-          secretKey: secretKey,
-        }, {type: ContentType.Json})
+        .createServiceAccountCreds(
+          {
+            policy: policyJSON,
+            accessKey: accessKey,
+            secretKey: secretKey,
+          },
+          { type: ContentType.Json }
+        )
         .then((res) => {
           setAddSending(false);
           setNewServiceAccount({
