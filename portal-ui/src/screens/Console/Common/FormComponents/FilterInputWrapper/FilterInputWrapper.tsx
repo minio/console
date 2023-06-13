@@ -15,14 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import TextField from "@mui/material/TextField";
-import { searchField } from "../common/styleLibrary";
+import { InputBox, InputLabel, Box } from "mds";
 
 interface IFilterInputWrapper {
-  classes: any;
   value: string;
   onChange: (txtVar: string) => any;
   label: string;
@@ -31,45 +26,7 @@ interface IFilterInputWrapper {
   name: string;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    searchField: {
-      ...searchField.searchField,
-      height: 30,
-      padding: 0,
-      "& input": {
-        padding: "0 12px",
-        height: 28,
-        fontSize: 12,
-        fontWeight: 600,
-        color: "#393939",
-      },
-      "&.isDisabled": {
-        "&:hover": {
-          borderColor: "#EAEDEE",
-        },
-      },
-      "& input.Mui-disabled": {
-        backgroundColor: "#EAEAEA",
-      },
-    },
-    labelStyle: {
-      color: "#393939",
-      fontSize: 12,
-      marginBottom: 4,
-    },
-    buttonKit: {
-      display: "flex",
-      alignItems: "center",
-    },
-    fieldContainer: {
-      flexGrow: 1,
-      margin: "0 15px",
-    },
-  });
-
 const FilterInputWrapper = ({
-  classes,
   label,
   onChange,
   value,
@@ -79,27 +36,31 @@ const FilterInputWrapper = ({
 }: IFilterInputWrapper) => {
   return (
     <Fragment>
-      <div className={classes.fieldContainer}>
-        <div className={classes.labelStyle}>{label}</div>
-        <div className={classes.buttonKit}>
-          <TextField
-            placeholder={placeholder}
-            id={id}
-            name={name}
-            label=""
-            onChange={(val) => {
-              onChange(val.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-            }}
-            className={classes.searchField}
-            value={value}
-          />
-        </div>
-      </div>
+      <Box
+        sx={{
+          flexGrow: 1,
+          margin: "0 15px",
+        }}
+      >
+        <InputLabel>{label}</InputLabel>
+        <InputBox
+          placeholder={placeholder}
+          id={id}
+          name={name}
+          label=""
+          onChange={(val) => {
+            onChange(val.target.value);
+          }}
+          sx={{
+            "& input": {
+              height: 30,
+            },
+          }}
+          value={value}
+        />
+      </Box>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(FilterInputWrapper);
+export default FilterInputWrapper;

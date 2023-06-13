@@ -15,9 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Button, OpenListIcon, SyncIcon } from "mds";
+import { Button, OpenListIcon, SyncIcon, Grid } from "mds";
 import { DateTime } from "luxon";
-import { Box, Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import DateTimePickerWrapper from "../DateTimePickerWrapper/DateTimePickerWrapper";
