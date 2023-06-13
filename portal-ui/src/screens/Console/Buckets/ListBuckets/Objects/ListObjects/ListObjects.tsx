@@ -44,7 +44,6 @@ import { DateTime } from "luxon";
 import createStyles from "@mui/styles/createStyles";
 import Grid from "@mui/material/Grid";
 import get from "lodash/get";
-import api from "../../../../../../common/api";
 import {
   decodeURLString,
   encodeURLString,
@@ -62,11 +61,7 @@ import {
 import { Badge } from "@mui/material";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import { extensionPreview } from "../utils";
-import { BucketInfo, BucketQuota } from "../../../types";
-import {
-  ErrorResponseHandler,
-  IRetentionConfig,
-} from "../../../../../../common/types";
+import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
@@ -141,6 +136,9 @@ import {
 import FilterObjectsSB from "../../../../ObjectBrowser/FilterObjectsSB";
 import AddAccessRule from "../../../BucketDetails/AddAccessRule";
 import { isVersionedMode } from "../../../../../../utils/validationFunctions";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { BucketQuota } from "api/consoleApi";
 
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects"))
@@ -389,19 +387,22 @@ const ListObjects = () => {
 
   useEffect(() => {
     if (!quota && !anonymousMode) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/quota`)
-        .then((res: BucketQuota) => {
+      api.buckets
+        .getBucketQuota(bucketName)
+        .then((res) => {
           let quotaVals = null;
 
-          if (res.quota) {
-            quotaVals = res;
+          if (res.data.quota) {
+            quotaVals = res.data;
           }
 
           setQuota(quotaVals);
         })
         .catch((err) => {
-          console.error("Error Getting Quota Status: ", err.detailedError);
+          console.error(
+            "Error Getting Quota Status: ",
+            err.error.detailedMessage
+          );
           setQuota(null);
         });
     }
@@ -432,16 +433,16 @@ const ListObjects = () => {
   // bucket info
   useEffect(() => {
     if ((loadingObjects || loadingBucket) && !anonymousMode) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}`)
-        .then((res: BucketInfo) => {
+      api.buckets
+        .bucketInfo(bucketName)
+        .then((res) => {
           dispatch(setBucketDetailsLoad(false));
-          dispatch(setBucketInfo(res));
+          dispatch(setBucketInfo(res.data));
           dispatch(setSelectedBucket(bucketName));
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           dispatch(setBucketDetailsLoad(false));
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err)));
         });
     }
   }, [bucketName, loadingBucket, dispatch, anonymousMode, loadingObjects]);
@@ -450,12 +451,12 @@ const ListObjects = () => {
 
   useEffect(() => {
     if (selectedBucket !== "") {
-      api
-        .invoke("GET", `/api/v1/buckets/${selectedBucket}/retention`)
-        .then((res: IRetentionConfig) => {
-          dispatch(setRetentionConfig(res));
+      api.buckets
+        .getBucketRetentionConfig(selectedBucket)
+        .then((res) => {
+          dispatch(setRetentionConfig(res.data));
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch(() => {
           dispatch(setRetentionConfig(null));
         });
     }
@@ -970,7 +971,10 @@ const ListObjects = () => {
                           <Fragment>{niceBytesInt(bucketInfo.size)}</Fragment>
                         )}
                         {bucketInfo.size && quota && (
-                          <Fragment> / {niceBytesInt(quota.quota)}</Fragment>
+                          <Fragment>
+                            {" "}
+                            / {niceBytesInt(quota.quota || 0)}
+                          </Fragment>
                         )}
                         {bucketInfo.size && bucketInfo.objects ? " - " : ""}
                         {bucketInfo.objects && (

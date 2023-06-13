@@ -29,12 +29,12 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
-import { ChangeUserPasswordRequest } from "../Buckets/types";
 
-import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import { api } from "api";
+import { ChangeUserPasswordRequest } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -89,19 +89,19 @@ const ChangeUserPassword = ({
       newSecretKey: newPassword,
     };
 
-    api
-      .invoke("POST", "/api/v1/account/change-user-password", request)
+    api.account
+      .changeUserPassword(request)
       .then((res) => {
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");
         closeModal();
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err)));
       });
   };
 

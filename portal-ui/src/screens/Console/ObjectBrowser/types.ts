@@ -15,8 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
-import { IRetentionConfig } from "../../../common/types";
-import { BucketVersioningInfo } from "../Buckets/types";
+import {
+  BucketVersioningResponse,
+  GetBucketRetentionConfig,
+} from "api/consoleApi";
 
 export const REWIND_SET_ENABLE = "REWIND/SET_ENABLE";
 export const REWIND_RESET_REWIND = "REWIND/RESET_REWIND";
@@ -84,8 +86,8 @@ export interface ObjectBrowserState {
   records: BucketObjectItem[];
   loadRecords: boolean;
   loadingVersioning: boolean;
-  versionInfo: BucketVersioningInfo;
-  lockingEnabled: boolean;
+  versionInfo: BucketVersioningResponse;
+  lockingEnabled: boolean | undefined;
   loadingLocking: boolean;
   selectedObjects: string[];
   downloadRenameModal: BucketObjectItem | null;
@@ -93,7 +95,7 @@ export interface ObjectBrowserState {
   previewOpen: boolean;
   shareFileModalOpen: boolean;
   isOpeningObjectDetail: boolean;
-  retentionConfig: IRetentionConfig | null;
+  retentionConfig: GetBucketRetentionConfig | null;
   longFileOpen: boolean;
   anonymousAccessOpen: boolean;
   connectionError: boolean;

@@ -29,7 +29,7 @@ export const errorToHandler = (e: Error): ErrorResponseHandler => {
   }
   return {
     statusCode: e.code,
-    errorMessage: e.message,
-    detailedError: e.detailedMessage,
+    errorMessage: e.message || "",
+    detailedError: e.detailedMessage || "",
   };
 };

@@ -28,12 +28,10 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { BucketReplicationRule, BulkReplicationResponse } from "../types";
+import { BucketReplicationRule } from "../types";
 
-import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import api from "../../../../common/api";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
@@ -42,6 +40,8 @@ import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMe
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IReplicationModal {
   open: boolean;
@@ -91,7 +91,9 @@ const AddReplicationModal = ({
   const [repDelete, setRepDelete] = useState<boolean>(true);
   const [metadataSync, setMetadataSync] = useState<boolean>(true);
   const [tags, setTags] = useState<string>("");
-  const [replicationMode, setReplicationMode] = useState<string>("async");
+  const [replicationMode, setReplicationMode] = useState<"async" | "sync">(
+    "async"
+  );
   const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
   const [bandwidthUnit, setBandwidthUnit] = useState<string>("Gi");
   const [healthCheck, setHealthCheck] = useState<string>("60");
@@ -146,12 +148,12 @@ const AddReplicationModal = ({
       replicateMetadata: metadataSync,
     };
 
-    api
-      .invoke("POST", "/api/v1/buckets-replication", remoteBucketsInfo)
-      .then((response: BulkReplicationResponse) => {
+    api.bucketsReplication
+      .setMultiBucketReplication(remoteBucketsInfo)
+      .then((res) => {
         setAddLoading(false);
 
-        const states = get(response, "replicationState", []);
+        const states = get(res.data, "replicationState", []);
 
         if (states.length > 0) {
           const itemVal = states[0];
@@ -179,9 +181,9 @@ const AddReplicationModal = ({
           })
         );
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setAddLoading(false);
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 
@@ -292,7 +294,7 @@ const AddReplicationModal = ({
                 id="replication_mode"
                 name="replication_mode"
                 onChange={(e: SelectChangeEvent<string>) => {
-                  setReplicationMode(e.target.value as string);
+                  setReplicationMode(e.target.value as "async" | "sync");
                 }}
                 label="Replication Mode"
                 value={replicationMode}

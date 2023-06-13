@@ -54,10 +54,8 @@ import {
 import { decodeURLString, encodeURLString } from "../../../../common/utils";
 import { permissionItems } from "../ListBuckets/Objects/utils";
 import { setErrorSnackMessage } from "../../../../systemSlice";
-import api from "../../../../common/api";
-import { BucketObjectLocking, BucketVersioningInfo } from "../types";
-import { ErrorResponseHandler } from "../../../../common/types";
 import OBHeader from "../../ObjectBrowser/OBHeader";
+import { api } from "api";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -433,16 +431,16 @@ const BrowserHandler = () => {
   useEffect(() => {
     if (loadingVersioning && !anonymousMode) {
       if (displayListObjects) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-          .then((res: BucketVersioningInfo) => {
-            dispatch(setIsVersioned(res));
+        api.buckets
+          .getBucketVersioning(bucketName)
+          .then((res) => {
+            dispatch(setIsVersioned(res.data));
             dispatch(setLoadingVersioning(false));
           })
-          .catch((err: ErrorResponseHandler) => {
+          .catch((err) => {
             console.error(
               "Error Getting Object Versioning Status: ",
-              err.detailedError
+              err.error.detailedMessage
             );
             dispatch(setLoadingVersioning(false));
           });
@@ -462,45 +460,22 @@ const BrowserHandler = () => {
   useEffect(() => {
     if (loadingLocking) {
       if (displayListObjects) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
-          .then((res: BucketObjectLocking) => {
-            dispatch(setLockingEnabled(res.object_locking_enabled));
+        api.buckets
+          .getBucketObjectLockingStatus(bucketName)
+          .then((res) => {
+            dispatch(setLockingEnabled(res.data.object_locking_enabled));
             dispatch(setLoadingLocking(false));
           })
-          .catch((err: ErrorResponseHandler) => {
+          .catch((err) => {
             console.error(
               "Error Getting Object Locking Status: ",
-              err.detailedError
+              err.error.detailedMessage
             );
             dispatch(setLoadingLocking(false));
           });
       } else {
         dispatch(resetMessages());
         dispatch(setLoadingLocking(false));
-      }
-    }
-  }, [bucketName, loadingLocking, dispatch, displayListObjects]);
-
-  useEffect(() => {
-    if (loadingLocking) {
-      if (displayListObjects) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
-          .then((res: BucketObjectLocking) => {
-            dispatch(setLockingEnabled(res.object_locking_enabled));
-            setLoadingLocking(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            console.error(
-              "Error Getting Object Locking Status: ",
-              err.detailedError
-            );
-            setLoadingLocking(false);
-          });
-      } else {
-        dispatch(resetMessages());
-        setLoadingLocking(false);
       }
     }
   }, [bucketName, loadingLocking, dispatch, displayListObjects]);
