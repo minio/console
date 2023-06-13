@@ -32,7 +32,6 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../store";
 import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
-import Menu from "./Menu/Menu";
 import MainError from "./Common/MainError/MainError";
 import {
   CONSOLE_UI_RESOURCE,
@@ -54,6 +53,7 @@ import {
 } from "../../systemSlice";
 import { selFeatures, selSession } from "./consoleSlice";
 import { api } from "api";
+import MenuWrapper from "./Menu/MenuWrapper";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -480,7 +480,7 @@ const Console = ({ classes }: IConsoleProps) => {
     <Fragment>
       {session && session.status === "ok" ? (
         <MainContainer
-          menu={!hideMenu ? <Menu /> : <Fragment />}
+          menu={!hideMenu ? <MenuWrapper /> : <Fragment />}
           mobileModeAuto={false}
         >
           <Fragment>

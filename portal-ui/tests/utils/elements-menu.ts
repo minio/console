@@ -15,85 +15,70 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Selector } from "testcafe";
-import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
+
+//----------------------------------------------------
+// Functions to get elements
+//----------------------------------------------------
+
+export const getMenuElement = (item) => {
+  return Selector("div.menuItems").find("button").withAttribute("id", item);
+};
+
+export const getSubmenuBlock = (item) => {
+  return getMenuElement(item).sibling("div.subItemsBox");
+};
 
 //----------------------------------------------------
 // General sidebar element
 //----------------------------------------------------
-export const sidebarItem = Selector(".MuiPaper-root").find("ul").child("a");
-export const logoutItem = Selector(".MuiPaper-root").find("ul").child("div");
+export const logoutItem = getMenuElement("sign-out");
 
 //----------------------------------------------------
 // Specific sidebar elements
 //----------------------------------------------------
-export const monitoringElement = Selector(".MuiPaper-root")
-  .find("ul")
-  .child("#tools");
-export const monitoringChildren = Selector("#tools-children");
+export const monitoringElement = getMenuElement("tools");
+export const monitoringChildren = getSubmenuBlock("tools");
+
 export const dashboardElement = monitoringChildren
-  .find("a")
-  .withAttribute("href", IAM_PAGES.DASHBOARD);
+  .find("button")
+  .withAttribute("id", "monitorMetrics");
 export const logsElement = monitoringChildren
-  .find("a")
-  .withAttribute("href", "/tools/logs");
+  .find("button")
+  .withAttribute("id", "monitorLogs");
 export const traceElement = monitoringChildren
-  .find("a")
-  .withAttribute("href", "/tools/trace");
+  .find("button")
+  .withAttribute("id", "monitorTrace");
 export const drivesElement = monitoringChildren
-  .find("a")
-  .withAttribute("href", "/tools/heal");
+  .find("button")
+  .withAttribute("id", "monitorDrives");
 export const watchElement = monitoringChildren
-  .find("a")
-  .withAttribute("href", "/tools/watch");
+  .find("button")
+  .withAttribute("id", "monitorWatch");
 
-export const bucketsElement = sidebarItem.withAttribute("href", "/buckets");
+export const bucketsElement = getMenuElement("buckets");
 
-export const serviceAcctsElement = sidebarItem.withAttribute(
-  "href",
-  IAM_PAGES.ACCOUNT
-);
+export const serviceAcctsElement = getMenuElement("nav-accesskeys");
 
-export const identityElement = Selector(".MuiPaper-root")
-  .find("ul")
-  .child("#identity");
-export const identityChildren = Selector("#identity-children");
+export const identityElement = getMenuElement("identity");
+export const identityChildren = getSubmenuBlock("identity");
 
 export const usersElement = identityChildren
-  .find("a")
-  .withAttribute("href", IAM_PAGES.USERS);
+  .find("button")
+  .withAttribute("id", "users");
 export const groupsElement = identityChildren
-  .find("a")
-  .withAttribute("href", IAM_PAGES.GROUPS);
+  .find("button")
+  .withAttribute("id", "groups");
 
-export const iamPoliciesElement = sidebarItem.withAttribute(
-  "href",
-  IAM_PAGES.POLICIES
-);
+export const iamPoliciesElement = getMenuElement("policies");
 
-export const configurationsElement = Selector(".MuiPaper-root")
-  .find("ul")
-  .child("#configurations");
+export const configurationsElement = getMenuElement("configurations");
 
-export const notificationEndpointsElement = Selector(".MuiPaper-root")
-  .find("ul")
-  .child("#lambda");
+export const notificationEndpointsElement = getMenuElement("lambda");
 
-export const tiersElement = Selector(".MuiPaper-root")
-  .find("ul")
-  .child("#tiers");
+export const tiersElement = getMenuElement("tiers");
 
-export const diagnosticsElement = Selector(".MuiPaper-root")
-  .find("ul")
-  .child("#diagnostics");
-export const performanceElement = Selector(".MuiPaper-root")
-  .find("ul")
-  .child("#performance");
-export const profileElement = Selector(".MuiPaper-root")
-  .find("ul")
-  .child("#profile");
-export const inspectElement = sidebarItem.withAttribute(
-  "href",
-  "/support/inspect"
-);
+export const diagnosticsElement = getMenuElement("diagnostics");
+export const performanceElement = getMenuElement("performance");
+export const inspectElement = getMenuElement("inspectObjects");
 
-export const licenseElement = sidebarItem.withAttribute("href", "/license");
+export const licenseElement = getMenuElement("license");
