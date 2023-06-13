@@ -183,7 +183,7 @@ const AddReplicationModal = ({
       })
       .catch((err) => {
         setAddLoading(false);
-        dispatch(setModalErrorSnackMessage(errorToHandler(err)));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 

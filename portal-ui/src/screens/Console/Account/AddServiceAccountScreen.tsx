@@ -46,6 +46,7 @@ import { getRandomString } from "../../../common/utils";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import HelpMenu from "../HelpMenu";
+import { ContentType } from "api/consoleApi";
 
 const AddServiceAccount = () => {
   const dispatch = useAppDispatch();
@@ -72,7 +73,7 @@ const AddServiceAccount = () => {
           policy: policyJSON,
           accessKey: accessKey,
           secretKey: secretKey,
-        })
+        }, {type: ContentType.Json})
         .then((res) => {
           setAddSending(false);
           setNewServiceAccount({
@@ -146,6 +147,7 @@ const AddServiceAccount = () => {
               noValidate
               autoComplete="off"
               onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                e.preventDefault();
                 addServiceAccount(e);
               }}
             >
