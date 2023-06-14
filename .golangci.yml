@@ -25,7 +25,6 @@ linters:
     - unused
     - staticcheck
     - unconvert
-    - varcheck
     - gocritic
     - gofumpt
     - durationcheck
