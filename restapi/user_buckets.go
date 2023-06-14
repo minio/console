@@ -210,7 +210,7 @@ func setBucketVersioningResponse(session *models.Principal, params bucketApi.Set
 	// defining the client to be used
 	amcClient := mcClient{client: s3Client}
 
-	var versioningState = VersionSuspend
+	versioningState := VersionSuspend
 
 	if params.Body.Versioning {
 		versioningState = VersionEnable
