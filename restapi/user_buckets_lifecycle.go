@@ -142,7 +142,7 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 func getBucketLifecycleResponse(session *models.Principal, params bucketApi.GetBucketLifecycleParams) (*models.BucketLifecycleResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -245,7 +245,7 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 func getAddBucketLifecycleResponse(session *models.Principal, params bucketApi.AddBucketLifecycleParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -358,7 +358,7 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 func getEditBucketLifecycleRule(session *models.Principal, params bucketApi.UpdateBucketLifecycleParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -412,7 +412,7 @@ func deleteBucketLifecycle(ctx context.Context, client MinioClient, params bucke
 func getDeleteBucketLifecycleRule(session *models.Principal, params bucketApi.DeleteBucketLifecycleRuleParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -498,7 +498,7 @@ func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params buc
 func getAddMultiBucketLifecycleResponse(session *models.Principal, params bucketApi.AddMultiBucketLifecycleParams) (*models.MultiLifecycleResult, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

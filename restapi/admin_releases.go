@@ -24,6 +24,8 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
@@ -62,12 +64,14 @@ func GetReleaseListResponse(_ *models.Principal, params release.ListReleasesPara
 	if params.Filter != nil {
 		filter = *params.Filter
 	}
+	ctx = context.WithValue(ctx, utils.ContextClientIP, getClientIP(params.HTTPRequest))
 	return releaseList(ctx, repo, currentRelease, search, filter)
 }
 
 func releaseList(ctx context.Context, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, *models.Error) {
 	serviceURL := getReleaseServiceURL()
-	releases, err := getReleases(serviceURL, repo, currentRelease, search, filter)
+	clientIP := utils.ClientIPFromContext(ctx)
+	releases, err := getReleases(serviceURL, repo, currentRelease, search, filter, clientIP)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -79,7 +83,7 @@ func getReleaseServiceURL() string {
 	return fmt.Sprintf("%s/releases", host)
 }
 
-func getReleases(endpoint, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, error) {
+func getReleases(endpoint, repo, currentRelease, search, filter, clientIP string) (*models.ReleaseListResponse, error) {
 	rl := &models.ReleaseListResponse{}
 	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
@@ -93,7 +97,7 @@ func getReleases(endpoint, repo, currentRelease, search, filter string) (*models
 	req.URL.RawQuery = q.Encode()
 	req.Header.Set("Content-Type", "application/json")
 
-	client := GetConsoleHTTPClient("")
+	client := GetConsoleHTTPClient("", clientIP)
 	client.Timeout = time.Second * 5
 
 	resp, err := client.Do(req)

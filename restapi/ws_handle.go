@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"strconv"
@@ -91,6 +92,7 @@ type WSConn interface {
 	writeMessage(messageType int, data []byte) error
 	close() error
 	readMessage() (messageType int, p []byte, err error)
+	remoteAddress() string
 }
 
 // Interface implementation
@@ -130,6 +132,16 @@ func (c wsConn) close() error {
 
 func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 	return c.conn.ReadMessage()
+}
+
+func (c wsConn) remoteAddress() string {
+	clientIP, _, err := net.SplitHostPort(c.conn.RemoteAddr().String())
+	if err != nil {
+		// In case there's an error, return an empty string
+		log.Printf("Invalid ws.clientIP = %s\n", err)
+		return ""
+	}
+	return clientIP
 }
 
 // serveWS validates the incoming request and
@@ -307,16 +319,19 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 
 // newWebSocketAdminClient returns a wsAdminClient authenticated as an admin user
 func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) (*wsAdminClient, error) {
+	// create a websocket connection interface implementation
+	// defining the connection to be used
+	wsConnection := wsConn{conn: conn}
+
+	clientIP := wsConnection.remoteAddress()
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
-	mAdmin, err := newAdminFromClaims(autClaims)
+	mAdmin, err := newAdminFromClaims(autClaims, clientIP)
 	if err != nil {
 		LogError("error creating madmin client: %v", err)
 		return nil, err
 	}
-	// create a websocket connection interface implementation
-	// defining the connection to be used
-	wsConnection := wsConn{conn: conn}
+
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
@@ -329,7 +344,13 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) 
 func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName, prefix string) (*wsS3Client, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
-	s3Client, err := newS3BucketClient(claims, bucketName, prefix)
+	clientIP, _, err := net.SplitHostPort(conn.RemoteAddr().String())
+	if err != nil {
+		// In case there's an error, return an empty string
+		log.Printf("Invalid ws.clientIP = %s\n", err)
+	}
+
+	s3Client, err := newS3BucketClient(claims, bucketName, prefix, clientIP)
 	if err != nil {
 		LogError("error creating S3Client:", err)
 		return nil, err
@@ -348,8 +369,12 @@ func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucket
 func newWebSocketMinioClient(conn *websocket.Conn, claims *models.Principal) (*wsMinioClient, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
-
-	mClient, err := newMinioClient(claims)
+	clientIP, _, err := net.SplitHostPort(conn.RemoteAddr().String())
+	if err != nil {
+		// In case there's an error, return an empty string
+		log.Printf("Invalid ws.clientIP = %s\n", err)
+	}
+	mClient, err := newMinioClient(claims, clientIP)
 	if err != nil {
 		LogError("error creating MinioClient:", err)
 		return nil, err

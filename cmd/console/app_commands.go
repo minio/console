@@ -41,8 +41,9 @@ func StartServer(ctx *cli.Context) error {
 	}
 
 	xctx := context.Background()
-	transport := restapi.PrepareSTSClientTransport(false)
-	if err := logger.InitializeLogger(xctx, transport); err != nil {
+
+	transport := restapi.PrepareSTSClientTransport(false, restapi.LocalAddress)
+	if err := logger.InitializeLogger(xctx, transport.Transport); err != nil {
 		fmt.Println("error InitializeLogger", err)
 		logger.CriticalIf(xctx, err)
 	}

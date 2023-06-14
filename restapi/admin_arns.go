@@ -53,7 +53,7 @@ func getArns(ctx context.Context, client MinioAdmin) (*models.ArnsResponse, erro
 func getArnsResponse(session *models.Principal, params systemApi.ArnListParams) (*models.ArnsResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

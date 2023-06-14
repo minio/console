@@ -127,7 +127,7 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 	})
 	// Gets policies for currently logged in user
 	api.PolicyGetUserPolicyHandler = policyApi.GetUserPolicyHandlerFunc(func(params policyApi.GetUserPolicyParams, session *models.Principal) middleware.Responder {
-		userPolicyResponse, err := getUserPolicyResponse(session)
+		userPolicyResponse, err := getUserPolicyResponse(params.HTTPRequest.Context(), session)
 		if err != nil {
 			return policyApi.NewGetUserPolicyDefault(int(err.Code)).WithPayload(err)
 		}
@@ -147,7 +147,7 @@ func getListAccessRulesWithBucketResponse(session *models.Principal, params buck
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	bucket := params.Bucket
-	client, err := newS3BucketClient(session, bucket, "")
+	client, err := newS3BucketClient(session, bucket, "", getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -163,7 +163,7 @@ func getSetAccessRuleWithBucketResponse(session *models.Principal, params bucket
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	prefixAccess := params.Prefixaccess
-	client, err := newS3BucketClient(session, params.Bucket, prefixAccess.Prefix)
+	client, err := newS3BucketClient(session, params.Bucket, prefixAccess.Prefix, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return false, ErrorWithContext(ctx, err)
 	}
@@ -184,7 +184,7 @@ func getDeleteAccessRuleWithBucketResponse(session *models.Principal, params buc
 	defer cancel()
 	bucket := params.Bucket
 	prefix := params.Prefix
-	client, err := newS3BucketClient(session, bucket, prefix.Prefix)
+	client, err := newS3BucketClient(session, bucket, prefix.Prefix, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return false, ErrorWithContext(ctx, err)
 	}
@@ -198,7 +198,7 @@ func getDeleteAccessRuleWithBucketResponse(session *models.Principal, params buc
 func getListPoliciesWithBucketResponse(session *models.Principal, params bucketApi.ListPoliciesWithBucketParams) (*models.ListPoliciesResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -284,7 +284,7 @@ func listPolicies(ctx context.Context, client MinioAdmin) ([]*models.Policy, err
 func getListPoliciesResponse(session *models.Principal, params policyApi.ListPoliciesParams) (*models.ListPoliciesResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -312,7 +312,7 @@ func getListUsersForPolicyResponse(session *models.Principal, params policyApi.L
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -350,7 +350,7 @@ func getListUsersForPolicyResponse(session *models.Principal, params policyApi.L
 	return filteredUsers, nil
 }
 
-func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
+func getUserPolicyResponse(ctx context.Context, session *models.Principal) (string, *models.Error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// serialize output
@@ -360,7 +360,7 @@ func getUserPolicyResponse(session *models.Principal) (string, *models.Error) {
 	tokenClaims, _ := getClaimsFromToken(session.STSSessionToken)
 
 	// initialize admin client
-	mAdminClient, err := NewMinioAdminClient(&models.Principal{
+	mAdminClient, err := NewMinioAdminClient(ctx, &models.Principal{
 		STSAccessKeyID:     session.STSAccessKeyID,
 		STSSecretAccessKey: session.STSSecretAccessKey,
 		STSSessionToken:    session.STSSessionToken,
@@ -387,7 +387,7 @@ func getSAUserPolicyResponse(session *models.Principal, params policyApi.GetSAUs
 		return nil, ErrorWithContext(ctx, ErrPolicyNotFound)
 	}
 	// initialize admin client
-	mAdminClient, err := NewMinioAdminClient(&models.Principal{
+	mAdminClient, err := NewMinioAdminClient(params.HTTPRequest.Context(), &models.Principal{
 		STSAccessKeyID:     session.STSAccessKeyID,
 		STSSecretAccessKey: session.STSSecretAccessKey,
 		STSSessionToken:    session.STSSessionToken,
@@ -461,7 +461,7 @@ func getSAUserPolicyResponse(session *models.Principal, params policyApi.GetSAUs
 func getListGroupsForPolicyResponse(session *models.Principal, params policyApi.ListGroupsForPolicyParams) ([]string, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -528,7 +528,7 @@ func getRemovePolicyResponse(session *models.Principal, params policyApi.RemoveP
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -571,7 +571,7 @@ func getAddPolicyResponse(session *models.Principal, params policyApi.AddPolicyP
 	if strings.Contains(*params.Body.Name, " ") {
 		return nil, ErrorWithContext(ctx, ErrPolicyNameContainsSpace)
 	}
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -616,7 +616,7 @@ func getPolicyStatements(ctx context.Context, client MinioAdmin, name string) ([
 func getPolicyInfoResponse(session *models.Principal, params policyApi.PolicyInfoParams) (*models.Policy, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -648,7 +648,7 @@ func getSetPolicyResponse(session *models.Principal, params policyApi.SetPolicyP
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	// Removing this section
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -665,7 +665,7 @@ func getSetPolicyResponse(session *models.Principal, params policyApi.SetPolicyP
 func getSetPolicyMultipleResponse(session *models.Principal, params policyApi.SetPolicyMultipleParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
