@@ -531,17 +531,6 @@ const constructLabelNames = (metrics: any, legendFormat: string) => {
   return cleanLegend;
 };
 
-export const getWidgetsWithValue = (payload: any[]): IDashboardPanel[] => {
-  return panelsConfiguration.map((panelItem: IDashboardPanel) => {
-    const payloadData = payload.find(
-      (panelT) =>
-        panelT.title.toLowerCase().trim() ===
-        panelItem.title.toLowerCase().trim()
-    );
-    return widgetDetailsToPanel(payloadData, panelItem);
-  });
-};
-
 export const widgetDetailsToPanel = (
   payloadData: any,
   panelItem: IDashboardPanel

@@ -14,62 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface IValidation {
-  fieldKey: string;
-  required: boolean;
-  pattern?: RegExp;
-  customPatternMessage?: string;
-  customValidation?: boolean; // The validation to trigger the error
-  customValidationMessage?: string;
-  value: string;
-}
-
-export const commonFormValidation = (fieldsValidate: IValidation[]) => {
-  let returnErrors: any = {};
-
-  fieldsValidate.forEach((field) => {
-    if (
-      field.required &&
-      typeof field.value !== "undefined" &&
-      field.value.trim &&
-      field.value.trim() === ""
-    ) {
-      returnErrors[field.fieldKey] = "Field cannot be empty";
-      return;
-    }
-    // if it's not required and the value is empty, we are done here
-    if (
-      !field.required &&
-      typeof field.value !== "undefined" &&
-      field.value.trim &&
-      field.value.trim() === ""
-    ) {
-      return;
-    }
-
-    if (field.customValidation && field.customValidationMessage) {
-      returnErrors[field.fieldKey] = field.customValidationMessage;
-      return;
-    }
-
-    if (field.pattern && field.customPatternMessage) {
-      const rgx = new RegExp(field.pattern, "g");
-
-      if (
-        field.value &&
-        field.value.trim() !== "" &&
-        !field.value.match(rgx) &&
-        typeof field.value !== "undefined"
-      ) {
-        returnErrors[field.fieldKey] = field.customPatternMessage;
-      }
-      return;
-    }
-  });
-
-  return returnErrors;
-};
-
 export const isVersionedMode = (status: string | undefined) => {
   return status === "Enabled" || status === "Suspended";
 };
