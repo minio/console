@@ -24,6 +24,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go/v2"
@@ -805,7 +807,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 
 func Test_SetBucketVersioning(t *testing.T) {
 	assert := assert.New(t)
-	ctx := context.Background()
+	ctx := context.WithValue(context.Background(), utils.ContextClientIP, "127.0.0.1")
 	errorMsg := "Error Message"
 	minClient := s3ClientMock{}
 	type args struct {
@@ -852,7 +854,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			minioSetVersioningMock = tt.args.setVersioningFunc
 
-			err := doSetVersioning(tt.args.client, tt.args.state)
+			err := doSetVersioning(tt.args.ctx, tt.args.client, tt.args.state)
 
 			fmt.Println(t.Name())
 			fmt.Println("Expected:", tt.expectedError, "Error:", err)

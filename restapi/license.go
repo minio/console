@@ -44,7 +44,7 @@ func (sp SubnetPlan) String() string {
 var InstanceLicensePlan = PlanAGPL
 
 func fetchLicensePlan() {
-	licenseInfo, err := subnet.ParseLicense(GetConsoleHTTPClient(""), os.Getenv(EnvSubnetLicense))
+	licenseInfo, err := subnet.ParseLicense(GetConsoleHTTPClient("", "127.0.0.1"), os.Getenv(EnvSubnetLicense))
 	if err != nil {
 		return
 	}

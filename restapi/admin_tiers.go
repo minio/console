@@ -177,7 +177,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 func getTiersResponse(session *models.Principal, params tieringApi.TiersListParams) (*models.TierListResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -279,7 +279,7 @@ func addTier(ctx context.Context, client MinioAdmin, params *tieringApi.AddTierP
 func getAddTierResponse(session *models.Principal, params tieringApi.AddTierParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -361,7 +361,7 @@ func getTier(ctx context.Context, client MinioAdmin, params *tieringApi.GetTierP
 func getGetTierResponse(session *models.Principal, params tieringApi.GetTierParams) (*models.Tier, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -395,7 +395,7 @@ func editTierCredentials(ctx context.Context, client MinioAdmin, params *tiering
 func getEditTierCredentialsResponse(session *models.Principal, params tieringApi.EditTierCredentialsParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}

@@ -79,7 +79,7 @@ func registerIDPHandlers(api *operations.ConsoleAPI) {
 func createIDPConfigurationResponse(session *models.Principal, params idp.CreateConfigurationParams) (*models.SetIDPResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -93,7 +93,7 @@ func createIDPConfigurationResponse(session *models.Principal, params idp.Create
 func updateIDPConfigurationResponse(session *models.Principal, params idp.UpdateConfigurationParams) (*models.SetIDPResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -118,7 +118,7 @@ func createOrUpdateIDPConfig(ctx context.Context, idpType, name, input string, u
 func listIDPConfigurationsResponse(session *models.Principal, params idp.ListConfigurationsParams) (*models.IdpListConfigurationsResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -154,7 +154,7 @@ func parseIDPConfigurations(configs []madmin.IDPListItem) (serverConfigs []*mode
 func deleteIDPConfigurationResponse(session *models.Principal, params idp.DeleteConfigurationParams) (*models.SetIDPResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -179,7 +179,7 @@ func deleteIDPConfig(ctx context.Context, idpType, name string, client MinioAdmi
 func getIDPConfigurationsResponse(session *models.Principal, params idp.GetConfigurationParams) (*models.IdpServerConfiguration, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -220,7 +220,7 @@ func parseIDPConfigurationsInfo(infoList []madmin.IDPCfgInfo) (results []*models
 func getLDAPEntitiesResponse(session *models.Principal, params idp.GetLDAPEntitiesParams) (*models.LdapEntities, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

@@ -167,7 +167,7 @@ func getCreateServiceAccountResponse(session *models.Principal, params saApi.Cre
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	userAdmin, err := NewMinioAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -228,7 +228,7 @@ func getCreateAUserServiceAccountResponse(session *models.Principal, params user
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	userAdmin, err := NewMinioAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -251,7 +251,8 @@ func getCreateAUserServiceAccountResponse(session *models.Principal, params user
 func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params userApi.CreateServiceAccountCredentialsParams) (*models.ServiceAccountCreds, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	userAdmin, err := NewMinioAdminClient(session)
+
+	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -286,7 +287,7 @@ func getCreateServiceAccountCredsResponse(session *models.Principal, params saAp
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	serviceAccount := params.Body
-	userAdmin, err := NewMinioAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -332,7 +333,7 @@ func getUserServiceAccounts(ctx context.Context, userClient MinioAdmin, user str
 // getUserServiceAccountsResponse authenticates the user and calls
 // getUserServiceAccounts to list the user's service accounts
 func getUserServiceAccountsResponse(ctx context.Context, session *models.Principal, user string) (models.ServiceAccounts, *models.Error) {
-	userAdmin, err := NewMinioAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(ctx, session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -363,7 +364,7 @@ func getDeleteServiceAccountResponse(session *models.Principal, params saApi.Del
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
-	userAdmin, err := NewMinioAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -399,7 +400,7 @@ func getServiceAccountPolicyResponse(session *models.Principal, params saApi.Get
 	if err != nil {
 		return "", ErrorWithContext(ctx, err)
 	}
-	userAdmin, err := NewMinioAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return "", ErrorWithContext(ctx, err)
 	}
@@ -430,7 +431,7 @@ func getSetServiceAccountPolicyResponse(session *models.Principal, params saApi.
 		return ErrorWithContext(ctx, err)
 	}
 	policy := *params.Policy.Policy
-	userAdmin, err := NewMinioAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -450,7 +451,7 @@ func getDeleteMultipleServiceAccountsResponse(session *models.Principal, params 
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	selectedSAs := params.SelectedSA
-	userAdmin, err := NewMinioAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}

@@ -63,7 +63,7 @@ func registerSiteReplicationHandler(api *operations.ConsoleAPI) {
 func getSRInfoResponse(session *models.Principal, params siteRepApi.GetSiteReplicationInfoParams) (*models.SiteReplicationInfoResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -79,7 +79,7 @@ func getSRInfoResponse(session *models.Principal, params siteRepApi.GetSiteRepli
 func getSRAddResponse(session *models.Principal, params siteRepApi.SiteReplicationInfoAddParams) (*models.SiteReplicationAddResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -95,7 +95,7 @@ func getSRAddResponse(session *models.Principal, params siteRepApi.SiteReplicati
 func getSREditResponse(session *models.Principal, params siteRepApi.SiteReplicationEditParams) (*models.PeerSiteEditResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -110,7 +110,7 @@ func getSREditResponse(session *models.Principal, params siteRepApi.SiteReplicat
 func getSRRemoveResponse(session *models.Principal, params siteRepApi.SiteReplicationRemoveParams) (*models.PeerSiteRemoveResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

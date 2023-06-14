@@ -76,7 +76,7 @@ func getNotificationEndpoints(ctx context.Context, client MinioAdmin) (*models.N
 func getNotificationEndpointsResponse(session *models.Principal, params configurationApi.NotificationEndpointListParams) (*models.NotifEndpointResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -146,7 +146,7 @@ func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *con
 func getAddNotificationEndpointResponse(session *models.Principal, params configurationApi.AddNotificationEndpointParams) (*models.SetNotificationEndpointResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

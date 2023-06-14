@@ -65,7 +65,7 @@ const (
 )
 
 var (
-	subPath     = "/"
+	cfgSubPath  = "/"
 	subPathOnce sync.Once
 )
 
@@ -203,6 +203,7 @@ func ContextMiddleware(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, utils.ContextRequestUserAgent, r.UserAgent())
 		ctx = context.WithValue(ctx, utils.ContextRequestHost, r.Host)
 		ctx = context.WithValue(ctx, utils.ContextRequestRemoteAddr, r.RemoteAddr)
+		ctx = context.WithValue(ctx, utils.ContextClientIP, getClientIP(r))
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -471,9 +472,9 @@ func configureServer(s *http.Server, _, _ string) {
 
 func getSubPath() string {
 	subPathOnce.Do(func() {
-		subPath = parseSubPath(env.Get(SubPath, ""))
+		cfgSubPath = parseSubPath(env.Get(SubPath, ""))
 	})
-	return subPath
+	return cfgSubPath
 }
 
 func parseSubPath(v string) string {
@@ -483,7 +484,7 @@ func parseSubPath(v string) string {
 	}
 	// Replace all unnecessary `\` to `/`
 	// also add pro-actively at the end.
-	subPath = path.Clean(filepath.ToSlash(v))
+	subPath := path.Clean(filepath.ToSlash(v))
 	if !strings.HasPrefix(subPath, SlashSeparator) {
 		subPath = SlashSeparator + subPath
 	}

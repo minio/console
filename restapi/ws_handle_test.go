@@ -46,6 +46,10 @@ func (c mockConn) close() error {
 	return nil
 }
 
+func (c mockConn) remoteAddress() string {
+	return "127.0.0.1"
+}
+
 func TestWSHandle(_ *testing.T) {
 	// assert := assert.New(t)
 	mockWSConn := mockConn{}
