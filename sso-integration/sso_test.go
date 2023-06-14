@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -282,7 +281,7 @@ func TestBadLogin(t *testing.T) {
 	fmt.Println(err)
 	expectedError := response.Status
 	assert.Equal("400 Bad Request", expectedError)
-	bodyBytes, _ := ioutil.ReadAll(response.Body)
+	bodyBytes, _ := io.ReadAll(response.Body)
 	result2 := models.Error{}
 	err = json.Unmarshal(bodyBytes, &result2)
 	if err != nil {

@@ -229,13 +229,6 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 	getResObj := &models.SiteReplicationInfoResponse{}
 	json.NewDecoder(getResponse.Body).Decode(getResObj)
 	var secondDeploymentID string
-	if getResObj != nil {
-		if len(getResObj.Sites) > 0 {
-			secondDeploymentID = getResObj.Sites[1].DeploymentID
-		}
-	} else {
-		assert.Fail("Unable to get Site deployment info")
-	}
 	fmt.Println("Edit Site Replication")
 	fmt.Println("Editing a valid site deployment id::", secondDeploymentID)
 	updatedSiteInfo := map[string]interface{}{

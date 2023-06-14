@@ -21,7 +21,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"testing"
@@ -630,7 +630,7 @@ func Test_PolicyListUsersAPI(t *testing.T) {
 				return
 			}
 			if response != nil {
-				bodyBytes, _ := ioutil.ReadAll(response.Body)
+				bodyBytes, _ := io.ReadAll(response.Body)
 				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
 				if response.StatusCode == 200 {
 					assert.Equal("[\"policyuser4\"]\n", string(bodyBytes))
@@ -709,7 +709,7 @@ func Test_PolicyListGroupsAPI(t *testing.T) {
 				return
 			}
 			if response != nil {
-				bodyBytes, _ := ioutil.ReadAll(response.Body)
+				bodyBytes, _ := io.ReadAll(response.Body)
 				assert.Equal(tt.expectedStatus, response.StatusCode, tt.name+" Failed")
 				if response.StatusCode == 200 {
 					assert.Equal("[\"testgroup12345\"]\n", string(bodyBytes))

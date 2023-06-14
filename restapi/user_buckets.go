@@ -184,7 +184,7 @@ type VersionState string
 
 const (
 	VersionEnable  VersionState = "enable"
-	VersionSuspend              = "suspend"
+	VersionSuspend VersionState = "suspend"
 )
 
 // removeBucket deletes a bucket

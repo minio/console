@@ -304,11 +304,11 @@ func importConfigResponse(session *models.Principal, params cfgApi.PostConfigsIm
 		return nil, ErrorWithContext(ctx, err)
 	}
 	file, _, err := params.HTTPRequest.FormFile("file")
-	defer file.Close()
-
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
+	defer file.Close()
+
 	err = mAdmin.SetConfig(ctx, file)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
