@@ -45,7 +45,8 @@
     "buildistanbulcoverage": "PORT=9090 USE_BABEL_PLUGIN_ISTANBUL=1 react-app-rewired build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "playwright": "PORT=5005 USE_BABEL_PLUGIN_ISTANBUL=1 react-app-rewired start"
+    "playwright": "PORT=5005 USE_BABEL_PLUGIN_ISTANBUL=1 react-app-rewired start",
+    "find-deadcode": "ts-prune -s consoleApi.ts | (! grep -v 'used in module')"
   },
   "eslintConfig": {
     "extends": "react-app",
@@ -93,6 +94,7 @@
     "react-app-rewired": "^2.2.1",
     "react-scripts": "5.0.1",
     "testcafe": "^2.6.2",
+    "ts-prune": "^0.10.3",
     "typescript": "^4.4.3"
   },
   "resolutions": {

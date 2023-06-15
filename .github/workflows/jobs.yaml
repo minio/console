@@ -120,6 +120,11 @@ jobs:
         continue-on-error: false
         run: |
           ./check-prettier.sh
+      - name: Check for dead code
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          ./check-deadcode.sh
   reuse-golang-dependencies:
     name: reuse golang dependencies
     runs-on: ubuntu-latest
