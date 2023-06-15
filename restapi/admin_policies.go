@@ -351,7 +351,7 @@ func getListUsersForPolicyResponse(session *models.Principal, params policyApi.L
 }
 
 func getUserPolicyResponse(ctx context.Context, session *models.Principal) (string, *models.Error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	// serialize output
 	if session == nil {

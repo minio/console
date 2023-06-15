@@ -19,7 +19,7 @@ package utils
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"regexp"
 
 	"github.com/minio/console/pkg/http"
@@ -35,7 +35,7 @@ func GetLatestMinIOImage(client http.ClientI) (*string, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
