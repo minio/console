@@ -348,9 +348,7 @@ const ListObjects = () => {
   const canUpload =
     hasPermission(
       [pathAsResourceInPolicy, ...sessionGrantWildCards],
-      putObjectPermScopes,
-      true,
-      true
+      putObjectPermScopes
     ) || anonymousMode;
 
   const displayDeleteObject = hasPermission(bucketName, [
