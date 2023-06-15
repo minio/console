@@ -269,7 +269,6 @@ const HelpMenu = () => {
                 <Tabs
                   value={helpTabName}
                   onChange={(e: React.ChangeEvent<{}>, newValue: string) => {
-                    console.log(`dispatch ${newValue}`);
                     dispatch(setHelpTabName(newValue));
                   }}
                   indicatorColor="primary"
