@@ -157,7 +157,7 @@ func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
 func getListUsersResponse(session *models.Principal, params userApi.ListUsersParams) (*models.ListUsersResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -218,7 +218,7 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 func getUserAddResponse(session *models.Principal, params userApi.AddUserParams) (*models.User, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -255,7 +255,7 @@ func removeUser(ctx context.Context, client MinioAdmin, accessKey string) error 
 func getRemoveUserResponse(session *models.Principal, params userApi.RemoveUserParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -288,7 +288,7 @@ func getUserInfoResponse(session *models.Principal, params userApi.GetUserInfoPa
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -439,7 +439,7 @@ func getUpdateUserGroupsResponse(session *models.Principal, params userApi.Updat
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -480,7 +480,7 @@ func getUpdateUserResponse(session *models.Principal, params userApi.UpdateUserI
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -554,7 +554,7 @@ func getAddUsersListToGroupsResponse(session *models.Principal, params userApi.B
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -576,7 +576,7 @@ func getAddUsersListToGroupsResponse(session *models.Principal, params userApi.B
 func getListUsersWithAccessToBucketResponse(session *models.Principal, params bucketApi.ListUsersWithAccessToBucketParams) ([]string, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -687,7 +687,7 @@ func changeUserPassword(ctx context.Context, client MinioAdmin, selectedUser str
 func getChangeUserPasswordResponse(session *models.Principal, params accountApi.ChangeUserPasswordParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -709,7 +709,7 @@ func getChangeUserPasswordResponse(session *models.Principal, params accountApi.
 func getCheckUserSAResponse(session *models.Principal, params userApi.CheckUserServiceAccountsParams) (*models.UserServiceAccountSummary, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

@@ -188,8 +188,8 @@ const (
 )
 
 // removeBucket deletes a bucket
-func doSetVersioning(client MCClient, state VersionState) error {
-	err := client.setVersioning(context.Background(), string(state))
+func doSetVersioning(ctx context.Context, client MCClient, state VersionState) error {
+	err := client.setVersioning(ctx, string(state))
 	if err != nil {
 		return err.Cause
 	}
@@ -202,7 +202,7 @@ func setBucketVersioningResponse(session *models.Principal, params bucketApi.Set
 	defer cancel()
 
 	bucketName := params.BucketName
-	s3Client, err := newS3BucketClient(session, bucketName, "")
+	s3Client, err := newS3BucketClient(session, bucketName, "", getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -216,7 +216,7 @@ func setBucketVersioningResponse(session *models.Principal, params bucketApi.Set
 		versioningState = VersionEnable
 	}
 
-	if err := doSetVersioning(amcClient, versioningState); err != nil {
+	if err := doSetVersioning(ctx, amcClient, versioningState); err != nil {
 		return ErrorWithContext(ctx, fmt.Errorf("error setting versioning for bucket: %s", err))
 	}
 	return nil
@@ -226,7 +226,7 @@ func getBucketReplicationResponse(session *models.Principal, params bucketApi.Ge
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -276,7 +276,7 @@ func getBucketReplicationRuleResponse(session *models.Principal, params bucketAp
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -343,7 +343,7 @@ func getBucketVersionedResponse(session *models.Principal, params bucketApi.GetB
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -424,7 +424,7 @@ func getListBucketsResponse(session *models.Principal, params bucketApi.ListBuck
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -459,7 +459,7 @@ func getMakeBucketResponse(session *models.Principal, params bucketApi.MakeBucke
 	if br == nil {
 		return nil, ErrorWithContext(ctx, ErrBucketBodyNotInRequest)
 	}
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -488,7 +488,7 @@ func getMakeBucketResponse(session *models.Principal, params bucketApi.MakeBucke
 
 	// enable versioning if indicated or retention enabled
 	if br.Versioning || br.Retention != nil {
-		s3Client, err := newS3BucketClient(session, *br.Name, "")
+		s3Client, err := newS3BucketClient(session, *br.Name, "", getClientIP(params.HTTPRequest))
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
@@ -496,14 +496,14 @@ func getMakeBucketResponse(session *models.Principal, params bucketApi.MakeBucke
 		// defining the client to be used
 		amcClient := mcClient{client: s3Client}
 
-		if err = doSetVersioning(amcClient, VersionEnable); err != nil {
+		if err = doSetVersioning(ctx, amcClient, VersionEnable); err != nil {
 			return nil, ErrorWithContext(ctx, fmt.Errorf("error setting versioning for bucket: %s", err))
 		}
 	}
 
 	// if it has support for
 	if br.Quota != nil && br.Quota.Enabled != nil && *br.Quota.Enabled {
-		mAdmin, err := NewMinioAdminClient(session)
+		mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
@@ -564,7 +564,7 @@ func getBucketSetPolicyResponse(session *models.Principal, params bucketApi.Buck
 	defer cancel()
 
 	// get updated bucket details and return it
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -572,7 +572,7 @@ func getBucketSetPolicyResponse(session *models.Principal, params bucketApi.Buck
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -597,7 +597,7 @@ func getPutBucketTagsResponse(session *models.Principal, params bucketApi.PutBuc
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -635,7 +635,7 @@ func getDeleteBucketResponse(session *models.Principal, params bucketApi.DeleteB
 	}
 	bucketName := params.Name
 
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -714,7 +714,7 @@ func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdm
 func getBucketInfoResponse(session *models.Principal, params bucketApi.BucketInfoParams) (*models.Bucket, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -722,7 +722,7 @@ func getBucketInfoResponse(session *models.Principal, params bucketApi.BucketInf
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -779,7 +779,7 @@ func enableBucketEncryption(ctx context.Context, client MinioClient, bucketName 
 func enableBucketEncryptionResponse(session *models.Principal, params bucketApi.EnableBucketEncryptionParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -801,7 +801,7 @@ func disableBucketEncryption(ctx context.Context, client MinioClient, bucketName
 func disableBucketEncryptionResponse(session *models.Principal, params bucketApi.DisableBucketEncryptionParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -828,7 +828,7 @@ func getBucketEncryptionInfo(ctx context.Context, client MinioClient, bucketName
 func getBucketEncryptionInfoResponse(session *models.Principal, params bucketApi.GetBucketEncryptionInfoParams) (*models.BucketEncryptionInfo, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -875,7 +875,7 @@ func setBucketRetentionConfig(ctx context.Context, client MinioClient, bucketNam
 func getSetBucketRetentionConfigResponse(session *models.Principal, params bucketApi.SetBucketRetentionConfigParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -948,7 +948,7 @@ func getBucketRetentionConfigResponse(session *models.Principal, params bucketAp
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	bucketName := params.BucketName
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -968,7 +968,7 @@ func getBucketObjectLockingResponse(session *models.Principal, params bucketApi.
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	bucketName := params.BucketName
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, fmt.Errorf("error creating MinIO Client: %v", err))
 	}
@@ -1005,7 +1005,7 @@ func getBucketRewindResponse(session *models.Principal, params bucketApi.GetBuck
 		}
 		prefix = string(decodedPrefix)
 	}
-	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
+	s3Client, err := newS3BucketClient(session, params.BucketName, prefix, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, fmt.Errorf("error creating S3Client: %v", err))
 	}

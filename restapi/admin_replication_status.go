@@ -39,7 +39,7 @@ func registerSiteReplicationStatusHandler(api *operations.ConsoleAPI) {
 func getSRStatusResponse(session *models.Principal, params siteRepApi.GetSiteReplicationStatusParams) (*models.SiteReplicationStatusResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

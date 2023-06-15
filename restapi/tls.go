@@ -23,8 +23,19 @@ import (
 	"time"
 )
 
+type ConsoleTransport struct {
+	Transport *http.Transport
+	ClientIP  string
+}
+
+func (t *ConsoleTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	req.Header.Add("X-Forwarded-For", t.ClientIP)
+	resp, err := t.Transport.RoundTrip(req)
+	return resp, err
+}
+
 // PrepareSTSClientTransport :
-func PrepareSTSClientTransport(insecure bool) *http.Transport {
+func PrepareSTSClientTransport(insecure bool, remoteAddress string) *ConsoleTransport {
 	// This takes github.com/minio/madmin-go/v2/transport.go as an example
 	//
 	// DefaultTransport - this default transport is similar to
@@ -51,13 +62,17 @@ func PrepareSTSClientTransport(insecure bool) *http.Transport {
 			RootCAs:            GlobalRootCAs,
 		},
 	}
-	return DefaultTransport
+	t := &ConsoleTransport{
+		Transport: DefaultTransport,
+		ClientIP:  remoteAddress,
+	}
+	return t
 }
 
 // PrepareConsoleHTTPClient returns an http.Client with custom configurations need it by *credentials.STSAssumeRole
 // custom configurations include the use of CA certificates
-func PrepareConsoleHTTPClient(insecure bool) *http.Client {
-	transport := PrepareSTSClientTransport(insecure)
+func PrepareConsoleHTTPClient(insecure bool, clientIP string) *http.Client {
+	transport := PrepareSTSClientTransport(insecure, clientIP)
 	// Return http client with default configuration
 	c := &http.Client{
 		Transport: transport,

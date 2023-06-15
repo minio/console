@@ -25,6 +25,8 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/minio/console/pkg/utils"
+
 	xhttp "github.com/minio/console/pkg/http"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -93,7 +95,8 @@ func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKe
 	if err != nil {
 		return false, err
 	}
-	registerResult, err := subnet.Register(GetConsoleHTTPClient(""), serverInfo, apiKey, "", "")
+	clientIP := utils.ClientIPFromContext(ctx)
+	registerResult, err := subnet.Register(GetConsoleHTTPClient("", clientIP), serverInfo, apiKey, "", "")
 	if err != nil {
 		return false, err
 	}
@@ -130,7 +133,7 @@ func SubnetLogin(client xhttp.ClientI, username, password string) (string, strin
 func GetSubnetLoginResponse(session *models.Principal, params subnetApi.SubnetLoginParams) (*models.SubnetLoginResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -195,7 +198,8 @@ func SubnetLoginWithMFA(client xhttp.ClientI, username, mfaToken, otp string) (*
 
 // GetSubnetHTTPClient will return a client with proxy if configured, otherwise will return the default console http client
 func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*xhttp.Client, error) {
-	subnetHTTPClient := GetConsoleHTTPClient("")
+	clientIP := utils.ClientIPFromContext(ctx)
+	subnetHTTPClient := GetConsoleHTTPClient("", clientIP)
 	subnetKey, err := GetSubnetKeyFromMinIOConfig(ctx, minioClient)
 	if err != nil {
 		return nil, err
@@ -210,10 +214,9 @@ func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*xhttp.Cl
 		if err != nil {
 			return nil, err
 		}
-		subnetHTTPClient.Transport.(*http.Transport).Proxy = http.ProxyURL(subnetProxyURL)
-	} else {
-		subnetHTTPClient = GetConsoleHTTPClient("")
+		subnetHTTPClient.Transport.(*ConsoleTransport).Transport.Proxy = http.ProxyURL(subnetProxyURL)
 	}
+
 	clientI := &xhttp.Client{
 		Client: subnetHTTPClient,
 	}
@@ -223,7 +226,7 @@ func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*xhttp.Cl
 func GetSubnetLoginWithMFAResponse(session *models.Principal, params subnetApi.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -292,7 +295,7 @@ func GetSubnetRegister(ctx context.Context, minioClient MinioAdmin, httpClient x
 func GetSubnetRegisterResponse(session *models.Principal, params subnetApi.SubnetRegisterParams) *models.Error {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -317,14 +320,15 @@ var ErrSubnetLicenseNotFound = errors.New("license not found")
 func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInfoParams) (*models.License, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
+	clientIP := utils.ClientIPFromContext(ctx)
 	client := &xhttp.Client{
-		Client: GetConsoleHTTPClient(""),
+		Client: GetConsoleHTTPClient("", clientIP),
 	}
 	// license gets seeded to us by MinIO
 	seededLicense := os.Getenv(EnvSubnetLicense)
 	// if it's missing, we will gracefully fallback to attempt to fetch it from MinIO
 	if seededLicense == "" {
-		mAdmin, err := NewMinioAdminClient(session)
+		mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
@@ -383,7 +387,7 @@ func GetSubnetRegToken(ctx context.Context, minioClient MinioAdmin) (string, err
 func GetSubnetRegTokenResponse(session *models.Principal, params subnetApi.SubnetRegTokenParams) (*models.SubnetRegTokenResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -404,7 +408,7 @@ func subnetRegTokenResponse(ctx context.Context, minioClient MinioAdmin) (*model
 func GetSubnetAPIKeyResponse(session *models.Principal, params subnetApi.SubnetAPIKeyParams) (*models.APIKey, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

@@ -44,7 +44,7 @@ func getVersionResponse(params systemApi.CheckMinIOVersionParams) (*models.Check
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	client := GetConsoleHTTPClient("")
+	client := GetConsoleHTTPClient("", getClientIP(params.HTTPRequest))
 	client.Timeout = 15 * time.Second
 
 	ver, err := utils.GetLatestMinIOImage(&xhttp.Client{

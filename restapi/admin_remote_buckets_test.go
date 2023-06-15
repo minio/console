@@ -24,6 +24,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
@@ -371,7 +373,10 @@ func (suite *RemoteBucketsTestSuite) TestUpdateMultiBucketReplicationHandlerWith
 
 func (suite *RemoteBucketsTestSuite) initUpdateMultiBucketReplicationRequest() (params bucketApi.UpdateMultiBucketReplicationParams, api operations.ConsoleAPI) {
 	registerAdminBucketRemoteHandlers(&api)
-	params.HTTPRequest = &http.Request{}
+	r := &http.Request{}
+	ctx := context.WithValue(context.Background(), utils.ContextClientIP, "127.0.0.1")
+	rc := r.WithContext(ctx)
+	params.HTTPRequest = rc
 	params.Body = &models.MultiBucketReplicationEdit{}
 	return params, api
 }

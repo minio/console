@@ -57,4 +57,5 @@ const (
 	ConsoleAnimatedLogin                         = "CONSOLE_ANIMATED_LOGIN"
 	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
 	SlashSeparator                               = "/"
+	LocalAddress                                 = "127.0.0.1"
 )

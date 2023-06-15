@@ -17,6 +17,7 @@
 package utils
 
 import (
+	"context"
 	"encoding/base64"
 
 	"github.com/google/uuid"
@@ -51,4 +52,15 @@ const (
 	ContextRequestHost       = key("request-host")
 	ContextRequestRemoteAddr = key("request-remote-addr")
 	ContextAuditKey          = key("request-audit-entry")
+	ContextClientIP          = key("client-ip")
 )
+
+// ClientIPFromContext attempts to get the Client IP from a context, if it's not present, it returns
+// 127.0.0.1
+func ClientIPFromContext(ctx context.Context) string {
+	val := ctx.Value(ContextClientIP)
+	if val != nil {
+		return val.(string)
+	}
+	return "127.0.0.1"
+}

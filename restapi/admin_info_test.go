@@ -23,6 +23,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	systemApi "github.com/minio/console/restapi/operations/system"
@@ -125,7 +127,7 @@ func (suite *AdminInfoTestSuite) initSystemDashboardWidgetDetailsRequest() (para
 }
 
 func (suite *AdminInfoTestSuite) TestGetUsageWidgetsForDeploymentWithoutError() {
-	ctx := context.Background()
+	ctx := context.WithValue(context.Background(), utils.ContextClientIP, "127.0.0.1")
 	suite.isPrometheusRequest = true
 	res, err := getUsageWidgetsForDeployment(ctx, suite.server.URL, suite.adminClient)
 	suite.assert.Nil(err)
@@ -134,7 +136,7 @@ func (suite *AdminInfoTestSuite) TestGetUsageWidgetsForDeploymentWithoutError() 
 }
 
 func (suite *AdminInfoTestSuite) TestGetWidgetDetailsWithoutError() {
-	ctx := context.Background()
+	ctx := context.WithValue(context.Background(), utils.ContextClientIP, "127.0.0.1")
 	suite.isPrometheusRequest = true
 	var step int32 = 1
 	var start int64

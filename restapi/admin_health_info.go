@@ -27,6 +27,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/klauspost/compress/gzip"
 	xhttp "github.com/minio/console/pkg/http"
 	subnet "github.com/minio/console/pkg/subnet"
@@ -72,6 +74,8 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 		ServerHealthInfo interface{} `json:"serverHealthInfo"`
 		SubnetResponse   string      `json:"subnetResponse"`
 	}
+
+	ctx = context.WithValue(ctx, utils.ContextClientIP, conn.remoteAddress())
 
 	subnetResp, err := sendHealthInfoToSubnet(ctx, healthInfo, client)
 	report := messageReport{
@@ -130,8 +134,10 @@ func getHealthInfoOptionsFromReq(req *http.Request) (*time.Duration, error) {
 func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client MinioAdmin) (string, error) {
 	filename := fmt.Sprintf("health_%d.json", time.Now().Unix())
 
+	clientIP := utils.ClientIPFromContext(ctx)
+
 	subnetUploadURL := subnet.UploadURL("health", filename)
-	subnetHTTPClient := &xhttp.Client{Client: GetConsoleHTTPClient("")}
+	subnetHTTPClient := &xhttp.Client{Client: GetConsoleHTTPClient("", clientIP)}
 	subnetTokenConfig, e := GetSubnetKeyFromMinIOConfig(ctx, client)
 	if e != nil {
 		return "", e
