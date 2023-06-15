@@ -12,9 +12,7 @@ Features:
 Bug Fix:
 
 - Disable Upload button on Object Browser if user not allowed
-- Fixed security vulnerability for `lestrrat-go/jwx`
-- Fixed security vulnerability for `fast-xml-parser`
-- Fixed bug on subtpaths for Object Browser
-- Fixed minor bugs on Tooltips
+- Fixed security vulnerability for `lestrrat-go/jwx` and `fast-xml-parser`
+- Fixed bug on sub-paths for Object Browser
 - Reduce number of calls to `/session` api to improve performance
 - Rolled back previous change for Share File feature to no longer ask for Service Account access keys
