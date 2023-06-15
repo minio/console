@@ -227,7 +227,7 @@ func TestHeal(t *testing.T) {
 	req = &http.Request{
 		URL: u,
 	}
-	opts, err = getHealOptionsFromReq(req)
+	_, err = getHealOptionsFromReq(req)
 	if assert.Error(err) {
 		assert.Equal("strconv.ParseBool: parsing \"nonbool\": invalid syntax", err.Error())
 	}
@@ -236,7 +236,7 @@ func TestHeal(t *testing.T) {
 	req = &http.Request{
 		URL: u,
 	}
-	opts, err = getHealOptionsFromReq(req)
+	_, err = getHealOptionsFromReq(req)
 	if assert.Error(err) {
 		assert.Equal("strconv.ParseBool: parsing \"nonbool\": invalid syntax", err.Error())
 	}
@@ -245,7 +245,7 @@ func TestHeal(t *testing.T) {
 	req = &http.Request{
 		URL: u,
 	}
-	opts, err = getHealOptionsFromReq(req)
+	_, err = getHealOptionsFromReq(req)
 	if assert.Error(err) {
 		assert.Equal("strconv.ParseBool: parsing \"nonbool\": invalid syntax", err.Error())
 	}
@@ -254,7 +254,7 @@ func TestHeal(t *testing.T) {
 	req = &http.Request{
 		URL: u,
 	}
-	opts, err = getHealOptionsFromReq(req)
+	_, err = getHealOptionsFromReq(req)
 	if assert.Error(err) {
 		assert.Equal("strconv.ParseBool: parsing \"nonbool\": invalid syntax", err.Error())
 	}
@@ -263,7 +263,7 @@ func TestHeal(t *testing.T) {
 	req = &http.Request{
 		URL: u,
 	}
-	opts, err = getHealOptionsFromReq(req)
+	_, err = getHealOptionsFromReq(req)
 	if assert.Error(err) {
 		assert.Equal("strconv.ParseBool: parsing \"nonbool\": invalid syntax", err.Error())
 	}

@@ -59,7 +59,7 @@ func TestAddServiceAccount(t *testing.T) {
 	minioAddServiceAccountMock = func(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error) {
 		return mockResponse, nil
 	}
-	saCreds, err = createServiceAccount(ctx, client, policyDefinition)
+	_, err = createServiceAccount(ctx, client, policyDefinition)
 	assert.Error(err)
 
 	// Test-3: if an error occurs on server while creating service account (valid policy), handle it

@@ -18,7 +18,7 @@ package restapi
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/minio/console/models"
@@ -55,7 +55,7 @@ func startProfiling(ctx context.Context, conn WSConn, client MinioAdmin, pOpts *
 	if err != nil {
 		return err
 	}
-	message, err := ioutil.ReadAll(zippedData)
+	message, err := io.ReadAll(zippedData)
 	if err != nil {
 		return err
 	}

@@ -56,6 +56,7 @@ func registerSessionHandlers(api *operations.ConsoleAPI) {
 
 func getClaimsFromToken(sessionToken string) (map[string]interface{}, error) {
 	jp := new(jwtgo.Parser)
+	// nolint:staticcheck // ignore SA1019
 	jp.ValidMethods = []string{
 		"RS256", "RS384", "RS512", "ES256", "ES384", "ES512",
 		"RS3256", "RS3384", "RS3512", "ES3256", "ES3384", "ES3512",
