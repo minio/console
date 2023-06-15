@@ -23,8 +23,8 @@ linters:
     - gomodguard
     - gofmt
     - unused
+    - staticcheck
     - unconvert
-    - varcheck
     - gocritic
     - gofumpt
     - durationcheck

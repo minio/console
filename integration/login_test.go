@@ -20,7 +20,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"testing"
@@ -56,7 +56,7 @@ func TestLoginStrategy(t *testing.T) {
 	}
 
 	if response != nil {
-		bodyBytes, _ := ioutil.ReadAll(response.Body)
+		bodyBytes, _ := io.ReadAll(response.Body)
 
 		loginDetails := models.LoginDetails{}
 

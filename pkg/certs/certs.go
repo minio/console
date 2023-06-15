@@ -24,7 +24,6 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -85,7 +84,7 @@ var (
 func ParsePublicCertFile(certFile string) (x509Certs []*x509.Certificate, err error) {
 	// Read certificate file.
 	var data []byte
-	if data, err = ioutil.ReadFile(certFile); err != nil {
+	if data, err = os.ReadFile(certFile); err != nil {
 		return nil, err
 	}
 
@@ -188,11 +187,11 @@ const EnvCertPassword = "CONSOLE_CERT_PASSWD"
 // from the provided paths. The private key may be encrypted and is
 // decrypted using the ENV_VAR: MINIO_CERT_PASSWD.
 func LoadX509KeyPair(certFile, keyFile string) (tls.Certificate, error) {
-	certPEMBlock, err := ioutil.ReadFile(certFile)
+	certPEMBlock, err := os.ReadFile(certFile)
 	if err != nil {
 		return tls.Certificate{}, err
 	}
-	keyPEMBlock, err := ioutil.ReadFile(keyFile)
+	keyPEMBlock, err := os.ReadFile(keyFile)
 	if err != nil {
 		return tls.Certificate{}, err
 	}
@@ -200,11 +199,13 @@ func LoadX509KeyPair(certFile, keyFile string) (tls.Certificate, error) {
 	if len(rest) > 0 {
 		return tls.Certificate{}, errors.New("the private key contains additional data")
 	}
+	// nolint:staticcheck // ignore SA1019
 	if x509.IsEncryptedPEMBlock(key) {
 		password := env.Get(EnvCertPassword, "")
 		if len(password) == 0 {
 			return tls.Certificate{}, errors.New("no password")
 		}
+		// nolint:staticcheck // ignore SA1019
 		decryptedKey, decErr := x509.DecryptPEMBlock(key, []byte(password))
 		if decErr != nil {
 			return tls.Certificate{}, decErr
