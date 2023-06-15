@@ -33,6 +33,7 @@ import withSuspense from "../Common/Components/withSuspense";
 import { setSnackBarMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { setVersionsModeEnabled } from "./objectBrowserSlice";
+import { getSessionGrantsWildCard } from "../Buckets/ListBuckets/UploadPermissionUtils";
 
 const CreatePathModal = withSuspense(
   React.lazy(
@@ -81,11 +82,14 @@ const BrowserBreadcrumbs = ({
 
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
 
-  const canCreatePath =
-    hasPermission(bucketName, [
-      IAM_SCOPES.S3_PUT_OBJECT,
-      IAM_SCOPES.S3_PUT_ACTIONS,
-    ]) || anonymousMode;
+  const putObjectPermScopes = [
+    IAM_SCOPES.S3_PUT_OBJECT,
+    IAM_SCOPES.S3_PUT_ACTIONS,
+  ];
+
+  const sessionGrants = useSelector((state: AppState) =>
+    state.console.session ? state.console.session.permissions || {} : {}
+  );
 
   let paths = internalPaths;
 
@@ -95,6 +99,19 @@ const BrowserBreadcrumbs = ({
 
   const splitPaths = paths.split("/").filter((path) => path !== "");
   const lastBreadcrumbsIndex = splitPaths.length - 1;
+
+  const pathToCheckPerms = paths || bucketName;
+  const sessionGrantWildCards = getSessionGrantsWildCard(
+    sessionGrants,
+    pathToCheckPerms,
+    putObjectPermScopes
+  );
+
+  const canCreatePath =
+    hasPermission(
+      [pathToCheckPerms, ...sessionGrantWildCards],
+      putObjectPermScopes
+    ) || anonymousMode;
 
   let breadcrumbsMap = splitPaths.map((objectItem: string, index: number) => {
     const subSplit = `${splitPaths.slice(0, index + 1).join("/")}/`;

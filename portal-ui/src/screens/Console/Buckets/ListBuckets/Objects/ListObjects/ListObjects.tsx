@@ -139,6 +139,11 @@ import { isVersionedMode } from "../../../../../../utils/validationFunctions";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { BucketQuota } from "api/consoleApi";
+import {
+  extractFileExtn,
+  getPolicyAllowedFileExtensions,
+  getSessionGrantsWildCard,
+} from "../../UploadPermissionUtils";
 
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects"))
@@ -313,6 +318,28 @@ const ListObjects = () => {
   const fileUpload = useRef<HTMLInputElement>(null);
   const folderUpload = useRef<HTMLInputElement>(null);
 
+  const sessionGrants = useSelector((state: AppState) =>
+    state.console.session ? state.console.session.permissions || {} : {}
+  );
+
+  const putObjectPermScopes = [
+    IAM_SCOPES.S3_PUT_OBJECT,
+    IAM_SCOPES.S3_PUT_ACTIONS,
+  ];
+
+  const pathAsResourceInPolicy = uploadPath.join("/");
+  const allowedFileExtensions = getPolicyAllowedFileExtensions(
+    sessionGrants,
+    pathAsResourceInPolicy,
+    putObjectPermScopes
+  );
+
+  const sessionGrantWildCards = getSessionGrantsWildCard(
+    sessionGrants,
+    pathAsResourceInPolicy,
+    putObjectPermScopes
+  );
+
   const canDownload = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_OBJECT,
     IAM_SCOPES.S3_GET_ACTIONS,
@@ -320,10 +347,8 @@ const ListObjects = () => {
   const canDelete = hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]);
   const canUpload =
     hasPermission(
-      uploadPath,
-      [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
-      true,
-      true
+      [pathAsResourceInPolicy, ...sessionGrantWildCards],
+      putObjectPermScopes
     ) || anonymousMode;
 
   const displayDeleteObject = hasPermission(bucketName, [
@@ -710,7 +735,53 @@ const ListObjects = () => {
     (acceptedFiles: any[]) => {
       if (acceptedFiles && acceptedFiles.length > 0 && canUpload) {
         let newFolderPath: string = acceptedFiles[0].path;
-        uploadObject(acceptedFiles, newFolderPath);
+        //Should we filter by allowed file extensions if any?.
+        let allowedFiles = [];
+        if (allowedFileExtensions.length > 0) {
+          allowedFiles = acceptedFiles.filter((file) => {
+            const fileExtn = extractFileExtn(file.name);
+            return allowedFileExtensions.includes(fileExtn);
+          });
+        } else {
+          allowedFiles = acceptedFiles;
+        }
+
+        if (allowedFiles.length) {
+          uploadObject(allowedFiles, newFolderPath);
+          console.log(
+            `${allowedFiles.length} Allowed Files Processed out of ${acceptedFiles.length}.`,
+            pathAsResourceInPolicy,
+            ...sessionGrantWildCards
+          );
+
+          if (allowedFiles.length !== acceptedFiles.length) {
+            dispatch(
+              setErrorSnackMessage({
+                errorMessage: "Upload is restricted.",
+                detailedError: permissionTooltipHelper(
+                  [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
+                  "upload objects to this location"
+                ),
+              })
+            );
+          }
+        } else {
+          dispatch(
+            setErrorSnackMessage({
+              errorMessage: "Could not process drag and drop.",
+              detailedError: permissionTooltipHelper(
+                [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
+                "upload objects to this location"
+              ),
+            })
+          );
+
+          console.error(
+            "Could not process drag and drop . upload may be restricted.",
+            pathAsResourceInPolicy,
+            ...sessionGrantWildCards
+          );
+        }
       }
       if (!canUpload) {
         dispatch(
@@ -1060,6 +1131,9 @@ const ListObjects = () => {
                 <input
                   type="file"
                   multiple
+                  accept={
+                    allowedFileExtensions ? allowedFileExtensions : undefined
+                  }
                   onChange={handleUploadButton}
                   style={{ display: "none" }}
                   ref={fileUpload}
@@ -1073,7 +1147,7 @@ const ListObjects = () => {
                 />
                 <UploadFilesButton
                   bucketName={bucketName}
-                  uploadPath={uploadPath.join("/")}
+                  uploadPath={pathAsResourceInPolicy}
                   uploadFileFunction={(closeMenu) => {
                     if (fileUpload && fileUpload.current) {
                       fileUpload.current.click();
