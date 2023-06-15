@@ -27,8 +27,6 @@ import {
   actionsTray,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
 import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
 import AddLifecycleModal from "./AddLifecycleModal";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
@@ -44,6 +42,8 @@ import { useParams } from "react-router-dom";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import { setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { ObjectBucketLifecycle } from "api/consoleApi";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -63,7 +63,9 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
   const params = useParams();
 
   const [loadingLifecycle, setLoadingLifecycle] = useState<boolean>(true);
-  const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
+  const [lifecycleRecords, setLifecycleRecords] = useState<
+    ObjectBucketLifecycle[]
+  >([]);
   const [addLifecycleOpen, setAddLifecycleOpen] = useState<boolean>(false);
   const [editLifecycleOpen, setEditLifecycleOpen] = useState<boolean>(false);
   const [selectedLifecycleRule, setSelectedLifecycleRule] =
@@ -94,16 +96,16 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
   useEffect(() => {
     if (loadingLifecycle) {
       if (displayLifeCycleRules) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/lifecycle`)
-          .then((res: any) => {
-            const records = get(res, "lifecycle", []);
+        api.buckets
+          .getBucketLifecycle(bucketName)
+          .then((res) => {
+            const records = get(res.data, "lifecycle", []);
 
             setLifecycleRecords(records || []);
             setLoadingLifecycle(false);
           })
-          .catch((err: ErrorResponseHandler) => {
-            console.error(err);
+          .catch((err) => {
+            console.error(err.error);
             setLifecycleRecords([]);
             setLoadingLifecycle(false);
           });

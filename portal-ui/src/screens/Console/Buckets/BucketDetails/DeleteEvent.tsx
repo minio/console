@@ -18,7 +18,6 @@ import React from "react";
 import get from "lodash/get";
 
 import { DialogContentText } from "@mui/material";
-import { BucketEvent } from "../types";
 
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
@@ -26,12 +25,13 @@ import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { NotificationConfig } from "api/consoleApi";
 
 interface IDeleteEventProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedBucket: string;
-  bucketEvent: BucketEvent | null;
+  bucketEvent: NotificationConfig | null;
 }
 
 const DeleteEvent = ({

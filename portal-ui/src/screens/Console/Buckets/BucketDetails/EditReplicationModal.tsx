@@ -29,14 +29,13 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { BucketReplicationRule } from "../types";
 
-import api from "../../../../common/api";
-import { ErrorResponseHandler } from "../../../../common/types";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IEditReplicationModal {
   closeModalAndRefresh: (refresh: boolean) => void;
@@ -82,27 +81,27 @@ const EditReplicationModal = ({
 
   useEffect(() => {
     if (editLoading) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/replication/${ruleID}`)
-        .then((res: BucketReplicationRule) => {
-          setPriority(res.priority.toString());
-          const pref = res.prefix || "";
-          const tag = res.tags || "";
+      api.buckets
+        .getBucketReplicationRule(bucketName, ruleID)
+        .then((res) => {
+          setPriority(res.data.priority ? res.data.priority.toString() : "");
+          const pref = res.data.prefix || "";
+          const tag = res.data.tags || "";
           setPrefix(pref);
           setInitialTags(tag);
           setTags(tag);
-          setDestination(res.destination.bucket);
-          setRepDeleteMarker(res.delete_marker_replication);
-          setTargetStorageClass(res.storageClass || "");
-          setRepExisting(!!res.existingObjects);
-          setRepDelete(!!res.deletes_replication);
-          setRuleState(res.status === "Enabled");
-          setMetadataSync(!!res.metadata_replication);
+          setDestination(res.data.destination?.bucket || "");
+          setRepDeleteMarker(res.data.delete_marker_replication || false);
+          setTargetStorageClass(res.data.storageClass || "");
+          setRepExisting(!!res.data.existingObjects);
+          setRepDelete(!!res.data.deletes_replication);
+          setRuleState(res.data.status === "Enabled");
+          setMetadataSync(!!res.data.metadata_replication);
 
           setEditLoading(false);
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setModalErrorSnackMessage(err));
+        .catch((err) => {
+          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
           setEditLoading(false);
         });
     }
@@ -123,18 +122,14 @@ const EditReplicationModal = ({
         storageClass: targetStorageClass,
       };
 
-      api
-        .invoke(
-          "PUT",
-          `/api/v1/buckets/${bucketName}/replication/${ruleID}`,
-          remoteBucketsInfo
-        )
+      api.buckets
+        .updateMultiBucketReplication(bucketName, ruleID, remoteBucketsInfo)
         .then(() => {
           setSaveEdit(false);
           closeModalAndRefresh(true);
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setModalErrorSnackMessage(err));
+        .catch((err) => {
+          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
           setSaveEdit(false);
         });
     }
