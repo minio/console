@@ -19,22 +19,6 @@ export interface BucketEncryptionInfo {
   kmsMasterKeyID: string;
 }
 
-export interface Details {
-  tags?: object;
-  locking?: boolean;
-  quota?: object;
-  versioning?: boolean;
-}
-
-export interface BucketInfo {
-  name: string;
-  access: string;
-  definition: string;
-  creation_date?: string;
-  objects?: number;
-  size?: number;
-}
-
 export interface BucketEvent {
   id: string;
   arn: string;
@@ -47,11 +31,6 @@ export interface BucketEventList {
   events: BucketEvent[];
   total: number;
 }
-
-export interface ArnList {
-  arns: string[];
-}
-
 export interface BucketVersioningInfo {
   excludeFolders?: boolean;
   excludedPrefixes?: Record<"Prefix", string>[];

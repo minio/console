@@ -14,12 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface LDAPEntitiesRequest {
-  users?: string[];
-  groups?: string[];
-  policies?: string[];
-}
-
 export interface LDAPEntitiesResponse {
   timestamp: string;
   users?: LDAPUsersResponse[];

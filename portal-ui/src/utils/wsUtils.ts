@@ -15,8 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Close codes for websockets defined in RFC 6455
-export const WSCloseNormalClosure = 1000;
-export const WSCloseCloseGoingAway = 1001;
 export const WSCloseAbnormalClosure = 1006;
 export const WSClosePolicyViolation = 1008;
 export const WSCloseInternalServerErr = 1011;
