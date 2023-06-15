@@ -184,7 +184,7 @@ type VersionState string
 
 const (
 	VersionEnable  VersionState = "enable"
-	VersionSuspend              = "suspend"
+	VersionSuspend VersionState = "suspend"
 )
 
 // removeBucket deletes a bucket
@@ -210,7 +210,7 @@ func setBucketVersioningResponse(session *models.Principal, params bucketApi.Set
 	// defining the client to be used
 	amcClient := mcClient{client: s3Client}
 
-	var versioningState VersionState = VersionSuspend
+	versioningState := VersionSuspend
 
 	if params.Body.Versioning {
 		versioningState = VersionEnable

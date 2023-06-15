@@ -18,7 +18,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"syscall"
 
@@ -163,7 +163,7 @@ func loadAllCerts(ctx *cli.Context) error {
 
 		// load ca cert from swagger server tls-ca flag
 		if swaggerServerCACertificate != "" {
-			caCert, caCertErr := ioutil.ReadFile(swaggerServerCACertificate)
+			caCert, caCertErr := os.ReadFile(swaggerServerCACertificate)
 			if caCertErr == nil {
 				restapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
 			}

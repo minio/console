@@ -25,7 +25,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -777,7 +776,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 
 	// Get versionID
 	listResponse, _ := ListObjects(bucketName, prefix, "true")
-	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
+	bodyBytes, _ := io.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
 	err := json.Unmarshal(bodyBytes, &listObjs)
 	if err != nil {
@@ -1058,7 +1057,7 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 
 	// Get versionID
 	listResponse, _ := ListObjects(bucketName, validPrefix, "true")
-	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
+	bodyBytes, _ := io.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
 	err := json.Unmarshal(bodyBytes, &listObjs)
 	if err != nil {
@@ -1226,7 +1225,7 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 
 	// 3. Get versionID
 	listResponse, _ := ListObjects(bucketName, validPrefix, "true")
-	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
+	bodyBytes, _ := io.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
 	err := json.Unmarshal(bodyBytes, &listObjs)
 	if err != nil {
@@ -1443,7 +1442,7 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 
 	// Get versionID
 	listResponse, _ := ListObjects(bucketName, prefix, "true")
-	bodyBytes, _ := ioutil.ReadAll(listResponse.Body)
+	bodyBytes, _ := io.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
 	err := json.Unmarshal(bodyBytes, &listObjs)
 	if err != nil {
@@ -1776,7 +1775,7 @@ func TestDownloadObject(t *testing.T) {
 	}
 
 	// 4. Verify the file was downloaded
-	files, err := ioutil.ReadDir(workingDirectory)
+	files, err := os.ReadDir(workingDirectory)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -2169,21 +2168,12 @@ func TestListBuckets(t *testing.T) {
 	// 2. List buckets
 	listBucketsResponse, listBucketsError := ListBuckets()
 	assert.Nil(listBucketsError)
-	if listBucketsError != nil {
-		log.Println(listBucketsError)
-		assert.Fail("Error listing the buckets")
-		return
-	}
-
+	assert.NotNil(listBucketsResponse)
+	assert.NotNil(listBucketsResponse.Body)
 	// 3. Verify list of buckets
-	b, err := io.ReadAll(listBucketsResponse.Body)
-	if listBucketsResponse != nil {
-		if err != nil {
-			log.Fatalln(err)
-		}
-		assert.Equal(200, listBucketsResponse.StatusCode,
-			"Status Code is incorrect: "+string(b))
-	}
+	b, _ := io.ReadAll(listBucketsResponse.Body)
+	assert.Equal(200, listBucketsResponse.StatusCode,
+		"Status Code is incorrect: "+string(b))
 	for i := 1; i <= numberOfBuckets; i++ {
 		assert.True(strings.Contains(string(b),
 			"testlistbuckets"+strconv.Itoa(i)))
@@ -2215,7 +2205,7 @@ func TestBucketsGet(t *testing.T) {
 
 	if response != nil {
 		assert.Equal(200, response.StatusCode, "Status Code is incorrect")
-		bodyBytes, _ := ioutil.ReadAll(response.Body)
+		bodyBytes, _ := io.ReadAll(response.Body)
 
 		listBuckets := models.ListBucketsResponse{}
 		err = json.Unmarshal(bodyBytes, &listBuckets)
@@ -2255,7 +2245,7 @@ func TestBucketVersioning(t *testing.T) {
 
 	if response != nil {
 
-		bodyBytes, _ := ioutil.ReadAll(response.Body)
+		bodyBytes, _ := io.ReadAll(response.Body)
 
 		sessionResponse := models.SessionResponse{}
 		err = json.Unmarshal(bodyBytes, &sessionResponse)
@@ -2292,7 +2282,7 @@ func TestBucketVersioning(t *testing.T) {
 		assert.Equal(
 			200, getVersioningResult.StatusCode, "Status Code is incorrect")
 	}
-	bodyBytes, _ := ioutil.ReadAll(getVersioningResult.Body)
+	bodyBytes, _ := io.ReadAll(getVersioningResult.Body)
 	structBucketRepl := models.BucketVersioningResponse{
 		ExcludeFolders:   false,
 		ExcludedPrefixes: nil,
@@ -2369,7 +2359,7 @@ func TestSetBucketTags(t *testing.T) {
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
 
-	response, err := client.Do(request)
+	_, err = client.Do(request)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
@@ -2387,14 +2377,14 @@ func TestSetBucketTags(t *testing.T) {
 	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
 	request.Header.Add("Content-Type", "application/json")
 
-	response, err = client.Do(request)
+	response, err := client.Do(request)
 	assert.Nil(err)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	bodyBytes, _ := ioutil.ReadAll(response.Body)
+	bodyBytes, _ := io.ReadAll(response.Body)
 
 	bucket := models.Bucket{}
 	err = json.Unmarshal(bodyBytes, &bucket)
@@ -2847,7 +2837,7 @@ func TestReplication(t *testing.T) {
 	}
 
 	// 3. Get rule ID and status from response's body
-	bodyBytes, _ := ioutil.ReadAll(response.Body)
+	bodyBytes, _ := io.ReadAll(response.Body)
 	structBucketRepl := models.BucketReplicationResponse{}
 	err = json.Unmarshal(bodyBytes, &structBucketRepl)
 	if err != nil {
@@ -2929,7 +2919,7 @@ func TestReplication(t *testing.T) {
 	}
 
 	// 9. Get rule ID and status from response's body
-	bodyBytes, _ = ioutil.ReadAll(response.Body)
+	bodyBytes, _ = io.ReadAll(response.Body)
 	structBucketRepl = models.BucketReplicationResponse{}
 	err = json.Unmarshal(bodyBytes, &structBucketRepl)
 	if err != nil {
@@ -2996,7 +2986,7 @@ func TestReturnsTheStatusOfObjectLockingSupportOnTheBucket(t *testing.T) {
 	}
 
 	// 2. Verify the status to be enabled for this bucket
-	bodyBytes, _ := ioutil.ReadAll(response.Body)
+	bodyBytes, _ := io.ReadAll(response.Body)
 	structBucketLocking := models.BucketObLockingResponse{}
 	err = json.Unmarshal(bodyBytes, &structBucketLocking)
 	if err != nil {
@@ -3077,7 +3067,7 @@ func TestSetBucketVersioning(t *testing.T) {
 		assert.Equal(
 			200, getVersioningResult.StatusCode, "Status Code is incorrect")
 	}
-	bodyBytes, _ := ioutil.ReadAll(getVersioningResult.Body)
+	bodyBytes, _ := io.ReadAll(getVersioningResult.Body)
 	result := models.BucketVersioningResponse{
 		ExcludeFolders:   false,
 		ExcludedPrefixes: nil,
@@ -3160,7 +3150,7 @@ func TestEnableBucketEncryption(t *testing.T) {
 		assert.Equal(
 			200, resp.StatusCode, "Status Code is incorrect")
 	}
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, _ := io.ReadAll(resp.Body)
 	result := models.BucketEncryptionInfo{}
 	err = json.Unmarshal(bodyBytes, &result)
 	if err != nil {
@@ -3192,7 +3182,7 @@ func TestEnableBucketEncryption(t *testing.T) {
 		assert.Equal(
 			404, resp.StatusCode, "Status Code is incorrect")
 	}
-	bodyBytes, _ = ioutil.ReadAll(resp.Body)
+	bodyBytes, _ = io.ReadAll(resp.Body)
 	result2 := models.Error{}
 	err = json.Unmarshal(bodyBytes, &result2)
 	if err != nil {
@@ -3437,7 +3427,7 @@ func TestBucketLifeCycle(t *testing.T) {
 		assert.Equal(
 			200, resp.StatusCode, "Status Code is incorrect")
 	}
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, _ := io.ReadAll(resp.Body)
 	result := models.BucketLifecycleResponse{}
 	err = json.Unmarshal(bodyBytes, &result)
 	if err != nil {
@@ -3483,7 +3473,7 @@ func TestBucketLifeCycle(t *testing.T) {
 		assert.Equal(
 			200, resp.StatusCode, "Status Code is incorrect")
 	}
-	bodyBytes, _ = ioutil.ReadAll(resp.Body)
+	bodyBytes, _ = io.ReadAll(resp.Body)
 	result = models.BucketLifecycleResponse{}
 	err = json.Unmarshal(bodyBytes, &result)
 	if err != nil {
@@ -3643,7 +3633,7 @@ func TestAccessRule(t *testing.T) {
 		assert.Equal(
 			200, resp.StatusCode, "Status Code is incorrect")
 	}
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	bodyBytes, _ := io.ReadAll(resp.Body)
 	result := models.ListAccessRulesResponse{}
 	err = json.Unmarshal(bodyBytes, &result)
 	if err != nil {
@@ -3681,7 +3671,7 @@ func TestAccessRule(t *testing.T) {
 		assert.Equal(
 			200, resp.StatusCode, "Status Code is incorrect")
 	}
-	bodyBytes, _ = ioutil.ReadAll(resp.Body)
+	bodyBytes, _ = io.ReadAll(resp.Body)
 	result = models.ListAccessRulesResponse{}
 	err = json.Unmarshal(bodyBytes, &result)
 	if err != nil {
@@ -3950,21 +3940,13 @@ func TestDeleteRemoteBucket(t *testing.T) {
 	// 3. Get ARN
 	resp, err = GetRemoteBucketARN(sourceBucket)
 	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	assert.NotNil(resp)
+	assert.NotNil(resp.Body)
+	bodyBytes, _ := io.ReadAll(resp.Body)
 	remoteBucket := models.RemoteBucket{}
 	err = json.Unmarshal(bodyBytes, &remoteBucket)
-	if err != nil {
-		log.Println(err)
-		assert.Nil(err)
-	}
-	if resp != nil {
-		assert.Equal(
-			200, resp.StatusCode, inspectHTTPResponse(resp))
-	}
+	assert.Nil(err)
+	assert.Equal(200, resp.StatusCode, inspectHTTPResponse(resp))
 
 	// 4. Delete Remote Bucket
 	if remoteBucket.RemoteARN != nil {
