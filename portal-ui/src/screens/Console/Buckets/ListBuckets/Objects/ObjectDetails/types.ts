@@ -28,12 +28,6 @@ export interface IFileInfo {
   is_delete_marker?: boolean;
   user_metadata?: object;
 }
-
-export interface FileInfoResponse {
-  objects: IFileInfo[];
-  total: number;
-}
-
 export interface MetadataResponse {
   objectMetadata: object;
 }

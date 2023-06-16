@@ -31,6 +31,7 @@ import { hasPermission } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import { useSelector } from "react-redux";
 import { AppState } from "../../../../store";
+import { getSessionGrantsWildCard } from "./UploadPermissionUtils";
 
 interface IUploadFilesButton {
   uploadPath: string;
@@ -65,6 +66,22 @@ const UploadFilesButton = ({
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
   );
+
+  const sessionGrants = useSelector((state: AppState) =>
+    state.console.session ? state.console.session.permissions || {} : {}
+  );
+
+  const putObjectPermScopes = [
+    IAM_SCOPES.S3_PUT_OBJECT,
+    IAM_SCOPES.S3_PUT_ACTIONS,
+  ];
+
+  const sessionGrantWildCards = getSessionGrantsWildCard(
+    sessionGrants,
+    uploadPath,
+    putObjectPermScopes
+  );
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openUploadMenu = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -75,13 +92,14 @@ const UploadFilesButton = ({
   };
 
   const uploadObjectAllowed =
-    hasPermission(uploadPath, [
-      IAM_SCOPES.S3_PUT_OBJECT,
-      IAM_SCOPES.S3_PUT_ACTIONS,
-    ]) || anonymousMode;
+    hasPermission(
+      [uploadPath, ...sessionGrantWildCards],
+      putObjectPermScopes
+    ) || anonymousMode;
+
   const uploadFolderAllowed = hasPermission(
-    bucketName,
-    [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
+    [bucketName, ...sessionGrantWildCards],
+    putObjectPermScopes,
     false,
     true
   );

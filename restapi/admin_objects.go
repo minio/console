@@ -32,7 +32,7 @@ type objectsListOpts struct {
 }
 
 type ObjectsRequest struct {
-	Mode       string `json:"mode,nonempty"`
+	Mode       string `json:"mode,omitempty"`
 	BucketName string `json:"bucket_name"`
 	Prefix     string `json:"prefix"`
 	Date       string `json:"date"`
@@ -40,7 +40,7 @@ type ObjectsRequest struct {
 }
 
 type WSResponse struct {
-	RequestID  int64            `json:"request_id,nonempty"`
+	RequestID  int64            `json:"request_id,omitempty"`
 	Error      string           `json:"error,omitempty"`
 	RequestEnd bool             `json:"request_end,omitempty"`
 	Prefix     string           `json:"prefix,omitempty"`
@@ -49,10 +49,10 @@ type WSResponse struct {
 }
 
 type ObjectResponse struct {
-	Name         string `json:"name,nonempty"`
-	LastModified string `json:"last_modified,nonempty"`
-	Size         int64  `json:"size,nonempty"`
-	VersionID    string `json:"version_id,nonempty"`
+	Name         string `json:"name,omitempty"`
+	LastModified string `json:"last_modified,omitempty"`
+	Size         int64  `json:"size,omitempty"`
+	VersionID    string `json:"version_id,omitempty"`
 	DeleteMarker bool   `json:"delete_flag,omitempty"`
 	IsLatest     bool   `json:"is_latest,omitempty"`
 }

@@ -291,10 +291,10 @@ func TestWatch(t *testing.T) {
 	}
 
 	// Test-9: getWatchOptionsFromReq invalid url
-	u, err = url.Parse("http://localhost/api/v1/wach/bucket2?prefix=&suffix=")
+	u, _ = url.Parse("http://localhost/api/v1/wach/bucket2?prefix=&suffix=")
 	req = &http.Request{
 		URL: u,
 	}
-	opts, err = getWatchOptionsFromReq(req)
+	_, err = getWatchOptionsFromReq(req)
 	assert.Error(err)
 }
