@@ -112,7 +112,9 @@ class DownloadHelper {
     let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     if (isSafari) {
       this.toastCallback();
-      this.downloadSafari();
+      this.downloadByBrowser();
+    } else if (!this.fileSize) {
+      this.downloadByBrowser();
     } else {
       this.download({
         url: this.path,
@@ -187,7 +189,7 @@ class DownloadHelper {
     }
   }
 
-  downloadSafari() {
+  downloadByBrowser() {
     const link = document.createElement("a");
     link.href = this.path;
     document.body.appendChild(link);
