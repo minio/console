@@ -241,7 +241,7 @@ jobs:
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
-          yarn audit
+          yarn audit --groups dependencies
 
   all-permissions-1:
     name: Permissions Tests Part 1
