@@ -21,10 +21,10 @@ require (
 	github.com/minio/cli v1.24.2
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.22.3
-	github.com/minio/madmin-go/v2 v2.2.0
-	github.com/minio/mc v0.0.0-20230526175537-0fac0e006eae
+	github.com/minio/madmin-go/v3 v3.0.2
+	github.com/minio/mc v0.0.0-20230619193119-5f39522e6902
 	github.com/minio/minio-go/v7 v7.0.55-0.20230525060734-b7836f021bfb
-	github.com/minio/pkg v1.6.5
+	github.com/minio/pkg v1.7.5
 	github.com/minio/selfupdate v0.6.0
 	github.com/minio/websocket v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -94,7 +94,7 @@ require (
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
-	github.com/minio/colorjson v1.0.4 // indirect
+	github.com/minio/colorjson v1.0.5 // indirect
 	github.com/minio/filepath v1.0.0 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/sha256-simd v1.0.1 // indirect

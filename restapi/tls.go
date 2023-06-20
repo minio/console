@@ -36,7 +36,7 @@ func (t *ConsoleTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 
 // PrepareSTSClientTransport :
 func PrepareSTSClientTransport(insecure bool, remoteAddress string) *ConsoleTransport {
-	// This takes github.com/minio/madmin-go/v2/transport.go as an example
+	// This takes github.com/minio/madmin-go/v3/transport.go as an example
 	//
 	// DefaultTransport - this default transport is similar to
 	// http.DefaultTransport but with additional param  DisableCompression

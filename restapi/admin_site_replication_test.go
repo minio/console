@@ -23,7 +23,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 	"github.com/stretchr/testify/assert"
 )
 

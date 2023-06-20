@@ -30,7 +30,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	bucketApi "github.com/minio/console/restapi/operations/bucket"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )

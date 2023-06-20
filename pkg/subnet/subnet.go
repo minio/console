@@ -28,7 +28,7 @@ import (
 	"github.com/minio/pkg/licverifier"
 
 	"github.com/minio/console/models"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 	mc "github.com/minio/mc/cmd"
 	"github.com/tidwall/gjson"
 )

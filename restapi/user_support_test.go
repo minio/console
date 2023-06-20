@@ -22,7 +22,7 @@ import (
 	"testing"
 
 	"github.com/minio/console/models"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 )
 
 func Test_getCallHomeRule(t *testing.T) {
