@@ -23,14 +23,11 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import Grid from "@mui/material/Grid";
-import { BucketEvent, BucketEventList } from "../types";
 import {
   actionsTray,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import api from "../../../../common/api";
 
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
@@ -44,6 +41,9 @@ import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import { api } from "api";
+import { NotificationConfig } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const DeleteEvent = withSuspense(React.lazy(() => import("./DeleteEvent")));
 const AddEvent = withSuspense(React.lazy(() => import("./AddEvent")));
@@ -69,9 +69,11 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
 
   const [addEventScreenOpen, setAddEventScreenOpen] = useState<boolean>(false);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
-  const [records, setRecords] = useState<BucketEvent[]>([]);
+  const [records, setRecords] = useState<NotificationConfig[]>([]);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<NotificationConfig | null>(
+    null
+  );
 
   const bucketName = params.bucketName || "";
 
@@ -94,16 +96,16 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
   useEffect(() => {
     if (loadingEvents) {
       if (displayEvents) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
-          .then((res: BucketEventList) => {
-            const events = get(res, "events", []);
+        api.buckets
+          .listBucketEvents(bucketName)
+          .then((res) => {
+            const events = get(res.data, "events", []);
             setLoadingEvents(false);
             setRecords(events || []);
           })
-          .catch((err: ErrorResponseHandler) => {
+          .catch((err) => {
             setLoadingEvents(false);
-            dispatch(setErrorSnackMessage(err));
+            dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           });
       } else {
         setLoadingEvents(false);
@@ -115,7 +117,7 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
     return <Fragment>{events.join(", ")}</Fragment>;
   };
 
-  const confirmDeleteEvent = (evnt: BucketEvent) => {
+  const confirmDeleteEvent = (evnt: NotificationConfig) => {
     setDeleteOpen(true);
     setSelectedEvent(evnt);
   };

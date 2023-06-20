@@ -26,11 +26,11 @@ import {
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 
-import api from "../../../../common/api";
-import { ErrorResponseHandler } from "../../../../common/types";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IEditAccessRule {
   classes: any;
@@ -69,16 +69,16 @@ const EditAccessRule = ({
   };
 
   const createProcess = () => {
-    api
-      .invoke("PUT", `/api/v1/bucket/${bucket}/access-rules`, {
+    api.bucket
+      .setAccessRuleWithBucket(bucket, {
         prefix: toEdit,
         access: selectedAccess,
       })
-      .then((res: any) => {
+      .then(() => {
         onClose();
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
+      .catch((err) => {
+        dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         onClose();
       });
   };

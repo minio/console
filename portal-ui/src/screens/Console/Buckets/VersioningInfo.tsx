@@ -1,13 +1,13 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { BucketVersioningInfo } from "./types";
 import LabelWithIcon from "./BucketDetails/SummaryItems/LabelWithIcon";
 import { DisabledIcon, EnabledIcon } from "mds";
+import { BucketVersioningResponse } from "api/consoleApi";
 
 const VersioningInfo = ({
   versioningState = {},
 }: {
-  versioningState?: BucketVersioningInfo;
+  versioningState?: BucketVersioningResponse;
 }) => {
   return (
     <Box
@@ -59,7 +59,7 @@ const VersioningInfo = ({
           >
             {versioningState.excludedPrefixes?.map((it) => (
               <div>
-                <strong>{it.Prefix}</strong>
+                <strong>{it.prefix}</strong>
               </div>
             ))}
           </div>
