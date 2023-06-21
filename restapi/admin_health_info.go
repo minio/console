@@ -32,7 +32,7 @@ import (
 	"github.com/klauspost/compress/gzip"
 	xhttp "github.com/minio/console/pkg/http"
 	subnet "github.com/minio/console/pkg/subnet"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 	"github.com/minio/websocket"
 )
 
