@@ -23,7 +23,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	siteRepApi "github.com/minio/console/restapi/operations/site_replication"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 )
 
 func registerSiteReplicationHandler(api *operations.ConsoleAPI) {
