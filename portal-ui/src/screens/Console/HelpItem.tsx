@@ -25,9 +25,6 @@ interface IHelpItemProps {
 }
 
 const HelpItem = ({ item, displayImage = true }: IHelpItemProps) => {
-  const imgString: string =
-    `url(${item.img})` + ", " + `url(${placeholderImg})`;
-
   return (
     <Fragment>
       <div
@@ -54,7 +51,8 @@ const HelpItem = ({ item, displayImage = true }: IHelpItemProps) => {
                   style={{
                     width: 208,
                     height: 116,
-                    backgroundImage: imgString,
+                    backgroundImage:
+                      `url(${item.img})` + ", " + `url(${placeholderImg})`,
                     backgroundPosition: "center center",
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
