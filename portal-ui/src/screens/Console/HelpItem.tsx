@@ -51,8 +51,7 @@ const HelpItem = ({ item, displayImage = true }: IHelpItemProps) => {
                   style={{
                     width: 208,
                     height: 116,
-                    backgroundImage:
-                      `url(${item.img})` + ", " + `url(${placeholderImg})`,
+                    backgroundImage: `url(${item.img}), url(${placeholderImg})`,
                     backgroundPosition: "center center",
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
