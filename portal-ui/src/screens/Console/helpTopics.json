@@ -399,7 +399,7 @@
           "title": "Multi-Site Active-Active Replication",
           "url": "https://blog.min.io/minio-multi-site-active-active-replication/",
           "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
-         }
+        }
       ]
     }
   },
@@ -1259,7 +1259,7 @@
           "title": "Faster Multi-Site Replication and Resync",
           "url": "https://blog.min.io/multi-site-replication-resync/",
           "body": "Multi-Site Active-Active Replication allows for rapid recovery."
-         },
+        },
         {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
@@ -1479,7 +1479,7 @@
           "title": "Faster Multi-Site Replication and Resync",
           "url": "https://blog.min.io/multi-site-replication-resync/",
           "body": "Multi-Site Active-Active Replication allows for rapid recovery."
-         },
+        },
         {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
@@ -1932,7 +1932,7 @@
       "links": [
         {
           "img": "https://i.ytimg.com/an_webp/Zyc-xhNcPco/mqdefault_6s.webp?du=3000&sqp=CPyt0qQG&rs=AOn4CLCbgR7oBe0xvtH8yvHof9HeWeXQOg",
-         "title": "What is SUBNET?",
+          "title": "What is SUBNET?",
           "url": "https://www.youtube.com/watch?v=Zyc-xhNcPco",
           "body": "The MinIO Subscription Network (SUBNET for short) is a simple, yet powerful software stack that ensures commercial customers are getting the very best out of their MinIO instances."
         }
