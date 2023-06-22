@@ -4044,6 +4044,8 @@ definitions:
       - put
       - delete
       - get
+      - replica
+      - ilm
   notificationConfig:
     type: object
     required:
