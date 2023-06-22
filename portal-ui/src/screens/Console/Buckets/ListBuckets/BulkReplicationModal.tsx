@@ -29,20 +29,20 @@ import {
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 
-import { BulkReplicationItem, BulkReplicationResponse } from "../types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
-import api from "../../../../common/api";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { SelectorTypes } from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
-import { ErrorResponseHandler } from "../../../../common/types";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { MultiBucketResponseItem } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 interface IBulkReplicationModal {
   open: boolean;
@@ -88,13 +88,17 @@ const AddBulkReplicationModal = ({
   const [targetURL, setTargetURL] = useState<string>("");
   const [region, setRegion] = useState<string>("");
   const [useTLS, setUseTLS] = useState<boolean>(true);
-  const [replicationMode, setReplicationMode] = useState<string>("async");
+  const [replicationMode, setReplicationMode] = useState<"async" | "sync">(
+    "async"
+  );
   const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
   const [bandwidthUnit, setBandwidthUnit] = useState<string>("Gi");
   const [healthCheck, setHealthCheck] = useState<string>("60");
   const [relationBuckets, setRelationBuckets] = useState<string[]>([]);
   const [remoteBucketsOpts, setRemoteBucketOpts] = useState<string[]>([]);
-  const [responseItem, setResponseItem] = useState<BulkReplicationItem[]>([]);
+  const [responseItem, setResponseItem] = useState<
+    MultiBucketResponseItem[] | undefined
+  >([]);
 
   const optionsForBucketsDrop: SelectorTypes[] = remoteBucketsOpts.map(
     (remoteBucketName: string) => {
@@ -146,19 +150,19 @@ const AddBulkReplicationModal = ({
       healthCheckPeriod: hc,
     };
 
-    api
-      .invoke("POST", "/api/v1/buckets-replication", remoteBucketsInfo)
-      .then((response: BulkReplicationResponse) => {
+    api.bucketsReplication
+      .setMultiBucketReplication(remoteBucketsInfo)
+      .then((response) => {
         setAddLoading(false);
 
-        const states = response.replicationState;
+        const states = response.data.replicationState;
         setResponseItem(states);
 
-        const filterErrors = states.filter(
+        const filterErrors = states?.filter(
           (itm) => itm.errorString && itm.errorString !== ""
         );
 
-        if (filterErrors.length === 0) {
+        if (filterErrors?.length === 0) {
           closeModalAndRefresh(true);
         } else {
           setTimeout(() => {
@@ -166,9 +170,9 @@ const AddBulkReplicationModal = ({
           }, 500);
         }
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setAddLoading(false);
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 
@@ -183,10 +187,10 @@ const AddBulkReplicationModal = ({
     };
     setExternalLoading(true);
 
-    api
-      .invoke("POST", "/api/v1/list-external-buckets", remoteConnectInfo)
-      .then((dataReturn) => {
-        const buckets = get(dataReturn, "buckets", []);
+    api.listExternalBuckets
+      .listExternalBuckets(remoteConnectInfo)
+      .then((res) => {
+        const buckets = get(res.data, "buckets", []);
 
         if (buckets && buckets.length > 0) {
           const arrayReplaceBuckets = buckets.map((element: any) => {
@@ -199,14 +203,14 @@ const AddBulkReplicationModal = ({
         wizardPageJump("++");
         setExternalLoading(false);
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setExternalLoading(false);
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 
   const stateOfItem = (initialBucket: string) => {
-    if (responseItem.length > 0) {
+    if (responseItem && responseItem.length > 0) {
       const bucketResponse = responseItem.find(
         (item) => item.originBucket === initialBucket
       );
@@ -288,16 +292,18 @@ const AddBulkReplicationModal = ({
     );
   };
 
-  const removeSuccessItems = (responseItem: BulkReplicationItem[]) => {
+  const removeSuccessItems = (
+    responseItem: MultiBucketResponseItem[] | undefined
+  ) => {
     let newBucketsToAlter = [...bucketsToAlter];
     let newRelationBuckets = [...relationBuckets];
 
-    responseItem.forEach((successElement) => {
+    responseItem?.forEach((successElement) => {
       const errorString = get(successElement, "errorString", "");
 
       if (!errorString || errorString === "") {
         const indexToRemove = newBucketsToAlter.indexOf(
-          successElement.originBucket
+          successElement.originBucket || ""
         );
 
         newBucketsToAlter.splice(indexToRemove, 1);
@@ -398,7 +404,7 @@ const AddBulkReplicationModal = ({
                     id="replication_mode"
                     name="replication_mode"
                     onChange={(e: SelectChangeEvent<string>) => {
-                      setReplicationMode(e.target.value as string);
+                      setReplicationMode(e.target.value as "sync" | "async");
                     }}
                     label="Replication Mode"
                     value={replicationMode}
@@ -482,7 +488,7 @@ const AddBulkReplicationModal = ({
                           {itemDisplayBulk(index)}
                         </div>
                         <div className={errorItem === "" ? classes.hide : ""}>
-                          {responseItem.length > 0 && (
+                          {responseItem && responseItem.length > 0 && (
                             <LogoToShow errString={errorItem} />
                           )}
                         </div>

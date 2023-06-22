@@ -15,13 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Usage, zoomState } from "./types";
+import { zoomState } from "./types";
 import { IDashboardPanel } from "./Prometheus/types";
 import { getUsageAsync } from "./dashboardThunks";
+import { AdminInfoResponse } from "api/consoleApi";
 
 export interface DashboardState {
   zoom: zoomState;
-  usage: Usage | null;
+  usage: AdminInfoResponse | null;
   loadingUsage: boolean;
   widgetLoadVersion: number;
 }

@@ -44,9 +44,7 @@ import {
   spacingUtils,
   textStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { IFileInfo, MetadataResponse } from "../ObjectDetails/types";
 import { extensionPreview } from "../utils";
-import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import {
   decodeURLString,
@@ -59,7 +57,6 @@ import {
   permissionTooltipHelper,
 } from "../../../../../../common/SecureComponent/permissions";
 import { AppState, useAppDispatch } from "../../../../../../store";
-import api from "../../../../../../common/api";
 import ShareFile from "../ObjectDetails/ShareFile";
 import SetRetention from "../ObjectDetails/SetRetention";
 import DeleteObject from "../ListObjects/DeleteObject";
@@ -83,7 +80,8 @@ import {
 import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
 import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 import { downloadObject } from "../../../../ObjectBrowser/utils";
-import { BucketVersioningResponse } from "api/consoleApi";
+import { BucketObject, BucketVersioningResponse } from "api/consoleApi";
+import { api } from "api";
 
 const styles = () =>
   createStyles({
@@ -114,16 +112,16 @@ const styles = () =>
     ...detailsPanel,
   });
 
-const emptyFile: IFileInfo = {
+const emptyFile: BucketObject = {
   is_latest: true,
   last_modified: "",
   legal_hold_status: "",
   name: "",
   retention_mode: "",
   retention_until_date: "",
-  size: "0",
+  size: 0,
   tags: {},
-  version_id: null,
+  version_id: undefined,
 };
 
 interface IObjectDetailPanelProps {
@@ -161,10 +159,10 @@ const ObjectDetailPanel = ({
   const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
   const [legalholdOpen, setLegalholdOpen] = useState<boolean>(false);
   const [inspectModalOpen, setInspectModalOpen] = useState<boolean>(false);
-  const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
-  const [allInfoElements, setAllInfoElements] = useState<IFileInfo[]>([]);
-  const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
-  const [versions, setVersions] = useState<IFileInfo[]>([]);
+  const [actualInfo, setActualInfo] = useState<BucketObject | null>(null);
+  const [allInfoElements, setAllInfoElements] = useState<BucketObject[]>([]);
+  const [objectToShare, setObjectToShare] = useState<BucketObject | null>(null);
+  const [versions, setVersions] = useState<BucketObject[]>([]);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [totalVersionsSize, setTotalVersionsSize] = useState<number>(0);
@@ -178,19 +176,19 @@ const ObjectDetailPanel = ({
 
   // calculate object name to display
   let objectNameArray: string[] = [];
-  if (actualInfo) {
+  if (actualInfo && actualInfo.name) {
     objectNameArray = actualInfo.name.split("/");
   }
 
   useEffect(() => {
     if (distributedSetup && allInfoElements && allInfoElements.length >= 1) {
       let infoElement =
-        allInfoElements.find((el: IFileInfo) => el.is_latest) || emptyFile;
+        allInfoElements.find((el: BucketObject) => el.is_latest) || emptyFile;
 
       if (selectedVersion !== "") {
         infoElement =
           allInfoElements.find(
-            (el: IFileInfo) => el.version_id === selectedVersion
+            (el: BucketObject) => el.version_id === selectedVersion
           ) || emptyFile;
       }
 
@@ -204,23 +202,21 @@ const ObjectDetailPanel = ({
 
   useEffect(() => {
     if (loadingObjectInfo && internalPaths !== "") {
-      api
-        .invoke(
-          "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}${
-            distributedSetup ? "&with_versions=true" : ""
-          }`
-        )
-        .then((res: { objects: IFileInfo[] }) => {
-          const result: IFileInfo[] = res.objects || [];
+      api.buckets
+        .listObjects(bucketName, {
+          prefix: internalPaths,
+          with_versions: distributedSetup,
+        })
+        .then((res) => {
+          const result: BucketObject[] = res.data.objects || [];
           if (distributedSetup) {
             setAllInfoElements(result);
             setVersions(result);
 
             const tVersionSize = result.reduce(
-              (acc: number, currValue: IFileInfo): number => {
+              (acc: number, currValue: BucketObject): number => {
                 if (currValue?.size) {
-                  return acc + parseInt(currValue.size);
+                  return acc + currValue.size;
                 }
                 return acc;
               },
@@ -241,8 +237,8 @@ const ObjectDetailPanel = ({
 
           dispatch(setLoadingObjectInfo(false));
         })
-        .catch((error: ErrorResponseHandler) => {
-          console.error("Error loading object details", error);
+        .catch((err) => {
+          console.error("Error loading object details", err.error);
           dispatch(setLoadingObjectInfo(false));
         });
     }
@@ -257,13 +253,12 @@ const ObjectDetailPanel = ({
 
   useEffect(() => {
     if (loadMetadata && internalPaths !== "") {
-      api
-        .invoke(
-          "GET",
-          `/api/v1/buckets/${bucketName}/objects/metadata?prefix=${internalPaths}`
-        )
-        .then((res: MetadataResponse) => {
-          let metadata = get(res, "objectMetadata", {});
+      api.buckets
+        .getObjectMetadata(bucketName, {
+          prefix: internalPaths,
+        })
+        .then((res) => {
+          let metadata = get(res.data, "objectMetadata", {});
 
           setMetaData(metadata);
           setLoadingMetadata(false);
@@ -605,7 +600,7 @@ const ObjectDetailPanel = ({
         <SetLegalHoldModal
           open={legalholdOpen}
           closeModalAndRefresh={closeLegalholdModal}
-          objectName={actualInfo.name}
+          objectName={actualInfo.name || ""}
           bucketName={bucketName}
           actualInfo={actualInfo}
         />
@@ -615,11 +610,11 @@ const ObjectDetailPanel = ({
           open={previewOpen}
           bucketName={bucketName}
           object={{
-            name: actualInfo.name,
+            name: actualInfo.name || "",
             version_id: actualInfo.version_id || "null",
-            size: parseInt(actualInfo.size || "0"),
+            size: actualInfo.size || 0,
             content_type: "",
-            last_modified: actualInfo.last_modified,
+            last_modified: actualInfo.last_modified || "",
           }}
           onClosePreview={() => {
             setPreviewOpen(false);
@@ -638,7 +633,7 @@ const ObjectDetailPanel = ({
         <InspectObject
           inspectOpen={inspectModalOpen}
           volumeName={bucketName}
-          inspectPath={actualInfo.name}
+          inspectPath={actualInfo.name || ""}
           closeInspectModalAndRefresh={closeInspectModal}
         />
       )}
@@ -660,7 +655,7 @@ const ObjectDetailPanel = ({
           <ActionsList
             title={
               <div className={classes.ObjectDetailsTitle}>
-                {displayFileIconName(objectName, true)}
+                {displayFileIconName(objectName || "", true)}
                 <span className={classes.objectNameContainer}>
                   {objectName}
                 </span>
@@ -729,7 +724,7 @@ const ObjectDetailPanel = ({
           <Box className={classes.detailContainer}>
             <strong>Size:</strong>
             <br />
-            {niceBytes(actualInfo.size || "0")}
+            {niceBytes(`${actualInfo.size || "0"}`)}
           </Box>
           {actualInfo.version_id &&
             actualInfo.version_id !== "null" &&
@@ -745,7 +740,7 @@ const ObjectDetailPanel = ({
             <Box className={classes.detailContainer}>
               <strong>Last Modified:</strong>
               <br />
-              {calculateLastModifyTime(actualInfo.last_modified)}
+              {calculateLastModifyTime(actualInfo.last_modified || "")}
             </Box>
           )}
           <Box className={classes.detailContainer}>

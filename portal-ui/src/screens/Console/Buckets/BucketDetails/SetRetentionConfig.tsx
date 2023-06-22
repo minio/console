@@ -28,16 +28,14 @@ import {
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 
-import {
-  ErrorResponseHandler,
-  IRetentionConfig,
-} from "../../../../common/types";
-import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { ObjectRetentionMode, ObjectRetentionUnit } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -63,9 +61,15 @@ const SetRetentionConfig = ({
   const dispatch = useAppDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [loadingForm, setLoadingForm] = useState<boolean>(true);
-  const [retentionMode, setRetentionMode] = useState<string>("compliance");
-  const [retentionUnit, setRetentionUnit] = useState<string>("days");
-  const [retentionValidity, setRetentionValidity] = useState<number>(1);
+  const [retentionMode, setRetentionMode] = useState<
+    ObjectRetentionMode | undefined
+  >(ObjectRetentionMode.Compliance);
+  const [retentionUnit, setRetentionUnit] = useState<
+    ObjectRetentionUnit | undefined
+  >(ObjectRetentionUnit.Days);
+  const [retentionValidity, setRetentionValidity] = useState<
+    number | undefined
+  >(1);
   const [valid, setValid] = useState<boolean>(false);
 
   const setRetention = (event: React.FormEvent) => {
@@ -74,24 +78,24 @@ const SetRetentionConfig = ({
       return;
     }
     setAddLoading(true);
-    api
-      .invoke("PUT", `/api/v1/buckets/${bucketName}/retention`, {
-        mode: retentionMode,
-        unit: retentionUnit,
-        validity: retentionValidity,
+    api.buckets
+      .setBucketRetentionConfig(bucketName, {
+        mode: retentionMode || ObjectRetentionMode.Compliance,
+        unit: retentionUnit || ObjectRetentionUnit.Days,
+        validity: retentionValidity || 1,
       })
       .then(() => {
         setAddLoading(false);
         closeModalAndRefresh();
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setAddLoading(false);
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 
   useEffect(() => {
-    if (Number.isNaN(retentionValidity) || retentionValidity < 1) {
+    if (Number.isNaN(retentionValidity) || (retentionValidity || 1) < 1) {
       setValid(false);
       return;
     }
@@ -100,17 +104,17 @@ const SetRetentionConfig = ({
 
   useEffect(() => {
     if (loadingForm) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/retention`)
-        .then((res: IRetentionConfig) => {
+      api.buckets
+        .getBucketRetentionConfig(bucketName)
+        .then((res) => {
           setLoadingForm(false);
 
           // We set default values
-          setRetentionMode(res.mode);
-          setRetentionValidity(res.validity);
-          setRetentionUnit(res.unit);
+          setRetentionMode(res.data.mode);
+          setRetentionValidity(res.data.validity);
+          setRetentionUnit(res.data.unit);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch(() => {
           setLoadingForm(false);
         });
     }
@@ -143,7 +147,7 @@ const SetRetentionConfig = ({
                   name="retention_mode"
                   label="Retention Mode"
                   onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                    setRetentionMode(e.target.value as string);
+                    setRetentionMode(e.target.value as ObjectRetentionMode);
                   }}
                   selectorOptions={[
                     { value: "compliance", label: "Compliance" },
@@ -158,7 +162,7 @@ const SetRetentionConfig = ({
                   name="retention_unit"
                   label="Retention Unit"
                   onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                    setRetentionUnit(e.target.value as string);
+                    setRetentionUnit(e.target.value as ObjectRetentionUnit);
                   }}
                   selectorOptions={[
                     { value: "days", label: "Days" },

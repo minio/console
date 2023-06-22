@@ -32,9 +32,6 @@ import {
   tableStyles,
   textStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { IFileInfo } from "./types";
-import api from "../../../../../../common/api";
-import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import { decodeURLString, niceBytesInt } from "../../../../../../common/utils";
 import RestoreFileVersion from "./RestoreFileVersion";
@@ -66,6 +63,9 @@ import {
 import { List, ListRowProps } from "react-virtualized";
 import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 import { downloadObject } from "../../../../ObjectBrowser/utils";
+import { BucketObject } from "api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -119,16 +119,16 @@ interface IVersionsNavigatorProps {
   bucketName: string;
 }
 
-const emptyFile: IFileInfo = {
+const emptyFile: BucketObject = {
   is_latest: true,
   last_modified: "",
   legal_hold_status: "",
   name: "",
   retention_mode: "",
   retention_until_date: "",
-  size: "0",
+  size: 0,
   tags: {},
-  version_id: null,
+  version_id: undefined,
 };
 
 const VersionsNavigator = ({
@@ -150,11 +150,13 @@ const VersionsNavigator = ({
 
   const distributedSetup = useSelector(selDistSet);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
-  const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
-  const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
-  const [versions, setVersions] = useState<IFileInfo[]>([]);
+  const [actualInfo, setActualInfo] = useState<BucketObject | null>(null);
+  const [objectToShare, setObjectToShare] = useState<BucketObject | null>(null);
+  const [versions, setVersions] = useState<BucketObject[]>([]);
   const [restoreVersionOpen, setRestoreVersionOpen] = useState<boolean>(false);
-  const [restoreVersion, setRestoreVersion] = useState<IFileInfo | null>(null);
+  const [restoreVersion, setRestoreVersion] = useState<BucketObject | null>(
+    null
+  );
   const [sortValue, setSortValue] = useState<string>("date");
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [deleteNonCurrentOpen, setDeleteNonCurrentOpen] =
@@ -165,7 +167,7 @@ const VersionsNavigator = ({
 
   // calculate object name to display
   let objectNameArray: string[] = [];
-  if (actualInfo) {
+  if (actualInfo && actualInfo.name) {
     objectNameArray = actualInfo.name.split("/");
   }
 
@@ -177,26 +179,24 @@ const VersionsNavigator = ({
 
   useEffect(() => {
     if (loadingVersions && internalPaths !== "") {
-      api
-        .invoke(
-          "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}${
-            distributedSetup ? "&with_versions=true" : ""
-          }`
-        )
-        .then((res: IFileInfo[]) => {
-          const result = get(res, "objects", []);
+      api.buckets
+        .listObjects(bucketName, {
+          prefix: internalPaths,
+          with_versions: distributedSetup,
+        })
+        .then((res) => {
+          const result = get(res.data, "objects", []);
 
           const decodedInternalPaths = decodeURLString(internalPaths);
 
           // Filter the results prefixes as API can return more files than expected.
           const filteredPrefixes = result.filter(
-            (item: IFileInfo) => item.name === decodedInternalPaths
+            (item: BucketObject) => item.name === decodedInternalPaths
           );
 
           if (distributedSetup) {
             setActualInfo(
-              filteredPrefixes.find((el: IFileInfo) => el.is_latest) ||
+              filteredPrefixes.find((el: BucketObject) => el.is_latest) ||
                 emptyFile
             );
             setVersions(filteredPrefixes);
@@ -207,8 +207,8 @@ const VersionsNavigator = ({
 
           dispatch(setLoadingVersions(false));
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           dispatch(setLoadingVersions(false));
         });
     }
@@ -224,26 +224,26 @@ const VersionsNavigator = ({
     setPreviewOpen(false);
   };
 
-  const onShareItem = (item: IFileInfo) => {
+  const onShareItem = (item: BucketObject) => {
     setObjectToShare(item);
     shareObject();
   };
 
-  const onPreviewItem = (item: IFileInfo) => {
+  const onPreviewItem = (item: BucketObject) => {
     setObjectToShare(item);
     setPreviewOpen(true);
   };
 
-  const onRestoreItem = (item: IFileInfo) => {
+  const onRestoreItem = (item: BucketObject) => {
     setRestoreVersion(item);
     setRestoreVersionOpen(true);
   };
 
-  const onDownloadItem = (item: IFileInfo) => {
+  const onDownloadItem = (item: BucketObject) => {
     downloadObject(dispatch, bucketName, internalPaths, item);
   };
 
-  const onGlobalClick = (item: IFileInfo) => {
+  const onGlobalClick = (item: BucketObject) => {
     dispatch(setSelectedVersion(item.version_id || ""));
   };
 
@@ -285,9 +285,9 @@ const VersionsNavigator = ({
     }
   };
 
-  const totalSpace = versions.reduce((acc: number, currValue: IFileInfo) => {
+  const totalSpace = versions.reduce((acc: number, currValue: BucketObject) => {
     if (currValue.size) {
-      return acc + parseInt(currValue.size);
+      return acc + currValue.size;
     }
     return acc;
   }, 0);
@@ -306,8 +306,8 @@ const VersionsNavigator = ({
         }
         return 0;
       default:
-        const dateA = new Date(a.last_modified).getTime();
-        const dateB = new Date(b.last_modified).getTime();
+        const dateA = new Date(a.last_modified || "").getTime();
+        const dateB = new Date(b.last_modified || "").getTime();
 
         if (dateA < dateB) {
           return 1;
@@ -381,7 +381,7 @@ const VersionsNavigator = ({
           restoreOpen={restoreVersionOpen}
           bucketName={bucketName}
           versionToRestore={restoreVersion}
-          objectPath={actualInfo.name}
+          objectPath={actualInfo.name || ""}
           onCloseAndUpdate={closeRestoreModal}
         />
       )}
@@ -390,16 +390,14 @@ const VersionsNavigator = ({
           open={previewOpen}
           bucketName={bucketName}
           object={{
-            name: actualInfo.name,
+            name: actualInfo.name || "",
             version_id:
               objectToShare && objectToShare.version_id
                 ? objectToShare.version_id
                 : "null",
-            size: parseInt(
-              objectToShare && objectToShare.size ? objectToShare.size : "0"
-            ),
+            size: objectToShare && objectToShare.size ? objectToShare.size : 0,
             content_type: "",
-            last_modified: actualInfo.last_modified,
+            last_modified: actualInfo.last_modified || "",
           }}
           onClosePreview={() => {
             setPreviewOpen(false);

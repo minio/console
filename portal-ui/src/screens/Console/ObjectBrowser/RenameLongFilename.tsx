@@ -32,13 +32,14 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { downloadObject } from "./utils";
+import { BucketObject } from "api/consoleApi";
 
 interface IRenameLongFilename {
   open: boolean;
   bucketName: string;
   internalPaths: string;
   currentItem: string;
-  actualInfo: IFileInfo;
+  actualInfo: BucketObject;
   closeModal: () => void;
 }
 

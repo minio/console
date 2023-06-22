@@ -26,7 +26,6 @@ import {
   PageLayout,
   RefreshIcon,
 } from "mds";
-import { ErrorResponseHandler } from "../../../../common/types";
 import { useAppDispatch } from "../../../../store";
 import {
   setErrorSnackMessage,
@@ -34,7 +33,6 @@ import {
   setServerNeedsRestart,
   setSnackBarMessage,
 } from "../../../../systemSlice";
-import api from "../../../../common/api";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
@@ -43,10 +41,12 @@ import { ldapFormFields, ldapHelpBoxContents } from "../utils";
 import AddIDPConfigurationHelpBox from "../AddIDPConfigurationHelpbox";
 import LDAPEntitiesQuery from "./LDAPEntitiesQuery";
 import ResetConfigurationModal from "../../EventDestinations/CustomForms/ResetConfigurationModal";
-import { IConfigurationSys, IElementValue } from "../../Configurations/types";
 import { TabPanel } from "../../../shared/tabs";
 import TabSelector from "../../Common/TabSelector/TabSelector";
 import HelpMenu from "../../HelpMenu";
+import { api } from "api";
+import { ConfigurationKV } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const enabledConfigLDAP = [
   "server_addr",
@@ -65,7 +65,9 @@ const IDPLDAPConfigurationDetails = () => {
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const [hasConfiguration, setHasConfiguration] = useState<boolean>(false);
   const [fields, setFields] = useState<any>({});
-  const [record, setRecord] = useState<IElementValue[] | null>(null);
+  const [record, setRecord] = useState<ConfigurationKV[] | undefined>(
+    undefined
+  );
   const [editMode, setEditMode] = useState<boolean>(false);
   const [resetOpen, setResetOpen] = useState<boolean>(false);
   const [curTab, setCurTab] = useState<number>(0);
@@ -77,7 +79,7 @@ const IDPLDAPConfigurationDetails = () => {
     setEditMode(!editMode);
   };
 
-  const parseFields = (record: IElementValue[]) => {
+  const parseFields = (record: ConfigurationKV[]) => {
     let fields: any = {};
     if (record && record.length > 0) {
       const enabled = record.find((item: any) => item.key === "enable");
@@ -112,18 +114,18 @@ const IDPLDAPConfigurationDetails = () => {
 
   useEffect(() => {
     const loadRecord = () => {
-      api
-        .invoke("GET", `/api/v1/configs/identity_ldap`)
-        .then((res: IConfigurationSys[]) => {
-          if (res.length > 0) {
-            setRecord(res[0].key_values);
-            parseFields(res[0].key_values);
+      api.configs
+        .configInfo("identity_ldap")
+        .then((res) => {
+          if (res.data.length > 0) {
+            setRecord(res.data[0].key_values);
+            parseFields(res.data[0].key_values || []);
           }
           setLoading(false);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setLoading(false);
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         });
     };
 
@@ -156,22 +158,22 @@ const IDPLDAPConfigurationDetails = () => {
       };
     });
 
-    api
-      .invoke("PUT", `/api/v1/configs/identity_ldap`, {
+    api.configs
+      .setConfig("identity_ldap", {
         key_values: keyVals,
       })
       .then((res) => {
         setEditMode(false);
         setRecord(keyVals);
         parseFields(keyVals);
-        dispatch(setServerNeedsRestart(res.restart));
+        dispatch(setServerNeedsRestart(res.data.restart || false));
 
-        if (!res.restart) {
+        if (!res.data.restart) {
           dispatch(setSnackBarMessage("Configuration saved successfully"));
         }
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
+      .catch((err) => {
+        dispatch(setErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 
@@ -180,7 +182,7 @@ const IDPLDAPConfigurationDetails = () => {
 
     if (refresh) {
       dispatch(setServerNeedsRestart(refresh));
-      setRecord(null);
+      setRecord(undefined);
       setFields({});
       setIsEnabled(false);
       setHasConfiguration(false);
@@ -198,17 +200,17 @@ const IDPLDAPConfigurationDetails = () => {
       ],
     };
 
-    api
-      .invoke("PUT", `/api/v1/configs/identity_ldap`, payload)
+    api.configs
+      .setConfig("identity_ldap", payload)
       .then((res) => {
         setIsEnabled(!isEnabled);
-        dispatch(setServerNeedsRestart(res.restart));
-        if (!res.restart) {
+        dispatch(setServerNeedsRestart(res.data.restart || false));
+        if (!res.data.restart) {
           dispatch(setSnackBarMessage("Configuration saved successfully"));
         }
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
+      .catch((err) => {
+        dispatch(setErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 

@@ -42,8 +42,8 @@ import {
 } from "../../../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../../../common/SecureComponent";
 import { downloadObject } from "../../../../ObjectBrowser/utils";
-import { IFileInfo } from "../ObjectDetails/types";
 import { DataTable } from "mds";
+import { BucketObject } from "api/consoleApi";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -148,14 +148,18 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
     payload = sortASC.reverse();
   }
 
-  const openPath = (object: IFileInfo) => {
-    const idElement = object.name;
+  const openPath = (object: BucketObject) => {
+    const idElement = object.name || "";
     const newPath = `/browser/${bucketName}${
       idElement ? `/${encodeURLString(idElement)}` : ``
     }`;
 
     // for anonymous start download
-    if (anonymousMode && internalPaths !== null && !object.name.endsWith("/")) {
+    if (
+      anonymousMode &&
+      internalPaths !== null &&
+      !object.name?.endsWith("/")
+    ) {
       downloadObject(
         dispatch,
         bucketName,

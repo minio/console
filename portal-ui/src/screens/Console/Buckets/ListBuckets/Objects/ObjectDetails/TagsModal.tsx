@@ -16,7 +16,6 @@
 
 import React, { Fragment, useState } from "react";
 import get from "lodash/get";
-import { useSelector } from "react-redux";
 import { Box, Grid } from "@mui/material";
 import {
   AddNewTagIcon,
@@ -29,30 +28,26 @@ import {
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { ErrorResponseHandler } from "../../../../../../common/types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import api from "../../../../../../common/api";
-import { encodeURLString } from "../../../../../../common/utils";
 import {
   formFieldStyles,
   modalStyleUtils,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { IFileInfo } from "./types";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../../../common/SecureComponent";
 import Chip from "@mui/material/Chip";
 import CloseIcon from "@mui/icons-material/Close";
-import {
-  selDistSet,
-  setModalErrorSnackMessage,
-} from "../../../../../../systemSlice";
+import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
+import { BucketObject } from "api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface ITagModal {
   modalOpen: boolean;
   bucketName: string;
-  actualInfo: IFileInfo;
+  actualInfo: BucketObject;
   onCloseAndUpdate: (refresh: boolean) => void;
   classes: any;
 }
@@ -103,7 +98,6 @@ const AddTagModal = ({
   classes,
 }: ITagModal) => {
   const dispatch = useAppDispatch();
-  const distributedSetup = useSelector(selDistSet);
   const [newKey, setNewKey] = useState<string>("");
   const [newLabel, setNewLabel] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
@@ -111,12 +105,11 @@ const AddTagModal = ({
   const [deleteKey, setDeleteKey] = useState<string>("");
   const [deleteLabel, setDeleteLabel] = useState<string>("");
 
-  const selectedObject = encodeURLString(actualInfo.name);
   const currentTags = actualInfo.tags;
   const currTagKeys = Object.keys(currentTags || {});
 
-  const allPathData = actualInfo.name.split("/");
-  const currentItem = allPathData.pop() || "";
+  const allPathData = actualInfo.name?.split("/");
+  const currentItem = allPathData?.pop() || "";
 
   const resetForm = () => {
     setNewLabel("");
@@ -130,20 +123,14 @@ const AddTagModal = ({
     newTag[newKey] = newLabel;
     const newTagList = { ...currentTags, ...newTag };
 
-    const verID = distributedSetup ? actualInfo.version_id : "null";
-
-    api
-      .invoke(
-        "PUT",
-        `/api/v1/buckets/${bucketName}/objects/tags?prefix=${selectedObject}&version_id=${verID}`,
-        { tags: newTagList }
-      )
-      .then((res: any) => {
+    api.buckets
+      .putBucketTags(bucketName, { tags: newTagList })
+      .then(() => {
         onCloseAndUpdate(true);
         setIsSending(false);
       })
-      .catch((error: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(error));
+      .catch((err) => {
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         setIsSending(false);
       });
   };
@@ -152,20 +139,14 @@ const AddTagModal = ({
     const cleanObject: any = { ...currentTags };
     delete cleanObject[deleteKey];
 
-    const verID = distributedSetup ? actualInfo.version_id : "null";
-
-    api
-      .invoke(
-        "PUT",
-        `/api/v1/buckets/${bucketName}/objects/tags?prefix=${selectedObject}&version_id=${verID}`,
-        { tags: cleanObject }
-      )
-      .then((res: any) => {
+    api.buckets
+      .putBucketTags(bucketName, { tags: cleanObject })
+      .then(() => {
         onCloseAndUpdate(true);
         setIsSending(false);
       })
-      .catch((error: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(error));
+      .catch((err) => {
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         setIsSending(false);
       });
   };

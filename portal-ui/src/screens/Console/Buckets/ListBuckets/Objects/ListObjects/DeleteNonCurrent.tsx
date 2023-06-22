@@ -16,16 +16,16 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 
-import { ErrorResponseHandler } from "../../../../../../common/types";
 import { decodeURLString } from "../../../../../../common/utils";
 import { ConfirmDeleteIcon, Switch, Grid, InputBox } from "mds";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
-import api from "../../../../../../common/api";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { hasPermission } from "../../../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IDeleteNonCurrentProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -57,18 +57,17 @@ const DeleteNonCurrentVersions = ({
 
   useEffect(() => {
     if (deleteLoading) {
-      api
-        .invoke(
-          "DELETE",
-          `/api/v1/buckets/${selectedBucket}/objects?path=${selectedObject}&non_current_versions=true${
-            bypassGovernance ? "&bypass=true" : ""
-          }`
-        )
+      api.buckets
+        .deleteObject(selectedBucket, {
+          path: selectedObject,
+          non_current_versions: true,
+          bypass: bypassGovernance,
+        })
         .then(() => {
           closeDeleteModalAndRefresh(true);
         })
-        .catch((error: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(error));
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           setDeleteLoading(false);
         });
     }

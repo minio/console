@@ -32,7 +32,6 @@ import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
 import { Box, LinearProgress } from "@mui/material";
 
-import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";
 import {
   actionsTray,
@@ -40,8 +39,6 @@ import {
   searchField,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AButton from "../Common/AButton/AButton";
 import SearchBox from "../Common/SearchBox";
@@ -69,6 +66,8 @@ import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const SetPolicy = withSuspense(
@@ -158,18 +157,18 @@ const Groups = ({ classes }: IGroupsProps) => {
     if (loading) {
       if (displayGroups) {
         const fetchRecords = () => {
-          api
-            .invoke("GET", `/api/v1/groups`)
-            .then((res: GroupsList) => {
+          api.groups
+            .listGroups()
+            .then((res) => {
               let resGroups: string[] = [];
-              if (res.groups !== null) {
-                resGroups = res.groups.sort(stringSort);
+              if (res.data.groups) {
+                resGroups = res.data.groups.sort(stringSort);
               }
               setRecords(resGroups);
               isLoading(false);
             })
-            .catch((err: ErrorResponseHandler) => {
-              dispatch(setErrorSnackMessage(err));
+            .catch((err) => {
+              dispatch(setErrorSnackMessage(errorToHandler(err.error)));
               isLoading(false);
             });
         };

@@ -33,11 +33,7 @@ import withStyles from "@mui/styles/withStyles";
 import { LinearProgress } from "@mui/material";
 import { red } from "@mui/material/colors";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import {
-  NotificationEndpointItem,
-  NotificationEndpointsList,
-  TransformedEndpointItem,
-} from "./types";
+import { TransformedEndpointItem } from "./types";
 import { getNotificationConfigKey, notificationTransform } from "./utils";
 
 import {
@@ -47,8 +43,6 @@ import {
   settingsCommon,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
 import AButton from "../Common/AButton/AButton";
 import SearchBox from "../Common/SearchBox";
 
@@ -62,6 +56,9 @@ import ConfirmDeleteDestinationModal from "./ConfirmDeleteDestinationModal";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import { useSelector } from "react-redux";
 import { setDestinationLoading } from "./destinationsSlice";
+import { api } from "api";
+import { NotificationEndpointItem } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -107,18 +104,18 @@ const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
   useEffect(() => {
     if (isLoading) {
       const fetchRecords = () => {
-        api
-          .invoke("GET", `/api/v1/admin/notification_endpoints`)
-          .then((res: NotificationEndpointsList) => {
+        api.admin
+          .notificationEndpointList()
+          .then((res) => {
             let resNotEndList: NotificationEndpointItem[] = [];
-            if (res.notification_endpoints !== null) {
-              resNotEndList = res.notification_endpoints;
+            if (res.data.notification_endpoints) {
+              resNotEndList = res.data.notification_endpoints;
             }
             setRecords(notificationTransform(resNotEndList));
             dispatch(setDestinationLoading(false));
           })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
+          .catch((err) => {
+            dispatch(setErrorSnackMessage(errorToHandler(err.error)));
             dispatch(setDestinationLoading(false));
           });
       };
@@ -137,17 +134,17 @@ const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
       const configKey = getNotificationConfigKey(ep.name);
       let accountId = `:${ep.account_id}`;
       if (configKey) {
-        api
-          .invoke("POST", `/api/v1/configs/${configKey}${accountId}/reset`)
-          .then((res) => {
+        api.configs
+          .resetConfig(`${configKey}${accountId}`)
+          .then(() => {
             dispatch(setServerNeedsRestart(true));
             setSelNotifyEndpoint(null);
             setIsDelConfirmOpen(false);
             dispatch(setDestinationLoading(true));
           })
-          .catch((err: ErrorResponseHandler) => {
+          .catch((err) => {
             setIsDelConfirmOpen(false);
-            dispatch(setErrorSnackMessage(err));
+            dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           });
       } else {
         setSelNotifyEndpoint(null);

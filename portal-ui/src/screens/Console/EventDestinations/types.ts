@@ -14,19 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface NotificationEndpointItem {
-  service: string;
-  account_id: string;
-  status: string;
-}
-
 export interface TransformedEndpointItem {
   service_name: string;
   status: string;
   name: string;
   account_id: string;
-}
-
-export interface NotificationEndpointsList {
-  notification_endpoints: NotificationEndpointItem[];
 }

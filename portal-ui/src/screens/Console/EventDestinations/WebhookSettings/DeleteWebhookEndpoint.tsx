@@ -18,14 +18,14 @@ import React, { useEffect, useState } from "react";
 import { ConfirmDeleteIcon } from "mds";
 import { DialogContentText } from "@mui/material";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import api from "../../../../common/api";
 import {
   configurationIsLoading,
   setErrorSnackMessage,
   setServerNeedsRestart,
 } from "../../../../systemSlice";
-import { ErrorResponseHandler } from "../../../../common/types";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IDeleteWebhookEndpoint {
   modalOpen: boolean;
@@ -46,17 +46,17 @@ const DeleteWebhookEndpoint = ({
 
   useEffect(() => {
     if (deleteLoading) {
-      api
-        .invoke("POST", `/api/v1/configs/${selectedARN}/reset`)
+      api.configs
+        .resetConfig(selectedARN)
         .then(() => {
           setDeleteLoading(false);
           dispatch(setServerNeedsRestart(true));
           dispatch(configurationIsLoading(true));
           onClose();
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setDeleteLoading(false);
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         });
     }
   }, [deleteLoading, dispatch, onClose, selectedARN]);

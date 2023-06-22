@@ -991,7 +991,7 @@ const ListObjects = () => {
             name: downloadRenameModal.name,
             last_modified: "",
             version_id: downloadRenameModal.version_id,
-            size: downloadRenameModal.size.toString(),
+            size: downloadRenameModal.size,
           }}
         />
       )}

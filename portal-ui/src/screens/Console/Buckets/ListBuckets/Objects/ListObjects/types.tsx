@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { BucketObject } from "api/consoleApi";
 import { IFileInfo } from "../ObjectDetails/types";
 
 export interface BucketObjectItem {
@@ -55,5 +56,5 @@ export interface ObjectResponse {
 
 export interface IRestoreLocalObjectList {
   prefix: string;
-  objectInfo: IFileInfo;
+  objectInfo: BucketObject;
 }

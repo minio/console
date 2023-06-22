@@ -22,20 +22,20 @@ import { Webhook } from "@mui/icons-material";
 import { formFieldStyles } from "../../Common/FormComponents/common/styleLibrary";
 import CallToActionIcon from "@mui/icons-material/CallToAction";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
-import api from "../../../../common/api";
 import {
   configurationIsLoading,
   setErrorSnackMessage,
   setServerNeedsRestart,
   setSnackBarMessage,
 } from "../../../../systemSlice";
-import { ErrorResponseHandler } from "../../../../common/types";
 import { useAppDispatch } from "../../../../store";
 import { LinearProgress } from "@mui/material";
 import { IConfigurationSys } from "../../Configurations/types";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 import { overrideFields } from "../../Configurations/utils";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IEndpointModal {
   open: boolean;
@@ -138,21 +138,21 @@ const EditEndpointModal = ({
       ],
     };
 
-    api
-      .invoke("PUT", `/api/v1/configs/${name}`, payload)
+    api.configs
+      .setConfig(name, payload)
       .then((res) => {
         setSaving(false);
-        dispatch(setServerNeedsRestart(res.restart));
-        if (!res.restart) {
+        dispatch(setServerNeedsRestart(res.data.restart || false));
+        if (!res.data.restart) {
           dispatch(setSnackBarMessage("Configuration saved successfully"));
         }
 
         onCloseEndpoint();
         dispatch(configurationIsLoading(true));
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setSaving(false);
-        dispatch(setErrorSnackMessage(err));
+        dispatch(setErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 

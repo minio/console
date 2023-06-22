@@ -37,16 +37,6 @@ export interface BucketReplication {
   rules: BucketReplicationRule[];
 }
 
-export interface BulkReplicationResponse {
-  replicationState: BulkReplicationItem[];
-}
-
-export interface BulkReplicationItem {
-  errorString: string;
-  originBucket: string;
-  targetBucket: string;
-}
-
 interface IExpirationLifecycle {
   days: number;
   date: string;

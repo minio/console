@@ -15,15 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { ErrorResponseHandler } from "../../../../../../common/types";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon, Switch } from "mds";
-import api from "../../../../../../common/api";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { hasPermission } from "../../../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IDeleteSelectedVersionsProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -70,20 +70,17 @@ const DeleteObject = ({
       });
 
       if (selectedObjectsRequest.length > 0) {
-        api
-          .invoke(
-            "POST",
-            `/api/v1/buckets/${selectedBucket}/delete-objects?all_versions=false${
-              bypassGovernance ? "&bypass=true" : ""
-            }`,
-            selectedObjectsRequest
-          )
+        api.buckets
+          .deleteMultipleObjects(selectedBucket, selectedObjectsRequest, {
+            all_versions: false,
+            bypass: bypassGovernance,
+          })
           .then(() => {
             setDeleteLoading(false);
             closeDeleteModalAndRefresh(true);
           })
-          .catch((error: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(error));
+          .catch((err) => {
+            dispatch(setErrorSnackMessage(errorToHandler(err.error)));
             setDeleteLoading(false);
           });
       }
