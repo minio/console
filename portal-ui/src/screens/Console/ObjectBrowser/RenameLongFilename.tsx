@@ -26,7 +26,6 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../Common/FormComponents/common/styleLibrary";
-import { IFileInfo } from "../Buckets/ListBuckets/Objects/ObjectDetails/types";
 import { useAppDispatch } from "../../../store";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
