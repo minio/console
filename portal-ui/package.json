@@ -115,7 +115,6 @@
     "websocket/debug": "^3.1.0",
     "fast-xml-parser": "^4.2.4",
     "semver": "^7.5.2"
-
   },
   "main": "index.js"
 }
