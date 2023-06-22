@@ -113,7 +113,8 @@
     "recharts/**/d3-color": "^3.1.0",
     "minio/xml2js": "^0.5.0",
     "websocket/debug": "^3.1.0",
-    "fast-xml-parser": "^4.2.4"
+    "fast-xml-parser": "^4.2.4",
+    "semver": "^7.5.2"
   },
   "main": "index.js"
 }
