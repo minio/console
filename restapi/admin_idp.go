@@ -26,7 +26,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/idp"
-	madmin "github.com/minio/madmin-go/v2"
+	madmin "github.com/minio/madmin-go/v3"
 )
 
 var errInvalidIDPType = fmt.Errorf("IDP type must be one of %v", madmin.ValidIDPConfigTypes)
