@@ -26,9 +26,7 @@ import {
   getBytes,
   k8sScalarUnitsExcluding,
 } from "../../../../common/utils";
-import { BucketQuota } from "../types";
 
-import { ErrorResponseHandler } from "../../../../common/types";
 import {
   formFieldStyles,
   modalStyleUtils,
@@ -36,11 +34,13 @@ import {
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import api from "../../../../common/api";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { BucketQuota } from "api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -76,7 +76,7 @@ const EnableQuota = ({
     if (enabled) {
       setQuotaEnabled(true);
       if (cfg) {
-        const unitCalc = calculateBytes(cfg.quota, true, false, true);
+        const unitCalc = calculateBytes(cfg.quota || 0, true, false, true);
 
         setQuotaSize(unitCalc.total.toString());
         setQuotaUnit(unitCalc.unit);
@@ -100,21 +100,20 @@ const EnableQuota = ({
     if (loading || !validInput) {
       return;
     }
-    let req = {
-      enabled: quotaEnabled,
-      amount: parseInt(getBytes(quotaSize, quotaUnit, true)),
-      quota_type: "hard",
-    };
 
-    api
-      .invoke("PUT", `/api/v1/buckets/${selectedBucket}/quota`, req)
+    api.buckets
+      .setBucketQuota(selectedBucket, {
+        enabled: quotaEnabled,
+        amount: parseInt(getBytes(quotaSize, quotaUnit, true)),
+        quota_type: "hard",
+      })
       .then(() => {
         setLoading(false);
         closeModalAndRefresh();
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setLoading(false);
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 
