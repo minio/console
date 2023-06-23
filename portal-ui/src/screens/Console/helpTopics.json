@@ -5,7 +5,7 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
-          "title": "SUBNET registration and support",
+          "title": "SUBNET Registration and Support",
           "url": "https://min.io/docs/minio/linux/administration/console/subnet-registration.html",
           "body": "Learn how to register your MinIO deployment and access our SUBNET support system"
         },
@@ -55,13 +55,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storage with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -103,25 +103,25 @@
           "img": "https://i.ytimg.com/vi/zqjsw4O2-4U/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDdKQS4ydVogrlzeyFn1-MEWsvLew",
           "title": "Creating Buckets and Users through the MinIO Console",
           "url": "https://www.youtube.com/watch?v=0PgMxz0HauA",
-          "body": "In this session, You will learn how to use the MinIO Console to manage your storage buckets and objects. We will be hands-on with an introduction to the MinIO Console and SDKs. We also show you how to install and use the MinIO SDKs for various programming languages."
+          "body": "Learn how to manage your storage buckets and objects with a hands-on introduction to the MinIO Console and SDKs."
         },
         {
           "img": "https://i.ytimg.com/vi/0PgMxz0HauA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDgAZSkEL56bvBaGB9HNi1UgpsBQQ",
-          "title": "Console Introduction - add a Bucket and a User",
+          "title": "Console Introduction - Add a Bucket and a User",
           "url": "https://www.youtube.com/watch?v=zqjsw4O2-4U",
-          "body": "In this session, we will show you how to create AWS S3 buckets and users with MinIO Console. You can use MinIO Console to manage your storage and data on Kubernetes clusters."
+          "body": "This session shows how to create AWS S3 buckets and users with MinIO Console."
         },
         {
           "img": "https://i.ytimg.com/vi/Hk9Z-sltUu8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAnxtUWHwe93YJS3rnR5hAJXQexqA",
           "title": "Object Locking and Retention",
           "url": "https://www.youtube.com/watch?v=Hk9Z-sltUu8",
-          "body": "In this MinIO video we're going to be talking about object retention, sometimes called object locking. And we're going to be talking about WORM, which is Write Once Read Many. We're also going to be talking about duration based holds and legal holds."
+          "body": "In this video we talk about object retention, WORM (Write Once Read Many), as well as duration based and legal holds."
         },
         {
           "img": "https://i.ytimg.com/vi/thNus-DL1u4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCtIxX-yp6lRqXlAsL9ReZ3Hw1TrA",
           "title": "Object Locking and Retention Lab",
           "url": "https://www.youtube.com/watch?v=thNus-DL1u4",
-          "body": "In this lab focused session, we're going to demonstrate how to create and remove both bucket and object specific retention, compliance, and legal holds. "
+          "body": "This lab demonstrates creation and removal of both bucket and object specific retention, compliance, and legal holds. "
         },
         {
           "img": "https://i.ytimg.com/vi/UuxqnUgowyg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA8R19exGswOv_yP8ZmSy1K6zmCbw",
@@ -133,7 +133,7 @@
           "img": "https://i.ytimg.com/vi/-PjTSwLB8ZA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAFOggpFKrODT6Wi5ZZVRpudjVAWg",
           "title": "Versioning",
           "url": "https://www.youtube.com/watch?v=-PjTSwLB8ZA",
-          "body": "In this session, we will learn about Versioning which is disabled by default in MinIO Buckets. With versioning, you have access to the full history of the object from its creation to each update and protect historical data."
+          "body": "Learn how Versioning gives access to the full history of an object from its creation through each update."
         }
       ]
     },
@@ -142,15 +142,15 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
           "img": "https://images.unsplash.com/photo-1428660285748-340f4e33d608?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDMzfHx0aW1lJTIwcmV3aW5kfGVufDB8fHx8MTYzMDM0NjAzMg&ixlib=rb-1.2.1&q=80&w=1000",
-          "title": "Continuous Data protection with MinIO Versioning and Rewind",
+          "title": "Continuous Data Protection with MinIO Versioning and Rewind",
           "url": "https://blog.min.io/continuous-data-protection-versioning-rewind/",
-          "body": "MinIO includes multiple mechanisms that ensure data is continuously protected. Learn how to continuously protect data using Versioning."
+          "body": "Learn how MinIO ensures that data is continuously protected using Versioning and other mechanisms."
         }
       ]
     }
@@ -184,7 +184,7 @@
       "links": [
         {
           "img": "https://i.ytimg.com/vi/UuxqnUgowyg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA8R19exGswOv_yP8ZmSy1K6zmCbw",
-          "title": "Versioning and Lifecycle management",
+          "title": "Versioning and Lifecycle Management",
           "url": "https://www.youtube.com/watch?v=UuxqnUgowyg",
           "body": "In this video, we will focus on versioning  and lifecycle management."
         }
@@ -230,13 +230,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storage with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -265,13 +265,13 @@
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "admin Policy Action Keys",
+          "title": "Admin Policy Action Keys",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#mc-admin-policy-action-keys",
-          "body": "MinIO supports the following actions for use with defining policies for MinIO admin operations. These actions are only valid for MinIO deployments and are not intended for use with other S3-compatible services."
+          "body": "See actions supported in defining policies for MinIO admin operations. These actions are only valid for MinIO deployments and are not intended for use with other S3-compatible services."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "admin Policy Condition Keys",
+          "title": "Admin Policy Condition Keys",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#mc-admin-policy-condition-keys",
           "body": "See which conditions MinIO supports for use with defining policies for admin actions."
         },
@@ -317,7 +317,7 @@
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
@@ -352,9 +352,9 @@
       "links": [
         {
           "img": "https://i.ytimg.com/vi/Exg2KsfzHzI/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD62meNdv1khzGt61nGwddj7L3oww",
-          "title": "Lifecycle management II - Versioning and Lifecycle management",
+          "title": "Lifecycle Management II - Versioning and Lifecycle Management",
           "url": "https://www.youtube.com/watch?v=UuxqnUgowyg",
-          "body": "In this video, we will focus on versioning  and lifecycle management."
+          "body": "In this video, we will focus on versioning and lifecycle management."
         }
       ]
     },
@@ -396,9 +396,9 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w2000/2021/09/denys-nevozhai-7nrsVjvALnA-unsplash.jpg",
-          "title": "Multi-site Active-Active Replication",
+          "title": "Multi-Site Active-Active Replication",
           "url": "https://blog.min.io/minio-multi-site-active-active-replication/",
-          "body": "Active-Active replication is a key tool for  organizations looking for multi-primary topologies,  fast hot-hot failover, and multi-geo resiliency."
+          "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
         }
       ]
     }
@@ -557,9 +557,9 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
-          "title": "Replication best practices",
+          "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
-          "body": "MinIO includes multiple data protection mechanisms,  and this blog post focuses on replication best practices"
+          "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
         },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2021/11/josh-rose-trYl7JYATH0-unsplash-1.jpg",
@@ -571,7 +571,7 @@
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
           "url": "https://blog.min.io/erasure-coding/",
-          "body": "Erasure coding is a key data protection method for  distributed storage systems. This blog post explains  how erasure coding satisfies enterprise requirements  for data protection and how it is implemented in MinIO."
+          "body": "Learn how erasure coding is implemented in MinIO, and how it satisfies enterprise requirements for data protection."
         },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2021/07/pexels-shockphoto-by-szoka-sebastian-1381938.jpg",
@@ -602,13 +602,13 @@
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "What is the Scanner?",
           "url": "https://min.io/docs/minio/linux/glossary.html#term-scanner",
-          "body": "One of several low-priority processes MinIO runs to  check lifecycle management rules, bucket or site  replication status, as well as object bit rot and healing"
+          "body": "One of several low-priority processes MinIO runs to check lifecycle management rules, bucket or site replication status, as well as object bit rot and healing"
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "Lifecycle Management Object Scanner Considerations",
           "url": "https://min.io/docs/minio/windows/administration/object-management/transition-objects-to-gcs.html#lifecycle-management-object-scanner",
-          "body": "MinIO uses a scanner process to check objects  against all configured lifecycle management rules.  High IO workloads or limited system resources may  delay application of lifecycle management rules"
+          "body": "MinIO uses a scanner process to check objects against all configured lifecycle management rules. High IO workloads or limited system resources may delay application of lifecycle management rules"
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
@@ -629,13 +629,13 @@
       "links": [
         {
           "img": "https://i.ytimg.com/vi/5fz3rE3wjGg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCq8mxi_s8tron8E3TPgTMfUbiiDw",
-          "title": "Lifecycle Management lab",
+          "title": "Lifecycle Management Lab",
           "url": "https://www.youtube.com/watch?v=5fz3rE3wjGg",
-          "body": "This video uses the MinIO client (mc) to demonstrate lifecycle management concepts, including expiration rules, the scanner, and transitioning objects to remote tiers."
+          "body": "Use the MinIO client to demonstrate expiration rules, the scanner, and transitioning objects to remote tiers."
         },
         {
           "img": "https://i.ytimg.com/vi/UuxqnUgowyg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA8R19exGswOv_yP8ZmSy1K6zmCbw",
-          "title": "Versioning and Lifecycle management",
+          "title": "Versioning and Lifecycle Management",
           "url": "https://www.youtube.com/watch?v=UuxqnUgowyg",
           "body": "In this video, we will focus on versioning  and lifecycle management."
         }
@@ -692,7 +692,7 @@
       "links": [
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "What is the logger_webhook environment variable?",
+          "title": "What is the logger_webhook Environment Variable?",
           "url": "https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-config.html#minio-server-config-logging-logs",
           "body": "The top-level configuration key for defining an  HTTP webhook target for publishing MinIO logs."
         },
@@ -900,27 +900,27 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
-          "title": "Replication best practices",
+          "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
-          "body": "MinIO includes multiple data protection mechanisms,  and this blog post focuses on replication best practices"
+          "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
         },
         {
           "img": "https://images.unsplash.com/photo-1548197193-2c2df590e23f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDU0fHxmYXN0JTIwbW90aW9uJTIwYmx1cnxlbnwwfHx8fDE2NjkxNDY0MzM&ixlib=rb-4.0.3&q=80&w=1000",
-          "title": "Faster multi-site replication and Resync",
+          "title": "Faster Multi-Site Replication and Resync",
           "url": "https://blog.min.io/multi-site-replication-resync/",
-          "body": "Multi-site Active-Active Replication goes beyond bucket replication to synchronize all buckets, IAM, security tokens, service accounts and bucket-level configurations."
+          "body": "Multi-Site Active-Active Replication allows for rapid recovery."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2021/09/denys-nevozhai-7nrsVjvALnA-unsplash.jpg",
-          "title": "Multi-site Active-active replication",
+          "title": "Multi-Site Active-Active Replication",
           "url": "https://blog.min.io/minio-multi-site-active-active-replication/",
-          "body": "Active-Active replication is a key tool for organizations looking for multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
+          "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
         },
         {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
           "url": "https://blog.min.io/erasure-coding/",
-          "body": "Erasure coding is a key data protection method for distributed storage systems. This blog post explains how erasure coding satisfies enterprise requirements for data protection and how it is implemented in MinIO."
+          "body": "Learn how erasure coding is implemented in MinIO, and how it satisfies enterprise requirements for data protection."
         }
       ]
     }
@@ -965,27 +965,27 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
-          "title": "Replication best practices",
+          "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
-          "body": "MinIO includes multiple data protection mechanisms,  and this blog post focuses on replication best practices"
+          "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
         },
         {
           "img": "https://images.unsplash.com/photo-1548197193-2c2df590e23f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDU0fHxmYXN0JTIwbW90aW9uJTIwYmx1cnxlbnwwfHx8fDE2NjkxNDY0MzM&ixlib=rb-4.0.3&q=80&w=1000",
-          "title": "Faster multi-site replication and Resync",
+          "title": "Faster Multi-Site Replication and Resync",
           "url": "https://blog.min.io/multi-site-replication-resync/",
-          "body": "Multi-site Active-Active Replication goes beyond bucket replication to synchronize all buckets, IAM, security tokens, service accounts and bucket-level configurations."
+          "body": "Multi-Site Active-Active Replication allows for rapid recovery."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2021/09/denys-nevozhai-7nrsVjvALnA-unsplash.jpg",
-          "title": "Multi-site Active-active replication",
+          "title": "Multi-Site Active-Active Replication",
           "url": "https://blog.min.io/minio-multi-site-active-active-replication/",
-          "body": "Active-Active replication is a key tool for organizations looking for multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
+          "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
         },
         {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
           "url": "https://blog.min.io/erasure-coding/",
-          "body": "Erasure coding is a key data protection method for distributed storage systems. This blog post explains how erasure coding satisfies enterprise requirements for data protection and how it is implemented in MinIO."
+          "body": "Learn how erasure coding is implemented in MinIO, and how it satisfies enterprise requirements for data protection."
         }
       ]
     }
@@ -1017,27 +1017,27 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
-          "title": "Replication best practices",
+          "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
-          "body": "MinIO includes multiple data protection mechanisms,  and this blog post focuses on replication best practices"
+          "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
         },
         {
           "img": "https://images.unsplash.com/photo-1548197193-2c2df590e23f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDU0fHxmYXN0JTIwbW90aW9uJTIwYmx1cnxlbnwwfHx8fDE2NjkxNDY0MzM&ixlib=rb-4.0.3&q=80&w=1000",
-          "title": "Faster multi-site replication and Resync",
+          "title": "Faster Multi-Site Replication and Resync",
           "url": "https://blog.min.io/multi-site-replication-resync/",
-          "body": "Multi-site Active-Active Replication goes beyond bucket replication to synchronize all buckets, IAM, security tokens, service accounts and bucket-level configurations."
+          "body": "Multi-Site Active-Active Replication allows for rapid recovery."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2021/09/denys-nevozhai-7nrsVjvALnA-unsplash.jpg",
-          "title": "Multi-site Active-active Replication",
+          "title": "Multi-Site Active-Active Replication",
           "url": "https://blog.min.io/minio-multi-site-active-active-replication/",
-          "body": "Active-Active replication is a key tool for organizations looking for multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
+          "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
         },
         {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
           "url": "https://blog.min.io/erasure-coding/",
-          "body": "Erasure coding is a key data protection method for distributed storage systems. This blog post explains how erasure coding satisfies enterprise requirements for data protection and how it is implemented in MinIO."
+          "body": "Learn how erasure coding is implemented in MinIO, and how it satisfies enterprise requirements for data protection."
         }
       ]
     }
@@ -1048,7 +1048,7 @@
       "links": [
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Transition form MinIO to Azure",
+          "title": "Transition from MinIO to Azure",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-azure.html",
           "body": "See the procedure to create a new object lifecycle management rule that transition objects from a MinIO bucket to a remote storage tier on the Azure storage backend."
         },
@@ -1090,21 +1090,21 @@
       "links": [
         {
           "img": "https://i.ytimg.com/vi/Exg2KsfzHzI/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD62meNdv1khzGt61nGwddj7L3oww",
-          "title": "Lifecycle management I - Tiers",
+          "title": "Lifecycle Management I - Tiers",
           "url": "https://www.youtube.com/watch?v=Exg2KsfzHzI",
           "body": "In this video we will cover expiration and transition of objects to an alternate tier of storage."
         },
         {
           "img": "https://i.ytimg.com/vi/UuxqnUgowyg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA8R19exGswOv_yP8ZmSy1K6zmCbw",
-          "title": "Lifecycle management II - Versioning and Lifecycle management",
+          "title": "Lifecycle Management II - Versioning and Lifecycle Management",
           "url": "https://www.youtube.com/watch?v=UuxqnUgowyg",
           "body": "In this video, we will focus on versioning  and lifecycle management."
         },
         {
           "img": "https://i.ytimg.com/vi/5fz3rE3wjGg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCq8mxi_s8tron8E3TPgTMfUbiiDw",
-          "title": "Lifecycle Management Lab Demo",
+          "title": "Lifecycle Management Lab",
           "url": "https://www.youtube.com/watch?v=5fz3rE3wjGg",
-          "body": "This video uses the MinIO client (mc) to demonstrate lifecycle management concepts, including expiration rules, the scanner, and transitioning objects to remote tiers."
+          "body": "Use the MinIO client to demonstrate expiration rules, the scanner, and transitioning objects to remote tiers."
         }
       ]
     },
@@ -1148,9 +1148,9 @@
         },
         {
           "img": "https://i.ytimg.com/vi/5fz3rE3wjGg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCq8mxi_s8tron8E3TPgTMfUbiiDw",
-          "title": "Lifecycle Management Lab Demo",
+          "title": "Lifecycle Management Lab",
           "url": "https://www.youtube.com/watch?v=5fz3rE3wjGg",
-          "body": "This video uses the MinIO client (mc) to demonstrate lifecycle management concepts, including expiration rules, the scanner, and transitioning objects to remote tiers."
+          "body": "Use the MinIO client to demonstrate expiration rules, the scanner, and transitioning objects to remote tiers."
         }
       ]
     },
@@ -1212,15 +1212,15 @@
         },
         {
           "img": "https://i.ytimg.com/vi/UuxqnUgowyg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA8R19exGswOv_yP8ZmSy1K6zmCbw",
-          "title": "Versioning and Lifecycle management",
+          "title": "Versioning and Lifecycle Management",
           "url": "https://www.youtube.com/watch?v=UuxqnUgowyg",
           "body": "In this video, we will focus on versioning  and lifecycle management."
         },
         {
           "img": "https://i.ytimg.com/vi/5fz3rE3wjGg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCq8mxi_s8tron8E3TPgTMfUbiiDw",
-          "title": "Lifecycle Management Lab Demo",
+          "title": "Lifecycle Management Lab",
           "url": "https://www.youtube.com/watch?v=5fz3rE3wjGg",
-          "body": "This video uses the MinIO client (mc) to demonstrate lifecycle management concepts, including expiration rules, the scanner, and transitioning objects to remote tiers."
+          "body": "Use the MinIO client to demonstrate expiration rules, the scanner, and transitioning objects to remote tiers."
         }
       ]
     },
@@ -1250,27 +1250,27 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
-          "title": "Replication best practices",
+          "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
-          "body": "MinIO includes multiple data protection mechanisms,  and this blog post focuses on replication best practices"
+          "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
         },
         {
           "img": "https://images.unsplash.com/photo-1548197193-2c2df590e23f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDU0fHxmYXN0JTIwbW90aW9uJTIwYmx1cnxlbnwwfHx8fDE2NjkxNDY0MzM&ixlib=rb-4.0.3&q=80&w=1000",
-          "title": "Faster Multi-site Replication and Resync",
+          "title": "Faster Multi-Site Replication and Resync",
           "url": "https://blog.min.io/multi-site-replication-resync/",
-          "body": "Multi-site Active-Active Replication goes beyond bucket replication to synchronize all buckets, IAM, security tokens, service accounts and bucket-level configurations."
+          "body": "Multi-Site Active-Active Replication allows for rapid recovery."
         },
         {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
           "url": "https://blog.min.io/erasure-coding/",
-          "body": "Erasure coding is a key data protection method for distributed storage systems. This blog post explains how erasure coding satisfies enterprise requirements for data protection and how it is implemented in MinIO."
+          "body": "Learn how erasure coding is implemented in MinIO, and how it satisfies enterprise requirements for data protection."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2021/09/denys-nevozhai-7nrsVjvALnA-unsplash.jpg",
-          "title": "Multi-site Active-active Replication",
+          "title": "Multi-SiteActive-Active Replication",
           "url": "https://blog.min.io/minio-multi-site-active-active-replication/",
-          "body": "Active-Active replication is a key tool for organizations looking for multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
+          "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
         }
       ]
     }
@@ -1339,7 +1339,7 @@
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "User management",
+          "title": "User Management",
           "url": "https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html#",
           "body": "Each user can have one or more assigned policies that explicitly list the actions and resources to which that user has access. Users can also inherit policies from the groups in which they have membership."
         },
@@ -1366,12 +1366,12 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
@@ -1397,7 +1397,7 @@
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "User management",
+          "title": "User Management",
           "url": "https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html#",
           "body": "Each user can have one or more assigned policies that explicitly list the actions and resources to which that user has access. Users can also inherit policies from the groups in which they have membership."
         },
@@ -1470,27 +1470,27 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
-          "title": "Replication best practices",
+          "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
-          "body": "MinIO includes multiple data protection mechanisms,  and this blog post focuses on replication best practices"
+          "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
         },
         {
           "img": "https://images.unsplash.com/photo-1548197193-2c2df590e23f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDU0fHxmYXN0JTIwbW90aW9uJTIwYmx1cnxlbnwwfHx8fDE2NjkxNDY0MzM&ixlib=rb-4.0.3&q=80&w=1000",
-          "title": "Faster Multi-site Replication and Resync",
+          "title": "Faster Multi-Site Replication and Resync",
           "url": "https://blog.min.io/multi-site-replication-resync/",
-          "body": "Multi-site Active-Active Replication goes beyond bucket replication to synchronize all buckets, IAM, security tokens, service accounts and bucket-level configurations."
+          "body": "Multi-Site Active-Active Replication allows for rapid recovery."
         },
         {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
           "url": "https://blog.min.io/erasure-coding/",
-          "body": "Erasure coding is a key data protection method for distributed storage systems. This blog post explains how erasure coding satisfies enterprise requirements for data protection and how it is implemented in MinIO."
+          "body": "Learn how erasure coding is implemented in MinIO, and how it satisfies enterprise requirements for data protection."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2021/09/denys-nevozhai-7nrsVjvALnA-unsplash.jpg",
-          "title": "Multi-site Active-active replication",
+          "title": "Multi-Site Active-Active Replication",
           "url": "https://blog.min.io/minio-multi-site-active-active-replication/",
-          "body": "Active-Active replication is a key tool for organizations looking for multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
+          "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
         }
       ]
     }
@@ -1592,7 +1592,7 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         }
@@ -1623,7 +1623,7 @@
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "User management",
+          "title": "User Management",
           "url": "https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html#",
           "body": "Each user can have one or more assigned policies that explicitly list the actions and resources to which that user has access. Users can also inherit policies from the groups in which they have membership."
         },
@@ -1662,7 +1662,7 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         }
@@ -1693,7 +1693,7 @@
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "User management",
+          "title": "User Management",
           "url": "https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html#",
           "body": "Each user can have one or more assigned policies that explicitly list the actions and resources to which that user has access. Users can also inherit policies from the groups in which they have membership."
         },
@@ -1738,7 +1738,7 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         }
@@ -1779,7 +1779,7 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         }
@@ -1820,7 +1820,7 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         }
@@ -1902,7 +1902,7 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         }
@@ -1915,7 +1915,7 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
-          "title": "Subnet registration and support",
+          "title": "SUBNET Registration and Support",
           "url": "https://min.io/docs/minio/linux/administration/console/subnet-registration.html",
           "body": "Learn how to register your MinIO deployment and access our SUBNET support system"
         },
@@ -1931,7 +1931,7 @@
       "header": null,
       "links": [
         {
-          "img": "https://i.ytimg.com/an_webp/Zyc-xhNcPco/mqdefault_6s.webp?du=3000&sqp=CNKby6IG&rs=AOn4CLBb47uG6Tw6SNaFW5_tmc7eAVqOtg",
+          "img": "https://i.ytimg.com/an_webp/Zyc-xhNcPco/mqdefault_6s.webp?du=3000&sqp=CPyt0qQG&rs=AOn4CLCbgR7oBe0xvtH8yvHof9HeWeXQOg",
           "title": "What is SUBNET?",
           "url": "https://www.youtube.com/watch?v=Zyc-xhNcPco",
           "body": "The MinIO Subscription Network (SUBNET for short) is a simple, yet powerful software stack that ensures commercial customers are getting the very best out of their MinIO instances."
@@ -1943,13 +1943,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2023/03/SUBNET-Healthcheck-and-Performance.jpg",
-          "title": "SUBNET healthcheck",
+          "title": "SUBNET Healthcheck",
           "url": "https://blog.min.io/subnet-healthcheck-and-performance/",
           "body": "HealthCheck provides a graphical user interface for supported components and runs diagnostics checks continually to ensure your environment is running optimally."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2023/02/Understanding-the-MinIO-Subscription-Network---Direct-to-Engineer-Engagement--copy--1-.png",
-          "title": "Direct to engineer engagement",
+          "title": "Direct-to-Engineer Engagement",
           "url": "https://blog.min.io/subnet-series-communication/",
           "body": "When things get big, cross clouds or involve mission-critical workloads, even the most sophisticated enterprises want someone on the other end of the line."
         },
@@ -2196,27 +2196,27 @@
       "links": [
         {
           "img": "https://i.ytimg.com/vi/Hk9Z-sltUu8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAnxtUWHwe93YJS3rnR5hAJXQexqA",
-          "title": "Object locking and Retention",
+          "title": "Object Locking and Retention",
           "url": "https://www.youtube.com/watch?v=Hk9Z-sltUu8",
-          "body": "In this MinIO video we're going to be talking about  object retention, WORM (Write Once Read Many),  as well as duration based holds and legal holds."
+          "body": "In this video we talk about object retention, WORM (Write Once Read Many), as well as duration based and legal holds."
         },
         {
           "img": "https://i.ytimg.com/vi/thNus-DL1u4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCtIxX-yp6lRqXlAsL9ReZ3Hw1TrA",
-          "title": "Object locking and retention Lab",
+          "title": "Object Locking and Retention Lab",
           "url": "https://www.youtube.com/watch?v=thNus-DL1u4",
-          "body": "In this lab focused session, we're going to demonstrate how to create and remove both bucket and object specific retention, compliance, and legal holds. "
+          "body": "This lab demonstrates creation and removal of both bucket and object specific retention, compliance, and legal holds. "
         },
         {
           "img": "https://i.ytimg.com/vi/dLSBuVG7Y3k/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCxb6seCAJL-Q4P2zYMm-rV71X0fA",
           "title": "Manipulating Objects",
           "url": "https://www.youtube.com/watch?v=dLSBuVG7Y3k",
-          "body": "In this session, we will demonstrate working with Prefixes & Objects so you can play along to learn how to work with Objects with examples and references of copying an object, CopySource Object, and Deleting an Object."
+          "body": "A demo of Prefixes & Objects with examples of copying and deleting an object, as well as CopySource Object."
         },
         {
           "img": "https://i.ytimg.com/vi/-PjTSwLB8ZA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAFOggpFKrODT6Wi5ZZVRpudjVAWg",
           "title": "Versioning",
           "url": "https://www.youtube.com/watch?v=-PjTSwLB8ZA",
-          "body": "In this session, we will learn about Versioning which is disabled by default in MinIO Buckets. With versioning, you have access to the full history of the object from its creation to each update and protect historical data."
+          "body": "Learn how Versioning gives access to the full history of an object from its creation through each update."
         }
       ]
     },
@@ -2227,13 +2227,13 @@
           "img": "https://images.unsplash.com/photo-1611783569248-a82ec2e72c67?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDIxfHxzcGVlZHxlbnwwfHx8fDE2NDEyMjY2MDI&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Versioning, Metadata and Storage",
           "url": "https://blog.min.io/minio-versioning-metadata-deep-dive/",
-          "body": "Learn how MinIO supports a complete object locking framework supporting Lifecycle management, an increasingly critical element in the data ecosystem."
+          "body": "Learn how MinIO supports Lifecycle management through a complete object locking framework."
         },
         {
           "img": "https://images.unsplash.com/photo-1428660285748-340f4e33d608?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDMzfHx0aW1lJTIwcmV3aW5kfGVufDB8fHx8MTYzMDM0NjAzMg&ixlib=rb-1.2.1&q=80&w=1000",
-          "title": "Continuous Data protection with MinIO Versioning and Rewind",
+          "title": "Continuous Data Protection with MinIO Versioning and Rewind",
           "url": "https://blog.min.io/continuous-data-protection-versioning-rewind/",
-          "body": "MinIO includes multiple mechanisms that ensure data is continuously protected. Learn how to continuously protect data using Versioning."
+          "body": "Learn how MinIO ensures that data is continuously protected using Versioning and other mechanisms."
         }
       ]
     }
@@ -2283,13 +2283,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storagew with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -2341,13 +2341,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storagew with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -2381,13 +2381,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storagew with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -2427,13 +2427,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storagew with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -2491,13 +2491,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storagew with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -2539,7 +2539,7 @@
           "img": "https://images.unsplash.com/photo-1611783569248-a82ec2e72c67?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDIxfHxzcGVlZHxlbnwwfHx8fDE2NDEyMjY2MDI&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Versioning, Metadata and Storage",
           "url": "https://blog.min.io/minio-versioning-metadata-deep-dive/",
-          "body": "Learn how MinIO supports a complete object locking framework supporting Lifecycle management, an increasingly critical element in the data ecosystem."
+          "body": "Learn how MinIO supports Lifecycle management through a complete object locking framework."
         }
       ]
     }
@@ -2583,7 +2583,7 @@
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
-          "title": "Subnet Registration and Support",
+          "title": "SUBNET Registration and Support",
           "url": "https://min.io/docs/minio/linux/administration/console/subnet-registration.html",
           "body": "You can use the MinIO Console to perform several of the license and subscription related functions available in MinIO"
         },
@@ -2713,15 +2713,15 @@
       "links": [
         {
           "img": "https://i.ytimg.com/vi/0PgMxz0HauA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDgAZSkEL56bvBaGB9HNi1UgpsBQQ",
-          "title": "Console introduction - add a Bucket and a User",
+          "title": "Console Introduction - Add a Bucket and a User",
           "url": "https://www.youtube.com/watch?v=zqjsw4O2-4U",
-          "body": "In this session, we will show you how to create AWS S3 buckets and users with MinIO Console. You can use MinIO Console to manage your storage and data on Kubernetes clusters."
+          "body": "This session shows how to create AWS S3 buckets and users with MinIO Console."
         },
         {
           "img": "https://i.ytimg.com/vi/zqjsw4O2-4U/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDdKQS4ydVogrlzeyFn1-MEWsvLew",
           "title": "Creating Buckets and Users through the MinIO Console",
           "url": "https://www.youtube.com/watch?v=0PgMxz0HauA",
-          "body": "In this session, You will learn how to use the MinIO Console to manage your storage buckets and objects. We will be hands-on with an introduction to the MinIO Console and SDKs. We also show you how to install and use the MinIO SDKs for various programming languages."
+          "body": "Learn how to manage your storage buckets and objects with a hands-on introduction to the MinIO Console and SDKs."
         }
       ]
     },
@@ -2730,13 +2730,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storagew with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -2782,13 +2782,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storagew with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -2824,10 +2824,10 @@
       "header": null,
       "links": [
         {
-          "img": "https://i.ytimg.com/vi/zqjsw4O2-4U/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDdKQS4ydVogrlzeyFn1-MEWsvLew",
-          "title": "Console introduction - add a Bucket and a User",
+          "img": "https://i.ytimg.com/vi/0PgMxz0HauA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDgAZSkEL56bvBaGB9HNi1UgpsBQQ",
+          "title": "Console Introduction - Add a Bucket and a User",
           "url": "https://www.youtube.com/watch?v=zqjsw4O2-4U",
-          "body": "In this session, we will show you how to create AWS S3 buckets and users with MinIO Console. You can use MinIO Console to manage your storage and data on Kubernetes clusters."
+          "body": "This session shows how to create AWS S3 buckets and users with MinIO Console."
         }
       ]
     },
@@ -2890,13 +2890,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storage with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -2936,13 +2936,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storagew with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -2976,13 +2976,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storagew with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -3022,13 +3022,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storage with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -3068,13 +3068,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storage with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -3128,45 +3128,45 @@
       "links": [
         {
           "img": "https://i.ytimg.com/vi/Hk9Z-sltUu8/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAnxtUWHwe93YJS3rnR5hAJXQexqA",
-          "title": "Object locking and Retention",
+          "title": "Object Locking and Retention",
           "url": "https://www.youtube.com/watch?v=Hk9Z-sltUu8",
-          "body": "In this MinIO video we're going to be talking about object retention, sometimes called object locking. And we're going to be talking about WORM, which is Write Once Read Many. We're also going to be talking about duration based holds and legal holds."
+          "body": "In this video we talk about object retention, WORM (Write Once Read Many), as well as duration based and legal holds."
         },
         {
           "img": "https://i.ytimg.com/vi/0PgMxz0HauA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDgAZSkEL56bvBaGB9HNi1UgpsBQQ",
-          "title": "Console introduction - add a Bucket and a User",
+          "title": "Console Introduction - Add a Bucket and a User",
           "url": "https://www.youtube.com/watch?v=zqjsw4O2-4U",
-          "body": "In this session, we will show you how to create AWS S3 buckets and users with MinIO Console. You can use MinIO Console to manage your storage and data on Kubernetes clusters."
+          "body": "This session shows how to create AWS S3 buckets and users with MinIO Console."
         },
         {
           "img": "https://i.ytimg.com/vi/thNus-DL1u4/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCtIxX-yp6lRqXlAsL9ReZ3Hw1TrA",
-          "title": "Object locking and retention Lab",
+          "title": "Object Locking and Retention Lab",
           "url": "https://www.youtube.com/watch?v=thNus-DL1u4",
-          "body": "In this lab focused session, we're going to demonstrate how to create and remove both bucket and object specific retention, compliance, and legal holds. "
+          "body": "This lab demonstrates creation and removal of both bucket and object specific retention, compliance, and legal holds. "
         },
         {
           "img": "https://i.ytimg.com/vi/-PjTSwLB8ZA/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAFOggpFKrODT6Wi5ZZVRpudjVAWg",
           "title": "Versioning",
           "url": "https://www.youtube.com/watch?v=-PjTSwLB8ZA",
-          "body": "In this session, we will learn about Versioning which is disabled by default in MinIO Buckets. With versioning, you have access to the full history of the object from its creation to each update and protect historical data."
+          "body": "Learn how Versioning gives access to the full history of an object from its creation through each update."
         },
         {
           "img": "https://i.ytimg.com/vi/XGOiwV6Cbuk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAfFQVDOavKWeCyg1x2IyGGXnh3RA",
           "title": "Versioning",
           "url": "https://www.youtube.com/watch?v=XGOiwV6Cbuk",
-          "body": "In this MinIO video, you will get an overview of how to set up and use object versioning as part of a data lifecycle management strategy."
+          "body": "This video gives an overview of how to set up and use object versioning as part of a data lifecycle management strategy."
         },
         {
           "img": "https://i.ytimg.com/vi/nFUI2N5zH34/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLC_nUVd3J_KbOkN_UqG0Bm_yBOpsg",
-          "title": "Versioning lab",
+          "title": "Versioning Lab",
           "url": "https://www.youtube.com/watch?v=nFUI2N5zH34",
-          "body": "This MinIO video features a demo that will take you through the steps to manage versioned objects using the MinIO command line tools."
+          "body": "This demo will take you through the steps to manage versioned objects using the MinIO command line tools."
         },
         {
           "img": "https://i.ytimg.com/vi/zqjsw4O2-4U/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDdKQS4ydVogrlzeyFn1-MEWsvLew",
           "title": "Creating Buckets and Users through the MinIO Console",
           "url": "https://www.youtube.com/watch?v=0PgMxz0HauA",
-          "body": "In this session, You will learn how to use the MinIO Console to manage your storage buckets and objects. We will be hands-on with an introduction to the MinIO Console and SDKs. We also show you how to install and use the MinIO SDKs for various programming languages."
+          "body": "Learn how to manage your storage buckets and objects with a hands-on introduction to the MinIO Console and SDKs."
         }
       ]
     },
@@ -3175,19 +3175,19 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
-          "title": "Replication best practices",
+          "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
-          "body": "MinIO includes multiple data protection mechanisms,  and this blog post focuses on replication best practices"
+          "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storagew with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         },
@@ -3195,19 +3195,19 @@
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
           "url": "https://blog.min.io/erasure-coding/",
-          "body": "Erasure coding is a key data protection method for distributed storage systems. This blog post explains how erasure coding satisfies enterprise requirements for data protection and how it is implemented in MinIO."
+          "body": "Learn how erasure coding is implemented in MinIO, and how it satisfies enterprise requirements for data protection."
         },
         {
           "img": "https://images.unsplash.com/photo-1428660285748-340f4e33d608?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDMzfHx0aW1lJTIwcmV3aW5kfGVufDB8fHx8MTYzMDM0NjAzMg&ixlib=rb-1.2.1&q=80&w=1000",
-          "title": "Continuous Data protection with MinIO Versioning and Rewind",
+          "title": "Continuous Data Protection with MinIO Versioning and Rewind",
           "url": "https://blog.min.io/continuous-data-protection-versioning-rewind/",
-          "body": "MinIO includes multiple mechanisms that ensure data is continuously protected. Learn how to continuously protect data using Versioning."
+          "body": "Learn how MinIO ensures that data is continuously protected using Versioning and other mechanisms."
         },
         {
           "img": "https://images.unsplash.com/photo-1611783569248-a82ec2e72c67?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDIxfHxzcGVlZHxlbnwwfHx8fDE2NDEyMjY2MDI&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Versioning, Metadata and Storage",
           "url": "https://blog.min.io/minio-versioning-metadata-deep-dive/",
-          "body": "Learn how MinIO supports a complete object locking framework supporting Lifecycle management, an increasingly critical element in the data ecosystem."
+          "body": "Learn how MinIO supports Lifecycle management through a complete object locking framework."
         }
       ]
     }
@@ -3257,7 +3257,7 @@
       "links": [
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Bucket Replication requirements",
+          "title": "Bucket Replication Requirements",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/bucket-replication/bucket-replication-requirements.html",
           "body": "Check here to ensure you meet the prerequisites before setting up any replication configurations."
         },
@@ -3285,22 +3285,22 @@
       "header": null,
       "links": [
         {
-          "img": "",
+          "img": "https://i.ytimg.com/vi/G4wQZEsIxcU/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBTPmOjC6YVBAmuyHwPK1OMfTrXoA",
           "title": "Bucket Replication Overview",
           "url": "https://www.youtube.com/watch?v=G4wQZEsIxcU",
           "body": "In this video, we will cover bucket level replication, both active-passive and active-active."
         },
         {
-          "img": "",
-          "title": "Replication lab I",
+          "img": "https://i.ytimg.com/vi/89vnToCcoAw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAxsMWCpBYqwqEy0xULLLdcIVKkeA",
+          "title": "Replication Lab I",
           "url": "https://www.youtube.com/watch?v=89vnToCcoAw",
-          "body": "This video uses the MinIO client (mc) to demonstrate bucket replication concepts, including active-passive and active-active replication."
+          "body": "Demonstrates bucket replication concepts using MinIO Client, including active-passive and active-active replication."
         },
         {
-          "img": "",
-          "title": "Replication lab II",
+          "img": "https://i.ytimg.com/vi/BLTlaOvVCSg/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB-NXCZeIpHpWu1RrWYY0zFYVS2pQ",
+          "title": "Replication Lab II",
           "url": "https://www.youtube.com/watch?v=BLTlaOvVCSg",
-          "body": "This video uses the MinIO client (mc) to demonstrate site replication concepts, including active-passive and active-active replication."
+          "body": "Demonstrates site replication concepts using MinIO Client, including active-passive and active-active replication."
         }
       ]
     },
@@ -3309,15 +3309,15 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
-          "title": "Replication best practices",
+          "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
-          "body": "MinIO includes multiple data protection mechanisms,  and this blog post focuses on replication best practices"
+          "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
         },
         {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
           "url": "https://blog.min.io/erasure-coding/",
-          "body": "Erasure coding is a key data protection method for distributed storage systems. This blog post explains how erasure coding satisfies enterprise requirements for data protection and how it is implemented in MinIO."
+          "body": "Learn how erasure coding is implemented in MinIO, and how it satisfies enterprise requirements for data protection."
         }
       ]
     }
@@ -3351,9 +3351,9 @@
       "links": [
         {
           "img": "https://i.ytimg.com/vi/5fz3rE3wjGg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCq8mxi_s8tron8E3TPgTMfUbiiDw",
-          "title": "Lifecycle Management lab",
+          "title": "Lifecycle Management Lab",
           "url": "https://www.youtube.com/watch?v=5fz3rE3wjGg",
-          "body": "This video uses the MinIO client (mc) to demonstrate lifecycle management concepts, including expiration rules, the scanner, and transitioning objects to remote tiers."
+          "body": "Use the MinIO client to demonstrate expiration rules, the scanner, and transitioning objects to remote tiers."
         }
       ]
     },
@@ -3364,7 +3364,7 @@
           "img": "https://images.unsplash.com/photo-1611783569248-a82ec2e72c67?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDIxfHxzcGVlZHxlbnwwfHx8fDE2NDEyMjY2MDI&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Versioning, Metadata and Storage",
           "url": "https://blog.min.io/minio-versioning-metadata-deep-dive/",
-          "body": "Learn how MinIO supports a complete object locking framework supporting Lifecycle management, an increasingly critical element in the data ecosystem."
+          "body": "Learn how MinIO supports Lifecycle management through a complete object locking framework."
         }
       ]
     }
@@ -3381,7 +3381,7 @@
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "User management",
+          "title": "User Management",
           "url": "https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html#",
           "body": "Each user can have one or more assigned policies that explicitly list the actions and resources to which that user has access. Users can also inherit policies from the groups in which they have membership."
         },
@@ -3408,13 +3408,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Securing hybrid cloud storage with MinIO IAM",
+          "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
+          "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         }
@@ -3454,7 +3454,7 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
-          "title": "Subnet registration and support",
+          "title": "SUBNET Registration and Support",
           "url": "https://min.io/docs/minio/linux/administration/console/subnet-registration.html",
           "body": "Learn how to register your MinIO deployment and access our SUBNET support system"
         },
@@ -3470,7 +3470,7 @@
       "header": null,
       "links": [
         {
-          "img": "https://i.ytimg.com/an_webp/Zyc-xhNcPco/mqdefault_6s.webp?du=3000&sqp=CNKby6IG&rs=AOn4CLBb47uG6Tw6SNaFW5_tmc7eAVqOtg",
+          "img": "https://i.ytimg.com/an_webp/Zyc-xhNcPco/mqdefault_6s.webp?du=3000&sqp=CPyt0qQG&rs=AOn4CLCbgR7oBe0xvtH8yvHof9HeWeXQOg",
           "title": "What is SUBNET?",
           "url": "https://www.youtube.com/watch?v=Zyc-xhNcPco",
           "body": "The MinIO Subscription Network (SUBNET for short) is a simple, yet powerful software stack that ensures commercial customers are getting the very best out of their MinIO instances."
@@ -3482,13 +3482,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2023/03/SUBNET-call-home.jpg",
-          "title": "SUBNET callhome diagnostics",
+          "title": "SUBNET Callhome Diagnostics",
           "url": "https://blog.min.io/subnet-call-home-diagnostics/",
-          "body": "Imagine a system that tracks your health daily, highlighting even the slightest problems, so that you can seek help before minor issues become major concerns. With MinIO’s new call-home diagnostics, you can have just that."
+          "body": "Imagine tracking your system's health daily, highlighting the slightest problems, so you can seek help before minor issues become major concerns."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2023/03/SUBNET-Healthcheck-and-Performance.jpg",
-          "title": "SUBNET healthcheck",
+          "title": "SUBNET Healthcheck",
           "url": "https://blog.min.io/subnet-healthcheck-and-performance/",
           "body": "HealthCheck provides a graphical user interface for supported components and runs diagnostics checks continually to ensure your environment is running optimally."
         }
@@ -3522,13 +3522,13 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2023/03/SUBNET-call-home.jpg",
-          "title": "SUBNET callhome diagnostics",
+          "title": "SUBNET Callhome Diagnostics",
           "url": "https://blog.min.io/subnet-call-home-diagnostics/",
           "body": "Imagine a system that tracks your health daily, highlighting even the slightest problems, so that you can seek help before minor issues become major concerns. With MinIO’s new call-home diagnostics, you can have just that."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2023/03/SUBNET-Healthcheck-and-Performance.jpg",
-          "title": "SUBNET healthcheck",
+          "title": "SUBNET Healthcheck",
           "url": "https://blog.min.io/subnet-healthcheck-and-performance/",
           "body": "HealthCheck provides a graphical user interface for supported components and runs diagnostics checks continually to ensure your environment is running optimally."
         }
@@ -3574,7 +3574,7 @@
       "links": [
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
-          "title": "Access Control best practices",
+          "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         }
@@ -3593,7 +3593,7 @@
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Subnet registration and support",
+          "title": "SUBNET Registration and Support",
           "url": "https://min.io/docs/minio/linux/administration/console/subnet-registration.html",
           "body": "Learn how to register your MinIO deployment and access our SUBNET support system"
         },
