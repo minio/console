@@ -16,22 +16,22 @@
 
 import React, { Fragment, useState } from "react";
 import { DialogContentText } from "@mui/material";
-import api from "../../../../common/api";
 
-import { ErrorResponseHandler } from "../../../../common/types";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmModalIcon } from "mds";
 
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import { BucketVersioningInfo } from "../types";
 import VersioningInfo from "../VersioningInfo";
+import { BucketVersioningResponse } from "api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IVersioningEventProps {
   closeVersioningModalAndRefresh: (refresh: boolean) => void;
   modalOpen: boolean;
   selectedBucket: string;
-  versioningInfo: BucketVersioningInfo | undefined;
+  versioningInfo: BucketVersioningResponse | undefined;
 }
 
 const EnableVersioningModal = ({
@@ -51,17 +51,17 @@ const EnableVersioningModal = ({
     }
     setVersioningLoading(true);
 
-    api
-      .invoke("PUT", `/api/v1/buckets/${selectedBucket}/versioning`, {
+    api.buckets
+      .setBucketVersioning(selectedBucket, {
         versioning: !isVersioningEnabled,
       })
       .then(() => {
         setVersioningLoading(false);
         closeVersioningModalAndRefresh(true);
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setVersioningLoading(false);
-        dispatch(setErrorSnackMessage(err));
+        dispatch(setErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 

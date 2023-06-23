@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { SelectChangeEvent } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { Button, ChangeAccessPolicyIcon } from "mds";
 import createStyles from "@mui/styles/createStyles";
@@ -27,8 +26,6 @@ import {
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
 
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
@@ -36,6 +33,9 @@ import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/Cod
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { emptyPolicy } from "../../Policies/utils";
+import { api } from "api";
+import { BucketAccess } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -61,7 +61,7 @@ interface ISetAccessPolicyProps {
   classes: any;
   open: boolean;
   bucketName: string;
-  actualPolicy: string;
+  actualPolicy: BucketAccess | string;
   actualDefinition: string;
   closeModalAndRefresh: () => void;
 }
@@ -76,26 +76,26 @@ const SetAccessPolicy = ({
 }: ISetAccessPolicyProps) => {
   const dispatch = useAppDispatch();
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [accessPolicy, setAccessPolicy] = useState<string>("");
+  const [accessPolicy, setAccessPolicy] = useState<BucketAccess | string>("");
   const [policyDefinition, setPolicyDefinition] = useState<string>(emptyPolicy);
   const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
-    if (addLoading) {
+    if (addLoading || !accessPolicy) {
       return;
     }
     setAddLoading(true);
-    api
-      .invoke("PUT", `/api/v1/buckets/${bucketName}/set-policy`, {
-        access: accessPolicy,
+    api.buckets
+      .bucketSetPolicy(bucketName, {
+        access: accessPolicy as BucketAccess,
         definition: policyDefinition,
       })
       .then((res) => {
         setAddLoading(false);
         closeModalAndRefresh();
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setAddLoading(false);
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 
@@ -132,13 +132,13 @@ const SetAccessPolicy = ({
                 label="Access Policy"
                 id="select-access-policy"
                 name="select-access-policy"
-                onChange={(e: SelectChangeEvent<string>) => {
-                  setAccessPolicy(e.target.value as string);
+                onChange={(e) => {
+                  setAccessPolicy(e.target.value as BucketAccess);
                 }}
                 options={[
-                  { value: "PRIVATE", label: "Private" },
-                  { value: "PUBLIC", label: "Public" },
-                  { value: "CUSTOM", label: "Custom" },
+                  { value: BucketAccess.PRIVATE, label: "Private" },
+                  { value: BucketAccess.PUBLIC, label: "Public" },
+                  { value: BucketAccess.CUSTOM, label: "Custom" },
                 ]}
               />
             </Grid>

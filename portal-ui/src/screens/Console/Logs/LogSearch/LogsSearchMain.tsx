@@ -15,112 +15,47 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Button, PageLayout, SearchIcon } from "mds";
-import { Theme } from "@mui/material/styles";
-import { Grid } from "@mui/material";
-import { DateTime } from "luxon";
 import get from "lodash/get";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { useSelector } from "react-redux";
+import { CSSObject } from "styled-components";
 import {
-  advancedFilterToggleStyles,
-  containerForHeader,
-  tableStyles,
-} from "../../Common/FormComponents/common/styleLibrary";
+  Box,
+  breakPoints,
+  Button,
+  DataTable,
+  ExpandOptionsButton,
+  Grid,
+  PageLayout,
+  SearchIcon,
+} from "mds";
+import { DateTime } from "luxon";
 import { IReqInfoSearchResults, ISearchResponse } from "./types";
 import { niceBytes, nsToSeconds } from "../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/FilterInputWrapper";
-import LogSearchFullModal from "./LogSearchFullModal";
 import { LogSearchColumnLabels } from "./utils";
-import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
-import { SecureComponent } from "../../../../common/SecureComponent";
-import MissingIntegration from "../../Common/MissingIntegration/MissingIntegration";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selFeatures } from "../../consoleSlice";
 import { useAppDispatch } from "../../../../store";
+import { SecureComponent } from "../../../../common/SecureComponent";
+import api from "../../../../common/api";
+import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/FilterInputWrapper";
+import LogSearchFullModal from "./LogSearchFullModal";
+import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
+import MissingIntegration from "../../Common/MissingIntegration/MissingIntegration";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
 
-interface ILogSearchProps {
-  classes: any;
-}
+const filtersContainer: CSSObject = {
+  display: "flex",
+  justifyContent: "space-between",
+  marginBottom: 12,
+};
 
-const styles = (theme: Theme) =>
-  createStyles({
-    blockCollapsed: {
-      display: "none",
-      overflowY: "hidden",
-    },
-    filterOpen: {
-      display: "block",
-      marginBottom: 12,
-    },
-    endLineAction: {
-      marginBottom: 15,
-      padding: "0 15px 0 15px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-    },
-    filtersContainer: {
-      display: "flex",
-      justifyContent: "space-between",
-      marginBottom: 12,
-    },
-    innerContainer: {
-      backgroundColor: "#fff",
-    },
-    noticeLabel: {
-      marginLeft: 15,
-      marginBottom: 15,
-      fontSize: 12,
-      color: "#9C9C9C",
-    },
-
-    tableFOpen: {
-      height: "calc(100vh - 520px)",
-    },
-    tableFClosed: {
-      height: "calc(100vh - 320px)",
-    },
-    ...tableStyles,
-    ...advancedFilterToggleStyles,
-
-    searchOptions: {
-      display: "flex",
-      padding: 15,
-      "@media (max-width: 900px)": {
-        flexFlow: "column",
-      },
-    },
-    formBox: {
-      border: "1px solid #EAEAEA",
-      marginBottom: 15,
-    },
-    dateRangePicker: {
-      "& div": {
-        marginBottom: 0,
-      },
-    },
-    advancedButton: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-start",
-    },
-
-    ...containerForHeader,
-  });
-
-const LogsSearchMain = ({ classes }: ILogSearchProps) => {
+const LogsSearchMain = () => {
   const dispatch = useAppDispatch();
   const features = useSelector(selFeatures);
 
@@ -239,16 +174,19 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
     setLoading(true);
   };
 
-  const selectColumn = (colName: string, active: boolean) => {
-    let newArray = [...columnsShown];
+  const selectColumn = (colID: string) => {
+    let newArray: string[];
 
-    if (!active) {
-      newArray = columnsShown.filter((element) => element !== colName);
+    const columnShown = columnsShown.findIndex((item) => item === colID);
+
+    // Column Exist, We remove from Array
+    if (columnShown >= 0) {
+      newArray = columnsShown.filter((element) => element !== colID);
     } else {
-      if (!newArray.includes(colName)) {
-        newArray.push(colName);
-      }
+      // Column not visible, we include it in the array
+      newArray = [...columnsShown, colID];
     }
+
     setColumnsShown(newArray);
   };
 
@@ -298,113 +236,129 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
           <MissingIntegration
             entity={"Audit Logs"}
             iconComponent={<SearchIcon />}
-            documentationLink="https://github.com/minio/operator/tree/master/logsearchapi"
+            documentationLink="https://min.io/docs/minio/windows/operations/monitoring/minio-logging.html?ref=con"
           />
         ) : (
           <Fragment>
             {" "}
-            <Grid item xs={12} className={classes.formBox}>
-              <Grid item xs={12} className={`${classes.searchOptions}`}>
-                <div className={classes.dateRangePicker}>
+            <Box withBorders sx={{ marginBottom: 15 }}>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  display: "flex",
+                  padding: 15,
+                  [`@media (max-width: ${breakPoints.lg}px)`]: {
+                    flexFlow: "column",
+                  },
+                }}
+              >
+                <Box>
                   <DateRangeSelector
                     setTimeEnd={(time) => setTimeEnd(time)}
                     setTimeStart={(time) => setTimeStart(time)}
                     timeEnd={timeEnd}
                     timeStart={timeStart}
                   />
-                </div>
-
-                <Grid item className={classes.advancedButton}>
-                  <button
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <ExpandOptionsButton
+                    label={`${filterOpen ? "Hide" : "Show"} advanced Filters`}
+                    open={filterOpen}
                     onClick={() => {
                       setFilterOpen(!filterOpen);
                     }}
-                    className={classes.advancedConfiguration}
-                  >
-                    {filterOpen ? "Hide" : "Show"} advanced Filters{" "}
-                    <span
-                      className={
-                        filterOpen
-                          ? classes.advancedOpen
-                          : classes.advancedClosed
-                      }
-                    >
-                      <ArrowForwardIosIcon />
-                    </span>
-                  </button>
-                </Grid>
+                  />
+                </Box>
               </Grid>
               <Grid
                 item
                 xs={12}
-                className={`${classes.blockCollapsed} ${
-                  filterOpen ? classes.filterOpen : ""
-                }`}
+                sx={{
+                  display: filterOpen ? "block" : "none",
+                  overflowY: "hidden",
+                  marginBottom: filterOpen ? 12 : 0,
+                }}
               >
-                <div className={classes.innerContainer}>
-                  <div className={classes.noticeLabel}>
-                    Enable your preferred options to get filtered records.
-                    <br />
-                    You can use '*' to match any character, '.' to signify a
-                    single character or '\' to scape an special character (E.g.
-                    mybucket-*)
-                  </div>
-                  <div className={classes.filtersContainer}>
-                    <FilterInputWrapper
-                      onChange={setBucket}
-                      value={bucket}
-                      label={"Bucket"}
-                      id="bucket"
-                      name="bucket"
-                    />
-                    <FilterInputWrapper
-                      onChange={setApiName}
-                      value={apiName}
-                      label={"API Name"}
-                      id="api_name"
-                      name="api_name"
-                    />
-                    <FilterInputWrapper
-                      onChange={setAccessKey}
-                      value={accessKey}
-                      label={"Access Key"}
-                      id="access_key"
-                      name="access_key"
-                    />
-                    <FilterInputWrapper
-                      onChange={setUserAgent}
-                      value={userAgent}
-                      label={"User Agent"}
-                      id="user_agent"
-                      name="user_agent"
-                    />
-                  </div>
-                  <div className={classes.filtersContainer}>
-                    <FilterInputWrapper
-                      onChange={setObject}
-                      value={object}
-                      label={"Object"}
-                      id="object"
-                      name="object"
-                    />
-                    <FilterInputWrapper
-                      onChange={setRequestID}
-                      value={requestID}
-                      label={"Request ID"}
-                      id="request_id"
-                      name="request_id"
-                    />
-                    <FilterInputWrapper
-                      onChange={setResponseStatus}
-                      value={responseStatus}
-                      label={"Response Status"}
-                      id="response_status"
-                      name="response_status"
-                    />
-                  </div>
-                </div>
+                <Box
+                  sx={{
+                    marginLeft: 15,
+                    marginBottom: 15,
+                    fontSize: 12,
+                    color: "#9C9C9C",
+                  }}
+                >
+                  Enable your preferred options to get filtered records.
+                  <br />
+                  You can use '*' to match any character, '.' to signify a
+                  single character or '\' to scape an special character (E.g.
+                  mybucket-*)
+                </Box>
+                <Box sx={filtersContainer}>
+                  <FilterInputWrapper
+                    onChange={setBucket}
+                    value={bucket}
+                    label={"Bucket"}
+                    id="bucket"
+                    name="bucket"
+                  />
+                  <FilterInputWrapper
+                    onChange={setApiName}
+                    value={apiName}
+                    label={"API Name"}
+                    id="api_name"
+                    name="api_name"
+                  />
+                  <FilterInputWrapper
+                    onChange={setAccessKey}
+                    value={accessKey}
+                    label={"Access Key"}
+                    id="access_key"
+                    name="access_key"
+                  />
+                  <FilterInputWrapper
+                    onChange={setUserAgent}
+                    value={userAgent}
+                    label={"User Agent"}
+                    id="user_agent"
+                    name="user_agent"
+                  />
+                </Box>
+                <Box sx={filtersContainer}>
+                  <FilterInputWrapper
+                    onChange={setObject}
+                    value={object}
+                    label={"Object"}
+                    id="object"
+                    name="object"
+                  />
+                  <FilterInputWrapper
+                    onChange={setRequestID}
+                    value={requestID}
+                    label={"Request ID"}
+                    id="request_id"
+                    name="request_id"
+                  />
+                  <FilterInputWrapper
+                    onChange={setResponseStatus}
+                    value={responseStatus}
+                    label={"Response Status"}
+                    id="response_status"
+                    name="response_status"
+                  />
+                </Box>
               </Grid>
-              <Grid item xs={12} className={classes.endLineAction}>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  marginBottom: 15,
+                  padding: "0 15px 0 15px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                }}
+              >
                 <Button
                   id={"get-information"}
                   type="button"
@@ -413,14 +367,14 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
                   label={"Get Information"}
                 />
               </Grid>
-            </Grid>
-            <Grid item xs={12} className={classes.tableBlock}>
+            </Box>
+            <Grid item xs={12}>
               <SecureComponent
                 scopes={[IAM_SCOPES.ADMIN_HEALTH_INFO]}
                 resource={CONSOLE_UI_RESOURCE}
                 errorProps={{ disabled: true }}
               >
-                <TableWrapper
+                <DataTable
                   columns={[
                     {
                       label: LogSearchColumnLabels.time,
@@ -496,7 +450,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
                   columnsShown={columnsShown}
                   onColumnChange={selectColumn}
                   customPaperHeight={
-                    filterOpen ? classes.tableFOpen : classes.tableFClosed
+                    filterOpen ? "calc(100vh - 520px)" : "calc(100vh - 320px)"
                   }
                   sortConfig={{
                     currentSort: "time",
@@ -524,4 +478,4 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
   );
 };
 
-export default withStyles(styles)(LogsSearchMain);
+export default LogsSearchMain;

@@ -34,7 +34,7 @@ import (
 	"github.com/minio/console/pkg/subnet"
 	"github.com/minio/console/restapi/operations"
 	subnetApi "github.com/minio/console/restapi/operations/subnet"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 )
 
 func registerSubnetHandlers(api *operations.ConsoleAPI) {

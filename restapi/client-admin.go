@@ -31,7 +31,7 @@ import (
 	"github.com/minio/console/pkg/utils"
 
 	"github.com/minio/console/models"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	iampolicy "github.com/minio/pkg/iam/policy"
