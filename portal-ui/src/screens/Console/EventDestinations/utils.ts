@@ -117,7 +117,7 @@ const commonFields = [
     label: "Queue Directory",
     required: false,
 
-    tooltip: "staging dir for undelivered messages e.g. '/home/events'",
+    tooltip: "Staging directory for undelivered messages e.g. '/home/events'",
     type: "string",
     placeholder: "Enter Queue Directory",
   },
@@ -126,7 +126,7 @@ const commonFields = [
     label: "Queue Limit",
     required: false,
 
-    tooltip: "maximum limit for undelivered messages, defaults to '10000'",
+    tooltip: "Maximum limit for undelivered messages, defaults to '10000'",
     type: "number",
     placeholder: "Enter Queue Limit",
   },
@@ -187,7 +187,7 @@ export const notificationEndpointsFields: any = {
       name: "tls_client_auth",
       label: "TLS Client Auth",
       tooltip:
-        "Client Auth determines the Kafka server's policy for TLS client auth",
+        "Client Auth determines the Kafka server's policy for TLS client authorization",
       type: "string",
       placeholder: "Enter TLS Client Auth",
     },
@@ -213,14 +213,14 @@ export const notificationEndpointsFields: any = {
     {
       name: "client_tls_cert",
       label: "client TLS cert",
-      tooltip: "Path to client certificate for mTLS auth",
+      tooltip: "Path to client certificate for mTLS authorization",
       type: "path",
       placeholder: "Enter TLS Client Cert",
     },
     {
       name: "client_tls_key",
       label: "client TLS key",
-      tooltip: "Path to client key for mTLS auth",
+      tooltip: "Path to client key for mTLS authorization",
       type: "path",
       placeholder: "Enter TLS Client Key",
     },
@@ -312,7 +312,7 @@ export const notificationEndpointsFields: any = {
       name: "address",
       required: true,
       label: "Address",
-      tooltip: "Redis server's address. For example: `localhost:6379`",
+      tooltip: "Redis server's address e.g. `localhost:6379`",
       type: "address",
       placeholder: "Enter Address",
     },
@@ -346,7 +346,7 @@ export const notificationEndpointsFields: any = {
       name: "topic",
       required: true,
       label: "Topic",
-      tooltip: "name of the MQTT topic to publish",
+      tooltip: "Name of the MQTT topic to publish",
       type: "string",
       placeholder: "Enter Topic",
     },
@@ -376,7 +376,7 @@ export const notificationEndpointsFields: any = {
       label: "Keep Alive Interval",
       tooltip: "Keep-alive interval for MQTT connections in s,m,h,d",
       type: "duration",
-      placeholder: "Enter Keep Alive Internal",
+      placeholder: "Enter Keep Alive Interval",
     },
     {
       name: "reconnect_interval",
@@ -448,13 +448,13 @@ export const notificationEndpointsFields: any = {
     {
       name: "streaming",
       label: "Streaming",
-      tooltip: "Set to 'on', to use streaming NATS server",
+      tooltip: "Set to 'on' to use streaming NATS server",
       type: "on|off",
     },
     {
       name: "streaming_async",
       label: "Streaming async",
-      tooltip: "Set to 'on', to enable asynchronous publish",
+      tooltip: "Set to 'on' to enable asynchronous publish",
       type: "on|off",
     },
     {
@@ -488,7 +488,7 @@ export const notificationEndpointsFields: any = {
     {
       name: "client_key",
       label: "Client Key",
-      tooltip: "Client cert key for NATS mTLS auth",
+      tooltip: "Client cert key for NATS mTLS authorization",
       type: "string",
       placeholder: "Enter Client Key",
     },
@@ -530,14 +530,14 @@ export const notificationEndpointsFields: any = {
       required: true,
       label: "Endpoint",
       tooltip:
-        "webhook server endpoint e.g. http://localhost:8080/minio/events",
+        "Webhook server endpoint e.g. http://localhost:8080/minio/events",
       type: "url",
       placeholder: "Enter Endpoint",
     },
     {
       name: "auth_token",
       label: "Auth Token",
-      tooltip: "opaque string or JWT authorization token",
+      tooltip: "Opaque string or JWT authorization token",
       type: "string",
       placeholder: "Enter auth_token",
     },
@@ -563,14 +563,14 @@ export const notificationEndpointsFields: any = {
     {
       name: "tls",
       label: "TLS",
-      tooltip: "set to 'on' to enable TLS",
+      tooltip: "Set to 'on' to enable TLS",
       type: "on|off",
     },
     {
       name: "tls_skip_verify",
       label: "TLS Skip Verify",
       tooltip:
-        'trust server TLS without verification, defaults to "on" (verify)',
+        'Trust server TLS without verification, defaults to "on" (verify)',
       type: "on|off",
     },
     ...commonFields,

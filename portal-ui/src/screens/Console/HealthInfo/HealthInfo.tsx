@@ -46,7 +46,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 
 import TestWrapper from "../Common/TestWrapper/TestWrapper";
-import { setServerDiagStat } from "../../../systemSlice";
+import { setHelpName, setServerDiagStat } from "../../../systemSlice";
 import {
   healthInfoMessageReceived,
   healthInfoResetMessage,
@@ -54,6 +54,7 @@ import {
 import RegisterCluster from "../Support/RegisterCluster";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { registeredCluster } from "../../../config";
+import HelpMenu from "../HelpMenu";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -255,9 +256,14 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
     setStartDiagnostic(true);
   };
 
+  useEffect(() => {
+    dispatch(setHelpName("health_info"));
+  }, [dispatch]);
+
   return (
     <Fragment>
-      <PageHeaderWrapper label="Health" />
+      <PageHeaderWrapper label="Health" actions={<HelpMenu />} />
+
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
         <Grid item xs={12} className={classes.boxy}>

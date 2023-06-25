@@ -23,22 +23,9 @@ import withStyles from "@mui/styles/withStyles";
 import { Box, Grid } from "@mui/material";
 import get from "lodash/get";
 import {
-  BucketEncryptionInfo,
-  BucketObjectLocking,
-  BucketQuota,
-  BucketReplication,
-  BucketVersioningInfo,
-} from "../types";
-import { BucketList } from "../../Watch/types";
-import {
   spacingUtils,
   textStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import {
-  ErrorResponseHandler,
-  IRetentionConfig,
-} from "../../../../common/types";
-import api from "../../../../common/api";
 
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import {
@@ -54,7 +41,11 @@ import EditablePropertyItem from "./SummaryItems/EditablePropertyItem";
 import ReportedUsage from "./SummaryItems/ReportedUsage";
 import BucketQuotaSize from "./SummaryItems/BucketQuotaSize";
 import SectionTitle from "../../Common/SectionTitle";
-import { selDistSet, setErrorSnackMessage } from "../../../../systemSlice";
+import {
+  selDistSet,
+  setErrorSnackMessage,
+  setHelpName,
+} from "../../../../systemSlice";
 import {
   selBucketDetailsInfo,
   selBucketDetailsLoading,
@@ -62,6 +53,14 @@ import {
 } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
 import VersioningInfo from "../VersioningInfo";
+import { api } from "api";
+import {
+  BucketEncryptionInfo,
+  BucketQuota,
+  BucketVersioningResponse,
+  GetBucketRetentionConfig,
+} from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const SetAccessPolicy = withSuspense(
   React.lazy(() => import("./SetAccessPolicy"))
@@ -109,8 +108,10 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
 
   const [encryptionCfg, setEncryptionCfg] =
     useState<BucketEncryptionInfo | null>(null);
-  const [bucketSize, setBucketSize] = useState<string>("0");
-  const [hasObjectLocking, setHasObjectLocking] = useState<boolean>(false);
+  const [bucketSize, setBucketSize] = useState<number | "0">("0");
+  const [hasObjectLocking, setHasObjectLocking] = useState<boolean | undefined>(
+    false
+  );
   const [accessPolicyScreenOpen, setAccessPolicyScreenOpen] =
     useState<boolean>(false);
   const [replicationRules, setReplicationRules] = useState<boolean>(false);
@@ -122,13 +123,14 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
   const [loadingQuota, setLoadingQuota] = useState<boolean>(true);
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [loadingRetention, setLoadingRetention] = useState<boolean>(true);
-  const [versioningInfo, setVersioningInfo] = useState<BucketVersioningInfo>();
+  const [versioningInfo, setVersioningInfo] =
+    useState<BucketVersioningResponse>();
   const [quotaEnabled, setQuotaEnabled] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
   const [retentionEnabled, setRetentionEnabled] = useState<boolean>(false);
   const [retentionConfig, setRetentionConfig] =
-    useState<IRetentionConfig | null>(null);
+    useState<GetBucketRetentionConfig | null>(null);
   const [retentionConfigOpen, setRetentionConfigOpen] =
     useState<boolean>(false);
   const [enableEncryptionScreenOpen, setEnableEncryptionScreenOpen] =
@@ -138,12 +140,17 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
   const [enableVersioningOpen, setEnableVersioningOpen] =
     useState<boolean>(false);
 
+  useEffect(() => {
+    dispatch(setHelpName("bucket_detail_summary"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const bucketName = params.bucketName || "";
 
   let accessPolicy = "n/a";
   let policyDefinition = "";
 
-  if (bucketInfo !== null) {
+  if (bucketInfo !== null && bucketInfo.access && bucketInfo.definition) {
     accessPolicy = bucketInfo.access;
     policyDefinition = bucketInfo.definition;
   }
@@ -173,16 +180,17 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
   useEffect(() => {
     if (loadingEncryption) {
       if (displayGetBucketEncryptionConfiguration) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/encryption/info`)
-          .then((res: BucketEncryptionInfo) => {
-            if (res.algorithm) {
+        api.buckets
+          .getBucketEncryptionInfo(bucketName)
+          .then((res) => {
+            if (res.data.algorithm) {
               setEncryptionEnabled(true);
-              setEncryptionCfg(res);
+              setEncryptionCfg(res.data);
             }
             setLoadingEncryption(false);
           })
-          .catch((err: ErrorResponseHandler) => {
+          .catch((err) => {
+            err = errorToHandler(err.error);
             if (
               err.errorMessage ===
               "The server side encryption configuration was not found"
@@ -202,14 +210,14 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
 
   useEffect(() => {
     if (loadingVersioning && distributedSetup) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-        .then((res: BucketVersioningInfo) => {
-          setVersioningInfo(res);
+      api.buckets
+        .getBucketVersioning(bucketName)
+        .then((res) => {
+          setVersioningInfo(res.data);
           setLoadingVersioning(false);
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           setLoadingVersioning(false);
         });
     }
@@ -218,19 +226,19 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
   useEffect(() => {
     if (loadingQuota && distributedSetup) {
       if (displayGetBucketQuota) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/quota`)
-          .then((res: BucketQuota) => {
-            setQuota(res);
-            if (res.quota) {
+        api.buckets
+          .getBucketQuota(bucketName)
+          .then((res) => {
+            setQuota(res.data);
+            if (res.data.quota) {
               setQuotaEnabled(true);
             } else {
               setQuotaEnabled(false);
             }
             setLoadingQuota(false);
           })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
+          .catch((err) => {
+            dispatch(setErrorSnackMessage(errorToHandler(err.error)));
             setQuotaEnabled(false);
             setLoadingQuota(false);
           });
@@ -251,14 +259,14 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
   useEffect(() => {
     if (loadingVersioning && distributedSetup) {
       if (displayGetBucketObjectLockConfiguration) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
-          .then((res: BucketObjectLocking) => {
-            setHasObjectLocking(res.object_locking_enabled);
+        api.buckets
+          .getBucketObjectLockingStatus(bucketName)
+          .then((res) => {
+            setHasObjectLocking(res.data.object_locking_enabled);
             setLoadingLocking(false);
           })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
+          .catch((err) => {
+            dispatch(setErrorSnackMessage(errorToHandler(err.error)));
             setLoadingLocking(false);
           });
       } else {
@@ -276,10 +284,10 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
 
   useEffect(() => {
     if (loadingSize) {
-      api
-        .invoke("GET", `/api/v1/buckets`)
-        .then((res: BucketList) => {
-          const resBuckets = get(res, "buckets", []);
+      api.buckets
+        .listBuckets()
+        .then((res) => {
+          const resBuckets = get(res.data, "buckets", []);
 
           const bucketInfo = resBuckets.find(
             (bucket) => bucket.name === bucketName
@@ -290,24 +298,24 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
           setLoadingSize(false);
           setBucketSize(size);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setLoadingSize(false);
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         });
     }
   }, [loadingSize, dispatch, bucketName]);
 
   useEffect(() => {
     if (loadingReplication && distributedSetup) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/replication`)
-        .then((res: BucketReplication) => {
-          const r = res.rules ? res.rules : [];
+      api.buckets
+        .getBucketReplication(bucketName)
+        .then((res) => {
+          const r = res.data.rules ? res.data.rules : [];
           setReplicationRules(r.length > 0);
           setLoadingReplication(false);
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           setLoadingReplication(false);
         });
     }
@@ -315,14 +323,14 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
 
   useEffect(() => {
     if (loadingRetention && hasObjectLocking) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/retention`)
-        .then((res: IRetentionConfig) => {
+      api.buckets
+        .getBucketRetentionConfig(bucketName)
+        .then((res) => {
           setLoadingRetention(false);
           setRetentionEnabled(true);
-          setRetentionConfig(res);
+          setRetentionConfig(res.data);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setRetentionEnabled(false);
           setLoadingRetention(false);
           setRetentionConfig(null);
@@ -549,7 +557,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   alignItems: "flex-start",
                 }}
               >
-                <ReportedUsage bucketSize={bucketSize} />
+                <ReportedUsage bucketSize={`${bucketSize}`} />
                 {quotaEnabled && quota ? (
                   <BucketQuotaSize quota={quota} />
                 ) : null}
@@ -674,7 +682,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                         {retentionConfig && retentionConfig.validity}{" "}
                         {retentionConfig &&
                           (retentionConfig.validity === 1
-                            ? retentionConfig.unit.slice(0, -1)
+                            ? retentionConfig.unit?.slice(0, -1)
                             : retentionConfig.unit)}
                       </label>
                     }

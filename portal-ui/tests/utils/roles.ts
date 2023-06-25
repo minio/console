@@ -7,7 +7,7 @@ const unixTimestamp = data.trim();
 const loginUrl = "http://localhost:9090/login";
 // diagnostics/watch/trace need to run in port 9090 (through the server) to work
 const loginUrlServer = "http://localhost:9090/login";
-const submitButton = Selector("form button");
+const submitButton = Selector("button").withAttribute("id", "do-login");
 
 export const admin = Role(
   loginUrl,
@@ -267,6 +267,17 @@ export const conditions2 = Role(
   async (t) => {
     await t
       .typeText("#accessKey", "conditions-2-" + unixTimestamp)
+      .typeText("#secretKey", "conditions1234")
+      .click(submitButton);
+  },
+  { preserveUrl: true }
+);
+
+export const conditions3 = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "conditions-3-" + unixTimestamp)
       .typeText("#secretKey", "conditions1234")
       .click(submitButton);
   },

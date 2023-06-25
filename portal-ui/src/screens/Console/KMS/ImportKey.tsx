@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Box } from "@mui/material";
 
 import Grid from "@mui/material/Grid";
@@ -28,13 +28,14 @@ import {
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import useApi from "../Common/Hooks/useApi";
 import KMSHelpBox from "./KMSHelpbox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 export const emptyContent = '{\n    "bytes": ""\n}';
 
@@ -70,6 +71,11 @@ const ImportKey = () => {
 
   const validSave = keyName.trim() !== "" && keyName.indexOf(" ") === -1;
 
+  useEffect(() => {
+    dispatch(setHelpName("import_key"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       <Grid item xs={12}>
@@ -80,6 +86,7 @@ const ImportKey = () => {
               label={"Keys"}
             />
           }
+          actions={<HelpMenu />}
         />
         <PageLayout>
           <FormLayout

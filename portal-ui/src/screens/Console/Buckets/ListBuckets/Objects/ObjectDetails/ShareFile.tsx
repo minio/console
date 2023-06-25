@@ -16,17 +16,9 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import { Button, CopyIcon, ReadBox, ShareIcon } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { Button, CopyIcon, ReadBox, ShareIcon, Grid } from "mds";
 import CopyToClipboard from "react-copy-to-clipboard";
-import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../../../../Common/FormComponents/common/styleLibrary";
 
 import { IFileInfo } from "./types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -41,34 +33,7 @@ import {
 } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    shareLinkInfo: {
-      fontSize: 14,
-      fontWeight: 400,
-    },
-    copyShareLink: {
-      display: "flex",
-      "@media (max-width: 900px)": {
-        flexFlow: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      },
-    },
-    copyShareLinkInput: {
-      "& div:first-child": {
-        marginTop: 0,
-      },
-      "@media (max-width: 900px)": {
-        minWidth: 250,
-      },
-    },
-    ...modalStyleUtils,
-    ...formFieldStyles,
-  });
-
 interface IShareFileProps {
-  classes: any;
   open: boolean;
   bucketName: string;
   dataObject: IFileInfo;
@@ -76,7 +41,6 @@ interface IShareFileProps {
 }
 
 const ShareFile = ({
-  classes,
   open,
   closeModalAndRefresh,
   bucketName,
@@ -127,7 +91,7 @@ const ShareFile = ({
               return;
             }
 
-            // Version couldn't ve retrieved, we default
+            // Version couldn't be retrieved, we default
             setVersionID("null");
           })
           .catch((error: ErrorResponseHandler) => {
@@ -207,7 +171,14 @@ const ShareFile = ({
         )}
         {!isLoadingVersion && (
           <Fragment>
-            <Grid item xs={12} className={classes.shareLinkInfo}>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                fontSize: 14,
+                fontWeight: 400,
+              }}
+            >
               This is a temporary URL with integrated access credentials for
               sharing objects valid for up to 7 days.
               <br />
@@ -215,7 +186,7 @@ const ShareFile = ({
               The temporary URL expires after the configured time limit.
             </Grid>
             <br />
-            <Grid item xs={12} className={classes.dateContainer}>
+            <Grid item xs={12}>
               <DaysSelector
                 initialDate={initialDate}
                 id="date"
@@ -228,7 +199,9 @@ const ShareFile = ({
             <Grid
               item
               xs={12}
-              className={`${classes.copyShareLink} ${classes.formFieldRow} `}
+              sx={{
+                marginBottom: 10,
+              }}
             >
               <ReadBox
                 actionButton={
@@ -243,7 +216,6 @@ const ShareFile = ({
                       }}
                       disabled={shareURL === "" || isLoadingFile}
                       style={{
-                        marginRight: "5px",
                         width: "28px",
                         height: "28px",
                         padding: "0px",
@@ -263,4 +235,4 @@ const ShareFile = ({
   );
 };
 
-export default withStyles(styles)(ShareFile);
+export default ShareFile;

@@ -27,11 +27,6 @@ export interface BucketObjectItem {
   is_latest?: boolean;
 }
 
-export interface BucketObjectItemsList {
-  objects: BucketObjectItem[];
-  total?: number;
-}
-
 export interface WebsocketRequest {
   mode: "objects" | "rewind" | "close" | "cancel";
   bucket_name?: string;
@@ -46,6 +41,7 @@ export interface WebsocketResponse {
   request_end?: boolean;
   data?: ObjectResponse[];
   prefix?: string;
+  bucketName?: string;
 }
 
 export interface ObjectResponse {

@@ -16,6 +16,7 @@
 
 import { Role, Selector } from "testcafe";
 import { readFileSync } from "fs";
+import { getMenuElement } from "../utils/elements-menu";
 
 const data = readFileSync(__dirname + "/../constants/timestamp.txt", "utf-8");
 const $TIMESTAMP = data.trim();
@@ -37,16 +38,9 @@ insAllowedSeckey = "poluicrashfix1234";*/
 const loginUrl = `${testDomainUrl}/login`;
 const bucketsScreenUrl = `${testDomainUrl}/buckets`;
 
-const loginSubmitBtn = Selector("form button");
+const loginSubmitBtn = Selector("button").withAttribute("id", "do-login");
 
-export const bucketsSidebarEl = Selector(".MuiPaper-root")
-  .find("ul")
-  .child("#buckets");
-
-export const menuListchildren = Selector("#tools-children");
-export const bucketsEl = menuListchildren
-  .find("a")
-  .withAttribute("href", "/buckets");
+export const bucketsSidebarEl = getMenuElement("buckets");
 
 export const inspectAllowedRole = Role(
   loginUrl,

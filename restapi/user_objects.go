@@ -31,6 +31,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/klauspost/compress/zip"
@@ -197,7 +199,7 @@ func getListObjectsResponse(session *models.Principal, params objectApi.ListObje
 	if params.BucketName == "" {
 		return nil, ErrorWithContext(ctx, ErrBucketNameNotInRequest)
 	}
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -398,7 +400,7 @@ func parseRange(s string, size int64) ([]httpRange, error) {
 func getDownloadObjectResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *models.Error) {
 	ctx := params.HTTPRequest.Context()
 	var prefix string
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -514,7 +516,7 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 func getDownloadFolderResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *models.Error) {
 	ctx := params.HTTPRequest.Context()
 	var prefix string
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if params.Prefix != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
@@ -631,7 +633,7 @@ func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteO
 		}
 		prefix = string(decodedPrefix)
 	}
-	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
+	s3Client, err := newS3BucketClient(session, params.BucketName, prefix, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -689,7 +691,7 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params objectApi.
 			version = params.Files[i].VersionID
 		}
 		prefix := params.Files[i].Path
-		s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
+		s3Client, err := newS3BucketClient(session, params.BucketName, prefix, getClientIP(params.HTTPRequest))
 		if err != nil {
 			return ErrorWithContext(ctx, err)
 		}
@@ -828,7 +830,7 @@ func deleteNonCurrentVersions(ctx context.Context, client MCClient, isBypass boo
 
 func getUploadObjectResponse(session *models.Principal, params objectApi.PostBucketsBucketNameObjectsUploadParams) *models.Error {
 	ctx := params.HTTPRequest.Context()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -895,6 +897,7 @@ func uploadFiles(ctx context.Context, client MinioClient, params objectApi.PostB
 // getShareObjectResponse returns a share object url
 func getShareObjectResponse(session *models.Principal, params objectApi.ShareObjectParams) (*string, *models.Error) {
 	ctx := params.HTTPRequest.Context()
+	clientIP := utils.ClientIPFromContext(ctx)
 	var prefix string
 	if params.Prefix != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
@@ -904,7 +907,7 @@ func getShareObjectResponse(session *models.Principal, params objectApi.ShareObj
 		}
 		prefix = string(decodedPrefix)
 	}
-	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
+	s3Client, err := newS3BucketClient(session, params.BucketName, prefix, clientIP)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -941,7 +944,7 @@ func getShareObjectURL(ctx context.Context, client MCClient, versionID string, d
 
 func getSetObjectLegalHoldResponse(session *models.Principal, params objectApi.PutObjectLegalHoldParams) *models.Error {
 	ctx := params.HTTPRequest.Context()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -976,7 +979,7 @@ func setObjectLegalHold(ctx context.Context, client MinioClient, bucketName, pre
 
 func getSetObjectRetentionResponse(session *models.Principal, params objectApi.PutObjectRetentionParams) *models.Error {
 	ctx := params.HTTPRequest.Context()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -1028,7 +1031,7 @@ func setObjectRetention(ctx context.Context, client MinioClient, bucketName, ver
 
 func deleteObjectRetentionResponse(session *models.Principal, params objectApi.DeleteObjectRetentionParams) *models.Error {
 	ctx := params.HTTPRequest.Context()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -1062,7 +1065,7 @@ func deleteObjectRetention(ctx context.Context, client MinioClient, bucketName, 
 
 func getPutObjectTagsResponse(session *models.Principal, params objectApi.PutObjectTagsParams) *models.Error {
 	ctx := params.HTTPRequest.Context()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -1099,7 +1102,7 @@ func putObjectTags(ctx context.Context, client MinioClient, bucketName, prefix, 
 // Restore Object Version
 func getPutObjectRestoreResponse(session *models.Principal, params objectApi.PutObjectRestoreParams) *models.Error {
 	ctx := params.HTTPRequest.Context()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -1154,7 +1157,7 @@ func restoreObject(ctx context.Context, client MinioClient, bucketName, prefix, 
 // Metadata Response from minio-go API
 func getObjectMetadataResponse(session *models.Principal, params objectApi.GetObjectMetadataParams) (*models.Metadata, *models.Error) {
 	ctx := params.HTTPRequest.Context()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

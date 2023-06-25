@@ -14,12 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface NotificationEndpoint {
-  service: string;
-  account_id: string;
-  properties: Map<string, string>;
-}
-
 export interface NotificationEndpointItem {
   service: string;
   account_id: string;

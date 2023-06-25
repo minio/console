@@ -104,9 +104,10 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 							}
 							if lsObj.Err != nil {
 								writeChannel <- WSResponse{
-									RequestID: messageRequest.RequestID,
-									Error:     lsObj.Err.Error(),
-									Prefix:    messageRequest.Prefix,
+									RequestID:  messageRequest.RequestID,
+									Error:      lsObj.Err.Error(),
+									Prefix:     messageRequest.Prefix,
+									BucketName: messageRequest.BucketName,
 								}
 
 								continue
@@ -162,7 +163,9 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 							return
 						}
 
-						s3Client, err := newS3BucketClient(session, objectRqConfigs.BucketName, objectRqConfigs.Prefix)
+						clientIP := wsc.conn.remoteAddress()
+
+						s3Client, err := newS3BucketClient(session, objectRqConfigs.BucketName, objectRqConfigs.Prefix, clientIP)
 						if err != nil {
 							LogError("error creating S3Client:", err)
 							close(done)
@@ -177,9 +180,10 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 						for lsObj := range startRewindListing(ctx, mcS3C, objectRqConfigs) {
 							if lsObj.Err != nil {
 								writeChannel <- WSResponse{
-									RequestID: messageRequest.RequestID,
-									Error:     lsObj.Err.String(),
-									Prefix:    messageRequest.Prefix,
+									RequestID:  messageRequest.RequestID,
+									Error:      lsObj.Err.String(),
+									Prefix:     messageRequest.Prefix,
+									BucketName: messageRequest.BucketName,
 								}
 
 								continue

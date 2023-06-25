@@ -33,9 +33,10 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../../src/common/types";
 import api from "../../../../src/common/api";
 
-import { setErrorSnackMessage } from "../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 interface IAddGroupProps {
   classes: any;
@@ -93,6 +94,11 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
     setSelectedUsers([]);
   };
 
+  useEffect(() => {
+    dispatch(setHelpName("add_group"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       <Grid item xs={12}>
@@ -103,6 +109,7 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
               onClick={() => navigate(IAM_PAGES.GROUPS)}
             />
           }
+          actions={<HelpMenu />}
         />
         <PageLayout>
           <FormLayout

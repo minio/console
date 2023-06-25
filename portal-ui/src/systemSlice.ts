@@ -29,7 +29,6 @@ export interface SystemState {
   loggedIn: boolean;
   showMarketplace: boolean;
   sidebarOpen: boolean;
-  session: string;
   userName: string;
   serverNeedsRestart: boolean;
   serverIsLoading: boolean;
@@ -43,13 +42,15 @@ export interface SystemState {
   licenseInfo: null | SubnetInfo;
   overrideStyles: null | IEmbeddedCustomStyles;
   anonymousMode: boolean;
+  helpName: string;
+  helpTabName: string;
+  locationPath: string;
 }
 
 const initialState: SystemState = {
   value: 0,
   loggedIn: false,
   showMarketplace: false,
-  session: "",
   userName: "",
   sidebarOpen: initSideBarOpen,
   siteReplicationInfo: { siteName: "", curSite: false, enabled: false },
@@ -72,6 +73,9 @@ const initialState: SystemState = {
   licenseInfo: null,
   overrideStyles: null,
   anonymousMode: false,
+  helpName: "help",
+  helpTabName: "docs",
+  locationPath: "",
 };
 
 export const systemSlice = createSlice({
@@ -150,6 +154,13 @@ export const systemSlice = createSlice({
     setSystemLicenseInfo: (state, action: PayloadAction<SubnetInfo | null>) => {
       state.licenseInfo = action.payload;
     },
+    setHelpName: (state, action: PayloadAction<string>) => {
+      state.helpName = action.payload;
+    },
+    setHelpTabName: (state, action: PayloadAction<string>) => {
+      state.helpTabName = action.payload;
+    },
+
     setOverrideStyles: (
       state,
       action: PayloadAction<IEmbeddedCustomStyles>
@@ -159,6 +170,9 @@ export const systemSlice = createSlice({
     setAnonymousMode: (state) => {
       state.anonymousMode = true;
       state.loggedIn = true;
+    },
+    setLocationPath: (state, action: PayloadAction<string>) => {
+      state.locationPath = action.payload;
     },
     resetSystem: () => {
       return initialState;
@@ -186,6 +200,9 @@ export const {
   setAnonymousMode,
   resetSystem,
   configurationIsLoading,
+  setHelpName,
+  setHelpTabName,
+  setLocationPath,
 } = systemSlice.actions;
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;

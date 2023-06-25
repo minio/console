@@ -15,40 +15,51 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ISessionResponse } from "./types";
+import { SessionResponse } from "../../api/consoleApi";
 import { AppState } from "../../store";
+import { fetchSession } from "../../screens/LoginPage/sessionThunk";
+import { SessionCallStates } from "./consoleSlice.types";
 
 export interface ConsoleState {
-  session: ISessionResponse;
+  session: SessionResponse;
+  sessionLoadingState: SessionCallStates;
 }
 
 const initialState: ConsoleState = {
-  session: {
-    status: "",
-    features: [],
-    distributedMode: false,
-    permissions: {},
-    allowResources: null,
-    customStyles: null,
-    envConstants: null,
-    serverEndPoint: "",
-  },
+  session: {},
+  sessionLoadingState: SessionCallStates.Initial,
 };
 
 export const consoleSlice = createSlice({
   name: "console",
   initialState,
   reducers: {
-    saveSessionResponse: (state, action: PayloadAction<ISessionResponse>) => {
+    setSessionLoadingState: (
+      state,
+      action: PayloadAction<SessionCallStates>
+    ) => {
+      state.sessionLoadingState = action.payload;
+    },
+    saveSessionResponse: (state, action: PayloadAction<SessionResponse>) => {
       state.session = action.payload;
     },
     resetSession: (state) => {
       state.session = initialState.session;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchSession.pending, (state, action) => {
+        state.sessionLoadingState = SessionCallStates.Loading;
+      })
+      .addCase(fetchSession.fulfilled, (state, action) => {
+        state.sessionLoadingState = SessionCallStates.Done;
+      });
+  },
 });
 
-export const { saveSessionResponse, resetSession } = consoleSlice.actions;
+export const { saveSessionResponse, resetSession, setSessionLoadingState } =
+  consoleSlice.actions;
 export const selSession = (state: AppState) => state.console.session;
 export const selFeatures = (state: AppState) =>
   state.console.session ? state.console.session.features : [];

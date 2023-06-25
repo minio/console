@@ -83,7 +83,7 @@ import {
 import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
 import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 import { downloadObject } from "../../../../ObjectBrowser/utils";
-import { BucketVersioningInfo } from "../../../types";
+import { BucketVersioningResponse } from "api/consoleApi";
 
 const styles = () =>
   createStyles({
@@ -130,8 +130,8 @@ interface IObjectDetailPanelProps {
   classes: any;
   internalPaths: string;
   bucketName: string;
-  versioningInfo: BucketVersioningInfo;
-  locking: boolean;
+  versioningInfo: BucketVersioningResponse;
+  locking: boolean | undefined;
   onClosePanel: (hardRefresh: boolean) => void;
 }
 

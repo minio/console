@@ -43,6 +43,7 @@ import withSuspense from "../Common/Components/withSuspense";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import {
   setErrorSnackMessage,
+  setHelpName,
   setServerNeedsRestart,
 } from "../../../systemSlice";
 import { useNavigate, useParams } from "react-router-dom";
@@ -50,6 +51,7 @@ import { useAppDispatch } from "../../../store";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import TargetTitle from "./TargetTitle";
 import { setDestinationLoading } from "./destinationsSlice";
+import HelpMenu from "../HelpMenu";
 
 const ConfMySql = withSuspense(
   React.lazy(() => import("./CustomForms/ConfMySql"))
@@ -153,6 +155,11 @@ const AddEventDestination = ({
     (element) => element.actionTrigger === service
   );
 
+  useEffect(() => {
+    dispatch(setHelpName("add_notification_endpoint"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       <PageHeaderWrapper
@@ -164,7 +171,7 @@ const AddEventDestination = ({
             />
           </Fragment>
         }
-        actions={<React.Fragment />}
+        actions={<HelpMenu />}
       />
 
       <PageLayout>

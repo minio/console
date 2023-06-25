@@ -30,6 +30,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import { useAppDispatch } from "../../../../store";
 import {
   setErrorSnackMessage,
+  setHelpName,
   setServerNeedsRestart,
   setSnackBarMessage,
 } from "../../../../systemSlice";
@@ -45,6 +46,7 @@ import ResetConfigurationModal from "../../EventDestinations/CustomForms/ResetCo
 import { IConfigurationSys, IElementValue } from "../../Configurations/types";
 import { TabPanel } from "../../../shared/tabs";
 import TabSelector from "../../Common/TabSelector/TabSelector";
+import HelpMenu from "../../HelpMenu";
 
 const enabledConfigLDAP = [
   "server_addr",
@@ -254,6 +256,11 @@ const IDPLDAPConfigurationDetails = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(setHelpName("LDAP"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Grid item xs={12}>
       {resetOpen && (
@@ -263,7 +270,7 @@ const IDPLDAPConfigurationDetails = () => {
           resetOpen={resetOpen}
         />
       )}
-      <PageHeaderWrapper label={"LDAP"} />
+      <PageHeaderWrapper label={"LDAP"} actions={<HelpMenu />} />
       <PageLayout variant={"constrained"}>
         <TabSelector
           selectedTab={curTab}

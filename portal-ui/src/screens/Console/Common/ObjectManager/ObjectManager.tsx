@@ -28,6 +28,7 @@ import {
   deleteFromList,
 } from "../../ObjectBrowser/objectBrowserSlice";
 import clsx from "clsx";
+import VirtualizedList from "../VirtualizedList/VirtualizedList";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -66,6 +67,7 @@ const styles = (theme: Theme) =>
       overflowX: "hidden",
       minHeight: 250,
       maxHeight: 335,
+      height: "100%",
       width: "100%",
       display: "flex",
       flexDirection: "column",
@@ -98,6 +100,16 @@ const ObjectManager = ({ classes }: IObjectManager) => {
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode
   );
+
+  function renderObject(index: number) {
+    return (
+      <ObjectHandled
+        objectToDisplay={objects[index]}
+        deleteFromList={(instanceID) => dispatch(deleteFromList(instanceID))}
+      />
+    );
+  }
+
   return (
     <Fragment>
       {managerOpen && (
@@ -123,15 +135,11 @@ const ObjectManager = ({ classes }: IObjectManager) => {
           </div>
           <div className={classes.title}>Downloads / Uploads</div>
           <div className={classes.actionsContainer}>
-            {objects.map((object, key) => (
-              <ObjectHandled
-                objectToDisplay={object}
-                key={`object-handled-${object.instanceID}`}
-                deleteFromList={(instanceID) =>
-                  dispatch(deleteFromList(instanceID))
-                }
-              />
-            ))}
+            <VirtualizedList
+              rowRenderFunction={renderObject}
+              totalItems={objects.length}
+              defaultHeight={110}
+            />
           </div>
         </Box>
       )}

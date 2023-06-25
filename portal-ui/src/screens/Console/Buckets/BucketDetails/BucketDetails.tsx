@@ -37,13 +37,10 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import api from "../../../../common/api";
-import { BucketInfo } from "../types";
 import {
   containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
 
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { Box } from "@mui/material";
@@ -67,6 +64,7 @@ import {
   selDistSet,
   selSiteRep,
   setErrorSnackMessage,
+  setHelpName,
 } from "../../../../systemSlice";
 import {
   selBucketDetailsInfo,
@@ -77,6 +75,9 @@ import {
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import HelpMenu from "../../HelpMenu";
 
 const DeleteBucket = withSuspense(
   React.lazy(() => import("../ListBuckets/DeleteBucket"))
@@ -143,6 +144,11 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
   }, [selTab]);
 
   useEffect(() => {
+    dispatch(setHelpName("bucket_details"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (!iniLoad) {
       dispatch(setBucketDetailsLoad(true));
       setIniLoad(true);
@@ -151,15 +157,15 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
 
   useEffect(() => {
     if (loadingBucket) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}`)
-        .then((res: BucketInfo) => {
+      api.buckets
+        .bucketInfo(bucketName)
+        .then((res) => {
           dispatch(setBucketDetailsLoad(false));
-          dispatch(setBucketInfo(res));
+          dispatch(setBucketInfo(res.data));
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           dispatch(setBucketDetailsLoad(false));
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err)));
         });
     }
   }, [bucketName, loadingBucket, dispatch]);
@@ -208,31 +214,36 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
           <BackLink label={"Buckets"} onClick={() => navigate("/buckets")} />
         }
         actions={
-          <TooltipWrapper
-            tooltip={
-              canBrowse
-                ? "Browse Bucket"
-                : permissionTooltipHelper(
-                    IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER],
-                    "browsing this bucket"
-                  )
-            }
-          >
-            <Button
-              id={"switch-browse-view"}
-              aria-label="Browse Bucket"
-              onClick={() => {
-                navigate(`/browser/${bucketName}`);
-              }}
-              icon={
-                <FolderIcon style={{ width: 20, height: 20, marginTop: -3 }} />
+          <Fragment>
+            <TooltipWrapper
+              tooltip={
+                canBrowse
+                  ? "Browse Bucket"
+                  : permissionTooltipHelper(
+                      IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER],
+                      "browsing this bucket"
+                    )
               }
-              style={{
-                padding: "0 10px",
-              }}
-              disabled={!canBrowse}
-            />
-          </TooltipWrapper>
+            >
+              <Button
+                id={"switch-browse-view"}
+                aria-label="Browse Bucket"
+                onClick={() => {
+                  navigate(`/browser/${bucketName}`);
+                }}
+                icon={
+                  <FolderIcon
+                    style={{ width: 20, height: 20, marginTop: -3 }}
+                  />
+                }
+                style={{
+                  padding: "0 10px",
+                }}
+                disabled={!canBrowse}
+              />
+            </TooltipWrapper>
+            <HelpMenu />
+          </Fragment>
         }
       />
       <PageLayout className={classes.pageContainer}>
@@ -257,7 +268,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   className={classes.capitalize}
                   style={{ fontWeight: 600, fontSize: 15 }}
                 >
-                  {bucketInfo?.access.toLowerCase()}
+                  {bucketInfo?.access?.toLowerCase()}
                 </span>
               </SecureComponent>
             }

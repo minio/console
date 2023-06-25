@@ -44,6 +44,8 @@ import api from "../../../common/api";
 import makeStyles from "@mui/styles/makeStyles";
 import { watchMessageReceived, watchResetMessages } from "./watchSlice";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
+import { setHelpName } from "../../../systemSlice";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -170,9 +172,15 @@ const Watch = () => {
     value: bucketName.name,
   }));
 
+  useEffect(() => {
+    dispatch(setHelpName("watch"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <React.Fragment>
-      <PageHeaderWrapper label="Watch" />
+      <PageHeaderWrapper label="Watch" actions={<HelpMenu />} />
+
       <PageLayout>
         <Grid container spacing={1} item xs={12}>
           <Grid item xs={12} className={classes.actionsTray}>

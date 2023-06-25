@@ -20,16 +20,13 @@ import { useParams } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import { AddIcon, Button } from "mds";
 import createStyles from "@mui/styles/createStyles";
-import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import api from "../../../../common/api";
 import Grid from "@mui/material/Grid";
 import {
   actionsTray,
   containerForHeader,
   objectBrowserCommon,
   searchField,
-  tableStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import PanelTitle from "../../Common/PanelTitle/PanelTitle";
@@ -39,11 +36,14 @@ import {
 } from "../../../../common/SecureComponent";
 
 import withSuspense from "../../Common/Components/withSuspense";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import makeStyles from "@mui/styles/makeStyles";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import { api } from "api";
+import { AccessRule as IAccessRule } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const AddAccessRuleModal = withSuspense(
   React.lazy(() => import("./AddAccessRule"))
@@ -65,7 +65,6 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundImage: "url(/images/ob_folder_filled.svg)",
       },
     },
-    ...tableStyles,
     ...actionsTray,
     ...searchField,
     ...objectBrowserCommon,
@@ -81,7 +80,7 @@ const AccessRule = () => {
   const loadingBucket = useSelector(selBucketDetailsLoading);
 
   const [loadingAccessRules, setLoadingAccessRules] = useState<boolean>(true);
-  const [accessRules, setAccessRules] = useState([]);
+  const [accessRules, setAccessRules] = useState<IAccessRule[] | undefined>([]);
   const [addAccessRuleOpen, setAddAccessRuleOpen] = useState<boolean>(false);
   const [deleteAccessRuleOpen, setDeleteAccessRuleOpen] =
     useState<boolean>(false);
@@ -133,16 +132,21 @@ const AccessRule = () => {
   ];
 
   useEffect(() => {
+    dispatch(setHelpName("bucket_detail_prefix"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (loadingAccessRules) {
       if (displayAccessRules) {
-        api
-          .invoke("GET", `/api/v1/bucket/${bucketName}/access-rules`)
-          .then((res: any) => {
-            setAccessRules(res.accessRules);
+        api.bucket
+          .listAccessRulesWithBucket(bucketName)
+          .then((res) => {
+            setAccessRules(res.data.accessRules);
             setLoadingAccessRules(false);
           })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
+          .catch((err) => {
+            dispatch(setErrorSnackMessage(errorToHandler(err)));
             setLoadingAccessRules(false);
           });
       } else {
@@ -224,24 +228,26 @@ const AccessRule = () => {
           resource={bucketName}
           errorProps={{ disabled: true }}
         >
-          <TableWrapper
-            noBackground={true}
-            itemActions={AccessRuleActions}
-            columns={[
-              {
-                label: "Prefix",
-                elementKey: "prefix",
-                renderFunction: (prefix: string) => {
-                  return prefix || "/";
+          {accessRules && (
+            <TableWrapper
+              noBackground={true}
+              itemActions={AccessRuleActions}
+              columns={[
+                {
+                  label: "Prefix",
+                  elementKey: "prefix",
+                  renderFunction: (prefix: string) => {
+                    return prefix || "/";
+                  },
                 },
-              },
-              { label: "Access", elementKey: "access" },
-            ]}
-            isLoading={loadingAccessRules}
-            records={accessRules}
-            entityName="Access Rules"
-            idField="prefix"
-          />
+                { label: "Access", elementKey: "access" },
+              ]}
+              isLoading={loadingAccessRules}
+              records={accessRules}
+              entityName="Access Rules"
+              idField="prefix"
+            />
+          )}
         </SecureComponent>
       </Grid>
     </Fragment>

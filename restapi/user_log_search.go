@@ -83,15 +83,15 @@ func getLogSearchResponse(session *models.Principal, params logApi.LogSearchPara
 	endpoint = fmt.Sprintf("%s&pageSize=%d", endpoint, *params.PageSize)
 	endpoint = fmt.Sprintf("%s&pageNo=%d", endpoint, *params.PageNo)
 
-	response, errLogSearch := logSearch(endpoint)
+	response, errLogSearch := logSearch(endpoint, getClientIP(params.HTTPRequest))
 	if errLogSearch != nil {
 		return nil, ErrorWithContext(ctx, errLogSearch)
 	}
 	return response, nil
 }
 
-func logSearch(endpoint string) (*models.LogSearchResponse, error) {
-	httpClnt := GetConsoleHTTPClient(endpoint)
+func logSearch(endpoint string, clientIP string) (*models.LogSearchResponse, error) {
+	httpClnt := GetConsoleHTTPClient(endpoint, clientIP)
 	resp, err := httpClnt.Get(endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("the Log Search API cannot be reached. Please review the URL and try again %v", err)

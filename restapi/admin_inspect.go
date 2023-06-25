@@ -29,7 +29,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	inspectApi "github.com/minio/console/restapi/operations/inspect"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 	"github.com/secure-io/sio-go"
 )
 
@@ -54,7 +54,7 @@ func registerInspectHandler(api *operations.ConsoleAPI) {
 
 func getInspectResult(session *models.Principal, params *inspectApi.InspectParams) ([]byte, io.ReadCloser, *models.Error) {
 	ctx := params.HTTPRequest.Context()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, nil, ErrorWithContext(ctx, err)
 	}

@@ -15,11 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BucketObjectItem } from "./ListObjects/types";
-import { IAllowResources } from "../../../types";
 import { encodeURLString } from "../../../../../common/utils";
 import { removeTrace } from "../../../ObjectBrowser/transferManager";
 import streamSaver from "streamsaver";
 import store from "../../../../../store";
+import { PermissionResource } from "api/consoleApi";
 
 export const download = (
   bucketName: string,
@@ -112,7 +112,9 @@ class DownloadHelper {
     let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     if (isSafari) {
       this.toastCallback();
-      this.downloadSafari();
+      this.downloadByBrowser();
+    } else if (!this.fileSize) {
+      this.downloadByBrowser();
     } else {
       this.download({
         url: this.path,
@@ -187,7 +189,7 @@ class DownloadHelper {
     }
   }
 
-  downloadSafari() {
+  downloadByBrowser() {
     const link = document.createElement("a");
     link.href = this.path;
     document.body.appendChild(link);
@@ -278,7 +280,7 @@ export const sortListObjects = (fieldSort: string) => {
 export const permissionItems = (
   bucketName: string,
   currentPath: string,
-  permissionsArray: IAllowResources[]
+  permissionsArray: PermissionResource[]
 ): BucketObjectItem[] | null => {
   if (permissionsArray.length === 0) {
     return null;
@@ -287,8 +289,8 @@ export const permissionItems = (
   // We get permissions applied to the current bucket
   const filteredPermissionsForBucket = permissionsArray.filter(
     (permissionItem) =>
-      permissionItem.resource.endsWith(`:${bucketName}`) ||
-      permissionItem.resource.includes(`:${bucketName}/`)
+      permissionItem.resource?.endsWith(`:${bucketName}`) ||
+      permissionItem.resource?.includes(`:${bucketName}/`)
   );
 
   // No permissions for this bucket. we can throw the error message at this point
@@ -296,7 +298,7 @@ export const permissionItems = (
     return null;
   }
 
-  const returnElements: BucketObjectItem[] = [];
+  let returnElements: BucketObjectItem[] = [];
 
   // We split current path
   const splitCurrentPath = currentPath.split("/");
@@ -305,8 +307,8 @@ export const permissionItems = (
     // We review paths in resource address
 
     // We split ARN & get the last item to check the URL
-    const splitARN = permissionElement.resource.split(":");
-    const urlARN = splitARN.pop() || "";
+    const splitARN = permissionElement.resource?.split(":");
+    const urlARN = splitARN?.pop() || "";
 
     // We split the paths of the URL & compare against current location to see if there are more items to include. In case current level is a wildcard or is the last one, we omit this validation
 
@@ -347,13 +349,21 @@ export const permissionItems = (
       permissionElement.conditionOperator === "StringEquals" ||
       permissionElement.conditionOperator === "StringLike"
     ) {
-      permissionElement.prefixes.forEach((prefixItem) => {
+      permissionElement.prefixes?.forEach((prefixItem) => {
         // Prefix Item is not empty?
         if (prefixItem !== "") {
           const splitItems = prefixItem.split("/");
 
           let pathToRouteElements: string[] = [];
 
+          // We verify if currentPath is contained in the path begin, if is not contained the  user has no access to this subpath
+          const cleanCurrPath = currentPath.replace(/\/$/, "");
+
+          if (!prefixItem.startsWith(cleanCurrPath) && currentPath !== "") {
+            return;
+          }
+
+          // For every split element we iterate and check if we can construct a URL
           splitItems.every((splitElement, index) => {
             if (!splitElement.includes("*") && splitElement !== "") {
               if (splitElement !== splitCurrentPath[index]) {
@@ -379,6 +389,21 @@ export const permissionItems = (
       });
     }
   });
+
+  // We clean duplicated name entries
+  if (returnElements.length > 0) {
+    let clElements: BucketObjectItem[] = [];
+    let keys: string[] = [];
+
+    returnElements.forEach((itm) => {
+      if (!keys.includes(itm.name)) {
+        clElements.push(itm);
+        keys.push(itm.name);
+      }
+    });
+
+    returnElements = clElements;
+  }
 
   return returnElements;
 };

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ILoginDetails, loginStrategyType } from "./types";
+import { LoginDetails } from "api/consoleApi";
 import {
   doLoginAsync,
   getFetchConfigurationAsync,
@@ -28,18 +28,14 @@ export interface LoginState {
   sts: string;
   useSTS: boolean;
   backgroundAnimation: boolean;
-
-  loginStrategy: ILoginDetails;
-
+  loginStrategy: LoginDetails;
   loginSending: boolean;
   loadingFetchConfiguration: boolean;
-
   latestMinIOVersion: string;
   loadingVersion: boolean;
-  isDirectPV: boolean;
   isK8S: boolean;
-
   navigateTo: string;
+  ssoEmbeddedIDPDisplay: boolean;
 }
 
 const initialState: LoginState = {
@@ -48,18 +44,17 @@ const initialState: LoginState = {
   sts: "",
   useSTS: false,
   loginStrategy: {
-    loginStrategy: loginStrategyType.unknown,
+    loginStrategy: undefined,
     redirectRules: [],
   },
   loginSending: false,
   loadingFetchConfiguration: true,
   latestMinIOVersion: "",
   loadingVersion: true,
-  isDirectPV: false,
   isK8S: false,
   backgroundAnimation: false,
-
   navigateTo: "",
+  ssoEmbeddedIDPDisplay: false,
 };
 
 export const loginSlice = createSlice({
@@ -80,6 +75,9 @@ export const loginSlice = createSlice({
     },
     setNavigateTo: (state, action: PayloadAction<string>) => {
       state.navigateTo = action.payload;
+    },
+    setDisplayEmbeddedIDPForms: (state, action: PayloadAction<boolean>) => {
+      state.ssoEmbeddedIDPDisplay = action.payload;
     },
     resetForm: (state) => initialState,
   },
@@ -107,7 +105,6 @@ export const loginSlice = createSlice({
         state.loadingFetchConfiguration = false;
         if (action.payload) {
           state.loginStrategy = action.payload;
-          state.isDirectPV = !!action.payload.isDirectPV;
           state.isK8S = !!action.payload.isK8S;
           state.backgroundAnimation = !!action.payload.animatedLogin;
         }
@@ -131,6 +128,7 @@ export const {
   setUseSTS,
   setSTS,
   setNavigateTo,
+  setDisplayEmbeddedIDPForms,
   resetForm,
 } = loginSlice.actions;
 

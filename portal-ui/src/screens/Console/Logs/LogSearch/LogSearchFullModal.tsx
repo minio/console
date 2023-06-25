@@ -15,14 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Grid } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, Grid } from "mds";
 import get from "lodash/get";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { IReqInfoSearchResults } from "./types";
 import { LogSearchColumnLabels } from "./utils";
 
@@ -30,27 +25,12 @@ interface ILogSearchFullModal {
   modalOpen: boolean;
   logSearchElement: IReqInfoSearchResults;
   onClose: () => void;
-  classes: any;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    objectKeyCol: {
-      fontWeight: 700,
-      paddingRight: "10px",
-      textAlign: "left",
-    },
-    ...modalBasic,
-  });
 
 const LogSearchFullModal = ({
   modalOpen,
   logSearchElement,
   onClose,
-  classes,
 }: ILogSearchFullModal) => {
   const jsonItems = Object.keys(logSearchElement);
 
@@ -69,7 +49,13 @@ const LogSearchFullModal = ({
               <tbody>
                 {jsonItems.map((objectKey: string, index: number) => (
                   <tr key={`logSearch-${index.toString()}`}>
-                    <th className={classes.objectKeyCol}>
+                    <th
+                      style={{
+                        fontWeight: 700,
+                        paddingRight: "10px",
+                        textAlign: "left",
+                      }}
+                    >
                       {get(LogSearchColumnLabels, objectKey, `${objectKey}`)}
                     </th>
                     <td>{get(logSearchElement, objectKey, "")}</td>
@@ -78,7 +64,11 @@ const LogSearchFullModal = ({
               </tbody>
             </table>
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
+          <Grid
+            item
+            xs={12}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
             <Button
               id={"close-log-search"}
               variant="callAction"
@@ -93,4 +83,4 @@ const LogSearchFullModal = ({
   );
 };
 
-export default withStyles(styles)(LogSearchFullModal);
+export default LogSearchFullModal;

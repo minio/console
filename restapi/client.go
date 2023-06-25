@@ -329,7 +329,7 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 	return s.stsAssumeRole.IsExpired()
 }
 
-func stsCredentials(minioURL, accessKey, secretKey, location string) (*credentials.Credentials, error) {
+func stsCredentials(minioURL, accessKey, secretKey, location, clientIP string) (*credentials.Credentials, error) {
 	if accessKey == "" || secretKey == "" {
 		return nil, errors.New("credentials endpoint, access and secret key are mandatory for AssumeRoleSTS")
 	}
@@ -340,7 +340,7 @@ func stsCredentials(minioURL, accessKey, secretKey, location string) (*credentia
 		DurationSeconds: int(xjwt.GetConsoleSTSDuration().Seconds()),
 	}
 	stsAssumeRole := &credentials.STSAssumeRole{
-		Client:      GetConsoleHTTPClient(minioURL),
+		Client:      GetConsoleHTTPClient(minioURL, clientIP),
 		STSEndpoint: minioURL,
 		Options:     opts,
 	}
@@ -348,7 +348,7 @@ func stsCredentials(minioURL, accessKey, secretKey, location string) (*credentia
 	return credentials.New(consoleSTSWrapper), nil
 }
 
-func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
+func NewConsoleCredentials(accessKey, secretKey, location, clientIP string) (*credentials.Credentials, error) {
 	minioURL := getMinIOServer()
 
 	// Future authentication methods can be added under this switch statement
@@ -356,7 +356,7 @@ func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 	// LDAP authentication for Console
 	case ldap.GetLDAPEnabled():
 		{
-			creds, err := auth.GetCredentialsFromLDAP(GetConsoleHTTPClient(minioURL), minioURL, accessKey, secretKey)
+			creds, err := auth.GetCredentialsFromLDAP(GetConsoleHTTPClient(minioURL, clientIP), minioURL, accessKey, secretKey)
 			if err != nil {
 				return nil, err
 			}
@@ -366,7 +366,7 @@ func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 
 			if err != nil && strings.Contains(strings.ToLower(err.Error()), "not found") {
 				// We try to use STS Credentials in case LDAP credentials are incorrect.
-				stsCreds, errSTS := stsCredentials(minioURL, accessKey, secretKey, location)
+				stsCreds, errSTS := stsCredentials(minioURL, accessKey, secretKey, location, clientIP)
 
 				// If there is an error with STS too, then we return the original LDAP error
 				if errSTS != nil {
@@ -390,7 +390,7 @@ func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 	// default authentication for Console is via STS (Security Token Service) against MinIO
 	default:
 		{
-			return stsCredentials(minioURL, accessKey, secretKey, location)
+			return stsCredentials(minioURL, accessKey, secretKey, location, clientIP)
 		}
 	}
 }
@@ -406,14 +406,14 @@ func getConsoleCredentialsFromSession(claims *models.Principal) *credentials.Cre
 
 // newMinioClient creates a new MinIO client based on the ConsoleCredentials extracted
 // from the provided session token
-func newMinioClient(claims *models.Principal) (*minio.Client, error) {
+func newMinioClient(claims *models.Principal, clientIP string) (*minio.Client, error) {
 	creds := getConsoleCredentialsFromSession(claims)
 	endpoint := getMinIOEndpoint()
 	secure := getMinIOEndpointIsSecure()
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:     creds,
 		Secure:    secure,
-		Transport: GetConsoleHTTPClient(getMinIOServer()).Transport,
+		Transport: GetConsoleHTTPClient(getMinIOServer(), clientIP).Transport,
 	})
 	if err != nil {
 		return nil, err
@@ -441,7 +441,7 @@ func computeObjectURLWithoutEncode(bucketName, prefix string) (string, error) {
 }
 
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
-func newS3BucketClient(claims *models.Principal, bucketName string, prefix string) (*mc.S3Client, error) {
+func newS3BucketClient(claims *models.Principal, bucketName string, prefix string, clientIP string) (*mc.S3Client, error) {
 	if claims == nil {
 		return nil, fmt.Errorf("the provided credentials are invalid")
 	}
@@ -450,7 +450,7 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 	if err != nil {
 		return nil, fmt.Errorf("the provided endpoint is invalid")
 	}
-	s3Config := newS3Config(objectURL, claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken)
+	s3Config := newS3Config(objectURL, claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, clientIP)
 	client, pErr := mc.S3New(s3Config)
 	if pErr != nil {
 		return nil, pErr.Cause
@@ -472,9 +472,10 @@ func pathJoinFinalSlash(elem ...string) string {
 	return path.Join(elem...)
 }
 
+// Deprecated
 // newS3Config simply creates a new Config struct using the passed
 // parameters.
-func newS3Config(endpoint, accessKey, secretKey, sessionToken string) *mc.Config {
+func newS3Config(endpoint, accessKey, secretKey, sessionToken string, clientIP string) *mc.Config {
 	// We have a valid alias and hostConfig. We populate the/
 	// consoleCredentials from the match found in the config file.
 	s3Config := new(mc.Config)
@@ -492,7 +493,7 @@ func newS3Config(endpoint, accessKey, secretKey, sessionToken string) *mc.Config
 	insecure := isLocalIPEndpoint(endpoint)
 
 	s3Config.Insecure = insecure
-	s3Config.Transport = PrepareSTSClientTransport(insecure)
+	s3Config.Transport = PrepareSTSClientTransport(insecure, clientIP).Transport
 
 	return s3Config
 }

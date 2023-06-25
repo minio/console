@@ -16,6 +16,9 @@ test-warnings:
 test-prettier:
 	./check-prettier.sh
 
+find-deadcode:
+	./check-deadcode.sh
+
 prettify:
 	yarn prettier --write . --loglevel warn
 

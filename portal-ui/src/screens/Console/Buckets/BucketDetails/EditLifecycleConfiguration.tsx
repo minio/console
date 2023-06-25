@@ -38,11 +38,6 @@ import {
 
 import { ITiersDropDown, LifeCycleItem } from "../types";
 import { ErrorResponseHandler } from "../../../../common/types";
-import {
-  ITierElement,
-  ITierResponse,
-} from "../../Configurations/TiersConfiguration/types";
-import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -52,6 +47,8 @@ import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/R
 
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { Tier } from "api/consoleApi";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -91,20 +88,20 @@ const EditLifecycleConfiguration = ({
   const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
   const [NCExpirationDays, setNCExpirationDays] = useState<string>("0");
   const [NCTransitionDays, setNCTransitionDays] = useState<string>("0");
-  const [ilmType, setIlmType] = useState<string>("expiry");
+  const [ilmType, setIlmType] = useState<"transition" | "expiry">("expiry");
   const [expiryDays, setExpiryDays] = useState<string>("0");
   const [transitionDays, setTransitionDays] = useState<string>("0");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   useEffect(() => {
     if (loadingTiers) {
-      api
-        .invoke("GET", `/api/v1/admin/tiers`)
-        .then((res: ITierResponse) => {
-          const tiersList: ITierElement[] | null = get(res, "items", []);
+      api.admin
+        .tiersList()
+        .then((res) => {
+          const tiersList: Tier[] | null = get(res.data, "items", []);
 
           if (tiersList !== null && tiersList.length >= 1) {
-            const objList = tiersList.map((tier: ITierElement) => {
+            const objList = tiersList.map((tier: Tier) => {
               const tierType = tier.type;
               const value = get(tier, `${tierType}.name`, "");
 
@@ -118,7 +115,7 @@ const EditLifecycleConfiguration = ({
           }
           setLoadingTiers(false);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch(() => {
           setLoadingTiers(false);
         });
     }
@@ -293,10 +290,10 @@ const EditLifecycleConfiguration = ({
         ...rules,
       };
 
-      api
-        .invoke(
-          "PUT",
-          `/api/v1/buckets/${selectedBucket}/lifecycle/${lifecycleRule.id}`,
+      api.buckets
+        .updateBucketLifecycle(
+          selectedBucket,
+          lifecycleRule.id,
           lifecycleUpdate
         )
         .then((res) => {

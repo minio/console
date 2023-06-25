@@ -28,6 +28,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
@@ -882,7 +884,7 @@ func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoP
 		prometheusURL = getPrometheusURL()
 	}
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -954,9 +956,7 @@ func getUsageWidgetsForDeployment(ctx context.Context, prometheusURL string, adm
 	return sessionResp, nil
 }
 
-func unmarshalPrometheus(ctx context.Context, endpoint string, data interface{}) bool {
-	httpClnt := GetConsoleHTTPClient(endpoint)
-
+func unmarshalPrometheus(ctx context.Context, httpClnt *http.Client, endpoint string, data interface{}) bool {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		ErrorWithContext(ctx, fmt.Errorf("Unable to create the request to fetch labels from prometheus: %w", err))
@@ -985,12 +985,14 @@ func unmarshalPrometheus(ctx context.Context, endpoint string, data interface{})
 }
 
 func testPrometheusURL(ctx context.Context, url string) bool {
+	clientIP := utils.ClientIPFromContext(ctx)
+	httpClnt := GetConsoleHTTPClient(url, clientIP)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url+"/-/healthy", nil)
 	if err != nil {
 		ErrorWithContext(ctx, fmt.Errorf("error Building Request: (%v)", err))
 		return false
 	}
-	response, err := GetConsoleHTTPClient(url).Do(req)
+	response, err := httpClnt.Do(req)
 	if err != nil {
 		ErrorWithContext(ctx, fmt.Errorf("default Prometheus URL not reachable, trying root testing: (%v)", err))
 		newTestURL := req.URL.Scheme + "://" + req.URL.Host + "/-/healthy"
@@ -999,7 +1001,7 @@ func testPrometheusURL(ctx context.Context, url string) bool {
 			ErrorWithContext(ctx, fmt.Errorf("error Building Root Request: (%v)", err))
 			return false
 		}
-		rootResponse, err := GetConsoleHTTPClient(newTestURL).Do(req2)
+		rootResponse, err := httpClnt.Do(req2)
 		if err != nil {
 			// URL & Root tests didn't work. Prometheus not reachable
 			ErrorWithContext(ctx, fmt.Errorf("root Prometheus URL not reachable: (%v)", err))
@@ -1021,6 +1023,8 @@ func getAdminInfoWidgetResponse(params systemApi.DashboardWidgetDetailsParams) (
 	if strings.TrimSpace(prometheusExtraLabels) != "" {
 		selector = fmt.Sprintf(`job="%s",%s`, prometheusJobID, prometheusExtraLabels)
 	}
+	clientIP := getClientIP(params.HTTPRequest)
+	ctx = context.WithValue(ctx, utils.ContextClientIP, clientIP)
 	return getWidgetDetails(ctx, prometheusURL, selector, params.WidgetID, params.Step, params.Start, params.End)
 }
 
@@ -1029,6 +1033,9 @@ func getWidgetDetails(ctx context.Context, prometheusURL string, selector string
 	if !testPrometheusURL(ctx, prometheusURL) {
 		return nil, ErrorWithContext(ctx, errors.New("prometheus URL is unreachable"))
 	}
+	clientIP := utils.ClientIPFromContext(ctx)
+	httpClnt := GetConsoleHTTPClient(prometheusURL, clientIP)
+
 	labelResultsCh := make(chan LabelResults)
 
 	for _, lbl := range labels {
@@ -1036,7 +1043,7 @@ func getWidgetDetails(ctx context.Context, prometheusURL string, selector string
 			endpoint := fmt.Sprintf("%s/api/v1/label/%s/values", prometheusURL, lbl.Name)
 
 			var response LabelResponse
-			if unmarshalPrometheus(ctx, endpoint, &response) {
+			if unmarshalPrometheus(ctx, httpClnt, endpoint, &response) {
 				return
 			}
 
@@ -1122,7 +1129,7 @@ LabelsWaitLoop:
 				endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", prometheusURL, apiType, url.QueryEscape(queryExpr), extraParamters)
 
 				var response PromResp
-				if unmarshalPrometheus(ctx, endpoint, &response) {
+				if unmarshalPrometheus(ctx, httpClnt, endpoint, &response) {
 					return
 				}
 

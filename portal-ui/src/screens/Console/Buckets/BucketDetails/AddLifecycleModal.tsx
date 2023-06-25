@@ -31,14 +31,8 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 
-import {
-  ITierElement,
-  ITierResponse,
-} from "../../Configurations/TiersConfiguration/types";
-import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import api from "../../../../common/api";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
@@ -52,7 +46,10 @@ import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMe
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { selDistSet, setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import { BucketVersioningInfo, ITiersDropDown } from "../types";
+import { ITiersDropDown } from "../types";
+import { api } from "api";
+import { BucketVersioningResponse, Tier } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 interface IReplicationModal {
   open: boolean;
@@ -84,12 +81,12 @@ const AddLifecycleModal = ({
   const [tiersList, setTiersList] = useState<ITiersDropDown[]>([]);
   const [addLoading, setAddLoading] = useState(false);
   const [versioningInfo, setVersioningInfo] =
-    useState<BucketVersioningInfo | null>(null);
+    useState<BucketVersioningResponse | null>(null);
   const [prefix, setPrefix] = useState("");
   const [tags, setTags] = useState<string>("");
   const [storageClass, setStorageClass] = useState("");
 
-  const [ilmType, setIlmType] = useState<string>("expiry");
+  const [ilmType, setIlmType] = useState<"expiry" | "transition">("expiry");
   const [targetVersion, setTargetVersion] = useState<"current" | "noncurrent">(
     "current"
   );
@@ -101,13 +98,13 @@ const AddLifecycleModal = ({
 
   useEffect(() => {
     if (loadingTiers) {
-      api
-        .invoke("GET", `/api/v1/admin/tiers`)
-        .then((res: ITierResponse) => {
-          const tiersList: ITierElement[] | null = get(res, "items", []);
+      api.admin
+        .tiersList()
+        .then((res) => {
+          const tiersList: Tier[] | null = get(res.data, "items", []);
 
           if (tiersList !== null && tiersList.length >= 1) {
-            const objList = tiersList.map((tier: ITierElement) => {
+            const objList = tiersList.map((tier: Tier) => {
               const tierType = tier.type;
               const value = get(tier, `${tierType}.name`, "");
 
@@ -121,7 +118,7 @@ const AddLifecycleModal = ({
           }
           setLoadingTiers(false);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch(() => {
           setLoadingTiers(false);
         });
     }
@@ -140,14 +137,14 @@ const AddLifecycleModal = ({
 
   useEffect(() => {
     if (loadingVersioning && distributedSetup) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-        .then((res: BucketVersioningInfo) => {
-          setVersioningInfo(res);
+      api.buckets
+        .getBucketVersioning(bucketName)
+        .then((res) => {
+          setVersioningInfo(res.data);
           setLoadingVersioning(false);
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setModalErrorSnackMessage(err));
+        .catch((err) => {
+          dispatch(setModalErrorSnackMessage(errorToHandler(err)));
           setLoadingVersioning(false);
         });
     }
@@ -192,19 +189,15 @@ const AddLifecycleModal = ({
       ...rules,
     };
 
-    api
-      .invoke(
-        "POST",
-        `/api/v1/buckets/${bucketName}/lifecycle`,
-        lifecycleInsert
-      )
+    api.buckets
+      .addBucketLifecycle(bucketName, lifecycleInsert)
       .then(() => {
         setAddLoading(false);
         closeModalAndRefresh(true);
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setAddLoading(false);
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err)));
       });
   };
 
@@ -245,8 +238,8 @@ const AddLifecycleModal = ({
                       id="ilm_type"
                       name="ilm_type"
                       label="Type of lifecycle"
-                      onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                        setIlmType(e.target.value as string);
+                      onChange={(e) => {
+                        setIlmType(e.target.value as "expiry" | "transition");
                       }}
                       selectorOptions={[
                         { value: "expiry", label: "Expiry" },

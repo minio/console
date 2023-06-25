@@ -45,9 +45,10 @@ import {
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 
 import RegionSelectWrapper from "./RegionSelectWrapper";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../../HelpMenu";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -309,6 +310,11 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
 
   const targetElement = tierTypes.find((item) => item.serviceName === type);
 
+  useEffect(() => {
+    dispatch(setHelpName("add-tier-configuration"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
       <PageHeaderWrapper
@@ -320,7 +326,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
             />
           </Fragment>
         }
-        actions={<React.Fragment />}
+        actions={<HelpMenu />}
       />
 
       <PageLayout>

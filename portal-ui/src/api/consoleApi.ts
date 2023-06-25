@@ -466,7 +466,6 @@ export interface LoginDetails {
     | "service-account"
     | "redirect-service-account";
   redirectRules?: RedirectRule[];
-  isDirectPV?: boolean;
   isK8S?: boolean;
   animatedLogin?: boolean;
 }

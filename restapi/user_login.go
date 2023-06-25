@@ -24,6 +24,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-openapi/errors"
+
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -31,7 +33,7 @@ import (
 	"github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/console/restapi/operations"
 	authApi "github.com/minio/console/restapi/operations/auth"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/pkg/env"
 )
@@ -89,6 +91,7 @@ func login(credentials ConsoleCredentialsI, sessionFeatures *auth.SessionFeature
 	if err != nil {
 		return nil, err
 	}
+
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
 	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), sessionFeatures)
 	if err != nil {
@@ -108,8 +111,8 @@ func getAccountInfo(ctx context.Context, client MinioAdmin) (*madmin.AccountInfo
 }
 
 // getConsoleCredentials will return ConsoleCredentials interface
-func getConsoleCredentials(accessKey, secretKey string) (*ConsoleCredentials, error) {
-	creds, err := NewConsoleCredentials(accessKey, secretKey, GetMinIORegion())
+func getConsoleCredentials(accessKey, secretKey, clientIP string) (*ConsoleCredentials, error) {
+	creds, err := NewConsoleCredentials(accessKey, secretKey, GetMinIORegion(), clientIP)
 	if err != nil {
 		return nil, err
 	}
@@ -133,9 +136,17 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *model
 			ConsoleCredentials: creds,
 			AccountAccessKey:   lr.AccessKey,
 		}
+
+		credsVerificate, _ := creds.Get()
+
+		if credsVerificate.SessionToken == "" || credsVerificate.SecretAccessKey == "" || credsVerificate.AccessKeyID == "" {
+			return nil, ErrorWithContext(ctx, errors.New(401, "Invalid STS Params"))
+		}
+
 	} else {
+		clientIP := getClientIP(params.HTTPRequest)
 		// prepare console credentials
-		consoleCreds, err = getConsoleCredentials(lr.AccessKey, lr.SecretKey)
+		consoleCreds, err = getConsoleCredentials(lr.AccessKey, lr.SecretKey, clientIP)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err, ErrInvalidLogin)
 		}
@@ -178,7 +189,7 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		for name, provider := range openIDProviders {
 			// initialize new oauth2 client
-			oauth2Client, err := openIDProviders.NewOauth2ProviderClient(name, nil, r, GetConsoleHTTPClient(""), GetConsoleHTTPClient(getMinIOServer()))
+			oauth2Client, err := openIDProviders.NewOauth2ProviderClient(name, nil, r, GetConsoleHTTPClient("", getClientIP(params.HTTPRequest)), GetConsoleHTTPClient(getMinIOServer(), getClientIP(params.HTTPRequest)))
 			if err != nil {
 				return nil, ErrorWithContext(ctx, err, ErrOauth2Provider)
 			}
@@ -257,7 +268,8 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProv
 		IDPName := requestItems.IDPName
 		state := requestItems.State
 		providerCfg := openIDProviders[IDPName]
-		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(IDPName, nil, r, GetConsoleHTTPClient(""), GetConsoleHTTPClient(getMinIOServer()))
+
+		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(IDPName, nil, r, GetConsoleHTTPClient("", getClientIP(params.HTTPRequest)), GetConsoleHTTPClient(getMinIOServer(), getClientIP(params.HTTPRequest)))
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}

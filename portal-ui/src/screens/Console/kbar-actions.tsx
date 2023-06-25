@@ -21,9 +21,9 @@ import { IAM_PAGES } from "../../common/SecureComponent/permissions";
 import { Bucket } from "../../api/consoleApi";
 
 export const routesAsKbarActions = (
-  features: string[] | null,
   buckets: Bucket[],
-  navigate: (url: string) => void
+  navigate: (url: string) => void,
+  features?: string[]
 ) => {
   const initialActions: Action[] = [];
   const allowedMenuItems = validRoutes(features);
@@ -34,8 +34,8 @@ export const routesAsKbarActions = (
           id: `${childI.id}`,
           name: childI.name,
           section: i.name,
-          perform: () => navigate(`${childI.to}`),
-          icon: <childI.icon />,
+          perform: () => navigate(`${childI.path}`),
+          icon: childI.icon,
         };
         initialActions.push(a);
       }
@@ -44,8 +44,8 @@ export const routesAsKbarActions = (
         id: `${i.id}`,
         name: i.name,
         section: "Navigation",
-        perform: () => navigate(`${i.to}`),
-        icon: <i.icon />,
+        perform: () => navigate(`${i.path}`),
+        icon: i.icon,
       };
       initialActions.push(a);
     }

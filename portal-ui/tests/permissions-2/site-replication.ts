@@ -17,12 +17,11 @@
 import * as roles from "../utils/roles";
 import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 import { Selector } from "testcafe";
+import { getMenuElement } from "../utils/elements-menu";
 
 let testDomainUrl = "http://localhost:9090";
 const screenUrl = `${testDomainUrl}${IAM_PAGES.SITE_REPLICATION}`;
-const siteReplicationEl = Selector(".MuiPaper-root")
-  .find("ul")
-  .child("#sitereplication");
+const siteReplicationEl = getMenuElement("sitereplication");
 export const addSitesBtn = Selector("button").withText("Add Sites");
 
 /* Begin Local Testing config block */

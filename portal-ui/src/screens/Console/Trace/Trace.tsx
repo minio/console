@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { Box, Grid } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
@@ -43,6 +43,8 @@ import {
 } from "./traceSlice";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
+import { setHelpName } from "../../../systemSlice";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -165,9 +167,15 @@ const Trace = ({ classes }: ITrace) => {
     dispatch(setTraceStarted(false));
   };
 
+  useEffect(() => {
+    dispatch(setHelpName("trace"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
-      <PageHeaderWrapper label={"Trace"} />
+      <PageHeaderWrapper label={"Trace"} actions={<HelpMenu />} />
+
       <PageLayout>
         <Grid container spacing={1} className={classes.formBox}>
           <Grid

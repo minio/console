@@ -2,6 +2,7 @@ import React from "react";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
+import { replaceUnicodeChar } from "../../../../../../common/utils";
 
 interface IIconWithLabel {
   classes: any;
@@ -34,7 +35,7 @@ const IconWithLabel = ({ classes, icon, strings }: IIconWithLabel) => {
     <div className={classes.fileName}>
       {icon}
       <span className={classes.fileNameText}>
-        {strings[strings.length - 1]}
+        {replaceUnicodeChar(strings[strings.length - 1])}
       </span>
     </div>
   );

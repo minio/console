@@ -28,7 +28,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -295,7 +294,7 @@ func decrypt(ciphertext, associatedData []byte) ([]byte, error) {
 		return nil, fmt.Errorf("invalid nonce size %d, expected %d", len(nonce), aead.NonceSize())
 	}
 
-	sealedBytes, err := ioutil.ReadAll(r)
+	sealedBytes, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}

@@ -22,6 +22,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/minio/console/pkg/utils"
+
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/console/pkg/auth/ldap"
@@ -33,7 +35,7 @@ func Test_getSessionResponse(t *testing.T) {
 		ctx     context.Context
 		session *models.Principal
 	}
-	ctx := context.Background()
+	ctx := context.WithValue(context.Background(), utils.ContextClientIP, "127.0.0.1")
 	tests := []struct {
 		name     string
 		args     args

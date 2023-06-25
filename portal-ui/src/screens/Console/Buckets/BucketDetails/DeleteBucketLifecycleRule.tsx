@@ -20,14 +20,14 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
 
 import { ConfirmDeleteIcon } from "mds";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import api from "../../../../common/api";
 
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IDeleteLifecycleRule {
   deleteOpen: boolean;
@@ -52,15 +52,15 @@ const DeleteBucketLifecycleRule = ({
 
   useEffect(() => {
     if (deletingRule) {
-      api
-        .invoke("DELETE", `/api/v1/buckets/${bucket}/lifecycle/${id}`)
-        .then((res) => {
+      api.buckets
+        .deleteBucketLifecycleRule(bucket, id)
+        .then(() => {
           setDeletingRule(false);
           onCloseAndRefresh(true);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setDeletingRule(false);
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         });
     }
   }, [deletingRule, bucket, id, onCloseAndRefresh, dispatch]);

@@ -24,7 +24,7 @@ import (
 	"time"
 
 	policies "github.com/minio/console/restapi/policy"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 
 	jwtgo "github.com/golang-jwt/jwt/v4"
 	"github.com/minio/pkg/bucket/policy/condition"
@@ -56,6 +56,7 @@ func registerSessionHandlers(api *operations.ConsoleAPI) {
 
 func getClaimsFromToken(sessionToken string) (map[string]interface{}, error) {
 	jp := new(jwtgo.Parser)
+	// nolint:staticcheck // ignore SA1019
 	jp.ValidMethods = []string{
 		"RS256", "RS384", "RS512", "ES256", "ES384", "ES512",
 		"RS3256", "RS3384", "RS3512", "ES3256", "ES3384", "ES3512",
@@ -78,9 +79,8 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		return nil, ErrorWithContext(ctx, ErrInvalidSession)
 	}
 	tokenClaims, _ := getClaimsFromToken(session.STSSessionToken)
-
 	// initialize admin client
-	mAdminClient, err := NewMinioAdminClient(&models.Principal{
+	mAdminClient, err := NewMinioAdminClient(ctx, &models.Principal{
 		STSAccessKeyID:     session.STSAccessKeyID,
 		STSSecretAccessKey: session.STSSecretAccessKey,
 		STSSessionToken:    session.STSSessionToken,

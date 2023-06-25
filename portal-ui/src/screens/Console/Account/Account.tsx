@@ -18,28 +18,20 @@ import React, { Fragment, useEffect, useState } from "react";
 import {
   AccountIcon,
   AddIcon,
+  Box,
   Button,
+  DataTable,
   DeleteIcon,
+  Grid,
   HelpBox,
   PageLayout,
   PasswordKeyIcon,
 } from "mds";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import Grid from "@mui/material/Grid";
-import api from "../../../common/api";
-import { Box } from "@mui/material";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
-import {
-  actionsTray,
-  searchField,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
+import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 
-import { ErrorResponseHandler } from "../../../common/types";
 import ChangePasswordModal from "./ChangePasswordModal";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
@@ -53,35 +45,27 @@ import { SecureComponent } from "../../../common/SecureComponent";
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
-import { setErrorSnackMessage, setSnackBarMessage } from "../../../systemSlice";
-import makeStyles from "@mui/styles/makeStyles";
+import {
+  setErrorSnackMessage,
+  setHelpName,
+  setSnackBarMessage,
+} from "../../../systemSlice";
 import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import HelpMenu from "../HelpMenu";
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount"))
-);
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    ...actionsTray,
-    ...searchField,
-    searchField: {
-      ...searchField.searchField,
-      marginRight: "auto",
-      maxWidth: 380,
-    },
-    ...tableStyles,
-  })
 );
 
 const Account = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const classes = useStyles();
   const features = useSelector(selFeatures);
 
   const [records, setRecords] = useState<string[]>([]);
@@ -104,17 +88,22 @@ const Account = () => {
   }, []);
 
   useEffect(() => {
+    dispatch(setHelpName("accessKeys"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (loading) {
-      api
-        .invoke("GET", `/api/v1/service-accounts`)
-        .then((res: string[]) => {
-          const serviceAccounts = res.sort(stringSort);
+      api.serviceAccounts
+        .listUserServiceAccounts()
+        .then((res) => {
+          const serviceAccounts = res.data.sort(stringSort);
 
           setLoading(false);
           setRecords(serviceAccounts);
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           setLoading(false);
         });
     }
@@ -128,6 +117,7 @@ const Account = () => {
     setDeleteOpen(false);
 
     if (refresh) {
+      setSelectedSAs([]);
       fetchRecords();
     }
   };
@@ -203,23 +193,24 @@ const Account = () => {
         open={changePasswordModalOpen}
         closeModal={() => setChangePasswordModalOpen(false)}
       />
-      <PageHeaderWrapper label="Access Keys" />
+      <PageHeaderWrapper label="Access Keys" actions={<HelpMenu />} />
+
       <PageLayout>
-        <Grid container spacing={1}>
-          <Grid item={true} xs={12} className={classes.actionsTray}>
+        <Grid container>
+          <Grid item xs={12} sx={{ ...actionsTray.actionsTray }}>
             <SearchBox
               placeholder={"Search Access Keys"}
               onChange={setFilter}
-              overrideClass={classes.searchField}
+              sx={{ marginRight: "auto", maxWidth: 380 }}
               value={filter}
             />
-
             <Box
               sx={{
                 display: "flex",
+                flexWrap: "nowrap",
+                gap: 5,
               }}
             >
-              {" "}
               <TooltipWrapper tooltip={"Delete Selected"}>
                 <Button
                   id={"delete-selected-accounts"}
@@ -247,32 +238,38 @@ const Account = () => {
                   disabled={userIDP}
                 />
               </SecureComponent>
-              <Button
-                id={"create-service-account"}
-                onClick={() => {
-                  navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
-                }}
-                label={`Create access key`}
-                icon={<AddIcon />}
-                variant={"callAction"}
-              />
+              <SecureComponent
+                scopes={[IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT]}
+                resource={CONSOLE_UI_RESOURCE}
+                matchAll
+                errorProps={{ disabled: true }}
+              >
+                <Button
+                  id={"create-service-account"}
+                  onClick={() => {
+                    navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
+                  }}
+                  label={`Create access key`}
+                  icon={<AddIcon />}
+                  variant={"callAction"}
+                />
+              </SecureComponent>
             </Box>
           </Grid>
 
-          <Grid item xs={12} className={classes.tableBlock}>
-            <TableWrapper
+          <Grid item xs={12}>
+            <DataTable
               isLoading={loading}
               records={filteredRecords}
               entityName={"Access Keys"}
-              idField={""}
-              columns={[{ label: "Access Key", elementKey: "" }]}
+              columns={[{ label: "Access Key" }]}
               itemActions={tableActions}
               selectedItems={selectedSAs}
               onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
               onSelectAll={selectAllItems}
             />
           </Grid>
-          <Grid item xs={12} marginTop={"15px"}>
+          <Grid item xs={12} sx={{ marginTop: 15 }}>
             <HelpBox
               title={"Learn more about ACCESS KEYS"}
               iconComponent={<AccountIcon />}
@@ -288,11 +285,8 @@ const Account = () => {
                   <br />
                   <br />
                   You can learn more at our{" "}
-                  {
-                    // TODO: Change this link once it is called access keys
-                  }
                   <a
-                    href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html?ref=con#service-accounts"
+                    href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html?ref=con#id3"
                     target="_blank"
                     rel="noopener"
                   >
