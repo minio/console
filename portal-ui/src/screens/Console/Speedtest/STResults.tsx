@@ -337,11 +337,7 @@ const STResults = ({ results, start }: ISTResults) => {
           <Grid container className={classes.resultsContainer}>
             {jsonView ? (
               <Fragment>
-                <CodeMirrorWrapper
-                  value={finalResJSON}
-                  readOnly
-                  onBeforeChange={() => {}}
-                />
+                <CodeMirrorWrapper value={finalResJSON} onChange={() => {}} />
               </Fragment>
             ) : (
               <Fragment>

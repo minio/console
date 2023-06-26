@@ -15,55 +15,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-
-import { Button, ChangeAccessPolicyIcon } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../Common/FormComponents/common/styleLibrary";
-
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import { Button, ChangeAccessPolicyIcon, Grid } from "mds";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    codeMirrorContainer: {
-      marginBottom: 20,
-      "& label": {
-        marginBottom: ".5rem",
-      },
-      "& label + div": {
-        display: "none",
-      },
-    },
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    ...spacingUtils,
-  });
-createStyles({
-  ...modalStyleUtils,
-  ...spacingUtils,
-});
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
 interface IServiceAccountPolicyProps {
-  classes: any;
   open: boolean;
   selectedAccessKey: string | null;
   closeModalAndRefresh: () => void;
 }
 
 const ServiceAccountPolicy = ({
-  classes,
   open,
   selectedAccessKey,
   closeModalAndRefresh,
@@ -117,17 +85,17 @@ const ServiceAccountPolicy = ({
         }}
       >
         <Grid container>
-          <Grid item xs={12} className={classes.codeMirrorContainer}>
+          <Grid item xs={12}>
             <CodeMirrorWrapper
               label={`Access Key Policy`}
               value={policyDefinition}
-              onBeforeChange={(editor, data, value) => {
+              onChange={(value) => {
                 setPolicyDefinition(value);
               }}
               editorHeight={"350px"}
             />
           </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
+          <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
             <Button
               id={"cancel-sa-policy"}
               type="button"
@@ -153,4 +121,4 @@ const ServiceAccountPolicy = ({
   );
 };
 
-export default withStyles(styles)(ServiceAccountPolicy);
+export default ServiceAccountPolicy;
