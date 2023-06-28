@@ -197,8 +197,8 @@ export const actionsTray = {
   actionsTray: {
     display: "flex" as const,
     justifyContent: "space-between" as const,
-    marginBottom: "1rem",
     alignItems: "center",
+    marginBottom: "1rem",
     "& button": {
       flexGrow: 0,
       marginLeft: 8,

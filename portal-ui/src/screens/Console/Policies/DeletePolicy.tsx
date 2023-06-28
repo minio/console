@@ -14,9 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-
-import { DialogContentText } from "@mui/material";
+import React, { Fragment } from "react";
 import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
@@ -65,10 +63,10 @@ const DeletePolicy = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           Are you sure you want to delete policy <br />
           <b>{selectedPolicy}</b>?
-        </DialogContentText>
+        </Fragment>
       }
     />
   );

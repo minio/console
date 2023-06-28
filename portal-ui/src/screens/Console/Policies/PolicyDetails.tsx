@@ -19,34 +19,23 @@ import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   BackLink,
+  Box,
   Button,
-  IAMPoliciesIcon,
-  RefreshIcon,
-  SearchIcon,
-  SectionTitle,
-  TrashIcon,
-  PageLayout,
+  DataTable,
   Grid,
+  IAMPoliciesIcon,
+  PageLayout,
+  RefreshIcon,
+  ScreenTitle,
+  SectionTitle,
+  Tabs,
+  TrashIcon,
 } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  actionsTray,
-  containerForHeader,
-  modalBasic,
-  searchField,
-} from "../Common/FormComponents/common/styleLibrary";
-import Paper from "@mui/material/Paper";
-import { Grid as MUIGrid, LinearProgress } from "@mui/material";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
+import { LinearProgress } from "@mui/material";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import InputAdornment from "@mui/material/InputAdornment";
-import TextField from "@mui/material/TextField";
-import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 
 import {
   CONSOLE_UI_RESOURCE,
@@ -87,38 +76,11 @@ import {
 } from "../../../api/consoleApi";
 import { api } from "../../../api";
 import HelpMenu from "../HelpMenu";
+import SearchBox from "../Common/SearchBox";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
-const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      display: "flex",
-      justifyContent: "flex-end",
-      paddingTop: 16,
-      "& button": {
-        marginLeft: 8,
-      },
-    },
-    pageContainer: {
-      border: "1px solid #EAEAEA",
-      height: "100%",
-    },
-    paperContainer: {
-      padding: "15px 15px 15px 50px",
-      minHeight: "450px",
-    },
-    ...actionsTray,
-    ...searchField,
-    ...modalBasic,
-    ...containerForHeader,
-  });
-
-interface IPolicyDetailsProps {
-  classes: any;
-}
-
-const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
+const PolicyDetails = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
@@ -140,6 +102,7 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
   const [filterGroups, setFilterGroups] = useState<string>("");
   const [loadingGroups, setLoadingGroups] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [selectedTab, setSelectedTab] = useState<string>("summary");
 
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
 
@@ -386,271 +349,284 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
         }
         actions={<HelpMenu />}
       />
-      <PageLayout className={classes.pageContainer}>
-        <MUIGrid container spacing={1}>
-          <Grid item xs={12}>
-            <ScreenTitle
-              icon={
-                <Fragment>
-                  <IAMPoliciesIcon width={40} />
-                </Fragment>
-              }
-              title={policyName}
-              subTitle={<Fragment>IAM Policy</Fragment>}
-              actions={
-                <Fragment>
-                  <SecureComponent
-                    scopes={[IAM_SCOPES.ADMIN_DELETE_POLICY]}
-                    resource={CONSOLE_UI_RESOURCE}
-                    errorProps={{ disabled: true }}
-                  >
-                    <TooltipWrapper
-                      tooltip={
-                        canDeletePolicy
-                          ? ""
-                          : permissionTooltipHelper(
-                              deletePolicyPermissions,
-                              "delete Policies"
-                            )
+      <PageLayout>
+        <ScreenTitle
+          icon={<IAMPoliciesIcon width={40} />}
+          title={policyName}
+          subTitle={<Fragment>IAM Policy</Fragment>}
+          actions={
+            <Fragment>
+              <SecureComponent
+                scopes={[IAM_SCOPES.ADMIN_DELETE_POLICY]}
+                resource={CONSOLE_UI_RESOURCE}
+                errorProps={{ disabled: true }}
+              >
+                <TooltipWrapper
+                  tooltip={
+                    canDeletePolicy
+                      ? ""
+                      : permissionTooltipHelper(
+                          deletePolicyPermissions,
+                          "delete Policies"
+                        )
+                  }
+                >
+                  <Button
+                    id={"delete-policy"}
+                    label={"Delete Policy"}
+                    variant="secondary"
+                    icon={<TrashIcon />}
+                    onClick={deletePolicy}
+                    disabled={!canDeletePolicy}
+                  />
+                </TooltipWrapper>
+              </SecureComponent>
+
+              <TooltipWrapper tooltip={"Refresh"}>
+                <Button
+                  id={"refresh-policy"}
+                  label={"Refresh"}
+                  variant="regular"
+                  icon={<RefreshIcon />}
+                  onClick={() => {
+                    refreshPolicyDetails();
+                  }}
+                />
+              </TooltipWrapper>
+            </Fragment>
+          }
+          sx={{ marginBottom: 15 }}
+        />
+        <Box>
+          <Tabs
+            options={[
+              {
+                tabConfig: {
+                  label: "Summary",
+                  disabled: !displayPolicy,
+                  id: "summary",
+                },
+                content: (
+                  <Fragment>
+                    <Grid
+                      onMouseMove={() =>
+                        dispatch(setHelpName("policy_details_summary"))
                       }
                     >
-                      <Button
-                        id={"delete-policy"}
-                        label={"Delete Policy"}
-                        variant="secondary"
-                        icon={<TrashIcon />}
-                        onClick={deletePolicy}
-                        disabled={!canDeletePolicy}
-                      />
-                    </TooltipWrapper>
-                  </SecureComponent>
-
-                  <TooltipWrapper tooltip={"Refresh"}>
-                    <Button
-                      id={"refresh-policy"}
-                      label={"Refresh"}
-                      variant="regular"
-                      icon={<RefreshIcon />}
-                      onClick={() => {
-                        refreshPolicyDetails();
-                      }}
-                    />
-                  </TooltipWrapper>
-                </Fragment>
-              }
-            />
-          </Grid>
-
-          <VerticalTabs>
-            {{
-              tabConfig: { label: "Summary", disabled: !displayPolicy },
-              content: (
-                <Fragment>
-                  <Grid
-                    onMouseMove={() =>
-                      dispatch(setHelpName("policy_details_summary"))
-                    }
-                  >
-                    <SectionTitle separator sx={{ marginBottom: 15 }}>
-                      Policy Summary
-                    </SectionTitle>
-                    <Paper className={classes.paperContainer}>
-                      <PolicyView policyStatements={policyStatements} />
-                    </Paper>
-                  </Grid>
-                </Fragment>
-              ),
-            }}
-            {{
-              tabConfig: {
-                label: "Users",
-                disabled: !displayUsers || ldapIsEnabled,
-              },
-              content: (
-                <Fragment>
-                  <Grid
-                    onMouseMove={() =>
-                      dispatch(setHelpName("policy_details_users"))
-                    }
-                  >
-                    <SectionTitle separator sx={{ marginBottom: 15 }}>
-                      Users
-                    </SectionTitle>
-                    <Grid container>
-                      {userList.length > 0 && (
-                        <Grid item xs={12} className={classes.actionsTray}>
-                          <TextField
-                            placeholder="Search Users"
-                            className={classes.searchField}
-                            id="search-resource"
-                            label=""
-                            onChange={(val) => {
-                              setFilterUsers(val.target.value);
-                            }}
-                            InputProps={{
-                              disableUnderline: true,
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <SearchIcon />
-                                </InputAdornment>
-                              ),
-                            }}
-                            variant="standard"
-                          />
-                        </Grid>
-                      )}
-                      <TableWrapper
-                        itemActions={userTableActions}
-                        columns={[{ label: "Name", elementKey: "name" }]}
-                        isLoading={loadingUsers}
-                        records={filteredUsers}
-                        entityName="Users with this Policy associated"
-                        idField="name"
-                      />
+                      <SectionTitle separator sx={{ marginBottom: 15 }}>
+                        Policy Summary
+                      </SectionTitle>
+                      <Box withBorders>
+                        <PolicyView policyStatements={policyStatements} />
+                      </Box>
                     </Grid>
-                  </Grid>
-                </Fragment>
-              ),
-            }}
-            {{
-              tabConfig: {
-                label: "Groups",
-                disabled: !displayGroups || ldapIsEnabled,
+                  </Fragment>
+                ),
               },
-              content: (
-                <Fragment>
-                  <Grid
-                    onMouseMove={() =>
-                      dispatch(setHelpName("policy_details_groups"))
-                    }
-                  >
-                    <SectionTitle separator sx={{ marginBottom: 15 }}>
-                      Groups
-                    </SectionTitle>
-                    <Grid container>
-                      {groupList.length > 0 && (
-                        <Grid item xs={12} className={classes.actionsTray}>
-                          <TextField
-                            placeholder="Search Groups"
-                            className={classes.searchField}
-                            id="search-resource"
-                            label=""
-                            onChange={(val) => {
-                              setFilterGroups(val.target.value);
-                            }}
-                            InputProps={{
-                              disableUnderline: true,
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <SearchIcon />
-                                </InputAdornment>
-                              ),
-                            }}
-                            variant="standard"
-                          />
-                        </Grid>
-                      )}
-                      <TableWrapper
-                        itemActions={groupTableActions}
-                        columns={[{ label: "Name", elementKey: "name" }]}
-                        isLoading={loadingGroups}
-                        records={filteredGroups}
-                        entityName="Groups with this Policy associated"
-                        idField="name"
-                      />
-                    </Grid>
-                  </Grid>
-                </Fragment>
-              ),
-            }}
-            {{
-              tabConfig: { label: "Raw Policy", disabled: !displayPolicy },
-              content: (
-                <Fragment>
-                  <Grid
-                    onMouseMove={() =>
-                      dispatch(setHelpName("policy_details_policy"))
-                    }
-                  >
-                    <SectionTitle separator sx={{ marginBottom: 15 }}>
-                      Raw Policy
-                    </SectionTitle>
-                    <form
-                      noValidate
-                      autoComplete="off"
-                      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                        saveRecord(e);
-                      }}
+              {
+                tabConfig: {
+                  label: "Users",
+                  disabled: !displayUsers || ldapIsEnabled,
+                  id: "users",
+                },
+                content: (
+                  <Fragment>
+                    <Grid
+                      onMouseMove={() =>
+                        dispatch(setHelpName("policy_details_users"))
+                      }
                     >
+                      <SectionTitle separator sx={{ marginBottom: 15 }}>
+                        Users
+                      </SectionTitle>
                       <Grid container>
-                        <Grid item xs={12}>
-                          <CodeMirrorWrapper
-                            value={policyDefinition}
-                            onChange={(value) => {
-                              if (canEditPolicy) {
-                                setPolicyDefinition(value);
-                              }
+                        {userList.length > 0 && (
+                          <Grid
+                            item
+                            xs={12}
+                            sx={{
+                              ...actionsTray.actionsTray,
+                              marginBottom: 15,
                             }}
-                            editorHeight={"350px"}
-                          />
-                        </Grid>
-                        <Grid item xs={12} className={classes.buttonContainer}>
-                          {!policy && (
-                            <button
-                              type="button"
-                              color="primary"
-                              className={classes.clearButton}
-                              onClick={() => {
-                                resetForm();
-                              }}
-                            >
-                              Clear
-                            </button>
-                          )}
-                          <SecureComponent
-                            scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
-                            resource={CONSOLE_UI_RESOURCE}
-                            errorProps={{ disabled: true }}
                           >
-                            <TooltipWrapper
-                              tooltip={
-                                canEditPolicy
-                                  ? ""
-                                  : permissionTooltipHelper(
-                                      createPolicyPermissions,
-                                      "edit a Policy"
-                                    )
-                              }
-                            >
-                              <Button
-                                id={"save"}
-                                type="submit"
-                                variant="callAction"
-                                color="primary"
-                                disabled={
-                                  addLoading || !validSave || !canEditPolicy
-                                }
-                                label={"Save"}
-                              />
-                            </TooltipWrapper>
-                          </SecureComponent>
-                        </Grid>
-                        {addLoading && (
-                          <Grid item xs={12}>
-                            <LinearProgress />
+                            <SearchBox
+                              value={filterUsers}
+                              placeholder={"Search Users"}
+                              id="search-resource"
+                              onChange={(val) => {
+                                setFilterUsers(val);
+                              }}
+                            />
                           </Grid>
                         )}
+                        <DataTable
+                          itemActions={userTableActions}
+                          columns={[{ label: "Name", elementKey: "name" }]}
+                          isLoading={loadingUsers}
+                          records={filteredUsers}
+                          entityName="Users with this Policy associated"
+                          idField="name"
+                          customPaperHeight={"500px"}
+                        />
                       </Grid>
-                    </form>
-                  </Grid>
-                </Fragment>
-              ),
-            }}
-          </VerticalTabs>
-        </MUIGrid>
+                    </Grid>
+                  </Fragment>
+                ),
+              },
+              {
+                tabConfig: {
+                  label: "Groups",
+                  disabled: !displayGroups || ldapIsEnabled,
+                  id: "groups",
+                },
+                content: (
+                  <Fragment>
+                    <Grid
+                      onMouseMove={() =>
+                        dispatch(setHelpName("policy_details_groups"))
+                      }
+                    >
+                      <SectionTitle separator sx={{ marginBottom: 15 }}>
+                        Groups
+                      </SectionTitle>
+                      <Grid container>
+                        {groupList.length > 0 && (
+                          <Grid
+                            item
+                            xs={12}
+                            sx={{
+                              ...actionsTray.actionsTray,
+                              marginBottom: 15,
+                            }}
+                          >
+                            <SearchBox
+                              value={filterUsers}
+                              placeholder={"Search Groups"}
+                              id="search-resource"
+                              onChange={(val) => {
+                                setFilterGroups(val);
+                              }}
+                            />
+                          </Grid>
+                        )}
+                        <DataTable
+                          itemActions={groupTableActions}
+                          columns={[{ label: "Name", elementKey: "name" }]}
+                          isLoading={loadingGroups}
+                          records={filteredGroups}
+                          entityName="Groups with this Policy associated"
+                          idField="name"
+                          customPaperHeight={"500px"}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Fragment>
+                ),
+              },
+              {
+                tabConfig: {
+                  label: "Raw Policy",
+                  disabled: !displayPolicy,
+                  id: "raw-policy",
+                },
+                content: (
+                  <Fragment>
+                    <Grid
+                      onMouseMove={() =>
+                        dispatch(setHelpName("policy_details_policy"))
+                      }
+                    >
+                      <SectionTitle separator sx={{ marginBottom: 15 }}>
+                        Raw Policy
+                      </SectionTitle>
+                      <form
+                        noValidate
+                        autoComplete="off"
+                        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                          saveRecord(e);
+                        }}
+                      >
+                        <Grid container>
+                          <Grid item xs={12}>
+                            <CodeMirrorWrapper
+                              value={policyDefinition}
+                              onChange={(value) => {
+                                if (canEditPolicy) {
+                                  setPolicyDefinition(value);
+                                }
+                              }}
+                              editorHeight={"350px"}
+                            />
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "flex-end",
+                              paddingTop: 16,
+                              gap: 8,
+                            }}
+                          >
+                            {!policy && (
+                              <Button
+                                type="button"
+                                variant={"regular"}
+                                id={"clear-policy"}
+                                onClick={() => {
+                                  resetForm();
+                                }}
+                              >
+                                Clear
+                              </Button>
+                            )}
+                            <SecureComponent
+                              scopes={[IAM_SCOPES.ADMIN_CREATE_POLICY]}
+                              resource={CONSOLE_UI_RESOURCE}
+                              errorProps={{ disabled: true }}
+                            >
+                              <TooltipWrapper
+                                tooltip={
+                                  canEditPolicy
+                                    ? ""
+                                    : permissionTooltipHelper(
+                                        createPolicyPermissions,
+                                        "edit a Policy"
+                                      )
+                                }
+                              >
+                                <Button
+                                  id={"save"}
+                                  type="submit"
+                                  variant="callAction"
+                                  color="primary"
+                                  disabled={
+                                    addLoading || !validSave || !canEditPolicy
+                                  }
+                                  label={"Save"}
+                                />
+                              </TooltipWrapper>
+                            </SecureComponent>
+                          </Grid>
+                          {addLoading && (
+                            <Grid item xs={12}>
+                              <LinearProgress />
+                            </Grid>
+                          )}
+                        </Grid>
+                      </form>
+                    </Grid>
+                  </Fragment>
+                ),
+              },
+            ]}
+            currentTabOrPath={selectedTab}
+            onTabClick={(tab) => setSelectedTab(tab)}
+          />
+        </Box>
       </PageLayout>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(PolicyDetails);
+export default PolicyDetails;
