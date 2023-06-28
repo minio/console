@@ -14,53 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
-
-import Grid from "@mui/material/Grid";
-import { Button, EventSubscriptionIcon } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
-import Checkbox from "@mui/material/Checkbox";
-import Table from "@mui/material/Table";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
-
+import React, { useCallback, useEffect, useState } from "react";
+import { Button, DataTable, EventSubscriptionIcon, Grid, InputBox } from "mds";
 import { ErrorResponseHandler } from "../../../../common/types";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper/AutocompleteWrapper";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { api } from "api";
 import { NotificationEventType } from "api/consoleApi";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    arnField: {
-      "& div div .MuiOutlinedInput-root": {
-        padding: 0,
-      },
-    },
-    ...formFieldStyles,
-    ...modalStyleUtils,
-  });
+import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
+import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper/AutocompleteWrapper";
+import {
+  formFieldStyles,
+  modalBasic,
+  modalStyleUtils,
+} from "../../Common/FormComponents/common/styleLibrary";
 
 interface IAddEventProps {
-  classes: any;
   open: boolean;
   selectedBucket: string;
   closeModalAndRefresh: () => void;
 }
 
 const AddEvent = ({
-  classes,
   open,
   selectedBucket,
   closeModalAndRefresh,
@@ -125,28 +100,27 @@ const AddEvent = ({
     { label: "PUT - Object Uploaded", value: NotificationEventType.Put },
     { label: "GET - Object accessed", value: NotificationEventType.Get },
     { label: "DELETE - Object Deleted", value: NotificationEventType.Delete },
+    {
+      label: "REPLICA - Object Replicated",
+      value: NotificationEventType.Replica,
+    },
+    { label: "ILM - Object Transitioned", value: NotificationEventType.Ilm },
   ];
 
-  const handleClick = (
-    event: React.MouseEvent<unknown> | ChangeEvent<unknown>,
-    name: NotificationEventType
-  ) => {
-    const selectedIndex = selectedEvents.indexOf(name);
-    let newSelected: NotificationEventType[] = [];
+  const handleClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const targetD = event.target;
+    const value = targetD.value;
+    const checked = targetD.checked;
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selectedEvents, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selectedEvents.slice(1));
-    } else if (selectedIndex === selectedEvents.length - 1) {
-      newSelected = newSelected.concat(selectedEvents.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selectedEvents.slice(0, selectedIndex),
-        selectedEvents.slice(selectedIndex + 1)
-      );
+    let elements: NotificationEventType[] = [...selectedEvents];
+
+    if (checked) {
+      elements.push(value as NotificationEventType);
+    } else {
+      elements = elements.filter((element) => element !== value);
     }
-    setSelectedEvents(newSelected);
+
+    setSelectedEvents(elements);
   };
 
   const arnValues = arnList?.map((arnConstant) => ({
@@ -171,11 +145,16 @@ const AddEvent = ({
         }}
       >
         <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
+          <Grid item xs={12} sx={modalBasic.formScrollable}>
             <Grid
               item
               xs={12}
-              className={`${classes.arnField} ${classes.formFieldRow}`}
+              sx={{
+                ...formFieldStyles.formFieldRow,
+                "& div div .MuiOutlinedInput-root": {
+                  padding: 0,
+                },
+              }}
             >
               <AutocompleteWrapper
                 onChange={(value: string) => {
@@ -188,8 +167,8 @@ const AddEvent = ({
                 options={arnValues || []}
               />
             </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
+            <Grid item xs={12} sx={formFieldStyles.formFieldRow}>
+              <InputBox
                 id="prefix-input"
                 name="prefix-input"
                 label="Prefix"
@@ -199,8 +178,8 @@ const AddEvent = ({
                 }}
               />
             </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
+            <Grid item xs={12} sx={formFieldStyles.formFieldRow}>
+              <InputBox
                 id="suffix-input"
                 name="suffix-input"
                 label="Suffix"
@@ -210,41 +189,19 @@ const AddEvent = ({
                 }}
               />
             </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <Table size="medium">
-                <TableHead className={classes.minTableHeader}>
-                  <TableRow>
-                    <TableCell>Select</TableCell>
-                    <TableCell>Event</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {events.map((row) => (
-                    <TableRow
-                      key={`group-${row.value}`}
-                      onClick={(event) => handleClick(event, row.value)}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          value={row.value}
-                          color="primary"
-                          inputProps={{
-                            "aria-label": "secondary checkbox",
-                          }}
-                          onChange={(event) => handleClick(event, row.value)}
-                          checked={selectedEvents.includes(row.value)}
-                        />
-                      </TableCell>
-                      <TableCell className={classes.wrapCell}>
-                        {row.label}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <Grid item xs={12} sx={formFieldStyles.formFieldRow}>
+              <DataTable
+                columns={[{ label: "Event", elementKey: "label" }]}
+                idField={"value"}
+                records={events}
+                onSelect={handleClick}
+                selectedItems={selectedEvents}
+                noBackground
+                customPaperHeight={"260px"}
+              />
             </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
+          <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
             <Button
               id={"cancel-add-event"}
               type="button"
@@ -259,7 +216,7 @@ const AddEvent = ({
               id={"save-event"}
               type="submit"
               variant="callAction"
-              disabled={addLoading}
+              disabled={addLoading || arn === "" || selectedEvents.length === 0}
               label={"Save"}
             />
           </Grid>
@@ -269,4 +226,4 @@ const AddEvent = ({
   );
 };
 
-export default withStyles(styles)(AddEvent);
+export default AddEvent;

@@ -23,7 +23,7 @@ require (
 	github.com/minio/kes v0.22.3
 	github.com/minio/madmin-go/v3 v3.0.2
 	github.com/minio/mc v0.0.0-20230619193119-5f39522e6902
-	github.com/minio/minio-go/v7 v7.0.55-0.20230525060734-b7836f021bfb
+	github.com/minio/minio-go/v7 v7.0.58-0.20230622175401-7048a16cfbca
 	github.com/minio/pkg v1.7.5
 	github.com/minio/selfupdate v0.6.0
 	github.com/minio/websocket v1.6.0
