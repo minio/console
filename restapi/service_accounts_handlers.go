@@ -32,7 +32,7 @@ import (
 	"github.com/minio/console/restapi/operations"
 	saApi "github.com/minio/console/restapi/operations/service_account"
 	"github.com/minio/madmin-go/v3"
-	iampolicy "github.com/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/v2/policy"
 )
 
 func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {

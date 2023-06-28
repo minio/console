@@ -34,7 +34,7 @@ import (
 	"github.com/minio/madmin-go/v3"
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	iampolicy "github.com/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/v2/policy"
 )
 
 const globalAppName = "MinIO Console"

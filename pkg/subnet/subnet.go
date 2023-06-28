@@ -25,7 +25,7 @@ import (
 
 	"github.com/minio/console/pkg/http"
 
-	"github.com/minio/pkg/licverifier"
+	"github.com/minio/pkg/v2/licverifier"
 
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go/v3"
