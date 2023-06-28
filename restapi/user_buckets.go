@@ -40,7 +40,7 @@ import (
 	bucketApi "github.com/minio/console/restapi/operations/bucket"
 	"github.com/minio/minio-go/v7/pkg/policy"
 	"github.com/minio/minio-go/v7/pkg/replication"
-	minioIAMPolicy "github.com/minio/pkg/iam/policy"
+	minioIAMPolicy "github.com/minio/pkg/v2/policy"
 )
 
 func registerBucketsHandlers(api *operations.ConsoleAPI) {

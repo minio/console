@@ -36,7 +36,7 @@ import (
 
 	"github.com/minio/madmin-go/v3"
 	mc "github.com/minio/mc/cmd"
-	"github.com/minio/pkg/env"
+	"github.com/minio/pkg/v2/env"
 )
 
 const (
