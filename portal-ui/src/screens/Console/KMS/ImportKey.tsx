@@ -126,7 +126,7 @@ const ImportKey = () => {
                   <CodeMirrorWrapper
                     label={"Set key Content"}
                     value={keyContent}
-                    onBeforeChange={(editor, data, value) => {
+                    onChange={(value) => {
                       setKeyContent(value);
                     }}
                     editorHeight={"350px"}
