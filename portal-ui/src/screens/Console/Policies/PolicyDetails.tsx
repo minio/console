@@ -585,10 +585,11 @@ const PolicyDetails = ({ classes }: IPolicyDetailsProps) => {
                       <Grid container>
                         <Grid item xs={12}>
                           <CodeMirrorWrapper
-                            readOnly={!canEditPolicy}
                             value={policyDefinition}
-                            onBeforeChange={(editor, data, value) => {
-                              setPolicyDefinition(value);
+                            onChange={(value) => {
+                              if (canEditPolicy) {
+                                setPolicyDefinition(value);
+                              }
                             }}
                             editorHeight={"350px"}
                           />

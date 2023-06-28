@@ -137,7 +137,7 @@ const AddPolicyScreen = () => {
                   <CodeMirrorWrapper
                     label={"Write Policy"}
                     value={policyDefinition}
-                    onBeforeChange={(editor, data, value) => {
+                    onChange={(value) => {
                       setPolicyDefinition(value);
                     }}
                     editorHeight={"350px"}
