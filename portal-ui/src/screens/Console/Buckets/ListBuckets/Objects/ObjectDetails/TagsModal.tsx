@@ -38,11 +38,16 @@ import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions
 import { SecureComponent } from "../../../../../../common/SecureComponent";
 import Chip from "@mui/material/Chip";
 import CloseIcon from "@mui/icons-material/Close";
-import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
+import {
+  selDistSet,
+  setModalErrorSnackMessage,
+} from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
 import { BucketObject } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
+import { encodeURLString } from "common/utils";
+import { useSelector } from "react-redux";
 
 interface ITagModal {
   modalOpen: boolean;
@@ -98,12 +103,15 @@ const AddTagModal = ({
   classes,
 }: ITagModal) => {
   const dispatch = useAppDispatch();
+  const distributedSetup = useSelector(selDistSet);
   const [newKey, setNewKey] = useState<string>("");
   const [newLabel, setNewLabel] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
   const [deleteEnabled, setDeleteEnabled] = useState<boolean>(false);
   const [deleteKey, setDeleteKey] = useState<string>("");
   const [deleteLabel, setDeleteLabel] = useState<string>("");
+
+  const selectedObject = encodeURLString(actualInfo.name || "");
 
   const currentTags = actualInfo.tags;
   const currTagKeys = Object.keys(currentTags || {});
@@ -123,8 +131,14 @@ const AddTagModal = ({
     newTag[newKey] = newLabel;
     const newTagList = { ...currentTags, ...newTag };
 
+    const verID = distributedSetup ? actualInfo.version_id || "" : "null";
+
     api.buckets
-      .putBucketTags(bucketName, { tags: newTagList })
+      .putObjectTags(
+        bucketName,
+        { prefix: selectedObject, version_id: verID },
+        { tags: newTagList }
+      )
       .then(() => {
         onCloseAndUpdate(true);
         setIsSending(false);
@@ -139,8 +153,14 @@ const AddTagModal = ({
     const cleanObject: any = { ...currentTags };
     delete cleanObject[deleteKey];
 
+    const verID = distributedSetup ? actualInfo.version_id || "" : "null";
+
     api.buckets
-      .putBucketTags(bucketName, { tags: cleanObject })
+      .putObjectTags(
+        bucketName,
+        { prefix: selectedObject, version_id: verID },
+        { tags: cleanObject }
+      )
       .then(() => {
         onCloseAndUpdate(true);
         setIsSending(false);
