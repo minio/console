@@ -73,7 +73,14 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 				eventTypePretty = models.NotificationEventTypePut
 			case notification.ObjectRemovedAll:
 				eventTypePretty = models.NotificationEventTypeDelete
+			case notification.ObjectReplicationAll:
+				eventTypePretty = models.NotificationEventTypeReplica
+			case notification.ObjectTransitionAll:
+				eventTypePretty = models.NotificationEventTypeIlm
+			default:
+				continue
 			}
+
 			result = append(result, eventTypePretty)
 		}
 		return result

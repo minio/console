@@ -55,6 +55,12 @@ const (
 
 	// NotificationEventTypeGet captures enum value "get"
 	NotificationEventTypeGet NotificationEventType = "get"
+
+	// NotificationEventTypeReplica captures enum value "replica"
+	NotificationEventTypeReplica NotificationEventType = "replica"
+
+	// NotificationEventTypeIlm captures enum value "ilm"
+	NotificationEventTypeIlm NotificationEventType = "ilm"
 )
 
 // for schema
@@ -62,7 +68,7 @@ var notificationEventTypeEnum []interface{}
 
 func init() {
 	var res []NotificationEventType
-	if err := json.Unmarshal([]byte(`["put","delete","get"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["put","delete","get","replica","ilm"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

@@ -291,6 +291,8 @@ export enum NotificationEventType {
   Put = "put",
   Delete = "delete",
   Get = "get",
+  Replica = "replica",
+  Ilm = "ilm",
 }
 
 export interface NotificationConfig {
