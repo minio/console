@@ -201,7 +201,7 @@ const AddServiceAccount = () => {
                   <Grid item xs={12} sx={{ ...modalStyleUtils.formScrollable }}>
                     <CodeMirrorWrapper
                       value={policyJSON}
-                      onBeforeChange={(editor, data, value) => {
+                      onChange={(value) => {
                         setPolicyJSON(value);
                       }}
                       editorHeight={"350px"}

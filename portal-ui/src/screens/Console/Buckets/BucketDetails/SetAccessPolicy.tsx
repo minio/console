@@ -156,14 +156,14 @@ const SetAccessPolicy = ({
               </div>
             )}
             {accessPolicy === "CUSTOM" && (
-              <Grid item xs={12} className={classes.codeMirrorContainer}>
+              <Grid item xs={12}>
                 <CodeMirrorWrapper
                   label={`Write Policy`}
                   value={policyDefinition}
-                  onBeforeChange={(editor, data, value) => {
+                  onChange={(value) => {
                     setPolicyDefinition(value);
                   }}
-                  editorHeight={"350px"}
+                  editorHeight={"300px"}
                 />
               </Grid>
             )}
