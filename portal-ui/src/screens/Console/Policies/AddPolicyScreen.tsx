@@ -15,27 +15,27 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
-import { Box } from "@mui/material";
 import {
   AddAccessRuleIcon,
   BackLink,
   Button,
   FormLayout,
   PageLayout,
+  Box,
+  Grid,
+  InputBox,
 } from "mds";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import { emptyPolicy } from "./utils";
-import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { api } from "../../../api";
 import { Error, HttpResponse, Policy } from "../../../api/consoleApi";
-import HelpMenu from "../HelpMenu";
 
 const AddPolicyScreen = () => {
   const dispatch = useAppDispatch();
@@ -119,9 +119,9 @@ const AddPolicyScreen = () => {
                 addRecord(e);
               }}
             >
-              <Grid container item spacing={1}>
+              <Grid container>
                 <Grid item xs={12}>
-                  <InputBoxWrapper
+                  <InputBox
                     id="policy-name"
                     name="policy-name"
                     label="Policy Name"
@@ -143,7 +143,7 @@ const AddPolicyScreen = () => {
                     editorHeight={"350px"}
                   />
                 </Grid>
-                <Grid item xs={12} textAlign={"right"}>
+                <Grid item xs={12} sx={{ textAlign: "right" }}>
                   <Box
                     sx={{
                       display: "flex",
