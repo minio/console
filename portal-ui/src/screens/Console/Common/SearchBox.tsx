@@ -23,6 +23,7 @@ type SearchBoxProps = {
   value: string;
   onChange: (value: string) => void;
   overrideClass?: any;
+  id?: string;
   sx?: CSSObject;
 };
 
@@ -31,23 +32,20 @@ const SearchBox = ({
   onChange,
   overrideClass,
   value,
+  id = "search-resource",
   sx,
 }: SearchBoxProps) => {
   return (
     <InputBox
       placeholder={placeholder}
       className={overrideClass ? overrideClass : ""}
-      id="search-resource"
+      id={id}
       label=""
       onChange={(e) => {
         onChange(e.target.value);
       }}
       value={value}
-      overlayObject={
-        <SearchIcon
-          style={{ width: 16, height: 16, marginTop: 5, marginRight: 5 }}
-        />
-      }
+      startIcon={<SearchIcon />}
       sx={sx}
     />
   );
