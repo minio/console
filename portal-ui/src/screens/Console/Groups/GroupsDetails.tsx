@@ -1,34 +1,40 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2023 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { Fragment, useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   AddIcon,
+  BackLink,
+  Box,
   Button,
+  DataTable,
+  Grid,
   GroupsIcon,
   IAMPoliciesIcon,
   PageLayout,
+  ScreenTitle,
+  SectionTitle,
+  Switch,
+  Tabs,
   TrashIcon,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-  spacingUtils,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
-
-import withStyles from "@mui/styles/withStyles";
-import { Grid } from "@mui/material";
-import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import SetPolicy from "../Policies/SetPolicy";
-import AddGroupMember from "./AddGroupMember";
-import DeleteGroup from "./DeleteGroup";
-import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import PanelTitle from "../Common/PanelTitle/PanelTitle";
-import SearchBox from "../Common/SearchBox";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { Group } from "api/consoleApi";
 import {
   addUserToGroupPermissions,
   CONSOLE_UI_RESOURCE,
@@ -47,83 +53,34 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../common/SecureComponent";
-import GroupDetailsHeader from "./GroupDetailsHeader";
-
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setHelpName, setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "../Users/AddUsersSlice";
+import SetPolicy from "../Policies/SetPolicy";
+import AddGroupMember from "./AddGroupMember";
+import DeleteGroup from "./DeleteGroup";
+import SearchBox from "../Common/SearchBox";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
-import { Group } from "api/consoleApi";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    pageContainer: {
-      border: "1px solid #EAEAEA",
-      width: "100%",
-    },
-    statusLabel: {
-      fontSize: ".8rem",
-      marginRight: ".7rem",
-    },
-    statusValue: {
-      fontWeight: "bold",
-      fontSize: ".9rem",
-      marginRight: ".7rem",
-    },
-    searchField: {
-      ...searchField.searchField,
-      maxWidth: 280,
-    },
-    ...tableStyles,
-    ...spacingUtils,
-    actionsTray: {
-      ...actionsTray.actionsTray,
-
-      alignItems: "center",
-      "& h1": {
-        flex: 1,
-      },
-      "& button": {
-        marginLeft: ".8rem",
-      },
-      "@media (max-width: 900px)": {
-        justifyContent: "flex-end",
-        "& h1": {
-          display: "none",
-        },
-        "& button": {
-          whiteSpace: "nowrap",
-          textOverflow: "ellipsis",
-        },
-      },
-    },
-    ...containerForHeader,
-  });
-
-interface IGroupDetailsProps {
-  classes: any;
-}
+import HelpMenu from "../HelpMenu";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 export const formatPolicy = (policy: string = ""): string[] => {
   if (policy.length <= 0) return [];
   return policy.split(",");
 };
 
-const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
+const GroupsDetails = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
 
   const [groupDetails, setGroupDetails] = useState<Group>({});
-
-  /*Modals*/
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
   const [usersOpen, setUsersOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [memberFilter, setMemberFilter] = useState<string>("");
+  const [currentTab, setCurrentTab] = useState<string>("members");
 
   const groupName = decodeURLString(params.groupName || "");
 
@@ -140,7 +97,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   );
 
   useEffect(() => {
-    dispatch(setHelpName("groups_members"));
+    dispatch(setHelpName("group_details"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -207,73 +164,70 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   }
 
   const groupsTabContent = (
-    <React.Fragment>
-      <div
-        className={classes.actionsTray}
-        onMouseMove={() => {
-          dispatch(setHelpName("groups_members"));
-        }}
-      >
-        <PanelTitle>Members</PanelTitle>
-        <SearchBox
-          placeholder={"Search members"}
-          onChange={(searchText) => {
-            setMemberFilter(searchText);
-          }}
-          overrideClass={classes.searchField}
-          value={memberFilter}
-        />
-        <SecureComponent
-          resource={CONSOLE_UI_RESOURCE}
-          scopes={addUserToGroupPermissions}
-          errorProps={{ disabled: true }}
-        >
-          <TooltipWrapper
-            tooltip={
-              canEditGroupMembers
-                ? memberActionText
-                : permissionTooltipHelper(
-                    createGroupPermissions,
-                    "edit Group membership"
-                  )
-            }
+    <Box
+      onMouseMove={() => {
+        dispatch(setHelpName("groups_members"));
+      }}
+    >
+      <SectionTitle
+        separator
+        sx={{ marginBottom: 15 }}
+        actions={
+          <Box
+            sx={{
+              display: "flex",
+              gap: 10,
+            }}
           >
-            <Button
-              id={"add-user-group"}
-              label={memberActionText}
-              variant="callAction"
-              icon={<AddIcon />}
-              onClick={() => {
-                setUsersOpen(true);
+            <SearchBox
+              placeholder={"Search members"}
+              onChange={(searchText) => {
+                setMemberFilter(searchText);
               }}
-              disabled={!canEditGroupMembers}
+              value={memberFilter}
+              sx={{
+                maxWidth: 280,
+              }}
             />
-          </TooltipWrapper>
-        </SecureComponent>
-      </div>
-
+            <SecureComponent
+              resource={CONSOLE_UI_RESOURCE}
+              scopes={addUserToGroupPermissions}
+              errorProps={{ disabled: true }}
+            >
+              <TooltipWrapper
+                tooltip={
+                  canEditGroupMembers
+                    ? memberActionText
+                    : permissionTooltipHelper(
+                        createGroupPermissions,
+                        "edit Group membership"
+                      )
+                }
+              >
+                <Button
+                  id={"add-user-group"}
+                  label={memberActionText}
+                  variant="callAction"
+                  icon={<AddIcon />}
+                  onClick={() => {
+                    setUsersOpen(true);
+                  }}
+                  disabled={!canEditGroupMembers}
+                />
+              </TooltipWrapper>
+            </SecureComponent>
+          </Box>
+        }
+      >
+        Members
+      </SectionTitle>
       <Grid item xs={12}>
         <SecureComponent
           resource={CONSOLE_UI_RESOURCE}
           scopes={listUsersPermissions}
           errorProps={{ disabled: true }}
         >
-          <TableWrapper
-            itemActions={[
-              {
-                type: "view",
-                onClick: (userName) => {
-                  navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
-                },
-                disableButtonFunction: () => !viewUser,
-              },
-            ]}
-            columns={[{ label: "Access Key", elementKey: "" }]}
-            selectedItems={[]}
-            isLoading={false}
-            records={filteredMembers}
-            entityName="Users"
-            idField=""
+          <TooltipWrapper
             tooltip={
               viewUser
                 ? ""
@@ -282,59 +236,68 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                     "view User details"
                   )
             }
-          />
+          >
+            <DataTable
+              itemActions={[
+                {
+                  type: "view",
+                  onClick: (userName) => {
+                    navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
+                  },
+                  disableButtonFunction: () => !viewUser,
+                },
+              ]}
+              columns={[{ label: "Access Key" }]}
+              selectedItems={[]}
+              isLoading={false}
+              records={filteredMembers}
+              entityName="Users"
+            />
+          </TooltipWrapper>
         </SecureComponent>
       </Grid>
-    </React.Fragment>
+    </Box>
   );
 
   const policiesTabContent = (
-    <React.Fragment>
-      <div
-        className={classes.actionsTray}
+    <Fragment>
+      <Box
         onMouseMove={() => {
           dispatch(setHelpName("groups_policies"));
         }}
       >
-        <PanelTitle>Policies</PanelTitle>
-        <TooltipWrapper
-          tooltip={
-            canSetPolicies
-              ? "Set Policies"
-              : permissionTooltipHelper(
-                  setGroupPoliciesPermissions,
-                  "assign Policies"
-                )
+        <SectionTitle
+          separator
+          sx={{ marginBottom: 15 }}
+          actions={
+            <TooltipWrapper
+              tooltip={
+                canSetPolicies
+                  ? "Set Policies"
+                  : permissionTooltipHelper(
+                      setGroupPoliciesPermissions,
+                      "assign Policies"
+                    )
+              }
+            >
+              <Button
+                id={"set-policies"}
+                label={`Set Policies`}
+                variant="callAction"
+                icon={<IAMPoliciesIcon />}
+                onClick={() => {
+                  setPolicyOpen(true);
+                }}
+                disabled={!canSetPolicies}
+              />
+            </TooltipWrapper>
           }
         >
-          <Button
-            id={"set-policies"}
-            label={`Set Policies`}
-            variant="callAction"
-            icon={<IAMPoliciesIcon />}
-            onClick={() => {
-              setPolicyOpen(true);
-            }}
-            disabled={!canSetPolicies}
-          />
-        </TooltipWrapper>
-      </div>
+          Policies
+        </SectionTitle>
+      </Box>
       <Grid item xs={12}>
-        <TableWrapper
-          itemActions={[
-            {
-              type: "view",
-              onClick: (policy) => {
-                navigate(`${IAM_PAGES.POLICIES}/${encodeURLString(policy)}`);
-              },
-              disableButtonFunction: () => !canViewPolicy,
-            },
-          ]}
-          columns={[{ label: "Policy", elementKey: "" }]}
-          isLoading={false}
-          records={groupPolicies}
-          entityName="Policies"
-          idField=""
+        <TooltipWrapper
           tooltip={
             canViewPolicy
               ? ""
@@ -343,95 +306,29 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
                   "view Policy details"
                 )
           }
-        />
-      </Grid>
-    </React.Fragment>
-  );
-  return (
-    <React.Fragment>
-      <GroupDetailsHeader />
-
-      <PageLayout className={classes.pageContainer}>
-        <Grid item xs={12}>
-          <ScreenTitle
-            icon={
-              <Fragment>
-                <GroupsIcon width={40} />
-              </Fragment>
-            }
-            title={groupName}
-            subTitle={null}
-            actions={
-              <Fragment>
-                <span className={classes.statusLabel}>Group Status:</span>
-                <span id="group-status" className={classes.statusValue}>
-                  {isGroupEnabled ? "Enabled" : "Disabled"}
-                </span>
-                <TooltipWrapper
-                  tooltip={
-                    hasPermission(
-                      CONSOLE_UI_RESOURCE,
-                      enableDisableGroupPermissions,
-                      true
-                    )
-                      ? ""
-                      : permissionTooltipHelper(
-                          enableDisableGroupPermissions,
-                          "enable or disable Groups"
-                        )
-                  }
-                >
-                  <SecureComponent
-                    resource={CONSOLE_UI_RESOURCE}
-                    scopes={enableDisableGroupPermissions}
-                    errorProps={{ disabled: true }}
-                    matchAll
-                  >
-                    <FormSwitchWrapper
-                      indicatorLabels={["Enabled", "Disabled"]}
-                      checked={isGroupEnabled}
-                      value={"group_enabled"}
-                      id="group-status"
-                      name="group-status"
-                      onChange={() => {
-                        toggleGroupStatus(!isGroupEnabled);
-                      }}
-                      switchOnly
-                    />
-                  </SecureComponent>
-                </TooltipWrapper>
-
-                <div className={classes.spacerLeft}>
-                  <TooltipWrapper tooltip={"Delete Group"}>
-                    <Button
-                      id={"delete-user-group"}
-                      variant="secondary"
-                      icon={<TrashIcon />}
-                      onClick={() => {
-                        setDeleteOpen(true);
-                      }}
-                    />
-                  </TooltipWrapper>
-                </div>
-              </Fragment>
-            }
+        >
+          <DataTable
+            itemActions={[
+              {
+                type: "view",
+                onClick: (policy) => {
+                  navigate(`${IAM_PAGES.POLICIES}/${encodeURLString(policy)}`);
+                },
+                disableButtonFunction: () => !canViewPolicy,
+              },
+            ]}
+            columns={[{ label: "Policy" }]}
+            isLoading={false}
+            records={groupPolicies}
+            entityName="Policies"
           />
-        </Grid>
+        </TooltipWrapper>
+      </Grid>
+    </Fragment>
+  );
 
-        <Grid item xs={12}>
-          <VerticalTabs>
-            {{
-              tabConfig: { label: "Members" },
-              content: groupsTabContent,
-            }}
-            {{
-              tabConfig: { label: "Policies" },
-              content: policiesTabContent,
-            }}
-          </VerticalTabs>
-        </Grid>
-      </PageLayout>
-      {/*Modals*/}
+  return (
+    <Fragment>
       {policyOpen ? (
         <SetPolicy
           open={policyOpen}
@@ -472,9 +369,110 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
           }}
         />
       )}
-      {/*Modals*/}
-    </React.Fragment>
+      <PageHeaderWrapper
+        label={
+          <Fragment>
+            <BackLink
+              label={"Groups"}
+              onClick={() => navigate(IAM_PAGES.GROUPS)}
+            />
+          </Fragment>
+        }
+        actions={<HelpMenu />}
+      />
+      <PageLayout>
+        <Grid item xs={12}>
+          <ScreenTitle
+            icon={
+              <Fragment>
+                <GroupsIcon width={40} />
+              </Fragment>
+            }
+            title={groupName}
+            subTitle={null}
+            bottomBorder
+            actions={
+              <Box
+                sx={{
+                  display: "flex",
+                  fontSize: 14,
+                  alignItems: "center",
+                  gap: 15,
+                }}
+              >
+                <span>Group Status:</span>
+                <span id="group-status-label" style={{ fontWeight: "bold" }}>
+                  {isGroupEnabled ? "Enabled" : "Disabled"}
+                </span>
+                <TooltipWrapper
+                  tooltip={
+                    hasPermission(
+                      CONSOLE_UI_RESOURCE,
+                      enableDisableGroupPermissions,
+                      true
+                    )
+                      ? ""
+                      : permissionTooltipHelper(
+                          enableDisableGroupPermissions,
+                          "enable or disable Groups"
+                        )
+                  }
+                >
+                  <SecureComponent
+                    resource={CONSOLE_UI_RESOURCE}
+                    scopes={enableDisableGroupPermissions}
+                    errorProps={{ disabled: true }}
+                    matchAll
+                  >
+                    <Switch
+                      indicatorLabels={["Enabled", "Disabled"]}
+                      checked={isGroupEnabled}
+                      value={"group_enabled"}
+                      id="group-status"
+                      name="group-status"
+                      onChange={() => {
+                        toggleGroupStatus(!isGroupEnabled);
+                      }}
+                      switchOnly
+                    />
+                  </SecureComponent>
+                </TooltipWrapper>
+
+                <TooltipWrapper tooltip={"Delete Group"}>
+                  <Button
+                    id={"delete-user-group"}
+                    variant="secondary"
+                    icon={<TrashIcon />}
+                    onClick={() => {
+                      setDeleteOpen(true);
+                    }}
+                  />
+                </TooltipWrapper>
+              </Box>
+            }
+            sx={{ marginBottom: 15 }}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <Tabs
+            options={[
+              {
+                tabConfig: { id: "members", label: "Members" },
+                content: groupsTabContent,
+              },
+              {
+                tabConfig: { id: "policies", label: "Policies" },
+                content: policiesTabContent,
+              },
+            ]}
+            currentTabOrPath={currentTab}
+            onTabClick={setCurrentTab}
+          />
+        </Grid>
+      </PageLayout>
+    </Fragment>
   );
 };
 
-export default withStyles(styles)(GroupsDetails);
+export default GroupsDetails;

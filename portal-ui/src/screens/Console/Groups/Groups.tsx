@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import {
   AddIcon,
@@ -26,22 +25,14 @@ import {
   IAMPoliciesIcon,
   PageLayout,
   UsersIcon,
+  DataTable,
+  Grid,
+  Box,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import { Box, LinearProgress } from "@mui/material";
-
+import { LinearProgress } from "@mui/material";
+import { api } from "api";
 import { stringSort } from "../../../utils/sortFunctions";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import AButton from "../Common/AButton/AButton";
-import SearchBox from "../Common/SearchBox";
+import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 import {
   applyPolicyPermissions,
   CONSOLE_UI_RESOURCE,
@@ -56,44 +47,23 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../common/SecureComponent";
-
+import { errorToHandler } from "../../../api/errors";
 import withSuspense from "../Common/Components/withSuspense";
-
 import { encodeURLString } from "../../../common/utils";
-
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
+import AButton from "../Common/AButton/AButton";
+import SearchBox from "../Common/SearchBox";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const SetPolicy = withSuspense(
   React.lazy(() => import("../Policies/SetPolicy"))
 );
 
-interface IGroupsProps {
-  classes: any;
-  openGroupModal: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    tableBlock: {
-      ...tableStyles.tableBlock,
-      marginTop: 15,
-    },
-    ...actionsTray,
-    searchField: {
-      ...searchField.searchField,
-      maxWidth: 380,
-    },
-    ...containerForHeader,
-  });
-
-const Groups = ({ classes }: IGroupsProps) => {
+const Groups = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -230,8 +200,8 @@ const Groups = ({ classes }: IGroupsProps) => {
       <PageHeaderWrapper label={"Groups"} actions={<HelpMenu />} />
 
       <PageLayout>
-        <Grid container spacing={1}>
-          <Grid item xs={12} className={classes.actionsTray}>
+        <Grid container>
+          <Grid item xs={12} sx={actionsTray.actionsTray}>
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
               scopes={displayGroupsPermissions}
@@ -240,8 +210,8 @@ const Groups = ({ classes }: IGroupsProps) => {
               <SearchBox
                 placeholder={"Search Groups"}
                 onChange={setFilter}
-                overrideClass={classes.searchField}
                 value={filter}
+                sx={{ maxWidth: 380 }}
               />
             </SecureComponent>
             <Box
@@ -334,15 +304,15 @@ const Groups = ({ classes }: IGroupsProps) => {
             <Fragment>
               {records.length > 0 && (
                 <Fragment>
-                  <Grid item xs={12} className={classes.tableBlock}>
+                  <Grid item xs={12} sx={{ marginBottom: 15 }}>
                     <SecureComponent
                       resource={CONSOLE_UI_RESOURCE}
                       scopes={displayGroupsPermissions}
                       errorProps={{ disabled: true }}
                     >
-                      <TableWrapper
+                      <DataTable
                         itemActions={tableActions}
-                        columns={[{ label: "Name", elementKey: "" }]}
+                        columns={[{ label: "Name" }]}
                         isLoading={loading}
                         selectedItems={checkedGroups}
                         onSelect={
@@ -354,7 +324,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                       />
                     </SecureComponent>
                   </Grid>
-                  <Grid item xs={12} marginTop={"25px"}>
+                  <Grid item xs={12}>
                     <HelpBox
                       title={"Groups"}
                       iconComponent={<GroupsIcon />}
@@ -382,12 +352,7 @@ const Groups = ({ classes }: IGroupsProps) => {
                 </Fragment>
               )}
               {records.length === 0 && (
-                <Grid
-                  container
-                  justifyContent={"center"}
-                  alignContent={"center"}
-                  alignItems={"center"}
-                >
+                <Grid container>
                   <Grid item xs={8}>
                     <HelpBox
                       title={"Groups"}
@@ -429,4 +394,4 @@ const Groups = ({ classes }: IGroupsProps) => {
   );
 };
 
-export default withStyles(styles)(Groups);
+export default Groups;

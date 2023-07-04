@@ -15,40 +15,29 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../Common/FormComponents/common/styleLibrary";
-import Grid from "@mui/material/Grid";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { LinearProgress } from "@mui/material";
-import { BackLink, Button, CreateGroupIcon, FormLayout, PageLayout } from "mds";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import AddGroupHelpBox from "./AddGroupHelpBox";
-import UsersSelectors from "./UsersSelectors";
-import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-
-import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
-import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import HelpMenu from "../HelpMenu";
+import {
+  BackLink,
+  Button,
+  CreateGroupIcon,
+  FormLayout,
+  Grid,
+  InputBox,
+  PageLayout,
+} from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
+import AddGroupHelpBox from "./AddGroupHelpBox";
+import UsersSelectors from "./UsersSelectors";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
-interface IAddGroupProps {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    ...modalStyleUtils,
-  });
-
-const AddGroupScreen = ({ classes }: IAddGroupProps) => {
+const AddGroupScreen = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [groupName, setGroupName] = useState<string>("");
@@ -101,73 +90,64 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
 
   return (
     <Fragment>
-      <Grid item xs={12}>
-        <PageHeaderWrapper
-          label={
-            <BackLink
-              label={"Groups"}
-              onClick={() => navigate(IAM_PAGES.GROUPS)}
+      <PageHeaderWrapper
+        label={
+          <BackLink
+            label={"Groups"}
+            onClick={() => navigate(IAM_PAGES.GROUPS)}
+          />
+        }
+        actions={<HelpMenu />}
+      />
+      <PageLayout>
+        <FormLayout
+          title={"Create Group"}
+          icon={<CreateGroupIcon />}
+          helpBox={<AddGroupHelpBox />}
+        >
+          <form noValidate autoComplete="off" onSubmit={setSaving}>
+            <InputBox
+              id="group-name"
+              name="group-name"
+              label="Group Name"
+              autoFocus={true}
+              value={groupName}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setGroupName(e.target.value);
+              }}
             />
-          }
-          actions={<HelpMenu />}
-        />
-        <PageLayout>
-          <FormLayout
-            title={"Create Group"}
-            icon={<CreateGroupIcon />}
-            helpBox={<AddGroupHelpBox />}
-          >
-            <form noValidate autoComplete="off" onSubmit={setSaving}>
-              <Grid container>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="group-name"
-                    name="group-name"
-                    label="Group Name"
-                    autoFocus={true}
-                    value={groupName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setGroupName(e.target.value);
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.userSelector}>
-                  <UsersSelectors
-                    selectedUsers={selectedUsers}
-                    setSelectedUsers={setSelectedUsers}
-                    editMode={true}
-                  />
-                </Grid>
-              </Grid>
-              <Grid item xs={12} className={classes.modalButtonBar}>
-                <Button
-                  id={"clear-group"}
-                  type="button"
-                  variant="regular"
-                  style={classes.spacerRight}
-                  onClick={resetForm}
-                  label={"Clear"}
-                />
+            <UsersSelectors
+              selectedUsers={selectedUsers}
+              setSelectedUsers={setSelectedUsers}
+              editMode={true}
+            />
+            <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+              <Button
+                id={"clear-group"}
+                type="button"
+                variant="regular"
+                onClick={resetForm}
+                label={"Clear"}
+              />
 
-                <Button
-                  id={"save-group"}
-                  type="submit"
-                  variant="callAction"
-                  disabled={saving || !validGroup}
-                  label={"Save"}
-                />
+              <Button
+                id={"save-group"}
+                type="submit"
+                variant="callAction"
+                disabled={saving || !validGroup}
+                label={"Save"}
+              />
+            </Grid>
+            {saving && (
+              <Grid item xs={12}>
+                <LinearProgress />
               </Grid>
-              {saving && (
-                <Grid item xs={12}>
-                  <LinearProgress />
-                </Grid>
-              )}
-            </form>
-          </FormLayout>
-        </PageLayout>
-      </Grid>
+            )}
+          </form>
+        </FormLayout>
+      </PageLayout>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(AddGroupScreen);
+export default AddGroupScreen;

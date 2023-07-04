@@ -14,71 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { LinearProgress } from "@mui/material";
+import React, { useCallback, useEffect, useState, Fragment } from "react";
 import get from "lodash/get";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import { usersSort } from "../../../utils/sortFunctions";
-import {
-  actionsTray,
-  selectorsCommon,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
-
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import SearchBox from "../Common/SearchBox";
-
-import { setModalErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
+import { Box, DataTable, Grid } from "mds";
+import { LinearProgress } from "@mui/material";
+import { usersSort } from "../../../utils/sortFunctions";
+import { setModalErrorSnackMessage } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
+import SearchBox from "../Common/SearchBox";
 
 interface IGroupsProps {
-  classes: any;
   selectedUsers: string[];
   setSelectedUsers: any;
   editMode?: boolean;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-      // paddingTop: 15,
-      boxShadow: "none",
-      border: 0,
-    },
-
-    tableBlock: {
-      ...tableStyles.tableBlock,
-    },
-    searchBox: {
-      flex: 1,
-    },
-    ...actionsTray,
-    actionsTitle: {
-      fontSize: 14,
-      alignSelf: "center",
-      minWidth: 160,
-      marginRight: 10,
-    },
-    noFound: {
-      textAlign: "center",
-      padding: theme.spacing(3),
-      border: "1px solid #EAEAEA",
-      fontSize: ".9rem",
-    },
-    ...selectorsCommon,
-  });
-
 const UsersSelectors = ({
-  classes,
   selectedUsers,
   setSelectedUsers,
   editMode = false,
@@ -146,44 +99,43 @@ const UsersSelectors = ({
   );
 
   return (
-    <React.Fragment>
-      <Grid item xs={12}>
-        <Paper className={classes.paper}>
-          {loading && <LinearProgress />}
-          {records !== null && records.length > 0 ? (
-            <React.Fragment>
-              <Grid item xs={12} className={classes.actionsTray}>
-                <label className={classes.actionsTitle}>
-                  {editMode ? "Edit Members" : "Assign Users"}
-                </label>
-                <div className={classes.searchBox}>
-                  <SearchBox
-                    placeholder="Filter Users"
-                    onChange={setFilter}
-                    value={filter}
-                  />
-                </div>
-              </Grid>
-              <Grid item xs={12} className={classes.tableBlock}>
-                <TableWrapper
-                  columns={[{ label: "Access Key", elementKey: "accessKey" }]}
-                  onSelect={selectionChanged}
-                  selectedItems={selUsers}
-                  isLoading={loading}
-                  records={filteredRecords}
-                  entityName="Users"
-                  idField="accessKey"
-                  customPaperHeight={classes.multiSelectTable}
-                />
-              </Grid>
-            </React.Fragment>
-          ) : (
-            <div className={classes.noFound}>No Users to display</div>
-          )}
-        </Paper>
-      </Grid>
-    </React.Fragment>
+    <Grid item xs={12} className={"inputItem"}>
+      <Box>
+        {loading && <LinearProgress />}
+        {records?.length > 0 ? (
+          <Fragment>
+            <Grid item xs={12} className={"inputItem"}>
+              <SearchBox
+                label={editMode ? "Edit Members" : "Assign Users"}
+                placeholder="Filter Users"
+                onChange={setFilter}
+                value={filter}
+              />
+            </Grid>
+            <DataTable
+              columns={[{ label: "Access Key", elementKey: "accessKey" }]}
+              onSelect={selectionChanged}
+              selectedItems={selUsers}
+              isLoading={loading}
+              records={filteredRecords}
+              entityName="Users"
+              idField="accessKey"
+              customPaperHeight={"200px"}
+            />
+          </Fragment>
+        ) : (
+          <Box
+            sx={{
+              textAlign: "center",
+              padding: "10px 0",
+            }}
+          >
+            No Users to display
+          </Box>
+        )}
+      </Box>
+    </Grid>
   );
 };
 
-export default withStyles(styles)(UsersSelectors);
+export default UsersSelectors;

@@ -14,17 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-
-import { DialogContentText } from "@mui/material";
-
+import React, { Fragment } from "react";
 import { ErrorResponseHandler } from "../../../common/types";
-import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
-import useApi from "../Common/Hooks/useApi";
 import { ConfirmDeleteIcon } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
+import useApi from "../Common/Hooks/useApi";
 
 interface IDeleteGroup {
   selectedGroups: string[];
@@ -72,11 +69,12 @@ const DeleteGroup = ({
       onConfirm={onDeleteGroups}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
-          Are you sure you want to delete the following {selectedGroups.length}{" "}
-          group{selectedGroups.length > 1 ? "s?" : "?"}
+        <Fragment>
+          Are you sure you want to delete the following{" "}
+          {selectedGroups.length === 1 ? "" : selectedGroups.length} group
+          {selectedGroups.length > 1 ? "s?" : "?"}
           {renderGroups}
-        </DialogContentText>
+        </Fragment>
       }
     />
   );
