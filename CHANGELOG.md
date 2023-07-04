@@ -2,6 +2,23 @@
 
 # Changelog
 
+## Release v0.31.0
+
+*Breaking Changes:*
+
+- *Removed support for Standalone Deployments*
+
+Features:
+
+- Updated way files are displayed in uploading component
+- Updated Audit Logs and Policies components
+
+Bug Fix:
+
+- Fixed Download folders issue in Object Browser
+- Added missing Notification Events (ILM & REPLICA) in Events Notification Page
+- Fixed Security Vulnerability for `semver` dependency
+---
 ## Release v0.30.0
 
 Features:
