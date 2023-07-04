@@ -32,7 +32,7 @@ const userDeleteIconButton = userListItem
   .child("checkbox")
   .withAttribute("aria-label", "secondary checkbox");
 
-const userCheckbox = Selector(".TableCheckbox");
+const userCheckbox = Selector(".TableCheckbox span.checkbox");
 
 fixture("For user with Users permissions")
   .page("http://localhost:9090")
@@ -100,8 +100,10 @@ test("IAM Policy can be set on User", async (t) => {
 
 test("Created User can be viewed and deleted", async (t) => {
   const userListItemExists = userListItem.exists;
-  const deleteSelectedButton =
-    Selector("button:enabled").withExactText("Delete Selected");
+  const deleteSelectedButton = Selector("button").withAttribute(
+    "id",
+    "delete-selected-users"
+  );
   await t
     .navigateTo(usersPageUrl)
     .typeText(elements.searchResourceInput, constants.TEST_USER_NAME)

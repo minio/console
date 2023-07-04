@@ -15,27 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect } from "react";
-import { Theme } from "@mui/material/styles";
-import { BackLink, Button, CreateUserIcon, FormLayout, PageLayout } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import UserSelector from "./UserSelector";
-import PasswordSelector from "./PasswordSelector";
-import { createUserAsync, resetFormAsync } from "./thunk/AddUsersThunk";
 import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../Common/FormComponents/common/styleLibrary";
-import Grid from "@mui/material/Grid";
+  BackLink,
+  Button,
+  CreateUserIcon,
+  FormLayout,
+  Grid,
+  PageLayout,
+} from "mds";
+import { createUserAsync, resetFormAsync } from "./thunk/AddUsersThunk";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { LinearProgress } from "@mui/material";
-
-import PolicySelectors from "../Policies/PolicySelectors";
-
-import GroupsSelectors from "./GroupsSelectors";
-
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { useNavigate } from "react-router-dom";
-import AddUserHelpBox from "./AddUserHelpBox";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
@@ -44,20 +36,15 @@ import {
   setSelectedGroups,
   setSendEnabled,
 } from "./AddUsersSlice";
+import AddUserHelpBox from "./AddUserHelpBox";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import PolicySelectors from "../Policies/PolicySelectors";
+import UserSelector from "./UserSelector";
+import PasswordSelector from "./PasswordSelector";
+import GroupsSelectors from "./GroupsSelectors";
 
-interface IAddUserProps {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    ...modalStyleUtils,
-  });
-
-const AddUser = ({ classes }: IAddUserProps) => {
+const AddUser = () => {
   const dispatch = useAppDispatch();
   const selectedPolicies = useSelector(
     (state: AppState) => state.createUser.selectedPolicies
@@ -128,55 +115,40 @@ const AddUser = ({ classes }: IAddUserProps) => {
                 saveRecord(e);
               }}
             >
-              <Grid container>
+              <UserSelector />
+              <PasswordSelector />
+              <PolicySelectors selectedPolicy={selectedPolicies} />
+              <GroupsSelectors
+                selectedGroups={selectedGroups}
+                setSelectedGroups={(elements: string[]) => {
+                  dispatch(setSelectedGroups(elements));
+                }}
+              />
+              {addLoading && (
                 <Grid item xs={12}>
-                  <div className={classes.formFieldRow}>
-                    <UserSelector classes={classes} />
-                  </div>
+                  <LinearProgress />
                 </Grid>
-                <Grid item xs={12}>
-                  <div className={classes.formFieldRow}>
-                    <PasswordSelector classes={classes} />
-                  </div>
-                </Grid>
+              )}
 
-                <Grid item xs={12}>
-                  <PolicySelectors selectedPolicy={selectedPolicies} />
-                </Grid>
-                <Grid item xs={12}>
-                  <GroupsSelectors
-                    selectedGroups={selectedGroups}
-                    setSelectedGroups={(elements: string[]) => {
-                      dispatch(setSelectedGroups(elements));
-                    }}
-                  />
-                </Grid>
-                {addLoading && (
-                  <Grid item xs={12}>
-                    <LinearProgress />
-                  </Grid>
-                )}
+              <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+                <Button
+                  id={"clear-add-user"}
+                  type="button"
+                  variant="regular"
+                  onClick={(e) => {
+                    dispatch(resetFormAsync());
+                  }}
+                  label={"Clear"}
+                />
 
-                <Grid item xs={12} className={classes.modalButtonBar}>
-                  <Button
-                    id={"clear-add-user"}
-                    type="button"
-                    variant="regular"
-                    onClick={(e) => {
-                      dispatch(resetFormAsync());
-                    }}
-                    label={"Clear"}
-                  />
-
-                  <Button
-                    id={"save-user"}
-                    type="submit"
-                    variant="callAction"
-                    color="primary"
-                    disabled={addLoading || !sendEnabled}
-                    label={"Save"}
-                  />
-                </Grid>
+                <Button
+                  id={"save-user"}
+                  type="submit"
+                  variant="callAction"
+                  color="primary"
+                  disabled={addLoading || !sendEnabled}
+                  label={"Save"}
+                />
               </Grid>
             </form>
           </FormLayout>
@@ -186,4 +158,4 @@ const AddUser = ({ classes }: IAddUserProps) => {
   );
 };
 
-export default withStyles(styles)(AddUser);
+export default AddUser;

@@ -14,41 +14,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
+import React, { useCallback, useEffect, useState, Fragment } from "react";
 import { LinearProgress } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import { AddMembersToGroupIcon, Button } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  modalBasic,
-  spacingUtils,
-} from "../Common/FormComponents/common/styleLibrary";
+import { AddMembersToGroupIcon, Button, FormLayout, Grid, Box } from "mds";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
-import GroupsSelectors from "./GroupsSelectors";
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-import Box from "@mui/material/Box";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...spacingUtils,
-    ...modalBasic,
-  });
+import api from "../../../common/api";
+import GroupsSelectors from "./GroupsSelectors";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 
 interface IChangeUserGroupsContentProps {
-  classes: any;
   closeModalAndRefresh: () => void;
   selectedUser: string;
   open: boolean;
 }
 
 const ChangeUserGroups = ({
-  classes,
   closeModalAndRefresh,
   selectedUser,
   open,
@@ -151,7 +135,7 @@ const ChangeUserGroups = ({
       title={"Set Groups"}
       titleIcon={<AddMembersToGroupIcon />}
     >
-      <React.Fragment>
+      <Fragment>
         <form
           noValidate
           autoComplete="off"
@@ -159,50 +143,40 @@ const ChangeUserGroups = ({
             saveRecord(e);
           }}
         >
-          <Grid container>
-            <Grid item xs={12} className={classes.formScrollable}>
-              <GroupsSelectors
-                selectedGroups={selectedGroups}
-                setSelectedGroups={(elements: string[]) => {
-                  setSelectedGroups(elements);
-                }}
-              />
-            </Grid>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 2,
-                alignItems: "center",
-                justifyContent: "flex-end",
-                width: "100%",
+          <FormLayout withBorders={false} containerPadding={false}>
+            <GroupsSelectors
+              selectedGroups={selectedGroups}
+              setSelectedGroups={(elements: string[]) => {
+                setSelectedGroups(elements);
               }}
-            >
-              <Button
-                id={"clear-change-user-groups"}
-                type="button"
-                variant="regular"
-                onClick={resetForm}
-                label={"Clear"}
-              />
+            />
+          </FormLayout>
+          <Box sx={modalStyleUtils.modalButtonBar}>
+            <Button
+              id={"clear-change-user-groups"}
+              type="button"
+              variant="regular"
+              onClick={resetForm}
+              label={"Clear"}
+            />
 
-              <Button
-                id={"save-user-groups"}
-                type="submit"
-                variant="callAction"
-                disabled={addLoading || !sendEnabled}
-                label={"Save"}
-              />
-            </Box>
-            {addLoading && (
-              <Grid item xs={12}>
-                <LinearProgress />
-              </Grid>
-            )}
-          </Grid>
+            <Button
+              id={"save-user-groups"}
+              type="submit"
+              variant="callAction"
+              disabled={addLoading || !sendEnabled}
+              label={"Save"}
+            />
+          </Box>
+          {addLoading && (
+            <Grid item xs={12}>
+              <LinearProgress />
+            </Grid>
+          )}
         </form>
-      </React.Fragment>
+      </Fragment>
     </ModalWrapper>
   );
 };
 
-export default withStyles(styles)(ChangeUserGroups);
+export default ChangeUserGroups;

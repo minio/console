@@ -44,8 +44,10 @@ export const startDiagnosticButton =
 export const startNewDiagnosticButton = Selector("#start-new-diagnostic");
 export const downloadButton = Selector("button:enabled").withText("Download");
 export const startButton = Selector("button:enabled").withText("Start");
-export const assignPoliciesButton =
-  Selector("button:enabled").withText("Assign Policies");
+export const assignPoliciesButton = Selector("button").withAttribute(
+  "id",
+  "assign-policies"
+);
 
 //----------------------------------------------------
 // Switches
@@ -178,7 +180,10 @@ export const nodeSelector = Selector('[data-test-id="node-selector"]');
 //----------------------------------------------------
 // User Details
 //----------------------------------------------------
-export const userPolicies = Selector(".MuiTab-root").withText("Policies");
+export const userPolicies = Selector(".optionsList button").withAttribute(
+  "id",
+  "policies"
+);
 //----------------------------------------------------
 // Rewind Options
 //----------------------------------------------------

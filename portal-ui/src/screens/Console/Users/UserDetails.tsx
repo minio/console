@@ -16,41 +16,25 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Theme } from "@mui/material/styles";
 import {
   AddIcon,
   BackLink,
+  Box,
   Button,
+  DataTable,
+  Grid,
   IAMPoliciesIcon,
   PageLayout,
   PasswordKeyIcon,
+  ScreenTitle,
+  SectionTitle,
+  Switch,
+  Tabs,
   TrashIcon,
   UsersIcon,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { Grid } from "@mui/material";
-
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
 import { IPolicyItem } from "./types";
 import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import ChangeUserGroups from "./ChangeUserGroups";
-import SetUserPolicies from "./SetUserPolicies";
-import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
-import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
-import DeleteUser from "./DeleteUser";
-import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import PanelTitle from "../Common/PanelTitle/PanelTitle";
-import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-
 import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setHelpName, setModalErrorSnackMessage } from "../../../systemSlice";
 import {
@@ -72,36 +56,18 @@ import { policyDetailsSort } from "../../../utils/sortFunctions";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    pageContainer: {
-      border: "1px solid #EAEAEA",
-    },
-    statusLabel: {
-      fontSize: ".8rem",
-      marginRight: ".5rem",
-    },
-    statusValue: {
-      fontWeight: "bold",
-      fontSize: ".9rem",
-      marginRight: ".5rem",
-    },
-    ...actionsTray,
-    ...searchField,
-    ...tableStyles,
-    ...containerForHeader,
-  });
-
-interface IUserDetailsProps {
-  classes: any;
-}
+import api from "../../../common/api";
+import ChangeUserGroups from "./ChangeUserGroups";
+import SetUserPolicies from "./SetUserPolicies";
+import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
+import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
+import DeleteUser from "./DeleteUser";
 
 interface IGroupItem {
   group: string;
 }
 
-const UserDetails = ({ classes }: IUserDetailsProps) => {
+const UserDetails = () => {
   const dispatch = useAppDispatch();
   const params = useParams();
   const navigate = useNavigate();
@@ -118,6 +84,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
     useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [hasPolicy, setHasPolicy] = useState<boolean>(false);
+  const [selectedTab, setSelectedTab] = useState<string>("groups");
 
   const enableEnabled =
     hasPermission(CONSOLE_UI_RESOURCE, enableUserPermissions) && !enabled;
@@ -238,17 +205,6 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
 
   return (
     <Fragment>
-      <PageHeaderWrapper
-        label={
-          <Fragment>
-            <BackLink
-              label={"Users"}
-              onClick={() => navigate(IAM_PAGES.USERS)}
-            />
-          </Fragment>
-        }
-        actions={<HelpMenu />}
-      />
       {addGroupOpen && (
         <ChangeUserGroups
           open={addGroupOpen}
@@ -286,20 +242,41 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
           closeModal={() => setChangeUserPasswordModalOpen(false)}
         />
       )}
-      <PageLayout className={classes.pageContainer}>
-        <Grid container spacing={1}>
+      <PageHeaderWrapper
+        label={
+          <Fragment>
+            <BackLink
+              label={"Users"}
+              onClick={() => navigate(IAM_PAGES.USERS)}
+            />
+          </Fragment>
+        }
+        actions={<HelpMenu />}
+      />
+      <PageLayout>
+        <Grid container>
           <Grid item xs={12}>
             <ScreenTitle
-              icon={
-                <Fragment>
-                  <UsersIcon width={40} />
-                </Fragment>
-              }
+              icon={<UsersIcon width={40} />}
               title={userName}
+              subTitle={""}
               actions={
                 <Fragment>
-                  <span className={classes.statusLabel}>User Status:</span>
-                  <span className={classes.statusValue}>
+                  <span
+                    style={{
+                      fontSize: ".8rem",
+                      marginRight: ".5rem",
+                    }}
+                  >
+                    User Status:
+                  </span>
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: ".9rem",
+                      marginRight: ".5rem",
+                    }}
+                  >
                     {enabled ? "Enabled" : "Disabled"}
                   </span>
                   <TooltipWrapper
@@ -328,7 +305,7 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                           )
                     }
                   >
-                    <FormSwitchWrapper
+                    <Switch
                       indicatorLabels={["Enabled", "Disabled"]}
                       checked={enabled}
                       value={"group_enabled"}
@@ -378,144 +355,162 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
                   </TooltipWrapper>
                 </Fragment>
               }
+              sx={{ marginBottom: 15 }}
             />
           </Grid>
 
           <Grid item xs={12}>
-            <VerticalTabs>
-              {{
-                tabConfig: {
-                  label: "Groups",
-                  disabled: !canAssignGroup,
-                },
-                content: (
-                  <React.Fragment>
-                    <div
-                      className={classes.actionsTray}
-                      onMouseMove={() =>
-                        dispatch(setHelpName("user_details_groups"))
-                      }
-                    >
-                      <PanelTitle>Groups</PanelTitle>
-                      <TooltipWrapper
-                        tooltip={
-                          canAssignGroup
-                            ? "Assign groups"
-                            : permissionTooltipHelper(
-                                assignGroupPermissions,
-                                "add users to groups"
-                              )
+            <Tabs
+              currentTabOrPath={selectedTab}
+              onTabClick={setSelectedTab}
+              options={[
+                {
+                  tabConfig: {
+                    id: "groups",
+                    label: "Groups",
+                    disabled: !canAssignGroup,
+                  },
+                  content: (
+                    <React.Fragment>
+                      <Box
+                        onMouseMove={() =>
+                          dispatch(setHelpName("user_details_groups"))
                         }
                       >
-                        <Button
-                          id={"add-groups"}
-                          label={"Add to Groups"}
-                          onClick={() => {
-                            setAddGroupOpen(true);
-                          }}
-                          icon={<AddIcon />}
-                          variant={"callAction"}
-                          disabled={!canAssignGroup}
+                        <SectionTitle
+                          separator
+                          sx={{ marginBottom: 15 }}
+                          actions={
+                            <TooltipWrapper
+                              tooltip={
+                                canAssignGroup
+                                  ? "Assign groups"
+                                  : permissionTooltipHelper(
+                                      assignGroupPermissions,
+                                      "add users to groups"
+                                    )
+                              }
+                            >
+                              <Button
+                                id={"add-groups"}
+                                label={"Add to Groups"}
+                                onClick={() => {
+                                  setAddGroupOpen(true);
+                                }}
+                                icon={<AddIcon />}
+                                variant={"callAction"}
+                                disabled={!canAssignGroup}
+                              />
+                            </TooltipWrapper>
+                          }
+                        >
+                          Groups
+                        </SectionTitle>
+                      </Box>
+                      <Grid
+                        item
+                        xs={12}
+                        onMouseMove={() =>
+                          dispatch(setHelpName("user_details_groups"))
+                        }
+                      >
+                        <DataTable
+                          itemActions={groupTableActions}
+                          columns={[{ label: "Name", elementKey: "group" }]}
+                          isLoading={loading}
+                          records={currentGroups}
+                          entityName="Groups"
+                          idField="group"
                         />
-                      </TooltipWrapper>
-                    </div>
-                    <Grid
-                      item
-                      xs={12}
-                      className={classes.tableBlock}
-                      onMouseMove={() =>
-                        dispatch(setHelpName("user_details_groups"))
-                      }
-                    >
-                      <TableWrapper
-                        itemActions={groupTableActions}
-                        columns={[{ label: "Name", elementKey: "group" }]}
-                        isLoading={loading}
-                        records={currentGroups}
-                        entityName="Groups"
-                        idField="group"
-                      />
-                    </Grid>
-                  </React.Fragment>
-                ),
-              }}
-              {{
-                tabConfig: {
-                  label: "Service Accounts",
-                  disabled: !hasPermission(
-                    CONSOLE_UI_RESOURCE,
-                    editServiceAccountPermissions
+                      </Grid>
+                    </React.Fragment>
                   ),
                 },
-                content: (
-                  <UserServiceAccountsPanel
-                    user={userName}
-                    hasPolicy={hasPolicy}
-                  />
-                ),
-              }}
-              {{
-                tabConfig: {
-                  label: "Policies",
-                  disabled: !canAssignPolicy,
+                {
+                  tabConfig: {
+                    id: "service_accounts",
+                    label: "Service Accounts",
+                    disabled: !hasPermission(
+                      CONSOLE_UI_RESOURCE,
+                      editServiceAccountPermissions
+                    ),
+                  },
+                  content: (
+                    <UserServiceAccountsPanel
+                      user={userName}
+                      hasPolicy={hasPolicy}
+                    />
+                  ),
                 },
-                content: (
-                  <Fragment>
-                    <div
-                      className={classes.actionsTray}
-                      onMouseMove={() =>
-                        dispatch(setHelpName("user_details_policies"))
-                      }
-                    >
-                      <PanelTitle>Policies</PanelTitle>
-
-                      <TooltipWrapper
-                        tooltip={
-                          canAssignPolicy
-                            ? "Assign Policies"
-                            : permissionTooltipHelper(
-                                assignIAMPolicyPermissions,
-                                "assign policies"
-                              )
+                {
+                  tabConfig: {
+                    id: "policies",
+                    label: "Policies",
+                    disabled: !canAssignPolicy,
+                  },
+                  content: (
+                    <Fragment>
+                      <Box
+                        onMouseMove={() =>
+                          dispatch(setHelpName("user_details_policies"))
                         }
                       >
-                        <Button
-                          id={"assign-policies"}
-                          label={"Assign Policies"}
-                          onClick={() => {
-                            setPolicyOpen(true);
-                          }}
-                          icon={<IAMPoliciesIcon />}
-                          variant={"callAction"}
-                          disabled={!canAssignPolicy}
-                        />
-                      </TooltipWrapper>
-                    </div>
-                    <div className={classes.tableBlock}>
-                      <TableWrapper
-                        itemActions={[
-                          {
-                            type: "view",
-                            onClick: (policy: IPolicyItem) => {
-                              navigate(
-                                `${IAM_PAGES.POLICIES}/${encodeURLString(
-                                  policy.policy
-                                )}`
-                              );
+                        <SectionTitle
+                          separator
+                          sx={{ marginBottom: 15 }}
+                          actions={
+                            <TooltipWrapper
+                              tooltip={
+                                canAssignPolicy
+                                  ? "Assign Policies"
+                                  : permissionTooltipHelper(
+                                      assignIAMPolicyPermissions,
+                                      "assign policies"
+                                    )
+                              }
+                            >
+                              <Button
+                                id={"assign-policies"}
+                                label={"Assign Policies"}
+                                onClick={() => {
+                                  setPolicyOpen(true);
+                                }}
+                                icon={<IAMPoliciesIcon />}
+                                variant={"callAction"}
+                                disabled={!canAssignPolicy}
+                              />
+                            </TooltipWrapper>
+                          }
+                        >
+                          Policies
+                        </SectionTitle>
+                      </Box>
+                      <Box>
+                        <DataTable
+                          itemActions={[
+                            {
+                              type: "view",
+                              onClick: (policy: IPolicyItem) => {
+                                navigate(
+                                  `${IAM_PAGES.POLICIES}/${encodeURLString(
+                                    policy.policy
+                                  )}`
+                                );
+                              },
                             },
-                          },
-                        ]}
-                        columns={[{ label: "Name", elementKey: "policy" }]}
-                        isLoading={loading}
-                        records={currentPolicies}
-                        entityName="Policies"
-                        idField="policy"
-                      />
-                    </div>
-                  </Fragment>
-                ),
-              }}
-            </VerticalTabs>
+                          ]}
+                          columns={[{ label: "Name", elementKey: "policy" }]}
+                          isLoading={loading}
+                          records={currentPolicies}
+                          entityName="Policies"
+                          idField="policy"
+                        />
+                      </Box>
+                    </Fragment>
+                  ),
+                },
+              ]}
+            />
           </Grid>
         </Grid>
       </PageLayout>
@@ -523,4 +518,4 @@ const UserDetails = ({ classes }: IUserDetailsProps) => {
   );
 };
 
-export default withStyles(styles)(UserDetails);
+export default UserDetails;

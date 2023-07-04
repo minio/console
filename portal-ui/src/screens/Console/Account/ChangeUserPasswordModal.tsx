@@ -15,47 +15,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { Button, ChangePasswordIcon } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import Grid from "@mui/material/Grid";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { Box, Button, ChangePasswordIcon, FormLayout, InputBox } from "mds";
 import { LinearProgress } from "@mui/material";
-import {
-  containerForHeader,
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../Common/FormComponents/common/styleLibrary";
-
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { api } from "api";
 import { ChangeUserPasswordRequest } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      textAlign: "right",
-    },
-    ...modalStyleUtils,
-    ...formFieldStyles,
-    ...spacingUtils,
-    ...containerForHeader,
-  });
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 
 interface IChangeUserPasswordProps {
-  classes: any;
   open: boolean;
   userName: string;
   closeModal: () => void;
 }
 
 const ChangeUserPassword = ({
-  classes,
   open,
   userName,
   closeModal,
@@ -123,37 +99,31 @@ const ChangeUserPassword = ({
           changeUserPassword(e);
         }}
       >
-        <Grid container>
-          <Grid item xs={12} className={classes.modalFormScrollable}>
-            <div className={classes.spacerBottom}>
-              Change password for: {userName}
-            </div>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="new-password"
-                name="new-password"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setNewPassword(event.target.value);
-                }}
-                label="New Password"
-                type="password"
-                value={newPassword}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="re-new-password"
-                name="re-new-password"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setReNewPassword(event.target.value);
-                }}
-                label="Type New Password Again"
-                type="password"
-                value={reNewPassword}
-              />
-            </Grid>
-          </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
+        <FormLayout withBorders={false} containerPadding={false}>
+          <Box sx={{ margin: "10px 0 20px" }}>
+            Change password for: <strong>{userName}</strong>
+          </Box>
+          <InputBox
+            id="new-password"
+            name="new-password"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setNewPassword(event.target.value);
+            }}
+            label="New Password"
+            type="password"
+            value={newPassword}
+          />
+          <InputBox
+            id="re-new-password"
+            name="re-new-password"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setReNewPassword(event.target.value);
+            }}
+            label="Type New Password Again"
+            type="password"
+            value={reNewPassword}
+          />
+          <Box sx={modalStyleUtils.modalButtonBar}>
             <Button
               id={"save-user-password"}
               type="submit"
@@ -165,16 +135,16 @@ const ChangeUserPassword = ({
               }
               label={"Save"}
             />
-          </Grid>
+          </Box>
           {loading && (
-            <Grid item xs={12}>
+            <Box>
               <LinearProgress />
-            </Grid>
+            </Box>
           )}
-        </Grid>
+        </FormLayout>
       </form>
     </ModalWrapper>
   ) : null;
 };
 
-export default withStyles(styles)(ChangeUserPassword);
+export default ChangeUserPassword;

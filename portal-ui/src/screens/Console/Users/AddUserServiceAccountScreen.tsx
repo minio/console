@@ -15,39 +15,24 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   BackLink,
+  Box,
   Button,
-  IAMPoliciesIcon,
+  FormLayout,
+  Grid,
+  InputBox,
   PageLayout,
   PasswordKeyIcon,
   ServiceAccountCredentialsIcon,
+  ServiceAccountIcon,
+  Switch,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../Common/FormComponents/common/styleLibrary";
-import Grid from "@mui/material/Grid";
-import { Box } from "@mui/material";
-import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
-
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../../src/common/types";
-import api from "../../../../src/common/api";
-import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import SectionTitle from "../Common/SectionTitle";
-
-import AddUserServiceAccountHelpBox from "./AddUserServiceAccountHelpBox";
+import { ErrorResponseHandler } from "../../../common/types";
 import {
   decodeURLString,
   encodeURLString,
@@ -55,20 +40,15 @@ import {
 } from "../../../common/utils";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import api from "../../../../src/common/api";
+import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
+import AddUserServiceAccountHelpBox from "./AddUserServiceAccountHelpBox";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
-interface IAddServiceAccountProps {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    ...modalStyleUtils,
-  });
-
-const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
+const AddServiceAccount = () => {
   const dispatch = useAppDispatch();
   const params = useParams();
   const navigate = useNavigate();
@@ -80,7 +60,6 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
     useState<boolean>(false);
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [policyJSON, setPolicyJSON] = useState<string>("");
 
   const userName = decodeURLString(params.userName || "");
@@ -145,7 +124,6 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
     setNewServiceAccount(null);
     setAccessKey("");
     setSecretKey("");
-    setShowPassword(false);
   };
 
   const closeCredentialsModal = () => {
@@ -183,152 +161,97 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
           actions={<HelpMenu />}
         />
         <PageLayout>
-          <Box
-            sx={{
-              display: "grid",
-              padding: "25px",
-              gap: "25px",
-              gridTemplateColumns: {
-                md: "2fr 1.2fr",
-                xs: "1fr",
-              },
-              border: "1px solid #eaeaea",
-            }}
+          <FormLayout
+            helpBox={<AddUserServiceAccountHelpBox />}
+            icon={<ServiceAccountCredentialsIcon />}
+            title={`Create Access Key for ${userName}`}
           >
-            <Box>
-              <SectionTitle icon={<ServiceAccountCredentialsIcon />}>
-                {`Create Access Key for ${userName}`}
-              </SectionTitle>
-              <form
-                noValidate
-                autoComplete="off"
-                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                  addUserServiceAccount(e);
+            <form
+              noValidate
+              autoComplete="off"
+              onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                e.preventDefault();
+                addUserServiceAccount(e);
+              }}
+            >
+              <InputBox
+                value={accessKey}
+                label={"Access Key"}
+                id={"accessKey"}
+                name={"accessKey"}
+                placeholder={"Enter Access Key"}
+                onChange={(e) => {
+                  setAccessKey(e.target.value);
                 }}
-              >
-                <Grid container item spacing="20" sx={{ marginTop: 1 }}>
-                  <Grid item xs={12}>
-                    <Grid container item spacing="20">
-                      <Grid item xs={12}>
-                        <Grid container>
-                          <Grid item xs={1}>
-                            <PasswordKeyIcon />
-                          </Grid>
-                          <Grid item>
-                            <Grid container item spacing="20">
-                              <Grid item xs={12}>
-                                {" "}
-                                <div className={classes.stackedInputs}>
-                                  <InputBoxWrapper
-                                    value={accessKey}
-                                    label={"Access Key"}
-                                    id={"accessKey"}
-                                    name={"accessKey"}
-                                    placeholder={"Enter Access Key"}
-                                    onChange={(e) => {
-                                      setAccessKey(e.target.value);
-                                    }}
-                                  />
-                                </div>
-                              </Grid>
-                              <Grid item xs={12}>
-                                <div className={classes.stackedInputs}>
-                                  <InputBoxWrapper
-                                    value={secretKey}
-                                    label={"Secret Key"}
-                                    id={"secretKey"}
-                                    name={"secretKey"}
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder={"Enter Secret Key"}
-                                    onChange={(e) => {
-                                      setSecretKey(e.target.value);
-                                    }}
-                                    overlayIcon={
-                                      showPassword ? (
-                                        <VisibilityOffIcon />
-                                      ) : (
-                                        <RemoveRedEyeIcon />
-                                      )
-                                    }
-                                    overlayAction={() =>
-                                      setShowPassword(!showPassword)
-                                    }
-                                  />
-                                </div>
-                              </Grid>
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid container item spacing="20">
-                    <Grid item xs={12}>
-                      <Grid container>
-                        <Grid item xs={1}>
-                          <IAMPoliciesIcon />
-                        </Grid>
-                        <Grid item xs={11}>
-                          <FormSwitchWrapper
-                            value="serviceAccountPolicy"
-                            id="serviceAccountPolicy"
-                            name="serviceAccountPolicy"
-                            checked={isRestrictedByPolicy}
-                            onChange={(
-                              event: React.ChangeEvent<HTMLInputElement>
-                            ) => {
-                              setIsRestrictedByPolicy(event.target.checked);
-                            }}
-                            label={"Restrict beyond user policy"}
-                            tooltip={
-                              "You can specify an optional JSON-formatted IAM policy to further restrict Access Key access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."
-                            }
-                          />
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    {isRestrictedByPolicy && (
-                      <Grid
-                        item
-                        xs={12}
-                        className={classes.codeMirrorContainer}
-                      >
-                        <Grid item xs={12} className={classes.formScrollable}>
-                          <CodeMirrorWrapper
-                            label={"Policy"}
-                            value={policyJSON}
-                            onChange={(value) => {
-                              setPolicyJSON(value);
-                            }}
-                          />
-                        </Grid>
-                      </Grid>
-                    )}
-                  </Grid>
-                  <Grid item xs={12} className={classes.modalButtonBar}>
-                    <Button
-                      id={"clear-add-sa"}
-                      type="button"
-                      variant="regular"
-                      onClick={resetForm}
-                      label={"Clear"}
-                    />
-                    <Button
-                      id="create-sa"
-                      type="submit"
-                      variant="callAction"
-                      label={"Create"}
+                startIcon={<ServiceAccountIcon />}
+              />
+              <InputBox
+                value={secretKey}
+                label={"Secret Key"}
+                id={"secretKey"}
+                name={"secretKey"}
+                type={"password"}
+                placeholder={"Enter Secret Key"}
+                onChange={(e) => {
+                  setSecretKey(e.target.value);
+                }}
+                startIcon={<PasswordKeyIcon />}
+              />
+              <Switch
+                value="serviceAccountPolicy"
+                id="serviceAccountPolicy"
+                name="serviceAccountPolicy"
+                checked={isRestrictedByPolicy}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setIsRestrictedByPolicy(event.target.checked);
+                }}
+                label={"Restrict beyond user policy"}
+                description={
+                  "You can specify an optional JSON-formatted IAM policy to further restrict Access Key access to a subset of the actions and resources explicitly allowed for the parent user. Additional access beyond that of the parent user cannot be implemented through these policies."
+                }
+              />
+              {isRestrictedByPolicy && (
+                <Grid item xs={12}>
+                  <Box>
+                    <PanelTitle>
+                      Current User Policy - edit the JSON to remove permissions
+                      for this Access Key
+                    </PanelTitle>
+                  </Box>
+                  <Grid item xs={12} sx={{ ...modalStyleUtils.formScrollable }}>
+                    <CodeMirrorWrapper
+                      value={policyJSON}
+                      onChange={(value) => {
+                        setPolicyJSON(value);
+                      }}
+                      editorHeight={"350px"}
                     />
                   </Grid>
                 </Grid>
-              </form>
-            </Box>
-            <AddUserServiceAccountHelpBox />
-          </Box>
+              )}
+              <Grid item xs={12} sx={{ ...modalStyleUtils.modalButtonBar }}>
+                <Button
+                  id={"clear"}
+                  type="button"
+                  variant="regular"
+                  onClick={resetForm}
+                  label={"Clear"}
+                />
+
+                <Button
+                  id={"create-sa"}
+                  type="submit"
+                  variant="callAction"
+                  color="primary"
+                  label={"Create"}
+                />
+              </Grid>
+            </form>
+          </FormLayout>
         </PageLayout>
       </Grid>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(AddServiceAccount);
+export default AddServiceAccount;

@@ -14,27 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import { Box } from "@mui/material";
+import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AddIcon, Button, DeleteIcon } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  actionsTray,
-  searchField,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
+import { AddIcon, Box, Button, DataTable, DeleteIcon, SectionTitle } from "mds";
 import api from "../../../common/api";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { stringSort } from "../../../utils/sortFunctions";
 import { ErrorResponseHandler } from "../../../common/types";
-import AddUserServiceAccount from "./AddUserServiceAccount";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
 import { selectSAs } from "../Configurations/utils";
@@ -54,23 +42,11 @@ import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 
 interface IUserServiceAccountsProps {
-  classes: any;
   user: string;
   hasPolicy: boolean;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...searchField,
-    ...actionsTray,
-    actionsTray: {
-      ...actionsTray.actionsTray,
-    },
-    ...tableStyles,
-  });
-
 const UserServiceAccountsPanel = ({
-  classes,
   user,
   hasPolicy,
 }: IUserServiceAccountsProps) => {
@@ -79,7 +55,6 @@ const UserServiceAccountsPanel = ({
 
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedServiceAccount, setSelectedServiceAccount] = useState<
     string | null
@@ -113,23 +88,6 @@ const UserServiceAccountsPanel = ({
 
   const fetchRecords = () => {
     setLoading(true);
-  };
-
-  const closeAddModalAndRefresh = (res: NewServiceAccount | null) => {
-    setAddScreenOpen(false);
-    fetchRecords();
-
-    if (res !== null) {
-      const nsa: NewServiceAccount = {
-        console: {
-          accessKey: `${res.accessKey}`,
-          secretKey: `${res.secretKey}`,
-          url: `${res.url}`,
-        },
-      };
-      setNewServiceAccount(nsa);
-      setShowNewCredentials(true);
-    }
   };
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
@@ -188,16 +146,7 @@ const UserServiceAccountsPanel = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <React.Fragment>
-      {addScreenOpen && (
-        <AddUserServiceAccount
-          open={addScreenOpen}
-          closeModalAndRefresh={(res: NewServiceAccount | null) => {
-            closeAddModalAndRefresh(res);
-          }}
-          user={user}
-        />
-      )}
+    <Fragment>
       {deleteOpen && (
         <DeleteServiceAccount
           deleteOpen={deleteOpen}
@@ -231,64 +180,68 @@ const UserServiceAccountsPanel = ({
           closeModalAndRefresh={closePolicyModal}
         />
       )}
-      <div className={classes.actionsTray}>
-        <PanelTitle>Access Keys</PanelTitle>
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <TooltipWrapper tooltip={"Delete Selected"}>
-            <Button
-              id={"delete-selected"}
-              onClick={() => {
-                setDeleteMultipleOpen(true);
-              }}
-              label={"Delete Selected"}
-              icon={<DeleteIcon />}
-              disabled={selectedSAs.length === 0}
-              variant={"secondary"}
-            />
-          </TooltipWrapper>
-          <SecureComponent
-            scopes={[
-              IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,
-              IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
-              IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,
-              IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS,
-            ]}
-            resource={CONSOLE_UI_RESOURCE}
-            matchAll
-            errorProps={{ disabled: true }}
-          >
-            <TooltipWrapper tooltip={"Create Access Key"}>
+
+      <SectionTitle
+        separator
+        sx={{ marginBottom: 15 }}
+        actions={
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
+            <TooltipWrapper tooltip={"Delete Selected"}>
               <Button
-                id={"create-service-account"}
-                label={"Create Access Key"}
-                variant="callAction"
-                icon={<AddIcon />}
+                id={"delete-selected"}
                 onClick={() => {
-                  navigate(
-                    `/identity/users/new-user-sa/${encodeURLString(user)}`
-                  );
+                  setDeleteMultipleOpen(true);
                 }}
-                disabled={!hasPolicy}
+                label={"Delete Selected"}
+                icon={<DeleteIcon />}
+                disabled={selectedSAs.length === 0}
+                variant={"secondary"}
               />
             </TooltipWrapper>
-          </SecureComponent>
-        </Box>
-      </div>
-      <div className={classes.tableBlock}>
-        <TableWrapper
-          isLoading={loading}
-          records={records}
-          entityName={"Access Keys"}
-          idField={""}
-          columns={[{ label: "Access Key", elementKey: "" }]}
-          itemActions={tableActions}
-          selectedItems={selectedSAs}
-          onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
-          onSelectAll={selectAllItems}
-        />
-      </div>
-    </React.Fragment>
+            <SecureComponent
+              scopes={[
+                IAM_SCOPES.ADMIN_CREATE_SERVICEACCOUNT,
+                IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
+                IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,
+                IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS,
+              ]}
+              resource={CONSOLE_UI_RESOURCE}
+              matchAll
+              errorProps={{ disabled: true }}
+            >
+              <TooltipWrapper tooltip={"Create Access Key"}>
+                <Button
+                  id={"create-service-account"}
+                  label={"Create Access Key"}
+                  variant="callAction"
+                  icon={<AddIcon />}
+                  onClick={() => {
+                    navigate(
+                      `/identity/users/new-user-sa/${encodeURLString(user)}`
+                    );
+                  }}
+                  disabled={!hasPolicy}
+                />
+              </TooltipWrapper>
+            </SecureComponent>
+          </Box>
+        }
+      >
+        Access Keys
+      </SectionTitle>
+
+      <DataTable
+        isLoading={loading}
+        records={records}
+        entityName={"Access Keys"}
+        columns={[{ label: "Access Key" }]}
+        itemActions={tableActions}
+        selectedItems={selectedSAs}
+        onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
+        onSelectAll={selectAllItems}
+      />
+    </Fragment>
   );
 };
 
-export default withStyles(styles)(UserServiceAccountsPanel);
+export default UserServiceAccountsPanel;

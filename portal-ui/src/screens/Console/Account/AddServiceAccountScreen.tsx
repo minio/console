@@ -30,23 +30,20 @@ import {
   ServiceAccountIcon,
 } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
-
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-
-import PanelTitle from "../Common/PanelTitle/PanelTitle";
-
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { getRandomString } from "../../../common/utils";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import HelpMenu from "../HelpMenu";
 import { ContentType } from "api/consoleApi";
+import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
+import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
+import PanelTitle from "../Common/PanelTitle/PanelTitle";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 const AddServiceAccount = () => {
   const dispatch = useAppDispatch();
@@ -123,7 +120,7 @@ const AddServiceAccount = () => {
       {newServiceAccount !== null && (
         <CredentialsPrompt
           newServiceAccount={newServiceAccount}
-          open={newServiceAccount !== null}
+          open={true}
           closeModal={() => {
             closeCredentialsModal();
           }}

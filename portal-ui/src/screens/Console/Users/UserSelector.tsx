@@ -14,36 +14,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import React from "react";
 import { setUserName } from "./AddUsersSlice";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../store";
+import { InputBox } from "mds";
 
-interface IAddUserProps2 {
-  classes: any;
-}
-
-const UserSelector = ({ classes }: IAddUserProps2) => {
+const UserSelector = () => {
   const dispatch = useAppDispatch();
   const userName = useSelector((state: AppState) => state.createUser.userName);
   return (
-    <Fragment>
-      <InputBoxWrapper
-        className={classes.spacerBottom}
-        classes={{
-          inputLabel: classes.sizedLabel,
-        }}
-        id="accesskey-input"
-        name="accesskey-input"
-        label="User Name"
-        value={userName}
-        autoFocus={true}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          dispatch(setUserName(e.target.value));
-        }}
-      />
-    </Fragment>
+    <InputBox
+      id="accesskey-input"
+      name="accesskey-input"
+      label="User Name"
+      value={userName}
+      autoFocus={true}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(setUserName(e.target.value));
+      }}
+    />
   );
 };
 export default UserSelector;

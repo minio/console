@@ -14,63 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
-
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { LinearProgress } from "@mui/material";
+import React, { useCallback, useEffect, useState, Fragment } from "react";
 import get from "lodash/get";
-import Grid from "@mui/material/Grid";
-
+import { LinearProgress } from "@mui/material";
+import { Box, DataTable, Grid } from "mds";
 import { stringSort } from "../../../utils/sortFunctions";
 import { GroupsList } from "../Groups/types";
-import {
-  actionsTray,
-  selectorsCommon,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import SearchBox from "../Common/SearchBox";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import api from "../../../common/api";
+import SearchBox from "../Common/SearchBox";
 
 interface IGroupsProps {
-  classes: any;
   selectedGroups: string[];
   setSelectedGroups: any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    noFound: {
-      textAlign: "center",
-      padding: "10px 0",
-    },
-    actionsTitle: {
-      fontWeight: 400,
-      color: "#000",
-      fontSize: 14,
-      alignSelf: "center",
-
-      marginRight: 48,
-      "@media (max-width: 900px)": {
-        marginRight: 0,
-      },
-    },
-    searchBox: {
-      flex: 1,
-      marginLeft: "2rem",
-    },
-    ...tableStyles,
-    ...actionsTray,
-    ...selectorsCommon,
-  });
-
 const GroupsSelectors = ({
-  classes,
   selectedGroups,
   setSelectedGroups,
 }: IGroupsProps) => {
@@ -135,41 +96,41 @@ const GroupsSelectors = ({
   );
 
   return (
-    <React.Fragment>
-      <Grid item xs={12}>
-        {loading && <LinearProgress />}
-        {records !== null && records.length > 0 ? (
-          <React.Fragment>
-            <Grid item xs={12} className={classes.actionsTray}>
-              <label className={classes.actionsTitle}>Assign Groups</label>
-
-              <div className={classes.searchBox}>
-                <SearchBox
-                  placeholder="Start typing to search for Groups"
-                  onChange={setFilter}
-                  value={filter}
-                />
-              </div>
-            </Grid>
-            <Grid item xs={12} className={classes.tableBlock}>
-              <TableWrapper
-                columns={[{ label: "Group", elementKey: "" }]}
-                onSelect={selectionChanged}
-                selectedItems={selGroups}
-                isLoading={loading}
-                records={filteredRecords}
-                entityName="Groups"
-                idField=""
-                customPaperHeight={classes.multiSelectTable}
-              />
-            </Grid>
-          </React.Fragment>
-        ) : (
-          <div className={classes.noFound}>No Groups Available</div>
-        )}
-      </Grid>
-    </React.Fragment>
+    <Grid item xs={12} className={"inputItem"}>
+      {loading && <LinearProgress />}
+      {records !== null && records.length > 0 ? (
+        <Fragment>
+          <Grid item xs={12} className={"inputItem"}>
+            <SearchBox
+              placeholder="Start typing to search for Groups"
+              onChange={setFilter}
+              value={filter}
+              label={"Assign Groups"}
+            />
+          </Grid>
+          <DataTable
+            columns={[{ label: "Group" }]}
+            onSelect={selectionChanged}
+            selectedItems={selGroups}
+            isLoading={loading}
+            records={filteredRecords}
+            entityName="Groups"
+            idField=""
+            customPaperHeight={"200px"}
+          />
+        </Fragment>
+      ) : (
+        <Box
+          sx={{
+            textAlign: "center",
+            padding: "10px 0",
+          }}
+        >
+          No Groups Available
+        </Box>
+      )}
+    </Grid>
   );
 };
 
-export default withStyles(styles)(GroupsSelectors);
+export default GroupsSelectors;

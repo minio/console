@@ -54,8 +54,9 @@ export const createUserAsync = createAsyncThunk(
         groups: selectedGroups,
         policies: selectedPolicies,
       })
-      .then((res) => {
+      .then(() => {
         dispatch(setAddLoading(false));
+        dispatch(resetFormAsync());
       })
       .catch((err: ErrorResponseHandler) => {
         dispatch(setAddLoading(false));

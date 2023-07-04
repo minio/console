@@ -15,37 +15,35 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { DialogContentText } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { ErrorResponseHandler } from "../../../common/types";
-import { ConfirmDeleteIcon, Loader } from "mds";
+import { ConfirmDeleteIcon, Loader, DataTable } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import WarningMessage from "../Common/WarningMessage/WarningMessage";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
+import { useAppDispatch } from "../../../store";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedUsers: string[] | null;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteUser = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedUsers,
-  setErrorSnackMessage,
 }: IDeleteUserProps) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => setErrorSnackMessage(err);
+  const onDelError = (err: ErrorResponseHandler) =>
+    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
 
   const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
@@ -67,11 +65,11 @@ const DeleteUser = ({
           setLoadingSA(false);
         })
         .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
+          dispatch(setErrorSnackMessage(err));
           setLoadingSA(false);
         });
     }
-  }, [selectedUsers, setErrorSnackMessage]);
+  }, [selectedUsers, dispatch]);
 
   if (!selectedUsers) {
     return null;
@@ -97,10 +95,12 @@ const DeleteUser = ({
   const onConfirmDelete = () => {
     for (let user of selectedUsers) {
       if (user === userLoggedIn) {
-        setErrorSnackMessage({
-          errorMessage: "Cannot delete currently logged in user",
-          detailedError: `Cannot delete currently logged in user ${userLoggedIn}`,
-        });
+        dispatch(
+          setErrorSnackMessage({
+            errorMessage: "Cannot delete currently logged in user",
+            detailedError: `Cannot delete currently logged in user ${userLoggedIn}`,
+          })
+        );
         closeDeleteModalAndRefresh(true);
       } else {
         invokeDeleteApi("DELETE", `/api/v1/user/${encodeURLString(user)}`);
@@ -122,9 +122,7 @@ const DeleteUser = ({
     "user" +
     (selectedUsers.length > 1 ? "s?" : "?");
 
-  return loadingSA ? (
-    <Loader />
-  ) : (
+  return (
     <ConfirmDialog
       title={`Delete User${selectedUsers.length > 1 ? "s" : ""}`}
       confirmText={"Delete"}
@@ -134,45 +132,43 @@ const DeleteUser = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
-          {hasSA ? (
-            <Fragment>
-              <WarningMessage
-                label="Click on a user to view the full listing of asociated Access Keys. All Access Keys associated with a user will be deleted along with the user. Are you sure you want to continue?"
-                title="Warning: One or more users selected has associated Access Keys. "
-              />
-              <TableWrapper
-                itemActions={tableActions}
-                columns={[
-                  { label: "Username", elementKey: "userName" },
-                  {
-                    label: "# Associated Access Keys",
-                    elementKey: "numSAs",
-                  },
-                ]}
-                isLoading={loadingSA}
-                records={userSAList}
-                entityName="User Access Keys"
-                idField="userName"
-                customPaperHeight="250"
-              />
-            </Fragment>
-          ) : (
-            <Fragment>
-              {noSAtext}
-              {renderUsers}
-            </Fragment>
-          )}
-        </DialogContentText>
+        loadingSA ? (
+          <Loader />
+        ) : (
+          <Fragment>
+            {hasSA ? (
+              <Fragment>
+                <WarningMessage
+                  label="Click on a user to view the full listing of asociated Access Keys. All Access Keys associated with a user will be deleted along with the user. Are you sure you want to continue?"
+                  title="Warning: One or more users selected has associated Access Keys. "
+                />
+                <DataTable
+                  itemActions={tableActions}
+                  columns={[
+                    { label: "Username", elementKey: "userName" },
+                    {
+                      label: "# Associated Access Keys",
+                      elementKey: "numSAs",
+                    },
+                  ]}
+                  isLoading={loadingSA}
+                  records={userSAList}
+                  entityName="User Access Keys"
+                  idField="userName"
+                  customPaperHeight="250"
+                />
+              </Fragment>
+            ) : (
+              <Fragment>
+                {noSAtext}
+                {renderUsers}
+              </Fragment>
+            )}
+          </Fragment>
+        )
       }
     />
   );
 };
 
-const mapDispatchToProps = {
-  setErrorSnackMessage,
-};
-
-const connector = connect(null, mapDispatchToProps);
-
-export default connector(DeleteUser);
+export default DeleteUser;

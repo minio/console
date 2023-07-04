@@ -15,14 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Box, Button, FormLayout, IAMPoliciesIcon } from "mds";
 import { LinearProgress } from "@mui/material";
 import { useSelector } from "react-redux";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import Grid from "@mui/material/Grid";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { IPolicyItem } from "../Users/types";
 import { ErrorResponseHandler } from "../../../common/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
@@ -33,28 +30,13 @@ import { AppState, useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "./AddUsersSlice";
 
 interface ISetUserPoliciesProps {
-  classes: any;
   closeModalAndRefresh: () => void;
   selectedUser: string;
   currentPolicies: IPolicyItem[];
   open: boolean;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalBasic,
-    buttonContainer: {
-      display: "flex",
-      justifyContent: "flex-end",
-      marginTop: ".9rem",
-      "& button": {
-        marginLeft: 8,
-      },
-    },
-  });
-
 const SetUserPolicies = ({
-  classes,
   closeModalAndRefresh,
   selectedUser,
   currentPolicies,
@@ -114,19 +96,17 @@ const SetUserPolicies = ({
       }}
       modalOpen={open}
       title="Set Policies"
+      titleIcon={<IAMPoliciesIcon />}
     >
-      <Grid container>
-        <Grid item xs={12}>
-          <PolicySelectors selectedPolicy={statePolicies} />
-        </Grid>
-      </Grid>
-      <Grid item xs={12} className={classes.buttonContainer}>
+      <FormLayout withBorders={false} containerPadding={false}>
+        <PolicySelectors selectedPolicy={statePolicies} />
+      </FormLayout>
+      <Box sx={modalStyleUtils.modalButtonBar}>
         <Button
           id={"reset-user-policies"}
           type="button"
           variant="regular"
           color="primary"
-          className={classes.clearButton}
           onClick={resetSelection}
           label={"Reset"}
         />
@@ -139,7 +119,7 @@ const SetUserPolicies = ({
           onClick={SetUserPoliciesAction}
           label={"Save"}
         />
-      </Grid>
+      </Box>
       {loading && (
         <Grid item xs={12}>
           <LinearProgress />
@@ -149,4 +129,4 @@ const SetUserPolicies = ({
   );
 };
 
-export default withStyles(styles)(SetUserPolicies);
+export default SetUserPolicies;
