@@ -239,7 +239,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 			case writeM := <-writeChannel:
 				jsonData, err := json.Marshal(writeM)
 				if err != nil {
-					LogInfo("Error while marshalling the response", err)
+					LogInfo("Error while marshaling the response", err)
 					return
 				}
 
