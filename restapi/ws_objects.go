@@ -232,18 +232,23 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 
 	// Write goroutine
 	go func() {
-		for writeM := range writeChannel {
-			jsonData, err := json.Marshal(writeM)
-			if err != nil {
-				LogInfo("Error while parsing the response", err)
+		for {
+			select {
+			case <-done:
 				return
-			}
+			case writeM := <-writeChannel:
+				jsonData, err := json.Marshal(writeM)
+				if err != nil {
+					LogInfo("Error while marshaling the response", err)
+					return
+				}
 
-			err = wsc.conn.writeMessage(websocket.TextMessage, jsonData)
+				err = wsc.conn.writeMessage(websocket.TextMessage, jsonData)
 
-			if err != nil {
-				LogInfo("Error while writing the message", err)
-				return
+				if err != nil {
+					LogInfo("Error while writing the message", err)
+					return
+				}
 			}
 		}
 	}()
