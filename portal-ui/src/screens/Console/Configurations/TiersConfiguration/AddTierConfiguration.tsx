@@ -199,7 +199,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
           navigate(IAM_PAGES.TIERS);
         })
         .catch(async (res: HttpResponse<void, Error>) => {
-          const err = await res.error;
+          const err = (await res.json()) as Error;
           setSaving(false);
           dispatch(setErrorSnackMessage(errorToHandler(err)));
         });
