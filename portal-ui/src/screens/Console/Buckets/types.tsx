@@ -14,55 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface BucketEncryptionInfo {
-  algorithm: string;
-  kmsMasterKeyID: string;
-}
-
-export interface Details {
-  tags?: object;
-  locking?: boolean;
-  quota?: object;
-  versioning?: boolean;
-}
-
-export interface BucketInfo {
-  name: string;
-  access: string;
-  definition: string;
-  creation_date?: string;
-  objects?: number;
-  size?: number;
-}
-
-export interface BucketEvent {
-  id: string;
-  arn: string;
-  events: string[];
-  prefix: string;
-  suffix: string;
-}
-
-export interface BucketEventList {
-  events: BucketEvent[];
-  total: number;
-}
-
-export interface ArnList {
-  arns: string[];
-}
-
-export interface BucketVersioningInfo {
-  excludeFolders?: boolean;
-  excludedPrefixes?: Record<"Prefix", string>[];
-  MFADelete?: string;
-  status?: "Enabled" | "Suspended" | "";
-}
-
-export interface BucketObjectLocking {
-  object_locking_enabled: boolean;
-}
-
 export interface BucketReplicationDestination {
   bucket: string;
 }
@@ -84,21 +35,6 @@ export interface BucketReplicationRule {
 
 export interface BucketReplication {
   rules: BucketReplicationRule[];
-}
-
-export interface BucketQuota {
-  quota: number;
-  type: string;
-}
-
-export interface ChangePasswordRequest {
-  current_secret_key: string;
-  new_secret_key: string;
-}
-
-export interface ChangeUserPasswordRequest {
-  selectedUser: string;
-  newSecretKey: string;
 }
 
 export interface BulkReplicationResponse {

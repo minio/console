@@ -15,21 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { AddIcon, Button, HelpBox, IAMPoliciesIcon, PageLayout } from "mds";
-import { useNavigate } from "react-router-dom";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-
 import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-} from "../Common/FormComponents/common/styleLibrary";
+  AddIcon,
+  Button,
+  DataTable,
+  Grid,
+  HelpBox,
+  IAMPoliciesIcon,
+  PageLayout,
+} from "mds";
+import { useNavigate } from "react-router-dom";
+import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
-
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import {
   CONSOLE_UI_RESOURCE,
   createPolicyPermissions,
@@ -44,42 +41,25 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../common/SecureComponent";
-import SearchBox from "../Common/SearchBox";
-
-import withSuspense from "../Common/Components/withSuspense";
-
-import { encodeURLString } from "../../../common/utils";
-import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
-import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import { api } from "../../../api";
 import {
   Error,
   HttpResponse,
   ListPoliciesResponse,
   Policy,
 } from "../../../api/consoleApi";
+import { encodeURLString } from "../../../common/utils";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
+import { api } from "../../../api";
+import SearchBox from "../Common/SearchBox";
+import withSuspense from "../Common/Components/withSuspense";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...actionsTray,
-    ...searchField,
-    searchField: {
-      ...searchField.searchField,
-      maxWidth: 380,
-    },
-    ...containerForHeader,
-  });
-
-interface IPoliciesProps {
-  classes: any;
-}
-
-const ListPolicies = ({ classes }: IPoliciesProps) => {
+const ListPolicies = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -194,7 +174,7 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
   }, []);
 
   return (
-    <React.Fragment>
+    <Fragment>
       {deleteOpen && (
         <DeletePolicy
           deleteOpen={deleteOpen}
@@ -204,14 +184,14 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
       )}
       <PageHeaderWrapper label="IAM Policies" actions={<HelpMenu />} />
 
-      <PageLayout className={classes.pageContainer}>
-        <Grid container spacing={1}>
-          <Grid item xs={12} className={classes.actionsTray}>
+      <PageLayout>
+        <Grid container sx={{ gap: 15 }}>
+          <Grid item xs={12} sx={actionsTray.actionsTray}>
             <SearchBox
               onChange={setFilterPolicies}
               placeholder="Search Policies"
-              overrideClass={classes.searchField}
               value={filterPolicies}
+              sx={{ maxWidth: 380 }}
             />
 
             <SecureComponent
@@ -242,19 +222,13 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
               </TooltipWrapper>
             </SecureComponent>
           </Grid>
-          <Grid item xs={12} className={classes.tableBlock}>
+          <Grid item xs={12}>
             <SecureComponent
               scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
               resource={CONSOLE_UI_RESOURCE}
               errorProps={{ disabled: true }}
             >
-              <TableWrapper
-                itemActions={tableActions}
-                columns={[{ label: "Name", elementKey: "name" }]}
-                isLoading={loading}
-                records={filteredRecords}
-                entityName="Policies"
-                idField="name"
+              <TooltipWrapper
                 tooltip={
                   canViewPolicy
                     ? ""
@@ -263,10 +237,19 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
                         "view Policy details"
                       )
                 }
-              />
+              >
+                <DataTable
+                  itemActions={tableActions}
+                  columns={[{ label: "Name", elementKey: "name" }]}
+                  isLoading={loading}
+                  records={filteredRecords}
+                  entityName="Policies"
+                  idField="name"
+                />
+              </TooltipWrapper>
             </SecureComponent>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ marginTop: 15 }}>
             <HelpBox
               title={"Learn more about IAM POLICIES"}
               iconComponent={<IAMPoliciesIcon />}
@@ -301,8 +284,8 @@ const ListPolicies = ({ classes }: IPoliciesProps) => {
           </Grid>
         </Grid>
       </PageLayout>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
-export default withStyles(styles)(ListPolicies);
+export default ListPolicies;

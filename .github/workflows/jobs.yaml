@@ -1,3 +1,5 @@
+# @format
+
 name: Workflow
 
 on:
@@ -15,15 +17,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
-
   lint-job:
     name: Checking Lint
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
+        go-version: [1.20.x]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ubuntu-latest]
     steps:
       - name: Check out source code
         uses: actions/checkout@v3
@@ -80,14 +80,13 @@ jobs:
           pip3 install semgrep
           semgrep --config semgrep.yaml $(pwd)/portal-ui --error
 
-
   ui-assets:
     name: "React Code Has No Warnings & Prettified"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -97,7 +96,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-          cache: 'yarn'
+          cache: "yarn"
           cache-dependency-path: portal-ui/yarn.lock
       - uses: actions/cache@v3
         id: assets-cache
@@ -121,13 +120,18 @@ jobs:
         continue-on-error: false
         run: |
           ./check-prettier.sh
+      - name: Check for dead code
+        working-directory: ./portal-ui
+        continue-on-error: false
+        run: |
+          ./check-deadcode.sh
   reuse-golang-dependencies:
     name: reuse golang dependencies
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -146,10 +150,10 @@ jobs:
 
   latest-minio:
     name: Build latest MinIO
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
+        go-version: [1.20.x]
     steps:
       # To build minio image, we need to clone the repository first
       - name: Clone github.com/minio/minio
@@ -184,8 +188,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -215,9 +219,7 @@ jobs:
           GOOS: linux
         run: |
           make console
-  
-  
-  
+
   react-code-known-vulnerabilities:
     name: "React Code Has No Known Vulnerable Deps"
     needs:
@@ -225,32 +227,32 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-          cache: 'yarn'
+          cache: "yarn"
           cache-dependency-path: portal-ui/yarn.lock
       - name: Checks for known security issues with the installed packages
         working-directory: ./portal-ui
         continue-on-error: false
         run: |
-          yarn audit  
+          yarn audit --groups dependencies
 
   all-permissions-1:
     name: Permissions Tests Part 1
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -292,12 +294,12 @@ jobs:
     name: Permissions Tests Part 2
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -338,12 +340,12 @@ jobs:
     name: Permissions Tests Part 3
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -380,17 +382,16 @@ jobs:
         run: |
           make cleanup-permissions
 
-
   all-permissions-4:
     name: Permissions Tests Part 4
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 15
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -426,11 +427,11 @@ jobs:
     name: Permissions Tests Part 5
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -466,11 +467,11 @@ jobs:
     name: Permissions Tests Part 6
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -506,11 +507,11 @@ jobs:
     name: Permissions Tests Part 7
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -546,11 +547,11 @@ jobs:
     name: Permissions Tests Part 8
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -586,11 +587,11 @@ jobs:
     name: Permissions Tests Part 9
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -631,11 +632,11 @@ jobs:
     name: Permissions Tests Part A
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -676,11 +677,11 @@ jobs:
     name: Permissions Tests Part B
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -717,160 +718,6 @@ jobs:
         run: |
           make cleanup-permissions
 
-  cross-compile-1:
-    name: Cross compile
-    needs:
-      - lint-job
-      - ui-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'linux/ppc64le linux/mips64'"
-
-  cross-compile-2:
-    name: Cross compile 2
-    needs:
-      - lint-job
-      - ui-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'linux/arm64 linux/s390x'"
-
-  cross-compile-3:
-    name: Cross compile 3
-    needs:
-      - lint-job
-      - ui-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'darwin/amd64 freebsd/amd64'"
-
-  cross-compile-4:
-    name: Cross compile 4
-    needs:
-      - lint-job
-      - ui-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'windows/amd64 linux/arm'"
-
-  cross-compile-5:
-    name: Cross compile 5
-    needs:
-      - lint-job
-      - ui-assets
-      - reuse-golang-dependencies
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'linux/386 netbsd/amd64'"
-
   test-pkg-on-go:
     name: Test Pkg on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
@@ -881,8 +728,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -918,8 +765,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -930,7 +777,6 @@ jobs:
           go-version: ${{ matrix.go-version }}
           cache: true
         id: go
-
 
       - name: Build on ${{ matrix.os }}
         env:
@@ -958,7 +804,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
+        go-version: [1.20.x]
 
     steps:
       - name: Check out code
@@ -967,7 +813,7 @@ jobs:
         uses: actions/checkout@master
         with:
           repository: minio/minio
-          path: 'minio_repository'
+          path: "minio_repository"
       - uses: actions/cache@v3
         id: minio-latest-cache
         name: MinIO Latest Cache
@@ -1003,7 +849,7 @@ jobs:
           echo "We are going to use the built image on test-integration";
           VERSION="minio/minio:$VERSION";
           echo $VERSION;
-          
+
           echo "Create bucket for replication with versioning"
           echo "Download mc for Ubuntu"
           wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
@@ -1036,7 +882,6 @@ jobs:
         working-directory: ./portal-ui
         run: yarn test
   replication:
-
     name: Site Replication Test
     needs:
       - lint-job
@@ -1044,11 +889,11 @@ jobs:
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
       - latest-minio
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
 
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
+        go-version: [1.20.x]
 
     steps:
       - name: Check out code
@@ -1065,7 +910,7 @@ jobs:
         uses: actions/checkout@master
         with:
           repository: minio/minio
-          path: 'minio_repository'
+          path: "minio_repository"
       - uses: actions/cache@v3
         id: minio-latest-cache
         name: MinIO Latest Cache
@@ -1110,8 +955,8 @@ jobs:
         with:
           name: replication-artifact
           path: ./replication/coverage/replication.out
+          if-no-files-found: error
   sso-integration:
-
     name: SSO Integration Test
     needs:
       - lint-job
@@ -1123,7 +968,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
+        go-version: [1.20.x]
 
     steps:
       - name: Check out code
@@ -1140,7 +985,7 @@ jobs:
         uses: actions/checkout@master
         with:
           repository: minio/minio
-          path: 'minio_repository'
+          path: "minio_repository"
       - uses: actions/cache@v3
         id: minio-latest-cache
         name: MinIO Latest Cache
@@ -1194,8 +1039,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.20.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.20.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1411,8 +1256,8 @@ jobs:
           yarn add -D nyc
           yarn add -D react-app-rewired
           yarn add -D create-react-app
+          yarn add -D @playwright/test
           yarn init -y
-          yarn add --dev @playwright/test
           echo "yarn install"
           yarn install
 
@@ -1434,6 +1279,8 @@ jobs:
         run: |
           echo "Run tests under playwright folder only"
           cd $GITHUB_WORKSPACE/portal-ui
+          yarn remove playwright
+          yarn add --dev @playwright/test
           echo "npx playwright test"
           npx playwright test # To run the tests
           echo "npx nyc report"

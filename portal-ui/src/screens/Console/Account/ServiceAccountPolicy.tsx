@@ -15,55 +15,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-
-import { Button, ChangeAccessPolicyIcon } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../Common/FormComponents/common/styleLibrary";
-
-import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import { Button, ChangeAccessPolicyIcon, Grid } from "mds";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    codeMirrorContainer: {
-      marginBottom: 20,
-      "& label": {
-        marginBottom: ".5rem",
-      },
-      "& label + div": {
-        display: "none",
-      },
-    },
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    ...spacingUtils,
-  });
-createStyles({
-  ...modalStyleUtils,
-  ...spacingUtils,
-});
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
 interface IServiceAccountPolicyProps {
-  classes: any;
   open: boolean;
   selectedAccessKey: string | null;
   closeModalAndRefresh: () => void;
 }
 
 const ServiceAccountPolicy = ({
-  classes,
   open,
   selectedAccessKey,
   closeModalAndRefresh,
@@ -73,39 +41,30 @@ const ServiceAccountPolicy = ({
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   useEffect(() => {
     if (loading) {
-      api
-        .invoke(
-          "GET",
-          `/api/v1/service-accounts/${encodeURLString(
-            selectedAccessKey
-          )}/policy`
-        )
+      api.serviceAccounts
+        .getServiceAccountPolicy(encodeURLString(selectedAccessKey))
         .then((res) => {
           setLoading(false);
-          setPolicyDefinition(res);
+          setPolicyDefinition(res.data);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setLoading(false);
-          dispatch(setModalErrorSnackMessage(err));
+          dispatch(setModalErrorSnackMessage(errorToHandler(err)));
         });
     }
   }, [loading, setLoading, dispatch, selectedAccessKey]);
 
   const setPolicy = (event: React.FormEvent, newPolicy: string) => {
     event.preventDefault();
-    api
-      .invoke(
-        "PUT",
-        `/api/v1/service-accounts/${encodeURLString(selectedAccessKey)}/policy`,
-        {
-          policy: newPolicy,
-        }
-      )
-      .then((res) => {
+    api.serviceAccounts
+      .setServiceAccountPolicy(encodeURLString(selectedAccessKey), {
+        policy: newPolicy,
+      })
+      .then(() => {
         closeModalAndRefresh();
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(err));
+      .catch((err) => {
+        dispatch(setModalErrorSnackMessage(errorToHandler(err)));
       });
   };
 
@@ -126,17 +85,17 @@ const ServiceAccountPolicy = ({
         }}
       >
         <Grid container>
-          <Grid item xs={12} className={classes.codeMirrorContainer}>
+          <Grid item xs={12}>
             <CodeMirrorWrapper
               label={`Access Key Policy`}
               value={policyDefinition}
-              onBeforeChange={(editor, data, value) => {
+              onChange={(value) => {
                 setPolicyDefinition(value);
               }}
               editorHeight={"350px"}
             />
           </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
+          <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
             <Button
               id={"cancel-sa-policy"}
               type="button"
@@ -162,4 +121,4 @@ const ServiceAccountPolicy = ({
   );
 };
 
-export default withStyles(styles)(ServiceAccountPolicy);
+export default ServiceAccountPolicy;

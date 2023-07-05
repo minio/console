@@ -59,7 +59,7 @@ func getCallHomeOptionResponse(session *models.Principal, params support.GetCall
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -133,7 +133,7 @@ func editCallHomeOptionResponse(session *models.Principal, params support.SetCal
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}

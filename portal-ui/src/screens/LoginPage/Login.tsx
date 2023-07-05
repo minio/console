@@ -36,7 +36,7 @@ export interface LoginStrategyPayload {
 }
 
 export const getTargetPath = () => {
-  let targetPath = "/";
+  let targetPath = "/browser";
   if (
     localStorage.getItem("redirect-path") &&
     localStorage.getItem("redirect-path") !== ""

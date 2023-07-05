@@ -24,7 +24,7 @@ import (
 
 	"github.com/minio/console/models"
 	tieringApi "github.com/minio/console/restapi/operations/tiering"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -104,7 +104,7 @@ func TestLogSearch(t *testing.T) {
 			}))
 			defer testRequest.Close()
 
-			resp, err := logSearch(testRequest.URL)
+			resp, err := logSearch(testRequest.URL, "127.0.0.1")
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("logSearch() error = %v, wantErr %v", err, tt.wantErr)

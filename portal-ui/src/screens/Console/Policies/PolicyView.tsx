@@ -1,3 +1,4 @@
+// This file is part of MinIO Console Server
 // Copyright (c) 2022 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,12 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Box } from "@mui/material";
-import Grid from "@mui/material/Grid";
 import SearchBox from "../Common/SearchBox";
 import { Theme } from "@mui/material/styles";
 import { searchField } from "../Common/FormComponents/common/styleLibrary";
-import { DisabledIcon, EnabledIcon } from "mds";
+import { DisabledIcon, EnabledIcon, Box, Grid } from "mds";
 import { STATUS_COLORS } from "../Dashboard/BasicDashboard/Utils";
 import makeStyles from "@mui/styles/makeStyles";
 import { IAMStatement } from "./types";
@@ -33,8 +32,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const rowGridStyle = {
   display: "grid",
-  gridTemplateColumns: "60px 1fr",
-  gap: "15px",
+  gridTemplateColumns: "70px 1fr",
+  gap: 15,
 };
 
 const escapeRegExp = (str = "") =>
@@ -65,26 +64,24 @@ const PolicyView = ({
   return (
     <Grid container>
       <Grid item xs={12}>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: {
-              sm: "1fr 1fr",
-              xs: "1fr",
-            },
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "15px",
-          }}
-        >
-          <Box>Statements</Box>
-          <SearchBox
-            placeholder={"Search"}
-            onChange={setFilter}
-            overrideClass={classes.searchField}
-            value={filter}
-          />
-        </Box>
+        <Grid container sx={{ display: "flex", alignItems: "center" }}>
+          <Grid item xs={12} sm={6} sx={{ fontWeight: "bold" }}>
+            Statements
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
+            <SearchBox
+              placeholder={"Search"}
+              onChange={setFilter}
+              overrideClass={classes.searchField}
+              value={filter}
+            />
+          </Grid>
+        </Grid>
       </Grid>
       {!policyStatements && <Fragment>Policy has no statements</Fragment>}
       {policyStatements && (
@@ -145,18 +142,8 @@ const PolicyView = ({
                     {effect}
                   </Box>
                 </Box>
-
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: {
-                      sm: "1fr 1fr",
-                      xs: "1fr",
-                    },
-                    gap: "15px",
-                  }}
-                >
-                  <Box sx={rowGridStyle}>
+                <Grid container sx={{ gap: 15 }}>
+                  <Grid item xs={12} sm={6} sx={rowGridStyle}>
                     <Box className="label">Actions:</Box>
                     <Box>
                       {stmt.Action &&
@@ -166,8 +153,8 @@ const PolicyView = ({
                           </div>
                         ))}
                     </Box>
-                  </Box>
-                  <Box sx={rowGridStyle}>
+                  </Grid>
+                  <Grid item xs={12} sm={6} sx={rowGridStyle}>
                     <Box className="label">Resources:</Box>
                     <Box>
                       {stmt.Resource &&
@@ -178,8 +165,8 @@ const PolicyView = ({
                           </div>
                         ))}
                     </Box>
-                  </Box>
-                </Box>
+                  </Grid>
+                </Grid>
               </Box>
             );
           })}

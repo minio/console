@@ -7433,7 +7433,9 @@ func init() {
       "enum": [
         "put",
         "delete",
-        "get"
+        "get",
+        "replica",
+        "ilm"
       ]
     },
     "objectBucketLifecycle": {
@@ -16564,7 +16566,9 @@ func init() {
       "enum": [
         "put",
         "delete",
-        "get"
+        "get",
+        "replica",
+        "ilm"
       ]
     },
     "objectBucketLifecycle": {

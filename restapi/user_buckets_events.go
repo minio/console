@@ -73,7 +73,14 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 				eventTypePretty = models.NotificationEventTypePut
 			case notification.ObjectRemovedAll:
 				eventTypePretty = models.NotificationEventTypeDelete
+			case notification.ObjectReplicationAll:
+				eventTypePretty = models.NotificationEventTypeReplica
+			case notification.ObjectTransitionAll:
+				eventTypePretty = models.NotificationEventTypeIlm
+			default:
+				continue
 			}
+
 			result = append(result, eventTypePretty)
 		}
 		return result
@@ -132,7 +139,7 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 func getListBucketEventsResponse(session *models.Principal, params bucketApi.ListBucketEventsParams) (*models.ListBucketEventsResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mClient, err := newMinioClient(session)
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -187,7 +194,7 @@ func getCreateBucketEventsResponse(session *models.Principal, params bucketApi.C
 	defer cancel()
 	bucketName := params.BucketName
 	eventReq := params.Body
-	s3Client, err := newS3BucketClient(session, bucketName, "")
+	s3Client, err := newS3BucketClient(session, bucketName, "", getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -228,7 +235,7 @@ func getDeleteBucketEventsResponse(session *models.Principal, params bucketApi.D
 	events := params.Body.Events
 	prefix := params.Body.Prefix
 	suffix := params.Body.Suffix
-	s3Client, err := newS3BucketClient(session, bucketName, "")
+	s3Client, err := newS3BucketClient(session, bucketName, "", getClientIP(params.HTTPRequest))
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}

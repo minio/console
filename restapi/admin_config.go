@@ -26,7 +26,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	madmin "github.com/minio/madmin-go/v2"
+	madmin "github.com/minio/madmin-go/v3"
 
 	cfgApi "github.com/minio/console/restapi/operations/configuration"
 )
@@ -104,7 +104,7 @@ func listConfig(client MinioAdmin) ([]*models.ConfigDescription, error) {
 func getListConfigResponse(session *models.Principal, params cfgApi.ListConfigParams) (*models.ListConfigResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -169,7 +169,7 @@ func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.C
 func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams) ([]*models.Configuration, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -234,7 +234,7 @@ func setConfigResponse(session *models.Principal, params cfgApi.SetConfigParams)
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -260,7 +260,7 @@ func resetConfigResponse(session *models.Principal, params cfgApi.ResetConfigPar
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -281,7 +281,7 @@ func exportConfigResponse(session *models.Principal, params cfgApi.ExportConfigP
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -299,16 +299,16 @@ func exportConfigResponse(session *models.Principal, params cfgApi.ExportConfigP
 func importConfigResponse(session *models.Principal, params cfgApi.PostConfigsImportParams) (*cfgApi.PostConfigsImportDefault, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
 	file, _, err := params.HTTPRequest.FormFile("file")
-	defer file.Close()
-
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
+	defer file.Close()
+
 	err = mAdmin.SetConfig(ctx, file)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)

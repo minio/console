@@ -14,24 +14,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Fragment } from "react";
 import get from "lodash/get";
-
-import { DialogContentText } from "@mui/material";
-import { BucketEvent } from "../types";
-
 import { ErrorResponseHandler } from "../../../../common/types";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { NotificationConfig } from "api/consoleApi";
 
 interface IDeleteEventProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedBucket: string;
-  bucketEvent: BucketEvent | null;
+  bucketEvent: NotificationConfig | null;
 }
 
 const DeleteEvent = ({
@@ -82,9 +79,7 @@ const DeleteEvent = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
-          Are you sure you want to delete this event?
-        </DialogContentText>
+        <Fragment>Are you sure you want to delete this event?</Fragment>
       }
     />
   );

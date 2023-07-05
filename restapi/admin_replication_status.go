@@ -23,7 +23,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	siteRepApi "github.com/minio/console/restapi/operations/site_replication"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 )
 
 func registerSiteReplicationStatusHandler(api *operations.ConsoleAPI) {
@@ -39,7 +39,7 @@ func registerSiteReplicationStatusHandler(api *operations.ConsoleAPI) {
 func getSRStatusResponse(session *models.Principal, params siteRepApi.GetSiteReplicationStatusParams) (*models.SiteReplicationStatusResponse, *models.Error) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	mAdmin, err := NewMinioAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

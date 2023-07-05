@@ -15,53 +15,30 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import get from "lodash/get";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Theme } from "@mui/material/styles";
-import { AddIcon, Button, HelpBox, LambdaIcon } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import get from "lodash/get";
-import Grid from "@mui/material/Grid";
-import { BucketEvent, BucketEventList } from "../types";
-import {
-  actionsTray,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import api from "../../../../common/api";
-
-import PanelTitle from "../../Common/PanelTitle/PanelTitle";
+import { AddIcon, Button, HelpBox, LambdaIcon, DataTable, Grid } from "mds";
+import { api } from "api";
+import { NotificationConfig } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
+import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
 import {
   hasPermission,
   SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-
-import withSuspense from "../../Common/Components/withSuspense";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
+import PanelTitle from "../../Common/PanelTitle/PanelTitle";
+import withSuspense from "../../Common/Components/withSuspense";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const DeleteEvent = withSuspense(React.lazy(() => import("./DeleteEvent")));
 const AddEvent = withSuspense(React.lazy(() => import("./AddEvent")));
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...searchField,
-    ...actionsTray,
-    twHeight: {
-      minHeight: 400,
-    },
-  });
-
-interface IBucketEventsProps {
-  classes: any;
-}
-
-const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
+const BucketEventsPanel = () => {
   const dispatch = useAppDispatch();
   const params = useParams();
 
@@ -69,9 +46,11 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
 
   const [addEventScreenOpen, setAddEventScreenOpen] = useState<boolean>(false);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
-  const [records, setRecords] = useState<BucketEvent[]>([]);
+  const [records, setRecords] = useState<NotificationConfig[]>([]);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<NotificationConfig | null>(
+    null
+  );
 
   const bucketName = params.bucketName || "";
 
@@ -94,16 +73,16 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
   useEffect(() => {
     if (loadingEvents) {
       if (displayEvents) {
-        api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
-          .then((res: BucketEventList) => {
-            const events = get(res, "events", []);
+        api.buckets
+          .listBucketEvents(bucketName)
+          .then((res) => {
+            const events = get(res.data, "events", []);
             setLoadingEvents(false);
             setRecords(events || []);
           })
-          .catch((err: ErrorResponseHandler) => {
+          .catch((err) => {
             setLoadingEvents(false);
-            dispatch(setErrorSnackMessage(err));
+            dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           });
       } else {
         setLoadingEvents(false);
@@ -115,7 +94,7 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
     return <Fragment>{events.join(", ")}</Fragment>;
   };
 
-  const confirmDeleteEvent = (evnt: BucketEvent) => {
+  const confirmDeleteEvent = (evnt: NotificationConfig) => {
     setDeleteOpen(true);
     setSelectedEvent(evnt);
   };
@@ -153,7 +132,7 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
       )}
 
       <Grid container>
-        <Grid item xs={12} className={classes.actionsTray}>
+        <Grid item xs={12} sx={actionsTray.actionsTray}>
           <PanelTitle>Events</PanelTitle>
           <SecureComponent
             scopes={[
@@ -187,7 +166,7 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
             resource={bucketName}
             errorProps={{ disabled: true }}
           >
-            <TableWrapper
+            <DataTable
               itemActions={tableActions}
               columns={[
                 { label: "SQS", elementKey: "arn" },
@@ -203,7 +182,7 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
               records={records}
               entityName="Events"
               idField="id"
-              customPaperHeight={classes.twHeight}
+              customPaperHeight={"400px"}
             />
           </SecureComponent>
         </Grid>
@@ -240,4 +219,4 @@ const BucketEventsPanel = ({ classes }: IBucketEventsProps) => {
   );
 };
 
-export default withStyles(styles)(BucketEventsPanel);
+export default BucketEventsPanel;

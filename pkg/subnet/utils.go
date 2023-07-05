@@ -23,13 +23,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 
 	xhttp "github.com/minio/console/pkg/http"
 
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/pkg/env"
 )
@@ -155,7 +154,7 @@ func subnetReqDo(client xhttp.ClientI, r *http.Request, headers map[string]strin
 	}
 
 	defer resp.Body.Close()
-	respBytes, e := ioutil.ReadAll(io.LimitReader(resp.Body, subnetRespBodyLimit))
+	respBytes, e := io.ReadAll(io.LimitReader(resp.Body, subnetRespBodyLimit))
 	if e != nil {
 		return "", e
 	}

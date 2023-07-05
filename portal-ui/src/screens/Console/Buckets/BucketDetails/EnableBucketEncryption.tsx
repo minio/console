@@ -25,9 +25,6 @@ import {
   formFieldStyles,
   modalStyleUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { BucketEncryptionInfo } from "../types";
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 
@@ -40,6 +37,13 @@ import {
 import { SecureComponent } from "../../../../common/SecureComponent";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import AddKeyModal from "./AddKeyModal";
+import {
+  BucketEncryptionInfo,
+  BucketEncryptionType,
+  KmsKeyInfo,
+} from "api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -66,33 +70,35 @@ const EnableBucketEncryption = ({
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(false);
   const [kmsKeyID, setKmsKeyID] = useState<string>("");
-  const [encryptionType, setEncryptionType] = useState<string>("disabled");
-  const [keys, setKeys] = useState<[]>([]);
+  const [encryptionType, setEncryptionType] = useState<
+    BucketEncryptionType | "disabled"
+  >("disabled");
+  const [keys, setKeys] = useState<KmsKeyInfo[] | undefined>([]);
   const [loadingKeys, setLoadingKeys] = useState<boolean>(false);
   const [addOpen, setAddOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (encryptionCfg) {
       if (encryptionCfg.algorithm === "AES256") {
-        setEncryptionType("sse-s3");
+        setEncryptionType(BucketEncryptionType.SseS3);
       } else {
-        setEncryptionType("sse-kms");
-        setKmsKeyID(encryptionCfg.kmsMasterKeyID);
+        setEncryptionType(BucketEncryptionType.SseKms);
+        setKmsKeyID(encryptionCfg.kmsMasterKeyID || "");
       }
     }
   }, [encryptionCfg]);
 
   useEffect(() => {
     if (encryptionType === "sse-kms") {
-      api
-        .invoke("GET", `/api/v1/kms/keys`)
-        .then((res: any) => {
-          setKeys(res.results);
+      api.kms
+        .kmsListKeys()
+        .then((res) => {
+          setKeys(res.data.results);
           setLoadingKeys(false);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setLoadingKeys(false);
-          dispatch(setModalErrorSnackMessage(err));
+          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         });
     }
   }, [encryptionType, loadingKeys, dispatch]);
@@ -103,19 +109,19 @@ const EnableBucketEncryption = ({
       return;
     }
     if (encryptionType === "disabled") {
-      api
-        .invoke("POST", `/api/v1/buckets/${selectedBucket}/encryption/disable`)
+      api.buckets
+        .disableBucketEncryption(selectedBucket)
         .then(() => {
           setLoading(false);
           closeModalAndRefresh();
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setLoading(false);
-          dispatch(setModalErrorSnackMessage(err));
+          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         });
     } else {
-      api
-        .invoke("POST", `/api/v1/buckets/${selectedBucket}/encryption/enable`, {
+      api.buckets
+        .enableBucketEncryption(selectedBucket, {
           encType: encryptionType,
           kmsKeyID: kmsKeyID,
         })
@@ -123,9 +129,9 @@ const EnableBucketEncryption = ({
           setLoading(false);
           closeModalAndRefresh();
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setLoading(false);
-          dispatch(setModalErrorSnackMessage(err));
+          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         });
     }
   };
@@ -161,8 +167,10 @@ const EnableBucketEncryption = ({
             <Grid item xs={12} className={classes.modalFormScrollable}>
               <Grid item xs={12} className={classes.formFieldRow}>
                 <SelectWrapper
-                  onChange={(e: SelectChangeEvent<string>) => {
-                    setEncryptionType(e.target.value as string);
+                  onChange={(e) => {
+                    setEncryptionType(
+                      e.target.value as BucketEncryptionType | "disabled"
+                    );
                   }}
                   id="select-encryption-type"
                   name="select-encryption-type"
@@ -175,11 +183,11 @@ const EnableBucketEncryption = ({
                     },
                     {
                       label: "SSE-S3",
-                      value: "sse-s3",
+                      value: BucketEncryptionType.SseS3,
                     },
                     {
                       label: "SSE-KMS",
-                      value: "sse-kms",
+                      value: BucketEncryptionType.SseKms,
                     },
                   ]}
                 />
@@ -192,21 +200,23 @@ const EnableBucketEncryption = ({
                   className={classes.formFieldRow}
                   display={"flex"}
                 >
-                  <SelectWrapper
-                    onChange={(e: SelectChangeEvent<string>) => {
-                      setKmsKeyID(e.target.value);
-                    }}
-                    id="select-kms-key-id"
-                    name="select-kms-key-id"
-                    label={"KMS Key ID"}
-                    value={kmsKeyID}
-                    options={keys.map((key: any) => {
-                      return {
-                        label: key.name,
-                        value: key.name,
-                      };
-                    })}
-                  />
+                  {keys && (
+                    <SelectWrapper
+                      onChange={(e: SelectChangeEvent<string>) => {
+                        setKmsKeyID(e.target.value);
+                      }}
+                      id="select-kms-key-id"
+                      name="select-kms-key-id"
+                      label={"KMS Key ID"}
+                      value={kmsKeyID}
+                      options={keys.map((key: KmsKeyInfo) => {
+                        return {
+                          label: key.name || "",
+                          value: key.name || "",
+                        };
+                      })}
+                    />
+                  )}
                   <Grid marginLeft={1}>
                     <SecureComponent
                       scopes={[IAM_SCOPES.KMS_IMPORT_KEY]}

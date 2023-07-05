@@ -297,7 +297,7 @@ const AddServiceAccount = ({ classes }: IAddServiceAccountProps) => {
                           <CodeMirrorWrapper
                             label={"Policy"}
                             value={policyJSON}
-                            onBeforeChange={(editor, data, value) => {
+                            onChange={(value) => {
                               setPolicyJSON(value);
                             }}
                           />

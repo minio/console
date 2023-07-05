@@ -22,10 +22,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 import { TabPanel } from "../../../shared/tabs";
-import { User } from "../../Users/types";
-import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import api from "../../../../common/api";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
@@ -40,7 +37,9 @@ import { encodeURLString } from "../../../../common/utils";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
-import { Policy } from "../../../../api/consoleApi";
+import { Policy, ServiceAccounts } from "../../../../api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 function a11yProps(index: any) {
   return {
@@ -58,9 +57,9 @@ const AccessDetails = () => {
 
   const [curTab, setCurTab] = useState<number>(0);
   const [loadingPolicies, setLoadingPolicies] = useState<boolean>(true);
-  const [bucketPolicy, setBucketPolicy] = useState<Policy[]>([]);
+  const [bucketPolicy, setBucketPolicy] = useState<Policy[] | undefined>([]);
   const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
-  const [bucketUsers, setBucketUsers] = useState<User[]>([]);
+  const [bucketUsers, setBucketUsers] = useState<ServiceAccounts>([]);
 
   const bucketName = params.bucketName || "";
 
@@ -117,14 +116,14 @@ const AccessDetails = () => {
   useEffect(() => {
     if (loadingUsers) {
       if (displayUsersList) {
-        api
-          .invoke("GET", `/api/v1/bucket-users/${bucketName}`)
-          .then((res: any) => {
-            setBucketUsers(res);
+        api.bucketUsers
+          .listUsersWithAccessToBucket(bucketName)
+          .then((res) => {
+            setBucketUsers(res.data);
             setLoadingUsers(false);
           })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
+          .catch((err) => {
+            dispatch(setErrorSnackMessage(errorToHandler(err)));
             setLoadingUsers(false);
           });
       } else {
@@ -141,14 +140,14 @@ const AccessDetails = () => {
   useEffect(() => {
     if (loadingPolicies) {
       if (displayPoliciesList) {
-        api
-          .invoke("GET", `/api/v1/bucket-policy/${bucketName}`)
-          .then((res: any) => {
-            setBucketPolicy(res.policies);
+        api.bucketPolicy
+          .listPoliciesWithBucket(bucketName)
+          .then((res) => {
+            setBucketPolicy(res.data.policies);
             setLoadingPolicies(false);
           })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
+          .catch((err) => {
+            dispatch(setErrorSnackMessage(errorToHandler(err)));
             setLoadingPolicies(false);
           });
       } else {
@@ -181,15 +180,17 @@ const AccessDetails = () => {
             resource={bucketName}
             errorProps={{ disabled: true }}
           >
-            <TableWrapper
-              noBackground={true}
-              itemActions={PolicyActions}
-              columns={[{ label: "Name", elementKey: "name" }]}
-              isLoading={loadingPolicies}
-              records={bucketPolicy}
-              entityName="Policies"
-              idField="name"
-            />
+            {bucketPolicy && (
+              <TableWrapper
+                noBackground={true}
+                itemActions={PolicyActions}
+                columns={[{ label: "Name", elementKey: "name" }]}
+                isLoading={loadingPolicies}
+                records={bucketPolicy}
+                entityName="Policies"
+                idField="name"
+              />
+            )}
           </SecureComponent>
         </TabPanel>
 

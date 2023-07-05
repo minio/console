@@ -25,7 +25,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	"github.com/minio/madmin-go/v2"
+	"github.com/minio/madmin-go/v3"
 	"github.com/minio/websocket"
 )
 
@@ -62,10 +62,6 @@ func getSpeedtestOptionsFromReq(req *http.Request) (*madmin.SpeedtestOpts, error
 	size, err := humanize.ParseBytes(paramSize)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse object size")
-	}
-
-	if size < 0 {
-		return nil, fmt.Errorf("size is expected to be atleast 0 bytes")
 	}
 
 	optionsSet.Size = int(size)

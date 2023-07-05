@@ -163,7 +163,9 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 							return
 						}
 
-						s3Client, err := newS3BucketClient(session, objectRqConfigs.BucketName, objectRqConfigs.Prefix)
+						clientIP := wsc.conn.remoteAddress()
+
+						s3Client, err := newS3BucketClient(session, objectRqConfigs.BucketName, objectRqConfigs.Prefix, clientIP)
 						if err != nil {
 							LogError("error creating S3Client:", err)
 							close(done)

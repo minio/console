@@ -82,12 +82,6 @@ export interface ITierResponse {
   items: ITierElement[];
 }
 
-export interface ITierUpdateCreds {
-  access_key: string;
-  secret_key: string;
-  creds: string;
-}
-
 export interface RegionEntry {
   label: string;
   value: string;

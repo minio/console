@@ -234,7 +234,8 @@ const OBListBuckets = () => {
                   {
                     label: "Objects",
                     elementKey: "objects",
-                    renderFunction: (size: number) => size || 0,
+                    renderFunction: (size: number | null) =>
+                      size ? size.toLocaleString() : 0,
                   },
                   {
                     label: "Size",

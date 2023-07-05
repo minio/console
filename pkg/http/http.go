@@ -18,7 +18,6 @@ package http
 
 import (
 	"io"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -69,6 +68,6 @@ func DrainBody(respBody io.ReadCloser) {
 		// the same connection for future uses.
 		//  - http://stackoverflow.com/a/17961593/4465767
 		defer respBody.Close()
-		io.Copy(ioutil.Discard, respBody)
+		io.Copy(io.Discard, respBody)
 	}
 }

@@ -69,23 +69,23 @@ type DiscoveryDoc struct {
 }
 
 func (ac Config) Exchange(ctx context.Context, code string, opts ...xoauth2.AuthCodeOption) (*xoauth2.Token, error) {
-	return ac.Exchange(ctx, code, opts...)
+	return ac.Config.Exchange(ctx, code, opts...)
 }
 
 func (ac Config) AuthCodeURL(state string, opts ...xoauth2.AuthCodeOption) string {
-	return ac.AuthCodeURL(state, opts...)
+	return ac.Config.AuthCodeURL(state, opts...)
 }
 
 func (ac Config) PasswordCredentialsToken(ctx context.Context, username, password string) (*xoauth2.Token, error) {
-	return ac.PasswordCredentialsToken(ctx, username, password)
+	return ac.Config.PasswordCredentialsToken(ctx, username, password)
 }
 
 func (ac Config) Client(ctx context.Context, t *xoauth2.Token) *http.Client {
-	return ac.Client(ctx, t)
+	return ac.Config.Client(ctx, t)
 }
 
 func (ac Config) TokenSource(ctx context.Context, t *xoauth2.Token) xoauth2.TokenSource {
-	return ac.TokenSource(ctx, t)
+	return ac.Config.TokenSource(ctx, t)
 }
 
 // Provider is a wrapper of the oauth2 configuration and the oidc provider
