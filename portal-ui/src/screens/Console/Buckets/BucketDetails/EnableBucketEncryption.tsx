@@ -118,7 +118,7 @@ const EnableBucketEncryption = ({
           closeModalAndRefresh();
         })
         .catch(async (res: HttpResponse<void, Error>) => {
-          const err = await res.error;
+          const err = (await res.json()) as Error;
           setLoading(false);
           dispatch(setModalErrorSnackMessage(errorToHandler(err)));
         });
@@ -134,7 +134,7 @@ const EnableBucketEncryption = ({
         })
 
         .catch(async (res: HttpResponse<void, Error>) => {
-          const err = await res.error;
+          const err = (await res.json()) as Error;
           setLoading(false);
           dispatch(setModalErrorSnackMessage(errorToHandler(err)));
         });
