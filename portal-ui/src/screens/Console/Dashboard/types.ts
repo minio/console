@@ -16,52 +16,6 @@
 
 import { IDashboardPanel } from "./Prometheus/types";
 
-export interface Usage {
-  usage: number;
-  buckets: number;
-  objects: number;
-  advancedMetricsStatus: "available" | "unavailable" | "not configured";
-  widgets?: any;
-  servers: ServerInfo[];
-  backend: Backend;
-  //TODO
-  lastScan: any;
-  lastHeal: any;
-  upTime: any;
-}
-
-export interface Backend {
-  backendType: string;
-  standardSCParity: number;
-  rrSCParity: number;
-  onlineDrives: number;
-  offlineDrives: number;
-}
-
-export interface ServerInfo {
-  state: string;
-  endpoint: string;
-  uptime: string;
-  version: string;
-  commitID: string;
-  poolNumber: number;
-  drives: IDriveInfo[];
-  network: any;
-}
-
-export interface IDriveInfo {
-  state: string;
-  uuid: string;
-  endpoint: string;
-  drivePath: string;
-  rootDisk: boolean;
-  healing: boolean;
-  model: string;
-  totalSpace: number;
-  usedSpace?: number;
-  availableSpace: number;
-}
-
 export interface zoomState {
   openZoom: boolean;
   widgetRender: null | IDashboardPanel;

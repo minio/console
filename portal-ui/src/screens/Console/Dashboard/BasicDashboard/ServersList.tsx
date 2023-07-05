@@ -19,13 +19,13 @@ import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import Collapse from "@mui/material/Collapse";
-import { ServerInfo } from "../types";
 import ServerInfoItem from "./ServerInfoItem";
 import { Box } from "@mui/material";
 import DriveInfoItem from "./DriveInfoItem";
 import { MenuCollapsedIcon, MenuExpandedIcon } from "mds";
+import { ServerProperties } from "api/consoleApi";
 
-const ServersList = ({ data }: { data: ServerInfo[] }) => {
+const ServersList = ({ data }: { data: ServerProperties[] }) => {
   const [expanded, setExpanded] = React.useState<string>(
     data.length > 1 ? "" : data[0].endpoint + "-0"
   );
@@ -126,7 +126,7 @@ const ServersList = ({ data }: { data: ServerInfo[] }) => {
                     component="div"
                     sx={{ paddingLeft: "30px" }}
                   >
-                    Drives ({serverInfo.drives.length})
+                    Drives ({serverInfo.drives?.length})
                   </ListSubheader>
 
                   <Collapse
@@ -145,7 +145,7 @@ const ServersList = ({ data }: { data: ServerInfo[] }) => {
                       },
                     }}
                   >
-                    {serverInfo.drives.map((driveInfo, index) => {
+                    {serverInfo.drives?.map((driveInfo, index) => {
                       return (
                         <DriveInfoItem
                           drive={driveInfo}

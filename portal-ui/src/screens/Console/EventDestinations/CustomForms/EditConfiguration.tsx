@@ -23,7 +23,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import api from "../../../../common/api";
 import ConfTargetGeneric from "../ConfTargetGeneric";
 
 import {
@@ -37,12 +36,10 @@ import {
 } from "../../Configurations/utils";
 import {
   IConfigurationElement,
-  IConfigurationSys,
   IElementValue,
   IOverrideEnv,
   KVField,
 } from "../../Configurations/types";
-import { ErrorResponseHandler } from "../../../../common/types";
 import ResetConfigurationModal from "./ResetConfigurationModal";
 import {
   configurationIsLoading,
@@ -54,6 +51,9 @@ import {
 import { AppState, useAppDispatch } from "../../../../store";
 import WebhookSettings from "../WebhookSettings/WebhookSettings";
 import { useSelector } from "react-redux";
+import { api } from "api";
+import { Configuration, ConfigurationKV } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -88,9 +88,7 @@ const EditConfiguration = ({
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
   const [configValues, setConfigValues] = useState<IElementValue[]>([]);
-  const [configSubsysList, setConfigSubsysList] = useState<IConfigurationSys[]>(
-    []
-  );
+  const [configSubsysList, setConfigSubsysList] = useState<Configuration[]>([]);
   const [resetConfigurationOpen, setResetConfigurationOpen] =
     useState<boolean>(false);
   const [overrideEnvs, setOverrideEnvs] = useState<IOverrideEnv>({});
@@ -108,17 +106,17 @@ const EditConfiguration = ({
       const configId = get(selectedConfiguration, "configuration_id", false);
 
       if (configId) {
-        api
-          .invoke("GET", `/api/v1/configs/${configId}`)
+        api.configs
+          .configInfo(configId)
           .then((res) => {
-            setConfigSubsysList(res);
-            let values: IElementValue[] = get(res[0], "key_values", []);
+            setConfigSubsysList(res.data);
+            let values: ConfigurationKV[] = get(res.data[0], "key_values", []);
 
             const fieldsConfig: KVField[] = fieldsConfigurations[configId];
 
             const keyVals = fieldsConfig.map((field) => {
               const includedValue = values.find(
-                (element: IElementValue) => element.key === field.name
+                (element: ConfigurationKV) => element.key === field.name
               );
               const customValue = includedValue?.value || "";
 
@@ -134,9 +132,9 @@ const EditConfiguration = ({
             setOverrideEnvs(overrideFields(keyVals));
             dispatch(configurationIsLoading(false));
           })
-          .catch((err: ErrorResponseHandler) => {
+          .catch((err) => {
             dispatch(configurationIsLoading(false));
-            dispatch(setErrorSnackMessage(err));
+            dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           });
 
         return;
@@ -150,23 +148,19 @@ const EditConfiguration = ({
       const payload = {
         key_values: removeEmptyFields(valuesObj),
       };
-      api
-        .invoke(
-          "PUT",
-          `/api/v1/configs/${selectedConfiguration.configuration_id}`,
-          payload
-        )
+      api.configs
+        .setConfig(selectedConfiguration.configuration_id, payload)
         .then((res) => {
           setSaving(false);
-          dispatch(setServerNeedsRestart(res.restart));
+          dispatch(setServerNeedsRestart(res.data.restart || false));
           dispatch(configurationIsLoading(true));
-          if (!res.restart) {
+          if (!res.data.restart) {
             dispatch(setSnackBarMessage("Configuration saved successfully"));
           }
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setSaving(false);
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         });
     }
   }, [saving, dispatch, selectedConfiguration, valuesObj, navigate]);

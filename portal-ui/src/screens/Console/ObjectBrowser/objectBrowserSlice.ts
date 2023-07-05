@@ -348,9 +348,8 @@ export const objectBrowserSlice = createSlice({
       if (indexToReplace >= 0) {
         state.records[indexToReplace].delete_flag =
           action.payload.objectInfo.is_delete_marker;
-        state.records[indexToReplace].size = parseInt(
-          action.payload.objectInfo.size || "0"
-        );
+        state.records[indexToReplace].size =
+          action.payload.objectInfo.size || 0;
       }
     },
     setIsOpeningOD: (state, action: PayloadAction<boolean>) => {

@@ -32,7 +32,6 @@ import {
   UptimeIcon,
 } from "mds";
 import { calculateBytes, representationNumber } from "../../../../common/utils";
-import { IDriveInfo, Usage } from "../types";
 import StatusCountCard from "./StatusCountCard";
 import groupBy from "lodash/groupBy";
 import ServersList from "./ServersList";
@@ -42,6 +41,7 @@ import { Link } from "react-router-dom";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import TimeStatItem from "../TimeStatItem";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import { AdminInfoResponse, ServerDrives } from "api/consoleApi";
 
 const BoxItem = ({ children }: { children: any }) => {
   return (
@@ -64,14 +64,14 @@ const BoxItem = ({ children }: { children: any }) => {
 };
 
 interface IDashboardProps {
-  usage: Usage | null;
+  usage: AdminInfoResponse | undefined;
 }
 
-const getServersList = (usage: Usage | null) => {
-  if (usage !== null) {
+const getServersList = (usage: AdminInfoResponse | undefined) => {
+  if (usage && usage.servers) {
     return [...usage.servers].sort(function (a, b) {
-      const nameA = a.endpoint.toLowerCase();
-      const nameB = b.endpoint.toLowerCase();
+      const nameA = a.endpoint?.toLowerCase() || "";
+      const nameB = b.endpoint?.toLowerCase() || "";
       if (nameA < nameB) {
         return -1;
       }
@@ -97,18 +97,19 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
   const usageValue = usage && usage.usage ? usage.usage.toString() : "0";
   const usageToRepresent = prettyUsage(usageValue);
 
-  const { lastScan = "n/a", lastHeal = "n/a", upTime = "n/a" } = usage || {};
+  const { lastScan = "n/a", lastHeal = "n/a", upTime = "n/a" } = {};
 
-  const serverList = getServersList(usage || null);
+  const serverList = getServersList(usage);
 
-  let allDrivesArray: IDriveInfo[] = [];
+  let allDrivesArray: ServerDrives[] = [];
 
   serverList.forEach((server) => {
-    const drivesInput = server.drives.map((drive) => {
+    const drivesInput = server.drives?.map((drive) => {
       return drive;
     });
-
-    allDrivesArray = [...allDrivesArray, ...drivesInput];
+    if (drivesInput) {
+      allDrivesArray = [...allDrivesArray, ...drivesInput];
+    }
   });
 
   const serversGroup = groupBy(serverList, "state");
@@ -202,9 +203,11 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             <BoxItem>
               <StatusCountCard
                 offlineCount={
-                  usage?.backend.offlineDrives || offlineDrives.length
+                  usage?.backend?.offlineDrives || offlineDrives.length
                 }
-                onlineCount={usage?.backend.onlineDrives || onlineDrives.length}
+                onlineCount={
+                  usage?.backend?.onlineDrives || onlineDrives.length
+                }
                 label={"Drives"}
                 icon={<DrivesIcon />}
               />

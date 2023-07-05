@@ -48,7 +48,7 @@ test
       .typeText("#newTagKey", "tag1")
       .typeText("#newTagLabel", "test")
       .click(Selector("#saveTag:enabled"))
-      .click(Selector("button").withText("Tags"))
+      .click(Selector("button").withText("Tags"), { offsetX: -1, offsetY: -1 })
       .expect(Selector(".MuiChip-label").withText("tag1 : test").exists)
       .ok()
       .click(Selector(".MuiChip-deleteIcon"))

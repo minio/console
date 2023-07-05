@@ -29,18 +29,18 @@ import {
 
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
-import api from "../../../../common/api";
-import { ITierElement } from "./types";
-import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { Tier } from "api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface ITierCredentialsModal {
   open: boolean;
   closeModalAndRefresh: (refresh: boolean) => any;
   classes: any;
-  tierData: ITierElement;
+  tierData: Tier;
 }
 
 const styles = (theme: Theme) =>
@@ -102,15 +102,19 @@ const UpdateTierCredentialsModal = ({
       };
     }
     if (name !== "") {
-      api
-        .invoke("PUT", `/api/v1/admin/tiers/${type}/${name}/credentials`, rules)
+      api.admin
+        .editTierCredentials(
+          type as "azure" | "s3" | "minio" | "gcs",
+          name,
+          rules
+        )
         .then(() => {
           setSavingTiers(false);
           closeModalAndRefresh(true);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setSavingTiers(false);
-          dispatch(setModalErrorSnackMessage(err));
+          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         });
     } else {
       setModalErrorSnackMessage({

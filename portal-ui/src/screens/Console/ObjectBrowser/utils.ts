@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { IFileInfo } from "../Buckets/ListBuckets/Objects/ObjectDetails/types";
 import { encodeURLString, getClientOS } from "../../../common/utils";
 import { makeid, storeCallForObjectWithID } from "./transferManager";
 import { download } from "../Buckets/ListBuckets/Objects/utils";
@@ -28,18 +27,22 @@ import {
 } from "./objectBrowserSlice";
 import { AppDispatch } from "../../../store";
 import { setSnackBarMessage } from "../../../systemSlice";
+import { BucketObject } from "api/consoleApi";
 
 export const downloadObject = (
   dispatch: AppDispatch,
   bucketName: string,
   internalPaths: string,
-  object: IFileInfo
+  object: BucketObject
 ) => {
   const identityDownload = encodeURLString(
     `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
   );
 
-  if (object.name.length > 200 && getClientOS().toLowerCase().includes("win")) {
+  if (
+    object.name?.length ||
+    (0 > 200 && getClientOS().toLowerCase().includes("win"))
+  ) {
     dispatch(setLongFileOpen(true));
     return;
   }
@@ -50,7 +53,7 @@ export const downloadObject = (
     bucketName,
     internalPaths,
     object.version_id,
-    parseInt(object.size || "0"),
+    object.size || 0,
     null,
     ID,
     (progress) => {
@@ -87,7 +90,7 @@ export const downloadObject = (
       done: false,
       instanceID: identityDownload,
       percentage: 0,
-      prefix: object.name,
+      prefix: object.name || "",
       type: "download",
       waitingForFile: true,
       failed: false,

@@ -16,6 +16,7 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addBucketAsync } from "./addBucketThunks";
+import { ObjectRetentionMode } from "api/consoleApi";
 
 export interface AddBucketState {
   loading: boolean;
@@ -29,7 +30,7 @@ export interface AddBucketState {
   quotaSize: string;
   quotaUnit: string;
   retentionEnabled: boolean;
-  retentionMode: string;
+  retentionMode: ObjectRetentionMode;
   retentionUnit: string;
   retentionValidity: number;
   navigateTo: string;
@@ -47,7 +48,7 @@ const initialState: AddBucketState = {
   quotaSize: "1",
   quotaUnit: "Ti",
   retentionEnabled: false,
-  retentionMode: "compliance",
+  retentionMode: ObjectRetentionMode.Compliance,
   retentionUnit: "days",
   retentionValidity: 180,
   navigateTo: "",
@@ -75,7 +76,7 @@ export const addBucketsSlice = createSlice({
       state.versioningEnabled = action.payload;
       if (!state.versioningEnabled || !state.retentionEnabled) {
         state.retentionEnabled = false;
-        state.retentionMode = "compliance";
+        state.retentionMode = ObjectRetentionMode.Compliance;
         state.retentionUnit = "days";
         state.retentionValidity = 180;
       }
@@ -119,7 +120,7 @@ export const addBucketsSlice = createSlice({
       state.retentionEnabled = action.payload;
       if (!state.versioningEnabled || !state.retentionEnabled) {
         state.retentionEnabled = false;
-        state.retentionMode = "compliance";
+        state.retentionMode = ObjectRetentionMode.Compliance;
         state.retentionUnit = "days";
         state.retentionValidity = 180;
       }
@@ -143,7 +144,7 @@ export const addBucketsSlice = createSlice({
         );
       }
     },
-    setRetentionMode: (state, action: PayloadAction<string>) => {
+    setRetentionMode: (state, action: PayloadAction<ObjectRetentionMode>) => {
       state.retentionMode = action.payload;
     },
     setRetentionUnit: (state, action: PayloadAction<string>) => {

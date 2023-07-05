@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { NotificationEndpointItem } from "./types";
-
+import { NotificationEndpointItem } from "api/consoleApi";
 import { IElementValue } from "../Configurations/types";
+import { TransformedEndpointItem } from "./types";
 
 export const notifyPostgres = "notify_postgres";
 export const notifyMysql = "notify_mysql";
@@ -39,7 +39,7 @@ export const notificationTransform = (
       account_id: element.account_id,
       status: element.status,
     };
-  });
+  }) as TransformedEndpointItem[];
 };
 
 export class DestType {

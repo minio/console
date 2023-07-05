@@ -22,10 +22,8 @@ import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import api from "../../../common/api";
 import SetPolicy from "../Policies/SetPolicy";
 import AddGroupMember from "./AddGroupMember";
-import { ErrorResponseHandler } from "../../../common/types";
 import DeleteGroup from "./DeleteGroup";
 import VerticalTabs from "../Common/VerticalTabs/VerticalTabs";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -56,6 +54,9 @@ import { setHelpName, setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "../Users/AddUsersSlice";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { Group } from "api/consoleApi";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -106,13 +107,6 @@ interface IGroupDetailsProps {
   classes: any;
 }
 
-type GroupInfo = {
-  members?: any[];
-  name?: string;
-  policy?: string;
-  status?: string;
-};
-
 export const formatPolicy = (policy: string = ""): string[] => {
   if (policy.length <= 0) return [];
   return policy.split(",");
@@ -123,7 +117,7 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const [groupDetails, setGroupDetails] = useState<GroupInfo>({});
+  const [groupDetails, setGroupDetails] = useState<Group>({});
 
   /*Modals*/
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
@@ -186,30 +180,29 @@ const GroupsDetails = ({ classes }: IGroupDetailsProps) => {
 
   function fetchGroupInfo() {
     if (getGroupDetails) {
-      api
-        .invoke("GET", `/api/v1/group/${encodeURLString(groupName)}`)
-        .then((res: any) => {
-          setGroupDetails(res);
+      api.group
+        .groupInfo(encodeURLString(groupName))
+        .then((res) => {
+          setGroupDetails(res.data);
         })
         .catch((err) => {
-          dispatch(setModalErrorSnackMessage(err));
+          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
           setGroupDetails({});
         });
     }
   }
 
   function toggleGroupStatus(nextStatus: boolean) {
-    return api
-      .invoke("PUT", `/api/v1/group/${encodeURLString(groupName)}`, {
-        group: groupName,
+    return api.group
+      .updateGroup(encodeURLString(groupName), {
         members: members,
         status: nextStatus ? "enabled" : "disabled",
       })
-      .then((res) => {
+      .then(() => {
         fetchGroupInfo();
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(err));
+      .catch((err) => {
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
       });
   }
 

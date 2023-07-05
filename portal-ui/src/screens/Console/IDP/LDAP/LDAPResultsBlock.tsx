@@ -16,11 +16,11 @@
 
 import React, { Fragment } from "react";
 import { Box, CollapseCaret, GroupsMenuIcon, SectionTitle } from "mds";
-import { LDAPEntitiesResponse } from "./types";
+import { LdapEntities } from "api/consoleApi";
 
 interface IResultBlock {
   entityName: "Group" | "User" | "Policy";
-  results: LDAPEntitiesResponse;
+  results: LdapEntities;
 }
 
 interface IEntityResultName {
@@ -113,7 +113,7 @@ const LDAPResultsBlock = ({ entityName, results }: IResultBlock) => {
           results.groups?.map((groupData, index) => {
             return (
               <Fragment key={`policy-res-${index}`}>
-                <EntityResultTitle name={groupData.group} />
+                <EntityResultTitle name={groupData.group || ""} />
                 {groupData.policies && (
                   <EntityResultItems
                     blockName={"Policies"}
@@ -127,7 +127,7 @@ const LDAPResultsBlock = ({ entityName, results }: IResultBlock) => {
           results.users?.map((groupData, index) => {
             return (
               <Fragment key={`users-res-${index}`}>
-                <EntityResultTitle name={groupData.user} />
+                <EntityResultTitle name={groupData.user || ""} />
                 {groupData.policies && (
                   <EntityResultItems
                     blockName={"Policies"}
@@ -141,7 +141,7 @@ const LDAPResultsBlock = ({ entityName, results }: IResultBlock) => {
           results.policies?.map((groupData, index) => {
             return (
               <Fragment key={`policy-map-${index}`}>
-                <EntityResultTitle name={groupData.policy} />
+                <EntityResultTitle name={groupData.policy || ""} />
                 {groupData.groups && (
                   <EntityResultItems
                     blockName={"Groups"}

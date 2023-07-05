@@ -75,6 +75,7 @@ import {
   Error,
   HttpResponse,
   ListBucketsResponse,
+  ObjectRetentionMode,
 } from "../../../../../api/consoleApi";
 import { errorToHandler } from "../../../../../api/errors";
 import makeStyles from "@mui/styles/makeStyles";
@@ -484,7 +485,11 @@ const AddBucket = () => {
                       name="retention_mode"
                       label="Mode"
                       onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                        dispatch(setRetentionMode(e.target.value as string));
+                        dispatch(
+                          setRetentionMode(
+                            e.target.value as ObjectRetentionMode
+                          )
+                        );
                       }}
                       selectorOptions={[
                         { value: "compliance", label: "Compliance" },

@@ -27,9 +27,10 @@ import {
 import AddEndpointModal from "./AddEndpointModal";
 import DeleteWebhookEndpoint from "./DeleteWebhookEndpoint";
 import EditWebhookEndpoint from "./EditWebhookEndpoint";
+import { Configuration } from "api/consoleApi";
 
 interface WebhookSettingsProps {
-  WebhookSettingslist: IConfigurationSys[];
+  WebhookSettingslist: Configuration[];
   setResetConfigurationOpen: () => void;
   type: string;
 }
@@ -157,12 +158,12 @@ const WebhookSettings = ({
         );
 
         if (wHook) {
-          const hasOverride = wHook.key_values.filter(
+          const hasOverride = wHook.key_values?.filter(
             (itm) => !!itm.env_override
           );
 
           // Has override values, we cannot delete.
-          if (hasOverride.length > 0) {
+          if (hasOverride && hasOverride.length > 0) {
             return true;
           }
 

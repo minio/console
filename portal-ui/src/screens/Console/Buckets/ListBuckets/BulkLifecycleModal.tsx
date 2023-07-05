@@ -33,20 +33,17 @@ import {
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
-import api from "../../../../common/api";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { ErrorResponseHandler } from "../../../../common/types";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
-import {
-  ITierElement,
-  ITierResponse,
-} from "../../Configurations/TiersConfiguration/types";
-import { ITiersDropDown, MultiBucketResult } from "../types";
+import { ITiersDropDown } from "../types";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { MultiLifecycleResult, Tier } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 interface IBulkReplicationModal {
   open: boolean;
@@ -94,21 +91,21 @@ const AddBulkReplicationModal = ({
   const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
   const [NCExpirationDays, setNCExpirationDays] = useState<string>("0");
   const [NCTransitionDays, setNCTransitionDays] = useState<string>("0");
-  const [ilmType, setIlmType] = useState<string>("expiry");
+  const [ilmType, setIlmType] = useState<"expiry" | "transition">("expiry");
   const [expiryDays, setExpiryDays] = useState<string>("0");
   const [transitionDays, setTransitionDays] = useState<string>("0");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [results, setResults] = useState<MultiBucketResult | null>(null);
+  const [results, setResults] = useState<MultiLifecycleResult | null>(null);
 
   useEffect(() => {
     if (loadingTiers) {
-      api
-        .invoke("GET", `/api/v1/admin/tiers`)
-        .then((res: ITierResponse) => {
-          const tiersList: ITierElement[] | null = get(res, "items", []);
+      api.admin
+        .tiersList()
+        .then((res) => {
+          const tiersList: Tier[] | null = get(res.data, "items", []);
 
           if (tiersList !== null && tiersList.length >= 1) {
-            const objList = tiersList.map((tier: ITierElement) => {
+            const objList = tiersList.map((tier: Tier) => {
               const tierType = tier.type;
               const value = get(tier, `${tierType}.name`, "");
 
@@ -122,9 +119,9 @@ const AddBulkReplicationModal = ({
           }
           setLoadingTiers(false);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setLoadingTiers(false);
-          dispatch(setModalErrorSnackMessage(err));
+          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         });
     }
   }, [loadingTiers, dispatch]);
@@ -198,16 +195,16 @@ const AddBulkReplicationModal = ({
       ...rules,
     };
 
-    api
-      .invoke("POST", `/api/v1/buckets/multi-lifecycle`, lifecycleInsert)
-      .then((res: MultiBucketResult) => {
+    api.buckets
+      .addMultiBucketLifecycle(lifecycleInsert)
+      .then((res) => {
         setAddLoading(false);
-        setResults(res);
+        setResults(res.data);
         to("++");
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         setAddLoading(false);
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
       });
   };
 
@@ -250,7 +247,9 @@ const AddBulkReplicationModal = ({
                             onChange={(
                               e: React.ChangeEvent<{ value: unknown }>
                             ) => {
-                              setIlmType(e.target.value as string);
+                              setIlmType(
+                                e.target.value as "expiry" | "transition"
+                              );
                             }}
                             selectorOptions={[
                               { value: "expiry", label: "Expiry" },
@@ -422,7 +421,7 @@ const AddBulkReplicationModal = ({
                 <Grid container>
                   <Grid item xs={12} className={classes.formScrollable}>
                     <h4>Buckets Results</h4>
-                    {results?.results.map((resultItem) => {
+                    {results?.results?.map((resultItem) => {
                       return (
                         <div className={classes.resultGrid}>
                           {LogoToShow({ errString: resultItem.error || "" })}

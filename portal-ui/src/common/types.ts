@@ -36,12 +36,6 @@ export interface ErrorResponseHandler {
   statusCode?: number;
 }
 
-export interface IRetentionConfig {
-  mode: string;
-  unit: string;
-  validity: number;
-}
-
 export interface IBytesCalc {
   total: number;
   unit: string;
