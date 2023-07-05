@@ -19,7 +19,6 @@ import { DateTime } from "luxon";
 import styled from "styled-components";
 import get from "lodash/get";
 import { displayFileIconName } from "../ListObjects/utils";
-import { IFileInfo } from "./types";
 import {
   DownloadIcon,
   PreviewIcon,
@@ -32,20 +31,21 @@ import {
 import { niceBytes } from "../../../../../../common/utils";
 import SpecificVersionPill from "./SpecificVersionPill";
 import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
+import { BucketObject } from "api/consoleApi";
 
 interface IFileVersionItem {
   fileName: string;
-  versionInfo: IFileInfo;
+  versionInfo: BucketObject;
   index: number;
   isSelected?: boolean;
   checkable: boolean;
   isChecked: boolean;
   onCheck: (versionID: string) => void;
-  onShare: (versionInfo: IFileInfo) => void;
-  onDownload: (versionInfo: IFileInfo) => void;
-  onRestore: (versionInfo: IFileInfo) => void;
-  onPreview: (versionInfo: IFileInfo) => void;
-  globalClick: (versionInfo: IFileInfo) => void;
+  onShare: (versionInfo: BucketObject) => void;
+  onDownload: (versionInfo: BucketObject) => void;
+  onRestore: (versionInfo: BucketObject) => void;
+  onPreview: (versionInfo: BucketObject) => void;
+  globalClick: (versionInfo: BucketObject) => void;
   key: any;
   style: any;
 }
@@ -322,7 +322,7 @@ const FileVersionItem = ({
                 {lastModified.toFormat("ccc, LLL dd yyyy HH:mm:ss (ZZZZ)")}
               </span>
               <span className={"versionData"}>
-                <strong>Size:</strong> {niceBytes(versionInfo.size || "0")}
+                <strong>Size:</strong> {niceBytes(`${versionInfo.size || "0"}`)}
               </span>
             </Grid>
           </Grid>

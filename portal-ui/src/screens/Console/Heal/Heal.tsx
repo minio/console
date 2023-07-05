@@ -30,7 +30,6 @@ import { Button, HealIcon, PageLayout } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { wsProtocol } from "../../../utils/wsUtils";
-import { Bucket, BucketList } from "../Watch/types";
 import { colorH, HealStatus } from "./types";
 import { niceBytes } from "../../../common/utils";
 import {
@@ -43,9 +42,7 @@ import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../common/types";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
-import api from "../../../common/api";
 import { SecureComponent } from "../../../common/SecureComponent";
 import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
 import { selDistSet, setHelpName } from "../../../systemSlice";
@@ -63,6 +60,9 @@ import {
 import { Legend } from "recharts";
 import HelpMenu from "../HelpMenu";
 import { useAppDispatch } from "../../../store";
+import { api } from "api";
+import { Bucket } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -146,17 +146,17 @@ const Heal = () => {
   });
 
   const fetchBucketList = () => {
-    api
-      .invoke("GET", `/api/v1/buckets`)
-      .then((res: BucketList) => {
+    api.buckets
+      .listBuckets()
+      .then((res) => {
         let buckets: Bucket[] = [];
-        if (res.buckets !== null) {
-          buckets = res.buckets;
+        if (res.data.buckets) {
+          buckets = res.data.buckets;
         }
         setBucketList(buckets);
       })
-      .catch((err: ErrorResponseHandler) => {
-        console.error(err);
+      .catch((err) => {
+        console.error(errorToHandler(err.error));
       });
   };
 

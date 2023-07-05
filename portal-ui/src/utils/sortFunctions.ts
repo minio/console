@@ -14,22 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Policy } from "api/consoleApi";
-
-interface userInterface {
-  accessKey: string;
-}
+import { Policy, User } from "api/consoleApi";
 
 interface policyDetailsInterface {
   policy: string;
 }
 
-export const usersSort = (a: userInterface, b: userInterface) => {
-  if (a.accessKey > b.accessKey) {
-    return 1;
-  }
-  if (a.accessKey < b.accessKey) {
-    return -1;
+export const usersSort = (a: User, b: User) => {
+  if (a.accessKey && b.accessKey) {
+    if (a.accessKey > b.accessKey) {
+      return 1;
+    }
+    if (a.accessKey < b.accessKey) {
+      return -1;
+    }
   }
   // a must be equal to b
   return 0;

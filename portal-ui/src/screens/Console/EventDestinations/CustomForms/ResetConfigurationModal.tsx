@@ -22,12 +22,12 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { deleteDialogStyles } from "../../Common/FormComponents/common/styleLibrary";
 
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -58,15 +58,15 @@ const ResetConfigurationModal = ({
 
   useEffect(() => {
     if (resetLoading) {
-      api
-        .invoke("POST", `/api/v1/configs/${configurationName}/reset`)
-        .then((res) => {
+      api.configs
+        .resetConfig(configurationName)
+        .then(() => {
           setResetLoading(false);
           closeResetModalAndRefresh(true);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setResetLoading(false);
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         });
     }
   }, [closeResetModalAndRefresh, configurationName, resetLoading, dispatch]);

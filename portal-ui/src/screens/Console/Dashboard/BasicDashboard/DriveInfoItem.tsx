@@ -18,7 +18,6 @@ import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { IDriveInfo } from "../types";
 import {
   capacityColors,
   niceBytes,
@@ -29,6 +28,7 @@ import { Cell, Pie, PieChart } from "recharts";
 import { CircleIcon } from "mds";
 import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
 import { STATUS_COLORS } from "./Utils";
+import { ServerDrives } from "api/consoleApi";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -37,7 +37,7 @@ const styles = (theme: Theme) =>
 
 interface ICardProps {
   classes?: any;
-  drive: IDriveInfo;
+  drive: ServerDrives;
 }
 
 const driveStatusColor = (health_status: string) => {
@@ -95,7 +95,7 @@ const DriveInfoItem = ({ drive }: ICardProps) => {
               marginRight: "10px",
               height: "10px",
               width: "10px",
-              fill: driveStatusColor(drive.state),
+              fill: driveStatusColor(drive.state || ""),
               flexShrink: 0,
             },
 

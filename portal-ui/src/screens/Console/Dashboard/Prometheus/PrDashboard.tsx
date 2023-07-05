@@ -41,7 +41,6 @@ import {
   trafficPanelsLayout,
 } from "./Widgets/LayoutUtil";
 import MergedWidgetsRenderer from "./Widgets/MergedWidgetsRenderer";
-import { Usage } from "../types";
 import BasicDashboard from "../BasicDashboard/BasicDashboard";
 import {
   Button,
@@ -54,11 +53,12 @@ import { ITabOption } from "../../Common/TabSelector/types";
 import { getUsageAsync } from "../dashboardThunks";
 import { reloadWidgets } from "../dashboardSlice";
 import { selFeatures } from "../../consoleSlice";
+import { AdminInfoResponse } from "api/consoleApi";
 
 interface IPrDashboard {
   classes?: any;
   apiPrefix?: string;
-  usage: Usage | null;
+  usage: AdminInfoResponse | null;
 }
 
 const styles = (theme: Theme) =>

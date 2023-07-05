@@ -40,6 +40,8 @@ import AddKeyModal from "./AddKeyModal";
 import {
   BucketEncryptionInfo,
   BucketEncryptionType,
+  Error,
+  HttpResponse,
   KmsKeyInfo,
 } from "api/consoleApi";
 import { api } from "api";
@@ -115,9 +117,10 @@ const EnableBucketEncryption = ({
           setLoading(false);
           closeModalAndRefresh();
         })
-        .catch((err) => {
+        .catch(async (res: HttpResponse<void, Error>) => {
+          const err = (await res.json()) as Error;
           setLoading(false);
-          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
+          dispatch(setModalErrorSnackMessage(errorToHandler(err)));
         });
     } else {
       api.buckets
@@ -125,13 +128,15 @@ const EnableBucketEncryption = ({
           encType: encryptionType,
           kmsKeyID: kmsKeyID,
         })
-        .then(() => {
+        .then((res) => {
           setLoading(false);
           closeModalAndRefresh();
         })
-        .catch((err) => {
+
+        .catch(async (res: HttpResponse<void, Error>) => {
+          const err = (await res.json()) as Error;
           setLoading(false);
-          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
+          dispatch(setModalErrorSnackMessage(errorToHandler(err)));
         });
     }
   };

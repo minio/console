@@ -30,8 +30,6 @@ import {
   modalBasic,
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import {
@@ -49,6 +47,9 @@ import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { Error, HttpResponse } from "api/consoleApi";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -181,19 +182,26 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
       }
 
       let payload = {
-        type: tierType,
+        type: tierType as
+          | "azure"
+          | "s3"
+          | "minio"
+          | "gcs"
+          | "unsupported"
+          | undefined,
         ...request,
       };
 
-      api
-        .invoke("POST", `/api/v1/admin/tiers`, payload)
+      api.admin
+        .addTier(payload)
         .then(() => {
           setSaving(false);
           navigate(IAM_PAGES.TIERS);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch(async (res: HttpResponse<void, Error>) => {
+          const err = (await res.json()) as Error;
           setSaving(false);
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err)));
         });
     }
   }, [

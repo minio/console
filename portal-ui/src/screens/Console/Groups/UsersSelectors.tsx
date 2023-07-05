@@ -22,7 +22,6 @@ import { LinearProgress } from "@mui/material";
 import get from "lodash/get";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { UsersList } from "../Users/types";
 import { usersSort } from "../../../utils/sortFunctions";
 import {
   actionsTray,
@@ -30,13 +29,13 @@ import {
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 
-import { ErrorResponseHandler } from "../../../common/types";
-import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SearchBox from "../Common/SearchBox";
 
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IGroupsProps {
   classes: any;
@@ -91,10 +90,10 @@ const UsersSelectors = ({
   const [filter, setFilter] = useState<string>("");
 
   const fetchUsers = useCallback(() => {
-    api
-      .invoke("GET", `/api/v1/users`)
-      .then((res: UsersList) => {
-        let users = get(res, "users", []);
+    api.users
+      .listUsers()
+      .then((res) => {
+        let users = get(res.data, "users", []);
 
         if (!users) {
           users = [];
@@ -103,8 +102,8 @@ const UsersSelectors = ({
         setRecords(users.sort(usersSort));
         isLoading(false);
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(err));
+      .catch((err) => {
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         isLoading(false);
       });
   }, [dispatch]);

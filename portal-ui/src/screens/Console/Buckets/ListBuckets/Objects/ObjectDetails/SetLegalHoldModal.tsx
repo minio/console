@@ -26,14 +26,14 @@ import {
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 
-import { IFileInfo } from "./types";
-import { ErrorResponseHandler } from "../../../../../../common/types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import api from "../../../../../../common/api";
 import { encodeURLString } from "../../../../../../common/utils";
 
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
+import { BucketObject, ObjectLegalHoldStatus } from "api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -48,7 +48,7 @@ interface ISetRetentionProps {
   closeModalAndRefresh: (reload: boolean) => void;
   objectName: string;
   bucketName: string;
-  actualInfo: IFileInfo;
+  actualInfo: BucketObject;
 }
 
 const SetLegalHoldModal = ({
@@ -73,20 +73,25 @@ const SetLegalHoldModal = ({
     e.preventDefault();
     setIsSaving(true);
 
-    api
-      .invoke(
-        "PUT",
-        `/api/v1/buckets/${bucketName}/objects/legalhold?prefix=${encodeURLString(
-          objectName
-        )}&version_id=${versionId}`,
-        { status: legalHoldEnabled ? "enabled" : "disabled" }
+    api.buckets
+      .putObjectLegalHold(
+        bucketName,
+        {
+          prefix: encodeURLString(objectName),
+          version_id: versionId || "",
+        },
+        {
+          status: legalHoldEnabled
+            ? ObjectLegalHoldStatus.Enabled
+            : ObjectLegalHoldStatus.Disabled,
+        }
       )
       .then(() => {
         setIsSaving(false);
         closeModalAndRefresh(true);
       })
-      .catch((error: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(error));
+      .catch((err) => {
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         setIsSaving(false);
       });
   };

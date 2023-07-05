@@ -15,21 +15,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../../../common/api";
-import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage } from "../../../systemSlice";
-import { Usage } from "./types";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 export const getUsageAsync = createAsyncThunk(
   "dashboard/getUsageAsync",
   async (_, { getState, rejectWithValue, dispatch }) => {
-    return api
-      .invoke("GET", `/api/v1/admin/info`)
-      .then((res: Usage) => {
-        return res;
+    return api.admin
+      .adminInfo()
+      .then((res) => {
+        return res.data;
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
+      .catch((err) => {
+        dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         return rejectWithValue(err);
       });
   }

@@ -30,13 +30,13 @@ import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWr
 import AddGroupHelpBox from "./AddGroupHelpBox";
 import UsersSelectors from "./UsersSelectors";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../../src/common/types";
-import api from "../../../../src/common/api";
 
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IAddGroupProps {
   classes: any;
@@ -63,8 +63,8 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
   useEffect(() => {
     if (saving) {
       const saveRecord = () => {
-        api
-          .invoke("POST", "/api/v1/groups", {
+        api.groups
+          .addGroup({
             group: groupName,
             members: selectedUsers,
           })
@@ -72,9 +72,9 @@ const AddGroupScreen = ({ classes }: IAddGroupProps) => {
             isSaving(false);
             navigate(`${IAM_PAGES.GROUPS}`);
           })
-          .catch((err: ErrorResponseHandler) => {
+          .catch((err) => {
             isSaving(false);
-            dispatch(setErrorSnackMessage(err));
+            dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           });
       };
 

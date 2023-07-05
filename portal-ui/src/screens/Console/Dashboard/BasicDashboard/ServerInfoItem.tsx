@@ -17,7 +17,6 @@ import React from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { ServerInfo } from "../types";
 import { niceDays } from "../../../../common/utils";
 import { Box } from "@mui/material";
 import { CircleIcon } from "mds";
@@ -28,6 +27,7 @@ import {
   getNetworkStatusColor,
   serverStatusColor,
 } from "./Utils";
+import { ServerProperties } from "api/consoleApi";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -36,7 +36,7 @@ const styles = (theme: Theme) =>
 
 interface ICardProps {
   classes?: any;
-  server: ServerInfo;
+  server: ServerProperties;
   index: number;
 }
 
@@ -125,7 +125,7 @@ const ServerInfoItem = ({ server }: ICardProps) => {
   const networkTotal = networkKeys.length;
   const totalDrives = server.drives ? server.drives.length : 0;
   const activeNetwork = networkKeys.reduce((acc: number, currValue: string) => {
-    const item = server.network[currValue];
+    const item = server.network ? server.network[currValue] : "";
     if (item === "online") {
       return acc + 1;
     }
@@ -217,7 +217,7 @@ const ServerInfoItem = ({ server }: ICardProps) => {
           <ServerStatItem
             statusColor={"green"}
             label={"Up time"}
-            value={server?.uptime ? niceDays(server.uptime) : "N/A"}
+            value={server?.uptime ? niceDays(`${server.uptime}`) : "N/A"}
           />
         </Box>
         <ServerStatItem

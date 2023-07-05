@@ -22,7 +22,6 @@ import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { BackLink, Button, FormLayout, Grid, InputBox, PageLayout } from "mds";
 
-import api from "../../../common/api";
 import {
   destinationList,
   notificationEndpointsFields,
@@ -34,7 +33,6 @@ import {
   modalBasic,
   settingsCommon,
 } from "../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../common/types";
 
 import { IElementValue } from "../Configurations/types";
 
@@ -52,6 +50,8 @@ import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import TargetTitle from "./TargetTitle";
 import { setDestinationLoading } from "./destinationsSlice";
 import HelpMenu from "../HelpMenu";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 const ConfMySql = withSuspense(
   React.lazy(() => import("./CustomForms/ConfMySql"))
@@ -96,17 +96,17 @@ const AddEventDestination = ({
       const payload = {
         key_values: removeEmptyFields(valuesArr),
       };
-      api
-        .invoke("PUT", `/api/v1/configs/${service}:${identifier}`, payload)
+      api.configs
+        .setConfig(`${service}:${identifier}`, payload)
         .then(() => {
           setSaving(false);
           dispatch(setServerNeedsRestart(true));
           dispatch(setDestinationLoading(true));
           navigate(IAM_PAGES.EVENT_DESTINATIONS);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch((err) => {
           setSaving(false);
-          dispatch(setErrorSnackMessage(err));
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         });
     }
   }, [

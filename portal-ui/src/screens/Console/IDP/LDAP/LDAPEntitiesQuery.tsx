@@ -15,8 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import api from "../../../../common/api";
-import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../store";
 import {
@@ -33,9 +31,11 @@ import {
 } from "mds";
 import PolicySelectors from "../../Policies/PolicySelectors";
 import { useSelector } from "react-redux";
-import { LDAPEntitiesResponse } from "./types";
 import { DateTime } from "luxon";
 import LDAPResultsBlock from "./LDAPResultsBlock";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { LdapEntities } from "api/consoleApi";
 
 const LDAPEntitiesQuery = () => {
   const dispatch = useAppDispatch();
@@ -43,7 +43,7 @@ const LDAPEntitiesQuery = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<string[]>([""]);
   const [groups, setGroups] = useState<string[]>([""]);
-  const [results, setResults] = useState<LDAPEntitiesResponse | null>(null);
+  const [results, setResults] = useState<LdapEntities | null>(null);
 
   const selectedPolicies = useSelector(
     (state: AppState) => state.createUser.selectedPolicies
@@ -70,14 +70,14 @@ const LDAPEntitiesQuery = () => {
       data["groups"] = cleanGroups;
     }
 
-    api
-      .invoke("POST", "/api/v1/ldap-entities", data)
-      .then((result: LDAPEntitiesResponse) => {
-        setResults(result);
+    api.ldapEntities
+      .getLdapEntities(data)
+      .then((result) => {
+        setResults(result.data);
         setLoading(false);
       })
-      .catch((err: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(err));
+      .catch((err) => {
+        dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         setLoading(false);
       });
   };

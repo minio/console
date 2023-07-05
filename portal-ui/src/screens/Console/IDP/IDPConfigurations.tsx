@@ -29,8 +29,6 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../common/SecureComponent";
-import api from "../../../common/api";
-import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { Grid } from "@mui/material";
@@ -40,6 +38,8 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 type IDPConfigurationsProps = {
   classes?: any;
@@ -58,7 +58,7 @@ const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedIDP, setSelectedIDP] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [records, setRecords] = useState<[]>([]);
+  const [records, setRecords] = useState<any[]>([]);
 
   const deleteIDP = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
@@ -79,21 +79,23 @@ const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {
   useEffect(() => {
     if (loading) {
       if (displayIDPs) {
-        api
-          .invoke("GET", `/api/v1/idp/${idpType}`)
+        api.idp
+          .listConfigurations(idpType)
           .then((res) => {
             setLoading(false);
-            setRecords(
-              res.results.map((r: any) => {
-                r.name = r.name === "_" ? "Default" : r.name;
-                r.enabled = r.enabled === true ? "Enabled" : "Disabled";
-                return r;
-              })
-            );
+            if (res.data.results) {
+              setRecords(
+                res.data.results.map((r: any) => {
+                  r.name = r.name === "_" ? "Default" : r.name;
+                  r.enabled = r.enabled === true ? "Enabled" : "Disabled";
+                  return r;
+                })
+              );
+            }
           })
-          .catch((err: ErrorResponseHandler) => {
+          .catch((err) => {
             setLoading(false);
-            dispatch(setErrorSnackMessage(err));
+            dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           });
       } else {
         setLoading(false);

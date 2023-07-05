@@ -4,8 +4,6 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import Grid from "@mui/material/Grid";
 import { AddMembersToGroupIcon, Button } from "mds";
-import api from "../../../common/api";
-import { ErrorResponseHandler } from "../../../common/types";
 
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -18,6 +16,8 @@ import withStyles from "@mui/styles/withStyles";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 type UserPickerModalProps = {
   classes?: any;
@@ -56,18 +56,17 @@ const AddGroupMember = ({
   const [selectedUsers, setSelectedUsers] = useState(preSelectedUsers);
 
   function addMembersToGroup() {
-    return api
-      .invoke("PUT", `/api/v1/group/${encodeURLString(selectedGroup)}`, {
-        group: selectedGroup,
+    return api.group
+      .updateGroup(encodeURLString(selectedGroup), {
         members: selectedUsers,
         status: groupStatus,
       })
-      .then((res) => {
+      .then(() => {
         onClose();
       })
-      .catch((err: ErrorResponseHandler) => {
+      .catch((err) => {
         onClose();
-        dispatch(setModalErrorSnackMessage(err));
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
       });
   }
 

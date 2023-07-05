@@ -26,6 +26,7 @@ import withStyles from "@mui/styles/withStyles";
 import makeStyles from "@mui/styles/makeStyles";
 import { fieldBasic, radioIcons, tooltipHelper } from "../common/styleLibrary";
 import { HelpIcon } from "mds";
+import { ObjectRetentionMode, ObjectRetentionUnit } from "api/consoleApi";
 
 export interface SelectorTypes {
   label: any;
@@ -34,7 +35,12 @@ export interface SelectorTypes {
 
 interface RadioGroupProps {
   selectorOptions: SelectorTypes[];
-  currentSelection: string;
+  currentSelection:
+    | ObjectRetentionMode
+    | ObjectRetentionUnit
+    | undefined
+    | "expiry"
+    | "transition";
   label: any;
   id: string;
   name: string;

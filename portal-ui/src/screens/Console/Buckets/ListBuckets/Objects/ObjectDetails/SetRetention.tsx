@@ -25,17 +25,17 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { IFileInfo } from "./types";
 
 import { twoDigitDate } from "../../../../Common/FormComponents/DateSelector/utils";
-import { ErrorResponseHandler } from "../../../../../../common/types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
-import api from "../../../../../../common/api";
-import { encodeURLString } from "../../../../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { useSelector } from "react-redux";
+import { BucketObject, ObjectRetentionMode } from "api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { encodeURLString } from "common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -50,7 +50,7 @@ interface ISetRetentionProps {
   closeModalAndRefresh: (updateInfo: boolean) => void;
   objectName: string;
   bucketName: string;
-  objectInfo: IFileInfo;
+  objectInfo: BucketObject;
 }
 
 interface IRefObject {
@@ -71,7 +71,7 @@ const SetRetention = ({
   );
 
   const [statusEnabled, setStatusEnabled] = useState<boolean>(true);
-  const [type, setType] = useState<string>("");
+  const [type, setType] = useState<ObjectRetentionMode | "">("");
   const [date, setDate] = useState<string>("");
   const [isDateValid, setIsDateValid] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -79,7 +79,7 @@ const SetRetention = ({
 
   useEffect(() => {
     if (objectInfo.retention_mode) {
-      setType(retentionConfig?.mode || "governance");
+      setType(retentionConfig?.mode || ObjectRetentionMode.Governance);
       setAlreadyConfigured(true);
     }
     // get retention_until_date if defined
@@ -109,7 +109,7 @@ const SetRetention = ({
 
   const resetForm = () => {
     setStatusEnabled(false);
-    setType("governance");
+    setType(ObjectRetentionMode.Governance);
     if (dateElement.current) {
       dateElement.current.resetDate();
     }
@@ -120,23 +120,24 @@ const SetRetention = ({
     versionId: string | null,
     expireDate: string
   ) => {
-    api
-      .invoke(
-        "PUT",
-        `/api/v1/buckets/${bucketName}/objects/retention?prefix=${encodeURLString(
-          selectedObject
-        )}&version_id=${versionId}`,
+    api.buckets
+      .putObjectRetention(
+        bucketName,
+        {
+          prefix: encodeURLString(selectedObject),
+          version_id: versionId || "",
+        },
         {
           expires: expireDate,
-          mode: type,
+          mode: type as ObjectRetentionMode,
         }
       )
-      .then((res: any) => {
+      .then(() => {
         setIsSaving(false);
         closeModalAndRefresh(true);
       })
-      .catch((error: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(error));
+      .catch((err) => {
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         setIsSaving(false);
       });
   };
@@ -145,27 +146,25 @@ const SetRetention = ({
     selectedObject: string,
     versionId: string | null
   ) => {
-    api
-      .invoke(
-        "DELETE",
-        `/api/v1/buckets/${bucketName}/objects/retention?prefix=${encodeURLString(
-          selectedObject
-        )}&version_id=${versionId}`
-      )
+    api.buckets
+      .deleteObjectRetention(bucketName, {
+        prefix: encodeURLString(selectedObject),
+        version_id: versionId || "",
+      })
       .then(() => {
         setIsSaving(false);
         closeModalAndRefresh(true);
       })
-      .catch((error: ErrorResponseHandler) => {
-        dispatch(setModalErrorSnackMessage(error));
+      .catch((err) => {
+        dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         setIsSaving(false);
       });
   };
 
   const saveNewRetentionPolicy = () => {
     setIsSaving(true);
-    const selectedObject = objectInfo.name;
-    const versionId = objectInfo.version_id;
+    const selectedObject = objectInfo.name || "";
+    const versionId = objectInfo.version_id || null;
 
     const expireDate =
       !statusEnabled && type === "governance" ? "" : `${date}T23:59:59Z`;
@@ -226,11 +225,11 @@ const SetRetention = ({
               !statusEnabled || (alreadyConfigured && type !== "")
             }
             onChange={(e) => {
-              setType(e.target.value);
+              setType(e.target.value as ObjectRetentionMode);
             }}
             selectorOptions={[
-              { label: "Governance", value: "governance" },
-              { label: "Compliance", value: "compliance" },
+              { label: "Governance", value: ObjectRetentionMode.Governance },
+              { label: "Compliance", value: ObjectRetentionMode.Compliance },
             ]}
           />
         </Grid>

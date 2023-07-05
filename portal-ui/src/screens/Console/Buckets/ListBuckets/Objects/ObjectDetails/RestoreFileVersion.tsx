@@ -19,21 +19,21 @@ import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../../../common/types";
 import { encodeURLString } from "../../../../../../common/utils";
-import api from "../../../../../../common/api";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { Box, RecoverIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
-import { IFileInfo } from "./types";
 import { restoreLocalObjectList } from "../../../../ObjectBrowser/objectBrowserSlice";
+import { BucketObject } from "api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IRestoreFileVersion {
   classes: any;
   restoreOpen: boolean;
   bucketName: string;
-  versionToRestore: IFileInfo;
+  versionToRestore: BucketObject;
   objectPath: string;
   onCloseAndUpdate: (refresh: boolean) => void;
 }
@@ -57,14 +57,12 @@ const RestoreFileVersion = ({
   const restoreVersion = () => {
     setRestoreLoading(true);
 
-    api
-      .invoke(
-        "PUT",
-        `/api/v1/buckets/${bucketName}/objects/restore?prefix=${encodeURLString(
-          objectPath
-        )}&version_id=${versionToRestore.version_id}`
-      )
-      .then((res: any) => {
+    api.buckets
+      .putObjectRestore(bucketName, {
+        prefix: encodeURLString(objectPath),
+        version_id: versionToRestore.version_id || "",
+      })
+      .then(() => {
         setRestoreLoading(false);
         onCloseAndUpdate(true);
         dispatch(
@@ -74,8 +72,8 @@ const RestoreFileVersion = ({
           })
         );
       })
-      .catch((error: ErrorResponseHandler) => {
-        dispatch(setErrorSnackMessage(error));
+      .catch((err) => {
+        dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         setRestoreLoading(false);
       });
   };

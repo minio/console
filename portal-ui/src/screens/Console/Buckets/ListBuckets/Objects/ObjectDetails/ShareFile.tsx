@@ -20,9 +20,6 @@ import { Button, CopyIcon, ReadBox, ShareIcon, Grid } from "mds";
 import CopyToClipboard from "react-copy-to-clipboard";
 import LinearProgress from "@mui/material/LinearProgress";
 
-import { IFileInfo } from "./types";
-import { ErrorResponseHandler } from "../../../../../../common/types";
-import api from "../../../../../../common/api";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
 import { encodeURLString } from "../../../../../../common/utils";
@@ -32,11 +29,14 @@ import {
   setModalSnackMessage,
 } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
+import { BucketObject } from "api/consoleApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 
 interface IShareFileProps {
   open: boolean;
   bucketName: string;
-  dataObject: IFileInfo;
+  dataObject: BucketObject;
   closeModalAndRefresh: () => void;
 }
 
@@ -72,18 +72,16 @@ const ShareFile = ({
     if (dataObject.version_id === undefined) {
       // In case it is not distributed setup, then we default to "null";
       if (distributedSetup) {
-        api
-          .invoke(
-            "GET",
-            `/api/v1/buckets/${bucketName}/objects?prefix=${encodeURLString(
-              dataObject.name
-            )}${distributedSetup ? "&with_versions=true" : ""}`
-          )
-          .then((res: { objects: IFileInfo[] }) => {
-            const result: IFileInfo[] = res.objects || [];
+        api.buckets
+          .listObjects(bucketName, {
+            prefix: encodeURLString(dataObject.name || ""),
+            with_versions: distributedSetup,
+          })
+          .then((res) => {
+            const result: BucketObject[] = res.data.objects || [];
 
-            const latestVersion: IFileInfo | undefined = result.find(
-              (elem: IFileInfo) => elem.is_latest
+            const latestVersion: BucketObject | undefined = result.find(
+              (elem: BucketObject) => elem.is_latest
             );
 
             if (latestVersion) {
@@ -94,8 +92,8 @@ const ShareFile = ({
             // Version couldn't be retrieved, we default
             setVersionID("null");
           })
-          .catch((error: ErrorResponseHandler) => {
-            dispatch(setModalErrorSnackMessage(error));
+          .catch((err) => {
+            dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
           });
 
         setIsLoadingVersion(false);
@@ -122,21 +120,18 @@ const ShareFile = ({
       );
 
       if (diffDate > 0) {
-        api
-          .invoke(
-            "GET",
-            `/api/v1/buckets/${bucketName}/objects/share?prefix=${encodeURLString(
-              dataObject.name
-            )}&version_id=${versionID}${
-              selectedDate !== "" ? `&expires=${diffDate}s` : ""
-            }`
-          )
-          .then((res: string) => {
-            setShareURL(res);
+        api.buckets
+          .shareObject(bucketName, {
+            prefix: encodeURLString(dataObject.name || ""),
+            version_id: versionID,
+            expires: selectedDate !== "" ? `${diffDate}s` : "",
+          })
+          .then((res) => {
+            setShareURL(res.data);
             setIsLoadingFile(false);
           })
-          .catch((error: ErrorResponseHandler) => {
-            dispatch(setModalErrorSnackMessage(error));
+          .catch((err) => {
+            dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
             setShareURL("");
             setIsLoadingFile(false);
           });

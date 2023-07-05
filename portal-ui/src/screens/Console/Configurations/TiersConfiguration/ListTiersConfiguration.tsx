@@ -42,9 +42,6 @@ import {
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
 
-import { ITierElement, ITierResponse } from "./types";
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AButton from "../../Common/AButton/AButton";
 import SearchBox from "../../Common/SearchBox";
@@ -73,6 +70,9 @@ import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 
 import HelpMenu from "../../HelpMenu";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { Tier } from "api/consoleApi";
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal"))
 );
@@ -114,12 +114,12 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   const navigate = useNavigate();
 
   const distributedSetup = useSelector(selDistSet);
-  const [records, setRecords] = useState<ITierElement[]>([]);
+  const [records, setRecords] = useState<Tier[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [updateCredentialsOpen, setUpdateCredentialsOpen] =
     useState<boolean>(false);
-  const [selectedTier, setSelectedTier] = useState<ITierElement>({
+  const [selectedTier, setSelectedTier] = useState<Tier>({
     type: "unsupported",
     status: false,
   });
@@ -131,14 +131,14 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     if (isLoading) {
       if (distributedSetup) {
         const fetchRecords = () => {
-          api
-            .invoke("GET", `/api/v1/admin/tiers`)
-            .then((res: ITierResponse) => {
-              setRecords(res.items || []);
+          api.admin
+            .tiersList()
+            .then((res) => {
+              setRecords(res.data.items || []);
               setIsLoading(false);
             })
-            .catch((err: ErrorResponseHandler) => {
-              dispatch(setErrorSnackMessage(err));
+            .catch((err) => {
+              dispatch(setErrorSnackMessage(errorToHandler(err.error)));
               setIsLoading(false);
             });
         };
@@ -149,7 +149,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     }
   }, [isLoading, dispatch, distributedSetup]);
 
-  const filteredRecords = records.filter((b: ITierElement) => {
+  const filteredRecords = records.filter((b: Tier) => {
     if (filter === "") {
       return true;
     }
@@ -163,7 +163,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     navigate(IAM_PAGES.TIERS_ADD);
   };
 
-  const renderTierName = (item: ITierElement) => {
+  const renderTierName = (item: Tier) => {
     const name = get(item, `${item.type}.name`, "");
 
     if (name !== null) {
@@ -233,7 +233,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     );
   };
 
-  const renderTierPrefix = (item: ITierElement) => {
+  const renderTierPrefix = (item: Tier) => {
     const prefix = get(item, `${item.type}.prefix`, "");
 
     if (prefix !== null) {
@@ -243,7 +243,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     return "";
   };
 
-  const renderTierEndpoint = (item: ITierElement) => {
+  const renderTierEndpoint = (item: Tier) => {
     const endpoint = get(item, `${item.type}.endpoint`, "");
 
     if (endpoint !== null) {
@@ -253,7 +253,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     return "";
   };
 
-  const renderTierBucket = (item: ITierElement) => {
+  const renderTierBucket = (item: Tier) => {
     const bucket = get(item, `${item.type}.bucket`, "");
 
     if (bucket !== null) {
@@ -263,7 +263,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     return "";
   };
 
-  const renderTierRegion = (item: ITierElement) => {
+  const renderTierRegion = (item: Tier) => {
     const region = get(item, `${item.type}.region`, "");
 
     if (region !== null) {
@@ -273,7 +273,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     return "";
   };
 
-  const renderTierUsage = (item: ITierElement) => {
+  const renderTierUsage = (item: Tier) => {
     const endpoint = get(item, `${item.type}.usage`, "");
 
     if (endpoint !== null) {
@@ -283,7 +283,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     return "";
   };
 
-  const renderTierObjects = (item: ITierElement) => {
+  const renderTierObjects = (item: Tier) => {
     const endpoint = get(item, `${item.type}.objects`, "");
 
     if (endpoint !== null) {
@@ -293,7 +293,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
     return "";
   };
 
-  const renderTierVersions = (item: ITierElement) => {
+  const renderTierVersions = (item: Tier) => {
     const endpoint = get(item, `${item.type}.versions`, "");
 
     if (endpoint !== null) {
@@ -389,7 +389,7 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                             itemActions={[
                               {
                                 type: "edit",
-                                onClick: (tierData: ITierElement) => {
+                                onClick: (tierData: Tier) => {
                                   setSelectedTier(tierData);
                                   setUpdateCredentialsOpen(true);
                                 },

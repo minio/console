@@ -21,9 +21,8 @@ import withStyles from "@mui/styles/withStyles";
 import { Grid } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { DrivesIcon, Loader, VersionIcon } from "mds";
-import { ServerInfo, Usage } from "../../Dashboard/types";
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
+import { api } from "api";
+import { ServerProperties } from "api/consoleApi";
 
 interface ITestWrapper {
   title: any;
@@ -133,18 +132,23 @@ const TestWrapper = ({
 
   useEffect(() => {
     if (loading) {
-      api
-        .invoke("GET", `/api/v1/admin/info?defaultOnly=true`)
-        .then((res: Usage) => {
-          const totalServers = res.servers?.length;
-          setTotalNodes(totalServers);
+      api.admin
+        .adminInfo({
+          defaultOnly: true,
+        })
+        .then((res) => {
+          const totalServers = res.data.servers?.length;
+          setTotalNodes(totalServers || 0);
 
-          if (res.servers.length > 0) {
-            setVersion(res.servers[0].version);
+          if (res.data.servers && res.data.servers.length > 0) {
+            setVersion(res.data.servers[0].version || "N/A");
 
-            const totalServers = res.servers.reduce(
-              (prevTotal: number, currentElement: ServerInfo) => {
-                return prevTotal + currentElement.drives.length;
+            const totalServers = res.data.servers.reduce(
+              (prevTotal: number, currentElement: ServerProperties) => {
+                let c = currentElement.drives
+                  ? currentElement.drives.length
+                  : 0;
+                return prevTotal + c;
               },
               0
             );
@@ -153,7 +157,7 @@ const TestWrapper = ({
 
           setLoading(false);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch(() => {
           setLoading(false);
         });
     }
