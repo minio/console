@@ -16,59 +16,28 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { useSelector } from "react-redux";
+import { Button, FormLayout, ReadBox, Grid } from "mds";
 import { LinearProgress } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import {
-  modalBasic,
-  spacingUtils,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
-import { User } from "../Users/types";
-
 import { ErrorResponseHandler } from "../../../common/types";
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import api from "../../../common/api";
-import PolicySelectors from "./PolicySelectors";
-import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
-
-import { useSelector } from "react-redux";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
+import { User } from "../Users/types";
 import { setSelectedPolicies } from "../Users/AddUsersSlice";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import PolicySelectors from "./PolicySelectors";
+import api from "../../../common/api";
 
 interface ISetPolicyProps {
-  classes: any;
   closeModalAndRefresh: () => void;
   selectedUser: User | null;
   selectedGroups: string[] | null;
   open: boolean;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalBasic,
-    ...spacingUtils,
-    tableBlock: {
-      ...tableStyles.tableBlock,
-      marginTop: 15,
-    },
-    buttonContainer: {
-      display: "flex",
-      justifyContent: "flex-end",
-      marginTop: ".9rem",
-      "& button": {
-        marginLeft: 8,
-      },
-    },
-  });
-
 const SetPolicy = ({
-  classes,
   closeModalAndRefresh,
   selectedUser,
   selectedGroups,
@@ -158,41 +127,34 @@ const SetPolicy = ({
       modalOpen={open}
       title="Set Policies"
     >
-      <Grid container>
+      <FormLayout withBorders={false} containerPadding={false}>
         {(selectedGroups?.length === 1 || selectedUser != null) && (
           <Fragment>
-            <Grid item xs={12}>
-              <PredefinedList
-                label={`Selected ${selectedGroups !== null ? "Group" : "User"}`}
-                content={selectedGroups !== null ? selectedGroups[0] : userName}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <PredefinedList
-                label={"Current Policy"}
-                content={actualPolicy.join(", ")}
-              />
-            </Grid>
+            <ReadBox
+              label={`Selected ${selectedGroups !== null ? "Group" : "User"}`}
+              sx={{ width: "100%" }}
+            >
+              {selectedGroups !== null ? selectedGroups[0] : userName}
+            </ReadBox>
+            <ReadBox label={"Current Policy"} sx={{ width: "100%" }}>
+              {actualPolicy.join(", ")}
+            </ReadBox>
           </Fragment>
         )}
         {selectedGroups && selectedGroups?.length > 1 && (
-          <PredefinedList
-            label={"Selected Groups"}
-            content={selectedGroups.join(", ")}
-          />
+          <ReadBox label={"Selected Groups"} sx={{ width: "100%" }}>
+            {selectedGroups.join(", ")}
+          </ReadBox>
         )}
         <Grid item xs={12}>
-          <div className={classes.tableBlock}>
-            <PolicySelectors selectedPolicy={selectedPolicy} />
-          </div>
+          <PolicySelectors selectedPolicy={selectedPolicy} />
         </Grid>
-      </Grid>
-      <Grid item xs={12} className={classes.buttonContainer}>
+      </FormLayout>
+      <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
         <Button
           id={"reset"}
           type="button"
           variant="regular"
-          className={classes.spacerRight}
           onClick={resetSelection}
           label={"Reset"}
         />
@@ -215,4 +177,4 @@ const SetPolicy = ({
   );
 };
 
-export default withStyles(styles)(SetPolicy);
+export default SetPolicy;

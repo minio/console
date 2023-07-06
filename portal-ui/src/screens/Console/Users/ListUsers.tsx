@@ -15,8 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-
-import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import {
   AddIcon,
@@ -29,23 +27,12 @@ import {
   DataTable,
   Grid,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import api from "../../../common/api";
 import { LinearProgress } from "@mui/material";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
+import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import { encodeURLString } from "../../../common/utils";
-import AButton from "../Common/AButton/AButton";
-import SearchBox from "../Common/SearchBox";
-import withSuspense from "../Common/Components/withSuspense";
 import {
   addUserToGroupPermissions,
   CONSOLE_UI_RESOURCE,
@@ -57,6 +44,10 @@ import {
   S3_ALL_RESOURCES,
   viewUserPermissions,
 } from "../../../common/SecureComponent/permissions";
+import api from "../../../common/api";
+import AButton from "../Common/AButton/AButton";
+import SearchBox from "../Common/SearchBox";
+import withSuspense from "../Common/Components/withSuspense";
 
 import {
   hasPermission,
@@ -71,24 +62,7 @@ import HelpMenu from "../HelpMenu";
 const DeleteUser = withSuspense(React.lazy(() => import("./DeleteUser")));
 const AddToGroup = withSuspense(React.lazy(() => import("./BulkAddToGroup")));
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...actionsTray,
-    ...searchField,
-    searchField: {
-      ...searchField.searchField,
-      marginRight: "auto",
-      maxWidth: 380,
-    },
-    ...tableStyles,
-    ...containerForHeader,
-  });
-
-interface IUsersProps {
-  classes: any;
-}
-
-const ListUsers = ({ classes }: IUsersProps) => {
+const ListUsers = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -219,12 +193,15 @@ const ListUsers = ({ classes }: IUsersProps) => {
 
       <PageLayout>
         <Grid container>
-          <Grid item xs={12} className={classes.actionsTray}>
+          <Grid item xs={12} sx={actionsTray.actionsTray}>
             <SearchBox
               placeholder={"Search Users"}
               onChange={setFilter}
-              overrideClass={classes.searchField}
               value={filter}
+              sx={{
+                marginRight: "auto",
+                maxWidth: 380,
+              }}
             />
             <SecureComponent
               resource={CONSOLE_UI_RESOURCE}
@@ -352,12 +329,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
             <Fragment>
               {records.length > 0 && (
                 <Fragment>
-                  <Grid
-                    item
-                    xs={12}
-                    className={classes.tableBlock}
-                    sx={{ marginBottom: 15 }}
-                  >
+                  <Grid item xs={12} sx={{ marginBottom: 15 }}>
                     <SecureComponent
                       scopes={[IAM_SCOPES.ADMIN_LIST_USERS]}
                       resource={CONSOLE_UI_RESOURCE}
@@ -496,4 +468,4 @@ const ListUsers = ({ classes }: IUsersProps) => {
   );
 };
 
-export default withStyles(styles)(ListUsers);
+export default ListUsers;

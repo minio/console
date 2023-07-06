@@ -371,7 +371,7 @@ const UserDetails = () => {
                     disabled: !canAssignGroup,
                   },
                   content: (
-                    <React.Fragment>
+                    <Fragment>
                       <Box
                         onMouseMove={() =>
                           dispatch(setHelpName("user_details_groups"))
@@ -423,7 +423,7 @@ const UserDetails = () => {
                           idField="group"
                         />
                       </Grid>
-                    </React.Fragment>
+                    </Fragment>
                   ),
                 },
                 {

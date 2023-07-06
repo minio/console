@@ -52,7 +52,7 @@ export const assignPoliciesButton = Selector("button").withAttribute(
 //----------------------------------------------------
 // Switches
 //----------------------------------------------------
-export const switchInput = Selector(".MuiSwitch-input");
+export const switchInput = Selector("#group-status").sibling("span");
 export const deleteAllVersions =
   Selector("#delete-versions").sibling("span.switchRail");
 
@@ -84,11 +84,10 @@ export const filterUserInput = searchResourceInput.withAttribute(
   "placeholder",
   "Filter Users"
 );
-export const groupUserCheckbox = Selector(".ReactVirtualized__Table__row span")
-  .withText(constants.TEST_USER_NAME)
-  .parent(1)
-  .find(".ReactVirtualized__Grid input")
-  .withAttribute("type", "checkbox");
+export const groupUserCheckbox = Selector(".ReactVirtualized__Table__row input")
+  .withAttribute("type", "checkbox")
+  .withAttribute("value", constants.TEST_USER_NAME)
+  .sibling("span");
 
 //----------------------------------------------------
 // Dropdowns and options
@@ -103,7 +102,7 @@ export const bucketDropdownOptionFor = (modifier) => {
 //----------------------------------------------------
 // Text
 //----------------------------------------------------
-export const groupStatusText = Selector("#group-status");
+export const groupStatusText = Selector("#group-status-label");
 
 //----------------------------------------------------
 // Tables, table headers and content
