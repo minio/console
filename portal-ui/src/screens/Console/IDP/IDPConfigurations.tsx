@@ -15,12 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { useAppDispatch } from "../../../store";
+import { AddIcon, Button, PageLayout, RefreshIcon, Grid, DataTable } from "mds";
 import { useNavigate } from "react-router-dom";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { useAppDispatch } from "../../../store";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
@@ -30,28 +29,17 @@ import {
   SecureComponent,
 } from "../../../common/SecureComponent";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
-import { Grid } from "@mui/material";
+import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { AddIcon, Button, PageLayout, RefreshIcon } from "mds";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
 
 type IDPConfigurationsProps = {
-  classes?: any;
   idpType: string;
 };
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...containerForHeader,
-  });
-
-const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {
+const IDPConfigurations = ({ idpType }: IDPConfigurationsProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -159,19 +147,15 @@ const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {
         label={`${idpType.toUpperCase()} Configurations`}
         actions={<HelpMenu />}
       />
-
-      <PageLayout className={classes.pageContainer}>
-        <Grid container spacing={1}>
+      <PageLayout>
+        <Grid container>
           <Grid
             item
             xs={12}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"flex-end"}
             sx={{
-              "& button": {
-                marginLeft: "8px",
-              },
+              ...actionsTray.actionsTray,
+              justifyContent: "flex-end",
+              gap: 8,
             }}
           >
             <SecureComponent
@@ -206,13 +190,13 @@ const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {
               </TooltipWrapper>
             </SecureComponent>
           </Grid>
-          <Grid item xs={12} className={classes.tableBlock}>
+          <Grid item xs={12}>
             <SecureComponent
               scopes={[IAM_SCOPES.ADMIN_CONFIG_UPDATE]}
               resource={CONSOLE_UI_RESOURCE}
               errorProps={{ disabled: true }}
             >
-              <TableWrapper
+              <DataTable
                 itemActions={tableActions}
                 columns={[
                   { label: "Name", elementKey: "name" },
@@ -232,4 +216,4 @@ const IDPConfigurations = ({ classes, idpType }: IDPConfigurationsProps) => {
   );
 };
 
-export default withStyles(styles)(IDPConfigurations);
+export default IDPConfigurations;

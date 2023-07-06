@@ -15,17 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { Box, Grid } from "@mui/material";
-import {
-  containerForHeader,
-  formFieldStyles,
-  modalBasic,
-  searchField,
-} from "../Common/FormComponents/common/styleLibrary";
 import {
   BackLink,
   Button,
@@ -33,9 +22,16 @@ import {
   PageLayout,
   RefreshIcon,
   TrashIcon,
+  Box,
+  Grid,
+  Switch,
+  InputBox,
+  FormLayout,
+  breakPoints,
+  ScreenTitle,
 } from "mds";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { useNavigate, useParams } from "react-router-dom";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
 import {
@@ -43,17 +39,14 @@ import {
   setHelpName,
   setServerNeedsRestart,
 } from "../../../systemSlice";
-import useApi from "../Common/Hooks/useApi";
 import api from "../../../common/api";
-import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
+import useApi from "../Common/Hooks/useApi";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import LabelValuePair from "../Common/UsageBarWrapper/LabelValuePair";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 
 type IDPConfigurationDetailsProps = {
-  classes?: any;
   formFields: object;
   endpoint: string;
   backLink: string;
@@ -63,23 +56,7 @@ type IDPConfigurationDetailsProps = {
   icon: React.ReactNode;
 };
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    formFieldRow: {
-      ...formFieldStyles.formFieldRow,
-    },
-    ...modalBasic,
-    pageContainer: {
-      height: "100%",
-    },
-    ...searchField,
-
-    ...containerForHeader,
-  });
-
 const IDPConfigurationDetails = ({
-  classes,
   formFields,
   endpoint,
   backLink,
@@ -231,9 +208,9 @@ const IDPConfigurationDetails = ({
     switch (value.type) {
       case "toggle":
         return (
-          <FormSwitchWrapper
+          <Switch
             indicatorLabels={["Enabled", "Disabled"]}
-            checked={fields[key] === "on" ? true : false}
+            checked={fields[key] === "on"}
             value={"is-field-enabled"}
             id={"is-field-enabled"}
             name={"is-field-enabled"}
@@ -248,7 +225,7 @@ const IDPConfigurationDetails = ({
         );
       default:
         return (
-          <InputBoxWrapper
+          <InputBox
             id={key}
             required={value.required}
             name={key}
@@ -269,18 +246,7 @@ const IDPConfigurationDetails = ({
 
   const renderEditForm = () => {
     return (
-      <Box
-        sx={{
-          display: "grid",
-          padding: "25px",
-          gap: "25px",
-          gridTemplateColumns: {
-            md: "2fr 1.2fr",
-            xs: "1fr",
-          },
-          border: "1px solid #eaeaea",
-        }}
-      >
+      <FormLayout helpBox={helpBox}>
         <form
           noValidate
           autoComplete="off"
@@ -288,58 +254,45 @@ const IDPConfigurationDetails = ({
             saveRecord(e);
           }}
         >
-          <Grid container item spacing="20" sx={{ marginTop: 1 }}>
-            <Grid xs={12} item className={classes.fieldBox}>
-              {Object.entries(formFields).map(([key, value]) => (
-                <Grid item xs={12} className={classes.formFieldRow} key={key}>
-                  {renderFormField(key, value)}
-                </Grid>
-              ))}
-              <Grid item xs={12} textAlign={"right"}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                    marginTop: "20px",
-                    gap: "15px",
-                  }}
-                >
-                  {editMode && (
-                    <Button
-                      id={"clear"}
-                      type="button"
-                      variant="regular"
-                      onClick={resetForm}
-                      label={"Clear"}
-                    />
-                  )}
-                  {editMode && (
-                    <Button
-                      id={"cancel"}
-                      type="button"
-                      variant="regular"
-                      onClick={toggleEditMode}
-                      label={"Cancel"}
-                    />
-                  )}
-                  {editMode && (
-                    <Button
-                      id={"save-key"}
-                      type="submit"
-                      variant="callAction"
-                      color="primary"
-                      disabled={loading || loadingSave || !validSave()}
-                      label={"Save"}
-                    />
-                  )}
-                </Box>
+          <Grid container>
+            <Grid xs={12} item>
+              {Object.entries(formFields).map(([key, value]) =>
+                renderFormField(key, value)
+              )}
+              <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+                {editMode && (
+                  <Button
+                    id={"clear"}
+                    type="button"
+                    variant="regular"
+                    onClick={resetForm}
+                    label={"Clear"}
+                  />
+                )}
+                {editMode && (
+                  <Button
+                    id={"cancel"}
+                    type="button"
+                    variant="regular"
+                    onClick={toggleEditMode}
+                    label={"Cancel"}
+                  />
+                )}
+                {editMode && (
+                  <Button
+                    id={"save-key"}
+                    type="submit"
+                    variant="callAction"
+                    color="primary"
+                    disabled={loading || loadingSave || !validSave()}
+                    label={"Save"}
+                  />
+                )}
               </Grid>
             </Grid>
           </Grid>
         </form>
-        {helpBox}
-      </Box>
+      </FormLayout>
     );
   };
   const renderViewForm = () => {
@@ -347,11 +300,15 @@ const IDPConfigurationDetails = ({
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
-          gridAutoFlow: { xs: "dense", sm: "row" },
+          gridTemplateColumns: "1fr",
+          gridAutoFlow: "dense",
           gap: 3,
           padding: "15px",
           border: "1px solid #eaeaea",
+          [`@media (min-width: ${breakPoints.sm}px)`]: {
+            gridTemplateColumns: "2fr 1fr",
+            gridAutoFlow: "row",
+          },
         }}
       >
         {Object.entries(formFields).map(([key, value]) => (
@@ -370,7 +327,7 @@ const IDPConfigurationDetails = ({
   }, [dispatch]);
 
   return (
-    <Grid item xs={12}>
+    <Fragment>
       {deleteOpen && configurationName && (
         <DeleteIDPConfigurationModal
           deleteOpen={deleteOpen}
@@ -379,15 +336,18 @@ const IDPConfigurationDetails = ({
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <PageHeaderWrapper
-        label={<BackLink onClick={() => navigate(backLink)} label={header} />}
-        actions={<HelpMenu />}
-      />
-      <PageLayout className={classes.pageContainer}>
-        <Box>
+      <Grid item xs={12}>
+        <PageHeaderWrapper
+          label={<BackLink onClick={() => navigate(backLink)} label={header} />}
+          actions={<HelpMenu />}
+        />
+        <PageLayout>
           <ScreenTitle
             icon={icon}
-            title={configurationName === "_" ? "Default" : configurationName}
+            title={
+              configurationName === "_" ? "Default" : configurationName || ""
+            }
+            subTitle={null}
             actions={
               <Fragment>
                 {configurationName !== "_" && (
@@ -425,13 +385,15 @@ const IDPConfigurationDetails = ({
                 />
               </Fragment>
             }
+            sx={{
+              marginBottom: 15,
+            }}
           />
-
           {editMode ? renderEditForm() : renderViewForm()}
-        </Box>
-      </PageLayout>
-    </Grid>
+        </PageLayout>
+      </Grid>
+    </Fragment>
   );
 };
 
-export default withStyles(styles)(IDPConfigurationDetails);
+export default IDPConfigurationDetails;

@@ -15,28 +15,26 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { Box, Grid } from "@mui/material";
 import {
-  formFieldStyles,
-  modalBasic,
-} from "../Common/FormComponents/common/styleLibrary";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { BackLink, Button, PageLayout } from "mds";
+  BackLink,
+  Button,
+  FormLayout,
+  Grid,
+  InputBox,
+  PageLayout,
+  SectionTitle,
+  Switch,
+} from "mds";
 import { useNavigate } from "react-router-dom";
 import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import {
   setErrorSnackMessage,
   setHelpName,
   setServerNeedsRestart,
 } from "../../../systemSlice";
 import useApi from "../Common/Hooks/useApi";
-import SectionTitle from "../Common/SectionTitle";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 
@@ -51,14 +49,7 @@ type AddIDPConfigurationProps = {
   endpoint: string;
 };
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    ...modalBasic,
-  });
-
 const AddIDPConfiguration = ({
-  classes,
   icon,
   helpBox,
   header,
@@ -132,7 +123,7 @@ const AddIDPConfiguration = ({
     switch (value.type) {
       case "toggle":
         return (
-          <FormSwitchWrapper
+          <Switch
             indicatorLabels={["Enabled", "Disabled"]}
             checked={fields[key] === "on" ? true : false}
             value={"is-field-enabled"}
@@ -148,7 +139,7 @@ const AddIDPConfiguration = ({
         );
       default:
         return (
-          <InputBoxWrapper
+          <InputBox
             id={key}
             required={value.required}
             name={key}
@@ -178,76 +169,45 @@ const AddIDPConfiguration = ({
         actions={<HelpMenu />}
       />
       <PageLayout>
-        <Box
-          sx={{
-            display: "grid",
-            padding: "25px",
-            gap: "25px",
-            gridTemplateColumns: {
-              md: "2fr 1.2fr",
-              xs: "1fr",
-            },
-            border: "1px solid #eaeaea",
-          }}
-        >
-          <Box>
-            <SectionTitle icon={icon}>{title}</SectionTitle>
-            <form
-              noValidate
-              autoComplete="off"
-              onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                addRecord(e);
-              }}
-            >
-              <Grid container item spacing="20" sx={{ marginTop: 1 }}>
-                <Grid xs={12} item>
-                  {Object.entries(extraFormFields).map(([key, value]) => (
-                    <Grid
-                      item
-                      xs={12}
-                      className={classes.formFieldRow}
-                      key={key}
-                    >
-                      {renderFormField(key, value)}
-                    </Grid>
-                  ))}
-                  <Grid item xs={12} textAlign={"right"}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "flex-end",
-                        marginTop: "20px",
-                        gap: "15px",
-                      }}
-                    >
-                      <Button
-                        id={"clear"}
-                        type="button"
-                        variant="regular"
-                        onClick={resetForm}
-                        label={"Clear"}
-                      />
+        <FormLayout helpBox={helpBox}>
+          <SectionTitle icon={icon}>{title}</SectionTitle>
+          <form
+            noValidate
+            autoComplete="off"
+            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+              addRecord(e);
+            }}
+          >
+            <Grid container>
+              <Grid xs={12} item>
+                {Object.entries(extraFormFields).map(([key, value]) =>
+                  renderFormField(key, value)
+                )}
+                <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+                  <Button
+                    id={"clear"}
+                    type="button"
+                    variant="regular"
+                    onClick={resetForm}
+                    label={"Clear"}
+                  />
 
-                      <Button
-                        id={"save-key"}
-                        type="submit"
-                        variant="callAction"
-                        color="primary"
-                        disabled={loading || !validSave()}
-                        label={"Save"}
-                      />
-                    </Box>
-                  </Grid>
+                  <Button
+                    id={"save-key"}
+                    type="submit"
+                    variant="callAction"
+                    color="primary"
+                    disabled={loading || !validSave()}
+                    label={"Save"}
+                  />
                 </Grid>
               </Grid>
-            </form>
-          </Box>
-          {helpBox}
-        </Box>
+            </Grid>
+          </form>
+        </FormLayout>
       </PageLayout>
     </Grid>
   );
 };
 
-export default withStyles(styles)(AddIDPConfiguration);
+export default AddIDPConfiguration;
