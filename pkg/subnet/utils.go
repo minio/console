@@ -128,7 +128,6 @@ func processHealthReport(info interface{}) ([]byte, string, error) {
 }
 
 func subnetUploadReq(body []byte, url string, formDataType string) (*http.Request, error) {
-
 	uploadDataBody := bytes.NewReader(body)
 	r, e := http.NewRequest(http.MethodPost, url, uploadDataBody)
 	if e != nil {
@@ -304,13 +303,16 @@ func subnetReqDoMC(r *http.Request, headers map[string]string) (string, error) {
 	}
 	return respStr, fmt.Errorf("Request failed with code %d with error: %s", resp.StatusCode, respStr)
 }
+
 func subnetHTTPDo(req *http.Request) (*http.Response, error) {
 	return getSubnetClient().Do(req)
 }
+
 func getSubnetClient() *http.Client {
 	client := httpClientSubnet(0)
 	return client
 }
+
 func httpClientSubnet(reqTimeout time.Duration) *http.Client {
 	return &http.Client{
 		Timeout: reqTimeout,
