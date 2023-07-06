@@ -2,6 +2,15 @@
 
 # Changelog
 
+## Release v0.32.0
+Features:
+- Updated Users and Groups components
+- Added placeholder image for Help Menu
+
+Bug Fix:
+
+- Fixed memory leak in WebSocket API for Object Browser 
+---
 ## Release v0.31.0
 
 *Breaking Changes:*

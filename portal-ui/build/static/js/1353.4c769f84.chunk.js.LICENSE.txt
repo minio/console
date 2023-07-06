@@ -1,1 +1,0 @@
-/*! streamsaver. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
