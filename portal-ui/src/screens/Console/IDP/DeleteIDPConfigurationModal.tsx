@@ -14,18 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-
-import { DialogContentText } from "@mui/material";
-import { ErrorResponseHandler } from "../../../common/types";
-import useApi from "../Common/Hooks/useApi";
-import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
+import React, { Fragment } from "react";
 import { ConfirmDeleteIcon } from "mds";
 import {
   setErrorSnackMessage,
   setServerNeedsRestart,
 } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import { ErrorResponseHandler } from "../../../common/types";
+import useApi from "../Common/Hooks/useApi";
+import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 
 interface IDeleteIDPConfigurationModalProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -74,10 +72,10 @@ const DeleteIDPConfigurationModal = ({
         disabled: deleteLoading,
       }}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           Are you sure you want to delete IDP <b>{displayName}</b>{" "}
           configuration? <br />
-        </DialogContentText>
+        </Fragment>
       }
     />
   );
