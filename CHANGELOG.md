@@ -4,7 +4,7 @@
 
 ## Release v0.32.0
 Features:
-- Updated Users components
+- Updated Users and Groups components
 - Added placeholder image for Help Menu
 
 Bug Fix:
