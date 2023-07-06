@@ -15,18 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { InputBox } from "mds";
 import { setSecretKey, setShowPassword } from "./AddUsersSlice";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../store";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
-interface IAddUserProps2 {
-  classes: any;
-}
-
-const PasswordSelector = ({ classes }: IAddUserProps2) => {
+const PasswordSelector = () => {
   const dispatch = useAppDispatch();
   const showPassword = useSelector(
     (state: AppState) => state.createUser.showPassword
@@ -35,11 +31,7 @@ const PasswordSelector = ({ classes }: IAddUserProps2) => {
     (state: AppState) => state.createUser.secretKey
   );
   return (
-    <InputBoxWrapper
-      className={classes.spacerBottom}
-      classes={{
-        inputLabel: classes.sizedLabel,
-      }}
+    <InputBox
       id="standard-multiline-static"
       name="standard-multiline-static"
       label="Password"

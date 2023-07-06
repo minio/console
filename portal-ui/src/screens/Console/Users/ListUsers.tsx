@@ -26,11 +26,13 @@ import {
   HelpBox,
   PageLayout,
   UsersIcon,
+  DataTable,
+  Grid,
 } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import api from "../../../common/api";
-import { Grid, LinearProgress } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
 import {
@@ -40,8 +42,6 @@ import {
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
-
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { encodeURLString } from "../../../common/utils";
 import AButton from "../Common/AButton/AButton";
 import SearchBox from "../Common/SearchBox";
@@ -117,8 +117,8 @@ const ListUsers = ({ classes }: IUsersProps) => {
     setDeleteOpen(false);
     if (refresh) {
       setLoading(true);
+      setCheckedUsers([]);
     }
-    setCheckedUsers([]);
   };
 
   const closeAddGroupBulk = (unCheckAll: boolean = false) => {
@@ -218,7 +218,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
       <PageHeaderWrapper label={"Users"} actions={<HelpMenu />} />
 
       <PageLayout>
-        <Grid container spacing={1}>
+        <Grid container>
           <Grid item xs={12} className={classes.actionsTray}>
             <SearchBox
               placeholder={"Search Users"}
@@ -356,14 +356,14 @@ const ListUsers = ({ classes }: IUsersProps) => {
                     item
                     xs={12}
                     className={classes.tableBlock}
-                    marginBottom={"15px"}
+                    sx={{ marginBottom: 15 }}
                   >
                     <SecureComponent
                       scopes={[IAM_SCOPES.ADMIN_LIST_USERS]}
                       resource={CONSOLE_UI_RESOURCE}
                       errorProps={{ disabled: true }}
                     >
-                      <TableWrapper
+                      <DataTable
                         itemActions={tableActions}
                         columns={[
                           { label: "Access Key", elementKey: "accessKey" },
@@ -428,12 +428,7 @@ const ListUsers = ({ classes }: IUsersProps) => {
                 </Fragment>
               )}
               {records.length === 0 && (
-                <Grid
-                  container
-                  justifyContent={"center"}
-                  alignContent={"center"}
-                  alignItems={"start"}
-                >
+                <Grid container>
                   <Grid item xs={8}>
                     <HelpBox
                       title={"Users"}

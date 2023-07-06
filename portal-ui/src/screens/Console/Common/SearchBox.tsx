@@ -24,6 +24,7 @@ type SearchBoxProps = {
   onChange: (value: string) => void;
   overrideClass?: any;
   id?: string;
+  label?: string;
   sx?: CSSObject;
 };
 
@@ -33,6 +34,7 @@ const SearchBox = ({
   overrideClass,
   value,
   id = "search-resource",
+  label = "",
   sx,
 }: SearchBoxProps) => {
   return (
@@ -40,7 +42,7 @@ const SearchBox = ({
       placeholder={placeholder}
       className={overrideClass ? overrideClass : ""}
       id={id}
-      label=""
+      label={label}
       onChange={(e) => {
         onChange(e.target.value);
       }}

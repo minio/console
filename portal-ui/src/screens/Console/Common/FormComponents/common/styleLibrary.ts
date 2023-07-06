@@ -714,33 +714,6 @@ export const commonDashboardInfocard: any = {
   },
 };
 
-export const serviceAccountStyles: any = {
-  buttonContainer: {
-    display: "flex",
-    justifyContent: "flex-end",
-  },
-  codeMirrorContainer: {
-    marginBottom: 20,
-    paddingLeft: 15,
-    "& label": {
-      marginBottom: ".5rem",
-    },
-    "& label + div": {
-      display: "none",
-    },
-  },
-  stackedInputs: {
-    display: "flex",
-    gap: 15,
-    paddingBottom: "1rem",
-    paddingLeft: "1rem",
-    flexFlow: "column",
-  },
-  buttonSpacer: {
-    marginRight: "1rem",
-  },
-};
-
 export const tableStyles: any = {
   tableBlock: {
     display: "flex",

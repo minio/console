@@ -15,21 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { AddMembersToGroupIcon, Button } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { AddMembersToGroupIcon, Button, FormLayout, Grid, ReadBox } from "mds";
 import { LinearProgress } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../Common/FormComponents/common/styleLibrary";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 
@@ -37,20 +29,12 @@ interface IAddToGroup {
   open: boolean;
   checkedUsers: any;
   closeModalAndRefresh: any;
-  classes: any;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalStyleUtils,
-    ...formFieldStyles,
-  });
 
 const BulkAddToGroup = ({
   open,
   checkedUsers,
   closeModalAndRefresh,
-  classes,
 }: IAddToGroup) => {
   const dispatch = useAppDispatch();
   //Local States
@@ -120,61 +104,57 @@ const BulkAddToGroup = ({
     >
       {accepted ? (
         <React.Fragment>
-          <Grid container>
-            <PredefinedList
-              label={"Groups"}
-              content={selectedGroups.join(", ")}
-            />
-            <PredefinedList label={"Users"} content={checkedUsers.join(", ")} />
-          </Grid>
-          <br />
-          <br />
-          <br />
+          <FormLayout
+            withBorders={false}
+            containerPadding={false}
+            sx={{ margin: "30px 0" }}
+          >
+            <ReadBox label={"Groups"} sx={{ width: "100%" }}>
+              {selectedGroups.join(", ")}
+            </ReadBox>
+            <ReadBox label={"Users"} sx={{ width: "100%" }}>
+              {" "}
+              {checkedUsers.join(", ")}{" "}
+            </ReadBox>
+          </FormLayout>
         </React.Fragment>
       ) : (
         <form noValidate autoComplete="off" onSubmit={setSaving}>
-          <Grid container>
-            <Grid item xs={12} className={classes.modalFormScrollable}>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <PredefinedList
-                  label={"Selected Users"}
-                  content={checkedUsers.join(", ")}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <GroupsSelectors
-                  selectedGroups={selectedGroups}
-                  setSelectedGroups={setSelectedGroups}
-                />
-              </Grid>
-            </Grid>
-            <Grid item xs={12} className={classes.modalButtonBar}>
-              <Button
-                id={"clear-bulk-add-group"}
-                type="button"
-                variant="regular"
-                color="primary"
-                onClick={resetForm}
-                label={"Clear"}
-              />
-              <Button
-                id={"save-add-group"}
-                type="submit"
-                variant="callAction"
-                disabled={saving || selectedGroups.length < 1}
-                label={"Save"}
-              />
-            </Grid>
-            {saving && (
-              <Grid item xs={12}>
-                <LinearProgress />
-              </Grid>
-            )}
+          <FormLayout withBorders={false} containerPadding={false}>
+            <ReadBox label={"Selected Users"} sx={{ width: "100%" }}>
+              {checkedUsers.join(", ")}
+            </ReadBox>
+            <GroupsSelectors
+              selectedGroups={selectedGroups}
+              setSelectedGroups={setSelectedGroups}
+            />
+          </FormLayout>
+          <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+            <Button
+              id={"clear-bulk-add-group"}
+              type="button"
+              variant="regular"
+              color="primary"
+              onClick={resetForm}
+              label={"Clear"}
+            />
+            <Button
+              id={"save-add-group"}
+              type="submit"
+              variant="callAction"
+              disabled={saving || selectedGroups.length < 1}
+              label={"Save"}
+            />
           </Grid>
+          {saving && (
+            <Grid item xs={12}>
+              <LinearProgress />
+            </Grid>
+          )}
         </form>
       )}
     </ModalWrapper>
   );
 };
 
-export default withStyles(styles)(BulkAddToGroup);
+export default BulkAddToGroup;
