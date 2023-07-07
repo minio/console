@@ -25,7 +25,12 @@ import {
   Loader,
   PageLayout,
   RefreshIcon,
+  Switch,
+  Tabs,
 } from "mds";
+import { api } from "api";
+import { ConfigurationKV } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 import { useAppDispatch } from "../../../../store";
 import {
   setErrorSnackMessage,
@@ -33,20 +38,14 @@ import {
   setServerNeedsRestart,
   setSnackBarMessage,
 } from "../../../../systemSlice";
+import { ldapFormFields, ldapHelpBoxContents } from "../utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
-import { ldapFormFields, ldapHelpBoxContents } from "../utils";
 import AddIDPConfigurationHelpBox from "../AddIDPConfigurationHelpbox";
 import LDAPEntitiesQuery from "./LDAPEntitiesQuery";
 import ResetConfigurationModal from "../../EventDestinations/CustomForms/ResetConfigurationModal";
-import { TabPanel } from "../../../shared/tabs";
-import TabSelector from "../../Common/TabSelector/TabSelector";
 import HelpMenu from "../../HelpMenu";
-import { api } from "api";
-import { ConfigurationKV } from "api/consoleApi";
-import { errorToHandler } from "api/errors";
 
 const enabledConfigLDAP = [
   "server_addr",
@@ -70,7 +69,7 @@ const IDPLDAPConfigurationDetails = () => {
   );
   const [editMode, setEditMode] = useState<boolean>(false);
   const [resetOpen, setResetOpen] = useState<boolean>(false);
-  const [curTab, setCurTab] = useState<number>(0);
+  const [curTab, setCurTab] = useState<string>("configuration");
 
   const toggleEditMode = () => {
     if (editMode && record) {
@@ -218,23 +217,21 @@ const IDPLDAPConfigurationDetails = () => {
     switch (value.type) {
       case "toggle":
         return (
-          <Box className={"inputItem"}>
-            <FormSwitchWrapper
-              key={key}
-              indicatorLabels={["Enabled", "Disabled"]}
-              checked={fields[key] === "on"}
-              value={"is-field-enabled"}
-              id={"is-field-enabled"}
-              name={"is-field-enabled"}
-              label={value.label}
-              tooltip={value.tooltip}
-              onChange={(e) =>
-                setFields({ ...fields, [key]: e.target.checked ? "on" : "off" })
-              }
-              description=""
-              disabled={!editMode}
-            />
-          </Box>
+          <Switch
+            key={key}
+            indicatorLabels={["Enabled", "Disabled"]}
+            checked={fields[key] === "on"}
+            value={"is-field-enabled"}
+            id={"is-field-enabled"}
+            name={"is-field-enabled"}
+            label={value.label}
+            tooltip={value.tooltip}
+            onChange={(e) =>
+              setFields({ ...fields, [key]: e.target.checked ? "on" : "off" })
+            }
+            description=""
+            disabled={!editMode}
+          />
         );
       default:
         return (
@@ -274,164 +271,182 @@ const IDPLDAPConfigurationDetails = () => {
       )}
       <PageHeaderWrapper label={"LDAP"} actions={<HelpMenu />} />
       <PageLayout variant={"constrained"}>
-        <TabSelector
-          selectedTab={curTab}
-          onChange={(newValue: number) => {
-            setCurTab(newValue);
-            setEditMode(false);
-          }}
-          tabOptions={[
-            { label: "Configuration" },
+        <Tabs
+          horizontal
+          options={[
             {
-              label: "Entities",
-              disabled: !hasConfiguration || !isEnabled,
-            },
-          ]}
-        />
-        <TabPanel index={0} value={curTab}>
-          <ScreenTitle
-            title={editMode ? "Edit Configuration" : ""}
-            actions={
-              !editMode ? (
+              tabConfig: { id: "configuration", label: "Configuration" },
+              content: (
                 <Fragment>
-                  <Button
-                    id={"edit"}
-                    type="button"
-                    variant={"callAction"}
-                    icon={<EditIcon />}
-                    onClick={toggleEditMode}
-                    label={"Edit Configuration"}
-                    disabled={loading}
-                  />
-                  {hasConfiguration && (
-                    <Button
-                      id={"is-configuration-enabled"}
-                      onClick={() => toggleConfiguration(!isEnabled)}
-                      label={isEnabled ? "Disable LDAP" : "Enable LDAP"}
-                      variant={isEnabled ? "secondary" : "regular"}
-                    />
-                  )}
-                  <Button
-                    id={"refresh-idp-config"}
-                    onClick={() => setLoading(true)}
-                    label={"Refresh"}
-                    icon={<RefreshIcon />}
-                  />
-                </Fragment>
-              ) : null
-            }
-          />
-          <br />
-          {loading ? (
-            <Box
-              sx={{ display: "flex", justifyContent: "center", marginTop: 10 }}
-            >
-              <Loader />
-            </Box>
-          ) : (
-            <Fragment>
-              {editMode ? (
-                <Fragment>
-                  <FormLayout
-                    helpBox={
-                      <AddIDPConfigurationHelpBox
-                        helpText={"Learn more about LDAP Configurations"}
-                        contents={ldapHelpBoxContents}
-                        docLink={
-                          "https://min.io/docs/minio/linux/operations/external-iam.html?ref=con#minio-external-iam-ad-ldap"
-                        }
-                        docText={"Learn more about LDAP Configurations"}
-                      />
+                  <ScreenTitle
+                    title={editMode ? "Edit Configuration" : ""}
+                    actions={
+                      !editMode ? (
+                        <Fragment>
+                          <Button
+                            id={"edit"}
+                            type="button"
+                            variant={"callAction"}
+                            icon={<EditIcon />}
+                            onClick={toggleEditMode}
+                            label={"Edit Configuration"}
+                            disabled={loading}
+                          />
+                          {hasConfiguration && (
+                            <Button
+                              id={"is-configuration-enabled"}
+                              onClick={() => toggleConfiguration(!isEnabled)}
+                              label={isEnabled ? "Disable LDAP" : "Enable LDAP"}
+                              variant={isEnabled ? "secondary" : "regular"}
+                            />
+                          )}
+                          <Button
+                            id={"refresh-idp-config"}
+                            onClick={() => setLoading(true)}
+                            label={"Refresh"}
+                            icon={<RefreshIcon />}
+                          />
+                        </Fragment>
+                      ) : null
                     }
-                  >
-                    {Object.entries(formFields).map(([key, value]) =>
-                      renderFormField(key, value)
-                    )}
+                  />
+                  <br />
+                  {loading ? (
                     <Box
                       sx={{
                         display: "flex",
-                        alignItems: "center",
-                        justifyContent: "flex-end",
-                        marginTop: "20px",
-                        gap: "15px",
+                        justifyContent: "center",
+                        marginTop: 10,
                       }}
                     >
-                      {editMode && (
-                        <Button
-                          id={"clear"}
-                          type="button"
-                          variant="secondary"
-                          onClick={() => setResetOpen(true)}
-                          label={"Reset Configuration"}
-                        />
-                      )}
-                      {editMode && (
-                        <Button
-                          id={"cancel"}
-                          type="button"
-                          variant="regular"
-                          onClick={toggleEditMode}
-                          label={"Cancel"}
-                        />
-                      )}
-                      {editMode && (
-                        <Button
-                          id={"save-key"}
-                          type="submit"
-                          variant="callAction"
-                          color="primary"
-                          disabled={loading || !validSave()}
-                          label={"Save"}
-                          onClick={saveRecord}
-                        />
-                      )}
+                      <Loader />
                     </Box>
-                  </FormLayout>
+                  ) : (
+                    <Fragment>
+                      {editMode ? (
+                        <Fragment>
+                          <FormLayout
+                            helpBox={
+                              <AddIDPConfigurationHelpBox
+                                helpText={
+                                  "Learn more about LDAP Configurations"
+                                }
+                                contents={ldapHelpBoxContents}
+                                docLink={
+                                  "https://min.io/docs/minio/linux/operations/external-iam.html?ref=con#minio-external-iam-ad-ldap"
+                                }
+                                docText={"Learn more about LDAP Configurations"}
+                              />
+                            }
+                          >
+                            {Object.entries(formFields).map(([key, value]) =>
+                              renderFormField(key, value)
+                            )}
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "flex-end",
+                                marginTop: "20px",
+                                gap: "15px",
+                              }}
+                            >
+                              {editMode && (
+                                <Button
+                                  id={"clear"}
+                                  type="button"
+                                  variant="secondary"
+                                  onClick={() => setResetOpen(true)}
+                                  label={"Reset Configuration"}
+                                />
+                              )}
+                              {editMode && (
+                                <Button
+                                  id={"cancel"}
+                                  type="button"
+                                  variant="regular"
+                                  onClick={toggleEditMode}
+                                  label={"Cancel"}
+                                />
+                              )}
+                              {editMode && (
+                                <Button
+                                  id={"save-key"}
+                                  type="submit"
+                                  variant="callAction"
+                                  color="primary"
+                                  disabled={loading || !validSave()}
+                                  label={"Save"}
+                                  onClick={saveRecord}
+                                />
+                              )}
+                            </Box>
+                          </FormLayout>
+                        </Fragment>
+                      ) : (
+                        <Fragment>
+                          <Box
+                            sx={{
+                              display: "grid",
+                              gridTemplateColumns: "1fr",
+                              gridAutoFlow: "dense",
+                              gap: 3,
+                              padding: "15px",
+                              border: "1px solid #eaeaea",
+                              [`@media (min-width: 576px)`]: {
+                                gridTemplateColumns: "2fr 1fr",
+                                gridAutoFlow: "row",
+                              },
+                            }}
+                          >
+                            <LabelValuePair
+                              label={"LDAP Enabled"}
+                              value={isEnabled ? "Yes" : "No"}
+                            />
+                            {hasConfiguration && (
+                              <Fragment>
+                                {Object.entries(formFields).map(
+                                  ([key, value]) => (
+                                    <LabelValuePair
+                                      key={key}
+                                      label={value.label}
+                                      value={fields[key] ? fields[key] : ""}
+                                    />
+                                  )
+                                )}
+                              </Fragment>
+                            )}
+                          </Box>
+                        </Fragment>
+                      )}
+                    </Fragment>
+                  )}
                 </Fragment>
-              ) : (
+              ),
+            },
+            {
+              tabConfig: {
+                id: "entities",
+                label: "Entities",
+                disabled: !hasConfiguration || !isEnabled,
+              },
+              content: (
                 <Fragment>
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr",
-                      gridAutoFlow: "dense",
-                      gap: 3,
-                      padding: "15px",
-                      border: "1px solid #eaeaea",
-                      [`@media (min-width: 576px)`]: {
-                        gridTemplateColumns: "2fr 1fr",
-                        gridAutoFlow: "row",
-                      },
-                    }}
-                  >
-                    <LabelValuePair
-                      label={"LDAP Enabled"}
-                      value={isEnabled ? "Yes" : "No"}
-                    />
-                    {hasConfiguration && (
-                      <Fragment>
-                        {Object.entries(formFields).map(([key, value]) => (
-                          <LabelValuePair
-                            key={key}
-                            label={value.label}
-                            value={fields[key] ? fields[key] : ""}
-                          />
-                        ))}
-                      </Fragment>
-                    )}
-                  </Box>
+                  {hasConfiguration && (
+                    <Box>
+                      <LDAPEntitiesQuery />
+                    </Box>
+                  )}
                 </Fragment>
-              )}
-            </Fragment>
-          )}
-        </TabPanel>
-        <TabPanel index={1} value={curTab}>
-          {hasConfiguration && (
-            <Box>
-              <LDAPEntitiesQuery />
-            </Box>
-          )}
-        </TabPanel>
+              ),
+            },
+          ]}
+          currentTabOrPath={curTab}
+          onTabClick={(newTab) => {
+            setCurTab(newTab);
+            setEditMode(false);
+          }}
+        />
       </PageLayout>
     </Grid>
   );

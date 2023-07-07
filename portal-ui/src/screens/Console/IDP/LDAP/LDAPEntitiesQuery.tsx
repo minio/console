@@ -15,8 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { setErrorSnackMessage } from "../../../../systemSlice";
-import { AppState, useAppDispatch } from "../../../../store";
 import {
   AddIcon,
   Box,
@@ -29,13 +27,15 @@ import {
   SectionTitle,
   TimeIcon,
 } from "mds";
-import PolicySelectors from "../../Policies/PolicySelectors";
 import { useSelector } from "react-redux";
 import { DateTime } from "luxon";
-import LDAPResultsBlock from "./LDAPResultsBlock";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { LdapEntities } from "api/consoleApi";
+import { setErrorSnackMessage } from "../../../../systemSlice";
+import { AppState, useAppDispatch } from "../../../../store";
+import LDAPResultsBlock from "./LDAPResultsBlock";
+import PolicySelectors from "../../Policies/PolicySelectors";
 
 const LDAPEntitiesQuery = () => {
   const dispatch = useAppDispatch();
