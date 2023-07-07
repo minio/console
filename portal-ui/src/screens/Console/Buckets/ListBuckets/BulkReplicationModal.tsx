@@ -15,27 +15,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-
+import { Select, InputBox, Switch, FormLayout, Tooltip, Grid } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { SelectChangeEvent, Tooltip } from "@mui/material";
 import get from "lodash/get";
-import Grid from "@mui/material/Grid";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import {
   modalBasic,
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { SelectorTypes } from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
@@ -43,6 +36,7 @@ import { useAppDispatch } from "../../../../store";
 import { api } from "api";
 import { MultiBucketResponseItem } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
+import { SelectorTypes } from "../../../../common/types";
 
 interface IBulkReplicationModal {
   open: boolean;
@@ -242,7 +236,7 @@ const AddBulkReplicationModal = ({
         if (errString) {
           return (
             <div className={classes.errorIcon}>
-              <Tooltip title={errString} placement="top-start">
+              <Tooltip tooltip={errString} placement="top">
                 <ErrorOutlineIcon />
               </Tooltip>
             </div>
@@ -262,13 +256,13 @@ const AddBulkReplicationModal = ({
     if (remoteBucketsOpts.length > 0) {
       return (
         <Fragment>
-          <SelectWrapper
+          <Select
             label=""
             id={`assign-bucket-${indexItem}`}
             name={`assign-bucket-${indexItem}`}
             value={relationBuckets[indexItem]}
-            onChange={(e: SelectChangeEvent<string>) => {
-              updateItem(indexItem, e.target.value as string);
+            onChange={(value) => {
+              updateItem(indexItem, value);
             }}
             options={optionsForBucketsDrop}
             disabled={addLoading}
@@ -278,7 +272,7 @@ const AddBulkReplicationModal = ({
     }
     return (
       <Fragment>
-        <InputBoxWrapper
+        <InputBox
           id={`assign-bucket-${indexItem}`}
           name={`assign-bucket-${indexItem}`}
           label=""
@@ -342,8 +336,8 @@ const AddBulkReplicationModal = ({
                 </span>
                 <br />
                 <br />
-                <Grid item xs={12}>
-                  <InputBoxWrapper
+                <FormLayout containerPadding={false} withBorders={false}>
+                  <InputBox
                     id="accessKey"
                     name="accessKey"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -352,9 +346,7 @@ const AddBulkReplicationModal = ({
                     label="Access Key"
                     value={accessKey}
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <InputBoxWrapper
+                  <InputBox
                     id="secretKey"
                     name="secretKey"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -363,9 +355,7 @@ const AddBulkReplicationModal = ({
                     label="Secret Key"
                     value={secretKey}
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <InputBoxWrapper
+                  <InputBox
                     id="targetURL"
                     name="targetURL"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -375,9 +365,7 @@ const AddBulkReplicationModal = ({
                     label="Target URL"
                     value={targetURL}
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormSwitchWrapper
+                  <Switch
                     checked={useTLS}
                     id="useTLS"
                     name="useTLS"
@@ -387,9 +375,7 @@ const AddBulkReplicationModal = ({
                     }}
                     value="yes"
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <InputBoxWrapper
+                  <InputBox
                     id="region"
                     name="region"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -398,13 +384,11 @@ const AddBulkReplicationModal = ({
                     label="Region"
                     value={region}
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <SelectWrapper
+                  <Select
                     id="replication_mode"
                     name="replication_mode"
-                    onChange={(e: SelectChangeEvent<string>) => {
-                      setReplicationMode(e.target.value as "sync" | "async");
+                    onChange={(value) => {
+                      setReplicationMode(value as "sync" | "async");
                     }}
                     label="Replication Mode"
                     value={replicationMode}
@@ -413,10 +397,8 @@ const AddBulkReplicationModal = ({
                       { label: "Synchronous", value: "sync" },
                     ]}
                   />
-                </Grid>
-                {replicationMode === "async" && (
-                  <Grid item xs={12}>
-                    <InputBoxWrapper
+                  {replicationMode === "async" && (
+                    <InputBox
                       type="number"
                       id="bandwidth_scalar"
                       name="bandwidth_scalar"
@@ -441,10 +423,8 @@ const AddBulkReplicationModal = ({
                         />
                       }
                     />
-                  </Grid>
-                )}
-                <Grid item xs={12}>
-                  <InputBoxWrapper
+                  )}
+                  <InputBox
                     id="healthCheck"
                     name="healthCheck"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -453,7 +433,7 @@ const AddBulkReplicationModal = ({
                     label="Health Check Duration"
                     value={healthCheck}
                   />
-                </Grid>
+                </FormLayout>
               </Fragment>
             ),
             buttons: [

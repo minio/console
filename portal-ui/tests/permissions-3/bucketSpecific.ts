@@ -17,13 +17,12 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
-import { bucketsElement, logoutItem } from "../utils/elements-menu";
 import {
-  namedTestBucketBrowseButtonFor,
   namedManageButtonFor,
+  namedTestBucketBrowseButtonFor,
 } from "../utils/functions";
+import { bucketsElement, logoutItem } from "../utils/elements-menu";
 import { Selector } from "testcafe";
-import * as constants from "../utils/constants";
 
 const TEST_BUCKET_NAME_SPECIFIC = "specific-bucket";
 
@@ -137,13 +136,7 @@ test
     await t
       .useRole(roles.bucketRead)
       .navigateTo("http://localhost:9090/buckets")
-      .expect(
-        Selector("h1")
-          .withText(`${TEST_BUCKET_NAME_SPECIFIC}-5`)
-          .parent(1)
-          .find("p")
-          .nth(-1).innerText,
-      )
+      .expect(Selector(`#access-${TEST_BUCKET_NAME_SPECIFIC}-5`).innerText)
       .eql("Access: R");
   })
   .after(async (t) => {
@@ -212,13 +205,7 @@ test
     await t
       .useRole(roles.bucketSpecific)
       .navigateTo("http://localhost:9090/buckets")
-      .expect(
-        Selector("h1")
-          .withText(`${TEST_BUCKET_NAME_SPECIFIC}-8`)
-          .parent(1)
-          .find("p")
-          .nth(-1).innerText,
-      )
+      .expect(Selector(`#access-${TEST_BUCKET_NAME_SPECIFIC}-8`).innerText)
       .eql("Access: R/W");
   })
   .after(async (t) => {

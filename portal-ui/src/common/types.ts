@@ -97,3 +97,8 @@ export interface IEmbeddedCustomStyles {
   inputBox: IEmbeddedInputBox;
   switch: IEmbeddedSwitch;
 }
+
+export interface SelectorTypes {
+  label: any;
+  value: string;
+}

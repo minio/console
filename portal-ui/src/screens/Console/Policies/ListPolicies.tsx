@@ -185,7 +185,7 @@ const ListPolicies = () => {
       <PageHeaderWrapper label="IAM Policies" actions={<HelpMenu />} />
 
       <PageLayout>
-        <Grid container sx={{ gap: 15 }}>
+        <Grid container>
           <Grid item xs={12} sx={actionsTray.actionsTray}>
             <SearchBox
               onChange={setFilterPolicies}

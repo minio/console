@@ -64,7 +64,7 @@ test.describe("Add Lifecycle Rule Modal in bucket settings tests for object vers
       await createBucketPage.createVersionedBucket(versionedBucketName);
       await bucketListPage.clickOnBucketRow(versionedBucketName);
       bucketSummaryPage = bucketSummaryPage(versionedBucketName);
-      await bucketSummaryPage.clickOnTab("Lifecycle"); //Tab Text is used.
+      await bucketSummaryPage.clickOnTab("lifecycle"); //Tab Text is used.
     });
 
     await test.step("Check if object version option is available on a versioned bucket", async () => {
@@ -93,7 +93,7 @@ test.describe("Add Lifecycle Rule Modal in bucket settings tests for object vers
       await createBucketPage.createBucket(nonVersionedBucketName);
       await bucketListPage.clickOnBucketRow(nonVersionedBucketName);
       bucketSummaryPage = bucketSummaryPage(versionedBucketName);
-      await bucketSummaryPage.clickOnTab("Lifecycle");
+      await bucketSummaryPage.clickOnTab("lifecycle");
     });
 
     await test.step("Check if object version option is NOT available on a non versioned bucket", async () => {

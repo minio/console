@@ -15,17 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { DialogContentText } from "@mui/material";
-
-import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmModalIcon } from "mds";
-
-import { setErrorSnackMessage } from "../../../../systemSlice";
-import { useAppDispatch } from "../../../../store";
-import VersioningInfo from "../VersioningInfo";
+import { Box, ConfirmModalIcon } from "mds";
 import { BucketVersioningResponse } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
+import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
+import VersioningInfo from "../VersioningInfo";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface IVersioningEventProps {
   closeVersioningModalAndRefresh: (refresh: boolean) => void;
@@ -80,7 +77,7 @@ const EnableVersioningModal = ({
         closeVersioningModalAndRefresh(false);
       }}
       confirmationContent={
-        <DialogContentText id="alert-dialog-description">
+        <Box id="alert-dialog-description">
           Are you sure you want to{" "}
           <strong>{isVersioningEnabled ? "suspend" : "enable"}</strong>{" "}
           versioning for this bucket?
@@ -91,16 +88,16 @@ const EnableVersioningModal = ({
               <strong>File versions won't be automatically deleted.</strong>
             </Fragment>
           )}
-          <div
-            style={{
+          <Box
+            sx={{
               paddingTop: "20px",
             }}
           >
             {isVersioningEnabled ? (
               <VersioningInfo versioningState={versioningInfo} />
             ) : null}
-          </div>
-        </DialogContentText>
+          </Box>
+        </Box>
       }
     />
   );

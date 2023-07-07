@@ -15,50 +15,35 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
-import Grid from "@mui/material/Grid";
-import { LifeCycleItem } from "../types";
-import { AddIcon, Button, HelpBox, TiersIcon } from "mds";
 import {
-  actionsTray,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
-import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
-import AddLifecycleModal from "./AddLifecycleModal";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import PanelTitle from "../../Common/PanelTitle/PanelTitle";
+  AddIcon,
+  Button,
+  DataTable,
+  Grid,
+  HelpBox,
+  SectionTitle,
+  TiersIcon,
+} from "mds";
+import { useSelector } from "react-redux";
+import { api } from "api";
+import { ObjectBucketLifecycle } from "api/consoleApi";
+import { LifeCycleItem } from "../types";
 import {
   hasPermission,
   SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import DeleteBucketLifecycleRule from "./DeleteBucketLifecycleRule";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useParams } from "react-router-dom";
-import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import { setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import { api } from "api";
-import { ObjectBucketLifecycle } from "api/consoleApi";
+import DeleteBucketLifecycleRule from "./DeleteBucketLifecycleRule";
+import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
+import AddLifecycleModal from "./AddLifecycleModal";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...searchField,
-    ...actionsTray,
-    twHeight: {
-      minHeight: 400,
-    },
-  });
-
-interface IBucketLifecyclePanelProps {
-  classes: any;
-}
-
-const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
+const BucketLifecyclePanel = () => {
   const loadingBucket = useSelector(selBucketDetailsLoading);
   const params = useParams();
 
@@ -280,9 +265,10 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
           onCloseAndRefresh={closeDelLCRefresh}
         />
       )}
-      <Grid container>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <PanelTitle>Lifecycle Rules</PanelTitle>
+      <SectionTitle
+        separator
+        sx={{ marginBottom: 15 }}
+        actions={
           <SecureComponent
             scopes={[
               IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
@@ -304,7 +290,11 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
               />
             </TooltipWrapper>
           </SecureComponent>
-        </Grid>
+        }
+      >
+        Lifecycle Rules
+      </SectionTitle>
+      <Grid container>
         <Grid item xs={12}>
           <SecureComponent
             scopes={[
@@ -314,7 +304,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
             resource={bucketName}
             errorProps={{ disabled: true }}
           >
-            <TableWrapper
+            <DataTable
               itemActions={lifecycleActions}
               columns={lifecycleColumns}
               isLoading={loadingLifecycle}
@@ -322,7 +312,7 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
               entityName="Lifecycle"
               customEmptyMessage="There are no Lifecycle rules yet"
               idField="id"
-              customPaperHeight={classes.twHeight}
+              customPaperHeight={"400px"}
             />
           </SecureComponent>
         </Grid>
@@ -359,4 +349,4 @@ const BucketLifecyclePanel = ({ classes }: IBucketLifecyclePanelProps) => {
   );
 };
 
-export default withStyles(styles)(BucketLifecyclePanel);
+export default BucketLifecyclePanel;

@@ -16,6 +16,7 @@
 import React, {
   ChangeEvent,
   createRef,
+  Fragment,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -23,15 +24,15 @@ import React, {
 } from "react";
 import get from "lodash/get";
 import debounce from "lodash/debounce";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import HelpIcon from "@mui/icons-material/Help";
-import { InputLabel, Tooltip } from "@mui/material";
-import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
-import { AddIcon } from "mds";
+import {
+  AddIcon,
+  Box,
+  Grid,
+  HelpIcon,
+  InputBox,
+  InputLabel,
+  Tooltip,
+} from "mds";
 
 interface IQueryMultiSelector {
   elements: string;
@@ -40,33 +41,9 @@ interface IQueryMultiSelector {
   tooltip?: string;
   keyPlaceholder?: string;
   valuePlaceholder?: string;
-  classes: any;
   withBorder?: boolean;
   onChange: (elements: string) => void;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...fieldBasic,
-    ...tooltipHelper,
-    inputWithBorder: {
-      border: "1px solid #EAEAEA",
-      padding: 15,
-      height: 150,
-      overflowY: "auto",
-      position: "relative",
-      marginTop: 15,
-    },
-    lineInputBoxes: {
-      display: "flex",
-      marginBottom: 10,
-    },
-    queryDiv: {
-      alignSelf: "center",
-      margin: "0 4px",
-      fontWeight: 600,
-    },
-  });
 
 const QueryMultiSelector = ({
   elements,
@@ -77,7 +54,6 @@ const QueryMultiSelector = ({
   valuePlaceholder = "",
   onChange,
   withBorder = false,
-  classes,
 }: IQueryMultiSelector) => {
   const [currentKeys, setCurrentKeys] = useState<string[]>([""]);
   const [currentValues, setCurrentValues] = useState<string[]>([""]);
@@ -195,10 +171,10 @@ const QueryMultiSelector = ({
       <Grid
         item
         xs={12}
-        className={classes.lineInputBoxes}
+        className={"lineInputBoxes inputItem"}
         key={`query-pair-${name}-${index.toString()}`}
       >
-        <InputBoxWrapper
+        <InputBox
           id={`${name}-key-${index.toString()}`}
           label={""}
           name={`${name}-${index.toString()}`}
@@ -207,8 +183,8 @@ const QueryMultiSelector = ({
           index={index}
           placeholder={keyPlaceholder}
         />
-        <span className={classes.queryDiv}>:</span>
-        <InputBoxWrapper
+        <span className={"queryDiv"}>:</span>
+        <InputBox
           id={`${name}-value-${index.toString()}`}
           label={""}
           name={`${name}-${index.toString()}`}
@@ -226,28 +202,55 @@ const QueryMultiSelector = ({
   });
 
   return (
-    <React.Fragment>
-      <Grid item xs={12} className={classes.fieldContainer}>
-        <InputLabel className={classes.inputLabel}>
-          <span>{label}</span>
+    <Fragment>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          "& .lineInputBoxes": {
+            display: "flex",
+          },
+          "& .queryDiv": {
+            alignSelf: "center",
+            margin: "-15px 4px 0",
+            fontWeight: 600,
+          },
+        }}
+      >
+        <InputLabel>
+          {label}
           {tooltip !== "" && (
-            <div className={classes.tooltipContainer}>
-              <Tooltip title={tooltip} placement="top-start">
-                <HelpIcon className={classes.tooltip} />
+            <Box
+              sx={{
+                marginLeft: 5,
+                display: "flex",
+                alignItems: "center",
+                "& .min-icon": {
+                  width: 13,
+                },
+              }}
+            >
+              <Tooltip tooltip={tooltip} placement="top">
+                <HelpIcon style={{ width: 13, height: 13 }} />
               </Tooltip>
-            </div>
+            </Box>
           )}
         </InputLabel>
-        <Grid
-          item
-          xs={12}
-          className={`${withBorder ? classes.inputWithBorder : ""}`}
+        <Box
+          withBorders={withBorder}
+          sx={{
+            padding: 15,
+            height: 150,
+            overflowY: "auto",
+            position: "relative",
+            marginTop: 15,
+          }}
         >
           {inputs}
           <div ref={bottomList} />
-        </Grid>
+        </Box>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
-export default withStyles(styles)(QueryMultiSelector);
+export default QueryMultiSelector;

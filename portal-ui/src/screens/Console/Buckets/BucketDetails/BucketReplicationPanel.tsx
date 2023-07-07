@@ -16,16 +16,19 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import { AddIcon, BucketsIcon, Button, HelpBox, TrashIcon } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-
+import { useParams } from "react-router-dom";
 import {
-  actionsTray,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
+  AddIcon,
+  Box,
+  BucketsIcon,
+  Button,
+  DataTable,
+  Grid,
+  HelpBox,
+  SectionTitle,
+  TrashIcon,
+} from "mds";
+import api from "../../../../common/api";
 import {
   BucketReplication,
   BucketReplicationDestination,
@@ -37,17 +40,15 @@ import {
   SecureComponent,
 } from "../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import api from "../../../../common/api";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import PanelTitle from "../../Common/PanelTitle/PanelTitle";
-import withSuspense from "../../Common/Components/withSuspense";
-import EditReplicationModal from "./EditReplicationModal";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
-import { useParams } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import withSuspense from "../../Common/Components/withSuspense";
 
+const EditReplicationModal = withSuspense(
+  React.lazy(() => import("./EditReplicationModal")),
+);
 const AddReplicationModal = withSuspense(
   React.lazy(() => import("./AddReplicationModal")),
 );
@@ -55,20 +56,7 @@ const DeleteReplicationRule = withSuspense(
   React.lazy(() => import("./DeleteReplicationRule")),
 );
 
-interface IBucketReplicationProps {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...searchField,
-    ...actionsTray,
-    twHeight: {
-      minHeight: 400,
-    },
-  });
-
-const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
+const BucketReplicationPanel = () => {
   const dispatch = useAppDispatch();
   const params = useParams();
 
@@ -258,10 +246,11 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
           ruleID={selectedRRule}
         />
       )}
-      <Grid container>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <PanelTitle>Replication</PanelTitle>
-          <div style={{ display: "flex" }}>
+      <SectionTitle
+        separator
+        sx={{ marginBottom: 15 }}
+        actions={
+          <Box style={{ display: "flex", gap: 10 }}>
             <SecureComponent
               scopes={[
                 IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
@@ -309,8 +298,12 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
                 />
               </TooltipWrapper>
             </SecureComponent>
-          </div>
-        </Grid>
+          </Box>
+        }
+      >
+        Replication
+      </SectionTitle>
+      <Grid container>
         <Grid item xs={12}>
           <SecureComponent
             scopes={[
@@ -320,7 +313,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
             resource={bucketName}
             errorProps={{ disabled: true }}
           >
-            <TableWrapper
+            <DataTable
               itemActions={replicationTableActions}
               columns={[
                 {
@@ -351,7 +344,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
               records={replicationRules}
               entityName="Replication Rules"
               idField="id"
-              customPaperHeight={classes.twHeight}
+              customPaperHeight={"400px"}
               textSelectable
               selectedItems={selectedRepRules}
               onSelect={(e) => selectRules(e)}
@@ -388,4 +381,4 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
   );
 };
 
-export default withStyles(styles)(BucketReplicationPanel);
+export default BucketReplicationPanel;

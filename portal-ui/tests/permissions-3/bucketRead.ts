@@ -60,11 +60,7 @@ test
       .useRole(roles.bucketRead)
       .navigateTo("http://localhost:9090/buckets")
       .expect(
-        Selector("h1")
-          .withText(`${constants.TEST_BUCKET_NAME}-bucketread2`)
-          .parent(1)
-          .find("p")
-          .nth(-1).innerText,
+        Selector(`#access-${constants.TEST_BUCKET_NAME}-bucketread2`).innerText,
       )
       .eql("Access: R");
   })

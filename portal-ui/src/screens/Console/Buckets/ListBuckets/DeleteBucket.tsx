@@ -14,16 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-
-import { DialogContentText } from "@mui/material";
-
-import { ErrorResponseHandler } from "../../../../common/types";
-import useApi from "../../Common/Hooks/useApi";
-import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import React, { Fragment } from "react";
 import { ConfirmDeleteIcon } from "mds";
+import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import useApi from "../../Common/Hooks/useApi";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface IDeleteBucketProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -64,10 +61,10 @@ const DeleteBucket = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           Are you sure you want to delete bucket <b>{selectedBucket}</b>? <br />
           A bucket can only be deleted if it's empty.
-        </DialogContentText>
+        </Fragment>
       }
     />
   );

@@ -15,29 +15,27 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
+import styled from "styled-components";
+import get from "lodash/get";
 import { LinearProgress } from "@mui/material";
-import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import {
   BackLink,
+  Box,
   BucketsIcon,
   Button,
   FormLayout,
+  Grid,
   HelpBox,
   InfoIcon,
+  InputBox,
   PageLayout,
+  RadioGroup,
+  Switch,
 } from "mds";
-import {
-  containerForHeader,
-  modalBasic,
-} from "../../../Common/FormComponents/common/styleLibrary";
-import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { k8sScalarUnitsExcluding } from "../../../../../common/utils";
 import { AppState, useAppDispatch } from "../../../../../store";
 import { useSelector } from "react-redux";
-import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import {
   selDistSet,
   selSiteRep,
@@ -78,51 +76,18 @@ import {
   ObjectRetentionMode,
 } from "../../../../../api/consoleApi";
 import { errorToHandler } from "../../../../../api/errors";
-import makeStyles from "@mui/styles/makeStyles";
 import HelpMenu from "../../../HelpMenu";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  buttonContainer: {
-    marginTop: 24,
-    display: "flex",
-    justifyContent: "flex-end",
-    "& button": {
-      marginLeft: 8,
-    },
-  },
-  error: {
-    color: "#b53b4b",
-    border: "1px solid #b53b4b",
-    padding: 8,
-    borderRadius: 3,
-  },
-  alertVersioning: {
-    border: "#E2E2E2 1px solid",
-    backgroundColor: "#FBFAFA",
-    borderRadius: 3,
-    display: "flex",
-    alignItems: "center",
-    padding: "10px",
-    color: "#767676",
-    "& > .min-icon ": {
-      width: 20,
-      height: 20,
-      marginRight: 10,
-    },
-  },
-  h6title: {
-    fontWeight: "bold",
-    color: "#000000",
-    fontSize: 20,
-  },
-  ...containerForHeader,
-  ...modalBasic,
+const ErrorBox = styled.div(({ theme }) => ({
+  color: get(theme, "signalColors.danger", "#C51B3F"),
+  border: `1px solid ${get(theme, "signalColors.danger", "#C51B3F")}`,
+  padding: 8,
+  borderRadius: 3,
 }));
 
 const AddBucket = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const classes = useStyles();
 
   const validBucketCharacters = new RegExp(
     `^[a-z0-9][a-z0-9\\.\\-]{1,61}[a-z0-9]$`,
@@ -303,18 +268,16 @@ const AddBucket = () => {
               dispatch(addBucketAsync());
             }}
           >
-            <Grid container marginTop={1} spacing={2}>
-              <Grid item xs={12}>
-                <AddBucketName hasErrors={hasErrors} />
-              </Grid>
-              <Grid item xs={12}>
+            <Box>
+              <AddBucketName hasErrors={hasErrors} />
+              <Box sx={{ margin: "10px 0" }}>
                 <BucketNamingRules errorList={validationResult} />
-              </Grid>
-              <Grid item xs={12}>
-                <SectionTitle>Features</SectionTitle>
+              </Box>
+              <SectionTitle>Features</SectionTitle>
+              <Box sx={{ marginTop: 10 }}>
                 {!distributedSetup && (
                   <Fragment>
-                    <div className={classes.error}>
+                    <ErrorBox>
                       These features are unavailable in a single-disk setup.
                       <br />
                       Please deploy a server in{" "}
@@ -326,24 +289,49 @@ const AddBucket = () => {
                         Distributed Mode
                       </a>{" "}
                       to use these features.
-                    </div>
+                    </ErrorBox>
                     <br />
                     <br />
                   </Fragment>
                 )}
-              </Grid>
-              <Grid item xs={12}>
+
                 {siteReplicationInfo.enabled && (
                   <Fragment>
                     <br />
-                    <div className={classes.alertVersioning}>
+                    <Box
+                      withBorders
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "10px",
+                        "& > .min-icon ": {
+                          width: 20,
+                          height: 20,
+                          marginRight: 10,
+                        },
+                      }}
+                    >
                       <InfoIcon /> Versioning setting cannot be changed as
                       cluster replication is enabled for this site.
-                    </div>
+                    </Box>
                     <br />
                   </Fragment>
                 )}
-                <TooltipWrapper
+                <Switch
+                  value="versioned"
+                  id="versioned"
+                  name="versioned"
+                  checked={versioningEnabled}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    dispatch(setVersioning(event.target.checked));
+                  }}
+                  label={"Versioning"}
+                  disabled={
+                    !distributedSetup ||
+                    lockingEnabled ||
+                    siteReplicationInfo.enabled ||
+                    !versioningAllowed
+                  }
                   tooltip={
                     versioningAllowed
                       ? lockingEnabled && versioningEnabled
@@ -357,27 +345,22 @@ const AddBucket = () => {
                           "Versioning",
                         )
                   }
-                >
-                  <FormSwitchWrapper
-                    value="versioned"
-                    id="versioned"
-                    name="versioned"
-                    checked={versioningEnabled}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      dispatch(setVersioning(event.target.checked));
-                    }}
-                    label={"Versioning"}
-                    disabled={
-                      !distributedSetup ||
-                      lockingEnabled ||
-                      siteReplicationInfo.enabled ||
-                      !versioningAllowed
+                />
+                <Switch
+                  value="locking"
+                  id="locking"
+                  name="locking"
+                  disabled={
+                    lockingFieldDisabled || !distributedSetup || !lockingAllowed
+                  }
+                  checked={lockingEnabled}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    dispatch(setEnableObjectLocking(event.target.checked));
+                    if (event.target.checked && !siteReplicationInfo.enabled) {
+                      dispatch(setVersioning(true));
                     }
-                  />
-                </TooltipWrapper>
-              </Grid>
-              <Grid item xs={12}>
-                <TooltipWrapper
+                  }}
+                  label={"Object Locking"}
                   tooltip={
                     lockingAllowed
                       ? ""
@@ -390,33 +373,8 @@ const AddBucket = () => {
                           "Locking",
                         )
                   }
-                >
-                  <FormSwitchWrapper
-                    value="locking"
-                    id="locking"
-                    name="locking"
-                    disabled={
-                      lockingFieldDisabled ||
-                      !distributedSetup ||
-                      !lockingAllowed
-                    }
-                    checked={lockingEnabled}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      dispatch(setEnableObjectLocking(event.target.checked));
-                      if (
-                        event.target.checked &&
-                        !siteReplicationInfo.enabled
-                      ) {
-                        dispatch(setVersioning(true));
-                      }
-                    }}
-                    label={"Object Locking"}
-                  />
-                </TooltipWrapper>
-              </Grid>
-
-              <Grid item xs={12}>
-                <FormSwitchWrapper
+                />
+                <Switch
                   value="bucket_quota"
                   id="bucket_quota"
                   name="bucket_quota"
@@ -427,11 +385,9 @@ const AddBucket = () => {
                   label={"Quota"}
                   disabled={!distributedSetup}
                 />
-              </Grid>
-              {quotaEnabled && distributedSetup && (
-                <React.Fragment>
-                  <Grid item xs={12}>
-                    <InputBoxWrapper
+                {quotaEnabled && distributedSetup && (
+                  <Fragment>
+                    <InputBox
                       type="string"
                       id="quota_size"
                       name="quota_size"
@@ -459,12 +415,10 @@ const AddBucket = () => {
                           : ""
                       }
                     />
-                  </Grid>
-                </React.Fragment>
-              )}
-              {versioningEnabled && distributedSetup && lockingAllowed && (
-                <Grid item xs={12}>
-                  <FormSwitchWrapper
+                  </Fragment>
+                )}
+                {versioningEnabled && distributedSetup && lockingAllowed && (
+                  <Switch
                     value="bucket_retention"
                     id="bucket_retention"
                     name="bucket_retention"
@@ -474,13 +428,11 @@ const AddBucket = () => {
                     }}
                     label={"Retention"}
                   />
-                </Grid>
-              )}
-              {retentionEnabled && distributedSetup && (
-                <React.Fragment>
-                  <Grid item xs={12}>
-                    <RadioGroupSelector
-                      currentSelection={retentionMode}
+                )}
+                {retentionEnabled && distributedSetup && (
+                  <Fragment>
+                    <RadioGroup
+                      currentValue={retentionMode}
                       id="retention_mode"
                       name="retention_mode"
                       label="Mode"
@@ -496,9 +448,7 @@ const AddBucket = () => {
                         { value: "governance", label: "Governance" },
                       ]}
                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <InputBoxWrapper
+                    <InputBox
                       type="number"
                       id="retention_validity"
                       name="retention_validity"
@@ -523,16 +473,26 @@ const AddBucket = () => {
                         />
                       }
                     />
-                  </Grid>
-                </React.Fragment>
-              )}
-            </Grid>
-            <Grid item xs={12} className={classes.buttonContainer}>
+                  </Fragment>
+                )}
+              </Box>
+            </Box>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                gap: 10,
+                marginTop: 15,
+              }}
+            >
               <Button
                 id={"clear"}
                 type="button"
                 variant={"regular"}
-                className={classes.clearButton}
+                className={"clearButton"}
                 onClick={resForm}
                 label={"Clear"}
               />

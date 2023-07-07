@@ -15,28 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
-import { LinearProgress, SelectChangeEvent } from "@mui/material";
-import { AddIcon, BucketEncryptionIcon, Button } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { LinearProgress } from "@mui/material";
 import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-
-import { setModalErrorSnackMessage } from "../../../../systemSlice";
-import { useAppDispatch } from "../../../../store";
-import {
-  CONSOLE_UI_RESOURCE,
-  IAM_SCOPES,
-} from "../../../../common/SecureComponent/permissions";
-import { SecureComponent } from "../../../../common/SecureComponent";
-import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import AddKeyModal from "./AddKeyModal";
+  AddIcon,
+  Box,
+  BucketEncryptionIcon,
+  Button,
+  FormLayout,
+  Grid,
+  Select,
+} from "mds";
 import {
   BucketEncryptionInfo,
   BucketEncryptionType,
@@ -46,15 +34,19 @@ import {
 } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalStyleUtils,
-    ...formFieldStyles,
-  });
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../../common/SecureComponent/permissions";
+import { SecureComponent } from "../../../../common/SecureComponent";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import AddKeyModal from "./AddKeyModal";
+import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 
 interface IEnableBucketEncryptionProps {
-  classes: any;
   open: boolean;
   encryptionEnabled: boolean;
   encryptionCfg: BucketEncryptionInfo | null;
@@ -63,7 +55,6 @@ interface IEnableBucketEncryptionProps {
 }
 
 const EnableBucketEncryption = ({
-  classes,
   open,
   encryptionCfg,
   selectedBucket,
@@ -128,7 +119,7 @@ const EnableBucketEncryption = ({
           encType: encryptionType,
           kmsKeyID: kmsKeyID,
         })
-        .then((res) => {
+        .then(() => {
           setLoading(false);
           closeModalAndRefresh();
         })
@@ -168,83 +159,69 @@ const EnableBucketEncryption = ({
             enableBucketEncryption(e);
           }}
         >
-          <Grid container>
-            <Grid item xs={12} className={classes.modalFormScrollable}>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <SelectWrapper
-                  onChange={(e) => {
-                    setEncryptionType(
-                      e.target.value as BucketEncryptionType | "disabled",
-                    );
-                  }}
-                  id="select-encryption-type"
-                  name="select-encryption-type"
-                  label={"Encryption Type"}
-                  value={encryptionType}
-                  options={[
-                    {
-                      label: "Disabled",
-                      value: "disabled",
-                    },
-                    {
-                      label: "SSE-S3",
-                      value: BucketEncryptionType.SseS3,
-                    },
-                    {
-                      label: "SSE-KMS",
-                      value: BucketEncryptionType.SseKms,
-                    },
-                  ]}
-                />
-              </Grid>
-
-              {encryptionType === "sse-kms" && (
-                <Grid
-                  item
-                  xs={12}
-                  className={classes.formFieldRow}
-                  display={"flex"}
+          <FormLayout withBorders={false} containerPadding={false}>
+            <Select
+              onChange={(value) => {
+                setEncryptionType(value as BucketEncryptionType | "disabled");
+              }}
+              id="select-encryption-type"
+              name="select-encryption-type"
+              label={"Encryption Type"}
+              value={encryptionType}
+              options={[
+                {
+                  label: "Disabled",
+                  value: "disabled",
+                },
+                {
+                  label: "SSE-S3",
+                  value: BucketEncryptionType.SseS3,
+                },
+                {
+                  label: "SSE-KMS",
+                  value: BucketEncryptionType.SseKms,
+                },
+              ]}
+            />
+            {encryptionType === "sse-kms" && (
+              <Box sx={{ display: "flex", gap: 10 }} className={"inputItem"}>
+                {keys && (
+                  <Select
+                    onChange={(value) => {
+                      setKmsKeyID(value);
+                    }}
+                    id="select-kms-key-id"
+                    name="select-kms-key-id"
+                    label={"KMS Key ID"}
+                    value={kmsKeyID}
+                    options={keys.map((key: KmsKeyInfo) => {
+                      return {
+                        label: key.name || "",
+                        value: key.name || "",
+                      };
+                    })}
+                  />
+                )}
+                <SecureComponent
+                  scopes={[IAM_SCOPES.KMS_IMPORT_KEY]}
+                  resource={CONSOLE_UI_RESOURCE}
+                  errorProps={{ disabled: true }}
                 >
-                  {keys && (
-                    <SelectWrapper
-                      onChange={(e: SelectChangeEvent<string>) => {
-                        setKmsKeyID(e.target.value);
+                  <TooltipWrapper tooltip={"Add key"}>
+                    <Button
+                      id={"import-key"}
+                      variant={"regular"}
+                      icon={<AddIcon />}
+                      onClick={(e) => {
+                        setAddOpen(true);
+                        e.preventDefault();
                       }}
-                      id="select-kms-key-id"
-                      name="select-kms-key-id"
-                      label={"KMS Key ID"}
-                      value={kmsKeyID}
-                      options={keys.map((key: KmsKeyInfo) => {
-                        return {
-                          label: key.name || "",
-                          value: key.name || "",
-                        };
-                      })}
                     />
-                  )}
-                  <Grid marginLeft={1}>
-                    <SecureComponent
-                      scopes={[IAM_SCOPES.KMS_IMPORT_KEY]}
-                      resource={CONSOLE_UI_RESOURCE}
-                      errorProps={{ disabled: true }}
-                    >
-                      <TooltipWrapper tooltip={"Add key"}>
-                        <Button
-                          id={"import-key"}
-                          variant={"regular"}
-                          icon={<AddIcon />}
-                          onClick={(e) => {
-                            setAddOpen(true);
-                            e.preventDefault();
-                          }}
-                        />
-                      </TooltipWrapper>
-                    </SecureComponent>
-                  </Grid>
-                </Grid>
-              )}
-            </Grid>
-            <Grid item xs={12} className={classes.modalButtonBar}>
+                  </TooltipWrapper>
+                </SecureComponent>
+              </Box>
+            )}
+            <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
               <Button
                 id={"cancel"}
                 type="submit"
@@ -268,11 +245,11 @@ const EnableBucketEncryption = ({
                 <LinearProgress />
               </Grid>
             )}
-          </Grid>
+          </FormLayout>
         </form>
       </ModalWrapper>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(EnableBucketEncryption);
+export default EnableBucketEncryption;

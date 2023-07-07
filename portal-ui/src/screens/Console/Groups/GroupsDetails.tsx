@@ -244,7 +244,7 @@ const GroupsDetails = () => {
                   onClick: (userName) => {
                     navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
                   },
-                  disableButtonFunction: () => !viewUser,
+                  isDisabled: !viewUser,
                 },
               ]}
               columns={[{ label: "Access Key" }]}
@@ -314,7 +314,7 @@ const GroupsDetails = () => {
                 onClick: (policy) => {
                   navigate(`${IAM_PAGES.POLICIES}/${encodeURLString(policy)}`);
                 },
-                disableButtonFunction: () => !canViewPolicy,
+                isDisabled: !canViewPolicy,
               },
             ]}
             columns={[{ label: "Policy" }]}

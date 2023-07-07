@@ -17,18 +17,14 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { Paper } from "@mui/material";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-
-import { TabPanel } from "../../../shared/tabs";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import { DataTable, SectionTitle, Tabs } from "mds";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
   IAM_SCOPES,
 } from "../../../../common/SecureComponent/permissions";
-import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
   hasPermission,
   SecureComponent,
@@ -38,15 +34,6 @@ import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
 import { Policy, ServiceAccounts } from "../../../../api/consoleApi";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
-
-function a11yProps(index: any) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
 
 const AccessDetails = () => {
   const dispatch = useAppDispatch();
@@ -55,7 +42,7 @@ const AccessDetails = () => {
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
 
-  const [curTab, setCurTab] = useState<number>(0);
+  const [curTab, setCurTab] = useState<string>("simple-tab-0");
   const [loadingPolicies, setLoadingPolicies] = useState<boolean>(true);
   const [bucketPolicy, setBucketPolicy] = useState<Policy[] | undefined>([]);
   const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
@@ -158,65 +145,63 @@ const AccessDetails = () => {
 
   return (
     <Fragment>
-      <PanelTitle>Access Audit</PanelTitle>
+      <SectionTitle separator>Access Audit</SectionTitle>
       <Tabs
-        value={curTab}
-        onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+        currentTabOrPath={curTab}
+        onTabClick={(newValue: string) => {
           setCurTab(newValue);
         }}
-        indicatorColor="primary"
-        textColor="primary"
-        aria-label="cluster-tabs"
-        variant="scrollable"
-        scrollButtons="auto"
-      >
-        {displayPoliciesList && <Tab label="Policies" {...a11yProps(0)} />}
-        {displayUsersList && <Tab label="Users" {...a11yProps(1)} />}
-      </Tabs>
-      <Paper>
-        <TabPanel index={0} value={curTab}>
-          <SecureComponent
-            scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
-            resource={bucketName}
-            errorProps={{ disabled: true }}
-          >
-            {bucketPolicy && (
-              <TableWrapper
-                noBackground={true}
-                itemActions={PolicyActions}
-                columns={[{ label: "Name", elementKey: "name" }]}
-                isLoading={loadingPolicies}
-                records={bucketPolicy}
-                entityName="Policies"
-                idField="name"
-              />
-            )}
-          </SecureComponent>
-        </TabPanel>
-
-        <TabPanel index={1} value={curTab}>
-          <SecureComponent
-            scopes={[
-              IAM_SCOPES.ADMIN_GET_POLICY,
-              IAM_SCOPES.ADMIN_LIST_USERS,
-              IAM_SCOPES.ADMIN_LIST_GROUPS,
-            ]}
-            resource={bucketName}
-            matchAll
-            errorProps={{ disabled: true }}
-          >
-            <TableWrapper
-              noBackground={true}
-              itemActions={userTableActions}
-              columns={[{ label: "User", elementKey: "accessKey" }]}
-              isLoading={loadingUsers}
-              records={bucketUsers}
-              entityName="Users"
-              idField="accessKey"
-            />
-          </SecureComponent>
-        </TabPanel>
-      </Paper>
+        horizontal
+        options={[
+          {
+            tabConfig: { label: "Policies", id: "simple-tab-0" },
+            content: (
+              <SecureComponent
+                scopes={[IAM_SCOPES.ADMIN_LIST_USER_POLICIES]}
+                resource={bucketName}
+                errorProps={{ disabled: true }}
+              >
+                {bucketPolicy && (
+                  <DataTable
+                    noBackground={true}
+                    itemActions={PolicyActions}
+                    columns={[{ label: "Name", elementKey: "name" }]}
+                    isLoading={loadingPolicies}
+                    records={bucketPolicy}
+                    entityName="Policies"
+                    idField="name"
+                  />
+                )}
+              </SecureComponent>
+            ),
+          },
+          {
+            tabConfig: { label: "Users", id: "simple-tab-1" },
+            content: (
+              <SecureComponent
+                scopes={[
+                  IAM_SCOPES.ADMIN_GET_POLICY,
+                  IAM_SCOPES.ADMIN_LIST_USERS,
+                  IAM_SCOPES.ADMIN_LIST_GROUPS,
+                ]}
+                resource={bucketName}
+                matchAll
+                errorProps={{ disabled: true }}
+              >
+                <DataTable
+                  noBackground={true}
+                  itemActions={userTableActions}
+                  columns={[{ label: "User", elementKey: "accessKey" }]}
+                  isLoading={loadingUsers}
+                  records={bucketUsers}
+                  entityName="Users"
+                  idField="accessKey"
+                />
+              </SecureComponent>
+            ),
+          },
+        ]}
+      />
     </Fragment>
   );
 };

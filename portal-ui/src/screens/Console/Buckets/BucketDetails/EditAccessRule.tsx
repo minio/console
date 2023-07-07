@@ -14,26 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import { Grid } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import { AddAccessRuleIcon, Button } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  modalStyleUtils,
-  spacingUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
-
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { setErrorSnackMessage } from "../../../../systemSlice";
-import { useAppDispatch } from "../../../../store";
+import React, { Fragment, useState } from "react";
+import { AddAccessRuleIcon, Button, FormLayout, Grid, Select } from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
+import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
+import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 
 interface IEditAccessRule {
-  classes: any;
   modalOpen: boolean;
   onClose: () => any;
   bucket: string;
@@ -41,16 +31,9 @@ interface IEditAccessRule {
   initial: string;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalStyleUtils,
-    ...spacingUtils,
-  });
-
 const EditAccessRule = ({
   modalOpen,
   onClose,
-  classes,
   bucket,
   toEdit,
   initial,
@@ -84,47 +67,45 @@ const EditAccessRule = ({
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       <ModalWrapper
         modalOpen={modalOpen}
         title={`Edit Anonymous Access Rule for ${`${bucket}/${toEdit || ""}`}`}
         onClose={onClose}
         titleIcon={<AddAccessRuleIcon />}
       >
-        <Grid container>
-          <Grid item xs={12} className={classes.spacerTop}>
-            <SelectWrapper
-              id="access"
-              name="Access"
-              onChange={(e) => {
-                setSelectedAccess(e.target.value);
-              }}
-              label="Access"
-              value={selectedAccess}
-              options={accessOptions}
-              disabled={false}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
-            <Button
-              id={"clear"}
-              type="button"
-              variant="regular"
-              onClick={resetForm}
-              label={"Clear"}
-            />
-            <Button
-              id={"save"}
-              type="submit"
-              variant="callAction"
-              onClick={createProcess}
-              label={"Save"}
-            />
-          </Grid>
+        <FormLayout containerPadding={false} withBorders={false}>
+          <Select
+            id="access"
+            name="Access"
+            onChange={(value) => {
+              setSelectedAccess(value);
+            }}
+            label="Access"
+            value={selectedAccess}
+            options={accessOptions}
+            disabled={false}
+          />
+        </FormLayout>
+        <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+          <Button
+            id={"clear"}
+            type="button"
+            variant="regular"
+            onClick={resetForm}
+            label={"Clear"}
+          />
+          <Button
+            id={"save"}
+            type="submit"
+            variant="callAction"
+            onClick={createProcess}
+            label={"Save"}
+          />
         </Grid>
       </ModalWrapper>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
-export default withStyles(styles)(EditAccessRule);
+export default EditAccessRule;

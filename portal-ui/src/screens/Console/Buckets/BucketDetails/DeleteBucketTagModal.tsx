@@ -14,16 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-
-import { DialogContentText } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
+import React, { Fragment } from "react";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import { ErrorResponseHandler } from "../../../../common/types";
 import { ConfirmDeleteIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
@@ -34,13 +28,7 @@ interface IDeleteBucketTagModal {
   bucketName: string;
   selectedTag: string[];
   onCloseAndUpdate: (refresh: boolean) => void;
-  classes: any;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalBasic,
-  });
 
 const DeleteBucketTagModal = ({
   deleteOpen,
@@ -48,7 +36,6 @@ const DeleteBucketTagModal = ({
   selectedTag,
   onCloseAndUpdate,
   bucketName,
-  classes,
 }: IDeleteBucketTagModal) => {
   const dispatch = useAppDispatch();
   const [tagKey, tagLabel] = selectedTag;
@@ -83,16 +70,22 @@ const DeleteBucketTagModal = ({
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           Are you sure you want to delete the tag{" "}
-          <b className={classes.wrapText}>
+          <b
+            style={{
+              maxWidth: 200,
+              whiteSpace: "normal",
+              wordWrap: "break-word",
+            }}
+          >
             {tagKey} : {tagLabel}
           </b>{" "}
           ?
-        </DialogContentText>
+        </Fragment>
       }
     />
   );
 };
 
-export default withStyles(styles)(DeleteBucketTagModal);
+export default DeleteBucketTagModal;
