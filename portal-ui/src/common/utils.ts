@@ -509,3 +509,12 @@ export const replaceUnicodeChar = (inputString: string): string => {
   let unicodeChar = "\u202E";
   return inputString.split(unicodeChar).join("<�202e>");
 };
+
+// unescaped characters might throw error like '%'
+export const safeDecodeURIComponent = (value: any) => {
+  try {
+    return decodeURIComponent(value);
+  } catch (err) {
+    return value;
+  }
+};
