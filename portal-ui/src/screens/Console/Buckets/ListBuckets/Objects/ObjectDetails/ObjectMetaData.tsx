@@ -24,6 +24,7 @@ import {
   detailsPanel,
   spacingUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
+import { safeDecodeURIComponent } from "../../../../../../common/utils";
 
 interface IObjectMetadata {
   metaData: any;
@@ -40,6 +41,12 @@ const styles = (theme: Theme) =>
     ...detailsPanel,
   });
 
+const itemRendererFn = (element: any) => {
+  return Array.isArray(element)
+    ? element.map(safeDecodeURIComponent).join(", ")
+    : safeDecodeURIComponent(element);
+};
+
 const ObjectMetaData = ({
   metaData,
   classes,
@@ -51,10 +58,7 @@ const ObjectMetaData = ({
     return (
       <Fragment>
         {metaKeys.map((element: string, index: number) => {
-          const renderItem = Array.isArray(metaData[element])
-            ? metaData[element].map(decodeURIComponent).join(", ")
-            : decodeURIComponent(metaData[element]);
-
+          const renderItem = itemRendererFn(metaData[element]);
           return (
             <Box
               className={classes.metadataLinear}
@@ -94,10 +98,7 @@ const ObjectMetaData = ({
         <Table className={classes.table} aria-label="simple table">
           <TableBody>
             {metaKeys.map((element: string, index: number) => {
-              const renderItem = Array.isArray(metaData[element])
-                ? metaData[element].map(decodeURIComponent).join(", ")
-                : decodeURIComponent(metaData[element]);
-
+              const renderItem = itemRendererFn(metaData[element]);
               return (
                 <TableRow key={`tRow-${index.toString()}`}>
                   <TableCell
