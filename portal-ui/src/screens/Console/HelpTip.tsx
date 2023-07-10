@@ -28,7 +28,7 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../Console/Common/FormComponents/common/styleLibrary";
-import { HelpIconFilled } from "mds";
+import { Box, HelpBox, HelpIconFilled } from "mds";
 import HelpItem from "./HelpItem";
 import { DocItem } from "./HelpMenu.types";
 
@@ -84,7 +84,17 @@ const HelpTip = ({ helpTipID, position }: IHelpTipProps) => {
               display={"flex"}
               justifyContent={"flex-end"}
             >
-              <HelpItem item={thisItem} displayImage={false} />
+              <HelpBox
+                title={thisItem.title}
+                iconComponent={<HelpIconFilled />}
+                help={
+                  <HelpItem
+                    item={thisItem}
+                    displayImage={false}
+                    displayTitle={false}
+                  />
+                }
+              />
             </Grid>
           )}
         </Grid>

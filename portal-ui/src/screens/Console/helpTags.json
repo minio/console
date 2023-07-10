@@ -171,7 +171,7 @@
 
   "create_service_account": {
     "docs": {
-      "header": "Access Keys",
+      "header": null,
       "links": [
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",

@@ -22,9 +22,14 @@ import placeholderImg from "../../placeholderimage.png";
 interface IHelpItemProps {
   item: DocItem;
   displayImage?: boolean;
+  displayTitle?: boolean;
 }
 
-const HelpItem = ({ item, displayImage = true }: IHelpItemProps) => {
+const HelpItem = ({
+  item,
+  displayImage = true,
+  displayTitle = true,
+}: IHelpItemProps) => {
   return (
     <Fragment>
       <div
@@ -69,7 +74,7 @@ const HelpItem = ({ item, displayImage = true }: IHelpItemProps) => {
               whiteSpace: "pre-wrap",
             }}
           >
-            {item.title}
+            {displayTitle && item.title}
           </div>
           <div
             style={{

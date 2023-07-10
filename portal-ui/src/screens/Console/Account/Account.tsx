@@ -249,15 +249,6 @@ const Account = () => {
                 matchAll
                 errorProps={{ disabled: true }}
               >
-                <Button
-                  id={"create-service-account"}
-                  onClick={() => {
-                    navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
-                  }}
-                  label={`Create access key`}
-                  icon={<AddIcon />}
-                  variant={"callAction"}
-                />
                 <HelpTip helpTipID="account_change_password" position="top" />
               </SecureComponent>
               <Button
