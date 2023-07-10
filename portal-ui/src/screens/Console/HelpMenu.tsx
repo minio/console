@@ -36,6 +36,7 @@ import ReactMarkdown from "react-markdown";
 
 const HelpMenu = () => {
   const helpTopics = require("../Console/helpTopics.json");
+  const helpTips = require("../Console/helpTags.json");
 
   const [helpItems, setHelpItems] = useState<DocItem[]>([]);
   const [headerDocs, setHeaderDocs] = useState<string | null>(null);

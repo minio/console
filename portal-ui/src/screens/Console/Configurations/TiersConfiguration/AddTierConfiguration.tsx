@@ -346,7 +346,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
           sx={{
             border: "1px solid #eaeaea",
             padding: "25px",
-          }} 
+          }}
         >
           <form noValidate onSubmit={submitForm}>
             {type !== "" && targetElement ? (

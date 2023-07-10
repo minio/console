@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -30,6 +30,7 @@ import {
 } from "../Console/Common/FormComponents/common/styleLibrary";
 import { HelpIconFilled } from "mds";
 import HelpItem from "./HelpItem";
+import { DocItem } from "./HelpMenu.types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -46,9 +47,29 @@ interface IHelpTipProps {
 type PlacesType = "top" | "right" | "bottom" | "left";
 
 const HelpTip = ({ helpTipID, position }: IHelpTipProps) => {
+  const helpTips = require("../Console/helpTags.json");
   const tipPlace = position ? (position as PlacesType) : "right";
 
   const [helpTipOpen, setHelpTipOpen] = useState<boolean>(false);
+  const tempItem: DocItem =
+    // helpTips[helpTipID || "help"]["docs"]["links"];
+
+    {
+      title: "I need Help!",
+      url: "https://min.io/docs/minio/kubernetes/upstream/",
+      body: "fake body",
+    };
+
+  useEffect(() => {
+    console.log("is there a helptipID: ", helpTipID);
+    {
+      helpTipID &&
+        console.log(
+          "check the helptips  helpTips[helpTipID]['docs']['links'][0]:",
+          helpTips[helpTipID]["docs"]["links"][0]
+        );
+    }
+  }, []);
 
   return (
     <Fragment>
@@ -81,7 +102,7 @@ const HelpTip = ({ helpTipID, position }: IHelpTipProps) => {
               display={"flex"}
               justifyContent={"flex-end"}
             >
-              <HelpItem helpTag={helpTipID} />
+              <HelpItem helpTag={helpTipID} item={tempItem} />
             </Grid>
           )}
         </Grid>
