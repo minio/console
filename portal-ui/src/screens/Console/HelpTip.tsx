@@ -51,25 +51,7 @@ const HelpTip = ({ helpTipID, position }: IHelpTipProps) => {
   const tipPlace = position ? (position as PlacesType) : "right";
 
   const [helpTipOpen, setHelpTipOpen] = useState<boolean>(false);
-  const tempItem: DocItem =
-    // helpTips[helpTipID || "help"]["docs"]["links"];
-
-    {
-      title: "I need Help!",
-      url: "https://min.io/docs/minio/kubernetes/upstream/",
-      body: "fake body",
-    };
-
-  useEffect(() => {
-    console.log("is there a helptipID: ", helpTipID);
-    {
-      helpTipID &&
-        console.log(
-          "check the helptips  helpTips[helpTipID]['docs']['links'][0]:",
-          helpTips[helpTipID]["docs"]["links"][0]
-        );
-    }
-  }, []);
+  const thisItem: DocItem = helpTips[helpTipID || "help"]["docs"]["links"][0];
 
   return (
     <Fragment>
@@ -102,7 +84,7 @@ const HelpTip = ({ helpTipID, position }: IHelpTipProps) => {
               display={"flex"}
               justifyContent={"flex-end"}
             >
-              <HelpItem helpTag={helpTipID} item={tempItem} />
+              <HelpItem item={thisItem} displayImage={false} />
             </Grid>
           )}
         </Grid>

@@ -22,10 +22,9 @@ import placeholderImg from "../../placeholderimage.png";
 interface IHelpItemProps {
   item: DocItem;
   displayImage?: boolean;
-  helpTag?: string;
 }
 
-const HelpItem = ({ item, displayImage = true, helpTag }: IHelpItemProps) => {
+const HelpItem = ({ item, displayImage = true }: IHelpItemProps) => {
   return (
     <Fragment>
       <div
@@ -62,7 +61,6 @@ const HelpItem = ({ item, displayImage = true, helpTag }: IHelpItemProps) => {
             </a>
           </div>
         )}
-        {helpTag && <h3>I'm a helptip! {helpTag}</h3>}
         <div style={{ flexGrow: 1, flexBasis: "auto" }}>
           <div
             style={{
