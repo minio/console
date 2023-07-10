@@ -176,7 +176,7 @@ const Trace = ({ classes }: ITrace) => {
 
   return (
     <Fragment>
-      <PageHeaderWrapper label={"Trace"} />
+      <PageHeaderWrapper label={"Trace"} actions={<HelpMenu />} />
 
       <PageLayout>
         <Grid container spacing={1} className={classes.formBox}>

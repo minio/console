@@ -22,7 +22,6 @@ import { DisabledIcon, EnabledIcon, Box, Grid } from "mds";
 import { STATUS_COLORS } from "../Dashboard/BasicDashboard/Utils";
 import makeStyles from "@mui/styles/makeStyles";
 import { IAMStatement } from "./types";
-import HelpTip from "../HelpTip";
 
 const useStyles = makeStyles((theme: Theme) => ({
   searchField: {

@@ -77,7 +77,6 @@ import {
 import { api } from "../../../api";
 import HelpMenu from "../HelpMenu";
 import SearchBox from "../Common/SearchBox";
-import HelpTip from "../HelpTip";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
