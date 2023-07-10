@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BucketObject } from "api/consoleApi";
+import { IFileInfo } from "../ObjectDetails/types";
 
 export interface BucketObjectItem {
   name: string;
