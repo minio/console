@@ -45,7 +45,6 @@ import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
 
-import HelpTip from "../../HelpTip";
 
 export type ReplicationSite = {
   deploymentID: string;
