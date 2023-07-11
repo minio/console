@@ -301,7 +301,7 @@
       "links": [
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Bucket Access Policy",
+          "title": "Bucket Encryption",
           "url": "https://min.io/docs/minio/linux/reference/minio-mc/mc-encrypt-set.html#enable-automatic-server-side-bucket-encryption",
           "body": "Learn about setting Bucket encryption"
         }

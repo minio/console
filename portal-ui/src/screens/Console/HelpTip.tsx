@@ -51,7 +51,10 @@ const HelpTip = ({ helpTipID, position }: IHelpTipProps) => {
   const tipPlace = position ? (position as PlacesType) : "right";
 
   const [helpTipOpen, setHelpTipOpen] = useState<boolean>(false);
-  const thisItem: DocItem = helpTips[helpTipID || "help"]["docs"]["links"][0];
+  const thisItem: DocItem =
+    helpTipID && helpTipID?.length > 0 && helpTips[helpTipID]
+      ? helpTips[helpTipID]["docs"]["links"][0]
+      : helpTips["help"]["docs"]["links"][0];
 
   return (
     <Fragment>

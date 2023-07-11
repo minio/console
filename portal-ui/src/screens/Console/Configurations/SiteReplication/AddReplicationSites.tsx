@@ -420,7 +420,7 @@ const AddReplicationSites = () => {
         >
           <Box>
             <SectionTitle
-              helpTipID="replication_tutorial"
+              helpTipID="replication_tutorials"
               icon={<ClustersIcon />}
             >
               Add Sites for Replication
