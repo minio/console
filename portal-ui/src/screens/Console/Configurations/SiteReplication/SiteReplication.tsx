@@ -201,7 +201,7 @@ const SiteReplication = () => {
             alignContent={"center"}
             alignItems={"center"}
           >
-            <Grid item xs={8} data-tooltip-id="replication_tutorial">
+            <Grid item xs={8} >
               <HelpBox
                 title={"Site Replication"}
                 iconComponent={<ClustersIcon />}
@@ -235,7 +235,6 @@ const SiteReplication = () => {
                 }
               />
             </Grid>
-            <HelpTip helpTipID="replication_tutorial" />
           </Grid>
         ) : null}
         {hasSites && !isSiteInfoLoading ? (

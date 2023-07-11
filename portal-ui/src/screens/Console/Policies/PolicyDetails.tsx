@@ -77,6 +77,7 @@ import {
 import { api } from "../../../api";
 import HelpMenu from "../HelpMenu";
 import SearchBox from "../Common/SearchBox";
+import HelpTip from "../HelpTip";
 
 const DeletePolicy = withSuspense(React.lazy(() => import("./DeletePolicy")));
 
@@ -531,14 +532,21 @@ const PolicyDetails = () => {
                 },
                 content: (
                   <Fragment>
+                    
                     <Grid
                       onMouseMove={() =>
                         dispatch(setHelpName("policy_details_policy"))
                       }
+                     
                     >
-                      <SectionTitle separator sx={{ marginBottom: 15 }}>
+                      <Grid container direction="column">
+                        <HelpTip helpTipID="policy_structure"  />
+                     <Grid item xs={2} data-tooltip-id="policy_structure">
+                      <SectionTitle   >
                         Raw Policy
                       </SectionTitle>
+                      </Grid>
+                      </Grid>
                       <form
                         noValidate
                         autoComplete="off"
@@ -547,7 +555,7 @@ const PolicyDetails = () => {
                         }}
                       >
                         <Grid container>
-                          <Grid item xs={12}>
+                          <Grid item xs={12}  >
                             <CodeMirrorWrapper
                               value={policyDefinition}
                               onChange={(value) => {
@@ -557,6 +565,7 @@ const PolicyDetails = () => {
                               }}
                               editorHeight={"350px"}
                             />
+                            
                           </Grid>
                           <Grid
                             item

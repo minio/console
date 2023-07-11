@@ -113,7 +113,7 @@
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "Identity and Access Management",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management.html",
-          "body": "Learn how authentication and authorization  are used to protect access to your data"
+          "body": "Learn how authentication and authorization are used to protect access to your data"
         }
       ]
     },
@@ -168,7 +168,6 @@
       "links": []
     }
   },
-
   "create_service_account": {
     "docs": {
       "header": null,
@@ -715,7 +714,6 @@
       "links": []
     }
   },
-
   "config_0": {
     "docs": {
       "header": "Region",
@@ -1011,48 +1009,7 @@
       "links": []
     }
   },
-  "trace": {
-    "docs": {
-      "header": "Trace",
-      "links": [
-        {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Trace",
-          "url": "https://min.io/docs/minio/linux/administration/console/managing-deployment.html#trace",
-          "body": "Use Trace to display API operations occurring on the target MinIO deployment."
-        }
-      ]
-    },
-    "video": {
-      "header": null,
-      "links": []
-    },
-    "blog": {
-      "header": null,
-      "links": []
-    }
-  },
-  "watch": {
-    "docs": {
-      "header": "Watch",
-      "links": [
-        {
-          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
-          "title": "Watch",
-          "url": "https://min.io/docs/minio/linux/reference/minio-mc/mc-watch.html",
-          "body": "Use Watch to watch for events on a specified bucket or local filesystem path"
-        }
-      ]
-    },
-    "video": {
-      "header": null,
-      "links": []
-    },
-    "blog": {
-      "header": null,
-      "links": []
-    }
-  },
+ 
   "event_destinations": {
     "docs": {
       "header": "Event Notifications",

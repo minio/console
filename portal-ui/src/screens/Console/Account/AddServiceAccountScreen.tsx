@@ -190,7 +190,7 @@ const AddServiceAccount = () => {
               {isRestrictedByPolicy && (
                 <Grid item xs={12}>
                   <Box>
-                    <PanelTitle>
+                    <PanelTitle helpTipID="policy_structure">
                       Current User Policy - edit the JSON to remove permissions
                       for this Access Key
                     </PanelTitle>

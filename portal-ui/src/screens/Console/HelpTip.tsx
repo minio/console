@@ -83,6 +83,7 @@ const HelpTip = ({ helpTipID, position }: IHelpTipProps) => {
               }}
               display={"flex"}
               justifyContent={"flex-end"}
+              maxWidth={400}
             >
               <HelpBox
                 title={thisItem.title}
@@ -93,6 +94,7 @@ const HelpTip = ({ helpTipID, position }: IHelpTipProps) => {
                     displayImage={false}
                     displayTitle={false}
                   />
+                  
                 }
               />
             </Grid>

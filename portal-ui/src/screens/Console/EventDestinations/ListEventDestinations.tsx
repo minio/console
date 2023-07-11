@@ -59,6 +59,7 @@ import { setDestinationLoading } from "./destinationsSlice";
 import { api } from "api";
 import { NotificationEndpointItem } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
+import HelpTip from "../HelpTip";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -207,7 +208,6 @@ const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
                   }}
                 />
               </TooltipWrapper>
-              <TooltipWrapper tooltip={"Add Event Destination"}>
                 <Button
                   id={"add-notification-target"}
                   label={"Add Event Destination"}
@@ -216,8 +216,10 @@ const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
                   onClick={() => {
                     navigate(IAM_PAGES.EVENT_DESTINATIONS_ADD);
                   }}
+                  data-tooltip-id="event_destinations"
                 />
-              </TooltipWrapper>
+                 <HelpTip helpTipID="event_destinations" position="top" />
+           
             </div>
           </Grid>
           {isLoading && <LinearProgress />}
