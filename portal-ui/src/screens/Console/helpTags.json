@@ -42,7 +42,7 @@
     }
   },
 
-  "list_policy1": {
+  "policy_creation_video": {
     "docs": {
       "header": "Creating Access Policies",
       "links": [
@@ -63,27 +63,7 @@
       "links": []
     }
   },
-  "users_groups_video": {
-    "docs": {
-      "header": "Using IDP to Manage Users And Groups",
-      "links": [
-        {
-          "img": "https://i.ytimg.com/an_webp/sJEFAVqoKr0/mqdefault_6s.webp?du=3000&sqp=CI2j-qIG&rs=AOn4CLAmMTLGuUkEvGMkiE0I0FVlV56R-Q",
-          "title": "Using IDP to Manage Users And Groups",
-          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0",
-          "body": "This video is focused on using MinIO's built in Identity Provider policies to manage users and groups."
-        }
-      ]
-    },
-    "video": {
-      "header": null,
-      "links": []
-    },
-    "blog": {
-      "header": null,
-      "links": []
-    }
-  },
+  
   "create_service_account": {
     "docs": {
       "header": null,

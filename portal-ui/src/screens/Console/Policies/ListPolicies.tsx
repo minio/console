@@ -219,9 +219,9 @@ const ListPolicies = () => {
                     navigate(`${IAM_PAGES.POLICY_ADD}`);
                   }}
                   disabled={!canCreatePolicy}
-                  data-tooltip-id="list_policy1"
+                  data-tooltip-id="policy_creation_video"
                 />
-                <HelpTip helpTipID="list_policy1" />
+                <HelpTip helpTipID="policy_creation_video" />
               </TooltipWrapper>
             </SecureComponent>
           </Grid>
