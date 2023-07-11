@@ -24,7 +24,6 @@ import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "mds";
 import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import WarningMessage from "../../Common/WarningMessage/WarningMessage";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 
@@ -101,10 +100,6 @@ const DeleteReplicationRule = ({
         <DialogContentText>
           {deleteSelectedRules ? (
             <Fragment>
-              <WarningMessage
-                title={"Warning"}
-                label={"The corresponding remote buckets will also be deleted."}
-              />
               Are you sure you want to remove the selected replication rules for
               bucket <b>{selectedBucket}</b>?<br />
               <br />
@@ -123,10 +118,6 @@ const DeleteReplicationRule = ({
             </Fragment>
           ) : (
             <Fragment>
-              <WarningMessage
-                title={"Warning"}
-                label={"The corresponding remote bucket will also be deleted."}
-              />
               Are you sure you want to delete replication rule{" "}
               <b>{ruleToDelete}</b>?
             </Fragment>

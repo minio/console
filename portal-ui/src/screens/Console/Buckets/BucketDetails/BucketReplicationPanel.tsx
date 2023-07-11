@@ -242,7 +242,10 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
           ruleToDelete={selectedRRule}
           rulesToDelete={selectedRepRules}
           remainingRules={replicationRules.length}
-          allSelected={selectedRepRules.length === replicationRules.length}
+          allSelected={
+            replicationRules.length > 0 &&
+            selectedRepRules.length === replicationRules.length
+          }
           deleteSelectedRules={deleteSelectedRules}
         />
       )}
@@ -277,7 +280,10 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
                   label={"Remove Selected Rules"}
                   icon={<TrashIcon />}
                   color={"secondary"}
-                  disabled={selectedRepRules.length === 0}
+                  disabled={
+                    selectedRepRules.length === 0 ||
+                    replicationRules.length === 0
+                  }
                   variant={"secondary"}
                 />
               </TooltipWrapper>
