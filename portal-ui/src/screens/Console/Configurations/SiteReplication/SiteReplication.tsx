@@ -201,7 +201,7 @@ const SiteReplication = () => {
             alignContent={"center"}
             alignItems={"center"}
           >
-            <Grid item xs={8} >
+            <Grid item xs={8}>
               <HelpBox
                 title={"Site Replication"}
                 iconComponent={<ClustersIcon />}

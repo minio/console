@@ -208,18 +208,17 @@ const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
                   }}
                 />
               </TooltipWrapper>
-                <Button
-                  id={"add-notification-target"}
-                  label={"Add Event Destination"}
-                  variant="callAction"
-                  icon={<AddIcon />}
-                  onClick={() => {
-                    navigate(IAM_PAGES.EVENT_DESTINATIONS_ADD);
-                  }}
-                  data-tooltip-id="event_destinations"
-                />
-                 <HelpTip helpTipID="event_destinations" position="top" />
-           
+              <Button
+                id={"add-notification-target"}
+                label={"Add Event Destination"}
+                variant="callAction"
+                icon={<AddIcon />}
+                onClick={() => {
+                  navigate(IAM_PAGES.EVENT_DESTINATIONS_ADD);
+                }}
+                data-tooltip-id="event_destinations"
+              />
+              <HelpTip helpTipID="event_destinations" position="top" />
             </div>
           </Grid>
           {isLoading && <LinearProgress />}

@@ -94,7 +94,6 @@ const HelpTip = ({ helpTipID, position }: IHelpTipProps) => {
                     displayImage={false}
                     displayTitle={false}
                   />
-                  
                 }
               />
             </Grid>

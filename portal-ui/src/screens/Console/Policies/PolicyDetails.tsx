@@ -532,20 +532,16 @@ const PolicyDetails = () => {
                 },
                 content: (
                   <Fragment>
-                    
                     <Grid
                       onMouseMove={() =>
                         dispatch(setHelpName("policy_details_policy"))
                       }
-                     
                     >
                       <Grid container direction="column">
-                        <HelpTip helpTipID="policy_structure"  />
-                     <Grid item xs={2} data-tooltip-id="policy_structure">
-                      <SectionTitle   >
-                        Raw Policy
-                      </SectionTitle>
-                      </Grid>
+                        <HelpTip helpTipID="policy_structure" />
+                        <Grid item xs={2} data-tooltip-id="policy_structure">
+                          <SectionTitle>Raw Policy</SectionTitle>
+                        </Grid>
                       </Grid>
                       <form
                         noValidate
@@ -555,7 +551,7 @@ const PolicyDetails = () => {
                         }}
                       >
                         <Grid container>
-                          <Grid item xs={12}  >
+                          <Grid item xs={12}>
                             <CodeMirrorWrapper
                               value={policyDefinition}
                               onChange={(value) => {
@@ -565,7 +561,6 @@ const PolicyDetails = () => {
                               }}
                               editorHeight={"350px"}
                             />
-                            
                           </Grid>
                           <Grid
                             item

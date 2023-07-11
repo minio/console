@@ -124,7 +124,6 @@ const AddPolicyScreen = () => {
             >
               <Grid container>
                 <Grid item xs={12}>
-                  <HelpTip helpTipID="add_policy2" position="top" />
                   <InputBox
                     id="policy-name"
                     name="policy-name"

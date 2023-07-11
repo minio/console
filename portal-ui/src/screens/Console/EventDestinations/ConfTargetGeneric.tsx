@@ -28,6 +28,7 @@ import CSVMultiSelector from "../Common/FormComponents/CSVMultiSelector/CSVMulti
 import CommentBoxWrapper from "../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import { ConsoleIcon, InputBox, Switch, Tooltip } from "mds";
+import HelpTip from "../HelpTip";
 
 interface IConfGenericProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -142,68 +143,76 @@ const ConfTargetGeneric = ({
         const value = holderItem ? holderItem.value : "off";
 
         return (
-          <Switch
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const value = e.target.checked ? "on" : "off";
-              setValueElement(field.name, value, item);
-            }}
-            id={field.name}
-            name={field.name}
-            label={field.label}
-            value={"switch_on"}
-            tooltip={field.tooltip}
-            checked={value === "on"}
-          />
+          <Grid data-tooltip-id={field.helpTipId}>
+            <Switch
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const value = e.target.checked ? "on" : "off";
+                setValueElement(field.name, value, item);
+              }}
+              id={field.name}
+              name={field.name}
+              label={field.label}
+              value={"switch_on"}
+              tooltip={field.tooltip}
+              checked={value === "on"}
+            />
+          </Grid>
         );
       case "csv":
         return (
-          <CSVMultiSelector
-            elements={holderItem ? holderItem.value : ""}
-            label={field.label}
-            name={field.name}
-            onChange={(value: string | string[]) => {
-              let valCh = "";
+          <Grid data-tooltip-id={field.helpTipId}>
+            <CSVMultiSelector
+              elements={holderItem ? holderItem.value : ""}
+              label={field.label}
+              name={field.name}
+              onChange={(value: string | string[]) => {
+                let valCh = "";
 
-              if (Array.isArray(value)) {
-                valCh = value.join(",");
-              } else {
-                valCh = value;
-              }
+                if (Array.isArray(value)) {
+                  valCh = value.join(",");
+                } else {
+                  valCh = value;
+                }
 
-              setValueElement(field.name, valCh, item);
-            }}
-            tooltip={field.tooltip}
-            commonPlaceholder={field.placeholder}
-            withBorder={true}
-          />
+                setValueElement(field.name, valCh, item);
+              }}
+              tooltip={field.tooltip}
+              commonPlaceholder={field.placeholder}
+              withBorder={true}
+            />
+          </Grid>
         );
       case "comment":
         return (
-          <CommentBoxWrapper
-            id={field.name}
-            name={field.name}
-            label={field.label}
-            tooltip={field.tooltip}
-            value={holderItem ? holderItem.value : ""}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setValueElement(field.name, e.target.value, item)
-            }
-            placeholder={field.placeholder}
-          />
+          <Grid data-tooltip-id={field.helpTipId}>
+            <CommentBoxWrapper
+              id={field.name}
+              name={field.name}
+              label={field.label}
+              tooltip={field.tooltip}
+              value={holderItem ? holderItem.value : ""}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValueElement(field.name, e.target.value, item)
+              }
+              placeholder={field.placeholder}
+            />
+          </Grid>
         );
       default:
         return (
-          <InputBox
-            id={field.name}
-            name={field.name}
-            label={field.label}
-            tooltip={field.tooltip}
-            value={holderItem ? holderItem.value : ""}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setValueElement(field.name, e.target.value, item)
-            }
-            placeholder={field.placeholder}
-          />
+          <Grid data-tooltip-id={field.helpTipId}>
+            <InputBox
+              id={field.name}
+              name={field.name}
+              label={field.label}
+              tooltip={field.tooltip}
+              value={holderItem ? holderItem.value : ""}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setValueElement(field.name, e.target.value, item)
+              }
+              placeholder={field.placeholder}
+            />
+          </Grid>
         );
     }
   };
@@ -214,6 +223,7 @@ const ConfTargetGeneric = ({
         {fieldsElements.map((field, item) => (
           <Grid item xs={12} key={field.name} className={classes.formFieldRow}>
             {fieldDefinition(field, item)}
+            <HelpTip helpTipID={field.helpTipId} />
           </Grid>
         ))}
       </Grid>

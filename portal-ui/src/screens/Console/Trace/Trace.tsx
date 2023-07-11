@@ -46,7 +46,6 @@ import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 import { setHelpName } from "../../../systemSlice";
 
-
 const styles = (theme: Theme) =>
   createStyles({
     sizeItem: {

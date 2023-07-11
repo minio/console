@@ -42,6 +42,7 @@ export interface KVField {
   multiline?: boolean;
   placeholder?: string;
   withBorder?: boolean;
+  helpTipId?: string;
   customValueProcess?: (value: string) => string;
 }
 
