@@ -250,17 +250,18 @@ const Account = () => {
                 errorProps={{ disabled: true }}
               >
                 <HelpTip helpTipID="account_change_password" position="top" />
+
+                <Button
+                  id={"create-service-account"}
+                  onClick={() => {
+                    navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
+                  }}
+                  label={`Create access key`}
+                  icon={<AddIcon />}
+                  variant={"callAction"}
+                  data-tooltip-id="create_service_account"
+                />
               </SecureComponent>
-              <Button
-                id={"create-service-account"}
-                onClick={() => {
-                  navigate(`${IAM_PAGES.ACCOUNT_ADD}`);
-                }}
-                label={`Create access key`}
-                icon={<AddIcon />}
-                variant={"callAction"}
-                data-tooltip-id="create_service_account"
-              />
             </Box>
           </Grid>
 
