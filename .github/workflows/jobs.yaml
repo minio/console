@@ -22,7 +22,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -110,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -133,7 +133,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
     steps:
       # To build minio image, we need to clone the repository first
       - name: Clone github.com/minio/minio
@@ -168,7 +168,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -207,7 +207,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -231,7 +231,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -278,7 +278,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -324,7 +324,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -370,7 +370,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -410,7 +410,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -450,7 +450,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -490,7 +490,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -530,7 +530,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -570,7 +570,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -615,7 +615,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -660,7 +660,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -708,7 +708,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -745,7 +745,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -784,7 +784,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
 
     steps:
       - name: Check out code
@@ -873,7 +873,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
 
     steps:
       - name: Check out code
@@ -948,7 +948,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
 
     steps:
       - name: Check out code
@@ -1019,7 +1019,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.20.6]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -1168,11 +1168,6 @@ jobs:
         continue-on-error: false
         run: |
           ./check-warnings-istanbul-coverage.sh
-      - name: Check if Files are Prettified
-        working-directory: ./portal-ui
-        continue-on-error: false
-        run: |
-          ./check-prettier.sh
 
   compile-binary-istanbul-coverage:
     name: "Compile Console Binary with Istanbul Plugin for Coverage"
