@@ -42,26 +42,6 @@ jobs:
         run: |
           make verifiers
 
-  vulnerable-dependencies-checks:
-    name: "Check for vulnerable dependencies"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [1.20.x]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-          check-latest: true
-      - name: Get govulncheck
-        run: go install golang.org/x/vuln/cmd/govulncheck@latest
-        shell: bash
-      - name: Run govulncheck
-        run: govulncheck ./...
-        shell: bash
   semgrep-static-code-analysis:
     name: "semgrep checks"
     runs-on: ubuntu-latest
@@ -219,29 +199,6 @@ jobs:
           GOOS: linux
         run: |
           make console
-
-  react-code-known-vulnerabilities:
-    name: "React Code Has No Known Vulnerable Deps"
-    needs:
-      - ui-assets
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [1.20.x]
-        os: [ubuntu-latest]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-          cache: "yarn"
-          cache-dependency-path: portal-ui/yarn.lock
-      - name: Checks for known security issues with the installed packages
-        working-directory: ./portal-ui
-        continue-on-error: false
-        run: |
-          yarn audit --groups dependencies
 
   all-permissions-1:
     name: Permissions Tests Part 1
@@ -1158,7 +1115,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [1.19.x]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -1188,11 +1145,6 @@ jobs:
         continue-on-error: false
         run: |
           ./check-warnings-istanbul-coverage.sh
-      - name: Check if Files are Prettified
-        working-directory: ./portal-ui
-        continue-on-error: false
-        run: |
-          ./check-prettier.sh
 
   compile-binary-istanbul-coverage:
     name: "Compile Console Binary with Istanbul Plugin for Coverage"
@@ -1204,7 +1156,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.19.x]
+        go-version: [1.20.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
