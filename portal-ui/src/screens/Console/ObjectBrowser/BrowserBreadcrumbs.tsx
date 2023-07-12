@@ -22,7 +22,7 @@ import makeStyles from "@mui/styles/makeStyles";
 import { Theme } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
-import { encodeURLString } from "../../../common/utils";
+import { encodeURLString, safeDecodeURIComponent } from "../../../common/utils";
 import { Button, CopyIcon, NewPathIcon, Tooltip, Breadcrumbs } from "mds";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
@@ -127,9 +127,14 @@ const BrowserBreadcrumbs = ({
       <Fragment key={`breadcrumbs-${index.toString()}`}>
         <span className={classes.slashSpacingStyle}>/</span>
         {index === lastBreadcrumbsIndex ? (
-          <span style={{ cursor: "default" }}>{objectItem}</span>
+          <span style={{ cursor: "default", whiteSpace: "pre" }}>
+            {safeDecodeURIComponent(objectItem) /*Only for display*/}
+          </span>
         ) : (
           <Link
+            style={{
+              whiteSpace: "pre",
+            }}
             to={route}
             onClick={() => {
               dispatch(
@@ -137,7 +142,11 @@ const BrowserBreadcrumbs = ({
               );
             }}
           >
-            {objectItem}
+            {
+              safeDecodeURIComponent(
+                objectItem
+              ) /*Only for display to preserve */
+            }
           </Link>
         )}
       </Fragment>
@@ -210,6 +219,9 @@ const BrowserBreadcrumbs = ({
           />
         )}
         <Breadcrumbs
+          sx={{
+            whiteSpace: "pre",
+          }}
           goBackFunction={goBackFunction}
           additionalOptions={
             <Fragment>

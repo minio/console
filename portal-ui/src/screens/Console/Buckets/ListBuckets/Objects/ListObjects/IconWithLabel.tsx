@@ -24,7 +24,7 @@ const styles = (theme: Theme) =>
       },
     },
     fileNameText: {
-      whiteSpace: "nowrap",
+      whiteSpace: "pre",
       overflow: "hidden",
       textOverflow: "ellipsis",
     },
