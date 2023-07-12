@@ -182,10 +182,7 @@ const AddEventDestination = ({
                 {targetElement && (
                   <TargetTitle
                     logoSrc={targetElement.logo}
-                    title={`${
-                      targetElement ? targetElement.targetTitle : ""
-                    } Event
-                        Destination`}
+                    title={targetElement ? targetElement.targetTitle : ""}
                   />
                 )}
               </Grid>
