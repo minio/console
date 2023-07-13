@@ -428,7 +428,7 @@ const ListObjects = () => {
       const objectName = selectedObjects[0];
       let objectType: AllowedPreviews = previewObjectType(metaData, objectName);
 
-      if (objectType !== "none") {
+      if (objectType !== "none" && canDownload) {
         setCanPreviewFile(true);
       } else {
         setCanPreviewFile(false);

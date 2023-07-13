@@ -44,7 +44,7 @@ import {
   spacingUtils,
   textStyleUtils,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import { extensionPreview } from "../utils";
+import { AllowedPreviews, previewObjectType } from "../utils";
 
 import {
   decodeURLString,
@@ -395,6 +395,8 @@ const ObjectDetailPanel = ({
     [IAM_SCOPES.S3_DELETE_OBJECT]
   );
 
+  let objectType: AllowedPreviews = previewObjectType(metaData, currentItem);
+
   const multiActionButtons = [
     {
       action: () => {
@@ -431,8 +433,7 @@ const ObjectDetailPanel = ({
       label: "Preview",
       disabled:
         !!actualInfo.is_delete_marker ||
-        extensionPreview(currentItem) === "none" ||
-        !canGetObject,
+        (objectType === "none" && !canGetObject),
       icon: <PreviewIcon />,
       tooltip: canGetObject
         ? "Preview this File"

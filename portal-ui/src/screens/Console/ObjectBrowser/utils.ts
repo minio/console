@@ -39,10 +39,9 @@ export const downloadObject = (
     `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
   );
 
-  if (
-    object.name?.length ||
-    (0 > 200 && getClientOS().toLowerCase().includes("win"))
-  ) {
+  const isWinOs = getClientOS().toLowerCase().includes("win");
+
+  if ((object.name?.length || 0) > 200 && isWinOs) {
     dispatch(setLongFileOpen(true));
     return;
   }
