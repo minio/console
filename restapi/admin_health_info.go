@@ -149,7 +149,7 @@ func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client 
 		}
 	}
 	headers := subnet.UploadAuthHeaders(apiKey)
-	uploadInfo, formDataType, e := subnet.ProcessUploadInfo(healthInfo, "health")
+	uploadInfo, formDataType, e := subnet.ProcessUploadInfo(healthInfo, "health", filename)
 	if e != nil {
 		return "", e
 	}

@@ -79,9 +79,9 @@ func UploadAuthHeaders(apiKey string) map[string]string {
 	return map[string]string{"x-subnet-api-key": apiKey}
 }
 
-func ProcessUploadInfo(info interface{}, uploadType string) ([]byte, string, error) {
+func ProcessUploadInfo(info interface{}, uploadType string, filename string) ([]byte, string, error) {
 	if uploadType == "health" {
-		return processHealthReport(info)
+		return processHealthReport(info, filename)
 	}
 	return nil, "", errors.New("invalid Subnet upload type")
 }
@@ -95,7 +95,7 @@ func UploadFileToSubnet(info []byte, client *xhttp.Client, reqURL string, header
 	return resp, e
 }
 
-func processHealthReport(info interface{}) ([]byte, string, error) {
+func processHealthReport(info interface{}, filename string) ([]byte, string, error) {
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
 	zipWriter := gzip.NewWriter(&body)
@@ -115,7 +115,6 @@ func processHealthReport(info interface{}) ([]byte, string, error) {
 	}
 	zipWriter.Close()
 	temp := body
-	filename := time.Now().String() + "_health.zip"
 	part, e := writer.CreateFormFile("file", filename)
 	if e != nil {
 		return nil, "", e
