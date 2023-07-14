@@ -434,12 +434,27 @@ export const representationNumber = (number: number | undefined) => {
   return `${returnValue}${unit}`;
 };
 
+/** Ref https://developer.mozilla.org/en-US/docs/Glossary/Base64 */
+
+const base64ToBytes = (base64: any): Uint8Array => {
+  const binString: any = atob(base64);
+  // @ts-ignore
+  return Uint8Array.from(binString, (m) => m.codePointAt(0));
+};
+
+const bytesToBase64 = (bytes: any) => {
+  const binString = Array.from(bytes, (x: any) => String.fromCodePoint(x)).join(
+    ""
+  );
+  return btoa(binString);
+};
+
 export const encodeURLString = (name: string | null) => {
   if (!name) {
     return "";
   }
   try {
-    return btoa(unescape(encodeURIComponent(name)));
+    return bytesToBase64(new TextEncoder().encode(name));
   } catch (err) {
     return "";
   }
@@ -447,7 +462,7 @@ export const encodeURLString = (name: string | null) => {
 
 export const decodeURLString = (text: string) => {
   try {
-    return decodeURIComponent(escape(window.atob(text)));
+    return new TextDecoder().decode(base64ToBytes(text));
   } catch (err) {
     return text;
   }
