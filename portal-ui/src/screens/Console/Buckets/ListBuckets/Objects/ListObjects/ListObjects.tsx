@@ -60,7 +60,7 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { Badge } from "@mui/material";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
-import { extensionPreview } from "../utils";
+import { AllowedPreviews, previewObjectType } from "../utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
@@ -301,6 +301,9 @@ const ListObjects = () => {
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
 
+  const [metaData, setMetaData] = useState<any>(null);
+  const [isMetaDataLoaded, setIsMetaDataLoaded] = useState(false);
+
   const isVersioningApplied = isVersionedMode(versioningConfig.status);
   const bucketName = params.bucketName || "";
 
@@ -365,6 +368,37 @@ const ListObjects = () => {
     (state: AppState) => state.objectBrowser.selectedObjects
   );
 
+  const fetchMetadata = useCallback(() => {
+    const objectName = selectedObjects[0];
+
+    if (!isMetaDataLoaded) {
+      const encodedPath = encodeURLString(objectName);
+      api.buckets
+        .getObjectMetadata(bucketName, {
+          prefix: encodedPath,
+        })
+        .then((res) => {
+          let metadata = get(res.data, "objectMetadata", {});
+          setIsMetaDataLoaded(true);
+          setMetaData(metadata);
+        })
+        .catch((err) => {
+          console.error(
+            "Error Getting Metadata Status: ",
+            err,
+            err?.detailedError
+          );
+          setIsMetaDataLoaded(true);
+        });
+    }
+  }, [bucketName, selectedObjects, isMetaDataLoaded]);
+
+  useEffect(() => {
+    if (bucketName && selectedObjects.length === 1) {
+      fetchMetadata();
+    }
+  }, [bucketName, selectedObjects, fetchMetadata]);
+
   useEffect(() => {
     dispatch(setSearchObjects(""));
     dispatch(setLoadingObjects(true));
@@ -392,8 +426,9 @@ const ListObjects = () => {
   useEffect(() => {
     if (selectedObjects.length === 1) {
       const objectName = selectedObjects[0];
+      let objectType: AllowedPreviews = previewObjectType(metaData, objectName);
 
-      if (extensionPreview(objectName) !== "none" && canDownload) {
+      if (objectType !== "none" && canDownload) {
         setCanPreviewFile(true);
       } else {
         setCanPreviewFile(false);
@@ -408,7 +443,7 @@ const ListObjects = () => {
       setCanShareFile(false);
       setCanPreviewFile(false);
     }
-  }, [selectedObjects, canDownload]);
+  }, [selectedObjects, canDownload, metaData]);
 
   useEffect(() => {
     if (!quota && !anonymousMode) {
