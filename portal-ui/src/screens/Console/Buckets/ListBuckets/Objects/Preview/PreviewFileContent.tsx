@@ -14,14 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { Grid, LinearProgress } from "@mui/material";
 import { BucketObjectItem } from "../ListObjects/types";
-import { extensionPreview } from "../utils";
+import { AllowedPreviews, previewObjectType } from "../utils";
 import { encodeURLString } from "../../../../../../common/utils";
 import clsx from "clsx";
+import WarningMessage from "../../../../Common/WarningMessage/WarningMessage";
+import { api } from "../../../../../../api";
+import get from "lodash/get";
 
 const styles = () =>
   createStyles({
@@ -72,6 +75,40 @@ const PreviewFile = ({
 }: IPreviewFileProps) => {
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [metaData, setMetaData] = useState<any>(null);
+  const [isMetaDataLoaded, setIsMetaDataLoaded] = useState(false);
+
+  const objectName = object?.name || "";
+
+  const fetchMetadata = useCallback(() => {
+    if (!isMetaDataLoaded) {
+      const encodedPath = encodeURLString(objectName);
+      api.buckets
+        .getObjectMetadata(bucketName, {
+          prefix: encodedPath,
+        })
+        .then((res) => {
+          let metadata = get(res.data, "objectMetadata", {});
+          setIsMetaDataLoaded(true);
+          setMetaData(metadata);
+        })
+        .catch((err) => {
+          console.error(
+            "Error Getting Metadata Status: ",
+            err,
+            err?.detailedError
+          );
+          setIsMetaDataLoaded(true);
+        });
+    }
+  }, [bucketName, objectName, isMetaDataLoaded]);
+
+  useEffect(() => {
+    if (bucketName && objectName) {
+      fetchMetadata();
+    }
+  }, [bucketName, objectName, fetchMetadata]);
+
   let path = "";
 
   if (object) {
@@ -83,7 +120,7 @@ const PreviewFile = ({
     }
   }
 
-  const objectType = extensionPreview(object?.name || "");
+  let objectType: AllowedPreviews = previewObjectType(metaData, objectName);
 
   const iframeLoaded = () => {
     setLoading(false);
@@ -91,79 +128,91 @@ const PreviewFile = ({
 
   return (
     <Fragment>
-      {loading && (
+      {objectType !== "none" && loading && (
         <Grid item xs={12}>
           <LinearProgress />
         </Grid>
       )}
-      <div style={{ textAlign: "center" }}>
-        {objectType === "video" && (
-          <video
-            style={{
-              width: "auto",
-              height: "auto",
-              maxWidth: "calc(100vw - 100px)",
-              maxHeight: "calc(100vh - 200px)",
-            }}
-            autoPlay={true}
-            controls={true}
-            muted={false}
-            playsInline={true}
-            onPlay={iframeLoaded}
-          >
-            <source src={path} type="video/mp4" />
-          </video>
-        )}
-        {objectType === "audio" && (
-          <audio
-            style={{
-              width: "100%",
-              height: "auto",
-            }}
-            autoPlay={true}
-            controls={true}
-            muted={false}
-            playsInline={true}
-            onPlay={iframeLoaded}
-          >
-            <source src={path} type="audio/mpeg" />
-          </audio>
-        )}
-        {objectType === "image" && (
-          <img
-            style={{
-              width: "auto",
-              height: "auto",
-              maxWidth: "100vw",
-              maxHeight: "100vh",
-            }}
-            src={path}
-            alt={"preview"}
-            onLoad={iframeLoaded}
-          />
-        )}
-        {objectType !== "video" &&
-          objectType !== "audio" &&
-          objectType !== "image" && (
-            <div
-              className={clsx(classes.iframeBase, {
-                [classes.iframeHidden]: loading,
-              })}
+      {isMetaDataLoaded ? (
+        <div style={{ textAlign: "center" }}>
+          {objectType === "video" && (
+            <video
+              style={{
+                width: "auto",
+                height: "auto",
+                maxWidth: "calc(100vw - 100px)",
+                maxHeight: "calc(100vh - 200px)",
+              }}
+              autoPlay={true}
+              controls={true}
+              muted={false}
+              playsInline={true}
+              onPlay={iframeLoaded}
             >
-              <iframe
-                src={path}
-                title="File Preview"
-                allowTransparency
-                className={`${classes.iframeContainer} ${
-                  isFullscreen ? "fullHeight" : objectType
-                }`}
-                onLoad={iframeLoaded}
-              >
-                File couldn't be loaded. Please try Download instead
-              </iframe>
+              <source src={path} type="video/mp4" />
+            </video>
+          )}
+          {objectType === "audio" && (
+            <audio
+              style={{
+                width: "100%",
+                height: "auto",
+              }}
+              autoPlay={true}
+              controls={true}
+              muted={false}
+              playsInline={true}
+              onPlay={iframeLoaded}
+            >
+              <source src={path} type="audio/mpeg" />
+            </audio>
+          )}
+          {objectType === "image" && (
+            <img
+              style={{
+                width: "auto",
+                height: "auto",
+                maxWidth: "100vw",
+                maxHeight: "100vh",
+              }}
+              src={path}
+              alt={"preview"}
+              onLoad={iframeLoaded}
+            />
+          )}
+          {objectType === "none" && (
+            <div>
+              <WarningMessage
+                label=" File couldn't be previewed using file extension or mime type. Please
+            try Download instead"
+                title="Preview unavailable "
+              />
             </div>
           )}
-      </div>
+          {objectType !== "none" &&
+            objectType !== "video" &&
+            objectType !== "audio" &&
+            objectType !== "image" && (
+              <div
+                className={clsx(classes.iframeBase, {
+                  [classes.iframeHidden]: loading,
+                })}
+              >
+                <iframe
+                  src={path}
+                  title="File Preview"
+                  allowTransparency
+                  className={`${classes.iframeContainer} ${
+                    isFullscreen ? "fullHeight" : objectType
+                  }`}
+                  onLoad={iframeLoaded}
+                >
+                  File couldn't be loaded. Please try Download instead
+                </iframe>
+              </div>
+            )}
+        </div>
+      ) : null}
     </Fragment>
   );
 };
