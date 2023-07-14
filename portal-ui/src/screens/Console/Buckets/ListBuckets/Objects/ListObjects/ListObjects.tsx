@@ -60,7 +60,7 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { Badge } from "@mui/material";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
-import { extensionPreview } from "../utils";
+import { AllowedPreviews, previewObjectType } from "../utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
@@ -301,6 +301,9 @@ const ListObjects = () => {
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
 
+  const [metaData, setMetaData] = useState<any>(null);
+  const [isMetaDataLoaded, setIsMetaDataLoaded] = useState(false);
+
   const isVersioningApplied = isVersionedMode(versioningConfig.status);
   const bucketName = params.bucketName || "";
 
@@ -340,20 +343,20 @@ const ListObjects = () => {
     putObjectPermScopes
   );
 
-  const canDownload = hasPermission(bucketName, [
-    IAM_SCOPES.S3_GET_OBJECT,
-    IAM_SCOPES.S3_GET_ACTIONS,
-  ]);
-  const canDelete = hasPermission(bucketName, [IAM_SCOPES.S3_DELETE_OBJECT]);
+  const canDownload = hasPermission(
+    [pathAsResourceInPolicy, ...sessionGrantWildCards],
+    [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS]
+  );
+  const canDelete = hasPermission(
+    [pathAsResourceInPolicy, ...sessionGrantWildCards],
+    [IAM_SCOPES.S3_DELETE_OBJECT]
+  );
   const canUpload =
     hasPermission(
       [pathAsResourceInPolicy, ...sessionGrantWildCards],
       putObjectPermScopes
     ) || anonymousMode;
 
-  const displayDeleteObject = hasPermission(bucketName, [
-    IAM_SCOPES.S3_DELETE_OBJECT,
-  ]);
   const canSetAnonymousAccess = hasPermission(bucketName, [
     IAM_SCOPES.S3_GET_BUCKET_POLICY,
     IAM_SCOPES.S3_PUT_BUCKET_POLICY,
@@ -364,6 +367,37 @@ const ListObjects = () => {
   const selectedObjects = useSelector(
     (state: AppState) => state.objectBrowser.selectedObjects
   );
+
+  const fetchMetadata = useCallback(() => {
+    const objectName = selectedObjects[0];
+
+    if (!isMetaDataLoaded) {
+      const encodedPath = encodeURLString(objectName);
+      api.buckets
+        .getObjectMetadata(bucketName, {
+          prefix: encodedPath,
+        })
+        .then((res) => {
+          let metadata = get(res.data, "objectMetadata", {});
+          setIsMetaDataLoaded(true);
+          setMetaData(metadata);
+        })
+        .catch((err) => {
+          console.error(
+            "Error Getting Metadata Status: ",
+            err,
+            err?.detailedError
+          );
+          setIsMetaDataLoaded(true);
+        });
+    }
+  }, [bucketName, selectedObjects, isMetaDataLoaded]);
+
+  useEffect(() => {
+    if (bucketName && selectedObjects.length === 1) {
+      fetchMetadata();
+    }
+  }, [bucketName, selectedObjects, fetchMetadata]);
 
   useEffect(() => {
     dispatch(setSearchObjects(""));
@@ -392,23 +426,24 @@ const ListObjects = () => {
   useEffect(() => {
     if (selectedObjects.length === 1) {
       const objectName = selectedObjects[0];
+      let objectType: AllowedPreviews = previewObjectType(metaData, objectName);
 
-      if (extensionPreview(objectName) !== "none") {
+      if (objectType !== "none" && canDownload) {
         setCanPreviewFile(true);
       } else {
         setCanPreviewFile(false);
       }
 
-      if (objectName.endsWith("/")) {
-        setCanShareFile(false);
-      } else {
+      if (objectName.endsWith("/") || canDownload) {
         setCanShareFile(true);
+      } else {
+        setCanShareFile(false);
       }
     } else {
       setCanShareFile(false);
       setCanPreviewFile(false);
     }
-  }, [selectedObjects]);
+  }, [selectedObjects, canDownload, metaData]);
 
   useEffect(() => {
     if (!quota && !anonymousMode) {
@@ -931,8 +966,7 @@ const ListObjects = () => {
       },
       label: "Delete",
       icon: <DeleteIcon />,
-      disabled:
-        !canDelete || selectedObjects.length === 0 || !displayDeleteObject,
+      disabled: !canDelete || selectedObjects.length === 0,
       tooltip: canDelete
         ? "Delete Selected Files"
         : permissionTooltipHelper(

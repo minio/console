@@ -200,10 +200,30 @@ class DownloadHelper {
   }
 }
 
+export type AllowedPreviews = "image" | "text" | "audio" | "video" | "none";
+export const contentTypePreview = (contentType: string): AllowedPreviews => {
+  if (contentType) {
+    const mimeObjectType = (contentType || "").toLowerCase();
+
+    if (mimeObjectType.includes("image")) {
+      return "image";
+    }
+    if (mimeObjectType.includes("text")) {
+      return "text";
+    }
+    if (mimeObjectType.includes("audio")) {
+      return "audio";
+    }
+    if (mimeObjectType.includes("video")) {
+      return "video";
+    }
+  }
+
+  return "none";
+};
+
 // Review file extension by name & returns the type of preview browser that can be used
-export const extensionPreview = (
-  fileName: string
-): "image" | "text" | "audio" | "video" | "none" => {
+export const extensionPreview = (fileName: string): AllowedPreviews => {
   const imageExtensions = [
     "jif",
     "jfif",
@@ -262,6 +282,30 @@ export const extensionPreview = (
   return "none";
 };
 
+export const previewObjectType = (
+  metaData: Record<any, any>,
+  objectName: string
+) => {
+  const metaContentType = (
+    (metaData && metaData["Content-Type"]) ||
+    ""
+  ).toString();
+
+  const extensionType = extensionPreview(objectName || "");
+  const contentType = contentTypePreview(metaContentType);
+
+  let objectType: AllowedPreviews = extensionType;
+
+  if (extensionType === contentType) {
+    objectType = extensionType;
+  } else if (extensionType === "none" && contentType !== "none") {
+    objectType = contentType;
+  } else if (contentType === "none" && extensionType !== "none") {
+    objectType = extensionType;
+  }
+
+  return objectType;
+};
 export const sortListObjects = (fieldSort: string) => {
   switch (fieldSort) {
     case "name":
