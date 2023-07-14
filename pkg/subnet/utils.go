@@ -115,7 +115,8 @@ func processHealthReport(info interface{}) ([]byte, string, error) {
 	}
 	zipWriter.Close()
 	temp := body
-	part, e := writer.CreateFormFile("file", "filename")
+	filename := time.Now().String() + "_health.zip"
+	part, e := writer.CreateFormFile("file", filename)
 	if e != nil {
 		return nil, "", e
 	}
