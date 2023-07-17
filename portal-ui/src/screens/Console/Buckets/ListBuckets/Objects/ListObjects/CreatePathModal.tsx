@@ -103,9 +103,14 @@ const CreatePathModal = ({
       .filter((splitItem) => splitItem.trim() !== "")
       .join("/");
 
+    if (folderPath.slice(0, 1) === "/") {
+      folderPath = folderPath.slice(1); //trim '/'
+    }
+
     const newPath = `/browser/${bucketName}/${encodeURLString(
       `${folderPath}${cleanPathURL}/`
     )}`;
+
     navigate(newPath);
     onClose();
   };
