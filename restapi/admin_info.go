@@ -837,8 +837,8 @@ var widgets = []Metric{
 			},
 
 			{
-				Expr:         `rate(minio_node_io_rchar_bytes{$__query}[$__rate_interval])`,
-				LegendFormat: "Node RChar [{{server}}]",
+				Expr:         `rate(minio_node_io_wchar_bytes{$__query}[$__rate_interval])`,
+				LegendFormat: "Node WChar [{{server}}]",
 			},
 		},
 	},
