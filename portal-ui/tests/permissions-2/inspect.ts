@@ -59,13 +59,13 @@ export const inspect_volume_input_err = Selector("#inspect_volume-helper-text");
 export const inspect_path_input_err = Selector("#inspect_path-helper-text");
 
 export const inspect_encrypt_input = Selector(
-  '[data-test-id="inspect_encrypt"]'
+  '[data-test-id="inspect_encrypt"]',
 );
 export const inspect_form_clear_btn = Selector(
-  '[data-test-id="inspect-clear-button"]'
+  '[data-test-id="inspect-clear-button"]',
 );
 export const inspect_form_submit_btn = Selector(
-  '[data-test-id="inspect-submit-button"]'
+  '[data-test-id="inspect-submit-button"]',
 );
 /**  Begin Allowed Policy Test **/
 
@@ -77,7 +77,7 @@ export const inspectAllowedRole = Role(
       .typeText("#secretKey", insAllowedSeckey)
       .click(loginSubmitBtn);
   },
-  { preserveUrl: true }
+  { preserveUrl: true },
 );
 
 fixture("For user with Inspect permissions")
@@ -160,7 +160,7 @@ export const inspectNotAllowedRole = Role(
       .typeText("#secretKey", insNotAllowedSeckey)
       .click(loginSubmitBtn);
   },
-  { preserveUrl: true }
+  { preserveUrl: true },
 );
 
 fixture("For user with Denied Inspect permissions")
@@ -184,7 +184,7 @@ test("Inspect link should NOT exists in Menu list", async (t) => {
     .click(monitoringElement)
     .expect(inspectEl.exists)
     .notOk(
-      "Inspect Link should not exist in the menu list as per inspect not allowed policy"
+      "Inspect Link should not exist in the menu list as per inspect not allowed policy",
     );
 });
 /**  End Not Allowed Policy Test **/

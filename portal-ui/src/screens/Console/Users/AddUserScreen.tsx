@@ -47,19 +47,19 @@ import GroupsSelectors from "./GroupsSelectors";
 const AddUser = () => {
   const dispatch = useAppDispatch();
   const selectedPolicies = useSelector(
-    (state: AppState) => state.createUser.selectedPolicies
+    (state: AppState) => state.createUser.selectedPolicies,
   );
   const selectedGroups = useSelector(
-    (state: AppState) => state.createUser.selectedGroups
+    (state: AppState) => state.createUser.selectedGroups,
   );
   const addLoading = useSelector(
-    (state: AppState) => state.createUser.addLoading
+    (state: AppState) => state.createUser.addLoading,
   );
   const sendEnabled = useSelector(
-    (state: AppState) => state.createUser.sendEnabled
+    (state: AppState) => state.createUser.sendEnabled,
   );
   const secretKeylength = useSelector(
-    (state: AppState) => state.createUser.secretKeylength
+    (state: AppState) => state.createUser.secretKeylength,
   );
   const navigate = useNavigate();
   dispatch(setSendEnabled());
@@ -71,7 +71,7 @@ const AddUser = () => {
         setErrorSnackMessage({
           errorMessage: "Passwords must be at least 8 characters long",
           detailedError: "",
-        })
+        }),
       );
       dispatch(setAddLoading(false));
       return;

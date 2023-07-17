@@ -85,7 +85,7 @@ const SingleValueWidget = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<string>("");
   const widgetVersion = useSelector(
-    (state: AppState) => state.dashboard.widgetLoadVersion
+    (state: AppState) => state.dashboard.widgetLoadVersion,
   );
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const SingleValueWidget = ({
             timeStart !== null ? `&start=${timeStart.toUnixInteger()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.toUnixInteger()}` : ""
-          }`
+          }`,
         )
         .then((res: any) => {
           const widgetsWithValue = widgetDetailsToPanel(res, panelItem);

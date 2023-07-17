@@ -154,7 +154,7 @@ const CommandBar = () => {
   const initialActions: Action[] = routesAsKbarActions(
     buckets,
     navigate,
-    features
+    features,
   );
 
   useRegisterActions(initialActions, [buckets, features]);
@@ -217,13 +217,13 @@ const ResultItem = React.forwardRef(
       active: boolean;
       currentRootActionId: ActionId;
     },
-    ref: React.Ref<HTMLDivElement>
+    ref: React.Ref<HTMLDivElement>,
   ) => {
     const classes = useStyles();
     const ancestors = React.useMemo(() => {
       if (!currentRootActionId) return action.ancestors;
       const index = action.ancestors.findIndex(
-        (ancestor) => ancestor.id === currentRootActionId
+        (ancestor) => ancestor.id === currentRootActionId,
       );
       // +1 removes the currentRootAction; e.g.
       // if we are on the "Set theme" parent action,
@@ -322,7 +322,7 @@ const ResultItem = React.forwardRef(
         ) : null}
       </div>
     );
-  }
+  },
 );
 
 export default CommandBar;

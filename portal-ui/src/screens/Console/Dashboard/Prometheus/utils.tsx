@@ -494,7 +494,7 @@ const calculateMainValue = (elements: any[], metricCalc: string) => {
       return ["", mean.toString()];
     default:
       const sortResult = elements.sort(
-        (value1: any[], value2: any[]) => value1[0] - value2[0]
+        (value1: any[], value2: any[]) => value1[0] - value2[0],
       );
 
       return sortResult[sortResult.length - 1];
@@ -533,7 +533,7 @@ const constructLabelNames = (metrics: any, legendFormat: string) => {
 
 export const widgetDetailsToPanel = (
   payloadData: any,
-  panelItem: IDashboardPanel
+  panelItem: IDashboardPanel,
 ) => {
   if (!payloadData) {
     return panelItem;
@@ -555,7 +555,7 @@ export const widgetDetailsToPanel = (
         const metricCalc = get(
           payloadData,
           "options.reduceOptions.calcs[0]",
-          "lastNotNull"
+          "lastNotNull",
         );
 
         const valueDisplay = calculateMainValue(elements, metricCalc);
@@ -575,11 +575,11 @@ export const widgetDetailsToPanel = (
         const metricCalc = get(
           payloadData,
           "options.reduceOptions.calcs[0]",
-          "lastNotNull"
+          "lastNotNull",
         );
 
         let chartSeries = get(payloadData, "targets", []).filter(
-          (seriesItem: any) => seriesItem !== null
+          (seriesItem: any) => seriesItem !== null,
         );
 
         const values = chartSeries.map((chartTarget: any) => {
@@ -593,7 +593,7 @@ export const widgetDetailsToPanel = (
             const metricKeyItem = Object.keys(elementValue.metric);
             const sortResult = values.sort(
               (value1: any[], value2: any[]) =>
-                parseInt(value1[0][1]) - parseInt(value2[0][1])
+                parseInt(value1[0][1]) - parseInt(value2[0][1]),
             );
 
             const metricName = elementValue.metric[metricKeyItem[0]];
@@ -640,7 +640,7 @@ export const widgetDetailsToPanel = (
         targets.forEach(
           (
             targetMaster: { legendFormat: string; result: any[] },
-            index: number
+            index: number,
           ) => {
             // Add a new serie to plot variables in case it is not from multiple values
             let results = get(targetMaster, "result", []);
@@ -653,7 +653,7 @@ export const widgetDetailsToPanel = (
               // Label Creation
               const labelName = constructLabelNames(
                 itemVals.metric,
-                legendFormat
+                legendFormat,
               );
               const keyName = `key_${index}${labelName}`;
 
@@ -673,7 +673,7 @@ export const widgetDetailsToPanel = (
 
               values.forEach((valInfo: any[]) => {
                 const itemIndex = plotValues.findIndex(
-                  (element) => element.name === valInfo[0]
+                  (element) => element.name === valInfo[0],
                 );
 
                 // Element not exists yet
@@ -687,7 +687,7 @@ export const widgetDetailsToPanel = (
                 }
               });
             });
-          }
+          },
         );
 
         const sortedSeries = series.sort((series1: any, series2: any) => {
@@ -707,11 +707,11 @@ export const widgetDetailsToPanel = (
               lineColor: colorsMain[index] || textToRGBColor(serialC.keyLabel),
               fillColor: colorsMain[index] || textToRGBColor(serialC.keyLabel),
             };
-          }
+          },
         );
 
         const sortedVals = plotValues.sort(
-          (value1: any, value2: any) => value1.name - value2.name
+          (value1: any, value2: any) => value1.name - value2.name,
         );
 
         return {
@@ -784,13 +784,13 @@ export const widgetDetailsToPanel = (
         const metricCalc = get(
           payloadData,
           "options.reduceOptions.calcs[0]",
-          "lastNotNull"
+          "lastNotNull",
         );
 
         const valueDisplay = calculateMainValue(elements, metricCalc);
 
         const sortResult = elements.sort(
-          (value1: any[], value2: any[]) => value1[0] - value2[0]
+          (value1: any[], value2: any[]) => value1[0] - value2[0],
         );
 
         let valuesForBackground = [];

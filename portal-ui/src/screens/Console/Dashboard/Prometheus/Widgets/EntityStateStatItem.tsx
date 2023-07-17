@@ -45,7 +45,7 @@ const EntityStateStatItem = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<string>("");
   const widgetVersion = useSelector(
-    (state: AppState) => state.dashboard.widgetLoadVersion
+    (state: AppState) => state.dashboard.widgetLoadVersion,
   );
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const EntityStateStatItem = ({
             timeStart !== null ? `&start=${timeStart.toUnixInteger()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.toUnixInteger()}` : ""
-          }`
+          }`,
         )
         .then((res: any) => {
           const widgetsWithValue = widgetDetailsToPanel(res, panelItem);

@@ -32,7 +32,7 @@ import { setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 
 const LicenseConsentModal = withSuspense(
-  React.lazy(() => import("./LicenseConsentModal"))
+  React.lazy(() => import("./LicenseConsentModal")),
 );
 
 const License = () => {

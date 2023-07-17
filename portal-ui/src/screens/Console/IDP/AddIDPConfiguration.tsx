@@ -181,7 +181,7 @@ const AddIDPConfiguration = ({
             <Grid container>
               <Grid xs={12} item>
                 {Object.entries(extraFormFields).map(([key, value]) =>
-                  renderFormField(key, value)
+                  renderFormField(key, value),
                 )}
                 <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
                   <Button

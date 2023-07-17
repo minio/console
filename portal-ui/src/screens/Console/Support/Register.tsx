@@ -63,28 +63,28 @@ const Register = ({ classes }: IRegister) => {
   const dispatch = useAppDispatch();
 
   const subnetMFAToken = useSelector(
-    (state: AppState) => state.register.subnetMFAToken
+    (state: AppState) => state.register.subnetMFAToken,
   );
   const subnetAccessToken = useSelector(
-    (state: AppState) => state.register.subnetAccessToken
+    (state: AppState) => state.register.subnetAccessToken,
   );
 
   const subnetRegToken = useSelector(
-    (state: AppState) => state.register.subnetRegToken
+    (state: AppState) => state.register.subnetRegToken,
   );
   const subnetOrganizations = useSelector(
-    (state: AppState) => state.register.subnetOrganizations
+    (state: AppState) => state.register.subnetOrganizations,
   );
 
   const loading = useSelector((state: AppState) => state.register.loading);
   const loadingLicenseInfo = useSelector(
-    (state: AppState) => state.register.loadingLicenseInfo
+    (state: AppState) => state.register.loadingLicenseInfo,
   );
   const clusterRegistered = useSelector(
-    (state: AppState) => state.register.clusterRegistered
+    (state: AppState) => state.register.clusterRegistered,
   );
   const licenseInfo = useSelector(
-    (state: AppState) => state.register.licenseInfo
+    (state: AppState) => state.register.licenseInfo,
   );
   const curTab = useSelector((state: AppState) => state.register.curTab);
 

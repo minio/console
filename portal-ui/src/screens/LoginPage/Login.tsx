@@ -52,20 +52,20 @@ const Login = () => {
   const navigate = useNavigate();
 
   const loginStrategy = useSelector(
-    (state: AppState) => state.login.loginStrategy
+    (state: AppState) => state.login.loginStrategy,
   );
   const loadingFetchConfiguration = useSelector(
-    (state: AppState) => state.login.loadingFetchConfiguration
+    (state: AppState) => state.login.loadingFetchConfiguration,
   );
   const loadingVersion = useSelector(
-    (state: AppState) => state.login.loadingVersion
+    (state: AppState) => state.login.loadingVersion,
   );
   const navigateTo = useSelector((state: AppState) => state.login.navigateTo);
 
   const isK8S = useSelector((state: AppState) => state.login.isK8S);
 
   const backgroundAnimation = useSelector(
-    (state: AppState) => state.login.backgroundAnimation
+    (state: AppState) => state.login.backgroundAnimation,
   );
 
   useEffect(() => {

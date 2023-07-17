@@ -49,7 +49,7 @@ const DeleteServiceAccount = ({
   const onConfirmDelete = () => {
     invokeDeleteApi(
       "DELETE",
-      `/api/v1/service-accounts/${encodeURLString(selectedServiceAccount)}`
+      `/api/v1/service-accounts/${encodeURLString(selectedServiceAccount)}`,
     );
   };
 

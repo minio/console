@@ -74,7 +74,7 @@ const AccessDetails = () => {
       IAM_SCOPES.ADMIN_LIST_USERS,
       IAM_SCOPES.ADMIN_LIST_GROUPS,
     ],
-    true
+    true,
   );
 
   const viewUser = hasPermission(CONSOLE_UI_RESOURCE, [

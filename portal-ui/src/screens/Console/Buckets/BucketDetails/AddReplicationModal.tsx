@@ -92,7 +92,7 @@ const AddReplicationModal = ({
   const [metadataSync, setMetadataSync] = useState<boolean>(true);
   const [tags, setTags] = useState<string>("");
   const [replicationMode, setReplicationMode] = useState<"async" | "sync">(
-    "async"
+    "async",
   );
   const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
   const [bandwidthUnit, setBandwidthUnit] = useState<string>("Gi");
@@ -165,7 +165,7 @@ const AddReplicationModal = ({
               setModalErrorSnackMessage({
                 errorMessage: itemVal.errorString,
                 detailedError: "",
-              })
+              }),
             );
             return;
           }
@@ -178,7 +178,7 @@ const AddReplicationModal = ({
           setModalErrorSnackMessage({
             errorMessage: "No changes applied",
             detailedError: "",
-          })
+          }),
         );
       })
       .catch((err) => {

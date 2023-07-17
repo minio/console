@@ -44,7 +44,7 @@ import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 
 const DeleteKMSModal = withSuspense(
-  React.lazy(() => import("./DeleteKMSModal"))
+  React.lazy(() => import("./DeleteKMSModal")),
 );
 
 const styles = (theme: Theme) =>

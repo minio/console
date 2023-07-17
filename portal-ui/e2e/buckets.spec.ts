@@ -54,7 +54,7 @@ test("invalid bucket name", async ({ page }) => {
   await page.getByRole("button", { name: "View Bucket Naming Rules" }).click();
   await expect(
     page.getByText(
-      "Bucket names can consist only of lowercase letters, numbers, dots (.), and hyphe"
-    )
+      "Bucket names can consist only of lowercase letters, numbers, dots (.), and hyphe",
+    ),
   ).toBeTruthy();
 });

@@ -28,7 +28,7 @@ import * as constants from "../utils/constants";
 const TEST_BUCKET_NAME_SPECIFIC = "specific-bucket";
 
 fixture("For user with permissions that only allow specific Buckets").page(
-  "http://localhost:9090"
+  "http://localhost:9090",
 );
 
 test("Buckets sidebar item exists", async (t) => {
@@ -119,7 +119,7 @@ test
       .useRole(roles.bucketRead)
       .navigateTo("http://localhost:9090/browser")
       .expect(
-        namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-4`).exists
+        namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-4`).exists,
       )
       .ok();
   })
@@ -142,7 +142,7 @@ test
           .withText(`${TEST_BUCKET_NAME_SPECIFIC}-5`)
           .parent(1)
           .find("p")
-          .nth(-1).innerText
+          .nth(-1).innerText,
       )
       .eql("Access: R");
   })
@@ -175,7 +175,7 @@ test
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpNamedBucketAndUploads(
       t,
-      `${TEST_BUCKET_NAME_SPECIFIC}-6`
+      `${TEST_BUCKET_NAME_SPECIFIC}-6`,
     );
   });
 
@@ -187,7 +187,7 @@ test
     await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-7`);
   })("Browse button exists", async (t) => {
     const testBucketBrowseButton = namedTestBucketBrowseButtonFor(
-      `${TEST_BUCKET_NAME_SPECIFIC}-7`
+      `${TEST_BUCKET_NAME_SPECIFIC}-7`,
     );
     await t
       .useRole(roles.bucketSpecific)
@@ -199,7 +199,7 @@ test
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpNamedBucketAndUploads(
       t,
-      `${TEST_BUCKET_NAME_SPECIFIC}-7`
+      `${TEST_BUCKET_NAME_SPECIFIC}-7`,
     );
   });
 
@@ -217,7 +217,7 @@ test
           .withText(`${TEST_BUCKET_NAME_SPECIFIC}-8`)
           .parent(1)
           .find("p")
-          .nth(-1).innerText
+          .nth(-1).innerText,
       )
       .eql("Access: R/W");
   })
@@ -225,7 +225,7 @@ test
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpNamedBucketAndUploads(
       t,
-      `${TEST_BUCKET_NAME_SPECIFIC}-8`
+      `${TEST_BUCKET_NAME_SPECIFIC}-8`,
     );
   });
 
@@ -236,7 +236,7 @@ test
   })("Upload button exists", async (t) => {
     const uploadExists = elements.uploadButton.exists;
     const testBucketBrowseButton = namedTestBucketBrowseButtonFor(
-      `${TEST_BUCKET_NAME_SPECIFIC}-9`
+      `${TEST_BUCKET_NAME_SPECIFIC}-9`,
     );
     await t
       .useRole(roles.bucketSpecific)
@@ -249,7 +249,7 @@ test
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpNamedBucketAndUploads(
       t,
-      `${TEST_BUCKET_NAME_SPECIFIC}-9`
+      `${TEST_BUCKET_NAME_SPECIFIC}-9`,
     );
   });
 
@@ -259,7 +259,7 @@ test
     await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-10`);
   })("Object can be uploaded to a bucket", async (t) => {
     const testBucketBrowseButton = namedTestBucketBrowseButtonFor(
-      `${TEST_BUCKET_NAME_SPECIFIC}-10`
+      `${TEST_BUCKET_NAME_SPECIFIC}-10`,
     );
     await t
       .useRole(roles.bucketSpecific)
@@ -272,7 +272,7 @@ test
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpNamedBucketAndUploads(
       t,
-      `${TEST_BUCKET_NAME_SPECIFIC}-10`
+      `${TEST_BUCKET_NAME_SPECIFIC}-10`,
     );
   });
 
@@ -292,6 +292,6 @@ test
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpNamedBucketAndUploads(
       t,
-      `${TEST_BUCKET_NAME_SPECIFIC}-11`
+      `${TEST_BUCKET_NAME_SPECIFIC}-11`,
     );
   });

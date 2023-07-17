@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
-  })
+  }),
 );
 
 const DetailsListPanel = ({

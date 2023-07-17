@@ -89,7 +89,7 @@ export const objectBrowserSlice = createSlice({
         state: boolean;
         bucket: string;
         dateRewind: any;
-      }>
+      }>,
     ) => {
       state.rewind.rewindEnabled = action.payload.state;
       state.rewind.bucketToRewind = action.payload.bucket;
@@ -105,7 +105,7 @@ export const objectBrowserSlice = createSlice({
       action: PayloadAction<{
         status: boolean;
         objectName?: string;
-      }>
+      }>,
     ) => {
       let objN = "";
       if (action.payload.objectName) {
@@ -125,10 +125,10 @@ export const objectBrowserSlice = createSlice({
       action: PayloadAction<{
         instanceID: string;
         progress: number;
-      }>
+      }>,
     ) => {
       const itemUpdate = state.objectManager.objectsToManage.findIndex(
-        (item) => item.instanceID === action.payload.instanceID
+        (item) => item.instanceID === action.payload.instanceID,
       );
 
       if (itemUpdate === -1) {
@@ -141,7 +141,7 @@ export const objectBrowserSlice = createSlice({
     },
     completeObject: (state, action: PayloadAction<string>) => {
       const objectToComplete = state.objectManager.objectsToManage.findIndex(
-        (item) => item.instanceID === action.payload
+        (item) => item.instanceID === action.payload,
       );
 
       if (objectToComplete === -1) {
@@ -167,10 +167,10 @@ export const objectBrowserSlice = createSlice({
     },
     failObject: (
       state,
-      action: PayloadAction<{ instanceID: string; msg: string }>
+      action: PayloadAction<{ instanceID: string; msg: string }>,
     ) => {
       const objectToFail = state.objectManager.objectsToManage.findIndex(
-        (item) => item.instanceID === action.payload.instanceID
+        (item) => item.instanceID === action.payload.instanceID,
       );
 
       state.objectManager.objectsToManage[objectToFail].failed = true;
@@ -193,7 +193,7 @@ export const objectBrowserSlice = createSlice({
     },
     cancelObjectInList: (state, action: PayloadAction<string>) => {
       const objectToCancel = state.objectManager.objectsToManage.findIndex(
-        (item) => item.instanceID === action.payload
+        (item) => item.instanceID === action.payload,
       );
 
       if (objectToCancel === -1) {
@@ -218,7 +218,7 @@ export const objectBrowserSlice = createSlice({
     },
     deleteFromList: (state, action: PayloadAction<string>) => {
       const notObject = state.objectManager.objectsToManage.filter(
-        (element) => element.instanceID !== action.payload
+        (element) => element.instanceID !== action.payload,
       );
 
       state.objectManager.objectsToManage = notObject;
@@ -227,7 +227,7 @@ export const objectBrowserSlice = createSlice({
     },
     cleanList: (state) => {
       const nonCompletedList = state.objectManager.objectsToManage.filter(
-        (item) => item.percentage !== 100
+        (item) => item.percentage !== 100,
       );
       state.objectManager.objectsToManage = nonCompletedList;
       state.objectManager.managerOpen =
@@ -297,7 +297,7 @@ export const objectBrowserSlice = createSlice({
     },
     setIsVersioned: (
       state,
-      action: PayloadAction<BucketVersioningResponse>
+      action: PayloadAction<BucketVersioningResponse>,
     ) => {
       state.versionInfo = action.payload;
     },
@@ -321,13 +321,13 @@ export const objectBrowserSlice = createSlice({
     },
     setDownloadRenameModal: (
       state,
-      action: PayloadAction<BucketObjectItem | null>
+      action: PayloadAction<BucketObjectItem | null>,
     ) => {
       state.downloadRenameModal = action.payload;
     },
     setSelectedPreview: (
       state,
-      action: PayloadAction<BucketObjectItem | null>
+      action: PayloadAction<BucketObjectItem | null>,
     ) => {
       state.selectedPreview = action.payload;
     },
@@ -339,10 +339,10 @@ export const objectBrowserSlice = createSlice({
     },
     restoreLocalObjectList: (
       state,
-      action: PayloadAction<IRestoreLocalObjectList>
+      action: PayloadAction<IRestoreLocalObjectList>,
     ) => {
       const indexToReplace = state.records.findIndex(
-        (element) => element.name === action.payload.prefix
+        (element) => element.name === action.payload.prefix,
       );
 
       if (indexToReplace >= 0) {
@@ -357,7 +357,7 @@ export const objectBrowserSlice = createSlice({
     },
     setRetentionConfig: (
       state,
-      action: PayloadAction<GetBucketRetentionConfig | null>
+      action: PayloadAction<GetBucketRetentionConfig | null>,
     ) => {
       state.retentionConfig = action.payload;
     },

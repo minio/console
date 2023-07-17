@@ -145,13 +145,13 @@ const ObjectDetailPanel = ({
 
   const distributedSetup = useSelector(selDistSet);
   const versionsMode = useSelector(
-    (state: AppState) => state.objectBrowser.versionsMode
+    (state: AppState) => state.objectBrowser.versionsMode,
   );
   const selectedVersion = useSelector(
-    (state: AppState) => state.objectBrowser.selectedVersion
+    (state: AppState) => state.objectBrowser.selectedVersion,
   );
   const loadingObjectInfo = useSelector(
-    (state: AppState) => state.objectBrowser.loadingObjectInfo
+    (state: AppState) => state.objectBrowser.loadingObjectInfo,
   );
 
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
@@ -188,7 +188,7 @@ const ObjectDetailPanel = ({
       if (selectedVersion !== "") {
         infoElement =
           allInfoElements.find(
-            (el: BucketObject) => el.version_id === selectedVersion
+            (el: BucketObject) => el.version_id === selectedVersion,
           ) || emptyFile;
       }
 
@@ -220,7 +220,7 @@ const ObjectDetailPanel = ({
                 }
                 return acc;
               },
-              0
+              0,
             );
 
             setTotalVersionsSize(tVersionSize);
@@ -374,7 +374,7 @@ const ObjectDetailPanel = ({
       IAM_SCOPES.S3_GET_ACTIONS,
       IAM_SCOPES.S3_PUT_ACTIONS,
     ],
-    true
+    true,
   );
   const canInspect = hasPermission(objectResources, [
     IAM_SCOPES.ADMIN_INSPECT_DATA,
@@ -392,7 +392,7 @@ const ObjectDetailPanel = ({
   ]);
   const canDelete = hasPermission(
     [bucketName, currentItem, [bucketName, actualInfo.name].join("/")],
-    [IAM_SCOPES.S3_DELETE_OBJECT]
+    [IAM_SCOPES.S3_DELETE_OBJECT],
   );
 
   let objectType: AllowedPreviews = previewObjectType(metaData, currentItem);
@@ -409,7 +409,7 @@ const ObjectDetailPanel = ({
         ? "Download this Object"
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
-            "download this object"
+            "download this object",
           ),
     },
     {
@@ -423,7 +423,7 @@ const ObjectDetailPanel = ({
         ? "Share this File"
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
-            "share this object"
+            "share this object",
           ),
     },
     {
@@ -439,7 +439,7 @@ const ObjectDetailPanel = ({
         ? "Preview this File"
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
-            "preview this object"
+            "preview this object",
           ),
     },
     {
@@ -460,7 +460,7 @@ const ObjectDetailPanel = ({
           : "Object Locking must be enabled on this bucket in order to set Legal Hold"
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_PUT_OBJECT_LEGAL_HOLD, IAM_SCOPES.S3_PUT_ACTIONS],
-            "change legal hold settings for this object"
+            "change legal hold settings for this object",
           ),
     },
     {
@@ -484,7 +484,7 @@ const ObjectDetailPanel = ({
               IAM_SCOPES.S3_GET_ACTIONS,
               IAM_SCOPES.S3_PUT_ACTIONS,
             ],
-            "change Retention Rules for this object"
+            "change Retention Rules for this object",
           ),
     },
     {
@@ -504,7 +504,7 @@ const ObjectDetailPanel = ({
               IAM_SCOPES.S3_GET_ACTIONS,
               IAM_SCOPES.S3_PUT_ACTIONS,
             ],
-            "set Tags on this object"
+            "set Tags on this object",
           ),
     },
     {
@@ -522,7 +522,7 @@ const ObjectDetailPanel = ({
         ? "Inspect this file"
         : permissionTooltipHelper(
             [IAM_SCOPES.ADMIN_INSPECT_DATA],
-            "inspect this file"
+            "inspect this file",
           ),
     },
     {
@@ -531,7 +531,7 @@ const ObjectDetailPanel = ({
           setVersionsModeEnabled({
             status: !versionsMode,
             objectName: objectName,
-          })
+          }),
         );
       },
       label: versionsMode ? "Hide Object Versions" : "Display Object Versions",
@@ -552,7 +552,7 @@ const ObjectDetailPanel = ({
               IAM_SCOPES.S3_GET_ACTIONS,
               IAM_SCOPES.S3_PUT_ACTIONS,
             ],
-            "display all versions of this object"
+            "display all versions of this object",
           ),
     },
   ];
@@ -670,7 +670,7 @@ const ObjectDetailPanel = ({
                 ? ""
                 : permissionTooltipHelper(
                     [IAM_SCOPES.S3_DELETE_OBJECT],
-                    "delete this object"
+                    "delete this object",
                   )
             }
           >

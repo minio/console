@@ -1527,7 +1527,7 @@ export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
   securityWorker?: (
-    securityData: SecurityDataType | null
+    securityData: SecurityDataType | null,
   ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
@@ -1573,7 +1573,7 @@ export class HttpClient<SecurityDataType = unknown> {
   protected encodeQueryParam(key: string, value: any) {
     const encodedKey = encodeURIComponent(key);
     return `${encodedKey}=${encodeURIComponent(
-      typeof value === "number" ? value : `${value}`
+      typeof value === "number" ? value : `${value}`,
     )}`;
   }
 
@@ -1589,13 +1589,13 @@ export class HttpClient<SecurityDataType = unknown> {
   protected toQueryString(rawQuery?: QueryParamsType): string {
     const query = rawQuery || {};
     const keys = Object.keys(query).filter(
-      (key) => "undefined" !== typeof query[key]
+      (key) => "undefined" !== typeof query[key],
     );
     return keys
       .map((key) =>
         Array.isArray(query[key])
           ? this.addArrayQueryParam(query, key)
-          : this.addQueryParam(query, key)
+          : this.addQueryParam(query, key),
       )
       .join("&");
   }
@@ -1623,7 +1623,7 @@ export class HttpClient<SecurityDataType = unknown> {
             ? property
             : typeof property === "object" && property !== null
             ? JSON.stringify(property)
-            : `${property}`
+            : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -1632,7 +1632,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected mergeRequestParams(
     params1: RequestParams,
-    params2?: RequestParams
+    params2?: RequestParams,
   ): RequestParams {
     return {
       ...this.baseApiParams,
@@ -1647,7 +1647,7 @@ export class HttpClient<SecurityDataType = unknown> {
   }
 
   protected createAbortSignal = (
-    cancelToken: CancelToken
+    cancelToken: CancelToken,
   ): AbortSignal | undefined => {
     if (this.abortControllers.has(cancelToken)) {
       const abortController = this.abortControllers.get(cancelToken);
@@ -1711,7 +1711,7 @@ export class HttpClient<SecurityDataType = unknown> {
           typeof body === "undefined" || body === null
             ? null
             : payloadFormatter(body),
-      }
+      },
     ).then(async (response) => {
       const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
@@ -1749,7 +1749,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * @baseUrl /api/v1
  */
 export class Api<
-  SecurityDataType extends unknown
+  SecurityDataType extends unknown,
 > extends HttpClient<SecurityDataType> {
   login = {
     /**
@@ -1795,7 +1795,7 @@ export class Api<
      */
     loginOauth2Auth: (
       body: LoginOauth2AuthRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/login/oauth2/auth`,
@@ -1873,7 +1873,7 @@ export class Api<
      */
     accountChangePassword: (
       body: AccountChangePasswordRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/account/change-password`,
@@ -1895,7 +1895,7 @@ export class Api<
      */
     changeUserPassword: (
       body: ChangeUserPasswordRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/account/change-user-password`,
@@ -1991,7 +1991,7 @@ export class Api<
      */
     getBucketRetentionConfig: (
       bucketName: string,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<GetBucketRetentionConfig, Error>({
         path: `/buckets/${bucketName}/retention`,
@@ -2013,7 +2013,7 @@ export class Api<
     setBucketRetentionConfig: (
       bucketName: string,
       body: PutBucketRetentionRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/retention`,
@@ -2043,7 +2043,7 @@ export class Api<
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ListObjectsResponse, Error>({
         path: `/buckets/${bucketName}/objects`,
@@ -2073,7 +2073,7 @@ export class Api<
         non_current_versions?: boolean;
         bypass?: boolean;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects`,
@@ -2099,7 +2099,7 @@ export class Api<
         all_versions?: boolean;
         bypass?: boolean;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/delete-objects`,
@@ -2126,7 +2126,7 @@ export class Api<
         prefix?: string;
       },
       data?: any,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/upload`,
@@ -2157,7 +2157,7 @@ export class Api<
         /** @default "" */
         override_file_name?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<File, Error>({
         path: `/buckets/${bucketName}/objects/download`,
@@ -2183,7 +2183,7 @@ export class Api<
         version_id: string;
         expires?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<IamEntity, Error>({
         path: `/buckets/${bucketName}/objects/share`,
@@ -2210,7 +2210,7 @@ export class Api<
         version_id: string;
       },
       body: PutObjectLegalHoldRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/legalhold`,
@@ -2238,7 +2238,7 @@ export class Api<
         version_id: string;
       },
       body: PutObjectRetentionRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/retention`,
@@ -2265,7 +2265,7 @@ export class Api<
         prefix: string;
         version_id: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/retention`,
@@ -2291,7 +2291,7 @@ export class Api<
         version_id: string;
       },
       body: PutObjectTagsRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/tags`,
@@ -2318,7 +2318,7 @@ export class Api<
         prefix: string;
         version_id: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/objects/restore`,
@@ -2342,7 +2342,7 @@ export class Api<
       query: {
         prefix: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<Metadata, Error>({
         path: `/buckets/${bucketName}/objects/metadata`,
@@ -2365,7 +2365,7 @@ export class Api<
     putBucketTags: (
       bucketName: string,
       body: PutBucketTagsRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/tags`,
@@ -2388,7 +2388,7 @@ export class Api<
     bucketSetPolicy: (
       name: string,
       body: SetBucketPolicyRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<Bucket, Error>({
         path: `/buckets/${name}/set-policy`,
@@ -2430,7 +2430,7 @@ export class Api<
     setBucketQuota: (
       name: string,
       body: SetBucketQuota,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<Bucket, Error>({
         path: `/buckets/${name}/quota`,
@@ -2459,7 +2459,7 @@ export class Api<
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ListBucketEventsResponse, Error>({
         path: `/buckets/${bucketName}/events`,
@@ -2482,7 +2482,7 @@ export class Api<
     createBucketEvent: (
       bucketName: string,
       body: BucketEventRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/events`,
@@ -2506,7 +2506,7 @@ export class Api<
       bucketName: string,
       arn: string,
       body: NotificationDeleteRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/events/${arn}`,
@@ -2547,7 +2547,7 @@ export class Api<
     getBucketReplicationRule: (
       bucketName: string,
       ruleId: string,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<BucketReplicationRule, Error>({
         path: `/buckets/${bucketName}/replication/${ruleId}`,
@@ -2570,7 +2570,7 @@ export class Api<
       bucketName: string,
       ruleId: string,
       body: MultiBucketReplicationEdit,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/replication/${ruleId}`,
@@ -2593,7 +2593,7 @@ export class Api<
     deleteBucketReplicationRule: (
       bucketName: string,
       ruleId: string,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/replication/${ruleId}`,
@@ -2613,7 +2613,7 @@ export class Api<
      */
     deleteAllReplicationRules: (
       bucketName: string,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/delete-all-replication-rules`,
@@ -2634,7 +2634,7 @@ export class Api<
     deleteSelectedReplicationRules: (
       bucketName: string,
       rules: BucketReplicationRuleList,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/delete-selected-replication-rules`,
@@ -2675,7 +2675,7 @@ export class Api<
     setBucketVersioning: (
       bucketName: string,
       body: SetBucketVersioning,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/versioning`,
@@ -2697,7 +2697,7 @@ export class Api<
      */
     getBucketObjectLockingStatus: (
       bucketName: string,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<BucketObLockingResponse, Error>({
         path: `/buckets/${bucketName}/object-locking`,
@@ -2719,7 +2719,7 @@ export class Api<
     enableBucketEncryption: (
       bucketName: string,
       body: BucketEncryptionRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/encryption/enable`,
@@ -2795,7 +2795,7 @@ export class Api<
     addBucketLifecycle: (
       bucketName: string,
       body: AddBucketLifecycle,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/lifecycle`,
@@ -2817,7 +2817,7 @@ export class Api<
      */
     addMultiBucketLifecycle: (
       body: AddMultiBucketLifecycle,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<MultiLifecycleResult, Error>({
         path: `/buckets/multi-lifecycle`,
@@ -2842,7 +2842,7 @@ export class Api<
       bucketName: string,
       lifecycleId: string,
       body: UpdateBucketLifecycle,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/lifecycle/${lifecycleId}`,
@@ -2865,7 +2865,7 @@ export class Api<
     deleteBucketLifecycleRule: (
       bucketName: string,
       lifecycleId: string,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/buckets/${bucketName}/lifecycle/${lifecycleId}`,
@@ -2889,7 +2889,7 @@ export class Api<
       query?: {
         prefix?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<RewindResponse, Error>({
         path: `/buckets/${bucketName}/rewind/${date}`,
@@ -2912,7 +2912,7 @@ export class Api<
      */
     listExternalBuckets: (
       body: ListExternalBucketsParams,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ListBucketsResponse, Error>({
         path: `/list-external-buckets`,
@@ -2936,7 +2936,7 @@ export class Api<
      */
     setMultiBucketReplication: (
       body: MultiBucketReplication,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<MultiBucketResponseState, Error>({
         path: `/buckets-replication`,
@@ -2965,7 +2965,7 @@ export class Api<
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ServiceAccounts, Error>({
         path: `/service-accounts`,
@@ -2987,7 +2987,7 @@ export class Api<
      */
     createServiceAccount: (
       body: ServiceAccountRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ServiceAccountCreds, Error>({
         path: `/service-accounts`,
@@ -3026,7 +3026,7 @@ export class Api<
      */
     deleteMultipleServiceAccounts: (
       selectedSA: string[],
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/service-accounts/delete-multi`,
@@ -3066,7 +3066,7 @@ export class Api<
     setServiceAccountPolicy: (
       accessKey: string,
       policy: AddServiceAccountPolicyRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/service-accounts/${accessKey}/policy`,
@@ -3089,7 +3089,7 @@ export class Api<
      */
     createServiceAccountCreds: (
       body: ServiceAccountRequestCreds,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ServiceAccountCreds, Error>({
         path: `/service-account-credentials`,
@@ -3117,7 +3117,7 @@ export class Api<
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ListUsersResponse, Error>({
         path: `/users`,
@@ -3159,7 +3159,7 @@ export class Api<
      */
     checkUserServiceAccounts: (
       selectedUsers: string[],
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<UserServiceAccountSummary, Error>({
         path: `/users/service-accounts`,
@@ -3201,7 +3201,7 @@ export class Api<
     updateUserInfo: (
       name: string,
       body: UpdateUser,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<User, Error>({
         path: `/user/${name}`,
@@ -3242,7 +3242,7 @@ export class Api<
     updateUserGroups: (
       name: string,
       body: UpdateUserGroups,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<User, Error>({
         path: `/user/${name}/groups`,
@@ -3320,7 +3320,7 @@ export class Api<
     createAUserServiceAccount: (
       name: string,
       body: ServiceAccountRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ServiceAccountCreds, Error>({
         path: `/user/${name}/service-accounts`,
@@ -3343,7 +3343,7 @@ export class Api<
     createServiceAccountCredentials: (
       name: string,
       body: ServiceAccountRequestCreds,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ServiceAccountCreds, Error>({
         path: `/user/${name}/service-account-credentials`,
@@ -3391,7 +3391,7 @@ export class Api<
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ListGroupsResponse, Error>({
         path: `/groups`,
@@ -3469,7 +3469,7 @@ export class Api<
     updateGroup: (
       name: string,
       body: UpdateGroupRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<Group, Error>({
         path: `/group/${name}`,
@@ -3498,7 +3498,7 @@ export class Api<
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ListPoliciesResponse, Error>({
         path: `/policies`,
@@ -3583,7 +3583,7 @@ export class Api<
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ListPoliciesResponse, Error>({
         path: `/bucket-policy/${bucket}`,
@@ -3607,7 +3607,7 @@ export class Api<
     setAccessRuleWithBucket: (
       bucket: string,
       prefixaccess: PrefixAccessPair,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<boolean, Error>({
         path: `/bucket/${bucket}/access-rules`,
@@ -3636,7 +3636,7 @@ export class Api<
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ListAccessRulesResponse, Error>({
         path: `/bucket/${bucket}/access-rules`,
@@ -3659,7 +3659,7 @@ export class Api<
     deleteAccessRuleWithBucket: (
       bucket: string,
       prefix: PrefixWrapper,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<boolean, Error>({
         path: `/bucket/${bucket}/access-rules`,
@@ -3689,7 +3689,7 @@ export class Api<
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ServiceAccounts, Error>({
         path: `/bucket-users/${bucket}`,
@@ -3753,7 +3753,7 @@ export class Api<
         /** @format int32 */
         limit?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ListConfigResponse, Error>({
         path: `/configs`,
@@ -3794,7 +3794,7 @@ export class Api<
     setConfig: (
       name: string,
       body: SetConfigRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<SetConfigResponse, Error>({
         path: `/configs/${name}`,
@@ -3856,7 +3856,7 @@ export class Api<
         /** @format binary */
         file: File;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/configs/import`,
@@ -3899,7 +3899,7 @@ export class Api<
      */
     setPolicyMultiple: (
       body: SetPolicyMultipleNameRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/set-policy-multi`,
@@ -4016,7 +4016,7 @@ export class Api<
       query: {
         token: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ApiKey, Error>({
         path: `/subnet/apikey`,
@@ -4101,7 +4101,7 @@ export class Api<
         /** @default false */
         defaultOnly?: boolean;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<AdminInfoResponse, Error>({
         path: `/admin/info`,
@@ -4129,7 +4129,7 @@ export class Api<
         /** @format int32 */
         step?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<WidgetDetails, Error>({
         path: `/admin/info/widgets/${widgetId}`,
@@ -4187,7 +4187,7 @@ export class Api<
      */
     addNotificationEndpoint: (
       body: NotificationEndpoint,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<SetNotificationEndpointResponse, Error>({
         path: `/admin/notification_endpoints`,
@@ -4228,7 +4228,7 @@ export class Api<
      */
     siteReplicationInfoAdd: (
       body: SiteReplicationAddRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<SiteReplicationAddResponse, Error>({
         path: `/admin/site-replication`,
@@ -4316,7 +4316,7 @@ export class Api<
         /** Entity Value to lookup */
         entityValue?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<SiteReplicationStatusResponse, Error>({
         path: `/admin/site-replication/status`,
@@ -4376,7 +4376,7 @@ export class Api<
     getTier: (
       type: "s3" | "gcs" | "azure" | "minio",
       name: string,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<Tier, Error>({
         path: `/admin/tiers/${type}/${name}`,
@@ -4399,7 +4399,7 @@ export class Api<
       type: "s3" | "gcs" | "azure" | "minio",
       name: string,
       body: TierCredentialsRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/admin/tiers/${type}/${name}/credentials`,
@@ -4425,7 +4425,7 @@ export class Api<
         volume: string;
         encrypt?: boolean;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<File, Error>({
         path: `/admin/inspect`,
@@ -4522,7 +4522,7 @@ export class Api<
     deleteRemoteBucket: (
       sourceBucketName: string,
       arn: string,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/remote-buckets/${sourceBucketName}/${arn}`,
@@ -4559,7 +4559,7 @@ export class Api<
         order?: "timeDesc" | "timeAsc";
         timeStart?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<LogSearchResponse, Error>({
         path: `/logs/search`,
@@ -4676,7 +4676,7 @@ export class Api<
         /** pattern to retrieve keys */
         pattern?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<KmsListKeysResponse, Error>({
         path: `/kms/keys`,
@@ -4734,7 +4734,7 @@ export class Api<
     kmsImportKey: (
       name: string,
       body: KmsImportKeyRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/kms/keys/${name}/import`,
@@ -4778,7 +4778,7 @@ export class Api<
         /** pattern to retrieve policies */
         pattern?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<KmsListPoliciesResponse, Error>({
         path: `/kms/policies`,
@@ -4836,7 +4836,7 @@ export class Api<
     kmsAssignPolicy: (
       name: string,
       body: KmsAssignPolicyRequest,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<void, Error>({
         path: `/kms/policies/${name}/assign`,
@@ -4932,7 +4932,7 @@ export class Api<
         /** pattern to retrieve identities */
         pattern?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<KmsListIdentitiesResponse, Error>({
         path: `/kms/identities`,
@@ -4956,7 +4956,7 @@ export class Api<
     createConfiguration: (
       type: string,
       body: IdpServerConfiguration,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<SetIDPResponse, Error>({
         path: `/idp/${type}`,
@@ -4997,7 +4997,7 @@ export class Api<
     getConfiguration: (
       name: string,
       type: string,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<IdpServerConfiguration, Error>({
         path: `/idp/${type}/${name}`,
@@ -5019,7 +5019,7 @@ export class Api<
     deleteConfiguration: (
       name: string,
       type: string,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<SetIDPResponse, Error>({
         path: `/idp/${type}/${name}`,
@@ -5042,7 +5042,7 @@ export class Api<
       name: string,
       type: string,
       body: IdpServerConfiguration,
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<SetIDPResponse, Error>({
         path: `/idp/${type}/${name}`,
@@ -5095,7 +5095,7 @@ export class Api<
         /** filter releases */
         filter?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<ReleaseListResponse, Error>({
         path: `/releases`,

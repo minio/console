@@ -46,7 +46,7 @@ const LDAPEntitiesQuery = () => {
   const [results, setResults] = useState<LdapEntities | null>(null);
 
   const selectedPolicies = useSelector(
-    (state: AppState) => state.createUser.selectedPolicies
+    (state: AppState) => state.createUser.selectedPolicies,
   );
 
   const searchEntities = () => {
@@ -258,7 +258,7 @@ const LDAPEntitiesQuery = () => {
                           }}
                         />
                         {DateTime.fromISO(results.timestamp).toFormat(
-                          "D HH:mm:ss"
+                          "D HH:mm:ss",
                         )}
                       </Fragment>
                     ) : (

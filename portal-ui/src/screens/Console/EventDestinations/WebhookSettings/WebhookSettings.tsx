@@ -154,12 +154,12 @@ const WebhookSettings = ({
       },
       disableButtonFunction: (item: string) => {
         const wHook = WebhookSettingslist.find(
-          (element) => element.name === item
+          (element) => element.name === item,
         );
 
         if (wHook) {
           const hasOverride = wHook.key_values?.filter(
-            (itm) => !!itm.env_override
+            (itm) => !!itm.env_override,
           );
 
           // Has override values, we cannot delete.

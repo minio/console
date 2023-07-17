@@ -39,7 +39,7 @@ export const logsSlice = createSlice({
         "HH:mm:ss z MM/dd/yyyy",
         {
           zone: "UTC",
-        }
+        },
       ).toJSDate();
 
       if (

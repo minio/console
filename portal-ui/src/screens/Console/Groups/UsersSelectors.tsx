@@ -95,7 +95,7 @@ const UsersSelectors = ({
   };
 
   const filteredRecords = records.filter((elementItem) =>
-    elementItem.accessKey.includes(filter)
+    elementItem.accessKey.includes(filter),
   );
 
   return (

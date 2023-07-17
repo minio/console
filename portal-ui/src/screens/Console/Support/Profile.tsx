@@ -104,7 +104,7 @@ const Profile = ({ classes }: IProfileProps) => {
 
     const wsProt = wsProtocol(url.protocol);
     c = new W3CWebSocket(
-      `${wsProt}://${url.hostname}:${port}${baseUrl}ws/profile?types=${typeString}`
+      `${wsProt}://${url.hostname}:${port}${baseUrl}ws/profile?types=${typeString}`,
     );
 
     if (c !== null) {

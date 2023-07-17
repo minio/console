@@ -36,7 +36,7 @@ export const componentToUse = (
   timeEnd: any,
   loading: boolean,
   apiPrefix: string,
-  zoomActivated: boolean = false
+  zoomActivated: boolean = false,
 ) => {
   switch (value.type) {
     case widgetType.singleValue:

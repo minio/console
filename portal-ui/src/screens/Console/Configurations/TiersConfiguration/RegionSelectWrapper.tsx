@@ -85,7 +85,7 @@ const styles = (theme: Theme) =>
 const inputStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...inputFieldStyles,
-  })
+  }),
 );
 
 const RegionSelectWrapper = ({
@@ -123,7 +123,7 @@ const RegionSelectWrapper = ({
         container
         className={clsx(
           className !== "" ? className : "",
-          error !== "" ? classes.errorInField : classes.inputBoxContainer
+          error !== "" ? classes.errorInField : classes.inputBoxContainer,
         )}
       >
         {label !== "" && (

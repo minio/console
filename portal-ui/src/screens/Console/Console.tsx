@@ -61,28 +61,28 @@ const Watch = React.lazy(() => import("./Watch/Watch"));
 const HealthInfo = React.lazy(() => import("./HealthInfo/HealthInfo"));
 
 const EventDestinations = React.lazy(
-  () => import("./EventDestinations/EventDestinations")
+  () => import("./EventDestinations/EventDestinations"),
 );
 const AddEventDestination = React.lazy(
-  () => import("./EventDestinations/AddEventDestination")
+  () => import("./EventDestinations/AddEventDestination"),
 );
 const EventTypeSelector = React.lazy(
-  () => import("./EventDestinations/EventTypeSelector")
+  () => import("./EventDestinations/EventTypeSelector"),
 );
 
 const ListTiersConfiguration = React.lazy(
-  () => import("./Configurations/TiersConfiguration/ListTiersConfiguration")
+  () => import("./Configurations/TiersConfiguration/ListTiersConfiguration"),
 );
 const TierTypeSelector = React.lazy(
-  () => import("./Configurations/TiersConfiguration/TierTypeSelector")
+  () => import("./Configurations/TiersConfiguration/TierTypeSelector"),
 );
 const AddTierConfiguration = React.lazy(
-  () => import("./Configurations/TiersConfiguration/AddTierConfiguration")
+  () => import("./Configurations/TiersConfiguration/AddTierConfiguration"),
 );
 
 const ErrorLogs = React.lazy(() => import("./Logs/ErrorLogs/ErrorLogs"));
 const LogsSearchMain = React.lazy(
-  () => import("./Logs/LogSearch/LogsSearchMain")
+  () => import("./Logs/LogSearch/LogsSearchMain"),
 );
 const GroupsDetails = React.lazy(() => import("./Groups/GroupsDetails"));
 
@@ -92,7 +92,7 @@ const IconsScreen = React.lazy(() => import("./Common/IconsScreen"));
 const Speedtest = React.lazy(() => import("./Speedtest/Speedtest"));
 
 const ObjectManager = React.lazy(
-  () => import("./Common/ObjectManager/ObjectManager")
+  () => import("./Common/ObjectManager/ObjectManager"),
 );
 
 const ObjectBrowser = React.lazy(() => import("./ObjectBrowser/ObjectBrowser"));
@@ -106,39 +106,39 @@ const Dashboard = React.lazy(() => import("./Dashboard/Dashboard"));
 const Account = React.lazy(() => import("./Account/Account"));
 
 const AccountCreate = React.lazy(
-  () => import("./Account/AddServiceAccountScreen")
+  () => import("./Account/AddServiceAccountScreen"),
 );
 
 const Users = React.lazy(() => import("./Users/Users"));
 const Groups = React.lazy(() => import("./Groups/Groups"));
 const IDPOpenIDConfigurations = React.lazy(
-  () => import("./IDP/IDPOpenIDConfigurations")
+  () => import("./IDP/IDPOpenIDConfigurations"),
 );
 const AddIDPOpenIDConfiguration = React.lazy(
-  () => import("./IDP/AddIDPOpenIDConfiguration")
+  () => import("./IDP/AddIDPOpenIDConfiguration"),
 );
 const IDPLDAPConfigurationDetails = React.lazy(
-  () => import("./IDP/LDAP/IDPLDAPConfigurationDetails")
+  () => import("./IDP/LDAP/IDPLDAPConfigurationDetails"),
 );
 const IDPOpenIDConfigurationDetails = React.lazy(
-  () => import("./IDP/IDPOpenIDConfigurationDetails")
+  () => import("./IDP/IDPOpenIDConfigurationDetails"),
 );
 
 const License = React.lazy(() => import("./License/License"));
 const ConfigurationOptions = React.lazy(
-  () => import("./Configurations/ConfigurationPanels/ConfigurationOptions")
+  () => import("./Configurations/ConfigurationPanels/ConfigurationOptions"),
 );
 
 const AddGroupScreen = React.lazy(() => import("./Groups/AddGroupScreen"));
 const SiteReplication = React.lazy(
-  () => import("./Configurations/SiteReplication/SiteReplication")
+  () => import("./Configurations/SiteReplication/SiteReplication"),
 );
 const SiteReplicationStatus = React.lazy(
-  () => import("./Configurations/SiteReplication/SiteReplicationStatus")
+  () => import("./Configurations/SiteReplication/SiteReplicationStatus"),
 );
 
 const AddReplicationSites = React.lazy(
-  () => import("./Configurations/SiteReplication/AddReplicationSites")
+  () => import("./Configurations/SiteReplication/AddReplicationSites"),
 );
 
 const KMSRoutes = React.lazy(() => import("./KMS/KMSRoutes"));
@@ -190,16 +190,16 @@ const Console = ({ classes }: IConsoleProps) => {
   const features = useSelector(selFeatures);
   const distributedSetup = useSelector(selDistSet);
   const snackBarMessage = useSelector(
-    (state: AppState) => state.system.snackBar
+    (state: AppState) => state.system.snackBar,
   );
   const needsRestart = useSelector(
-    (state: AppState) => state.system.serverNeedsRestart
+    (state: AppState) => state.system.serverNeedsRestart,
   );
   const isServerLoading = useSelector(
-    (state: AppState) => state.system.serverIsLoading
+    (state: AppState) => state.system.serverIsLoading,
   );
   const loadingProgress = useSelector(
-    (state: AppState) => state.system.loadingProgress
+    (state: AppState) => state.system.loadingProgress,
   );
 
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
@@ -256,7 +256,7 @@ const Console = ({ classes }: IConsoleProps) => {
           resource.length > 0 &&
           hasPermission(
             resource[1],
-            IAM_PAGES_PERMISSIONS[IAM_PAGES.OBJECT_BROWSER_VIEW]
+            IAM_PAGES_PERMISSIONS[IAM_PAGES.OBJECT_BROWSER_VIEW],
           )
         );
       },
@@ -288,7 +288,7 @@ const Console = ({ classes }: IConsoleProps) => {
           resource.length > 0 &&
           hasPermission(
             resource[1],
-            IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_ADMIN_VIEW]
+            IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_ADMIN_VIEW],
           )
         );
       },
@@ -450,9 +450,9 @@ const Console = ({ classes }: IConsoleProps) => {
             ? route.customPermissionFnc()
             : hasPermission(
                 CONSOLE_UI_RESOURCE,
-                IAM_PAGES_PERMISSIONS[route.path]
+                IAM_PAGES_PERMISSIONS[route.path],
               ))) &&
-        !route.fsHidden
+        !route.fsHidden,
   );
 
   const closeSnackBar = () => {

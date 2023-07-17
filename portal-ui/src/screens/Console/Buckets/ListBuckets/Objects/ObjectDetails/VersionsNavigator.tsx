@@ -139,13 +139,13 @@ const VersionsNavigator = ({
   const dispatch = useAppDispatch();
 
   const searchVersions = useSelector(
-    (state: AppState) => state.objectBrowser.searchVersions
+    (state: AppState) => state.objectBrowser.searchVersions,
   );
   const loadingVersions = useSelector(
-    (state: AppState) => state.objectBrowser.loadingVersions
+    (state: AppState) => state.objectBrowser.loadingVersions,
   );
   const selectedVersion = useSelector(
-    (state: AppState) => state.objectBrowser.selectedVersion
+    (state: AppState) => state.objectBrowser.selectedVersion,
   );
 
   const distributedSetup = useSelector(selDistSet);
@@ -155,7 +155,7 @@ const VersionsNavigator = ({
   const [versions, setVersions] = useState<BucketObject[]>([]);
   const [restoreVersionOpen, setRestoreVersionOpen] = useState<boolean>(false);
   const [restoreVersion, setRestoreVersion] = useState<BucketObject | null>(
-    null
+    null,
   );
   const [sortValue, setSortValue] = useState<string>("date");
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
@@ -191,13 +191,13 @@ const VersionsNavigator = ({
 
           // Filter the results prefixes as API can return more files than expected.
           const filteredPrefixes = result.filter(
-            (item: BucketObject) => item.name === decodedInternalPaths
+            (item: BucketObject) => item.name === decodedInternalPaths,
           );
 
           if (distributedSetup) {
             setActualInfo(
               filteredPrefixes.find((el: BucketObject) => el.is_latest) ||
-                emptyFile
+                emptyFile,
             );
             setVersions(filteredPrefixes);
           } else {
@@ -322,7 +322,7 @@ const VersionsNavigator = ({
   const onCheckVersion = (selectedVersion: string) => {
     if (selectedItems.includes(selectedVersion)) {
       const filteredItems = selectedItems.filter(
-        (element) => element !== selectedVersion
+        (element) => element !== selectedVersion,
       );
 
       setSelectedItems(filteredItems);
@@ -360,7 +360,7 @@ const VersionsNavigator = ({
         checkable={selectEnabled}
         onCheck={onCheckVersion}
         isChecked={selectedItems.includes(
-          filteredRecords[index].version_id || ""
+          filteredRecords[index].version_id || "",
         )}
       />
     );

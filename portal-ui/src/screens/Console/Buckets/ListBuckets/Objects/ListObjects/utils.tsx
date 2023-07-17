@@ -103,7 +103,7 @@ export const extensionToIcon: IExtToIcon[] = [
 
 export const displayFileIconName = (
   element: string,
-  returnOnlyIcon: boolean = false
+  returnOnlyIcon: boolean = false,
 ) => {
   let elementString = element;
   let icon = <FileNonType />;

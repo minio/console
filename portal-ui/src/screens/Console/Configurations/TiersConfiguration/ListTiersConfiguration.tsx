@@ -74,7 +74,7 @@ import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { Tier } from "api/consoleApi";
 const UpdateTierCredentialsModal = withSuspense(
-  React.lazy(() => import("./UpdateTierCredentialsModal"))
+  React.lazy(() => import("./UpdateTierCredentialsModal")),
 );
 
 interface IListTiersConfig {

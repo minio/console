@@ -31,5 +31,5 @@ export const getUsageAsync = createAsyncThunk(
         dispatch(setErrorSnackMessage(errorToHandler(err.error)));
         return rejectWithValue(err);
       });
-  }
+  },
 );

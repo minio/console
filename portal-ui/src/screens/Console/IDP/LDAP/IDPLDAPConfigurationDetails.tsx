@@ -65,7 +65,7 @@ const IDPLDAPConfigurationDetails = () => {
   const [hasConfiguration, setHasConfiguration] = useState<boolean>(false);
   const [fields, setFields] = useState<any>({});
   const [record, setRecord] = useState<ConfigurationKV[] | undefined>(
-    undefined
+    undefined,
   );
   const [editMode, setEditMode] = useState<boolean>(false);
   const [resetOpen, setResetOpen] = useState<boolean>(false);
@@ -340,7 +340,7 @@ const IDPLDAPConfigurationDetails = () => {
                             }
                           >
                             {Object.entries(formFields).map(([key, value]) =>
-                              renderFormField(key, value)
+                              renderFormField(key, value),
                             )}
                             <Box
                               sx={{
@@ -412,7 +412,7 @@ const IDPLDAPConfigurationDetails = () => {
                                       label={value.label}
                                       value={fields[key] ? fields[key] : ""}
                                     />
-                                  )
+                                  ),
                                 )}
                               </Fragment>
                             )}

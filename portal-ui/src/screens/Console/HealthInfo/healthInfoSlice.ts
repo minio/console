@@ -30,7 +30,7 @@ export const healthInfoSlice = createSlice({
   reducers: {
     healthInfoMessageReceived: (
       state,
-      action: PayloadAction<HealthInfoMessage>
+      action: PayloadAction<HealthInfoMessage>,
     ) => {
       state.message = action.payload;
     },

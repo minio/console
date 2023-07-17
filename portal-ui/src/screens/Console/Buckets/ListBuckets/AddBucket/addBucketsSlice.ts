@@ -68,7 +68,7 @@ export const addBucketsSlice = createSlice({
         state.invalidFields = [...state.invalidFields, "name"];
       } else {
         state.invalidFields = state.invalidFields.filter(
-          (field) => field !== "name"
+          (field) => field !== "name",
         );
       }
     },
@@ -92,7 +92,7 @@ export const addBucketsSlice = createSlice({
         state.quotaUnit = "Ti";
 
         state.invalidFields = state.invalidFields.filter(
-          (field) => field !== "quotaSize"
+          (field) => field !== "quotaSize",
         );
       }
     },
@@ -108,7 +108,7 @@ export const addBucketsSlice = createSlice({
           state.invalidFields = [...state.invalidFields, "quotaSize"];
         } else {
           state.invalidFields = state.invalidFields.filter(
-            (field) => field !== "quotaSize"
+            (field) => field !== "quotaSize",
           );
         }
       }
@@ -140,7 +140,7 @@ export const addBucketsSlice = createSlice({
         state.invalidFields = [...state.invalidFields, "retentionValidity"];
       } else {
         state.invalidFields = state.invalidFields.filter(
-          (field) => field !== "retentionValidity"
+          (field) => field !== "retentionValidity",
         );
       }
     },
@@ -159,7 +159,7 @@ export const addBucketsSlice = createSlice({
         state.invalidFields = [...state.invalidFields, "retentionValidity"];
       } else {
         state.invalidFields = state.invalidFields.filter(
-          (field) => field !== "retentionValidity"
+          (field) => field !== "retentionValidity",
         );
       }
     },

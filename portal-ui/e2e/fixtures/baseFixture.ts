@@ -29,9 +29,9 @@ export const test = baseTest.extend({
     await context.addInitScript(() =>
       window.addEventListener("beforeunload", () =>
         (window as any).collectIstanbulCoverage(
-          JSON.stringify((window as any).__coverage__)
-        )
-      )
+          JSON.stringify((window as any).__coverage__),
+        ),
+      ),
     );
     await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
     await context.exposeFunction(
@@ -41,18 +41,18 @@ export const test = baseTest.extend({
           fs.writeFileSync(
             path.join(
               istanbulCLIOutput,
-              `playwright_coverage_${generateUUID()}.json`
+              `playwright_coverage_${generateUUID()}.json`,
             ),
-            coverageJSON
+            coverageJSON,
           );
-      }
+      },
     );
     await use(context);
     for (const page of context.pages()) {
       await page.evaluate(() =>
         (window as any).collectIstanbulCoverage(
-          JSON.stringify((window as any).__coverage__)
-        )
+          JSON.stringify((window as any).__coverage__),
+        ),
       );
     }
   },

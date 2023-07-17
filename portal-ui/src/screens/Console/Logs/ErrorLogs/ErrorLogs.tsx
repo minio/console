@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
     ...inlineCheckboxes,
     ...containerForHeader,
-  })
+  }),
 );
 
 export const SelectStyled = withStyles((theme: Theme) =>
@@ -89,7 +89,7 @@ export const SelectStyled = withStyles((theme: Theme) =>
         backgroundColor: "transparent",
       },
     },
-  })
+  }),
 )(InputBase);
 
 var c: any = null;
@@ -126,7 +126,7 @@ const ErrorLogs = () => {
         url.hostname
       }:${port}${baseUrl}ws/console/?logType=${logType}&node=${
         selectedNode === "Select node" ? "" : selectedNode
-      }`
+      }`,
     );
     let interval: any | null = null;
     if (c !== null) {

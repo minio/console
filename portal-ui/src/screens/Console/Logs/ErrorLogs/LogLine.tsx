@@ -83,7 +83,7 @@ const messageForError = (log: LogMessage) => {
     "HH:mm:ss z MM/dd/yyyy",
     {
       zone: "UTC",
-    }
+    },
   );
   return (
     <Fragment>
@@ -170,7 +170,7 @@ const LogLine = (props: { log: LogMessage }) => {
     "HH:mm:ss z MM/dd/yyyy",
     {
       zone: "UTC",
-    }
+    },
   );
   const dateOfLine = logTime.toJSDate(); //DateTime.fromJSDate(log.time);
 

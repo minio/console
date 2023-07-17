@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...containerForHeader,
-  })
+  }),
 );
 
 const SelectStyled = withStyles((theme: Theme) =>
@@ -83,7 +83,7 @@ const SelectStyled = withStyles((theme: Theme) =>
       fontSize: 13,
       lineHeight: "50px",
     },
-  })
+  }),
 )(InputBase);
 
 const Watch = () => {
@@ -130,7 +130,7 @@ const Watch = () => {
 
       const wsProt = wsProtocol(url.protocol);
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/watch/${bucketName}?prefix=${prefix}&suffix=${suffix}`
+        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/watch/${bucketName}?prefix=${prefix}&suffix=${suffix}`,
       );
 
       let interval: any | null = null;

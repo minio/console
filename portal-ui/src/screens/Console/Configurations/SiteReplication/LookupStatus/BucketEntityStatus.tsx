@@ -95,7 +95,7 @@ const BucketEntityStatus = ({
           case 3:
             sbStatus = syncStatus(
               rSite.OLockConfigMismatch,
-              rSite.HasOLockConfigSet
+              rSite.HasOLockConfigSet,
             );
             sfRow.push(sbStatus);
             break;
@@ -106,7 +106,7 @@ const BucketEntityStatus = ({
           case 5:
             sbStatus = syncStatus(
               rSite.ReplicationCfgMismatch,
-              rSite.HasReplicationCfg
+              rSite.HasReplicationCfg,
             );
             sfRow.push(sbStatus);
             break;

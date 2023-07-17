@@ -59,7 +59,7 @@ import { errorToHandler } from "api/errors";
 import HelpMenu from "../HelpMenu";
 
 const DeleteServiceAccount = withSuspense(
-  React.lazy(() => import("./DeleteServiceAccount"))
+  React.lazy(() => import("./DeleteServiceAccount")),
 );
 
 const Account = () => {
@@ -160,7 +160,7 @@ const Account = () => {
   ];
 
   const filteredRecords = records.filter((elementItem) =>
-    elementItem.toLowerCase().includes(filter.toLowerCase())
+    elementItem.toLowerCase().includes(filter.toLowerCase()),
   );
 
   return (

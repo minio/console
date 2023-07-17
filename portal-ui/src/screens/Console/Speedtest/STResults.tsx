@@ -134,7 +134,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: "#07193E",
       marginRight: 20,
     },
-  })
+  }),
 );
 
 interface ISTResults {
@@ -204,11 +204,11 @@ const STResults = ({ results, start }: ISTResults) => {
     let element = document.createElement("a");
     element.setAttribute(
       "href",
-      "data:text/plain;charset=utf-8," + JSON.stringify(finalRes)
+      "data:text/plain;charset=utf-8," + JSON.stringify(finalRes),
     );
     element.setAttribute(
       "download",
-      `speedtest_results-${date.toISOString()}.log`
+      `speedtest_results-${date.toISOString()}.log`,
     );
 
     element.style.display = "none";

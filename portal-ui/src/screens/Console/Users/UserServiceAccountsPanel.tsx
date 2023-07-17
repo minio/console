@@ -217,7 +217,7 @@ const UserServiceAccountsPanel = ({
                   icon={<AddIcon />}
                   onClick={() => {
                     navigate(
-                      `/identity/users/new-user-sa/${encodeURLString(user)}`
+                      `/identity/users/new-user-sa/${encodeURLString(user)}`,
                     );
                   }}
                   disabled={!hasPolicy}
