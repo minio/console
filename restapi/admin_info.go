@@ -305,7 +305,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum(minio_bucket_usage_total_bytes{$__query}) by (instance)`,
+				Expr:         `sum(minio_cluster_usage_total_bytes{$__query}) by (instance)`,
 				LegendFormat: "Used Capacity",
 				InitialTime:  -180,
 				Step:         10,
@@ -331,7 +331,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `max by (range) (minio_bucket_objects_size_distribution{$__query})`,
+				Expr:         `max by (range) (minio_cluster_objects_size_distribution{$__query})`,
 				LegendFormat: "{{range}}",
 				Step:         300,
 			},
@@ -598,7 +598,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `topk(1, sum(minio_bucket_usage_object_total{$__query}) by (instance))`,
+				Expr:         `topk(1, sum(minio_cluster_usage_object_total{$__query}) by (instance))`,
 				LegendFormat: "",
 			},
 		},
