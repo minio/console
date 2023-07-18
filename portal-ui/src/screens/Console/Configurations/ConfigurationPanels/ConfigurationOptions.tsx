@@ -37,10 +37,11 @@ import ExportConfigButton from "./ExportConfigButton";
 import ImportConfigButton from "./ImportConfigButton";
 import { Box } from "@mui/material";
 import HelpMenu from "../../HelpMenu";
-import { setHelpName } from "../../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { api } from "../../../../api";
 import { IElement } from "../types";
+import { errorToHandler } from "../../../../api/errors";
 
 interface IConfigurationOptions {
   classes: any;
@@ -66,17 +67,18 @@ const getRoutePath = (path: string) => {
   return `${IAM_PAGES.SETTINGS}/${path}`;
 };
 
-//region would not be part of config subsystem list.
+// region is not part of config subsystem list.
 const NON_SUB_SYS_CONFIG_ITEMS = ["region"];
-const IGNORED_CONFIG_SUB_SYS = ["cache"]; //cahe config is un supported.
+const IGNORED_CONFIG_SUB_SYS = ["cache"]; // cache config is not supported.
 
 const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
   const { pathname = "" } = useLocation();
+  const dispatch = useAppDispatch();
 
   const [configSubSysList, setConfigSubSysList] = useState<string[]>([]);
   const fetchConfigSubSysList = useCallback(async () => {
     api.configs
-      .listConfig() //get all available config subsystems.
+      .listConfig() // get a list of available config subsystems.
       .then((res) => {
         if (res && res?.data && res?.data?.configurations) {
           const confSubSysList = (res?.data?.configurations || []).reduce(
@@ -92,14 +94,13 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
           setConfigSubSysList(confSubSysList);
         }
       })
-      .catch(() => {
-        console.log("Error in retrieving config subsystem list.");
+      .catch((err) => {
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
       });
-  }, []);
+  }, [dispatch]);
 
   let selConfigTab = pathname.substring(pathname.lastIndexOf("/") + 1);
   selConfigTab = selConfigTab === "settings" ? "region" : selConfigTab;
-  const dispatch = useAppDispatch();
   useEffect(() => {
     fetchConfigSubSysList();
     dispatch(setHelpName("settings_Region"));
