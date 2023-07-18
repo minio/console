@@ -46,11 +46,11 @@ const HelpMenu = () => {
   const [helpMenuOpen, setHelpMenuOpen] = useState<boolean>(false);
 
   const systemHelpName = useSelector(
-    (state: AppState) => state.system.helpName
+    (state: AppState) => state.system.helpName,
   );
 
   const helpTabName = useSelector(
-    (state: AppState) => state.system.helpTabName
+    (state: AppState) => state.system.helpTabName,
   );
 
   const toggleHelpMenu = () => {

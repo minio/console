@@ -32,7 +32,7 @@ export const download = (
   completeCallback: () => void,
   errorCallback: (msg: string) => void,
   abortCallback: () => void,
-  toastCallback: () => void
+  toastCallback: () => void,
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
@@ -59,7 +59,7 @@ export const download = (
     completeCallback,
     errorCallback,
     abortCallback,
-    toastCallback
+    toastCallback,
   );
 };
 
@@ -86,7 +86,7 @@ class DownloadHelper {
     completeCallback: () => void,
     errorCallback: (msg: string) => void,
     abortCallback: () => void,
-    toastCallback: () => void
+    toastCallback: () => void,
   ) {
     this.aborter = new AbortController();
     this.path = path;
@@ -284,7 +284,7 @@ export const extensionPreview = (fileName: string): AllowedPreviews => {
 
 export const previewObjectType = (
   metaData: Record<any, any>,
-  objectName: string
+  objectName: string,
 ) => {
   const metaContentType = (
     (metaData && metaData["Content-Type"]) ||
@@ -324,7 +324,7 @@ export const sortListObjects = (fieldSort: string) => {
 export const permissionItems = (
   bucketName: string,
   currentPath: string,
-  permissionsArray: PermissionResource[]
+  permissionsArray: PermissionResource[],
 ): BucketObjectItem[] | null => {
   if (permissionsArray.length === 0) {
     return null;
@@ -334,7 +334,7 @@ export const permissionItems = (
   const filteredPermissionsForBucket = permissionsArray.filter(
     (permissionItem) =>
       permissionItem.resource?.endsWith(`:${bucketName}`) ||
-      permissionItem.resource?.includes(`:${bucketName}/`)
+      permissionItem.resource?.includes(`:${bucketName}/`),
   );
 
   // No permissions for this bucket. we can throw the error message at this point

@@ -53,11 +53,11 @@ const StrategyForm = ({ redirectRules }: { redirectRules: RedirectRule[] }) => {
   const sts = useSelector((state: AppState) => state.login.sts);
   const useSTS = useSelector((state: AppState) => state.login.useSTS);
   const displaySSOForm = useSelector(
-    (state: AppState) => state.login.ssoEmbeddedIDPDisplay
+    (state: AppState) => state.login.ssoEmbeddedIDPDisplay,
   );
 
   const loginSending = useSelector(
-    (state: AppState) => state.login.loginSending
+    (state: AppState) => state.login.loginSending,
   );
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {

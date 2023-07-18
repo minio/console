@@ -322,7 +322,7 @@ const ListBuckets = () => {
                       : !canPutLifecycle
                       ? permissionTooltipHelper(
                           IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
-                          "configure lifecycle for the selected buckets"
+                          "configure lifecycle for the selected buckets",
                         )
                       : selectedBuckets.length === 0
                       ? bulkSelect
@@ -384,7 +384,7 @@ const ListBuckets = () => {
                     ? ""
                     : permissionTooltipHelper(
                         [IAM_SCOPES.S3_CREATE_BUCKET],
-                        "create a bucket"
+                        "create a bucket",
                       )
                 }
               >
@@ -463,7 +463,7 @@ const ListBuckets = () => {
                                 IAM_SCOPES.S3_LIST_BUCKET,
                                 IAM_SCOPES.S3_ALL_LIST_BUCKET,
                               ],
-                              "view the buckets on this server"
+                              "view the buckets on this server",
                             )}
                             <br />
                           </Fragment>

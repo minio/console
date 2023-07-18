@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...modalStyleUtils,
     ...formFieldStyles,
-  })
+  }),
 );
 
 const CreatePathModal = ({
@@ -93,7 +93,7 @@ const CreatePathModal = ({
         setModalErrorSnackMessage({
           errorMessage: "Folder cannot have the same name as an existing file",
           detailedError: "",
-        })
+        }),
       );
       return;
     }
@@ -108,7 +108,7 @@ const CreatePathModal = ({
     }
 
     const newPath = `/browser/${bucketName}/${encodeURLString(
-      `${folderPath}${cleanPathURL}/`
+      `${folderPath}${cleanPathURL}/`,
     )}`;
 
     navigate(newPath);

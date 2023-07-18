@@ -47,7 +47,7 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
         setModalErrorSnackMessage({
           errorMessage: "New passwords don't match",
           detailedError: "",
-        })
+        }),
       );
       return;
     }
@@ -57,7 +57,7 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
         setModalErrorSnackMessage({
           errorMessage: "Passwords must be at least 8 characters long",
           detailedError: "",
-        })
+        }),
       );
       return;
     }

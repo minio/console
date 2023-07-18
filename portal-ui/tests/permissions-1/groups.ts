@@ -24,7 +24,7 @@ import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 
 const groupsListItemFor = (modifier: string) => {
   return Selector(".ReactVirtualized__Table__rowColumn").withText(
-    `${constants.TEST_GROUP_NAME}-${modifier}`
+    `${constants.TEST_GROUP_NAME}-${modifier}`,
   );
 };
 
@@ -37,7 +37,7 @@ const createGroup = async (t: TestController, modifier: string) => {
     .navigateTo(groupsAddPageUrl)
     .typeText(
       elements.groupNameInput,
-      `${constants.TEST_GROUP_NAME}-${modifier}`
+      `${constants.TEST_GROUP_NAME}-${modifier}`,
     )
     .typeText(elements.filterUserInput, constants.TEST_USER_NAME)
     .click(elements.groupUserCheckbox)

@@ -39,7 +39,7 @@ test("Can create a policy", async ({ page }) => {
   await page
     .locator("#code_wrapper")
     .fill(
-      '{\n  "Version": "2012-10-17",\n  "Statement": [\n    {\n      "Effect": "Allow",\n      "Action": [\n        "s3:*"\n      ],\n      "Resource": [\n        "arn:aws:s3:::bucket1/*",\n        "arn:aws:s3:::bucket2/*",\n        "arn:aws:s3:::bucket3/*",\n        "arn:aws:s3:::bucket4/*"\n      ]\n    },\n    {\n      "Effect": "Deny",\n      "Action": [\n        "s3:DeleteBucket"\n      ],\n      "Resource": [\n        "arn:aws:s3:::*"\n      ]\n    }\n  ]\n}\n'
+      '{\n  "Version": "2012-10-17",\n  "Statement": [\n    {\n      "Effect": "Allow",\n      "Action": [\n        "s3:*"\n      ],\n      "Resource": [\n        "arn:aws:s3:::bucket1/*",\n        "arn:aws:s3:::bucket2/*",\n        "arn:aws:s3:::bucket3/*",\n        "arn:aws:s3:::bucket4/*"\n      ]\n    },\n    {\n      "Effect": "Deny",\n      "Action": [\n        "s3:DeleteBucket"\n      ],\n      "Resource": [\n        "arn:aws:s3:::*"\n      ]\n    }\n  ]\n}\n',
     );
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("gridcell", { name: policyName })).toBeTruthy();

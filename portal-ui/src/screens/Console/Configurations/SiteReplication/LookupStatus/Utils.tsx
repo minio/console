@@ -12,7 +12,7 @@ export function syncStatus(mismatch: boolean, set: boolean): string | boolean {
 export function isEntityNotFound(
   sites: Partial<StatsResponseType>,
   lookupList: Partial<StatsResponseType>,
-  lookupKey: string
+  lookupKey: string,
 ) {
   const siteKeys: string[] = Object.keys(sites);
   return siteKeys.find((sk: string) => {

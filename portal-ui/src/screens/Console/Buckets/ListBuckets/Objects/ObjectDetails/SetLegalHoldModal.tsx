@@ -84,7 +84,7 @@ const SetLegalHoldModal = ({
           status: legalHoldEnabled
             ? ObjectLegalHoldStatus.Enabled
             : ObjectLegalHoldStatus.Disabled,
-        }
+        },
       )
       .then(() => {
         setIsSaving(false);

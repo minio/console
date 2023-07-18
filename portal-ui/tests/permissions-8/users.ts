@@ -22,10 +22,10 @@ import { identityElement, usersElement } from "../utils/elements-menu";
 import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 
 const userListItem = Selector(".ReactVirtualized__Table__rowColumn").withText(
-  constants.TEST_USER_NAME
+  constants.TEST_USER_NAME,
 );
 const policyListItem = Selector(".ReactVirtualized__Table__rowColumn").withText(
-  constants.TEST_ASSIGN_POLICY_NAME
+  constants.TEST_ASSIGN_POLICY_NAME,
 );
 
 const userDeleteIconButton = userListItem
@@ -102,7 +102,7 @@ test("Created User can be viewed and deleted", async (t) => {
   const userListItemExists = userListItem.exists;
   const deleteSelectedButton = Selector("button").withAttribute(
     "id",
-    "delete-selected-users"
+    "delete-selected-users",
   );
   await t
     .navigateTo(usersPageUrl)

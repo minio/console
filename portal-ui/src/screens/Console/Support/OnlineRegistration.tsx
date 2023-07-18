@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: "75px",
     },
     ...spacingUtils,
-  })
+  }),
 );
 
 const OnlineRegistration = () => {
@@ -49,13 +49,13 @@ const OnlineRegistration = () => {
   const dispatch = useAppDispatch();
 
   const subnetPassword = useSelector(
-    (state: AppState) => state.register.subnetPassword
+    (state: AppState) => state.register.subnetPassword,
   );
   const subnetEmail = useSelector(
-    (state: AppState) => state.register.subnetEmail
+    (state: AppState) => state.register.subnetEmail,
   );
   const showPassword = useSelector(
-    (state: AppState) => state.register.showPassword
+    (state: AppState) => state.register.showPassword,
   );
   const loading = useSelector((state: AppState) => state.register.loading);
 

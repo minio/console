@@ -153,7 +153,7 @@ const EditLifecycleConfiguration = ({
         lifecycleRule.transition.noncurrent_transition_days !== 0
       ) {
         setNCTransitionDays(
-          lifecycleRule.transition.noncurrent_transition_days.toString()
+          lifecycleRule.transition.noncurrent_transition_days.toString(),
         );
         setIlmType("transition");
         transitionMode = true;
@@ -183,7 +183,7 @@ const EditLifecycleConfiguration = ({
         lifecycleRule.expiration.noncurrent_expiration_days !== 0
       ) {
         setNCExpirationDays(
-          lifecycleRule.expiration.noncurrent_expiration_days.toString()
+          lifecycleRule.expiration.noncurrent_expiration_days.toString(),
         );
         setIlmType("expiry");
         transitionMode = false;
@@ -203,15 +203,15 @@ const EditLifecycleConfiguration = ({
     if (transitionMode) {
       setStorageClass(lifecycleRule.transition?.storage_class || "");
       setNCTransitionDays(
-        lifecycleRule.transition?.noncurrent_transition_days?.toString() || "0"
+        lifecycleRule.transition?.noncurrent_transition_days?.toString() || "0",
       );
       setNCTransitionSC(
-        lifecycleRule.transition?.noncurrent_storage_class || ""
+        lifecycleRule.transition?.noncurrent_storage_class || "",
       );
     } else {
       // Expiry fields
       setNCExpirationDays(
-        lifecycleRule.expiration?.noncurrent_expiration_days?.toString() || "0"
+        lifecycleRule.expiration?.noncurrent_expiration_days?.toString() || "0",
       );
     }
 
@@ -225,7 +225,7 @@ const EditLifecycleConfiguration = ({
             currItem.value
           }`;
         },
-        ""
+        "",
       );
 
       setTags(tgs);
@@ -294,7 +294,7 @@ const EditLifecycleConfiguration = ({
         .updateBucketLifecycle(
           selectedBucket,
           lifecycleRule.id,
-          lifecycleUpdate
+          lifecycleUpdate,
         )
         .then((res) => {
           setAddLoading(false);
@@ -535,7 +535,7 @@ const EditLifecycleConfiguration = ({
                             name="expired_delete_marker"
                             checked={expiredObjectDM}
                             onChange={(
-                              event: React.ChangeEvent<HTMLInputElement>
+                              event: React.ChangeEvent<HTMLInputElement>,
                             ) => {
                               setExpiredObjectDM(event.target.checked);
                             }}

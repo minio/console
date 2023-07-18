@@ -88,7 +88,7 @@ const Trace = ({ classes }: ITrace) => {
 
   const messages = useSelector((state: AppState) => state.trace.messages);
   const traceStarted = useSelector(
-    (state: AppState) => state.trace.traceStarted
+    (state: AppState) => state.trace.traceStarted,
   );
 
   const [statusCode, setStatusCode] = useState<string>("");
@@ -128,7 +128,7 @@ const Trace = ({ classes }: ITrace) => {
         url.hostname
       }:${port}${baseUrl}ws/trace?calls=${calls}&threshold=${threshold}&onlyErrors=${
         errors ? "yes" : "no"
-      }&statusCode=${statusCode}&method=${method}&funcname=${func}&path=${path}`
+      }&statusCode=${statusCode}&method=${method}&funcname=${func}&path=${path}`,
     );
 
     let interval: any | null = null;

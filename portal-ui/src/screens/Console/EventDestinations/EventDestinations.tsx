@@ -23,7 +23,7 @@ import { setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 
 const ListNotificationEndpoints = withSuspense(
-  React.lazy(() => import("./ListEventDestinations"))
+  React.lazy(() => import("./ListEventDestinations")),
 );
 
 const EventDestinations = () => {

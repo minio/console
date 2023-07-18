@@ -150,7 +150,7 @@ const TestWrapper = ({
                   : 0;
                 return prevTotal + c;
               },
-              0
+              0,
             );
             setTotalDrives(totalServers);
           }

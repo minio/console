@@ -158,7 +158,7 @@ const useStyles = makeStyles((theme: Theme) =>
     disabled: {
       backgroundColor: "red",
     },
-  })
+  }),
 );
 
 interface IBucketListItem {

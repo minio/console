@@ -174,7 +174,7 @@ const EnableBucketEncryption = ({
                 <SelectWrapper
                   onChange={(e) => {
                     setEncryptionType(
-                      e.target.value as BucketEncryptionType | "disabled"
+                      e.target.value as BucketEncryptionType | "disabled",
                     );
                   }}
                   id="select-encryption-type"

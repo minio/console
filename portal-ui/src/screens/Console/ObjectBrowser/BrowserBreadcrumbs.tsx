@@ -37,8 +37,8 @@ import { getSessionGrantsWildCard } from "../Buckets/ListBuckets/UploadPermissio
 
 const CreatePathModal = withSuspense(
   React.lazy(
-    () => import("../Buckets/ListBuckets/Objects/ListObjects/CreatePathModal")
-  )
+    () => import("../Buckets/ListBuckets/Objects/ListObjects/CreatePathModal"),
+  ),
 );
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
     slashSpacingStyle: {
       margin: "0 5px",
     },
-  })
+  }),
 );
 
 interface IObjectBrowser {
@@ -68,16 +68,16 @@ const BrowserBreadcrumbs = ({
   const classes = useStyles();
 
   const rewindEnabled = useSelector(
-    (state: AppState) => state.objectBrowser.rewind.rewindEnabled
+    (state: AppState) => state.objectBrowser.rewind.rewindEnabled,
   );
   const versionsMode = useSelector(
-    (state: AppState) => state.objectBrowser.versionsMode
+    (state: AppState) => state.objectBrowser.versionsMode,
   );
   const versionedFile = useSelector(
-    (state: AppState) => state.objectBrowser.versionedFile
+    (state: AppState) => state.objectBrowser.versionedFile,
   );
   const anonymousMode = useSelector(
-    (state: AppState) => state.system.anonymousMode
+    (state: AppState) => state.system.anonymousMode,
   );
 
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
@@ -88,7 +88,7 @@ const BrowserBreadcrumbs = ({
   ];
 
   const sessionGrants = useSelector((state: AppState) =>
-    state.console.session ? state.console.session.permissions || {} : {}
+    state.console.session ? state.console.session.permissions || {} : {},
   );
 
   let paths = internalPaths;
@@ -104,13 +104,13 @@ const BrowserBreadcrumbs = ({
   const sessionGrantWildCards = getSessionGrantsWildCard(
     sessionGrants,
     pathToCheckPerms,
-    putObjectPermScopes
+    putObjectPermScopes,
   );
 
   const canCreatePath =
     hasPermission(
       [pathToCheckPerms, ...sessionGrantWildCards],
-      putObjectPermScopes
+      putObjectPermScopes,
     ) || anonymousMode;
 
   let breadcrumbsMap = splitPaths.map((objectItem: string, index: number) => {
@@ -138,13 +138,13 @@ const BrowserBreadcrumbs = ({
             to={route}
             onClick={() => {
               dispatch(
-                setVersionsModeEnabled({ status: false, objectName: "" })
+                setVersionsModeEnabled({ status: false, objectName: "" }),
               );
             }}
           >
             {
               safeDecodeURIComponent(
-                objectItem
+                objectItem,
               ) /*Only for display to preserve */
             }
           </Link>
@@ -202,7 +202,7 @@ const BrowserBreadcrumbs = ({
           prevPath.length > 0
             ? `/${encodeURLString(`${prevPath.join("/")}/`)}`
             : ""
-        }`
+        }`,
       );
     }
   };
@@ -266,7 +266,7 @@ const BrowserBreadcrumbs = ({
                 ? "Choose or create a new path"
                 : permissionTooltipHelper(
                     [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
-                    "create a new path"
+                    "create a new path",
                   )
             }
           >

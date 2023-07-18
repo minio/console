@@ -60,7 +60,7 @@ import SearchBox from "../Common/SearchBox";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
 const SetPolicy = withSuspense(
-  React.lazy(() => import("../Policies/SetPolicy"))
+  React.lazy(() => import("../Policies/SetPolicy")),
 );
 
 const Groups = () => {
@@ -89,12 +89,12 @@ const Groups = () => {
 
   const displayGroups = hasPermission(
     CONSOLE_UI_RESOURCE,
-    displayGroupsPermissions
+    displayGroupsPermissions,
   );
 
   const deleteGroup = hasPermission(
     CONSOLE_UI_RESOURCE,
-    deleteGroupPermissions
+    deleteGroupPermissions,
   );
 
   const getGroup = hasPermission(CONSOLE_UI_RESOURCE, getGroupPermissions);
@@ -102,7 +102,7 @@ const Groups = () => {
   const applyPolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
     applyPolicyPermissions,
-    true
+    true,
   );
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,7 +158,7 @@ const Groups = () => {
   };
 
   const filteredRecords = records.filter((elementItem) =>
-    elementItem.includes(filter)
+    elementItem.includes(filter),
   );
 
   const viewAction = (group: any) => {
@@ -233,7 +233,7 @@ const Groups = () => {
                       ? "Select Policy"
                       : permissionTooltipHelper(
                           applyPolicyPermissions,
-                          "apply policies to Groups"
+                          "apply policies to Groups",
                         )
                   }
                 >
@@ -263,7 +263,7 @@ const Groups = () => {
                       ? "Delete Selected"
                       : permissionTooltipHelper(
                           getGroupPermissions,
-                          "delete Groups"
+                          "delete Groups",
                         )
                   }
                 >

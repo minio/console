@@ -62,7 +62,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
 
   const parseDsnString = (
     input: string,
-    keys: string[]
+    keys: string[],
   ): Map<string, string> => {
     let kvFields: Map<string, string> = new Map();
     const regex = /(.*?):(.*?)@tcp\((.*?):(.*?)\)\/(.*?)$/gm;

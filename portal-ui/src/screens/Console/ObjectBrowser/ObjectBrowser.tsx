@@ -22,10 +22,10 @@ import NotFoundPage from "../../NotFoundPage";
 import OBBucketList from "./OBBucketList";
 
 const BrowserHandler = React.lazy(
-  () => import("../Buckets/BucketDetails/BrowserHandler")
+  () => import("../Buckets/BucketDetails/BrowserHandler"),
 );
 const AddBucket = React.lazy(
-  () => import("../Buckets/ListBuckets/AddBucket/AddBucket")
+  () => import("../Buckets/ListBuckets/AddBucket/AddBucket"),
 );
 
 const ObjectBrowser = () => {

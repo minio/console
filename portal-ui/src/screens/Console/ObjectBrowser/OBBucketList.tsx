@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     ...actionsTray,
     ...containerForHeader,
-  })
+  }),
 );
 
 const OBListBuckets = () => {
@@ -308,7 +308,7 @@ const OBListBuckets = () => {
                                 IAM_SCOPES.S3_LIST_BUCKET,
                                 IAM_SCOPES.S3_ALL_LIST_BUCKET,
                               ],
-                              "view the buckets on this server"
+                              "view the buckets on this server",
                             )}
                             <br />
                           </Fragment>

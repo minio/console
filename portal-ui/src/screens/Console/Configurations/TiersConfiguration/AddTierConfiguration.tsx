@@ -123,7 +123,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
     }
 
     setNameInputError(
-      "Please verify that string is uppercase only and contains valid characters (numbers, dashes & underscores)."
+      "Please verify that string is uppercase only and contains valid characters (numbers, dashes & underscores).",
     );
     return false;
   }, [name]);

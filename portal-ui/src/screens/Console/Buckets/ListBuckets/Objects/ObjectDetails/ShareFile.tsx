@@ -81,7 +81,7 @@ const ShareFile = ({
             const result: BucketObject[] = res.data.objects || [];
 
             const latestVersion: BucketObject | undefined = result.find(
-              (elem: BucketObject) => elem.is_latest
+              (elem: BucketObject) => elem.is_latest,
             );
 
             if (latestVersion) {
@@ -116,7 +116,7 @@ const ShareFile = ({
       const currDate = new Date();
 
       const diffDate = Math.ceil(
-        (slDate.getTime() - currDate.getTime()) / 1000
+        (slDate.getTime() - currDate.getTime()) / 1000,
       );
 
       if (diffDate > 0) {
@@ -206,7 +206,7 @@ const ShareFile = ({
                       variant="regular"
                       onClick={() => {
                         dispatch(
-                          setModalSnackMessage("Share URL Copied to clipboard")
+                          setModalSnackMessage("Share URL Copied to clipboard"),
                         );
                       }}
                       disabled={shareURL === "" || isLoadingFile}

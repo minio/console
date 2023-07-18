@@ -63,19 +63,19 @@ import {
 import { errorToHandler } from "api/errors";
 
 const SetAccessPolicy = withSuspense(
-  React.lazy(() => import("./SetAccessPolicy"))
+  React.lazy(() => import("./SetAccessPolicy")),
 );
 const SetRetentionConfig = withSuspense(
-  React.lazy(() => import("./SetRetentionConfig"))
+  React.lazy(() => import("./SetRetentionConfig")),
 );
 const EnableBucketEncryption = withSuspense(
-  React.lazy(() => import("./EnableBucketEncryption"))
+  React.lazy(() => import("./EnableBucketEncryption")),
 );
 const EnableVersioningModal = withSuspense(
-  React.lazy(() => import("./EnableVersioningModal"))
+  React.lazy(() => import("./EnableVersioningModal")),
 );
 const BucketTags = withSuspense(
-  React.lazy(() => import("./SummaryItems/BucketTags"))
+  React.lazy(() => import("./SummaryItems/BucketTags")),
 );
 
 const EnableQuota = withSuspense(React.lazy(() => import("./EnableQuota")));
@@ -110,7 +110,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
     useState<BucketEncryptionInfo | null>(null);
   const [bucketSize, setBucketSize] = useState<number | "0">("0");
   const [hasObjectLocking, setHasObjectLocking] = useState<boolean | undefined>(
-    false
+    false,
   );
   const [accessPolicyScreenOpen, setAccessPolicyScreenOpen] =
     useState<boolean>(false);
@@ -290,7 +290,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
           const resBuckets = get(res.data, "buckets", []);
 
           const bucketInfo = resBuckets.find(
-            (bucket) => bucket.name === bucketName
+            (bucket) => bucket.name === bucketName,
           );
 
           const size = get(bucketInfo, "size", "0");

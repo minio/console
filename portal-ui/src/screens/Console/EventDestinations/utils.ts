@@ -30,7 +30,7 @@ export const notifyWebhooks = "notify_webhook";
 export const notifyNsq = "notify_nsq";
 
 export const notificationTransform = (
-  notificationElements: NotificationEndpointItem[]
+  notificationElements: NotificationEndpointItem[],
 ) => {
   return notificationElements.map((element) => {
     return {

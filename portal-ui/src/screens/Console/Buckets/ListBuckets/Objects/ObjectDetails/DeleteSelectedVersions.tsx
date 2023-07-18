@@ -45,13 +45,13 @@ const DeleteObject = ({
   const [bypassGovernance, setBypassGovernance] = useState<boolean>(false);
 
   const retentionConfig = useSelector(
-    (state: AppState) => state.objectBrowser.retentionConfig
+    (state: AppState) => state.objectBrowser.retentionConfig,
   );
 
   const canBypass =
     hasPermission(
       [selectedBucket],
-      [IAM_SCOPES.S3_BYPASS_GOVERNANCE_RETENTION]
+      [IAM_SCOPES.S3_BYPASS_GOVERNANCE_RETENTION],
     ) && retentionConfig?.mode === "governance";
 
   const onClose = () => closeDeleteModalAndRefresh(false);

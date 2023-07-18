@@ -15,5 +15,5 @@ console.log("add babel plugin");
 
 module.exports = override(
   process.env.USE_BABEL_PLUGIN_ISTANBUL &&
-    addBabelPlugins("babel-plugin-istanbul")
+    addBabelPlugins("babel-plugin-istanbul"),
 );

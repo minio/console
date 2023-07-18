@@ -46,13 +46,13 @@ import { AccessRule as IAccessRule } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
 
 const AddAccessRuleModal = withSuspense(
-  React.lazy(() => import("./AddAccessRule"))
+  React.lazy(() => import("./AddAccessRule")),
 );
 const DeleteAccessRuleModal = withSuspense(
-  React.lazy(() => import("./DeleteAccessRule"))
+  React.lazy(() => import("./DeleteAccessRule")),
 );
 const EditAccessRuleModal = withSuspense(
-  React.lazy(() => import("./EditAccessRule"))
+  React.lazy(() => import("./EditAccessRule")),
 );
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...searchField,
     ...objectBrowserCommon,
     ...containerForHeader,
-  })
+  }),
 );
 
 const AccessRule = () => {

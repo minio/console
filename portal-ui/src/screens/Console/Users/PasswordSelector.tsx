@@ -25,10 +25,10 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 const PasswordSelector = () => {
   const dispatch = useAppDispatch();
   const showPassword = useSelector(
-    (state: AppState) => state.createUser.showPassword
+    (state: AppState) => state.createUser.showPassword,
   );
   const secretKey = useSelector(
-    (state: AppState) => state.createUser.secretKey
+    (state: AppState) => state.createUser.secretKey,
   );
   return (
     <InputBox

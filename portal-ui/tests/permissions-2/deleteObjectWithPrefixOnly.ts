@@ -20,7 +20,7 @@ import * as functions from "../utils/functions";
 import { testBucketBrowseButtonFor } from "../utils/functions";
 
 fixture("Delete Objects With Prefix Only policy").page(
-  "http://localhost:9090/"
+  "http://localhost:9090/",
 );
 
 export const sideBar = Selector("div.MuiGrid-root.MuiGrid-item");
@@ -38,7 +38,7 @@ test
       t,
       bucket1,
       "test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
   })("Delete button is disabled for object inside bucket", async (t) => {
     await t
@@ -46,7 +46,7 @@ test
       .navigateTo(`http://localhost:9090/browser`)
       .click(test1BucketBrowseButton)
       .click(
-        Selector(".ReactVirtualized__Table__rowColumn").withText("test.txt")
+        Selector(".ReactVirtualized__Table__rowColumn").withText("test.txt"),
       )
       .expect(sideBarDeleteButton.hasAttribute("disabled"))
       .ok();
@@ -62,7 +62,7 @@ test
       t,
       bucket2,
       "digitalinsights/xref_cust_guid_actd-v1.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
   })(
     "Delete button is enabled for object that matches prefix inside bucket",
@@ -73,17 +73,17 @@ test
         .click(test2BucketBrowseButton)
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText(
-            "digitalinsights"
-          )
+            "digitalinsights",
+          ),
         )
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText(
-            "xref_cust_guid_actd-v1.txt"
-          )
+            "xref_cust_guid_actd-v1.txt",
+          ),
         )
         .expect(sideBarDeleteButton.hasAttribute("disabled"))
         .notOk();
-    }
+    },
   )
   .after(async (t) => {
     await functions.cleanUpBucketAndUploads(t, bucket2);
@@ -96,7 +96,7 @@ test
       t,
       bucket3,
       "digitalinsights/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
   })(
     "Delete button is disabled for object that doesn't matches prefix inside bucket",
@@ -107,15 +107,15 @@ test
         .click(test3BucketBrowseButton)
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText(
-            "digitalinsights"
-          )
+            "digitalinsights",
+          ),
         )
         .click(
-          Selector(".ReactVirtualized__Table__rowColumn").withText("test.txt")
+          Selector(".ReactVirtualized__Table__rowColumn").withText("test.txt"),
         )
         .expect(sideBarDeleteButton.hasAttribute("disabled"))
         .ok();
-    }
+    },
   )
   .after(async (t) => {
     await functions.cleanUpBucketAndUploads(t, bucket3);

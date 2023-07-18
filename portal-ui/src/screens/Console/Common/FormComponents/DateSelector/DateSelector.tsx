@@ -68,7 +68,7 @@ const DateSelector = forwardRef(
       onDateChange,
       value = "",
     }: IDateSelectorProps,
-    ref: any
+    ref: any,
   ) => {
     useImperativeHandle(ref, () => ({ resetDate }));
 
@@ -194,7 +194,7 @@ const DateSelector = forwardRef(
         </Box>
       </Grid>
     );
-  }
+  },
 );
 
 export default withStyles(styles)(DateSelector);

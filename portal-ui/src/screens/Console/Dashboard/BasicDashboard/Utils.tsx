@@ -22,7 +22,7 @@ export const STATUS_COLORS = {
 
 export const getDriveStatusColor = (
   activeDisks: number,
-  totalDrives: number
+  totalDrives: number,
 ) => {
   if (activeDisks <= totalDrives / 2) {
     return STATUS_COLORS.RED;
@@ -47,7 +47,7 @@ export const serverStatusColor = (health_status: string) => {
 };
 export const getNetworkStatusColor = (
   activeNetwork: number,
-  networkTotal: number
+  networkTotal: number,
 ) => {
   if (activeNetwork <= networkTotal / 2) {
     return STATUS_COLORS.RED;

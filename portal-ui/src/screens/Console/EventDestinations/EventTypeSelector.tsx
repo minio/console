@@ -30,13 +30,13 @@ import { setHelpName } from "../../../systemSlice";
 
 const withLogos = destinationList.filter((elService) => elService.logo !== "");
 const database = withLogos.filter(
-  (elService) => elService.category === DestType.DB
+  (elService) => elService.category === DestType.DB,
 );
 const queue = withLogos.filter(
-  (elService) => elService.category === DestType.Queue
+  (elService) => elService.category === DestType.Queue,
 );
 const functions = withLogos.filter(
-  (elService) => elService.category === DestType.Func
+  (elService) => elService.category === DestType.Func,
 );
 
 const EventTypeSelector = () => {

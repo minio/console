@@ -43,7 +43,7 @@ test
           .withText(`${constants.TEST_BUCKET_NAME}-bucketwritew`)
           .parent(1)
           .find("p")
-          .nth(-1).innerText
+          .nth(-1).innerText,
       )
       .eql("Access: W");
   })

@@ -55,13 +55,13 @@ const DeleteObject = ({
   const [bypassGovernance, setBypassGovernance] = useState<boolean>(false);
 
   const retentionConfig = useSelector(
-    (state: AppState) => state.objectBrowser.retentionConfig
+    (state: AppState) => state.objectBrowser.retentionConfig,
   );
 
   const canBypass =
     hasPermission(
       [selectedBucket],
-      [IAM_SCOPES.S3_BYPASS_GOVERNANCE_RETENTION]
+      [IAM_SCOPES.S3_BYPASS_GOVERNANCE_RETENTION],
     ) && retentionConfig?.mode === "governance";
 
   if (!selectedObjects) {
@@ -91,7 +91,7 @@ const DeleteObject = ({
         `/api/v1/buckets/${selectedBucket}/delete-objects?all_versions=${deleteVersions}${
           bypassGovernance ? "&bypass=true" : ""
         }`,
-        toSend
+        toSend,
       );
     }
   };

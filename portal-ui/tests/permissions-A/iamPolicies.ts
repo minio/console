@@ -26,7 +26,7 @@ import {
 import { IAM_PAGES } from "../../src/common/SecureComponent/permissions";
 
 const iamPolicyListItem = Selector(
-  ".ReactVirtualized__Table__rowColumn"
+  ".ReactVirtualized__Table__rowColumn",
 ).withText(constants.TEST_IAM_POLICY_NAME);
 
 const iamPolicyDelete = iamPolicyListItem

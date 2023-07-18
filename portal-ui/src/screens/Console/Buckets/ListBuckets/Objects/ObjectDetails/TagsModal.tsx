@@ -137,7 +137,7 @@ const AddTagModal = ({
       .putObjectTags(
         bucketName,
         { prefix: selectedObject, version_id: verID },
-        { tags: newTagList }
+        { tags: newTagList },
       )
       .then(() => {
         onCloseAndUpdate(true);
@@ -159,7 +159,7 @@ const AddTagModal = ({
       .putObjectTags(
         bucketName,
         { prefix: selectedObject, version_id: verID },
-        { tags: cleanObject }
+        { tags: cleanObject },
       )
       .then(() => {
         onCloseAndUpdate(true);

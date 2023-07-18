@@ -71,5 +71,5 @@ export const addBucketAsync = createAsyncThunk(
     }
 
     return api.buckets.makeBucket(request);
-  }
+  },
 );

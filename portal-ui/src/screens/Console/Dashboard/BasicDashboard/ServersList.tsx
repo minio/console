@@ -27,7 +27,7 @@ import { ServerProperties } from "api/consoleApi";
 
 const ServersList = ({ data }: { data: ServerProperties[] }) => {
   const [expanded, setExpanded] = React.useState<string>(
-    data.length > 1 ? "" : data[0].endpoint + "-0"
+    data.length > 1 ? "" : data[0].endpoint + "-0",
   );
 
   const handleClick = (key: string) => {

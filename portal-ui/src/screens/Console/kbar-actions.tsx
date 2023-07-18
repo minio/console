@@ -23,7 +23,7 @@ import { Bucket } from "../../api/consoleApi";
 export const routesAsKbarActions = (
   buckets: Bucket[],
   navigate: (url: string) => void,
-  features?: string[]
+  features?: string[],
 ) => {
   const initialActions: Action[] = [];
   const allowedMenuItems = validRoutes(features);
