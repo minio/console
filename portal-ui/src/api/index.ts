@@ -35,5 +35,5 @@ export function CommonAPIValidation<D, E>(
   if (err && res.status === 403 && err.message === "invalid session") {
     document.location = "/";
   }
-  return res;
+  throw res;
 }
