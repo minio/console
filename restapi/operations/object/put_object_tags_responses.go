@@ -66,7 +66,7 @@ type PutObjectTagsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewPutObjectTagsDefault creates PutObjectTagsDefault with default headers values
@@ -92,13 +92,13 @@ func (o *PutObjectTagsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the put object tags default response
-func (o *PutObjectTagsDefault) WithPayload(payload *models.Error) *PutObjectTagsDefault {
+func (o *PutObjectTagsDefault) WithPayload(payload *models.APIError) *PutObjectTagsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the put object tags default response
-func (o *PutObjectTagsDefault) SetPayload(payload *models.Error) {
+func (o *PutObjectTagsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

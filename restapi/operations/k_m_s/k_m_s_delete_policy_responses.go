@@ -66,7 +66,7 @@ type KMSDeletePolicyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewKMSDeletePolicyDefault creates KMSDeletePolicyDefault with default headers values
@@ -92,13 +92,13 @@ func (o *KMSDeletePolicyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the k m s delete policy default response
-func (o *KMSDeletePolicyDefault) WithPayload(payload *models.Error) *KMSDeletePolicyDefault {
+func (o *KMSDeletePolicyDefault) WithPayload(payload *models.APIError) *KMSDeletePolicyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s delete policy default response
-func (o *KMSDeletePolicyDefault) SetPayload(payload *models.Error) {
+func (o *KMSDeletePolicyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

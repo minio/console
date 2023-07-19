@@ -66,7 +66,7 @@ type UpdateMultiBucketReplicationDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewUpdateMultiBucketReplicationDefault creates UpdateMultiBucketReplicationDefault with default headers values
@@ -92,13 +92,13 @@ func (o *UpdateMultiBucketReplicationDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the update multi bucket replication default response
-func (o *UpdateMultiBucketReplicationDefault) WithPayload(payload *models.Error) *UpdateMultiBucketReplicationDefault {
+func (o *UpdateMultiBucketReplicationDefault) WithPayload(payload *models.APIError) *UpdateMultiBucketReplicationDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the update multi bucket replication default response
-func (o *UpdateMultiBucketReplicationDefault) SetPayload(payload *models.Error) {
+func (o *UpdateMultiBucketReplicationDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

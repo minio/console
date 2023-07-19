@@ -86,7 +86,7 @@ type ProfilingStartDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewProfilingStartDefault creates ProfilingStartDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ProfilingStartDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the profiling start default response
-func (o *ProfilingStartDefault) WithPayload(payload *models.Error) *ProfilingStartDefault {
+func (o *ProfilingStartDefault) WithPayload(payload *models.APIError) *ProfilingStartDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the profiling start default response
-func (o *ProfilingStartDefault) SetPayload(payload *models.Error) {
+func (o *ProfilingStartDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

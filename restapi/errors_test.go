@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/stretchr/testify/assert"
 )
@@ -34,7 +33,7 @@ func TestError(t *testing.T) {
 	type testError struct {
 		name string
 		args args
-		want *models.Error
+		want *CodedApiError
 	}
 
 	var tests []testError
@@ -91,7 +90,10 @@ func TestError(t *testing.T) {
 			args: args{
 				err: []interface{}{e.err},
 			},
-			want: &models.Error{Code: int32(e.code), Message: swag.String(e.err.Error()), DetailedMessage: swag.String(e.err.Error())},
+			want: &CodedApiError{
+				Code:     e.code,
+				ApiError: &models.APIError{Message: e.err.Error(), DetailedMessage: e.err.Error()},
+			},
 		})
 	}
 	tests = append(tests,
@@ -100,13 +102,16 @@ func TestError(t *testing.T) {
 			args: args{
 				err: []interface{}{ErrDefault, ErrInvalidLogin},
 			},
-			want: &models.Error{Code: int32(401), Message: swag.String(ErrDefault.Error()), DetailedMessage: swag.String(ErrDefault.Error())},
+			want: &CodedApiError{
+				Code:     int(401),
+				ApiError: &models.APIError{Message: ErrDefault.Error(), DetailedMessage: ErrDefault.Error()},
+			},
 		})
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Error(tt.args.err...)
 			assert.Equalf(t, tt.want.Code, got.Code, "Error(%v) Got (%v)", tt.want.Code, got.Code)
-			assert.Equalf(t, *tt.want.DetailedMessage, *got.DetailedMessage, "Error(%s) Got (%s)", *tt.want.DetailedMessage, *got.DetailedMessage)
+			assert.Equalf(t, tt.want.ApiError.DetailedMessage, got.ApiError.DetailedMessage, "Error(%s) Got (%s)", tt.want.ApiError.DetailedMessage, got.ApiError.DetailedMessage)
 		})
 	}
 }
@@ -119,7 +124,7 @@ func TestErrorWithContext(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *models.Error
+		want *CodedApiError
 	}{
 		{
 			name: "default error",
@@ -127,7 +132,9 @@ func TestErrorWithContext(t *testing.T) {
 				ctx: context.Background(),
 				err: []interface{}{ErrDefault},
 			},
-			want: &models.Error{Code: 500, Message: swag.String(ErrDefault.Error()), DetailedMessage: swag.String(ErrDefault.Error())},
+			want: &CodedApiError{
+				Code: 500, ApiError: &models.APIError{Message: ErrDefault.Error(), DetailedMessage: ErrDefault.Error()},
+			},
 		},
 	}
 	for _, tt := range tests {

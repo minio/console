@@ -86,7 +86,7 @@ type KMSVersionDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewKMSVersionDefault creates KMSVersionDefault with default headers values
@@ -112,13 +112,13 @@ func (o *KMSVersionDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the k m s version default response
-func (o *KMSVersionDefault) WithPayload(payload *models.Error) *KMSVersionDefault {
+func (o *KMSVersionDefault) WithPayload(payload *models.APIError) *KMSVersionDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s version default response
-func (o *KMSVersionDefault) SetPayload(payload *models.Error) {
+func (o *KMSVersionDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

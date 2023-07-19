@@ -66,7 +66,7 @@ type SetBucketRetentionConfigDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSetBucketRetentionConfigDefault creates SetBucketRetentionConfigDefault with default headers values
@@ -92,13 +92,13 @@ func (o *SetBucketRetentionConfigDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the set bucket retention config default response
-func (o *SetBucketRetentionConfigDefault) WithPayload(payload *models.Error) *SetBucketRetentionConfigDefault {
+func (o *SetBucketRetentionConfigDefault) WithPayload(payload *models.APIError) *SetBucketRetentionConfigDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the set bucket retention config default response
-func (o *SetBucketRetentionConfigDefault) SetPayload(payload *models.Error) {
+func (o *SetBucketRetentionConfigDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

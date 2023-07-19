@@ -85,7 +85,7 @@ type InspectDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewInspectDefault creates InspectDefault with default headers values
@@ -111,13 +111,13 @@ func (o *InspectDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the inspect default response
-func (o *InspectDefault) WithPayload(payload *models.Error) *InspectDefault {
+func (o *InspectDefault) WithPayload(payload *models.APIError) *InspectDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the inspect default response
-func (o *InspectDefault) SetPayload(payload *models.Error) {
+func (o *InspectDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

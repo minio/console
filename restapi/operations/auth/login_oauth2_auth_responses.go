@@ -66,7 +66,7 @@ type LoginOauth2AuthDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewLoginOauth2AuthDefault creates LoginOauth2AuthDefault with default headers values
@@ -92,13 +92,13 @@ func (o *LoginOauth2AuthDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the login oauth2 auth default response
-func (o *LoginOauth2AuthDefault) WithPayload(payload *models.Error) *LoginOauth2AuthDefault {
+func (o *LoginOauth2AuthDefault) WithPayload(payload *models.APIError) *LoginOauth2AuthDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the login oauth2 auth default response
-func (o *LoginOauth2AuthDefault) SetPayload(payload *models.Error) {
+func (o *LoginOauth2AuthDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

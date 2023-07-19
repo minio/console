@@ -66,7 +66,7 @@ type SetServiceAccountPolicyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSetServiceAccountPolicyDefault creates SetServiceAccountPolicyDefault with default headers values
@@ -92,13 +92,13 @@ func (o *SetServiceAccountPolicyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the set service account policy default response
-func (o *SetServiceAccountPolicyDefault) WithPayload(payload *models.Error) *SetServiceAccountPolicyDefault {
+func (o *SetServiceAccountPolicyDefault) WithPayload(payload *models.APIError) *SetServiceAccountPolicyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the set service account policy default response
-func (o *SetServiceAccountPolicyDefault) SetPayload(payload *models.Error) {
+func (o *SetServiceAccountPolicyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

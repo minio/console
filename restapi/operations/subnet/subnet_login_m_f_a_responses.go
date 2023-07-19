@@ -86,7 +86,7 @@ type SubnetLoginMFADefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSubnetLoginMFADefault creates SubnetLoginMFADefault with default headers values
@@ -112,13 +112,13 @@ func (o *SubnetLoginMFADefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the subnet login m f a default response
-func (o *SubnetLoginMFADefault) WithPayload(payload *models.Error) *SubnetLoginMFADefault {
+func (o *SubnetLoginMFADefault) WithPayload(payload *models.APIError) *SubnetLoginMFADefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the subnet login m f a default response
-func (o *SubnetLoginMFADefault) SetPayload(payload *models.Error) {
+func (o *SubnetLoginMFADefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

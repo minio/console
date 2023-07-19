@@ -89,7 +89,7 @@ type ListUsersForPolicyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListUsersForPolicyDefault creates ListUsersForPolicyDefault with default headers values
@@ -115,13 +115,13 @@ func (o *ListUsersForPolicyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list users for policy default response
-func (o *ListUsersForPolicyDefault) WithPayload(payload *models.Error) *ListUsersForPolicyDefault {
+func (o *ListUsersForPolicyDefault) WithPayload(payload *models.APIError) *ListUsersForPolicyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list users for policy default response
-func (o *ListUsersForPolicyDefault) SetPayload(payload *models.Error) {
+func (o *ListUsersForPolicyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

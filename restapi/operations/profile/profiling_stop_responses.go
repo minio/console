@@ -85,7 +85,7 @@ type ProfilingStopDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewProfilingStopDefault creates ProfilingStopDefault with default headers values
@@ -111,13 +111,13 @@ func (o *ProfilingStopDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the profiling stop default response
-func (o *ProfilingStopDefault) WithPayload(payload *models.Error) *ProfilingStopDefault {
+func (o *ProfilingStopDefault) WithPayload(payload *models.APIError) *ProfilingStopDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the profiling stop default response
-func (o *ProfilingStopDefault) SetPayload(payload *models.Error) {
+func (o *ProfilingStopDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

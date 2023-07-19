@@ -85,7 +85,7 @@ type DownloadObjectDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDownloadObjectDefault creates DownloadObjectDefault with default headers values
@@ -111,13 +111,13 @@ func (o *DownloadObjectDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the download object default response
-func (o *DownloadObjectDefault) WithPayload(payload *models.Error) *DownloadObjectDefault {
+func (o *DownloadObjectDefault) WithPayload(payload *models.APIError) *DownloadObjectDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the download object default response
-func (o *DownloadObjectDefault) SetPayload(payload *models.Error) {
+func (o *DownloadObjectDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

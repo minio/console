@@ -86,7 +86,7 @@ type ListConfigurationsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListConfigurationsDefault creates ListConfigurationsDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ListConfigurationsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list configurations default response
-func (o *ListConfigurationsDefault) WithPayload(payload *models.Error) *ListConfigurationsDefault {
+func (o *ListConfigurationsDefault) WithPayload(payload *models.APIError) *ListConfigurationsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list configurations default response
-func (o *ListConfigurationsDefault) SetPayload(payload *models.Error) {
+func (o *ListConfigurationsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

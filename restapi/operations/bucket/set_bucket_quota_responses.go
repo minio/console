@@ -86,7 +86,7 @@ type SetBucketQuotaDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSetBucketQuotaDefault creates SetBucketQuotaDefault with default headers values
@@ -112,13 +112,13 @@ func (o *SetBucketQuotaDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the set bucket quota default response
-func (o *SetBucketQuotaDefault) WithPayload(payload *models.Error) *SetBucketQuotaDefault {
+func (o *SetBucketQuotaDefault) WithPayload(payload *models.APIError) *SetBucketQuotaDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the set bucket quota default response
-func (o *SetBucketQuotaDefault) SetPayload(payload *models.Error) {
+func (o *SetBucketQuotaDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

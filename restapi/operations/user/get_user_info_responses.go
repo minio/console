@@ -86,7 +86,7 @@ type GetUserInfoDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetUserInfoDefault creates GetUserInfoDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetUserInfoDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get user info default response
-func (o *GetUserInfoDefault) WithPayload(payload *models.Error) *GetUserInfoDefault {
+func (o *GetUserInfoDefault) WithPayload(payload *models.APIError) *GetUserInfoDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get user info default response
-func (o *GetUserInfoDefault) SetPayload(payload *models.Error) {
+func (o *GetUserInfoDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

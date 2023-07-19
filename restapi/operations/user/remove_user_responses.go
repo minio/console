@@ -66,7 +66,7 @@ type RemoveUserDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewRemoveUserDefault creates RemoveUserDefault with default headers values
@@ -92,13 +92,13 @@ func (o *RemoveUserDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the remove user default response
-func (o *RemoveUserDefault) WithPayload(payload *models.Error) *RemoveUserDefault {
+func (o *RemoveUserDefault) WithPayload(payload *models.APIError) *RemoveUserDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the remove user default response
-func (o *RemoveUserDefault) SetPayload(payload *models.Error) {
+func (o *RemoveUserDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

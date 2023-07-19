@@ -66,7 +66,7 @@ type PutObjectRetentionDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewPutObjectRetentionDefault creates PutObjectRetentionDefault with default headers values
@@ -92,13 +92,13 @@ func (o *PutObjectRetentionDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the put object retention default response
-func (o *PutObjectRetentionDefault) WithPayload(payload *models.Error) *PutObjectRetentionDefault {
+func (o *PutObjectRetentionDefault) WithPayload(payload *models.APIError) *PutObjectRetentionDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the put object retention default response
-func (o *PutObjectRetentionDefault) SetPayload(payload *models.Error) {
+func (o *PutObjectRetentionDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

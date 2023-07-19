@@ -66,7 +66,7 @@ type BulkUpdateUsersGroupsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewBulkUpdateUsersGroupsDefault creates BulkUpdateUsersGroupsDefault with default headers values
@@ -92,13 +92,13 @@ func (o *BulkUpdateUsersGroupsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the bulk update users groups default response
-func (o *BulkUpdateUsersGroupsDefault) WithPayload(payload *models.Error) *BulkUpdateUsersGroupsDefault {
+func (o *BulkUpdateUsersGroupsDefault) WithPayload(payload *models.APIError) *BulkUpdateUsersGroupsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the bulk update users groups default response
-func (o *BulkUpdateUsersGroupsDefault) SetPayload(payload *models.Error) {
+func (o *BulkUpdateUsersGroupsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

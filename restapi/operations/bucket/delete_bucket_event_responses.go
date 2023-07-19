@@ -66,7 +66,7 @@ type DeleteBucketEventDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDeleteBucketEventDefault creates DeleteBucketEventDefault with default headers values
@@ -92,13 +92,13 @@ func (o *DeleteBucketEventDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the delete bucket event default response
-func (o *DeleteBucketEventDefault) WithPayload(payload *models.Error) *DeleteBucketEventDefault {
+func (o *DeleteBucketEventDefault) WithPayload(payload *models.APIError) *DeleteBucketEventDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the delete bucket event default response
-func (o *DeleteBucketEventDefault) SetPayload(payload *models.Error) {
+func (o *DeleteBucketEventDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

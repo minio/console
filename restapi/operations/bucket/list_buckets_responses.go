@@ -86,7 +86,7 @@ type ListBucketsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListBucketsDefault creates ListBucketsDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ListBucketsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list buckets default response
-func (o *ListBucketsDefault) WithPayload(payload *models.Error) *ListBucketsDefault {
+func (o *ListBucketsDefault) WithPayload(payload *models.APIError) *ListBucketsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list buckets default response
-func (o *ListBucketsDefault) SetPayload(payload *models.Error) {
+func (o *ListBucketsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

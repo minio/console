@@ -89,7 +89,7 @@ type ConfigInfoDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewConfigInfoDefault creates ConfigInfoDefault with default headers values
@@ -115,13 +115,13 @@ func (o *ConfigInfoDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the config info default response
-func (o *ConfigInfoDefault) WithPayload(payload *models.Error) *ConfigInfoDefault {
+func (o *ConfigInfoDefault) WithPayload(payload *models.APIError) *ConfigInfoDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the config info default response
-func (o *ConfigInfoDefault) SetPayload(payload *models.Error) {
+func (o *ConfigInfoDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

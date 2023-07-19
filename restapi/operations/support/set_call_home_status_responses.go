@@ -66,7 +66,7 @@ type SetCallHomeStatusDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSetCallHomeStatusDefault creates SetCallHomeStatusDefault with default headers values
@@ -92,13 +92,13 @@ func (o *SetCallHomeStatusDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the set call home status default response
-func (o *SetCallHomeStatusDefault) WithPayload(payload *models.Error) *SetCallHomeStatusDefault {
+func (o *SetCallHomeStatusDefault) WithPayload(payload *models.APIError) *SetCallHomeStatusDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the set call home status default response
-func (o *SetCallHomeStatusDefault) SetPayload(payload *models.Error) {
+func (o *SetCallHomeStatusDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

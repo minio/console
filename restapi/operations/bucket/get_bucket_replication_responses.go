@@ -86,7 +86,7 @@ type GetBucketReplicationDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetBucketReplicationDefault creates GetBucketReplicationDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetBucketReplicationDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get bucket replication default response
-func (o *GetBucketReplicationDefault) WithPayload(payload *models.Error) *GetBucketReplicationDefault {
+func (o *GetBucketReplicationDefault) WithPayload(payload *models.APIError) *GetBucketReplicationDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get bucket replication default response
-func (o *GetBucketReplicationDefault) SetPayload(payload *models.Error) {
+func (o *GetBucketReplicationDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

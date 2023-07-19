@@ -89,7 +89,7 @@ type ListUserServiceAccountsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListUserServiceAccountsDefault creates ListUserServiceAccountsDefault with default headers values
@@ -115,13 +115,13 @@ func (o *ListUserServiceAccountsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list user service accounts default response
-func (o *ListUserServiceAccountsDefault) WithPayload(payload *models.Error) *ListUserServiceAccountsDefault {
+func (o *ListUserServiceAccountsDefault) WithPayload(payload *models.APIError) *ListUserServiceAccountsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list user service accounts default response
-func (o *ListUserServiceAccountsDefault) SetPayload(payload *models.Error) {
+func (o *ListUserServiceAccountsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -84,7 +84,7 @@ type SetAccessRuleWithBucketDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSetAccessRuleWithBucketDefault creates SetAccessRuleWithBucketDefault with default headers values
@@ -110,13 +110,13 @@ func (o *SetAccessRuleWithBucketDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the set access rule with bucket default response
-func (o *SetAccessRuleWithBucketDefault) WithPayload(payload *models.Error) *SetAccessRuleWithBucketDefault {
+func (o *SetAccessRuleWithBucketDefault) WithPayload(payload *models.APIError) *SetAccessRuleWithBucketDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the set access rule with bucket default response
-func (o *SetAccessRuleWithBucketDefault) SetPayload(payload *models.Error) {
+func (o *SetAccessRuleWithBucketDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

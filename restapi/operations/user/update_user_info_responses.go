@@ -86,7 +86,7 @@ type UpdateUserInfoDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewUpdateUserInfoDefault creates UpdateUserInfoDefault with default headers values
@@ -112,13 +112,13 @@ func (o *UpdateUserInfoDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the update user info default response
-func (o *UpdateUserInfoDefault) WithPayload(payload *models.Error) *UpdateUserInfoDefault {
+func (o *UpdateUserInfoDefault) WithPayload(payload *models.APIError) *UpdateUserInfoDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the update user info default response
-func (o *UpdateUserInfoDefault) SetPayload(payload *models.Error) {
+func (o *UpdateUserInfoDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -66,7 +66,7 @@ type LoginDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewLoginDefault creates LoginDefault with default headers values
@@ -92,13 +92,13 @@ func (o *LoginDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the login default response
-func (o *LoginDefault) WithPayload(payload *models.Error) *LoginDefault {
+func (o *LoginDefault) WithPayload(payload *models.APIError) *LoginDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the login default response
-func (o *LoginDefault) SetPayload(payload *models.Error) {
+func (o *LoginDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

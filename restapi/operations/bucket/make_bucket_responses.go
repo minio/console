@@ -86,7 +86,7 @@ type MakeBucketDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewMakeBucketDefault creates MakeBucketDefault with default headers values
@@ -112,13 +112,13 @@ func (o *MakeBucketDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the make bucket default response
-func (o *MakeBucketDefault) WithPayload(payload *models.Error) *MakeBucketDefault {
+func (o *MakeBucketDefault) WithPayload(payload *models.APIError) *MakeBucketDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the make bucket default response
-func (o *MakeBucketDefault) SetPayload(payload *models.Error) {
+func (o *MakeBucketDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

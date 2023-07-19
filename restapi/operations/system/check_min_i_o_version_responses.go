@@ -86,7 +86,7 @@ type CheckMinIOVersionDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewCheckMinIOVersionDefault creates CheckMinIOVersionDefault with default headers values
@@ -112,13 +112,13 @@ func (o *CheckMinIOVersionDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the check min i o version default response
-func (o *CheckMinIOVersionDefault) WithPayload(payload *models.Error) *CheckMinIOVersionDefault {
+func (o *CheckMinIOVersionDefault) WithPayload(payload *models.APIError) *CheckMinIOVersionDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the check min i o version default response
-func (o *CheckMinIOVersionDefault) SetPayload(payload *models.Error) {
+func (o *CheckMinIOVersionDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

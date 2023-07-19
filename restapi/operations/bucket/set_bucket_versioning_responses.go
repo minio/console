@@ -66,7 +66,7 @@ type SetBucketVersioningDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSetBucketVersioningDefault creates SetBucketVersioningDefault with default headers values
@@ -92,13 +92,13 @@ func (o *SetBucketVersioningDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the set bucket versioning default response
-func (o *SetBucketVersioningDefault) WithPayload(payload *models.Error) *SetBucketVersioningDefault {
+func (o *SetBucketVersioningDefault) WithPayload(payload *models.APIError) *SetBucketVersioningDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the set bucket versioning default response
-func (o *SetBucketVersioningDefault) SetPayload(payload *models.Error) {
+func (o *SetBucketVersioningDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -66,7 +66,7 @@ type PostConfigsImportDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewPostConfigsImportDefault creates PostConfigsImportDefault with default headers values
@@ -92,13 +92,13 @@ func (o *PostConfigsImportDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the post configs import default response
-func (o *PostConfigsImportDefault) WithPayload(payload *models.Error) *PostConfigsImportDefault {
+func (o *PostConfigsImportDefault) WithPayload(payload *models.APIError) *PostConfigsImportDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the post configs import default response
-func (o *PostConfigsImportDefault) SetPayload(payload *models.Error) {
+func (o *PostConfigsImportDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

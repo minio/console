@@ -34,7 +34,6 @@ import (
 	"time"
 
 	"github.com/minio/console/models"
-	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/stretchr/testify/assert"
 )
@@ -3182,7 +3181,7 @@ func TestEnableBucketEncryption(t *testing.T) {
 			404, resp.StatusCode, "Status Code is incorrect")
 	}
 	bodyBytes, _ = io.ReadAll(resp.Body)
-	result2 := models.Error{}
+	result2 := models.APIError{}
 	err = json.Unmarshal(bodyBytes, &result2)
 	if err != nil {
 		log.Println(err)

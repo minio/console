@@ -86,7 +86,7 @@ type ListUsersDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListUsersDefault creates ListUsersDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ListUsersDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list users default response
-func (o *ListUsersDefault) WithPayload(payload *models.Error) *ListUsersDefault {
+func (o *ListUsersDefault) WithPayload(payload *models.APIError) *ListUsersDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list users default response
-func (o *ListUsersDefault) SetPayload(payload *models.Error) {
+func (o *ListUsersDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -86,7 +86,7 @@ type KMSGetPolicyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewKMSGetPolicyDefault creates KMSGetPolicyDefault with default headers values
@@ -112,13 +112,13 @@ func (o *KMSGetPolicyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the k m s get policy default response
-func (o *KMSGetPolicyDefault) WithPayload(payload *models.Error) *KMSGetPolicyDefault {
+func (o *KMSGetPolicyDefault) WithPayload(payload *models.APIError) *KMSGetPolicyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s get policy default response
-func (o *KMSGetPolicyDefault) SetPayload(payload *models.Error) {
+func (o *KMSGetPolicyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

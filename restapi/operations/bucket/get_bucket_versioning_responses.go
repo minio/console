@@ -86,7 +86,7 @@ type GetBucketVersioningDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetBucketVersioningDefault creates GetBucketVersioningDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetBucketVersioningDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get bucket versioning default response
-func (o *GetBucketVersioningDefault) WithPayload(payload *models.Error) *GetBucketVersioningDefault {
+func (o *GetBucketVersioningDefault) WithPayload(payload *models.APIError) *GetBucketVersioningDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get bucket versioning default response
-func (o *GetBucketVersioningDefault) SetPayload(payload *models.Error) {
+func (o *GetBucketVersioningDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -41,12 +41,7 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../common/SecureComponent";
-import {
-  Error,
-  HttpResponse,
-  ListPoliciesResponse,
-  Policy,
-} from "../../../api/consoleApi";
+import { Policy } from "../../../api/consoleApi";
 import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
@@ -101,7 +96,7 @@ const ListPolicies = () => {
       if (canDisplayPolicies) {
         api.policies
           .listPolicies()
-          .then((res: HttpResponse<ListPoliciesResponse, Error>) => {
+          .then((res) => {
             const policies = res.data.policies ?? [];
 
             policies.sort((pa, pb) => {

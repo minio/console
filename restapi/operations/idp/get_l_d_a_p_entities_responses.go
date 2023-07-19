@@ -86,7 +86,7 @@ type GetLDAPEntitiesDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetLDAPEntitiesDefault creates GetLDAPEntitiesDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetLDAPEntitiesDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get l d a p entities default response
-func (o *GetLDAPEntitiesDefault) WithPayload(payload *models.Error) *GetLDAPEntitiesDefault {
+func (o *GetLDAPEntitiesDefault) WithPayload(payload *models.APIError) *GetLDAPEntitiesDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get l d a p entities default response
-func (o *GetLDAPEntitiesDefault) SetPayload(payload *models.Error) {
+func (o *GetLDAPEntitiesDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

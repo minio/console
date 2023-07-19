@@ -86,7 +86,7 @@ type GetBucketEncryptionInfoDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetBucketEncryptionInfoDefault creates GetBucketEncryptionInfoDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetBucketEncryptionInfoDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get bucket encryption info default response
-func (o *GetBucketEncryptionInfoDefault) WithPayload(payload *models.Error) *GetBucketEncryptionInfoDefault {
+func (o *GetBucketEncryptionInfoDefault) WithPayload(payload *models.APIError) *GetBucketEncryptionInfoDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get bucket encryption info default response
-func (o *GetBucketEncryptionInfoDefault) SetPayload(payload *models.Error) {
+func (o *GetBucketEncryptionInfoDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

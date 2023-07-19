@@ -86,7 +86,7 @@ type GetBucketRewindDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetBucketRewindDefault creates GetBucketRewindDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetBucketRewindDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get bucket rewind default response
-func (o *GetBucketRewindDefault) WithPayload(payload *models.Error) *GetBucketRewindDefault {
+func (o *GetBucketRewindDefault) WithPayload(payload *models.APIError) *GetBucketRewindDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get bucket rewind default response
-func (o *GetBucketRewindDefault) SetPayload(payload *models.Error) {
+func (o *GetBucketRewindDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

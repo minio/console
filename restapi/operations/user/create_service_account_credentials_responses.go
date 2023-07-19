@@ -86,7 +86,7 @@ type CreateServiceAccountCredentialsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewCreateServiceAccountCredentialsDefault creates CreateServiceAccountCredentialsDefault with default headers values
@@ -112,13 +112,13 @@ func (o *CreateServiceAccountCredentialsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the create service account credentials default response
-func (o *CreateServiceAccountCredentialsDefault) WithPayload(payload *models.Error) *CreateServiceAccountCredentialsDefault {
+func (o *CreateServiceAccountCredentialsDefault) WithPayload(payload *models.APIError) *CreateServiceAccountCredentialsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the create service account credentials default response
-func (o *CreateServiceAccountCredentialsDefault) SetPayload(payload *models.Error) {
+func (o *CreateServiceAccountCredentialsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

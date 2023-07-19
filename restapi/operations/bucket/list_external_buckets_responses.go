@@ -86,7 +86,7 @@ type ListExternalBucketsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListExternalBucketsDefault creates ListExternalBucketsDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ListExternalBucketsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list external buckets default response
-func (o *ListExternalBucketsDefault) WithPayload(payload *models.Error) *ListExternalBucketsDefault {
+func (o *ListExternalBucketsDefault) WithPayload(payload *models.APIError) *ListExternalBucketsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list external buckets default response
-func (o *ListExternalBucketsDefault) SetPayload(payload *models.Error) {
+func (o *ListExternalBucketsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

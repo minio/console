@@ -86,7 +86,7 @@ type BucketSetPolicyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewBucketSetPolicyDefault creates BucketSetPolicyDefault with default headers values
@@ -112,13 +112,13 @@ func (o *BucketSetPolicyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the bucket set policy default response
-func (o *BucketSetPolicyDefault) WithPayload(payload *models.Error) *BucketSetPolicyDefault {
+func (o *BucketSetPolicyDefault) WithPayload(payload *models.APIError) *BucketSetPolicyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the bucket set policy default response
-func (o *BucketSetPolicyDefault) SetPayload(payload *models.Error) {
+func (o *BucketSetPolicyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

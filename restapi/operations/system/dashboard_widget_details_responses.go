@@ -86,7 +86,7 @@ type DashboardWidgetDetailsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDashboardWidgetDetailsDefault creates DashboardWidgetDetailsDefault with default headers values
@@ -112,13 +112,13 @@ func (o *DashboardWidgetDetailsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the dashboard widget details default response
-func (o *DashboardWidgetDetailsDefault) WithPayload(payload *models.Error) *DashboardWidgetDetailsDefault {
+func (o *DashboardWidgetDetailsDefault) WithPayload(payload *models.APIError) *DashboardWidgetDetailsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the dashboard widget details default response
-func (o *DashboardWidgetDetailsDefault) SetPayload(payload *models.Error) {
+func (o *DashboardWidgetDetailsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

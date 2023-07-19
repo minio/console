@@ -89,7 +89,7 @@ type ListGroupsForPolicyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListGroupsForPolicyDefault creates ListGroupsForPolicyDefault with default headers values
@@ -115,13 +115,13 @@ func (o *ListGroupsForPolicyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list groups for policy default response
-func (o *ListGroupsForPolicyDefault) WithPayload(payload *models.Error) *ListGroupsForPolicyDefault {
+func (o *ListGroupsForPolicyDefault) WithPayload(payload *models.APIError) *ListGroupsForPolicyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list groups for policy default response
-func (o *ListGroupsForPolicyDefault) SetPayload(payload *models.Error) {
+func (o *ListGroupsForPolicyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

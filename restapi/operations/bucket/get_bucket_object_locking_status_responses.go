@@ -86,7 +86,7 @@ type GetBucketObjectLockingStatusDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetBucketObjectLockingStatusDefault creates GetBucketObjectLockingStatusDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetBucketObjectLockingStatusDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get bucket object locking status default response
-func (o *GetBucketObjectLockingStatusDefault) WithPayload(payload *models.Error) *GetBucketObjectLockingStatusDefault {
+func (o *GetBucketObjectLockingStatusDefault) WithPayload(payload *models.APIError) *GetBucketObjectLockingStatusDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get bucket object locking status default response
-func (o *GetBucketObjectLockingStatusDefault) SetPayload(payload *models.Error) {
+func (o *GetBucketObjectLockingStatusDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -66,7 +66,7 @@ type DeleteBucketLifecycleRuleDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDeleteBucketLifecycleRuleDefault creates DeleteBucketLifecycleRuleDefault with default headers values
@@ -92,13 +92,13 @@ func (o *DeleteBucketLifecycleRuleDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the delete bucket lifecycle rule default response
-func (o *DeleteBucketLifecycleRuleDefault) WithPayload(payload *models.Error) *DeleteBucketLifecycleRuleDefault {
+func (o *DeleteBucketLifecycleRuleDefault) WithPayload(payload *models.APIError) *DeleteBucketLifecycleRuleDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the delete bucket lifecycle rule default response
-func (o *DeleteBucketLifecycleRuleDefault) SetPayload(payload *models.Error) {
+func (o *DeleteBucketLifecycleRuleDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -86,7 +86,7 @@ type GroupInfoDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGroupInfoDefault creates GroupInfoDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GroupInfoDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the group info default response
-func (o *GroupInfoDefault) WithPayload(payload *models.Error) *GroupInfoDefault {
+func (o *GroupInfoDefault) WithPayload(payload *models.APIError) *GroupInfoDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the group info default response
-func (o *GroupInfoDefault) SetPayload(payload *models.Error) {
+func (o *GroupInfoDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

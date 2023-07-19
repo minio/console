@@ -86,7 +86,7 @@ type ListObjectsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListObjectsDefault creates ListObjectsDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ListObjectsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list objects default response
-func (o *ListObjectsDefault) WithPayload(payload *models.Error) *ListObjectsDefault {
+func (o *ListObjectsDefault) WithPayload(payload *models.APIError) *ListObjectsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list objects default response
-func (o *ListObjectsDefault) SetPayload(payload *models.Error) {
+func (o *ListObjectsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

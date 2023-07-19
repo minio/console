@@ -84,7 +84,7 @@ type GetUserPolicyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetUserPolicyDefault creates GetUserPolicyDefault with default headers values
@@ -110,13 +110,13 @@ func (o *GetUserPolicyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get user policy default response
-func (o *GetUserPolicyDefault) WithPayload(payload *models.Error) *GetUserPolicyDefault {
+func (o *GetUserPolicyDefault) WithPayload(payload *models.APIError) *GetUserPolicyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get user policy default response
-func (o *GetUserPolicyDefault) SetPayload(payload *models.Error) {
+func (o *GetUserPolicyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

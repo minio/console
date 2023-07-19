@@ -66,7 +66,7 @@ type KMSImportKeyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewKMSImportKeyDefault creates KMSImportKeyDefault with default headers values
@@ -92,13 +92,13 @@ func (o *KMSImportKeyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the k m s import key default response
-func (o *KMSImportKeyDefault) WithPayload(payload *models.Error) *KMSImportKeyDefault {
+func (o *KMSImportKeyDefault) WithPayload(payload *models.APIError) *KMSImportKeyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s import key default response
-func (o *KMSImportKeyDefault) SetPayload(payload *models.Error) {
+func (o *KMSImportKeyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

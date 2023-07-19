@@ -86,7 +86,7 @@ type PolicyInfoDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewPolicyInfoDefault creates PolicyInfoDefault with default headers values
@@ -112,13 +112,13 @@ func (o *PolicyInfoDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the policy info default response
-func (o *PolicyInfoDefault) WithPayload(payload *models.Error) *PolicyInfoDefault {
+func (o *PolicyInfoDefault) WithPayload(payload *models.APIError) *PolicyInfoDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the policy info default response
-func (o *PolicyInfoDefault) SetPayload(payload *models.Error) {
+func (o *PolicyInfoDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

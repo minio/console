@@ -86,7 +86,7 @@ type KMSMetricsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewKMSMetricsDefault creates KMSMetricsDefault with default headers values
@@ -112,13 +112,13 @@ func (o *KMSMetricsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the k m s metrics default response
-func (o *KMSMetricsDefault) WithPayload(payload *models.Error) *KMSMetricsDefault {
+func (o *KMSMetricsDefault) WithPayload(payload *models.APIError) *KMSMetricsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s metrics default response
-func (o *KMSMetricsDefault) SetPayload(payload *models.Error) {
+func (o *KMSMetricsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

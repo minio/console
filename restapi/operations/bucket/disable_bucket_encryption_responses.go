@@ -66,7 +66,7 @@ type DisableBucketEncryptionDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDisableBucketEncryptionDefault creates DisableBucketEncryptionDefault with default headers values
@@ -92,13 +92,13 @@ func (o *DisableBucketEncryptionDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the disable bucket encryption default response
-func (o *DisableBucketEncryptionDefault) WithPayload(payload *models.Error) *DisableBucketEncryptionDefault {
+func (o *DisableBucketEncryptionDefault) WithPayload(payload *models.APIError) *DisableBucketEncryptionDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the disable bucket encryption default response
-func (o *DisableBucketEncryptionDefault) SetPayload(payload *models.Error) {
+func (o *DisableBucketEncryptionDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

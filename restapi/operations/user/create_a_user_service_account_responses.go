@@ -86,7 +86,7 @@ type CreateAUserServiceAccountDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewCreateAUserServiceAccountDefault creates CreateAUserServiceAccountDefault with default headers values
@@ -112,13 +112,13 @@ func (o *CreateAUserServiceAccountDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the create a user service account default response
-func (o *CreateAUserServiceAccountDefault) WithPayload(payload *models.Error) *CreateAUserServiceAccountDefault {
+func (o *CreateAUserServiceAccountDefault) WithPayload(payload *models.APIError) *CreateAUserServiceAccountDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the create a user service account default response
-func (o *CreateAUserServiceAccountDefault) SetPayload(payload *models.Error) {
+func (o *CreateAUserServiceAccountDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

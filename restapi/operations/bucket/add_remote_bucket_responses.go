@@ -66,7 +66,7 @@ type AddRemoteBucketDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewAddRemoteBucketDefault creates AddRemoteBucketDefault with default headers values
@@ -92,13 +92,13 @@ func (o *AddRemoteBucketDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the add remote bucket default response
-func (o *AddRemoteBucketDefault) WithPayload(payload *models.Error) *AddRemoteBucketDefault {
+func (o *AddRemoteBucketDefault) WithPayload(payload *models.APIError) *AddRemoteBucketDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the add remote bucket default response
-func (o *AddRemoteBucketDefault) SetPayload(payload *models.Error) {
+func (o *AddRemoteBucketDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

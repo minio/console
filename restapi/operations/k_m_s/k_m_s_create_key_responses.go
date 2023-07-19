@@ -66,7 +66,7 @@ type KMSCreateKeyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewKMSCreateKeyDefault creates KMSCreateKeyDefault with default headers values
@@ -92,13 +92,13 @@ func (o *KMSCreateKeyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the k m s create key default response
-func (o *KMSCreateKeyDefault) WithPayload(payload *models.Error) *KMSCreateKeyDefault {
+func (o *KMSCreateKeyDefault) WithPayload(payload *models.APIError) *KMSCreateKeyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s create key default response
-func (o *KMSCreateKeyDefault) SetPayload(payload *models.Error) {
+func (o *KMSCreateKeyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

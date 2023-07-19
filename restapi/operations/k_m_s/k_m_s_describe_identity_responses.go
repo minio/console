@@ -86,7 +86,7 @@ type KMSDescribeIdentityDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewKMSDescribeIdentityDefault creates KMSDescribeIdentityDefault with default headers values
@@ -112,13 +112,13 @@ func (o *KMSDescribeIdentityDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the k m s describe identity default response
-func (o *KMSDescribeIdentityDefault) WithPayload(payload *models.Error) *KMSDescribeIdentityDefault {
+func (o *KMSDescribeIdentityDefault) WithPayload(payload *models.APIError) *KMSDescribeIdentityDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s describe identity default response
-func (o *KMSDescribeIdentityDefault) SetPayload(payload *models.Error) {
+func (o *KMSDescribeIdentityDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

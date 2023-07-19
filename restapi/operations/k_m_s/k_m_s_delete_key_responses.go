@@ -66,7 +66,7 @@ type KMSDeleteKeyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewKMSDeleteKeyDefault creates KMSDeleteKeyDefault with default headers values
@@ -92,13 +92,13 @@ func (o *KMSDeleteKeyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the k m s delete key default response
-func (o *KMSDeleteKeyDefault) WithPayload(payload *models.Error) *KMSDeleteKeyDefault {
+func (o *KMSDeleteKeyDefault) WithPayload(payload *models.APIError) *KMSDeleteKeyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s delete key default response
-func (o *KMSDeleteKeyDefault) SetPayload(payload *models.Error) {
+func (o *KMSDeleteKeyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

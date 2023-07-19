@@ -86,7 +86,7 @@ type NotificationEndpointListDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewNotificationEndpointListDefault creates NotificationEndpointListDefault with default headers values
@@ -112,13 +112,13 @@ func (o *NotificationEndpointListDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the notification endpoint list default response
-func (o *NotificationEndpointListDefault) WithPayload(payload *models.Error) *NotificationEndpointListDefault {
+func (o *NotificationEndpointListDefault) WithPayload(payload *models.APIError) *NotificationEndpointListDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the notification endpoint list default response
-func (o *NotificationEndpointListDefault) SetPayload(payload *models.Error) {
+func (o *NotificationEndpointListDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

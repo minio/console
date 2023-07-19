@@ -26,10 +26,9 @@ import {
   Select,
 } from "mds";
 import {
+  ApiError,
   BucketEncryptionInfo,
   BucketEncryptionType,
-  Error,
-  HttpResponse,
   KmsKeyInfo,
 } from "api/consoleApi";
 import { api } from "api";
@@ -108,8 +107,8 @@ const EnableBucketEncryption = ({
           setLoading(false);
           closeModalAndRefresh();
         })
-        .catch(async (res: HttpResponse<void, Error>) => {
-          const err = (await res.json()) as Error;
+        .catch(async (res) => {
+          const err = (await res.json()) as ApiError;
           setLoading(false);
           dispatch(setModalErrorSnackMessage(errorToHandler(err)));
         });
@@ -124,8 +123,8 @@ const EnableBucketEncryption = ({
           closeModalAndRefresh();
         })
 
-        .catch(async (res: HttpResponse<void, Error>) => {
-          const err = (await res.json()) as Error;
+        .catch(async (res) => {
+          const err = (await res.json()) as ApiError;
           setLoading(false);
           dispatch(setModalErrorSnackMessage(errorToHandler(err)));
         });
