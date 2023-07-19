@@ -88,7 +88,7 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
               }
               return acc;
             },
-            []
+            [],
           );
 
           setConfigSubSysList(confSubSysList);
@@ -114,7 +114,7 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
         configSubSysList.includes(configuration_id) ||
         !configSubSysList.length
       );
-    }
+    },
   );
 
   return (
