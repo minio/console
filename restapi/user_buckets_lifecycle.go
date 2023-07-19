@@ -47,21 +47,21 @@ func registerBucketsLifecycleHandlers(api *operations.ConsoleAPI) {
 	api.BucketGetBucketLifecycleHandler = bucketApi.GetBucketLifecycleHandlerFunc(func(params bucketApi.GetBucketLifecycleParams, session *models.Principal) middleware.Responder {
 		listBucketLifecycleResponse, err := getBucketLifecycleResponse(session, params)
 		if err != nil {
-			return bucketApi.NewGetBucketLifecycleDefault(err.Code).WithPayload(err.ApiError)
+			return bucketApi.NewGetBucketLifecycleDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewGetBucketLifecycleOK().WithPayload(listBucketLifecycleResponse)
 	})
 	api.BucketAddBucketLifecycleHandler = bucketApi.AddBucketLifecycleHandlerFunc(func(params bucketApi.AddBucketLifecycleParams, session *models.Principal) middleware.Responder {
 		err := getAddBucketLifecycleResponse(session, params)
 		if err != nil {
-			return bucketApi.NewAddBucketLifecycleDefault(err.Code).WithPayload(err.ApiError)
+			return bucketApi.NewAddBucketLifecycleDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewAddBucketLifecycleCreated()
 	})
 	api.BucketUpdateBucketLifecycleHandler = bucketApi.UpdateBucketLifecycleHandlerFunc(func(params bucketApi.UpdateBucketLifecycleParams, session *models.Principal) middleware.Responder {
 		err := getEditBucketLifecycleRule(session, params)
 		if err != nil {
-			return bucketApi.NewUpdateBucketLifecycleDefault(err.Code).WithPayload(err.ApiError)
+			return bucketApi.NewUpdateBucketLifecycleDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return bucketApi.NewUpdateBucketLifecycleOK()
@@ -69,7 +69,7 @@ func registerBucketsLifecycleHandlers(api *operations.ConsoleAPI) {
 	api.BucketDeleteBucketLifecycleRuleHandler = bucketApi.DeleteBucketLifecycleRuleHandlerFunc(func(params bucketApi.DeleteBucketLifecycleRuleParams, session *models.Principal) middleware.Responder {
 		err := getDeleteBucketLifecycleRule(session, params)
 		if err != nil {
-			return bucketApi.NewDeleteBucketLifecycleRuleDefault(err.Code).WithPayload(err.ApiError)
+			return bucketApi.NewDeleteBucketLifecycleRuleDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return bucketApi.NewDeleteBucketLifecycleRuleNoContent()
@@ -77,7 +77,7 @@ func registerBucketsLifecycleHandlers(api *operations.ConsoleAPI) {
 	api.BucketAddMultiBucketLifecycleHandler = bucketApi.AddMultiBucketLifecycleHandlerFunc(func(params bucketApi.AddMultiBucketLifecycleParams, session *models.Principal) middleware.Responder {
 		multiBucketResponse, err := getAddMultiBucketLifecycleResponse(session, params)
 		if err != nil {
-			bucketApi.NewAddMultiBucketLifecycleDefault(err.Code).WithPayload(err.ApiError)
+			bucketApi.NewAddMultiBucketLifecycleDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return bucketApi.NewAddMultiBucketLifecycleOK().WithPayload(multiBucketResponse)
@@ -140,7 +140,7 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 }
 
 // getBucketLifecycleResponse performs getBucketLifecycle() and serializes it to the handler's output
-func getBucketLifecycleResponse(session *models.Principal, params bucketApi.GetBucketLifecycleParams) (*models.BucketLifecycleResponse, *CodedApiError) {
+func getBucketLifecycleResponse(session *models.Principal, params bucketApi.GetBucketLifecycleParams) (*models.BucketLifecycleResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -243,7 +243,7 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 }
 
 // getAddBucketLifecycleResponse returns the response of adding a bucket lifecycle response
-func getAddBucketLifecycleResponse(session *models.Principal, params bucketApi.AddBucketLifecycleParams) *CodedApiError {
+func getAddBucketLifecycleResponse(session *models.Principal, params bucketApi.AddBucketLifecycleParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -356,7 +356,7 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 }
 
 // getEditBucketLifecycleRule returns the response of bucket lifecycle tier edit
-func getEditBucketLifecycleRule(session *models.Principal, params bucketApi.UpdateBucketLifecycleParams) *CodedApiError {
+func getEditBucketLifecycleRule(session *models.Principal, params bucketApi.UpdateBucketLifecycleParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -410,7 +410,7 @@ func deleteBucketLifecycle(ctx context.Context, client MinioClient, params bucke
 }
 
 // getDeleteBucketLifecycleRule returns the response of bucket lifecycle tier delete
-func getDeleteBucketLifecycleRule(session *models.Principal, params bucketApi.DeleteBucketLifecycleRuleParams) *CodedApiError {
+func getDeleteBucketLifecycleRule(session *models.Principal, params bucketApi.DeleteBucketLifecycleRuleParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -496,7 +496,7 @@ func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params buc
 }
 
 // getAddMultiBucketLifecycleResponse returns the response of multibucket lifecycle assignment
-func getAddMultiBucketLifecycleResponse(session *models.Principal, params bucketApi.AddMultiBucketLifecycleParams) (*models.MultiLifecycleResult, *CodedApiError) {
+func getAddMultiBucketLifecycleResponse(session *models.Principal, params bucketApi.AddMultiBucketLifecycleParams) (*models.MultiLifecycleResult, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))

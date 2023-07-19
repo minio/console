@@ -58,21 +58,21 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	api.ObjectListObjectsHandler = objectApi.ListObjectsHandlerFunc(func(params objectApi.ListObjectsParams, session *models.Principal) middleware.Responder {
 		resp, err := getListObjectsResponse(session, params)
 		if err != nil {
-			return objectApi.NewListObjectsDefault(err.Code).WithPayload(err.ApiError)
+			return objectApi.NewListObjectsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewListObjectsOK().WithPayload(resp)
 	})
 	// delete object
 	api.ObjectDeleteObjectHandler = objectApi.DeleteObjectHandlerFunc(func(params objectApi.DeleteObjectParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteObjectResponse(session, params); err != nil {
-			return objectApi.NewDeleteObjectDefault(err.Code).WithPayload(err.ApiError)
+			return objectApi.NewDeleteObjectDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewDeleteObjectOK()
 	})
 	// delete multiple objects
 	api.ObjectDeleteMultipleObjectsHandler = objectApi.DeleteMultipleObjectsHandlerFunc(func(params objectApi.DeleteMultipleObjectsParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteMultiplePathsResponse(session, params); err != nil {
-			return objectApi.NewDeleteMultipleObjectsDefault(err.Code).WithPayload(err.ApiError)
+			return objectApi.NewDeleteMultipleObjectsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewDeleteMultipleObjectsOK()
 	})
@@ -86,7 +86,7 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 			if err != nil {
 				apiErr := ErrorWithContext(ctx, err)
-				return objectApi.NewDownloadObjectDefault(400).WithPayload(apiErr.ApiError)
+				return objectApi.NewDownloadObjectDefault(400).WithPayload(apiErr.APIError)
 			}
 			prefix = string(decodedPrefix)
 		}
@@ -96,7 +96,7 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 			isFolder = true
 		}
 		var resp middleware.Responder
-		var err *CodedApiError
+		var err *CodedAPIError
 
 		if isFolder {
 			resp, err = getDownloadFolderResponse(session, params)
@@ -105,7 +105,7 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 
 		if err != nil {
-			return objectApi.NewDownloadObjectDefault(int(err.Code)).WithPayload(err.ApiError)
+			return objectApi.NewDownloadObjectDefault(err.Code).WithPayload(err.APIError)
 		}
 		return resp
 	})
@@ -127,10 +127,10 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	// upload object
 	api.ObjectPostBucketsBucketNameObjectsUploadHandler = objectApi.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params objectApi.PostBucketsBucketNameObjectsUploadParams, session *models.Principal) middleware.Responder {
 		if err := getUploadObjectResponse(session, params); err != nil {
-			if strings.Contains(err.ApiError.DetailedMessage, "413") {
-				return objectApi.NewPostBucketsBucketNameObjectsUploadDefault(413).WithPayload(err.ApiError)
+			if strings.Contains(err.APIError.DetailedMessage, "413") {
+				return objectApi.NewPostBucketsBucketNameObjectsUploadDefault(413).WithPayload(err.APIError)
 			}
-			return objectApi.NewPostBucketsBucketNameObjectsUploadDefault(int(err.Code)).WithPayload(err.ApiError)
+			return objectApi.NewPostBucketsBucketNameObjectsUploadDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewPostBucketsBucketNameObjectsUploadOK()
 	})
@@ -138,42 +138,42 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	api.ObjectShareObjectHandler = objectApi.ShareObjectHandlerFunc(func(params objectApi.ShareObjectParams, session *models.Principal) middleware.Responder {
 		resp, err := getShareObjectResponse(session, params)
 		if err != nil {
-			return objectApi.NewShareObjectDefault(int(err.Code)).WithPayload(err.ApiError)
+			return objectApi.NewShareObjectDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewShareObjectOK().WithPayload(*resp)
 	})
 	// set object legalhold status
 	api.ObjectPutObjectLegalHoldHandler = objectApi.PutObjectLegalHoldHandlerFunc(func(params objectApi.PutObjectLegalHoldParams, session *models.Principal) middleware.Responder {
 		if err := getSetObjectLegalHoldResponse(session, params); err != nil {
-			return objectApi.NewPutObjectLegalHoldDefault(int(err.Code)).WithPayload(err.ApiError)
+			return objectApi.NewPutObjectLegalHoldDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewPutObjectLegalHoldOK()
 	})
 	// set object retention
 	api.ObjectPutObjectRetentionHandler = objectApi.PutObjectRetentionHandlerFunc(func(params objectApi.PutObjectRetentionParams, session *models.Principal) middleware.Responder {
 		if err := getSetObjectRetentionResponse(session, params); err != nil {
-			return objectApi.NewPutObjectRetentionDefault(int(err.Code)).WithPayload(err.ApiError)
+			return objectApi.NewPutObjectRetentionDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewPutObjectRetentionOK()
 	})
 	// delete object retention
 	api.ObjectDeleteObjectRetentionHandler = objectApi.DeleteObjectRetentionHandlerFunc(func(params objectApi.DeleteObjectRetentionParams, session *models.Principal) middleware.Responder {
 		if err := deleteObjectRetentionResponse(session, params); err != nil {
-			return objectApi.NewDeleteObjectRetentionDefault(int(err.Code)).WithPayload(err.ApiError)
+			return objectApi.NewDeleteObjectRetentionDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewDeleteObjectRetentionOK()
 	})
 	// set tags in object
 	api.ObjectPutObjectTagsHandler = objectApi.PutObjectTagsHandlerFunc(func(params objectApi.PutObjectTagsParams, session *models.Principal) middleware.Responder {
 		if err := getPutObjectTagsResponse(session, params); err != nil {
-			return objectApi.NewPutObjectTagsDefault(int(err.Code)).WithPayload(err.ApiError)
+			return objectApi.NewPutObjectTagsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewPutObjectTagsOK()
 	})
 	// Restore file version
 	api.ObjectPutObjectRestoreHandler = objectApi.PutObjectRestoreHandlerFunc(func(params objectApi.PutObjectRestoreParams, session *models.Principal) middleware.Responder {
 		if err := getPutObjectRestoreResponse(session, params); err != nil {
-			return objectApi.NewPutObjectRestoreDefault(int(err.Code)).WithPayload(err.ApiError)
+			return objectApi.NewPutObjectRestoreDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewPutObjectRestoreOK()
 	})
@@ -181,14 +181,14 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	api.ObjectGetObjectMetadataHandler = objectApi.GetObjectMetadataHandlerFunc(func(params objectApi.GetObjectMetadataParams, session *models.Principal) middleware.Responder {
 		resp, err := getObjectMetadataResponse(session, params)
 		if err != nil {
-			return objectApi.NewGetObjectMetadataDefault(int(err.Code)).WithPayload(err.ApiError)
+			return objectApi.NewGetObjectMetadataDefault(err.Code).WithPayload(err.APIError)
 		}
 		return objectApi.NewGetObjectMetadataOK().WithPayload(resp)
 	})
 }
 
 // getListObjectsResponse returns a list of objects
-func getListObjectsResponse(session *models.Principal, params objectApi.ListObjectsParams) (*models.ListObjectsResponse, *CodedApiError) {
+func getListObjectsResponse(session *models.Principal, params objectApi.ListObjectsParams) (*models.ListObjectsResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	var prefix string
@@ -414,7 +414,7 @@ func parseRange(s string, size int64) ([]httpRange, error) {
 	return ranges, nil
 }
 
-func getDownloadObjectResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *CodedApiError) {
+func getDownloadObjectResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *CodedAPIError) {
 	ctx := params.HTTPRequest.Context()
 	var prefix string
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -530,7 +530,7 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 	}), nil
 }
 
-func getDownloadFolderResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *CodedApiError) {
+func getDownloadFolderResponse(session *models.Principal, params objectApi.DownloadObjectParams) (middleware.Responder, *CodedAPIError) {
 	ctx := params.HTTPRequest.Context()
 	var prefix string
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -760,7 +760,7 @@ func getMultipleFilesDownloadResponse(session *models.Principal, params objectAp
 }
 
 // getDeleteObjectResponse returns whether there was an error on deletion of object
-func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteObjectParams) *CodedApiError {
+func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteObjectParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	var prefix string
@@ -813,7 +813,7 @@ func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteO
 }
 
 // getDeleteMultiplePathsResponse returns whether there was an error on deletion of any object
-func getDeleteMultiplePathsResponse(session *models.Principal, params objectApi.DeleteMultipleObjectsParams) *CodedApiError {
+func getDeleteMultiplePathsResponse(session *models.Principal, params objectApi.DeleteMultipleObjectsParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	var version string
@@ -967,7 +967,7 @@ func deleteNonCurrentVersions(ctx context.Context, client MCClient, isBypass boo
 	return nil
 }
 
-func getUploadObjectResponse(session *models.Principal, params objectApi.PostBucketsBucketNameObjectsUploadParams) *CodedApiError {
+func getUploadObjectResponse(session *models.Principal, params objectApi.PostBucketsBucketNameObjectsUploadParams) *CodedAPIError {
 	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
@@ -1034,7 +1034,7 @@ func uploadFiles(ctx context.Context, client MinioClient, params objectApi.PostB
 }
 
 // getShareObjectResponse returns a share object url
-func getShareObjectResponse(session *models.Principal, params objectApi.ShareObjectParams) (*string, *CodedApiError) {
+func getShareObjectResponse(session *models.Principal, params objectApi.ShareObjectParams) (*string, *CodedAPIError) {
 	ctx := params.HTTPRequest.Context()
 	clientIP := utils.ClientIPFromContext(ctx)
 	var prefix string
@@ -1081,7 +1081,7 @@ func getShareObjectURL(ctx context.Context, client MCClient, versionID string, d
 	return &objURL, nil
 }
 
-func getSetObjectLegalHoldResponse(session *models.Principal, params objectApi.PutObjectLegalHoldParams) *CodedApiError {
+func getSetObjectLegalHoldResponse(session *models.Principal, params objectApi.PutObjectLegalHoldParams) *CodedAPIError {
 	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
@@ -1116,7 +1116,7 @@ func setObjectLegalHold(ctx context.Context, client MinioClient, bucketName, pre
 	return client.putObjectLegalHold(ctx, bucketName, prefix, minio.PutObjectLegalHoldOptions{VersionID: versionID, Status: &lstatus})
 }
 
-func getSetObjectRetentionResponse(session *models.Principal, params objectApi.PutObjectRetentionParams) *CodedApiError {
+func getSetObjectRetentionResponse(session *models.Principal, params objectApi.PutObjectRetentionParams) *CodedAPIError {
 	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
@@ -1168,7 +1168,7 @@ func setObjectRetention(ctx context.Context, client MinioClient, bucketName, ver
 	return client.putObjectRetention(ctx, bucketName, prefix, opts)
 }
 
-func deleteObjectRetentionResponse(session *models.Principal, params objectApi.DeleteObjectRetentionParams) *CodedApiError {
+func deleteObjectRetentionResponse(session *models.Principal, params objectApi.DeleteObjectRetentionParams) *CodedAPIError {
 	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
@@ -1202,7 +1202,7 @@ func deleteObjectRetention(ctx context.Context, client MinioClient, bucketName, 
 	return client.putObjectRetention(ctx, bucketName, prefix, opts)
 }
 
-func getPutObjectTagsResponse(session *models.Principal, params objectApi.PutObjectTagsParams) *CodedApiError {
+func getPutObjectTagsResponse(session *models.Principal, params objectApi.PutObjectTagsParams) *CodedAPIError {
 	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
@@ -1239,7 +1239,7 @@ func putObjectTags(ctx context.Context, client MinioClient, bucketName, prefix, 
 }
 
 // Restore Object Version
-func getPutObjectRestoreResponse(session *models.Principal, params objectApi.PutObjectRestoreParams) *CodedApiError {
+func getPutObjectRestoreResponse(session *models.Principal, params objectApi.PutObjectRestoreParams) *CodedAPIError {
 	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {
@@ -1294,7 +1294,7 @@ func restoreObject(ctx context.Context, client MinioClient, bucketName, prefix, 
 }
 
 // Metadata Response from minio-go API
-func getObjectMetadataResponse(session *models.Principal, params objectApi.GetObjectMetadataParams) (*models.Metadata, *CodedApiError) {
+func getObjectMetadataResponse(session *models.Principal, params objectApi.GetObjectMetadataParams) (*models.Metadata, *CodedAPIError) {
 	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {

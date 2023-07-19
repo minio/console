@@ -34,14 +34,14 @@ func registerLogSearchHandlers(api *operations.ConsoleAPI) {
 	api.LoggingLogSearchHandler = logApi.LogSearchHandlerFunc(func(params logApi.LogSearchParams, session *models.Principal) middleware.Responder {
 		searchResp, err := getLogSearchResponse(session, params)
 		if err != nil {
-			return logApi.NewLogSearchDefault(err.Code).WithPayload(err.ApiError)
+			return logApi.NewLogSearchDefault(err.Code).WithPayload(err.APIError)
 		}
 		return logApi.NewLogSearchOK().WithPayload(searchResp)
 	})
 }
 
 // getLogSearchResponse performs a query to Log Search if Enabled
-func getLogSearchResponse(session *models.Principal, params logApi.LogSearchParams) (*models.LogSearchResponse, *CodedApiError) {
+func getLogSearchResponse(session *models.Principal, params logApi.LogSearchParams) (*models.LogSearchResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	sessionResp, err := getSessionResponse(ctx, session)
@@ -59,9 +59,9 @@ func getLogSearchResponse(session *models.Principal, params logApi.LogSearchPara
 	}
 
 	if !allowedToQueryLogSearchAPI {
-		return nil, &CodedApiError{
+		return nil, &CodedAPIError{
 			Code: 403,
-			ApiError: &models.APIError{
+			APIError: &models.APIError{
 				Message:         "Forbidden",
 				DetailedMessage: "The Log Search API not available.",
 			},

@@ -30,7 +30,7 @@ import (
 
 // APIError Api error
 //
-// swagger:model ApiError
+// swagger:model APIError
 type APIError struct {
 
 	// detailed message

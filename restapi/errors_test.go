@@ -33,7 +33,7 @@ func TestError(t *testing.T) {
 	type testError struct {
 		name string
 		args args
-		want *CodedApiError
+		want *CodedAPIError
 	}
 
 	var tests []testError
@@ -90,9 +90,9 @@ func TestError(t *testing.T) {
 			args: args{
 				err: []interface{}{e.err},
 			},
-			want: &CodedApiError{
+			want: &CodedAPIError{
 				Code:     e.code,
-				ApiError: &models.APIError{Message: e.err.Error(), DetailedMessage: e.err.Error()},
+				APIError: &models.APIError{Message: e.err.Error(), DetailedMessage: e.err.Error()},
 			},
 		})
 	}
@@ -102,16 +102,16 @@ func TestError(t *testing.T) {
 			args: args{
 				err: []interface{}{ErrDefault, ErrInvalidLogin},
 			},
-			want: &CodedApiError{
+			want: &CodedAPIError{
 				Code:     int(401),
-				ApiError: &models.APIError{Message: ErrDefault.Error(), DetailedMessage: ErrDefault.Error()},
+				APIError: &models.APIError{Message: ErrDefault.Error(), DetailedMessage: ErrDefault.Error()},
 			},
 		})
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Error(tt.args.err...)
 			assert.Equalf(t, tt.want.Code, got.Code, "Error(%v) Got (%v)", tt.want.Code, got.Code)
-			assert.Equalf(t, tt.want.ApiError.DetailedMessage, got.ApiError.DetailedMessage, "Error(%s) Got (%s)", tt.want.ApiError.DetailedMessage, got.ApiError.DetailedMessage)
+			assert.Equalf(t, tt.want.APIError.DetailedMessage, got.APIError.DetailedMessage, "Error(%s) Got (%s)", tt.want.APIError.DetailedMessage, got.APIError.DetailedMessage)
 		})
 	}
 }
@@ -124,7 +124,7 @@ func TestErrorWithContext(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *CodedApiError
+		want *CodedAPIError
 	}{
 		{
 			name: "default error",
@@ -132,8 +132,8 @@ func TestErrorWithContext(t *testing.T) {
 				ctx: context.Background(),
 				err: []interface{}{ErrDefault},
 			},
-			want: &CodedApiError{
-				Code: 500, ApiError: &models.APIError{Message: ErrDefault.Error(), DetailedMessage: ErrDefault.Error()},
+			want: &CodedAPIError{
+				Code: 500, APIError: &models.APIError{Message: ErrDefault.Error(), DetailedMessage: ErrDefault.Error()},
 			},
 		},
 	}

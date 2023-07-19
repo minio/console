@@ -41,7 +41,7 @@ func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 	api.SystemAdminInfoHandler = systemApi.AdminInfoHandlerFunc(func(params systemApi.AdminInfoParams, session *models.Principal) middleware.Responder {
 		infoResp, err := getAdminInfoResponse(session, params)
 		if err != nil {
-			return systemApi.NewAdminInfoDefault(err.Code).WithPayload(err.ApiError)
+			return systemApi.NewAdminInfoDefault(err.Code).WithPayload(err.APIError)
 		}
 		return systemApi.NewAdminInfoOK().WithPayload(infoResp)
 	})
@@ -49,7 +49,7 @@ func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 	api.SystemDashboardWidgetDetailsHandler = systemApi.DashboardWidgetDetailsHandlerFunc(func(params systemApi.DashboardWidgetDetailsParams, session *models.Principal) middleware.Responder {
 		infoResp, err := getAdminInfoWidgetResponse(params)
 		if err != nil {
-			return systemApi.NewDashboardWidgetDetailsDefault(err.Code).WithPayload(err.ApiError)
+			return systemApi.NewDashboardWidgetDetailsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return systemApi.NewDashboardWidgetDetailsOK().WithPayload(infoResp)
 	})
@@ -875,7 +875,7 @@ type LabelResults struct {
 }
 
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
-func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoParams) (*models.AdminInfoResponse, *CodedApiError) {
+func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoParams) (*models.AdminInfoResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	prometheusURL := ""
@@ -1012,7 +1012,7 @@ func testPrometheusURL(ctx context.Context, url string) bool {
 	return response.StatusCode == http.StatusOK
 }
 
-func getAdminInfoWidgetResponse(params systemApi.DashboardWidgetDetailsParams) (*models.WidgetDetails, *CodedApiError) {
+func getAdminInfoWidgetResponse(params systemApi.DashboardWidgetDetailsParams) (*models.WidgetDetails, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	prometheusURL := getPrometheusURL()
@@ -1028,7 +1028,7 @@ func getAdminInfoWidgetResponse(params systemApi.DashboardWidgetDetailsParams) (
 	return getWidgetDetails(ctx, prometheusURL, selector, params.WidgetID, params.Step, params.Start, params.End)
 }
 
-func getWidgetDetails(ctx context.Context, prometheusURL string, selector string, widgetID int32, step *int32, start *int64, end *int64) (*models.WidgetDetails, *CodedApiError) {
+func getWidgetDetails(ctx context.Context, prometheusURL string, selector string, widgetID int32, step *int32, start *int64, end *int64) (*models.WidgetDetails, *CodedAPIError) {
 	// We test if prometheus URL is reachable. this is meant to avoid unuseful calls and application hang.
 	if !testPrometheusURL(ctx, prometheusURL) {
 		return nil, ErrorWithContext(ctx, errors.New("prometheus URL is unreachable"))
@@ -1172,5 +1172,5 @@ LabelsWaitLoop:
 		return &wdgtResult, nil
 	}
 
-	return nil, &CodedApiError{Code: 404, ApiError: &models.APIError{Message: "Widget not found"}}
+	return nil, &CodedAPIError{Code: 404, APIError: &models.APIError{Message: "Widget not found"}}
 }

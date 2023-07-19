@@ -33,6 +33,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/minio/minio-go/v7"
+
 	"github.com/minio/console/models"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/stretchr/testify/assert"
@@ -3187,7 +3189,7 @@ func TestEnableBucketEncryption(t *testing.T) {
 		log.Println(err)
 		assert.Nil(err)
 	}
-	dereferencedPointerDetailedMessage := *result2.DetailedMessage
+	dereferencedPointerDetailedMessage := result2.DetailedMessage
 	assert.Equal("error server side encryption configuration not found", dereferencedPointerDetailedMessage, dereferencedPointerDetailedMessage)
 }
 

@@ -37,7 +37,7 @@ func registerLogoutHandlers(api *operations.ConsoleAPI) {
 	api.AuthLogoutHandler = authApi.LogoutHandlerFunc(func(params authApi.LogoutParams, session *models.Principal) middleware.Responder {
 		err := getLogoutResponse(session, params)
 		if err != nil {
-			return authApi.NewLogoutDefault(err.Code).WithPayload(err.ApiError)
+			return authApi.NewLogoutDefault(err.Code).WithPayload(err.APIError)
 		}
 		// Custom response writer to expire the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
@@ -66,7 +66,7 @@ func logout(credentials ConsoleCredentialsI) {
 }
 
 // getLogoutResponse performs logout() and returns nil or errors
-func getLogoutResponse(session *models.Principal, params authApi.LogoutParams) *CodedApiError {
+func getLogoutResponse(session *models.Principal, params authApi.LogoutParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	state := params.Body.State

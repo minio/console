@@ -75,13 +75,13 @@ var (
 	ErrHealthReportFail                 = errors.New("failure to generate Health report")
 )
 
-type CodedApiError struct {
+type CodedAPIError struct {
 	Code     int
-	ApiError *models.APIError
+	APIError *models.APIError
 }
 
 // ErrorWithContext :
-func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedApiError {
+func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedAPIError {
 	errorCode := 500
 	errorMessage := ErrDefault.Error()
 	var err1 error
@@ -257,11 +257,11 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedApiError {
 			}
 		}
 	}
-	return &CodedApiError{Code: errorCode, ApiError: &models.APIError{Message: errorMessage, DetailedMessage: err1.Error()}}
+	return &CodedAPIError{Code: errorCode, APIError: &models.APIError{Message: errorMessage, DetailedMessage: err1.Error()}}
 }
 
 // Error receives an errors object and parse it against k8sErrors, returns the right errors code paired with a generic errors message
-func Error(err ...interface{}) *CodedApiError {
+func Error(err ...interface{}) *CodedAPIError {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	return ErrorWithContext(ctx, err...)
