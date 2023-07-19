@@ -471,7 +471,7 @@ var widgets = []Metric{
 		ID:            66,
 		Title:         "Number of Buckets",
 		Type:          "stat",
-		MaxDataPoints: 100,
+		MaxDataPoints: 5,
 		GridPos: GridPos{
 			H: 3,
 			W: 3,
@@ -487,8 +487,9 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `count(count by (bucket) (minio_bucket_usage_total_bytes{$__query}))`,
+				Expr:         `minio_cluster_bucket_total{$__query}`,
 				LegendFormat: "",
+				Step:         100,
 			},
 		},
 	},
