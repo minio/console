@@ -1,3 +1,19 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2023 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import { test, expect, type Page } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
@@ -187,7 +203,7 @@ test.describe("Item", () => {
     const secondTodo = todoItems.nth(1);
     await secondTodo.dblclick();
     await expect(secondTodo.getByRole("textbox", { name: "Edit" })).toHaveValue(
-      TODO_ITEMS[1]
+      TODO_ITEMS[1],
     );
     await secondTodo
       .getByRole("textbox", { name: "Edit" })
@@ -217,7 +233,7 @@ test.describe("Editing", () => {
     await expect(
       todoItem.locator("label", {
         hasText: TODO_ITEMS[1],
-      })
+      }),
     ).not.toBeVisible();
     await checkNumberOfTodosInLocalStorage(page, 3);
   });
@@ -320,7 +336,7 @@ test.describe("Clear completed button", () => {
   test("should display the correct text", async ({ page }) => {
     await page.locator(".todo-list li .toggle").first().check();
     await expect(
-      page.getByRole("button", { name: "Clear completed" })
+      page.getByRole("button", { name: "Clear completed" }),
     ).toBeVisible();
   });
 
@@ -338,7 +354,7 @@ test.describe("Clear completed button", () => {
     await page.locator(".todo-list li .toggle").first().check();
     await page.getByRole("button", { name: "Clear completed" }).click();
     await expect(
-      page.getByRole("button", { name: "Clear completed" })
+      page.getByRole("button", { name: "Clear completed" }),
     ).toBeHidden();
   });
 });
@@ -434,7 +450,7 @@ test.describe("Routing", () => {
 
   test("should highlight the currently applied filter", async ({ page }) => {
     await expect(page.getByRole("link", { name: "All" })).toHaveClass(
-      "selected"
+      "selected",
     );
 
     //create locators for active and completed links
@@ -469,12 +485,12 @@ async function checkNumberOfTodosInLocalStorage(page: Page, expected: number) {
 
 async function checkNumberOfCompletedTodosInLocalStorage(
   page: Page,
-  expected: number
+  expected: number,
 ) {
   return await page.waitForFunction((e) => {
     return (
       JSON.parse(localStorage["react-todos"]).filter(
-        (todo: any) => todo.completed
+        (todo: any) => todo.completed,
       ).length === e
     );
   }, expected);
