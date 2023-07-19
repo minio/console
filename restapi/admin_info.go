@@ -331,7 +331,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `max by (range) (minio_cluster_objects_size_distribution{$__query})`,
+				Expr:         `minio_cluster_objects_size_distribution{$__query}`,
 				LegendFormat: "{{range}}",
 				Step:         300,
 			},
