@@ -62,6 +62,7 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 	if err != nil {
 		return err
 	}
+
 	compressedDiag, err := tarGZ(healthInfo, version)
 	if err != nil {
 		return err
