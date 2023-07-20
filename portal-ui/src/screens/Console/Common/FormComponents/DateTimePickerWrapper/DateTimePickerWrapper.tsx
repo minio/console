@@ -316,8 +316,8 @@ const DateTimePickerWrapper = ({
         xs={12}
         className={`${containerCls} ${classNamePrefix}input-field-container`}
         sx={{
-          display: "flex",
-          alignItems: "center",
+          display: "grid",
+          gridAutoColumns: "max-content",
         }}
       >
         {label !== "" && (
