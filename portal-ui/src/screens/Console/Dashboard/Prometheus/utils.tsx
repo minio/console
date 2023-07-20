@@ -736,11 +736,7 @@ export const widgetDetailsToPanel = (
         if (panelItem.customStructure) {
           values = panelItem.customStructure.map((structureItem) => {
             const metricTake = chartBars.find((element: any) => {
-              const metricKeyItem = Object.keys(element.metric);
-
-              const metricName = element.metric[metricKeyItem[0]];
-
-              return metricName === structureItem.originTag;
+              return element.metric.range === structureItem.originTag;
             });
 
             const elements = get(metricTake, "values", []);
