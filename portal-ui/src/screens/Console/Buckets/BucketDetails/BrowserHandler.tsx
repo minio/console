@@ -476,9 +476,34 @@ const BrowserHandler = () => {
       dispatch(resetMessages());
       dispatch(setLoadingRecords(true));
       dispatch(setLoadingObjects(true));
-      initWSRequest("", new Date());
+
+      let pathPrefix = "";
+      if (internalPaths) {
+        const decodedPath = decodeURLString(internalPaths);
+
+        // internalPaths are selected (file details), we split and get parent folder
+        if (selectedInternalPaths === internalPaths) {
+          pathPrefix = `${decodeURLString(internalPaths)
+            .split("/")
+            .slice(0, -1)
+            .join("/")}/`;
+        } else {
+          pathPrefix = decodedPath.endsWith("/")
+            ? decodedPath
+            : decodedPath + "/";
+        }
+      }
+
+      initWSRequest(pathPrefix, new Date());
     }
-  }, [bucketName, dispatch, initWSRequest, allowResources]);
+  }, [
+    bucketName,
+    dispatch,
+    initWSRequest,
+    allowResources,
+    internalPaths,
+    selectedInternalPaths,
+  ]);
 
   return (
     <Fragment>
