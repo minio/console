@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -37,8 +37,11 @@ import ExportConfigButton from "./ExportConfigButton";
 import ImportConfigButton from "./ImportConfigButton";
 import { Box } from "@mui/material";
 import HelpMenu from "../../HelpMenu";
-import { setHelpName } from "../../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import { api } from "../../../../api";
+import { IElement } from "../types";
+import { errorToHandler } from "../../../../api/errors";
 
 interface IConfigurationOptions {
   classes: any;
@@ -64,16 +67,55 @@ const getRoutePath = (path: string) => {
   return `${IAM_PAGES.SETTINGS}/${path}`;
 };
 
+// region is not part of config subsystem list.
+const NON_SUB_SYS_CONFIG_ITEMS = ["region"];
+const IGNORED_CONFIG_SUB_SYS = ["cache"]; // cache config is not supported.
+
 const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
   const { pathname = "" } = useLocation();
+  const dispatch = useAppDispatch();
+
+  const [configSubSysList, setConfigSubSysList] = useState<string[]>([]);
+  const fetchConfigSubSysList = useCallback(async () => {
+    api.configs
+      .listConfig() // get a list of available config subsystems.
+      .then((res) => {
+        if (res && res?.data && res?.data?.configurations) {
+          const confSubSysList = (res?.data?.configurations || []).reduce(
+            (acc: string[], { key = "" }) => {
+              if (!IGNORED_CONFIG_SUB_SYS.includes(key)) {
+                acc.push(key);
+              }
+              return acc;
+            },
+            [],
+          );
+
+          setConfigSubSysList(confSubSysList);
+        }
+      })
+      .catch((err) => {
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
+      });
+  }, [dispatch]);
 
   let selConfigTab = pathname.substring(pathname.lastIndexOf("/") + 1);
   selConfigTab = selConfigTab === "settings" ? "region" : selConfigTab;
-  const dispatch = useAppDispatch();
   useEffect(() => {
+    fetchConfigSubSysList();
     dispatch(setHelpName("settings_Region"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const availableConfigSubSys = configurationElements.filter(
+    ({ configuration_id }: IElement) => {
+      return (
+        NON_SUB_SYS_CONFIG_ITEMS.includes(configuration_id) ||
+        configSubSysList.includes(configuration_id) ||
+        !configSubSysList.length
+      );
+    },
+  );
 
   return (
     <Fragment>
@@ -104,7 +146,7 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
               isRouteTabs
               routes={
                 <Routes>
-                  {configurationElements.map((element) => (
+                  {availableConfigSubSys.map((element) => (
                     <Route
                       key={`configItem-${element.configuration_label}`}
                       path={`${element.configuration_id}`}
@@ -118,7 +160,7 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
                 </Routes>
               }
             >
-              {configurationElements.map((element) => {
+              {availableConfigSubSys.map((element) => {
                 const { configuration_id, configuration_label, icon } = element;
                 return {
                   tabConfig: {
