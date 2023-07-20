@@ -62,13 +62,13 @@ const EditEndpointModal = ({
   useEffect(() => {
     if (endpointInfo) {
       const endpointLocate = endpointInfo.key_values.find(
-        (key) => key.key === "endpoint"
+        (key) => key.key === "endpoint",
       );
       const tokenLocate = endpointInfo.key_values.find(
-        (key) => key.key === "auth_token"
+        (key) => key.key === "auth_token",
       );
       const enable = endpointInfo.key_values.find(
-        (key) => key.key === "enable"
+        (key) => key.key === "enable",
       );
 
       let invalidInputs: string[] = [];
@@ -169,7 +169,7 @@ const EditEndpointModal = ({
 
   const defaultWH = !name.includes(":");
   const hasOverride = endpointInfo.key_values.filter(
-    (itm) => !!itm.env_override
+    (itm) => !!itm.env_override,
   );
 
   const overrideValues = overrideFields(hasOverride);

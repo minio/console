@@ -41,7 +41,7 @@ export const downloadSelected = createAsyncThunk(
 
     const downloadObject = (object: BucketObjectItem) => {
       const identityDownload = encodeURLString(
-        `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
+        `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`,
       );
 
       const ID = makeid(8);
@@ -58,7 +58,7 @@ export const downloadSelected = createAsyncThunk(
             updateProgress({
               instanceID: identityDownload,
               progress: progress,
-            })
+            }),
           );
         },
         () => {
@@ -73,10 +73,10 @@ export const downloadSelected = createAsyncThunk(
         () => {
           dispatch(
             setSnackBarMessage(
-              "File download will be handled directly by the browser."
-            )
+              "File download will be handled directly by the browser.",
+            ),
           );
-        }
+        },
       );
       storeCallForObjectWithID(ID, downloadCall);
       dispatch(
@@ -92,7 +92,7 @@ export const downloadSelected = createAsyncThunk(
           failed: false,
           cancelled: false,
           errorMessage: "",
-        })
+        }),
       );
     };
 
@@ -120,7 +120,7 @@ export const downloadSelected = createAsyncThunk(
         downloadObject(filteredItem);
       });
     }
-  }
+  },
 );
 
 export const openPreview = createAsyncThunk(
@@ -141,7 +141,7 @@ export const openPreview = createAsyncThunk(
         dispatch(setPreviewOpen(true));
       }
     }
-  }
+  },
 );
 
 export const openShare = createAsyncThunk(
@@ -162,7 +162,7 @@ export const openShare = createAsyncThunk(
         dispatch(setShareFileModalOpen(true));
       }
     }
-  }
+  },
 );
 
 export const openAnonymousAccess = createAsyncThunk(
@@ -176,5 +176,5 @@ export const openAnonymousAccess = createAsyncThunk(
     ) {
       dispatch(setAnonymousAccessOpen(true));
     }
-  }
+  },
 );

@@ -70,13 +70,13 @@ const AddServiceAccount = () => {
         .invoke(
           "POST",
           `/api/v1/user/${encodeURLString(
-            userName
+            userName,
           )}/service-account-credentials`,
           {
             policy: policyJSON,
             accessKey: accessKey,
             secretKey: secretKey,
-          }
+          },
         )
         .then((res) => {
           setAddSending(false);

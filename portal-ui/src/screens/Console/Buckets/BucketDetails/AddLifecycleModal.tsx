@@ -88,7 +88,7 @@ const AddLifecycleModal = ({
 
   const [ilmType, setIlmType] = useState<"expiry" | "transition">("expiry");
   const [targetVersion, setTargetVersion] = useState<"current" | "noncurrent">(
-    "current"
+    "current",
   );
 
   const [lifecycleDays, setLifecycleDays] = useState<string>("");
@@ -256,7 +256,7 @@ const AddLifecycleModal = ({
                         label="Object Version"
                         onChange={(e) => {
                           setTargetVersion(
-                            e.target.value as "current" | "noncurrent"
+                            e.target.value as "current" | "noncurrent",
                           );
                         }}
                         options={[
@@ -319,7 +319,7 @@ const AddLifecycleModal = ({
                             id="prefix"
                             name="prefix"
                             onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>
+                              e: React.ChangeEvent<HTMLInputElement>,
                             ) => {
                               setPrefix(e.target.value);
                             }}
@@ -357,7 +357,7 @@ const AddLifecycleModal = ({
                               name="expired_delete_marker"
                               checked={expiredObjectDM}
                               onChange={(
-                                event: React.ChangeEvent<HTMLInputElement>
+                                event: React.ChangeEvent<HTMLInputElement>,
                               ) => {
                                 setExpiredObjectDM(event.target.checked);
                               }}

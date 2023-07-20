@@ -128,7 +128,7 @@ const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
   }, [dispatch]);
 
   const resetNotificationConfig = (
-    ep: TransformedEndpointItem | undefined | null
+    ep: TransformedEndpointItem | undefined | null,
   ) => {
     if (ep?.name) {
       const configKey = getNotificationConfigKey(ep.name);

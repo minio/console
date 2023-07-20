@@ -245,10 +245,10 @@ const AddBulkReplicationModal = ({
                             name="quota_type"
                             label="ILM Rule"
                             onChange={(
-                              e: React.ChangeEvent<{ value: unknown }>
+                              e: React.ChangeEvent<{ value: unknown }>,
                             ) => {
                               setIlmType(
-                                e.target.value as "expiry" | "transition"
+                                e.target.value as "expiry" | "transition",
                               );
                             }}
                             selectorOptions={[
@@ -265,7 +265,7 @@ const AddBulkReplicationModal = ({
                                 id="expiry_days"
                                 name="expiry_days"
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   setExpiryDays(e.target.value);
                                 }}
@@ -280,7 +280,7 @@ const AddBulkReplicationModal = ({
                                 id="noncurrentversion_expiration_days"
                                 name="noncurrentversion_expiration_days"
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   setNCExpirationDays(e.target.value);
                                 }}
@@ -298,7 +298,7 @@ const AddBulkReplicationModal = ({
                                 id="transition_days"
                                 name="transition_days"
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   setTransitionDays(e.target.value);
                                 }}
@@ -313,7 +313,7 @@ const AddBulkReplicationModal = ({
                                 id="noncurrentversion_transition_days"
                                 name="noncurrentversion_transition_days"
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   setNCTransitionDays(e.target.value);
                                 }}
@@ -327,7 +327,7 @@ const AddBulkReplicationModal = ({
                                 id="noncurrentversion_t_SC"
                                 name="noncurrentversion_t_SC"
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   setNCTransitionSC(e.target.value);
                                 }}
@@ -363,7 +363,7 @@ const AddBulkReplicationModal = ({
                             id="prefix"
                             name="prefix"
                             onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>
+                              e: React.ChangeEvent<HTMLInputElement>,
                             ) => {
                               setPrefix(e.target.value);
                             }}
@@ -391,7 +391,7 @@ const AddBulkReplicationModal = ({
                             name="expired_delete_marker"
                             checked={expiredObjectDM}
                             onChange={(
-                              event: React.ChangeEvent<HTMLInputElement>
+                              event: React.ChangeEvent<HTMLInputElement>,
                             ) => {
                               setExpiredObjectDM(event.target.checked);
                             }}

@@ -97,7 +97,7 @@ const SiteReplicationStatus = () => {
     },
     (err: any) => {
       setStats({});
-    }
+    },
   );
 
   const {

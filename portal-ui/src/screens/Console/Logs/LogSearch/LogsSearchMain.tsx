@@ -72,7 +72,7 @@ const LogsSearchMain = () => {
   const [requestID, setRequestID] = useState<string>("");
   const [responseStatus, setResponseStatus] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC" | undefined>(
-    "DESC"
+    "DESC",
   );
   const [columnsShown, setColumnsShown] = useState<string[]>([
     "time",
@@ -121,7 +121,7 @@ const LogsSearchMain = () => {
             sortOrder === "DESC" ? "timeDesc" : "timeAsc"
           }${timeStart !== null ? `&timeStart=${timeStart.toISO()}` : ""}${
             timeEnd !== null ? `&timeEnd=${timeEnd.toISO()}` : ""
-          }`
+          }`,
         )
         .then((res: ISearchResponse) => {
           const fetchedResults = res.results || [];

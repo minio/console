@@ -92,7 +92,7 @@ const GroupsSelectors = ({
   };
 
   const filteredRecords = records.filter((elementItem) =>
-    elementItem.includes(filter)
+    elementItem.includes(filter),
   );
 
   return (

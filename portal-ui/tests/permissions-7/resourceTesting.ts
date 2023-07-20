@@ -29,7 +29,7 @@ const bucket3 = "my-company";
 const test1BucketBrowseButton = namedTestBucketBrowseButtonFor(bucket1);
 const test3BucketBrowseButton = namedTestBucketBrowseButtonFor(bucket3);
 export const file = Selector(".ReactVirtualized__Table__rowColumn").withText(
-  "test.txt"
+  "test.txt",
 );
 export const deniedError = Selector(".message-text").withText("Access Denied.");
 
@@ -40,25 +40,25 @@ test
       t,
       bucket1,
       "test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/secondlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/secondlevel/thirdlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
   })(
     "User can only see permitted files in last path as expected",
@@ -69,7 +69,9 @@ test
         .click(test1BucketBrowseButton)
         .wait(1500)
         .click(
-          Selector(".ReactVirtualized__Table__rowColumn").withText("firstlevel")
+          Selector(".ReactVirtualized__Table__rowColumn").withText(
+            "firstlevel",
+          ),
         )
         .wait(1500)
         .expect(file.exists)
@@ -77,13 +79,13 @@ test
         .wait(1500)
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText(
-            "secondlevel"
-          )
+            "secondlevel",
+          ),
         )
         .wait(1500)
         .expect(file.exists)
         .notOk();
-    }
+    },
   )
   .after(async (t) => {
     await functions.cleanUpNamedBucketAndUploads(t, bucket1);
@@ -96,25 +98,25 @@ test
       t,
       bucket1,
       "test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/secondlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/secondlevel/thirdlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
   })("User can browse from first level as policy has wildcard", async (t) => {
     await t
@@ -123,21 +125,21 @@ test
       .click(test1BucketBrowseButton)
       .wait(1500)
       .click(
-        Selector(".ReactVirtualized__Table__rowColumn").withText("firstlevel")
+        Selector(".ReactVirtualized__Table__rowColumn").withText("firstlevel"),
       )
       .wait(1500)
       .expect(file.exists)
       .ok()
       .wait(1500)
       .click(
-        Selector(".ReactVirtualized__Table__rowColumn").withText("secondlevel")
+        Selector(".ReactVirtualized__Table__rowColumn").withText("secondlevel"),
       )
       .wait(1500)
       .expect(file.exists)
       .ok()
       .wait(1500)
       .click(
-        Selector(".ReactVirtualized__Table__rowColumn").withText("thirdlevel")
+        Selector(".ReactVirtualized__Table__rowColumn").withText("thirdlevel"),
       )
       .wait(1500)
       .expect(file.exists)
@@ -154,31 +156,31 @@ test
       t,
       bucket3,
       "test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket3,
       "home/UserY/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket3,
       "home/UserX/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket3,
       "home/User/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket3,
       "home/User/secondlevel/thirdlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt"
+      "portal-ui/tests/uploads/test.txt",
     );
   })("User can browse from sub levels as policy has wildcard", async (t) => {
     await t
@@ -193,11 +195,11 @@ test
       .expect(file.exists)
       .ok()
       .click(
-        Selector(".ReactVirtualized__Table__rowColumn").withText("secondlevel")
+        Selector(".ReactVirtualized__Table__rowColumn").withText("secondlevel"),
       )
       .wait(1500)
       .click(
-        Selector(".ReactVirtualized__Table__rowColumn").withText("thirdlevel")
+        Selector(".ReactVirtualized__Table__rowColumn").withText("thirdlevel"),
       )
       .wait(1500)
       .expect(file.exists)

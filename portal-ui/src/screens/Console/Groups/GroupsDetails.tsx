@@ -87,13 +87,13 @@ const GroupsDetails = () => {
   const { members = [], policy = "", status: groupEnabled } = groupDetails;
 
   const filteredMembers = members.filter((elementItem) =>
-    elementItem.includes(memberFilter)
+    elementItem.includes(memberFilter),
   );
 
   const viewUser = hasPermission(
     CONSOLE_UI_RESOURCE,
     viewUserPermissions,
-    true
+    true,
   );
 
   useEffect(() => {
@@ -114,25 +114,25 @@ const GroupsDetails = () => {
 
   const getGroupDetails = hasPermission(
     CONSOLE_UI_RESOURCE,
-    getGroupPermissions
+    getGroupPermissions,
   );
 
   const canEditGroupMembers = hasPermission(
     CONSOLE_UI_RESOURCE,
     editGroupMembersPermissions,
-    true
+    true,
   );
 
   const canSetPolicies = hasPermission(
     CONSOLE_UI_RESOURCE,
     setGroupPoliciesPermissions,
-    true
+    true,
   );
 
   const canViewPolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
     viewPolicyPermissions,
-    true
+    true,
   );
 
   function fetchGroupInfo() {
@@ -200,7 +200,7 @@ const GroupsDetails = () => {
                     ? memberActionText
                     : permissionTooltipHelper(
                         createGroupPermissions,
-                        "edit Group membership"
+                        "edit Group membership",
                       )
                 }
               >
@@ -233,7 +233,7 @@ const GroupsDetails = () => {
                 ? ""
                 : permissionTooltipHelper(
                     viewUserPermissions,
-                    "view User details"
+                    "view User details",
                   )
             }
           >
@@ -276,7 +276,7 @@ const GroupsDetails = () => {
                   ? "Set Policies"
                   : permissionTooltipHelper(
                       setGroupPoliciesPermissions,
-                      "assign Policies"
+                      "assign Policies",
                     )
               }
             >
@@ -303,7 +303,7 @@ const GroupsDetails = () => {
               ? ""
               : permissionTooltipHelper(
                   viewPolicyPermissions,
-                  "view Policy details"
+                  "view Policy details",
                 )
           }
         >
@@ -409,12 +409,12 @@ const GroupsDetails = () => {
                     hasPermission(
                       CONSOLE_UI_RESOURCE,
                       enableDisableGroupPermissions,
-                      true
+                      true,
                     )
                       ? ""
                       : permissionTooltipHelper(
                           enableDisableGroupPermissions,
-                          "enable or disable Groups"
+                          "enable or disable Groups",
                         )
                   }
                 >

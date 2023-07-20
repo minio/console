@@ -288,7 +288,7 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
     link: string,
     btnText: string,
     variant: any,
-    plan: string
+    plan: string,
   ) => {
     let linkToNav =
       currentPlan !== "community" ? "https://subnet.min.io" : link;
@@ -612,7 +612,7 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
                   `https://slack.min.io${linkTracker}`,
                   "Join Slack",
                   "regular",
-                  LICENSE_PLANS.COMMUNITY
+                  LICENSE_PLANS.COMMUNITY,
                 )}
               </Box>
             </Box>
@@ -658,7 +658,7 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
                   ? "Subscribe"
                   : "Login to SUBNET",
                 "callAction",
-                LICENSE_PLANS.STANDARD
+                LICENSE_PLANS.STANDARD,
               )}
             </Box>
           </Box>
@@ -713,7 +713,7 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
                   ? "Subscribe"
                   : "Login to SUBNET",
                 "callAction",
-                LICENSE_PLANS.ENTERPRISE
+                LICENSE_PLANS.ENTERPRISE,
               )}
             </Box>
           </Box>

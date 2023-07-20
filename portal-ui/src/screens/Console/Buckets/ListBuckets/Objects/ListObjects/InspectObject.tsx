@@ -94,7 +94,7 @@ const InspectObject = ({
             setErrorSnackMessage({
               errorMessage: resErr.message,
               detailedError: resErr.code,
-            })
+            }),
           );
         }
         const blob: Blob = await res.blob();

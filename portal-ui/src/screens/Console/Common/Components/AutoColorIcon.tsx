@@ -28,7 +28,7 @@ const AutoColorIcon = ({ marginRight, marginTop }: IAutoColorIcon) => {
   let tinycolor = require("tinycolor2");
 
   const colorVariants = useSelector(
-    (state: AppState) => state.system.overrideStyles
+    (state: AppState) => state.system.overrideStyles,
   );
 
   const isDark =

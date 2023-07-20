@@ -36,7 +36,7 @@ export const resetFormAsync = createAsyncThunk(
     dispatch(setSecretKey(""));
     dispatch(setSelectedPolicies([]));
     dispatch(setShowPassword(false));
-  }
+  },
 );
 
 export const createUserAsync = createAsyncThunk(
@@ -62,5 +62,5 @@ export const createUserAsync = createAsyncThunk(
         dispatch(setAddLoading(false));
         dispatch(setErrorSnackMessage(err));
       });
-  }
+  },
 );

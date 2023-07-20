@@ -26,7 +26,7 @@ const ConfigurationsList = () => {
   const configName = pathname.substring(pathname.lastIndexOf("/") + 1);
 
   const validActiveConfig = configurationElements.find(
-    (element) => element.configuration_id === configName
+    (element) => element.configuration_id === configName,
   );
   const containerClassName = `${configName}`;
   return (

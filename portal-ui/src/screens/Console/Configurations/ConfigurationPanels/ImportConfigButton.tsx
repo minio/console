@@ -15,11 +15,11 @@ const ImportConfigButton = () => {
   const dispatch = useDispatch();
 
   const needsRestart = useSelector(
-    (state: AppState) => state.system.serverNeedsRestart
+    (state: AppState) => state.system.serverNeedsRestart,
   );
 
   const [refreshPage, setRefreshPage] = useState<boolean | undefined>(
-    undefined
+    undefined,
   );
   const fileUpload = useRef<HTMLInputElement>(null);
 
@@ -31,7 +31,7 @@ const ImportConfigButton = () => {
     },
     (err) => {
       dispatch(setErrorSnackMessage(err));
-    }
+    },
   );
 
   useEffect(() => {

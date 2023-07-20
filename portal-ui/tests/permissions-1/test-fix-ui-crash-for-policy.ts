@@ -50,7 +50,7 @@ export const inspectAllowedRole = Role(
       .typeText("#secretKey", insAllowedSeckey)
       .click(loginSubmitBtn);
   },
-  { preserveUrl: true }
+  { preserveUrl: true },
 );
 
 fixture("For user with Bucket Prefix permissions")

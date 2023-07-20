@@ -62,7 +62,7 @@ const permissionsValidation = (item: IMenuItem) => {
       ? item.customPermissionFnc()
       : hasPermission(
           CONSOLE_UI_RESOURCE,
-          IAM_PAGES_PERMISSIONS[item.path ?? ""]
+          IAM_PAGES_PERMISSIONS[item.path ?? ""],
         )) ||
       item.forceDisplay) &&
     !item.fsHidden
@@ -80,7 +80,7 @@ const validateItem = (item: IMenuItem) => {
 
         return [...acc, item];
       },
-      []
+      [],
     );
 
     const ret = { ...item, children: childArray };
@@ -97,7 +97,7 @@ const validateItem = (item: IMenuItem) => {
 
 export const validRoutes = (
   features: string[] | null | undefined,
-  licenseNotification: boolean = false
+  licenseNotification: boolean = false,
 ) => {
   const ldapIsEnabled = (features && features.includes("ldap-idp")) || false;
   const kmsIsEnabled = (features && features.includes("kms")) || false;

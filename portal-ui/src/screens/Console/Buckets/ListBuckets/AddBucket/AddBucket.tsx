@@ -125,7 +125,7 @@ const AddBucket = () => {
   const classes = useStyles();
 
   const validBucketCharacters = new RegExp(
-    `^[a-z0-9][a-z0-9\\.\\-]{1,61}[a-z0-9]$`
+    `^[a-z0-9][a-z0-9\\.\\-]{1,61}[a-z0-9]$`,
   );
   const ipAddressFormat = new RegExp(`^(\\d+\\.){3}\\d+$`);
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
@@ -135,39 +135,39 @@ const AddBucket = () => {
   const hasErrors = errorList.length > 0;
   const [records, setRecords] = useState<string[]>([]);
   const versioningEnabled = useSelector(
-    (state: AppState) => state.addBucket.versioningEnabled
+    (state: AppState) => state.addBucket.versioningEnabled,
   );
   const lockingEnabled = useSelector(
-    (state: AppState) => state.addBucket.lockingEnabled
+    (state: AppState) => state.addBucket.lockingEnabled,
   );
   const quotaEnabled = useSelector(
-    (state: AppState) => state.addBucket.quotaEnabled
+    (state: AppState) => state.addBucket.quotaEnabled,
   );
   const quotaSize = useSelector((state: AppState) => state.addBucket.quotaSize);
   const quotaUnit = useSelector((state: AppState) => state.addBucket.quotaUnit);
   const retentionEnabled = useSelector(
-    (state: AppState) => state.addBucket.retentionEnabled
+    (state: AppState) => state.addBucket.retentionEnabled,
   );
   const retentionMode = useSelector(
-    (state: AppState) => state.addBucket.retentionMode
+    (state: AppState) => state.addBucket.retentionMode,
   );
   const retentionUnit = useSelector(
-    (state: AppState) => state.addBucket.retentionUnit
+    (state: AppState) => state.addBucket.retentionUnit,
   );
   const retentionValidity = useSelector(
-    (state: AppState) => state.addBucket.retentionValidity
+    (state: AppState) => state.addBucket.retentionValidity,
   );
   const addLoading = useSelector((state: AppState) => state.addBucket.loading);
   const invalidFields = useSelector(
-    (state: AppState) => state.addBucket.invalidFields
+    (state: AppState) => state.addBucket.invalidFields,
   );
   const lockingFieldDisabled = useSelector(
-    (state: AppState) => state.addBucket.lockingFieldDisabled
+    (state: AppState) => state.addBucket.lockingFieldDisabled,
   );
   const distributedSetup = useSelector(selDistSet);
   const siteReplicationInfo = useSelector(selSiteRep);
   const navigateTo = useSelector(
-    (state: AppState) => state.addBucket.navigateTo
+    (state: AppState) => state.addBucket.navigateTo,
   );
 
   const lockingAllowed = hasPermission(
@@ -177,7 +177,7 @@ const AddBucket = () => {
       IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
       IAM_SCOPES.S3_PUT_ACTIONS,
     ],
-    true
+    true,
   );
 
   const versioningAllowed = hasPermission("*", [
@@ -354,7 +354,7 @@ const AddBucket = () => {
                             IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
                             IAM_SCOPES.S3_PUT_ACTIONS,
                           ],
-                          "Versioning"
+                          "Versioning",
                         )
                   }
                 >
@@ -387,7 +387,7 @@ const AddBucket = () => {
                             IAM_SCOPES.S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION,
                             IAM_SCOPES.S3_PUT_ACTIONS,
                           ],
-                          "Locking"
+                          "Locking",
                         )
                   }
                 >
@@ -487,8 +487,8 @@ const AddBucket = () => {
                       onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
                         dispatch(
                           setRetentionMode(
-                            e.target.value as ObjectRetentionMode
-                          )
+                            e.target.value as ObjectRetentionMode,
+                          ),
                         );
                       }}
                       selectorOptions={[

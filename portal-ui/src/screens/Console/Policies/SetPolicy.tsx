@@ -49,7 +49,7 @@ const SetPolicy = ({
   const [actualPolicy, setActualPolicy] = useState<string[]>([]);
   const [selectedPolicy, setSelectedPolicy] = useState<string[]>([]);
   const currentPolicies = useSelector(
-    (state: AppState) => state.createUser.selectedPolicies
+    (state: AppState) => state.createUser.selectedPolicies,
   );
   const setPolicyAction = () => {
     let users = null;

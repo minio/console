@@ -24,7 +24,7 @@ import * as constants from "../utils/constants";
 import { deleteAllVersions } from "../utils/elements";
 
 fixture("For user with Bucket Read & Write permissions").page(
-  "http://localhost:9090"
+  "http://localhost:9090",
 );
 
 test
@@ -50,15 +50,15 @@ test
       .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("bucketdelete3"))
       .click(
-        "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
+        "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)",
       )
       .click(elements.deleteButton)
       .click(elements.deleteAllVersions)
       .click(Selector("button:enabled").withExactText("Delete").nth(1))
       .expect(
         Selector(
-          "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
-        ).exists
+          "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)",
+        ).exists,
       )
       .notOk();
   })

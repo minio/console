@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...formFieldStyles,
     ...spacingUtils,
     ...containerForHeader,
-  })
+  }),
 );
 
 const RenameLongFileName = ({

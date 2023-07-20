@@ -65,7 +65,7 @@ const BulkAddToGroup = ({
           setModalErrorSnackMessage({
             errorMessage: "You need to select at least one group to assign",
             detailedError: "",
-          })
+          }),
         );
       }
     }

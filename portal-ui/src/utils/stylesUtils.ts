@@ -17,7 +17,7 @@
 import { IEmbeddedCustomStyles } from "../common/types";
 
 export const getOverrideColorVariants: (
-  customStyles: string
+  customStyles: string,
 ) => false | IEmbeddedCustomStyles = (customStyles) => {
   try {
     return JSON.parse(atob(customStyles)) as IEmbeddedCustomStyles;

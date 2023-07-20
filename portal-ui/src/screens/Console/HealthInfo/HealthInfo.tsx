@@ -102,7 +102,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
   const message = useSelector((state: AppState) => state.healthInfo.message);
 
   const serverDiagnosticStatus = useSelector(
-    (state: AppState) => state.system.serverDiagnosticStatus
+    (state: AppState) => state.system.serverDiagnosticStatus,
   );
   const [startDiagnostic, setStartDiagnostic] = useState(false);
 
@@ -119,7 +119,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
     let element = document.createElement("a");
     element.setAttribute(
       "href",
-      `data:application/gzip;base64,${diagFileContent}`
+      `data:application/gzip;base64,${diagFileContent}`,
     );
     element.setAttribute("download", "diagnostic.json.gz");
 
@@ -135,7 +135,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
     if (serverDiagnosticStatus === DiagStatInProgress) {
       setTitle("Diagnostic in progress...");
       setMessage(
-        "Diagnostic started. Please do not refresh page during diagnosis."
+        "Diagnostic started. Please do not refresh page during diagnosis.",
       );
       return;
     }
@@ -187,7 +187,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
       const baseUrl = baseLocation.pathname;
 
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/health-info?deadline=1h`
+        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/health-info?deadline=1h`,
       );
       let interval: any | null = null;
       if (c !== null) {
@@ -198,7 +198,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
             c.send("ok");
           }, 10 * 1000);
           setMessage(
-            "Diagnostic started. Please do not refresh page during diagnosis."
+            "Diagnostic started. Please do not refresh page during diagnosis.",
           );
           dispatch(setServerDiagStat(DiagStatInProgress));
         };
@@ -206,7 +206,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
           let m: ReportMessage = JSON.parse(message.data.toString());
           if (m.serverHealthInfo) {
             m.serverHealthInfo.timestamp = new Date(
-              m.serverHealthInfo.timestamp.toString()
+              m.serverHealthInfo.timestamp.toString(),
             );
             dispatch(healthInfoMessageReceived(m.serverHealthInfo));
           }

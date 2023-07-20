@@ -105,12 +105,12 @@ const UserDetails = () => {
   const canAssignPolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
     assignIAMPolicyPermissions,
-    true
+    true,
   );
   const canAssignGroup = hasPermission(
     CONSOLE_UI_RESOURCE,
     assignGroupPermissions,
-    true
+    true,
   );
 
   const viewGroup = hasPermission(CONSOLE_UI_RESOURCE, getGroupPermissions);
@@ -139,7 +139,7 @@ const UserDetails = () => {
             return {
               policy: policy,
             };
-          }
+          },
         );
 
         currentPolicies.sort(policyDetailsSort);
@@ -285,23 +285,23 @@ const UserDetails = () => {
                         ? ""
                         : hasPermission(
                             CONSOLE_UI_RESOURCE,
-                            enableUserPermissions
+                            enableUserPermissions,
                           )
                         ? permissionTooltipHelper(
                             disableUserPermissions,
-                            "disable users"
+                            "disable users",
                           )
                         : hasPermission(
                             CONSOLE_UI_RESOURCE,
-                            disableUserPermissions
+                            disableUserPermissions,
                           )
                         ? permissionTooltipHelper(
                             enableUserPermissions,
-                            "enable users"
+                            "enable users",
                           )
                         : permissionTooltipHelper(
                             enableDisableUserPermissions,
-                            "enable or disable users"
+                            "enable or disable users",
                           )
                     }
                   >
@@ -327,7 +327,7 @@ const UserDetails = () => {
                           : "Delete User"
                         : permissionTooltipHelper(
                             deleteUserPermissions,
-                            "delete user"
+                            "delete user",
                           )
                     }
                   >
@@ -339,7 +339,7 @@ const UserDetails = () => {
                       disabled={
                         !hasPermission(
                           CONSOLE_UI_RESOURCE,
-                          deleteUserPermissions
+                          deleteUserPermissions,
                         ) || userLoggedIn === userName
                       }
                     />
@@ -387,7 +387,7 @@ const UserDetails = () => {
                                   ? "Assign groups"
                                   : permissionTooltipHelper(
                                       assignGroupPermissions,
-                                      "add users to groups"
+                                      "add users to groups",
                                     )
                               }
                             >
@@ -432,7 +432,7 @@ const UserDetails = () => {
                     label: "Service Accounts",
                     disabled: !hasPermission(
                       CONSOLE_UI_RESOURCE,
-                      editServiceAccountPermissions
+                      editServiceAccountPermissions,
                     ),
                   },
                   content: (
@@ -465,7 +465,7 @@ const UserDetails = () => {
                                   ? "Assign Policies"
                                   : permissionTooltipHelper(
                                       assignIAMPolicyPermissions,
-                                      "assign policies"
+                                      "assign policies",
                                     )
                               }
                             >
@@ -493,8 +493,8 @@ const UserDetails = () => {
                               onClick: (policy: IPolicyItem) => {
                                 navigate(
                                   `${IAM_PAGES.POLICIES}/${encodeURLString(
-                                    policy.policy
-                                  )}`
+                                    policy.policy,
+                                  )}`,
                                 );
                               },
                             },

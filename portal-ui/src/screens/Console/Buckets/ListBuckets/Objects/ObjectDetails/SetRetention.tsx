@@ -67,7 +67,7 @@ const SetRetention = ({
 }: ISetRetentionProps) => {
   const dispatch = useAppDispatch();
   const retentionConfig = useSelector(
-    (state: AppState) => state.objectBrowser.retentionConfig
+    (state: AppState) => state.objectBrowser.retentionConfig,
   );
 
   const [statusEnabled, setStatusEnabled] = useState<boolean>(true);
@@ -118,7 +118,7 @@ const SetRetention = ({
   const addRetention = (
     selectedObject: string,
     versionId: string | null,
-    expireDate: string
+    expireDate: string,
   ) => {
     api.buckets
       .putObjectRetention(
@@ -130,7 +130,7 @@ const SetRetention = ({
         {
           expires: expireDate,
           mode: type as ObjectRetentionMode,
-        }
+        },
       )
       .then(() => {
         setIsSaving(false);
@@ -144,7 +144,7 @@ const SetRetention = ({
 
   const disableRetention = (
     selectedObject: string,
-    versionId: string | null
+    versionId: string | null,
   ) => {
     api.buckets
       .deleteObjectRetention(bucketName, {

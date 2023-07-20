@@ -75,14 +75,14 @@ const ListUsers = () => {
 
   const displayListUsers = hasPermission(
     CONSOLE_UI_RESOURCE,
-    listUsersPermissions
+    listUsersPermissions,
   );
 
   const viewUser = hasPermission(CONSOLE_UI_RESOURCE, viewUserPermissions);
 
   const addUserToGroup = hasPermission(
     CONSOLE_UI_RESOURCE,
-    addUserToGroupPermissions
+    addUserToGroupPermissions,
   );
 
   const deleteUser = hasPermission(CONSOLE_UI_RESOURCE, deleteUserPermissions);
@@ -124,7 +124,7 @@ const ListUsers = () => {
   }, [loading, dispatch, displayListUsers]);
 
   const filteredRecords = records.filter((elementItem) =>
-    elementItem.accessKey.includes(filter)
+    elementItem.accessKey.includes(filter),
   );
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,7 +147,7 @@ const ListUsers = () => {
 
   const viewAction = (selectionElement: any): void => {
     navigate(
-      `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.accessKey)}`
+      `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.accessKey)}`,
     );
   };
 
@@ -217,7 +217,7 @@ const ListUsers = () => {
                       : "Delete Selected"
                     : permissionTooltipHelper(
                         [IAM_SCOPES.ADMIN_DELETE_USER],
-                        "delete users"
+                        "delete users",
                       )
                 }
               >
@@ -247,7 +247,7 @@ const ListUsers = () => {
                       : "Add to Group"
                     : permissionTooltipHelper(
                         [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP],
-                        "add users to groups"
+                        "add users to groups",
                       )
                 }
               >
@@ -285,7 +285,7 @@ const ListUsers = () => {
                       IAM_SCOPES.ADMIN_LIST_GROUPS,
                       IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
                     ],
-                    true
+                    true,
                   )
                     ? "Create User"
                     : permissionTooltipHelper(
@@ -295,7 +295,7 @@ const ListUsers = () => {
                           IAM_SCOPES.ADMIN_LIST_GROUPS,
                           IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
                         ],
-                        "create users"
+                        "create users",
                       )
                 }
               >
@@ -316,7 +316,7 @@ const ListUsers = () => {
                         IAM_SCOPES.ADMIN_LIST_GROUPS,
                         IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
                       ],
-                      true
+                      true,
                     )
                   }
                 />

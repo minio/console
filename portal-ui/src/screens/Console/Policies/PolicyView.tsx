@@ -45,7 +45,7 @@ const Highlight = ({ search = "", children = "" }): any => {
 
   if (search) {
     return parts.map((part, index) =>
-      txtParts.test(part) ? <mark key={index}>{part}</mark> : part
+      txtParts.test(part) ? <mark key={index}>{part}</mark> : part,
     );
   } else {
     return children;

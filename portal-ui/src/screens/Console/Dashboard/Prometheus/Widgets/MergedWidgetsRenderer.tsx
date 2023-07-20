@@ -75,14 +75,14 @@ const MergedWidgetsRenderer = ({
           timeStart,
           timeEnd,
           loading,
-          apiPrefix
+          apiPrefix,
         )}
         rightComponent={componentToUse(
           rightPanel,
           timeStart,
           timeEnd,
           loading,
-          apiPrefix
+          apiPrefix,
         )}
       />
     );

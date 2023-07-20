@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...searchField,
     ...formFieldStyles,
     ...containerForHeader,
-  })
+  }),
 );
 
 const Speedtest = () => {
@@ -94,7 +94,7 @@ const Speedtest = () => {
   const [start, setStart] = useState<boolean>(false);
 
   const [currStatus, setCurrStatus] = useState<SpeedTestResponse[] | null>(
-    null
+    null,
   );
 
   const [size, setSize] = useState<string>("64");
@@ -120,7 +120,7 @@ const Speedtest = () => {
 
       const wsProt = wsProtocol(url.protocol);
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/speedtest?&size=${size}${sizeUnit}&duration=${duration}s`
+        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/speedtest?&size=${size}${sizeUnit}&duration=${duration}s`,
       );
 
       const baseDate = DateTime.now();

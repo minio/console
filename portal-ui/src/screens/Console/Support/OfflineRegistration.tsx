@@ -34,13 +34,13 @@ import {
 const OfflineRegistration = () => {
   const dispatch = useAppDispatch();
   const subnetRegToken = useSelector(
-    (state: AppState) => state.register.subnetRegToken
+    (state: AppState) => state.register.subnetRegToken,
   );
   const clusterRegistered = useSelector(
-    (state: AppState) => state.register.clusterRegistered
+    (state: AppState) => state.register.clusterRegistered,
   );
   const licenseInfo = useSelector(
-    (state: AppState) => state.register.licenseInfo
+    (state: AppState) => state.register.licenseInfo,
   );
 
   const offlineRegUrl = `https://subnet.min.io/cluster/register?token=${subnetRegToken}`;
@@ -54,7 +54,7 @@ const OfflineRegistration = () => {
     },
     (err) => {
       dispatch(setErrorSnackMessage(err));
-    }
+    },
   );
 
   const applyAirGapLicense = () => {

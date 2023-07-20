@@ -33,10 +33,10 @@ export const downloadObject = (
   dispatch: AppDispatch,
   bucketName: string,
   internalPaths: string,
-  object: BucketObject
+  object: BucketObject,
 ) => {
   const identityDownload = encodeURLString(
-    `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`
+    `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`,
   );
 
   const isWinOs = getClientOS().toLowerCase().includes("win");
@@ -60,7 +60,7 @@ export const downloadObject = (
         updateProgress({
           instanceID: identityDownload,
           progress: progress,
-        })
+        }),
       );
     },
     () => {
@@ -75,10 +75,10 @@ export const downloadObject = (
     () => {
       dispatch(
         setSnackBarMessage(
-          "File download will be handled directly by the browser."
-        )
+          "File download will be handled directly by the browser.",
+        ),
       );
-    }
+    },
   );
 
   storeCallForObjectWithID(ID, downloadCall);
@@ -95,6 +95,6 @@ export const downloadObject = (
       failed: false,
       cancelled: false,
       errorMessage: "",
-    })
+    }),
   );
 };

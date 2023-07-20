@@ -92,7 +92,7 @@ export const systemSlice = createSlice({
       // persist preference to local storage
       localStorage.setItem(
         "sidebarOpen",
-        JSON.stringify({ open: action.payload })
+        JSON.stringify({ open: action.payload }),
       );
       state.sidebarOpen = action.payload;
     },
@@ -117,7 +117,7 @@ export const systemSlice = createSlice({
     },
     setErrorSnackMessage: (
       state,
-      action: PayloadAction<ErrorResponseHandler>
+      action: PayloadAction<ErrorResponseHandler>,
     ) => {
       state.snackBar = {
         message: action.payload.errorMessage,
@@ -134,7 +134,7 @@ export const systemSlice = createSlice({
     },
     setModalErrorSnackMessage: (
       state,
-      action: PayloadAction<{ errorMessage: string; detailedError: string }>
+      action: PayloadAction<{ errorMessage: string; detailedError: string }>,
     ) => {
       state.modalSnackBar = {
         message: action.payload.errorMessage,
@@ -163,7 +163,7 @@ export const systemSlice = createSlice({
 
     setOverrideStyles: (
       state,
-      action: PayloadAction<IEmbeddedCustomStyles>
+      action: PayloadAction<IEmbeddedCustomStyles>,
     ) => {
       state.overrideStyles = action.payload;
     },

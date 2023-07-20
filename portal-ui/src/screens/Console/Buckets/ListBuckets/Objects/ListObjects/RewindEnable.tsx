@@ -42,23 +42,23 @@ const RewindEnable = ({
   const dispatch = useAppDispatch();
 
   const rewindEnabled = useSelector(
-    (state: AppState) => state.objectBrowser.rewind.rewindEnabled
+    (state: AppState) => state.objectBrowser.rewind.rewindEnabled,
   );
   const dateRewind = useSelector(
-    (state: AppState) => state.objectBrowser.rewind.dateToRewind
+    (state: AppState) => state.objectBrowser.rewind.dateToRewind,
   );
 
   const [rewindEnabling, setRewindEnabling] = useState<boolean>(false);
   const [rewindEnableButton, setRewindEnableButton] = useState<boolean>(true);
   const [dateSelected, setDateSelected] = useState<DateTime>(
-    DateTime.fromJSDate(new Date())
+    DateTime.fromJSDate(new Date()),
   );
 
   useEffect(() => {
     if (rewindEnabled) {
       setRewindEnableButton(true);
       setDateSelected(
-        DateTime.fromISO(dateRewind || DateTime.now().toISO() || "")
+        DateTime.fromISO(dateRewind || DateTime.now().toISO() || ""),
       );
     }
   }, [rewindEnabled, dateRewind]);
@@ -73,7 +73,7 @@ const RewindEnable = ({
           state: true,
           bucket: bucketName,
           dateRewind: dateSelected.toISO(),
-        })
+        }),
       );
     }
     dispatch(setLoadingObjects(true));

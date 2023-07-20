@@ -85,7 +85,7 @@ const PieChartWidget = ({
   const [dataOuter, setDataOuter] = useState<object[]>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
   const widgetVersion = useSelector(
-    (state: AppState) => state.dashboard.widgetLoadVersion
+    (state: AppState) => state.dashboard.widgetLoadVersion,
   );
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const PieChartWidget = ({
             timeStart !== null ? `&start=${timeStart.toUnixInteger()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.toUnixInteger()}` : ""
-          }`
+          }`,
         )
         .then((res: any) => {
           const widgetsWithValue = widgetDetailsToPanel(res, panelItem);
@@ -161,22 +161,22 @@ const PieChartWidget = ({
                     innerRadius={get(
                       pieChartConfiguration,
                       "outerChart.innerRadius",
-                      0
+                      0,
                     )}
                     outerRadius={get(
                       pieChartConfiguration,
                       "outerChart.outerRadius",
-                      "80%"
+                      "80%",
                     )}
                     startAngle={get(
                       pieChartConfiguration,
                       "outerChart.startAngle",
-                      0
+                      0,
                     )}
                     endAngle={get(
                       pieChartConfiguration,
                       "outerChart.endAngle",
-                      360
+                      360,
                     )}
                     fill="#201763"
                   >
@@ -201,22 +201,22 @@ const PieChartWidget = ({
                     innerRadius={get(
                       pieChartConfiguration,
                       "innerChart.innerRadius",
-                      0
+                      0,
                     )}
                     outerRadius={get(
                       pieChartConfiguration,
                       "innerChart.outerRadius",
-                      "80%"
+                      "80%",
                     )}
                     startAngle={get(
                       pieChartConfiguration,
                       "innerChart.startAngle",
-                      0
+                      0,
                     )}
                     endAngle={get(
                       pieChartConfiguration,
                       "innerChart.endAngle",
-                      360
+                      360,
                     )}
                     fill="#201763"
                   >

@@ -32,10 +32,10 @@ const MenuWrapper = () => {
   const { pathname = "" } = useLocation();
 
   const sidebarOpen = useSelector(
-    (state: AppState) => state.system.sidebarOpen
+    (state: AppState) => state.system.sidebarOpen,
   );
   const licenseInfo = useSelector(
-    (state: AppState) => state?.system?.licenseInfo
+    (state: AppState) => state?.system?.licenseInfo,
   );
 
   const isAgplAckDone = getLicenseConsent();

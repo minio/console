@@ -24,7 +24,7 @@ const FilterObjectsSB = () => {
   const dispatch = useAppDispatch();
 
   const searchObjects = useSelector(
-    (state: AppState) => state.objectBrowser.searchObjects
+    (state: AppState) => state.objectBrowser.searchObjects,
   );
   return (
     <SearchBox

@@ -73,7 +73,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
   const KvSeparator = "=";
   const parseConnectionString = (
     input: string,
-    keys: string[]
+    keys: string[],
   ): Map<string, string> => {
     let valueIndexes: number[] = [];
 

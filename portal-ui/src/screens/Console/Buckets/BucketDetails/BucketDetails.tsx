@@ -80,25 +80,25 @@ import { errorToHandler } from "api/errors";
 import HelpMenu from "../../HelpMenu";
 
 const DeleteBucket = withSuspense(
-  React.lazy(() => import("../ListBuckets/DeleteBucket"))
+  React.lazy(() => import("../ListBuckets/DeleteBucket")),
 );
 const AccessRulePanel = withSuspense(
-  React.lazy(() => import("./AccessRulePanel"))
+  React.lazy(() => import("./AccessRulePanel")),
 );
 const AccessDetailsPanel = withSuspense(
-  React.lazy(() => import("./AccessDetailsPanel"))
+  React.lazy(() => import("./AccessDetailsPanel")),
 );
 const BucketSummaryPanel = withSuspense(
-  React.lazy(() => import("./BucketSummaryPanel"))
+  React.lazy(() => import("./BucketSummaryPanel")),
 );
 const BucketEventsPanel = withSuspense(
-  React.lazy(() => import("./BucketEventsPanel"))
+  React.lazy(() => import("./BucketEventsPanel")),
 );
 const BucketReplicationPanel = withSuspense(
-  React.lazy(() => import("./BucketReplicationPanel"))
+  React.lazy(() => import("./BucketReplicationPanel")),
 );
 const BucketLifecyclePanel = withSuspense(
-  React.lazy(() => import("./BucketLifecyclePanel"))
+  React.lazy(() => import("./BucketLifecyclePanel")),
 );
 
 const styles = (theme: Theme) =>
@@ -221,7 +221,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                   ? "Browse Bucket"
                   : permissionTooltipHelper(
                       IAM_PERMISSIONS[IAM_ROLES.BUCKET_VIEWER],
-                      "browsing this bucket"
+                      "browsing this bucket",
                     )
               }
             >
@@ -288,7 +288,7 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
                               IAM_SCOPES.S3_DELETE_BUCKET,
                               IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
                             ],
-                            "deleting this bucket"
+                            "deleting this bucket",
                           )
                     }
                   >

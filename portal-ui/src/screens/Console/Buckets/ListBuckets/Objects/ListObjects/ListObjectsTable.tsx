@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundImage: "url(/images/ob_folder_filled.svg)",
       },
     },
-  })
+  }),
 );
 
 interface IListObjectTable {
@@ -92,31 +92,31 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
   const bucketName = params.bucketName || "";
 
   const detailsOpen = useSelector(
-    (state: AppState) => state.objectBrowser.objectDetailsOpen
+    (state: AppState) => state.objectBrowser.objectDetailsOpen,
   );
 
   const loadingObjects = useSelector(
-    (state: AppState) => state.objectBrowser.loadingObjects
+    (state: AppState) => state.objectBrowser.loadingObjects,
   );
 
   const features = useSelector(selFeatures);
   const obOnly = !!features?.includes("object-browser-only");
 
   const rewindEnabled = useSelector(
-    (state: AppState) => state.objectBrowser.rewind.rewindEnabled
+    (state: AppState) => state.objectBrowser.rewind.rewindEnabled,
   );
   const records = useSelector((state: AppState) => state.objectBrowser.records);
   const searchObjects = useSelector(
-    (state: AppState) => state.objectBrowser.searchObjects
+    (state: AppState) => state.objectBrowser.searchObjects,
   );
   const selectedObjects = useSelector(
-    (state: AppState) => state.objectBrowser.selectedObjects
+    (state: AppState) => state.objectBrowser.selectedObjects,
   );
   const connectionError = useSelector(
-    (state: AppState) => state.objectBrowser.connectionError
+    (state: AppState) => state.objectBrowser.connectionError,
   );
   const anonymousMode = useSelector(
-    (state: AppState) => state.system.anonymousMode
+    (state: AppState) => state.system.anonymousMode,
   );
 
   const displayListObjects = hasPermission(bucketName, [
@@ -164,7 +164,7 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
         dispatch,
         bucketName,
         `${encodeURLString(idElement)}`,
-        object
+        object,
       );
       return;
     }
@@ -179,8 +179,8 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
     }
     dispatch(
       setSelectedObjectView(
-        `${idElement ? `${encodeURLString(idElement)}` : ``}`
-      )
+        `${idElement ? `${encodeURLString(idElement)}` : ``}`,
+      ),
     );
   };
   const tableActions: ItemActions[] = [
@@ -235,7 +235,7 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
     !displayListObjects && !anonymousMode
       ? permissionTooltipHelper(
           [IAM_SCOPES.S3_LIST_BUCKET, IAM_SCOPES.S3_ALL_LIST_BUCKET],
-          "view Objects in this bucket"
+          "view Objects in this bucket",
         )
       : `This location is empty${
           !rewindEnabled ? ", please try uploading a new file" : ""

@@ -80,7 +80,7 @@ const SiteReplication = () => {
     },
     (err: any) => {
       setSites([]);
-    }
+    },
   );
 
   const getSites = () => {
@@ -95,7 +95,7 @@ const SiteReplication = () => {
     },
     (err: ErrorResponseHandler) => {
       dispatch(setErrorSnackMessage(err));
-    }
+    },
   );
 
   const removeSites = (isAll: boolean = false, delSites: string[] = []) => {

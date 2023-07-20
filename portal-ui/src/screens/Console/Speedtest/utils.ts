@@ -18,7 +18,7 @@ import { SpeedTestResponse } from "./types";
 
 export const cleanMetrics = (results: SpeedTestResponse[]) => {
   const cleanRes = results.filter(
-    (item) => item.version !== "0" && item.disks !== 0
+    (item) => item.version !== "0" && item.disks !== 0,
   );
 
   const states = cleanRes.map((itemRes) => {

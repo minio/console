@@ -70,7 +70,7 @@ let wsInFlight: boolean = false;
 const initWSConnection = (
   openCallback?: () => void,
   onMessageCallback?: (message: IMessageEvent) => void,
-  connErrorCallback?: (message: string) => void
+  connErrorCallback?: (message: string) => void,
 ) => {
   if (wsInFlight) {
     return;
@@ -87,7 +87,7 @@ const initWSConnection = (
   const wsProt = wsProtocol(url.protocol);
 
   objectsWS = new WebSocket(
-    `${wsProt}://${url.hostname}:${port}${baseUrl}ws/objectManager`
+    `${wsProt}://${url.hostname}:${port}${baseUrl}ws/objectManager`,
   );
 
   objectsWS.onopen = () => {
@@ -108,11 +108,11 @@ const initWSConnection = (
       errorCounter += 1;
     } else {
       console.error(
-        "Websocket not available. Please review that your environment settings are enabled to allow websocket connections and that requests are made from the same origin."
+        "Websocket not available. Please review that your environment settings are enabled to allow websocket connections and that requests are made from the same origin.",
       );
       if (connErrorCallback) {
         connErrorCallback(
-          "Couldn't establish WebSocket connection. Please review your configuration and try again."
+          "Couldn't establish WebSocket connection. Please review your configuration and try again.",
         );
       }
     }
@@ -139,41 +139,41 @@ const BrowserHandler = () => {
   const location = useLocation();
 
   const loadingVersioning = useSelector(
-    (state: AppState) => state.objectBrowser.loadingVersioning
+    (state: AppState) => state.objectBrowser.loadingVersioning,
   );
 
   const rewindEnabled = useSelector(
-    (state: AppState) => state.objectBrowser.rewind.rewindEnabled
+    (state: AppState) => state.objectBrowser.rewind.rewindEnabled,
   );
   const rewindDate = useSelector(
-    (state: AppState) => state.objectBrowser.rewind.dateToRewind
+    (state: AppState) => state.objectBrowser.rewind.dateToRewind,
   );
   const showDeleted = useSelector(
-    (state: AppState) => state.objectBrowser.showDeleted
+    (state: AppState) => state.objectBrowser.showDeleted,
   );
   const allowResources = useSelector(
-    (state: AppState) => state.console.session.allowResources
+    (state: AppState) => state.console.session.allowResources,
   );
   const loadingObjects = useSelector(
-    (state: AppState) => state.objectBrowser.loadingObjects
+    (state: AppState) => state.objectBrowser.loadingObjects,
   );
   const loadingLocking = useSelector(
-    (state: AppState) => state.objectBrowser.loadingLocking
+    (state: AppState) => state.objectBrowser.loadingLocking,
   );
   const loadRecords = useSelector(
-    (state: AppState) => state.objectBrowser.loadRecords
+    (state: AppState) => state.objectBrowser.loadRecords,
   );
   const selectedInternalPaths = useSelector(
-    (state: AppState) => state.objectBrowser.selectedInternalPaths
+    (state: AppState) => state.objectBrowser.selectedInternalPaths,
   );
   const simplePath = useSelector(
-    (state: AppState) => state.objectBrowser.simplePath
+    (state: AppState) => state.objectBrowser.simplePath,
   );
   const isOpeningOD = useSelector(
-    (state: AppState) => state.objectBrowser.isOpeningObjectDetail
+    (state: AppState) => state.objectBrowser.isOpeningObjectDetail,
   );
   const anonymousMode = useSelector(
-    (state: AppState) => state.system.anonymousMode
+    (state: AppState) => state.system.anonymousMode,
   );
 
   const bucketName = params.bucketName || "";
@@ -214,7 +214,7 @@ const BrowserHandler = () => {
           const permitItems = permissionItems(
             response.bucketName || bucketName,
             pathPrefix,
-            allowResources || []
+            allowResources || [],
           );
 
           if (!permitItems || permitItems.length === 0) {
@@ -222,7 +222,7 @@ const BrowserHandler = () => {
               setErrorSnackMessage({
                 errorMessage: response.error,
                 detailedError: response.error,
-              })
+              }),
             );
           } else {
             dispatch(setRecords(permitItems));
@@ -243,7 +243,7 @@ const BrowserHandler = () => {
         }
       }
     },
-    [dispatch, allowResources, bucketName]
+    [dispatch, allowResources, bucketName],
   );
 
   const initWSRequest = useCallback(
@@ -280,7 +280,7 @@ const BrowserHandler = () => {
             setErrorSnackMessage({
               errorMessage: message,
               detailedError: message,
-            })
+            }),
           );
           dispatch(errorInConnection(true));
         };
@@ -288,7 +288,7 @@ const BrowserHandler = () => {
         initWSConnection(dupRequest, onMessageCallBack, fatalWSError);
       }
     },
-    [bucketName, rewindEnabled, showDeleted, dispatch, onMessageCallBack]
+    [bucketName, rewindEnabled, showDeleted, dispatch, onMessageCallBack],
   );
 
   useEffect(() => {
@@ -313,7 +313,7 @@ const BrowserHandler = () => {
       dispatch(setObjectDetailsView(false));
       dispatch(setSelectedObjectView(null));
       dispatch(
-        setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths)
+        setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths),
       );
       dispatch(setLoadingLocking(true));
     } else {
@@ -322,13 +322,13 @@ const BrowserHandler = () => {
       dispatch(setLoadingVersions(true));
       dispatch(
         setSelectedObjectView(
-          `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`
-        )
+          `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`,
+        ),
       );
       dispatch(
         setSimplePathHandler(
-          `${decodedIPaths.split("/").slice(0, -1).join("/")}/`
-        )
+          `${decodedIPaths.split("/").slice(0, -1).join("/")}/`,
+        ),
       );
     }
   }, [bucketName, internalPaths, rewindDate, rewindEnabled, dispatch]);
@@ -428,7 +428,7 @@ const BrowserHandler = () => {
           .catch((err) => {
             console.error(
               "Error Getting Object Versioning Status: ",
-              err.error.detailedMessage
+              err.error.detailedMessage,
             );
             dispatch(setLoadingVersioning(false));
           });
@@ -457,7 +457,7 @@ const BrowserHandler = () => {
           .catch((err) => {
             console.error(
               "Error Getting Object Locking Status: ",
-              err.error.detailedMessage
+              err.error.detailedMessage,
             );
             dispatch(setLoadingLocking(false));
           });

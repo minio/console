@@ -106,7 +106,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...inlineCheckboxes,
     ...searchField,
     ...containerForHeader,
-  })
+  }),
 );
 
 const SelectStyled = withStyles((theme: Theme) =>
@@ -121,7 +121,7 @@ const SelectStyled = withStyles((theme: Theme) =>
         backgroundColor: "transparent",
       },
     },
-  })
+  }),
 )(InputBase);
 
 const Heal = () => {
@@ -198,7 +198,7 @@ const Heal = () => {
 
       const wsProt = wsProtocol(url.protocol);
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/heal/${bucketName}?prefix=${prefix}&recursive=${recursive}&force-start=${forceStart}&force-stop=${forceStop}`
+        `${wsProt}://${url.hostname}:${port}${baseUrl}ws/heal/${bucketName}?prefix=${prefix}&recursive=${recursive}&force-start=${forceStart}&force-stop=${forceStop}`,
       );
 
       if (c !== null) {

@@ -46,7 +46,7 @@ const AddEvent = ({
   const [suffix, setSuffix] = useState<string>("");
   const [arn, setArn] = useState<string>("");
   const [selectedEvents, setSelectedEvents] = useState<NotificationEventType[]>(
-    []
+    [],
   );
   const [arnList, setArnList] = useState<string[] | undefined>([]);
 

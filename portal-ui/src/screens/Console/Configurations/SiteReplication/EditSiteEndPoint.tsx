@@ -64,7 +64,7 @@ const EditSiteEndPoint = ({
           setErrorSnackMessage({
             errorMessage: "Error",
             detailedError: res.status,
-          })
+          }),
         );
       }
       onComplete();
@@ -72,7 +72,7 @@ const EditSiteEndPoint = ({
     (err: any) => {
       dispatch(setErrorSnackMessage(err));
       onComplete();
-    }
+    },
   );
 
   const updatePeerSite = () => {

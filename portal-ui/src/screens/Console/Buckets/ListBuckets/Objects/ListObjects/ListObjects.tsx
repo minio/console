@@ -146,14 +146,14 @@ import {
 } from "../../UploadPermissionUtils";
 
 const DeleteMultipleObjects = withSuspense(
-  React.lazy(() => import("./DeleteMultipleObjects"))
+  React.lazy(() => import("./DeleteMultipleObjects")),
 );
 const ShareFile = withSuspense(
-  React.lazy(() => import("../ObjectDetails/ShareFile"))
+  React.lazy(() => import("../ObjectDetails/ShareFile")),
 );
 const RewindEnable = withSuspense(React.lazy(() => import("./RewindEnable")));
 const PreviewFileModal = withSuspense(
-  React.lazy(() => import("../Preview/PreviewFileModal"))
+  React.lazy(() => import("../Preview/PreviewFileModal")),
 );
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -208,7 +208,7 @@ const useStyles = makeStyles((theme: Theme) =>
     ...objectBrowserExtras,
     ...objectBrowserCommon,
     ...containerForHeader,
-  })
+  }),
 );
 
 const baseDnDStyle = {
@@ -238,57 +238,57 @@ const ListObjects = () => {
   const location = useLocation();
 
   const rewindEnabled = useSelector(
-    (state: AppState) => state.objectBrowser.rewind.rewindEnabled
+    (state: AppState) => state.objectBrowser.rewind.rewindEnabled,
   );
   const bucketToRewind = useSelector(
-    (state: AppState) => state.objectBrowser.rewind.bucketToRewind
+    (state: AppState) => state.objectBrowser.rewind.bucketToRewind,
   );
   const versionsMode = useSelector(
-    (state: AppState) => state.objectBrowser.versionsMode
+    (state: AppState) => state.objectBrowser.versionsMode,
   );
 
   const showDeleted = useSelector(
-    (state: AppState) => state.objectBrowser.showDeleted
+    (state: AppState) => state.objectBrowser.showDeleted,
   );
   const detailsOpen = useSelector(
-    (state: AppState) => state.objectBrowser.objectDetailsOpen
+    (state: AppState) => state.objectBrowser.objectDetailsOpen,
   );
   const selectedInternalPaths = useSelector(
-    (state: AppState) => state.objectBrowser.selectedInternalPaths
+    (state: AppState) => state.objectBrowser.selectedInternalPaths,
   );
   const loadingObjects = useSelector(
-    (state: AppState) => state.objectBrowser.loadingObjects
+    (state: AppState) => state.objectBrowser.loadingObjects,
   );
   const simplePath = useSelector(
-    (state: AppState) => state.objectBrowser.simplePath
+    (state: AppState) => state.objectBrowser.simplePath,
   );
 
   const versioningConfig = useSelector(
-    (state: AppState) => state.objectBrowser.versionInfo
+    (state: AppState) => state.objectBrowser.versionInfo,
   );
   const lockingEnabled = useSelector(
-    (state: AppState) => state.objectBrowser.lockingEnabled
+    (state: AppState) => state.objectBrowser.lockingEnabled,
   );
   const downloadRenameModal = useSelector(
-    (state: AppState) => state.objectBrowser.downloadRenameModal
+    (state: AppState) => state.objectBrowser.downloadRenameModal,
   );
   const selectedPreview = useSelector(
-    (state: AppState) => state.objectBrowser.selectedPreview
+    (state: AppState) => state.objectBrowser.selectedPreview,
   );
   const shareFileModalOpen = useSelector(
-    (state: AppState) => state.objectBrowser.shareFileModalOpen
+    (state: AppState) => state.objectBrowser.shareFileModalOpen,
   );
   const previewOpen = useSelector(
-    (state: AppState) => state.objectBrowser.previewOpen
+    (state: AppState) => state.objectBrowser.previewOpen,
   );
   const selectedBucket = useSelector(
-    (state: AppState) => state.objectBrowser.selectedBucket
+    (state: AppState) => state.objectBrowser.selectedBucket,
   );
   const anonymousMode = useSelector(
-    (state: AppState) => state.system.anonymousMode
+    (state: AppState) => state.system.anonymousMode,
   );
   const anonymousAccessOpen = useSelector(
-    (state: AppState) => state.objectBrowser.anonymousAccessOpen
+    (state: AppState) => state.objectBrowser.anonymousAccessOpen,
   );
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
@@ -322,7 +322,7 @@ const ListObjects = () => {
   const folderUpload = useRef<HTMLInputElement>(null);
 
   const sessionGrants = useSelector((state: AppState) =>
-    state.console.session ? state.console.session.permissions || {} : {}
+    state.console.session ? state.console.session.permissions || {} : {},
   );
 
   const putObjectPermScopes = [
@@ -334,27 +334,27 @@ const ListObjects = () => {
   const allowedFileExtensions = getPolicyAllowedFileExtensions(
     sessionGrants,
     pathAsResourceInPolicy,
-    putObjectPermScopes
+    putObjectPermScopes,
   );
 
   const sessionGrantWildCards = getSessionGrantsWildCard(
     sessionGrants,
     pathAsResourceInPolicy,
-    putObjectPermScopes
+    putObjectPermScopes,
   );
 
   const canDownload = hasPermission(
     [pathAsResourceInPolicy, ...sessionGrantWildCards],
-    [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS]
+    [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
   );
   const canDelete = hasPermission(
     [pathAsResourceInPolicy, ...sessionGrantWildCards],
-    [IAM_SCOPES.S3_DELETE_OBJECT]
+    [IAM_SCOPES.S3_DELETE_OBJECT],
   );
   const canUpload =
     hasPermission(
       [pathAsResourceInPolicy, ...sessionGrantWildCards],
-      putObjectPermScopes
+      putObjectPermScopes,
     ) || anonymousMode;
 
   const canSetAnonymousAccess = hasPermission(bucketName, [
@@ -365,7 +365,7 @@ const ListObjects = () => {
   ]);
 
   const selectedObjects = useSelector(
-    (state: AppState) => state.objectBrowser.selectedObjects
+    (state: AppState) => state.objectBrowser.selectedObjects,
   );
 
   const fetchMetadata = useCallback(() => {
@@ -386,7 +386,7 @@ const ListObjects = () => {
           console.error(
             "Error Getting Metadata Status: ",
             err,
-            err?.detailedError
+            err?.detailedError,
           );
           setIsMetaDataLoaded(true);
         });
@@ -461,7 +461,7 @@ const ListObjects = () => {
         .catch((err) => {
           console.error(
             "Error Getting Quota Status: ",
-            err.error.detailedMessage
+            err.error.detailedMessage,
           );
           setQuota(null);
         });
@@ -563,7 +563,7 @@ const ListObjects = () => {
         files: File[],
         bucketName: string,
         path: string,
-        folderPath: string
+        folderPath: string,
       ) => {
         let uploadPromise = (file: File) => {
           return new Promise((resolve, reject) => {
@@ -608,7 +608,7 @@ const ListObjects = () => {
                   (finalFolderPath.trim() === "" && !path.endsWith("/"))
                     ? "/"
                     : ""
-                }`
+                }`,
               );
             }
 
@@ -617,7 +617,7 @@ const ListObjects = () => {
             }
 
             const identity = encodeURLString(
-              `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`
+              `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`,
             );
 
             let xhr = new XMLHttpRequest();
@@ -661,7 +661,7 @@ const ListObjects = () => {
                   failObject({
                     instanceID: identity,
                     msg: errorMessage,
-                  })
+                  }),
                 );
                 reject({ status: xhr.status, message: errorMessage });
 
@@ -675,7 +675,7 @@ const ListObjects = () => {
                 failObject({
                   instanceID: identity,
                   msg: "A network error occurred.",
-                })
+                }),
               );
               return;
             });
@@ -687,7 +687,7 @@ const ListObjects = () => {
                 updateProgress({
                   instanceID: identity,
                   progress: progress,
-                })
+                }),
               );
             });
 
@@ -697,7 +697,7 @@ const ListObjects = () => {
                 failObject({
                   instanceID: identity,
                   msg: "A network error occurred.",
-                })
+                }),
               );
               return;
             };
@@ -727,7 +727,7 @@ const ListObjects = () => {
                   failed: false,
                   cancelled: false,
                   errorMessage: "",
-                })
+                }),
               );
               storeFormDataWithID(ID, formData);
             }
@@ -743,7 +743,7 @@ const ListObjects = () => {
         }
         Promise.allSettled(uploadFilePromises).then((results: Array<any>) => {
           const errors = results.filter(
-            (result) => result.status === "rejected"
+            (result) => result.status === "rejected",
           );
           if (errors.length > 0) {
             const totalFiles = uploadFilePromises.length;
@@ -763,7 +763,7 @@ const ListObjects = () => {
 
       upload(files, bucketName, pathPrefix, folderPath);
     },
-    [bucketName, dispatch, simplePath, anonymousMode]
+    [bucketName, dispatch, simplePath, anonymousMode],
   );
 
   const onDrop = useCallback(
@@ -786,7 +786,7 @@ const ListObjects = () => {
           console.log(
             `${allowedFiles.length} Allowed Files Processed out of ${acceptedFiles.length}.`,
             pathAsResourceInPolicy,
-            ...sessionGrantWildCards
+            ...sessionGrantWildCards,
           );
 
           if (allowedFiles.length !== acceptedFiles.length) {
@@ -795,9 +795,9 @@ const ListObjects = () => {
                 errorMessage: "Upload is restricted.",
                 detailedError: permissionTooltipHelper(
                   [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
-                  "upload objects to this location"
+                  "upload objects to this location",
                 ),
-              })
+              }),
             );
           }
         } else {
@@ -806,15 +806,15 @@ const ListObjects = () => {
               errorMessage: "Could not process drag and drop.",
               detailedError: permissionTooltipHelper(
                 [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
-                "upload objects to this location"
+                "upload objects to this location",
               ),
-            })
+            }),
           );
 
           console.error(
             "Could not process drag and drop . upload may be restricted.",
             pathAsResourceInPolicy,
-            ...sessionGrantWildCards
+            ...sessionGrantWildCards,
           );
         }
       }
@@ -824,14 +824,14 @@ const ListObjects = () => {
             errorMessage: "Upload not allowed",
             detailedError: permissionTooltipHelper(
               [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
-              "upload objects to this location"
+              "upload objects to this location",
             ),
-          })
+          }),
         );
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [uploadObject]
+    [uploadObject],
   );
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept } =
@@ -846,7 +846,7 @@ const ListObjects = () => {
       ...(isDragActive ? activeDnDStyle : {}),
       ...(isDragAccept ? acceptDnDStyle : {}),
     }),
-    [isDragActive, isDragAccept]
+    [isDragActive, isDragAccept],
   );
 
   const closeShareModal = () => {
@@ -924,7 +924,7 @@ const ListObjects = () => {
         ? "Download Selected"
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
-            "download objects from this bucket"
+            "download objects from this bucket",
           ),
     },
     {
@@ -971,7 +971,7 @@ const ListObjects = () => {
         ? "Delete Selected Files"
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_DELETE_OBJECT],
-            "delete objects in this bucket"
+            "delete objects in this bucket",
           ),
     },
   ];
@@ -1060,7 +1060,7 @@ const ListObjects = () => {
                     <strong>
                       {bucketInfo?.creation_date
                         ? createdTime.toFormat(
-                            "ccc, LLL dd yyyy HH:mm:ss (ZZZZ)"
+                            "ccc, LLL dd yyyy HH:mm:ss (ZZZZ)",
                           )
                         : ""}
                     </strong>

@@ -92,13 +92,13 @@ const ObjectManager = ({ classes }: IObjectManager) => {
   const dispatch = useAppDispatch();
 
   const objects = useSelector(
-    (state: AppState) => state.objectBrowser.objectManager.objectsToManage
+    (state: AppState) => state.objectBrowser.objectManager.objectsToManage,
   );
   const managerOpen = useSelector(
-    (state: AppState) => state.objectBrowser.objectManager.managerOpen
+    (state: AppState) => state.objectBrowser.objectManager.managerOpen,
   );
   const anonymousMode = useSelector(
-    (state: AppState) => state.system.anonymousMode
+    (state: AppState) => state.system.anonymousMode,
   );
 
   function renderObject(index: number) {

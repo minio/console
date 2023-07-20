@@ -99,7 +99,7 @@ const BarChartWidget = ({
   const [hover, setHover] = useState<boolean>(false);
   const componentRef = useRef<HTMLElement>();
   const widgetVersion = useSelector(
-    (state: AppState) => state.dashboard.widgetLoadVersion
+    (state: AppState) => state.dashboard.widgetLoadVersion,
   );
   const onHover = () => {
     setHover(true);
@@ -132,7 +132,7 @@ const BarChartWidget = ({
             timeStart !== null ? `&start=${timeStart.toUnixInteger()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.toUnixInteger()}` : ""
-          }`
+          }`,
         )
         .then((res: any) => {
           const widgetsWithValue = widgetDetailsToPanel(res, panelItem);

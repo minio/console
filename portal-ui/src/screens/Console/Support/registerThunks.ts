@@ -56,7 +56,7 @@ export const fetchLicenseInfo = createAsyncThunk(
     const getSubnetInfo = hasPermission(
       CONSOLE_UI_RESOURCE,
       IAM_PAGES_PERMISSIONS[IAM_PAGES.LICENSE],
-      true
+      true,
     );
 
     const loadingLicenseInfo = state.register.loadingLicenseInfo;
@@ -88,7 +88,7 @@ export const fetchLicenseInfo = createAsyncThunk(
     } else {
       dispatch(setLoadingLicenseInfo(false));
     }
-  }
+  },
 );
 
 export interface ClassRegisterArgs {
@@ -115,7 +115,7 @@ export const callRegister = createAsyncThunk(
         dispatch(setErrorSnackMessage(err));
         dispatch(setLoading(false));
       });
-  }
+  },
 );
 
 export const subnetLoginWithMFA = createAsyncThunk(
@@ -147,15 +147,15 @@ export const subnetLoginWithMFA = createAsyncThunk(
               callRegister({
                 token: resp.access_token,
                 account_id: resp.organizations[0].accountId.toString(),
-              })
+              }),
             );
           } else {
             dispatch(setSubnetAccessToken(resp.access_token));
             dispatch(setSubnetOrganizations(resp.organizations));
             dispatch(
               setSelectedSubnetOrganization(
-                resp.organizations[0].accountId.toString()
-              )
+                resp.organizations[0].accountId.toString(),
+              ),
             );
           }
         }
@@ -165,7 +165,7 @@ export const subnetLoginWithMFA = createAsyncThunk(
         dispatch(setLoading(false));
         dispatch(setSubnetOTP(""));
       });
-  }
+  },
 );
 
 export const subnetLogin = createAsyncThunk(
@@ -201,8 +201,8 @@ export const subnetLogin = createAsyncThunk(
           dispatch(setSubnetOrganizations(resp.organizations));
           dispatch(
             setSelectedSubnetOrganization(
-              resp.organizations[0].accountId.toString()
-            )
+              resp.organizations[0].accountId.toString(),
+            ),
           );
         }
       })
@@ -211,5 +211,5 @@ export const subnetLogin = createAsyncThunk(
         dispatch(setLoading(false));
         dispatch(resetRegisterForm());
       });
-  }
+  },
 );

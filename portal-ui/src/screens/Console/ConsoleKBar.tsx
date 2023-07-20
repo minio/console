@@ -27,7 +27,7 @@ import AnonymousAccess from "../AnonymousAccess/AnonymousAccess";
 const ConsoleKBar = () => {
   const features = useSelector(selFeatures);
   const anonymousMode = useSelector(
-    (state: AppState) => state.system.anonymousMode
+    (state: AppState) => state.system.anonymousMode,
   );
 
   // if we are hiding the menu also disable the k-bar so just return console

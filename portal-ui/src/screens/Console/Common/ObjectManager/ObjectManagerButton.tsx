@@ -53,13 +53,13 @@ const ObjectManagerButton = () => {
   const dispatch = useAppDispatch();
   const classes = useStyles();
   const managerObjects = useSelector(
-    (state: AppState) => state.objectBrowser.objectManager.objectsToManage
+    (state: AppState) => state.objectBrowser.objectManager.objectsToManage,
   );
   const newItems = useSelector(
-    (state: AppState) => state.objectBrowser.objectManager.newItems
+    (state: AppState) => state.objectBrowser.objectManager.newItems,
   );
   const managerOpen = useSelector(
-    (state: AppState) => state.objectBrowser.objectManager.managerOpen
+    (state: AppState) => state.objectBrowser.objectManager.managerOpen,
   );
 
   const [newObject, setNewObject] = useState<boolean>(false);
