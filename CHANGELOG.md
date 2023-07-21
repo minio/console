@@ -2,6 +2,16 @@
 
 # Changelog
 
+## Release v0.33.0
+Features:
+- Updated OpenID, LDAP components
+
+Bug Fix:
+
+- Fixed security issues
+- Fixed navigation issues in Object Browser
+- Fixed Dashboard metrics
+---
 ## Release v0.32.0
 Features:
 - Updated Users and Groups components
