@@ -69,7 +69,7 @@ const RestoreFileVersion = ({
           restoreLocalObjectList({
             prefix: objectPath,
             objectInfo: versionToRestore,
-          })
+          }),
         );
       })
       .catch((err) => {

@@ -21,12 +21,12 @@ export const extractFileExtn = (resourceStr: string) => {
 export const getPolicyAllowedFileExtensions = (
   sessionGrants: Record<string, string[]>,
   uploadPath: string,
-  scopes: string[] = []
+  scopes: string[] = [],
 ) => {
   const sessionGrantWildCards = getSessionGrantsWildCard(
     sessionGrants,
     uploadPath,
-    scopes
+    scopes,
   );
 
   //get acceptable files if any in the policy.
@@ -38,7 +38,7 @@ export const getPolicyAllowedFileExtensions = (
       }
       return acc;
     },
-    []
+    [],
   );
 
   const uniqueExtensions = [...new Set(allowedFileExtensions)];
@@ -50,7 +50,7 @@ export const getPolicyAllowedFileExtensions = (
 export const getSessionGrantsWildCard = (
   sessionGrants: Record<string, string[]>,
   uploadPath: string,
-  scopes: string[] = []
+  scopes: string[] = [],
 ) => {
   //get only the path matching grants to reduce processing.
   const grantsWithExtension = Object.keys(sessionGrants).reduce(
@@ -60,7 +60,7 @@ export const getSessionGrantsWildCard = (
       }
       return acc;
     },
-    {}
+    {},
   );
 
   const checkPathsForPermission = (sessionGrantKey: string) => {
@@ -76,12 +76,12 @@ export const getSessionGrantsWildCard = (
         }
 
         return wildCardMatch || actionKey === scopeKey;
-      })
+      }),
     );
 
     const sessionGrantKeyPath = sessionGrantKey.substring(
       0,
-      sessionGrantKey.indexOf("/*.") //start of extension part.
+      sessionGrantKey.indexOf("/*."), //start of extension part.
     );
     const isUploadPathMatching =
       sessionGrantKeyPath === `arn:aws:s3:::${uploadPath}`;

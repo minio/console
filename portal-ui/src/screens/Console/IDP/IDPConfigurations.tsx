@@ -77,7 +77,7 @@ const IDPConfigurations = ({ idpType }: IDPConfigurationsProps) => {
                   r.name = r.name === "_" ? "Default" : r.name;
                   r.enabled = r.enabled === true ? "Enabled" : "Disabled";
                   return r;
-                })
+                }),
               );
             }
           })

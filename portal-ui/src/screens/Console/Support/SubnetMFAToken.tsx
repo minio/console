@@ -29,7 +29,7 @@ const SubnetMFAToken = () => {
   const dispatch = useAppDispatch();
 
   const subnetMFAToken = useSelector(
-    (state: AppState) => state.register.subnetMFAToken
+    (state: AppState) => state.register.subnetMFAToken,
   );
   const subnetOTP = useSelector((state: AppState) => state.register.subnetOTP);
   const loading = useSelector((state: AppState) => state.register.loading);

@@ -37,10 +37,10 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   const userLoggedIn = useSelector((state: AppState) => state.system.loggedIn);
   const [componentLoading, setComponentLoading] = useState<boolean>(true);
   const sessionLoadingState = useSelector(
-    (state: AppState) => state.console.sessionLoadingState
+    (state: AppState) => state.console.sessionLoadingState,
   );
   const anonymousMode = useSelector(
-    (state: AppState) => state.system.anonymousMode
+    (state: AppState) => state.system.anonymousMode,
   );
   const { pathname = "" } = useLocation();
 
@@ -87,7 +87,7 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
     (err: ErrorResponseHandler) => {
       // we will fail this call silently, but show it on the console
       console.error(`Error loading site replication status`, err);
-    }
+    },
   );
 
   useEffect(() => {

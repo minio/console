@@ -47,13 +47,13 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
   const features = useSelector(selFeatures);
 
   const versionsMode = useSelector(
-    (state: AppState) => state.objectBrowser.versionsMode
+    (state: AppState) => state.objectBrowser.versionsMode,
   );
   const versionedFile = useSelector(
-    (state: AppState) => state.objectBrowser.versionedFile
+    (state: AppState) => state.objectBrowser.versionedFile,
   );
   const searchVersions = useSelector(
-    (state: AppState) => state.objectBrowser.searchVersions
+    (state: AppState) => state.objectBrowser.searchVersions,
   );
 
   const obOnly = !!features?.includes("object-browser-only");

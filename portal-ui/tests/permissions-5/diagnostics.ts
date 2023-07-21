@@ -57,8 +57,8 @@ test("Download button exists after Diagnostic is completed", async (t) => {
       document,
       null,
       XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    )
+      null,
+    ),
   );
   await t
     .useRole(roles.diagnostics)
@@ -81,8 +81,8 @@ test("Download button is clickable after Diagnostic is completed", async (t) => 
       document,
       null,
       XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    )
+      null,
+    ),
   );
   await t
     .useRole(roles.diagnostics)
@@ -105,8 +105,8 @@ test("Start New Diagnostic button exists after Diagnostic is completed", async (
       document,
       null,
       XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    )
+      null,
+    ),
   );
   await t
     .useRole(roles.diagnostics)
@@ -133,8 +133,8 @@ test("Start New Diagnostic button is clickable after Diagnostic is completed", a
       document,
       null,
       XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    )
+      null,
+    ),
   );
   await t
     .useRole(roles.diagnostics)

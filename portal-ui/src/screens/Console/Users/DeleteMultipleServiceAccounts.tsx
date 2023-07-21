@@ -46,7 +46,7 @@ const DeleteMultipleSAs = ({
     invokeDeleteApi(
       "DELETE",
       `/api/v1/service-accounts/delete-multi`,
-      selectedSAs
+      selectedSAs,
     );
   };
   return (

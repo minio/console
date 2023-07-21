@@ -49,7 +49,7 @@ const BucketEventsPanel = () => {
   const [records, setRecords] = useState<NotificationConfig[]>([]);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<NotificationConfig | null>(
-    null
+    null,
   );
 
   const bucketName = params.bucketName || "";

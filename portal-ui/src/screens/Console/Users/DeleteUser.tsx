@@ -81,7 +81,7 @@ const DeleteUser = ({
   ));
   const viewAction = (selectionElement: any): void => {
     navigate(
-      `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.userName)}`
+      `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.userName)}`,
     );
     onClose();
   };
@@ -99,7 +99,7 @@ const DeleteUser = ({
           setErrorSnackMessage({
             errorMessage: "Cannot delete currently logged in user",
             detailedError: `Cannot delete currently logged in user ${userLoggedIn}`,
-          })
+          }),
         );
         closeDeleteModalAndRefresh(true);
       } else {

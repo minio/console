@@ -31,10 +31,10 @@ import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../store";
 
 const AddBucketTagModal = withSuspense(
-  React.lazy(() => import("../AddBucketTagModal"))
+  React.lazy(() => import("../AddBucketTagModal")),
 );
 const DeleteBucketTagModal = withSuspense(
-  React.lazy(() => import("../DeleteBucketTagModal"))
+  React.lazy(() => import("../DeleteBucketTagModal")),
 );
 
 type BucketTagProps = {

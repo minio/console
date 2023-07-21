@@ -94,7 +94,7 @@ const EditConfiguration = ({
   const [overrideEnvs, setOverrideEnvs] = useState<IOverrideEnv>({});
 
   const loadingConfig = useSelector(
-    (state: AppState) => state.system.loadingConfigurations
+    (state: AppState) => state.system.loadingConfigurations,
   );
 
   useEffect(() => {
@@ -116,7 +116,7 @@ const EditConfiguration = ({
 
             const keyVals = fieldsConfig.map((field) => {
               const includedValue = values.find(
-                (element: ConfigurationKV) => element.key === field.name
+                (element: ConfigurationKV) => element.key === field.name,
               );
               const customValue = includedValue?.value || "";
 
@@ -175,7 +175,7 @@ const EditConfiguration = ({
     (newValue: IElementValue[]) => {
       setValueObj(newValue);
     },
-    [setValueObj]
+    [setValueObj],
   );
 
   const continueReset = (restart: boolean) => {
@@ -195,7 +195,9 @@ const EditConfiguration = ({
       <div
         onMouseMove={() => {
           dispatch(
-            setHelpName(`settings_${selectedConfiguration.configuration_label}`)
+            setHelpName(
+              `settings_${selectedConfiguration.configuration_label}`,
+            ),
           );
         }}
       >

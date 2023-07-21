@@ -69,13 +69,13 @@ const styles = (theme: Theme) =>
 const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
   const dispatch = useAppDispatch();
   const loadingUsage = useSelector(
-    (state: AppState) => state.dashboard.loadingUsage
+    (state: AppState) => state.dashboard.loadingUsage,
   );
   const zoomOpen = useSelector(
-    (state: AppState) => state.dashboard.zoom.openZoom
+    (state: AppState) => state.dashboard.zoom.openZoom,
   );
   const zoomWidget = useSelector(
-    (state: AppState) => state.dashboard.zoom.widgetRender
+    (state: AppState) => state.dashboard.zoom.widgetRender,
   );
   const features = useSelector(selFeatures);
   const obOnly = !!features?.includes("object-browser-only");
@@ -101,7 +101,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
 
   const renderCmpByConfig = (
     panelInfo: IDashboardPanel | undefined,
-    key: string
+    key: string,
   ) => {
     return (
       <Fragment key={`widget-${key}`}>
@@ -123,7 +123,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
                   timeEnd,
                   true,
                   apiPrefix,
-                  zoomOpen
+                  zoomOpen,
                 )
               )}
             </Box>
@@ -140,7 +140,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
         (cellItem: DLayoutColumnProps, colIdx: number) => {
           const panelInfo = getPanelDetails(cellItem.componentId);
           return renderCmpByConfig(panelInfo, `${rIdx}-${colIdx}`);
-        }
+        },
       );
       const rowConfig = (
         <Box sx={rowItem.sx} key={`layout-row-${rIdx}`}>

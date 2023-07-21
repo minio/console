@@ -104,7 +104,7 @@ const SetAccessPolicy = ({
     setPolicyDefinition(
       actualDefinition
         ? JSON.stringify(JSON.parse(actualDefinition), null, 4)
-        : emptyPolicy
+        : emptyPolicy,
     );
   }, [setAccessPolicy, actualPolicy, setPolicyDefinition, actualDefinition]);
 

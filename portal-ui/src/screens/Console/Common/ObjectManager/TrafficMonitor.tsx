@@ -30,19 +30,19 @@ const TrafficMonitor = () => {
   const dispatch = useAppDispatch();
 
   const objects = useSelector(
-    (state: AppState) => state.objectBrowser.objectManager.objectsToManage
+    (state: AppState) => state.objectBrowser.objectManager.objectsToManage,
   );
 
   const limitVars = useSelector((state: AppState) =>
-    state.console.session ? state.console.session.envConstants : null
+    state.console.session ? state.console.session.envConstants : null,
   );
 
   const currentDIP = useSelector(
-    (state: AppState) => state.objectBrowser.objectManager.currentDownloads
+    (state: AppState) => state.objectBrowser.objectManager.currentDownloads,
   );
 
   const currentUIP = useSelector(
-    (state: AppState) => state.objectBrowser.objectManager.currentUploads
+    (state: AppState) => state.objectBrowser.objectManager.currentUploads,
   );
 
   const limitUploads = limitVars?.maxConcurrentUploads || 10;
@@ -54,13 +54,13 @@ const TrafficMonitor = () => {
         (object) =>
           object.type === "download" &&
           !object.done &&
-          !currentDIP.includes(object.ID)
+          !currentDIP.includes(object.ID),
       );
       const filterUploads = objects.filter(
         (object) =>
           object.type === "upload" &&
           !object.done &&
-          !currentUIP.includes(object.ID)
+          !currentUIP.includes(object.ID),
       );
 
       const remainingDownloadSlots = limitDownloads - currentDIP.length;
@@ -71,7 +71,7 @@ const TrafficMonitor = () => {
       ) {
         const itemsToDownload = filterDownloads.slice(
           0,
-          remainingDownloadSlots
+          remainingDownloadSlots,
         );
 
         itemsToDownload.forEach((item) => {

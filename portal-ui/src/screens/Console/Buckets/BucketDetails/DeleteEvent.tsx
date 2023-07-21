@@ -65,7 +65,7 @@ const DeleteEvent = ({
         events,
         prefix,
         suffix,
-      }
+      },
     );
   };
 

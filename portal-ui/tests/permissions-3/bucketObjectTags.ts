@@ -21,7 +21,7 @@ import { testBucketBrowseButtonFor } from "../utils/functions";
 import { Selector } from "testcafe";
 
 fixture("For user with Bucket Read & Write permissions").page(
-  "http://localhost:9090"
+  "http://localhost:9090",
 );
 
 test
@@ -42,7 +42,7 @@ test
       .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("bucketobjecttags"))
       .click(
-        "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
+        "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)",
       )
       .click(Selector("button").withText("Tags"))
       .typeText("#newTagKey", "tag1")
@@ -80,7 +80,7 @@ test
       .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("bucketcannottag"))
       .click(
-        "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)"
+        "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)",
       )
       .click(Selector("button").withText("Tags"))
       .typeText("#newTagKey", "tag1")

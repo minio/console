@@ -116,8 +116,8 @@ const RegionSelect = ({
 
         return opts.filter((opt) =>
           `${opt.label.toLowerCase()}${opt.value.toLowerCase()}`.includes(
-            filterText
-          )
+            filterText,
+          ),
         );
       }}
       renderOption={(props: any, opt: any) => {

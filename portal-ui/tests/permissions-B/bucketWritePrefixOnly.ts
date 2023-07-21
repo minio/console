@@ -19,7 +19,7 @@ import * as elements from "../utils/elements";
 import { Selector } from "testcafe";
 
 fixture("For user with Bucket Write to specific prefix permissions").page(
-  "http://localhost:9090"
+  "http://localhost:9090",
 );
 
 test
@@ -34,10 +34,10 @@ test
         .expect(Selector("li").withText("Upload File").hasClass("Mui-disabled"))
         .ok()
         .expect(
-          Selector("li").withText("Upload Folder").hasClass("Mui-disabled")
+          Selector("li").withText("Upload Folder").hasClass("Mui-disabled"),
         )
         .notOk();
-    }
+    },
   )
   .after(async (t) => {});
 
@@ -53,9 +53,9 @@ test
         .expect(Selector("li").withText("Upload File").hasClass("Mui-disabled"))
         .notOk()
         .expect(
-          Selector("li").withText("Upload Folder").hasClass("Mui-disabled")
+          Selector("li").withText("Upload Folder").hasClass("Mui-disabled"),
         )
         .notOk();
-    }
+    },
   )
   .after(async (t) => {});

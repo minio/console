@@ -75,22 +75,22 @@ const ListPolicies = () => {
 
   const canDeletePolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
-    deletePolicyPermissions
+    deletePolicyPermissions,
   );
 
   const canDisplayPolicies = hasPermission(
     CONSOLE_UI_RESOURCE,
-    listPolicyPermissions
+    listPolicyPermissions,
   );
 
   const canCreatePolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
-    createPolicyPermissions
+    createPolicyPermissions,
   );
 
   const canViewPolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
-    viewPolicyPermissions
+    viewPolicyPermissions,
   );
 
   useEffect(() => {
@@ -165,8 +165,8 @@ const ListPolicies = () => {
     },
   ];
 
-  const filteredRecords = records.filter((elementItem) =>
-    elementItem.name?.includes(filterPolicies)
+  const filteredRecords = records.filter(
+    (elementItem) => elementItem.name?.includes(filterPolicies),
   );
 
   useEffect(() => {
@@ -206,7 +206,7 @@ const ListPolicies = () => {
                     ? ""
                     : permissionTooltipHelper(
                         createPolicyPermissions,
-                        "create a Policy"
+                        "create a Policy",
                       )
                 }
               >
@@ -237,7 +237,7 @@ const ListPolicies = () => {
                     ? ""
                     : permissionTooltipHelper(
                         viewPolicyPermissions,
-                        "view Policy details"
+                        "view Policy details",
                       )
                 }
               >

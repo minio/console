@@ -64,11 +64,11 @@ const UploadFilesButton = ({
   overrideStyles = {},
 }: IUploadFilesButton) => {
   const anonymousMode = useSelector(
-    (state: AppState) => state.system.anonymousMode
+    (state: AppState) => state.system.anonymousMode,
   );
 
   const sessionGrants = useSelector((state: AppState) =>
-    state.console.session ? state.console.session.permissions || {} : {}
+    state.console.session ? state.console.session.permissions || {} : {},
   );
 
   const putObjectPermScopes = [
@@ -79,7 +79,7 @@ const UploadFilesButton = ({
   const sessionGrantWildCards = getSessionGrantsWildCard(
     sessionGrants,
     uploadPath,
-    putObjectPermScopes
+    putObjectPermScopes,
   );
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -94,14 +94,14 @@ const UploadFilesButton = ({
   const uploadObjectAllowed =
     hasPermission(
       [uploadPath, ...sessionGrantWildCards],
-      putObjectPermScopes
+      putObjectPermScopes,
     ) || anonymousMode;
 
   const uploadFolderAllowed = hasPermission(
     [bucketName, ...sessionGrantWildCards],
     putObjectPermScopes,
     false,
-    true
+    true,
   );
 
   const uploadEnabled: boolean = uploadObjectAllowed || uploadFolderAllowed;
@@ -114,7 +114,7 @@ const UploadFilesButton = ({
             ? "Upload Files"
             : permissionTooltipHelper(
                 [IAM_SCOPES.S3_PUT_OBJECT, IAM_SCOPES.S3_PUT_ACTIONS],
-                "upload files to this bucket"
+                "upload files to this bucket",
               )
         }
       >

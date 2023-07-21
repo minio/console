@@ -111,7 +111,7 @@ const LinearGraphWidget = ({
   const [dataMax, setDataMax] = useState<number>(0);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
   const widgetVersion = useSelector(
-    (state: AppState) => state.dashboard.widgetLoadVersion
+    (state: AppState) => state.dashboard.widgetLoadVersion,
   );
 
   const componentRef = useRef<HTMLElement>();
@@ -140,7 +140,7 @@ const LinearGraphWidget = ({
             timeStart !== null ? `&start=${timeStart.toUnixInteger()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.toUnixInteger()}` : ""
-          }`
+          }`,
         )
         .then((res: any) => {
           const widgetsWithValue = widgetDetailsToPanel(res, panelItem);

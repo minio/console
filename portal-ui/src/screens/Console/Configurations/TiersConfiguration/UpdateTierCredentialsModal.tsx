@@ -106,7 +106,7 @@ const UpdateTierCredentialsModal = ({
         .editTierCredentials(
           type as "azure" | "s3" | "minio" | "gcs",
           name,
-          rules
+          rules,
         )
         .then(() => {
           setSavingTiers(false);

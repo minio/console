@@ -409,7 +409,7 @@ export const removeEmptyFields = (formFields: IElementValue[]) => {
 export const selectSAs = (
   e: React.ChangeEvent<HTMLInputElement>,
   setSelectedSAs: Function,
-  selectedSAs: string[]
+  selectedSAs: string[],
 ) => {
   const targetD = e.target;
   const value = targetD.value;

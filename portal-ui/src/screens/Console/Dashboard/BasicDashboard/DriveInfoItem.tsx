@@ -198,7 +198,7 @@ const DriveInfoItem = ({ drive }: ICardProps) => {
             >
               <div className="info-value">
                 {niceBytes(
-                  drive.totalSpace ? drive.totalSpace.toString() : "0"
+                  drive.totalSpace ? drive.totalSpace.toString() : "0",
                 )}
               </div>
               <label className="info-label">Capacity</label>
@@ -223,7 +223,7 @@ const DriveInfoItem = ({ drive }: ICardProps) => {
             >
               <div className="info-value">
                 {niceBytes(
-                  drive.availableSpace ? drive.availableSpace.toString() : "0"
+                  drive.availableSpace ? drive.availableSpace.toString() : "0",
                 )}
               </div>
               <label className="info-label">Available</label>

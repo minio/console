@@ -57,7 +57,7 @@ export const stringSort = (a: string, b: string) => {
 
 export const policyDetailsSort = (
   a: policyDetailsInterface,
-  b: policyDetailsInterface
+  b: policyDetailsInterface,
 ) => {
   if (a.policy > b.policy) {
     return 1;

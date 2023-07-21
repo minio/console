@@ -71,7 +71,7 @@ const AddPolicyScreen = () => {
               "There was an error creating a Policy: " +
               (err.error.detailedMessage || "") +
               ". Please check Policy syntax.",
-          })
+          }),
         );
       });
   };

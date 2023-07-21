@@ -110,43 +110,43 @@ const PolicyDetails = () => {
   const displayGroups = hasPermission(
     CONSOLE_UI_RESOURCE,
     listGroupPermissions,
-    true
+    true,
   );
 
   const viewGroup = hasPermission(
     CONSOLE_UI_RESOURCE,
     getGroupPermissions,
-    true
+    true,
   );
 
   const displayUsers = hasPermission(
     CONSOLE_UI_RESOURCE,
     listUsersPermissions,
-    true
+    true,
   );
 
   const viewUser = hasPermission(
     CONSOLE_UI_RESOURCE,
     viewUserPermissions,
-    true
+    true,
   );
 
   const displayPolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
     viewPolicyPermissions,
-    true
+    true,
   );
 
   const canDeletePolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
     deletePolicyPermissions,
-    true
+    true,
   );
 
   const canEditPolicy = hasPermission(
     CONSOLE_UI_RESOURCE,
     createPolicyPermissions,
-    true
+    true,
   );
 
   const saveRecord = (event: React.FormEvent) => {
@@ -175,7 +175,7 @@ const PolicyDetails = () => {
                 "There was an error updating the Policy: " +
                 (err.error.detailedMessage || "") +
                 ". Please check Policy syntax.",
-            })
+            }),
           );
         });
     } else {
@@ -232,7 +232,7 @@ const PolicyDetails = () => {
                 setPolicyDefinition(
                   result
                     ? JSON.stringify(JSON.parse(result.data?.policy!), null, 4)
-                    : ""
+                    : "",
                 );
                 const pol: IAMPolicy = JSON.parse(result.data?.policy!);
                 setPolicyStatements(pol.Statement);
@@ -299,7 +299,7 @@ const PolicyDetails = () => {
   ];
 
   const filteredUsers = userList.filter((elementItem) =>
-    elementItem.includes(filterUsers)
+    elementItem.includes(filterUsers),
   );
 
   const groupViewAction = (group: any) => {
@@ -315,7 +315,7 @@ const PolicyDetails = () => {
   ];
 
   const filteredGroups = groupList.filter((elementItem) =>
-    elementItem.includes(filterGroups)
+    elementItem.includes(filterGroups),
   );
 
   const refreshPolicyDetails = () => {
@@ -368,7 +368,7 @@ const PolicyDetails = () => {
                       ? ""
                       : permissionTooltipHelper(
                           deletePolicyPermissions,
-                          "delete Policies"
+                          "delete Policies",
                         )
                   }
                 >
@@ -595,7 +595,7 @@ const PolicyDetails = () => {
                                     ? ""
                                     : permissionTooltipHelper(
                                         createPolicyPermissions,
-                                        "edit a Policy"
+                                        "edit a Policy",
                                       )
                                 }
                               >

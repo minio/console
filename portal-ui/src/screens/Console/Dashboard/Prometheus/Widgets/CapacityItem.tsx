@@ -53,7 +53,7 @@ const CapacityItem = ({
   const [totalUsed, setTotalUsed] = useState<number>(0);
   const [totalUsable, setTotalUsable] = useState<number>(0);
   const widgetVersion = useSelector(
-    (state: AppState) => state.dashboard.widgetLoadVersion
+    (state: AppState) => state.dashboard.widgetLoadVersion,
   );
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const CapacityItem = ({
             timeStart !== null ? `&start=${timeStart.toUnixInteger()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.toUnixInteger()}` : ""
-          }`
+          }`,
         )
         .then((res: any) => {
           const widgetsWithValue = widgetDetailsToPanel(res, value);

@@ -52,7 +52,7 @@ const styles = (theme: Theme) =>
 export const valueDef = (
   key: string,
   type: string,
-  defaults: IElementValue[]
+  defaults: IElementValue[],
 ) => {
   let defValue = type === "on|off" ? "off" : "";
 

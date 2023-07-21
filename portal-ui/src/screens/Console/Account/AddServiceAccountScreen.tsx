@@ -72,7 +72,7 @@ const AddServiceAccount = () => {
             accessKey: accessKey,
             secretKey: secretKey,
           },
-          { type: ContentType.Json }
+          { type: ContentType.Json },
         )
         .then((res) => {
           setAddSending(false);

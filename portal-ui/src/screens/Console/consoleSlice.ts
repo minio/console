@@ -36,7 +36,7 @@ export const consoleSlice = createSlice({
   reducers: {
     setSessionLoadingState: (
       state,
-      action: PayloadAction<SessionCallStates>
+      action: PayloadAction<SessionCallStates>,
     ) => {
       state.sessionLoadingState = action.payload;
     },

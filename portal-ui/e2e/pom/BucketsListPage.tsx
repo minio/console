@@ -30,7 +30,7 @@ export class BucketsListPage {
 
   locateBucket(bucketName: string): Locator {
     const bucketRow = this.getLocator(
-      `${this.bucketListItemPrefix}${bucketName}`
+      `${this.bucketListItemPrefix}${bucketName}`,
     );
     return bucketRow;
   }

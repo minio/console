@@ -49,10 +49,10 @@ import { useAppDispatch } from "../../../../store";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
 const AddReplicationModal = withSuspense(
-  React.lazy(() => import("./AddReplicationModal"))
+  React.lazy(() => import("./AddReplicationModal")),
 );
 const DeleteReplicationRule = withSuspense(
-  React.lazy(() => import("./DeleteReplicationRule"))
+  React.lazy(() => import("./DeleteReplicationRule")),
 );
 
 interface IBucketReplicationProps {
@@ -218,7 +218,7 @@ const BucketReplicationPanel = ({ classes }: IBucketReplicationProps) => {
           IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
           IAM_SCOPES.S3_PUT_ACTIONS,
         ],
-        true
+        true,
       ),
     },
   ];

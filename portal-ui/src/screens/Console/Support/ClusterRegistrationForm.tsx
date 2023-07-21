@@ -29,13 +29,13 @@ const ClusterRegistrationForm = () => {
   const dispatch = useAppDispatch();
 
   const subnetAccessToken = useSelector(
-    (state: AppState) => state.register.subnetAccessToken
+    (state: AppState) => state.register.subnetAccessToken,
   );
   const selectedSubnetOrganization = useSelector(
-    (state: AppState) => state.register.selectedSubnetOrganization
+    (state: AppState) => state.register.selectedSubnetOrganization,
   );
   const subnetOrganizations = useSelector(
-    (state: AppState) => state.register.subnetOrganizations
+    (state: AppState) => state.register.subnetOrganizations,
   );
   const loading = useSelector((state: AppState) => state.register.loading);
 
@@ -97,7 +97,7 @@ const ClusterRegistrationForm = () => {
                     callRegister({
                       token: subnetAccessToken,
                       account_id: selectedSubnetOrganization,
-                    })
+                    }),
                   );
                 }
               }}

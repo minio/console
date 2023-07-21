@@ -65,7 +65,7 @@ export class API {
       const errMessage = get(
         err.response,
         "body.message",
-        `Error ${err.status.toString()}`
+        `Error ${err.status.toString()}`,
       );
 
       let detailedMessage = get(err.response, "body.detailedMessage", "");

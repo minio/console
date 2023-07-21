@@ -152,7 +152,7 @@ const AddReplicationSites = () => {
     },
     (err: any) => {
       setDefaultNewRows();
-    }
+    },
   );
 
   const getSites = () => {
@@ -179,7 +179,7 @@ const AddReplicationSites = () => {
       }
       return acc;
     },
-    []
+    [],
   );
 
   const isExistingCredsValidity = existingSites
@@ -212,13 +212,13 @@ const AddReplicationSites = () => {
           setErrorSnackMessage({
             errorMessage: "Error",
             detailedError: res.status,
-          })
+          }),
         );
       }
     },
     (err: any) => {
       dispatch(setErrorSnackMessage(err));
-    }
+    },
   );
 
   const resetForm = () => {
@@ -255,7 +255,7 @@ const AddReplicationSites = () => {
         }
         return acc;
       },
-      []
+      [],
     );
 
     const sitesToAdd = curSite.concat(newOrExistingSitesToAdd);
@@ -307,7 +307,7 @@ const AddReplicationSites = () => {
                       return prevItems.map((item, ix) =>
                         ix === index
                           ? { ...item, [fieldName]: filedValue }
-                          : item
+                          : item,
                       );
                     });
                   }
@@ -366,7 +366,9 @@ const AddReplicationSites = () => {
                   const filedValue = e.target.value;
                   setExistingSites((prevItems) => {
                     return prevItems.map((item, ix) =>
-                      ix === index ? { ...item, [fieldName]: filedValue } : item
+                      ix === index
+                        ? { ...item, [fieldName]: filedValue }
+                        : item,
                     );
                   });
                 }}
@@ -386,7 +388,7 @@ const AddReplicationSites = () => {
                 }}
                 onRemoveClick={(index) => {
                   setExistingSites(
-                    existingSites.filter((_, idx) => idx !== index)
+                    existingSites.filter((_, idx) => idx !== index),
                   );
                 }}
               />

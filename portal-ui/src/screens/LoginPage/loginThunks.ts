@@ -63,7 +63,7 @@ export const doLoginAsync = createAsyncThunk(
         dispatch(setErrorSnackMessage(errorToHandler(err)));
         return rejectWithValue(false);
       });
-  }
+  },
 );
 export const getFetchConfigurationAsync = createAsyncThunk(
   "login/getFetchConfigurationAsync",
@@ -80,7 +80,7 @@ export const getFetchConfigurationAsync = createAsyncThunk(
         dispatch(setErrorSnackMessage(errorToHandler(err)));
         return rejectWithValue(false);
       });
-  }
+  },
 );
 
 export const getVersionAsync = createAsyncThunk(
@@ -98,5 +98,5 @@ export const getVersionAsync = createAsyncThunk(
         dispatch(setErrorSnackMessage(errorToHandler(err)));
         return rejectWithValue(false);
       });
-  }
+  },
 );

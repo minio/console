@@ -54,15 +54,15 @@ import { api } from "api";
 import { errorToHandler } from "api/errors";
 
 const ConfMySql = withSuspense(
-  React.lazy(() => import("./CustomForms/ConfMySql"))
+  React.lazy(() => import("./CustomForms/ConfMySql")),
 );
 
 const ConfTargetGeneric = withSuspense(
-  React.lazy(() => import("./ConfTargetGeneric"))
+  React.lazy(() => import("./ConfTargetGeneric")),
 );
 
 const ConfPostgres = withSuspense(
-  React.lazy(() => import("./CustomForms/ConfPostgres"))
+  React.lazy(() => import("./CustomForms/ConfPostgres")),
 );
 
 const styles = (theme: Theme) =>
@@ -129,7 +129,7 @@ const AddEventDestination = ({
     (newValue: IElementValue[]) => {
       setValueArr(newValue);
     },
-    [setValueArr]
+    [setValueArr],
   );
 
   let srvComponent;
@@ -152,7 +152,7 @@ const AddEventDestination = ({
   }
 
   const targetElement = destinationList.find(
-    (element) => element.actionTrigger === service
+    (element) => element.actionTrigger === service,
   );
 
   useEffect(() => {

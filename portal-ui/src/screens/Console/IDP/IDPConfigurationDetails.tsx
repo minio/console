@@ -99,7 +99,7 @@ const IDPConfigurationDetails = ({
 
   const [loadingEnabledSave, invokeEnabledApi] = useApi(
     onEnabledSuccess,
-    onEnabledError
+    onEnabledError,
   );
 
   const toggleEditMode = () => {
@@ -257,7 +257,7 @@ const IDPConfigurationDetails = ({
           <Grid container>
             <Grid xs={12} item>
               {Object.entries(formFields).map(([key, value]) =>
-                renderFormField(key, value)
+                renderFormField(key, value),
               )}
               <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
                 {editMode && (

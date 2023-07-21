@@ -89,7 +89,7 @@ const AddBulkReplicationModal = ({
   const [region, setRegion] = useState<string>("");
   const [useTLS, setUseTLS] = useState<boolean>(true);
   const [replicationMode, setReplicationMode] = useState<"async" | "sync">(
-    "async"
+    "async",
   );
   const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
   const [bandwidthUnit, setBandwidthUnit] = useState<string>("Gi");
@@ -106,7 +106,7 @@ const AddBulkReplicationModal = ({
         label: remoteBucketName,
         value: remoteBucketName,
       };
-    }
+    },
   );
 
   useEffect(() => {
@@ -159,7 +159,7 @@ const AddBulkReplicationModal = ({
         setResponseItem(states);
 
         const filterErrors = states?.filter(
-          (itm) => itm.errorString && itm.errorString !== ""
+          (itm) => itm.errorString && itm.errorString !== "",
         );
 
         if (filterErrors?.length === 0) {
@@ -177,7 +177,7 @@ const AddBulkReplicationModal = ({
   };
 
   const retrieveRemoteBuckets = (
-    wizardPageJump: (page: number | string) => void
+    wizardPageJump: (page: number | string) => void,
   ) => {
     const remoteConnectInfo = {
       accessKey: accessKey,
@@ -212,7 +212,7 @@ const AddBulkReplicationModal = ({
   const stateOfItem = (initialBucket: string) => {
     if (responseItem && responseItem.length > 0) {
       const bucketResponse = responseItem.find(
-        (item) => item.originBucket === initialBucket
+        (item) => item.originBucket === initialBucket,
       );
 
       if (bucketResponse) {
@@ -293,7 +293,7 @@ const AddBulkReplicationModal = ({
   };
 
   const removeSuccessItems = (
-    responseItem: MultiBucketResponseItem[] | undefined
+    responseItem: MultiBucketResponseItem[] | undefined,
   ) => {
     let newBucketsToAlter = [...bucketsToAlter];
     let newRelationBuckets = [...relationBuckets];
@@ -303,7 +303,7 @@ const AddBulkReplicationModal = ({
 
       if (!errorString || errorString === "") {
         const indexToRemove = newBucketsToAlter.indexOf(
-          successElement.originBucket || ""
+          successElement.originBucket || "",
         );
 
         newBucketsToAlter.splice(indexToRemove, 1);

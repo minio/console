@@ -55,7 +55,7 @@ export const fetchSession = createAsyncThunk(
 
         if (res.data.customStyles && res.data.customStyles !== "") {
           const overrideColorVariants = getOverrideColorVariants(
-            res.data.customStyles
+            res.data.customStyles,
           );
 
           if (overrideColorVariants !== false) {
@@ -75,7 +75,7 @@ export const fetchSession = createAsyncThunk(
             .listObjects(
               bucket,
               { limit: 1 },
-              { headers: { "X-Anonymous": "1" } }
+              { headers: { "X-Anonymous": "1" } },
             )
             .then(() => {
               dispatch(setAnonymousMode());
@@ -94,5 +94,5 @@ export const fetchSession = createAsyncThunk(
         }
         return rejectWithValue(res.error);
       });
-  }
+  },
 );

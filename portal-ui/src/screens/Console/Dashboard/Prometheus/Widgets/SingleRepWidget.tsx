@@ -52,7 +52,7 @@ const SingleRepWidget = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
   const widgetVersion = useSelector(
-    (state: AppState) => state.dashboard.widgetLoadVersion
+    (state: AppState) => state.dashboard.widgetLoadVersion,
   );
 
   useEffect(() => {
@@ -79,7 +79,7 @@ const SingleRepWidget = ({
             timeStart !== null ? `&start=${timeStart.toUnixInteger()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.toUnixInteger()}` : ""
-          }`
+          }`,
         )
         .then((res: any) => {
           const widgetsWithValue = widgetDetailsToPanel(res, panelItem);

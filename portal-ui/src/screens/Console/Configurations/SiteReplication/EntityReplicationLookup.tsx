@@ -42,7 +42,7 @@ const EntityReplicationLookup = () => {
     (err: any) => {
       setStats({});
       setStatsLoaded(true);
-    }
+    },
   );
 
   const {

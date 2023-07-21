@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     ...modalStyleUtils,
     ...formFieldStyles,
-  })
+  }),
 );
 
 const CreatePathModal = ({
@@ -93,7 +93,7 @@ const CreatePathModal = ({
         setModalErrorSnackMessage({
           errorMessage: "Folder cannot have the same name as an existing file",
           detailedError: "",
-        })
+        }),
       );
       return;
     }
@@ -103,9 +103,14 @@ const CreatePathModal = ({
       .filter((splitItem) => splitItem.trim() !== "")
       .join("/");
 
+    if (folderPath.slice(0, 1) === "/") {
+      folderPath = folderPath.slice(1); //trim '/'
+    }
+
     const newPath = `/browser/${bucketName}/${encodeURLString(
-      `${folderPath}${cleanPathURL}/`
+      `${folderPath}${cleanPathURL}/`,
     )}`;
+
     navigate(newPath);
     onClose();
   };

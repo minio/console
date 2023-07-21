@@ -44,7 +44,7 @@ const PolicySelectors = ({ noTitle = false }: ISelectPolicyProps) => {
   const [filter, setFilter] = useState<string>("");
 
   const currentPolicies = useSelector(
-    (state: AppState) => state.createUser.selectedPolicies
+    (state: AppState) => state.createUser.selectedPolicies,
   );
 
   const fetchPolicies = useCallback(() => {
@@ -95,7 +95,7 @@ const PolicySelectors = ({ noTitle = false }: ISelectPolicyProps) => {
   };
 
   const filteredRecords = records.filter((elementItem) =>
-    elementItem.name.includes(filter)
+    elementItem.name.includes(filter),
   );
 
   return (

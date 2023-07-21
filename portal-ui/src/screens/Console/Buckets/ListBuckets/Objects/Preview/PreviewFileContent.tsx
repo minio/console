@@ -96,7 +96,7 @@ const PreviewFile = ({
           console.error(
             "Error Getting Metadata Status: ",
             err,
-            err?.detailedError
+            err?.detailedError,
           );
           setIsMetaDataLoaded(true);
         });
