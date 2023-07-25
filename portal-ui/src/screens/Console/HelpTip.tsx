@@ -65,7 +65,7 @@ const HelpTip = ({ helpTipID, position }: IHelpTipProps) => {
         afterHide={() => {
           setHelpTipOpen(false);
         }}
-        style={{ backgroundColor: "transparent", color: "black", zIndex: 10 }}
+        style={{ backgroundColor: "transparent", color: "black", zIndex: 100 }}
         clickable
       >
         <Grid container zIndex={50} sx={{ fontSize: "500" }}>

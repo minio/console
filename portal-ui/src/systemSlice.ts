@@ -45,6 +45,7 @@ export interface SystemState {
   helpName: string;
   helpTabName: string;
   locationPath: string;
+  clickLock: boolean;
 }
 
 const initialState: SystemState = {
@@ -76,6 +77,7 @@ const initialState: SystemState = {
   helpName: "help",
   helpTabName: "docs",
   locationPath: "",
+  clickLock: false,
 };
 
 export const systemSlice = createSlice({
@@ -174,6 +176,9 @@ export const systemSlice = createSlice({
     setLocationPath: (state, action: PayloadAction<string>) => {
       state.locationPath = action.payload;
     },
+    setSystemClickLock: (state, action: PayloadAction<boolean>) => {
+      state.clickLock = action.payload;
+    },
     resetSystem: () => {
       return initialState;
     },
@@ -203,6 +208,7 @@ export const {
   setHelpName,
   setHelpTabName,
   setLocationPath,
+  setSystemClickLock,
 } = systemSlice.actions;
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;

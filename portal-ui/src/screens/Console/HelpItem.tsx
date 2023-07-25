@@ -81,7 +81,7 @@ const HelpItem = ({
               width: "100%",
               whiteSpace: "pre-line",
               lineHeight: "1.5em",
-              height: "3em",
+              height: "auto",
               overflow: "hidden",
               textOverflow: "ellipsis",
             }}

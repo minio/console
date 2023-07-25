@@ -17,6 +17,7 @@
 import { Box, Tooltip } from "@mui/material";
 import React from "react";
 import { Cell, Pie, PieChart } from "recharts";
+import HelpTip from "screens/Console/HelpTip";
 
 const ReportedUsage = ({
   usageValue,
@@ -77,17 +78,17 @@ const ReportedUsage = ({
           <span>Reported Usage</span>
         </div>
 
-        <Tooltip title={`${usageValue} Bytes`}>
-          <label
-            className={"unit-value"}
-            style={{
-              fontWeight: 600,
-            }}
-          >
-            {total}
-          </label>
-        </Tooltip>
+        <label
+          className={"unit-value"}
+          style={{
+            fontWeight: 600,
+          }}
+          data-tooltip-id="reported_usage_calc"
+        >
+          {total}
+        </label>
         <label className={"unit-type"}>{unit}</label>
+        <HelpTip helpTipID="reported_usage_calc" position="left" />
       </Box>
 
       <Box>

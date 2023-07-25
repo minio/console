@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -34,6 +34,10 @@ import { hasPermission } from "../../../../common/SecureComponent";
 import clsx from "clsx";
 import makeStyles from "@mui/styles/makeStyles";
 import { Bucket } from "../../../../api/consoleApi";
+import HelpTip from "screens/Console/HelpTip";
+import { AppState, useAppDispatch } from "store";
+import { setSystemClickLock } from "../../../../systemSlice";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -118,6 +122,7 @@ const useStyles = makeStyles((theme: Theme) =>
     unit: {
       fontSize: 12,
       fontWeight: "normal",
+      marginLeft: 30,
     },
     bucketName: {
       padding: 0,
@@ -179,6 +184,9 @@ const BucketListItem = ({
   const classes = useStyles();
   const navigate = useNavigate();
 
+  const [clickLock, setClickLock] = useState<boolean>(false);
+  const sysClickLock = useSelector((state: AppState) => state.system.clickLock);
+
   const usage = niceBytes(`${bucket.size}` || "0");
   const usageScalar = usage.split(" ")[0];
   const usageUnit = usage.split(" ")[1];
@@ -190,6 +198,7 @@ const BucketListItem = ({
     hasPermission(bucket.name, IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]) &&
     false;
 
+  const dispatch = useAppDispatch();
   const accessToStr = (bucket: Bucket): string => {
     if (bucket.rw_access?.read && !bucket.rw_access?.write) {
       return "R";
@@ -203,6 +212,18 @@ const BucketListItem = ({
   const onCheckboxClick = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSelect(e);
   };
+  const lockForHelpTip = () => {
+    setClickLock(true);
+  };
+  const unlockForHelpTip = () => {
+    setClickLock(false);
+  };
+  const handleBucketClick = () => {
+    !sysClickLock && navigate(`/buckets/${bucket.name}/admin`);
+  };
+  useEffect(() => {
+    dispatch(setSystemClickLock(clickLock));
+  }, [clickLock]);
 
   return (
     <Grid
@@ -210,15 +231,13 @@ const BucketListItem = ({
       className={clsx(classes.root, "bucket-item", {
         [classes.disabled]: manageAllowed,
       })}
-      onClick={() => {
-        navigate(`/buckets/${bucket.name}/admin`);
-      }}
+      onClick={handleBucketClick}
       sx={{
         cursor: "pointer",
       }}
       id={`manageBucket-${bucket.name}`}
     >
-      <Grid item xs={12}>
+      <Grid item xs={12} onMouseLeave={unlockForHelpTip}>
         <Grid container justifyContent={"space-between"}>
           <Grid item xs={12} sm={7}>
             <Grid container>
@@ -278,11 +297,22 @@ const BucketListItem = ({
               <BucketsIcon />
             </Link>
           </Grid>
-          <Grid item textAlign={"left"} className={classes.metric}>
+          <Grid
+            item
+            textAlign={"left"}
+            className={classes.metric}
+            onMouseOver={lockForHelpTip}
+          >
             <ReportedUsageIcon />
-            <span className={classes.metricLabel}>Usage</span>
+            <span
+              className={classes.metricLabel}
+              data-tooltip-id="reported_usage_calc"
+            >
+              Usage
+            </span>
             <div className={classes.metricText}>
               {usageScalar}
+
               <span className={classes.unit}>{usageUnit}</span>
               {quota !== "0" && (
                 <Fragment>
@@ -293,6 +323,7 @@ const BucketListItem = ({
               )}
             </div>
           </Grid>
+          <HelpTip helpTipID="reported_usage_calc" position="right" />
           <Grid item textAlign={"left"} className={classes.metric}>
             <TotalObjectsIcon />
             <span className={classes.metricLabel}>Objects</span>

@@ -18,6 +18,7 @@ import React from "react";
 import { Box } from "@mui/material";
 import { niceBytes } from "../../../../../common/utils";
 import { ReportedUsageFullIcon } from "mds";
+import HelpTip from "screens/Console/HelpTip";
 
 const ReportedUsage = ({ bucketSize }: { bucketSize: string }) => {
   return (
@@ -43,6 +44,7 @@ const ReportedUsage = ({ bucketSize }: { bucketSize: string }) => {
           marginLeft: "20px",
           fontSize: "19px",
         }}
+        data-tooltip-id="reported_usage_calc"
       >
         <label
           style={{
@@ -51,8 +53,10 @@ const ReportedUsage = ({ bucketSize }: { bucketSize: string }) => {
         >
           Reported Usage:
         </label>
+
         <label>{niceBytes(bucketSize)}</label>
       </Box>
+      <HelpTip helpTipID="reported_usage_calc" position="bottom" />
     </Box>
   );
 };
