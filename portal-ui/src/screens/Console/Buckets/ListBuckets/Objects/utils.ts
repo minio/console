@@ -131,6 +131,7 @@ class DownloadHelper {
         this.filename = this.getFilename(response);
       }
       if (!this.writer) {
+        streamSaver.mitm = `${window.location.origin}/lib/streamsaver/mitm.html`;
         this.writer = streamSaver.createWriteStream(this.filename).getWriter();
       }
       const reader = response.body.getReader();
