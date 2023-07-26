@@ -223,6 +223,7 @@ const BucketListItem = ({
   };
   useEffect(() => {
     dispatch(setSystemClickLock(clickLock));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clickLock]);
 
   return (
