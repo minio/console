@@ -189,7 +189,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 								continue
 							}
 
-							name := strings.ReplaceAll(lsObj.URL.Path, fmt.Sprintf("/%s/", objectRqConfigs.BucketName), "")
+							name := strings.Replace(lsObj.URL.Path, fmt.Sprintf("/%s/", objectRqConfigs.BucketName), "", 1)
 
 							objItem := ObjectResponse{
 								Name:         name,
