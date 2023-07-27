@@ -17,7 +17,7 @@
 import React from "react";
 import { Box } from "@mui/material";
 import { niceBytes } from "../../../../../common/utils";
-import { ReportedUsageFullIcon } from "mds";
+import { Grid, ReportedUsageFullIcon } from "mds";
 import HelpTip from "screens/Console/HelpTip";
 
 const ReportedUsage = ({ bucketSize }: { bucketSize: string }) => {
@@ -34,29 +34,43 @@ const ReportedUsage = ({ bucketSize }: { bucketSize: string }) => {
       }}
     >
       <ReportedUsageFullIcon />
+      <Grid container>
+        <Grid item xs={9}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "center",
+              flexFlow: "column",
+              marginLeft: "20px",
+              fontSize: "19px",
+            }}
+            data-tooltip-id="reported_usage_calc"
+          >
+            <label
+              style={{
+                fontWeight: 600,
+              }}
+            >
+              Reported Usage:
+            </label>
 
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "center",
-          flexFlow: "column",
-          marginLeft: "20px",
-          fontSize: "19px",
-        }}
-        data-tooltip-id="reported_usage_calc"
-      >
-        <label
-          style={{
-            fontWeight: 600,
-          }}
-        >
-          Reported Usage:
-        </label>
-
-        <label>{niceBytes(bucketSize)}</label>
-      </Box>
-      <HelpTip helpTipID="reported_usage_calc" position="bottom" />
+            <label>{niceBytes(bucketSize)}</label>
+          </Box>
+        </Grid>
+        <Grid item xs={3}>
+          <Box
+            sx={{
+              "& .min-icon": {
+                height: "100%",
+                width: "100%",
+              },
+            }}
+          >
+            <HelpTip helpTipID="reported_usage_calc" position="right" />
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
