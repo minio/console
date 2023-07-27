@@ -32,7 +32,6 @@ import (
 
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go/v3"
-	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
@@ -388,43 +387,29 @@ func (ac AdminClient) getBucketQuota(ctx context.Context, bucket string) (madmin
 
 // serverHealthInfo implements mc.ServerHealthInfo - Connect to a minio server and call Health Info Management API
 func (ac AdminClient) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error) {
-	resp, version, err := ac.Client.ServerHealthInfo(ctx, healthDataTypes, deadline)
-	if err != nil {
-		return nil, version, err
-	}
-
+	info := madmin.HealthInfo{}
 	var healthInfo interface{}
-
-	decoder := json.NewDecoder(resp.Body)
-	switch version {
-	case madmin.HealthInfoVersion0:
-		info := madmin.HealthInfoV0{}
-		for {
-			if err = decoder.Decode(&info); err != nil {
-				break
-			}
-		}
-
-		// Old minio versions don't return the MinIO info in
-		// response of the healthinfo api. So fetch it separately
-		minioInfo, err := ac.Client.ServerInfo(ctx)
+	var version string
+	var tryCount int
+	for info.Version == "" && tryCount < 10 {
+		resp, version, err := ac.Client.ServerHealthInfo(ctx, healthDataTypes, deadline)
 		if err != nil {
-			info.Minio.Error = err.Error()
-		} else {
-			info.Minio.Info = minioInfo
+			return nil, version, err
 		}
-
-		healthInfo = mcCmd.MapHealthInfoToV1(info, nil)
-		version = madmin.HealthInfoVersion1
-	case madmin.HealthInfoVersion:
-		info := madmin.HealthInfo{}
+		decoder := json.NewDecoder(resp.Body)
 		for {
 			if err = decoder.Decode(&info); err != nil {
 				break
 			}
 		}
-		healthInfo = info
+		tryCount++
+		time.Sleep(2 * time.Second)
+
 	}
+	if info.Version == "" {
+		return nil, "", ErrHealthReportFail
+	}
+	healthInfo = info
 
 	return healthInfo, version, nil
 }

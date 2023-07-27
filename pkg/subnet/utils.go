@@ -19,14 +19,20 @@ package subnet
 import (
 	"bytes"
 	"compress/gzip"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
+	"net"
 	"net/http"
+	"time"
 
+	"github.com/mattn/go-ieproxy"
 	xhttp "github.com/minio/console/pkg/http"
+	"github.com/tidwall/gjson"
 
 	"github.com/minio/madmin-go/v3"
 	mc "github.com/minio/mc/cmd"
@@ -73,8 +79,15 @@ func UploadAuthHeaders(apiKey string) map[string]string {
 	return map[string]string{"x-subnet-api-key": apiKey}
 }
 
-func UploadFileToSubnet(info interface{}, client *xhttp.Client, filename string, reqURL string, headers map[string]string) (string, error) {
-	req, e := subnetUploadReq(info, reqURL, filename)
+func ProcessUploadInfo(info interface{}, uploadType string, filename string) ([]byte, string, error) {
+	if uploadType == "health" {
+		return processHealthReport(info, filename)
+	}
+	return nil, "", errors.New("invalid Subnet upload type")
+}
+
+func UploadFileToSubnet(info []byte, client *xhttp.Client, reqURL string, headers map[string]string, formDataType string) (string, error) {
+	req, e := subnetUploadReq(info, reqURL, formDataType)
 	if e != nil {
 		return "", e
 	}
@@ -82,7 +95,7 @@ func UploadFileToSubnet(info interface{}, client *xhttp.Client, filename string,
 	return resp, e
 }
 
-func subnetUploadReq(info interface{}, url string, filename string) (*http.Request, error) {
+func processHealthReport(info interface{}, filename string) ([]byte, string, error) {
 	var body bytes.Buffer
 	writer := multipart.NewWriter(&body)
 	zipWriter := gzip.NewWriter(&body)
@@ -94,29 +107,33 @@ func subnetUploadReq(info interface{}, url string, filename string) (*http.Reque
 	}{Version: version}
 
 	if e := enc.Encode(header); e != nil {
-		return nil, e
+		return nil, "", e
 	}
 
 	if e := enc.Encode(info); e != nil {
-		return nil, e
+		return nil, "", e
 	}
 	zipWriter.Close()
 	temp := body
 	part, e := writer.CreateFormFile("file", filename)
 	if e != nil {
-		return nil, e
+		return nil, "", e
 	}
 	if _, e = io.Copy(part, &temp); e != nil {
-		return nil, e
+		return nil, "", e
 	}
 
 	writer.Close()
+	return body.Bytes(), writer.FormDataContentType(), nil
+}
 
-	r, e := http.NewRequest(http.MethodPost, url, &body)
+func subnetUploadReq(body []byte, url string, formDataType string) (*http.Request, error) {
+	uploadDataBody := bytes.NewReader(body)
+	r, e := http.NewRequest(http.MethodPost, url, uploadDataBody)
 	if e != nil {
 		return nil, e
 	}
-	r.Header.Add("Content-Type", writer.FormDataContentType())
+	r.Header.Add("Content-Type", formDataType)
 
 	return r, nil
 }
@@ -225,4 +242,94 @@ func getDriveSpaceInfo(admInfo madmin.InfoMessage) (uint64, uint64) {
 		}
 	}
 	return total, used
+}
+
+func GetSubnetAPIKeyUsingLicense(lic string) (string, error) {
+	return getSubnetAPIKeyUsingAuthHeaders(subnetLicenseAuthHeaders(lic))
+}
+
+func getSubnetAPIKeyUsingAuthHeaders(authHeaders map[string]string) (string, error) {
+	resp, e := subnetGetReqMC(subnetAPIKeyURL(), authHeaders)
+	if e != nil {
+		return "", e
+	}
+	return extractSubnetCred("api_key", gjson.Parse(resp))
+}
+
+func extractSubnetCred(key string, resp gjson.Result) (string, error) {
+	result := resp.Get(key)
+	if result.Index == 0 {
+		return "", fmt.Errorf("Couldn't extract %s from SUBNET response: %s", key, resp)
+	}
+	return result.String(), nil
+}
+
+func subnetLicenseAuthHeaders(lic string) map[string]string {
+	return map[string]string{"x-subnet-license": lic}
+}
+
+func subnetGetReqMC(reqURL string, headers map[string]string) (string, error) {
+	r, e := http.NewRequest(http.MethodGet, reqURL, nil)
+	if e != nil {
+		return "", e
+	}
+	return subnetReqDoMC(r, headers)
+}
+
+func subnetReqDoMC(r *http.Request, headers map[string]string) (string, error) {
+	for k, v := range headers {
+		r.Header.Add(k, v)
+	}
+
+	ct := r.Header.Get("Content-Type")
+	if len(ct) == 0 {
+		r.Header.Add("Content-Type", "application/json")
+	}
+
+	resp, e := subnetHTTPDo(r)
+	if e != nil {
+		return "", e
+	}
+
+	defer resp.Body.Close()
+	respBytes, e := io.ReadAll(io.LimitReader(resp.Body, subnetRespBodyLimit))
+	if e != nil {
+		return "", e
+	}
+	respStr := string(respBytes)
+
+	if resp.StatusCode == http.StatusOK {
+		return respStr, nil
+	}
+	return respStr, fmt.Errorf("Request failed with code %d with error: %s", resp.StatusCode, respStr)
+}
+
+func subnetHTTPDo(req *http.Request) (*http.Response, error) {
+	return getSubnetClient().Do(req)
+}
+
+func getSubnetClient() *http.Client {
+	client := httpClientSubnet(0)
+	return client
+}
+
+func httpClientSubnet(reqTimeout time.Duration) *http.Client {
+	return &http.Client{
+		Timeout: reqTimeout,
+		Transport: &http.Transport{
+			DialContext: (&net.Dialer{
+				Timeout: 10 * time.Second,
+			}).DialContext,
+			Proxy: ieproxy.GetProxyFunc(),
+			TLSClientConfig: &tls.Config{
+				// Can't use SSLv3 because of POODLE and BEAST
+				// Can't use TLSv1.0 because of POODLE and BEAST using CBC cipher
+				// Can't use TLSv1.1 because of RC4 cipher usage
+				MinVersion: tls.VersionTLS12,
+			},
+			IdleConnTimeout:       90 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ExpectContinueTimeout: 10 * time.Second,
+		},
+	}
 }

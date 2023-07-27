@@ -68,7 +68,6 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 		return err
 	}
 	encodedDiag := b64.StdEncoding.EncodeToString(compressedDiag)
-
 	type messageReport struct {
 		Encoded          string      `json:"encoded"`
 		ServerHealthInfo interface{} `json:"serverHealthInfo"`
@@ -76,7 +75,6 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 	}
 
 	ctx = context.WithValue(ctx, utils.ContextClientIP, conn.remoteAddress())
-
 	subnetResp, err := sendHealthInfoToSubnet(ctx, healthInfo, client)
 	report := messageReport{
 		Encoded:          encodedDiag,
@@ -142,9 +140,22 @@ func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client 
 	if e != nil {
 		return "", e
 	}
-	apiKey := subnetTokenConfig.APIKey
+	var apiKey string
+	if len(subnetTokenConfig.APIKey) != 0 {
+		apiKey = subnetTokenConfig.APIKey
+	} else {
+		apiKey, e = subnet.GetSubnetAPIKeyUsingLicense(subnetTokenConfig.License)
+		if e != nil {
+			return "", e
+		}
+	}
 	headers := subnet.UploadAuthHeaders(apiKey)
-	resp, e := subnet.UploadFileToSubnet(healthInfo, subnetHTTPClient, filename, subnetUploadURL, headers)
+	uploadInfo, formDataType, e := subnet.ProcessUploadInfo(healthInfo, "health", filename)
+	if e != nil {
+		return "", e
+	}
+	resp, e := subnet.UploadFileToSubnet(uploadInfo, subnetHTTPClient, subnetUploadURL, headers, formDataType)
+
 	if e != nil {
 		return "", e
 	}
