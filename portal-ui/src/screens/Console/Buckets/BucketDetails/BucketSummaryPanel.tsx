@@ -548,7 +548,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                 <EditablePropertyItem
                   iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
                   resourceName={bucketName}
-                  property={"Quota:"}
+                  property={"Bucket Quota:"}
                   value={quotaEnabled ? "Enabled" : "Disabled"}
                   onEdit={setBucketQuota}
                   isLoading={loadingQuota}
