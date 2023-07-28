@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { SelectorTypes } from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import { SelectorTypes } from "../../../common/types";
 
 export type KVFieldType =
   | "string"

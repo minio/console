@@ -15,158 +15,110 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { Fragment } from "react";
 import get from "lodash/get";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import { BucketsIcon, ReportedUsageIcon, TotalObjectsIcon } from "mds";
-import { Box, Grid, Typography } from "@mui/material";
+import styled from "styled-components";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Box,
+  breakPoints,
+  BucketsIcon,
+  Checkbox,
+  Grid,
+  ReportedUsageIcon,
+  TotalObjectsIcon,
+} from "mds";
 import {
   calculateBytes,
   niceBytes,
   prettyNumber,
 } from "../../../../common/utils";
-import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
-import { Link, useNavigate } from "react-router-dom";
 import {
   IAM_PERMISSIONS,
   IAM_ROLES,
 } from "../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../common/SecureComponent";
-import clsx from "clsx";
-import makeStyles from "@mui/styles/makeStyles";
 import { Bucket } from "../../../../api/consoleApi";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      marginBottom: 30,
-      padding: 20,
-      color: theme.palette.primary.main,
-      border: "#E5E5E5 1px solid",
-      borderRadius: 2,
-      textDecoration: "none",
-      "&:hover": {
-        backgroundColor: "#fafafa",
+const BucketItemMain = styled.div(({ theme }) => ({
+  border: `${get(theme, "borderColor", "#eaeaea")} 1px solid`,
+  borderRadius: 3,
+  padding: 15,
+  cursor: "pointer",
+  "&.disabled": {
+    backgroundColor: get(theme, "signalColors.danger", "red"),
+  },
+  "&:hover": {
+    backgroundColor: get(theme, "boxBackground", "#FBFAFA"),
+  },
+  "& .bucketTitle": {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 10,
+    "& h1": {
+      padding: 0,
+      margin: 0,
+      marginBottom: 5,
+      fontSize: 22,
+      color: get(theme, "screenTitle.iconColor", "#07193E"),
+      [`@media (max-width: ${breakPoints.md}px)`]: {
+        marginBottom: 0,
       },
+    },
+  },
+  "& .bucketDetails": {
+    display: "flex",
+    gap: 40,
+    "& span": {
+      fontSize: 14,
+    },
+    [`@media (max-width: ${breakPoints.md}px)`]: {
+      flexFlow: "column-reverse",
+      gap: 5,
+    },
+  },
+  "& .bucketMetrics": {
+    display: "flex",
+    alignItems: "center",
+    marginTop: 20,
+    gap: 25,
+    borderTop: `${get(theme, "borderColor", "#E2E2E2")} 1px solid`,
+    paddingTop: 20,
+    "& svg.bucketIcon": {
+      color: get(theme, "screenTitle.iconColor", "#07193E"),
+      fill: get(theme, "screenTitle.iconColor", "#07193E"),
+    },
+    "& .metric": {
       "& .min-icon": {
-        height: 14,
-        width: 14,
-      },
-      "& .MuiTypography-body2": {
-        fontSize: 14,
-      },
-      "& .MuiCardHeader-content": {
-        wordWrap: "break-word",
-        overflowWrap: "break-word",
-        wordBreak: "break-all",
-        font: "normal normal bold 24px/27px Inter",
-        color: theme.palette.primary.main,
-
-        "& .MuiTypography-root": {
-          fontSize: 19,
-          fontWeight: "bold",
-          "& .min-icon": {
-            position: "relative",
-            top: 4,
-            marginRight: 4,
-            height: "24px !important",
-          },
-        },
-      },
-      "& .MuiCardHeader-root": {
-        background:
-          "transparent linear-gradient(0deg, #EEF1F44E 0%, #FFFFFF 100%) 0% 0% no-repeat padding-box",
-      },
-    },
-    checkBoxElement: {
-      width: 32,
-      height: 32,
-      float: "left",
-      overflow: "hidden",
-      "& div": {
-        position: "absolute",
-      },
-    },
-    manageButton: {
-      borderRadius: 4,
-      width: 111,
-      color: theme.palette.grey["700"],
-      textTransform: "unset",
-      fontSize: 12,
-      fontWeight: "normal",
-      "& .MuiButton-endIcon": {
-        "& .min-icon": {
-          fontSize: 18,
-        },
-      },
-    },
-    metric: {
-      "& .min-icon": {
-        color: "#000000",
+        color: get(theme, "fontColor", "#000"),
         width: 13,
         marginRight: 5,
       },
     },
-    metricLabel: {
+    "& .metricLabel": {
       fontSize: 14,
       fontWeight: "bold",
-      color: "#000000",
+      color: get(theme, "fontColor", "#000"),
     },
-    metricText: {
+    "& .metricText": {
       fontSize: 24,
       fontWeight: "bold",
     },
-    unit: {
+    "& .unit": {
       fontSize: 12,
       fontWeight: "normal",
     },
-    bucketName: {
-      padding: 0,
-      margin: 0,
-      fontSize: 22,
+    [`@media (max-width: ${breakPoints.md}px)`]: {
+      marginTop: 8,
+      paddingTop: 8,
     },
-    bucketIcon: {
-      "& .min-icon": {
-        height: 48,
-        width: 48,
-        color: theme.palette.primary.main,
-      },
-    },
-    bucketInfo: {
-      display: "flex",
-      "@media (max-width: 900px)": {
-        flexFlow: "column-reverse",
-      },
-    },
-    bucketStats: {
-      marginTop: 15,
-      borderTop: "1px solid rgb(234,234,234, .7)",
-      paddingTop: 14,
-    },
-    bucketActionButtons: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-
-      "& button": {
-        marginLeft: 8,
-      },
-
-      "@media (max-width: 900px)": {
-        marginTop: "-33px",
-      },
-    },
-    disabled: {
-      backgroundColor: "red",
-    },
-  }),
-);
+  },
+}));
 
 interface IBucketListItem {
   bucket: Bucket;
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selected: boolean;
   bulkSelect: boolean;
-  noManage?: boolean;
 }
 
 const BucketListItem = ({
@@ -174,9 +126,7 @@ const BucketListItem = ({
   onSelect,
   selected,
   bulkSelect,
-  noManage = false,
 }: IBucketListItem) => {
-  const classes = useStyles();
   const navigate = useNavigate();
 
   const usage = niceBytes(`${bucket.size}` || "0");
@@ -205,104 +155,81 @@ const BucketListItem = ({
   };
 
   return (
-    <Grid
-      container
-      className={clsx(classes.root, "bucket-item", {
-        [classes.disabled]: manageAllowed,
-      })}
+    <BucketItemMain
       onClick={() => {
         navigate(`/buckets/${bucket.name}/admin`);
       }}
-      sx={{
-        cursor: "pointer",
-      }}
       id={`manageBucket-${bucket.name}`}
+      className={`bucket-item ${manageAllowed ? "disabled" : ""}`}
     >
-      <Grid item xs={12}>
-        <Grid container justifyContent={"space-between"}>
-          <Grid item xs={12} sm={7}>
-            <Grid container>
-              <Grid item xs={12}>
-                {bulkSelect && (
-                  <div
-                    className={classes.checkBoxElement}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <CheckboxWrapper
-                      checked={selected}
-                      id={`select-${bucket.name}`}
-                      label={""}
-                      name={`select-${bucket.name}`}
-                      onChange={onCheckboxClick}
-                      value={bucket.name}
-                    />
-                  </div>
-                )}
-                <h1 className={classes.bucketName}>
-                  {bucket.name} {manageAllowed}
-                </h1>
-              </Grid>
-              <Grid item xs={12}>
-                <Grid container className={classes.bucketInfo}>
-                  <Grid item xs={12} sm paddingRight={5}>
-                    <Typography variant="body2">
-                      Created:{" "}
-                      {bucket.creation_date
-                        ? new Date(bucket.creation_date).toString()
-                        : "n/a"}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm>
-                    <Typography variant="body2">
-                      Access: {accessToStr(bucket)}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} sm={5} className={classes.bucketActionButtons}>
-            <Box display={{ xs: "none", sm: "block" }}>
-              <div style={{ marginBottom: 10 }} />
-            </Box>
-          </Grid>
-        </Grid>
-      </Grid>
+      <Box className={"bucketTitle"}>
+        {bulkSelect && (
+          <Box
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <Checkbox
+              checked={selected}
+              id={`select-${bucket.name}`}
+              label={""}
+              name={`select-${bucket.name}`}
+              onChange={onCheckboxClick}
+              value={bucket.name}
+            />
+          </Box>
+        )}
+        <h1>
+          {bucket.name} {manageAllowed}
+        </h1>
+      </Box>
+      <Box className={"bucketDetails"}>
+        <span id={`created-${bucket.name}`}>
+          <strong>Created:</strong>{" "}
+          {bucket.creation_date
+            ? new Date(bucket.creation_date).toString()
+            : "n/a"}
+        </span>
+        <span id={`access-${bucket.name}`}>
+          <strong>Access:</strong> {accessToStr(bucket)}
+        </span>
+      </Box>
+      <Box className={"bucketMetrics"}>
+        <Link to={`/buckets/${bucket.name}/admin`}>
+          <BucketsIcon
+            className={"bucketIcon"}
+            style={{
+              height: 48,
+              width: 48,
+            }}
+          />
+        </Link>
 
-      <Grid item xs={12} className={classes.bucketStats}>
-        <Grid container justifyContent={"flex-start"} spacing={4}>
-          <Grid item className={classes.bucketIcon}>
-            <Link to={`/buckets/${bucket.name}/admin`}>
-              <BucketsIcon />
-            </Link>
-          </Grid>
-          <Grid item textAlign={"left"} className={classes.metric}>
-            <ReportedUsageIcon />
-            <span className={classes.metricLabel}>Usage</span>
-            <div className={classes.metricText}>
-              {usageScalar}
-              <span className={classes.unit}>{usageUnit}</span>
-              {quota !== "0" && (
-                <Fragment>
-                  {" "}
-                  / {quotaForString.total}
-                  <span className={classes.unit}>{quotaForString.unit}</span>
-                </Fragment>
-              )}
-            </div>
-          </Grid>
-          <Grid item textAlign={"left"} className={classes.metric}>
-            <TotalObjectsIcon />
-            <span className={classes.metricLabel}>Objects</span>
-            <div className={classes.metricText}>
-              {bucket.objects ? prettyNumber(bucket.objects) : 0}
-            </div>
-          </Grid>
+        <Grid item className={"metric"}>
+          <ReportedUsageIcon />
+          <span className={"metricLabel"}>Usage</span>
+          <div className={"metricText"}>
+            {usageScalar}
+            <span className={"unit"}>{usageUnit}</span>
+            {quota !== "0" && (
+              <Fragment>
+                {" "}
+                / {quotaForString.total}
+                <span className={"unit"}>{quotaForString.unit}</span>
+              </Fragment>
+            )}
+          </div>
         </Grid>
-      </Grid>
-    </Grid>
+
+        <Grid item className={"metric"}>
+          <TotalObjectsIcon />
+          <span className={"metricLabel"}>Objects</span>
+          <div className={"metricText"}>
+            {bucket.objects ? prettyNumber(bucket.objects) : 0}
+          </div>
+        </Grid>
+      </Box>
+    </BucketItemMain>
   );
 };
 

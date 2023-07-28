@@ -15,9 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
+import { HardBucketQuotaIcon, Box } from "mds";
 import { niceBytes } from "../../../../../common/utils";
-import { HardBucketQuotaIcon } from "mds";
 
 const BucketQuotaSize = ({ quota }: { quota: any }) => {
   return (
@@ -33,7 +32,6 @@ const BucketQuotaSize = ({ quota }: { quota: any }) => {
       }}
     >
       <HardBucketQuotaIcon />
-
       <Box
         sx={{
           display: "flex",

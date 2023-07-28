@@ -1,7 +1,21 @@
-import React from "react";
+// This file is part of MinIO Console Server
+// Copyright (c) 2023 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Box } from "@mui/material";
-import { HelpIconFilled } from "mds";
+import React, { Fragment } from "react";
+import { HelpBox, HelpIconFilled, Box } from "mds";
 
 interface IKMSHelpBoxProps {
   helpText: string;
@@ -10,41 +24,17 @@ interface IKMSHelpBoxProps {
 
 const KMSHelpBox = ({ helpText, contents }: IKMSHelpBoxProps) => {
   return (
-    <Box
-      sx={{
-        flex: 1,
-        border: "1px solid #eaeaea",
-        borderRadius: "2px",
-        display: "flex",
-        flexFlow: "column",
-        padding: "20px",
-      }}
-    >
-      <Box
-        sx={{
-          fontSize: "16px",
-          fontWeight: 600,
-          display: "flex",
-          alignItems: "center",
-          marginBottom: "16px",
-          paddingBottom: "20px",
-
-          "& .min-icon": {
-            height: "21px",
-            width: "21px",
-            marginRight: "15px",
-          },
-        }}
-      >
-        <HelpIconFilled />
-        <div>{helpText}</div>
-      </Box>
-      <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
-        {contents.map((content) => (
-          <Box sx={{ paddingBottom: "20px" }}>{content}</Box>
-        ))}
-      </Box>
-    </Box>
+    <HelpBox
+      iconComponent={<HelpIconFilled />}
+      title={helpText}
+      help={
+        <Fragment>
+          {contents.map((content) => (
+            <Box sx={{ paddingBottom: "20px" }}>{content}</Box>
+          ))}
+        </Fragment>
+      }
+    />
   );
 };
 

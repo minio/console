@@ -15,32 +15,31 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import get from "lodash/get";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { Box, Grid } from "@mui/material";
-import get from "lodash/get";
+import { api } from "api";
 import {
-  spacingUtils,
-  textStyleUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
-
+  BucketEncryptionInfo,
+  BucketQuota,
+  BucketVersioningResponse,
+  GetBucketRetentionConfig,
+} from "api/consoleApi";
+import { errorToHandler } from "api/errors";
+import {
+  Box,
+  DisabledIcon,
+  EnabledIcon,
+  Grid,
+  SectionTitle,
+  ValuePair,
+} from "mds";
+import { twoColCssGridLayoutConfig } from "../../Common/FormComponents/common/styleLibrary";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import {
   hasPermission,
   SecureComponent,
 } from "../../../../common/SecureComponent";
-
-import withSuspense from "../../Common/Components/withSuspense";
-import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
-import LabelWithIcon from "./SummaryItems/LabelWithIcon";
-import { DisabledIcon, EnabledIcon } from "mds";
-import EditablePropertyItem from "./SummaryItems/EditablePropertyItem";
-import ReportedUsage from "./SummaryItems/ReportedUsage";
-import BucketQuotaSize from "./SummaryItems/BucketQuotaSize";
-import SectionTitle from "../../Common/SectionTitle";
 import {
   selDistSet,
   setErrorSnackMessage,
@@ -53,14 +52,11 @@ import {
 } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
 import VersioningInfo from "../VersioningInfo";
-import { api } from "api";
-import {
-  BucketEncryptionInfo,
-  BucketQuota,
-  BucketVersioningResponse,
-  GetBucketRetentionConfig,
-} from "api/consoleApi";
-import { errorToHandler } from "api/errors";
+import withSuspense from "../../Common/Components/withSuspense";
+import LabelWithIcon from "./SummaryItems/LabelWithIcon";
+import EditablePropertyItem from "./SummaryItems/EditablePropertyItem";
+import ReportedUsage from "./SummaryItems/ReportedUsage";
+import BucketQuotaSize from "./SummaryItems/BucketQuotaSize";
 
 const SetAccessPolicy = withSuspense(
   React.lazy(() => import("./SetAccessPolicy")),
@@ -77,33 +73,14 @@ const EnableVersioningModal = withSuspense(
 const BucketTags = withSuspense(
   React.lazy(() => import("./SummaryItems/BucketTags")),
 );
-
 const EnableQuota = withSuspense(React.lazy(() => import("./EnableQuota")));
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...spacingUtils,
-    ...textStyleUtils,
-  });
-
-const twoColCssGridLayoutConfig = {
-  display: "grid",
-  gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
-  gridAutoFlow: { xs: "dense", sm: "row" },
-  gap: 2,
-};
-
-interface IBucketSummaryProps {
-  classes: any;
-}
-
-const BucketSummary = ({ classes }: IBucketSummaryProps) => {
+const BucketSummary = () => {
   const dispatch = useAppDispatch();
   const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
   const bucketInfo = useSelector(selBucketDetailsInfo);
-
   const distributedSetup = useSelector(selDistSet);
 
   const [encryptionCfg, setEncryptionCfg] =
@@ -388,7 +365,6 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
     versioningText = "Suspended";
   }
 
-  // @ts-ignore
   return (
     <Fragment>
       {enableEncryptionScreenOpen && (
@@ -434,15 +410,17 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
         />
       )}
 
-      <SectionTitle>Summary</SectionTitle>
-      <Grid container spacing={1}>
+      <SectionTitle separator sx={{ marginBottom: 15 }}>
+        Summary
+      </SectionTitle>
+      <Grid container>
         <SecureComponent
           scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY, IAM_SCOPES.S3_GET_ACTIONS]}
           resource={bucketName}
         >
           <Grid item xs={12}>
-            <Box sx={{ ...twoColCssGridLayoutConfig }}>
-              <Box sx={{ ...twoColCssGridLayoutConfig }}>
+            <Box sx={twoColCssGridLayoutConfig}>
+              <Box sx={twoColCssGridLayoutConfig}>
                 <SecureComponent
                   scopes={[
                     IAM_SCOPES.S3_GET_BUCKET_POLICY,
@@ -494,7 +472,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   ]}
                   resource={bucketName}
                 >
-                  <LabelValuePair
+                  <ValuePair
                     label={"Replication:"}
                     value={
                       <LabelWithIcon
@@ -502,7 +480,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                           replicationRules ? <EnabledIcon /> : <DisabledIcon />
                         }
                         label={
-                          <label className={classes.textMuted}>
+                          <label className={"muted"}>
                             {replicationRules ? "Enabled" : "Disabled"}
                           </label>
                         }
@@ -518,7 +496,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   ]}
                   resource={bucketName}
                 >
-                  <LabelValuePair
+                  <ValuePair
                     label={"Object Locking:"}
                     value={
                       <LabelWithIcon
@@ -526,7 +504,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                           hasObjectLocking ? <EnabledIcon /> : <DisabledIcon />
                         }
                         label={
-                          <label className={classes.textMuted}>
+                          <label className={"muted"}>
                             {hasObjectLocking ? "Enabled" : "Disabled"}
                           </label>
                         }
@@ -534,8 +512,8 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                     }
                   />
                 </SecureComponent>
-                <Box className={classes.spacerTop}>
-                  <LabelValuePair
+                <Box>
+                  <ValuePair
                     label={"Tags:"}
                     value={<BucketTags bucketName={bucketName} />}
                   />
@@ -549,7 +527,6 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                   isLoading={loadingQuota}
                 />
               </Box>
-
               <Box
                 sx={{
                   display: "grid",
@@ -574,19 +551,13 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
             ]}
             resource={bucketName}
           >
-            <Grid item xs={12}>
-              <SectionTitle>Versioning</SectionTitle>
+            <Grid item xs={12} sx={{ marginTop: 5 }}>
+              <SectionTitle separator sx={{ marginBottom: 15 }}>
+                Versioning
+              </SectionTitle>
 
-              <Box
-                sx={{
-                  ...twoColCssGridLayoutConfig,
-                }}
-              >
-                <Box
-                  sx={{
-                    ...twoColCssGridLayoutConfig,
-                  }}
-                >
+              <Box sx={twoColCssGridLayoutConfig}>
+                <Box sx={twoColCssGridLayoutConfig}>
                   <EditablePropertyItem
                     iamScopes={[
                       IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
@@ -599,7 +570,7 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                         sx={{
                           display: "flex",
                           flexDirection: "column",
-                          textDecorationStyle: "normal",
+                          textDecorationStyle: "initial",
                           placeItems: "flex-start",
                           justifyItems: "flex-start",
                           gap: 3,
@@ -629,25 +600,13 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
             ]}
             resource={bucketName}
           >
-            <Grid item xs={12}>
-              <SectionTitle>Retention</SectionTitle>
+            <Grid item xs={12} sx={{ marginTop: 5 }}>
+              <SectionTitle separator sx={{ marginBottom: 15 }}>
+                Retention
+              </SectionTitle>
 
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
-                  gridAutoFlow: { xs: "dense", sm: "row" } /* NEW */,
-                  gap: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
-                    gridAutoFlow: { xs: "dense", sm: "row" } /* NEW */,
-                    gap: 2,
-                  }}
-                >
+              <Box sx={twoColCssGridLayoutConfig}>
+                <Box sx={twoColCssGridLayoutConfig}>
                   <EditablePropertyItem
                     iamScopes={[IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA]}
                     resourceName={bucketName}
@@ -659,11 +618,11 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                     isLoading={loadingRetention}
                   />
 
-                  <LabelValuePair
+                  <ValuePair
                     label={"Mode:"}
                     value={
                       <label
-                        className={classes.textMuted}
+                        className={"muted"}
                         style={{ textTransform: "capitalize" }}
                       >
                         {retentionConfig && retentionConfig.mode
@@ -672,11 +631,11 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                       </label>
                     }
                   />
-                  <LabelValuePair
+                  <ValuePair
                     label={"Validity:"}
                     value={
                       <label
-                        className={classes.textMuted}
+                        className={"muted"}
                         style={{ textTransform: "capitalize" }}
                       >
                         {retentionConfig && retentionConfig.validity}{" "}
@@ -688,16 +647,6 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
                     }
                   />
                 </Box>
-
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  {/*Spacer*/}
-                </Box>
               </Box>
             </Grid>
           </SecureComponent>
@@ -707,4 +656,4 @@ const BucketSummary = ({ classes }: IBucketSummaryProps) => {
   );
 };
 
-export default withStyles(styles)(BucketSummary);
+export default BucketSummary;

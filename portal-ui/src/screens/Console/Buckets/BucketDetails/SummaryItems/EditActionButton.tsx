@@ -15,26 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { IconButton } from "@mui/material";
-import { EditIcon } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { EditIcon, IconButton } from "mds";
 
 type EditActionButtonProps = {
   disabled?: boolean;
   onClick: () => void | any;
   [x: string]: any;
 };
-
-const styles = (theme: Theme) =>
-  createStyles({
-    root: {
-      "&:hover": {
-        backgroundColor: "#E2E2E2",
-      },
-    },
-  });
 
 const EditActionButton = ({
   disabled,
@@ -53,4 +40,4 @@ const EditActionButton = ({
   );
 };
 
-export default withStyles(styles)(EditActionButton);
+export default EditActionButton;

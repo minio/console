@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
+import { Box } from "mds";
 
 type LabelWithIconProps = {
   icon: React.ReactNode | null;
@@ -27,20 +27,22 @@ const LabelWithIcon = ({ icon = null, label = null }: LabelWithIconProps) => {
     <Box
       sx={{
         display: "flex",
+        alignItems: "center",
+        gap: 5,
+        marginTop: 3,
       }}
     >
-      <div
-        style={{
+      <Box
+        sx={{
           height: 16,
           width: 16,
           display: "flex",
           alignItems: "center",
-          marginTop: 5,
         }}
       >
         {icon}
-      </div>
-      <div style={{ marginLeft: icon ? 5 : "none" }}>{label}</div>
+      </Box>
+      <Box>{label}</Box>
     </Box>
   );
 };

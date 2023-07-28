@@ -14,46 +14,35 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import { Grid } from "@mui/material";
-import { AddAccessRuleIcon, Button } from "mds";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
-
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+  AddAccessRuleIcon,
+  Button,
+  FormLayout,
+  Grid,
+  InputBox,
+  Select,
+} from "mds";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
 
 interface IAddAccessRule {
-  classes: any;
   modalOpen: boolean;
   onClose: () => any;
   bucket: string;
   prefilledRoute?: string;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    ...modalStyleUtils,
-  });
-
 const AddAccessRule = ({
   modalOpen,
   onClose,
-  classes,
   bucket,
   prefilledRoute,
 }: IAddAccessRule) => {
@@ -102,36 +91,32 @@ const AddAccessRule = ({
       onClose={onClose}
       titleIcon={<AddAccessRuleIcon />}
     >
-      <Grid container>
-        <Grid item xs={12} className={classes.formFieldRow}>
-          <InputBoxWrapper
-            value={prefix}
-            label={"Prefix"}
-            id={"prefix"}
-            name={"prefix"}
-            placeholder={"Enter Prefix"}
-            onChange={(e) => {
-              setPrefix(e.target.value);
-            }}
-            tooltip={
-              "Enter '/' to apply the rule to all prefixes and objects at the bucket root. Do not include the wildcard asterisk '*' as part of the prefix *unless* it is an explicit part of the prefix name. The Console automatically appends an asterisk to the appropriate sections of the resulting IAM policy."
-            }
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <SelectWrapper
-            id="access"
-            name="Access"
-            onChange={(e) => {
-              setSelectedAccess(e.target.value);
-            }}
-            label="Access"
-            value={selectedAccess}
-            options={accessOptions}
-            disabled={false}
-          />
-        </Grid>
-        <Grid item xs={12} className={classes.modalButtonBar}>
+      <FormLayout withBorders={false} containerPadding={false}>
+        <InputBox
+          value={prefix}
+          label={"Prefix"}
+          id={"prefix"}
+          name={"prefix"}
+          placeholder={"Enter Prefix"}
+          onChange={(e) => {
+            setPrefix(e.target.value);
+          }}
+          tooltip={
+            "Enter '/' to apply the rule to all prefixes and objects at the bucket root. Do not include the wildcard asterisk '*' as part of the prefix *unless* it is an explicit part of the prefix name. The Console automatically appends an asterisk to the appropriate sections of the resulting IAM policy."
+          }
+        />
+        <Select
+          id="access"
+          name="Access"
+          onChange={(value) => {
+            setSelectedAccess(value);
+          }}
+          label="Access"
+          value={selectedAccess}
+          options={accessOptions}
+          disabled={false}
+        />
+        <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
           <Button
             id={"clear"}
             type="button"
@@ -149,9 +134,9 @@ const AddAccessRule = ({
             label={"Save"}
           />
         </Grid>
-      </Grid>
+      </FormLayout>
     </ModalWrapper>
   );
 };
 
-export default withStyles(styles)(AddAccessRule);
+export default AddAccessRule;

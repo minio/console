@@ -14,41 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
-
-import { DialogContentText, LinearProgress } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { deleteDialogStyles } from "../../Common/FormComponents/common/styleLibrary";
-
+import React, { Fragment, useEffect, useState } from "react";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import { LinearProgress } from "@mui/material";
 import { ConfirmDeleteIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    wrapText: {
-      maxWidth: "200px",
-      whiteSpace: "normal",
-      wordWrap: "break-word",
-    },
-    ...deleteDialogStyles,
-  });
 
 interface IResetConfiguration {
-  classes: any;
   configurationName: string;
   closeResetModalAndRefresh: (reloadConfiguration: boolean) => void;
-
   resetOpen: boolean;
 }
 
 const ResetConfigurationModal = ({
-  classes,
   configurationName,
   closeResetModalAndRefresh,
   resetOpen,
@@ -87,20 +68,26 @@ const ResetConfigurationModal = ({
         closeResetModalAndRefresh(false);
       }}
       confirmationContent={
-        <React.Fragment>
+        <Fragment>
           {resetLoading && <LinearProgress />}
-          <DialogContentText>
+          <Fragment>
             Are you sure you want to restore these configurations to default
             values?
             <br />
-            <b className={classes.wrapText}>
+            <b
+              style={{
+                maxWidth: "200px",
+                whiteSpace: "normal",
+                wordWrap: "break-word",
+              }}
+            >
               Please note that this may cause your system to not be accessible
             </b>
-          </DialogContentText>
-        </React.Fragment>
+          </Fragment>
+        </Fragment>
       }
     />
   );
 };
 
-export default withStyles(styles)(ResetConfigurationModal);
+export default ResetConfigurationModal;

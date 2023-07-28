@@ -16,6 +16,8 @@
 
 // This object contains variables that will be used across form components.
 
+import { breakPoints } from "mds";
+
 const inputLabelBase = {
   fontWeight: 600,
   marginRight: 10,
@@ -954,6 +956,17 @@ export const objectBrowserExtras = {
     "@media (max-width: 600px)": {
       marginLeft: 0,
     },
+  },
+};
+
+export const twoColCssGridLayoutConfig = {
+  display: "grid",
+  gridTemplateColumns: "2fr 1fr",
+  gridAutoFlow: "row",
+  gap: 10,
+  [`@media (max-width: ${breakPoints.sm}px)`]: {
+    gridTemplateColumns: "1fr",
+    gridAutoFlow: "dense",
   },
 };
 
