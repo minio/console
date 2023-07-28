@@ -72,6 +72,7 @@ var (
 	ErrPolicyNotFound                   = errors.New("policy does not exist")
 	ErrLoginNotAllowed                  = errors.New("login not allowed")
 	ErrSubnetUploadFail                 = errors.New("Subnet upload failed")
+	ErrHealthReportFail                 = errors.New("failure to generate Health report")
 )
 
 // ErrorWithContext :
