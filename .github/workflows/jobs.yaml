@@ -241,7 +241,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-1/ --skip-js-errors -c 3'
+          args: '"firefox --headless --no-sandbox" portal-ui/tests/permissions-1/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |
@@ -287,7 +287,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-2/ --skip-js-errors -c 3'
+          args: '"firefox --headless --no-sandbox" portal-ui/tests/permissions-2/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |
@@ -333,7 +333,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-3/ --skip-js-errors -c 3'
+          args: '"firefox --headless --no-sandbox" portal-ui/tests/permissions-3/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |
@@ -379,7 +379,7 @@ jobs:
         timeout-minutes: 10
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-4/ --skip-js-errors'
+          args: '"firefox --headless --no-sandbox" portal-ui/tests/permissions-4/ --skip-js-errors'
   all-permissions-5:
     name: Permissions Tests Part 5
     needs:
@@ -419,7 +419,7 @@ jobs:
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-5/ --skip-js-errors'
+          args: '"firefox --headless --no-sandbox" portal-ui/tests/permissions-5/ --skip-js-errors'
   all-permissions-6:
     name: Permissions Tests Part 6
     needs:
@@ -459,7 +459,7 @@ jobs:
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-6/ --skip-js-errors'
+          args: '"firefox --headless --no-sandbox" portal-ui/tests/permissions-6/ --skip-js-errors'
   all-permissions-7:
     name: Permissions Tests Part 7
     needs:
@@ -499,7 +499,7 @@ jobs:
         timeout-minutes: 5
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-7/ --skip-js-errors'
+          args: '"firefox --headless --no-sandbox" portal-ui/tests/permissions-7/ --skip-js-errors'
   all-permissions-8:
     name: Permissions Tests Part 8
     needs:
@@ -579,7 +579,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-9/ --skip-js-errors -c 3'
+          args: '"firefox --headless --no-sandbox" portal-ui/tests/permissions-9/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |
@@ -624,7 +624,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-A/ --skip-js-errors -c 3'
+          args: '"firefox --headless --no-sandbox" portal-ui/tests/permissions-A/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |
@@ -669,7 +669,7 @@ jobs:
       - name: Run TestCafe Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: '"chrome --headless --no-sandbox" portal-ui/tests/permissions-B/ --skip-js-errors -c 3'
+          args: '"firefox --headless --no-sandbox" portal-ui/tests/permissions-B/ --skip-js-errors -c 3'
 
       - name: Clean up users & policies
         run: |

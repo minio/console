@@ -2,6 +2,17 @@
 
 # Changelog
 
+## Release v0.34.0
+Features:
+- Updated Buckets components
+
+Bug Fix:
+
+- Fixed SUBNET Health report upload
+- Updated Download Handler
+- Fixes issue with rewind
+- Avoid 1 hour expiration for IDP credentials
+---
 ## Release v0.33.0
 Features:
 - Updated OpenID, LDAP components
