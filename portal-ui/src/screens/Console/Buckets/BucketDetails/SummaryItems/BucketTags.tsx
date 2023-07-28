@@ -13,22 +13,18 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { useEffect, useState } from "react";
+import get from "lodash/get";
+import { AddIcon, Box, Loader, Tag } from "mds";
 import { Bucket } from "../../../Watch/types";
 import { ErrorResponseHandler } from "../../../../../common/types";
-import useApi from "../../../Common/Hooks/useApi";
-import { Box } from "@mui/material";
 import { IAM_SCOPES } from "../../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../../common/SecureComponent";
-import get from "lodash/get";
-import Chip from "@mui/material/Chip";
-import CloseIcon from "@mui/icons-material/Close";
-import AddIcon from "@mui/icons-material/Add";
-import withSuspense from "../../../Common/Components/withSuspense";
-import { Loader } from "mds";
-
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../store";
+import useApi from "../../../Common/Hooks/useApi";
+import withSuspense from "../../../Common/Components/withSuspense";
 
 const AddBucketTagModal = withSuspense(
   React.lazy(() => import("../AddBucketTagModal")),
@@ -71,9 +67,15 @@ const BucketTags = ({ bucketName }: BucketTagProps) => {
   };
 
   const onTagLoaded = (res: Bucket) => {
-    if (res != null && res?.details != null && "tags" in res?.details) {
-      setTags(res?.details?.tags);
-      setTagKeys(Object.keys(res?.details?.tags));
+    if (!!res && res?.details != null) {
+      if (res.details.tags) {
+        setTags(res?.details?.tags);
+        setTagKeys(Object.keys(res?.details?.tags));
+
+        return;
+      }
+      setTags([]);
+      setTagKeys([]);
     }
   };
 
@@ -103,9 +105,10 @@ const BucketTags = ({ bucketName }: BucketTagProps) => {
           sx={{
             display: "flex",
             flexFlow: "column",
+            marginTop: 5,
           }}
         >
-          <Box>
+          <Box sx={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {tagKeys &&
               tagKeys.map((tagKey: any, index: any) => {
                 const tag = get(tags, `${tagKey}`, "");
@@ -124,15 +127,9 @@ const BucketTags = ({ bucketName }: BucketTagProps) => {
                         onDelete: null,
                       }}
                     >
-                      <Chip
-                        style={{
-                          textTransform: "none",
-                          marginRight: "5px",
-                        }}
-                        size="small"
+                      <Tag
                         label={`${tagKey} : ${tag}`}
-                        color="primary"
-                        deleteIcon={<CloseIcon />}
+                        id={`tag-${tagKey}-${tag}`}
                         onDelete={() => {
                           deleteTag(tagKey, tag);
                         }}
@@ -142,29 +139,26 @@ const BucketTags = ({ bucketName }: BucketTagProps) => {
                 }
                 return null;
               })}
+            <SecureComponent
+              scopes={[
+                IAM_SCOPES.S3_PUT_BUCKET_TAGGING,
+                IAM_SCOPES.S3_PUT_ACTIONS,
+              ]}
+              resource={bucketName}
+              errorProps={{ disabled: true, onClick: null }}
+            >
+              <Tag
+                label="Add tag"
+                icon={<AddIcon />}
+                id={"create-tag"}
+                variant={"outlined"}
+                onClick={() => {
+                  setTagModalOpen(true);
+                }}
+                sx={{ cursor: "pointer", maxWidth: 90 }}
+              />
+            </SecureComponent>
           </Box>
-
-          <SecureComponent
-            scopes={[
-              IAM_SCOPES.S3_PUT_BUCKET_TAGGING,
-              IAM_SCOPES.S3_PUT_ACTIONS,
-            ]}
-            resource={bucketName}
-            errorProps={{ disabled: true, onClick: null }}
-          >
-            <Chip
-              style={{ maxWidth: 80, marginTop: "10px" }}
-              icon={<AddIcon />}
-              clickable
-              size="small"
-              label="Add tag"
-              color="primary"
-              variant="outlined"
-              onClick={() => {
-                setTagModalOpen(true);
-              }}
-            />
-          </SecureComponent>
         </Box>
       </SecureComponent>
 

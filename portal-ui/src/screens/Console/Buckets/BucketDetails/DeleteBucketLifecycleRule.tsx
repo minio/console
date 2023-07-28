@@ -14,20 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
-import { DialogContentText } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-
+import React, { useEffect, useState, Fragment } from "react";
 import { ConfirmDeleteIcon } from "mds";
-import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-
-import { setErrorSnackMessage } from "../../../../systemSlice";
-import { useAppDispatch } from "../../../../store";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
+import { setErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface IDeleteLifecycleRule {
   deleteOpen: boolean;
@@ -35,11 +28,6 @@ interface IDeleteLifecycleRule {
   bucket: string;
   id: string;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalBasic,
-  });
 
 const DeleteBucketLifecycleRule = ({
   onCloseAndRefresh,
@@ -79,12 +67,12 @@ const DeleteBucketLifecycleRule = ({
       titleIcon={<ConfirmDeleteIcon />}
       onClose={() => onCloseAndRefresh(false)}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           Are you sure you want to delete the <strong>{id}</strong> rule?
-        </DialogContentText>
+        </Fragment>
       }
     />
   );
 };
 
-export default withStyles(styles)(DeleteBucketLifecycleRule);
+export default DeleteBucketLifecycleRule;

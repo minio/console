@@ -15,9 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { setIsDirty, setName } from "./addBucketsSlice";
-import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { InputBox } from "mds";
 import { useSelector } from "react-redux";
+import { setIsDirty, setName } from "./addBucketsSlice";
 import { AppState, useAppDispatch } from "../../../../../store";
 
 const AddBucketName = ({ hasErrors }: { hasErrors: boolean }) => {
@@ -25,7 +25,7 @@ const AddBucketName = ({ hasErrors }: { hasErrors: boolean }) => {
 
   const bucketName = useSelector((state: AppState) => state.addBucket.name);
   return (
-    <InputBoxWrapper
+    <InputBox
       id="bucket-name"
       name="bucket-name"
       error={hasErrors ? "Invalid bucket name" : ""}

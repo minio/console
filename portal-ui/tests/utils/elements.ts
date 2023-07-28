@@ -61,18 +61,10 @@ export const deleteAllVersions =
 //----------------------------------------------------
 export const bucketNameInput = Selector("#bucket-name");
 export const bucketsPrefixInput = Selector("#prefix");
-export const bucketsAccessInput = Selector(
-  'input[class*="MuiSelect-nativeInput"]',
-);
-export const bucketsAccessReadOnlyInput = Selector(
-  'li[class*="MuiMenuItem-root"]',
-).withText("readonly");
-export const bucketsAccessWriteOnlyInput = Selector(
-  'li[class*="MuiMenuItem-root"]',
-).withText("writeonly");
-export const bucketsAccessReadWriteInput = Selector(
-  'li[class*="MuiMenuItem-root"]',
-).withText("readwrite");
+export const bucketsAccessInput = Selector("div.selectContainer");
+export const bucketsAccessReadOnlyInput = Selector("li").withText("readonly");
+export const bucketsAccessWriteOnlyInput = Selector("li").withText("writeonly");
+export const bucketsAccessReadWriteInput = Selector("li").withText("readwrite");
 export const uploadInput = Selector("input").withAttribute("type", "file");
 export const createPolicyName = Selector("#policy-name");
 export const createPolicyTextfield = Selector(".w-tc-editor-text");
@@ -118,8 +110,10 @@ export const createGroupUserTable = Selector(
 //----------------------------------------------------
 // Bucket page vertical tabs
 //----------------------------------------------------
-export const bucketAccessRulesTab =
-  Selector(".MuiTab-root").withText("Anonymous");
+export const bucketAccessRulesTab = Selector("button").withAttribute(
+  "id",
+  "anonymous",
+);
 
 //----------------------------------------------------
 // Settings window

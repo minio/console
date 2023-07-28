@@ -15,65 +15,40 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import { BucketReplicationIcon, Button } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { SelectChangeEvent } from "@mui/material";
 import get from "lodash/get";
-import Grid from "@mui/material/Grid";
 import {
-  createTenantCommon,
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
-import { BucketReplicationRule } from "../types";
-
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
-import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
-import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-
-import { setModalErrorSnackMessage } from "../../../../systemSlice";
-import { useAppDispatch } from "../../../../store";
+  Box,
+  BucketReplicationIcon,
+  Button,
+  FormLayout,
+  Grid,
+  InputBox,
+  Select,
+  Switch,
+} from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
+import { BucketReplicationRule } from "../types";
+import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
+import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
+import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
+import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
 interface IReplicationModal {
   open: boolean;
   closeModalAndRefresh: () => any;
-  classes: any;
   bucketName: string;
 
   setReplicationRules: BucketReplicationRule[];
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    multiContainer: {
-      display: "flex",
-      alignItems: "center",
-    },
-    ...spacingUtils,
-    ...createTenantCommon,
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    modalFormScrollable: {
-      ...modalStyleUtils.modalFormScrollable,
-      paddingRight: 10,
-    },
-  });
-
 const AddReplicationModal = ({
   open,
   closeModalAndRefresh,
-  classes,
   bucketName,
-
   setReplicationRules,
 }: IReplicationModal) => {
   const dispatch = useAppDispatch();
@@ -205,242 +180,205 @@ const AddReplicationModal = ({
           addRecord();
         }}
       >
-        <Grid container>
-          <Grid item xs={12} className={classes.modalFormScrollable}>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="priority"
-                name="priority"
+        <FormLayout withBorders={false} containerPadding={false}>
+          <InputBox
+            id="priority"
+            name="priority"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              if (e.target.validity.valid) {
+                setPriority(e.target.value);
+              }
+            }}
+            label="Priority"
+            value={priority}
+            pattern={"[0-9]*"}
+          />
+
+          <InputBox
+            id="targetURL"
+            name="targetURL"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setTargetURL(e.target.value);
+            }}
+            placeholder="play.min.io"
+            label="Target URL"
+            value={targetURL}
+          />
+
+          <Switch
+            checked={useTLS}
+            id="useTLS"
+            name="useTLS"
+            label="Use TLS"
+            onChange={(e) => {
+              setUseTLS(e.target.checked);
+            }}
+            value="yes"
+          />
+
+          <InputBox
+            id="accessKey"
+            name="accessKey"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setAccessKey(e.target.value);
+            }}
+            label="Access Key"
+            value={accessKey}
+          />
+
+          <InputBox
+            id="secretKey"
+            name="secretKey"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setSecretKey(e.target.value);
+            }}
+            label="Secret Key"
+            value={secretKey}
+          />
+
+          <InputBox
+            id="targetBucket"
+            name="targetBucket"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setTargetBucket(e.target.value);
+            }}
+            label="Target Bucket"
+            value={targetBucket}
+          />
+
+          <InputBox
+            id="region"
+            name="region"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setRegion(e.target.value);
+            }}
+            label="Region"
+            value={region}
+          />
+
+          <Select
+            id="replication_mode"
+            name="replication_mode"
+            onChange={(value) => {
+              setReplicationMode(value as "async" | "sync");
+            }}
+            label="Replication Mode"
+            value={replicationMode}
+            options={[
+              { label: "Asynchronous", value: "async" },
+              { label: "Synchronous", value: "sync" },
+            ]}
+          />
+
+          {replicationMode === "async" && (
+            <Box className={"inputItem"}>
+              <InputBox
+                type="number"
+                id="bandwidth_scalar"
+                name="bandwidth_scalar"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   if (e.target.validity.valid) {
-                    setPriority(e.target.value);
+                    setBandwidthScalar(e.target.value as string);
                   }
                 }}
-                label="Priority"
-                value={priority}
+                label="Bandwidth"
+                value={bandwidthScalar}
+                min="0"
                 pattern={"[0-9]*"}
+                overlayObject={
+                  <InputUnitMenu
+                    id={"quota_unit"}
+                    onUnitChange={(newValue) => {
+                      setBandwidthUnit(newValue);
+                    }}
+                    unitSelected={bandwidthUnit}
+                    unitsList={k8sScalarUnitsExcluding(["Ki"])}
+                    disabled={false}
+                  />
+                }
               />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="targetURL"
-                name="targetURL"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setTargetURL(e.target.value);
-                }}
-                placeholder="play.min.io"
-                label="Target URL"
-                value={targetURL}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <FormSwitchWrapper
-                checked={useTLS}
-                id="useTLS"
-                name="useTLS"
-                label="Use TLS"
-                onChange={(e) => {
-                  setUseTLS(e.target.checked);
-                }}
-                value="yes"
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="accessKey"
-                name="accessKey"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setAccessKey(e.target.value);
-                }}
-                label="Access Key"
-                value={accessKey}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="secretKey"
-                name="secretKey"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setSecretKey(e.target.value);
-                }}
-                label="Secret Key"
-                value={secretKey}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="targetBucket"
-                name="targetBucket"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setTargetBucket(e.target.value);
-                }}
-                label="Target Bucket"
-                value={targetBucket}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="region"
-                name="region"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setRegion(e.target.value);
-                }}
-                label="Region"
-                value={region}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <SelectWrapper
-                id="replication_mode"
-                name="replication_mode"
-                onChange={(e: SelectChangeEvent<string>) => {
-                  setReplicationMode(e.target.value as "async" | "sync");
-                }}
-                label="Replication Mode"
-                value={replicationMode}
-                options={[
-                  { label: "Asynchronous", value: "async" },
-                  { label: "Synchronous", value: "sync" },
-                ]}
-              />
-            </Grid>
+            </Box>
+          )}
 
-            {replicationMode === "async" && (
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <div className={classes.multiContainer}>
-                  <InputBoxWrapper
-                    type="number"
-                    id="bandwidth_scalar"
-                    name="bandwidth_scalar"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      if (e.target.validity.valid) {
-                        setBandwidthScalar(e.target.value as string);
-                      }
-                    }}
-                    label="Bandwidth"
-                    value={bandwidthScalar}
-                    min="0"
-                    pattern={"[0-9]*"}
-                    overlayObject={
-                      <InputUnitMenu
-                        id={"quota_unit"}
-                        onUnitChange={(newValue) => {
-                          setBandwidthUnit(newValue);
-                        }}
-                        unitSelected={bandwidthUnit}
-                        unitsList={k8sScalarUnitsExcluding(["Ki"])}
-                        disabled={false}
-                      />
-                    }
-                  />
-                </div>
-              </Grid>
-            )}
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="healthCheck"
-                name="healthCheck"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setHealthCheck(e.target.value as string);
-                }}
-                label="Health Check Duration"
-                value={healthCheck}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              className={`${classes.spacerTop} ${classes.formFieldRow}`}
-            >
-              <InputBoxWrapper
-                id="storageClass"
-                name="storageClass"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setTargetStorageClass(e.target.value);
-                }}
-                placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
-                label="Storage Class"
-                value={targetStorageClass}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <fieldset className={classes.fieldGroup}>
-                <legend className={classes.descriptionText}>
-                  Object Filters
-                </legend>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="prefix"
-                    name="prefix"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setPrefix(e.target.value);
-                    }}
-                    placeholder="prefix"
-                    label="Prefix"
-                    value={prefix}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <QueryMultiSelector
-                    name="tags"
-                    label="Tags"
-                    elements={""}
-                    onChange={(vl: string) => {
-                      setTags(vl);
-                    }}
-                    keyPlaceholder="Tag Key"
-                    valuePlaceholder="Tag Value"
-                    withBorder
-                  />
-                </Grid>
-              </fieldset>
-            </Grid>
-            <Grid item xs={12}>
-              <fieldset className={classes.fieldGroup}>
-                <legend className={classes.descriptionText}>
-                  Replication Options
-                </legend>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <FormSwitchWrapper
-                    checked={metadataSync}
-                    id="metadatataSync"
-                    name="metadatataSync"
-                    label="Metadata Sync"
-                    onChange={(e) => {
-                      setMetadataSync(e.target.checked);
-                    }}
-                    value={metadataSync}
-                    description={"Metadata Sync"}
-                  />
-                  <FormSwitchWrapper
-                    checked={repDeleteMarker}
-                    id="deleteMarker"
-                    name="deleteMarker"
-                    label="Delete Marker"
-                    onChange={(e) => {
-                      setRepDeleteMarker(e.target.checked);
-                    }}
-                    value={repDeleteMarker}
-                    description={"Replicate soft deletes"}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <FormSwitchWrapper
-                    checked={repDelete}
-                    id="repDelete"
-                    name="repDelete"
-                    label="Deletes"
-                    onChange={(e) => {
-                      setRepDelete(e.target.checked);
-                    }}
-                    value={repDelete}
-                    description={"Replicate versioned deletes"}
-                  />
-                </Grid>
-              </fieldset>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
+          <InputBox
+            id="healthCheck"
+            name="healthCheck"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setHealthCheck(e.target.value as string);
+            }}
+            label="Health Check Duration"
+            value={healthCheck}
+          />
+
+          <InputBox
+            id="storageClass"
+            name="storageClass"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setTargetStorageClass(e.target.value);
+            }}
+            placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
+            label="Storage Class"
+            value={targetStorageClass}
+          />
+
+          <fieldset className={"inputItem"}>
+            <legend>Object Filters</legend>
+            <InputBox
+              id="prefix"
+              name="prefix"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setPrefix(e.target.value);
+              }}
+              placeholder="prefix"
+              label="Prefix"
+              value={prefix}
+            />
+            <QueryMultiSelector
+              name="tags"
+              label="Tags"
+              elements={""}
+              onChange={(vl: string) => {
+                setTags(vl);
+              }}
+              keyPlaceholder="Tag Key"
+              valuePlaceholder="Tag Value"
+              withBorder
+            />
+          </fieldset>
+          <fieldset className={"inputItem"}>
+            <legend>Replication Options</legend>
+            <Switch
+              checked={metadataSync}
+              id="metadatataSync"
+              name="metadatataSync"
+              label="Metadata Sync"
+              onChange={(e) => {
+                setMetadataSync(e.target.checked);
+              }}
+              description={"Metadata Sync"}
+            />
+            <Switch
+              checked={repDeleteMarker}
+              id="deleteMarker"
+              name="deleteMarker"
+              label="Delete Marker"
+              onChange={(e) => {
+                setRepDeleteMarker(e.target.checked);
+              }}
+              description={"Replicate soft deletes"}
+            />
+            <Switch
+              checked={repDelete}
+              id="repDelete"
+              name="repDelete"
+              label="Deletes"
+              onChange={(e) => {
+                setRepDelete(e.target.checked);
+              }}
+              description={"Replicate versioned deletes"}
+            />
+          </fieldset>
+          <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
             <Button
               id={"cancel"}
               type="button"
@@ -460,10 +398,10 @@ const AddReplicationModal = ({
               label={"Save"}
             />
           </Grid>
-        </Grid>
+        </FormLayout>
       </form>
     </ModalWrapper>
   );
 };
 
-export default withStyles(styles)(AddReplicationModal);
+export default AddReplicationModal;

@@ -15,50 +15,25 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import { Button, ChangeAccessPolicyIcon } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
-
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-
-import { setModalErrorSnackMessage } from "../../../../systemSlice";
-import { useAppDispatch } from "../../../../store";
-import { emptyPolicy } from "../../Policies/utils";
 import { api } from "api";
 import { BucketAccess } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    codeMirrorContainer: {
-      marginBottom: 20,
-      "& label": {
-        marginBottom: ".5rem",
-      },
-      "& label + div": {
-        display: "none",
-      },
-    },
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    ...spacingUtils,
-  });
-createStyles({
-  ...modalStyleUtils,
-  ...spacingUtils,
-});
+import {
+  Box,
+  Button,
+  ChangeAccessPolicyIcon,
+  FormLayout,
+  Grid,
+  Select,
+} from "mds";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
+import { emptyPolicy } from "../../Policies/utils";
+import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
+import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
 interface ISetAccessPolicyProps {
-  classes: any;
   open: boolean;
   bucketName: string;
   actualPolicy: BucketAccess | string;
@@ -67,7 +42,6 @@ interface ISetAccessPolicyProps {
 }
 
 const SetAccessPolicy = ({
-  classes,
   open,
   bucketName,
   actualPolicy,
@@ -89,7 +63,7 @@ const SetAccessPolicy = ({
         access: accessPolicy as BucketAccess,
         definition: policyDefinition,
       })
-      .then((res) => {
+      .then(() => {
         setAddLoading(false);
         closeModalAndRefresh();
       })
@@ -124,75 +98,71 @@ const SetAccessPolicy = ({
           addRecord(e);
         }}
       >
-        <Grid container>
-          <Grid item xs={12} className={classes.modalFormScrollable}>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <SelectWrapper
-                value={accessPolicy}
-                label="Access Policy"
-                id="select-access-policy"
-                name="select-access-policy"
-                onChange={(e) => {
-                  setAccessPolicy(e.target.value as BucketAccess);
+        <FormLayout withBorders={false} containerPadding={false}>
+          <Select
+            value={accessPolicy}
+            label="Access Policy"
+            id="select-access-policy"
+            name="select-access-policy"
+            onChange={(value) => {
+              setAccessPolicy(value as BucketAccess);
+            }}
+            options={[
+              { value: BucketAccess.PRIVATE, label: "Private" },
+              { value: BucketAccess.PUBLIC, label: "Public" },
+              { value: BucketAccess.CUSTOM, label: "Custom" },
+            ]}
+          />
+          {accessPolicy === "PUBLIC" && (
+            <Box
+              className={"muted"}
+              style={{
+                marginTop: "25px",
+                fontSize: "14px",
+                fontStyle: "italic",
+              }}
+            >
+              * Warning: With Public access anyone will be able to upload,
+              download and delete files from this Bucket *
+            </Box>
+          )}
+          {accessPolicy === "CUSTOM" && (
+            <Grid item xs={12}>
+              <CodeMirrorWrapper
+                label={`Write Policy`}
+                value={policyDefinition}
+                onChange={(value) => {
+                  setPolicyDefinition(value);
                 }}
-                options={[
-                  { value: BucketAccess.PRIVATE, label: "Private" },
-                  { value: BucketAccess.PUBLIC, label: "Public" },
-                  { value: BucketAccess.CUSTOM, label: "Custom" },
-                ]}
+                editorHeight={"300px"}
               />
             </Grid>
-            {accessPolicy === "PUBLIC" && (
-              <div
-                style={{
-                  marginTop: "25px",
-                  fontSize: "14px",
-                  fontStyle: "italic",
-                  color: "#5E5E5E",
-                }}
-              >
-                * Warning: With Public access anyone will be able to upload,
-                download and delete files from this Bucket *
-              </div>
-            )}
-            {accessPolicy === "CUSTOM" && (
-              <Grid item xs={12}>
-                <CodeMirrorWrapper
-                  label={`Write Policy`}
-                  value={policyDefinition}
-                  onChange={(value) => {
-                    setPolicyDefinition(value);
-                  }}
-                  editorHeight={"300px"}
-                />
-              </Grid>
-            )}
-          </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
-            <Button
-              id={"cancel"}
-              type="button"
-              variant="regular"
-              onClick={() => {
-                closeModalAndRefresh();
-              }}
-              disabled={addLoading}
-              label={"Cancel"}
-            />
-            <Button
-              id={"set"}
-              type="submit"
-              variant="callAction"
-              disabled={
-                addLoading || (accessPolicy === "CUSTOM" && !policyDefinition)
-              }
-              label={"Set"}
-            />
-          </Grid>
-        </Grid>
+          )}
+        </FormLayout>
+        <Box sx={modalStyleUtils.modalButtonBar}>
+          <Button
+            id={"cancel"}
+            type="button"
+            variant="regular"
+            onClick={() => {
+              closeModalAndRefresh();
+            }}
+            disabled={addLoading}
+            label={"Cancel"}
+          />
+          <Button
+            id={"set"}
+            type="submit"
+            variant="callAction"
+            disabled={
+              addLoading || (accessPolicy === "CUSTOM" && !policyDefinition)
+            }
+            label={"Set"}
+          />
+        </Box>
       </form>
     </ModalWrapper>
   );
 };
 
-export default withStyles(styles)(SetAccessPolicy);
+export default SetAccessPolicy;

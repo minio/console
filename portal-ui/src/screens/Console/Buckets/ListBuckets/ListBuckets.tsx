@@ -15,9 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-
 import { useNavigate } from "react-router-dom";
-import { Theme } from "@mui/material/styles";
 import {
   AddIcon,
   BucketsIcon,
@@ -29,17 +27,11 @@ import {
   RefreshIcon,
   SelectAllIcon,
   SelectMultipleIcon,
+  Grid,
+  breakPoints,
 } from "mds";
 import { LinearProgress } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
-
-import BucketListItem from "./BucketListItem";
-import BulkReplicationModal from "./BulkReplicationModal";
+import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
 import { SecureComponent } from "../../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
@@ -49,20 +41,12 @@ import {
   IAM_SCOPES,
   permissionTooltipHelper,
 } from "../../../../common/SecureComponent/permissions";
-import SearchBox from "../../Common/SearchBox";
-import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
-import BulkLifecycleModal from "./BulkLifecycleModal";
-import hasPermission from "../../../../common/SecureComponent/accessControl";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { useSelector } from "react-redux";
 import { selFeatures } from "../../consoleSlice";
-import AutoColorIcon from "../../Common/Components/AutoColorIcon";
-import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import AButton from "../../Common/AButton/AButton";
 import { setLoadingObjects } from "../../ObjectBrowser/objectBrowserSlice";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
-import makeStyles from "@mui/styles/makeStyles";
 import { api } from "../../../../api";
 import {
   Bucket,
@@ -72,30 +56,19 @@ import {
 } from "../../../../api/consoleApi";
 import { errorToHandler } from "../../../../api/errors";
 import HelpMenu from "../../HelpMenu";
-
-const useStyles = makeStyles((theme: Theme) => ({
-  bucketList: {
-    marginTop: 25,
-    height: "calc(100vh - 211px)",
-    "&.isEmbedded": {
-      height: "calc(100vh - 128px)",
-    },
-  },
-  searchField: {
-    ...searchField.searchField,
-    minWidth: 380,
-    "@media (max-width: 900px)": {
-      minWidth: 220,
-    },
-  },
-  ...containerForHeader,
-  ...actionsTray,
-}));
+import AutoColorIcon from "../../Common/Components/AutoColorIcon";
+import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
+import AButton from "../../Common/AButton/AButton";
+import SearchBox from "../../Common/SearchBox";
+import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
+import BulkLifecycleModal from "./BulkLifecycleModal";
+import hasPermission from "../../../../common/SecureComponent/accessControl";
+import BucketListItem from "./BucketListItem";
+import BulkReplicationModal from "./BulkReplicationModal";
 
 const ListBuckets = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const classes = useStyles();
 
   const [records, setRecords] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -199,7 +172,6 @@ const ListBuckets = () => {
           onSelect={selectListBuckets}
           selected={selectedBuckets.includes(bucket.name)}
           bulkSelect={bulkSelect}
-          noManage={obOnly}
         />
       );
     }
@@ -246,7 +218,7 @@ const ListBuckets = () => {
       )}
 
       <PageLayout>
-        <Grid item xs={12} className={classes.actionsTray} display="flex">
+        <Grid item xs={12} sx={actionsTray.actionsTray}>
           {obOnly && (
             <Grid item xs>
               <AutoColorIcon marginRight={15} marginTop={10} />
@@ -256,21 +228,24 @@ const ListBuckets = () => {
             <SearchBox
               onChange={setFilterBuckets}
               placeholder="Search Buckets"
-              overrideClass={classes.searchField}
               value={filterBuckets}
+              sx={{
+                minWidth: 380,
+                [`@media (max-width: ${breakPoints.md}px)`]: {
+                  minWidth: 220,
+                },
+              }}
             />
           )}
 
           <Grid
             item
             xs={12}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"flex-end"}
             sx={{
-              "& button": {
-                marginLeft: "8px",
-              },
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: 5,
             }}
           >
             {!obOnly && (
@@ -408,7 +383,14 @@ const ListBuckets = () => {
           <Grid
             item
             xs={12}
-            className={`${classes.bucketList} ${obOnly ? "isEmbedded" : ""}`}
+            sx={{
+              marginTop: 25,
+              height: "calc(100vh - 211px)",
+              "&.isEmbedded": {
+                height: "calc(100vh - 128px)",
+              },
+            }}
+            className={obOnly ? "isEmbedded" : ""}
           >
             {filteredRecords.length !== 0 && (
               <VirtualizedList
@@ -417,12 +399,7 @@ const ListBuckets = () => {
               />
             )}
             {filteredRecords.length === 0 && filterBuckets !== "" && (
-              <Grid
-                container
-                justifyContent={"center"}
-                alignContent={"center"}
-                alignItems={"center"}
-              >
+              <Grid container>
                 <Grid item xs={8}>
                   <HelpBox
                     iconComponent={<BucketsIcon />}
@@ -437,12 +414,7 @@ const ListBuckets = () => {
               </Grid>
             )}
             {!hasBuckets && (
-              <Grid
-                container
-                justifyContent={"center"}
-                alignContent={"center"}
-                alignItems={"center"}
-              >
+              <Grid container>
                 <Grid item xs={8}>
                   <HelpBox
                     iconComponent={<BucketsIcon />}

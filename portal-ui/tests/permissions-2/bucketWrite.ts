@@ -39,11 +39,8 @@ test
       .useRole(roles.bucketWrite)
       .navigateTo("http://localhost:9090/buckets")
       .expect(
-        Selector("h1")
-          .withText(`${constants.TEST_BUCKET_NAME}-bucketwritew`)
-          .parent(1)
-          .find("p")
-          .nth(-1).innerText,
+        Selector(`#access-${constants.TEST_BUCKET_NAME}-bucketwritew`)
+          .innerText,
       )
       .eql("Access: W");
   })

@@ -41,6 +41,7 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
       logoLabelInverse: "#FFF",
       loaderColor: overrideVars.loaderColor,
       boxBackground: overrideVars.boxBackground,
+      mutedText: "#9c9c9c",
       buttons: {
         regular: {
           enabled: {
@@ -254,6 +255,7 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
         onBackgroundColor: overrideVars.okColor,
         switchBackground: overrideVars.switch.switchBackground,
         disabledBackground: overrideVars.switch.disabledBackground,
+        disabledOnBackground: overrideVars.switch.disabledBackground,
       },
       dropdownSelector: {
         hoverText: overrideVars.buttonStyles.hoverText,

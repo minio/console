@@ -14,12 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { DialogContentText, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
+import { Grid, InputBox } from "mds";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { useAppDispatch } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../systemSlice";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import KMSHelpBox from "../../KMS/KMSHelpbox";
@@ -61,7 +60,7 @@ const AddKeyModal = ({
         variant: "callAction",
       }}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           <KMSHelpBox
             helpText={"Create Key"}
             contents={[
@@ -69,8 +68,8 @@ const AddKeyModal = ({
             ]}
           />
 
-          <Grid item xs={12} marginTop={3}>
-            <InputBoxWrapper
+          <Grid item xs={12} sx={{ marginTop: 15 }}>
+            <InputBox
               id="key-name"
               name="key-name"
               label="Key Name"
@@ -86,7 +85,7 @@ const AddKeyModal = ({
               }}
             />
           </Grid>
-        </DialogContentText>
+        </Fragment>
       }
     />
   );

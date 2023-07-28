@@ -18,11 +18,18 @@ import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { AddIcon, Button, HelpBox, LambdaIcon, DataTable, Grid } from "mds";
+import {
+  AddIcon,
+  Button,
+  HelpBox,
+  LambdaIcon,
+  DataTable,
+  Grid,
+  SectionTitle,
+} from "mds";
 import { api } from "api";
 import { NotificationConfig } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
-import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
 import {
   hasPermission,
   SecureComponent,
@@ -31,7 +38,6 @@ import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
-import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import withSuspense from "../../Common/Components/withSuspense";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 
@@ -131,9 +137,10 @@ const BucketEventsPanel = () => {
         />
       )}
 
-      <Grid container>
-        <Grid item xs={12} sx={actionsTray.actionsTray}>
-          <PanelTitle>Events</PanelTitle>
+      <SectionTitle
+        separator
+        sx={{ marginBottom: 15 }}
+        actions={
           <SecureComponent
             scopes={[
               IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
@@ -156,7 +163,12 @@ const BucketEventsPanel = () => {
               />
             </TooltipWrapper>
           </SecureComponent>
-        </Grid>
+        }
+      >
+        Events
+      </SectionTitle>
+
+      <Grid container>
         <Grid item xs={12}>
           <SecureComponent
             scopes={[

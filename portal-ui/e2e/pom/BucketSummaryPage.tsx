@@ -27,9 +27,8 @@ export class BucketSummaryPage {
     await this.clickOnTab(`Summary`);
   }
 
-  async clickOnTab(tabName: string) {
-    const page = this.page;
-    await page.getByRole("tab", { name: tabName }).click();
+  async clickOnTab(tabID: string) {
+    await this.getLocator(`#${tabID}`).click();
 
     // await page.goto(`${BUCKET_LIST_PAGE}/${this.bucketName}/admin/${tabName}`);
   }
@@ -41,6 +40,6 @@ export class BucketSummaryPage {
 
   async getObjectVersionOption() {
     await this.page.getByRole("button", { name: "Add Lifecycle Rule" }).click();
-    return this.getLocator("#object_version");
+    return this.getLocator("#object_version-select > div").nth(0);
   }
 }

@@ -15,10 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import LabelValuePair from "../../../Common/UsageBarWrapper/LabelValuePair";
+import { Box, ValuePair, ActionLink } from "mds";
 import { SecureComponent } from "../../../../../common/SecureComponent";
-import ActionLink from "./ActionLink";
-import { Box } from "@mui/material";
+
 import EditActionButton from "./EditActionButton";
 
 type EditablePropertyItemProps = {
@@ -69,9 +68,10 @@ const EditablePropertyItem = ({
         display: "flex",
         alignItems: "baseline",
         justifyContent: "flex-start",
+        gap: 10,
       }}
     >
-      <LabelValuePair
+      <ValuePair
         label={property}
         value={
           <SecureAction
@@ -79,7 +79,12 @@ const EditablePropertyItem = ({
             iamScopes={iamScopes}
             secureCmpProps={secureCmpProps}
           >
-            <ActionLink isLoading={isLoading} onClick={onEdit} label={value} />
+            <ActionLink
+              isLoading={isLoading}
+              onClick={onEdit}
+              label={value}
+              sx={{ fontWeight: "bold" }}
+            />
           </SecureAction>
         }
       />

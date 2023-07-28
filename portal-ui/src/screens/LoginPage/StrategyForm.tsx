@@ -142,6 +142,7 @@ const StrategyForm = ({ redirectRules }: { redirectRules: RedirectRule[] }) => {
             />
             {redirectRules.length > 1 && (
               <DropdownSelector
+                id={"redirect-rules"}
                 options={ssoOptions}
                 selectedOption={""}
                 onSelect={(nValue) => submitSSOInitRequest(nValue)}

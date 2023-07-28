@@ -15,35 +15,22 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import { AddIcon, Button, DataTable, SectionTitle } from "mds";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Theme } from "@mui/material/styles";
-import { AddIcon, Button } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import Grid from "@mui/material/Grid";
-import {
-  actionsTray,
-  containerForHeader,
-  objectBrowserCommon,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { api } from "api";
+import { AccessRule as IAccessRule } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 import {
   hasPermission,
   SecureComponent,
 } from "../../../../common/SecureComponent";
-
-import withSuspense from "../../Common/Components/withSuspense";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
-import makeStyles from "@mui/styles/makeStyles";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
+import withSuspense from "../../Common/Components/withSuspense";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import { api } from "api";
-import { AccessRule as IAccessRule } from "api/consoleApi";
-import { errorToHandler } from "api/errors";
 
 const AddAccessRuleModal = withSuspense(
   React.lazy(() => import("./AddAccessRule")),
@@ -55,26 +42,8 @@ const EditAccessRuleModal = withSuspense(
   React.lazy(() => import("./EditAccessRule")),
 );
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    "@global": {
-      ".rowLine:hover  .iconFileElm": {
-        backgroundImage: "url(/images/ob_file_filled.svg)",
-      },
-      ".rowLine:hover  .iconFolderElm": {
-        backgroundImage: "url(/images/ob_folder_filled.svg)",
-      },
-    },
-    ...actionsTray,
-    ...searchField,
-    ...objectBrowserCommon,
-    ...containerForHeader,
-  }),
-);
-
 const AccessRule = () => {
   const dispatch = useAppDispatch();
-  const classes = useStyles();
   const params = useParams();
 
   const loadingBucket = useSelector(selBucketDetailsLoading);
@@ -196,60 +165,60 @@ const AccessRule = () => {
           initial={initialAccess}
         />
       )}
-      <Grid item xs={12} className={classes.actionsTray}>
-        <PanelTitle>Anonymous Access</PanelTitle>
-        <SecureComponent
-          scopes={[
-            IAM_SCOPES.S3_GET_BUCKET_POLICY,
-            IAM_SCOPES.S3_PUT_BUCKET_POLICY,
-            IAM_SCOPES.S3_GET_ACTIONS,
-            IAM_SCOPES.S3_PUT_ACTIONS,
+      <SectionTitle
+        separator
+        sx={{ marginBottom: 15 }}
+        actions={
+          <SecureComponent
+            scopes={[
+              IAM_SCOPES.S3_GET_BUCKET_POLICY,
+              IAM_SCOPES.S3_PUT_BUCKET_POLICY,
+              IAM_SCOPES.S3_GET_ACTIONS,
+              IAM_SCOPES.S3_PUT_ACTIONS,
+            ]}
+            resource={bucketName}
+            matchAll
+            errorProps={{ disabled: true }}
+          >
+            <TooltipWrapper tooltip={"Add Access Rule"}>
+              <Button
+                id={"add-bucket-access-rule"}
+                onClick={() => {
+                  setAddAccessRuleOpen(true);
+                }}
+                label={"Add Access Rule"}
+                icon={<AddIcon />}
+                variant={"callAction"}
+              />
+            </TooltipWrapper>
+          </SecureComponent>
+        }
+      >
+        Anonymous Access
+      </SectionTitle>
+      <SecureComponent
+        scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY, IAM_SCOPES.S3_GET_ACTIONS]}
+        resource={bucketName}
+        errorProps={{ disabled: true }}
+      >
+        <DataTable
+          itemActions={AccessRuleActions}
+          columns={[
+            {
+              label: "Prefix",
+              elementKey: "prefix",
+              renderFunction: (prefix: string) => {
+                return prefix || "/";
+              },
+            },
+            { label: "Access", elementKey: "access" },
           ]}
-          resource={bucketName}
-          matchAll
-          errorProps={{ disabled: true }}
-        >
-          <TooltipWrapper tooltip={"Add Access Rule"}>
-            <Button
-              id={"add-bucket-access-rule"}
-              onClick={() => {
-                setAddAccessRuleOpen(true);
-              }}
-              label={"Add Access Rule"}
-              icon={<AddIcon />}
-              variant={"callAction"}
-            />
-          </TooltipWrapper>
-        </SecureComponent>
-      </Grid>
-      <Grid item sx={{ border: "#EAEDEE 1px solid" }}>
-        <SecureComponent
-          scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY, IAM_SCOPES.S3_GET_ACTIONS]}
-          resource={bucketName}
-          errorProps={{ disabled: true }}
-        >
-          {accessRules && (
-            <TableWrapper
-              noBackground={true}
-              itemActions={AccessRuleActions}
-              columns={[
-                {
-                  label: "Prefix",
-                  elementKey: "prefix",
-                  renderFunction: (prefix: string) => {
-                    return prefix || "/";
-                  },
-                },
-                { label: "Access", elementKey: "access" },
-              ]}
-              isLoading={loadingAccessRules}
-              records={accessRules}
-              entityName="Access Rules"
-              idField="prefix"
-            />
-          )}
-        </SecureComponent>
-      </Grid>
+          isLoading={loadingAccessRules}
+          records={accessRules || []}
+          entityName="Access Rules"
+          idField="prefix"
+        />
+      </SecureComponent>
     </Fragment>
   );
 };

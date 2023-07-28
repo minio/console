@@ -15,17 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-
-import { DialogContentText } from "@mui/material";
-
+import { ConfirmDeleteIcon, Grid, InputBox } from "mds";
 import { ErrorResponseHandler } from "../../../../common/types";
-import useApi from "../../Common/Hooks/useApi";
-import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import { ConfirmDeleteIcon } from "mds";
-import Grid from "@mui/material/Grid";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import useApi from "../../Common/Hooks/useApi";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface IDeleteReplicationProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -97,7 +92,7 @@ const DeleteReplicationRule = ({
         disabled: deleteSelectedRules && confirmationText !== "Yes, I am sure",
       }}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           {deleteSelectedRules ? (
             <Fragment>
               Are you sure you want to remove the selected replication rules for
@@ -105,7 +100,7 @@ const DeleteReplicationRule = ({
               <br />
               To continue please type <b>Yes, I am sure</b> in the box.
               <Grid item xs={12}>
-                <InputBoxWrapper
+                <InputBox
                   id="retype-tenant"
                   name="retype-tenant"
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,7 +117,7 @@ const DeleteReplicationRule = ({
               <b>{ruleToDelete}</b>?
             </Fragment>
           )}
-        </DialogContentText>
+        </Fragment>
       }
     />
   );

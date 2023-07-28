@@ -15,24 +15,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { LinearProgress } from "@mui/material";
-import { Theme } from "@mui/material/styles";
-import { BucketQuotaIcon, Button } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
+import {
+  BucketQuotaIcon,
+  Button,
+  FormLayout,
+  InputBox,
+  Switch,
+  Grid,
+} from "mds";
 import {
   calculateBytes,
   getBytes,
   k8sScalarUnitsExcluding,
 } from "../../../../common/utils";
 
-import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 
@@ -41,15 +38,9 @@ import { useAppDispatch } from "../../../../store";
 import { BucketQuota } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    ...modalStyleUtils,
-  });
+import { LinearProgress } from "@mui/material";
 
 interface IEnableQuotaProps {
-  classes: any;
   open: boolean;
   enabled: boolean;
   cfg: BucketQuota | null;
@@ -58,7 +49,6 @@ interface IEnableQuotaProps {
 }
 
 const EnableQuota = ({
-  classes,
   open,
   enabled,
   cfg,
@@ -134,60 +124,48 @@ const EnableQuota = ({
           enableBucketEncryption();
         }}
       >
-        <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <FormSwitchWrapper
-                value="bucket_quota"
-                id="bucket_quota"
-                name="bucket_quota"
-                checked={quotaEnabled}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setQuotaEnabled(event.target.checked);
-                }}
-                label={"Enabled"}
-              />
-            </Grid>
-            {quotaEnabled && (
-              <React.Fragment>
-                <Grid item xs={12} className={classes.formFieldRow}>
-                  <Grid container>
-                    <Grid item xs={12}>
-                      <InputBoxWrapper
-                        id="quota_size"
-                        name="quota_size"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setQuotaSize(e.target.value);
-                          if (!e.target.validity.valid) {
-                            setValidInput(false);
-                          } else {
-                            setValidInput(true);
-                          }
-                        }}
-                        label="Quota"
-                        value={quotaSize}
-                        required
-                        min="1"
-                        overlayObject={
-                          <InputUnitMenu
-                            id={"quota_unit"}
-                            onUnitChange={(newValue) => {
-                              setQuotaUnit(newValue);
-                            }}
-                            unitSelected={quotaUnit}
-                            unitsList={k8sScalarUnitsExcluding(["Ki"])}
-                            disabled={false}
-                          />
-                        }
-                        error={!validInput ? "Please enter a valid quota" : ""}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </React.Fragment>
-            )}
-          </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
+        <FormLayout withBorders={false} containerPadding={false}>
+          <Switch
+            value="bucket_quota"
+            id="bucket_quota"
+            name="bucket_quota"
+            checked={quotaEnabled}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setQuotaEnabled(event.target.checked);
+            }}
+            label={"Enabled"}
+          />
+          {quotaEnabled && (
+            <InputBox
+              id="quota_size"
+              name="quota_size"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setQuotaSize(e.target.value);
+                if (!e.target.validity.valid) {
+                  setValidInput(false);
+                } else {
+                  setValidInput(true);
+                }
+              }}
+              label="Quota"
+              value={quotaSize}
+              required
+              min="1"
+              overlayObject={
+                <InputUnitMenu
+                  id={"quota_unit"}
+                  onUnitChange={(newValue) => {
+                    setQuotaUnit(newValue);
+                  }}
+                  unitSelected={quotaUnit}
+                  unitsList={k8sScalarUnitsExcluding(["Ki"])}
+                  disabled={false}
+                />
+              }
+              error={!validInput ? "Please enter a valid quota" : ""}
+            />
+          )}
+          <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
             <Button
               id={"cancel"}
               type="button"
@@ -212,10 +190,10 @@ const EnableQuota = ({
               <LinearProgress />
             </Grid>
           )}
-        </Grid>
+        </FormLayout>
       </form>
     </ModalWrapper>
   );
 };
 
-export default withStyles(styles)(EnableQuota);
+export default EnableQuota;
