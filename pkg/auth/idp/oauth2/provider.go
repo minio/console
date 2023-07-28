@@ -25,13 +25,13 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio-go/v7/pkg/set"
 
+	"github.com/minio/console/pkg/auth/token"
 	"github.com/minio/console/pkg/auth/utils"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/oauth2"
@@ -331,22 +331,23 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state, roleARN
 			return nil, errors.New("invalid token")
 		}
 
-		// expiration configured in the token itself
-		expiration := int(oauth2Token.Expiry.Sub(time.Now().UTC()).Seconds())
-
-		// check if user configured a hardcoded expiration for console via env variables
-		// and override the incoming expiration
-		userConfiguredExpiration := getIDPTokenExpiration()
-		if userConfiguredExpiration != "" {
-			expiration, _ = strconv.Atoi(userConfiguredExpiration)
+		expiration := token.GetConsoleSTSDuration()
+		if exp := getIDPTokenExpiration(); exp > 0 {
+			expiration = exp
 		}
+
+		// Use the expiration configured in the token itself if it is closer than the configured value
+		if exp := oauth2Token.Expiry.Sub(time.Now().UTC()); exp < expiration {
+			expiration = exp
+		}
+
 		idToken := oauth2Token.Extra("id_token")
 		if idToken == nil {
 			return nil, errors.New("missing id_token")
 		}
 		token := &credentials.WebIdentityToken{
 			Token:  idToken.(string),
-			Expiry: expiration,
+			Expiry: int(expiration.Seconds()),
 		}
 		if client.UserInfo { // look for access_token only if userinfo is requested.
 			accessToken := oauth2Token.Extra("access_token")
