@@ -41,13 +41,25 @@ export const addBucketAsync = createAsyncThunk(
     const retentionValidity = state.addBucket.retentionValidity;
     const distributedSetup = state.system.distributedSetup;
     const siteReplicationInfo = state.system.siteReplicationInfo;
+    const excludeFolders = state.addBucket.excludeFolders;
+    const excludedPrefixes = state.addBucket.excludedPrefixes;
 
     let request: MakeBucketRequest = {
       name: bucketName,
-      versioning:
-        distributedSetup && !siteReplicationInfo.enabled
-          ? versioningEnabled
-          : false,
+      versioning: {
+        enabled:
+          distributedSetup && !siteReplicationInfo.enabled
+            ? versioningEnabled
+            : false,
+        excludePrefixes:
+          distributedSetup && !siteReplicationInfo.enabled && !lockingEnabled
+            ? excludedPrefixes.split(",").filter((item) => item.trim() !== "")
+            : [],
+        excludeFolders:
+          distributedSetup && !siteReplicationInfo.enabled && !lockingEnabled
+            ? excludeFolders
+            : false,
+      },
       locking: distributedSetup ? lockingEnabled : false,
     };
 

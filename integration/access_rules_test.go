@@ -31,7 +31,7 @@ import (
 func Test_AddAccessRuleAPI(t *testing.T) {
 	assert := assert.New(t)
 
-	AddBucket("testaccessruleadd", false, false, nil, nil)
+	AddBucket("testaccessruleadd", false, nil, nil, nil)
 
 	type args struct {
 		bucket string
@@ -111,7 +111,7 @@ func Test_AddAccessRuleAPI(t *testing.T) {
 func Test_GetAccessRulesAPI(t *testing.T) {
 	assert := assert.New(t)
 
-	AddBucket("testaccessruleget", false, false, nil, nil)
+	AddBucket("testaccessruleget", false, nil, nil, nil)
 
 	type args struct {
 		bucket string
@@ -161,7 +161,7 @@ func Test_GetAccessRulesAPI(t *testing.T) {
 func Test_DeleteAccessRuleAPI(t *testing.T) {
 	assert := assert.New(t)
 
-	AddBucket("testaccessruledelete", false, false, nil, nil)
+	AddBucket("testaccessruledelete", false, nil, nil, nil)
 
 	type args struct {
 		prefix string

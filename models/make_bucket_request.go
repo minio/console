@@ -50,7 +50,7 @@ type MakeBucketRequest struct {
 	Retention *PutBucketRetentionRequest `json:"retention,omitempty"`
 
 	// versioning
-	Versioning bool `json:"versioning,omitempty"`
+	Versioning *SetBucketVersioning `json:"versioning,omitempty"`
 }
 
 // Validate validates this make bucket request
@@ -66,6 +66,10 @@ func (m *MakeBucketRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRetention(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVersioning(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -122,6 +126,25 @@ func (m *MakeBucketRequest) validateRetention(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *MakeBucketRequest) validateVersioning(formats strfmt.Registry) error {
+	if swag.IsZero(m.Versioning) { // not required
+		return nil
+	}
+
+	if m.Versioning != nil {
+		if err := m.Versioning.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("versioning")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("versioning")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this make bucket request based on the context it is used
 func (m *MakeBucketRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -131,6 +154,10 @@ func (m *MakeBucketRequest) ContextValidate(ctx context.Context, formats strfmt.
 	}
 
 	if err := m.contextValidateRetention(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVersioning(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -164,6 +191,22 @@ func (m *MakeBucketRequest) contextValidateRetention(ctx context.Context, format
 				return ve.ValidateName("retention")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("retention")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *MakeBucketRequest) contextValidateVersioning(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Versioning != nil {
+		if err := m.Versioning.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("versioning")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("versioning")
 			}
 			return err
 		}

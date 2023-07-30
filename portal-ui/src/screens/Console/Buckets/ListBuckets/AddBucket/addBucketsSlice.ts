@@ -34,6 +34,8 @@ export interface AddBucketState {
   retentionUnit: string;
   retentionValidity: number;
   navigateTo: string;
+  excludeFolders: boolean;
+  excludedPrefixes: string;
 }
 
 const initialState: AddBucketState = {
@@ -52,6 +54,8 @@ const initialState: AddBucketState = {
   retentionUnit: "days",
   retentionValidity: 180,
   navigateTo: "",
+  excludeFolders: false,
+  excludedPrefixes: "",
 };
 
 export const addBucketsSlice = createSlice({
@@ -80,6 +84,12 @@ export const addBucketsSlice = createSlice({
         state.retentionUnit = "days";
         state.retentionValidity = 180;
       }
+    },
+    setExcludeFolders: (state, action: PayloadAction<boolean>) => {
+      state.excludeFolders = action.payload;
+    },
+    setExcludedPrefixes: (state, action: PayloadAction<string>) => {
+      state.excludedPrefixes = action.payload;
     },
     setEnableObjectLocking: (state, action: PayloadAction<boolean>) => {
       state.lockingEnabled = action.payload;
@@ -196,6 +206,8 @@ export const {
   setRetentionMode,
   setRetentionUnit,
   setRetentionValidity,
+  setExcludedPrefixes,
+  setExcludeFolders,
 } = addBucketsSlice.actions;
 
 export default addBucketsSlice.reducer;
