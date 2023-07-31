@@ -383,6 +383,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
+        timeout-minutes: 10
         run: npx testcafe "chrome:headless" portal-ui/tests/permissions-4/ -q --skip-js-errors -c 3
 
   all-permissions-5:
@@ -425,6 +426,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
+        timeout-minutes: 5
         run: npx testcafe "chrome:headless" portal-ui/tests/permissions-5/ -q --skip-js-errors -c 3
 
   all-permissions-6:
@@ -467,6 +469,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
+        timeout-minutes: 5
         run: npx testcafe "chrome:headless" portal-ui/tests/permissions-6/ -q --skip-js-errors -c 3
 
   all-permissions-7:
@@ -508,6 +511,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
+        timeout-minutes: 5
         run: npx testcafe "chrome:headless" portal-ui/tests/permissions-7/ -q --skip-js-errors -c 3
 
   all-permissions-8:
@@ -550,6 +554,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
+        timeout-minutes: 5
         run: npx testcafe "chrome:headless" portal-ui/tests/permissions-8/ -q --skip-js-errors -c 3
 
   all-permissions-9:
