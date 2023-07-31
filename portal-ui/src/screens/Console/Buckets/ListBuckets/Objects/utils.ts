@@ -18,8 +18,52 @@ import { BucketObjectItem } from "./ListObjects/types";
 import { encodeURLString } from "../../../../../common/utils";
 import { removeTrace } from "../../../ObjectBrowser/transferManager";
 import store from "../../../../../store";
-import { PermissionResource } from "api/consoleApi";
+import { ContentType, PermissionResource } from "api/consoleApi";
+import { api } from "../../../../../api";
+import { setErrorSnackMessage } from "../../../../../systemSlice";
 
+const downloadWithLink = (href: string, downloadFileName: string) => {
+  const link = document.createElement("a");
+  link.href = href;
+  link.download = downloadFileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+export const downloadSelectedAsZip = async (
+  bucketName: string,
+  objectList: string[],
+  resultFileName: string,
+) => {
+  const state = store.getState();
+  const anonymousMode = state.system.anonymousMode;
+
+  try {
+    const resp = await api.buckets.downloadMultipleObjects(
+      bucketName,
+      objectList,
+      {
+        type: ContentType.Json,
+        headers: anonymousMode
+          ? {
+              "X-Anonymous": "1",
+            }
+          : undefined,
+      },
+    );
+    const blob = await resp.blob();
+    const href = window.URL.createObjectURL(blob);
+    downloadWithLink(href, resultFileName);
+  } catch (err: any) {
+    store.dispatch(
+      setErrorSnackMessage({
+        errorMessage: `Download of multiple files failed. ${err.statusText}`,
+        detailedError: "",
+      }),
+    );
+  }
+};
 export const download = (
   bucketName: string,
   objectPath: string,
@@ -33,8 +77,6 @@ export const download = (
   abortCallback: () => void,
   toastCallback: () => void,
 ) => {
-  const anchor = document.createElement("a");
-  document.body.appendChild(anchor);
   let basename = document.baseURI.replace(window.location.origin, "");
   const state = store.getState();
   const anonymousMode = state.system.anonymousMode;
@@ -90,12 +132,7 @@ export const download = (
 
         removeTrace(id);
 
-        var link = document.createElement("a");
-        link.href = window.URL.createObjectURL(req.response);
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        downloadWithLink(window.URL.createObjectURL(req.response), filename);
       } else {
         if (req.getResponseHeader("Content-Type") === "application/json") {
           const rspBody: { detailedMessage?: string } = JSON.parse(

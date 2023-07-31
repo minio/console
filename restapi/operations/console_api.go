@@ -211,6 +211,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		ObjectDownloadObjectHandler: object.DownloadObjectHandlerFunc(func(params object.DownloadObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.DownloadObject has not yet been implemented")
 		}),
+		ObjectDownloadMultipleObjectsHandler: object.DownloadMultipleObjectsHandlerFunc(func(params object.DownloadMultipleObjectsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation object.DownloadMultipleObjects has not yet been implemented")
+		}),
 		TieringEditTierCredentialsHandler: tiering.EditTierCredentialsHandlerFunc(func(params tiering.EditTierCredentialsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation tiering.EditTierCredentials has not yet been implemented")
 		}),
@@ -701,6 +704,8 @@ type ConsoleAPI struct {
 	BucketDisableBucketEncryptionHandler bucket.DisableBucketEncryptionHandler
 	// ObjectDownloadObjectHandler sets the operation handler for the download object operation
 	ObjectDownloadObjectHandler object.DownloadObjectHandler
+	// ObjectDownloadMultipleObjectsHandler sets the operation handler for the download multiple objects operation
+	ObjectDownloadMultipleObjectsHandler object.DownloadMultipleObjectsHandler
 	// TieringEditTierCredentialsHandler sets the operation handler for the edit tier credentials operation
 	TieringEditTierCredentialsHandler tiering.EditTierCredentialsHandler
 	// BucketEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
@@ -1144,6 +1149,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.ObjectDownloadObjectHandler == nil {
 		unregistered = append(unregistered, "object.DownloadObjectHandler")
+	}
+	if o.ObjectDownloadMultipleObjectsHandler == nil {
+		unregistered = append(unregistered, "object.DownloadMultipleObjectsHandler")
 	}
 	if o.TieringEditTierCredentialsHandler == nil {
 		unregistered = append(unregistered, "tiering.EditTierCredentialsHandler")
@@ -1761,6 +1769,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects/download"] = object.NewDownloadObject(o.context, o.ObjectDownloadObjectHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/buckets/{bucket_name}/objects/download-multiple"] = object.NewDownloadMultipleObjects(o.context, o.ObjectDownloadMultipleObjectsHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
