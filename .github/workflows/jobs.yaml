@@ -384,7 +384,7 @@ jobs:
 
       - name: Run TestCafe Tests
         timeout-minutes: 10
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-4/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-4/ --skip-js-errors
 
   all-permissions-5:
     name: Permissions Tests Part 5
@@ -427,7 +427,7 @@ jobs:
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-5/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-5/ --skip-js-errors
 
   all-permissions-6:
     name: Permissions Tests Part 6
@@ -470,7 +470,7 @@ jobs:
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-6/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-6/ --skip-js-errors
 
   all-permissions-7:
     name: Permissions Tests Part 7
@@ -512,7 +512,7 @@ jobs:
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-7/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-7/ --skip-js-errors
 
   all-permissions-8:
     name: Permissions Tests Part 8
@@ -555,7 +555,7 @@ jobs:
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-8/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-8/ --skip-js-errors
 
   all-permissions-9:
     name: Permissions Tests Part 9
@@ -597,7 +597,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-9/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-9/ --skip-js-errors -c 3
 
       - name: Clean up users & policies
         run: |
@@ -643,7 +643,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-A/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-A/ --skip-js-errors -c 3
 
       - name: Clean up users & policies
         run: |
@@ -689,7 +689,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-B/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-B/ --skip-js-errors -c 3
 
       - name: Clean up users & policies
         run: |
