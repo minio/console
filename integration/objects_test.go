@@ -17,8 +17,10 @@
 package integration
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
@@ -190,6 +192,89 @@ func TestObjectGet(t *testing.T) {
 			assert.Nil(err, fmt.Sprintf("%s returned an error: %v", tt.name, err))
 			if response != nil {
 				assert.Equal(tt.expectedStatus, response.StatusCode, fmt.Sprintf("%s returned the wrong status code", tt.name))
+			}
+		})
+	}
+}
+
+func downloadMultipleFiles(bucketName string, objects []string) (*http.Response, error) {
+	requestURL := fmt.Sprintf("http://localhost:9090/api/v1/buckets/%s/objects/download-multiple", bucketName)
+
+	postReqParams, _ := json.Marshal(objects)
+	reqBody := bytes.NewReader(postReqParams)
+
+	request, err := http.NewRequest(
+		"POST", requestURL, reqBody)
+	if err != nil {
+		log.Println(err)
+		return nil, nil
+	}
+
+	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
+	request.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	response, err := client.Do(request)
+	return response, err
+}
+
+func TestDownloadMultipleFiles(t *testing.T) {
+	assert := assert.New(t)
+	type args struct {
+		bucketName string
+		objectLis  []string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		expectedStatus int
+		expectedError  bool
+	}{
+		{
+			name: "Test empty Bucket",
+			args: args{
+				bucketName: "",
+			},
+			expectedStatus: 400,
+			expectedError:  true,
+		},
+		{
+			name: "Test empty object list",
+			args: args{
+				bucketName: "test-bucket",
+			},
+			expectedStatus: 400,
+			expectedError:  true,
+		},
+		{
+			name: "Test with bucket and object list",
+			args: args{
+				bucketName: "test-bucket",
+				objectLis: []string{
+					"my-object.txt",
+					"test-prefix/",
+					"test-prefix/nested-prefix/",
+					"test-prefix/nested-prefix/deep-nested/",
+				},
+			},
+			expectedStatus: 200,
+			expectedError:  false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resp, err := downloadMultipleFiles(tt.args.bucketName, tt.args.objectLis)
+			if tt.expectedError {
+				assert.Nil(err)
+				if err != nil {
+					log.Println(err)
+					return
+				}
+			}
+			if resp != nil {
+				assert.NotNil(resp)
 			}
 		})
 	}

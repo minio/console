@@ -915,7 +915,7 @@ const ListObjects = () => {
   const downloadToolTip =
     selectedObjects?.length <= 1
       ? "Download Selected"
-      : ` Download selected objects as Zip. Note: Any prefix selected would download as a different zip. Any Deleted objects in the selection would be skipped from download.`;
+      : ` Download selected objects as Zip. Any Deleted objects in the selection would be skipped from download.`;
 
   const multiActionButtons = [
     {
