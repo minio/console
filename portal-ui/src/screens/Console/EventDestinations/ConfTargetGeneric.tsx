@@ -98,6 +98,7 @@ const ConfTargetGeneric = ({
 
   const setValueElement = (key: string, value: string, index: number) => {
     const valuesDup = [...valueHolder];
+    value = value.trim();
     valuesDup[index] = { key, value };
 
     setValueHolder(valuesDup);
