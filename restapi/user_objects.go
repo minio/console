@@ -641,41 +641,98 @@ func getMultipleFilesDownloadResponse(session *models.Principal, params objectAp
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
+	minioClient := minioClient{client: mClient}
 
-	fmt.Print("Object List::", params.ObjectList)
 	resp, pw := io.Pipe()
 	// Create file async
 	go func() {
 		defer pw.Close()
 		zipw := zip.NewWriter(pw)
 		defer zipw.Close()
-		for _, dObj := range params.ObjectList {
-			objectData, serr := mClient.StatObject(ctx, params.BucketName, dObj, minio.StatObjectOptions{})
-			if serr != nil {
-				// Ignore errors, move to next
-				continue
-			}
-			// any prefixes, DEL markers would be skipped
-			object, err := mClient.GetObject(ctx, params.BucketName, dObj, minio.GetObjectOptions{})
-			if err != nil {
-				// Ignore errors, move to next
-				continue
-			}
+
+		addToZip := func(name string, modified time.Time) (io.Writer, error) {
 			f, err := zipw.CreateHeader(&zip.FileHeader{
-				Name:     dObj,
+				Name:     name,
 				NonUTF8:  false,
 				Method:   zip.Deflate,
-				Modified: objectData.LastModified,
+				Modified: modified,
 			})
-			if err != nil {
-				// Ignore errors, move to next
-				continue
-			}
-			_, err = io.Copy(f, object)
-			if err != nil {
-				// We have a partial object, report error.
-				pw.CloseWithError(err)
-				return
+			return f, err
+		}
+
+		for _, dObj := range params.ObjectList {
+			// if a prefix is selected, list and add objects recursively
+			// the prefixes are not base64 encoded.
+			if strings.HasSuffix(dObj, "/") {
+				prefix := dObj
+
+				folders := strings.Split(prefix, "/")
+
+				var folder string
+				if len(folders) > 1 {
+					folder = folders[len(folders)-2]
+				}
+
+				objects, err := listBucketObjects(ListObjectsOpts{
+					ctx:          ctx,
+					client:       minioClient,
+					bucketName:   params.BucketName,
+					prefix:       prefix,
+					recursive:    true,
+					withVersions: false,
+					withMetadata: false,
+				})
+				if err != nil {
+					pw.CloseWithError(err)
+				}
+
+				for i, obj := range objects {
+					name := folder + objects[i].Name[len(prefix)-1:]
+
+					object, err := mClient.GetObject(ctx, params.BucketName, obj.Name, minio.GetObjectOptions{})
+					if err != nil {
+						// Ignore errors, move to next
+						continue
+					}
+					modified, _ := time.Parse(time.RFC3339, obj.LastModified)
+
+					f, err := addToZip(name, modified)
+					if err != nil {
+						// Ignore errors, move to next
+						continue
+					}
+					_, err = io.Copy(f, object)
+					if err != nil {
+						// We have a partial object, report error.
+						pw.CloseWithError(err)
+						return
+					}
+				}
+
+			} else {
+				// add selected individual object
+				objectData, err := mClient.StatObject(ctx, params.BucketName, dObj, minio.StatObjectOptions{})
+				if err != nil {
+					// Ignore errors, move to next
+					continue
+				}
+				object, err := mClient.GetObject(ctx, params.BucketName, dObj, minio.GetObjectOptions{})
+				if err != nil {
+					// Ignore errors, move to next
+					continue
+				}
+
+				f, err := addToZip(dObj, objectData.LastModified)
+				if err != nil {
+					// Ignore errors, move to next
+					continue
+				}
+				_, err = io.Copy(f, object)
+				if err != nil {
+					// We have a partial object, report error.
+					pw.CloseWithError(err)
+					return
+				}
 			}
 		}
 	}()

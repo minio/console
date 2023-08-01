@@ -127,35 +127,20 @@ export const downloadSelected = createAsyncThunk(
             "LL-dd-yyyy-HH-mm-ss",
           )}_files_list.zip`;
 
-          const prefixesToDownload: BucketObjectItem[] = [];
           // We are enforcing zip download when multiple files are selected for better user experience
           const multiObjList = itemsToDownload.reduce((dwList: any[], bi) => {
-            // Download only objects as zip, and download each prefix individually as zip.
+            // Download objects/prefixes(recursively) as zip
             // Skip any deleted files selected via "Show deleted objects" in selection and log for debugging
-            const isPrefix = bi?.name.endsWith("/");
             const isDeleted = bi?.delete_flag;
-
-            if (bi && !isPrefix && !isDeleted) {
+            if (bi && !isDeleted) {
               dwList.push(bi.name);
             } else {
-              if (isPrefix && !isDeleted) {
-                prefixesToDownload.push(bi);
-              } else {
-                console.log(`Skipping ${bi?.name} from download.`);
-              }
+              console.log(`Skipping ${bi?.name} from download.`);
             }
             return dwList;
           }, []);
 
-          //  Download selected objects as Zip.
-          //  can we batch with some limit like 100 or 1000 files at a time?
           await downloadSelectedAsZip(bucketName, multiObjList, fileName);
-          // now begin download of each selected prefix as zip
-          if (prefixesToDownload.length) {
-            prefixesToDownload.forEach((prefix) => {
-              downloadObject(prefix);
-            });
-          }
           return;
         }
       }

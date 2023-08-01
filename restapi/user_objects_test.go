@@ -1483,6 +1483,19 @@ func Test_getMultipleFilesDownloadResponse(t *testing.T) {
 			want:  nil,
 			want1: nil,
 		},
+		{
+			name: "few prefixes and a file sent for download",
+			args: args{
+				session: nil,
+				params: object.DownloadMultipleObjectsParams{
+					HTTPRequest: &http.Request{},
+					BucketName:  "test-bucket",
+					ObjectList:  []string{"my-folder/", "my-folder/test-nested", "z-obj.png"},
+				},
+			},
+			want:  nil,
+			want1: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
