@@ -1,67 +1,34 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2022 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { Fragment, useEffect, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { Theme } from "@mui/material/styles";
-import { Button, PageLayout } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { Grid } from "@mui/material";
-import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
+import { Button, PageLayout, FormLayout, Box, Checkbox, InputLabel } from "mds";
 import { wsProtocol } from "../../../utils/wsUtils";
-import {
-  actionsTray,
-  containerForHeader,
-  inlineCheckboxes,
-} from "../Common/FormComponents/common/styleLibrary";
 import { useNavigate } from "react-router-dom";
-import RegisterCluster from "./RegisterCluster";
 import { registeredCluster } from "../../../config";
-import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import HelpMenu from "../HelpMenu";
 import { useAppDispatch } from "../../../store";
 import { setHelpName } from "../../../systemSlice";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      display: "flex",
-      justifyContent: "flex-end",
-      marginTop: 24,
-      "& button": {
-        marginLeft: 8,
-      },
-    },
-    dropdown: {
-      marginBottom: 24,
-    },
-    checkboxLabel: {
-      marginTop: 12,
-      marginRight: 4,
-      fontSize: 16,
-      fontWeight: 500,
-    },
-    checkboxDisabled: {
-      opacity: 0.5,
-    },
-    inlineCheckboxes: {
-      ...inlineCheckboxes.inlineCheckboxes,
-      alignItems: "center",
-
-      "@media (max-width: 900px)": {
-        flexFlow: "column",
-        alignItems: "flex-start",
-      },
-    },
-    ...actionsTray,
-    ...containerForHeader,
-  });
-
-interface IProfileProps {
-  classes: any;
-}
+import RegisterCluster from "./RegisterCluster";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 var c: any = null;
 
-const Profile = ({ classes }: IProfileProps) => {
+const Profile = () => {
   const navigate = useNavigate();
 
   const [profilingStarted, setProfilingStarted] = useState<boolean>(false);
@@ -150,34 +117,39 @@ const Profile = ({ classes }: IProfileProps) => {
   return (
     <Fragment>
       <PageHeaderWrapper label="Profile" actions={<HelpMenu />} />
-
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
-        <Grid item xs={12} className={classes.boxy}>
-          <Grid item xs={12} className={classes.dropdown}>
-            <Grid
-              item
-              xs={12}
-              className={`${classes.inlineCheckboxes} ${
-                profilingStarted && classes.checkboxDisabled
-              }`}
-            >
-              <div className={classes.checkboxLabel}>Types to profile:</div>
-              {typesList.map((t) => (
-                <CheckboxWrapper
-                  checked={types.indexOf(t.value) > -1}
-                  disabled={profilingStarted}
-                  key={`checkbox-${t.label}`}
-                  id={`checkbox-${t.label}`}
-                  label={t.label}
-                  name={`checkbox-${t.label}`}
-                  onChange={onCheckboxClick}
-                  value={t.value}
-                />
-              ))}
-            </Grid>
-          </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
+        <FormLayout>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 10,
+              "& div": { width: "initial" },
+              "& .inputItem:not(:last-of-type)": { marginBottom: 0 },
+            }}
+          >
+            <InputLabel noMinWidth>Types to profile:</InputLabel>
+            {typesList.map((t) => (
+              <Checkbox
+                checked={types.indexOf(t.value) > -1}
+                disabled={profilingStarted}
+                key={`checkbox-${t.label}`}
+                id={`checkbox-${t.label}`}
+                label={t.label}
+                name={`checkbox-${t.label}`}
+                onChange={onCheckboxClick}
+                value={t.value}
+              />
+            ))}
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: 24,
+              gap: 10,
+            }}
+          >
             <Button
               id={"start-profiling"}
               type="submit"
@@ -203,11 +175,11 @@ const Profile = ({ classes }: IProfileProps) => {
               }}
               label={"Stop Profiling"}
             />
-          </Grid>
-        </Grid>
+          </Box>
+        </FormLayout>
       </PageLayout>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(Profile);
+export default Profile;

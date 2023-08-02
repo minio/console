@@ -15,25 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Box, DialogContentText } from "@mui/material";
 import {
+  Box,
+  breakPoints,
   Button,
+  FormLayout,
   HelpBox,
+  InputBox,
   InspectMenuIcon,
   PageLayout,
   PasswordKeyIcon,
+  Switch,
 } from "mds";
 import { useNavigate } from "react-router-dom";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import {
-  deleteDialogStyles,
-  modalStyleUtils,
-} from "../Common/FormComponents/common/styleLibrary";
-import withStyles from "@mui/styles/withStyles";
 import { useSelector } from "react-redux";
 import {
   deleteCookie,
@@ -41,27 +35,19 @@ import {
   getCookieValue,
   performDownload,
 } from "../../../common/utils";
-import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
-import KeyRevealer from "./KeyRevealer";
 import {
   selDistSet,
   setErrorSnackMessage,
   setHelpName,
 } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-import RegisterCluster from "../Support/RegisterCluster";
 import { registeredCluster } from "../../../config";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
+import KeyRevealer from "./KeyRevealer";
+import RegisterCluster from "../Support/RegisterCluster";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    switchLabel: {
-      fontWeight: "normal",
-    },
-    ...deleteDialogStyles,
-    ...modalStyleUtils,
-  });
 
 const ExampleBlock = ({
   volumeVal,
@@ -77,9 +63,9 @@ const ExampleBlock = ({
           sx={{
             display: "flex",
             marginBottom: "5px",
-            flexFlow: {
-              sm: "row",
-              xs: "column",
+            flexFlow: "row",
+            [`@media (max-width: ${breakPoints.sm}px)`]: {
+              flexFlow: "column",
             },
           }}
         >
@@ -88,9 +74,9 @@ const ExampleBlock = ({
         <Box
           sx={{
             display: "flex",
-            flexFlow: {
-              sm: "row",
-              xs: "column",
+            flexFlow: "row",
+            [`@media (max-width: ${breakPoints.sm}px)`]: {
+              flexFlow: "column",
             },
           }}
         >
@@ -102,7 +88,7 @@ const ExampleBlock = ({
   );
 };
 
-const Inspect = ({ classes }: { classes: any }) => {
+const Inspect = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const distributedSetup = useSelector(selDistSet);
@@ -218,200 +204,13 @@ const Inspect = ({ classes }: { classes: any }) => {
             entity={"Inspect"}
           />
         ) : (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "flex-start",
-              border: "1px solid #eaeaea",
-              padding: {
-                lg: "40px",
-                xs: "15px",
-              },
-              flexWrap: "wrap",
-              gap: {
-                lg: "55px",
-                xs: "20px",
-              },
-              height: {
-                md: "calc(100vh - 120px)",
-                xs: "100%",
-              },
-              flexFlow: {
-                lg: "row",
-                xs: "column",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                border: "1px solid #eaeaea",
-                flex: {
-                  md: 2,
-                  xs: 1,
-                },
-                width: {
-                  lg: "auto",
-                  xs: "100%",
-                },
-                padding: {
-                  lg: "40px",
-                  xs: "15px",
-                },
-              }}
-            >
-              <form
-                noValidate
-                autoComplete="off"
-                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                  e.preventDefault();
-                  if (!clusterRegistered) {
-                    navigate("/support/register");
-                    return;
-                  }
-                  performInspect();
-                }}
-              >
-                <Box>
-                  <InputBoxWrapper
-                    id="inspect_volume"
-                    name="inspect_volume"
-                    extraInputProps={{
-                      "data-test-id": "inspect_volume",
-                    }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setVolumeName(e.target.value);
-                    }}
-                    label="Volume or Bucket Name"
-                    value={volumeName}
-                    error={volumeError}
-                    required
-                    placeholder={"test-bucket"}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    marginTop: "15px",
-                  }}
-                >
-                  <InputBoxWrapper
-                    id="inspect_path"
-                    name="inspect_path"
-                    extraInputProps={{
-                      "data-test-id": "inspect_path",
-                    }}
-                    error={pathError}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setInspectPath(e.target.value);
-                    }}
-                    label="File or Path to inspect"
-                    value={inspectPath}
-                    required
-                    placeholder={"test*/xl.meta"}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    marginTop: "25px",
-                  }}
-                >
-                  <FormSwitchWrapper
-                    classes={{
-                      inputLabel: classes.switchLabel,
-                    }}
-                    extraInputProps={{
-                      "data-test-id": "inspect_encrypt",
-                    }}
-                    label="Encrypt"
-                    indicatorLabels={["True", "False"]}
-                    checked={isEncrypt}
-                    value={"true"}
-                    id="inspect_encrypt"
-                    name="inspect_encrypt"
-                    onChange={(e) => {
-                      setIsEncrypt(!isEncrypt);
-                    }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                    marginTop: "55px",
-                  }}
-                >
-                  <Button
-                    id={"inspect-clear-button"}
-                    style={{
-                      marginRight: "15px",
-                    }}
-                    type="button"
-                    variant="regular"
-                    data-test-id="inspect-clear-button"
-                    onClick={resetForm}
-                    label={"Clear"}
-                  />
-                  <Button
-                    id={"inspect-start"}
-                    type="submit"
-                    variant={!clusterRegistered ? "regular" : "callAction"}
-                    data-test-id="inspect-submit-button"
-                    disabled={!isFormValid}
-                    label={"Inspect"}
-                  />
-                </Box>
-              </form>
-            </Box>
-            <Box
-              sx={{
-                flex: 1,
-                minWidth: {
-                  md: "365px",
-                  xs: "100%",
-                },
-                width: "100%",
-              }}
-            >
+          <FormLayout
+            helpBox={
               <HelpBox
-                title={""}
-                iconComponent={null}
+                title={"Learn more about the Inspect feature"}
+                iconComponent={<InspectMenuIcon />}
                 help={
                   <Fragment>
-                    <Box
-                      sx={{
-                        marginTop: "-25px",
-                        fontSize: "16px",
-                        fontWeight: 600,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "flex-start",
-                        padding: "2px",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          backgroundColor: "#07193E",
-                          height: "15px",
-                          width: "15px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: "50%",
-                          marginRight: "18px",
-                          padding: "3px",
-                          "& .min-icon": {
-                            height: "11px",
-                            width: "11px",
-                            fill: "#ffffff",
-                          },
-                        }}
-                      >
-                        <InspectMenuIcon />
-                      </Box>
-                      Learn more about the Inspect feature
-                    </Box>
-
                     <Box
                       sx={{
                         marginTop: "16px",
@@ -429,16 +228,6 @@ const Inspect = ({ classes }: { classes: any }) => {
                         flexFlow: "column",
                         fontSize: "14px",
                         flex: "2",
-                        "& .step-number": {
-                          color: "#ffffff",
-                          height: "25px",
-                          width: "25px",
-                          background: "#081C42",
-                          marginRight: "10px",
-                          textAlign: "center",
-                          fontWeight: 600,
-                          borderRadius: "50%",
-                        },
 
                         "& .step-row": {
                           fontSize: "14px",
@@ -472,19 +261,16 @@ const Inspect = ({ classes }: { classes: any }) => {
 
                         "& .example-code-block label": {
                           display: "inline-block",
-                          width: {
-                            sm: "160px",
-                            xs: "100%",
-                          },
+                          width: 160,
                           fontWeight: 600,
-                          fontSize: "14px",
+                          fontSize: 14,
+                          [`@media (max-width: ${breakPoints.sm}px)`]: {
+                            width: "100%",
+                          },
                         },
 
                         "& code": {
-                          width: {
-                            sm: "100px",
-                            xs: "100%",
-                          },
+                          width: 100,
                           paddingLeft: "10px",
                           fontFamily: "monospace",
                           paddingRight: "10px",
@@ -493,8 +279,10 @@ const Inspect = ({ classes }: { classes: any }) => {
                           borderRadius: "2px",
                           border: "1px solid #eaeaea",
                           fontSize: "10px",
-                          color: "#082146",
                           fontWeight: 500,
+                          [`@media (max-width: ${breakPoints.sm}px)`]: {
+                            width: "100%",
+                          },
                         },
                         "& .spacer": {
                           marginBottom: "5px",
@@ -564,8 +352,85 @@ const Inspect = ({ classes }: { classes: any }) => {
                   </Fragment>
                 }
               />
-            </Box>
-          </Box>
+            }
+          >
+            <form
+              noValidate
+              autoComplete="off"
+              onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                e.preventDefault();
+                if (!clusterRegistered) {
+                  navigate("/support/register");
+                  return;
+                }
+                performInspect();
+              }}
+            >
+              <InputBox
+                id="inspect_volume"
+                name="inspect_volume"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setVolumeName(e.target.value);
+                }}
+                label="Volume or Bucket Name"
+                value={volumeName}
+                error={volumeError}
+                required
+                placeholder={"test-bucket"}
+              />
+              <InputBox
+                id="inspect_path"
+                name="inspect_path"
+                error={pathError}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setInspectPath(e.target.value);
+                }}
+                label="File or Path to inspect"
+                value={inspectPath}
+                required
+                placeholder={"test*/xl.meta"}
+              />
+              <Switch
+                label="Encrypt"
+                indicatorLabels={["True", "False"]}
+                checked={isEncrypt}
+                value={"true"}
+                id="inspect_encrypt"
+                name="inspect_encrypt"
+                onChange={() => {
+                  setIsEncrypt(!isEncrypt);
+                }}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  marginTop: "55px",
+                }}
+              >
+                <Button
+                  id={"inspect-clear-button"}
+                  style={{
+                    marginRight: "15px",
+                  }}
+                  type="button"
+                  variant="regular"
+                  data-test-id="inspect-clear-button"
+                  onClick={resetForm}
+                  label={"Clear"}
+                />
+                <Button
+                  id={"inspect-start"}
+                  type="submit"
+                  variant={!clusterRegistered ? "regular" : "callAction"}
+                  data-test-id="inspect-submit-button"
+                  disabled={!isFormValid}
+                  label={"Inspect"}
+                />
+              </Box>
+            </form>
+          </FormLayout>
         )}
         {decryptionKey ? (
           <ModalWrapper
@@ -574,7 +439,7 @@ const Inspect = ({ classes }: { classes: any }) => {
             onClose={onCloseDecKeyModal}
             titleIcon={<PasswordKeyIcon />}
           >
-            <DialogContentText component="div">
+            <Fragment>
               <Box>
                 This will be displayed only once. It cannot be recovered.
                 <br />
@@ -588,7 +453,7 @@ const Inspect = ({ classes }: { classes: any }) => {
               >
                 <KeyRevealer value={decryptionKey} />
               </form>
-            </DialogContentText>
+            </Fragment>
           </ModalWrapper>
         ) : null}
       </PageLayout>
@@ -596,4 +461,4 @@ const Inspect = ({ classes }: { classes: any }) => {
   );
 };
 
-export default withStyles(styles)(Inspect);
+export default Inspect;
