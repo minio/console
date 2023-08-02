@@ -7124,7 +7124,7 @@ func init() {
           "$ref": "#/definitions/putBucketRetentionRequest"
         },
         "versioning": {
-          "type": "boolean"
+          "$ref": "#/definitions/setBucketVersioning"
         }
       }
     },
@@ -8195,8 +8195,18 @@ func init() {
     "setBucketVersioning": {
       "type": "object",
       "properties": {
-        "versioning": {
+        "enabled": {
           "type": "boolean"
+        },
+        "excludeFolders": {
+          "type": "boolean"
+        },
+        "excludePrefixes": {
+          "type": "array",
+          "maxLength": 10,
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -16257,7 +16267,7 @@ func init() {
           "$ref": "#/definitions/putBucketRetentionRequest"
         },
         "versioning": {
-          "type": "boolean"
+          "$ref": "#/definitions/setBucketVersioning"
         }
       }
     },
@@ -17328,8 +17338,18 @@ func init() {
     "setBucketVersioning": {
       "type": "object",
       "properties": {
-        "versioning": {
+        "enabled": {
           "type": "boolean"
+        },
+        "excludeFolders": {
+          "type": "boolean"
+        },
+        "excludePrefixes": {
+          "type": "array",
+          "maxLength": 10,
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

@@ -232,7 +232,7 @@ type MCClient interface {
 	list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 	get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
 	shareDownload(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
-	setVersioning(ctx context.Context, status string) *probe.Error
+	setVersioning(ctx context.Context, status string, excludePrefix []string, excludeFolders bool) *probe.Error
 }
 
 // Interface implementation
@@ -265,8 +265,8 @@ func (c mcClient) deleteAllReplicationRules(ctx context.Context) *probe.Error {
 	return c.client.RemoveReplication(ctx)
 }
 
-func (c mcClient) setVersioning(ctx context.Context, status string) *probe.Error {
-	return c.client.SetVersion(ctx, status, []string{}, false)
+func (c mcClient) setVersioning(ctx context.Context, status string, excludePrefix []string, excludeFolders bool) *probe.Error {
+	return c.client.SetVersion(ctx, status, excludePrefix, excludeFolders)
 }
 
 func (c mcClient) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {

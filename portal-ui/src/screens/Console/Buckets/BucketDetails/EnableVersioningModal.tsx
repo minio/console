@@ -15,32 +15,54 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Box, ConfirmModalIcon } from "mds";
+import { Box, Button, FormLayout, ModalBox, Switch } from "mds";
 import { BucketVersioningResponse } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import VersioningInfo from "../VersioningInfo";
-import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import CSVMultiSelector from "../../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 
 interface IVersioningEventProps {
   closeVersioningModalAndRefresh: (refresh: boolean) => void;
   modalOpen: boolean;
   selectedBucket: string;
   versioningInfo: BucketVersioningResponse | undefined;
+  objectLockingEnabled: boolean;
 }
+
+const parseExcludedPrefixes = (
+  bucketVersioning: BucketVersioningResponse | undefined,
+) => {
+  const excludedPrefixes = bucketVersioning?.excludedPrefixes;
+
+  if (excludedPrefixes) {
+    return excludedPrefixes.map((item) => item.prefix).join(",");
+  }
+
+  return "";
+};
 
 const EnableVersioningModal = ({
   closeVersioningModalAndRefresh,
   modalOpen,
   selectedBucket,
   versioningInfo = {},
+  objectLockingEnabled,
 }: IVersioningEventProps) => {
-  const isVersioningEnabled = versioningInfo.status === "Enabled";
-
   const dispatch = useAppDispatch();
+
   const [versioningLoading, setVersioningLoading] = useState<boolean>(false);
+  const [versionState, setVersionState] = useState<boolean>(
+    versioningInfo?.status === "Enabled",
+  );
+  const [excludeFolders, setExcludeFolders] = useState<boolean>(
+    !!versioningInfo?.excludeFolders,
+  );
+  const [excludedPrefixes, setExcludedPrefixes] = useState<string>(
+    parseExcludedPrefixes(versioningInfo),
+  );
 
   const enableVersioning = () => {
     if (versioningLoading) {
@@ -50,7 +72,11 @@ const EnableVersioningModal = ({
 
     api.buckets
       .setBucketVersioning(selectedBucket, {
-        versioning: !isVersioningEnabled,
+        enabled: versionState,
+        excludeFolders: versionState ? excludeFolders : false,
+        excludePrefixes: versionState
+          ? excludedPrefixes.split(",").filter((item) => item.trim() !== "")
+          : [],
       })
       .then(() => {
         setVersioningLoading(false);
@@ -62,44 +88,76 @@ const EnableVersioningModal = ({
       });
   };
 
+  const resetForm = () => {
+    setExcludedPrefixes("");
+    setExcludeFolders(false);
+    setVersionState(false);
+  };
+
   return (
-    <ConfirmDialog
+    <ModalBox
+      onClose={() => closeVersioningModalAndRefresh(false)}
+      open={modalOpen}
       title={`Versioning on Bucket`}
-      confirmText={isVersioningEnabled ? "Suspend" : "Enable"}
-      isOpen={modalOpen}
-      isLoading={versioningLoading}
-      titleIcon={<ConfirmModalIcon />}
-      onConfirm={enableVersioning}
-      confirmButtonProps={{
-        variant: "callAction",
-      }}
-      onClose={() => {
-        closeVersioningModalAndRefresh(false);
-      }}
-      confirmationContent={
-        <Box id="alert-dialog-description">
-          Are you sure you want to{" "}
-          <strong>{isVersioningEnabled ? "suspend" : "enable"}</strong>{" "}
-          versioning for this bucket?
-          {isVersioningEnabled && (
-            <Fragment>
-              <br />
-              <br />
-              <strong>File versions won't be automatically deleted.</strong>
-            </Fragment>
-          )}
-          <Box
-            sx={{
-              paddingTop: "20px",
-            }}
-          >
-            {isVersioningEnabled ? (
-              <VersioningInfo versioningState={versioningInfo} />
-            ) : null}
-          </Box>
+    >
+      <FormLayout withBorders={false} containerPadding={false}>
+        <Switch
+          id={"activateVersioning"}
+          label={"Versioning Status"}
+          checked={versionState}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setVersionState(e.target.checked);
+          }}
+          indicatorLabels={["Enabled", "Disabled"]}
+        />
+        {versionState && !objectLockingEnabled && (
+          <Fragment>
+            <Switch
+              id={"excludeFolders"}
+              label={"Exclude Folders"}
+              checked={excludeFolders}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setExcludeFolders(e.target.checked);
+              }}
+              indicatorLabels={["Enabled", "Disabled"]}
+            />
+            <CSVMultiSelector
+              elements={excludedPrefixes}
+              label={"Excluded Prefixes"}
+              name={"excludedPrefixes"}
+              onChange={(value: string | string[]) => {
+                let valCh = "";
+
+                if (Array.isArray(value)) {
+                  valCh = value.join(",");
+                } else {
+                  valCh = value;
+                }
+                setExcludedPrefixes(valCh);
+              }}
+              withBorder={true}
+            />
+          </Fragment>
+        )}
+        <Box sx={modalStyleUtils.modalButtonBar}>
+          <Button
+            id={"clear"}
+            type="button"
+            variant="regular"
+            color="primary"
+            onClick={resetForm}
+            label={"Clear"}
+          />
+          <Button
+            type="submit"
+            variant="callAction"
+            onClick={enableVersioning}
+            id="saveTag"
+            label={"Save"}
+          />
         </Box>
-      }
-    />
+      </FormLayout>
+    </ModalBox>
   );
 };
 

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box, ValuePair, ActionLink } from "mds";
+import { ActionLink, Box, ValuePair } from "mds";
 import { SecureComponent } from "../../../../../common/SecureComponent";
 
 import EditActionButton from "./EditActionButton";
@@ -28,6 +28,7 @@ type EditablePropertyItemProps = {
   value: any;
   onEdit: () => void;
   secureCmpProps?: Record<any, any>;
+  disabled?: boolean;
 };
 
 const SecureAction = ({
@@ -61,6 +62,7 @@ const EditablePropertyItem = ({
   property = null,
   value = null,
   onEdit,
+  disabled = false,
 }: EditablePropertyItemProps) => {
   return (
     <Box
@@ -84,6 +86,7 @@ const EditablePropertyItem = ({
               onClick={onEdit}
               label={value}
               sx={{ fontWeight: "bold" }}
+              disabled={disabled}
             />
           </SecureAction>
         }
@@ -104,6 +107,7 @@ const EditablePropertyItem = ({
               height: "16px",
             },
           }}
+          disabled={disabled}
         />
       </SecureAction>
     </Box>

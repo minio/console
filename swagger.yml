@@ -3756,7 +3756,7 @@ definitions:
       locking:
         type: boolean
       versioning:
-        type: boolean
+        $ref: "#/definitions/setBucketVersioning"
       quota:
         $ref: "#/definitions/setBucketQuota"
       retention:
@@ -4963,8 +4963,16 @@ definitions:
   setBucketVersioning:
     type: object
     properties:
-      versioning:
+      enabled:
         type: boolean
+      excludePrefixes:
+        type: array
+        maxLength: 10
+        items:
+          type: string
+      excludeFolders:
+        type: boolean
+
   bucketObLockingResponse:
     type: object
     properties:
