@@ -100,7 +100,7 @@ const BrowserBreadcrumbs = ({
   const splitPaths = paths.split("/").filter((path) => path !== "");
   const lastBreadcrumbsIndex = splitPaths.length - 1;
 
-  const pathToCheckPerms = paths || bucketName;
+  const pathToCheckPerms = bucketName + paths || bucketName;
   const sessionGrantWildCards = getSessionGrantsWildCard(
     sessionGrants,
     pathToCheckPerms,
