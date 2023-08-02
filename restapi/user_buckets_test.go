@@ -50,7 +50,7 @@ var (
 	minioSetObjectLockConfigMock        func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
 	minioGetBucketObjectLockConfigMock  func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
 	minioGetObjectLockConfigMock        func(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
-	minioSetVersioningMock              func(ctx context.Context, state string) *probe.Error
+	minioSetVersioningMock              func(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error
 	minioCopyObjectMock                 func(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error)
 	minioSetBucketTaggingMock           func(ctx context.Context, bucketName string, tags *tags.Tags) error
 	minioRemoveBucketTaggingMock        func(ctx context.Context, bucketName string) error
@@ -112,8 +112,8 @@ func (mc minioClientMock) copyObject(ctx context.Context, dst minio.CopyDestOpti
 	return minioCopyObjectMock(ctx, dst, src)
 }
 
-func (c s3ClientMock) setVersioning(ctx context.Context, state string) *probe.Error {
-	return minioSetVersioningMock(ctx, state)
+func (c s3ClientMock) setVersioning(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error {
+	return minioSetVersioningMock(ctx, state, excludePrefix, excludeFolders)
 }
 
 func (mc minioClientMock) GetBucketTagging(ctx context.Context, bucketName string) (*tags.Tags, error) {
@@ -813,9 +813,11 @@ func Test_SetBucketVersioning(t *testing.T) {
 	type args struct {
 		ctx               context.Context
 		state             VersionState
+		excludePrefix     []string
+		excludeFolders    bool
 		bucketName        string
 		client            s3ClientMock
-		setVersioningFunc func(ctx context.Context, state string) *probe.Error
+		setVersioningFunc func(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error
 	}
 	tests := []struct {
 		name          string
@@ -829,7 +831,36 @@ func Test_SetBucketVersioning(t *testing.T) {
 				state:      VersionEnable,
 				bucketName: "test",
 				client:     minClient,
-				setVersioningFunc: func(ctx context.Context, state string) *probe.Error {
+				setVersioningFunc: func(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error {
+					return nil
+				},
+			},
+			expectedError: nil,
+		},
+		{
+			name: "Set Bucket Version with Prefixes Success",
+			args: args{
+				ctx:           ctx,
+				state:         VersionEnable,
+				excludePrefix: []string{"prefix1", "prefix2"},
+				bucketName:    "test",
+				client:        minClient,
+				setVersioningFunc: func(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error {
+					return nil
+				},
+			},
+			expectedError: nil,
+		},
+		{
+			name: "Set Bucket Version with Excluded Folders Success",
+			args: args{
+				ctx:            ctx,
+				state:          VersionEnable,
+				excludePrefix:  []string{"prefix1", "prefix2"},
+				excludeFolders: true,
+				bucketName:     "test",
+				client:         minClient,
+				setVersioningFunc: func(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error {
 					return nil
 				},
 			},
@@ -842,7 +873,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 				state:      VersionEnable,
 				bucketName: "test",
 				client:     minClient,
-				setVersioningFunc: func(ctx context.Context, state string) *probe.Error {
+				setVersioningFunc: func(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error {
 					return probe.NewError(errors.New(errorMsg))
 				},
 			},
@@ -854,7 +885,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			minioSetVersioningMock = tt.args.setVersioningFunc
 
-			err := doSetVersioning(tt.args.ctx, tt.args.client, tt.args.state)
+			err := doSetVersioning(tt.args.ctx, tt.args.client, tt.args.state, tt.args.excludePrefix, tt.args.excludeFolders)
 
 			fmt.Println(t.Name())
 			fmt.Println("Expected:", tt.expectedError, "Error:", err)

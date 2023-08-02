@@ -407,6 +407,7 @@ const BucketSummary = () => {
           modalOpen={enableVersioningOpen}
           selectedBucket={bucketName}
           versioningInfo={versioningInfo}
+          objectLockingEnabled={!!hasObjectLocking}
         />
       )}
 
@@ -581,6 +582,7 @@ const BucketSummary = () => {
                     }
                     onEdit={setBucketVersioning}
                     isLoading={loadingVersioning}
+                    disabled={hasObjectLocking}
                   />
 
                   {versioningInfo?.status === "Enabled" ? (

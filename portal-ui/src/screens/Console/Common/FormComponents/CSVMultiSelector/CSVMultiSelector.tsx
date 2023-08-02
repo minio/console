@@ -20,16 +20,10 @@ import React, {
   useEffect,
   useRef,
   useState,
+  Fragment,
 } from "react";
 import get from "lodash/get";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import { InputLabel, Tooltip } from "@mui/material";
-import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import { AddIcon, HelpIcon } from "mds";
-import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
+import { AddIcon, Box, HelpIcon, InputBox, InputLabel, Tooltip } from "mds";
 
 interface ICSVMultiSelector {
   elements: string;
@@ -37,36 +31,9 @@ interface ICSVMultiSelector {
   label: string;
   tooltip?: string;
   commonPlaceholder?: string;
-  classes: any;
   withBorder?: boolean;
   onChange: (elements: string) => void;
 }
-
-const styles = (theme: Theme) => {
-  return createStyles({
-    ...fieldBasic,
-    ...tooltipHelper,
-    inputWithBorder: {
-      border: "1px solid #EAEAEA",
-      padding: 15,
-      height: 150,
-      overflowY: "auto",
-      position: "relative",
-      marginTop: 15,
-      flex: 1,
-    },
-    inputBoxSpacer: {
-      marginBottom: 7,
-    },
-    inputLabel: {
-      ...fieldBasic.inputLabel,
-      margin: 0,
-      alignItems: "flex-start",
-      paddingTop: "20px",
-      minWidth: 162,
-    },
-  });
-};
 
 const CSVMultiSelector = ({
   elements,
@@ -76,7 +43,6 @@ const CSVMultiSelector = ({
   commonPlaceholder = "",
   onChange,
   withBorder = false,
-  classes,
 }: ICSVMultiSelector) => {
   const [currentElements, setCurrentElements] = useState<string[]>([""]);
   const bottomList = createRef<HTMLDivElement>();
@@ -154,55 +120,65 @@ const CSVMultiSelector = ({
 
   const inputs = currentElements.map((element, index) => {
     return (
-      <div
-        className={classes.inputBoxSpacer}
+      <InputBox
         key={`csv-multi-${name}-${index.toString()}`}
-      >
-        <InputBoxWrapper
-          id={`${name}-${index.toString()}`}
-          label={""}
-          name={`${name}-${index.toString()}`}
-          value={currentElements[index]}
-          onChange={onChangeElement}
-          index={index}
-          key={`csv-${name}-${index.toString()}`}
-          placeholder={commonPlaceholder}
-          overlayIcon={
-            index === currentElements.length - 1 ? <AddIcon /> : null
-          }
-          overlayAction={() => {
-            addEmptyLine(currentElements);
-          }}
-        />
-      </div>
+        id={`${name}-${index.toString()}`}
+        label={""}
+        name={`${name}-${index.toString()}`}
+        value={currentElements[index]}
+        onChange={onChangeElement}
+        index={index}
+        placeholder={commonPlaceholder}
+        overlayIcon={index === currentElements.length - 1 ? <AddIcon /> : null}
+        overlayAction={() => {
+          addEmptyLine(currentElements);
+        }}
+      />
     );
   });
 
   return (
-    <React.Fragment>
-      <Grid item xs={12} className={classes.fieldContainer}>
-        <InputLabel className={classes.inputLabel}>
+    <Fragment>
+      <Box sx={{ display: "flex" }} className={"inputItem"}>
+        <InputLabel
+          sx={{
+            alignItems: "flex-start",
+          }}
+        >
           <span>{label}</span>
           {tooltip !== "" && (
-            <div className={classes.tooltipContainer}>
-              <Tooltip title={tooltip} placement="top-start">
-                <div className={classes.tooltip}>
+            <Box
+              sx={{
+                marginLeft: 5,
+                display: "flex",
+                alignItems: "center",
+                "& .min-icon": {
+                  width: 13,
+                },
+              }}
+            >
+              <Tooltip tooltip={tooltip} placement="top">
+                <Box className={tooltip}>
                   <HelpIcon />
-                </div>
+                </Box>
               </Tooltip>
-            </div>
+            </Box>
           )}
         </InputLabel>
-        <Grid
-          item
-          xs={12}
-          className={`${withBorder ? classes.inputWithBorder : ""}`}
+        <Box
+          withBorders={withBorder}
+          sx={{
+            width: "100%",
+            overflowY: "auto",
+            height: 150,
+            position: "relative",
+          }}
         >
           {inputs}
           <div ref={bottomList} />
-        </Grid>
-      </Grid>
-    </React.Fragment>
+        </Box>
+      </Box>
+    </Fragment>
   );
 };
-export default withStyles(styles)(CSVMultiSelector);
+export default CSVMultiSelector;

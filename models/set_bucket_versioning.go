@@ -34,8 +34,14 @@ import (
 // swagger:model setBucketVersioning
 type SetBucketVersioning struct {
 
-	// versioning
-	Versioning bool `json:"versioning,omitempty"`
+	// enabled
+	Enabled bool `json:"enabled,omitempty"`
+
+	// exclude folders
+	ExcludeFolders bool `json:"excludeFolders,omitempty"`
+
+	// exclude prefixes
+	ExcludePrefixes []string `json:"excludePrefixes"`
 }
 
 // Validate validates this set bucket versioning

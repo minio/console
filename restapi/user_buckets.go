@@ -188,8 +188,8 @@ const (
 )
 
 // removeBucket deletes a bucket
-func doSetVersioning(ctx context.Context, client MCClient, state VersionState) error {
-	err := client.setVersioning(ctx, string(state))
+func doSetVersioning(ctx context.Context, client MCClient, state VersionState, excludePrefix []string, excludeFolders bool) error {
+	err := client.setVersioning(ctx, string(state), excludePrefix, excludeFolders)
 	if err != nil {
 		return err.Cause
 	}
@@ -212,11 +212,19 @@ func setBucketVersioningResponse(session *models.Principal, params bucketApi.Set
 
 	versioningState := VersionSuspend
 
-	if params.Body.Versioning {
+	if params.Body.Enabled {
 		versioningState = VersionEnable
 	}
 
-	if err := doSetVersioning(ctx, amcClient, versioningState); err != nil {
+	var excludePrefixes []string
+
+	if params.Body.ExcludePrefixes != nil {
+		excludePrefixes = params.Body.ExcludePrefixes
+	}
+
+	excludeFolders := params.Body.ExcludeFolders
+
+	if err := doSetVersioning(ctx, amcClient, versioningState, excludePrefixes, excludeFolders); err != nil {
 		return ErrorWithContext(ctx, fmt.Errorf("error setting versioning for bucket: %s", err))
 	}
 	return nil
@@ -486,8 +494,14 @@ func getMakeBucketResponse(session *models.Principal, params bucketApi.MakeBucke
 		}
 	}()
 
+	versioningEnabled := false
+
+	if br.Versioning != nil && br.Versioning.Enabled {
+		versioningEnabled = true
+	}
+
 	// enable versioning if indicated or retention enabled
-	if br.Versioning || br.Retention != nil {
+	if versioningEnabled || br.Retention != nil {
 		s3Client, err := newS3BucketClient(session, *br.Name, "", getClientIP(params.HTTPRequest))
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
@@ -496,7 +510,18 @@ func getMakeBucketResponse(session *models.Principal, params bucketApi.MakeBucke
 		// defining the client to be used
 		amcClient := mcClient{client: s3Client}
 
-		if err = doSetVersioning(ctx, amcClient, VersionEnable); err != nil {
+		excludePrefixes := []string{}
+		excludeFolders := false
+
+		if br.Versioning.ExcludeFolders && !br.Locking {
+			excludeFolders = true
+		}
+
+		if br.Versioning.ExcludePrefixes != nil && !br.Locking {
+			excludePrefixes = br.Versioning.ExcludePrefixes
+		}
+
+		if err = doSetVersioning(ctx, amcClient, VersionEnable, excludePrefixes, excludeFolders); err != nil {
 			return nil, ErrorWithContext(ctx, fmt.Errorf("error setting versioning for bucket: %s", err))
 		}
 	}

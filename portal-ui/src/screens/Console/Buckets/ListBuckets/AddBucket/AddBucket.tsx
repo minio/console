@@ -48,6 +48,8 @@ import SectionTitle from "../../../Common/SectionTitle";
 import {
   resetForm,
   setEnableObjectLocking,
+  setExcludedPrefixes,
+  setExcludeFolders,
   setIsDirty,
   setName,
   setQuota,
@@ -77,6 +79,7 @@ import {
 } from "../../../../../api/consoleApi";
 import { errorToHandler } from "../../../../../api/errors";
 import HelpMenu from "../../../HelpMenu";
+import CSVMultiSelector from "../../../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";
 
 const ErrorBox = styled.div(({ theme }) => ({
   color: get(theme, "signalColors.danger", "#C51B3F"),
@@ -101,6 +104,12 @@ const AddBucket = () => {
   const [records, setRecords] = useState<string[]>([]);
   const versioningEnabled = useSelector(
     (state: AppState) => state.addBucket.versioningEnabled,
+  );
+  const excludeFolders = useSelector(
+    (state: AppState) => state.addBucket.excludeFolders,
+  );
+  const excludedPrefixes = useSelector(
+    (state: AppState) => state.addBucket.excludedPrefixes,
   );
   const lockingEnabled = useSelector(
     (state: AppState) => state.addBucket.lockingEnabled,
@@ -346,6 +355,35 @@ const AddBucket = () => {
                         )
                   }
                 />
+                {versioningEnabled && distributedSetup && !lockingEnabled && (
+                  <Fragment>
+                    <Switch
+                      id={"excludeFolders"}
+                      label={"Exclude Folders"}
+                      checked={excludeFolders}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        dispatch(setExcludeFolders(e.target.checked));
+                      }}
+                      indicatorLabels={["Enabled", "Disabled"]}
+                    />
+                    <CSVMultiSelector
+                      elements={excludedPrefixes}
+                      label={"Excluded Prefixes"}
+                      name={"excludedPrefixes"}
+                      onChange={(value: string | string[]) => {
+                        let valCh = "";
+
+                        if (Array.isArray(value)) {
+                          valCh = value.join(",");
+                        } else {
+                          valCh = value;
+                        }
+                        dispatch(setExcludedPrefixes(valCh));
+                      }}
+                      withBorder={true}
+                    />
+                  </Fragment>
+                )}
                 <Switch
                   value="locking"
                   id="locking"
@@ -363,7 +401,11 @@ const AddBucket = () => {
                   label={"Object Locking"}
                   tooltip={
                     lockingAllowed
-                      ? ""
+                      ? `${
+                          versioningEnabled
+                            ? "Exclude Folders & Exclude Prefixes options will not be available if this option is enabled."
+                            : ""
+                        }`
                       : permissionTooltipHelper(
                           [
                             IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,

@@ -126,7 +126,7 @@ export interface BucketObject {
 export interface MakeBucketRequest {
   name: string;
   locking?: boolean;
-  versioning?: boolean;
+  versioning?: SetBucketVersioning;
   quota?: SetBucketQuota;
   retention?: PutBucketRetentionRequest;
 }
@@ -802,7 +802,10 @@ export interface BucketVersioningResponse {
 }
 
 export interface SetBucketVersioning {
-  versioning?: boolean;
+  enabled?: boolean;
+  /** @maxLength 10 */
+  excludePrefixes?: string[];
+  excludeFolders?: boolean;
 }
 
 export interface BucketObLockingResponse {
