@@ -107,6 +107,21 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return resp
 	})
+	// download multiple objects
+	api.ObjectDownloadMultipleObjectsHandler = objectApi.DownloadMultipleObjectsHandlerFunc(func(params objectApi.DownloadMultipleObjectsParams, session *models.Principal) middleware.Responder {
+		ctx := params.HTTPRequest.Context()
+		if len(params.ObjectList) < 1 {
+			return objectApi.NewDownloadMultipleObjectsDefault(400).WithPayload(ErrorWithContext(ctx, errors.New("could not download, since object list is empty")))
+		}
+		var resp middleware.Responder
+		var err *models.Error
+		resp, err = getMultipleFilesDownloadResponse(session, params)
+		if err != nil {
+			return objectApi.NewDownloadMultipleObjectsDefault(int(err.Code)).WithPayload(err)
+		}
+		return resp
+	})
+
 	// upload object
 	api.ObjectPostBucketsBucketNameObjectsUploadHandler = objectApi.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params objectApi.PostBucketsBucketNameObjectsUploadParams, session *models.Principal) middleware.Responder {
 		if err := getUploadObjectResponse(session, params); err != nil {
@@ -610,6 +625,125 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 		escapedName := url.PathEscape(filename)
 
 		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", escapedName))
+		rw.Header().Set("Content-Type", "application/zip")
+
+		// Copy the stream
+		_, err := io.Copy(rw, resp)
+		if err != nil {
+			ErrorWithContext(ctx, fmt.Errorf("Unable to write all the requested data: %v", err))
+		}
+	}), nil
+}
+
+func getMultipleFilesDownloadResponse(session *models.Principal, params objectApi.DownloadMultipleObjectsParams) (middleware.Responder, *models.Error) {
+	ctx := params.HTTPRequest.Context()
+	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	minioClient := minioClient{client: mClient}
+
+	resp, pw := io.Pipe()
+	// Create file async
+	go func() {
+		defer pw.Close()
+		zipw := zip.NewWriter(pw)
+		defer zipw.Close()
+
+		addToZip := func(name string, modified time.Time) (io.Writer, error) {
+			f, err := zipw.CreateHeader(&zip.FileHeader{
+				Name:     name,
+				NonUTF8:  false,
+				Method:   zip.Deflate,
+				Modified: modified,
+			})
+			return f, err
+		}
+
+		for _, dObj := range params.ObjectList {
+			// if a prefix is selected, list and add objects recursively
+			// the prefixes are not base64 encoded.
+			if strings.HasSuffix(dObj, "/") {
+				prefix := dObj
+
+				folders := strings.Split(prefix, "/")
+
+				var folder string
+				if len(folders) > 1 {
+					folder = folders[len(folders)-2]
+				}
+
+				objects, err := listBucketObjects(ListObjectsOpts{
+					ctx:          ctx,
+					client:       minioClient,
+					bucketName:   params.BucketName,
+					prefix:       prefix,
+					recursive:    true,
+					withVersions: false,
+					withMetadata: false,
+				})
+				if err != nil {
+					pw.CloseWithError(err)
+				}
+
+				for i, obj := range objects {
+					name := folder + objects[i].Name[len(prefix)-1:]
+
+					object, err := mClient.GetObject(ctx, params.BucketName, obj.Name, minio.GetObjectOptions{})
+					if err != nil {
+						// Ignore errors, move to next
+						continue
+					}
+					modified, _ := time.Parse(time.RFC3339, obj.LastModified)
+
+					f, err := addToZip(name, modified)
+					if err != nil {
+						// Ignore errors, move to next
+						continue
+					}
+					_, err = io.Copy(f, object)
+					if err != nil {
+						// We have a partial object, report error.
+						pw.CloseWithError(err)
+						return
+					}
+				}
+
+			} else {
+				// add selected individual object
+				objectData, err := mClient.StatObject(ctx, params.BucketName, dObj, minio.StatObjectOptions{})
+				if err != nil {
+					// Ignore errors, move to next
+					continue
+				}
+				object, err := mClient.GetObject(ctx, params.BucketName, dObj, minio.GetObjectOptions{})
+				if err != nil {
+					// Ignore errors, move to next
+					continue
+				}
+
+				f, err := addToZip(dObj, objectData.LastModified)
+				if err != nil {
+					// Ignore errors, move to next
+					continue
+				}
+				_, err = io.Copy(f, object)
+				if err != nil {
+					// We have a partial object, report error.
+					pw.CloseWithError(err)
+					return
+				}
+			}
+		}
+	}()
+
+	return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
+		defer resp.Close()
+
+		// indicate it's a download / inline content to the browser, and the size of the object
+		fileName := "selected_files_" + time.Now().UTC().Format(time.DateTime)
+
+		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", fileName))
 		rw.Header().Set("Content-Type", "application/zip")
 
 		// Copy the stream

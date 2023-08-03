@@ -19,7 +19,10 @@ import { AppState } from "../../../store";
 import { encodeURLString, getClientOS } from "../../../common/utils";
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import { makeid, storeCallForObjectWithID } from "./transferManager";
-import { download } from "../Buckets/ListBuckets/Objects/utils";
+import {
+  download,
+  downloadSelectedAsZip,
+} from "../Buckets/ListBuckets/Objects/utils";
 import {
   cancelObjectInList,
   completeObject,
@@ -33,6 +36,7 @@ import {
   updateProgress,
 } from "./objectBrowserSlice";
 import { setSnackBarMessage } from "../../../systemSlice";
+import { DateTime } from "luxon";
 
 export const downloadSelected = createAsyncThunk(
   "objectBrowser/downloadSelected",
@@ -104,8 +108,7 @@ export const downloadSelected = createAsyncThunk(
 
       itemsToDownload = state.objectBrowser.records.filter(filterFunction);
 
-      // I case just one element is selected, then we trigger download modal validation.
-      // We are going to enforce zip download when multiple files are selected
+      // In case just one element is selected, then we trigger download modal validation.
       if (itemsToDownload.length === 1) {
         if (
           itemsToDownload[0].name.length > 200 &&
@@ -113,12 +116,34 @@ export const downloadSelected = createAsyncThunk(
         ) {
           dispatch(setDownloadRenameModal(itemsToDownload[0]));
           return;
+        } else {
+          downloadObject(itemsToDownload[0]);
+        }
+      } else {
+        if (itemsToDownload.length === 1) {
+          downloadObject(itemsToDownload[0]);
+        } else if (itemsToDownload.length > 1) {
+          const fileName = `${DateTime.now().toFormat(
+            "LL-dd-yyyy-HH-mm-ss",
+          )}_files_list.zip`;
+
+          // We are enforcing zip download when multiple files are selected for better user experience
+          const multiObjList = itemsToDownload.reduce((dwList: any[], bi) => {
+            // Download objects/prefixes(recursively) as zip
+            // Skip any deleted files selected via "Show deleted objects" in selection and log for debugging
+            const isDeleted = bi?.delete_flag;
+            if (bi && !isDeleted) {
+              dwList.push(bi.name);
+            } else {
+              console.log(`Skipping ${bi?.name} from download.`);
+            }
+            return dwList;
+          }, []);
+
+          await downloadSelectedAsZip(bucketName, multiObjList, fileName);
+          return;
         }
       }
-
-      itemsToDownload.forEach((filteredItem) => {
-        downloadObject(filteredItem);
-      });
     }
   },
 );

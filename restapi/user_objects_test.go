@@ -22,10 +22,14 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"path/filepath"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/go-openapi/runtime/middleware"
+	"github.com/minio/console/restapi/operations/object"
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
@@ -905,7 +909,7 @@ func Test_deleteObjects(t *testing.T) {
 }
 
 func Test_shareObject(t *testing.T) {
-	assert := assert.New(t)
+	tAssert := assert.New(t)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	client := s3ClientMock{}
@@ -978,7 +982,7 @@ func Test_shareObject(t *testing.T) {
 					return
 				}
 			} else {
-				assert.Equal(*url, tt.expected)
+				tAssert.Equal(*url, tt.expected)
 			}
 		})
 	}
@@ -1054,7 +1058,7 @@ func Test_putObjectLegalHold(t *testing.T) {
 }
 
 func Test_putObjectRetention(t *testing.T) {
-	assert := assert.New(t)
+	tAssert := assert.New(t)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	client := minioClientMock{}
@@ -1176,16 +1180,16 @@ func Test_putObjectRetention(t *testing.T) {
 			err := setObjectRetention(ctx, client, tt.args.bucket, tt.args.prefix, tt.args.versionID, tt.args.opts)
 			if tt.wantError != nil {
 				fmt.Println(t.Name())
-				assert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("setObjectRetention() error: `%s`, wantErr: `%s`", err, tt.wantError))
+				tAssert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("setObjectRetention() error: `%s`, wantErr: `%s`", err, tt.wantError))
 			} else {
-				assert.Nil(err, fmt.Sprintf("setObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
+				tAssert.Nil(err, fmt.Sprintf("setObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
 			}
 		})
 	}
 }
 
 func Test_deleteObjectRetention(t *testing.T) {
-	assert := assert.New(t)
+	tAssert := assert.New(t)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	client := minioClientMock{}
@@ -1219,16 +1223,16 @@ func Test_deleteObjectRetention(t *testing.T) {
 			err := deleteObjectRetention(ctx, client, tt.args.bucket, tt.args.prefix, tt.args.versionID)
 			if tt.wantError != nil {
 				fmt.Println(t.Name())
-				assert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("deleteObjectRetention() error: `%s`, wantErr: `%s`", err, tt.wantError))
+				tAssert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("deleteObjectRetention() error: `%s`, wantErr: `%s`", err, tt.wantError))
 			} else {
-				assert.Nil(err, fmt.Sprintf("deleteObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
+				tAssert.Nil(err, fmt.Sprintf("deleteObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
 			}
 		})
 	}
 }
 
 func Test_getObjectInfo(t *testing.T) {
-	assert := assert.New(t)
+	tAssert := assert.New(t)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	client := minioClientMock{}
@@ -1272,9 +1276,9 @@ func Test_getObjectInfo(t *testing.T) {
 			_, err := getObjectInfo(ctx, client, tt.args.bucketName, tt.args.prefix)
 			if tt.wantError != nil {
 				fmt.Println(t.Name())
-				assert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("getObjectInfo() error: `%s`, wantErr: `%s`", err, tt.wantError))
+				tAssert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("getObjectInfo() error: `%s`, wantErr: `%s`", err, tt.wantError))
 			} else {
-				assert.Nil(err, fmt.Sprintf("getObjectInfo() error: %v, wantErr: %v", err, tt.wantError))
+				tAssert.Nil(err, fmt.Sprintf("getObjectInfo() error: %v, wantErr: %v", err, tt.wantError))
 			}
 		})
 	}
@@ -1437,6 +1441,67 @@ func Test_newClientURL(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equalf(t, tt.want, *newClientURL(tt.args.urlStr), "newClientURL(%v)", tt.args.urlStr)
+		})
+	}
+}
+
+func Test_getMultipleFilesDownloadResponse(t *testing.T) {
+	type args struct {
+		session *models.Principal
+		params  object.DownloadMultipleObjectsParams
+	}
+
+	tests := []struct {
+		name  string
+		args  args
+		want  middleware.Responder
+		want1 *models.Error
+	}{
+		{
+			name: "test no objects sent for download",
+			args: args{
+				session: nil,
+				params: object.DownloadMultipleObjectsParams{
+					HTTPRequest: &http.Request{},
+					BucketName:  "test-bucket",
+					ObjectList:  nil,
+				},
+			},
+			want:  nil,
+			want1: nil,
+		},
+		{
+			name: "few objects sent for download",
+			args: args{
+				session: nil,
+				params: object.DownloadMultipleObjectsParams{
+					HTTPRequest: &http.Request{},
+					BucketName:  "test-bucket",
+					ObjectList:  []string{"test.txt", ",y-obj.doc", "z-obj.png"},
+				},
+			},
+			want:  nil,
+			want1: nil,
+		},
+		{
+			name: "few prefixes and a file sent for download",
+			args: args{
+				session: nil,
+				params: object.DownloadMultipleObjectsParams{
+					HTTPRequest: &http.Request{},
+					BucketName:  "test-bucket",
+					ObjectList:  []string{"my-folder/", "my-folder/test-nested", "z-obj.png"},
+				},
+			},
+			want:  nil,
+			want1: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1 := getMultipleFilesDownloadResponse(tt.args.session, tt.args.params)
+			assert.Equal(t, tt.want1, got1)
+			assert.NotNil(t, got)
 		})
 	}
 }

@@ -1646,6 +1646,59 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/objects/download-multiple": {
+      "post": {
+        "security": [
+          {
+            "key": []
+          },
+          {
+            "anonymous": []
+          }
+        ],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "tags": [
+          "Object"
+        ],
+        "summary": "Download Multiple Objects",
+        "operationId": "DownloadMultipleObjects",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "objectList",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/objects/legalhold": {
       "put": {
         "tags": [
@@ -10642,6 +10695,59 @@ func init() {
             "default": "",
             "name": "override_file_name",
             "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/objects/download-multiple": {
+      "post": {
+        "security": [
+          {
+            "key": []
+          },
+          {
+            "anonymous": []
+          }
+        ],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "tags": [
+          "Object"
+        ],
+        "summary": "Download Multiple Objects",
+        "operationId": "DownloadMultipleObjects",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "objectList",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {

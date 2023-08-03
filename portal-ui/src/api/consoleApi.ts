@@ -2146,6 +2146,28 @@ export class Api<
      * No description
      *
      * @tags Object
+     * @name DownloadMultipleObjects
+     * @summary Download Multiple Objects
+     * @request POST:/buckets/{bucket_name}/objects/download-multiple
+     * @secure
+     */
+    downloadMultipleObjects: (
+      bucketName: string,
+      objectList: string[],
+      params: RequestParams = {},
+    ) =>
+      this.request<File, Error>({
+        path: `/buckets/${bucketName}/objects/download-multiple`,
+        method: "POST",
+        body: objectList,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Object
      * @name DownloadObject
      * @summary Download Object
      * @request GET:/buckets/{bucket_name}/objects/download

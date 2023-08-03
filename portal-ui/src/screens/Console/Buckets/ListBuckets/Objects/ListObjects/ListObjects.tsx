@@ -912,6 +912,11 @@ const ListObjects = () => {
     createdTime = DateTime.fromISO(bucketInfo.creation_date);
   }
 
+  const downloadToolTip =
+    selectedObjects?.length <= 1
+      ? "Download Selected"
+      : ` Download selected objects as Zip. Any Deleted objects in the selection would be skipped from download.`;
+
   const multiActionButtons = [
     {
       action: () => {
@@ -921,7 +926,7 @@ const ListObjects = () => {
       disabled: !canDownload || selectedObjects?.length === 0,
       icon: <DownloadIcon />,
       tooltip: canDownload
-        ? "Download Selected"
+        ? downloadToolTip
         : permissionTooltipHelper(
             [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
             "download objects from this bucket",

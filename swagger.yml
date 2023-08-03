@@ -439,6 +439,39 @@ paths:
       tags:
         - Object
 
+  /buckets/{bucket_name}/objects/download-multiple:
+    post:
+      summary: Download Multiple Objects
+      operationId: DownloadMultipleObjects
+      security:
+        - key: [ ]
+        - anonymous: [ ]
+      produces:
+        - application/octet-stream
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: objectList
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: file
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - Object
+
   /buckets/{bucket_name}/objects/download:
     get:
       summary: Download Object
