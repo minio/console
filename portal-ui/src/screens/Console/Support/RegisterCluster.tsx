@@ -65,7 +65,7 @@ const RegisterCluster = ({ compactMode = false }: IRegisterCluster) => {
               </div>
             }
             iconComponent={<WarnIcon />}
-            help={<Fragment />}
+            help={null}
           />
         </Grid>
         <br />

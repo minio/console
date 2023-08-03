@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { Fragment, useEffect, useState } from "react";
-
 import {
   ICloseEvent,
   IMessageEvent,
   w3cwebsocket as W3CWebSocket,
 } from "websocket";
-import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Grid, HelpBox, InfoIcon, Loader, PageLayout } from "mds";
@@ -31,71 +29,25 @@ import {
   HealthInfoMessage,
   ReportMessage,
 } from "./types";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { AppState, useAppDispatch } from "../../../store";
 import {
   WSCloseAbnormalClosure,
   WSCloseInternalServerErr,
   WSClosePolicyViolation,
   wsProtocol,
 } from "../../../utils/wsUtils";
-import {
-  actionsTray,
-  containerForHeader,
-} from "../Common/FormComponents/common/styleLibrary";
-
-import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import { setHelpName, setServerDiagStat } from "../../../systemSlice";
 import {
   healthInfoMessageReceived,
   healthInfoResetMessage,
 } from "./healthInfoSlice";
+import { registeredCluster } from "../../../config";
+import TestWrapper from "../Common/TestWrapper/TestWrapper";
 import RegisterCluster from "../Support/RegisterCluster";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import { registeredCluster } from "../../../config";
 import HelpMenu from "../HelpMenu";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    loading: {
-      paddingTop: 8,
-      paddingLeft: 40,
-    },
-    buttons: {
-      justifyContent: "flex-start",
-      gap: 20,
-    },
-    localMessage: {
-      fontSize: 24,
-      color: "#07193E",
-      fontWeight: "bold",
-      textAlign: "center",
-      marginBottom: 20,
-    },
-    progressResult: {
-      textAlign: "center",
-      marginBottom: 25,
-    },
-    startDiagnostic: {
-      display: "flex",
-      justifyContent: "flex-end",
-      margin: 25,
-      marginBottom: 0,
-    },
-    startDiagnosticCenter: {
-      textAlign: "center",
-      marginTop: 0,
-    },
-    ...actionsTray,
-    ...containerForHeader,
-  });
-
-interface IHealthInfo {
-  classes: any;
-}
-
-const HealthInfo = ({ classes }: IHealthInfo) => {
+const HealthInfo = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -266,21 +218,35 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
 
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
-        <Grid item xs={12} className={classes.boxy}>
-          <TestWrapper title={title} advancedVisible={false}>
-            <Grid container className={classes.buttons}>
+        <Box withBorders>
+          <TestWrapper title={title}>
+            <Grid
+              container
+              sx={{
+                justifyContent: "flex-start",
+                gap: 20,
+              }}
+            >
               <Grid
                 key="start-download"
                 item
                 xs={12}
-                className={classes.progressResult}
+                sx={{
+                  textAlign: "center",
+                  marginBottom: 25,
+                }}
               >
-                <div className={classes.localMessage}>{localMessage}</div>
-                <div className={classes.progressResult}>
+                <h2>{localMessage}</h2>
+                <Box
+                  sx={{
+                    textAlign: "center",
+                    marginBottom: 25,
+                  }}
+                >
                   {" "}
                   {subnetResponse !== "" &&
                     !subnetResponse.toLowerCase().includes("error") && (
-                      <Grid item xs={12} className={classes.serversData}>
+                      <Grid item xs={12}>
                         <strong>
                           Health report uploaded to Subnet successfully!
                         </strong>
@@ -294,7 +260,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                   {(subnetResponse === "" ||
                     subnetResponse.toLowerCase().includes("error")) &&
                     serverDiagnosticStatus === DiagStatSuccess && (
-                      <Grid item xs={12} className={classes.serversData}>
+                      <Grid item xs={12}>
                         <strong>
                           Something went wrong uploading your Health report to
                           Subnet.
@@ -307,11 +273,16 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
                         </strong>
                       </Grid>
                     )}
-                </div>
+                </Box>
                 {serverDiagnosticStatus === DiagStatInProgress ? (
-                  <div className={classes.loading}>
+                  <Box
+                    sx={{
+                      paddingTop: 8,
+                      paddingLeft: 40,
+                    }}
+                  >
                     <Loader style={{ width: 25, height: 25 }} />
-                  </div>
+                  </Box>
                 ) : (
                   <Fragment>
                     <Box
@@ -353,7 +324,7 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
               </Grid>
             </Grid>
           </TestWrapper>
-        </Grid>
+        </Box>
         {!startDiagnostic && clusterRegistered && (
           <Fragment>
             <br />
@@ -373,4 +344,4 @@ const HealthInfo = ({ classes }: IHealthInfo) => {
   );
 };
 
-export default withStyles(styles)(HealthInfo);
+export default HealthInfo;

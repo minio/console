@@ -15,8 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Box } from "@mui/material";
-import { Button, CallHomeMenuIcon, HelpBox, Loader, PageLayout } from "mds";
+import {
+  Box,
+  Button,
+  CallHomeMenuIcon,
+  FormLayout,
+  HelpBox,
+  Loader,
+  PageLayout,
+  Switch,
+} from "mds";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../../common/api";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -26,20 +34,8 @@ import { ICallHomeResponse } from "./types";
 import { registeredCluster } from "../../../config";
 import CallHomeConfirmation from "./CallHomeConfirmation";
 import RegisterCluster from "./RegisterCluster";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
-
-const PromoLabels = ({ title, text }: { title: string; text: string }) => {
-  return (
-    <div style={{ marginTop: 15 }}>
-      <div style={{ marginBottom: 10, fontWeight: "bold" }}>{title}</div>
-      <div style={{ color: "#969696", fontSize: 12, marginBottom: 40 }}>
-        {text}
-      </div>
-    </div>
-  );
-};
 
 const CallHome = () => {
   const dispatch = useAppDispatch();
@@ -124,175 +120,13 @@ const CallHome = () => {
       <PageHeaderWrapper label="Call Home" actions={<HelpMenu />} />
       <PageLayout>
         {!clusterRegistered && <RegisterCluster compactMode />}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "flex-start",
-            border: "1px solid #eaeaea",
-            padding: {
-              lg: "40px",
-              xs: "15px",
-            },
-            flexWrap: "wrap",
-            gap: {
-              lg: "55px",
-              xs: "20px",
-            },
-            height: {
-              md: "calc(100vh - 120px)",
-              xs: "100%",
-            },
-            flexFlow: {
-              lg: "row",
-              xs: "column",
-            },
-          }}
-        >
-          <Box
-            sx={{
-              border: "1px solid #eaeaea",
-              flex: {
-                md: 2,
-                xs: 1,
-              },
-              width: {
-                lg: "auto",
-                xs: "100%",
-              },
-              padding: {
-                lg: "40px",
-                xs: "15px",
-              },
-            }}
-          >
-            {loading ? (
-              <span style={{ marginLeft: 5 }}>
-                <Loader style={{ width: 16, height: 16 }} />
-              </span>
-            ) : (
-              <Fragment>
-                <div style={{ marginBottom: 25 }}>
-                  <FormSwitchWrapper
-                    value="enableDiag"
-                    id="enableDiag"
-                    name="enableDiag"
-                    checked={diagEnabled}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setDiagEnabled(event.target.checked);
-                    }}
-                    label={"Daily Health Report"}
-                    disabled={!clusterRegistered}
-                  />
-                  <PromoLabels
-                    title={"When you enable diagnostics"}
-                    text={
-                      "Daily Health Report enables you to proactively identify potential issues in your deployment before they escalate."
-                    }
-                  />
-                </div>
-                <div>
-                  <FormSwitchWrapper
-                    value="enableLogs"
-                    id="enableLogs"
-                    name="enableLogs"
-                    checked={logsEnabled}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setLogsEnabled(event.target.checked);
-                    }}
-                    label={"Live Error Logs"}
-                    disabled={!clusterRegistered}
-                  />
-                  <PromoLabels
-                    title={"When you enable logs"}
-                    text={
-                      "Live Error Logs will enable MinIO's support team and automatic diagnostics system to catch failures early."
-                    }
-                  />
-                </div>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                    marginTop: "55px",
-                    gap: "0px 10px",
-                  }}
-                >
-                  {(oDiagEnabled || oLogsEnabled) && (
-                    <Button
-                      id={"callhome-action"}
-                      variant={"secondary"}
-                      data-test-id="call-home-toggle-button"
-                      onClick={disableCallHomeAction}
-                      disabled={loading}
-                    >
-                      Disable Call Home
-                    </Button>
-                  )}
-                  <Button
-                    id={"callhome-action"}
-                    type="button"
-                    variant={mainVariant}
-                    data-test-id="call-home-toggle-button"
-                    onClick={confirmCallHomeAction}
-                    disabled={loading}
-                  >
-                    Save Configuration
-                  </Button>
-                </Box>
-              </Fragment>
-            )}
-          </Box>
-          <Box
-            sx={{
-              flex: 1,
-              minWidth: {
-                md: "365px",
-                xs: "100%",
-              },
-              width: "100%",
-            }}
-          >
+        <FormLayout
+          helpBox={
             <HelpBox
-              title={""}
-              iconComponent={null}
+              title={"Learn more about Call Home"}
+              iconComponent={<CallHomeMenuIcon />}
               help={
                 <Fragment>
-                  <Box
-                    sx={{
-                      marginTop: "-25px",
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-start",
-                      padding: "2px",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        backgroundColor: "#07193E",
-                        height: "15px",
-                        width: "15px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                        marginRight: "18px",
-                        padding: "3px",
-                        "& .min-icon": {
-                          height: "11px",
-                          width: "11px",
-                          fill: "#ffffff",
-                        },
-                      }}
-                    >
-                      <CallHomeMenuIcon />
-                    </Box>
-                    Learn more about Call Home
-                  </Box>
-
                   <Box
                     sx={{
                       display: "flex",
@@ -322,8 +156,76 @@ const CallHome = () => {
                 </Fragment>
               }
             />
-          </Box>
-        </Box>
+          }
+        >
+          {loading ? (
+            <span style={{ marginLeft: 5 }}>
+              <Loader style={{ width: 16, height: 16 }} />
+            </span>
+          ) : (
+            <Fragment>
+              <Switch
+                value="enableDiag"
+                id="enableDiag"
+                name="enableDiag"
+                checked={diagEnabled}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setDiagEnabled(event.target.checked);
+                }}
+                label={"Daily Health Report"}
+                disabled={!clusterRegistered}
+                description={
+                  "Daily Health Report enables you to proactively identify potential issues in your deployment before they escalate."
+                }
+              />
+              <Switch
+                value="enableLogs"
+                id="enableLogs"
+                name="enableLogs"
+                checked={logsEnabled}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setLogsEnabled(event.target.checked);
+                }}
+                label={"Live Error Logs"}
+                disabled={!clusterRegistered}
+                description={
+                  "Live Error Logs will enable MinIO's support team and automatic diagnostics system to catch failures early."
+                }
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  marginTop: "55px",
+                  gap: "0px 10px",
+                }}
+              >
+                {(oDiagEnabled || oLogsEnabled) && (
+                  <Button
+                    id={"callhome-action"}
+                    variant={"secondary"}
+                    data-test-id="call-home-toggle-button"
+                    onClick={disableCallHomeAction}
+                    disabled={loading}
+                  >
+                    Disable Call Home
+                  </Button>
+                )}
+                <Button
+                  id={"callhome-action"}
+                  type="button"
+                  variant={mainVariant}
+                  data-test-id="call-home-toggle-button"
+                  onClick={confirmCallHomeAction}
+                  disabled={loading}
+                >
+                  Save Configuration
+                </Button>
+              </Box>
+            </Fragment>
+          )}
+        </FormLayout>
       </PageLayout>
     </Fragment>
   );

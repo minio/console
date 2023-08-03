@@ -52,15 +52,15 @@ export const inspectEl = Selector(".MuiPaper-root")
   .find("ul")
   .child("#inspect");
 
-export const inspect_volume_input = Selector('[data-test-id="inspect_volume"]');
-export const inspect_path_input = Selector('[data-test-id="inspect_path"]');
+export const inspect_volume_input = Selector("#inspect_volume");
+export const inspect_path_input = Selector("#inspect_path");
 
-export const inspect_volume_input_err = Selector("#inspect_volume-helper-text");
-export const inspect_path_input_err = Selector("#inspect_path-helper-text");
+export const inspect_volume_input_err =
+  Selector("#inspect_volume").sibling("div.errorText");
+export const inspect_path_input_err =
+  Selector("#inspect_path").sibling("div.errorText");
 
-export const inspect_encrypt_input = Selector(
-  '[data-test-id="inspect_encrypt"]',
-);
+export const inspect_encrypt_input = Selector("#inspect_encrypt");
 export const inspect_form_clear_btn = Selector(
   '[data-test-id="inspect-clear-button"]',
 );
