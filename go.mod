@@ -42,6 +42,8 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
+require github.com/mattn/go-ieproxy v0.0.1
+
 require (
 	aead.dev/mem v0.2.0 // indirect
 	aead.dev/minisign v0.2.0 // indirect
@@ -89,7 +91,6 @@ require (
 	github.com/lufia/plan9stats v0.0.0-20230326075908-cb1d2100619a // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-ieproxy v0.0.1 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
