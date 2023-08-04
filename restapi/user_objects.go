@@ -741,7 +741,7 @@ func getMultipleFilesDownloadResponse(session *models.Principal, params objectAp
 		defer resp.Close()
 
 		// indicate it's a download / inline content to the browser, and the size of the object
-		fileName := "selected_files_" + time.Now().UTC().Format(time.DateTime)
+		fileName := "selected_files_" + strings.ReplaceAll(strings.ReplaceAll(time.Now().UTC().Format(time.RFC3339), ":", ""), "-", "")
 
 		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", fileName))
 		rw.Header().Set("Content-Type", "application/zip")
