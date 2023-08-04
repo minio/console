@@ -50,7 +50,6 @@ import HelpMenu from "../../HelpMenu";
 const enabledConfigLDAP = [
   "server_addr",
   "lookup_bind_dn",
-  "lookup_bind_password",
   "user_dn_search_base_dn",
   "user_dn_search_filter",
 ];
