@@ -89,17 +89,16 @@ const IDPLDAPConfigurationDetails = () => {
 
         if (
           enabledConfigLDAP.includes(item.key) &&
-          item.value &&
-          item.value !== "" &&
-          item.value !== "off"
+          ((item.value && item.value !== "" && item.value !== "off") ||
+            (item.env_override &&
+              item.env_override.value !== "" &&
+              item.env_override.value !== "off"))
         ) {
           totalCoincidences++;
         }
       });
-
       const hasConfig = totalCoincidences === enabledConfigLDAP.length;
-
-      if ((!enabled || enabled.value === "on") && hasConfig) {
+      if (hasConfig && enabled && enabled.value !== "off") {
         setIsEnabled(true);
       } else {
         setIsEnabled(false);
