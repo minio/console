@@ -15,11 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Button, Grid } from "mds";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { Button, FormLayout, Grid, InputBox } from "mds";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Webhook } from "@mui/icons-material";
-import { formFieldStyles } from "../../Common/FormComponents/common/styleLibrary";
 import CallToActionIcon from "@mui/icons-material/CallToAction";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import {
@@ -30,8 +30,7 @@ import {
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { LinearProgress } from "@mui/material";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 
 interface IEndpointModal {
   open: boolean;
@@ -148,8 +147,8 @@ const AddEndpointModal = ({ open, type, onCloseEndpoint }: IEndpointModal) => {
         onClose={onCloseEndpoint}
         titleIcon={icon}
       >
-        <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-          <InputBoxWrapper
+        <FormLayout containerPadding={false} withBorders={false}>
+          <InputBox
             id="name"
             name="name"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -167,9 +166,7 @@ const AddEndpointModal = ({ open, type, onCloseEndpoint }: IEndpointModal) => {
             pattern={"^(?=.*[a-zA-Z0-9]).{1,}$"}
             required
           />
-        </Grid>
-        <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-          <InputBoxWrapper
+          <InputBox
             id="endpoint"
             name="endpoint"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,9 +187,7 @@ const AddEndpointModal = ({ open, type, onCloseEndpoint }: IEndpointModal) => {
             }
             required
           />
-        </Grid>
-        <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-          <InputBoxWrapper
+          <InputBox
             id="auth-token"
             name="auth-token"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,7 +197,7 @@ const AddEndpointModal = ({ open, type, onCloseEndpoint }: IEndpointModal) => {
             label="Auth Token"
             value={authToken}
           />
-        </Grid>
+        </FormLayout>
         {saving && (
           <Grid
             item
@@ -214,14 +209,7 @@ const AddEndpointModal = ({ open, type, onCloseEndpoint }: IEndpointModal) => {
             <LinearProgress />
           </Grid>
         )}
-        <Grid
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
+        <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
           <Button
             id={"reset"}
             type="button"

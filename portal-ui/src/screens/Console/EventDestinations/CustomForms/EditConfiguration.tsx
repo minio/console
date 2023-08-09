@@ -15,20 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { Button, Loader } from "mds";
-import { useLocation, useNavigate } from "react-router-dom";
 import get from "lodash/get";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { Box } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import ConfTargetGeneric from "../ConfTargetGeneric";
-
-import {
-  fieldBasic,
-  settingsCommon,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { Box, Button, Grid, Loader } from "mds";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { api } from "api";
+import { Configuration, ConfigurationKV } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 import {
   fieldsConfigurations,
   overrideFields,
@@ -40,7 +33,6 @@ import {
   IOverrideEnv,
   KVField,
 } from "../../Configurations/types";
-import ResetConfigurationModal from "./ResetConfigurationModal";
 import {
   configurationIsLoading,
   setErrorSnackMessage,
@@ -50,31 +42,16 @@ import {
 } from "../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../store";
 import WebhookSettings from "../WebhookSettings/WebhookSettings";
-import { useSelector } from "react-redux";
-import { api } from "api";
-import { Configuration, ConfigurationKV } from "api/consoleApi";
-import { errorToHandler } from "api/errors";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...fieldBasic,
-    ...settingsCommon,
-    settingsFormContainer: {
-      display: "grid",
-      gridTemplateColumns: "1fr",
-      gridGap: "10px",
-    },
-  });
+import ConfTargetGeneric from "../ConfTargetGeneric";
+import ResetConfigurationModal from "./ResetConfigurationModal";
 
 interface IAddNotificationEndpointProps {
   selectedConfiguration: IConfigurationElement;
-  classes: any;
   className?: string;
 }
 
 const EditConfiguration = ({
   selectedConfiguration,
-  classes,
   className = "",
 }: IAddNotificationEndpointProps) => {
   const dispatch = useAppDispatch();
@@ -238,7 +215,15 @@ const EditConfiguration = ({
                     flexFlow: "column",
                   }}
                 >
-                  <Grid item xs={12} className={classes.settingsFormContainer}>
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr",
+                      gap: "10px",
+                    }}
+                  >
                     <ConfTargetGeneric
                       fields={
                         fieldsConfigurations[
@@ -263,6 +248,7 @@ const EditConfiguration = ({
                     }}
                   >
                     <Button
+                      type={"button"}
                       id={"restore-defaults"}
                       variant="secondary"
                       onClick={resetConfigurationMOpen}
@@ -287,4 +273,4 @@ const EditConfiguration = ({
   );
 };
 
-export default withStyles(styles)(EditConfiguration);
+export default EditConfiguration;

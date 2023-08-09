@@ -15,53 +15,37 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
+import {
+  Box,
+  Grid,
+  HelpBox,
+  PageLayout,
+  ScreenTitle,
+  SettingsIcon,
+  Tabs,
+} from "mds";
 
 import { configurationElements } from "../utils";
 import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
-import { HelpBox, PageLayout, SettingsIcon } from "mds";
-import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import VerticalTabs from "../../Common/VerticalTabs/VerticalTabs";
-import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
 import ConfigurationForm from "./ConfigurationForm";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import ExportConfigButton from "./ExportConfigButton";
 import ImportConfigButton from "./ImportConfigButton";
-import { Box } from "@mui/material";
+
 import HelpMenu from "../../HelpMenu";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { api } from "../../../../api";
 import { IElement } from "../types";
 import { errorToHandler } from "../../../../api/errors";
-
-interface IConfigurationOptions {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    settingsOptionsContainer: {
-      display: "flex" as const,
-      flexDirection: "row" as const,
-      justifyContent: "flex-start" as const,
-      flexWrap: "wrap" as const,
-      border: "#E5E5E5 1px solid",
-      borderRadius: 2,
-      backgroundColor: "#fff",
-    },
-    ...searchField,
-    ...actionsTray,
-    ...containerForHeader,
-  });
 
 const getRoutePath = (path: string) => {
   return `${IAM_PAGES.SETTINGS}/${path}`;
@@ -71,9 +55,10 @@ const getRoutePath = (path: string) => {
 const NON_SUB_SYS_CONFIG_ITEMS = ["region"];
 const IGNORED_CONFIG_SUB_SYS = ["cache"]; // cache config is not supported.
 
-const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
+const ConfigurationOptions = () => {
   const { pathname = "" } = useLocation();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [configSubSysList, setConfigSubSysList] = useState<string[]>([]);
   const fetchConfigSubSysList = useCallback(async () => {
@@ -99,8 +84,6 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
       });
   }, [dispatch]);
 
-  let selConfigTab = pathname.substring(pathname.lastIndexOf("/") + 1);
-  selConfigTab = selConfigTab === "settings" ? "region" : selConfigTab;
   useEffect(() => {
     fetchConfigSubSysList();
     dispatch(setHelpName("settings_Region"));
@@ -121,59 +104,57 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
     <Fragment>
       <PageHeaderWrapper label={"Settings"} actions={<HelpMenu />} />
       <PageLayout>
-        <Grid item xs={12}>
-          <div
-            id="settings-container"
-            className={classes.settingsOptionsContainer}
-          >
-            <ScreenTitle
-              icon={<SettingsIcon />}
-              title={"MinIO Configuration:"}
-              actions={
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: 2,
-                  }}
-                >
-                  <ImportConfigButton />
-                  <ExportConfigButton />
-                </Box>
-              }
-            />
-            <VerticalTabs
-              selectedTab={selConfigTab}
-              isRouteTabs
-              routes={
-                <Routes>
-                  {availableConfigSubSys.map((element) => (
-                    <Route
-                      key={`configItem-${element.configuration_label}`}
-                      path={`${element.configuration_id}`}
-                      element={<ConfigurationForm />}
-                    />
-                  ))}
+        <Grid item xs={12} id={"settings-container"}>
+          <ScreenTitle
+            icon={<SettingsIcon />}
+            title={"MinIO Configuration:"}
+            actions={
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 10,
+                }}
+              >
+                <ImportConfigButton />
+                <ExportConfigButton />
+              </Box>
+            }
+            sx={{ marginBottom: 15 }}
+          />
+          <Tabs
+            currentTabOrPath={pathname}
+            onTabClick={(path) => {
+              navigate(path);
+            }}
+            useRouteTabs
+            options={availableConfigSubSys.map((element) => {
+              const { configuration_id, configuration_label, icon } = element;
+              return {
+                tabConfig: {
+                  id: `settings-tab-${configuration_label}`,
+                  label: configuration_label,
+                  value: configuration_id,
+                  icon: icon,
+                  to: getRoutePath(configuration_id),
+                },
+              };
+            })}
+            routes={
+              <Routes>
+                {availableConfigSubSys.map((element) => (
                   <Route
-                    path={"/"}
-                    element={<Navigate to={`${IAM_PAGES.SETTINGS}/region`} />}
+                    key={`configItem-${element.configuration_label}`}
+                    path={`${element.configuration_id}`}
+                    element={<ConfigurationForm />}
                   />
-                </Routes>
-              }
-            >
-              {availableConfigSubSys.map((element) => {
-                const { configuration_id, configuration_label, icon } = element;
-                return {
-                  tabConfig: {
-                    label: configuration_label,
-                    value: configuration_id,
-                    icon: icon,
-                    component: Link,
-                    to: getRoutePath(configuration_id),
-                  },
-                };
-              })}
-            </VerticalTabs>
-          </div>
+                ))}
+                <Route
+                  path={"/"}
+                  element={<Navigate to={`${IAM_PAGES.SETTINGS}/region`} />}
+                />
+              </Routes>
+            }
+          />
         </Grid>
         <Grid item xs={12} sx={{ paddingTop: "15px" }}>
           <HelpBox
@@ -203,4 +184,4 @@ const ConfigurationOptions = ({ classes }: IConfigurationOptions) => {
   );
 };
 
-export default withStyles(styles)(ConfigurationOptions);
+export default ConfigurationOptions;
