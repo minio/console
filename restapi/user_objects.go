@@ -722,7 +722,10 @@ func getMultipleFilesDownloadResponse(session *models.Principal, params objectAp
 					continue
 				}
 
-				f, err := addToZip(dObj, objectData.LastModified)
+				prefixes := strings.Split(dObj, "/")
+				// truncate upper level prefixes to make the download as flat at the current level.
+				objectName := prefixes[len(prefixes)-1]
+				f, err := addToZip(objectName, objectData.LastModified)
 				if err != nil {
 					// Ignore errors, move to next
 					continue
