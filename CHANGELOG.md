@@ -4,6 +4,10 @@
 
 ## Release v0.36.0
 
+Features:
+
+- Updated Settings page components
+
 Bug Fix:
 
 - Show LDAP Enabled value LDAP configuration
