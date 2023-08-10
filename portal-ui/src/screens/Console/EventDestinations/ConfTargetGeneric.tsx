@@ -14,37 +14,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
-import { IElementValue, IOverrideEnv, KVField } from "../Configurations/types";
+import React, { Fragment, useEffect, useState } from "react";
 import {
-  formFieldStyles,
-  modalBasic,
-} from "../Common/FormComponents/common/styleLibrary";
+  CommentBox,
+  ConsoleIcon,
+  FormLayout,
+  Grid,
+  InputBox,
+  ReadBox,
+  Switch,
+  Tooltip,
+} from "mds";
+import { IElementValue, IOverrideEnv, KVField } from "../Configurations/types";
 import CSVMultiSelector from "../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";
-import CommentBoxWrapper from "../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
-import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
-import { ConsoleIcon, InputBox, Switch, Tooltip } from "mds";
 
 interface IConfGenericProps {
   onChange: (newValue: IElementValue[]) => void;
   fields: KVField[];
   defaultVals?: IElementValue[];
   overrideEnv?: IOverrideEnv;
-  classes: any;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    formFieldRow: {
-      ...formFieldStyles.formFieldRow,
-    },
-    ...modalBasic,
-  });
 
 // Function to get defined values,
 //we make this because the backed sometimes don't return all the keys when there is an initial configuration
@@ -71,7 +60,6 @@ const ConfTargetGeneric = ({
   fields,
   defaultVals,
   overrideEnv,
-  classes,
 }: IConfGenericProps) => {
   const [valueHolder, setValueHolder] = useState<IElementValue[]>([]);
   const fieldsElements = !fields ? [] : fields;
@@ -113,9 +101,8 @@ const ConfTargetGeneric = ({
 
       if (override) {
         return (
-          <PredefinedList
+          <ReadBox
             label={field.label}
-            content={override.value}
             actionButton={
               <Grid
                 item
@@ -133,7 +120,10 @@ const ConfTargetGeneric = ({
                 </Tooltip>
               </Grid>
             }
-          />
+            sx={{ width: "100%" }}
+          >
+            {override.value}
+          </ReadBox>
         );
       }
     }
@@ -180,15 +170,13 @@ const ConfTargetGeneric = ({
         );
       case "comment":
         return (
-          <CommentBoxWrapper
+          <CommentBox
             id={field.name}
             name={field.name}
             label={field.label}
             tooltip={field.tooltip}
             value={holderItem ? holderItem.value : ""}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setValueElement(field.name, e.target.value, item)
-            }
+            onChange={(e) => setValueElement(field.name, e.target.value, item)}
             placeholder={field.placeholder}
           />
         );
@@ -210,16 +198,12 @@ const ConfTargetGeneric = ({
   };
 
   return (
-    <Grid container>
-      <Grid xs={12} item className={classes.fieldBox}>
-        {fieldsElements.map((field, item) => (
-          <Grid item xs={12} key={field.name} className={classes.formFieldRow}>
-            {fieldDefinition(field, item)}
-          </Grid>
-        ))}
-      </Grid>
-    </Grid>
+    <FormLayout withBorders={false} containerPadding={false}>
+      {fieldsElements.map((field, item) => (
+        <Fragment key={field.name}>{fieldDefinition(field, item)}</Fragment>
+      ))}
+    </FormLayout>
   );
 };
 
-export default withStyles(styles)(ConfTargetGeneric);
+export default ConfTargetGeneric;

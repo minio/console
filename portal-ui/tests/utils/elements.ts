@@ -123,45 +123,41 @@ export const settingsWindow = Selector("#settings-container");
 //----------------------------------------------------
 // Settings page vertical tabs
 //----------------------------------------------------
-export const settingsRegionTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/region",
+export const settingsRegionTab = Selector("button").withAttribute(
+  "id",
+  "settings-tab-Region",
 );
-export const settingsCompressionTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/compression",
+export const settingsCompressionTab = Selector("button").withAttribute(
+  "id",
+  "settings-tab-Compression",
 );
-export const settingsApiTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/api",
+export const settingsApiTab = Selector("button").withAttribute(
+  "id",
+  "settings-tab-API",
 );
-export const settingsHealTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/heal",
+export const settingsHealTab = Selector("button").withAttribute(
+  "id",
+  "settings-tab-Heal",
 );
-export const settingsScannerTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/scanner",
+export const settingsScannerTab = Selector("button").withAttribute(
+  "id",
+  "settings-tab-Scanner",
 );
-export const settingsEtcdTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/etcd",
+export const settingsEtcdTab = Selector("button").withAttribute(
+  "id",
+  "settings-tab-Etcd",
 );
-export const settingsOpenIdTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/identity_openid",
+export const settingsLoggerWebhookTab = Selector("button").withAttribute(
+  "id",
+  "settings-tab-Logger Webhook",
 );
-export const settingsLdapTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/identity_ldap",
+export const settingsAuditWebhookTab = Selector("button").withAttribute(
+  "id",
+  "settings-tab-Audit Webhook",
 );
-export const settingsLoggerWebhookTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/logger_webhook",
-);
-export const settingsAuditWebhookTab = Selector(".MuiTab-root").withAttribute(
-  "href",
-  "/settings/configurations/audit_webhook",
+export const settingsAuditKafkaTab = Selector("button").withAttribute(
+  "id",
+  "settings-tab-Audit Kafka",
 );
 
 //----------------------------------------------------

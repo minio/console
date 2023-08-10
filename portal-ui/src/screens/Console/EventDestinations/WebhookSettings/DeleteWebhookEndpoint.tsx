@@ -14,9 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { ConfirmDeleteIcon } from "mds";
-import { DialogContentText } from "@mui/material";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import {
   configurationIsLoading,
@@ -24,8 +25,6 @@ import {
   setServerNeedsRestart,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
 
 interface IDeleteWebhookEndpoint {
   modalOpen: boolean;
@@ -38,7 +37,6 @@ const DeleteWebhookEndpoint = ({
   modalOpen,
   onClose,
   selectedARN,
-  type,
 }: IDeleteWebhookEndpoint) => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
@@ -84,10 +82,10 @@ const DeleteWebhookEndpoint = ({
       titleIcon={<ConfirmDeleteIcon />}
       onClose={onClose}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           {`${message} `}
           <strong>{selectedARN}</strong>?
-        </DialogContentText>
+        </Fragment>
       }
     />
   );

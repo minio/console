@@ -43,11 +43,10 @@ test("All vertical tab items exist", async (t) => {
   const settingsHealTabExists = elements.settingsHealTab.exists;
   const settingsScannerTabExists = elements.settingsScannerTab.exists;
   const settingsEtcdTabExists = elements.settingsEtcdTab.exists;
-  const settingsOpenIdTabExists = elements.settingsOpenIdTab.exists;
-  const settingsLdapTabExists = elements.settingsLdapTab.exists;
   const settingsLoggerWebhookTabExists =
     elements.settingsLoggerWebhookTab.exists;
   const settingsAuditWebhookTabExists = elements.settingsAuditWebhookTab.exists;
+  const settingsAuditKafkaTabExists = elements.settingsAuditKafkaTab.exists;
   await t
     .navigateTo("http://localhost:9090/settings/configurations")
     .expect(settingsRegionTabExists)
@@ -65,5 +64,7 @@ test("All vertical tab items exist", async (t) => {
     .expect(settingsLoggerWebhookTabExists)
     .ok()
     .expect(settingsAuditWebhookTabExists)
+    .ok()
+    .expect(settingsAuditKafkaTabExists)
     .ok();
 });
