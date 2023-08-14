@@ -377,6 +377,7 @@ const Inspect = () => {
                 error={volumeError}
                 required
                 placeholder={"test-bucket"}
+                disabled={!clusterRegistered}
               />
               <InputBox
                 id="inspect_path"
@@ -389,6 +390,7 @@ const Inspect = () => {
                 value={inspectPath}
                 required
                 placeholder={"test*/xl.meta"}
+                disabled={!clusterRegistered}
               />
               <Switch
                 label="Encrypt"
@@ -400,6 +402,7 @@ const Inspect = () => {
                 onChange={() => {
                   setIsEncrypt(!isEncrypt);
                 }}
+                disabled={!clusterRegistered}
               />
               <Box
                 sx={{
@@ -419,13 +422,14 @@ const Inspect = () => {
                   data-test-id="inspect-clear-button"
                   onClick={resetForm}
                   label={"Clear"}
+                  disabled={!clusterRegistered}
                 />
                 <Button
                   id={"inspect-start"}
                   type="submit"
                   variant={!clusterRegistered ? "regular" : "callAction"}
                   data-test-id="inspect-submit-button"
-                  disabled={!isFormValid}
+                  disabled={!isFormValid || !clusterRegistered}
                   label={"Inspect"}
                 />
               </Box>

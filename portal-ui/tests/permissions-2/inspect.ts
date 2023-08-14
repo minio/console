@@ -111,42 +111,6 @@ test("Form Input states verification", async (t) => {
   await t
     .expect(inspect_path_input_err.innerText)
     .eql("This field is required");
-
-  //Enter form values
-  await t.typeText(inspect_volume_input, "/").typeText(inspect_path_input, "/");
-
-  //verify post state of Invalid values
-  await t.expect(inspect_volume_input.value).eql("/");
-  await t.expect(inspect_path_input.value).eql("/");
-  await t
-    .expect(inspect_volume_input_err.innerText)
-    .eql("Volume/Bucket name cannot start with /");
-  await t
-    .expect(inspect_path_input_err.innerText)
-    .eql("Path cannot start with /");
-  await t.expect(inspect_form_submit_btn.hasAttribute("disabled")).eql(true);
-  await t.expect(inspect_form_clear_btn.hasAttribute("disabled")).eql(false);
-
-  //Important. Testcafe's way to clear input values.
-  await t.selectText(inspect_volume_input).pressKey("delete");
-  await t.selectText(inspect_path_input).pressKey("delete");
-
-  //Enter Valid form values
-  await t
-    .typeText(inspect_volume_input, volumeValue)
-    .typeText(inspect_path_input, pathValue);
-
-  //verify post state of valid values
-  await t.expect(inspect_volume_input.value).eql(volumeValue);
-  await t.expect(inspect_path_input.value).eql(pathValue);
-  await t.expect(inspect_volume_input_err.exists).notOk();
-  await t.expect(inspect_path_input_err.exists).notOk();
-
-  await t.click(inspect_form_clear_btn);
-  //reset state verification
-  await t.expect(inspect_volume_input.value).eql("");
-  await t.expect(inspect_path_input.value).eql("");
-  await t.expect(inspect_form_submit_btn.hasAttribute("disabled")).eql(true);
 });
 /**  End Allowed Policy Test **/
 

@@ -27,6 +27,7 @@ import {
   PageLayout,
   SpeedtestIcon,
   WarnIcon,
+  InputBox,
 } from "mds";
 import { DateTime } from "luxon";
 import createStyles from "@mui/styles/createStyles";
@@ -44,7 +45,6 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import STResults from "./STResults";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ProgressBarWrapper from "../Common/ProgressBarWrapper/ProgressBarWrapper";
 import InputUnitMenu from "../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { SecureComponent } from "../../../common/SecureComponent";
@@ -258,7 +258,7 @@ const Speedtest = () => {
                 </Grid>
                 <Grid item md sm={12}>
                   <div style={{ marginLeft: 10, width: 300 }}>
-                    <InputBoxWrapper
+                    <InputBox
                       id={"size"}
                       name={"size"}
                       label={"Object Size"}
@@ -267,7 +267,7 @@ const Speedtest = () => {
                       }}
                       noLabelMinWidth={true}
                       value={size}
-                      disabled={start}
+                      disabled={start || !clusterRegistered}
                       overlayObject={
                         <InputUnitMenu
                           id={"size-unit"}
@@ -278,7 +278,7 @@ const Speedtest = () => {
                             { label: "MiB", value: "MiB" },
                             { label: "GiB", value: "GiB" },
                           ]}
-                          disabled={start}
+                          disabled={start || !clusterRegistered}
                         />
                       }
                     />
@@ -286,7 +286,7 @@ const Speedtest = () => {
                 </Grid>
                 <Grid item md sm={12}>
                   <div style={{ marginLeft: 10, width: 300 }}>
-                    <InputBoxWrapper
+                    <InputBox
                       id={"duration"}
                       name={"duration"}
                       label={"Duration"}
@@ -297,14 +297,14 @@ const Speedtest = () => {
                       }}
                       noLabelMinWidth={true}
                       value={duration}
-                      disabled={start}
+                      disabled={start || !clusterRegistered}
                       overlayObject={
                         <InputUnitMenu
                           id={"size-unit"}
                           onUnitChange={() => {}}
                           unitSelected={"s"}
                           unitsList={[{ label: "s", value: "s" }]}
-                          disabled={start}
+                          disabled={start || !clusterRegistered}
                         />
                       }
                       pattern={"[0-9]*"}
@@ -324,7 +324,10 @@ const Speedtest = () => {
                     }
                     className={`${classes.buttonBackground} ${classes.speedStart}`}
                     disabled={
-                      duration.trim() === "" || size.trim() === "" || start
+                      duration.trim() === "" ||
+                      size.trim() === "" ||
+                      start ||
+                      !clusterRegistered
                     }
                     label={buttonLabel}
                   />

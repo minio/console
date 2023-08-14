@@ -39,7 +39,7 @@ const RegisterCluster = ({ compactMode = false }: IRegisterCluster) => {
   );
 
   const registerMessage =
-    "Use your MinIO Subscription Network login credentials to register this cluster.";
+    "Please use your MinIO Subscription Network login credentials to register this cluster and enable this feature.";
 
   if (compactMode) {
     return (
