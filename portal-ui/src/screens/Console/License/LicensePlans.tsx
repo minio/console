@@ -325,8 +325,6 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
     }
   }, [isSmallScreen, currentPlan]);
 
-  const linkTracker = `?ref=con`;
-
   const featureList = FEATURE_ITEMS;
   return (
     <Fragment>
@@ -609,7 +607,7 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
               })}
               <Box className="button-box">
                 {getButton(
-                  `https://slack.min.io${linkTracker}`,
+                  `https://slack.min.io`,
                   "Join Slack",
                   "regular",
                   LICENSE_PLANS.COMMUNITY,
@@ -653,7 +651,7 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
 
             <Box className="button-box">
               {getButton(
-                `https://min.io/signup${linkTracker}`,
+                `https://min.io/signup`,
                 !PAID_PLANS.includes(currentPlan)
                   ? "Subscribe"
                   : "Login to SUBNET",
@@ -708,7 +706,7 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
             })}
             <Box className="button-box">
               {getButton(
-                `https://min.io/signup${linkTracker}`,
+                `https://min.io/signup`,
                 !PAID_PLANS.includes(currentPlan)
                   ? "Subscribe"
                   : "Login to SUBNET",
