@@ -132,7 +132,7 @@ const Profile = () => {
             {typesList.map((t) => (
               <Checkbox
                 checked={types.indexOf(t.value) > -1}
-                disabled={profilingStarted}
+                disabled={profilingStarted || !clusterRegistered}
                 key={`checkbox-${t.label}`}
                 id={`checkbox-${t.label}`}
                 label={t.label}
@@ -154,7 +154,9 @@ const Profile = () => {
               id={"start-profiling"}
               type="submit"
               variant={clusterRegistered ? "callAction" : "regular"}
-              disabled={profilingStarted || types.length < 1}
+              disabled={
+                profilingStarted || types.length < 1 || !clusterRegistered
+              }
               onClick={() => {
                 if (!clusterRegistered) {
                   navigate("/support/register");
@@ -169,7 +171,7 @@ const Profile = () => {
               type="submit"
               variant="callAction"
               color="primary"
-              disabled={!profilingStarted}
+              disabled={!profilingStarted || !clusterRegistered}
               onClick={() => {
                 stopProfiling();
               }}

@@ -207,7 +207,7 @@ const CallHome = () => {
                     variant={"secondary"}
                     data-test-id="call-home-toggle-button"
                     onClick={disableCallHomeAction}
-                    disabled={loading}
+                    disabled={loading || !clusterRegistered}
                   >
                     Disable Call Home
                   </Button>
@@ -218,7 +218,7 @@ const CallHome = () => {
                   variant={mainVariant}
                   data-test-id="call-home-toggle-button"
                   onClick={confirmCallHomeAction}
-                  disabled={loading}
+                  disabled={loading || !clusterRegistered}
                 >
                   Save Configuration
                 </Button>

@@ -313,7 +313,7 @@ const HealthInfo = () => {
                           variant={
                             !clusterRegistered ? "regular" : "callAction"
                           }
-                          disabled={startDiagnostic}
+                          disabled={startDiagnostic || !clusterRegistered}
                           onClick={startDiagnosticAction}
                           label={buttonStartText}
                         />
