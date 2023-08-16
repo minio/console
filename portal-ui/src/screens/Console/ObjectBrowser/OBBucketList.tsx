@@ -54,12 +54,7 @@ import AButton from "../Common/AButton/AButton";
 import makeStyles from "@mui/styles/makeStyles";
 import { niceBytesInt } from "../../../common/utils";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import {
-  Bucket,
-  Error,
-  HttpResponse,
-  ListBucketsResponse,
-} from "../../../api/consoleApi";
+import { Bucket } from "../../../api/consoleApi";
 import { api } from "../../../api";
 import { errorToHandler } from "../../../api/errors";
 import { setLoadingObjects } from "./objectBrowserSlice";
@@ -104,7 +99,7 @@ const OBListBuckets = () => {
         setLoading(true);
         api.buckets
           .listBuckets()
-          .then((res: HttpResponse<ListBucketsResponse, Error>) => {
+          .then((res) => {
             if (res.data) {
               setLoading(false);
               setRecords(res.data.buckets || []);

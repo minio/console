@@ -66,7 +66,7 @@ type DeleteObjectDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDeleteObjectDefault creates DeleteObjectDefault with default headers values
@@ -92,13 +92,13 @@ func (o *DeleteObjectDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the delete object default response
-func (o *DeleteObjectDefault) WithPayload(payload *models.Error) *DeleteObjectDefault {
+func (o *DeleteObjectDefault) WithPayload(payload *models.APIError) *DeleteObjectDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the delete object default response
-func (o *DeleteObjectDefault) SetPayload(payload *models.Error) {
+func (o *DeleteObjectDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

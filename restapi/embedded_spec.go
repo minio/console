@@ -76,7 +76,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -106,7 +106,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -129,7 +129,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -160,7 +160,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -208,7 +208,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -253,7 +253,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -276,7 +276,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -307,7 +307,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -330,7 +330,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -361,7 +361,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -392,7 +392,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -423,7 +423,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -488,7 +488,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -511,7 +511,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -539,7 +539,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -582,7 +582,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -630,7 +630,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -673,7 +673,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -719,7 +719,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -762,7 +762,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -799,7 +799,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -836,7 +836,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -859,7 +859,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -890,7 +890,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -923,7 +923,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -956,7 +956,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -984,7 +984,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1033,7 +1033,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1069,7 +1069,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1097,7 +1097,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1133,7 +1133,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1164,7 +1164,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1207,7 +1207,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1241,7 +1241,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1283,7 +1283,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1314,7 +1314,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1348,7 +1348,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1390,7 +1390,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1422,7 +1422,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1453,7 +1453,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1518,7 +1518,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1575,7 +1575,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1640,7 +1640,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1693,7 +1693,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1741,7 +1741,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1778,7 +1778,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1818,7 +1818,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1866,7 +1866,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1904,7 +1904,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -1952,7 +1952,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2000,7 +2000,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2043,7 +2043,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2074,7 +2074,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2111,7 +2111,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2151,7 +2151,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2183,7 +2183,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2214,7 +2214,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2248,7 +2248,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2290,7 +2290,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2326,7 +2326,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2357,7 +2357,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2391,7 +2391,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2422,7 +2422,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2448,7 +2448,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2479,7 +2479,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2516,7 +2516,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2555,7 +2555,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2579,7 +2579,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2616,7 +2616,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2639,7 +2639,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2669,7 +2669,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2703,7 +2703,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2740,7 +2740,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2771,7 +2771,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2802,7 +2802,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2839,7 +2839,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2865,7 +2865,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2902,7 +2902,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2930,7 +2930,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -2962,7 +2962,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3000,7 +3000,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3039,7 +3039,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3084,7 +3084,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3121,7 +3121,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3144,7 +3144,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3167,7 +3167,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3198,7 +3198,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3227,7 +3227,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3259,7 +3259,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3290,7 +3290,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3318,7 +3318,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3350,7 +3350,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3377,7 +3377,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3414,7 +3414,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3437,7 +3437,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3468,7 +3468,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3496,7 +3496,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3528,7 +3528,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3555,7 +3555,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3592,7 +3592,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3624,7 +3624,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3647,7 +3647,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3670,7 +3670,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3703,7 +3703,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3736,7 +3736,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3760,7 +3760,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3789,7 +3789,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3820,7 +3820,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3850,7 +3850,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3914,7 +3914,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3940,7 +3940,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -3977,7 +3977,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4008,7 +4008,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4042,7 +4042,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4076,7 +4076,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4107,7 +4107,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4133,7 +4133,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4166,7 +4166,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4192,7 +4192,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4242,7 +4242,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4265,7 +4265,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4293,7 +4293,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4324,7 +4324,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4358,7 +4358,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4391,7 +4391,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4428,7 +4428,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4459,7 +4459,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4492,7 +4492,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4520,7 +4520,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4551,7 +4551,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4585,7 +4585,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4605,7 +4605,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4628,7 +4628,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4658,7 +4658,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4688,7 +4688,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4719,7 +4719,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4742,7 +4742,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4775,7 +4775,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4808,7 +4808,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4838,7 +4838,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4861,7 +4861,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4884,7 +4884,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4912,7 +4912,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4935,7 +4935,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -4966,7 +4966,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5003,7 +5003,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5029,7 +5029,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5068,7 +5068,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5099,7 +5099,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5138,7 +5138,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5169,7 +5169,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5206,7 +5206,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5243,7 +5243,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5274,7 +5274,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5304,7 +5304,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5340,7 +5340,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -5348,6 +5348,17 @@ func init() {
     }
   },
   "definitions": {
+    "ApiError": {
+      "type": "object",
+      "properties": {
+        "detailedMessage": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "BackendProperties": {
       "type": "object",
       "properties": {
@@ -6227,25 +6238,6 @@ func init() {
         },
         "maxConcurrentUploads": {
           "type": "integer"
-        }
-      }
-    },
-    "error": {
-      "type": "object",
-      "required": [
-        "message",
-        "detailedMessage"
-      ],
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "detailedMessage": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
         }
       }
     },
@@ -9160,7 +9152,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9190,7 +9182,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9213,7 +9205,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9244,7 +9236,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9292,7 +9284,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9337,7 +9329,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9360,7 +9352,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9391,7 +9383,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9414,7 +9406,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9445,7 +9437,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9476,7 +9468,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9507,7 +9499,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9572,7 +9564,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9595,7 +9587,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9623,7 +9615,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9666,7 +9658,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9714,7 +9706,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9757,7 +9749,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9803,7 +9795,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9846,7 +9838,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9883,7 +9875,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9920,7 +9912,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9943,7 +9935,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -9974,7 +9966,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10007,7 +9999,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10040,7 +10032,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10068,7 +10060,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10117,7 +10109,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10153,7 +10145,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10181,7 +10173,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10217,7 +10209,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10248,7 +10240,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10291,7 +10283,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10325,7 +10317,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10367,7 +10359,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10398,7 +10390,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10432,7 +10424,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10474,7 +10466,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10506,7 +10498,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10537,7 +10529,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10602,7 +10594,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10659,7 +10651,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10724,7 +10716,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10777,7 +10769,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10825,7 +10817,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10862,7 +10854,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10902,7 +10894,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10950,7 +10942,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -10988,7 +10980,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11036,7 +11028,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11084,7 +11076,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11127,7 +11119,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11158,7 +11150,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11195,7 +11187,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11235,7 +11227,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11267,7 +11259,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11298,7 +11290,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11332,7 +11324,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11374,7 +11366,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11410,7 +11402,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11441,7 +11433,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11475,7 +11467,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11506,7 +11498,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11532,7 +11524,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11563,7 +11555,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11600,7 +11592,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11639,7 +11631,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11663,7 +11655,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11700,7 +11692,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11723,7 +11715,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11753,7 +11745,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11787,7 +11779,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11824,7 +11816,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11855,7 +11847,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11886,7 +11878,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11923,7 +11915,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11949,7 +11941,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -11986,7 +11978,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12014,7 +12006,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12046,7 +12038,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12084,7 +12076,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12123,7 +12115,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12168,7 +12160,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12205,7 +12197,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12228,7 +12220,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12251,7 +12243,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12282,7 +12274,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12311,7 +12303,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12343,7 +12335,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12374,7 +12366,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12402,7 +12394,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12434,7 +12426,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12461,7 +12453,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12498,7 +12490,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12521,7 +12513,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12552,7 +12544,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12580,7 +12572,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12612,7 +12604,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12639,7 +12631,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12676,7 +12668,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12708,7 +12700,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12731,7 +12723,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12754,7 +12746,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12787,7 +12779,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12820,7 +12812,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12844,7 +12836,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12873,7 +12865,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12904,7 +12896,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12934,7 +12926,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -12998,7 +12990,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13024,7 +13016,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13061,7 +13053,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13092,7 +13084,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13126,7 +13118,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13160,7 +13152,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13191,7 +13183,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13217,7 +13209,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13250,7 +13242,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13276,7 +13268,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13326,7 +13318,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13349,7 +13341,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13377,7 +13369,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13408,7 +13400,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13442,7 +13434,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13475,7 +13467,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13512,7 +13504,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13543,7 +13535,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13576,7 +13568,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13604,7 +13596,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13635,7 +13627,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13669,7 +13661,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13689,7 +13681,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13712,7 +13704,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13742,7 +13734,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13772,7 +13764,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13803,7 +13795,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13826,7 +13818,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13859,7 +13851,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13892,7 +13884,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13922,7 +13914,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13945,7 +13937,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13968,7 +13960,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -13996,7 +13988,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14019,7 +14011,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14050,7 +14042,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14087,7 +14079,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14113,7 +14105,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14152,7 +14144,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14183,7 +14175,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14222,7 +14214,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14253,7 +14245,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14290,7 +14282,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14327,7 +14319,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14358,7 +14350,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14388,7 +14380,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14424,7 +14416,7 @@ func init() {
           "default": {
             "description": "Generic error response.",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/ApiError"
             }
           }
         }
@@ -14432,6 +14424,17 @@ func init() {
     }
   },
   "definitions": {
+    "ApiError": {
+      "type": "object",
+      "properties": {
+        "detailedMessage": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "BackendProperties": {
       "type": "object",
       "properties": {
@@ -15460,25 +15463,6 @@ func init() {
         },
         "maxConcurrentUploads": {
           "type": "integer"
-        }
-      }
-    },
-    "error": {
-      "type": "object",
-      "required": [
-        "message",
-        "detailedMessage"
-      ],
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "detailedMessage": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
         }
       }
     },

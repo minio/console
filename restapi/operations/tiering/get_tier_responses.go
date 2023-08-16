@@ -86,7 +86,7 @@ type GetTierDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetTierDefault creates GetTierDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetTierDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get tier default response
-func (o *GetTierDefault) WithPayload(payload *models.Error) *GetTierDefault {
+func (o *GetTierDefault) WithPayload(payload *models.APIError) *GetTierDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get tier default response
-func (o *GetTierDefault) SetPayload(payload *models.Error) {
+func (o *GetTierDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

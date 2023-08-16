@@ -33,14 +33,14 @@ func registerVersionHandlers(api *operations.ConsoleAPI) {
 	api.SystemCheckMinIOVersionHandler = systemApi.CheckMinIOVersionHandlerFunc(func(params systemApi.CheckMinIOVersionParams) middleware.Responder {
 		versionResponse, err := getVersionResponse(params)
 		if err != nil {
-			return systemApi.NewCheckMinIOVersionDefault(int(err.Code)).WithPayload(err)
+			return systemApi.NewCheckMinIOVersionDefault(err.Code).WithPayload(err.APIError)
 		}
 		return systemApi.NewCheckMinIOVersionOK().WithPayload(versionResponse)
 	})
 }
 
 // getSessionResponse parse the token of the current session and returns a list of allowed actions to render in the UI
-func getVersionResponse(params systemApi.CheckMinIOVersionParams) (*models.CheckVersionResponse, *models.Error) {
+func getVersionResponse(params systemApi.CheckMinIOVersionParams) (*models.CheckVersionResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 

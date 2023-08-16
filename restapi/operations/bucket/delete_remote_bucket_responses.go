@@ -66,7 +66,7 @@ type DeleteRemoteBucketDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDeleteRemoteBucketDefault creates DeleteRemoteBucketDefault with default headers values
@@ -92,13 +92,13 @@ func (o *DeleteRemoteBucketDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the delete remote bucket default response
-func (o *DeleteRemoteBucketDefault) WithPayload(payload *models.Error) *DeleteRemoteBucketDefault {
+func (o *DeleteRemoteBucketDefault) WithPayload(payload *models.APIError) *DeleteRemoteBucketDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the delete remote bucket default response
-func (o *DeleteRemoteBucketDefault) SetPayload(payload *models.Error) {
+func (o *DeleteRemoteBucketDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

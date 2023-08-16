@@ -66,7 +66,7 @@ type EditTierCredentialsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewEditTierCredentialsDefault creates EditTierCredentialsDefault with default headers values
@@ -92,13 +92,13 @@ func (o *EditTierCredentialsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the edit tier credentials default response
-func (o *EditTierCredentialsDefault) WithPayload(payload *models.Error) *EditTierCredentialsDefault {
+func (o *EditTierCredentialsDefault) WithPayload(payload *models.APIError) *EditTierCredentialsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the edit tier credentials default response
-func (o *EditTierCredentialsDefault) SetPayload(payload *models.Error) {
+func (o *EditTierCredentialsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

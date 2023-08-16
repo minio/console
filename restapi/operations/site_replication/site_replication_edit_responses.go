@@ -86,7 +86,7 @@ type SiteReplicationEditDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSiteReplicationEditDefault creates SiteReplicationEditDefault with default headers values
@@ -112,13 +112,13 @@ func (o *SiteReplicationEditDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the site replication edit default response
-func (o *SiteReplicationEditDefault) WithPayload(payload *models.Error) *SiteReplicationEditDefault {
+func (o *SiteReplicationEditDefault) WithPayload(payload *models.APIError) *SiteReplicationEditDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the site replication edit default response
-func (o *SiteReplicationEditDefault) SetPayload(payload *models.Error) {
+func (o *SiteReplicationEditDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -86,7 +86,7 @@ type AddMultiBucketLifecycleDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewAddMultiBucketLifecycleDefault creates AddMultiBucketLifecycleDefault with default headers values
@@ -112,13 +112,13 @@ func (o *AddMultiBucketLifecycleDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the add multi bucket lifecycle default response
-func (o *AddMultiBucketLifecycleDefault) WithPayload(payload *models.Error) *AddMultiBucketLifecycleDefault {
+func (o *AddMultiBucketLifecycleDefault) WithPayload(payload *models.APIError) *AddMultiBucketLifecycleDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the add multi bucket lifecycle default response
-func (o *AddMultiBucketLifecycleDefault) SetPayload(payload *models.Error) {
+func (o *AddMultiBucketLifecycleDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

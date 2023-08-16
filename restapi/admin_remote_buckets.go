@@ -47,7 +47,7 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketListRemoteBucketsHandler = bucketApi.ListRemoteBucketsHandlerFunc(func(params bucketApi.ListRemoteBucketsParams, session *models.Principal) middleware.Responder {
 		listResp, err := getListRemoteBucketsResponse(session, params)
 		if err != nil {
-			return bucketApi.NewListRemoteBucketsDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewListRemoteBucketsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewListRemoteBucketsOK().WithPayload(listResp)
 	})
@@ -56,7 +56,7 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketRemoteBucketDetailsHandler = bucketApi.RemoteBucketDetailsHandlerFunc(func(params bucketApi.RemoteBucketDetailsParams, session *models.Principal) middleware.Responder {
 		response, err := getRemoteBucketDetailsResponse(session, params)
 		if err != nil {
-			return bucketApi.NewRemoteBucketDetailsDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewRemoteBucketDetailsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewRemoteBucketDetailsOK().WithPayload(response)
 	})
@@ -65,7 +65,7 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketDeleteRemoteBucketHandler = bucketApi.DeleteRemoteBucketHandlerFunc(func(params bucketApi.DeleteRemoteBucketParams, session *models.Principal) middleware.Responder {
 		err := getDeleteRemoteBucketResponse(session, params)
 		if err != nil {
-			return bucketApi.NewDeleteRemoteBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewDeleteRemoteBucketDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewDeleteRemoteBucketNoContent()
 	})
@@ -74,7 +74,7 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketAddRemoteBucketHandler = bucketApi.AddRemoteBucketHandlerFunc(func(params bucketApi.AddRemoteBucketParams, session *models.Principal) middleware.Responder {
 		err := getAddRemoteBucketResponse(session, params)
 		if err != nil {
-			return bucketApi.NewAddRemoteBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewAddRemoteBucketDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewAddRemoteBucketCreated()
 	})
@@ -83,7 +83,7 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketSetMultiBucketReplicationHandler = bucketApi.SetMultiBucketReplicationHandlerFunc(func(params bucketApi.SetMultiBucketReplicationParams, session *models.Principal) middleware.Responder {
 		response, err := setMultiBucketReplicationResponse(session, params)
 		if err != nil {
-			return bucketApi.NewSetMultiBucketReplicationDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewSetMultiBucketReplicationDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return bucketApi.NewSetMultiBucketReplicationOK().WithPayload(response)
@@ -93,7 +93,7 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketListExternalBucketsHandler = bucketApi.ListExternalBucketsHandlerFunc(func(params bucketApi.ListExternalBucketsParams, session *models.Principal) middleware.Responder {
 		response, err := listExternalBucketsResponse(params)
 		if err != nil {
-			return bucketApi.NewListExternalBucketsDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewListExternalBucketsDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return bucketApi.NewListExternalBucketsOK().WithPayload(response)
@@ -103,7 +103,7 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketDeleteBucketReplicationRuleHandler = bucketApi.DeleteBucketReplicationRuleHandlerFunc(func(params bucketApi.DeleteBucketReplicationRuleParams, session *models.Principal) middleware.Responder {
 		err := deleteReplicationRuleResponse(session, params)
 		if err != nil {
-			return bucketApi.NewDeleteBucketReplicationRuleDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewDeleteBucketReplicationRuleDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return bucketApi.NewDeleteBucketReplicationRuleNoContent()
@@ -113,13 +113,13 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketDeleteAllReplicationRulesHandler = bucketApi.DeleteAllReplicationRulesHandlerFunc(func(params bucketApi.DeleteAllReplicationRulesParams, session *models.Principal) middleware.Responder {
 		err := deleteBucketReplicationRulesResponse(session, params)
 		if err != nil {
-			if err.Code == 500 && *err.DetailedMessage == "The remote target does not exist" {
+			if err.Code == 500 && err.APIError.DetailedMessage == "The remote target does not exist" {
 				// We should ignore this MinIO error when deleting all replication rules
 				return bucketApi.NewDeleteAllReplicationRulesNoContent() // This will return 204 as per swagger spec
 			}
 			// If there is a different error, then we should handle it
 			// This will return a generic error with err.Code (likely a 500 or 404) and its *err.DetailedMessage
-			return bucketApi.NewDeleteAllReplicationRulesDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewDeleteAllReplicationRulesDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewDeleteAllReplicationRulesNoContent()
 	})
@@ -128,7 +128,7 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketDeleteSelectedReplicationRulesHandler = bucketApi.DeleteSelectedReplicationRulesHandlerFunc(func(params bucketApi.DeleteSelectedReplicationRulesParams, session *models.Principal) middleware.Responder {
 		err := deleteSelectedReplicationRulesResponse(session, params)
 		if err != nil {
-			return bucketApi.NewDeleteSelectedReplicationRulesDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewDeleteSelectedReplicationRulesDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return bucketApi.NewDeleteSelectedReplicationRulesNoContent()
@@ -138,13 +138,13 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	api.BucketUpdateMultiBucketReplicationHandler = bucketApi.UpdateMultiBucketReplicationHandlerFunc(func(params bucketApi.UpdateMultiBucketReplicationParams, session *models.Principal) middleware.Responder {
 		err := updateBucketReplicationResponse(session, params)
 		if err != nil {
-			return bucketApi.NewUpdateMultiBucketReplicationDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewUpdateMultiBucketReplicationDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewUpdateMultiBucketReplicationCreated()
 	})
 }
 
-func getListRemoteBucketsResponse(session *models.Principal, params bucketApi.ListRemoteBucketsParams) (*models.ListRemoteBucketsResponse, *models.Error) {
+func getListRemoteBucketsResponse(session *models.Principal, params bucketApi.ListRemoteBucketsParams) (*models.ListRemoteBucketsResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -155,7 +155,7 @@ func getListRemoteBucketsResponse(session *models.Principal, params bucketApi.Li
 	return listRemoteBuckets(ctx, adminClient)
 }
 
-func getRemoteBucketDetailsResponse(session *models.Principal, params bucketApi.RemoteBucketDetailsParams) (*models.RemoteBucket, *models.Error) {
+func getRemoteBucketDetailsResponse(session *models.Principal, params bucketApi.RemoteBucketDetailsParams) (*models.RemoteBucket, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -166,7 +166,7 @@ func getRemoteBucketDetailsResponse(session *models.Principal, params bucketApi.
 	return getRemoteBucket(ctx, adminClient, params.Name)
 }
 
-func getDeleteRemoteBucketResponse(session *models.Principal, params bucketApi.DeleteRemoteBucketParams) *models.Error {
+func getDeleteRemoteBucketResponse(session *models.Principal, params bucketApi.DeleteRemoteBucketParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -181,7 +181,7 @@ func getDeleteRemoteBucketResponse(session *models.Principal, params bucketApi.D
 	return nil
 }
 
-func getAddRemoteBucketResponse(session *models.Principal, params bucketApi.AddRemoteBucketParams) *models.Error {
+func getAddRemoteBucketResponse(session *models.Principal, params bucketApi.AddRemoteBucketParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -196,7 +196,7 @@ func getAddRemoteBucketResponse(session *models.Principal, params bucketApi.AddR
 	return nil
 }
 
-func listRemoteBuckets(ctx context.Context, client MinioAdmin) (*models.ListRemoteBucketsResponse, *models.Error) {
+func listRemoteBuckets(ctx context.Context, client MinioAdmin) (*models.ListRemoteBucketsResponse, *CodedAPIError) {
 	var remoteBuckets []*models.RemoteBucket
 	buckets, err := client.listRemoteBuckets(ctx, "", "")
 	if err != nil {
@@ -228,7 +228,7 @@ func listRemoteBuckets(ctx context.Context, client MinioAdmin) (*models.ListRemo
 	}, nil
 }
 
-func getRemoteBucket(ctx context.Context, client MinioAdmin, name string) (*models.RemoteBucket, *models.Error) {
+func getRemoteBucket(ctx context.Context, client MinioAdmin, name string) (*models.RemoteBucket, *CodedAPIError) {
 	remoteBucket, err := client.getRemoteBucket(ctx, name, "")
 	if err != nil {
 		return nil, ErrorWithContext(ctx, fmt.Errorf("error getting remote bucket details: %v", err))
@@ -502,7 +502,7 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 	return resultsList
 }
 
-func setMultiBucketReplicationResponse(session *models.Principal, params bucketApi.SetMultiBucketReplicationParams) (*models.MultiBucketResponseState, *models.Error) {
+func setMultiBucketReplicationResponse(session *models.Principal, params bucketApi.SetMultiBucketReplicationParams) (*models.MultiBucketResponseState, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -545,7 +545,7 @@ func setMultiBucketReplicationResponse(session *models.Principal, params bucketA
 	return &resultsParsed, nil
 }
 
-func listExternalBucketsResponse(params bucketApi.ListExternalBucketsParams) (*models.ListBucketsResponse, *models.Error) {
+func listExternalBucketsResponse(params bucketApi.ListExternalBucketsParams) (*models.ListBucketsResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	remoteAdmin, err := newAdminFromCreds(*params.Body.AccessKey, *params.Body.SecretKey, *params.Body.TargetURL, *params.Body.UseTLS)
@@ -555,7 +555,7 @@ func listExternalBucketsResponse(params bucketApi.ListExternalBucketsParams) (*m
 	return listExternalBuckets(ctx, AdminClient{Client: remoteAdmin})
 }
 
-func listExternalBuckets(ctx context.Context, client MinioAdmin) (*models.ListBucketsResponse, *models.Error) {
+func listExternalBuckets(ctx context.Context, client MinioAdmin) (*models.ListBucketsResponse, *CodedAPIError) {
 	buckets, err := getAccountBuckets(ctx, client)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -733,7 +733,7 @@ func deleteSelectedReplicationRules(ctx context.Context, session *models.Princip
 	return nil
 }
 
-func deleteReplicationRuleResponse(session *models.Principal, params bucketApi.DeleteBucketReplicationRuleParams) *models.Error {
+func deleteReplicationRuleResponse(session *models.Principal, params bucketApi.DeleteBucketReplicationRuleParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	ctx = context.WithValue(ctx, utils.ContextClientIP, getClientIP(params.HTTPRequest))
@@ -744,7 +744,7 @@ func deleteReplicationRuleResponse(session *models.Principal, params bucketApi.D
 	return nil
 }
 
-func deleteBucketReplicationRulesResponse(session *models.Principal, params bucketApi.DeleteAllReplicationRulesParams) *models.Error {
+func deleteBucketReplicationRulesResponse(session *models.Principal, params bucketApi.DeleteAllReplicationRulesParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	ctx = context.WithValue(ctx, utils.ContextClientIP, getClientIP(params.HTTPRequest))
@@ -755,7 +755,7 @@ func deleteBucketReplicationRulesResponse(session *models.Principal, params buck
 	return nil
 }
 
-func deleteSelectedReplicationRulesResponse(session *models.Principal, params bucketApi.DeleteSelectedReplicationRulesParams) *models.Error {
+func deleteSelectedReplicationRulesResponse(session *models.Principal, params bucketApi.DeleteSelectedReplicationRulesParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -768,7 +768,7 @@ func deleteSelectedReplicationRulesResponse(session *models.Principal, params bu
 	return nil
 }
 
-func updateBucketReplicationResponse(session *models.Principal, params bucketApi.UpdateMultiBucketReplicationParams) *models.Error {
+func updateBucketReplicationResponse(session *models.Principal, params bucketApi.UpdateMultiBucketReplicationParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 

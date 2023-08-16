@@ -86,7 +86,7 @@ type AdminInfoDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewAdminInfoDefault creates AdminInfoDefault with default headers values
@@ -112,13 +112,13 @@ func (o *AdminInfoDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the admin info default response
-func (o *AdminInfoDefault) WithPayload(payload *models.Error) *AdminInfoDefault {
+func (o *AdminInfoDefault) WithPayload(payload *models.APIError) *AdminInfoDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the admin info default response
-func (o *AdminInfoDefault) SetPayload(payload *models.Error) {
+func (o *AdminInfoDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

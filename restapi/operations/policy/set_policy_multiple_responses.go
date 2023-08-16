@@ -66,7 +66,7 @@ type SetPolicyMultipleDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSetPolicyMultipleDefault creates SetPolicyMultipleDefault with default headers values
@@ -92,13 +92,13 @@ func (o *SetPolicyMultipleDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the set policy multiple default response
-func (o *SetPolicyMultipleDefault) WithPayload(payload *models.Error) *SetPolicyMultipleDefault {
+func (o *SetPolicyMultipleDefault) WithPayload(payload *models.APIError) *SetPolicyMultipleDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the set policy multiple default response
-func (o *SetPolicyMultipleDefault) SetPayload(payload *models.Error) {
+func (o *SetPolicyMultipleDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

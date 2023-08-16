@@ -66,7 +66,7 @@ type RestartServiceDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewRestartServiceDefault creates RestartServiceDefault with default headers values
@@ -92,13 +92,13 @@ func (o *RestartServiceDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the restart service default response
-func (o *RestartServiceDefault) WithPayload(payload *models.Error) *RestartServiceDefault {
+func (o *RestartServiceDefault) WithPayload(payload *models.APIError) *RestartServiceDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the restart service default response
-func (o *RestartServiceDefault) SetPayload(payload *models.Error) {
+func (o *RestartServiceDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

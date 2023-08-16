@@ -21,10 +21,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/go-openapi/swag"
+	"github.com/minio/minio-go/v7"
+
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go/v3"
-	"github.com/minio/minio-go/v7"
 )
 
 var (
@@ -75,9 +75,14 @@ var (
 	ErrHealthReportFail                 = errors.New("failure to generate Health report")
 )
 
+type CodedAPIError struct {
+	Code     int
+	APIError *models.APIError
+}
+
 // ErrorWithContext :
-func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
-	errorCode := int32(500)
+func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedAPIError {
+	errorCode := 500
 	errorMessage := ErrDefault.Error()
 	var err1 error
 	var exists bool
@@ -241,6 +246,7 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 				errorCode = 400
 				errorMessage = "Bucket already exists"
 			}
+
 			LogError("ErrorWithContext:%v", err...)
 			LogIf(ctx, err1, err...)
 		}
@@ -251,11 +257,11 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *models.Error {
 			}
 		}
 	}
-	return &models.Error{Code: errorCode, Message: swag.String(errorMessage), DetailedMessage: swag.String(err1.Error())}
+	return &CodedAPIError{Code: errorCode, APIError: &models.APIError{Message: errorMessage, DetailedMessage: err1.Error()}}
 }
 
 // Error receives an errors object and parse it against k8sErrors, returns the right errors code paired with a generic errors message
-func Error(err ...interface{}) *models.Error {
+func Error(err ...interface{}) *CodedAPIError {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	return ErrorWithContext(ctx, err...)

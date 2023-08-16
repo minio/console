@@ -37,7 +37,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       # Exclude this API from the authentication requirement
       security: [ ]
       tags:
@@ -57,7 +57,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       # Exclude this API from the authentication requirement
       security: [ ]
       tags:
@@ -78,7 +78,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       security: [ ]
       tags:
         - Auth
@@ -99,7 +99,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Auth
 
@@ -115,7 +115,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Auth
 
@@ -131,7 +131,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       security: [ ]
       tags:
         - System
@@ -152,7 +152,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Account
 
@@ -172,7 +172,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Account
 
@@ -188,7 +188,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
     post:
@@ -208,7 +208,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -229,7 +229,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
     delete:
@@ -246,7 +246,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -267,7 +267,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
     put:
@@ -289,7 +289,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -334,7 +334,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
     delete:
@@ -375,7 +375,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -409,7 +409,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -435,7 +435,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -468,7 +468,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -512,7 +512,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -545,7 +545,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -577,7 +577,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -609,7 +609,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
     delete:
@@ -634,7 +634,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -666,7 +666,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -693,7 +693,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -718,7 +718,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
@@ -742,7 +742,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -768,7 +768,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -789,7 +789,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
     put:
@@ -813,7 +813,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -844,7 +844,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
     post:
@@ -866,7 +866,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -894,7 +894,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -916,7 +916,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -938,7 +938,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -959,7 +959,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -984,7 +984,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1011,7 +1011,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1034,7 +1034,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1053,7 +1053,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1077,7 +1077,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1098,7 +1098,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
     put:
@@ -1120,7 +1120,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1141,7 +1141,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1165,7 +1165,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1184,7 +1184,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1205,7 +1205,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1226,7 +1226,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
     post:
@@ -1248,7 +1248,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1270,7 +1270,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1298,7 +1298,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1320,7 +1320,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1349,7 +1349,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -1376,7 +1376,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - ServiceAccount
     post:
@@ -1396,7 +1396,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - ServiceAccount
 
@@ -1418,7 +1418,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - ServiceAccount
 
@@ -1437,7 +1437,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - ServiceAccount
 
@@ -1459,7 +1459,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - ServiceAccount
 
@@ -1480,7 +1480,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - ServiceAccount
     put:
@@ -1502,7 +1502,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - ServiceAccount
 
@@ -1529,7 +1529,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
     post:
@@ -1549,7 +1549,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
 
@@ -1573,7 +1573,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
 
@@ -1594,7 +1594,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
     put:
@@ -1618,7 +1618,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
     delete:
@@ -1635,7 +1635,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
 
@@ -1661,7 +1661,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
   /user/policy:
@@ -1676,7 +1676,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Policy
   /user/{name}/policies:
@@ -1696,7 +1696,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Policy
   /user/{name}/service-accounts:
@@ -1716,7 +1716,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
     post:
@@ -1740,7 +1740,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
 
@@ -1766,7 +1766,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
 
@@ -1786,7 +1786,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - User
 
@@ -1813,7 +1813,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Group
     post:
@@ -1831,7 +1831,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Group
 
@@ -1852,7 +1852,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Group
     delete:
@@ -1869,7 +1869,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Group
     put:
@@ -1893,7 +1893,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Group
 
@@ -1920,7 +1920,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Policy
     post:
@@ -1940,7 +1940,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Policy
 
@@ -1963,7 +1963,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Policy
 
@@ -1986,7 +1986,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Policy
 
@@ -2017,7 +2017,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -2043,7 +2043,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
     get:
@@ -2072,7 +2072,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
     delete:
@@ -2096,7 +2096,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -2129,7 +2129,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -2150,7 +2150,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Policy
     delete:
@@ -2167,7 +2167,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Policy
 
@@ -2194,7 +2194,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Configuration
 
@@ -2214,7 +2214,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Policy
 
@@ -2234,7 +2234,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Policy
 
@@ -2257,7 +2257,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Configuration
     put:
@@ -2281,7 +2281,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Configuration
 
@@ -2302,7 +2302,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Configuration
 
@@ -2318,7 +2318,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Configuration
   /configs/import:
@@ -2337,7 +2337,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Configuration
   /service/restart:
@@ -2350,7 +2350,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Service
   /profiling/start:
@@ -2371,7 +2371,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Profile
 
@@ -2389,7 +2389,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Profile
   /subnet/registration-token:
@@ -2404,7 +2404,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Subnet
   /subnet/info:
@@ -2419,7 +2419,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Subnet
   /subnet/apikey:
@@ -2439,7 +2439,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Subnet
   /subnet/register:
@@ -2460,7 +2460,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Subnet
 
@@ -2482,7 +2482,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Subnet
 
@@ -2504,7 +2504,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Subnet
 
@@ -2526,7 +2526,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - System
 
@@ -2558,7 +2558,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - System
 
@@ -2574,7 +2574,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - System
 
@@ -2590,7 +2590,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Configuration
     post:
@@ -2610,7 +2610,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Configuration
 
@@ -2626,7 +2626,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - SiteReplication
     post:
@@ -2646,7 +2646,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - SiteReplication
     put:
@@ -2666,7 +2666,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - SiteReplication
     delete:
@@ -2686,7 +2686,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - SiteReplication
 
@@ -2733,7 +2733,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - SiteReplication
 
@@ -2749,7 +2749,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Tiering
     post:
@@ -2767,7 +2767,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Tiering
 
@@ -2797,7 +2797,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Tiering
 
@@ -2830,7 +2830,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Tiering
 
@@ -2848,7 +2848,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - System
 
@@ -2864,7 +2864,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
     post:
@@ -2882,7 +2882,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
 
@@ -2903,7 +2903,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
   /remote-buckets/{source-bucket-name}/{arn}:
@@ -2925,7 +2925,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Bucket
   /logs/search:
@@ -2966,7 +2966,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Logging
 
@@ -2982,7 +2982,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/metrics:
@@ -2997,7 +2997,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/apis:
@@ -3012,7 +3012,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/version:
@@ -3027,7 +3027,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/keys:
@@ -3046,7 +3046,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
     get:
@@ -3065,7 +3065,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/keys/{name}:
@@ -3086,7 +3086,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
     delete:
@@ -3104,7 +3104,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/keys/{name}/import:
@@ -3128,7 +3128,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/policies:
@@ -3147,7 +3147,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
     get:
@@ -3166,7 +3166,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/policies/{name}:
@@ -3187,7 +3187,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
     delete:
@@ -3205,7 +3205,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/policies/{name}/assign:
@@ -3229,7 +3229,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/policies/{name}/describe:
@@ -3250,7 +3250,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/identities/{name}:
@@ -3269,7 +3269,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/identities/{name}/describe:
@@ -3290,7 +3290,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/describe-self/identity:
@@ -3305,7 +3305,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
   /kms/identities:
@@ -3325,7 +3325,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - KMS
 
@@ -3357,7 +3357,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Inspect
   /idp/{type}:
@@ -3383,7 +3383,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - idp
     get:
@@ -3403,7 +3403,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - idp
   /idp/{type}/{name}:
@@ -3429,7 +3429,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - idp
     delete:
@@ -3454,7 +3454,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - idp
     put:
@@ -3484,7 +3484,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - idp
 
@@ -3506,7 +3506,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - idp
 
@@ -3540,7 +3540,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - release
 
@@ -3556,7 +3556,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Support
 
@@ -3575,7 +3575,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Support
 
@@ -3794,15 +3794,9 @@ definitions:
         $ref: "#/definitions/setBucketQuota"
       retention:
         $ref: "#/definitions/putBucketRetentionRequest"
-  error:
+  ApiError:
     type: object
-    required:
-      - message
-      - detailedMessage
     properties:
-      code:
-        type: integer
-        format: int32
       message:
         type: string
       detailedMessage:
@@ -4030,7 +4024,7 @@ definitions:
       value:
         type: string
       env_override:
-          $ref: "#/definitions/envOverride"
+        $ref: "#/definitions/envOverride"
   envOverride:
     type: object
     properties:
@@ -4654,7 +4648,7 @@ definitions:
       onlineDrives:
         type: integer
       offlineDrives:
-        type: integer    
+        type: integer
   arnsResponse:
     type: object
     properties:

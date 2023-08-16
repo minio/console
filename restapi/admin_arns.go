@@ -31,7 +31,7 @@ func registerAdminArnsHandlers(api *operations.ConsoleAPI) {
 	api.SystemArnListHandler = systemApi.ArnListHandlerFunc(func(params systemApi.ArnListParams, session *models.Principal) middleware.Responder {
 		arnsResp, err := getArnsResponse(session, params)
 		if err != nil {
-			return systemApi.NewArnListDefault(int(err.Code)).WithPayload(err)
+			return systemApi.NewArnListDefault(err.Code).WithPayload(err.APIError)
 		}
 		return systemApi.NewArnListOK().WithPayload(arnsResp)
 	})
@@ -50,7 +50,7 @@ func getArns(ctx context.Context, client MinioAdmin) (*models.ArnsResponse, erro
 }
 
 // getArnsResponse returns a list of active arns in the instance
-func getArnsResponse(session *models.Principal, params systemApi.ArnListParams) (*models.ArnsResponse, *models.Error) {
+func getArnsResponse(session *models.Principal, params systemApi.ArnListParams) (*models.ArnsResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)

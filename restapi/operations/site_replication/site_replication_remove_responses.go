@@ -86,7 +86,7 @@ type SiteReplicationRemoveDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSiteReplicationRemoveDefault creates SiteReplicationRemoveDefault with default headers values
@@ -112,13 +112,13 @@ func (o *SiteReplicationRemoveDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the site replication remove default response
-func (o *SiteReplicationRemoveDefault) WithPayload(payload *models.Error) *SiteReplicationRemoveDefault {
+func (o *SiteReplicationRemoveDefault) WithPayload(payload *models.APIError) *SiteReplicationRemoveDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the site replication remove default response
-func (o *SiteReplicationRemoveDefault) SetPayload(payload *models.Error) {
+func (o *SiteReplicationRemoveDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -66,7 +66,7 @@ type PutObjectRestoreDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewPutObjectRestoreDefault creates PutObjectRestoreDefault with default headers values
@@ -92,13 +92,13 @@ func (o *PutObjectRestoreDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the put object restore default response
-func (o *PutObjectRestoreDefault) WithPayload(payload *models.Error) *PutObjectRestoreDefault {
+func (o *PutObjectRestoreDefault) WithPayload(payload *models.APIError) *PutObjectRestoreDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the put object restore default response
-func (o *PutObjectRestoreDefault) SetPayload(payload *models.Error) {
+func (o *PutObjectRestoreDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

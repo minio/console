@@ -66,7 +66,7 @@ type DeleteAllReplicationRulesDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDeleteAllReplicationRulesDefault creates DeleteAllReplicationRulesDefault with default headers values
@@ -92,13 +92,13 @@ func (o *DeleteAllReplicationRulesDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the delete all replication rules default response
-func (o *DeleteAllReplicationRulesDefault) WithPayload(payload *models.Error) *DeleteAllReplicationRulesDefault {
+func (o *DeleteAllReplicationRulesDefault) WithPayload(payload *models.APIError) *DeleteAllReplicationRulesDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the delete all replication rules default response
-func (o *DeleteAllReplicationRulesDefault) SetPayload(payload *models.Error) {
+func (o *DeleteAllReplicationRulesDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -282,13 +282,13 @@ func TestBadLogin(t *testing.T) {
 	expectedError := response.Status
 	assert.Equal("400 Bad Request", expectedError)
 	bodyBytes, _ := io.ReadAll(response.Body)
-	result2 := models.Error{}
+	result2 := models.APIError{}
 	err = json.Unmarshal(bodyBytes, &result2)
 	if err != nil {
 		log.Println(err)
 		assert.Nil(err)
 	}
-	detailedMessage := *result2.DetailedMessage
+	detailedMessage := result2.DetailedMessage
 	fmt.Println(detailedMessage)
 	assert.Equal("expected 'code' response type - got [], login not allowed", detailedMessage)
 }

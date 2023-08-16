@@ -43,7 +43,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	api.AuthLoginDetailHandler = authApi.LoginDetailHandlerFunc(func(params authApi.LoginDetailParams) middleware.Responder {
 		loginDetails, err := getLoginDetailsResponse(params, GlobalMinIOConfig.OpenIDProviders)
 		if err != nil {
-			return authApi.NewLoginDetailDefault(int(err.Code)).WithPayload(err)
+			return authApi.NewLoginDetailDefault(err.Code).WithPayload(err.APIError)
 		}
 		return authApi.NewLoginDetailOK().WithPayload(loginDetails)
 	})
@@ -51,7 +51,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	api.AuthLoginHandler = authApi.LoginHandlerFunc(func(params authApi.LoginParams) middleware.Responder {
 		loginResponse, err := getLoginResponse(params)
 		if err != nil {
-			return authApi.NewLoginDefault(int(err.Code)).WithPayload(err)
+			return authApi.NewLoginDefault(err.Code).WithPayload(err.APIError)
 		}
 		// Custom response writer to set the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
@@ -64,7 +64,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	api.AuthLoginOauth2AuthHandler = authApi.LoginOauth2AuthHandlerFunc(func(params authApi.LoginOauth2AuthParams) middleware.Responder {
 		loginResponse, err := getLoginOauth2AuthResponse(params, GlobalMinIOConfig.OpenIDProviders)
 		if err != nil {
-			return authApi.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
+			return authApi.NewLoginOauth2AuthDefault(err.Code).WithPayload(err.APIError)
 		}
 		// Custom response writer to set the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
@@ -123,7 +123,7 @@ func getConsoleCredentials(accessKey, secretKey, clientIP string) (*ConsoleCrede
 }
 
 // getLoginResponse performs login() and serializes it to the handler's output
-func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *models.Error) {
+func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	lr := params.Body
@@ -177,7 +177,7 @@ func isKubernetes() bool {
 }
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
-func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders oauth2.OpenIDPCfg) (*models.LoginDetails, *models.Error) {
+func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders oauth2.OpenIDPCfg) (*models.LoginDetails, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
@@ -242,7 +242,7 @@ func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, 
 	return userCredentials, nil
 }
 
-func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProviders oauth2.OpenIDPCfg) (*models.LoginResponse, *models.Error) {
+func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProviders oauth2.OpenIDPCfg) (*models.LoginResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	r := params.HTTPRequest

@@ -86,7 +86,7 @@ type SubnetAPIKeyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSubnetAPIKeyDefault creates SubnetAPIKeyDefault with default headers values
@@ -112,13 +112,13 @@ func (o *SubnetAPIKeyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the subnet Api key default response
-func (o *SubnetAPIKeyDefault) WithPayload(payload *models.Error) *SubnetAPIKeyDefault {
+func (o *SubnetAPIKeyDefault) WithPayload(payload *models.APIError) *SubnetAPIKeyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the subnet Api key default response
-func (o *SubnetAPIKeyDefault) SetPayload(payload *models.Error) {
+func (o *SubnetAPIKeyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

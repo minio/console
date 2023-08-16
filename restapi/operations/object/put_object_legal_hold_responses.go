@@ -66,7 +66,7 @@ type PutObjectLegalHoldDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewPutObjectLegalHoldDefault creates PutObjectLegalHoldDefault with default headers values
@@ -92,13 +92,13 @@ func (o *PutObjectLegalHoldDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the put object legal hold default response
-func (o *PutObjectLegalHoldDefault) WithPayload(payload *models.Error) *PutObjectLegalHoldDefault {
+func (o *PutObjectLegalHoldDefault) WithPayload(payload *models.APIError) *PutObjectLegalHoldDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the put object legal hold default response
-func (o *PutObjectLegalHoldDefault) SetPayload(payload *models.Error) {
+func (o *PutObjectLegalHoldDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

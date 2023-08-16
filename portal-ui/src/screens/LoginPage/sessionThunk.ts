@@ -17,12 +17,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { setErrorSnackMessage } from "../../systemSlice";
 import { api } from "api";
-import {
-  Error,
-  HttpResponse,
-  SessionResponse,
-  ListObjectsResponse,
-} from "api/consoleApi";
 import { errorToHandler } from "api/errors";
 import {
   saveSessionResponse,
@@ -32,11 +26,11 @@ import { SessionCallStates } from "../Console/consoleSlice.types";
 
 import {
   globalSetDistributedSetup,
-  setOverrideStyles,
   setAnonymousMode,
+  setOverrideStyles,
+  userLogged,
 } from "../../../src/systemSlice";
 import { getOverrideColorVariants } from "../../utils/stylesUtils";
-import { userLogged } from "../../../src/systemSlice";
 import { AppState } from "../../store";
 
 export const fetchSession = createAsyncThunk(
@@ -48,7 +42,7 @@ export const fetchSession = createAsyncThunk(
 
     return api.session
       .sessionCheck()
-      .then((res: HttpResponse<SessionResponse, Error>) => {
+      .then((res) => {
         dispatch(userLogged(true));
         dispatch(saveSessionResponse(res.data));
         dispatch(globalSetDistributedSetup(res.data.distributedMode || false));
@@ -63,7 +57,7 @@ export const fetchSession = createAsyncThunk(
           }
         }
       })
-      .catch(async (res: HttpResponse<SessionResponse, Error>) => {
+      .catch(async (res) => {
         if (screen === "browser") {
           const bucket = pathnameParts.length >= 3 ? pathnameParts[2] : "";
           // no bucket, no business
@@ -80,7 +74,7 @@ export const fetchSession = createAsyncThunk(
             .then(() => {
               dispatch(setAnonymousMode());
             })
-            .catch((res: HttpResponse<ListObjectsResponse, Error>) => {
+            .catch((res) => {
               dispatch(setErrorSnackMessage(errorToHandler(res.error)));
             })
             .finally(() => {

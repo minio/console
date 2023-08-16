@@ -15,20 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { ErrorResponseHandler } from "../common/types";
-import { Error } from "./consoleApi";
+import { ApiError } from "./consoleApi";
 
 // errorToHandler translates a swagger error to a ErrorResponseHandler which
 // is legacy, when all API calls are using the swagger API, we can remove this.
-export const errorToHandler = (e: Error): ErrorResponseHandler => {
+export const errorToHandler = (e: ApiError): ErrorResponseHandler => {
   if (!e) {
     return {
-      statusCode: 0,
       errorMessage: "",
       detailedError: "",
     };
   }
   return {
-    statusCode: e.code,
     errorMessage: e.message || "",
     detailedError: e.detailedMessage || "",
   };

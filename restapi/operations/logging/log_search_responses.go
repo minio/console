@@ -86,7 +86,7 @@ type LogSearchDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewLogSearchDefault creates LogSearchDefault with default headers values
@@ -112,13 +112,13 @@ func (o *LogSearchDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the log search default response
-func (o *LogSearchDefault) WithPayload(payload *models.Error) *LogSearchDefault {
+func (o *LogSearchDefault) WithPayload(payload *models.APIError) *LogSearchDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the log search default response
-func (o *LogSearchDefault) SetPayload(payload *models.Error) {
+func (o *LogSearchDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

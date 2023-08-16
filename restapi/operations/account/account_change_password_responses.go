@@ -66,7 +66,7 @@ type AccountChangePasswordDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewAccountChangePasswordDefault creates AccountChangePasswordDefault with default headers values
@@ -92,13 +92,13 @@ func (o *AccountChangePasswordDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the account change password default response
-func (o *AccountChangePasswordDefault) WithPayload(payload *models.Error) *AccountChangePasswordDefault {
+func (o *AccountChangePasswordDefault) WithPayload(payload *models.APIError) *AccountChangePasswordDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the account change password default response
-func (o *AccountChangePasswordDefault) SetPayload(payload *models.Error) {
+func (o *AccountChangePasswordDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

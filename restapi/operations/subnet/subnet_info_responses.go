@@ -86,7 +86,7 @@ type SubnetInfoDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSubnetInfoDefault creates SubnetInfoDefault with default headers values
@@ -112,13 +112,13 @@ func (o *SubnetInfoDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the subnet info default response
-func (o *SubnetInfoDefault) WithPayload(payload *models.Error) *SubnetInfoDefault {
+func (o *SubnetInfoDefault) WithPayload(payload *models.APIError) *SubnetInfoDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the subnet info default response
-func (o *SubnetInfoDefault) SetPayload(payload *models.Error) {
+func (o *SubnetInfoDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -36,7 +36,7 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 	api.ConfigurationListConfigHandler = cfgApi.ListConfigHandlerFunc(func(params cfgApi.ListConfigParams, session *models.Principal) middleware.Responder {
 		configListResp, err := getListConfigResponse(session, params)
 		if err != nil {
-			return cfgApi.NewListConfigDefault(int(err.Code)).WithPayload(err)
+			return cfgApi.NewListConfigDefault(err.Code).WithPayload(err.APIError)
 		}
 		return cfgApi.NewListConfigOK().WithPayload(configListResp)
 	})
@@ -44,7 +44,7 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 	api.ConfigurationConfigInfoHandler = cfgApi.ConfigInfoHandlerFunc(func(params cfgApi.ConfigInfoParams, session *models.Principal) middleware.Responder {
 		config, err := getConfigResponse(session, params)
 		if err != nil {
-			return cfgApi.NewConfigInfoDefault(int(err.Code)).WithPayload(err)
+			return cfgApi.NewConfigInfoDefault(err.Code).WithPayload(err.APIError)
 		}
 		return cfgApi.NewConfigInfoOK().WithPayload(config)
 	})
@@ -52,7 +52,7 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 	api.ConfigurationSetConfigHandler = cfgApi.SetConfigHandlerFunc(func(params cfgApi.SetConfigParams, session *models.Principal) middleware.Responder {
 		resp, err := setConfigResponse(session, params)
 		if err != nil {
-			return cfgApi.NewSetConfigDefault(int(err.Code)).WithPayload(err)
+			return cfgApi.NewSetConfigDefault(err.Code).WithPayload(err.APIError)
 		}
 		return cfgApi.NewSetConfigOK().WithPayload(resp)
 	})
@@ -60,7 +60,7 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 	api.ConfigurationResetConfigHandler = cfgApi.ResetConfigHandlerFunc(func(params cfgApi.ResetConfigParams, session *models.Principal) middleware.Responder {
 		resp, err := resetConfigResponse(session, params)
 		if err != nil {
-			return cfgApi.NewResetConfigDefault(int(err.Code)).WithPayload(err)
+			return cfgApi.NewResetConfigDefault(err.Code).WithPayload(err.APIError)
 		}
 		return cfgApi.NewResetConfigOK().WithPayload(resp)
 	})
@@ -68,14 +68,14 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 	api.ConfigurationExportConfigHandler = cfgApi.ExportConfigHandlerFunc(func(params cfgApi.ExportConfigParams, session *models.Principal) middleware.Responder {
 		resp, err := exportConfigResponse(session, params)
 		if err != nil {
-			return cfgApi.NewExportConfigDefault((int(err.Code))).WithPayload(err)
+			return cfgApi.NewExportConfigDefault(err.Code).WithPayload(err.APIError)
 		}
 		return cfgApi.NewExportConfigOK().WithPayload(resp)
 	})
 	api.ConfigurationPostConfigsImportHandler = cfgApi.PostConfigsImportHandlerFunc(func(params cfgApi.PostConfigsImportParams, session *models.Principal) middleware.Responder {
 		_, err := importConfigResponse(session, params)
 		if err != nil {
-			return cfgApi.NewPostConfigsImportDefault((int(err.Code))).WithPayload(err)
+			return cfgApi.NewPostConfigsImportDefault(err.Code).WithPayload(err.APIError)
 		}
 		return cfgApi.NewPostConfigsImportDefault(200)
 	})
@@ -101,7 +101,7 @@ func listConfig(client MinioAdmin) ([]*models.ConfigDescription, error) {
 }
 
 // getListConfigResponse performs listConfig() and serializes it to the handler's output
-func getListConfigResponse(session *models.Principal, params cfgApi.ListConfigParams) (*models.ListConfigResponse, *models.Error) {
+func getListConfigResponse(session *models.Principal, params cfgApi.ListConfigParams) (*models.ListConfigResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -166,7 +166,7 @@ func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.C
 }
 
 // getConfigResponse performs getConfig() and serializes it to the handler's output
-func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams) ([]*models.Configuration, *models.Error) {
+func getConfigResponse(session *models.Principal, params cfgApi.ConfigInfoParams) ([]*models.Configuration, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -230,7 +230,7 @@ func buildConfig(configName *string, kvs []*models.ConfigurationKV) *string {
 }
 
 // setConfigResponse implements setConfig() to be used by handler
-func setConfigResponse(session *models.Principal, params cfgApi.SetConfigParams) (*models.SetConfigResponse, *models.Error) {
+func setConfigResponse(session *models.Principal, params cfgApi.SetConfigParams) (*models.SetConfigResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -256,7 +256,7 @@ func resetConfig(ctx context.Context, client MinioAdmin, configName *string) (er
 }
 
 // resetConfigResponse implements resetConfig() to be used by handler
-func resetConfigResponse(session *models.Principal, params cfgApi.ResetConfigParams) (*models.SetConfigResponse, *models.Error) {
+func resetConfigResponse(session *models.Principal, params cfgApi.ResetConfigParams) (*models.SetConfigResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -277,7 +277,7 @@ func resetConfigResponse(session *models.Principal, params cfgApi.ResetConfigPar
 	return &models.SetConfigResponse{Restart: true}, nil
 }
 
-func exportConfigResponse(session *models.Principal, params cfgApi.ExportConfigParams) (*models.ConfigExportResponse, *models.Error) {
+func exportConfigResponse(session *models.Principal, params cfgApi.ExportConfigParams) (*models.ConfigExportResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -296,7 +296,7 @@ func exportConfigResponse(session *models.Principal, params cfgApi.ExportConfigP
 	}, nil
 }
 
-func importConfigResponse(session *models.Principal, params cfgApi.PostConfigsImportParams) (*cfgApi.PostConfigsImportDefault, *models.Error) {
+func importConfigResponse(session *models.Principal, params cfgApi.PostConfigsImportParams) (*cfgApi.PostConfigsImportDefault, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)

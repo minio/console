@@ -86,7 +86,7 @@ type TiersListDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewTiersListDefault creates TiersListDefault with default headers values
@@ -112,13 +112,13 @@ func (o *TiersListDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the tiers list default response
-func (o *TiersListDefault) WithPayload(payload *models.Error) *TiersListDefault {
+func (o *TiersListDefault) WithPayload(payload *models.APIError) *TiersListDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the tiers list default response
-func (o *TiersListDefault) SetPayload(payload *models.Error) {
+func (o *TiersListDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

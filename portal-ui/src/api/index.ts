@@ -1,4 +1,4 @@
-import { Api, HttpResponse, Error, FullRequestParams } from "./consoleApi";
+import { Api, HttpResponse, FullRequestParams, ApiError } from "./consoleApi";
 
 export let api = new Api();
 api.baseUrl = `${new URL(document.baseURI).pathname}api/v1`;
@@ -25,15 +25,17 @@ api.request = async <T = any, E = any>({
     cancelToken,
     ...params,
   });
-  return internalResp.then(CommonAPIValidation);
+  return internalResp.catch((e) => CommonAPIValidation(e));
 };
 
 export function CommonAPIValidation<D, E>(
   res: HttpResponse<D, E>,
 ): HttpResponse<D, E> {
-  const err = res.error as Error;
-  if (err && err.code === 403 && err.message === "invalid session") {
-    document.location = "/";
+  const err = res.error as ApiError;
+  if (err && res.status === 403 && err.message === "invalid session") {
+    if (window.location.pathname !== "/login") {
+      document.location = "/login";
+    }
   }
-  return res;
+  throw res;
 }

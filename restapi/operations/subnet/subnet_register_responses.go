@@ -66,7 +66,7 @@ type SubnetRegisterDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSubnetRegisterDefault creates SubnetRegisterDefault with default headers values
@@ -92,13 +92,13 @@ func (o *SubnetRegisterDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the subnet register default response
-func (o *SubnetRegisterDefault) WithPayload(payload *models.Error) *SubnetRegisterDefault {
+func (o *SubnetRegisterDefault) WithPayload(payload *models.APIError) *SubnetRegisterDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the subnet register default response
-func (o *SubnetRegisterDefault) SetPayload(payload *models.Error) {
+func (o *SubnetRegisterDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

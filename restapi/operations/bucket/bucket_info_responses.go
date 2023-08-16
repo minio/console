@@ -86,7 +86,7 @@ type BucketInfoDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewBucketInfoDefault creates BucketInfoDefault with default headers values
@@ -112,13 +112,13 @@ func (o *BucketInfoDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the bucket info default response
-func (o *BucketInfoDefault) WithPayload(payload *models.Error) *BucketInfoDefault {
+func (o *BucketInfoDefault) WithPayload(payload *models.APIError) *BucketInfoDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the bucket info default response
-func (o *BucketInfoDefault) SetPayload(payload *models.Error) {
+func (o *BucketInfoDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

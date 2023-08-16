@@ -66,7 +66,7 @@ type RemovePolicyDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewRemovePolicyDefault creates RemovePolicyDefault with default headers values
@@ -92,13 +92,13 @@ func (o *RemovePolicyDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the remove policy default response
-func (o *RemovePolicyDefault) WithPayload(payload *models.Error) *RemovePolicyDefault {
+func (o *RemovePolicyDefault) WithPayload(payload *models.APIError) *RemovePolicyDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the remove policy default response
-func (o *RemovePolicyDefault) SetPayload(payload *models.Error) {
+func (o *RemovePolicyDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -84,7 +84,7 @@ type ShareObjectDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewShareObjectDefault creates ShareObjectDefault with default headers values
@@ -110,13 +110,13 @@ func (o *ShareObjectDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the share object default response
-func (o *ShareObjectDefault) WithPayload(payload *models.Error) *ShareObjectDefault {
+func (o *ShareObjectDefault) WithPayload(payload *models.APIError) *ShareObjectDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the share object default response
-func (o *ShareObjectDefault) SetPayload(payload *models.Error) {
+func (o *ShareObjectDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

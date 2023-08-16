@@ -20,13 +20,7 @@ import { setErrorSnackMessage, userLogged } from "../../systemSlice";
 import { setNavigateTo } from "./loginSlice";
 import { getTargetPath } from "./Login";
 import { api } from "api";
-import {
-  CheckVersionResponse,
-  Error,
-  HttpResponse,
-  LoginDetails,
-  LoginRequest,
-} from "api/consoleApi";
+import { ApiError, LoginRequest } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
 
 export const doLoginAsync = createAsyncThunk(
@@ -52,14 +46,14 @@ export const doLoginAsync = createAsyncThunk(
 
     return api.login
       .login(payload)
-      .then((res: HttpResponse<void, Error>) => {
+      .then((res) => {
         // We set the state in redux
         dispatch(userLogged(true));
         localStorage.setItem("userLoggedIn", accessKey);
         dispatch(setNavigateTo(getTargetPath()));
       })
-      .catch(async (res: HttpResponse<void, Error>) => {
-        const err = (await res.json()) as Error;
+      .catch(async (res) => {
+        const err = (await res.json()) as ApiError;
         dispatch(setErrorSnackMessage(errorToHandler(err)));
         return rejectWithValue(false);
       });
@@ -70,13 +64,13 @@ export const getFetchConfigurationAsync = createAsyncThunk(
   async (_, { dispatch, rejectWithValue }) => {
     return api.login
       .loginDetail()
-      .then((res: HttpResponse<LoginDetails, Error>) => {
+      .then((res) => {
         if (res.data) {
           return res.data;
         }
       })
-      .catch(async (res: HttpResponse<LoginDetails, Error>) => {
-        const err = (await res.json()) as Error;
+      .catch(async (res) => {
+        const err = (await res.json()) as ApiError;
         dispatch(setErrorSnackMessage(errorToHandler(err)));
         return rejectWithValue(false);
       });
@@ -88,13 +82,13 @@ export const getVersionAsync = createAsyncThunk(
   async (_, { getState, rejectWithValue, dispatch }) => {
     return api.checkVersion
       .checkMinIoVersion()
-      .then((res: HttpResponse<CheckVersionResponse, Error>) => {
+      .then((res) => {
         if (res.data !== undefined) {
           return res.data.latest_version;
         }
       })
-      .catch(async (res: HttpResponse<CheckVersionResponse, Error>) => {
-        const err = (await res.json()) as Error;
+      .catch(async (res) => {
+        const err = (await res.json()) as ApiError;
         dispatch(setErrorSnackMessage(errorToHandler(err)));
         return rejectWithValue(false);
       });

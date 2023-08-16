@@ -86,7 +86,7 @@ type UpdateConfigurationDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewUpdateConfigurationDefault creates UpdateConfigurationDefault with default headers values
@@ -112,13 +112,13 @@ func (o *UpdateConfigurationDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the update configuration default response
-func (o *UpdateConfigurationDefault) WithPayload(payload *models.Error) *UpdateConfigurationDefault {
+func (o *UpdateConfigurationDefault) WithPayload(payload *models.APIError) *UpdateConfigurationDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the update configuration default response
-func (o *UpdateConfigurationDefault) SetPayload(payload *models.Error) {
+func (o *UpdateConfigurationDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

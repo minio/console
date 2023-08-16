@@ -86,7 +86,7 @@ type SubnetRegTokenDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSubnetRegTokenDefault creates SubnetRegTokenDefault with default headers values
@@ -112,13 +112,13 @@ func (o *SubnetRegTokenDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the subnet reg token default response
-func (o *SubnetRegTokenDefault) WithPayload(payload *models.Error) *SubnetRegTokenDefault {
+func (o *SubnetRegTokenDefault) WithPayload(payload *models.APIError) *SubnetRegTokenDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the subnet reg token default response
-func (o *SubnetRegTokenDefault) SetPayload(payload *models.Error) {
+func (o *SubnetRegTokenDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

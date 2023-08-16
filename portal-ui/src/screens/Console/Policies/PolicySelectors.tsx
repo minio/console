@@ -16,7 +16,7 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { LinearProgress } from "@mui/material";
-import { DataTable, Grid, Box } from "mds";
+import { Box, DataTable, Grid } from "mds";
 import { policySort } from "../../../utils/sortFunctions";
 import { ErrorResponseHandler } from "../../../common/types";
 import SearchBox from "../Common/SearchBox";
@@ -25,11 +25,6 @@ import { AppState, useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "../Users/AddUsersSlice";
 import { useSelector } from "react-redux";
 import { api } from "../../../api";
-import {
-  Error,
-  HttpResponse,
-  ListPoliciesResponse,
-} from "../../../api/consoleApi";
 
 interface ISelectPolicyProps {
   selectedPolicy?: string[];
@@ -52,7 +47,7 @@ const PolicySelectors = ({ noTitle = false }: ISelectPolicyProps) => {
 
     api.policies
       .listPolicies()
-      .then((res: HttpResponse<ListPoliciesResponse, Error>) => {
+      .then((res) => {
         const policies = res.data.policies ?? [];
         isLoading(false);
         setRecords(policies.sort(policySort));

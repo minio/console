@@ -86,7 +86,7 @@ type SiteReplicationInfoAddDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSiteReplicationInfoAddDefault creates SiteReplicationInfoAddDefault with default headers values
@@ -112,13 +112,13 @@ func (o *SiteReplicationInfoAddDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the site replication info add default response
-func (o *SiteReplicationInfoAddDefault) WithPayload(payload *models.Error) *SiteReplicationInfoAddDefault {
+func (o *SiteReplicationInfoAddDefault) WithPayload(payload *models.APIError) *SiteReplicationInfoAddDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the site replication info add default response
-func (o *SiteReplicationInfoAddDefault) SetPayload(payload *models.Error) {
+func (o *SiteReplicationInfoAddDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -66,7 +66,7 @@ type AddGroupDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewAddGroupDefault creates AddGroupDefault with default headers values
@@ -92,13 +92,13 @@ func (o *AddGroupDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the add group default response
-func (o *AddGroupDefault) WithPayload(payload *models.Error) *AddGroupDefault {
+func (o *AddGroupDefault) WithPayload(payload *models.APIError) *AddGroupDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the add group default response
-func (o *AddGroupDefault) SetPayload(payload *models.Error) {
+func (o *AddGroupDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

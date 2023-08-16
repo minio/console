@@ -35,7 +35,7 @@ func registerBucketQuotaHandlers(api *operations.ConsoleAPI) {
 	api.BucketSetBucketQuotaHandler = bucektApi.SetBucketQuotaHandlerFunc(func(params bucektApi.SetBucketQuotaParams, session *models.Principal) middleware.Responder {
 		err := setBucketQuotaResponse(session, params)
 		if err != nil {
-			return bucektApi.NewSetBucketQuotaDefault(int(err.Code)).WithPayload(err)
+			return bucektApi.NewSetBucketQuotaDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucektApi.NewSetBucketQuotaOK()
 	})
@@ -44,13 +44,13 @@ func registerBucketQuotaHandlers(api *operations.ConsoleAPI) {
 	api.BucketGetBucketQuotaHandler = bucektApi.GetBucketQuotaHandlerFunc(func(params bucektApi.GetBucketQuotaParams, session *models.Principal) middleware.Responder {
 		resp, err := getBucketQuotaResponse(session, params)
 		if err != nil {
-			return bucektApi.NewGetBucketQuotaDefault(int(err.Code)).WithPayload(err)
+			return bucektApi.NewGetBucketQuotaDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucektApi.NewGetBucketQuotaOK().WithPayload(resp)
 	})
 }
 
-func setBucketQuotaResponse(session *models.Principal, params bucektApi.SetBucketQuotaParams) *models.Error {
+func setBucketQuotaResponse(session *models.Principal, params bucektApi.SetBucketQuotaParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -92,7 +92,7 @@ func setBucketQuota(ctx context.Context, ac *AdminClient, bucket *string, bucket
 	return nil
 }
 
-func getBucketQuotaResponse(session *models.Principal, params bucektApi.GetBucketQuotaParams) (*models.BucketQuota, *models.Error) {
+func getBucketQuotaResponse(session *models.Principal, params bucektApi.GetBucketQuotaParams) (*models.BucketQuota, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)

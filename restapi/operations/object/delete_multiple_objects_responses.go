@@ -66,7 +66,7 @@ type DeleteMultipleObjectsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDeleteMultipleObjectsDefault creates DeleteMultipleObjectsDefault with default headers values
@@ -92,13 +92,13 @@ func (o *DeleteMultipleObjectsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the delete multiple objects default response
-func (o *DeleteMultipleObjectsDefault) WithPayload(payload *models.Error) *DeleteMultipleObjectsDefault {
+func (o *DeleteMultipleObjectsDefault) WithPayload(payload *models.APIError) *DeleteMultipleObjectsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the delete multiple objects default response
-func (o *DeleteMultipleObjectsDefault) SetPayload(payload *models.Error) {
+func (o *DeleteMultipleObjectsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

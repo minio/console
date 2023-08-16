@@ -66,7 +66,7 @@ type LogoutDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewLogoutDefault creates LogoutDefault with default headers values
@@ -92,13 +92,13 @@ func (o *LogoutDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the logout default response
-func (o *LogoutDefault) WithPayload(payload *models.Error) *LogoutDefault {
+func (o *LogoutDefault) WithPayload(payload *models.APIError) *LogoutDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the logout default response
-func (o *LogoutDefault) SetPayload(payload *models.Error) {
+func (o *LogoutDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

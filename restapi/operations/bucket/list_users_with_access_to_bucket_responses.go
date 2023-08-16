@@ -89,7 +89,7 @@ type ListUsersWithAccessToBucketDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListUsersWithAccessToBucketDefault creates ListUsersWithAccessToBucketDefault with default headers values
@@ -115,13 +115,13 @@ func (o *ListUsersWithAccessToBucketDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list users with access to bucket default response
-func (o *ListUsersWithAccessToBucketDefault) WithPayload(payload *models.Error) *ListUsersWithAccessToBucketDefault {
+func (o *ListUsersWithAccessToBucketDefault) WithPayload(payload *models.APIError) *ListUsersWithAccessToBucketDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list users with access to bucket default response
-func (o *ListUsersWithAccessToBucketDefault) SetPayload(payload *models.Error) {
+func (o *ListUsersWithAccessToBucketDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

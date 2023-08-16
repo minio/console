@@ -71,12 +71,7 @@ import { hasPermission } from "../../../../../common/SecureComponent";
 import BucketNamingRules from "./BucketNamingRules";
 import PageHeaderWrapper from "../../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { api } from "../../../../../api";
-import {
-  Error,
-  HttpResponse,
-  ListBucketsResponse,
-  ObjectRetentionMode,
-} from "../../../../../api/consoleApi";
+import { ObjectRetentionMode } from "../../../../../api/consoleApi";
 import { errorToHandler } from "../../../../../api/errors";
 import HelpMenu from "../../../HelpMenu";
 import CSVMultiSelector from "../../../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";
@@ -183,7 +178,7 @@ const AddBucket = () => {
     const fetchRecords = () => {
       api.buckets
         .listBuckets()
-        .then((res: HttpResponse<ListBucketsResponse, Error>) => {
+        .then((res) => {
           if (res.data) {
             var bucketList: string[] = [];
             if (res.data.buckets != null && res.data.buckets.length > 0) {

@@ -24,8 +24,6 @@ import (
 
 	"github.com/minio/console/pkg/utils"
 
-	"github.com/go-openapi/swag"
-
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -49,7 +47,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 	api.UserListUsersHandler = userApi.ListUsersHandlerFunc(func(params userApi.ListUsersParams, session *models.Principal) middleware.Responder {
 		listUsersResponse, err := getListUsersResponse(session, params)
 		if err != nil {
-			return userApi.NewListUsersDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewListUsersDefault(err.Code).WithPayload(err.APIError)
 		}
 		return userApi.NewListUsersOK().WithPayload(listUsersResponse)
 	})
@@ -57,7 +55,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 	api.UserAddUserHandler = userApi.AddUserHandlerFunc(func(params userApi.AddUserParams, session *models.Principal) middleware.Responder {
 		userResponse, err := getUserAddResponse(session, params)
 		if err != nil {
-			return userApi.NewAddUserDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewAddUserDefault(err.Code).WithPayload(err.APIError)
 		}
 		return userApi.NewAddUserCreated().WithPayload(userResponse)
 	})
@@ -65,7 +63,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 	api.UserRemoveUserHandler = userApi.RemoveUserHandlerFunc(func(params userApi.RemoveUserParams, session *models.Principal) middleware.Responder {
 		err := getRemoveUserResponse(session, params)
 		if err != nil {
-			return userApi.NewRemoveUserDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewRemoveUserDefault(err.Code).WithPayload(err.APIError)
 		}
 		return userApi.NewRemoveUserNoContent()
 	})
@@ -73,7 +71,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 	api.UserUpdateUserGroupsHandler = userApi.UpdateUserGroupsHandlerFunc(func(params userApi.UpdateUserGroupsParams, session *models.Principal) middleware.Responder {
 		userUpdateResponse, err := getUpdateUserGroupsResponse(session, params)
 		if err != nil {
-			return userApi.NewUpdateUserGroupsDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewUpdateUserGroupsDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return userApi.NewUpdateUserGroupsOK().WithPayload(userUpdateResponse)
@@ -82,7 +80,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 	api.UserGetUserInfoHandler = userApi.GetUserInfoHandlerFunc(func(params userApi.GetUserInfoParams, session *models.Principal) middleware.Responder {
 		userInfoResponse, err := getUserInfoResponse(session, params)
 		if err != nil {
-			return userApi.NewGetUserInfoDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewGetUserInfoDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return userApi.NewGetUserInfoOK().WithPayload(userInfoResponse)
@@ -91,7 +89,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 	api.UserUpdateUserInfoHandler = userApi.UpdateUserInfoHandlerFunc(func(params userApi.UpdateUserInfoParams, session *models.Principal) middleware.Responder {
 		userUpdateResponse, err := getUpdateUserResponse(session, params)
 		if err != nil {
-			return userApi.NewUpdateUserInfoDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewUpdateUserInfoDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return userApi.NewUpdateUserInfoOK().WithPayload(userUpdateResponse)
@@ -100,7 +98,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 	api.UserBulkUpdateUsersGroupsHandler = userApi.BulkUpdateUsersGroupsHandlerFunc(func(params userApi.BulkUpdateUsersGroupsParams, session *models.Principal) middleware.Responder {
 		err := getAddUsersListToGroupsResponse(session, params)
 		if err != nil {
-			return userApi.NewBulkUpdateUsersGroupsDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewBulkUpdateUsersGroupsDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return userApi.NewBulkUpdateUsersGroupsOK()
@@ -108,7 +106,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 	api.BucketListUsersWithAccessToBucketHandler = bucketApi.ListUsersWithAccessToBucketHandlerFunc(func(params bucketApi.ListUsersWithAccessToBucketParams, session *models.Principal) middleware.Responder {
 		response, err := getListUsersWithAccessToBucketResponse(session, params)
 		if err != nil {
-			return bucketApi.NewListUsersWithAccessToBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewListUsersWithAccessToBucketDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewListUsersWithAccessToBucketOK().WithPayload(response)
 	})
@@ -116,7 +114,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 	api.AccountChangeUserPasswordHandler = accountApi.ChangeUserPasswordHandlerFunc(func(params accountApi.ChangeUserPasswordParams, session *models.Principal) middleware.Responder {
 		err := getChangeUserPasswordResponse(session, params)
 		if err != nil {
-			return accountApi.NewChangeUserPasswordDefault(int(err.Code)).WithPayload(err)
+			return accountApi.NewChangeUserPasswordDefault(err.Code).WithPayload(err.APIError)
 		}
 		return accountApi.NewChangeUserPasswordCreated()
 	})
@@ -124,7 +122,7 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 	api.UserCheckUserServiceAccountsHandler = userApi.CheckUserServiceAccountsHandlerFunc(func(params userApi.CheckUserServiceAccountsParams, session *models.Principal) middleware.Responder {
 		userSAList, err := getCheckUserSAResponse(session, params)
 		if err != nil {
-			return userApi.NewCheckUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
+			return userApi.NewCheckUserServiceAccountsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return userApi.NewCheckUserServiceAccountsOK().WithPayload(userSAList)
 	})
@@ -154,7 +152,7 @@ func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
 }
 
 // getListUsersResponse performs listUsers() and serializes it to the handler's output
-func getListUsersResponse(session *models.Principal, params userApi.ListUsersParams) (*models.ListUsersResponse, *models.Error) {
+func getListUsersResponse(session *models.Principal, params userApi.ListUsersParams) (*models.ListUsersResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -215,7 +213,7 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 	return userRet, nil
 }
 
-func getUserAddResponse(session *models.Principal, params userApi.AddUserParams) (*models.User, *models.Error) {
+func getUserAddResponse(session *models.Principal, params userApi.AddUserParams) (*models.User, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -252,7 +250,7 @@ func removeUser(ctx context.Context, client MinioAdmin, accessKey string) error 
 	return client.removeUser(ctx, accessKey)
 }
 
-func getRemoveUserResponse(session *models.Principal, params userApi.RemoveUserParams) *models.Error {
+func getRemoveUserResponse(session *models.Principal, params userApi.RemoveUserParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -284,7 +282,7 @@ func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*mad
 	return &userInfo, nil
 }
 
-func getUserInfoResponse(session *models.Principal, params userApi.GetUserInfoParams) (*models.User, *models.Error) {
+func getUserInfoResponse(session *models.Principal, params userApi.GetUserInfoParams) (*models.User, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -306,9 +304,9 @@ func getUserInfoResponse(session *models.Principal, params userApi.GetUserInfoPa
 	if err != nil {
 		// User doesn't exist, return 404
 		if madmin.ToErrorResponse(err).Code == "XMinioAdminNoSuchUser" {
-			var errorCode int32 = 404
+			errorCode := 404
 			errorMessage := "User doesn't exist"
-			return nil, &models.Error{Code: errorCode, Message: swag.String(errorMessage), DetailedMessage: swag.String(err.Error())}
+			return nil, &CodedAPIError{Code: errorCode, APIError: &models.APIError{Message: errorMessage, DetailedMessage: err.Error()}}
 		}
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -435,7 +433,7 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 	return userReturn, nil
 }
 
-func getUpdateUserGroupsResponse(session *models.Principal, params userApi.UpdateUserGroupsParams) (*models.User, *models.Error) {
+func getUpdateUserGroupsResponse(session *models.Principal, params userApi.UpdateUserGroupsParams) (*models.User, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -476,7 +474,7 @@ func setUserStatus(ctx context.Context, client MinioAdmin, user string, status s
 	return client.setUserStatus(ctx, user, setStatus)
 }
 
-func getUpdateUserResponse(session *models.Principal, params userApi.UpdateUserInfoParams) (*models.User, *models.Error) {
+func getUpdateUserResponse(session *models.Principal, params userApi.UpdateUserInfoParams) (*models.User, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -550,7 +548,7 @@ func addUsersListToGroups(ctx context.Context, client MinioAdmin, usersToUpdate 
 	return nil
 }
 
-func getAddUsersListToGroupsResponse(session *models.Principal, params userApi.BulkUpdateUsersGroupsParams) *models.Error {
+func getAddUsersListToGroupsResponse(session *models.Principal, params userApi.BulkUpdateUsersGroupsParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -573,7 +571,7 @@ func getAddUsersListToGroupsResponse(session *models.Principal, params userApi.B
 	return nil
 }
 
-func getListUsersWithAccessToBucketResponse(session *models.Principal, params bucketApi.ListUsersWithAccessToBucketParams) ([]string, *models.Error) {
+func getListUsersWithAccessToBucketResponse(session *models.Principal, params bucketApi.ListUsersWithAccessToBucketParams) ([]string, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -684,7 +682,7 @@ func changeUserPassword(ctx context.Context, client MinioAdmin, selectedUser str
 }
 
 // getChangeUserPasswordResponse will change the password of selctedUser to newSecretKey
-func getChangeUserPasswordResponse(session *models.Principal, params accountApi.ChangeUserPasswordParams) *models.Error {
+func getChangeUserPasswordResponse(session *models.Principal, params accountApi.ChangeUserPasswordParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -706,7 +704,7 @@ func getChangeUserPasswordResponse(session *models.Principal, params accountApi.
 	return nil
 }
 
-func getCheckUserSAResponse(session *models.Principal, params userApi.CheckUserServiceAccountsParams) (*models.UserServiceAccountSummary, *models.Error) {
+func getCheckUserSAResponse(session *models.Principal, params userApi.CheckUserServiceAccountsParams) (*models.UserServiceAccountSummary, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)

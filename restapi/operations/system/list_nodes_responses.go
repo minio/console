@@ -89,7 +89,7 @@ type ListNodesDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListNodesDefault creates ListNodesDefault with default headers values
@@ -115,13 +115,13 @@ func (o *ListNodesDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list nodes default response
-func (o *ListNodesDefault) WithPayload(payload *models.Error) *ListNodesDefault {
+func (o *ListNodesDefault) WithPayload(payload *models.APIError) *ListNodesDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list nodes default response
-func (o *ListNodesDefault) SetPayload(payload *models.Error) {
+func (o *ListNodesDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

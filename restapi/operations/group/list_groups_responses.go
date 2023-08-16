@@ -86,7 +86,7 @@ type ListGroupsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListGroupsDefault creates ListGroupsDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ListGroupsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list groups default response
-func (o *ListGroupsDefault) WithPayload(payload *models.Error) *ListGroupsDefault {
+func (o *ListGroupsDefault) WithPayload(payload *models.APIError) *ListGroupsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list groups default response
-func (o *ListGroupsDefault) SetPayload(payload *models.Error) {
+func (o *ListGroupsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

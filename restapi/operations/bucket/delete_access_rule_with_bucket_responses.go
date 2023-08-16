@@ -84,7 +84,7 @@ type DeleteAccessRuleWithBucketDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDeleteAccessRuleWithBucketDefault creates DeleteAccessRuleWithBucketDefault with default headers values
@@ -110,13 +110,13 @@ func (o *DeleteAccessRuleWithBucketDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the delete access rule with bucket default response
-func (o *DeleteAccessRuleWithBucketDefault) WithPayload(payload *models.Error) *DeleteAccessRuleWithBucketDefault {
+func (o *DeleteAccessRuleWithBucketDefault) WithPayload(payload *models.APIError) *DeleteAccessRuleWithBucketDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the delete access rule with bucket default response
-func (o *DeleteAccessRuleWithBucketDefault) SetPayload(payload *models.Error) {
+func (o *DeleteAccessRuleWithBucketDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

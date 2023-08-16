@@ -45,7 +45,7 @@ func Test_getChangePasswordResponse(t *testing.T) {
 	expected := (*models.LoginResponse)(nil)
 	assert.Equal(expected, loginResponse)
 	expectedError := "error please check your current password" // errChangePassword
-	assert.Equal(expectedError, *actualError.DetailedMessage)
+	assert.Equal(expectedError, actualError.APIError.DetailedMessage)
 }
 
 func Test_changePassword(t *testing.T) {

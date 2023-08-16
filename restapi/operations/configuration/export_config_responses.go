@@ -86,7 +86,7 @@ type ExportConfigDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewExportConfigDefault creates ExportConfigDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ExportConfigDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the export config default response
-func (o *ExportConfigDefault) WithPayload(payload *models.Error) *ExportConfigDefault {
+func (o *ExportConfigDefault) WithPayload(payload *models.APIError) *ExportConfigDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the export config default response
-func (o *ExportConfigDefault) SetPayload(payload *models.Error) {
+func (o *ExportConfigDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -36,7 +36,7 @@ func registerAccountHandlers(api *operations.ConsoleAPI) {
 	api.AccountAccountChangePasswordHandler = accountApi.AccountChangePasswordHandlerFunc(func(params accountApi.AccountChangePasswordParams, session *models.Principal) middleware.Responder {
 		changePasswordResponse, err := getChangePasswordResponse(session, params)
 		if err != nil {
-			return accountApi.NewAccountChangePasswordDefault(int(err.Code)).WithPayload(err)
+			return accountApi.NewAccountChangePasswordDefault(err.Code).WithPayload(err.APIError)
 		}
 		// Custom response writer to update the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
@@ -54,7 +54,7 @@ func changePassword(ctx context.Context, client MinioAdmin, session *models.Prin
 
 // getChangePasswordResponse will validate user knows what is the current password (avoid account hijacking), update user account password
 // and authenticate the user generating a new session token/cookie
-func getChangePasswordResponse(session *models.Principal, params accountApi.AccountChangePasswordParams) (*models.LoginResponse, *models.Error) {
+func getChangePasswordResponse(session *models.Principal, params accountApi.AccountChangePasswordParams) (*models.LoginResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientIP := getClientIP(params.HTTPRequest)

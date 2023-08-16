@@ -86,7 +86,7 @@ type SessionCheckDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSessionCheckDefault creates SessionCheckDefault with default headers values
@@ -112,13 +112,13 @@ func (o *SessionCheckDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the session check default response
-func (o *SessionCheckDefault) WithPayload(payload *models.Error) *SessionCheckDefault {
+func (o *SessionCheckDefault) WithPayload(payload *models.APIError) *SessionCheckDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the session check default response
-func (o *SessionCheckDefault) SetPayload(payload *models.Error) {
+func (o *SessionCheckDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

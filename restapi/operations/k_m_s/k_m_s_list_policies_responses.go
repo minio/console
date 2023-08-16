@@ -86,7 +86,7 @@ type KMSListPoliciesDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewKMSListPoliciesDefault creates KMSListPoliciesDefault with default headers values
@@ -112,13 +112,13 @@ func (o *KMSListPoliciesDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the k m s list policies default response
-func (o *KMSListPoliciesDefault) WithPayload(payload *models.Error) *KMSListPoliciesDefault {
+func (o *KMSListPoliciesDefault) WithPayload(payload *models.APIError) *KMSListPoliciesDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s list policies default response
-func (o *KMSListPoliciesDefault) SetPayload(payload *models.Error) {
+func (o *KMSListPoliciesDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

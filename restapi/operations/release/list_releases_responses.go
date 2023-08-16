@@ -86,7 +86,7 @@ type ListReleasesDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListReleasesDefault creates ListReleasesDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ListReleasesDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list releases default response
-func (o *ListReleasesDefault) WithPayload(payload *models.Error) *ListReleasesDefault {
+func (o *ListReleasesDefault) WithPayload(payload *models.APIError) *ListReleasesDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list releases default response
-func (o *ListReleasesDefault) SetPayload(payload *models.Error) {
+func (o *ListReleasesDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

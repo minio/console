@@ -37,12 +37,7 @@ import { Box } from "@mui/material";
 import { MenuExpandedIcon } from "mds";
 import { useSelector } from "react-redux";
 import { selFeatures } from "./consoleSlice";
-import {
-  Bucket,
-  Error,
-  HttpResponse,
-  ListBucketsResponse,
-} from "../../api/consoleApi";
+import { Bucket } from "../../api/consoleApi";
 import { api } from "../../api";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -137,13 +132,11 @@ const CommandBar = () => {
   const [buckets, setBuckets] = useState<Bucket[]>([]);
 
   const invokeListBucketsApi = () => {
-    api.buckets
-      .listBuckets()
-      .then((res: HttpResponse<ListBucketsResponse, Error>) => {
-        if (res.data !== undefined) {
-          setBuckets(res.data.buckets || []);
-        }
-      });
+    api.buckets.listBuckets().then((res) => {
+      if (res.data !== undefined) {
+        setBuckets(res.data.buckets || []);
+      }
+    });
   };
 
   const fetchBuckets = useCallback(() => {

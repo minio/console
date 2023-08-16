@@ -86,7 +86,7 @@ type KMSListKeysDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewKMSListKeysDefault creates KMSListKeysDefault with default headers values
@@ -112,13 +112,13 @@ func (o *KMSListKeysDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the k m s list keys default response
-func (o *KMSListKeysDefault) WithPayload(payload *models.Error) *KMSListKeysDefault {
+func (o *KMSListKeysDefault) WithPayload(payload *models.APIError) *KMSListKeysDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the k m s list keys default response
-func (o *KMSListKeysDefault) SetPayload(payload *models.Error) {
+func (o *KMSListKeysDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

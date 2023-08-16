@@ -86,7 +86,7 @@ type AddUserDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewAddUserDefault creates AddUserDefault with default headers values
@@ -112,13 +112,13 @@ func (o *AddUserDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the add user default response
-func (o *AddUserDefault) WithPayload(payload *models.Error) *AddUserDefault {
+func (o *AddUserDefault) WithPayload(payload *models.APIError) *AddUserDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the add user default response
-func (o *AddUserDefault) SetPayload(payload *models.Error) {
+func (o *AddUserDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

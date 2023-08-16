@@ -66,7 +66,7 @@ type CreateBucketEventDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewCreateBucketEventDefault creates CreateBucketEventDefault with default headers values
@@ -92,13 +92,13 @@ func (o *CreateBucketEventDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the create bucket event default response
-func (o *CreateBucketEventDefault) WithPayload(payload *models.Error) *CreateBucketEventDefault {
+func (o *CreateBucketEventDefault) WithPayload(payload *models.APIError) *CreateBucketEventDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the create bucket event default response
-func (o *CreateBucketEventDefault) SetPayload(payload *models.Error) {
+func (o *CreateBucketEventDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -49,7 +49,7 @@ import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper"
 import HelpMenu from "../../HelpMenu";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import { Error, HttpResponse } from "api/consoleApi";
+import { ApiError } from "api/consoleApi";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -198,8 +198,8 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
           setSaving(false);
           navigate(IAM_PAGES.TIERS);
         })
-        .catch(async (res: HttpResponse<void, Error>) => {
-          const err = (await res.json()) as Error;
+        .catch(async (res) => {
+          const err = (await res.json()) as ApiError;
           setSaving(false);
           dispatch(setErrorSnackMessage(errorToHandler(err)));
         });

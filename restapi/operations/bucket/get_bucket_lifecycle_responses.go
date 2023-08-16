@@ -86,7 +86,7 @@ type GetBucketLifecycleDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetBucketLifecycleDefault creates GetBucketLifecycleDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetBucketLifecycleDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get bucket lifecycle default response
-func (o *GetBucketLifecycleDefault) WithPayload(payload *models.Error) *GetBucketLifecycleDefault {
+func (o *GetBucketLifecycleDefault) WithPayload(payload *models.APIError) *GetBucketLifecycleDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get bucket lifecycle default response
-func (o *GetBucketLifecycleDefault) SetPayload(payload *models.Error) {
+func (o *GetBucketLifecycleDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

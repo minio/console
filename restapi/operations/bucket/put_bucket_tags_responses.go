@@ -66,7 +66,7 @@ type PutBucketTagsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewPutBucketTagsDefault creates PutBucketTagsDefault with default headers values
@@ -92,13 +92,13 @@ func (o *PutBucketTagsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the put bucket tags default response
-func (o *PutBucketTagsDefault) WithPayload(payload *models.Error) *PutBucketTagsDefault {
+func (o *PutBucketTagsDefault) WithPayload(payload *models.APIError) *PutBucketTagsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the put bucket tags default response
-func (o *PutBucketTagsDefault) SetPayload(payload *models.Error) {
+func (o *PutBucketTagsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

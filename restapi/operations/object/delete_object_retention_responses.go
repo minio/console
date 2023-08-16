@@ -66,7 +66,7 @@ type DeleteObjectRetentionDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDeleteObjectRetentionDefault creates DeleteObjectRetentionDefault with default headers values
@@ -92,13 +92,13 @@ func (o *DeleteObjectRetentionDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the delete object retention default response
-func (o *DeleteObjectRetentionDefault) WithPayload(payload *models.Error) *DeleteObjectRetentionDefault {
+func (o *DeleteObjectRetentionDefault) WithPayload(payload *models.APIError) *DeleteObjectRetentionDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the delete object retention default response
-func (o *DeleteObjectRetentionDefault) SetPayload(payload *models.Error) {
+func (o *DeleteObjectRetentionDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

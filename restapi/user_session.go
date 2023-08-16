@@ -48,7 +48,7 @@ func registerSessionHandlers(api *operations.ConsoleAPI) {
 	api.AuthSessionCheckHandler = authApi.SessionCheckHandlerFunc(func(params authApi.SessionCheckParams, session *models.Principal) middleware.Responder {
 		sessionResp, err := getSessionResponse(params.HTTPRequest.Context(), session)
 		if err != nil {
-			return authApi.NewSessionCheckDefault(int(err.Code)).WithPayload(err)
+			return authApi.NewSessionCheckDefault(err.Code).WithPayload(err.APIError)
 		}
 		return authApi.NewSessionCheckOK().WithPayload(sessionResp)
 	})
@@ -70,7 +70,7 @@ func getClaimsFromToken(sessionToken string) (map[string]interface{}, error) {
 }
 
 // getSessionResponse parse the token of the current session and returns a list of allowed actions to render in the UI
-func getSessionResponse(ctx context.Context, session *models.Principal) (*models.SessionResponse, *models.Error) {
+func getSessionResponse(ctx context.Context, session *models.Principal) (*models.SessionResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 

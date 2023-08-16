@@ -86,7 +86,7 @@ type GetObjectMetadataDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetObjectMetadataDefault creates GetObjectMetadataDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetObjectMetadataDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get object metadata default response
-func (o *GetObjectMetadataDefault) WithPayload(payload *models.Error) *GetObjectMetadataDefault {
+func (o *GetObjectMetadataDefault) WithPayload(payload *models.APIError) *GetObjectMetadataDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get object metadata default response
-func (o *GetObjectMetadataDefault) SetPayload(payload *models.Error) {
+func (o *GetObjectMetadataDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

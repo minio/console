@@ -85,7 +85,7 @@ type DownloadMultipleObjectsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDownloadMultipleObjectsDefault creates DownloadMultipleObjectsDefault with default headers values
@@ -111,13 +111,13 @@ func (o *DownloadMultipleObjectsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the download multiple objects default response
-func (o *DownloadMultipleObjectsDefault) WithPayload(payload *models.Error) *DownloadMultipleObjectsDefault {
+func (o *DownloadMultipleObjectsDefault) WithPayload(payload *models.APIError) *DownloadMultipleObjectsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the download multiple objects default response
-func (o *DownloadMultipleObjectsDefault) SetPayload(payload *models.Error) {
+func (o *DownloadMultipleObjectsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -39,7 +39,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	api.ServiceAccountCreateServiceAccountHandler = saApi.CreateServiceAccountHandlerFunc(func(params saApi.CreateServiceAccountParams, session *models.Principal) middleware.Responder {
 		creds, err := getCreateServiceAccountResponse(session, params)
 		if err != nil {
-			return saApi.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewCreateServiceAccountDefault(err.Code).WithPayload(err.APIError)
 		}
 		return saApi.NewCreateServiceAccountCreated().WithPayload(creds)
 	})
@@ -47,7 +47,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	api.UserCreateAUserServiceAccountHandler = userApi.CreateAUserServiceAccountHandlerFunc(func(params userApi.CreateAUserServiceAccountParams, session *models.Principal) middleware.Responder {
 		creds, err := getCreateAUserServiceAccountResponse(session, params)
 		if err != nil {
-			return saApi.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewCreateServiceAccountDefault(err.Code).WithPayload(err.APIError)
 		}
 		return userApi.NewCreateAUserServiceAccountCreated().WithPayload(creds)
 	})
@@ -55,14 +55,14 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	api.UserCreateServiceAccountCredentialsHandler = userApi.CreateServiceAccountCredentialsHandlerFunc(func(params userApi.CreateServiceAccountCredentialsParams, session *models.Principal) middleware.Responder {
 		creds, err := getCreateAUserServiceAccountCredsResponse(session, params)
 		if err != nil {
-			return saApi.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewCreateServiceAccountDefault(err.Code).WithPayload(err.APIError)
 		}
 		return userApi.NewCreateServiceAccountCredentialsCreated().WithPayload(creds)
 	})
 	api.ServiceAccountCreateServiceAccountCredsHandler = saApi.CreateServiceAccountCredsHandlerFunc(func(params saApi.CreateServiceAccountCredsParams, session *models.Principal) middleware.Responder {
 		creds, err := getCreateServiceAccountCredsResponse(session, params)
 		if err != nil {
-			return saApi.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewCreateServiceAccountDefault(err.Code).WithPayload(err.APIError)
 		}
 		return userApi.NewCreateServiceAccountCredentialsCreated().WithPayload(creds)
 	})
@@ -72,7 +72,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 		defer cancel()
 		serviceAccounts, err := getUserServiceAccountsResponse(ctx, session, "")
 		if err != nil {
-			return saApi.NewListUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewListUserServiceAccountsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return saApi.NewListUserServiceAccountsOK().WithPayload(serviceAccounts)
 	})
@@ -80,7 +80,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	// Delete a User's service account
 	api.ServiceAccountDeleteServiceAccountHandler = saApi.DeleteServiceAccountHandlerFunc(func(params saApi.DeleteServiceAccountParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteServiceAccountResponse(session, params); err != nil {
-			return saApi.NewDeleteServiceAccountDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewDeleteServiceAccountDefault(err.Code).WithPayload(err.APIError)
 		}
 		return saApi.NewDeleteServiceAccountNoContent()
 	})
@@ -91,7 +91,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 		defer cancel()
 		serviceAccounts, err := getUserServiceAccountsResponse(ctx, session, params.Name)
 		if err != nil {
-			return saApi.NewListUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewListUserServiceAccountsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return saApi.NewListUserServiceAccountsOK().WithPayload(serviceAccounts)
 	})
@@ -99,7 +99,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	api.ServiceAccountGetServiceAccountPolicyHandler = saApi.GetServiceAccountPolicyHandlerFunc(func(params saApi.GetServiceAccountPolicyParams, session *models.Principal) middleware.Responder {
 		serviceAccounts, err := getServiceAccountPolicyResponse(session, params)
 		if err != nil {
-			return saApi.NewGetServiceAccountPolicyDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewGetServiceAccountPolicyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return saApi.NewGetServiceAccountPolicyOK().WithPayload(serviceAccounts)
 	})
@@ -107,7 +107,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	api.ServiceAccountSetServiceAccountPolicyHandler = saApi.SetServiceAccountPolicyHandlerFunc(func(params saApi.SetServiceAccountPolicyParams, session *models.Principal) middleware.Responder {
 		err := getSetServiceAccountPolicyResponse(session, params)
 		if err != nil {
-			return saApi.NewSetServiceAccountPolicyDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewSetServiceAccountPolicyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return saApi.NewSetServiceAccountPolicyOK()
 	})
@@ -115,7 +115,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	// Delete multiple service accounts
 	api.ServiceAccountDeleteMultipleServiceAccountsHandler = saApi.DeleteMultipleServiceAccountsHandlerFunc(func(params saApi.DeleteMultipleServiceAccountsParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteMultipleServiceAccountsResponse(session, params); err != nil {
-			return saApi.NewDeleteMultipleServiceAccountsDefault(int(err.Code)).WithPayload(err)
+			return saApi.NewDeleteMultipleServiceAccountsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return saApi.NewDeleteMultipleServiceAccountsNoContent()
 	})
@@ -162,7 +162,7 @@ func createServiceAccountCreds(ctx context.Context, userClient MinioAdmin, polic
 // getCreateServiceAccountResponse creates a service account with the defined policy for the user that
 // is requesting, it first gets the credentials of the user and creates a client which is going to
 // make the call to create the Service Account
-func getCreateServiceAccountResponse(session *models.Principal, params saApi.CreateServiceAccountParams) (*models.ServiceAccountCreds, *models.Error) {
+func getCreateServiceAccountResponse(session *models.Principal, params saApi.CreateServiceAccountParams) (*models.ServiceAccountCreds, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -223,7 +223,7 @@ func createAUserServiceAccountCreds(ctx context.Context, userClient MinioAdmin, 
 // getCreateServiceAccountResponse creates a service account with the defined policy for the user that
 // is requesting it ,it first gets the credentials of the user and creates a client which is going to
 // make the call to create the Service Account
-func getCreateAUserServiceAccountResponse(session *models.Principal, params userApi.CreateAUserServiceAccountParams) (*models.ServiceAccountCreds, *models.Error) {
+func getCreateAUserServiceAccountResponse(session *models.Principal, params userApi.CreateAUserServiceAccountParams) (*models.ServiceAccountCreds, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -247,7 +247,7 @@ func getCreateAUserServiceAccountResponse(session *models.Principal, params user
 
 // getCreateServiceAccountCredsResponse creates a service account with the defined policy for the user that
 // is requesting it, and with the credentials provided
-func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params userApi.CreateServiceAccountCredentialsParams) (*models.ServiceAccountCreds, *models.Error) {
+func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params userApi.CreateServiceAccountCredentialsParams) (*models.ServiceAccountCreds, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -282,7 +282,7 @@ func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params
 	return saCreds, nil
 }
 
-func getCreateServiceAccountCredsResponse(session *models.Principal, params saApi.CreateServiceAccountCredsParams) (*models.ServiceAccountCreds, *models.Error) {
+func getCreateServiceAccountCredsResponse(session *models.Principal, params saApi.CreateServiceAccountCredsParams) (*models.ServiceAccountCreds, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	serviceAccount := params.Body
@@ -347,7 +347,7 @@ func getUserServiceAccounts(ctx context.Context, userClient MinioAdmin, user str
 
 // getUserServiceAccountsResponse authenticates the user and calls
 // getUserServiceAccounts to list the user's service accounts
-func getUserServiceAccountsResponse(ctx context.Context, session *models.Principal, user string) (models.ServiceAccounts, *models.Error) {
+func getUserServiceAccountsResponse(ctx context.Context, session *models.Principal, user string) (models.ServiceAccounts, *CodedAPIError) {
 	userAdmin, err := NewMinioAdminClient(ctx, session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -372,7 +372,7 @@ func deleteServiceAccount(ctx context.Context, userClient MinioAdmin, accessKey 
 }
 
 // getDeleteServiceAccountResponse authenticates the user and calls deleteServiceAccount
-func getDeleteServiceAccountResponse(session *models.Principal, params saApi.DeleteServiceAccountParams) *models.Error {
+func getDeleteServiceAccountResponse(session *models.Principal, params saApi.DeleteServiceAccountParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	accessKey, err := utils.DecodeBase64(params.AccessKey)
@@ -408,7 +408,7 @@ func getServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessK
 
 // getServiceAccountPolicyResponse authenticates the user and calls
 // getServiceAccountPolicy to get the policy for a service account
-func getServiceAccountPolicyResponse(session *models.Principal, params saApi.GetServiceAccountPolicyParams) (string, *models.Error) {
+func getServiceAccountPolicyResponse(session *models.Principal, params saApi.GetServiceAccountPolicyParams) (string, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	accessKey, err := utils.DecodeBase64(params.AccessKey)
@@ -438,7 +438,7 @@ func setServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessK
 
 // getSetServiceAccountPolicyResponse authenticates the user and calls
 // getSetServiceAccountPolicy to set the policy for a service account
-func getSetServiceAccountPolicyResponse(session *models.Principal, params saApi.SetServiceAccountPolicyParams) *models.Error {
+func getSetServiceAccountPolicyResponse(session *models.Principal, params saApi.SetServiceAccountPolicyParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	accessKey, err := utils.DecodeBase64(params.AccessKey)
@@ -462,7 +462,7 @@ func getSetServiceAccountPolicyResponse(session *models.Principal, params saApi.
 }
 
 // getDeleteMultipleServiceAccountsResponse authenticates the user and calls deleteServiceAccount for each account listed in selectedSAs
-func getDeleteMultipleServiceAccountsResponse(session *models.Principal, params saApi.DeleteMultipleServiceAccountsParams) *models.Error {
+func getDeleteMultipleServiceAccountsResponse(session *models.Principal, params saApi.DeleteMultipleServiceAccountsParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	selectedSAs := params.SelectedSA

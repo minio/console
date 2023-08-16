@@ -18,12 +18,12 @@ import React, { Fragment, useEffect, useState } from "react";
 import {
   AddAccessRuleIcon,
   BackLink,
+  Box,
   Button,
   FormLayout,
-  PageLayout,
-  Box,
   Grid,
   InputBox,
+  PageLayout,
 } from "mds";
 import AddPolicyHelpBox from "./AddPolicyHelpBox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
@@ -35,7 +35,6 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
 import { emptyPolicy } from "./utils";
 import { api } from "../../../api";
-import { Error, HttpResponse, Policy } from "../../../api/consoleApi";
 
 const AddPolicyScreen = () => {
   const dispatch = useAppDispatch();
@@ -56,11 +55,11 @@ const AddPolicyScreen = () => {
         name: policyName,
         policy: policyDefinition,
       })
-      .then((res: HttpResponse<Policy, Error>) => {
+      .then((res) => {
         setAddLoading(false);
         navigate(`${IAM_PAGES.POLICIES}`);
       })
-      .catch((err: HttpResponse<Policy, Error>) => {
+      .catch((err) => {
         setAddLoading(false);
         dispatch(
           setErrorSnackMessage({

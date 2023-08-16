@@ -86,7 +86,7 @@ type CheckUserServiceAccountsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewCheckUserServiceAccountsDefault creates CheckUserServiceAccountsDefault with default headers values
@@ -112,13 +112,13 @@ func (o *CheckUserServiceAccountsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the check user service accounts default response
-func (o *CheckUserServiceAccountsDefault) WithPayload(payload *models.Error) *CheckUserServiceAccountsDefault {
+func (o *CheckUserServiceAccountsDefault) WithPayload(payload *models.APIError) *CheckUserServiceAccountsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the check user service accounts default response
-func (o *CheckUserServiceAccountsDefault) SetPayload(payload *models.Error) {
+func (o *CheckUserServiceAccountsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

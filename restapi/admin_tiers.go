@@ -34,7 +34,7 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 	api.TieringTiersListHandler = tieringApi.TiersListHandlerFunc(func(params tieringApi.TiersListParams, session *models.Principal) middleware.Responder {
 		tierList, err := getTiersResponse(session, params)
 		if err != nil {
-			return tieringApi.NewTiersListDefault(int(err.Code)).WithPayload(err)
+			return tieringApi.NewTiersListDefault(err.Code).WithPayload(err.APIError)
 		}
 		return tieringApi.NewTiersListOK().WithPayload(tierList)
 	})
@@ -42,7 +42,7 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 	api.TieringAddTierHandler = tieringApi.AddTierHandlerFunc(func(params tieringApi.AddTierParams, session *models.Principal) middleware.Responder {
 		err := getAddTierResponse(session, params)
 		if err != nil {
-			return tieringApi.NewAddTierDefault(int(err.Code)).WithPayload(err)
+			return tieringApi.NewAddTierDefault(err.Code).WithPayload(err.APIError)
 		}
 		return tieringApi.NewAddTierCreated()
 	})
@@ -50,7 +50,7 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 	api.TieringGetTierHandler = tieringApi.GetTierHandlerFunc(func(params tieringApi.GetTierParams, session *models.Principal) middleware.Responder {
 		notifEndpoints, err := getGetTierResponse(session, params)
 		if err != nil {
-			return tieringApi.NewGetTierDefault(int(err.Code)).WithPayload(err)
+			return tieringApi.NewGetTierDefault(err.Code).WithPayload(err.APIError)
 		}
 		return tieringApi.NewGetTierOK().WithPayload(notifEndpoints)
 	})
@@ -58,7 +58,7 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 	api.TieringEditTierCredentialsHandler = tieringApi.EditTierCredentialsHandlerFunc(func(params tieringApi.EditTierCredentialsParams, session *models.Principal) middleware.Responder {
 		err := getEditTierCredentialsResponse(session, params)
 		if err != nil {
-			return tieringApi.NewEditTierCredentialsDefault(int(err.Code)).WithPayload(err)
+			return tieringApi.NewEditTierCredentialsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return tieringApi.NewEditTierCredentialsOK()
 	})
@@ -174,7 +174,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 }
 
 // getTiersResponse returns a response with a list of tiers
-func getTiersResponse(session *models.Principal, params tieringApi.TiersListParams) (*models.TierListResponse, *models.Error) {
+func getTiersResponse(session *models.Principal, params tieringApi.TiersListParams) (*models.TierListResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -276,7 +276,7 @@ func addTier(ctx context.Context, client MinioAdmin, params *tieringApi.AddTierP
 }
 
 // getAddTierResponse returns the response of admin tier
-func getAddTierResponse(session *models.Principal, params tieringApi.AddTierParams) *models.Error {
+func getAddTierResponse(session *models.Principal, params tieringApi.AddTierParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -358,7 +358,7 @@ func getTier(ctx context.Context, client MinioAdmin, params *tieringApi.GetTierP
 }
 
 // getGetTierResponse returns a tier
-func getGetTierResponse(session *models.Principal, params tieringApi.GetTierParams) (*models.Tier, *models.Error) {
+func getGetTierResponse(session *models.Principal, params tieringApi.GetTierParams) (*models.Tier, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -392,7 +392,7 @@ func editTierCredentials(ctx context.Context, client MinioAdmin, params *tiering
 }
 
 // getEditTierCredentialsResponse returns the result of editing credentials for a tier
-func getEditTierCredentialsResponse(session *models.Principal, params tieringApi.EditTierCredentialsParams) *models.Error {
+func getEditTierCredentialsResponse(session *models.Principal, params tieringApi.EditTierCredentialsParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)

@@ -68,7 +68,7 @@ import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import { Error, HttpResponse, Policy } from "../../../api/consoleApi";
+import { Policy } from "../../../api/consoleApi";
 import { api } from "../../../api";
 import HelpMenu from "../HelpMenu";
 import SearchBox from "../Common/SearchBox";
@@ -160,7 +160,7 @@ const PolicyDetails = () => {
           dispatch(setSnackBarMessage("Policy successfully updated"));
           refreshPolicyDetails();
         })
-        .catch((err: HttpResponse<Policy, Error>) => {
+        .catch((err) => {
           setAddLoading(false);
           dispatch(
             setErrorSnackMessage({
@@ -183,7 +183,7 @@ const PolicyDetails = () => {
         if (displayUsers && !ldapIsEnabled) {
           api.policies
             .listUsersForPolicy(encodeURLString(policyName))
-            .then((result: HttpResponse<string[], Error>) => {
+            .then((result) => {
               setUserList(result.data ?? []);
               setLoadingUsers(false);
             })
@@ -202,7 +202,7 @@ const PolicyDetails = () => {
         if (displayGroups && !ldapIsEnabled) {
           api.policies
             .listGroupsForPolicy(encodeURLString(policyName))
-            .then((result: HttpResponse<string[], Error>) => {
+            .then((result) => {
               setGroupList(result.data ?? []);
               setLoadingGroups(false);
             })
@@ -220,7 +220,7 @@ const PolicyDetails = () => {
         if (displayPolicy) {
           api.policy
             .policyInfo(encodeURLString(policyName))
-            .then((result: HttpResponse<Policy, Error>) => {
+            .then((result) => {
               if (result.data) {
                 setPolicy(result.data);
                 setPolicyDefinition(

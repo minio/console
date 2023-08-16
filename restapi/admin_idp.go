@@ -26,7 +26,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/idp"
-	madmin "github.com/minio/madmin-go/v3"
+	"github.com/minio/madmin-go/v3"
 )
 
 var errInvalidIDPType = fmt.Errorf("IDP type must be one of %v", madmin.ValidIDPConfigTypes)
@@ -35,48 +35,48 @@ func registerIDPHandlers(api *operations.ConsoleAPI) {
 	api.IdpCreateConfigurationHandler = idp.CreateConfigurationHandlerFunc(func(params idp.CreateConfigurationParams, session *models.Principal) middleware.Responder {
 		response, err := createIDPConfigurationResponse(session, params)
 		if err != nil {
-			return idp.NewCreateConfigurationDefault(int(err.Code)).WithPayload(err)
+			return idp.NewCreateConfigurationDefault(err.Code).WithPayload(err.APIError)
 		}
 		return idp.NewCreateConfigurationCreated().WithPayload(response)
 	})
 	api.IdpUpdateConfigurationHandler = idp.UpdateConfigurationHandlerFunc(func(params idp.UpdateConfigurationParams, session *models.Principal) middleware.Responder {
 		response, err := updateIDPConfigurationResponse(session, params)
 		if err != nil {
-			return idp.NewUpdateConfigurationDefault(int(err.Code)).WithPayload(err)
+			return idp.NewUpdateConfigurationDefault(err.Code).WithPayload(err.APIError)
 		}
 		return idp.NewUpdateConfigurationOK().WithPayload(response)
 	})
 	api.IdpListConfigurationsHandler = idp.ListConfigurationsHandlerFunc(func(params idp.ListConfigurationsParams, session *models.Principal) middleware.Responder {
 		response, err := listIDPConfigurationsResponse(session, params)
 		if err != nil {
-			return idp.NewListConfigurationsDefault(int(err.Code)).WithPayload(err)
+			return idp.NewListConfigurationsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return idp.NewListConfigurationsOK().WithPayload(response)
 	})
 	api.IdpDeleteConfigurationHandler = idp.DeleteConfigurationHandlerFunc(func(params idp.DeleteConfigurationParams, session *models.Principal) middleware.Responder {
 		response, err := deleteIDPConfigurationResponse(session, params)
 		if err != nil {
-			return idp.NewDeleteConfigurationDefault(int(err.Code)).WithPayload(err)
+			return idp.NewDeleteConfigurationDefault(err.Code).WithPayload(err.APIError)
 		}
 		return idp.NewDeleteConfigurationOK().WithPayload(response)
 	})
 	api.IdpGetConfigurationHandler = idp.GetConfigurationHandlerFunc(func(params idp.GetConfigurationParams, session *models.Principal) middleware.Responder {
 		response, err := getIDPConfigurationsResponse(session, params)
 		if err != nil {
-			return idp.NewGetConfigurationDefault(int(err.Code)).WithPayload(err)
+			return idp.NewGetConfigurationDefault(err.Code).WithPayload(err.APIError)
 		}
 		return idp.NewGetConfigurationOK().WithPayload(response)
 	})
 	api.IdpGetLDAPEntitiesHandler = idp.GetLDAPEntitiesHandlerFunc(func(params idp.GetLDAPEntitiesParams, session *models.Principal) middleware.Responder {
 		response, err := getLDAPEntitiesResponse(session, params)
 		if err != nil {
-			return idp.NewGetLDAPEntitiesDefault(int(err.Code)).WithPayload(err)
+			return idp.NewGetLDAPEntitiesDefault(err.Code).WithPayload(err.APIError)
 		}
 		return idp.NewGetLDAPEntitiesOK().WithPayload(response)
 	})
 }
 
-func createIDPConfigurationResponse(session *models.Principal, params idp.CreateConfigurationParams) (*models.SetIDPResponse, *models.Error) {
+func createIDPConfigurationResponse(session *models.Principal, params idp.CreateConfigurationParams) (*models.SetIDPResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -90,7 +90,7 @@ func createIDPConfigurationResponse(session *models.Principal, params idp.Create
 	return &models.SetIDPResponse{Restart: restart}, nil
 }
 
-func updateIDPConfigurationResponse(session *models.Principal, params idp.UpdateConfigurationParams) (*models.SetIDPResponse, *models.Error) {
+func updateIDPConfigurationResponse(session *models.Principal, params idp.UpdateConfigurationParams) (*models.SetIDPResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -115,7 +115,7 @@ func createOrUpdateIDPConfig(ctx context.Context, idpType, name, input string, u
 	return restart, nil
 }
 
-func listIDPConfigurationsResponse(session *models.Principal, params idp.ListConfigurationsParams) (*models.IdpListConfigurationsResponse, *models.Error) {
+func listIDPConfigurationsResponse(session *models.Principal, params idp.ListConfigurationsParams) (*models.IdpListConfigurationsResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -151,7 +151,7 @@ func parseIDPConfigurations(configs []madmin.IDPListItem) (serverConfigs []*mode
 	return serverConfigs
 }
 
-func deleteIDPConfigurationResponse(session *models.Principal, params idp.DeleteConfigurationParams) (*models.SetIDPResponse, *models.Error) {
+func deleteIDPConfigurationResponse(session *models.Principal, params idp.DeleteConfigurationParams) (*models.SetIDPResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -176,7 +176,7 @@ func deleteIDPConfig(ctx context.Context, idpType, name string, client MinioAdmi
 	return restart, nil
 }
 
-func getIDPConfigurationsResponse(session *models.Principal, params idp.GetConfigurationParams) (*models.IdpServerConfiguration, *models.Error) {
+func getIDPConfigurationsResponse(session *models.Principal, params idp.GetConfigurationParams) (*models.IdpServerConfiguration, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -217,7 +217,7 @@ func parseIDPConfigurationsInfo(infoList []madmin.IDPCfgInfo) (results []*models
 	return results
 }
 
-func getLDAPEntitiesResponse(session *models.Principal, params idp.GetLDAPEntitiesParams) (*models.LdapEntities, *models.Error) {
+func getLDAPEntitiesResponse(session *models.Principal, params idp.GetLDAPEntitiesParams) (*models.LdapEntities, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)

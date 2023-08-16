@@ -45,14 +45,14 @@ func registerInspectHandler(api *operations.ConsoleAPI) {
 
 		k, r, err := getInspectResult(principal, &params)
 		if err != nil {
-			return inspectApi.NewInspectDefault(int(err.Code)).WithPayload(err)
+			return inspectApi.NewInspectDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return middleware.ResponderFunc(processInspectResponse(&params, k, r))
 	})
 }
 
-func getInspectResult(session *models.Principal, params *inspectApi.InspectParams) ([]byte, io.ReadCloser, *models.Error) {
+func getInspectResult(session *models.Principal, params *inspectApi.InspectParams) ([]byte, io.ReadCloser, *CodedAPIError) {
 	ctx := params.HTTPRequest.Context()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {

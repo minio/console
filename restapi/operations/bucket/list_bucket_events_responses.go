@@ -86,7 +86,7 @@ type ListBucketEventsDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListBucketEventsDefault creates ListBucketEventsDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ListBucketEventsDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list bucket events default response
-func (o *ListBucketEventsDefault) WithPayload(payload *models.Error) *ListBucketEventsDefault {
+func (o *ListBucketEventsDefault) WithPayload(payload *models.APIError) *ListBucketEventsDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list bucket events default response
-func (o *ListBucketEventsDefault) SetPayload(payload *models.Error) {
+func (o *ListBucketEventsDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

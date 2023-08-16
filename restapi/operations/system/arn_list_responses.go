@@ -86,7 +86,7 @@ type ArnListDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewArnListDefault creates ArnListDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ArnListDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the arn list default response
-func (o *ArnListDefault) WithPayload(payload *models.Error) *ArnListDefault {
+func (o *ArnListDefault) WithPayload(payload *models.APIError) *ArnListDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the arn list default response
-func (o *ArnListDefault) SetPayload(payload *models.Error) {
+func (o *ArnListDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

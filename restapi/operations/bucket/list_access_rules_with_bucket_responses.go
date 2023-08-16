@@ -86,7 +86,7 @@ type ListAccessRulesWithBucketDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewListAccessRulesWithBucketDefault creates ListAccessRulesWithBucketDefault with default headers values
@@ -112,13 +112,13 @@ func (o *ListAccessRulesWithBucketDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the list access rules with bucket default response
-func (o *ListAccessRulesWithBucketDefault) WithPayload(payload *models.Error) *ListAccessRulesWithBucketDefault {
+func (o *ListAccessRulesWithBucketDefault) WithPayload(payload *models.APIError) *ListAccessRulesWithBucketDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list access rules with bucket default response
-func (o *ListAccessRulesWithBucketDefault) SetPayload(payload *models.Error) {
+func (o *ListAccessRulesWithBucketDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

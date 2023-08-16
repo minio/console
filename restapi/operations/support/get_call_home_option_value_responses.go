@@ -86,7 +86,7 @@ type GetCallHomeOptionValueDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewGetCallHomeOptionValueDefault creates GetCallHomeOptionValueDefault with default headers values
@@ -112,13 +112,13 @@ func (o *GetCallHomeOptionValueDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the get call home option value default response
-func (o *GetCallHomeOptionValueDefault) WithPayload(payload *models.Error) *GetCallHomeOptionValueDefault {
+func (o *GetCallHomeOptionValueDefault) WithPayload(payload *models.APIError) *GetCallHomeOptionValueDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get call home option value default response
-func (o *GetCallHomeOptionValueDefault) SetPayload(payload *models.Error) {
+func (o *GetCallHomeOptionValueDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -66,7 +66,7 @@ type DeleteServiceAccountDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewDeleteServiceAccountDefault creates DeleteServiceAccountDefault with default headers values
@@ -92,13 +92,13 @@ func (o *DeleteServiceAccountDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the delete service account default response
-func (o *DeleteServiceAccountDefault) WithPayload(payload *models.Error) *DeleteServiceAccountDefault {
+func (o *DeleteServiceAccountDefault) WithPayload(payload *models.APIError) *DeleteServiceAccountDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the delete service account default response
-func (o *DeleteServiceAccountDefault) SetPayload(payload *models.Error) {
+func (o *DeleteServiceAccountDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

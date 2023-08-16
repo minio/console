@@ -38,7 +38,7 @@ func registerSupportHandlers(api *operations.ConsoleAPI) {
 	api.SupportGetCallHomeOptionValueHandler = support.GetCallHomeOptionValueHandlerFunc(func(params support.GetCallHomeOptionValueParams, session *models.Principal) middleware.Responder {
 		callhomeResp, err := getCallHomeOptionResponse(session, params)
 		if err != nil {
-			return support.NewGetCallHomeOptionValueDefault(int(err.Code)).WithPayload(err)
+			return support.NewGetCallHomeOptionValueDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return support.NewGetCallHomeOptionValueOK().WithPayload(callhomeResp)
@@ -47,7 +47,7 @@ func registerSupportHandlers(api *operations.ConsoleAPI) {
 	api.SupportSetCallHomeStatusHandler = support.SetCallHomeStatusHandlerFunc(func(params support.SetCallHomeStatusParams, session *models.Principal) middleware.Responder {
 		err := editCallHomeOptionResponse(session, params)
 		if err != nil {
-			return support.NewSetCallHomeStatusDefault(int(err.Code)).WithPayload(err)
+			return support.NewSetCallHomeStatusDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return support.NewSetCallHomeStatusNoContent()
@@ -55,7 +55,7 @@ func registerSupportHandlers(api *operations.ConsoleAPI) {
 }
 
 // getCallHomeOptionResponse returns the selected option value
-func getCallHomeOptionResponse(session *models.Principal, params support.GetCallHomeOptionValueParams) (*models.CallHomeGetResponse, *models.Error) {
+func getCallHomeOptionResponse(session *models.Principal, params support.GetCallHomeOptionValueParams) (*models.CallHomeGetResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -129,7 +129,7 @@ func getCallHomeRule(ctx context.Context, client MinioAdmin) (*models.CallHomeGe
 }
 
 // editCallHomeOptionResponse returns if there was an error setting the option
-func editCallHomeOptionResponse(session *models.Principal, params support.SetCallHomeStatusParams) *models.Error {
+func editCallHomeOptionResponse(session *models.Principal, params support.SetCallHomeStatusParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 

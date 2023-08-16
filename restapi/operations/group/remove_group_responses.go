@@ -66,7 +66,7 @@ type RemoveGroupDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewRemoveGroupDefault creates RemoveGroupDefault with default headers values
@@ -92,13 +92,13 @@ func (o *RemoveGroupDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the remove group default response
-func (o *RemoveGroupDefault) WithPayload(payload *models.Error) *RemoveGroupDefault {
+func (o *RemoveGroupDefault) WithPayload(payload *models.APIError) *RemoveGroupDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the remove group default response
-func (o *RemoveGroupDefault) SetPayload(payload *models.Error) {
+func (o *RemoveGroupDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

@@ -25,9 +25,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/madmin-go/v3"
 	"github.com/minio/minio-go/v7"
 
+	"github.com/minio/madmin-go/v3"
 	"github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7/pkg/sse"
@@ -48,7 +48,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketListBucketsHandler = bucketApi.ListBucketsHandlerFunc(func(params bucketApi.ListBucketsParams, session *models.Principal) middleware.Responder {
 		listBucketsResponse, err := getListBucketsResponse(session, params)
 		if err != nil {
-			return bucketApi.NewListBucketsDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewListBucketsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewListBucketsOK().WithPayload(listBucketsResponse)
 	})
@@ -56,14 +56,14 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketMakeBucketHandler = bucketApi.MakeBucketHandlerFunc(func(params bucketApi.MakeBucketParams, session *models.Principal) middleware.Responder {
 		makeBucketResponse, err := getMakeBucketResponse(session, params)
 		if err != nil {
-			return bucketApi.NewMakeBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewMakeBucketDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewMakeBucketOK().WithPayload(makeBucketResponse)
 	})
 	// delete bucket
 	api.BucketDeleteBucketHandler = bucketApi.DeleteBucketHandlerFunc(func(params bucketApi.DeleteBucketParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteBucketResponse(session, params); err != nil {
-			return bucketApi.NewMakeBucketDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewMakeBucketDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewDeleteBucketNoContent()
 	})
@@ -71,7 +71,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketBucketInfoHandler = bucketApi.BucketInfoHandlerFunc(func(params bucketApi.BucketInfoParams, session *models.Principal) middleware.Responder {
 		bucketInfoResp, err := getBucketInfoResponse(session, params)
 		if err != nil {
-			return bucketApi.NewBucketInfoDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewBucketInfoDefault(err.Code).WithPayload(err.APIError)
 		}
 
 		return bucketApi.NewBucketInfoOK().WithPayload(bucketInfoResp)
@@ -80,7 +80,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketBucketSetPolicyHandler = bucketApi.BucketSetPolicyHandlerFunc(func(params bucketApi.BucketSetPolicyParams, session *models.Principal) middleware.Responder {
 		bucketSetPolicyResp, err := getBucketSetPolicyResponse(session, params)
 		if err != nil {
-			return bucketApi.NewBucketSetPolicyDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewBucketSetPolicyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewBucketSetPolicyOK().WithPayload(bucketSetPolicyResp)
 	})
@@ -88,7 +88,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketPutBucketTagsHandler = bucketApi.PutBucketTagsHandlerFunc(func(params bucketApi.PutBucketTagsParams, session *models.Principal) middleware.Responder {
 		err := getPutBucketTagsResponse(session, params)
 		if err != nil {
-			return bucketApi.NewPutBucketTagsDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewPutBucketTagsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewPutBucketTagsOK()
 	})
@@ -96,7 +96,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketGetBucketVersioningHandler = bucketApi.GetBucketVersioningHandlerFunc(func(params bucketApi.GetBucketVersioningParams, session *models.Principal) middleware.Responder {
 		getBucketVersioning, err := getBucketVersionedResponse(session, params)
 		if err != nil {
-			return bucketApi.NewGetBucketVersioningDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewGetBucketVersioningDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewGetBucketVersioningOK().WithPayload(getBucketVersioning)
 	})
@@ -104,7 +104,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketSetBucketVersioningHandler = bucketApi.SetBucketVersioningHandlerFunc(func(params bucketApi.SetBucketVersioningParams, session *models.Principal) middleware.Responder {
 		err := setBucketVersioningResponse(session, params)
 		if err != nil {
-			return bucketApi.NewSetBucketVersioningDefault(500).WithPayload(err)
+			return bucketApi.NewSetBucketVersioningDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewSetBucketVersioningCreated()
 	})
@@ -112,7 +112,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketGetBucketReplicationHandler = bucketApi.GetBucketReplicationHandlerFunc(func(params bucketApi.GetBucketReplicationParams, session *models.Principal) middleware.Responder {
 		getBucketReplication, err := getBucketReplicationResponse(session, params)
 		if err != nil {
-			return bucketApi.NewGetBucketReplicationDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewGetBucketReplicationDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewGetBucketReplicationOK().WithPayload(getBucketReplication)
 	})
@@ -120,7 +120,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketGetBucketReplicationRuleHandler = bucketApi.GetBucketReplicationRuleHandlerFunc(func(params bucketApi.GetBucketReplicationRuleParams, session *models.Principal) middleware.Responder {
 		getBucketReplicationRule, err := getBucketReplicationRuleResponse(session, params)
 		if err != nil {
-			return bucketApi.NewGetBucketReplicationRuleDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewGetBucketReplicationRuleDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewGetBucketReplicationRuleOK().WithPayload(getBucketReplicationRule)
 	})
@@ -128,14 +128,14 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	// enable bucket encryption
 	api.BucketEnableBucketEncryptionHandler = bucketApi.EnableBucketEncryptionHandlerFunc(func(params bucketApi.EnableBucketEncryptionParams, session *models.Principal) middleware.Responder {
 		if err := enableBucketEncryptionResponse(session, params); err != nil {
-			return bucketApi.NewEnableBucketEncryptionDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewEnableBucketEncryptionDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewEnableBucketEncryptionOK()
 	})
 	// disable bucket encryption
 	api.BucketDisableBucketEncryptionHandler = bucketApi.DisableBucketEncryptionHandlerFunc(func(params bucketApi.DisableBucketEncryptionParams, session *models.Principal) middleware.Responder {
 		if err := disableBucketEncryptionResponse(session, params); err != nil {
-			return bucketApi.NewDisableBucketEncryptionDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewDisableBucketEncryptionDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewDisableBucketEncryptionOK()
 	})
@@ -143,14 +143,14 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketGetBucketEncryptionInfoHandler = bucketApi.GetBucketEncryptionInfoHandlerFunc(func(params bucketApi.GetBucketEncryptionInfoParams, session *models.Principal) middleware.Responder {
 		response, err := getBucketEncryptionInfoResponse(session, params)
 		if err != nil {
-			return bucketApi.NewGetBucketEncryptionInfoDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewGetBucketEncryptionInfoDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewGetBucketEncryptionInfoOK().WithPayload(response)
 	})
 	// set bucket retention config
 	api.BucketSetBucketRetentionConfigHandler = bucketApi.SetBucketRetentionConfigHandlerFunc(func(params bucketApi.SetBucketRetentionConfigParams, session *models.Principal) middleware.Responder {
 		if err := getSetBucketRetentionConfigResponse(session, params); err != nil {
-			return bucketApi.NewSetBucketRetentionConfigDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewSetBucketRetentionConfigDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewSetBucketRetentionConfigOK()
 	})
@@ -158,7 +158,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketGetBucketRetentionConfigHandler = bucketApi.GetBucketRetentionConfigHandlerFunc(func(params bucketApi.GetBucketRetentionConfigParams, session *models.Principal) middleware.Responder {
 		response, err := getBucketRetentionConfigResponse(session, params)
 		if err != nil {
-			return bucketApi.NewGetBucketRetentionConfigDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewGetBucketRetentionConfigDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewGetBucketRetentionConfigOK().WithPayload(response)
 	})
@@ -166,7 +166,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketGetBucketObjectLockingStatusHandler = bucketApi.GetBucketObjectLockingStatusHandlerFunc(func(params bucketApi.GetBucketObjectLockingStatusParams, session *models.Principal) middleware.Responder {
 		getBucketObjectLockingStatus, err := getBucketObjectLockingResponse(session, params)
 		if err != nil {
-			return bucketApi.NewGetBucketObjectLockingStatusDefault(int(err.Code)).WithPayload(err)
+			return bucketApi.NewGetBucketObjectLockingStatusDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewGetBucketObjectLockingStatusOK().WithPayload(getBucketObjectLockingStatus)
 	})
@@ -174,7 +174,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	api.BucketGetBucketRewindHandler = bucketApi.GetBucketRewindHandlerFunc(func(params bucketApi.GetBucketRewindParams, session *models.Principal) middleware.Responder {
 		getBucketRewind, err := getBucketRewindResponse(session, params)
 		if err != nil {
-			return bucketApi.NewGetBucketRewindDefault(500).WithPayload(err)
+			return bucketApi.NewGetBucketRewindDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewGetBucketRewindOK().WithPayload(getBucketRewind)
 	})
@@ -197,7 +197,7 @@ func doSetVersioning(ctx context.Context, client MCClient, state VersionState, e
 	return nil
 }
 
-func setBucketVersioningResponse(session *models.Principal, params bucketApi.SetBucketVersioningParams) *models.Error {
+func setBucketVersioningResponse(session *models.Principal, params bucketApi.SetBucketVersioningParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -230,7 +230,7 @@ func setBucketVersioningResponse(session *models.Principal, params bucketApi.Set
 	return nil
 }
 
-func getBucketReplicationResponse(session *models.Principal, params bucketApi.GetBucketReplicationParams) (*models.BucketReplicationResponse, *models.Error) {
+func getBucketReplicationResponse(session *models.Principal, params bucketApi.GetBucketReplicationParams) (*models.BucketReplicationResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -280,7 +280,7 @@ func getBucketReplicationResponse(session *models.Principal, params bucketApi.Ge
 	return bucketRResponse, nil
 }
 
-func getBucketReplicationRuleResponse(session *models.Principal, params bucketApi.GetBucketReplicationRuleParams) (*models.BucketReplicationRule, *models.Error) {
+func getBucketReplicationRuleResponse(session *models.Principal, params bucketApi.GetBucketReplicationRuleParams) (*models.BucketReplicationRule, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -347,7 +347,7 @@ func getBucketReplicationRuleResponse(session *models.Principal, params bucketAp
 	return returnRule, nil
 }
 
-func getBucketVersionedResponse(session *models.Principal, params bucketApi.GetBucketVersioningParams) (*models.BucketVersioningResponse, *models.Error) {
+func getBucketVersionedResponse(session *models.Principal, params bucketApi.GetBucketVersioningParams) (*models.BucketVersioningResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -428,7 +428,7 @@ func getAccountBuckets(ctx context.Context, client MinioAdmin) ([]*models.Bucket
 }
 
 // getListBucketsResponse performs listBuckets() and serializes it to the handler's output
-func getListBucketsResponse(session *models.Principal, params bucketApi.ListBucketsParams) (*models.ListBucketsResponse, *models.Error) {
+func getListBucketsResponse(session *models.Principal, params bucketApi.ListBucketsParams) (*models.ListBucketsResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -459,7 +459,7 @@ func makeBucket(ctx context.Context, client MinioClient, bucketName string, obje
 }
 
 // getMakeBucketResponse performs makeBucket() to create a bucket with its access policy
-func getMakeBucketResponse(session *models.Principal, params bucketApi.MakeBucketParams) (*models.MakeBucketsResponse, *models.Error) {
+func getMakeBucketResponse(session *models.Principal, params bucketApi.MakeBucketParams) (*models.MakeBucketsResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	// bucket request needed to proceed
@@ -584,7 +584,7 @@ func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName s
 
 // getBucketSetPolicyResponse calls setBucketAccessPolicy() to set a access policy to a bucket
 // and returns the serialized output.
-func getBucketSetPolicyResponse(session *models.Principal, params bucketApi.BucketSetPolicyParams) (*models.Bucket, *models.Error) {
+func getBucketSetPolicyResponse(session *models.Principal, params bucketApi.BucketSetPolicyParams) (*models.Bucket, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -618,7 +618,7 @@ func getBucketSetPolicyResponse(session *models.Principal, params bucketApi.Buck
 }
 
 // putBucketTags sets tags for a bucket
-func getPutBucketTagsResponse(session *models.Principal, params bucketApi.PutBucketTagsParams) *models.Error {
+func getPutBucketTagsResponse(session *models.Principal, params bucketApi.PutBucketTagsParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
@@ -652,7 +652,7 @@ func removeBucket(client MinioClient, bucketName string) error {
 }
 
 // getDeleteBucketResponse performs removeBucket() to delete a bucket
-func getDeleteBucketResponse(session *models.Principal, params bucketApi.DeleteBucketParams) *models.Error {
+func getDeleteBucketResponse(session *models.Principal, params bucketApi.DeleteBucketParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	if params.Name == "" {
@@ -736,7 +736,7 @@ func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdm
 }
 
 // getBucketInfoResponse calls getBucketInfo() to get the bucket's info
-func getBucketInfoResponse(session *models.Principal, params bucketApi.BucketInfoParams) (*models.Bucket, *models.Error) {
+func getBucketInfoResponse(session *models.Principal, params bucketApi.BucketInfoParams) (*models.Bucket, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -801,7 +801,7 @@ func enableBucketEncryption(ctx context.Context, client MinioClient, bucketName 
 }
 
 // enableBucketEncryptionResponse calls enableBucketEncryption() to create new encryption configuration for provided bucket name
-func enableBucketEncryptionResponse(session *models.Principal, params bucketApi.EnableBucketEncryptionParams) *models.Error {
+func enableBucketEncryptionResponse(session *models.Principal, params bucketApi.EnableBucketEncryptionParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -823,7 +823,7 @@ func disableBucketEncryption(ctx context.Context, client MinioClient, bucketName
 }
 
 // disableBucketEncryptionResponse calls disableBucketEncryption()
-func disableBucketEncryptionResponse(session *models.Principal, params bucketApi.DisableBucketEncryptionParams) *models.Error {
+func disableBucketEncryptionResponse(session *models.Principal, params bucketApi.DisableBucketEncryptionParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -850,7 +850,7 @@ func getBucketEncryptionInfo(ctx context.Context, client MinioClient, bucketName
 	return &models.BucketEncryptionInfo{Algorithm: bucketInfo.Rules[0].Apply.SSEAlgorithm, KmsMasterKeyID: bucketInfo.Rules[0].Apply.KmsMasterKeyID}, nil
 }
 
-func getBucketEncryptionInfoResponse(session *models.Principal, params bucketApi.GetBucketEncryptionInfoParams) (*models.BucketEncryptionInfo, *models.Error) {
+func getBucketEncryptionInfoResponse(session *models.Principal, params bucketApi.GetBucketEncryptionInfoParams) (*models.BucketEncryptionInfo, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -897,7 +897,7 @@ func setBucketRetentionConfig(ctx context.Context, client MinioClient, bucketNam
 	return client.setObjectLockConfig(ctx, bucketName, &retentionMode, &retentionValidity, &retentionUnit)
 }
 
-func getSetBucketRetentionConfigResponse(session *models.Principal, params bucketApi.SetBucketRetentionConfigParams) *models.Error {
+func getSetBucketRetentionConfigResponse(session *models.Principal, params bucketApi.SetBucketRetentionConfigParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
@@ -969,7 +969,7 @@ func getBucketRetentionConfig(ctx context.Context, client MinioClient, bucketNam
 	return config, nil
 }
 
-func getBucketRetentionConfigResponse(session *models.Principal, params bucketApi.GetBucketRetentionConfigParams) (*models.GetBucketRetentionConfig, *models.Error) {
+func getBucketRetentionConfigResponse(session *models.Principal, params bucketApi.GetBucketRetentionConfigParams) (*models.GetBucketRetentionConfig, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	bucketName := params.BucketName
@@ -989,7 +989,7 @@ func getBucketRetentionConfigResponse(session *models.Principal, params bucketAp
 	return config, nil
 }
 
-func getBucketObjectLockingResponse(session *models.Principal, params bucketApi.GetBucketObjectLockingStatusParams) (*models.BucketObLockingResponse, *models.Error) {
+func getBucketObjectLockingResponse(session *models.Principal, params bucketApi.GetBucketObjectLockingStatusParams) (*models.BucketObLockingResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	bucketName := params.BucketName
@@ -1018,7 +1018,7 @@ func getBucketObjectLockingResponse(session *models.Principal, params bucketApi.
 	}, nil
 }
 
-func getBucketRewindResponse(session *models.Principal, params bucketApi.GetBucketRewindParams) (*models.RewindResponse, *models.Error) {
+func getBucketRewindResponse(session *models.Principal, params bucketApi.GetBucketRewindParams) (*models.RewindResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	prefix := ""

@@ -40,7 +40,7 @@ func registerKMSStatusHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSStatusHandler = kmsAPI.KMSStatusHandlerFunc(func(params kmsAPI.KMSStatusParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSStatusResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSStatusDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSStatusDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSStatusOK().WithPayload(resp)
 	})
@@ -48,7 +48,7 @@ func registerKMSStatusHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSMetricsHandler = kmsAPI.KMSMetricsHandlerFunc(func(params kmsAPI.KMSMetricsParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSMetricsResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSMetricsDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSMetricsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSMetricsOK().WithPayload(resp)
 	})
@@ -56,7 +56,7 @@ func registerKMSStatusHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSAPIsHandler = kmsAPI.KMSAPIsHandlerFunc(func(params kmsAPI.KMSAPIsParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSAPIsResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSAPIsDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSAPIsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSAPIsOK().WithPayload(resp)
 	})
@@ -64,13 +64,13 @@ func registerKMSStatusHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSVersionHandler = kmsAPI.KMSVersionHandlerFunc(func(params kmsAPI.KMSVersionParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSVersionResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSVersionDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSVersionDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSVersionOK().WithPayload(resp)
 	})
 }
 
-func GetKMSStatusResponse(session *models.Principal, params kmsAPI.KMSStatusParams) (*models.KmsStatusResponse, *models.Error) {
+func GetKMSStatusResponse(session *models.Principal, params kmsAPI.KMSStatusParams) (*models.KmsStatusResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -80,7 +80,7 @@ func GetKMSStatusResponse(session *models.Principal, params kmsAPI.KMSStatusPara
 	return kmsStatus(ctx, AdminClient{Client: mAdmin})
 }
 
-func kmsStatus(ctx context.Context, minioClient MinioAdmin) (*models.KmsStatusResponse, *models.Error) {
+func kmsStatus(ctx context.Context, minioClient MinioAdmin) (*models.KmsStatusResponse, *CodedAPIError) {
 	st, err := minioClient.kmsStatus(ctx)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -99,7 +99,7 @@ func parseStatusEndpoints(endpoints map[string]madmin.ItemState) (kmsEndpoints [
 	return kmsEndpoints
 }
 
-func GetKMSMetricsResponse(session *models.Principal, params kmsAPI.KMSMetricsParams) (*models.KmsMetricsResponse, *models.Error) {
+func GetKMSMetricsResponse(session *models.Principal, params kmsAPI.KMSMetricsParams) (*models.KmsMetricsResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -109,7 +109,7 @@ func GetKMSMetricsResponse(session *models.Principal, params kmsAPI.KMSMetricsPa
 	return kmsMetrics(ctx, AdminClient{Client: mAdmin})
 }
 
-func kmsMetrics(ctx context.Context, minioClient MinioAdmin) (*models.KmsMetricsResponse, *models.Error) {
+func kmsMetrics(ctx context.Context, minioClient MinioAdmin) (*models.KmsMetricsResponse, *CodedAPIError) {
 	metrics, err := minioClient.kmsMetrics(ctx)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -143,7 +143,7 @@ func parseHistogram(histogram map[int64]int64) (records []*models.KmsLatencyHist
 	return records
 }
 
-func GetKMSAPIsResponse(session *models.Principal, params kmsAPI.KMSAPIsParams) (*models.KmsAPIsResponse, *models.Error) {
+func GetKMSAPIsResponse(session *models.Principal, params kmsAPI.KMSAPIsParams) (*models.KmsAPIsResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -153,7 +153,7 @@ func GetKMSAPIsResponse(session *models.Principal, params kmsAPI.KMSAPIsParams) 
 	return kmsAPIs(ctx, AdminClient{Client: mAdmin})
 }
 
-func kmsAPIs(ctx context.Context, minioClient MinioAdmin) (*models.KmsAPIsResponse, *models.Error) {
+func kmsAPIs(ctx context.Context, minioClient MinioAdmin) (*models.KmsAPIsResponse, *CodedAPIError) {
 	apis, err := minioClient.kmsAPIs(ctx)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -175,7 +175,7 @@ func parseApis(apis []madmin.KMSAPI) (data []*models.KmsAPI) {
 	return data
 }
 
-func GetKMSVersionResponse(session *models.Principal, params kmsAPI.KMSVersionParams) (*models.KmsVersionResponse, *models.Error) {
+func GetKMSVersionResponse(session *models.Principal, params kmsAPI.KMSVersionParams) (*models.KmsVersionResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -185,7 +185,7 @@ func GetKMSVersionResponse(session *models.Principal, params kmsAPI.KMSVersionPa
 	return kmsVersion(ctx, AdminClient{Client: mAdmin})
 }
 
-func kmsVersion(ctx context.Context, minioClient MinioAdmin) (*models.KmsVersionResponse, *models.Error) {
+func kmsVersion(ctx context.Context, minioClient MinioAdmin) (*models.KmsVersionResponse, *CodedAPIError) {
 	version, err := minioClient.kmsVersion(ctx)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -199,7 +199,7 @@ func registerKMSKeyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSCreateKeyHandler = kmsAPI.KMSCreateKeyHandlerFunc(func(params kmsAPI.KMSCreateKeyParams, session *models.Principal) middleware.Responder {
 		err := GetKMSCreateKeyResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSCreateKeyDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSCreateKeyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSCreateKeyCreated()
 	})
@@ -207,7 +207,7 @@ func registerKMSKeyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSImportKeyHandler = kmsAPI.KMSImportKeyHandlerFunc(func(params kmsAPI.KMSImportKeyParams, session *models.Principal) middleware.Responder {
 		err := GetKMSImportKeyResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSImportKeyDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSImportKeyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSImportKeyCreated()
 	})
@@ -215,7 +215,7 @@ func registerKMSKeyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSListKeysHandler = kmsAPI.KMSListKeysHandlerFunc(func(params kmsAPI.KMSListKeysParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSListKeysResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSListKeysDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSListKeysDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSListKeysOK().WithPayload(resp)
 	})
@@ -223,7 +223,7 @@ func registerKMSKeyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSKeyStatusHandler = kmsAPI.KMSKeyStatusHandlerFunc(func(params kmsAPI.KMSKeyStatusParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSKeyStatusResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSKeyStatusDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSKeyStatusDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSKeyStatusOK().WithPayload(resp)
 	})
@@ -231,13 +231,13 @@ func registerKMSKeyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSDeleteKeyHandler = kmsAPI.KMSDeleteKeyHandlerFunc(func(params kmsAPI.KMSDeleteKeyParams, session *models.Principal) middleware.Responder {
 		err := GetKMSDeleteKeyResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSDeleteKeyDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSDeleteKeyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSDeleteKeyOK()
 	})
 }
 
-func GetKMSCreateKeyResponse(session *models.Principal, params kmsAPI.KMSCreateKeyParams) *models.Error {
+func GetKMSCreateKeyResponse(session *models.Principal, params kmsAPI.KMSCreateKeyParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -247,14 +247,14 @@ func GetKMSCreateKeyResponse(session *models.Principal, params kmsAPI.KMSCreateK
 	return createKey(ctx, *params.Body.Key, AdminClient{Client: mAdmin})
 }
 
-func createKey(ctx context.Context, key string, minioClient MinioAdmin) *models.Error {
+func createKey(ctx context.Context, key string, minioClient MinioAdmin) *CodedAPIError {
 	if err := minioClient.createKey(ctx, key); err != nil {
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
-func GetKMSImportKeyResponse(session *models.Principal, params kmsAPI.KMSImportKeyParams) *models.Error {
+func GetKMSImportKeyResponse(session *models.Principal, params kmsAPI.KMSImportKeyParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -268,14 +268,14 @@ func GetKMSImportKeyResponse(session *models.Principal, params kmsAPI.KMSImportK
 	return importKey(ctx, params.Name, bytes, AdminClient{Client: mAdmin})
 }
 
-func importKey(ctx context.Context, key string, bytes []byte, minioClient MinioAdmin) *models.Error {
+func importKey(ctx context.Context, key string, bytes []byte, minioClient MinioAdmin) *CodedAPIError {
 	if err := minioClient.importKey(ctx, key, bytes); err != nil {
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
-func GetKMSListKeysResponse(session *models.Principal, params kmsAPI.KMSListKeysParams) (*models.KmsListKeysResponse, *models.Error) {
+func GetKMSListKeysResponse(session *models.Principal, params kmsAPI.KMSListKeysParams) (*models.KmsListKeysResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -289,7 +289,7 @@ func GetKMSListKeysResponse(session *models.Principal, params kmsAPI.KMSListKeys
 	return listKeys(ctx, pattern, AdminClient{Client: mAdmin})
 }
 
-func listKeys(ctx context.Context, pattern string, minioClient MinioAdmin) (*models.KmsListKeysResponse, *models.Error) {
+func listKeys(ctx context.Context, pattern string, minioClient MinioAdmin) (*models.KmsListKeysResponse, *CodedAPIError) {
 	results, err := minioClient.listKeys(ctx, pattern)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -308,7 +308,7 @@ func parseKeys(results []madmin.KMSKeyInfo) (data []*models.KmsKeyInfo) {
 	return data
 }
 
-func GetKMSKeyStatusResponse(session *models.Principal, params kmsAPI.KMSKeyStatusParams) (*models.KmsKeyStatusResponse, *models.Error) {
+func GetKMSKeyStatusResponse(session *models.Principal, params kmsAPI.KMSKeyStatusParams) (*models.KmsKeyStatusResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -318,7 +318,7 @@ func GetKMSKeyStatusResponse(session *models.Principal, params kmsAPI.KMSKeyStat
 	return keyStatus(ctx, params.Name, AdminClient{Client: mAdmin})
 }
 
-func keyStatus(ctx context.Context, key string, minioClient MinioAdmin) (*models.KmsKeyStatusResponse, *models.Error) {
+func keyStatus(ctx context.Context, key string, minioClient MinioAdmin) (*models.KmsKeyStatusResponse, *CodedAPIError) {
 	ks, err := minioClient.keyStatus(ctx, key)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -330,7 +330,7 @@ func keyStatus(ctx context.Context, key string, minioClient MinioAdmin) (*models
 	}, nil
 }
 
-func GetKMSDeleteKeyResponse(session *models.Principal, params kmsAPI.KMSDeleteKeyParams) *models.Error {
+func GetKMSDeleteKeyResponse(session *models.Principal, params kmsAPI.KMSDeleteKeyParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -340,7 +340,7 @@ func GetKMSDeleteKeyResponse(session *models.Principal, params kmsAPI.KMSDeleteK
 	return deleteKey(ctx, params.Name, AdminClient{Client: mAdmin})
 }
 
-func deleteKey(ctx context.Context, key string, minioClient MinioAdmin) *models.Error {
+func deleteKey(ctx context.Context, key string, minioClient MinioAdmin) *CodedAPIError {
 	if err := minioClient.deleteKey(ctx, key); err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -351,7 +351,7 @@ func registerKMSPolicyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSSetPolicyHandler = kmsAPI.KMSSetPolicyHandlerFunc(func(params kmsAPI.KMSSetPolicyParams, session *models.Principal) middleware.Responder {
 		err := GetKMSSetPolicyResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSSetPolicyDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSSetPolicyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSSetPolicyOK()
 	})
@@ -359,7 +359,7 @@ func registerKMSPolicyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSAssignPolicyHandler = kmsAPI.KMSAssignPolicyHandlerFunc(func(params kmsAPI.KMSAssignPolicyParams, session *models.Principal) middleware.Responder {
 		err := GetKMSAssignPolicyResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSAssignPolicyDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSAssignPolicyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSAssignPolicyOK()
 	})
@@ -367,7 +367,7 @@ func registerKMSPolicyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSDescribePolicyHandler = kmsAPI.KMSDescribePolicyHandlerFunc(func(params kmsAPI.KMSDescribePolicyParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSDescribePolicyResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSDescribePolicyDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSDescribePolicyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSDescribePolicyOK().WithPayload(resp)
 	})
@@ -375,7 +375,7 @@ func registerKMSPolicyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSGetPolicyHandler = kmsAPI.KMSGetPolicyHandlerFunc(func(params kmsAPI.KMSGetPolicyParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSGetPolicyResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSGetPolicyDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSGetPolicyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSGetPolicyOK().WithPayload(resp)
 	})
@@ -383,7 +383,7 @@ func registerKMSPolicyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSListPoliciesHandler = kmsAPI.KMSListPoliciesHandlerFunc(func(params kmsAPI.KMSListPoliciesParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSListPoliciesResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSListPoliciesDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSListPoliciesDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSListPoliciesOK().WithPayload(resp)
 	})
@@ -391,13 +391,13 @@ func registerKMSPolicyHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSDeletePolicyHandler = kmsAPI.KMSDeletePolicyHandlerFunc(func(params kmsAPI.KMSDeletePolicyParams, session *models.Principal) middleware.Responder {
 		err := GetKMSDeletePolicyResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSDeletePolicyDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSDeletePolicyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSDeletePolicyOK()
 	})
 }
 
-func GetKMSSetPolicyResponse(session *models.Principal, params kmsAPI.KMSSetPolicyParams) *models.Error {
+func GetKMSSetPolicyResponse(session *models.Principal, params kmsAPI.KMSSetPolicyParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -411,14 +411,14 @@ func GetKMSSetPolicyResponse(session *models.Principal, params kmsAPI.KMSSetPoli
 	return setPolicy(ctx, *params.Body.Policy, bytes, AdminClient{Client: mAdmin})
 }
 
-func setPolicy(ctx context.Context, policy string, content []byte, minioClient MinioAdmin) *models.Error {
+func setPolicy(ctx context.Context, policy string, content []byte, minioClient MinioAdmin) *CodedAPIError {
 	if err := minioClient.setKMSPolicy(ctx, policy, content); err != nil {
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
-func GetKMSAssignPolicyResponse(session *models.Principal, params kmsAPI.KMSAssignPolicyParams) *models.Error {
+func GetKMSAssignPolicyResponse(session *models.Principal, params kmsAPI.KMSAssignPolicyParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -432,14 +432,14 @@ func GetKMSAssignPolicyResponse(session *models.Principal, params kmsAPI.KMSAssi
 	return assignPolicy(ctx, params.Name, bytes, AdminClient{Client: mAdmin})
 }
 
-func assignPolicy(ctx context.Context, policy string, content []byte, minioClient MinioAdmin) *models.Error {
+func assignPolicy(ctx context.Context, policy string, content []byte, minioClient MinioAdmin) *CodedAPIError {
 	if err := minioClient.assignPolicy(ctx, policy, content); err != nil {
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
 }
 
-func GetKMSDescribePolicyResponse(session *models.Principal, params kmsAPI.KMSDescribePolicyParams) (*models.KmsDescribePolicyResponse, *models.Error) {
+func GetKMSDescribePolicyResponse(session *models.Principal, params kmsAPI.KMSDescribePolicyParams) (*models.KmsDescribePolicyResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -449,7 +449,7 @@ func GetKMSDescribePolicyResponse(session *models.Principal, params kmsAPI.KMSDe
 	return describePolicy(ctx, params.Name, AdminClient{Client: mAdmin})
 }
 
-func describePolicy(ctx context.Context, policy string, minioClient MinioAdmin) (*models.KmsDescribePolicyResponse, *models.Error) {
+func describePolicy(ctx context.Context, policy string, minioClient MinioAdmin) (*models.KmsDescribePolicyResponse, *CodedAPIError) {
 	dp, err := minioClient.describePolicy(ctx, policy)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -461,7 +461,7 @@ func describePolicy(ctx context.Context, policy string, minioClient MinioAdmin) 
 	}, nil
 }
 
-func GetKMSGetPolicyResponse(session *models.Principal, params kmsAPI.KMSGetPolicyParams) (*models.KmsGetPolicyResponse, *models.Error) {
+func GetKMSGetPolicyResponse(session *models.Principal, params kmsAPI.KMSGetPolicyParams) (*models.KmsGetPolicyResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -471,7 +471,7 @@ func GetKMSGetPolicyResponse(session *models.Principal, params kmsAPI.KMSGetPoli
 	return getPolicy(ctx, params.Name, AdminClient{Client: mAdmin})
 }
 
-func getPolicy(ctx context.Context, policy string, minioClient MinioAdmin) (*models.KmsGetPolicyResponse, *models.Error) {
+func getPolicy(ctx context.Context, policy string, minioClient MinioAdmin) (*models.KmsGetPolicyResponse, *CodedAPIError) {
 	p, err := minioClient.getKMSPolicy(ctx, policy)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -482,7 +482,7 @@ func getPolicy(ctx context.Context, policy string, minioClient MinioAdmin) (*mod
 	}, nil
 }
 
-func GetKMSListPoliciesResponse(session *models.Principal, params kmsAPI.KMSListPoliciesParams) (*models.KmsListPoliciesResponse, *models.Error) {
+func GetKMSListPoliciesResponse(session *models.Principal, params kmsAPI.KMSListPoliciesParams) (*models.KmsListPoliciesResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -496,7 +496,7 @@ func GetKMSListPoliciesResponse(session *models.Principal, params kmsAPI.KMSList
 	return listKMSPolicies(ctx, pattern, AdminClient{Client: mAdmin})
 }
 
-func listKMSPolicies(ctx context.Context, pattern string, minioClient MinioAdmin) (*models.KmsListPoliciesResponse, *models.Error) {
+func listKMSPolicies(ctx context.Context, pattern string, minioClient MinioAdmin) (*models.KmsListPoliciesResponse, *CodedAPIError) {
 	results, err := minioClient.listKMSPolicies(ctx, pattern)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -515,7 +515,7 @@ func parsePolicies(results []madmin.KMSPolicyInfo) (data []*models.KmsPolicyInfo
 	return data
 }
 
-func GetKMSDeletePolicyResponse(session *models.Principal, params kmsAPI.KMSDeletePolicyParams) *models.Error {
+func GetKMSDeletePolicyResponse(session *models.Principal, params kmsAPI.KMSDeletePolicyParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -525,7 +525,7 @@ func GetKMSDeletePolicyResponse(session *models.Principal, params kmsAPI.KMSDele
 	return deletePolicy(ctx, params.Name, AdminClient{Client: mAdmin})
 }
 
-func deletePolicy(ctx context.Context, policy string, minioClient MinioAdmin) *models.Error {
+func deletePolicy(ctx context.Context, policy string, minioClient MinioAdmin) *CodedAPIError {
 	if err := minioClient.deletePolicy(ctx, policy); err != nil {
 		return ErrorWithContext(ctx, err)
 	}
@@ -536,7 +536,7 @@ func registerKMSIdentityHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSDescribeIdentityHandler = kmsAPI.KMSDescribeIdentityHandlerFunc(func(params kmsAPI.KMSDescribeIdentityParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSDescribeIdentityResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSDescribeIdentityDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSDescribeIdentityDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSDescribeIdentityOK().WithPayload(resp)
 	})
@@ -544,7 +544,7 @@ func registerKMSIdentityHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSDescribeSelfIdentityHandler = kmsAPI.KMSDescribeSelfIdentityHandlerFunc(func(params kmsAPI.KMSDescribeSelfIdentityParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSDescribeSelfIdentityResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSDescribeSelfIdentityDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSDescribeSelfIdentityDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSDescribeSelfIdentityOK().WithPayload(resp)
 	})
@@ -552,20 +552,20 @@ func registerKMSIdentityHandlers(api *operations.ConsoleAPI) {
 	api.KmsKMSListIdentitiesHandler = kmsAPI.KMSListIdentitiesHandlerFunc(func(params kmsAPI.KMSListIdentitiesParams, session *models.Principal) middleware.Responder {
 		resp, err := GetKMSListIdentitiesResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSListIdentitiesDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSListIdentitiesDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSListIdentitiesOK().WithPayload(resp)
 	})
 	api.KmsKMSDeleteIdentityHandler = kmsAPI.KMSDeleteIdentityHandlerFunc(func(params kmsAPI.KMSDeleteIdentityParams, session *models.Principal) middleware.Responder {
 		err := GetKMSDeleteIdentityResponse(session, params)
 		if err != nil {
-			return kmsAPI.NewKMSDeleteIdentityDefault(int(err.Code)).WithPayload(err)
+			return kmsAPI.NewKMSDeleteIdentityDefault(err.Code).WithPayload(err.APIError)
 		}
 		return kmsAPI.NewKMSDeleteIdentityOK()
 	})
 }
 
-func GetKMSDescribeIdentityResponse(session *models.Principal, params kmsAPI.KMSDescribeIdentityParams) (*models.KmsDescribeIdentityResponse, *models.Error) {
+func GetKMSDescribeIdentityResponse(session *models.Principal, params kmsAPI.KMSDescribeIdentityParams) (*models.KmsDescribeIdentityResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -575,7 +575,7 @@ func GetKMSDescribeIdentityResponse(session *models.Principal, params kmsAPI.KMS
 	return describeIdentity(ctx, params.Name, AdminClient{Client: mAdmin})
 }
 
-func describeIdentity(ctx context.Context, identity string, minioClient MinioAdmin) (*models.KmsDescribeIdentityResponse, *models.Error) {
+func describeIdentity(ctx context.Context, identity string, minioClient MinioAdmin) (*models.KmsDescribeIdentityResponse, *CodedAPIError) {
 	i, err := minioClient.describeIdentity(ctx, identity)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -589,7 +589,7 @@ func describeIdentity(ctx context.Context, identity string, minioClient MinioAdm
 	}, nil
 }
 
-func GetKMSDescribeSelfIdentityResponse(session *models.Principal, params kmsAPI.KMSDescribeSelfIdentityParams) (*models.KmsDescribeSelfIdentityResponse, *models.Error) {
+func GetKMSDescribeSelfIdentityResponse(session *models.Principal, params kmsAPI.KMSDescribeSelfIdentityParams) (*models.KmsDescribeSelfIdentityResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -599,7 +599,7 @@ func GetKMSDescribeSelfIdentityResponse(session *models.Principal, params kmsAPI
 	return describeSelfIdentity(ctx, AdminClient{Client: mAdmin})
 }
 
-func describeSelfIdentity(ctx context.Context, minioClient MinioAdmin) (*models.KmsDescribeSelfIdentityResponse, *models.Error) {
+func describeSelfIdentity(ctx context.Context, minioClient MinioAdmin) (*models.KmsDescribeSelfIdentityResponse, *CodedAPIError) {
 	i, err := minioClient.describeSelfIdentity(ctx)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -616,7 +616,7 @@ func describeSelfIdentity(ctx context.Context, minioClient MinioAdmin) (*models.
 	}, nil
 }
 
-func GetKMSListIdentitiesResponse(session *models.Principal, params kmsAPI.KMSListIdentitiesParams) (*models.KmsListIdentitiesResponse, *models.Error) {
+func GetKMSListIdentitiesResponse(session *models.Principal, params kmsAPI.KMSListIdentitiesParams) (*models.KmsListIdentitiesResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -630,7 +630,7 @@ func GetKMSListIdentitiesResponse(session *models.Principal, params kmsAPI.KMSLi
 	return listIdentities(ctx, pattern, AdminClient{Client: mAdmin})
 }
 
-func listIdentities(ctx context.Context, pattern string, minioClient MinioAdmin) (*models.KmsListIdentitiesResponse, *models.Error) {
+func listIdentities(ctx context.Context, pattern string, minioClient MinioAdmin) (*models.KmsListIdentitiesResponse, *CodedAPIError) {
 	results, err := minioClient.listIdentities(ctx, pattern)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -651,7 +651,7 @@ func parseIdentities(results []madmin.KMSIdentityInfo) (data []*models.KmsIdenti
 	return data
 }
 
-func GetKMSDeleteIdentityResponse(session *models.Principal, params kmsAPI.KMSDeleteIdentityParams) *models.Error {
+func GetKMSDeleteIdentityResponse(session *models.Principal, params kmsAPI.KMSDeleteIdentityParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -661,7 +661,7 @@ func GetKMSDeleteIdentityResponse(session *models.Principal, params kmsAPI.KMSDe
 	return deleteIdentity(ctx, params.Name, AdminClient{Client: mAdmin})
 }
 
-func deleteIdentity(ctx context.Context, identity string, minioClient MinioAdmin) *models.Error {
+func deleteIdentity(ctx context.Context, identity string, minioClient MinioAdmin) *CodedAPIError {
 	if err := minioClient.deleteIdentity(ctx, identity); err != nil {
 		return ErrorWithContext(ctx, err)
 	}

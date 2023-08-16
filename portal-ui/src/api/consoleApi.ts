@@ -131,11 +131,9 @@ export interface MakeBucketRequest {
   retention?: PutBucketRetentionRequest;
 }
 
-export interface Error {
-  /** @format int32 */
-  code?: number;
-  message: string;
-  detailedMessage: string;
+export interface ApiError {
+  message?: string;
+  detailedMessage?: string;
 }
 
 export interface User {
@@ -1713,10 +1711,9 @@ export class HttpClient<SecurityDataType = unknown> {
             ? { "Content-Type": type }
             : {}),
         },
-        signal:
-          (cancelToken
-            ? this.createAbortSignal(cancelToken)
-            : requestParams.signal) || null,
+        signal: cancelToken
+          ? this.createAbortSignal(cancelToken)
+          : requestParams.signal,
         body:
           typeof body === "undefined" || body === null
             ? null
@@ -1771,7 +1768,7 @@ export class Api<
      * @request GET:/login
      */
     loginDetail: (params: RequestParams = {}) =>
-      this.request<LoginDetails, Error>({
+      this.request<LoginDetails, ApiError>({
         path: `/login`,
         method: "GET",
         format: "json",
@@ -1787,7 +1784,7 @@ export class Api<
      * @request POST:/login
      */
     login: (body: LoginRequest, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/login`,
         method: "POST",
         body: body,
@@ -1807,7 +1804,7 @@ export class Api<
       body: LoginOauth2AuthRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/login/oauth2/auth`,
         method: "POST",
         body: body,
@@ -1826,7 +1823,7 @@ export class Api<
      * @secure
      */
     logout: (body: LogoutRequest, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/logout`,
         method: "POST",
         body: body,
@@ -1846,7 +1843,7 @@ export class Api<
      * @secure
      */
     sessionCheck: (params: RequestParams = {}) =>
-      this.request<SessionResponse, Error>({
+      this.request<SessionResponse, ApiError>({
         path: `/session`,
         method: "GET",
         secure: true,
@@ -1864,7 +1861,7 @@ export class Api<
      * @request GET:/check-version
      */
     checkMinIoVersion: (params: RequestParams = {}) =>
-      this.request<CheckVersionResponse, Error>({
+      this.request<CheckVersionResponse, ApiError>({
         path: `/check-version`,
         method: "GET",
         format: "json",
@@ -1885,7 +1882,7 @@ export class Api<
       body: AccountChangePasswordRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/account/change-password`,
         method: "POST",
         body: body,
@@ -1907,7 +1904,7 @@ export class Api<
       body: ChangeUserPasswordRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/account/change-user-password`,
         method: "POST",
         body: body,
@@ -1927,7 +1924,7 @@ export class Api<
      * @secure
      */
     listBuckets: (params: RequestParams = {}) =>
-      this.request<ListBucketsResponse, Error>({
+      this.request<ListBucketsResponse, ApiError>({
         path: `/buckets`,
         method: "GET",
         secure: true,
@@ -1945,7 +1942,7 @@ export class Api<
      * @secure
      */
     makeBucket: (body: MakeBucketRequest, params: RequestParams = {}) =>
-      this.request<MakeBucketsResponse, Error>({
+      this.request<MakeBucketsResponse, ApiError>({
         path: `/buckets`,
         method: "POST",
         body: body,
@@ -1965,7 +1962,7 @@ export class Api<
      * @secure
      */
     bucketInfo: (name: string, params: RequestParams = {}) =>
-      this.request<Bucket, Error>({
+      this.request<Bucket, ApiError>({
         path: `/buckets/${name}`,
         method: "GET",
         secure: true,
@@ -1983,7 +1980,7 @@ export class Api<
      * @secure
      */
     deleteBucket: (name: string, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${name}`,
         method: "DELETE",
         secure: true,
@@ -2003,7 +2000,7 @@ export class Api<
       bucketName: string,
       params: RequestParams = {},
     ) =>
-      this.request<GetBucketRetentionConfig, Error>({
+      this.request<GetBucketRetentionConfig, ApiError>({
         path: `/buckets/${bucketName}/retention`,
         method: "GET",
         secure: true,
@@ -2025,7 +2022,7 @@ export class Api<
       body: PutBucketRetentionRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/retention`,
         method: "PUT",
         body: body,
@@ -2055,7 +2052,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ListObjectsResponse, Error>({
+      this.request<ListObjectsResponse, ApiError>({
         path: `/buckets/${bucketName}/objects`,
         method: "GET",
         query: query,
@@ -2085,7 +2082,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/objects`,
         method: "DELETE",
         query: query,
@@ -2111,7 +2108,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/delete-objects`,
         method: "POST",
         query: query,
@@ -2138,7 +2135,7 @@ export class Api<
       data?: any,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/objects/upload`,
         method: "POST",
         query: query,
@@ -2162,7 +2159,7 @@ export class Api<
       objectList: string[],
       params: RequestParams = {},
     ) =>
-      this.request<File, Error>({
+      this.request<File, ApiError>({
         path: `/buckets/${bucketName}/objects/download-multiple`,
         method: "POST",
         body: objectList,
@@ -2191,7 +2188,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<File, Error>({
+      this.request<File, ApiError>({
         path: `/buckets/${bucketName}/objects/download`,
         method: "GET",
         query: query,
@@ -2217,7 +2214,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<IamEntity, Error>({
+      this.request<IamEntity, ApiError>({
         path: `/buckets/${bucketName}/objects/share`,
         method: "GET",
         query: query,
@@ -2244,7 +2241,7 @@ export class Api<
       body: PutObjectLegalHoldRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/objects/legalhold`,
         method: "PUT",
         query: query,
@@ -2272,7 +2269,7 @@ export class Api<
       body: PutObjectRetentionRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/objects/retention`,
         method: "PUT",
         query: query,
@@ -2299,7 +2296,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/objects/retention`,
         method: "DELETE",
         query: query,
@@ -2325,7 +2322,7 @@ export class Api<
       body: PutObjectTagsRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/objects/tags`,
         method: "PUT",
         query: query,
@@ -2352,7 +2349,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/objects/restore`,
         method: "PUT",
         query: query,
@@ -2376,7 +2373,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<Metadata, Error>({
+      this.request<Metadata, ApiError>({
         path: `/buckets/${bucketName}/objects/metadata`,
         method: "GET",
         query: query,
@@ -2399,7 +2396,7 @@ export class Api<
       body: PutBucketTagsRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/tags`,
         method: "PUT",
         body: body,
@@ -2422,7 +2419,7 @@ export class Api<
       body: SetBucketPolicyRequest,
       params: RequestParams = {},
     ) =>
-      this.request<Bucket, Error>({
+      this.request<Bucket, ApiError>({
         path: `/buckets/${name}/set-policy`,
         method: "PUT",
         body: body,
@@ -2442,7 +2439,7 @@ export class Api<
      * @secure
      */
     getBucketQuota: (name: string, params: RequestParams = {}) =>
-      this.request<BucketQuota, Error>({
+      this.request<BucketQuota, ApiError>({
         path: `/buckets/${name}/quota`,
         method: "GET",
         secure: true,
@@ -2464,7 +2461,7 @@ export class Api<
       body: SetBucketQuota,
       params: RequestParams = {},
     ) =>
-      this.request<Bucket, Error>({
+      this.request<Bucket, ApiError>({
         path: `/buckets/${name}/quota`,
         method: "PUT",
         body: body,
@@ -2493,7 +2490,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ListBucketEventsResponse, Error>({
+      this.request<ListBucketEventsResponse, ApiError>({
         path: `/buckets/${bucketName}/events`,
         method: "GET",
         query: query,
@@ -2516,7 +2513,7 @@ export class Api<
       body: BucketEventRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/events`,
         method: "POST",
         body: body,
@@ -2540,7 +2537,7 @@ export class Api<
       body: NotificationDeleteRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/events/${arn}`,
         method: "DELETE",
         body: body,
@@ -2559,7 +2556,7 @@ export class Api<
      * @secure
      */
     getBucketReplication: (bucketName: string, params: RequestParams = {}) =>
-      this.request<BucketReplicationResponse, Error>({
+      this.request<BucketReplicationResponse, ApiError>({
         path: `/buckets/${bucketName}/replication`,
         method: "GET",
         secure: true,
@@ -2581,7 +2578,7 @@ export class Api<
       ruleId: string,
       params: RequestParams = {},
     ) =>
-      this.request<BucketReplicationRule, Error>({
+      this.request<BucketReplicationRule, ApiError>({
         path: `/buckets/${bucketName}/replication/${ruleId}`,
         method: "GET",
         secure: true,
@@ -2604,7 +2601,7 @@ export class Api<
       body: MultiBucketReplicationEdit,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/replication/${ruleId}`,
         method: "PUT",
         body: body,
@@ -2627,7 +2624,7 @@ export class Api<
       ruleId: string,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/replication/${ruleId}`,
         method: "DELETE",
         secure: true,
@@ -2647,7 +2644,7 @@ export class Api<
       bucketName: string,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/delete-all-replication-rules`,
         method: "DELETE",
         secure: true,
@@ -2668,7 +2665,7 @@ export class Api<
       rules: BucketReplicationRuleList,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/delete-selected-replication-rules`,
         method: "DELETE",
         body: rules,
@@ -2687,7 +2684,7 @@ export class Api<
      * @secure
      */
     getBucketVersioning: (bucketName: string, params: RequestParams = {}) =>
-      this.request<BucketVersioningResponse, Error>({
+      this.request<BucketVersioningResponse, ApiError>({
         path: `/buckets/${bucketName}/versioning`,
         method: "GET",
         secure: true,
@@ -2709,7 +2706,7 @@ export class Api<
       body: SetBucketVersioning,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/versioning`,
         method: "PUT",
         body: body,
@@ -2731,7 +2728,7 @@ export class Api<
       bucketName: string,
       params: RequestParams = {},
     ) =>
-      this.request<BucketObLockingResponse, Error>({
+      this.request<BucketObLockingResponse, ApiError>({
         path: `/buckets/${bucketName}/object-locking`,
         method: "GET",
         secure: true,
@@ -2753,7 +2750,7 @@ export class Api<
       body: BucketEncryptionRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/encryption/enable`,
         method: "POST",
         body: body,
@@ -2772,7 +2769,7 @@ export class Api<
      * @secure
      */
     disableBucketEncryption: (bucketName: string, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/encryption/disable`,
         method: "POST",
         secure: true,
@@ -2789,7 +2786,7 @@ export class Api<
      * @secure
      */
     getBucketEncryptionInfo: (bucketName: string, params: RequestParams = {}) =>
-      this.request<BucketEncryptionInfo, Error>({
+      this.request<BucketEncryptionInfo, ApiError>({
         path: `/buckets/${bucketName}/encryption/info`,
         method: "GET",
         secure: true,
@@ -2807,7 +2804,7 @@ export class Api<
      * @secure
      */
     getBucketLifecycle: (bucketName: string, params: RequestParams = {}) =>
-      this.request<BucketLifecycleResponse, Error>({
+      this.request<BucketLifecycleResponse, ApiError>({
         path: `/buckets/${bucketName}/lifecycle`,
         method: "GET",
         secure: true,
@@ -2829,7 +2826,7 @@ export class Api<
       body: AddBucketLifecycle,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/lifecycle`,
         method: "POST",
         body: body,
@@ -2851,7 +2848,7 @@ export class Api<
       body: AddMultiBucketLifecycle,
       params: RequestParams = {},
     ) =>
-      this.request<MultiLifecycleResult, Error>({
+      this.request<MultiLifecycleResult, ApiError>({
         path: `/buckets/multi-lifecycle`,
         method: "POST",
         body: body,
@@ -2876,7 +2873,7 @@ export class Api<
       body: UpdateBucketLifecycle,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/lifecycle/${lifecycleId}`,
         method: "PUT",
         body: body,
@@ -2899,7 +2896,7 @@ export class Api<
       lifecycleId: string,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/buckets/${bucketName}/lifecycle/${lifecycleId}`,
         method: "DELETE",
         secure: true,
@@ -2923,7 +2920,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<RewindResponse, Error>({
+      this.request<RewindResponse, ApiError>({
         path: `/buckets/${bucketName}/rewind/${date}`,
         method: "GET",
         query: query,
@@ -2946,7 +2943,7 @@ export class Api<
       body: ListExternalBucketsParams,
       params: RequestParams = {},
     ) =>
-      this.request<ListBucketsResponse, Error>({
+      this.request<ListBucketsResponse, ApiError>({
         path: `/list-external-buckets`,
         method: "POST",
         body: body,
@@ -2970,7 +2967,7 @@ export class Api<
       body: MultiBucketReplication,
       params: RequestParams = {},
     ) =>
-      this.request<MultiBucketResponseState, Error>({
+      this.request<MultiBucketResponseState, ApiError>({
         path: `/buckets-replication`,
         method: "POST",
         body: body,
@@ -2999,7 +2996,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ServiceAccounts, Error>({
+      this.request<ServiceAccounts, ApiError>({
         path: `/service-accounts`,
         method: "GET",
         query: query,
@@ -3021,7 +3018,7 @@ export class Api<
       body: ServiceAccountRequest,
       params: RequestParams = {},
     ) =>
-      this.request<ServiceAccountCreds, Error>({
+      this.request<ServiceAccountCreds, ApiError>({
         path: `/service-accounts`,
         method: "POST",
         body: body,
@@ -3040,7 +3037,7 @@ export class Api<
      * @secure
      */
     deleteServiceAccount: (accessKey: string, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/service-accounts/${accessKey}`,
         method: "DELETE",
         secure: true,
@@ -3060,7 +3057,7 @@ export class Api<
       selectedSA: string[],
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/service-accounts/delete-multi`,
         method: "DELETE",
         body: selectedSA,
@@ -3078,7 +3075,7 @@ export class Api<
      * @secure
      */
     getServiceAccountPolicy: (accessKey: string, params: RequestParams = {}) =>
-      this.request<IamEntity, Error>({
+      this.request<IamEntity, ApiError>({
         path: `/service-accounts/${accessKey}/policy`,
         method: "GET",
         secure: true,
@@ -3100,7 +3097,7 @@ export class Api<
       policy: AddServiceAccountPolicyRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/service-accounts/${accessKey}/policy`,
         method: "PUT",
         body: policy,
@@ -3123,7 +3120,7 @@ export class Api<
       body: ServiceAccountRequestCreds,
       params: RequestParams = {},
     ) =>
-      this.request<ServiceAccountCreds, Error>({
+      this.request<ServiceAccountCreds, ApiError>({
         path: `/service-account-credentials`,
         method: "POST",
         body: body,
@@ -3151,7 +3148,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ListUsersResponse, Error>({
+      this.request<ListUsersResponse, ApiError>({
         path: `/users`,
         method: "GET",
         query: query,
@@ -3170,7 +3167,7 @@ export class Api<
      * @secure
      */
     addUser: (body: AddUserRequest, params: RequestParams = {}) =>
-      this.request<User, Error>({
+      this.request<User, ApiError>({
         path: `/users`,
         method: "POST",
         body: body,
@@ -3193,7 +3190,7 @@ export class Api<
       selectedUsers: string[],
       params: RequestParams = {},
     ) =>
-      this.request<UserServiceAccountSummary, Error>({
+      this.request<UserServiceAccountSummary, ApiError>({
         path: `/users/service-accounts`,
         method: "POST",
         body: selectedUsers,
@@ -3213,7 +3210,7 @@ export class Api<
      * @secure
      */
     getUserInfo: (name: string, params: RequestParams = {}) =>
-      this.request<User, Error>({
+      this.request<User, ApiError>({
         path: `/user/${name}`,
         method: "GET",
         secure: true,
@@ -3235,7 +3232,7 @@ export class Api<
       body: UpdateUser,
       params: RequestParams = {},
     ) =>
-      this.request<User, Error>({
+      this.request<User, ApiError>({
         path: `/user/${name}`,
         method: "PUT",
         body: body,
@@ -3255,7 +3252,7 @@ export class Api<
      * @secure
      */
     removeUser: (name: string, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/user/${name}`,
         method: "DELETE",
         secure: true,
@@ -3276,7 +3273,7 @@ export class Api<
       body: UpdateUserGroups,
       params: RequestParams = {},
     ) =>
-      this.request<User, Error>({
+      this.request<User, ApiError>({
         path: `/user/${name}/groups`,
         method: "PUT",
         body: body,
@@ -3296,7 +3293,7 @@ export class Api<
      * @secure
      */
     getUserPolicy: (params: RequestParams = {}) =>
-      this.request<IamEntity, Error>({
+      this.request<IamEntity, ApiError>({
         path: `/user/policy`,
         method: "GET",
         secure: true,
@@ -3314,7 +3311,7 @@ export class Api<
      * @secure
      */
     getSaUserPolicy: (name: string, params: RequestParams = {}) =>
-      this.request<AUserPolicyResponse, Error>({
+      this.request<AUserPolicyResponse, ApiError>({
         path: `/user/${name}/policies`,
         method: "GET",
         secure: true,
@@ -3332,7 +3329,7 @@ export class Api<
      * @secure
      */
     listAUserServiceAccounts: (name: string, params: RequestParams = {}) =>
-      this.request<ServiceAccounts, Error>({
+      this.request<ServiceAccounts, ApiError>({
         path: `/user/${name}/service-accounts`,
         method: "GET",
         secure: true,
@@ -3354,7 +3351,7 @@ export class Api<
       body: ServiceAccountRequest,
       params: RequestParams = {},
     ) =>
-      this.request<ServiceAccountCreds, Error>({
+      this.request<ServiceAccountCreds, ApiError>({
         path: `/user/${name}/service-accounts`,
         method: "POST",
         body: body,
@@ -3377,7 +3374,7 @@ export class Api<
       body: ServiceAccountRequestCreds,
       params: RequestParams = {},
     ) =>
-      this.request<ServiceAccountCreds, Error>({
+      this.request<ServiceAccountCreds, ApiError>({
         path: `/user/${name}/service-account-credentials`,
         method: "POST",
         body: body,
@@ -3397,7 +3394,7 @@ export class Api<
      * @secure
      */
     bulkUpdateUsersGroups: (body: BulkUserGroups, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/users-groups-bulk`,
         method: "PUT",
         body: body,
@@ -3425,7 +3422,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ListGroupsResponse, Error>({
+      this.request<ListGroupsResponse, ApiError>({
         path: `/groups`,
         method: "GET",
         query: query,
@@ -3444,7 +3441,7 @@ export class Api<
      * @secure
      */
     addGroup: (body: AddGroupRequest, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/groups`,
         method: "POST",
         body: body,
@@ -3464,7 +3461,7 @@ export class Api<
      * @secure
      */
     groupInfo: (name: string, params: RequestParams = {}) =>
-      this.request<Group, Error>({
+      this.request<Group, ApiError>({
         path: `/group/${name}`,
         method: "GET",
         secure: true,
@@ -3482,7 +3479,7 @@ export class Api<
      * @secure
      */
     removeGroup: (name: string, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/group/${name}`,
         method: "DELETE",
         secure: true,
@@ -3503,7 +3500,7 @@ export class Api<
       body: UpdateGroupRequest,
       params: RequestParams = {},
     ) =>
-      this.request<Group, Error>({
+      this.request<Group, ApiError>({
         path: `/group/${name}`,
         method: "PUT",
         body: body,
@@ -3532,7 +3529,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ListPoliciesResponse, Error>({
+      this.request<ListPoliciesResponse, ApiError>({
         path: `/policies`,
         method: "GET",
         query: query,
@@ -3551,7 +3548,7 @@ export class Api<
      * @secure
      */
     addPolicy: (body: AddPolicyRequest, params: RequestParams = {}) =>
-      this.request<Policy, Error>({
+      this.request<Policy, ApiError>({
         path: `/policies`,
         method: "POST",
         body: body,
@@ -3571,7 +3568,7 @@ export class Api<
      * @secure
      */
     listUsersForPolicy: (policy: string, params: RequestParams = {}) =>
-      this.request<string[], Error>({
+      this.request<string[], ApiError>({
         path: `/policies/${policy}/users`,
         method: "GET",
         secure: true,
@@ -3589,7 +3586,7 @@ export class Api<
      * @secure
      */
     listGroupsForPolicy: (policy: string, params: RequestParams = {}) =>
-      this.request<string[], Error>({
+      this.request<string[], ApiError>({
         path: `/policies/${policy}/groups`,
         method: "GET",
         secure: true,
@@ -3617,7 +3614,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ListPoliciesResponse, Error>({
+      this.request<ListPoliciesResponse, ApiError>({
         path: `/bucket-policy/${bucket}`,
         method: "GET",
         query: query,
@@ -3641,7 +3638,7 @@ export class Api<
       prefixaccess: PrefixAccessPair,
       params: RequestParams = {},
     ) =>
-      this.request<boolean, Error>({
+      this.request<boolean, ApiError>({
         path: `/bucket/${bucket}/access-rules`,
         method: "PUT",
         body: prefixaccess,
@@ -3670,7 +3667,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ListAccessRulesResponse, Error>({
+      this.request<ListAccessRulesResponse, ApiError>({
         path: `/bucket/${bucket}/access-rules`,
         method: "GET",
         query: query,
@@ -3693,7 +3690,7 @@ export class Api<
       prefix: PrefixWrapper,
       params: RequestParams = {},
     ) =>
-      this.request<boolean, Error>({
+      this.request<boolean, ApiError>({
         path: `/bucket/${bucket}/access-rules`,
         method: "DELETE",
         body: prefix,
@@ -3723,7 +3720,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<string[], Error>({
+      this.request<string[], ApiError>({
         path: `/bucket-users/${bucket}`,
         method: "GET",
         query: query,
@@ -3743,7 +3740,7 @@ export class Api<
      * @secure
      */
     policyInfo: (name: string, params: RequestParams = {}) =>
-      this.request<Policy, Error>({
+      this.request<Policy, ApiError>({
         path: `/policy/${name}`,
         method: "GET",
         secure: true,
@@ -3761,7 +3758,7 @@ export class Api<
      * @secure
      */
     removePolicy: (name: string, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/policy/${name}`,
         method: "DELETE",
         secure: true,
@@ -3787,7 +3784,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ListConfigResponse, Error>({
+      this.request<ListConfigResponse, ApiError>({
         path: `/configs`,
         method: "GET",
         query: query,
@@ -3806,7 +3803,7 @@ export class Api<
      * @secure
      */
     configInfo: (name: string, params: RequestParams = {}) =>
-      this.request<Configuration[], Error>({
+      this.request<Configuration[], ApiError>({
         path: `/configs/${name}`,
         method: "GET",
         secure: true,
@@ -3828,7 +3825,7 @@ export class Api<
       body: SetConfigRequest,
       params: RequestParams = {},
     ) =>
-      this.request<SetConfigResponse, Error>({
+      this.request<SetConfigResponse, ApiError>({
         path: `/configs/${name}`,
         method: "PUT",
         body: body,
@@ -3848,7 +3845,7 @@ export class Api<
      * @secure
      */
     resetConfig: (name: string, params: RequestParams = {}) =>
-      this.request<SetConfigResponse, Error>({
+      this.request<SetConfigResponse, ApiError>({
         path: `/configs/${name}/reset`,
         method: "POST",
         secure: true,
@@ -3866,7 +3863,7 @@ export class Api<
      * @secure
      */
     exportConfig: (params: RequestParams = {}) =>
-      this.request<ConfigExportResponse, Error>({
+      this.request<ConfigExportResponse, ApiError>({
         path: `/configs/export`,
         method: "GET",
         secure: true,
@@ -3890,7 +3887,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/configs/import`,
         method: "POST",
         body: data,
@@ -3910,7 +3907,7 @@ export class Api<
      * @secure
      */
     setPolicy: (body: SetPolicyNameRequest, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/set-policy`,
         method: "PUT",
         body: body,
@@ -3933,7 +3930,7 @@ export class Api<
       body: SetPolicyMultipleNameRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/set-policy-multi`,
         method: "PUT",
         body: body,
@@ -3953,7 +3950,7 @@ export class Api<
      * @secure
      */
     restartService: (params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/service/restart`,
         method: "POST",
         secure: true,
@@ -3971,7 +3968,7 @@ export class Api<
      * @secure
      */
     profilingStart: (body: ProfilingStartRequest, params: RequestParams = {}) =>
-      this.request<StartProfilingList, Error>({
+      this.request<StartProfilingList, ApiError>({
         path: `/profiling/start`,
         method: "POST",
         body: body,
@@ -3991,7 +3988,7 @@ export class Api<
      * @secure
      */
     profilingStop: (params: RequestParams = {}) =>
-      this.request<File, Error>({
+      this.request<File, ApiError>({
         path: `/profiling/stop`,
         method: "POST",
         secure: true,
@@ -4009,7 +4006,7 @@ export class Api<
      * @secure
      */
     subnetRegToken: (params: RequestParams = {}) =>
-      this.request<SubnetRegTokenResponse, Error>({
+      this.request<SubnetRegTokenResponse, ApiError>({
         path: `/subnet/registration-token`,
         method: "GET",
         secure: true,
@@ -4027,7 +4024,7 @@ export class Api<
      * @secure
      */
     subnetInfo: (params: RequestParams = {}) =>
-      this.request<License, Error>({
+      this.request<License, ApiError>({
         path: `/subnet/info`,
         method: "GET",
         secure: true,
@@ -4050,7 +4047,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ApiKey, Error>({
+      this.request<ApiKey, ApiError>({
         path: `/subnet/apikey`,
         method: "GET",
         query: query,
@@ -4069,7 +4066,7 @@ export class Api<
      * @secure
      */
     subnetRegister: (body: SubnetRegisterRequest, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/subnet/register`,
         method: "POST",
         body: body,
@@ -4088,7 +4085,7 @@ export class Api<
      * @secure
      */
     subnetLogin: (body: SubnetLoginRequest, params: RequestParams = {}) =>
-      this.request<SubnetLoginResponse, Error>({
+      this.request<SubnetLoginResponse, ApiError>({
         path: `/subnet/login`,
         method: "POST",
         body: body,
@@ -4108,7 +4105,7 @@ export class Api<
      * @secure
      */
     subnetLoginMfa: (body: SubnetLoginMFARequest, params: RequestParams = {}) =>
-      this.request<SubnetLoginResponse, Error>({
+      this.request<SubnetLoginResponse, ApiError>({
         path: `/subnet/login/mfa`,
         method: "POST",
         body: body,
@@ -4135,7 +4132,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<AdminInfoResponse, Error>({
+      this.request<AdminInfoResponse, ApiError>({
         path: `/admin/info`,
         method: "GET",
         query: query,
@@ -4163,7 +4160,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<WidgetDetails, Error>({
+      this.request<WidgetDetails, ApiError>({
         path: `/admin/info/widgets/${widgetId}`,
         method: "GET",
         query: query,
@@ -4182,7 +4179,7 @@ export class Api<
      * @secure
      */
     arnList: (params: RequestParams = {}) =>
-      this.request<ArnsResponse, Error>({
+      this.request<ArnsResponse, ApiError>({
         path: `/admin/arns`,
         method: "GET",
         secure: true,
@@ -4200,7 +4197,7 @@ export class Api<
      * @secure
      */
     notificationEndpointList: (params: RequestParams = {}) =>
-      this.request<NotifEndpointResponse, Error>({
+      this.request<NotifEndpointResponse, ApiError>({
         path: `/admin/notification_endpoints`,
         method: "GET",
         secure: true,
@@ -4221,7 +4218,7 @@ export class Api<
       body: NotificationEndpoint,
       params: RequestParams = {},
     ) =>
-      this.request<SetNotificationEndpointResponse, Error>({
+      this.request<SetNotificationEndpointResponse, ApiError>({
         path: `/admin/notification_endpoints`,
         method: "POST",
         body: body,
@@ -4241,7 +4238,7 @@ export class Api<
      * @secure
      */
     getSiteReplicationInfo: (params: RequestParams = {}) =>
-      this.request<SiteReplicationInfoResponse, Error>({
+      this.request<SiteReplicationInfoResponse, ApiError>({
         path: `/admin/site-replication`,
         method: "GET",
         secure: true,
@@ -4262,7 +4259,7 @@ export class Api<
       body: SiteReplicationAddRequest,
       params: RequestParams = {},
     ) =>
-      this.request<SiteReplicationAddResponse, Error>({
+      this.request<SiteReplicationAddResponse, ApiError>({
         path: `/admin/site-replication`,
         method: "POST",
         body: body,
@@ -4282,7 +4279,7 @@ export class Api<
      * @secure
      */
     siteReplicationEdit: (body: PeerInfo, params: RequestParams = {}) =>
-      this.request<PeerSiteEditResponse, Error>({
+      this.request<PeerSiteEditResponse, ApiError>({
         path: `/admin/site-replication`,
         method: "PUT",
         body: body,
@@ -4302,7 +4299,7 @@ export class Api<
      * @secure
      */
     siteReplicationRemove: (body: PeerInfoRemove, params: RequestParams = {}) =>
-      this.request<PeerSiteRemoveResponse, Error>({
+      this.request<PeerSiteRemoveResponse, ApiError>({
         path: `/admin/site-replication`,
         method: "DELETE",
         body: body,
@@ -4350,7 +4347,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<SiteReplicationStatusResponse, Error>({
+      this.request<SiteReplicationStatusResponse, ApiError>({
         path: `/admin/site-replication/status`,
         method: "GET",
         query: query,
@@ -4369,7 +4366,7 @@ export class Api<
      * @secure
      */
     tiersList: (params: RequestParams = {}) =>
-      this.request<TierListResponse, Error>({
+      this.request<TierListResponse, ApiError>({
         path: `/admin/tiers`,
         method: "GET",
         secure: true,
@@ -4387,7 +4384,7 @@ export class Api<
      * @secure
      */
     addTier: (body: Tier, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/admin/tiers`,
         method: "POST",
         body: body,
@@ -4410,7 +4407,7 @@ export class Api<
       name: string,
       params: RequestParams = {},
     ) =>
-      this.request<Tier, Error>({
+      this.request<Tier, ApiError>({
         path: `/admin/tiers/${type}/${name}`,
         method: "GET",
         secure: true,
@@ -4433,7 +4430,7 @@ export class Api<
       body: TierCredentialsRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/admin/tiers/${type}/${name}/credentials`,
         method: "PUT",
         body: body,
@@ -4459,7 +4456,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<File, Error>({
+      this.request<File, ApiError>({
         path: `/admin/inspect`,
         method: "GET",
         query: query,
@@ -4478,7 +4475,7 @@ export class Api<
      * @secure
      */
     listNodes: (params: RequestParams = {}) =>
-      this.request<string[], Error>({
+      this.request<string[], ApiError>({
         path: `/nodes`,
         method: "GET",
         secure: true,
@@ -4497,7 +4494,7 @@ export class Api<
      * @secure
      */
     listRemoteBuckets: (params: RequestParams = {}) =>
-      this.request<ListRemoteBucketsResponse, Error>({
+      this.request<ListRemoteBucketsResponse, ApiError>({
         path: `/remote-buckets`,
         method: "GET",
         secure: true,
@@ -4515,7 +4512,7 @@ export class Api<
      * @secure
      */
     addRemoteBucket: (body: CreateRemoteBucket, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/remote-buckets`,
         method: "POST",
         body: body,
@@ -4534,7 +4531,7 @@ export class Api<
      * @secure
      */
     remoteBucketDetails: (name: string, params: RequestParams = {}) =>
-      this.request<RemoteBucket, Error>({
+      this.request<RemoteBucket, ApiError>({
         path: `/remote-buckets/${name}`,
         method: "GET",
         secure: true,
@@ -4556,7 +4553,7 @@ export class Api<
       arn: string,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/remote-buckets/${sourceBucketName}/${arn}`,
         method: "DELETE",
         secure: true,
@@ -4593,7 +4590,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<LogSearchResponse, Error>({
+      this.request<LogSearchResponse, ApiError>({
         path: `/logs/search`,
         method: "GET",
         query: query,
@@ -4613,7 +4610,7 @@ export class Api<
      * @secure
      */
     kmsStatus: (params: RequestParams = {}) =>
-      this.request<KmsStatusResponse, Error>({
+      this.request<KmsStatusResponse, ApiError>({
         path: `/kms/status`,
         method: "GET",
         secure: true,
@@ -4631,7 +4628,7 @@ export class Api<
      * @secure
      */
     kmsMetrics: (params: RequestParams = {}) =>
-      this.request<KmsMetricsResponse, Error>({
+      this.request<KmsMetricsResponse, ApiError>({
         path: `/kms/metrics`,
         method: "GET",
         secure: true,
@@ -4649,7 +4646,7 @@ export class Api<
      * @secure
      */
     kmsapIs: (params: RequestParams = {}) =>
-      this.request<KmsAPIsResponse, Error>({
+      this.request<KmsAPIsResponse, ApiError>({
         path: `/kms/apis`,
         method: "GET",
         secure: true,
@@ -4667,7 +4664,7 @@ export class Api<
      * @secure
      */
     kmsVersion: (params: RequestParams = {}) =>
-      this.request<KmsVersionResponse, Error>({
+      this.request<KmsVersionResponse, ApiError>({
         path: `/kms/version`,
         method: "GET",
         secure: true,
@@ -4685,7 +4682,7 @@ export class Api<
      * @secure
      */
     kmsCreateKey: (body: KmsCreateKeyRequest, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/kms/keys`,
         method: "POST",
         body: body,
@@ -4710,7 +4707,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<KmsListKeysResponse, Error>({
+      this.request<KmsListKeysResponse, ApiError>({
         path: `/kms/keys`,
         method: "GET",
         query: query,
@@ -4729,7 +4726,7 @@ export class Api<
      * @secure
      */
     kmsKeyStatus: (name: string, params: RequestParams = {}) =>
-      this.request<KmsKeyStatusResponse, Error>({
+      this.request<KmsKeyStatusResponse, ApiError>({
         path: `/kms/keys/${name}`,
         method: "GET",
         secure: true,
@@ -4747,7 +4744,7 @@ export class Api<
      * @secure
      */
     kmsDeleteKey: (name: string, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/kms/keys/${name}`,
         method: "DELETE",
         secure: true,
@@ -4768,7 +4765,7 @@ export class Api<
       body: KmsImportKeyRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/kms/keys/${name}/import`,
         method: "POST",
         body: body,
@@ -4787,7 +4784,7 @@ export class Api<
      * @secure
      */
     kmsSetPolicy: (body: KmsSetPolicyRequest, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/kms/policies`,
         method: "POST",
         body: body,
@@ -4812,7 +4809,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<KmsListPoliciesResponse, Error>({
+      this.request<KmsListPoliciesResponse, ApiError>({
         path: `/kms/policies`,
         method: "GET",
         query: query,
@@ -4831,7 +4828,7 @@ export class Api<
      * @secure
      */
     kmsGetPolicy: (name: string, params: RequestParams = {}) =>
-      this.request<KmsGetPolicyResponse, Error>({
+      this.request<KmsGetPolicyResponse, ApiError>({
         path: `/kms/policies/${name}`,
         method: "GET",
         secure: true,
@@ -4849,7 +4846,7 @@ export class Api<
      * @secure
      */
     kmsDeletePolicy: (name: string, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/kms/policies/${name}`,
         method: "DELETE",
         secure: true,
@@ -4870,7 +4867,7 @@ export class Api<
       body: KmsAssignPolicyRequest,
       params: RequestParams = {},
     ) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/kms/policies/${name}/assign`,
         method: "POST",
         body: body,
@@ -4889,7 +4886,7 @@ export class Api<
      * @secure
      */
     kmsDescribePolicy: (name: string, params: RequestParams = {}) =>
-      this.request<KmsDescribePolicyResponse, Error>({
+      this.request<KmsDescribePolicyResponse, ApiError>({
         path: `/kms/policies/${name}/describe`,
         method: "GET",
         secure: true,
@@ -4907,7 +4904,7 @@ export class Api<
      * @secure
      */
     kmsDeleteIdentity: (name: string, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/kms/identities/${name}`,
         method: "DELETE",
         secure: true,
@@ -4924,7 +4921,7 @@ export class Api<
      * @secure
      */
     kmsDescribeIdentity: (name: string, params: RequestParams = {}) =>
-      this.request<KmsDescribeIdentityResponse, Error>({
+      this.request<KmsDescribeIdentityResponse, ApiError>({
         path: `/kms/identities/${name}/describe`,
         method: "GET",
         secure: true,
@@ -4942,7 +4939,7 @@ export class Api<
      * @secure
      */
     kmsDescribeSelfIdentity: (params: RequestParams = {}) =>
-      this.request<KmsDescribeSelfIdentityResponse, Error>({
+      this.request<KmsDescribeSelfIdentityResponse, ApiError>({
         path: `/kms/describe-self/identity`,
         method: "GET",
         secure: true,
@@ -4966,7 +4963,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<KmsListIdentitiesResponse, Error>({
+      this.request<KmsListIdentitiesResponse, ApiError>({
         path: `/kms/identities`,
         method: "GET",
         query: query,
@@ -4990,7 +4987,7 @@ export class Api<
       body: IdpServerConfiguration,
       params: RequestParams = {},
     ) =>
-      this.request<SetIDPResponse, Error>({
+      this.request<SetIDPResponse, ApiError>({
         path: `/idp/${type}`,
         method: "POST",
         body: body,
@@ -5009,7 +5006,7 @@ export class Api<
      * @secure
      */
     listConfigurations: (type: string, params: RequestParams = {}) =>
-      this.request<IdpListConfigurationsResponse, Error>({
+      this.request<IdpListConfigurationsResponse, ApiError>({
         path: `/idp/${type}`,
         method: "GET",
         secure: true,
@@ -5031,7 +5028,7 @@ export class Api<
       type: string,
       params: RequestParams = {},
     ) =>
-      this.request<IdpServerConfiguration, Error>({
+      this.request<IdpServerConfiguration, ApiError>({
         path: `/idp/${type}/${name}`,
         method: "GET",
         secure: true,
@@ -5053,7 +5050,7 @@ export class Api<
       type: string,
       params: RequestParams = {},
     ) =>
-      this.request<SetIDPResponse, Error>({
+      this.request<SetIDPResponse, ApiError>({
         path: `/idp/${type}/${name}`,
         method: "DELETE",
         secure: true,
@@ -5076,7 +5073,7 @@ export class Api<
       body: IdpServerConfiguration,
       params: RequestParams = {},
     ) =>
-      this.request<SetIDPResponse, Error>({
+      this.request<SetIDPResponse, ApiError>({
         path: `/idp/${type}/${name}`,
         method: "PUT",
         body: body,
@@ -5096,7 +5093,7 @@ export class Api<
      * @secure
      */
     getLdapEntities: (body: LdapEntitiesRequest, params: RequestParams = {}) =>
-      this.request<LdapEntities, Error>({
+      this.request<LdapEntities, ApiError>({
         path: `/ldap-entities`,
         method: "POST",
         body: body,
@@ -5129,7 +5126,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReleaseListResponse, Error>({
+      this.request<ReleaseListResponse, ApiError>({
         path: `/releases`,
         method: "GET",
         query: query,
@@ -5149,7 +5146,7 @@ export class Api<
      * @secure
      */
     getCallHomeOptionValue: (params: RequestParams = {}) =>
-      this.request<CallHomeGetResponse, Error>({
+      this.request<CallHomeGetResponse, ApiError>({
         path: `/support/callhome`,
         method: "GET",
         secure: true,
@@ -5167,7 +5164,7 @@ export class Api<
      * @secure
      */
     setCallHomeStatus: (body: CallHomeSetStatus, params: RequestParams = {}) =>
-      this.request<void, Error>({
+      this.request<void, ApiError>({
         path: `/support/callhome`,
         method: "PUT",
         body: body,

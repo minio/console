@@ -42,7 +42,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	api.SubnetSubnetLoginHandler = subnetApi.SubnetLoginHandlerFunc(func(params subnetApi.SubnetLoginParams, session *models.Principal) middleware.Responder {
 		resp, err := GetSubnetLoginResponse(session, params)
 		if err != nil {
-			return subnetApi.NewSubnetLoginDefault(int(err.Code)).WithPayload(err)
+			return subnetApi.NewSubnetLoginDefault(err.Code).WithPayload(err.APIError)
 		}
 		return subnetApi.NewSubnetLoginOK().WithPayload(resp)
 	})
@@ -50,7 +50,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	api.SubnetSubnetLoginMFAHandler = subnetApi.SubnetLoginMFAHandlerFunc(func(params subnetApi.SubnetLoginMFAParams, session *models.Principal) middleware.Responder {
 		resp, err := GetSubnetLoginWithMFAResponse(session, params)
 		if err != nil {
-			return subnetApi.NewSubnetLoginMFADefault(int(err.Code)).WithPayload(err)
+			return subnetApi.NewSubnetLoginMFADefault(err.Code).WithPayload(err.APIError)
 		}
 		return subnetApi.NewSubnetLoginMFAOK().WithPayload(resp)
 	})
@@ -58,7 +58,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	api.SubnetSubnetRegisterHandler = subnetApi.SubnetRegisterHandlerFunc(func(params subnetApi.SubnetRegisterParams, session *models.Principal) middleware.Responder {
 		err := GetSubnetRegisterResponse(session, params)
 		if err != nil {
-			return subnetApi.NewSubnetRegisterDefault(int(err.Code)).WithPayload(err)
+			return subnetApi.NewSubnetRegisterDefault(err.Code).WithPayload(err.APIError)
 		}
 		return subnetApi.NewSubnetRegisterOK()
 	})
@@ -66,7 +66,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	api.SubnetSubnetInfoHandler = subnetApi.SubnetInfoHandlerFunc(func(params subnetApi.SubnetInfoParams, session *models.Principal) middleware.Responder {
 		resp, err := GetSubnetInfoResponse(session, params)
 		if err != nil {
-			return subnetApi.NewSubnetInfoDefault(int(err.Code)).WithPayload(err)
+			return subnetApi.NewSubnetInfoDefault(err.Code).WithPayload(err.APIError)
 		}
 		return subnetApi.NewSubnetInfoOK().WithPayload(resp)
 	})
@@ -74,7 +74,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	api.SubnetSubnetRegTokenHandler = subnetApi.SubnetRegTokenHandlerFunc(func(params subnetApi.SubnetRegTokenParams, session *models.Principal) middleware.Responder {
 		resp, err := GetSubnetRegTokenResponse(session, params)
 		if err != nil {
-			return subnetApi.NewSubnetRegTokenDefault(int(err.Code)).WithPayload(err)
+			return subnetApi.NewSubnetRegTokenDefault(err.Code).WithPayload(err.APIError)
 		}
 		return subnetApi.NewSubnetRegTokenOK().WithPayload(resp)
 	})
@@ -82,7 +82,7 @@ func registerSubnetHandlers(api *operations.ConsoleAPI) {
 	api.SubnetSubnetAPIKeyHandler = subnetApi.SubnetAPIKeyHandlerFunc(func(params subnetApi.SubnetAPIKeyParams, session *models.Principal) middleware.Responder {
 		resp, err := GetSubnetAPIKeyResponse(session, params)
 		if err != nil {
-			return subnetApi.NewSubnetAPIKeyDefault(int(err.Code)).WithPayload(err)
+			return subnetApi.NewSubnetAPIKeyDefault(err.Code).WithPayload(err.APIError)
 		}
 		return subnetApi.NewSubnetAPIKeyOK().WithPayload(resp)
 	})
@@ -130,7 +130,7 @@ func SubnetLogin(client xhttp.ClientI, username, password string) (string, strin
 	return "", "", errors.New("something went wrong")
 }
 
-func GetSubnetLoginResponse(session *models.Principal, params subnetApi.SubnetLoginParams) (*models.SubnetLoginResponse, *models.Error) {
+func GetSubnetLoginResponse(session *models.Principal, params subnetApi.SubnetLoginParams) (*models.SubnetLoginResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -140,7 +140,7 @@ func GetSubnetLoginResponse(session *models.Principal, params subnetApi.SubnetLo
 	return subnetLoginResponse(ctx, AdminClient{Client: mAdmin}, params)
 }
 
-func subnetLoginResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetLoginParams) (*models.SubnetLoginResponse, *models.Error) {
+func subnetLoginResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetLoginParams) (*models.SubnetLoginResponse, *CodedAPIError) {
 	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, minioClient)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -223,7 +223,7 @@ func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*xhttp.Cl
 	return clientI, nil
 }
 
-func GetSubnetLoginWithMFAResponse(session *models.Principal, params subnetApi.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *models.Error) {
+func GetSubnetLoginWithMFAResponse(session *models.Principal, params subnetApi.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -234,7 +234,7 @@ func GetSubnetLoginWithMFAResponse(session *models.Principal, params subnetApi.S
 	return subnetLoginWithMFAResponse(ctx, minioClient, params)
 }
 
-func subnetLoginWithMFAResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *models.Error) {
+func subnetLoginWithMFAResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *CodedAPIError) {
 	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, minioClient)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -292,7 +292,7 @@ func GetSubnetRegister(ctx context.Context, minioClient MinioAdmin, httpClient x
 	return nil
 }
 
-func GetSubnetRegisterResponse(session *models.Principal, params subnetApi.SubnetRegisterParams) *models.Error {
+func GetSubnetRegisterResponse(session *models.Principal, params subnetApi.SubnetRegisterParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -303,7 +303,7 @@ func GetSubnetRegisterResponse(session *models.Principal, params subnetApi.Subne
 	return subnetRegisterResponse(ctx, adminClient, params)
 }
 
-func subnetRegisterResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetRegisterParams) *models.Error {
+func subnetRegisterResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetRegisterParams) *CodedAPIError {
 	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, minioClient)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
@@ -317,7 +317,7 @@ func subnetRegisterResponse(ctx context.Context, minioClient MinioAdmin, params 
 
 var ErrSubnetLicenseNotFound = errors.New("license not found")
 
-func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInfoParams) (*models.License, *models.Error) {
+func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInfoParams) (*models.License, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	clientIP := utils.ClientIPFromContext(ctx)
@@ -384,7 +384,7 @@ func GetSubnetRegToken(ctx context.Context, minioClient MinioAdmin) (string, err
 	return regToken, nil
 }
 
-func GetSubnetRegTokenResponse(session *models.Principal, params subnetApi.SubnetRegTokenParams) (*models.SubnetRegTokenResponse, *models.Error) {
+func GetSubnetRegTokenResponse(session *models.Principal, params subnetApi.SubnetRegTokenParams) (*models.SubnetRegTokenResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -395,7 +395,7 @@ func GetSubnetRegTokenResponse(session *models.Principal, params subnetApi.Subne
 	return subnetRegTokenResponse(ctx, adminClient)
 }
 
-func subnetRegTokenResponse(ctx context.Context, minioClient MinioAdmin) (*models.SubnetRegTokenResponse, *models.Error) {
+func subnetRegTokenResponse(ctx context.Context, minioClient MinioAdmin) (*models.SubnetRegTokenResponse, *CodedAPIError) {
 	token, err := GetSubnetRegToken(ctx, minioClient)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -405,7 +405,7 @@ func subnetRegTokenResponse(ctx context.Context, minioClient MinioAdmin) (*model
 	}, nil
 }
 
-func GetSubnetAPIKeyResponse(session *models.Principal, params subnetApi.SubnetAPIKeyParams) (*models.APIKey, *models.Error) {
+func GetSubnetAPIKeyResponse(session *models.Principal, params subnetApi.SubnetAPIKeyParams) (*models.APIKey, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
@@ -416,7 +416,7 @@ func GetSubnetAPIKeyResponse(session *models.Principal, params subnetApi.SubnetA
 	return subnetAPIKeyResponse(ctx, adminClient, params)
 }
 
-func subnetAPIKeyResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetAPIKeyParams) (*models.APIKey, *models.Error) {
+func subnetAPIKeyResponse(ctx context.Context, minioClient MinioAdmin, params subnetApi.SubnetAPIKeyParams) (*models.APIKey, *CodedAPIError) {
 	subnetHTTPClient, err := GetSubnetHTTPClient(ctx, minioClient)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)

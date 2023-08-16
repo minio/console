@@ -66,7 +66,7 @@ type PostBucketsBucketNameObjectsUploadDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewPostBucketsBucketNameObjectsUploadDefault creates PostBucketsBucketNameObjectsUploadDefault with default headers values
@@ -92,13 +92,13 @@ func (o *PostBucketsBucketNameObjectsUploadDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the post buckets bucket name objects upload default response
-func (o *PostBucketsBucketNameObjectsUploadDefault) WithPayload(payload *models.Error) *PostBucketsBucketNameObjectsUploadDefault {
+func (o *PostBucketsBucketNameObjectsUploadDefault) WithPayload(payload *models.APIError) *PostBucketsBucketNameObjectsUploadDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the post buckets bucket name objects upload default response
-func (o *PostBucketsBucketNameObjectsUploadDefault) SetPayload(payload *models.Error) {
+func (o *PostBucketsBucketNameObjectsUploadDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

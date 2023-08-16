@@ -86,7 +86,7 @@ type SetMultiBucketReplicationDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewSetMultiBucketReplicationDefault creates SetMultiBucketReplicationDefault with default headers values
@@ -112,13 +112,13 @@ func (o *SetMultiBucketReplicationDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the set multi bucket replication default response
-func (o *SetMultiBucketReplicationDefault) WithPayload(payload *models.Error) *SetMultiBucketReplicationDefault {
+func (o *SetMultiBucketReplicationDefault) WithPayload(payload *models.APIError) *SetMultiBucketReplicationDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the set multi bucket replication default response
-func (o *SetMultiBucketReplicationDefault) SetPayload(payload *models.Error) {
+func (o *SetMultiBucketReplicationDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

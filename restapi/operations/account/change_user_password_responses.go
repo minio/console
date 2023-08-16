@@ -66,7 +66,7 @@ type ChangeUserPasswordDefault struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Error `json:"body,omitempty"`
+	Payload *models.APIError `json:"body,omitempty"`
 }
 
 // NewChangeUserPasswordDefault creates ChangeUserPasswordDefault with default headers values
@@ -92,13 +92,13 @@ func (o *ChangeUserPasswordDefault) SetStatusCode(code int) {
 }
 
 // WithPayload adds the payload to the change user password default response
-func (o *ChangeUserPasswordDefault) WithPayload(payload *models.Error) *ChangeUserPasswordDefault {
+func (o *ChangeUserPasswordDefault) WithPayload(payload *models.APIError) *ChangeUserPasswordDefault {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the change user password default response
-func (o *ChangeUserPasswordDefault) SetPayload(payload *models.Error) {
+func (o *ChangeUserPasswordDefault) SetPayload(payload *models.APIError) {
 	o.Payload = payload
 }
 

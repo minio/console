@@ -23,7 +23,6 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	logApi "github.com/minio/console/restapi/operations/logging"
@@ -35,14 +34,14 @@ func registerLogSearchHandlers(api *operations.ConsoleAPI) {
 	api.LoggingLogSearchHandler = logApi.LogSearchHandlerFunc(func(params logApi.LogSearchParams, session *models.Principal) middleware.Responder {
 		searchResp, err := getLogSearchResponse(session, params)
 		if err != nil {
-			return logApi.NewLogSearchDefault(int(err.Code)).WithPayload(err)
+			return logApi.NewLogSearchDefault(err.Code).WithPayload(err.APIError)
 		}
 		return logApi.NewLogSearchOK().WithPayload(searchResp)
 	})
 }
 
 // getLogSearchResponse performs a query to Log Search if Enabled
-func getLogSearchResponse(session *models.Principal, params logApi.LogSearchParams) (*models.LogSearchResponse, *models.Error) {
+func getLogSearchResponse(session *models.Principal, params logApi.LogSearchParams) (*models.LogSearchResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	sessionResp, err := getSessionResponse(ctx, session)
@@ -60,10 +59,12 @@ func getLogSearchResponse(session *models.Principal, params logApi.LogSearchPara
 	}
 
 	if !allowedToQueryLogSearchAPI {
-		return nil, &models.Error{
-			Code:            int32(403),
-			Message:         swag.String("Forbidden"),
-			DetailedMessage: swag.String("The Log Search API not available."),
+		return nil, &CodedAPIError{
+			Code: 403,
+			APIError: &models.APIError{
+				Message:         "Forbidden",
+				DetailedMessage: "The Log Search API not available.",
+			},
 		}
 	}
 

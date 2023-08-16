@@ -42,13 +42,13 @@ func registerReleasesHandlers(api *operations.ConsoleAPI) {
 	api.ReleaseListReleasesHandler = release.ListReleasesHandlerFunc(func(params release.ListReleasesParams, session *models.Principal) middleware.Responder {
 		resp, err := GetReleaseListResponse(session, params)
 		if err != nil {
-			return release.NewListReleasesDefault(int(err.Code)).WithPayload(err)
+			return release.NewListReleasesDefault(err.Code).WithPayload(err.APIError)
 		}
 		return release.NewListReleasesOK().WithPayload(resp)
 	})
 }
 
-func GetReleaseListResponse(_ *models.Principal, params release.ListReleasesParams) (*models.ReleaseListResponse, *models.Error) {
+func GetReleaseListResponse(_ *models.Principal, params release.ListReleasesParams) (*models.ReleaseListResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	repo := params.Repo
@@ -68,7 +68,7 @@ func GetReleaseListResponse(_ *models.Principal, params release.ListReleasesPara
 	return releaseList(ctx, repo, currentRelease, search, filter)
 }
 
-func releaseList(ctx context.Context, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, *models.Error) {
+func releaseList(ctx context.Context, repo, currentRelease, search, filter string) (*models.ReleaseListResponse, *CodedAPIError) {
 	serviceURL := getReleaseServiceURL()
 	clientIP := utils.ClientIPFromContext(ctx)
 	releases, err := getReleases(serviceURL, repo, currentRelease, search, filter, clientIP)
