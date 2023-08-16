@@ -37,12 +37,14 @@ const ServiceAccountPolicy = ({
   closeModalAndRefresh,
 }: IServiceAccountPolicyProps) => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   useEffect(() => {
-    if (loading) {
+    if (!loading && selectedAccessKey !== "") {
+      const sourceAccKey = encodeURLString(selectedAccessKey);
+      setLoading(true);
       api.serviceAccounts
-        .getServiceAccountPolicy(encodeURLString(selectedAccessKey))
+        .getServiceAccountPolicy(sourceAccKey)
         .then((res) => {
           setLoading(false);
           setPolicyDefinition(res.data);
@@ -52,7 +54,8 @@ const ServiceAccountPolicy = ({
           dispatch(setModalErrorSnackMessage(errorToHandler(err)));
         });
     }
-  }, [loading, setLoading, dispatch, selectedAccessKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAccessKey]);
 
   const setPolicy = (event: React.FormEvent, newPolicy: string) => {
     event.preventDefault();

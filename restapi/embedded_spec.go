@@ -8161,7 +8161,24 @@ func init() {
     "serviceAccounts": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "accessKey": {
+            "type": "string"
+          },
+          "accountStatus": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "expiration": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
       }
     },
     "sessionResponse": {
@@ -14515,6 +14532,26 @@ func init() {
         }
       }
     },
+    "ServiceAccountsItems0": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "type": "string"
+        },
+        "accountStatus": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "expiration": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "SubnetRegTokenResponse": {
       "type": "object",
       "properties": {
@@ -17357,7 +17394,7 @@ func init() {
     "serviceAccounts": {
       "type": "array",
       "items": {
-        "type": "string"
+        "$ref": "#/definitions/ServiceAccountsItems0"
       }
     },
     "sessionResponse": {

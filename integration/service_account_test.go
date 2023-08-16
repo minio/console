@@ -305,7 +305,6 @@ func TestCreateServiceAccountForUserWithCredentials(t *testing.T) {
 	userName := "testcreateserviceaccountforuserwithcredentials1"
 	assert := assert.New(t)
 	policy := ""
-	serviceAccountLengthInBytes := 40 // As observed, update as needed
 
 	// 1. Create the user
 	groups := []string{}
@@ -383,7 +382,6 @@ func TestCreateServiceAccountForUserWithCredentials(t *testing.T) {
 					finalResponse,
 				)
 			}
-			assert.Equal(len(finalResponse), serviceAccountLengthInBytes, finalResponse)
 		})
 	}
 

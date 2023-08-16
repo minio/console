@@ -33,7 +33,7 @@ import { encodeURLString } from "../../../../common/utils";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
-import { Policy, ServiceAccounts } from "../../../../api/consoleApi";
+import { Policy } from "../../../../api/consoleApi";
 
 const AccessDetails = () => {
   const dispatch = useAppDispatch();
@@ -46,7 +46,7 @@ const AccessDetails = () => {
   const [loadingPolicies, setLoadingPolicies] = useState<boolean>(true);
   const [bucketPolicy, setBucketPolicy] = useState<Policy[] | undefined>([]);
   const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
-  const [bucketUsers, setBucketUsers] = useState<ServiceAccounts>([]);
+  const [bucketUsers, setBucketUsers] = useState<string[]>([]);
 
   const bucketName = params.bucketName || "";
 

@@ -29,7 +29,6 @@ import {
 } from "mds";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { stringSort } from "../../../utils/sortFunctions";
 import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 
 import ChangePasswordModal from "./ChangePasswordModal";
@@ -57,6 +56,9 @@ import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import HelpMenu from "../HelpMenu";
+import { ServiceAccounts } from "../../../api/consoleApi";
+import { usersSort } from "../../../utils/sortFunctions";
+import { ACCOUNT_TABLE_COLUMNS } from "./AccountUtils";
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount")),
@@ -68,7 +70,7 @@ const Account = () => {
 
   const features = useSelector(selFeatures);
 
-  const [records, setRecords] = useState<string[]>([]);
+  const [records, setRecords] = useState<ServiceAccounts>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -97,10 +99,9 @@ const Account = () => {
       api.serviceAccounts
         .listUserServiceAccounts()
         .then((res) => {
-          const serviceAccounts = res.data.sort(stringSort);
-
           setLoading(false);
-          setRecords(serviceAccounts);
+          const sortedRows = res.data.sort(usersSort);
+          setRecords(sortedRows);
         })
         .catch((err) => {
           dispatch(setErrorSnackMessage(errorToHandler(err.error)));
@@ -136,14 +137,6 @@ const Account = () => {
     setPolicyOpen(true);
   };
 
-  const selectAllItems = () => {
-    if (selectedSAs.length === records.length) {
-      setSelectedSAs([]);
-      return;
-    }
-    setSelectedSAs(records);
-  };
-
   const closePolicyModal = () => {
     setPolicyOpen(false);
     setLoading(true);
@@ -155,12 +148,27 @@ const Account = () => {
   };
 
   const tableActions = [
-    { type: "view", onClick: policyModalOpen },
-    { type: "delete", onClick: confirmDeleteServiceAccount },
+    {
+      type: "view",
+      onClick: (value: any) => {
+        if (value) {
+          policyModalOpen(value.accessKey);
+        }
+      },
+    },
+    {
+      type: "delete",
+      onClick: (value: any) => {
+        if (value) {
+          confirmDeleteServiceAccount(value.accessKey);
+        }
+      },
+    },
   ];
 
-  const filteredRecords = records.filter((elementItem) =>
-    elementItem.toLowerCase().includes(filter.toLowerCase()),
+  const filteredRecords = records.filter(
+    (elementItem) =>
+      elementItem?.accessKey?.toLowerCase().includes(filter.toLowerCase()),
   );
 
   return (
@@ -259,14 +267,14 @@ const Account = () => {
 
           <Grid item xs={12}>
             <DataTable
+              itemActions={tableActions}
+              entityName={"Access Keys"}
+              columns={ACCOUNT_TABLE_COLUMNS}
+              onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
+              selectedItems={selectedSAs}
               isLoading={loading}
               records={filteredRecords}
-              entityName={"Access Keys"}
-              columns={[{ label: "Access Key" }]}
-              itemActions={tableActions}
-              selectedItems={selectedSAs}
-              onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
-              onSelectAll={selectAllItems}
+              idField="accessKey"
             />
           </Grid>
           <Grid item xs={12} sx={{ marginTop: 15 }}>
