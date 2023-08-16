@@ -165,7 +165,7 @@ export const settingsAuditKafkaTab = Selector("button").withAttribute(
 //----------------------------------------------------
 export const logWindow = Selector('[data-test-id="logs-list-container"]');
 //Node selector
-export const nodeSelector = Selector('[data-test-id="node-selector"]');
+export const nodeSelector = Selector("#node-selector-select");
 //----------------------------------------------------
 // User Details
 //----------------------------------------------------
