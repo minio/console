@@ -13,90 +13,34 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { Fragment, useEffect, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { Theme } from "@mui/material/styles";
-import { Button, PageLayout } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { Box, Button, Grid, PageLayout, Select } from "mds";
 import { useSelector } from "react-redux";
-import { FormControl, Grid, InputBase, MenuItem, Select } from "@mui/material";
-
-import { ErrorResponseHandler } from "../../../../../src/common/types";
-import api from "../../../../../src/common/api";
+import { ErrorResponseHandler } from "../../../../common/types";
 import { AppState, useAppDispatch } from "../../../../store";
-
 import { wsProtocol } from "../../../../utils/wsUtils";
-import {
-  actionsTray,
-  containerForHeader,
-  inlineCheckboxes,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
-import SearchBox from "../../Common/SearchBox";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import LogLine from "./LogLine";
 import {
   logMessageReceived,
   logResetMessages,
   setLogsStarted,
 } from "../logsSlice";
-import makeStyles from "@mui/styles/makeStyles";
+import { setHelpName } from "../../../../systemSlice";
+import SearchBox from "../../Common/SearchBox";
+import api from "../../../../../src/common/api";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableContainer from "@mui/material/TableContainer";
+import LogLine from "./LogLine";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
-import { setHelpName } from "../../../../systemSlice";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    logList: {
-      background: "#fff",
-      minHeight: 400,
-      height: "calc(100vh - 200px)",
-      overflow: "auto",
-      fontSize: 13,
-      borderRadius: 4,
-    },
-    logerror_tab: {
-      color: "#A52A2A",
-      paddingLeft: 25,
-    },
-    nodeField: {
-      width: "100%",
-    },
-    ...actionsTray,
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      marginBottom: 0,
-    },
-    ...searchField,
-
-    ...inlineCheckboxes,
-    ...containerForHeader,
-  }),
-);
-
-export const SelectStyled = withStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      lineHeight: "50px",
-      "label + &": {
-        marginTop: theme.spacing(3),
-      },
-      "& .MuiSelect-select:focus": {
-        backgroundColor: "transparent",
-      },
-    },
-  }),
-)(InputBase);
 
 var c: any = null;
 
 const ErrorLogs = () => {
   const dispatch = useAppDispatch();
-  const classes = useStyles();
 
   const messages = useSelector((state: AppState) => state.logs.logMessages);
   const logsStarted = useSelector((state: AppState) => state.logs.logsStarted);
@@ -223,9 +167,6 @@ const ErrorLogs = () => {
       .invoke("GET", `/api/v1/nodes`)
       .then((res: string[]) => {
         setNodes(res);
-        // if (res.length > 0) {
-        //   setSelectedNode(res[0]);
-        // }
         setLoadingNodes(false);
       })
       .catch((err: ErrorResponseHandler) => {
@@ -243,97 +184,64 @@ const ErrorLogs = () => {
       <PageHeaderWrapper label="Logs" actions={<HelpMenu />} />
 
       <PageLayout>
-        <Grid container spacing={1}>
-          <Grid item xs={4}>
+        <Grid container sx={{ gap: 15 }}>
+          <Grid item xs={3}>
             {!loadingNodes ? (
-              <FormControl variant="outlined" className={classes.nodeField}>
-                <Select
-                  id="node"
-                  name="node"
-                  data-test-id="node-selector"
-                  value={selectedNode}
-                  onChange={(e) => {
-                    setSelectedNode(e.target.value as string);
-                  }}
-                  className={classes.searchField}
-                  disabled={loadingNodes || logsStarted}
-                  input={<SelectStyled />}
-                  placeholder={"Select Node"}
-                >
-                  <MenuItem value={"all"} key={`select-node-all`}>
-                    All Nodes
-                  </MenuItem>
-                  {nodes.map((aNode) => (
-                    <MenuItem value={aNode} key={`select-node-name-${aNode}`}>
-                      {aNode}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Select
+                id="node-selector"
+                name="node"
+                data-test-id="node-selector"
+                value={selectedNode}
+                onChange={(value) => {
+                  setSelectedNode(value as string);
+                }}
+                disabled={loadingNodes || logsStarted}
+                options={[
+                  { label: "All Nodes", value: "all" },
+                  ...nodes.map((aNode) => ({ label: aNode, value: aNode })),
+                ]}
+              />
             ) : (
               <h3> Loading nodes</h3>
             )}
           </Grid>
 
           <Grid item xs={3}>
-            <FormControl variant="outlined" className={classes.nodeField}>
-              <Select
-                id="logType"
-                name="logType"
-                data-test-id="log-type"
-                value={logType}
-                onChange={(e) => {
-                  setLogType(e.target.value as string);
-                }}
-                className={classes.searchField}
-                disabled={loadingNodes || logsStarted}
-                input={<SelectStyled />}
-                placeholder={"Select Log Type"}
-              >
-                <MenuItem value="all" key="all-log-types">
-                  All Log Types
-                </MenuItem>
-                <MenuItem value="minio" key="minio-log-type">
-                  MinIO
-                </MenuItem>
-                <MenuItem value="application" key="app-log-type">
-                  Application
-                </MenuItem>
-              </Select>
-            </FormControl>
+            <Select
+              id="logType"
+              name="logType"
+              data-test-id="log-type"
+              value={logType}
+              onChange={(value) => {
+                setLogType(value as string);
+              }}
+              disabled={loadingNodes || logsStarted}
+              options={[
+                { value: "all", label: "All Log Types" },
+                {
+                  value: "minio",
+                  label: "MinIO",
+                },
+                { value: "application", label: "Application" },
+              ]}
+            />
           </Grid>
           <Grid item xs={3}>
             {userAgents.length > 1 && (
-              <FormControl variant="outlined" className={classes.nodeField}>
-                <Select
-                  id="userAgent"
-                  name="userAgent"
-                  data-test-id="user-agent"
-                  value={selectedUserAgent}
-                  onChange={(e) => {
-                    setSelectedUserAgent(e.target.value as string);
-                  }}
-                  className={classes.searchField}
-                  disabled={userAgents.length < 1 || logsStarted}
-                  input={<SelectStyled />}
-                >
-                  <MenuItem
-                    value={selectedUserAgent}
-                    key={`select-user-agent-default`}
-                    disabled={true}
-                  >
-                    Select User Agent
-                  </MenuItem>
-                  {userAgents.map((anAgent) => (
-                    <MenuItem
-                      value={anAgent}
-                      key={`select-user-agent-${anAgent}`}
-                    >
-                      {anAgent}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Select
+                id="userAgent"
+                name="userAgent"
+                data-test-id="user-agent"
+                value={selectedUserAgent}
+                onChange={(value) => {
+                  setSelectedUserAgent(value as string);
+                }}
+                disabled={userAgents.length < 1 || logsStarted}
+                options={userAgents.map((anAgent) => ({
+                  label: anAgent,
+                  value: anAgent,
+                }))}
+              />
             )}
           </Grid>
           <Grid
@@ -361,7 +269,21 @@ const ErrorLogs = () => {
               />
             )}
           </Grid>
-          <Grid item xs={12} className={classes.actionsTray}>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex" as const,
+              justifyContent: "space-between" as const,
+              alignItems: "center",
+              marginBottom: "1rem",
+              "& button": {
+                flexGrow: 0,
+                marginLeft: 8,
+                marginBottom: 0,
+              },
+            }}
+          >
             <SearchBox
               placeholder="Filter"
               onChange={(e) => {
@@ -371,10 +293,16 @@ const ErrorLogs = () => {
             />
           </Grid>
           <Grid item xs={12}>
-            <div
+            <Box
               id="logs-container"
-              className={classes.logList}
               data-test-id="logs-list-container"
+              sx={{
+                minHeight: 400,
+                height: "calc(100vh - 200px)",
+                overflow: "auto",
+                fontSize: 13,
+                borderRadius: 4,
+              }}
             >
               <TableContainer component={Paper}>
                 <Table aria-label="collapsible table">
@@ -390,7 +318,7 @@ const ErrorLogs = () => {
                   </div>
                 )}
               </TableContainer>
-            </div>
+            </Box>
           </Grid>
         </Grid>
       </PageLayout>
