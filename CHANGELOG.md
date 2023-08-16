@@ -2,6 +2,17 @@
 
 # Changelog
 
+## Release v0.37.0
+
+Features:
+
+- Updated Trace and Logs page components
+- Updated Prometheus metrics
+
+Bug Fix:
+
+- Disabled input fields for Subscription features if MinIO is not registered
+
 ## Release v0.36.0
 
 Features:
