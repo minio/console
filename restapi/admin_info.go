@@ -60,7 +60,7 @@ type UsageInfo struct {
 	Buckets          int64
 	Objects          int64
 	Usage            int64
-	DisksUsage       int64
+	DrivesUsage      int64
 	Servers          []*models.ServerProperties
 	EndpointNotReady bool
 	Backend          *models.BackendProperties
@@ -125,12 +125,12 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 		OfflineDrives:    int64(offlineDrives),
 	}
 	return &UsageInfo{
-		Buckets:    int64(serverInfo.Buckets.Count),
-		Objects:    int64(serverInfo.Objects.Count),
-		Usage:      int64(serverInfo.Usage.Size),
-		DisksUsage: usedSpace,
-		Servers:    serverArray,
-		Backend:    backendData,
+		Buckets:     int64(serverInfo.Buckets.Count),
+		Objects:     int64(serverInfo.Objects.Count),
+		Usage:       int64(serverInfo.Usage.Size),
+		DrivesUsage: usedSpace,
+		Servers:     serverArray,
+		Backend:     backendData,
 	}, nil
 }
 
@@ -173,7 +173,7 @@ type WidgetLabel struct {
 
 var labels = []WidgetLabel{
 	{Name: "instance"},
-	{Name: "disk"},
+	{Name: "drive"},
 	{Name: "server"},
 	{Name: "api"},
 }
@@ -443,7 +443,7 @@ var widgets = []Metric{
 	},
 	{
 		ID:            9,
-		Title:         "Total Online Disks",
+		Title:         "Total Online Drives",
 		Type:          "stat",
 		MaxDataPoints: 100,
 		GridPos: GridPos{
@@ -461,8 +461,8 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_cluster_disk_online_total{$__query}`,
-				LegendFormat: "Total online disks in MinIO Cluster",
+				Expr:         `minio_cluster_drive_online_total{$__query}`,
+				LegendFormat: "Total online drives in MinIO Cluster",
 				Step:         60,
 			},
 		},
@@ -555,7 +555,7 @@ var widgets = []Metric{
 	},
 	{
 		ID:            78,
-		Title:         "Total Offline Disks",
+		Title:         "Total Offline Drives",
 		Type:          "stat",
 		MaxDataPoints: 100,
 		GridPos: GridPos{
@@ -573,7 +573,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_cluster_disk_offline_total{$__query}`,
+				Expr:         `minio_cluster_drive_offline_total{$__query}`,
 				LegendFormat: "",
 				Step:         60,
 			},
@@ -759,8 +759,8 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_node_disk_used_bytes{$__query}`,
-				LegendFormat: "Used Capacity [{{server}}:{{disk}}]",
+				Expr:         `minio_node_drive_used_bytes{$__query}`,
+				LegendFormat: "Used Capacity [{{server}}:{{drive}}]",
 			},
 		},
 	},
@@ -776,8 +776,8 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_cluster_disk_free_inodes{$__query}`,
-				LegendFormat: "Free Inodes [{{server}}:{{disk}}]",
+				Expr:         `minio_cluster_drive_free_inodes{$__query}`,
+				LegendFormat: "Free Inodes [{{server}}:{{drive}}]",
 			},
 		},
 	},
