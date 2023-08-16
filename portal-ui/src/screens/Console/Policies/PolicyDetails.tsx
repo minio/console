@@ -68,7 +68,7 @@ import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import { Error, HttpResponse, Policy } from "../../../api/consoleApi";
+import { Policy } from "../../../api/consoleApi";
 import { api } from "../../../api";
 import HelpMenu from "../HelpMenu";
 import SearchBox from "../Common/SearchBox";

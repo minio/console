@@ -113,13 +113,14 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	api.ObjectDownloadMultipleObjectsHandler = objectApi.DownloadMultipleObjectsHandlerFunc(func(params objectApi.DownloadMultipleObjectsParams, session *models.Principal) middleware.Responder {
 		ctx := params.HTTPRequest.Context()
 		if len(params.ObjectList) < 1 {
-			return objectApi.NewDownloadMultipleObjectsDefault(400).WithPayload(ErrorWithContext(ctx, errors.New("could not download, since object list is empty")))
+			errCode := ErrorWithContext(ctx, errors.New("could not download, since object list is empty"))
+			return objectApi.NewDownloadMultipleObjectsDefault(errCode.Code).WithPayload(errCode.APIError)
 		}
 		var resp middleware.Responder
-		var err *models.Error
+		var err *CodedAPIError
 		resp, err = getMultipleFilesDownloadResponse(session, params)
 		if err != nil {
-			return objectApi.NewDownloadMultipleObjectsDefault(int(err.Code)).WithPayload(err)
+			return objectApi.NewDownloadMultipleObjectsDefault(err.Code).WithPayload(err.APIError)
 		}
 		return resp
 	})
@@ -637,7 +638,7 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 	}), nil
 }
 
-func getMultipleFilesDownloadResponse(session *models.Principal, params objectApi.DownloadMultipleObjectsParams) (middleware.Responder, *models.Error) {
+func getMultipleFilesDownloadResponse(session *models.Principal, params objectApi.DownloadMultipleObjectsParams) (middleware.Responder, *CodedAPIError) {
 	ctx := params.HTTPRequest.Context()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if err != nil {

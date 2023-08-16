@@ -468,7 +468,7 @@ paths:
         default:
           description: Generic error response.
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/ApiError"
       tags:
         - Object
 
