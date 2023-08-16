@@ -1455,7 +1455,7 @@ func Test_getMultipleFilesDownloadResponse(t *testing.T) {
 		name  string
 		args  args
 		want  middleware.Responder
-		want1 *models.Error
+		want1 *CodedAPIError
 	}{
 		{
 			name: "test no objects sent for download",
