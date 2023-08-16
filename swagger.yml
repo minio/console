@@ -4871,7 +4871,19 @@ definitions:
   serviceAccounts:
     type: array
     items:
-      type: string
+      type: object
+      properties:
+        accountStatus:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        expiration:
+          type: string
+        accessKey:
+          type: string
+
   serviceAccountRequest:
     type: object
     properties:

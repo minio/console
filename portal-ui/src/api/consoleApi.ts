@@ -728,7 +728,13 @@ export interface BulkUserGroups {
   groups: string[];
 }
 
-export type ServiceAccounts = string[];
+export type ServiceAccounts = {
+  accountStatus?: string;
+  name?: string;
+  description?: string;
+  expiration?: string;
+  accessKey?: string;
+}[];
 
 export interface ServiceAccountRequest {
   /** policy to be applied to the Service Account if any */
@@ -3565,7 +3571,7 @@ export class Api<
      * @secure
      */
     listUsersForPolicy: (policy: string, params: RequestParams = {}) =>
-      this.request<ServiceAccounts, Error>({
+      this.request<string[], Error>({
         path: `/policies/${policy}/users`,
         method: "GET",
         secure: true,
@@ -3583,7 +3589,7 @@ export class Api<
      * @secure
      */
     listGroupsForPolicy: (policy: string, params: RequestParams = {}) =>
-      this.request<ServiceAccounts, Error>({
+      this.request<string[], Error>({
         path: `/policies/${policy}/groups`,
         method: "GET",
         secure: true,
@@ -3717,7 +3723,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ServiceAccounts, Error>({
+      this.request<string[], Error>({
         path: `/bucket-users/${bucket}`,
         method: "GET",
         query: query,
@@ -4472,7 +4478,7 @@ export class Api<
      * @secure
      */
     listNodes: (params: RequestParams = {}) =>
-      this.request<ServiceAccounts, Error>({
+      this.request<string[], Error>({
         path: `/nodes`,
         method: "GET",
         secure: true,

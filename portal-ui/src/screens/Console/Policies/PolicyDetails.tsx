@@ -68,12 +68,7 @@ import { selFeatures } from "../consoleSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import {
-  Error,
-  HttpResponse,
-  Policy,
-  ServiceAccounts,
-} from "../../../api/consoleApi";
+import { Error, HttpResponse, Policy } from "../../../api/consoleApi";
 import { api } from "../../../api";
 import HelpMenu from "../HelpMenu";
 import SearchBox from "../Common/SearchBox";
@@ -188,7 +183,7 @@ const PolicyDetails = () => {
         if (displayUsers && !ldapIsEnabled) {
           api.policies
             .listUsersForPolicy(encodeURLString(policyName))
-            .then((result: HttpResponse<ServiceAccounts, Error>) => {
+            .then((result: HttpResponse<string[], Error>) => {
               setUserList(result.data ?? []);
               setLoadingUsers(false);
             })
@@ -207,7 +202,7 @@ const PolicyDetails = () => {
         if (displayGroups && !ldapIsEnabled) {
           api.policies
             .listGroupsForPolicy(encodeURLString(policyName))
-            .then((result: HttpResponse<ServiceAccounts, Error>) => {
+            .then((result: HttpResponse<string[], Error>) => {
               setGroupList(result.data ?? []);
               setLoadingGroups(false);
             })

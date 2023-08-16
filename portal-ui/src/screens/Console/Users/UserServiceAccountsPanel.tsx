@@ -19,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 import { AddIcon, Box, Button, DataTable, DeleteIcon, SectionTitle } from "mds";
 import api from "../../../common/api";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
-import { stringSort } from "../../../utils/sortFunctions";
 import { ErrorResponseHandler } from "../../../common/types";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
@@ -40,6 +39,9 @@ import {
 } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import { ServiceAccounts } from "../../../api/consoleApi";
+import { usersSort } from "../../../utils/sortFunctions";
+import { ACCOUNT_TABLE_COLUMNS } from "../Account/AccountUtils";
 
 interface IUserServiceAccountsProps {
   user: string;
@@ -53,7 +55,7 @@ const UserServiceAccountsPanel = ({
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const [records, setRecords] = useState<string[]>([]);
+  const [records, setRecords] = useState<ServiceAccounts>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedServiceAccount, setSelectedServiceAccount] = useState<
@@ -74,10 +76,10 @@ const UserServiceAccountsPanel = ({
     if (loading) {
       api
         .invoke("GET", `/api/v1/user/${encodeURLString(user)}/service-accounts`)
-        .then((res: string[]) => {
-          const serviceAccounts = res.sort(stringSort);
+        .then((res: ServiceAccounts) => {
           setLoading(false);
-          setRecords(serviceAccounts);
+          const sortedRows = res.sort(usersSort);
+          setRecords(sortedRows);
         })
         .catch((err: ErrorResponseHandler) => {
           dispatch(setErrorSnackMessage(err));
@@ -107,14 +109,6 @@ const UserServiceAccountsPanel = ({
     }
   };
 
-  const selectAllItems = () => {
-    if (selectedSAs.length === records.length) {
-      setSelectedSAs([]);
-      return;
-    }
-    setSelectedSAs(records);
-  };
-
   const closeCredentialsModal = () => {
     setShowNewCredentials(false);
     setNewServiceAccount(null);
@@ -136,8 +130,22 @@ const UserServiceAccountsPanel = ({
   };
 
   const tableActions = [
-    { type: "view", onClick: policyModalOpen },
-    { type: "delete", onClick: confirmDeleteServiceAccount },
+    {
+      type: "view",
+      onClick: (value: any) => {
+        if (value) {
+          policyModalOpen(value.accessKey);
+        }
+      },
+    },
+    {
+      type: "delete",
+      onClick: (value: any) => {
+        if (value) {
+          confirmDeleteServiceAccount(value.accessKey);
+        }
+      },
+    },
   ];
 
   useEffect(() => {
@@ -231,14 +239,14 @@ const UserServiceAccountsPanel = ({
       </SectionTitle>
 
       <DataTable
+        itemActions={tableActions}
+        entityName={"Access Keys"}
+        columns={ACCOUNT_TABLE_COLUMNS}
+        onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
+        selectedItems={selectedSAs}
         isLoading={loading}
         records={records}
-        entityName={"Access Keys"}
-        columns={[{ label: "Access Key" }]}
-        itemActions={tableActions}
-        selectedItems={selectedSAs}
-        onSelect={(e) => selectSAs(e, setSelectedSAs, selectedSAs)}
-        onSelectAll={selectAllItems}
+        idField="accessKey"
       />
     </Fragment>
   );

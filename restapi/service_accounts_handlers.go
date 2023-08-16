@@ -22,15 +22,14 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
-
-	"github.com/minio/console/pkg/utils"
-
-	userApi "github.com/minio/console/restapi/operations/user"
+	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
+	"github.com/minio/console/pkg/utils"
 	"github.com/minio/console/restapi/operations"
 	saApi "github.com/minio/console/restapi/operations/service_account"
+	userApi "github.com/minio/console/restapi/operations/user"
 	"github.com/minio/madmin-go/v3"
 	iampolicy "github.com/minio/pkg/iam/policy"
 )
@@ -323,11 +322,27 @@ func getUserServiceAccounts(ctx context.Context, userClient MinioAdmin, user str
 	if err != nil {
 		return nil, err
 	}
-	serviceAccounts := models.ServiceAccounts{}
+	saList := models.ServiceAccounts{}
+
 	for _, acc := range listServAccs.Accounts {
-		serviceAccounts = append(serviceAccounts, acc.AccessKey)
+		aInfo, err := userClient.infoServiceAccount(ctx, acc.AccessKey)
+		if err != nil {
+			continue
+		}
+		expiry := ""
+		if aInfo.Expiration != nil {
+			expiry = aInfo.Expiration.Format(time.RFC3339)
+		}
+
+		saList = append(saList, &models.ServiceAccountsItems0{
+			AccountStatus: aInfo.AccountStatus,
+			Description:   aInfo.Description,
+			Expiration:    expiry,
+			Name:          aInfo.Name,
+			AccessKey:     acc.AccessKey,
+		})
 	}
-	return serviceAccounts, nil
+	return saList, nil
 }
 
 // getUserServiceAccountsResponse authenticates the user and calls

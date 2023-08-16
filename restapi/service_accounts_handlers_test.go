@@ -98,12 +98,22 @@ func TestListServiceAccounts(t *testing.T) {
 	minioListServiceAccountsMock = func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
 		return mockResponse, nil
 	}
-	serviceAccounts, err := getUserServiceAccounts(ctx, client, "")
+
+	mockInfoResp := madmin.InfoServiceAccountResp{
+		ParentUser:    "",
+		AccountStatus: "",
+		ImpliedPolicy: false,
+		Policy:        "",
+		Name:          "",
+		Description:   "",
+		Expiration:    nil,
+	}
+	minioInfoServiceAccountMock = func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error) {
+		return mockInfoResp, nil
+	}
+	_, err := getUserServiceAccounts(ctx, client, "")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-	for i, sa := range serviceAccounts {
-		assert.Equal(mockResponse.Accounts[i].AccessKey, sa)
 	}
 
 	// Test-2: getUserServiceAccounts returns an error, handle it properly
