@@ -326,10 +326,10 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state, roleARN
 		if err != nil {
 			return nil, err
 		}
-		client.RefreshToken = oauth2Token.RefreshToken
 		if !oauth2Token.Valid() {
 			return nil, errors.New("invalid token")
 		}
+		client.RefreshToken = oauth2Token.RefreshToken
 
 		expiration := token.GetConsoleSTSDuration()
 		if exp := getIDPTokenExpiration(); exp > 0 {
