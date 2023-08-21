@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box, Grid } from "@mui/material";
-import { HelpBox } from "mds";
+import { HelpBox, Box, Grid, breakPoints } from "mds";
 
 interface IDistributedOnly {
   iconComponent: any;
@@ -25,7 +24,7 @@ interface IDistributedOnly {
 
 const DistributedOnly = ({ iconComponent, entity }: IDistributedOnly) => {
   return (
-    <Grid container alignItems={"center"}>
+    <Grid container>
       <Grid item xs={12}>
         <HelpBox
           title={`${entity} not available`}
@@ -34,21 +33,16 @@ const DistributedOnly = ({ iconComponent, entity }: IDistributedOnly) => {
             <Box
               sx={{
                 fontSize: "14px",
-                display: "flex",
-                border: "none",
-                flexFlow: {
-                  xs: "column",
-                  md: "row",
-                },
-                "& a": {
-                  color: (theme) => theme.colors.link,
-                  textDecoration: "underline",
+                [`@media (max-width: ${breakPoints.sm}px)`]: {
+                  display: "flex",
+                  flexFlow: "column",
                 },
               }}
             >
-              <div>This feature is not available for a single-disk setup.</div>
-
-              <div>
+              <span>
+                This feature is not available for a single-disk setup.&nbsp;
+              </span>
+              <span>
                 Please deploy a server in{" "}
                 <a
                   href="https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-multi-node-multi-drive.html?ref=con"
@@ -58,7 +52,7 @@ const DistributedOnly = ({ iconComponent, entity }: IDistributedOnly) => {
                   Distributed Mode
                 </a>{" "}
                 to use this feature.
-              </div>
+              </span>
             </Box>
           }
         />

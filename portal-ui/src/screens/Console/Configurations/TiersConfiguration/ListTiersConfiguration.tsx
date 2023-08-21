@@ -17,37 +17,27 @@
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { Box, LinearProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import {
+  ActionLink,
   AddIcon,
+  Box,
   Button,
+  DataTable,
+  Grid,
   HelpBox,
   PageLayout,
+  ProgressBar,
   RefreshIcon,
   TierOfflineIcon,
   TierOnlineIcon,
   TiersIcon,
   TiersNotAvailableIcon,
 } from "mds";
-import Grid from "@mui/material/Grid";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-  settingsCommon,
-  tableStyles,
-  typesSelection,
-} from "../../Common/FormComponents/common/styleLibrary";
-
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import AButton from "../../Common/AButton/AButton";
-import SearchBox from "../../Common/SearchBox";
-
-import withSuspense from "../../Common/Components/withSuspense";
-import DistributedOnly from "../../Common/DistributedOnly/DistributedOnly";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { Tier } from "api/consoleApi";
+import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
@@ -64,52 +54,19 @@ import {
   setErrorSnackMessage,
   setHelpName,
 } from "../../../../systemSlice";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../../store";
+import SearchBox from "../../Common/SearchBox";
+import withSuspense from "../../Common/Components/withSuspense";
+import DistributedOnly from "../../Common/DistributedOnly/DistributedOnly";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
-
 import HelpMenu from "../../HelpMenu";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
-import { Tier } from "api/consoleApi";
+
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal")),
 );
 
-interface IListTiersConfig {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...actionsTray,
-    ...searchField,
-    ...settingsCommon,
-    ...typesSelection,
-    ...containerForHeader,
-    customConfigurationPage: {
-      minHeight: 400,
-    },
-    actionsTray: {
-      ...actionsTray.actionsTray,
-    },
-    searchField: {
-      ...searchField.searchField,
-      marginRight: "auto",
-      maxWidth: 380,
-    },
-
-    rightActionButtons: {
-      display: "flex",
-      "& button": {
-        whiteSpace: "nowrap",
-      },
-    },
-    ...tableStyles,
-  });
-
-const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
+const ListTiersConfiguration = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -206,9 +163,8 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
             justifyItems: "start",
             color: "#4CCB92",
             fontSize: "8px",
+            flexDirection: "column",
           }}
-          flexDirection={"column"}
-          display={"flex"}
         >
           <TierOnlineIcon style={{ fill: "#4CCB92", width: 14, height: 14 }} />
           ONLINE
@@ -220,12 +176,11 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
         container
         sx={{
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           color: "#C83B51",
           fontSize: "8px",
         }}
-        flexDirection={"column"}
-        display={"flex"}
       >
         <TierOfflineIcon style={{ fill: "#C83B51", width: 14, height: 14 }} />
         OFFLINE
@@ -331,15 +286,24 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
           />
         ) : (
           <Fragment>
-            <Grid item xs={12} className={classes.actionsTray}>
+            <Grid item xs={12} sx={actionsTray.actionsTray}>
               <SearchBox
                 placeholder="Filter"
                 onChange={setFilter}
-                overrideClass={classes.searchField}
                 value={filter}
+                sx={{
+                  marginRight: "auto",
+                  maxWidth: 380,
+                }}
               />
 
-              <div className={classes.rightActionButtons}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "nowrap",
+                  gap: 5,
+                }}
+              >
                 <Button
                   id={"refresh-list"}
                   icon={<RefreshIcon />}
@@ -371,99 +335,97 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                     />
                   </SecureComponent>
                 </TooltipWrapper>
-              </div>
+              </Box>
             </Grid>
-            {isLoading && <LinearProgress />}
+            {isLoading && <ProgressBar />}
             {!isLoading && (
               <Fragment>
                 {records.length > 0 && (
                   <Fragment>
-                    <Grid item xs={12} className={classes.tableBlock}>
+                    <Grid item xs={12}>
                       <SecureComponent
                         scopes={[IAM_SCOPES.ADMIN_LIST_TIERS]}
                         resource={CONSOLE_UI_RESOURCE}
                         errorProps={{ disabled: true }}
                       >
-                        <Box sx={{ width: "100%" }}>
-                          <TableWrapper
-                            itemActions={[
-                              {
-                                type: "edit",
-                                onClick: (tierData: Tier) => {
-                                  setSelectedTier(tierData);
-                                  setUpdateCredentialsOpen(true);
-                                },
+                        <DataTable
+                          itemActions={[
+                            {
+                              type: "edit",
+                              onClick: (tierData: Tier) => {
+                                setSelectedTier(tierData);
+                                setUpdateCredentialsOpen(true);
                               },
-                            ]}
-                            columns={[
-                              {
-                                label: "Tier Name",
-                                elementKey: "type",
-                                renderFunction: renderTierName,
-                                renderFullObject: true,
-                              },
-                              {
-                                label: "Status",
-                                elementKey: "status",
-                                renderFunction: renderTierStatus,
-                                width: 50,
-                              },
-                              {
-                                label: "Type",
-                                elementKey: "type",
-                                renderFunction: renderTierType,
-                                width: 50,
-                              },
-                              {
-                                label: "Endpoint",
-                                elementKey: "type",
-                                renderFunction: renderTierEndpoint,
-                                renderFullObject: true,
-                              },
-                              {
-                                label: "Bucket",
-                                elementKey: "type",
-                                renderFunction: renderTierBucket,
-                                renderFullObject: true,
-                              },
-                              {
-                                label: "Prefix",
-                                elementKey: "type",
-                                renderFunction: renderTierPrefix,
-                                renderFullObject: true,
-                              },
-                              {
-                                label: "Region",
-                                elementKey: "type",
-                                renderFunction: renderTierRegion,
-                                renderFullObject: true,
-                              },
-                              {
-                                label: "Usage",
-                                elementKey: "type",
-                                renderFunction: renderTierUsage,
-                                renderFullObject: true,
-                              },
-                              {
-                                label: "Objects",
-                                elementKey: "type",
-                                renderFunction: renderTierObjects,
-                                renderFullObject: true,
-                              },
-                              {
-                                label: "Versions",
-                                elementKey: "type",
-                                renderFunction: renderTierVersions,
-                                renderFullObject: true,
-                              },
-                            ]}
-                            isLoading={isLoading}
-                            records={filteredRecords}
-                            entityName="Tiers"
-                            idField="service_name"
-                            customPaperHeight={classes.customConfigurationPage}
-                          />
-                        </Box>
+                            },
+                          ]}
+                          columns={[
+                            {
+                              label: "Tier Name",
+                              elementKey: "type",
+                              renderFunction: renderTierName,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Status",
+                              elementKey: "status",
+                              renderFunction: renderTierStatus,
+                              width: 50,
+                            },
+                            {
+                              label: "Type",
+                              elementKey: "type",
+                              renderFunction: renderTierType,
+                              width: 50,
+                            },
+                            {
+                              label: "Endpoint",
+                              elementKey: "type",
+                              renderFunction: renderTierEndpoint,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Bucket",
+                              elementKey: "type",
+                              renderFunction: renderTierBucket,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Prefix",
+                              elementKey: "type",
+                              renderFunction: renderTierPrefix,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Region",
+                              elementKey: "type",
+                              renderFunction: renderTierRegion,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Usage",
+                              elementKey: "type",
+                              renderFunction: renderTierUsage,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Objects",
+                              elementKey: "type",
+                              renderFunction: renderTierObjects,
+                              renderFullObject: true,
+                            },
+                            {
+                              label: "Versions",
+                              elementKey: "type",
+                              renderFunction: renderTierVersions,
+                              renderFullObject: true,
+                            },
+                          ]}
+                          isLoading={isLoading}
+                          records={filteredRecords}
+                          entityName="Tiers"
+                          idField="service_name"
+                          customPaperHeight={"400px"}
+                        />
                       </SecureComponent>
                     </Grid>
                     <Grid
@@ -502,40 +464,36 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
                   </Fragment>
                 )}
                 {records.length === 0 && (
-                  <Grid
-                    container
-                    justifyContent={"center"}
-                    alignContent={"center"}
-                    alignItems={"center"}
-                  >
-                    <Grid item xs={8}>
-                      <HelpBox
-                        title={"Tiers"}
-                        iconComponent={<TiersIcon />}
-                        help={
-                          <Fragment>
-                            Tiers are used by the MinIO Object Lifecycle
-                            Management which allows creating rules for time or
-                            date based automatic transition or expiry of
-                            objects. For object transition, MinIO automatically
-                            moves the object to a configured remote storage
-                            tier.
-                            <br />
-                            <br />
-                            {hasSetTier ? (
-                              <div>
-                                To get started,{" "}
-                                <AButton onClick={addTier}>Create Tier</AButton>
-                                .
-                              </div>
-                            ) : (
-                              ""
-                            )}
-                          </Fragment>
-                        }
-                      />
-                    </Grid>
-                  </Grid>
+                  <HelpBox
+                    title={"Tiers"}
+                    iconComponent={<TiersIcon />}
+                    help={
+                      <Fragment>
+                        Tiers are used by the MinIO Object Lifecycle Management
+                        which allows creating rules for time or date based
+                        automatic transition or expiry of objects. For object
+                        transition, MinIO automatically moves the object to a
+                        configured remote storage tier.
+                        <br />
+                        <br />
+                        {hasSetTier ? (
+                          <div>
+                            To get started,{" "}
+                            <ActionLink
+                              isLoading={false}
+                              label={""}
+                              onClick={addTier}
+                            >
+                              Create Tier
+                            </ActionLink>
+                            .
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </Fragment>
+                    }
+                  />
                 )}
               </Fragment>
             )}
@@ -546,4 +504,4 @@ const ListTiersConfiguration = ({ classes }: IListTiersConfig) => {
   );
 };
 
-export default withStyles(styles)(ListTiersConfiguration);
+export default ListTiersConfiguration;

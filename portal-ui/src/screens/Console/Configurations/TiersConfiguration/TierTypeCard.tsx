@@ -15,9 +15,39 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box, Grid } from "@mui/material";
+import styled from "styled-components";
+import get from "lodash/get";
 
-import { Button } from "mds";
+const TierButtonBase = styled.button(({ theme }) => ({
+  background: get(theme, "boxBackground", "#FFF"),
+  border: `${get(theme, "borderColor", "#E2E2E2")} 1px solid`,
+  borderRadius: 5,
+  height: 80,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "start",
+  marginBottom: 16,
+  marginRight: 8,
+  cursor: "pointer",
+  overflow: "hidden",
+  "&:hover": {
+    backgroundColor: get(theme, "buttons.regular.hover.background", "#ebebeb"),
+  },
+  "& .imageContainer": {
+    width: 80,
+    "& .min-icon": {
+      maxWidth: 46,
+      maxHeight: 46,
+    },
+  },
+  "& .tierNotifTitle": {
+    color: get(theme, "buttons.callAction.enabled.background", "#07193E"),
+    fontSize: 16,
+    fontFamily: "Inter,sans-serif",
+    paddingLeft: 18,
+    fontWeight: "bold",
+  },
+}));
 
 type TierTypeCardProps = {
   onClick: (name: string) => void;
@@ -25,54 +55,15 @@ type TierTypeCardProps = {
   name: string;
 };
 const TierTypeCard = ({ onClick, icon, name }: TierTypeCardProps) => {
-  const styles = {
-    tierTypeCard: {
-      height: "80px",
-      width: "auto",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-start",
-      padding: 5,
-      border: "1px solid #E5E5E5",
-      borderRadius: 2,
-      cursor: "pointer",
-      overflow: "hidden",
-      "&:hover": { background: "#ebebeb" },
-    },
-    tierTypeTitle: {
-      fontWeight: 600,
-      fontSize: 14,
-      justifyContent: "center",
-    },
-  };
   return (
-    <Button
-      id={name}
+    <TierButtonBase
       onClick={() => {
         onClick(name);
       }}
-      style={styles.tierTypeCard}
     >
-      <Grid container alignItems={"center"}>
-        {icon ? (
-          <Grid item padding={1} xs={4}>
-            <Box
-              sx={{
-                "& .min-icon": {
-                  height: "30px",
-                  width: "30px",
-                },
-              }}
-            >
-              {icon}
-            </Box>
-          </Grid>
-        ) : null}
-        <Grid item xs={8} style={styles.tierTypeTitle} paddingLeft={1}>
-          {name}
-        </Grid>
-      </Grid>
-    </Button>
+      <span className={"imageContainer"}>{icon}</span>
+      <span className={"tierNotifTitle"}>{name}</span>
+    </TierButtonBase>
   );
 };
 

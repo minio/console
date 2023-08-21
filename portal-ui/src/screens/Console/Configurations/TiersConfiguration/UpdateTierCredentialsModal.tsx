@@ -16,47 +16,25 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { Button, LockIcon } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { LinearProgress } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import {
-  formFieldStyles,
-  modalBasic,
-} from "../../Common/FormComponents/common/styleLibrary";
-
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import { setModalErrorSnackMessage } from "../../../../systemSlice";
-import { useAppDispatch } from "../../../../store";
+import { Button, FormLayout, Grid, InputBox, LockIcon, ProgressBar } from "mds";
 import { Tier } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { useAppDispatch } from "../../../../store";
+import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
+import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 
 interface ITierCredentialsModal {
   open: boolean;
   closeModalAndRefresh: (refresh: boolean) => any;
-  classes: any;
   tierData: Tier;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      display: "flex",
-      justifyContent: "flex-end",
-    },
-    ...modalBasic,
-    ...formFieldStyles,
-  });
 
 const UpdateTierCredentialsModal = ({
   open,
   closeModalAndRefresh,
-  classes,
   tierData,
 }: ITierCredentialsModal) => {
   const dispatch = useAppDispatch();
@@ -142,98 +120,88 @@ const UpdateTierCredentialsModal = ({
           addRecord();
         }}
       >
-        <Grid container>
-          <Grid item xs={12}>
-            {(type === "s3" || type === "minio") && (
-              <Fragment>
-                <div className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="accessKey"
-                    name="accessKey"
-                    label="Access Key"
-                    placeholder="Enter Access Key"
-                    value={accountName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setAccountName(e.target.value);
-                    }}
-                  />
-                </div>
-                <div className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="secretKey"
-                    name="secretKey"
-                    label="Secret Key"
-                    placeholder="Enter Secret Key"
-                    value={accountKey}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setAccountKey(e.target.value);
-                    }}
-                  />
-                </div>
-              </Fragment>
-            )}
-            {type === "gcs" && (
-              <Fragment>
-                <FileSelector
-                  accept=".json"
-                  id="creds"
-                  label="Credentials"
-                  name="creds"
-                  onChange={(encodedValue, fileName) => {
-                    setEncodedCreds(encodedValue);
-                    setCreds(fileName);
-                  }}
-                  value={creds}
-                />
-              </Fragment>
-            )}
-            {type === "azure" && (
-              <Fragment>
-                <div className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="accountName"
-                    name="accountName"
-                    label="Account Name"
-                    placeholder="Enter Account Name"
-                    value={accountName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setAccountName(e.target.value);
-                    }}
-                  />
-                </div>
-                <div className={classes.formFieldRow}>
-                  <InputBoxWrapper
-                    id="accountKey"
-                    name="accountKey"
-                    label="Account Key"
-                    placeholder="Enter Account Key"
-                    value={accountKey}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setAccountKey(e.target.value);
-                    }}
-                  />
-                </div>
-              </Fragment>
-            )}
-          </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
-            <Button
-              id={"save-credentials"}
-              type="submit"
-              variant="callAction"
-              disabled={savingTiers || !isFormValid}
-              label={"Save"}
-            />
-          </Grid>
-          {savingTiers && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
+        <FormLayout withBorders={false} containerPadding={false}>
+          {(type === "s3" || type === "minio") && (
+            <Fragment>
+              <InputBox
+                id="accessKey"
+                name="accessKey"
+                label="Access Key"
+                placeholder="Enter Access Key"
+                value={accountName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setAccountName(e.target.value);
+                }}
+              />
+              <InputBox
+                id="secretKey"
+                name="secretKey"
+                label="Secret Key"
+                placeholder="Enter Secret Key"
+                value={accountKey}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setAccountKey(e.target.value);
+                }}
+              />
+            </Fragment>
           )}
+          {type === "gcs" && (
+            <Fragment>
+              <FileSelector
+                accept=".json"
+                id="creds"
+                label="Credentials"
+                name="creds"
+                onChange={(encodedValue, fileName) => {
+                  setEncodedCreds(encodedValue);
+                  setCreds(fileName);
+                }}
+                value={creds}
+              />
+            </Fragment>
+          )}
+          {type === "azure" && (
+            <Fragment>
+              <InputBox
+                id="accountName"
+                name="accountName"
+                label="Account Name"
+                placeholder="Enter Account Name"
+                value={accountName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setAccountName(e.target.value);
+                }}
+              />
+              <InputBox
+                id="accountKey"
+                name="accountKey"
+                label="Account Key"
+                placeholder="Enter Account Key"
+                value={accountKey}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setAccountKey(e.target.value);
+                }}
+              />
+            </Fragment>
+          )}
+        </FormLayout>
+        {savingTiers && (
+          <Grid item xs={12}>
+            <ProgressBar />
+          </Grid>
+        )}
+        <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+          <Button
+            id={"save-credentials"}
+            type="submit"
+            variant="callAction"
+            disabled={savingTiers || !isFormValid}
+            label={"Save"}
+          />
         </Grid>
       </form>
     </ModalWrapper>
   );
 };
 
-export default withStyles(styles)(UpdateTierCredentialsModal);
+export default UpdateTierCredentialsModal;
