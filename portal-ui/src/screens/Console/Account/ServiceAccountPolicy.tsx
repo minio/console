@@ -16,14 +16,15 @@
 
 import React, { useEffect, useState } from "react";
 import { Button, ChangeAccessPolicyIcon, Grid } from "mds";
-import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { encodeURLString } from "../../../common/utils";
-import { setModalErrorSnackMessage } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import { ApiError } from "api/consoleApi";
+import { useAppDispatch } from "store";
+import { encodeURLString } from "common/utils";
+import { setErrorSnackMessage, setModalErrorSnackMessage } from "systemSlice";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 
 interface IServiceAccountPolicyProps {
   open: boolean;
@@ -66,8 +67,9 @@ const ServiceAccountPolicy = ({
       .then(() => {
         closeModalAndRefresh();
       })
-      .catch((err) => {
-        dispatch(setModalErrorSnackMessage(errorToHandler(err)));
+      .catch(async (res) => {
+        const err = (await res.json()) as ApiError;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
       });
   };
 

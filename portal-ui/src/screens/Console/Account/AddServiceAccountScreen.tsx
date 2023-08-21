@@ -33,17 +33,17 @@ import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
-import { getRandomString } from "../../../common/utils";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import { ContentType } from "api/consoleApi";
+import { ApiError, ContentType } from "api/consoleApi";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import { useAppDispatch } from "store";
+import { getRandomString } from "common/utils";
 
 const AddServiceAccount = () => {
   const dispatch = useAppDispatch();
@@ -83,9 +83,10 @@ const AddServiceAccount = () => {
           });
         })
 
-        .catch((err) => {
+        .catch(async (res) => {
           setAddSending(false);
-          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
+          const err = (await res.json()) as ApiError;
+          dispatch(setErrorSnackMessage(errorToHandler(err)));
         });
     }
   }, [addSending, setAddSending, dispatch, policyJSON, accessKey, secretKey]);
