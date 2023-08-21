@@ -34,31 +34,32 @@ import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 import ChangePasswordModal from "./ChangePasswordModal";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
-import {
-  CONSOLE_UI_RESOURCE,
-  IAM_PAGES,
-  IAM_SCOPES,
-} from "../../../common/SecureComponent/permissions";
-import { SecureComponent } from "../../../common/SecureComponent";
 
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
 import ServiceAccountPolicy from "./ServiceAccountPolicy";
-import {
-  setErrorSnackMessage,
-  setHelpName,
-  setSnackBarMessage,
-} from "../../../systemSlice";
+
 import { selFeatures } from "../consoleSlice";
-import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import HelpMenu from "../HelpMenu";
-import { ServiceAccounts } from "../../../api/consoleApi";
-import { usersSort } from "../../../utils/sortFunctions";
 import { ACCOUNT_TABLE_COLUMNS } from "./AccountUtils";
+import { useAppDispatch } from "store";
+import { ApiError, ServiceAccounts } from "api/consoleApi";
+import {
+  setErrorSnackMessage,
+  setHelpName,
+  setSnackBarMessage,
+} from "systemSlice";
+import { usersSort } from "utils/sortFunctions";
+import { SecureComponent } from "common/SecureComponent";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_PAGES,
+  IAM_SCOPES,
+} from "common/SecureComponent/permissions";
 
 const DeleteServiceAccount = withSuspense(
   React.lazy(() => import("./DeleteServiceAccount")),
@@ -103,8 +104,9 @@ const Account = () => {
           const sortedRows = res.data.sort(usersSort);
           setRecords(sortedRows);
         })
-        .catch((err) => {
-          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
+        .catch(async (res) => {
+          const err = (await res.json()) as ApiError;
+          dispatch(setErrorSnackMessage(errorToHandler(err)));
           setLoading(false);
         });
     }
