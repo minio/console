@@ -13,8 +13,9 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React from "react";
-import { Grid, IconButton, InputLabel, Tooltip } from "@mui/material";
+import { Grid, IconButton, InputLabel, Tooltip } from "mds";
 import { InputProps as StandardInputProps } from "@mui/material/Input";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -127,19 +128,14 @@ const RegionSelectWrapper = ({
         )}
       >
         {label !== "" && (
-          <InputLabel
-            htmlFor={id}
-            className={
-              noLabelMinWidth ? classes.noMinWidthLabel : classes.inputLabel
-            }
-          >
+          <InputLabel htmlFor={id} noMinWidth={noLabelMinWidth}>
             <span>
               {label}
               {required ? "*" : ""}
             </span>
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>
-                <Tooltip title={tooltip} placement="top-start">
+                <Tooltip tooltip={tooltip} placement="top">
                   <div className={classes.tooltip}>
                     <HelpIcon />
                   </div>
@@ -171,9 +167,6 @@ const RegionSelectWrapper = ({
                 }
                 id={overlayId}
                 size={"small"}
-                disableFocusRipple={false}
-                disableRipple={false}
-                disableTouchRipple={false}
               >
                 {overlayIcon}
               </IconButton>

@@ -18,19 +18,25 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import get from "lodash/get";
-import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
-import { BackLink, Button, PageLayout } from "mds";
+import {
+  BackLink,
+  breakPoints,
+  Button,
+  Grid,
+  PageLayout,
+  InputBox,
+  SectionTitle,
+} from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box } from "@mui/material";
 import {
   fileInputStyles,
   formFieldStyles,
   modalBasic,
+  modalStyleUtils,
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import {
   azureServiceName,
@@ -348,53 +354,28 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
         >
           <form noValidate onSubmit={submitForm}>
             {type !== "" && targetElement ? (
-              <Grid
-                item
-                xs={12}
-                key={`icon-${targetElement.targetTitle}`}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "start",
-                  marginBottom: "20px",
-                }}
-              >
-                {targetElement.logo ? (
-                  <Box
-                    sx={{
-                      "& .min-icon": {
-                        height: "60px",
-                        width: "60px",
-                      },
-                    }}
-                  >
-                    {targetElement.logo}
-                  </Box>
-                ) : null}
-
-                <div className={classes.lambdaNotifTitle}>
-                  <b>
-                    {titleSelection ? titleSelection : ""} - Add Tier
-                    Configuration
-                  </b>
-                </div>
-              </Grid>
+              <SectionTitle icon={targetElement.logo} sx={{ marginBottom: 20 }}>
+                {titleSelection ? titleSelection : ""} - Add Tier Configuration
+              </SectionTitle>
             ) : null}
-
             <Grid
               item
               xs={12}
               sx={{
                 display: "grid",
-                gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-                gridAutoFlow: { xs: "dense", sm: "row" },
-                gridRowGap: 25,
+                gridTemplateColumns: "1fr 1fr",
+                gridAutoFlow: "row",
+                gridRowGap: 20,
                 gridColumnGap: 50,
+                [`@media (max-width: ${breakPoints.sm}px)`]: {
+                  gridTemplateColumns: "1fr",
+                  gridAutoFlow: "dense",
+                },
               }}
             >
               {type !== "" && (
                 <Fragment>
-                  <InputBoxWrapper
+                  <InputBox
                     id="name"
                     name="name"
                     label="Name"
@@ -404,7 +385,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                     error={nameInputError}
                     required
                   />
-                  <InputBoxWrapper
+                  <InputBox
                     id="endpoint"
                     name="endpoint"
                     label="Endpoint"
@@ -417,7 +398,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                   />
                   {(type === s3ServiceName || type === minioServiceName) && (
                     <Fragment>
-                      <InputBoxWrapper
+                      <InputBox
                         id="accessKey"
                         name="accessKey"
                         label="Access Key"
@@ -428,7 +409,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                         }}
                         required
                       />
-                      <InputBoxWrapper
+                      <InputBox
                         id="secretKey"
                         name="secretKey"
                         label="Secret Key"
@@ -462,7 +443,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                   )}
                   {type === azureServiceName && (
                     <Fragment>
-                      <InputBoxWrapper
+                      <InputBox
                         id="accountName"
                         name="accountName"
                         label="Account Name"
@@ -473,7 +454,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                         }}
                         required
                       />
-                      <InputBoxWrapper
+                      <InputBox
                         id="accountKey"
                         name="accountKey"
                         label="Account Key"
@@ -486,7 +467,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                       />
                     </Fragment>
                   )}
-                  <InputBoxWrapper
+                  <InputBox
                     id="bucket"
                     name="bucket"
                     label="Bucket"
@@ -497,7 +478,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                     }}
                     required
                   />
-                  <InputBoxWrapper
+                  <InputBox
                     id="prefix"
                     name="prefix"
                     label="Prefix"
@@ -519,7 +500,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                     type={type as "azure" | "s3" | "minio" | "gcs"}
                   />
                   {type === s3ServiceName && (
-                    <InputBoxWrapper
+                    <InputBox
                       id="storageClass"
                       name="storageClass"
                       label="Storage Class"
@@ -533,7 +514,7 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                 </Fragment>
               )}
             </Grid>
-            <Grid item xs={12} className={classes.settingsButtonContainer}>
+            <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
               <Button
                 id={"save-tier-configuration"}
                 type="submit"
