@@ -78,8 +78,8 @@ const AddAccessRule = ({
         dispatch(setSnackBarMessage("Access Rule added successfully"));
         onClose();
       })
-      .catch((err) => {
-        dispatch(setErrorSnackMessage(errorToHandler(err)));
+      .catch((res) => {
+        dispatch(setErrorSnackMessage(errorToHandler(res.error)));
         onClose();
       });
   };
