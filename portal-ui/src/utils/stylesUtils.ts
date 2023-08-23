@@ -264,6 +264,7 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
         selectedBGColor: overrideVars.buttonStyles.hoverColor,
         selectedTextColor: overrideVars.buttonStyles.hoverText,
         optionTextColor: overrideVars.fontColor,
+        disabledText: overrideVars.disabledLinkColor,
       },
       readBox: {
         borderColor: overrideVars.borderColor,
