@@ -15,13 +15,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
-import { Box, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { BackLink, Button, ClustersIcon, HelpBox, PageLayout } from "mds";
+import {
+  BackLink,
+  Button,
+  ClustersIcon,
+  HelpBox,
+  PageLayout,
+  Box,
+  Grid,
+  ProgressBar,
+  InputLabel,
+  SectionTitle,
+} from "mds";
 import useApi from "../../Common/Hooks/useApi";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
-import SectionTitle from "../../Common/SectionTitle";
 import {
   setErrorSnackMessage,
   setHelpName,
@@ -58,17 +66,18 @@ const isEmptyValue = (value: string): boolean => {
 const TableHeader = () => {
   return (
     <React.Fragment>
-      <Box
-        sx={{
-          fontSize: "14px",
-          marginLeft: "5px",
-        }}
-      >
-        Site Name
+      <Box>
+        <InputLabel>Site Name</InputLabel>
       </Box>
-      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>Endpoint {"*"}</Box>
-      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>Access Key {"*"}</Box>
-      <Box sx={{ fontSize: "14px", marginLeft: "5px" }}>Secret Key {"*"}</Box>
+      <Box>
+        <InputLabel>Endpoint {"*"}</InputLabel>
+      </Box>
+      <Box>
+        <InputLabel>Access Key {"*"}</InputLabel>
+      </Box>
+      <Box>
+        <InputLabel>Secret Key {"*"}</InputLabel>
+      </Box>
       <Box> </Box>
     </React.Fragment>
   );
@@ -272,10 +281,10 @@ const AddReplicationSites = () => {
       >
         <SiteTypeHeader title={"This Site"} />
         <Box
+          withBorders
           sx={{
             display: "grid",
             gridTemplateColumns: ".8fr 1.2fr .8fr .8fr .2fr",
-            border: "1px solid #eaeaea",
             padding: "15px",
             gap: "10px",
             maxHeight: "430px",
@@ -330,10 +339,10 @@ const AddReplicationSites = () => {
       >
         <SiteTypeHeader title={"Peer Sites"} />
         <Box
+          withBorders
           sx={{
             display: "grid",
             gridTemplateColumns: ".8fr 1.2fr .8fr .8fr .2fr",
-            border: "1px solid #eaeaea",
             padding: "15px",
             gap: "10px",
             maxHeight: "430px",
@@ -421,11 +430,11 @@ const AddReplicationSites = () => {
           }}
         >
           <Box>
-            <SectionTitle icon={<ClustersIcon />}>
+            <SectionTitle separator icon={<ClustersIcon />}>
               Add Sites for Replication
             </SectionTitle>
 
-            {isSiteInfoLoading || isAdding ? <LinearProgress /> : null}
+            {isSiteInfoLoading || isAdding ? <ProgressBar /> : null}
 
             <Box
               sx={{
@@ -526,17 +535,6 @@ const AddReplicationSites = () => {
                     flexFlow: "column",
                     fontSize: "14px",
                     flex: "2",
-                    "& .step-number": {
-                      color: "#ffffff",
-                      height: "25px",
-                      width: "25px",
-                      background: "#081C42",
-                      marginRight: "10px",
-                      textAlign: "center",
-                      fontWeight: 600,
-                      borderRadius: "50%",
-                    },
-
                     "& li": {
                       fontSize: "14px",
                       display: "flex",
@@ -546,15 +544,6 @@ const AddReplicationSites = () => {
 
                       "&.step-text": {
                         fontWeight: 400,
-                      },
-                      "&:before": {
-                        content: "' '",
-                        height: "7px",
-                        width: "7px",
-                        backgroundColor: "#2781B0",
-                        marginRight: "10px",
-                        marginTop: "12px",
-                        flexShrink: 0,
                       },
                     },
                   }}

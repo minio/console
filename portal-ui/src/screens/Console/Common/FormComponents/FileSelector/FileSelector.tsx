@@ -16,8 +16,7 @@
 
 import React, { useState } from "react";
 import get from "lodash/get";
-import { Grid, InputLabel, Tooltip } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
+import { Grid, InputLabel, Tooltip, IconButton } from "mds";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Theme } from "@mui/material/styles";
@@ -96,16 +95,16 @@ const FileSelector = ({
       <Grid
         item
         xs={12}
-        className={`${classes.fileInputField} ${classes.fieldBottom} ${
-          classes.fieldContainer
-        } ${error !== "" ? classes.errorInField : ""}`}
+        className={`inputItem ${classes.fileInputField} ${
+          classes.fieldBottom
+        } ${classes.fieldContainer} ${
+          error !== "" ? classes.errorInField : ""
+        }`}
       >
         {label !== "" && (
           <InputLabel
             htmlFor={id}
-            className={`${error !== "" ? classes.fieldLabelError : ""} ${
-              classes.inputLabel
-            }`}
+            className={`${error !== "" ? classes.fieldLabelError : ""}`}
           >
             <span>
               {label}
@@ -113,7 +112,7 @@ const FileSelector = ({
             </span>
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>
-                <Tooltip title={tooltip} placement="top-start">
+                <Tooltip tooltip={tooltip} placement="top">
                   <div className={classes.tooltip}>
                     <HelpIcon />
                   </div>
@@ -144,12 +143,9 @@ const FileSelector = ({
               <IconButton
                 color="primary"
                 aria-label="upload picture"
-                component="span"
                 onClick={() => {
                   setShowSelector(false);
                 }}
-                disableRipple={false}
-                disableFocusRipple={false}
                 size="small"
               >
                 <CancelIcon />
@@ -164,12 +160,9 @@ const FileSelector = ({
             <IconButton
               color="primary"
               aria-label="upload picture"
-              component="span"
               onClick={() => {
                 setShowSelector(true);
               }}
-              disableRipple={false}
-              disableFocusRipple={false}
               size="small"
             >
               <AttachFileIcon />

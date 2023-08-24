@@ -32,6 +32,7 @@ import {
   PageLayout,
   RadioGroup,
   Switch,
+  SectionTitle,
 } from "mds";
 import { k8sScalarUnitsExcluding } from "../../../../../common/utils";
 import { AppState, useAppDispatch } from "../../../../../store";
@@ -44,7 +45,6 @@ import {
 } from "../../../../../systemSlice";
 import InputUnitMenu from "../../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import TooltipWrapper from "../../../Common/TooltipWrapper/TooltipWrapper";
-import SectionTitle from "../../../Common/SectionTitle";
 import {
   resetForm,
   setEnableObjectLocking,
@@ -277,7 +277,7 @@ const AddBucket = () => {
               <Box sx={{ margin: "10px 0" }}>
                 <BucketNamingRules errorList={validationResult} />
               </Box>
-              <SectionTitle>Features</SectionTitle>
+              <SectionTitle separator>Features</SectionTitle>
               <Box sx={{ marginTop: 10 }}>
                 {!distributedSetup && (
                   <Fragment>

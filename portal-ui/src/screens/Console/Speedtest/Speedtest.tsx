@@ -17,90 +17,48 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { Grid } from "@mui/material";
-import { Theme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import {
+  Box,
   Button,
+  Grid,
   HelpBox,
+  InputBox,
   Loader,
   PageLayout,
   SpeedtestIcon,
   WarnIcon,
-  InputBox,
 } from "mds";
 import { DateTime } from "luxon";
-import createStyles from "@mui/styles/createStyles";
-import {
-  actionsTray,
-  advancedFilterToggleStyles,
-  containerForHeader,
-  formFieldStyles,
-  searchField,
-} from "../Common/FormComponents/common/styleLibrary";
+import STResults from "./STResults";
+import ProgressBarWrapper from "../Common/ProgressBarWrapper/ProgressBarWrapper";
+import InputUnitMenu from "../Common/FormComponents/InputUnitMenu/InputUnitMenu";
+import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
+import RegisterCluster from "../Support/RegisterCluster";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
+import { SecureComponent } from "../../../common/SecureComponent";
+import { selDistSet, setHelpName } from "../../../systemSlice";
+import { registeredCluster } from "../../../config";
+import { useAppDispatch } from "../../../store";
 import { wsProtocol } from "../../../utils/wsUtils";
 import { SpeedTestResponse } from "./types";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
-import STResults from "./STResults";
-import ProgressBarWrapper from "../Common/ProgressBarWrapper/ProgressBarWrapper";
-import InputUnitMenu from "../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import { SecureComponent } from "../../../common/SecureComponent";
-import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
-import { selDistSet, setHelpName } from "../../../systemSlice";
-import makeStyles from "@mui/styles/makeStyles";
-import RegisterCluster from "../Support/RegisterCluster";
-import { registeredCluster } from "../../../config";
-import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import HelpMenu from "../HelpMenu";
-import { useAppDispatch } from "../../../store";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    advancedContent: {
-      backgroundColor: "#FBFAFA",
-      maxHeight: 0,
-      transitionDuration: "0.3s",
-      overflow: "hidden",
-      padding: "0 15px",
-      marginTop: 15,
-      justifyContent: "space-between",
-      "&.open": {
-        maxHeight: 400,
-        paddingBottom: 15,
-      },
-    },
-
-    stepProgressText: {
-      fontSize: 13,
-      marginBottom: 8,
-    },
-    ...advancedFilterToggleStyles,
-    ...actionsTray,
-    ...searchField,
-    ...formFieldStyles,
-    ...containerForHeader,
-  }),
-);
 
 const Speedtest = () => {
   const distributedSetup = useSelector(selDistSet);
-
   const navigate = useNavigate();
 
-  const classes = useStyles();
   const [start, setStart] = useState<boolean>(false);
-
   const [currStatus, setCurrStatus] = useState<SpeedTestResponse[] | null>(
     null,
   );
-
   const [size, setSize] = useState<string>("64");
   const [sizeUnit, setSizeUnit] = useState<string>("MB");
   const [duration, setDuration] = useState<string>("10");
-
   const [topDate, setTopDate] = useState<number>(0);
   const [currentValue, setCurrentValue] = useState<number>(0);
   const [totalSeconds, setTotalSeconds] = useState<number>(0);
@@ -228,10 +186,15 @@ const Speedtest = () => {
             scopes={[IAM_SCOPES.ADMIN_HEAL]}
             resource={CONSOLE_UI_RESOURCE}
           >
-            <Grid item xs={12} className={classes.boxy}>
+            <Box withBorders>
               <Grid container>
-                <Grid item md={4} sm={12}>
-                  <div className={classes.stepProgressText}>
+                <Grid item md={3} sm={12}>
+                  <Box
+                    sx={{
+                      fontSize: 13,
+                      marginBottom: 8,
+                    }}
+                  >
                     {start ? (
                       <Fragment>
                         Speedtest in progress...
@@ -246,17 +209,17 @@ const Speedtest = () => {
                         )}
                       </Fragment>
                     )}
-                  </div>
-                  <div>
+                  </Box>
+                  <Box>
                     <ProgressBarWrapper
                       value={speedometerValue}
                       ready={currStatus !== null && !start}
                       indeterminate={start}
                       size={"small"}
                     />
-                  </div>
+                  </Box>
                 </Grid>
-                <Grid item md sm={12}>
+                <Grid item md={4} sm={12}>
                   <div style={{ marginLeft: 10, width: 300 }}>
                     <InputBox
                       id={"size"}
@@ -284,7 +247,7 @@ const Speedtest = () => {
                     />
                   </div>
                 </Grid>
-                <Grid item md sm={12}>
+                <Grid item md={4} sm={12}>
                   <div style={{ marginLeft: 10, width: 300 }}>
                     <InputBox
                       id={"duration"}
@@ -311,7 +274,7 @@ const Speedtest = () => {
                     />
                   </div>
                 </Grid>
-                <Grid item md={1} sm={12} textAlign={"right"}>
+                <Grid item md={1} sm={12} sx={{ textAlign: "center" }}>
                   <Button
                     onClick={startSpeedtestButton}
                     color="primary"
@@ -322,7 +285,6 @@ const Speedtest = () => {
                         ? "callAction"
                         : "regular"
                     }
-                    className={`${classes.buttonBackground} ${classes.speedStart}`}
                     disabled={
                       duration.trim() === "" ||
                       size.trim() === "" ||
@@ -333,7 +295,7 @@ const Speedtest = () => {
                   />
                 </Grid>
               </Grid>
-              <Grid container className={classes.multiModule}>
+              <Grid container>
                 <Grid item xs={12}>
                   <Fragment>
                     <Grid item xs={12}>
@@ -346,7 +308,7 @@ const Speedtest = () => {
                   </Fragment>
                 </Grid>
               </Grid>
-            </Grid>
+            </Box>
 
             {!start && !currStatus && clusterRegistered && (
               <Fragment>

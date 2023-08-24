@@ -16,7 +16,6 @@
 
 import React, { Fragment, useState } from "react";
 import get from "lodash/get";
-import { Theme } from "@mui/material/styles";
 import {
   Button,
   ComputerLineIcon,
@@ -26,116 +25,114 @@ import {
   StorageIcon,
   UploadStatIcon,
   VersionIcon,
+  Grid,
+  Box,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import { Grid } from "@mui/material";
 import { IndvServerMetric, SpeedTestResponse, STServer } from "./types";
 import { calculateBytes, prettyNumber } from "../../../common/utils";
-import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer } from "recharts";
 import { cleanMetrics } from "./utils";
+import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import SpeedTestUnit from "./SpeedTestUnit";
-import makeStyles from "@mui/styles/makeStyles";
+import styled from "styled-components";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    actionButtons: {
-      textAlign: "right",
+const STResultsContainer = styled.div(({ theme }) => ({
+  "& .actionButtons": {
+    textAlign: "right",
+  },
+  "& .descriptorLabel": {
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  "& .resultsContainer": {
+    backgroundColor: get(theme, "boxBackground", "#FBFAFA"),
+    borderTop: `${get(theme, "borderColor", "#E2E2E2")} 1px solid`,
+    marginTop: 30,
+    padding: 25,
+  },
+  "& .resultsIcon": {
+    display: "flex",
+    alignItems: "center",
+    "& svg": {
+      fill: get(theme, `screenTitle.iconColor`, "#07193E"),
     },
-    descriptorLabel: {
-      fontWeight: "bold",
+  },
+  "& .detailedItem": {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  "& .detailedVersion": {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  "& .serversTable": {
+    width: "100%",
+    marginTop: 15,
+    "& thead > tr > th": {
+      textAlign: "left",
+      padding: 15,
       fontSize: 14,
+      fontWeight: "bold",
     },
-    resultsContainer: {
-      backgroundColor: "#FBFAFA",
-      borderTop: "#F1F1F1 1px solid",
-      marginTop: 30,
-      padding: 25,
-    },
-    resultsIcon: {
-      display: "flex",
-      alignItems: "center",
-      "& svg": {
-        fill: "#07193E",
+    "& tbody > tr": {
+      "&:last-of-type": {
+        "& > td": {
+          borderBottom: `${get(theme, "borderColor", "#E2E2E2")} 1px solid`,
+        },
       },
-    },
-    detailedItem: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-start",
-    },
-    detailedVersion: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-    },
-    serversTable: {
-      width: "100%",
-      marginTop: 15,
-      "& thead > tr > th": {
-        textAlign: "left",
+      "& > td": {
+        borderTop: `${get(theme, "borderColor", "#E2E2E2")} 1px solid`,
         padding: 15,
         fontSize: 14,
-        fontWeight: "bold",
-      },
-      "& tbody > tr": {
+        "&:first-of-type": {
+          borderLeft: `${get(theme, "borderColor", "#E2E2E2")} 1px solid`,
+        },
         "&:last-of-type": {
-          "& > td": {
-            borderBottom: "#E2E2E2 1px solid",
-          },
-        },
-        "& > td": {
-          borderTop: "#E2E2E2 1px solid",
-          padding: 15,
-          fontSize: 14,
-          "&:first-of-type": {
-            borderLeft: "#E2E2E2 1px solid",
-          },
-          "&:last-of-type": {
-            borderRight: "#E2E2E2 1px solid",
-          },
+          borderRight: `${get(theme, "borderColor", "#E2E2E2")} 1px solid`,
         },
       },
     },
-    serverIcon: {
-      width: 55,
+  },
+  "& .serverIcon": {
+    width: 55,
+  },
+  "& .serverValue": {
+    width: 140,
+  },
+  "& .serverHost": {
+    maxWidth: 540,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  "& .tableOverflow": {
+    overflowX: "auto",
+    paddingBottom: 15,
+  },
+  "& .objectGeneral": {
+    marginTop: 15,
+  },
+  "& .download": {
+    "& .min-icon": {
+      width: 35,
+      height: 35,
+      color: get(theme, "signalColors.good", "#4CCB92"),
     },
-    serverValue: {
-      width: 140,
+  },
+  "& .upload": {
+    "& .min-icon": {
+      width: 35,
+      height: 35,
+      color: get(theme, "signalColors.info", "#2781B0"),
     },
-    serverHost: {
-      maxWidth: 540,
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-    },
-    tableOverflow: {
-      overflowX: "auto",
-      paddingBottom: 15,
-    },
-    objectGeneral: {
-      marginTop: 15,
-    },
-    download: {
-      "& .min-icon": {
-        width: 35,
-        height: 35,
-        color: "rgb(113,200,150)",
-      },
-    },
-    upload: {
-      "& .min-icon": {
-        width: 35,
-        height: 35,
-        color: "rgb(66,127,172)",
-      },
-    },
-    versionIcon: {
-      color: "#07193E",
-      marginRight: 20,
-    },
-  }),
-);
+  },
+  "& .versionIcon": {
+    color: get(theme, `screenTitle.iconColor`, "#07193E"),
+    marginRight: 20,
+  },
+}));
 
 interface ISTResults {
   results: SpeedTestResponse[];
@@ -143,8 +140,6 @@ interface ISTResults {
 }
 
 const STResults = ({ results, start }: ISTResults) => {
-  const classes = useStyles();
-
   const [jsonView, setJsonView] = useState<boolean>(false);
 
   const finalRes = results[results.length - 1] || [];
@@ -227,14 +222,14 @@ const STResults = ({ results, start }: ISTResults) => {
   const clnMetrics = cleanMetrics(results);
 
   return (
-    <Fragment>
-      <Grid container className={classes.objectGeneral}>
+    <STResultsContainer>
+      <Grid container className={"objectGeneral"}>
         <Grid item xs={12} md={6} lg={6}>
-          <Grid container className={classes.objectGeneral}>
+          <Grid container className={"objectGeneral"}>
             <Grid item xs={12} md={6} lg={6}>
               <SpeedTestUnit
                 icon={
-                  <div className={classes.download}>
+                  <div className={"download"}>
                     <DownloadStatIcon />
                   </div>
                 }
@@ -246,7 +241,7 @@ const STResults = ({ results, start }: ISTResults) => {
             <Grid item xs={12} md={6} lg={6}>
               <SpeedTestUnit
                 icon={
-                  <div className={classes.upload}>
+                  <div className={"upload"}>
                     <UploadStatIcon />
                   </div>
                 }
@@ -305,7 +300,7 @@ const STResults = ({ results, start }: ISTResults) => {
       {clnMetrics.length > 1 && (
         <Fragment>
           <Grid container>
-            <Grid item xs={12} md={6} className={classes.descriptorLabel}>
+            <Grid item xs={12} md={6} className={"descriptorLabel"}>
               {start ? (
                 <Fragment>Preliminar Results:</Fragment>
               ) : (
@@ -314,7 +309,12 @@ const STResults = ({ results, start }: ISTResults) => {
                 </Fragment>
               )}
             </Grid>
-            <Grid item xs={12} md={6} className={classes.actionButtons}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{ display: "flex", justifyContent: "right", gap: 8 }}
+            >
               {!start && (
                 <Fragment>
                   <Button
@@ -334,118 +334,121 @@ const STResults = ({ results, start }: ISTResults) => {
               )}
             </Grid>
           </Grid>
-          <Grid container className={classes.resultsContainer}>
-            {jsonView ? (
-              <Fragment>
-                <CodeMirrorWrapper value={finalResJSON} onChange={() => {}} />
-              </Fragment>
-            ) : (
-              <Fragment>
-                <Grid
-                  item
-                  xs={12}
-                  sm={12}
-                  md={1}
-                  lg={1}
-                  className={classes.resultsIcon}
-                  alignItems={"flex-end"}
-                >
-                  <ComputerLineIcon width={45} />
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={3}
-                  lg={2}
-                  className={classes.detailedItem}
-                >
-                  Nodes:&nbsp;<strong>{finalRes.servers}</strong>
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={3}
-                  lg={2}
-                  className={classes.detailedItem}
-                >
-                  Drives:&nbsp;<strong>{finalRes.disks}</strong>
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={3}
-                  lg={2}
-                  className={classes.detailedItem}
-                >
-                  Concurrent:&nbsp;<strong>{finalRes.concurrent}</strong>
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={12}
-                  md={12}
-                  lg={5}
-                  className={classes.detailedVersion}
-                >
-                  <span className={classes.versionIcon}>
-                    <VersionIcon />
-                  </span>{" "}
-                  MinIO VERSION&nbsp;<strong>{finalRes.version}</strong>
-                </Grid>
-                <Grid item xs={12} className={classes.tableOverflow}>
-                  <table
-                    className={classes.serversTable}
-                    cellSpacing={0}
-                    cellPadding={0}
+          <Box withBorders useBackground sx={{ marginTop: 15 }}>
+            <Grid container>
+              {jsonView ? (
+                <Fragment>
+                  <CodeMirrorWrapper value={finalResJSON} onChange={() => {}} />
+                </Fragment>
+              ) : (
+                <Fragment>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={12}
+                    md={1}
+                    lg={1}
+                    className={"resultsIcon"}
                   >
-                    <thead>
-                      <tr>
-                        <th colSpan={2}>Servers</th>
-                        <th>GET</th>
-                        <th>PUT</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {statJoin.map((stats, index) => (
-                        <tr key={`storage-${index.toString()}`}>
-                          <td className={classes.serverIcon}>
-                            <StorageIcon />
-                          </td>
-                          <td className={classes.serverHost}>{stats.host}</td>
-                          {stats.getError && stats.getError !== "" ? (
-                            <td>{stats.getError}</td>
-                          ) : (
-                            <Fragment>
-                              <td className={classes.serverValue}>
-                                {prettyNumber(parseFloat(stats.getValue))}&nbsp;
-                                {stats.getUnit}/s.
-                              </td>
-                            </Fragment>
-                          )}
-                          {stats.putError && stats.putError !== "" ? (
-                            <td>{stats.putError}</td>
-                          ) : (
-                            <Fragment>
-                              <td className={classes.serverValue}>
-                                {prettyNumber(parseFloat(stats.putValue))}&nbsp;
-                                {stats.putUnit}/s.
-                              </td>
-                            </Fragment>
-                          )}
+                    <ComputerLineIcon width={45} />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    lg={2}
+                    className={"detailedItem"}
+                  >
+                    Nodes:&nbsp;<strong>{finalRes.servers}</strong>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    lg={2}
+                    className={"detailedItem"}
+                  >
+                    Drives:&nbsp;<strong>{finalRes.disks}</strong>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    lg={2}
+                    className={"detailedItem"}
+                  >
+                    Concurrent:&nbsp;<strong>{finalRes.concurrent}</strong>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={12}
+                    md={12}
+                    lg={5}
+                    className={"detailedVersion"}
+                  >
+                    <span className={"versionIcon"}>
+                      <VersionIcon />
+                    </span>{" "}
+                    MinIO VERSION&nbsp;<strong>{finalRes.version}</strong>
+                  </Grid>
+                  <Grid item xs={12} className={"tableOverflow"}>
+                    <table
+                      className={"serversTable"}
+                      cellSpacing={0}
+                      cellPadding={0}
+                    >
+                      <thead>
+                        <tr>
+                          <th colSpan={2}>Servers</th>
+                          <th>GET</th>
+                          <th>PUT</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </Grid>
-              </Fragment>
-            )}
-          </Grid>
+                      </thead>
+                      <tbody>
+                        {statJoin.map((stats, index) => (
+                          <tr key={`storage-${index.toString()}`}>
+                            <td className={"serverIcon"}>
+                              <StorageIcon />
+                            </td>
+                            <td className={"serverHost"}>{stats.host}</td>
+                            {stats.getError && stats.getError !== "" ? (
+                              <td>{stats.getError}</td>
+                            ) : (
+                              <Fragment>
+                                <td className={"serverValue"}>
+                                  {prettyNumber(parseFloat(stats.getValue))}
+                                  &nbsp;
+                                  {stats.getUnit}/s.
+                                </td>
+                              </Fragment>
+                            )}
+                            {stats.putError && stats.putError !== "" ? (
+                              <td>{stats.putError}</td>
+                            ) : (
+                              <Fragment>
+                                <td className={"serverValue"}>
+                                  {prettyNumber(parseFloat(stats.putValue))}
+                                  &nbsp;
+                                  {stats.putUnit}/s.
+                                </td>
+                              </Fragment>
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </Grid>
+                </Fragment>
+              )}
+            </Grid>
+          </Box>
         </Fragment>
       )}
-    </Fragment>
+    </STResultsContainer>
   );
 };
 
