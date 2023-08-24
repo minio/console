@@ -15,8 +15,98 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
-import { CircleIcon } from "mds";
+import styled from "styled-components";
+import get from "lodash/get";
+import { Box, breakPoints, CircleIcon } from "mds";
+
+const StatusCountBase = styled.div(({ theme }) => ({
+  fontFamily: "Inter,sans-serif",
+  maxWidth: "321px",
+  display: "flex",
+  marginLeft: "auto",
+  marginRight: "auto",
+  cursor: "default",
+  color: get(theme, "signalColors.main", "#07193E"),
+  "& .mainBox": {
+    flex: 1,
+    display: "flex",
+    padding: "0 8px 0 8px",
+    [`@media (max-width: ${breakPoints.sm}px)`]: {
+      padding: "0 10px 0 10px",
+    },
+    "& .indicatorIcon": {
+      width: "20px",
+      height: "20px",
+      marginTop: "8px",
+      maxWidth: "26px",
+      "& .min-icon": {
+        width: "16px",
+        height: "16px",
+      },
+    },
+    "& .indicatorContainer": {
+      flex: 1,
+      display: "flex",
+      flexFlow: "column",
+      "& .indicatorLabel": {
+        fontSize: "16px",
+        fontWeight: 600,
+      },
+      "& .counterIndicator": {
+        display: "flex",
+        alignItems: "center",
+        gap: "5px",
+        justifyContent: "space-between",
+        paddingBottom: 0,
+        fontSize: "55px",
+        [`@media (max-width: ${breakPoints.sm}px)`]: {
+          paddingBottom: 10,
+          fontSize: "35px",
+        },
+        [`@media (max-width: ${breakPoints.lg}px)`]: {
+          fontSize: "45px",
+        },
+        [`@media (max-width: ${breakPoints.xl}px)`]: {
+          fontSize: "50px",
+        },
+        flexFlow: "row",
+        fontWeight: 600,
+
+        "& .stat-text": {
+          color: get(theme, "mutedText", "#87888D"),
+          fontSize: "12px",
+          marginTop: "8px",
+        },
+        "& .stat-value": {
+          textAlign: "center",
+          height: "50px",
+        },
+        "& .min-icon": {
+          marginRight: "8px",
+          marginTop: "8px",
+          height: "10px",
+          width: "10px",
+        },
+      },
+      "& .onlineCounter": {
+        display: "flex",
+        alignItems: "center",
+        marginTop: "5px",
+        "& .min-icon": {
+          fill: get(theme, "signalColors.good", "#4CCB92"),
+        },
+      },
+      "& .offlineCount": {
+        display: "flex",
+        alignItems: "center",
+        marginTop: "8px",
+        "& .min-icon": {
+          fill: get(theme, "signalColors.danger", "#C51B3F"),
+        },
+      },
+    },
+  },
+}));
 
 export const StatusCountCard = ({
   onlineCount = 0,
@@ -34,91 +124,15 @@ export const StatusCountCard = ({
   notOkStatusText?: string;
 }) => {
   return (
-    <Box
-      sx={{
-        fontFamily: "Inter,sans-serif",
-        color: "#07193E",
-        maxWidth: "321px",
-        display: "flex",
-        marginLeft: "auto",
-        marginRight: "auto",
-        cursor: "default",
-      }}
-    >
-      <Box
-        sx={{
-          flex: 1,
-          display: "flex",
-          padding: {
-            sm: "0 8px 0 8px",
-            xs: "0 10px 0 10px",
-          },
-        }}
-      >
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexFlow: "column",
-          }}
-        >
-          <Box
-            sx={{
-              fontSize: "16px",
-              fontWeight: 600,
-            }}
-          >
-            {label}
-          </Box>
+    <StatusCountBase>
+      <Box className={"mainBox"}>
+        <Box className={"indicatorContainer"}>
+          <Box className={"indicatorLabel"}>{label}</Box>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "5px",
-              justifyContent: "space-between",
-              paddingBottom: {
-                md: "0px",
-                xs: "10px",
-              },
-              fontSize: {
-                xl: "55px",
-                lg: "50px",
-                md: "45px",
-                xs: "35px",
-              },
-              flexFlow: "row",
-              fontWeight: 600,
-
-              "& .stat-text": {
-                color: "#696969",
-                fontSize: "12px",
-                marginTop: "8px",
-              },
-              "& .stat-value": {
-                textAlign: "center",
-                height: "50px",
-              },
-              "& .min-icon": {
-                marginRight: "8px",
-                marginTop: "8px",
-                height: "10px",
-                width: "10px",
-              },
-            }}
-          >
+          <Box className={"counterIndicator"}>
             <Box>
               <Box className="stat-value">{onlineCount}</Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginTop: "5px",
-                  "& .min-icon": {
-                    fill: "#4CCB92",
-                  },
-                }}
-              >
+              <Box className={"onlineCounter"}>
                 <CircleIcon />
                 <div className="stat-text">{okStatusText}</div>
               </Box>
@@ -126,38 +140,16 @@ export const StatusCountCard = ({
 
             <Box>
               <Box className="stat-value">{offlineCount}</Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginTop: "8px",
-                  "& .min-icon": {
-                    fill: "#C83B51",
-                  },
-                }}
-              >
+              <Box className={"offlineCount"}>
                 <CircleIcon />{" "}
                 <div className="stat-text">{notOkStatusText}</div>
               </Box>
             </Box>
           </Box>
         </Box>
-        <Box
-          sx={{
-            width: "20px",
-            height: "20px",
-            marginTop: "8px",
-            maxWidth: "26px",
-            "& .min-icon": {
-              width: "16px",
-              height: "16px",
-            },
-          }}
-        >
-          {icon}
-        </Box>
+        <Box className={"indicatorIcon"}>{icon}</Box>
       </Box>
-    </Box>
+    </StatusCountBase>
   );
 };
 

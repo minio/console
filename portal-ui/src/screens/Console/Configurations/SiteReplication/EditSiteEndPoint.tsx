@@ -15,10 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { Button, EditIcon } from "mds";
-import { Box, DialogContentText } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { Box, Button, EditIcon, Grid, InputBox, InputLabel } from "mds";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import useApi from "../../Common/Hooks/useApi";
 import {
@@ -26,31 +23,24 @@ import {
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import withStyles from "@mui/styles/withStyles";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
+import styled from "styled-components";
+import get from "lodash/get";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalStyleUtils,
-    ...formFieldStyles,
-    ...spacingUtils,
-  });
+const SiteEndpointContainer = styled.div(({ theme }) => ({
+  "& .alertText": {
+    color: get(theme, "signalColors.danger", "#C51B3F"),
+  },
+}));
+
 const EditSiteEndPoint = ({
   editSite = {},
   onClose,
   onComplete,
-  classes = {},
 }: {
   editSite: any;
   onClose: () => void;
   onComplete: () => void;
-  classes: any;
 }) => {
   const dispatch = useAppDispatch();
   const [editEndPointName, setEditEndPointName] = useState<string>("");
@@ -99,7 +89,7 @@ const EditSiteEndPoint = ({
       titleIcon={<EditIcon />}
       onClose={onClose}
     >
-      <DialogContentText>
+      <SiteEndpointContainer>
         <Box
           sx={{
             display: "flex",
@@ -118,8 +108,8 @@ const EditSiteEndPoint = ({
         </Box>
 
         <Grid item xs={12}>
-          <Box sx={{ marginBottom: "5px" }}> New Endpoint:</Box>
-          <InputBoxWrapper
+          <InputLabel sx={{ marginBottom: 5 }}>New Endpoint:</InputLabel>
+          <InputBox
             id="edit-rep-peer-endpoint"
             name="edit-rep-peer-endpoint"
             placeholder={"https://dr.minio-storage:9000"}
@@ -130,31 +120,32 @@ const EditSiteEndPoint = ({
             value={editEndPointName}
           />
         </Grid>
-        <Grid item xs={12} marginBottom={"15px"}>
-          <Box
-            sx={{
-              fontStyle: "italic",
-              display: "flex",
-              alignItems: "center",
-              fontSize: "12px",
-              marginTop: 2,
-            }}
-          >
-            <Box sx={{ fontWeight: 600 }}>Note:</Box>{" "}
-            <Box sx={{ marginLeft: 1, color: "red" }}>
-              Access Key and Secret Key should be same on the new site/endpoint.
-            </Box>
-          </Box>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            marginBottom: 15,
+            fontStyle: "italic",
+            display: "flex",
+            alignItems: "center",
+            fontSize: "12px",
+            marginTop: 2,
+          }}
+        >
+          <strong>Note:</strong>&nbsp;
+          <span className={"alertText"}>
+            Access Key and Secret Key should be same on the new site/endpoint.
+          </span>
         </Grid>
-      </DialogContentText>
+      </SiteEndpointContainer>
 
-      <Grid item xs={12} className={classes.modalButtonBar}>
+      <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
         <Button
           id={"close"}
           type="button"
           variant="regular"
           onClick={onClose}
-          label={"Close"}
+          label={"Cancel"}
         />
         <Button
           id={"update"}
@@ -168,4 +159,4 @@ const EditSiteEndPoint = ({
     </ModalWrapper>
   );
 };
-export default withStyles(styles)(EditSiteEndPoint);
+export default EditSiteEndPoint;

@@ -15,30 +15,31 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Box, Grid } from "@mui/material";
 import {
   BackLink,
+  Box,
+  breakPoints,
   BucketsIcon,
   Button,
+  Grid,
   GroupsIcon,
   IAMPoliciesIcon,
   Loader,
   PageLayout,
   RefreshIcon,
   UsersIcon,
+  SectionTitle,
 } from "mds";
-import useApi from "../../Common/Hooks/useApi";
-
+import { useNavigate } from "react-router-dom";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
-import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
+import { useAppDispatch } from "../../../../store";
+import { setHelpName } from "../../../../systemSlice";
+import useApi from "../../Common/Hooks/useApi";
 import StatusCountCard from "../../Dashboard/BasicDashboard/StatusCountCard";
 import EntityReplicationLookup from "./EntityReplicationLookup";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import { useNavigate } from "react-router-dom";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
-import { useAppDispatch } from "../../../../store";
-import { setHelpName } from "../../../../systemSlice";
 
 export type StatsResponseType = {
   maxBuckets?: number;
@@ -66,11 +67,11 @@ const SREntityStatus = ({
   const statEntityLen = Object.keys(entityStatObj || {})?.length;
   return (
     <Box
+      withBorders
       sx={{
-        border: "1px solid #f1f1f1",
         padding: "25px",
-        maxWidth: {
-          sm: "100%",
+        [`@media (min-width: ${breakPoints.sm}px)`]: {
+          maxWidth: "100%",
         },
       }}
     >
@@ -140,8 +141,7 @@ const SiteReplicationStatus = () => {
       />
 
       <PageLayout>
-        <ScreenTitle
-          title={"Replication status from all Sites"}
+        <SectionTitle
           actions={
             <Fragment>
               <TooltipWrapper tooltip={"Refresh"}>
@@ -158,17 +158,22 @@ const SiteReplicationStatus = () => {
               </TooltipWrapper>
             </Fragment>
           }
-        />
+          separator
+        >
+          Replication status from all Sites
+        </SectionTitle>
 
         {!isStatsLoading ? (
           <Box
             sx={{
               display: "grid",
               marginTop: "25px",
-              gridTemplateColumns: {
-                md: "1fr 1fr 1fr 1fr",
-                sm: "1fr 1fr",
-                xs: "1fr",
+              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              [`@media (max-width: ${breakPoints.md}px)`]: {
+                gridTemplateColumns: "1fr 1fr",
+              },
+              [`@media (max-width: ${breakPoints.sm}px)`]: {
+                gridTemplateColumns: "1fr",
               },
               gap: "30px",
             }}
@@ -202,21 +207,23 @@ const SiteReplicationStatus = () => {
           <Grid
             item
             xs={12}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            marginTop={"45px"}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginTop: 45,
+            }}
           >
             <Loader style={{ width: 25, height: 25 }} />
           </Grid>
         )}
 
         <Box
+          withBorders
           sx={{
-            border: "1px solid #eaeaea",
-            minHeight: {
-              sm: "450px",
-              xs: "250px",
+            minHeight: 450,
+            [`@media (max-width: ${breakPoints.sm}px)`]: {
+              minHeight: 250,
             },
             marginTop: "25px",
             padding: "25px",

@@ -15,10 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { Box, Grid } from "@mui/material";
-import { Button, ClustersIcon, Loader } from "mds";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import {
+  Box,
+  breakPoints,
+  Button,
+  ClustersIcon,
+  Grid,
+  Loader,
+  Select,
+  InputBox,
+} from "mds";
 import useApi from "../../Common/Hooks/useApi";
 import { StatsResponseType } from "./SiteReplicationStatus";
 import BucketEntityStatus from "./LookupStatus/BucketEntityStatus";
@@ -67,10 +73,12 @@ const EntityReplicationLookup = () => {
         sx={{
           display: "grid",
           alignItems: "center",
-          gridTemplateColumns: {
-            md: ".7fr .9fr 1.2fr .3fr",
-            sm: "1.2fr .7fr .7fr .3fr",
-            xs: "1fr",
+          gridTemplateColumns: ".7fr .9fr 1.2fr .3fr",
+          [`@media (max-width: ${breakPoints.sm}px)`]: {
+            gridTemplateColumns: "1fr",
+          },
+          [`@media (max-width: ${breakPoints.md}px)`]: {
+            gridTemplateColumns: "1.2fr .7fr .7fr .3fr",
           },
           gap: "15px",
         }}
@@ -80,17 +88,17 @@ const EntityReplicationLookup = () => {
         </Box>
         <Box
           sx={{
-            marginLeft: {
-              md: "-25px",
-              xs: "0px",
+            marginLeft: -25,
+            [`@media (max-width: ${breakPoints.sm}px)`]: {
+              marginLeft: 0,
             },
           }}
         >
-          <SelectWrapper
+          <Select
             id="replicationEntityLookup"
             name="replicationEntityLookup"
-            onChange={(e) => {
-              setEntityType(e.target.value);
+            onChange={(value) => {
+              setEntityType(value);
               setStatsLoaded(false);
             }}
             label=""
@@ -122,7 +130,7 @@ const EntityReplicationLookup = () => {
             flex: 2,
           }}
         >
-          <InputBoxWrapper
+          <InputBox
             id="replicationLookupEntityValue"
             name="replicationLookupEntityValue"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,10 +167,12 @@ const EntityReplicationLookup = () => {
         <Grid
           item
           xs={12}
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          marginTop={"45px"}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 45,
+          }}
         >
           <Loader style={{ width: 25, height: 25 }} />
         </Grid>

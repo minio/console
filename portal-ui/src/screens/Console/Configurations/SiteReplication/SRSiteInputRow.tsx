@@ -15,12 +15,22 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Box } from "@mui/material";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import Grid from "@mui/material/Grid";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import { AddIcon, Button, RemoveIcon } from "mds";
+import { AddIcon, Box, Button, Grid, InputBox, RemoveIcon } from "mds";
 import { SiteInputRow } from "./Types";
+
+interface ISRSiteInputRowProps {
+  rowData: SiteInputRow;
+  rowId: number;
+  onFieldChange: (e: any, fieldName: string, index: number) => void;
+  onAddClick?: (index: number) => void;
+  onRemoveClick?: (index: number) => void;
+  canAdd?: boolean;
+  canRemove?: boolean;
+  showRowActions?: boolean;
+  disabledFields?: string[];
+  fieldErrors?: Record<string, string>;
+}
 
 const SRSiteInputRow = ({
   rowData,
@@ -33,30 +43,17 @@ const SRSiteInputRow = ({
   showRowActions = true,
   disabledFields = [],
   fieldErrors = {},
-}: {
-  rowData: SiteInputRow;
-  rowId: number;
-  onFieldChange: (e: any, fieldName: string, index: number) => void;
-  onAddClick?: (index: number) => void;
-  onRemoveClick?: (index: number) => void;
-  canAdd?: boolean;
-  canRemove?: boolean;
-  showRowActions?: boolean;
-  disabledFields?: string[];
-  fieldErrors?: Record<string, string>;
-}) => {
+}: ISRSiteInputRowProps) => {
   const { endpoint = "", accessKey = "", secretKey = "", name = "" } = rowData;
   return (
     <Fragment key={`${index}`}>
       <Box>
-        <InputBoxWrapper
+        <InputBox
           id={`add-rep-peer-site-${index}`}
           name={`add-rep-peer-site-${index}`}
           placeholder={`site-name`}
           label=""
-          extraInputProps={{
-            readOnly: disabledFields.includes("name"),
-          }}
+          readOnly={disabledFields.includes("name")}
           value={name}
           onChange={(e) => {
             onFieldChange(e, "name", index);
@@ -65,14 +62,12 @@ const SRSiteInputRow = ({
         />
       </Box>
       <Box>
-        <InputBoxWrapper
+        <InputBox
           id={`add-rep-peer-site-ep-${index}`}
           name={`add-rep-peer-site-ep-${index}`}
           placeholder={`https://dr.minio-storage:900${index}`}
           label=""
-          extraInputProps={{
-            readOnly: disabledFields.includes("endpoint"),
-          }}
+          readOnly={disabledFields.includes("endpoint")}
           error={fieldErrors["endpoint"]}
           value={endpoint}
           onChange={(e) => {
@@ -83,7 +78,7 @@ const SRSiteInputRow = ({
       </Box>
 
       <Box>
-        <InputBoxWrapper
+        <InputBox
           id={`add-rep-peer-site-ac-${index}`}
           name={`add-rep-peer-site-ac-${index}`}
           label=""
@@ -98,7 +93,7 @@ const SRSiteInputRow = ({
         />
       </Box>
       <Box>
-        <InputBoxWrapper
+        <InputBox
           id={`add-rep-peer-site-sk-${index}`}
           name={`add-rep-peer-site-sk-${index}`}
           label=""
@@ -113,7 +108,7 @@ const SRSiteInputRow = ({
           data-test-id={`add-rep-peer-site-sk-${index}`}
         />
       </Box>
-      <Grid item xs={12} alignItems={"center"} display={"flex"}>
+      <Grid item xs={12} sx={{ alignItems: "center", display: "flex" }}>
         <Box
           sx={{
             display: "flex",

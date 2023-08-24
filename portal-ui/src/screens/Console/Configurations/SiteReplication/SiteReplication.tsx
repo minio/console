@@ -16,31 +16,32 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { Box, DialogContentText, Grid } from "@mui/material";
-import useApi from "../../Common/Hooks/useApi";
-import ReplicationSites from "./ReplicationSites";
 import {
+  ActionLink,
   AddIcon,
+  Box,
   Button,
   ClustersIcon,
   ConfirmDeleteIcon,
+  Grid,
   HelpBox,
   Loader,
   PageLayout,
   RecoverIcon,
+  SectionTitle,
   TrashIcon,
 } from "mds";
 import { ErrorResponseHandler } from "../../../../common/types";
-import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import {
   setErrorSnackMessage,
   setHelpName,
   setSnackBarMessage,
 } from "../../../../systemSlice";
-import AButton from "../../Common/AButton/AButton";
 import { useAppDispatch } from "../../../../store";
+import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
+import useApi from "../../Common/Hooks/useApi";
+import ReplicationSites from "./ReplicationSites";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
@@ -120,59 +121,64 @@ const SiteReplication = () => {
   return (
     <Fragment>
       <PageHeaderWrapper label={"Site Replication"} actions={<HelpMenu />} />
-
       <PageLayout>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-            "& button": {
-              marginLeft: "8px",
-            },
-          }}
-        >
-          {hasSites ? (
-            <Fragment>
-              <TooltipWrapper tooltip={"Delete All"}>
-                <Button
-                  id={"delete-all"}
-                  label={"Delete All"}
-                  variant="secondary"
-                  disabled={isRemoving}
-                  icon={<TrashIcon />}
-                  onClick={() => {
-                    setIsDeleteAll(true);
-                  }}
-                />
-              </TooltipWrapper>
-              <TooltipWrapper tooltip={"Replication Status"}>
-                <Button
-                  id={"replication-status"}
-                  label={"Replication Status"}
-                  variant="regular"
-                  icon={<RecoverIcon />}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate(IAM_PAGES.SITE_REPLICATION_STATUS);
-                  }}
-                />
-              </TooltipWrapper>
-            </Fragment>
-          ) : null}
-          <TooltipWrapper tooltip={"Add Replication Sites"}>
-            <Button
-              id={"add-replication-site"}
-              label={"Add Sites"}
-              variant="callAction"
-              disabled={isRemoving}
-              icon={<AddIcon />}
-              onClick={() => {
-                navigate(IAM_PAGES.SITE_REPLICATION_ADD);
+        <SectionTitle
+          separator={!!hasSites}
+          sx={{ marginBottom: 15 }}
+          actions={
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                gap: 8,
               }}
-            />
-          </TooltipWrapper>
-        </Box>
+            >
+              {hasSites ? (
+                <Fragment>
+                  <TooltipWrapper tooltip={"Delete All"}>
+                    <Button
+                      id={"delete-all"}
+                      label={"Delete All"}
+                      variant="secondary"
+                      disabled={isRemoving}
+                      icon={<TrashIcon />}
+                      onClick={() => {
+                        setIsDeleteAll(true);
+                      }}
+                    />
+                  </TooltipWrapper>
+                  <TooltipWrapper tooltip={"Replication Status"}>
+                    <Button
+                      id={"replication-status"}
+                      label={"Replication Status"}
+                      variant="regular"
+                      icon={<RecoverIcon />}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(IAM_PAGES.SITE_REPLICATION_STATUS);
+                      }}
+                    />
+                  </TooltipWrapper>
+                </Fragment>
+              ) : null}
+              <TooltipWrapper tooltip={"Add Replication Sites"}>
+                <Button
+                  id={"add-replication-site"}
+                  label={"Add Sites"}
+                  variant="callAction"
+                  disabled={isRemoving}
+                  icon={<AddIcon />}
+                  onClick={() => {
+                    navigate(IAM_PAGES.SITE_REPLICATION_ADD);
+                  }}
+                />
+              </TooltipWrapper>
+            </Box>
+          }
+        >
+          {hasSites ? "List of Replicated Sites" : ""}
+        </SectionTitle>
         {hasSites ? (
           <ReplicationSites
             sites={sites}
@@ -193,12 +199,7 @@ const SiteReplication = () => {
           </Box>
         ) : null}
         {!hasSites && !isSiteInfoLoading ? (
-          <Grid
-            container
-            justifyContent={"center"}
-            alignContent={"center"}
-            alignItems={"center"}
-          >
+          <Grid container>
             <Grid item xs={8}>
               <HelpBox
                 title={"Site Replication"}
@@ -211,13 +212,15 @@ const SiteReplication = () => {
                     <br />
                     <br />
                     To get started,{" "}
-                    <AButton
+                    <ActionLink
+                      isLoading={false}
+                      label={""}
                       onClick={() => {
                         navigate(IAM_PAGES.SITE_REPLICATION_ADD);
                       }}
                     >
                       Add a Replication Site
-                    </AButton>
+                    </ActionLink>
                     .
                     <br />
                     You can learn more at our{" "}
@@ -294,9 +297,9 @@ const SiteReplication = () => {
               setIsDeleteAll(false);
             }}
             confirmationContent={
-              <DialogContentText>
+              <Fragment>
                 Are you sure you want to remove all the replication sites?.
-              </DialogContentText>
+              </Fragment>
             }
           />
         ) : null}

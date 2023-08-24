@@ -15,8 +15,56 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
-import { CircleIcon } from "mds";
+import styled from "styled-components";
+import get from "lodash/get";
+import { Box, CircleIcon } from "mds";
+
+const LookupTableBase = styled.div(({ theme }) => ({
+  marginTop: 15,
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    "& .feature-cell": {
+      fontWeight: 600,
+      fontSize: 14,
+      paddingLeft: 15,
+    },
+    "& .status-cell": {
+      textAlign: "center",
+    },
+    "& .header-cell": {
+      textAlign: "center",
+    },
+    "& tr": {
+      height: 38,
+      "& td": {
+        borderBottom: `1px solid ${get(theme, "borderColor", "#E2E2E2")}`,
+      },
+      "& th": {
+        borderBottom: `2px solid ${get(theme, "borderColor", "#E2E2E2")}`,
+      },
+    },
+    "& .indicator": {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      "& .min-icon": {
+        height: 15,
+        width: 15,
+      },
+      "&.active": {
+        "& .min-icon": {
+          fill: get(theme, "signalColors.good", "#4CCB92"),
+        },
+      },
+      "&.deactivated": {
+        "& .min-icon": {
+          fill: get(theme, "signalColors.danger", "#C51B3F"),
+        },
+      },
+    },
+  },
+}));
 
 const LookupStatusTable = ({
   matrixData = [],
@@ -32,9 +80,9 @@ const LookupStatusTable = ({
 
   const tableHeader = header.map((hC: string, hcIdx: number) => {
     return (
-      <td className="header-cell" key={`${0}${hcIdx}`}>
+      <th className="header-cell" key={`${0}${hcIdx}`}>
         {hC}
-      </td>
+      </th>
     );
   });
 
@@ -51,35 +99,13 @@ const LookupStatusTable = ({
           }
           if (v === true) {
             indicator = (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  "& .min-icon": {
-                    fill: "#4CCB92",
-                    height: "15px",
-                    width: "15px",
-                  },
-                }}
-              >
+              <Box className={`indicator active`}>
                 <CircleIcon />
               </Box>
             );
           } else if (v === false) {
             indicator = (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  "& .min-icon": {
-                    fill: "#C83B51",
-                    height: "15px",
-                    width: "15px",
-                  },
-                }}
-              >
+              <Box className={`indicator deactivated`}>
                 <CircleIcon />
               </Box>
             );
@@ -99,34 +125,8 @@ const LookupStatusTable = ({
   });
 
   return (
-    <Box
-      sx={{
-        marginTop: "15px",
-        table: {
-          width: "100%",
-          borderCollapse: "collapse",
-
-          "& .feature-cell": {
-            fontWeight: 600,
-            fontSize: "14px",
-            paddingLeft: "15px",
-          },
-          "& .status-cell": {
-            textAlign: "center",
-          },
-          "& .header-cell": {
-            textAlign: "center",
-          },
-          "& tr": {
-            height: "38px",
-          },
-          "tr td ": {
-            border: "1px solid #f1f1f1",
-          },
-        },
-      }}
-    >
-      <Box sx={{ marginTop: "15px", marginBottom: "15px" }}>
+    <LookupTableBase>
+      <Box sx={{ marginTop: 15, marginBottom: 15 }}>
         Replication status for {entityType}: <strong>{entityName}</strong>.
       </Box>
       <table>
@@ -135,7 +135,7 @@ const LookupStatusTable = ({
         </thead>
         <tbody>{tableRowsToRender}</tbody>
       </table>
-    </Box>
+    </LookupTableBase>
   );
 };
 
