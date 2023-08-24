@@ -13,83 +13,33 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { useEffect, useState } from "react";
-import {
-  FormControl,
-  Grid,
-  InputBase,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+
+import React, { useEffect, useState, Fragment } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import { Button, PageLayout } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import {
+  Box,
+  Button,
+  DataTable,
+  Grid,
+  InputBox,
+  InputLabel,
+  PageLayout,
+  Select,
+} from "mds";
 import { AppState, useAppDispatch } from "../../../store";
 import { Bucket, BucketList, EventInfo } from "./types";
 import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-  tableStyles,
-} from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import api from "../../../common/api";
-import makeStyles from "@mui/styles/makeStyles";
 import { watchMessageReceived, watchResetMessages } from "./watchSlice";
+import { setHelpName } from "../../../systemSlice";
+import api from "../../../common/api";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
-import { setHelpName } from "../../../systemSlice";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    searchPrefix: {
-      flexGrow: 1,
-      marginLeft: 15,
-    },
-    watchTableHeight: {
-      height: "calc(100vh - 270px)",
-    },
-    bucketField: {
-      flexGrow: 2,
-      minWidth: 200,
-    },
-    ...tableStyles,
-    ...actionsTray,
-    ...searchField,
-    ...containerForHeader,
-  }),
-);
-
-const SelectStyled = withStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      lineHeight: "50px",
-      "label + &": {
-        marginTop: theme.spacing(3),
-      },
-      "& .MuiSelect-select:focus": {
-        backgroundColor: "transparent",
-      },
-    },
-    input: {
-      height: 50,
-      fontSize: 13,
-      lineHeight: "50px",
-    },
-  }),
-)(InputBase);
 
 const Watch = () => {
   const dispatch = useAppDispatch();
-  const classes = useStyles();
-
   const messages = useSelector((state: AppState) => state.watch.messages);
 
   const [start, setStart] = useState(false);
@@ -177,89 +127,83 @@ const Watch = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <React.Fragment>
-      <PageHeaderWrapper label="Watch" actions={<HelpMenu />} />
+  const optionsArray = bucketNames.map((option) => ({
+    label: option.label,
+    value: option.value,
+  }));
 
+  return (
+    <Fragment>
+      <PageHeaderWrapper label="Watch" actions={<HelpMenu />} />
       <PageLayout>
-        <Grid container spacing={1} item xs={12}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <FormControl variant="outlined" className={classes.bucketField}>
+        <Grid container>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              gap: 10,
+              marginBottom: 15,
+              alignItems: "center",
+            }}
+          >
+            <Box sx={{ flexGrow: 1 }}>
+              <InputLabel>Bucket</InputLabel>
               <Select
                 id="bucket-name"
                 name="bucket-name"
                 value={bucketName}
-                onChange={(e) => {
-                  setBucketName(e.target.value as string);
+                onChange={(value) => {
+                  setBucketName(value as string);
                 }}
-                className={classes.searchField}
                 disabled={start}
-                input={<SelectStyled />}
-              >
-                <MenuItem
-                  value={bucketName}
-                  key={`select-bucket-name-default`}
-                  disabled={true}
-                >
-                  Select Bucket
-                </MenuItem>
-                {bucketNames.map((option) => (
-                  <MenuItem
-                    value={option.value}
-                    key={`select-bucket-name-${option.label}`}
-                  >
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              className={`${classes.searchField} ${classes.searchPrefix}`}
-              id="prefix-resource"
-              label="Prefix"
-              disabled={start}
-              InputProps={{
-                disableUnderline: true,
-              }}
-              onChange={(e) => {
-                setPrefix(e.target.value);
-              }}
-              variant="standard"
-            />
-            <TextField
-              className={`${classes.searchField} ${classes.searchPrefix}`}
-              id="suffix-resource"
-              label="Suffix"
-              disabled={start}
-              InputProps={{
-                disableUnderline: true,
-              }}
-              onChange={(e) => {
-                setSuffix(e.target.value);
-              }}
-              variant="standard"
-            />
-            {start ? (
-              <Button
-                id={"stop-watch"}
-                type="submit"
-                variant="callAction"
-                onClick={() => setStart(false)}
-                label={"Stop"}
+                options={optionsArray}
+                placeholder={"Select Bucket"}
               />
-            ) : (
-              <Button
-                id={"start-watch"}
-                type="submit"
-                variant="callAction"
-                onClick={() => setStart(true)}
-                label={"Start"}
+            </Box>
+            <Box sx={{ flexGrow: 1 }}>
+              <InputLabel>Prefix</InputLabel>
+              <InputBox
+                id="prefix-resource"
+                disabled={start}
+                onChange={(e) => {
+                  setPrefix(e.target.value);
+                }}
               />
-            )}
+            </Box>
+            <Box sx={{ flexGrow: 1 }}>
+              <InputLabel>Suffix</InputLabel>
+              <InputBox
+                id="suffix-resource"
+                disabled={start}
+                onChange={(e) => {
+                  setSuffix(e.target.value);
+                }}
+              />
+            </Box>
+            <Box sx={{ alignSelf: "flex-end", paddingBottom: 4 }}>
+              {start ? (
+                <Button
+                  id={"stop-watch"}
+                  type="submit"
+                  variant="callAction"
+                  onClick={() => setStart(false)}
+                  label={"Stop"}
+                />
+              ) : (
+                <Button
+                  id={"start-watch"}
+                  type="submit"
+                  variant="callAction"
+                  onClick={() => setStart(true)}
+                  label={"Start"}
+                />
+              )}
+            </Box>
           </Grid>
 
-          <Grid item xs={12} className={classes.tableBlock}>
-            <TableWrapper
+          <Grid item xs={12}>
+            <DataTable
               columns={[
                 {
                   label: "Time",
@@ -279,12 +223,12 @@ const Watch = () => {
               customEmptyMessage={"No Changes at this time"}
               idField={"watch_table"}
               isLoading={false}
-              customPaperHeight={classes.watchTableHeight}
+              customPaperHeight={"calc(100vh - 270px)"}
             />
           </Grid>
         </Grid>
       </PageLayout>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
