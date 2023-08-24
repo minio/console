@@ -13,61 +13,55 @@
 //
 //  You should have received a copy of the GNU Affero General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-import { calculateBytes } from "../../../common/utils";
 import React from "react";
-import withStyles from "@mui/styles/withStyles";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import clsx from "clsx";
+import styled from "styled-components";
+import get from "lodash/get";
+import { calculateBytes } from "../../../common/utils";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    objectGeneralTitle: {
-      lineHeight: 1,
-      fontSize: 50,
-      color: "#696969",
-    },
-    generalUnit: {
-      color: "#000",
-      fontSize: 12,
-      fontWeight: "bold",
-    },
-    testUnitRes: {
-      fontSize: 60,
-      color: "#081C42",
-      fontWeight: "bold",
-      textAlign: "right",
-    },
-    metricValContainer: {
-      lineHeight: 1,
-      verticalAlign: "bottom",
-    },
-    objectsUnitRes: {
-      fontSize: 22,
-      marginTop: 6,
-      color: "#696969",
-      fontWeight: "bold",
-      textAlign: "right",
-    },
-    objectsUnit: {
-      color: "#696969",
-      fontSize: 16,
-      fontWeight: "bold",
-    },
-    iconTd: {
-      verticalAlign: "bottom",
-    },
-  });
+const SpeedTestUnitBase = styled.table(({ theme }) => ({
+  "& .objectGeneralTitle": {
+    lineHeight: 1,
+    fontSize: 50,
+    color: get(theme, "mutedText", "#87888d"),
+  },
+  "& .generalUnit": {
+    color: get(theme, "fontColor", "#000"),
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  "& .testUnitRes": {
+    fontSize: 60,
+    color: get(theme, "signalColors.main", "#07193E"),
+    fontWeight: "bold",
+    textAlign: "right",
+  },
+  "& .metricValContainer": {
+    lineHeight: 1,
+    verticalAlign: "bottom",
+  },
+  "& .objectsUnitRes": {
+    fontSize: 22,
+    marginTop: 6,
+    color: get(theme, "mutedText", "#87888d"),
+    fontWeight: "bold",
+    textAlign: "right",
+  },
+  "& .objectsUnit": {
+    color: get(theme, "mutedText", "#87888d"),
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  "& .iconTd": {
+    verticalAlign: "bottom",
+  },
+}));
 
 const SpeedTestUnit = ({
-  classes,
   title,
   icon,
   throughput,
   objects,
 }: {
-  classes: any;
   title: any;
   icon: any;
   throughput: string;
@@ -84,30 +78,22 @@ const SpeedTestUnit = ({
   }
 
   return (
-    <table>
+    <SpeedTestUnitBase>
       <tr>
-        <td className={classes.objectGeneralTitle}>{title}</td>
-        <td className={classes.iconTd}>{icon}</td>
+        <td className={"objectGeneralTitle"}>{title}</td>
+        <td className={"iconTd"}>{icon}</td>
       </tr>
       <tr>
-        <td className={clsx(classes.metricValContainer, classes.testUnitRes)}>
-          {total}
-        </td>
-        <td className={clsx(classes.metricValContainer, classes.generalUnit)}>
-          {unit}
-        </td>
+        <td className={`metricValContainer testUnitRes`}>{total}</td>
+        <td className={`metricValContainer generalUnit`}>{unit}</td>
       </tr>
       <tr>
-        <td
-          className={clsx(classes.metricValContainer, classes.objectsUnitRes)}
-        >
-          {objects}
-        </td>
-        <td className={clsx(classes.metricValContainer, classes.objectsUnit)}>
+        <td className={`metricValContainer objectsUnitRes`}>{objects}</td>
+        <td className={`metricValContainer objectsUnit`}>
           {objects !== 0 && "Objs/S"}
         </td>
       </tr>
-    </table>
+    </SpeedTestUnitBase>
   );
 };
-export default withStyles(styles)(SpeedTestUnit);
+export default SpeedTestUnit;
