@@ -14,13 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
-import { styled } from "@mui/material/styles";
-import LinearProgress, {
-  linearProgressClasses,
-  LinearProgressProps,
-} from "@mui/material/LinearProgress";
-import Box from "@mui/material/Box";
+import React from "react";
+import { ProgressBar, ProgressBarProps } from "mds";
 
 interface IProgressBarWrapper {
   value: number;
@@ -30,62 +25,28 @@ interface IProgressBarWrapper {
   size?: string;
   error?: boolean;
   cancelled?: boolean;
+  notificationLabel?: string;
 }
 
-const BorderLinearProgress = styled(LinearProgress)(() => ({
-  height: 10,
-  borderRadius: 5,
-  [`&.${linearProgressClasses.colorPrimary}`]: {
-    backgroundColor: "#f1f1f1",
-  },
-  [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
-  },
-}));
-const SmallBorderLinearProgress = styled(BorderLinearProgress)(() => ({
-  height: 6,
-  borderRadius: 3,
-  [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 3,
-  },
-}));
-
 function LinearProgressWithLabel(
-  props: { error: boolean; cancelled: boolean } & LinearProgressProps,
+  props: { error: boolean; cancelled: boolean } & ProgressBarProps,
 ) {
-  let color = "#000";
-  let size = 18;
+  let label = "";
 
   if (props.error) {
-    color = "#C83B51";
-    size = 14;
+    label = `Error: ${props.notificationLabel || ""}`;
   } else if (props.cancelled) {
-    color = "#FFBD62";
-    size = 14;
+    label = `Cancelled`;
   }
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ width: "100%", mr: 3 }}>
-        <BorderLinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box
-        sx={{
-          minWidth: 35,
-          fontSize: size,
-          color: color,
-        }}
-        className={"value"}
-      >
-        {props.cancelled ? (
-          "Cancelled"
-        ) : (
-          <Fragment>
-            {props.error ? "Failed" : `${Math.round(props.value || 0)}%`}
-          </Fragment>
-        )}
-      </Box>
-    </Box>
+    <ProgressBar
+      variant={"determinate"}
+      value={props.value}
+      color={props.color}
+      progressLabel
+      notificationLabel={label}
+    />
   );
 }
 
@@ -97,22 +58,24 @@ const ProgressBarWrapper = ({
   size = "regular",
   error,
   cancelled,
+  notificationLabel,
 }: IProgressBarWrapper) => {
   let color: any;
   if (error) {
-    color = "error";
+    color = "red";
   } else if (cancelled) {
-    color = "warning";
+    color = "orange";
   } else if (value === 100 && ready) {
-    color = "success";
+    color = "green";
   } else {
-    color = "primary";
+    color = "blue";
   }
-  const propsComponent: LinearProgressProps = {
+  const propsComponent: ProgressBarProps = {
     variant:
       indeterminate && !ready && !cancelled ? "indeterminate" : "determinate",
     value: ready ? 100 : value,
     color: color,
+    notificationLabel: notificationLabel || "",
   };
   if (withLabel) {
     return (
@@ -124,10 +87,12 @@ const ProgressBarWrapper = ({
     );
   }
   if (size === "small") {
-    return <SmallBorderLinearProgress {...propsComponent} />;
+    return (
+      <ProgressBar {...propsComponent} sx={{ height: 6, borderRadius: 6 }} />
+    );
   }
 
-  return <BorderLinearProgress {...propsComponent} />;
+  return <ProgressBar {...propsComponent} />;
 };
 
 export default ProgressBarWrapper;

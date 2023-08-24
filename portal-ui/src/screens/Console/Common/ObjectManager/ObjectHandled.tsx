@@ -249,15 +249,14 @@ const ObjectHandled = ({
               error={objectToDisplay.failed}
               cancelled={objectToDisplay.cancelled}
               withLabel
+              notificationLabel={
+                objectToDisplay.errorMessage !== ""
+                  ? objectToDisplay.errorMessage
+                  : ""
+              }
             />
           )}
         </div>
-        {objectToDisplay.errorMessage !== "" && (
-          <div className={classes.errorMessage}>
-            <strong>Error: </strong>
-            {objectToDisplay.errorMessage}
-          </div>
-        )}
       </div>
     </Fragment>
   );
