@@ -59,7 +59,7 @@ export const deleteAllVersions =
 //----------------------------------------------------
 // Inputs
 //----------------------------------------------------
-export const bucketNameInput = Selector("#bucket-name");
+export const bucketNameInput = Selector("#bucket-name-select");
 export const bucketsPrefixInput = Selector("#prefix");
 export const bucketsAccessInput = Selector("div.selectContainer");
 export const bucketsAccessReadOnlyInput = Selector("li").withText("readonly");
@@ -85,8 +85,7 @@ export const groupUserCheckbox = Selector(".ReactVirtualized__Table__row input")
 // Dropdowns and options
 //----------------------------------------------------
 export const bucketDropdownOptionFor = (modifier) => {
-  return Selector("li").withAttribute(
-    "data-value",
+  return Selector("#bucket-name-options-selector li").withText(
     `${constants.TEST_BUCKET_NAME}-${modifier}`,
   );
 };
