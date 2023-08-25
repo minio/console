@@ -24,16 +24,13 @@ import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
   IAM_SCOPES,
-} from "../../../../common/SecureComponent/permissions";
-import {
-  hasPermission,
-  SecureComponent,
-} from "../../../../common/SecureComponent";
-import { encodeURLString } from "../../../../common/utils";
-import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
-import { selBucketDetailsLoading } from "./bucketDetailsSlice";
-import { useAppDispatch } from "../../../../store";
-import { Policy } from "../../../../api/consoleApi";
+} from "common/SecureComponent/permissions";
+import { hasPermission, SecureComponent } from "common/SecureComponent";
+import { encodeURLString } from "common/utils";
+import { setErrorSnackMessage, setHelpName } from "systemSlice";
+import { selBucketDetailsLoading } from "screens/Console/Buckets/BucketDetails/bucketDetailsSlice";
+import { useAppDispatch } from "store";
+import { Policy } from "api/consoleApi";
 
 const AccessDetails = () => {
   const dispatch = useAppDispatch();
