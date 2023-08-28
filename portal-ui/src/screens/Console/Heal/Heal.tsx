@@ -16,116 +16,48 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  FormControl,
-  Grid,
-  InputBase,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { Theme } from "@mui/material/styles";
-import { Button, HealIcon, PageLayout } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { wsProtocol } from "../../../utils/wsUtils";
-import { colorH, HealStatus } from "./types";
-import { niceBytes } from "../../../common/utils";
 import {
-  actionsTray,
-  containerForHeader,
-  inlineCheckboxes,
-  searchField,
-} from "../Common/FormComponents/common/styleLibrary";
-import {
-  CONSOLE_UI_RESOURCE,
-  IAM_SCOPES,
-} from "../../../common/SecureComponent/permissions";
-import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
-import { SecureComponent } from "../../../common/SecureComponent";
-import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
-import { selDistSet, setHelpName } from "../../../systemSlice";
-import makeStyles from "@mui/styles/makeStyles";
-import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+  Box,
+  Button,
+  Checkbox,
+  Grid,
+  HealIcon,
+  InputBox,
+  InputLabel,
+  PageLayout,
+  Select,
+} from "mds";
 import {
   Bar,
   BarChart,
   CartesianGrid,
+  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-import { Legend } from "recharts";
-import HelpMenu from "../HelpMenu";
-import { useAppDispatch } from "../../../store";
+
 import { api } from "api";
 import { Bucket } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    graphContainer: {
-      backgroundColor: "#fff",
-      border: "#EAEDEE 1px solid",
-      borderRadius: 3,
-      padding: "19px 38px",
-      marginTop: 15,
-    },
-    scanInfo: {
-      marginTop: 20,
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    scanData: {
-      fontSize: 13,
-    },
-    formBox: {
-      padding: 15,
-      border: "1px solid #EAEAEA",
-    },
-    buttonBar: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-    },
-    bucketField: {
-      flex: 1,
-    },
-    prefixField: {
-      ...searchField.searchField,
-      marginLeft: 10,
-      flex: 1,
-    },
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      marginBottom: 0,
-    },
-    ...inlineCheckboxes,
-    ...searchField,
-    ...containerForHeader,
-  }),
-);
-
-const SelectStyled = withStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      lineHeight: "50px",
-      marginRight: 15,
-      "label + &": {
-        marginTop: theme.spacing(3),
-      },
-      "& .MuiSelect-select:focus": {
-        backgroundColor: "transparent",
-      },
-    },
-  }),
-)(InputBase);
+import { wsProtocol } from "../../../utils/wsUtils";
+import { colorH, HealStatus } from "./types";
+import { niceBytes } from "../../../common/utils";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import { selDistSet, setHelpName } from "../../../systemSlice";
+import { SecureComponent } from "../../../common/SecureComponent";
+import { useAppDispatch } from "../../../store";
+import DistributedOnly from "../Common/DistributedOnly/DistributedOnly";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
 const Heal = () => {
-  const classes = useStyles();
   const distributedSetup = useSelector(selDistSet);
 
   const [start, setStart] = useState(false);
@@ -166,13 +98,13 @@ const Heal = () => {
 
   // forceStart and forceStop need to be mutually exclusive
   useEffect(() => {
-    if (forceStart === true) {
+    if (forceStart) {
       setForceStop(false);
     }
   }, [forceStart]);
 
   useEffect(() => {
-    if (forceStop === true) {
+    if (forceStop) {
       setForceStart(false);
     }
   }, [forceStop]);
@@ -285,84 +217,81 @@ const Heal = () => {
             scopes={[IAM_SCOPES.ADMIN_HEAL]}
             resource={CONSOLE_UI_RESOURCE}
           >
-            <Grid xs={12} item className={classes.formBox}>
-              <Grid item xs={12} className={classes.actionsTray}>
-                <FormControl variant="outlined" className={classes.bucketField}>
+            <Box withBorders>
+              <Box
+                sx={{
+                  display: "flex" as const,
+                  alignItems: "center",
+                  marginBottom: 15,
+                  gap: 15,
+                }}
+              >
+                <Box sx={{ flexGrow: 1, width: "100%" }}>
+                  <InputLabel>Bucket</InputLabel>
                   <Select
-                    label="Bucket"
                     id="bucket-name"
                     name="bucket-name"
                     value={bucketName}
-                    onChange={(e) => {
-                      setBucketName(e.target.value as string);
+                    onChange={(value) => {
+                      setBucketName(value as string);
                     }}
-                    className={classes.searchField}
-                    input={<SelectStyled />}
-                    displayEmpty
-                  >
-                    <MenuItem value="" key={`select-bucket-name-default`}>
-                      Select Bucket
-                    </MenuItem>
-                    {bucketNames.map((option) => (
-                      <MenuItem
-                        value={option.value}
-                        key={`select-bucket-name-${option.label}`}
-                      >
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <TextField
-                  label="Prefix"
-                  className={classes.prefixField}
-                  id="prefix-resource"
-                  disabled={false}
-                  InputProps={{
-                    disableUnderline: true,
-                  }}
-                  onChange={(e) => {
-                    setPrefix(e.target.value);
-                  }}
-                  variant="standard"
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.inlineCheckboxes}>
-                <CheckboxWrapper
-                  name="recursive"
-                  id="recursive"
-                  value="recursive"
-                  checked={recursive}
-                  onChange={(e) => {
-                    setRecursive(e.target.checked);
-                  }}
-                  disabled={false}
-                  label="Recursive"
-                />
-                <CheckboxWrapper
-                  name="forceStart"
-                  id="forceStart"
-                  value="forceStart"
-                  checked={forceStart}
-                  onChange={(e) => {
-                    setForceStart(e.target.checked);
-                  }}
-                  disabled={false}
-                  label="Force Start"
-                />
-                <CheckboxWrapper
-                  name="forceStop"
-                  id="forceStop"
-                  value="forceStop"
-                  checked={forceStop}
-                  onChange={(e) => {
-                    setForceStop(e.target.checked);
-                  }}
-                  disabled={false}
-                  label="Force Stop"
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.buttonBar}>
+                    options={bucketNames}
+                    placeholder={"Select Bucket"}
+                  />
+                </Box>
+                <Box sx={{ flexGrow: 1, width: "100%" }}>
+                  <InputLabel>Prefix</InputLabel>
+                  <InputBox
+                    id="prefix-resource"
+                    disabled={false}
+                    onChange={(e) => {
+                      setPrefix(e.target.value);
+                    }}
+                  />
+                </Box>
+              </Box>
+              <Box sx={{ display: "flex", gap: 20 }}>
+                <Box>
+                  <Checkbox
+                    name="recursive"
+                    id="recursive"
+                    value="recursive"
+                    checked={recursive}
+                    onChange={() => {
+                      setRecursive(!recursive);
+                    }}
+                    disabled={false}
+                    label="Recursive"
+                  />
+                </Box>
+                <Box>
+                  <Checkbox
+                    name="forceStart"
+                    id="forceStart"
+                    value="forceStart"
+                    checked={forceStart}
+                    onChange={() => {
+                      setForceStart(!forceStart);
+                    }}
+                    disabled={false}
+                    label="Force Start"
+                  />
+                </Box>
+                <Box>
+                  <Checkbox
+                    name="forceStop"
+                    id="forceStop"
+                    value="forceStop"
+                    checked={forceStop}
+                    onChange={() => {
+                      setForceStop(!forceStop);
+                    }}
+                    disabled={false}
+                    label="Force Stop"
+                  />
+                </Box>
+              </Box>
+              <Box sx={modalStyleUtils.modalButtonBar}>
                 <Button
                   id={"start-heal"}
                   type="submit"
@@ -372,9 +301,18 @@ const Heal = () => {
                   onClick={() => setStart(true)}
                   label={"Start"}
                 />
-              </Grid>
-            </Grid>
-            <Grid item xs={12} className={classes.graphContainer}>
+              </Box>
+            </Box>
+            <Box
+              withBorders
+              sx={{
+                marginTop: 15,
+                '& ul li:not([class*="Mui"])::before': {
+                  listStyle: "none",
+                  content: "' '",
+                },
+              }}
+            >
               <ResponsiveContainer width={"90%"} height={400}>
                 <BarChart
                   width={600}
@@ -391,34 +329,48 @@ const Heal = () => {
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
-                  <Legend verticalAlign={"top"} layout={"vertical"} />
+                  <Legend
+                    verticalAlign={"top"}
+                    layout={"horizontal"}
+                    className={"noLi"}
+                  />
                   <Bar
                     dataKey="ah"
                     name={"After Healing"}
-                    fill="rgba(0, 0, 255, 0.2)"
-                    stroke="rgba(0, 0, 255, 1)"
+                    fill="#2781B060"
+                    stroke="#2781B0"
                   />
                   <Bar
                     dataKey="bh"
                     name={"Before Healing"}
-                    fill="rgba(153, 102, 255, 0.2)"
-                    stroke="rgba(153, 102, 255, 1)"
+                    fill="#C83B5160"
+                    stroke="#C83B51"
                   />
                 </BarChart>
               </ResponsiveContainer>
-              <Grid item xs={12} className={classes.scanInfo}>
-                <div className={classes.scanData}>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  marginTop: 20,
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  "& .scanData": {},
+                }}
+              >
+                <Box className={"scanData"}>
                   <strong>Size scanned:</strong> {hStatus.sizeScanned}
-                </div>
-                <div className={classes.scanData}>
+                </Box>
+                <Box className={"scanData"}>
                   <strong>Objects healed:</strong> {hStatus.objectsHealed} /{" "}
                   {hStatus.objectsScanned}
-                </div>
-                <div className={classes.scanData}>
+                </Box>
+                <Box className={"scanData"}>
                   <strong>Healing time:</strong> {hStatus.healDuration}s
-                </div>
+                </Box>
               </Grid>
-            </Grid>
+            </Box>
           </SecureComponent>
         )}
       </PageLayout>
