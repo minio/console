@@ -323,13 +323,13 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state, roleARN
 	getWebTokenExpiry := func() (*credentials.WebIdentityToken, error) {
 		customCtx := context.WithValue(ctx, oauth2.HTTPClient, client.provHTTPClient)
 		oauth2Token, err := client.oauth2Config.Exchange(customCtx, code)
-		client.RefreshToken = oauth2Token.RefreshToken
 		if err != nil {
 			return nil, err
 		}
 		if !oauth2Token.Valid() {
 			return nil, errors.New("invalid token")
 		}
+		client.RefreshToken = oauth2Token.RefreshToken
 
 		expiration := token.GetConsoleSTSDuration()
 		if exp := getIDPTokenExpiration(); exp > 0 {
