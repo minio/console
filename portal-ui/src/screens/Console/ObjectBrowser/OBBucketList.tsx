@@ -24,10 +24,11 @@ import {
   DataTable,
   HelpBox,
   PageLayout,
+  ProgressBar,
   RefreshIcon,
 } from "mds";
 import createStyles from "@mui/styles/createStyles";
-import { LinearProgress } from "@mui/material";
+
 import Grid from "@mui/material/Grid";
 import {
   actionsTray,
@@ -190,7 +191,7 @@ const OBListBuckets = () => {
           </Grid>
         </Grid>
 
-        {loading && <LinearProgress />}
+        {loading && <ProgressBar />}
         {!loading && (
           <Grid
             item

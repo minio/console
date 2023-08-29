@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { LinearProgress } from "@mui/material";
+
 import {
   BackLink,
   Button,
@@ -26,6 +26,7 @@ import {
   Grid,
   InputBox,
   PageLayout,
+  ProgressBar,
 } from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
@@ -140,7 +141,7 @@ const AddGroupScreen = () => {
             </Grid>
             {saving && (
               <Grid item xs={12}>
-                <LinearProgress />
+                <ProgressBar />
               </Grid>
             )}
           </form>

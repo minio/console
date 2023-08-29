@@ -29,8 +29,9 @@ import {
   SelectMultipleIcon,
   Grid,
   breakPoints,
+  ProgressBar,
 } from "mds";
-import { LinearProgress } from "@mui/material";
+
 import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
 import { SecureComponent } from "../../../../common/SecureComponent";
 import {
@@ -371,7 +372,7 @@ const ListBuckets = () => {
           </Grid>
         </Grid>
 
-        {loading && <LinearProgress />}
+        {loading && <ProgressBar />}
         {!loading && (
           <Grid
             item

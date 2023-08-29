@@ -22,6 +22,7 @@ import {
   InputBox,
   Switch,
   Grid,
+  ProgressBar,
 } from "mds";
 import {
   calculateBytes,
@@ -38,7 +39,6 @@ import { useAppDispatch } from "../../../../store";
 import { BucketQuota } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import { LinearProgress } from "@mui/material";
 
 interface IEnableQuotaProps {
   open: boolean;
@@ -187,7 +187,7 @@ const EnableQuota = ({
           </Grid>
           {loading && (
             <Grid item xs={12}>
-              <LinearProgress />
+              <ProgressBar />
             </Grid>
           )}
         </FormLayout>

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { LinearProgress } from "@mui/material";
+
 import {
   AddIcon,
   Box,
@@ -23,6 +23,7 @@ import {
   Button,
   FormLayout,
   Grid,
+  ProgressBar,
   Select,
 } from "mds";
 import {
@@ -241,7 +242,7 @@ const EnableBucketEncryption = ({
             </Grid>
             {loading && (
               <Grid item xs={12}>
-                <LinearProgress />
+                <ProgressBar />
               </Grid>
             )}
           </FormLayout>

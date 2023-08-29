@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Button, CallHomeMenuIcon, CircleIcon, Grid } from "mds";
-import { LinearProgress } from "@mui/material";
+import { Button, CallHomeMenuIcon, CircleIcon, Grid, ProgressBar } from "mds";
+
 import api from "../../../common/api";
 import { ICallHomeResponse } from "./types";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -85,7 +85,7 @@ const CallHomeConfirmation = ({
                 marginBottom: 10,
               }}
             >
-              <LinearProgress />
+              <ProgressBar />
             </Grid>
           )}
           <Grid
@@ -163,7 +163,7 @@ const CallHomeConfirmation = ({
                 marginBottom: 10,
               }}
             >
-              <LinearProgress />
+              <ProgressBar />
             </Grid>
           )}
           <Grid

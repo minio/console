@@ -17,7 +17,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Grid, LinearProgress } from "@mui/material";
+import { Grid } from "@mui/material";
 import { BucketObjectItem } from "../ListObjects/types";
 import { AllowedPreviews, previewObjectType } from "../utils";
 import { encodeURLString } from "../../../../../../common/utils";
@@ -25,6 +25,7 @@ import clsx from "clsx";
 import WarningMessage from "../../../../Common/WarningMessage/WarningMessage";
 import { api } from "../../../../../../api";
 import get from "lodash/get";
+import { ProgressBar } from "mds";
 
 const styles = () =>
   createStyles({
@@ -130,7 +131,7 @@ const PreviewFile = ({
     <Fragment>
       {objectType !== "none" && loading && (
         <Grid item xs={12}>
-          <LinearProgress />
+          <ProgressBar />
         </Grid>
       )}
       {isMetaDataLoaded ? (

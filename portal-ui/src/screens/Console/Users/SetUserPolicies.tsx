@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Box, Button, FormLayout, IAMPoliciesIcon } from "mds";
-import { LinearProgress } from "@mui/material";
+import { Box, Button, FormLayout, IAMPoliciesIcon, ProgressBar } from "mds";
+
 import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
@@ -122,7 +122,7 @@ const SetUserPolicies = ({
       </Box>
       {loading && (
         <Grid item xs={12}>
-          <LinearProgress />
+          <ProgressBar />
         </Grid>
       )}
     </ModalWrapper>

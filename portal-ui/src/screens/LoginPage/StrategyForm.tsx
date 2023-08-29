@@ -24,6 +24,7 @@ import {
   LockFilledIcon,
   LogoutIcon,
   PasswordKeyIcon,
+  ProgressBar,
   Select,
   UserFilledIcon,
 } from "mds";
@@ -34,7 +35,7 @@ import {
   setSTS,
   setUseSTS,
 } from "./loginSlice";
-import { LinearProgress } from "@mui/material";
+
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import { doLoginAsync } from "./loginThunks";
@@ -254,7 +255,7 @@ const StrategyForm = ({ redirectRules }: { redirectRules: RedirectRule[] }) => {
                 height: 10,
               }}
             >
-              {loginSending && <LinearProgress />}
+              {loginSending && <ProgressBar />}
             </Grid>
           </Fragment>
         )}
