@@ -26,7 +26,7 @@ import { Button, MainContainer } from "mds";
 import debounce from "lodash/debounce";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { LinearProgress } from "@mui/material";
+
 import Snackbar from "@mui/material/Snackbar";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -54,6 +54,7 @@ import {
 import { selFeatures, selSession } from "./consoleSlice";
 import { api } from "api";
 import MenuWrapper from "./Menu/MenuWrapper";
+import { LinearProgress } from "@mui/material";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));

@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 import { withStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
-import { LinearProgress } from "@mui/material";
+
 import Grid from "@mui/material/Grid";
 import ShareFile from "./ShareFile";
 import {
@@ -45,6 +45,7 @@ import {
   SelectMultipleIcon,
   VersionsIcon,
   ScreenTitle,
+  ProgressBar,
 } from "mds";
 import FileVersionItem from "./FileVersionItem";
 import PreviewFileModal from "../Preview/PreviewFileModal";
@@ -424,7 +425,7 @@ const VersionsNavigator = ({
       <Grid container className={classes.versionsContainer}>
         {!actualInfo && (
           <Grid item xs={12}>
-            <LinearProgress />
+            <ProgressBar />
           </Grid>
         )}
 

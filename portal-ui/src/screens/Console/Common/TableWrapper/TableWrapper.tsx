@@ -18,7 +18,6 @@ import {
   Checkbox,
   Grid,
   IconButton,
-  LinearProgress,
   Paper,
   Popover,
   Typography,
@@ -39,7 +38,7 @@ import {
   radioIcons,
   TableRowPredefStyles,
 } from "../FormComponents/common/styleLibrary";
-import { Loader } from "mds";
+import { Loader, ProgressBar } from "mds";
 import TooltipWrapper from "../TooltipWrapper/TooltipWrapper";
 
 //Interfaces for table Items
@@ -588,7 +587,7 @@ const TableWrapper = ({
                 {loadingMessage}
               </Grid>
               <Grid item xs={12}>
-                <LinearProgress />
+                <ProgressBar />
               </Grid>
             </Grid>
           )}

@@ -16,10 +16,8 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, CopyIcon, ReadBox, ShareIcon, Grid } from "mds";
+import { Button, CopyIcon, ReadBox, ShareIcon, Grid, ProgressBar } from "mds";
 import CopyToClipboard from "react-copy-to-clipboard";
-import LinearProgress from "@mui/material/LinearProgress";
-
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
 import { encodeURLString } from "../../../../../../common/utils";
@@ -161,7 +159,7 @@ const ShareFile = ({
       >
         {isLoadingVersion && (
           <Grid item xs={12}>
-            <LinearProgress />
+            <ProgressBar />
           </Grid>
         )}
         {!isLoadingVersion && (

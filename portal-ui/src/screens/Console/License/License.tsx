@@ -15,11 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { LinearProgress } from "@mui/material";
+
 import Grid from "@mui/material/Grid";
 import { SubnetInfo } from "./types";
 import api from "../../../common/api";
-import { ArrowIcon, Button, PageLayout } from "mds";
+import { ArrowIcon, Button, PageLayout, ProgressBar } from "mds";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import LicensePlans from "./LicensePlans";
 import { useNavigate } from "react-router-dom";
@@ -117,7 +117,7 @@ const License = () => {
   if (loadingLicenseInfo) {
     return (
       <Grid item xs={12}>
-        <LinearProgress />
+        <ProgressBar />
       </Grid>
     );
   }

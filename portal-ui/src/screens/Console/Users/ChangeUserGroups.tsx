@@ -15,8 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState, Fragment } from "react";
-import { LinearProgress } from "@mui/material";
-import { AddMembersToGroupIcon, Button, FormLayout, Grid, Box } from "mds";
+
+import {
+  AddMembersToGroupIcon,
+  Button,
+  FormLayout,
+  Grid,
+  Box,
+  ProgressBar,
+} from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import { encodeURLString } from "../../../common/utils";
@@ -170,7 +177,7 @@ const ChangeUserGroups = ({
           </Box>
           {addLoading && (
             <Grid item xs={12}>
-              <LinearProgress />
+              <ProgressBar />
             </Grid>
           )}
         </form>

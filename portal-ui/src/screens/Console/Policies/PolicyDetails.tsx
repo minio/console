@@ -25,6 +25,7 @@ import {
   Grid,
   IAMPoliciesIcon,
   PageLayout,
+  ProgressBar,
   RefreshIcon,
   ScreenTitle,
   SectionTitle,
@@ -32,7 +33,6 @@ import {
   TrashIcon,
 } from "mds";
 import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
-import { LinearProgress } from "@mui/material";
 
 import { ErrorResponseHandler } from "../../../common/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
@@ -605,7 +605,7 @@ const PolicyDetails = () => {
                           </Grid>
                           {addLoading && (
                             <Grid item xs={12}>
-                              <LinearProgress />
+                              <ProgressBar />
                             </Grid>
                           )}
                         </Grid>

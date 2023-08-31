@@ -28,8 +28,9 @@ import {
   DataTable,
   Grid,
   Box,
+  ProgressBar,
 } from "mds";
-import { LinearProgress } from "@mui/material";
+
 import { api } from "api";
 import { stringSort } from "../../../utils/sortFunctions";
 import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
@@ -299,7 +300,7 @@ const Groups = () => {
               </SecureComponent>
             </Box>
           </Grid>
-          {loading && <LinearProgress />}
+          {loading && <ProgressBar />}
           {!loading && (
             <Fragment>
               {records.length > 0 && (

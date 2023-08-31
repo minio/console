@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { LinearProgress } from "@mui/material";
-import { Box, DataTable, Grid } from "mds";
+
+import { Box, DataTable, Grid, ProgressBar } from "mds";
 import { policySort } from "../../../utils/sortFunctions";
 import { ErrorResponseHandler } from "../../../common/types";
 import SearchBox from "../Common/SearchBox";
@@ -95,7 +95,7 @@ const PolicySelectors = ({ noTitle = false }: ISelectPolicyProps) => {
 
   return (
     <Grid item xs={12} className={"inputItem"}>
-      {loading && <LinearProgress />}
+      {loading && <ProgressBar />}
       {records.length > 0 ? (
         <Fragment>
           <Grid item xs={12} className={"inputItem"}>

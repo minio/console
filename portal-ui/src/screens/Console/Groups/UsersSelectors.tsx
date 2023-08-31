@@ -18,8 +18,8 @@ import React, { useCallback, useEffect, useState, Fragment } from "react";
 import get from "lodash/get";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import { Box, DataTable, Grid } from "mds";
-import { LinearProgress } from "@mui/material";
+import { Box, DataTable, Grid, ProgressBar } from "mds";
+
 import { usersSort } from "../../../utils/sortFunctions";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
@@ -101,7 +101,7 @@ const UsersSelectors = ({
   return (
     <Grid item xs={12} className={"inputItem"}>
       <Box>
-        {loading && <LinearProgress />}
+        {loading && <ProgressBar />}
         {records?.length > 0 ? (
           <Fragment>
             <Grid item xs={12} className={"inputItem"}>

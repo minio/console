@@ -22,6 +22,7 @@ import {
   Grid,
   InputBox,
   LifecycleConfigIcon,
+  ProgressBar,
   RadioGroup,
   Select,
   Switch,
@@ -30,7 +31,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  LinearProgress,
   Typography,
 } from "@mui/material";
 import { api } from "api";
@@ -525,7 +525,7 @@ const EditLifecycleConfiguration = ({
           </Grid>
           {addLoading && (
             <Grid item xs={12}>
-              <LinearProgress />
+              <ProgressBar />
             </Grid>
           )}
         </FormLayout>
