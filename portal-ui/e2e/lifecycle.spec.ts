@@ -76,9 +76,8 @@ test.describe("Add Lifecycle Rule Modal in bucket settings tests for object vers
 
     await test.step("Clean up bucket and verify the clean up", async () => {
       await bucketSummaryPage.confirmDeleteBucket();
-      const existBukCount = await bucketListPage.isBucketExist(
-        versionedBucketName,
-      );
+      const existBukCount =
+        await bucketListPage.isBucketExist(versionedBucketName);
       await expect(existBukCount).toEqual(0);
     });
   });
