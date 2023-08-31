@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Button, FormLayout, Grid, InputBox } from "mds";
+import { Button, FormLayout, Grid, InputBox, ProgressBar } from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -29,7 +29,7 @@ import {
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import { LinearProgress } from "@mui/material";
+
 import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 
 interface IEndpointModal {
@@ -206,7 +206,7 @@ const AddEndpointModal = ({ open, type, onCloseEndpoint }: IEndpointModal) => {
               marginBottom: 10,
             }}
           >
-            <LinearProgress />
+            <ProgressBar />
           </Grid>
         )}
         <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>

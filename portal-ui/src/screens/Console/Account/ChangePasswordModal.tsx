@@ -15,9 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { Button, ChangePasswordIcon, InputBox, Grid, FormLayout } from "mds";
+import {
+  Button,
+  ChangePasswordIcon,
+  InputBox,
+  Grid,
+  FormLayout,
+  ProgressBar,
+} from "mds";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import { LinearProgress } from "@mui/material";
+
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
@@ -167,7 +174,7 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
           </Grid>
           {loading && (
             <Grid item xs={12}>
-              <LinearProgress />
+              <ProgressBar />
             </Grid>
           )}
         </Grid>

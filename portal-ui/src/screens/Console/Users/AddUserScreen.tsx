@@ -22,10 +22,11 @@ import {
   FormLayout,
   Grid,
   PageLayout,
+  ProgressBar,
 } from "mds";
 import { createUserAsync, resetFormAsync } from "./thunk/AddUsersThunk";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { LinearProgress } from "@mui/material";
+
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { useNavigate } from "react-router-dom";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
@@ -126,7 +127,7 @@ const AddUser = () => {
               />
               {addLoading && (
                 <Grid item xs={12}>
-                  <LinearProgress />
+                  <ProgressBar />
                 </Grid>
               )}
 

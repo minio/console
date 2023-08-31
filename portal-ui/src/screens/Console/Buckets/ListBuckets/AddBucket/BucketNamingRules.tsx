@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Grid, ExpandOptionsButton } from "mds";
-import { LinearProgress } from "@mui/material";
+import { Grid, ExpandOptionsButton, ProgressBar } from "mds";
+
 import { AppState } from "../../../../../store";
 import { useSelector } from "react-redux";
 import ValidRule from "./ValidRule";
@@ -129,7 +129,7 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
 
       {addLoading && (
         <Grid item xs={12}>
-          <LinearProgress />
+          <ProgressBar />
         </Grid>
       )}
     </Fragment>

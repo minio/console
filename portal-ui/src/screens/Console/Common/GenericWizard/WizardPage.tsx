@@ -16,11 +16,10 @@
 
 import React from "react";
 import { Theme } from "@mui/material/styles";
-import { Button } from "mds";
+import { Button, ProgressBar } from "mds";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
 import { IWizardButton, IWizardPage } from "./types";
-import { LinearProgress } from "@mui/material";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -97,7 +96,7 @@ const WizardPage = ({
       </div>
       {loadingStep && (
         <div>
-          <LinearProgress />
+          <ProgressBar />
         </div>
       )}
       <div

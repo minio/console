@@ -24,6 +24,7 @@ import {
   RadioGroup,
   Select,
   Grid,
+  ProgressBar,
 } from "mds";
 import { useSelector } from "react-redux";
 import { api } from "api";
@@ -33,7 +34,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  LinearProgress,
   Typography,
 } from "@mui/material";
 import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
@@ -198,7 +198,7 @@ const AddLifecycleModal = ({
       {loadingTiers && (
         <Grid container>
           <Grid item xs={12}>
-            <LinearProgress />
+            <ProgressBar />
           </Grid>
         </Grid>
       )}
@@ -362,7 +362,7 @@ const AddLifecycleModal = ({
             </Grid>
             {addLoading && (
               <Grid item xs={12}>
-                <LinearProgress />
+                <ProgressBar />
               </Grid>
             )}
           </FormLayout>

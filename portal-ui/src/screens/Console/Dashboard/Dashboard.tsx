@@ -21,7 +21,7 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { LinearProgress } from "@mui/material";
+
 import { AppState, useAppDispatch } from "../../../store";
 import { getUsageAsync } from "./dashboardThunks";
 import { useSelector } from "react-redux";
@@ -29,6 +29,7 @@ import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { selFeatures } from "../consoleSlice";
 import HelpMenu from "../HelpMenu";
 import { setHelpName } from "../../../systemSlice";
+import { ProgressBar } from "mds";
 
 interface IDashboardSimple {
   classes: any;
@@ -73,7 +74,7 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
       {loading ? (
         <Grid container>
           <Grid item xs={12} className={classes.container}>
-            <LinearProgress />
+            <ProgressBar />
           </Grid>
         </Grid>
       ) : (
