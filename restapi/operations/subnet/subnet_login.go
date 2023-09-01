@@ -51,7 +51,7 @@ func NewSubnetLogin(ctx *middleware.Context, handler SubnetLoginHandler) *Subnet
 /*
 	SubnetLogin swagger:route POST /subnet/login Subnet subnetLogin
 
-Login to subnet
+Login to SUBNET
 */
 type SubnetLogin struct {
 	Context *middleware.Context

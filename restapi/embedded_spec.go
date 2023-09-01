@@ -4753,7 +4753,7 @@ func init() {
         "tags": [
           "Subnet"
         ],
-        "summary": "Login to subnet",
+        "summary": "Login to SUBNET",
         "operationId": "SubnetLogin",
         "parameters": [
           {
@@ -4786,7 +4786,7 @@ func init() {
         "tags": [
           "Subnet"
         ],
-        "summary": "Login to subnet using mfa",
+        "summary": "Login to SUBNET using mfa",
         "operationId": "SubnetLoginMFA",
         "parameters": [
           {
@@ -4849,7 +4849,7 @@ func init() {
         "tags": [
           "Subnet"
         ],
-        "summary": "Subnet registraton token",
+        "summary": "SUBNET registraton token",
         "operationId": "SubnetRegToken",
         "responses": {
           "200": {
@@ -13829,7 +13829,7 @@ func init() {
         "tags": [
           "Subnet"
         ],
-        "summary": "Login to subnet",
+        "summary": "Login to SUBNET",
         "operationId": "SubnetLogin",
         "parameters": [
           {
@@ -13862,7 +13862,7 @@ func init() {
         "tags": [
           "Subnet"
         ],
-        "summary": "Login to subnet using mfa",
+        "summary": "Login to SUBNET using mfa",
         "operationId": "SubnetLoginMFA",
         "parameters": [
           {
@@ -13925,7 +13925,7 @@ func init() {
         "tags": [
           "Subnet"
         ],
-        "summary": "Subnet registraton token",
+        "summary": "SUBNET registraton token",
         "operationId": "SubnetRegToken",
         "responses": {
           "200": {
