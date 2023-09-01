@@ -1711,9 +1711,10 @@ export class HttpClient<SecurityDataType = unknown> {
             ? { "Content-Type": type }
             : {}),
         },
-        signal: cancelToken
-          ? this.createAbortSignal(cancelToken)
-          : requestParams.signal,
+        signal:
+          (cancelToken
+            ? this.createAbortSignal(cancelToken)
+            : requestParams.signal) || null,
         body:
           typeof body === "undefined" || body === null
             ? null
@@ -4001,7 +4002,7 @@ export class Api<
      *
      * @tags Subnet
      * @name SubnetRegToken
-     * @summary Subnet registraton token
+     * @summary SUBNET registraton token
      * @request GET:/subnet/registration-token
      * @secure
      */
@@ -4080,7 +4081,7 @@ export class Api<
      *
      * @tags Subnet
      * @name SubnetLogin
-     * @summary Login to subnet
+     * @summary Login to SUBNET
      * @request POST:/subnet/login
      * @secure
      */
@@ -4100,7 +4101,7 @@ export class Api<
      *
      * @tags Subnet
      * @name SubnetLoginMfa
-     * @summary Login to subnet using mfa
+     * @summary Login to SUBNET using mfa
      * @request POST:/subnet/login/mfa
      * @secure
      */
