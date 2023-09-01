@@ -24,13 +24,14 @@ import {
   HelpBox,
   LambdaIcon,
   PageLayout,
+  ProgressBar,
   RefreshIcon,
 } from "mds";
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { LinearProgress } from "@mui/material";
+
 import { red } from "@mui/material/colors";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { TransformedEndpointItem } from "./types";
@@ -220,7 +221,7 @@ const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
               </TooltipWrapper>
             </div>
           </Grid>
-          {isLoading && <LinearProgress />}
+          {isLoading && <ProgressBar />}
           {!isLoading && (
             <Fragment>
               {records.length > 0 && (

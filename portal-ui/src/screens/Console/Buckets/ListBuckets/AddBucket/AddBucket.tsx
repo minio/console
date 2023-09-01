@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components";
 import get from "lodash/get";
-import { LinearProgress } from "@mui/material";
+
 import { useNavigate } from "react-router-dom";
 import {
   BackLink,
@@ -33,6 +33,7 @@ import {
   RadioGroup,
   Switch,
   SectionTitle,
+  ProgressBar,
 } from "mds";
 import { k8sScalarUnitsExcluding } from "../../../../../common/utils";
 import { AppState, useAppDispatch } from "../../../../../store";
@@ -557,7 +558,7 @@ const AddBucket = () => {
             </Grid>
             {addLoading && (
               <Grid item xs={12}>
-                <LinearProgress />
+                <ProgressBar />
               </Grid>
             )}
           </form>

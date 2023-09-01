@@ -16,8 +16,8 @@
 
 import React, { useCallback, useEffect, useState, Fragment } from "react";
 import get from "lodash/get";
-import { LinearProgress } from "@mui/material";
-import { Box, DataTable, Grid } from "mds";
+
+import { Box, DataTable, Grid, ProgressBar } from "mds";
 import { stringSort } from "../../../utils/sortFunctions";
 import { GroupsList } from "../Groups/types";
 import { ErrorResponseHandler } from "../../../common/types";
@@ -97,7 +97,7 @@ const GroupsSelectors = ({
 
   return (
     <Grid item xs={12} className={"inputItem"}>
-      {loading && <LinearProgress />}
+      {loading && <ProgressBar />}
       {records !== null && records.length > 0 ? (
         <Fragment>
           <Grid item xs={12} className={"inputItem"}>

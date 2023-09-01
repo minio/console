@@ -18,8 +18,8 @@ import React, { Fragment, useEffect, useState } from "react";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
-import { LinearProgress } from "@mui/material";
-import { ConfirmDeleteIcon } from "mds";
+
+import { ConfirmDeleteIcon, ProgressBar } from "mds";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 
@@ -69,7 +69,7 @@ const ResetConfigurationModal = ({
       }}
       confirmationContent={
         <Fragment>
-          {resetLoading && <LinearProgress />}
+          {resetLoading && <ProgressBar />}
           <Fragment>
             Are you sure you want to restore these configurations to default
             values?

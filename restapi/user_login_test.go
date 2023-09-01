@@ -26,7 +26,7 @@ import (
 
 	"github.com/minio/madmin-go/v3"
 
-	iampolicy "github.com/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/v2/policy"
 
 	"github.com/minio/console/pkg/auth"
 

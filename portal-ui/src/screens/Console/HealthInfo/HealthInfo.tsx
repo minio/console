@@ -248,12 +248,12 @@ const HealthInfo = () => {
                     !subnetResponse.toLowerCase().includes("error") && (
                       <Grid item xs={12}>
                         <strong>
-                          Health report uploaded to Subnet successfully!
+                          Health report uploaded to SUBNET successfully!
                         </strong>
                         &nbsp;{" "}
                         <strong>
                           See the results on your{" "}
-                          <a href={subnetResponse}>Subnet Dashboard</a>{" "}
+                          <a href={subnetResponse}>SUBNET Dashboard</a>{" "}
                         </strong>
                       </Grid>
                     )}
@@ -263,12 +263,12 @@ const HealthInfo = () => {
                       <Grid item xs={12}>
                         <strong>
                           Something went wrong uploading your Health report to
-                          Subnet.
+                          SUBNET.
                         </strong>
                         &nbsp;{" "}
                         <strong>
                           Log into your{" "}
-                          <a href="https://subnet.min.io">Subnet Account</a> to
+                          <a href="https://subnet.min.io">SUBNET Account</a> to
                           manually upload your Health report.
                         </strong>
                       </Grid>
@@ -330,7 +330,7 @@ const HealthInfo = () => {
             <br />
             <HelpBox
               title={
-                "Cluster Health Report will be uploaded to Subnet, and is viewable from your Subnet Diagnostics dashboard."
+                "Cluster Health Report will be uploaded to SUBNET, and is viewable from your SUBNET Diagnostics dashboard."
               }
               iconComponent={<InfoIcon />}
               help={

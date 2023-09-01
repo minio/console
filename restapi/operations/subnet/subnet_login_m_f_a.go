@@ -51,7 +51,7 @@ func NewSubnetLoginMFA(ctx *middleware.Context, handler SubnetLoginMFAHandler) *
 /*
 	SubnetLoginMFA swagger:route POST /subnet/login/mfa Subnet subnetLoginMFA
 
-Login to subnet using mfa
+Login to SUBNET using mfa
 */
 type SubnetLoginMFA struct {
 	Context *middleware.Context

@@ -17,8 +17,8 @@
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
-import { Button, FormLayout, ReadBox, Grid } from "mds";
-import { LinearProgress } from "@mui/material";
+import { Button, FormLayout, ReadBox, Grid, ProgressBar } from "mds";
+
 import { ErrorResponseHandler } from "../../../common/types";
 import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
@@ -170,7 +170,7 @@ const SetPolicy = ({
       </Grid>
       {loading && (
         <Grid item xs={12}>
-          <LinearProgress />
+          <ProgressBar />
         </Grid>
       )}
     </ModalWrapper>

@@ -36,7 +36,7 @@ import (
 
 	"github.com/minio/madmin-go/v3"
 	mc "github.com/minio/mc/cmd"
-	"github.com/minio/pkg/env"
+	"github.com/minio/pkg/v2/env"
 )
 
 const (
@@ -83,7 +83,7 @@ func ProcessUploadInfo(info interface{}, uploadType string, filename string) ([]
 	if uploadType == "health" {
 		return processHealthReport(info, filename)
 	}
-	return nil, "", errors.New("invalid Subnet upload type")
+	return nil, "", errors.New("invalid SUBNET upload type")
 }
 
 func UploadFileToSubnet(info []byte, client *xhttp.Client, reqURL string, headers map[string]string, formDataType string) (string, error) {

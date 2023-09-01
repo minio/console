@@ -25,9 +25,9 @@ import (
 
 	"github.com/minio/cli"
 	"github.com/minio/console/pkg"
-	"github.com/minio/pkg/console"
-	"github.com/minio/pkg/trie"
-	"github.com/minio/pkg/words"
+	"github.com/minio/pkg/v2/console"
+	"github.com/minio/pkg/v2/trie"
+	"github.com/minio/pkg/v2/words"
 )
 
 // Help template for Console.

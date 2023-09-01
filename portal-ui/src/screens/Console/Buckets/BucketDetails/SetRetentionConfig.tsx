@@ -15,11 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Button, Loader, Grid, FormLayout, RadioGroup, InputBox } from "mds";
+import {
+  Button,
+  Loader,
+  Grid,
+  FormLayout,
+  RadioGroup,
+  InputBox,
+  ProgressBar,
+} from "mds";
 import { api } from "api";
 import { ObjectRetentionMode, ObjectRetentionUnit } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
-import { LinearProgress } from "@mui/material";
+
 import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
@@ -177,7 +185,7 @@ const SetRetentionConfig = ({
             </Grid>
             {addLoading && (
               <Grid item xs={12}>
-                <LinearProgress />
+                <ProgressBar />
               </Grid>
             )}
           </FormLayout>

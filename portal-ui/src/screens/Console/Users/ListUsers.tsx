@@ -26,8 +26,9 @@ import {
   UsersIcon,
   DataTable,
   Grid,
+  ProgressBar,
 } from "mds";
-import { LinearProgress } from "@mui/material";
+
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
 import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
@@ -324,7 +325,7 @@ const ListUsers = () => {
             </SecureComponent>
           </Grid>
 
-          {loading && <LinearProgress />}
+          {loading && <ProgressBar />}
           {!loading && (
             <Fragment>
               {records.length > 0 && (

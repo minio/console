@@ -20,7 +20,7 @@ import Grid from "@mui/material/Grid";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box, LinearProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
 import { IDashboardPanel } from "./types";
 import { panelsConfiguration } from "./utils";
@@ -46,6 +46,7 @@ import {
   Button,
   HelpBox,
   PageLayout,
+  ProgressBar,
   PrometheusErrorIcon,
   SyncIcon,
 } from "mds";
@@ -341,7 +342,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
           index={usage?.advancedMetricsStatus === "not configured" ? 0 : 3}
           value={curTab}
         >
-          {(!usage || loadingUsage) && <LinearProgress />}
+          {(!usage || loadingUsage) && <ProgressBar />}
           {usage && !loadingUsage && <BasicDashboard usage={usage} />}
         </TabPanel>
       </Grid>

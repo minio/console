@@ -2394,7 +2394,7 @@ paths:
         - Profile
   /subnet/registration-token:
     get:
-      summary: Subnet registraton token
+      summary: SUBNET registraton token
       operationId: SubnetRegToken
       responses:
         200:
@@ -2466,7 +2466,7 @@ paths:
 
   /subnet/login:
     post:
-      summary: Login to subnet
+      summary: Login to SUBNET
       operationId: SubnetLogin
       parameters:
         - name: body
@@ -2488,7 +2488,7 @@ paths:
 
   /subnet/login/mfa:
     post:
-      summary: Login to subnet using mfa
+      summary: Login to SUBNET using mfa
       operationId: SubnetLoginMFA
       parameters:
         - name: body

@@ -15,8 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { AddMembersToGroupIcon, Button, FormLayout, Grid, ReadBox } from "mds";
-import { LinearProgress } from "@mui/material";
+import {
+  AddMembersToGroupIcon,
+  Button,
+  FormLayout,
+  Grid,
+  ProgressBar,
+  ReadBox,
+} from "mds";
+
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
@@ -148,7 +155,7 @@ const BulkAddToGroup = ({
           </Grid>
           {saving && (
             <Grid item xs={12}>
-              <LinearProgress />
+              <ProgressBar />
             </Grid>
           )}
         </form>

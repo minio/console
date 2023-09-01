@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Button, ConsoleIcon, Grid, Tooltip } from "mds";
+import { Button, ConsoleIcon, Grid, ProgressBar, Tooltip } from "mds";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Webhook } from "@mui/icons-material";
@@ -29,7 +29,7 @@ import {
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import { LinearProgress } from "@mui/material";
+
 import { IConfigurationSys } from "../../Configurations/types";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
@@ -339,7 +339,7 @@ const EditEndpointModal = ({
                   marginBottom: 10,
                 }}
               >
-                <LinearProgress />
+                <ProgressBar />
               </Grid>
             )}
             <Grid
