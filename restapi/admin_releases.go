@@ -30,7 +30,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	release "github.com/minio/console/restapi/operations/release"
-	"github.com/minio/pkg/env"
+	"github.com/minio/pkg/v2/env"
 )
 
 var (

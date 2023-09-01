@@ -25,7 +25,7 @@ import (
 
 	"github.com/minio/console/pkg/logger/config"
 	"github.com/minio/console/pkg/logger/target/http"
-	"github.com/minio/pkg/env"
+	"github.com/minio/pkg/v2/env"
 )
 
 // NewConfig - initialize new logger config.

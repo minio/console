@@ -23,9 +23,9 @@ import (
 	"strings"
 
 	"github.com/minio/console/pkg/auth/idp/oauth2"
-	xcerts "github.com/minio/pkg/certs"
-	"github.com/minio/pkg/env"
-	xnet "github.com/minio/pkg/net"
+	xcerts "github.com/minio/pkg/v2/certs"
+	"github.com/minio/pkg/v2/env"
+	xnet "github.com/minio/pkg/v2/net"
 )
 
 var (
