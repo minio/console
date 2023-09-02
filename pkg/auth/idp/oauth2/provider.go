@@ -341,6 +341,12 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state, roleARN
 			expiration = exp
 		}
 
+		// Minimum duration in S3 spec is 15 minutes, do not bother returning
+		// an error to the user and force the minimum duration instead
+		if expiration < 900*time.Second {
+			expiration = 900 * time.Second
+		}
+
 		idToken := oauth2Token.Extra("id_token")
 		if idToken == nil {
 			return nil, errors.New("missing id_token")
