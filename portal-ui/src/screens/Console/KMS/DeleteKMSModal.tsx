@@ -14,9 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
-
-import { DialogContentText, Grid } from "@mui/material";
+import React, { useState, Fragment } from "react";
 import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
@@ -24,7 +22,7 @@ import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import WarningMessage from "../Common/WarningMessage/WarningMessage";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { ConfirmDeleteIcon } from "mds";
+import { ConfirmDeleteIcon, Grid } from "mds";
 
 interface IDeleteKMSModalProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -71,7 +69,7 @@ const DeleteKMSModal = ({
         disabled: retypeKey !== selectedItem || deleteLoading,
       }}
       confirmationContent={
-        <DialogContentText>
+        <Fragment>
           <Grid item xs={12}>
             <WarningMessage
               title={"WARNING"}
@@ -93,7 +91,7 @@ const DeleteKMSModal = ({
               value={retypeKey}
             />
           </Grid>
-        </DialogContentText>
+        </Fragment>
       }
     />
   );

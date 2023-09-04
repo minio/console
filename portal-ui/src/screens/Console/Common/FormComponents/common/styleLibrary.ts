@@ -140,25 +140,6 @@ export const checkboxIcons = {
   },
 };
 
-const radioBasic = {
-  width: 16,
-  height: 16,
-  borderRadius: "100%",
-  "input:disabled ~ &": {
-    border: "1px solid #E5E5E5",
-  },
-  padding: 1,
-};
-
-export const radioIcons = {
-  radioUnselectedIcon: { ...radioBasic, border: "2px solid #E5E5E5" },
-  radioSelectedIcon: {
-    ...radioBasic,
-    border: "2px solid #E5E5E5",
-    backgroundColor: "#072C4F",
-  },
-};
-
 export const containerForHeader = {
   container: {
     position: "relative" as const,
@@ -665,13 +646,6 @@ export const inputFieldStyles = {
   },
 };
 
-export const inlineCheckboxes = {
-  inlineCheckboxes: {
-    display: "flex",
-    justifyContent: "flex-start",
-  },
-};
-
 const commonStateIcon = {
   marginRight: 10,
   lineHeight: 1,
@@ -931,16 +905,5 @@ export const twoColCssGridLayoutConfig = {
   [`@media (max-width: ${breakPoints.sm}px)`]: {
     gridTemplateColumns: "1fr",
     gridAutoFlow: "dense",
-  },
-};
-
-// These classes are meant to be used as React.CSSProperties for TableWrapper
-export const TableRowPredefStyles: any = {
-  deleted: {
-    color: "#707070",
-    backgroundColor: "#f1f0f0",
-    "&.selected": {
-      color: "#b2b2b2",
-    },
   },
 };

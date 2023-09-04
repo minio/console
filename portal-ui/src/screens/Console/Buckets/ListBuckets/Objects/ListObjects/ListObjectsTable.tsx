@@ -14,9 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
-import { ItemActions } from "../../../../Common/TableWrapper/TableWrapper";
 import React, { useState } from "react";
+import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
 import makeStyles from "@mui/styles/makeStyles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -42,7 +41,7 @@ import {
 } from "../../../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../../../common/SecureComponent";
 import { downloadObject } from "../../../../ObjectBrowser/utils";
-import { DataTable } from "mds";
+import { DataTable, ItemActions } from "mds";
 import { BucketObject } from "api/consoleApi";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -186,7 +185,7 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
   const tableActions: ItemActions[] = [
     {
       type: "view",
-      label: "View",
+      tooltip: "View",
       onClick: openPath,
       sendOnlyId: false,
     },
