@@ -2,6 +2,18 @@
 
 # Changelog
 
+## Release v0.38.0
+
+Features:
+
+- Added extra information to Service Accounts page
+- Updated Tiers, Site Replication, Speedtest, Heal & Watch pages components
+
+Bug Fix:
+
+- Fixed IDP expiry time errors
+- Updated project Dependencies
+
 ## Release v0.37.0
 
 Features:
