@@ -55,6 +55,7 @@ import { selFeatures, selSession } from "./consoleSlice";
 import { api } from "api";
 import MenuWrapper from "./Menu/MenuWrapper";
 import { LinearProgress } from "@mui/material";
+import EditBucketReplication from "./Buckets/BucketDetails/EditBucketReplication";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -99,6 +100,10 @@ const ObjectManager = React.lazy(
 const ObjectBrowser = React.lazy(() => import("./ObjectBrowser/ObjectBrowser"));
 
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
+
+const Edi = React.lazy(
+  () => import("./Buckets/BucketDetails/EditBucketReplication"),
+);
 const Policies = React.lazy(() => import("./Policies/Policies"));
 
 const AddPolicyScreen = React.lazy(() => import("./Policies/AddPolicyScreen"));
@@ -276,6 +281,16 @@ const Console = ({ classes }: IConsoleProps) => {
       path: IAM_PAGES.ADD_BUCKETS,
       customPermissionFnc: () => {
         return hasPermission("*", IAM_PAGES_PERMISSIONS[IAM_PAGES.ADD_BUCKETS]);
+      },
+    },
+    {
+      component: EditBucketReplication,
+      path: IAM_PAGES.BUCKETS_EDIT_REPLICATION,
+      customPermissionFnc: () => {
+        return hasPermission(
+          "*",
+          IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_EDIT_REPLICATION],
+        );
       },
     },
     {
