@@ -15,14 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { Box } from "@mui/material";
-
-import Grid from "@mui/material/Grid";
-import { AddAccessRuleIcon, Button, FormLayout, PageLayout } from "mds";
+import { AddAccessRuleIcon, Button, FormLayout, PageLayout, Grid } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { ErrorResponseHandler } from "../../../common/types";
 import useApi from "../Common/Hooks/useApi";
 import KMSHelpBox from "./KMSHelpbox";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 
 interface IAddKeyFormProps {
   onSuccess: () => void;
@@ -71,7 +69,7 @@ const AddKeyForm = ({ onSuccess, onError }: IAddKeyFormProps) => {
             addRecord(e);
           }}
         >
-          <Grid container item spacing={1}>
+          <Grid container>
             <Grid item xs={12}>
               <InputBoxWrapper
                 id="key-name"
@@ -85,33 +83,23 @@ const AddKeyForm = ({ onSuccess, onError }: IAddKeyFormProps) => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} textAlign={"right"}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  marginTop: "20px",
-                  gap: "15px",
-                }}
-              >
-                <Button
-                  id={"clear"}
-                  type="button"
-                  variant="regular"
-                  onClick={resetForm}
-                  label={"Clear"}
-                />
+            <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+              <Button
+                id={"clear"}
+                type="button"
+                variant="regular"
+                onClick={resetForm}
+                label={"Clear"}
+              />
 
-                <Button
-                  id={"save-key"}
-                  type="submit"
-                  variant="callAction"
-                  color="primary"
-                  disabled={loading || !validSave}
-                  label={"Save"}
-                />
-              </Box>
+              <Button
+                id={"save-key"}
+                type="submit"
+                variant="callAction"
+                color="primary"
+                disabled={loading || !validSave}
+                label={"Save"}
+              />
             </Grid>
           </Grid>
         </form>

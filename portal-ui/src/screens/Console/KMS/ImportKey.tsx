@@ -15,14 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Box } from "@mui/material";
-
-import Grid from "@mui/material/Grid";
 import {
   AddAccessRuleIcon,
   BackLink,
   Button,
   FormLayout,
+  Grid,
   PageLayout,
 } from "mds";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -36,6 +34,7 @@ import KMSHelpBox from "./KMSHelpbox";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 
 export const emptyContent = '{\n    "bytes": ""\n}';
 
@@ -108,7 +107,7 @@ const ImportKey = () => {
                 importRecord(e);
               }}
             >
-              <Grid container item spacing={1}>
+              <Grid container>
                 <Grid item xs={12}>
                   <InputBoxWrapper
                     id="key-name"
@@ -132,33 +131,23 @@ const ImportKey = () => {
                     editorHeight={"350px"}
                   />
                 </Grid>
-                <Grid item xs={12} textAlign={"right"}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-end",
-                      marginTop: "20px",
-                      gap: "15px",
-                    }}
-                  >
-                    <Button
-                      id={"clear"}
-                      type="button"
-                      variant="regular"
-                      onClick={resetForm}
-                      label={"Clear"}
-                    />
+                <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+                  <Button
+                    id={"clear"}
+                    type="button"
+                    variant="regular"
+                    onClick={resetForm}
+                    label={"Clear"}
+                  />
 
-                    <Button
-                      id={"import-key"}
-                      type="submit"
-                      variant="callAction"
-                      color="primary"
-                      disabled={loading || !validSave}
-                      label={"Import"}
-                    />
-                  </Box>
+                  <Button
+                    id={"import-key"}
+                    type="submit"
+                    variant="callAction"
+                    color="primary"
+                    disabled={loading || !validSave}
+                    label={"Import"}
+                  />
                 </Grid>
               </Grid>
             </form>

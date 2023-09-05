@@ -14,10 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Grid, Theme } from "@mui/material";
-import { createStyles, withStyles } from "@mui/styles";
-import { AddIcon, Button, PageLayout, RefreshIcon, UploadIcon } from "mds";
 import React, { useEffect, useState } from "react";
+import {
+  AddIcon,
+  Button,
+  DataTable,
+  Grid,
+  PageLayout,
+  RefreshIcon,
+  UploadIcon,
+} from "mds";
 import { useNavigate } from "react-router-dom";
 import api from "../../../common/api";
 import {
@@ -33,12 +39,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import withSuspense from "../Common/Components/withSuspense";
-import {
-  containerForHeader,
-  searchField,
-} from "../Common/FormComponents/common/styleLibrary";
 import SearchBox from "../Common/SearchBox";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
@@ -47,17 +48,7 @@ const DeleteKMSModal = withSuspense(
   React.lazy(() => import("./DeleteKMSModal")),
 );
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...searchField,
-    ...containerForHeader,
-  });
-
-interface IKeysProps {
-  classes: any;
-}
-
-const ListKeys = ({ classes }: IKeysProps) => {
+const ListKeys = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -149,15 +140,15 @@ const ListKeys = ({ classes }: IKeysProps) => {
         actions={<HelpMenu />}
       />
 
-      <PageLayout className={classes.pageContainer}>
-        <Grid container spacing={1}>
+      <PageLayout>
+        <Grid container>
           <Grid
             item
             xs={12}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"flex-end"}
             sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
               "& button": {
                 marginLeft: "8px",
               },
@@ -221,13 +212,13 @@ const ListKeys = ({ classes }: IKeysProps) => {
               </TooltipWrapper>
             </SecureComponent>
           </Grid>
-          <Grid item xs={12} className={classes.tableBlock}>
+          <Grid item xs={12}>
             <SecureComponent
               scopes={[IAM_SCOPES.KMS_LIST_KEYS]}
               resource={CONSOLE_UI_RESOURCE}
               errorProps={{ disabled: true }}
             >
-              <TableWrapper
+              <DataTable
                 itemActions={tableActions}
                 columns={[
                   { label: "Name", elementKey: "name" },
@@ -247,4 +238,4 @@ const ListKeys = ({ classes }: IKeysProps) => {
   );
 };
 
-export default withStyles(styles)(ListKeys);
+export default ListKeys;
