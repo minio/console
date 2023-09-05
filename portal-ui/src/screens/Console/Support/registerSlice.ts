@@ -27,12 +27,11 @@ export interface RegisterState {
   selectedSubnetOrganization: string;
   subnetRegToken: string;
   subnetOrganizations: SubnetOrganization[];
-  showPassword: boolean;
   loading: boolean;
   loadingLicenseInfo: boolean;
   clusterRegistered: boolean;
   licenseInfo: SubnetInfo | undefined;
-  curTab: number;
+  curTab: string;
 }
 
 const initialState: RegisterState = {
@@ -45,12 +44,11 @@ const initialState: RegisterState = {
   selectedSubnetOrganization: "",
   subnetRegToken: "",
   subnetOrganizations: [],
-  showPassword: false,
   loading: false,
   loadingLicenseInfo: false,
   clusterRegistered: false,
   licenseInfo: undefined,
-  curTab: 0,
+  curTab: "simple-tab-0",
 };
 
 export const registerSlice = createSlice({
@@ -87,9 +85,6 @@ export const registerSlice = createSlice({
     ) => {
       state.subnetOrganizations = action.payload;
     },
-    setShowPassword: (state, action: PayloadAction<boolean>) => {
-      state.showPassword = action.payload;
-    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -102,7 +97,7 @@ export const registerSlice = createSlice({
     setLicenseInfo: (state, action: PayloadAction<SubnetInfo | undefined>) => {
       state.licenseInfo = action.payload;
     },
-    setCurTab: (state, action: PayloadAction<number>) => {
+    setCurTab: (state, action: PayloadAction<string>) => {
       state.curTab = action.payload;
     },
     resetRegisterForm: () => initialState,
@@ -120,7 +115,6 @@ export const {
   setSelectedSubnetOrganization,
   setSubnetRegToken,
   setSubnetOrganizations,
-  setShowPassword,
   setLoading,
   setLoadingLicenseInfo,
   setClusterRegistered,

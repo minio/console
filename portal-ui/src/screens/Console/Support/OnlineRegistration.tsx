@@ -14,38 +14,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
-import { Box } from "@mui/material";
-import { FormTitle } from "./utils";
-import { Button, OnlineRegistrationIcon, UsersIcon } from "mds";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import React from "react";
+import {
+  Box,
+  Button,
+  FormLayout,
+  InputBox,
+  OnlineRegistrationIcon,
+  UsersIcon,
+} from "mds";
 import RegisterHelpBox from "./RegisterHelpBox";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
-import makeStyles from "@mui/styles/makeStyles";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../store";
-import {
-  setShowPassword,
-  setSubnetEmail,
-  setSubnetPassword,
-} from "./registerSlice";
+import { setSubnetEmail, setSubnetPassword } from "./registerSlice";
 import { subnetLogin } from "./registerThunks";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    sizedLabel: {
-      minWidth: "75px",
-    },
-    ...spacingUtils,
-  }),
-);
-
 const OnlineRegistration = () => {
-  const classes = useStyles();
   const dispatch = useAppDispatch();
 
   const subnetPassword = useSelector(
@@ -54,131 +39,79 @@ const OnlineRegistration = () => {
   const subnetEmail = useSelector(
     (state: AppState) => state.register.subnetEmail,
   );
-  const showPassword = useSelector(
-    (state: AppState) => state.register.showPassword,
-  );
   const loading = useSelector((state: AppState) => state.register.loading);
 
   return (
-    <Fragment>
+    <FormLayout
+      icon={<OnlineRegistrationIcon />}
+      title={"Online activation of MinIO Subscription Network License"}
+      withBorders={false}
+      containerPadding={false}
+      helpBox={<RegisterHelpBox />}
+    >
       <Box
         sx={{
-          "& .title-text": {
-            marginLeft: "27px",
-            fontWeight: 600,
-          },
-        }}
-      >
-        <FormTitle
-          icon={<OnlineRegistrationIcon />}
-          title={`Online activation of MinIO Subscription Network License`}
-        />
-      </Box>
-      <Box
-        sx={{
+          fontSize: "14px",
           display: "flex",
-          flexFlow: {
-            xs: "column",
-            md: "row",
-          },
+          flexFlow: "column",
+          marginBottom: "30px",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexFlow: "column",
-            flex: "2",
-          }}
-        >
-          <Box
-            sx={{
-              fontSize: "16px",
-              display: "flex",
-              flexFlow: "column",
-              marginTop: "30px",
-              marginBottom: "30px",
-            }}
-          >
-            Use your MinIO Subscription Network login credentials to register
-            this cluster.
-          </Box>
-          <Box
-            sx={{
-              flex: "1",
-            }}
-          >
-            <InputBoxWrapper
-              className={classes.spacerBottom}
-              classes={{
-                inputLabel: classes.sizedLabel,
-              }}
-              id="subnet-email"
-              name="subnet-email"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                dispatch(setSubnetEmail(event.target.value))
-              }
-              label="Email"
-              value={subnetEmail}
-              overlayIcon={<UsersIcon />}
-            />
-            <InputBoxWrapper
-              className={classes.spacerBottom}
-              classes={{
-                inputLabel: classes.sizedLabel,
-              }}
-              id="subnet-password"
-              name="subnet-password"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                dispatch(setSubnetPassword(event.target.value))
-              }
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              value={subnetPassword}
-              overlayIcon={
-                showPassword ? <VisibilityOffIcon /> : <RemoveRedEyeIcon />
-              }
-              overlayAction={() => dispatch(setShowPassword(!showPassword))}
-            />
-
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                "& button": {
-                  marginLeft: "8px",
-                },
-              }}
-            >
-              <Button
-                id={"sign-up"}
-                type="submit"
-                className={classes.spacerRight}
-                variant="regular"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.open(`https://min.io/signup?ref=con`, "_blank");
-                }}
-                label={"Sign up"}
-              />
-              <Button
-                id={"register-credentials"}
-                type="submit"
-                variant="callAction"
-                disabled={
-                  loading ||
-                  subnetEmail.trim().length === 0 ||
-                  subnetPassword.trim().length === 0
-                }
-                onClick={() => dispatch(subnetLogin())}
-                label={"Register"}
-              />
-            </Box>
-          </Box>
-        </Box>
-        <RegisterHelpBox />
+        Use your MinIO Subscription Network login credentials to register this
+        cluster.
       </Box>
-    </Fragment>
+      <Box
+        sx={{
+          flex: "1",
+        }}
+      >
+        <InputBox
+          id="subnet-email"
+          name="subnet-email"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            dispatch(setSubnetEmail(event.target.value))
+          }
+          label="Email"
+          value={subnetEmail}
+          overlayIcon={<UsersIcon />}
+        />
+        <InputBox
+          id="subnet-password"
+          name="subnet-password"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            dispatch(setSubnetPassword(event.target.value))
+          }
+          label="Password"
+          type={"password"}
+          value={subnetPassword}
+        />
+
+        <Box sx={modalStyleUtils.modalButtonBar}>
+          <Button
+            id={"sign-up"}
+            type="submit"
+            variant="regular"
+            onClick={(e) => {
+              e.preventDefault();
+              window.open(`https://min.io/signup?ref=con`, "_blank");
+            }}
+            label={"Sign up"}
+          />
+          <Button
+            id={"register-credentials"}
+            type="submit"
+            variant="callAction"
+            disabled={
+              loading ||
+              subnetEmail.trim().length === 0 ||
+              subnetPassword.trim().length === 0
+            }
+            onClick={() => dispatch(subnetLogin())}
+            label={"Register"}
+          />
+        </Box>
+      </Box>
+    </FormLayout>
   );
 };
 

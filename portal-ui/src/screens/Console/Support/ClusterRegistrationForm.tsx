@@ -15,15 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
-import { FormTitle } from "./utils";
-import SelectWrapper from "../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { Box, Button, FormLayout, Select } from "mds";
 import { setLoading, setSelectedSubnetOrganization } from "./registerSlice";
-import { Button } from "mds";
-import RegisterHelpBox from "./RegisterHelpBox";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../store";
 import { callRegister } from "./registerThunks";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
+import RegisterHelpBox from "./RegisterHelpBox";
 
 const ClusterRegistrationForm = () => {
   const dispatch = useAppDispatch();
@@ -40,76 +38,48 @@ const ClusterRegistrationForm = () => {
   const loading = useSelector((state: AppState) => state.register.loading);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-      }}
+    <FormLayout
+      title={"Register MinIO cluster"}
+      containerPadding
+      withBorders={false}
+      helpBox={<RegisterHelpBox />}
     >
-      <Box
-        sx={{
-          display: "flex",
-          flexFlow: "column",
-          flex: "2",
-        }}
-      >
-        <Box
-          sx={{
-            marginTop: "15px",
-            marginBottom: "15px",
-            "& .title-text": {
-              marginLeft: "0px",
-            },
-          }}
-        >
-          <FormTitle title={`Register MinIO cluster`} />
-        </Box>
-        <Box>
-          <SelectWrapper
-            id="subnet-organization"
-            name="subnet-organization"
-            onChange={(e) =>
-              dispatch(setSelectedSubnetOrganization(e.target.value as string))
+      <Select
+        id="subnet-organization"
+        name="subnet-organization"
+        onChange={(value) =>
+          dispatch(setSelectedSubnetOrganization(value as string))
+        }
+        label="Select an organization"
+        value={selectedSubnetOrganization}
+        options={subnetOrganizations.map((organization) => ({
+          label: organization.company,
+          value: organization.accountId.toString(),
+        }))}
+      />
+      <Box sx={modalStyleUtils.modalButtonBar}>
+        <Button
+          id={"register-cluster"}
+          onClick={() => () => {
+            if (loading) {
+              return;
             }
-            label="Select an organization"
-            value={selectedSubnetOrganization}
-            options={subnetOrganizations.map((organization) => ({
-              label: organization.company,
-              value: organization.accountId.toString(),
-            }))}
-          />
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              marginTop: "15px",
-            }}
-          >
-            <Button
-              id={"register-cluster"}
-              onClick={() => () => {
-                if (loading) {
-                  return;
-                }
-                dispatch(setLoading(true));
-                if (subnetAccessToken && selectedSubnetOrganization) {
-                  dispatch(
-                    callRegister({
-                      token: subnetAccessToken,
-                      account_id: selectedSubnetOrganization,
-                    }),
-                  );
-                }
-              }}
-              disabled={loading || subnetAccessToken.trim().length === 0}
-              variant="callAction"
-              label={"Register"}
-            />
-          </Box>
-        </Box>
+            dispatch(setLoading(true));
+            if (subnetAccessToken && selectedSubnetOrganization) {
+              dispatch(
+                callRegister({
+                  token: subnetAccessToken,
+                  account_id: selectedSubnetOrganization,
+                }),
+              );
+            }
+          }}
+          disabled={loading || subnetAccessToken.trim().length === 0}
+          variant="callAction"
+          label={"Register"}
+        />
       </Box>
-      <RegisterHelpBox />
-    </Box>
+    </FormLayout>
   );
 };
 

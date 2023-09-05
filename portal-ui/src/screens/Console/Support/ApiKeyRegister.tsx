@@ -14,42 +14,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { Box } from "@mui/material";
-import { Button, OnlineRegistrationIcon } from "mds";
-import { FormTitle } from "./utils";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import GetApiKeyModal from "./GetApiKeyModal";
-import RegisterHelpBox from "./RegisterHelpBox";
+import React, { useCallback, useEffect, useState } from "react";
+import { Box, Button, FormLayout, InputBox, OnlineRegistrationIcon } from "mds";
+import { useNavigate } from "react-router-dom";
 import { SubnetLoginRequest, SubnetLoginResponse } from "../License/types";
-import api from "../../../common/api";
 import { useAppDispatch } from "../../../store";
 import {
   setErrorSnackMessage,
   setServerNeedsRestart,
 } from "../../../systemSlice";
 import { ErrorResponseHandler } from "../../../common/types";
-import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { useNavigate } from "react-router-dom";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
+import GetApiKeyModal from "./GetApiKeyModal";
+import RegisterHelpBox from "./RegisterHelpBox";
+import api from "../../../common/api";
 
 interface IApiKeyRegister {
-  classes: any;
   registerEndpoint: string;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    sizedLabel: {
-      minWidth: "75px",
-    },
-    ...spacingUtils,
-  });
-
-const ApiKeyRegister = ({ classes, registerEndpoint }: IApiKeyRegister) => {
+const ApiKeyRegister = ({ registerEndpoint }: IApiKeyRegister) => {
   const navigate = useNavigate();
 
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
@@ -92,108 +77,66 @@ const ApiKeyRegister = ({ classes, registerEndpoint }: IApiKeyRegister) => {
   };
 
   return (
-    <Fragment>
+    <FormLayout
+      title={"Register cluster with API key"}
+      icon={<OnlineRegistrationIcon />}
+      containerPadding={false}
+      withBorders={false}
+      helpBox={<RegisterHelpBox />}
+    >
       <Box
         sx={{
-          "& .title-text": {
-            marginLeft: "27px",
-            fontWeight: 600,
-          },
-        }}
-      >
-        <FormTitle
-          icon={<OnlineRegistrationIcon />}
-          title={`Register cluster with API key`}
-        />
-      </Box>
-      <Box
-        sx={{
+          fontSize: 14,
           display: "flex",
-          flexFlow: {
-            xs: "column",
-            md: "row",
-          },
+          flexFlow: "column",
+          marginBottom: "30px",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexFlow: "column",
-            flex: "2",
-          }}
-        >
-          <Box
-            sx={{
-              fontSize: "16px",
-              display: "flex",
-              flexFlow: "column",
-              marginTop: "30px",
-              marginBottom: "30px",
-            }}
-          >
-            Use your MinIO Subscription Network API Key to register this
-            cluster.
-          </Box>
-          <Box
-            sx={{
-              flex: "1",
-            }}
-          >
-            <InputBoxWrapper
-              className={classes.spacerBottom}
-              classes={{
-                inputLabel: classes.sizedLabel,
-              }}
-              id="api-key"
-              name="api-key"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setApiKey(event.target.value)
-              }
-              label="API Key"
-              value={apiKey}
-            />
-
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                "& button": {
-                  marginLeft: "8px",
-                },
-              }}
-            >
-              <Button
-                id={"get-from-subnet"}
-                variant="regular"
-                className={classes.spacerRight}
-                disabled={loading}
-                onClick={() => setShowApiKeyModal(true)}
-                label={"Get from SUBNET"}
-              />
-              <Button
-                id={"register"}
-                type="submit"
-                variant="callAction"
-                disabled={loading || apiKey.trim().length === 0}
-                onClick={() => onRegister()}
-                label={"Register"}
-              />
-              <GetApiKeyModal
-                open={showApiKeyModal}
-                closeModal={() => setShowApiKeyModal(false)}
-                onSet={(value) => {
-                  setApiKey(value);
-                  setFromModal(true);
-                }}
-              />
-            </Box>
-          </Box>
-        </Box>
-        <RegisterHelpBox />
+        Use your MinIO Subscription Network API Key to register this cluster.
       </Box>
-    </Fragment>
+      <Box
+        sx={{
+          flex: "1",
+        }}
+      >
+        <InputBox
+          id="api-key"
+          name="api-key"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setApiKey(event.target.value)
+          }
+          label="API Key"
+          value={apiKey}
+        />
+
+        <Box sx={modalStyleUtils.modalButtonBar}>
+          <Button
+            id={"get-from-subnet"}
+            variant="regular"
+            disabled={loading}
+            onClick={() => setShowApiKeyModal(true)}
+            label={"Get from SUBNET"}
+          />
+          <Button
+            id={"register"}
+            type="submit"
+            variant="callAction"
+            disabled={loading || apiKey.trim().length === 0}
+            onClick={() => onRegister()}
+            label={"Register"}
+          />
+        </Box>
+      </Box>
+      <GetApiKeyModal
+        open={showApiKeyModal}
+        closeModal={() => setShowApiKeyModal(false)}
+        onSet={(value) => {
+          setApiKey(value);
+          setFromModal(true);
+        }}
+      />
+    </FormLayout>
   );
 };
 
-export default withStyles(styles)(ApiKeyRegister);
+export default ApiKeyRegister;
