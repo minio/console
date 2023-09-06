@@ -854,17 +854,22 @@ func deleteObjects(ctx context.Context, client MCClient, bucket string, path str
 	}
 
 	if recursive || allVersions {
-		return deleteMultipleObjects(ctx, client, recursive, allVersions, bypass)
+		return deleteMultipleObjects(ctx, client, path, recursive, allVersions, bypass)
 	}
 
 	return deleteSingleObject(ctx, client, bucket, path, versionID, bypass)
+}
+
+// Return standardized URL to be used to compare later.
+func getStandardizedURL(targetURL string) string {
+	return filepath.FromSlash(targetURL)
 }
 
 // deleteMultipleObjects uses listing before removal, it can list recursively or not,
 //
 //	Use cases:
 //	   * Remove objects recursively
-func deleteMultipleObjects(ctx context.Context, client MCClient, recursive, allVersions, isBypass bool) error {
+func deleteMultipleObjects(ctx context.Context, client MCClient, path string, recursive, allVersions, isBypass bool) error {
 	// Constants defined to make this code more readable
 	const (
 		isIncomplete   = false
@@ -892,6 +897,11 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive, allV
 			if content.Err != nil {
 				continue
 			}
+
+			if !strings.HasSuffix(getStandardizedURL(content.URL.Path), path) && !strings.HasSuffix(path, "/") {
+				continue
+			}
+
 			select {
 			case contentCh <- content:
 			case <-lctx.Done():
