@@ -30,14 +30,8 @@ import {
   Switch,
 } from "mds";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
-import {
-  setErrorSnackMessage,
-  setHelpName,
-  setModalErrorSnackMessage,
-  setSnackBarMessage,
-} from "../../../../systemSlice";
+import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import useApi from "../../Common/Hooks/useApi";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
 import { api } from "api";
@@ -56,6 +50,8 @@ const EditBucketReplication = () => {
     dispatch(setHelpName("bucket-replication-edit"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const backLink = IAM_PAGES.BUCKETS + `/${bucketName}/admin/replication`;
 
   const [editLoading, setEditLoading] = useState<boolean>(true);
   const [saveEdit, setSaveEdit] = useState<boolean>(false);
@@ -118,10 +114,10 @@ const EditBucketReplication = () => {
       api.buckets
         .updateMultiBucketReplication(bucketName, ruleID, remoteBucketsInfo)
         .then(() => {
-          navigate(IAM_PAGES.BUCKETS + `/${bucketName}/admin/replication`);
+          navigate(backLink);
         })
         .catch((err) => {
-          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
           setSaveEdit(false);
         });
     }
@@ -148,9 +144,7 @@ const EditBucketReplication = () => {
         label={
           <BackLink
             label={"Edit Bucket Replication"}
-            onClick={() =>
-              navigate(IAM_PAGES.BUCKETS + `/${bucketName}/admin/replication`)
-            }
+            onClick={() => navigate(backLink)}
           />
         }
         actions={<HelpMenu />}
@@ -318,7 +312,7 @@ const EditBucketReplication = () => {
                 variant="regular"
                 disabled={editLoading || saveEdit}
                 onClick={() => {
-                  navigate("buckets");
+                  navigate(backLink);
                 }}
                 label={"Cancel"}
               />

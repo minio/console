@@ -159,7 +159,6 @@ const BucketReplicationPanel = () => {
     navigate(
       `/buckets/edit-replication?bucketName=${bucketName}&ruleID=${replication.id}`,
     );
-    //setEditReplicationModal(true);
   };
 
   const ruleDestDisplay = (events: BucketReplicationDestination) => {
