@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   AddIcon,
   Box,
@@ -153,10 +153,12 @@ const BucketReplicationPanel = () => {
     setDeleteSelectedRules(true);
     setDeleteReplicationModal(true);
   };
-
+  const navigate = useNavigate();
   const editReplicationRule = (replication: BucketReplicationRule) => {
     setSelectedRRule(replication.id);
-    setEditReplicationModal(true);
+    navigate(
+      `/buckets/edit-replication?bucketName=${bucketName}&ruleID=${replication.id}`,
+    );
   };
 
   const ruleDestDisplay = (events: BucketReplicationDestination) => {
