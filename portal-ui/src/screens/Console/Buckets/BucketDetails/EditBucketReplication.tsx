@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   BackLink,
   Box,
@@ -41,10 +41,10 @@ import QueryMultiSelector from "screens/Console/Common/FormComponents/QueryMulti
 const EditBucketReplication = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [searchParams, _] = useSearchParams();
+  let params = new URLSearchParams(document.location.search);
 
-  const bucketName = searchParams.get("bucketName");
-  const ruleID = searchParams.get("ruleID");
+  const bucketName = params.get("bucketName") || "";
+  const ruleID = params.get("ruleID") || "";
 
   useEffect(() => {
     dispatch(setHelpName("bucket-replication-edit"));
@@ -121,6 +121,7 @@ const EditBucketReplication = () => {
           setSaveEdit(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     saveEdit,
     bucketName,

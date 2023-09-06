@@ -55,7 +55,6 @@ import { selFeatures, selSession } from "./consoleSlice";
 import { api } from "api";
 import MenuWrapper from "./Menu/MenuWrapper";
 import { LinearProgress } from "@mui/material";
-import EditBucketReplication from "./Buckets/BucketDetails/EditBucketReplication";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -101,7 +100,7 @@ const ObjectBrowser = React.lazy(() => import("./ObjectBrowser/ObjectBrowser"));
 
 const Buckets = React.lazy(() => import("./Buckets/Buckets"));
 
-const Edi = React.lazy(
+const EditBucketReplication = React.lazy(
   () => import("./Buckets/BucketDetails/EditBucketReplication"),
 );
 const Policies = React.lazy(() => import("./Policies/Policies"));
