@@ -140,6 +140,7 @@ export const IAM_PAGES = {
   BUCKETS: "/buckets",
   ADD_BUCKETS: "add-bucket",
   BUCKETS_ADMIN_VIEW: ":bucketName/admin/*",
+  BUCKETS_EDIT_REPLICATION: "/buckets/edit-replication",
   /* Object Browser */
   OBJECT_BROWSER_VIEW: "/browser",
   OBJECT_BROWSER_BUCKET_VIEW: "/browser/:bucketName",
@@ -292,6 +293,9 @@ export const IAM_PERMISSIONS = {
 export const IAM_PAGES_PERMISSIONS = {
   [IAM_PAGES.ADD_BUCKETS]: [
     IAM_SCOPES.S3_CREATE_BUCKET, // create bucket page
+  ],
+  [IAM_PAGES.BUCKETS_EDIT_REPLICATION]: [
+    ...IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN], // edit bucket replication bucket page
   ],
   [IAM_PAGES.BUCKETS_ADMIN_VIEW]: [
     ...IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN], // bucket admin page
