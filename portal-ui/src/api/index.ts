@@ -25,7 +25,7 @@ api.request = async <T = any, E = any>({
     cancelToken,
     ...params,
   });
-  return internalResp.catch((e) => CommonAPIValidation(e));
+  return internalResp.then((e) => CommonAPIValidation(e));
 };
 
 export function CommonAPIValidation<D, E>(
@@ -37,5 +37,5 @@ export function CommonAPIValidation<D, E>(
       document.location = "/login";
     }
   }
-  throw res;
+  return res;
 }
