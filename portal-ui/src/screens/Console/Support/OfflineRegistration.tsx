@@ -15,21 +15,27 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Box, Link } from "@mui/material";
-import { ClusterRegistered, FormTitle } from "./utils";
-import { Button, CopyIcon, OfflineRegistrationIcon } from "mds";
-import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import CopyToClipboard from "react-copy-to-clipboard";
-import RegisterHelpBox from "./RegisterHelpBox";
+import {
+  Box,
+  Button,
+  CommentBox,
+  CopyIcon,
+  FormLayout,
+  OfflineRegistrationIcon,
+} from "mds";
+import { ClusterRegistered } from "./utils";
 import { AppState, useAppDispatch } from "../../../store";
 import { useSelector } from "react-redux";
-import CommentBoxWrapper from "../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
-import useApi from "../Common/Hooks/useApi";
 import { fetchLicenseInfo } from "./registerThunks";
 import {
   setErrorSnackMessage,
   setServerNeedsRestart,
 } from "../../../systemSlice";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
+import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
+import CopyToClipboard from "react-copy-to-clipboard";
+import RegisterHelpBox from "./RegisterHelpBox";
+import useApi from "../Common/Hooks/useApi";
 
 const OfflineRegistration = () => {
   const dispatch = useAppDispatch();
@@ -66,9 +72,8 @@ const OfflineRegistration = () => {
   return (
     <Fragment>
       <Box
+        withBorders
         sx={{
-          border: "1px solid #eaeaea",
-          borderRadius: "2px",
           display: "flex",
           flexFlow: "column",
           padding: "43px",
@@ -77,146 +82,105 @@ const OfflineRegistration = () => {
         {clusterRegistered && licenseInfo ? (
           <ClusterRegistered email={licenseInfo.email} />
         ) : (
-          <Fragment>
-            <Box
-              sx={{
-                "& .title-text": {
-                  marginLeft: "27px",
-                  fontWeight: 600,
-                },
-              }}
-            >
-              <FormTitle
-                icon={<OfflineRegistrationIcon />}
-                title={`Register cluster in an Air-gap environment`}
-              />
-            </Box>
-
+          <FormLayout
+            title={"Register cluster in an Air-gap environment"}
+            icon={<OfflineRegistrationIcon />}
+            helpBox={<RegisterHelpBox />}
+            withBorders={false}
+            containerPadding={false}
+          >
             <Box
               sx={{
                 display: "flex",
+                flexFlow: "column",
+                flex: "2",
+                marginTop: "15px",
+                "& .step-row": {
+                  fontSize: 14,
+                  display: "flex",
+                  marginTop: "15px",
+                  marginBottom: "15px",
+                },
               }}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexFlow: "column",
-                  flex: "2",
-                  marginTop: "15px",
-                  "& .step-number": {
-                    color: "#ffffff",
-                    height: "25px",
-                    width: "25px",
-                    background: "#081C42",
-                    marginRight: "10px",
-                    textAlign: "center",
-                    fontWeight: 600,
-                    borderRadius: "50%",
-                  },
-
-                  "& .step-row": {
-                    fontSize: "16px",
-                    display: "flex",
-                    marginTop: "15px",
-                    marginBottom: "15px",
-                  },
-                }}
-              >
-                <Box>
-                  <Box className="step-row">
-                    <div className="step-text">
-                      Click on the link to register this cluster in SUBNET and
-                      get a License Key for this Air-Gap deployment
-                    </div>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      flex: "1",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 3,
-                    }}
-                  >
-                    <Link
-                      style={{
-                        color: "#2781B0",
-                        cursor: "pointer",
-                      }}
-                      color="inherit"
-                      href={offlineRegUrl}
-                      target="_blank"
-                    >
-                      https://subnet.min.io/cluster/register
-                    </Link>
-
-                    <TooltipWrapper tooltip={"Copy to Clipboard"}>
-                      <CopyToClipboard text={offlineRegUrl}>
-                        <Button
-                          type={"button"}
-                          id={"copy-ult-to-clip-board"}
-                          icon={<CopyIcon />}
-                          color={"primary"}
-                          variant={"regular"}
-                        />
-                      </CopyToClipboard>
-                    </TooltipWrapper>
-                  </Box>
-
-                  <div
-                    style={{
-                      marginTop: "25px",
-                      fontSize: "14px",
-                      fontStyle: "italic",
-                      color: "#5E5E5E",
-                    }}
-                  >
-                    Note: If this machine does not have internet connection,
-                    Copy paste the following URL in a browser where you access
-                    SUBNET and follow the instructions to complete the
-                    registration
-                  </div>
-
-                  <Box
-                    sx={{
-                      marginTop: "25px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <label style={{ fontWeight: "bold", marginBottom: "10px" }}>
-                      Paste the License Key{" "}
-                    </label>
-                    <CommentBoxWrapper
-                      value={licenseKey}
-                      disabled={isSaving}
-                      label={""}
-                      id={"licenseKey"}
-                      name={"licenseKey"}
-                      placeholder={"License Key"}
-                      onChange={(e) => {
-                        setLicenseKey(e.target.value);
-                      }}
-                    />
-                  </Box>
-                  <Box
-                    sx={{
-                      marginTop: "25px",
-                    }}
-                  >
-                    <Button
-                      id={"apply-license-key"}
-                      onClick={applyAirGapLicense}
-                      variant={"callAction"}
-                      disabled={!licenseKey || isSaving}
-                      label={"Apply Cluster License"}
-                    />
+              <Box>
+                <Box className="step-row">
+                  <Box className="step-text">
+                    Click on the link to register this cluster in SUBNET and get
+                    a License Key for this Air-Gap deployment
                   </Box>
                 </Box>
+
+                <Box
+                  sx={{
+                    flex: "1",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 3,
+                  }}
+                >
+                  <a href={offlineRegUrl} target="_blank">
+                    https://subnet.min.io/cluster/register
+                  </a>
+
+                  <TooltipWrapper tooltip={"Copy to Clipboard"}>
+                    <CopyToClipboard text={offlineRegUrl}>
+                      <Button
+                        type={"button"}
+                        id={"copy-ult-to-clip-board"}
+                        icon={<CopyIcon />}
+                        color={"primary"}
+                        variant={"regular"}
+                      />
+                    </CopyToClipboard>
+                  </TooltipWrapper>
+                </Box>
+
+                <Box
+                  className={"muted"}
+                  sx={{
+                    marginTop: "25px",
+                  }}
+                >
+                  Note: If this machine does not have internet connection, Copy
+                  paste the following URL in a browser where you access SUBNET
+                  and follow the instructions to complete the registration
+                </Box>
+
+                <Box
+                  sx={{
+                    marginTop: "25px",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <label style={{ fontWeight: "bold", marginBottom: "10px" }}>
+                    Paste the License Key{" "}
+                  </label>
+                  <CommentBox
+                    value={licenseKey}
+                    disabled={isSaving}
+                    label={""}
+                    id={"licenseKey"}
+                    name={"licenseKey"}
+                    placeholder={"License Key"}
+                    onChange={(e) => {
+                      setLicenseKey(e.target.value);
+                    }}
+                  />
+                </Box>
+                <Box sx={modalStyleUtils.modalButtonBar}>
+                  <Button
+                    id={"apply-license-key"}
+                    onClick={applyAirGapLicense}
+                    variant={"callAction"}
+                    disabled={!licenseKey || isSaving}
+                    label={"Apply Cluster License"}
+                  />
+                </Box>
               </Box>
-              <RegisterHelpBox />
             </Box>
-          </Fragment>
+          </FormLayout>
         )}
       </Box>
     </Fragment>

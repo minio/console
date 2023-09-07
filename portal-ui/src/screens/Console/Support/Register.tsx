@@ -15,23 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import { spacingUtils } from "../Common/FormComponents/common/styleLibrary";
-import withStyles from "@mui/styles/withStyles";
-import { Box } from "@mui/material";
-import api from "../../../common/api";
-
+import { Box, PageLayout, Tabs } from "mds";
 import { SubnetRegTokenResponse } from "../License/types";
 import { ErrorResponseHandler } from "../../../common/types";
 import { useSelector } from "react-redux";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import { TabPanel } from "../../shared/tabs";
 import { ClusterRegistered, ProxyConfiguration } from "./utils";
-import ApiKeyRegister from "./ApiKeyRegister";
 import { fetchLicenseInfo } from "./registerThunks";
 import {
   resetRegisterForm,
@@ -44,22 +34,11 @@ import SubnetMFAToken from "./SubnetMFAToken";
 import ClusterRegistrationForm from "./ClusterRegistrationForm";
 import OnlineRegistration from "./OnlineRegistration";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import { PageLayout } from "mds";
 import HelpMenu from "../HelpMenu";
+import api from "../../../common/api";
+import ApiKeyRegister from "./ApiKeyRegister";
 
-interface IRegister {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    sizedLabel: {
-      minWidth: "75px",
-    },
-    ...spacingUtils,
-  });
-
-const Register = ({ classes }: IRegister) => {
+const Register = () => {
   const dispatch = useAppDispatch();
 
   const subnetMFAToken = useSelector(
@@ -98,25 +77,27 @@ const Register = ({ classes }: IRegister) => {
     };
   }, [dispatch]);
 
-  const fetchSubnetRegToken = () => {
-    if (loading || subnetRegToken) {
-      return;
+  useEffect(() => {
+    if (curTab === "simple-tab-2" && !loading && !subnetRegToken) {
+      const fetchSubnetRegToken = () => {
+        dispatch(setLoading(true));
+        api
+          .invoke("GET", "/api/v1/subnet/registration-token")
+          .then((resp: SubnetRegTokenResponse) => {
+            dispatch(setLoading(false));
+            if (resp && resp.regToken) {
+              dispatch(setSubnetRegToken(resp.regToken));
+            }
+          })
+          .catch((err: ErrorResponseHandler) => {
+            console.error(err);
+            dispatch(setErrorSnackMessage(err));
+            dispatch(setLoading(false));
+          });
+      };
+      fetchSubnetRegToken();
     }
-    dispatch(setLoading(true));
-    api
-      .invoke("GET", "/api/v1/subnet/registration-token")
-      .then((resp: SubnetRegTokenResponse) => {
-        dispatch(setLoading(false));
-        if (resp && resp.regToken) {
-          dispatch(setSubnetRegToken(resp.regToken));
-        }
-      })
-      .catch((err: ErrorResponseHandler) => {
-        console.error(err);
-        dispatch(setErrorSnackMessage(err));
-        dispatch(setLoading(false));
-      });
-  };
+  }, [curTab, loading, subnetRegToken, dispatch]);
 
   useEffect(() => {
     if (initialLicenseLoading) {
@@ -125,7 +106,7 @@ const Register = ({ classes }: IRegister) => {
     }
   }, [initialLicenseLoading, setInitialLicenseLoading, dispatch]);
 
-  let clusterRegistrationForm: JSX.Element = <Fragment />;
+  let clusterRegistrationForm: React.ReactElement = <Fragment />;
 
   if (subnetAccessToken && subnetOrganizations.length > 0) {
     clusterRegistrationForm = <ClusterRegistrationForm />;
@@ -138,9 +119,8 @@ const Register = ({ classes }: IRegister) => {
   const apiKeyRegistration = (
     <Fragment>
       <Box
+        withBorders
         sx={{
-          border: "1px solid #eaeaea",
-          borderRadius: "2px",
           display: "flex",
           flexFlow: "column",
           padding: "43px",
@@ -161,9 +141,8 @@ const Register = ({ classes }: IRegister) => {
   const regUi = (
     <Fragment>
       <Box
+        withBorders
         sx={{
-          border: "1px solid #eaeaea",
-          borderRadius: "2px",
           display: "flex",
           flexFlow: "column",
           padding: "43px",
@@ -197,46 +176,38 @@ const Register = ({ classes }: IRegister) => {
 
       <PageLayout>
         <Tabs
-          value={curTab}
-          onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+          horizontal
+          currentTabOrPath={curTab}
+          onTabClick={(newValue: string) => {
             dispatch(setCurTab(newValue));
           }}
-          indicatorColor="primary"
-          textColor="primary"
-          aria-label="cluster-tabs"
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab
-            label="Credentials"
-            id="simple-tab-0"
-            aria-controls="simple-tab-panel-0"
-          />
-          <Tab
-            label="API Key"
-            id="simple-tab-1"
-            aria-controls="simple-tab-panel-1"
-          />
-          <Tab
-            label="Air-Gap"
-            id="simple-tab-2"
-            aria-controls="simple-tab-panel-2"
-            onClick={() => fetchSubnetRegToken()}
-          />
-        </Tabs>
-
-        <TabPanel index={0} value={curTab}>
-          {uiToShow}
-        </TabPanel>
-        <TabPanel index={1} value={curTab}>
-          {apiKeyRegistration}
-        </TabPanel>
-        <TabPanel index={2} value={curTab}>
-          {offlineRegistration}
-        </TabPanel>
+          options={[
+            {
+              tabConfig: {
+                label: "Credentials",
+                id: "simple-tab-0",
+              },
+              content: uiToShow,
+            },
+            {
+              tabConfig: {
+                label: "API Key",
+                id: "simple-tab-1",
+              },
+              content: apiKeyRegistration,
+            },
+            {
+              tabConfig: {
+                label: "Air-Gap",
+                id: "simple-tab-2",
+              },
+              content: offlineRegistration,
+            },
+          ]}
+        />
       </PageLayout>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(Register);
+export default Register;

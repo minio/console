@@ -18,14 +18,14 @@ import React, { Fragment } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { selectorTypes } from "../SelectWrapper/SelectWrapper";
+import { SelectorType } from "mds";
 import { Menu, MenuItem } from "@mui/material";
 
 interface IInputUnitBox {
   classes: any;
   id: string;
   unitSelected: string;
-  unitsList: selectorTypes[];
+  unitsList: SelectorType[];
   disabled?: boolean;
   onUnitChange?: (newValue: string) => void;
 }

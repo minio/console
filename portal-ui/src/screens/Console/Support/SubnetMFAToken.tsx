@@ -15,15 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { setSubnetOTP } from "./registerSlice";
-import { Button } from "mds";
-import RegisterHelpBox from "./RegisterHelpBox";
-import { AppState, useAppDispatch } from "../../../store";
+import { Box, Button, FormLayout, InputBox, LockIcon } from "mds";
 import { useSelector } from "react-redux";
+import { setSubnetOTP } from "./registerSlice";
+import { AppState, useAppDispatch } from "../../../store";
 import { subnetLoginWithMFA } from "./registerThunks";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
+import RegisterHelpBox from "./RegisterHelpBox";
 
 const SubnetMFAToken = () => {
   const dispatch = useAppDispatch();
@@ -35,76 +33,51 @@ const SubnetMFAToken = () => {
   const loading = useSelector((state: AppState) => state.register.loading);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-      }}
+    <FormLayout
+      title={"Two-Factor Authentication"}
+      helpBox={<RegisterHelpBox />}
+      withBorders={false}
+      containerPadding={false}
     >
       <Box
         sx={{
+          fontSize: 14,
           display: "flex",
           flexFlow: "column",
-          flex: "2",
+          marginBottom: "30px",
         }}
       >
-        <Box
-          sx={{
-            fontSize: "16px",
-            display: "flex",
-            flexFlow: "column",
-            marginTop: "30px",
-            marginBottom: "30px",
-          }}
-        >
-          Two-Factor Authentication
-        </Box>
-
-        <Box>
-          Please enter the 6-digit verification code that was sent to your email
-          address. This code will be valid for 5 minutes.
-        </Box>
-
-        <Box
-          sx={{
-            flex: "1",
-            marginTop: "30px",
-          }}
-        >
-          <InputBoxWrapper
-            overlayIcon={<LockOutlinedIcon />}
-            id="subnet-otp"
-            name="subnet-otp"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              dispatch(setSubnetOTP(event.target.value))
-            }
-            placeholder=""
-            label=""
-            value={subnetOTP}
-          />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Button
-            id={"verify"}
-            onClick={() => dispatch(subnetLoginWithMFA())}
-            disabled={
-              loading ||
-              subnetOTP.trim().length === 0 ||
-              subnetMFAToken.trim().length === 0
-            }
-            variant="callAction"
-            label={"Verify"}
-          />
-        </Box>
+        Please enter the 6-digit verification code that was sent to your email
+        address. This code will be valid for 5 minutes.
       </Box>
 
-      <RegisterHelpBox />
-    </Box>
+      <Box>
+        <InputBox
+          overlayIcon={<LockIcon />}
+          id="subnet-otp"
+          name="subnet-otp"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            dispatch(setSubnetOTP(event.target.value))
+          }
+          placeholder=""
+          label=""
+          value={subnetOTP}
+        />
+      </Box>
+      <Box sx={modalStyleUtils.modalButtonBar}>
+        <Button
+          id={"verify"}
+          onClick={() => dispatch(subnetLoginWithMFA())}
+          disabled={
+            loading ||
+            subnetOTP.trim().length === 0 ||
+            subnetMFAToken.trim().length === 0
+          }
+          variant="callAction"
+          label={"Verify"}
+        />
+      </Box>
+    </FormLayout>
   );
 };
 export default SubnetMFAToken;

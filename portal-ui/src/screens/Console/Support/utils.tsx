@@ -1,56 +1,37 @@
-import { Box, Grid, Link } from "@mui/material";
-import { Fragment, useState } from "react";
-import { CopyIcon, SettingsIcon } from "mds";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import RegistrationStatusBanner from "./RegistrationStatusBanner";
+// This file is part of MinIO Console Server
+// Copyright (c) 2022 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export const FormTitle = ({
-  icon = null,
-  title,
-}: {
-  icon?: any;
-  title: any;
-}) => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-start",
-      }}
-    >
-      {icon}
-      <div className="title-text">{title}</div>
-    </Box>
-  );
-};
+import React, { Fragment, useState } from "react";
+import { CopyIcon, SettingsIcon, Box, Grid, Switch, InputBox } from "mds";
+import RegistrationStatusBanner from "./RegistrationStatusBanner";
 
 export const ClusterRegistered = ({ email }: { email: string }) => {
   return (
     <Fragment>
       <RegistrationStatusBanner email={email} />
-      <Grid item xs={12} marginTop={"25px"}>
+      <Grid item xs={12} sx={{ marginTop: 25 }}>
         <Box
           sx={{
             padding: "20px",
-            "& a": {
-              color: "#2781B0",
-              cursor: "pointer",
-            },
           }}
         >
           Login to{" "}
-          <Link
-            href="https://subnet.min.io"
-            target="_blank"
-            style={{
-              color: "#2781B0",
-              cursor: "pointer",
-            }}
-          >
+          <a href="https://subnet.min.io" target="_blank">
             SUBNET
-          </Link>{" "}
+          </a>{" "}
           to avail support for this MinIO cluster
         </Box>
       </Grid>
@@ -65,9 +46,8 @@ export const ProxyConfiguration = () => {
   return (
     <Fragment>
       <Box
+        withBorders
         sx={{
-          border: "1px solid #eaeaea",
-          borderRadius: "2px",
           display: "flex",
           padding: "23px",
           marginTop: "40px",
@@ -103,21 +83,17 @@ export const ProxyConfiguration = () => {
             }}
           >
             For airgap/firewalled environments it is possible to{" "}
-            <Link
-              style={{
-                color: "#2781B0",
-                cursor: "pointer",
-              }}
+            <a
               href="https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-config.html?ref=con"
               target="_blank"
             >
               configure a proxy
-            </Link>{" "}
+            </a>{" "}
             to connect to SUBNET .
           </Box>
           <Box>
             {displaySubnetProxy && (
-              <InputBoxWrapper
+              <InputBox
                 disabled
                 id="subnetProxy"
                 name="subnetProxy"
@@ -126,9 +102,6 @@ export const ProxyConfiguration = () => {
                 label=""
                 value={proxyConfigurationCommand}
                 overlayIcon={<CopyIcon />}
-                extraInputProps={{
-                  readOnly: true,
-                }}
                 overlayAction={() =>
                   navigator.clipboard.writeText(proxyConfigurationCommand)
                 }
@@ -141,7 +114,7 @@ export const ProxyConfiguration = () => {
             display: "flex",
           }}
         >
-          <FormSwitchWrapper
+          <Switch
             value="enableProxy"
             id="enableProxy"
             name="enableProxy"

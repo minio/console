@@ -16,8 +16,7 @@
 
 import React, { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box } from "@mui/material";
-import { Button, Grid, HelpBox, WarnIcon } from "mds";
+import { Box, breakPoints, Button, Grid, HelpBox, WarnIcon } from "mds";
 
 interface IRegisterCluster {
   compactMode?: boolean;
@@ -81,11 +80,11 @@ const RegisterCluster = ({ compactMode = false }: IRegisterCluster) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        flexFlow: {
-          sm: "row",
-          xs: "column",
-        },
+        flexFlow: "row",
         marginBottom: "15px",
+        [`@media (max-width: ${breakPoints.sm}px)`]: {
+          flexFlow: "column",
+        },
       }}
     >
       <Grid container>
@@ -113,9 +112,9 @@ const RegisterCluster = ({ compactMode = false }: IRegisterCluster) => {
           <Box
             sx={{
               display: "flex",
-              flexFlow: {
-                xs: "column",
-                md: "row",
+              flexFlow: "row",
+              [`@media (max-width: ${breakPoints.sm}px)`]: {
+                flexFlow: "column",
               },
             }}
           >
