@@ -15,9 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box, Grid } from "@mui/material";
 import {
   ArrowRightIcon,
+  Box,
+  breakPoints,
   BucketsIcon,
   Button,
   DiagnosticsMenuIcon,
@@ -46,15 +47,14 @@ import { AdminInfoResponse, ServerDrives } from "api/consoleApi";
 const BoxItem = ({ children }: { children: any }) => {
   return (
     <Box
+      withBorders
       sx={{
-        border: "1px solid #f1f1f1",
-        padding: {
-          md: "15px",
-          xs: "5px",
-        },
+        padding: 15,
         height: "136px",
-        maxWidth: {
-          sm: "100%",
+        maxWidth: "100%",
+        [`@media (max-width: ${breakPoints.sm}px)`]: {
+          padding: 5,
+          maxWidth: "initial",
         },
       }}
     >
@@ -124,8 +124,8 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
           display: "grid",
           gridTemplateRows: "1fr",
           gridTemplateColumns: "1fr",
-          gap: "27px",
-          marginBottom: "40px",
+          gap: 27,
+          marginBottom: 40,
         }}
       >
         <Box
@@ -139,13 +139,13 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             sx={{
               display: "grid",
               gridTemplateRows: "136px",
-              gridTemplateColumns: {
-                sm: "1fr 1fr 1fr",
-                xs: "1fr",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: 20,
+              [`@media (max-width: ${breakPoints.sm}px)`]: {
+                gridTemplateColumns: "1fr",
               },
-              gap: {
-                md: "20px",
-                xs: "20px",
+              [`@media (max-width: ${breakPoints.md}px)`]: {
+                marginBottom: 0,
               },
             }}
           >
@@ -214,12 +214,12 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
             </BoxItem>
 
             <Box
+              withBorders
               sx={{
                 gridRowStart: "1",
                 gridRowEnd: "3",
                 gridColumnStart: "3",
-                border: "1px solid #f1f1f1",
-                padding: "15px",
+                padding: 15,
                 display: "grid",
                 justifyContent: "stretch",
               }}
@@ -243,9 +243,9 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                     <Box>
                       <Box
                         sx={{
-                          display: {
-                            md: "inline",
-                            xs: "none",
+                          display: "inline",
+                          [`@media (max-width: ${breakPoints.sm}px)`]: {
+                            display: "none",
                           },
                         }}
                       >
@@ -262,9 +262,9 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                     <Box>
                       <Box
                         sx={{
-                          display: {
-                            md: "inline",
-                            xs: "none",
+                          display: "inline",
+                          [`@media (max-width: ${breakPoints.sm}px)`]: {
+                            display: "none",
                           },
                         }}
                       >
@@ -283,29 +283,32 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
               </Box>
             </Box>
           </Box>
-          <Grid container spacing={1}>
-            <Grid item xs={4}>
-              <TimeStatItem
-                icon={<StorageIcon />}
-                label={"Backend type"}
-                value={usage?.backend?.backendType ?? "Unknown"}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TimeStatItem
-                icon={<FormatDrivesIcon />}
-                label={"Standard storage class parity"}
-                value={usage?.backend?.standardSCParity?.toString() ?? "n/a"}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TimeStatItem
-                icon={<FormatDrivesIcon />}
-                label={"Reduced redundancy storage class parity"}
-                value={usage?.backend?.rrSCParity?.toString() ?? "n/a"}
-              />
-            </Grid>
-          </Grid>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: "14px",
+              [`@media (max-width: ${breakPoints.lg}px)`]: {
+                gridTemplateColumns: "1fr",
+              },
+            }}
+          >
+            <TimeStatItem
+              icon={<StorageIcon />}
+              label={"Backend type"}
+              value={usage?.backend?.backendType ?? "Unknown"}
+            />
+            <TimeStatItem
+              icon={<FormatDrivesIcon />}
+              label={"Standard storage class parity"}
+              value={usage?.backend?.standardSCParity?.toString() ?? "n/a"}
+            />
+            <TimeStatItem
+              icon={<FormatDrivesIcon />}
+              label={"Reduced redundancy storage class parity"}
+              value={usage?.backend?.rrSCParity?.toString() ?? "n/a"}
+            />
+          </Box>
 
           <Box
             sx={{
@@ -338,11 +341,8 @@ const BasicDashboard = ({ usage }: IDashboardProps) => {
                   </Box>
                   <Box
                     sx={{
-                      paddingTop: "20px",
-                      fontSize: "14px",
-                      "& a": {
-                        color: (theme) => theme.colors.link,
-                      },
+                      paddingTop: 20,
+                      fontSize: 14,
                     }}
                   >
                     <a

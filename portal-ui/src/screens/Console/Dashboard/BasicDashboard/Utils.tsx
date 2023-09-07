@@ -17,7 +17,7 @@
 export const STATUS_COLORS = {
   RED: "#C83B51",
   GREEN: "#4CCB92",
-  YELLOW: "#E7A219",
+  YELLOW: "#FFBD62",
 };
 
 export const getDriveStatusColor = (
@@ -25,24 +25,24 @@ export const getDriveStatusColor = (
   totalDrives: number,
 ) => {
   if (activeDisks <= totalDrives / 2) {
-    return STATUS_COLORS.RED;
+    return "bad";
   }
   if (totalDrives !== 2 && activeDisks === totalDrives / 2 + 1) {
-    return STATUS_COLORS.YELLOW;
+    return "warn";
   }
   if (activeDisks === totalDrives) {
-    return STATUS_COLORS.GREEN;
+    return "good";
   }
 };
 
 export const serverStatusColor = (health_status: string) => {
   switch (health_status) {
     case "offline":
-      return STATUS_COLORS.RED;
+      return "bad";
     case "online":
-      return STATUS_COLORS.GREEN;
+      return "good";
     default:
-      return STATUS_COLORS.YELLOW;
+      return "warn";
   }
 };
 export const getNetworkStatusColor = (
@@ -50,12 +50,12 @@ export const getNetworkStatusColor = (
   networkTotal: number,
 ) => {
   if (activeNetwork <= networkTotal / 2) {
-    return STATUS_COLORS.RED;
+    return "bad";
   }
   if (activeNetwork === networkTotal / 2 + 1) {
-    return STATUS_COLORS.YELLOW;
+    return "warn";
   }
   if (activeNetwork === networkTotal) {
-    return STATUS_COLORS.GREEN;
+    return "good";
   }
 };

@@ -15,8 +15,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box, Tooltip } from "@mui/material";
-import { Loader } from "mds";
+import styled from "styled-components";
+import get from "lodash/get";
+import { Box, breakPoints, Loader, Tooltip } from "mds";
+
+const StatCardMain = styled.div(({ theme }) => ({
+  fontFamily: "Inter,sans-serif",
+  color: get(theme, "signalColors.main", "#07193E"),
+  maxWidth: "300px",
+  display: "flex",
+  marginLeft: "auto",
+  marginRight: "auto",
+  cursor: "default",
+  position: "relative",
+  width: "100%",
+}));
 
 const NumericStatCard = ({
   value,
@@ -36,9 +49,9 @@ const NumericStatCard = ({
           flex: 1,
           display: "flex",
           width: "100%",
-          padding: {
-            sm: "0 8px 0 8px",
-            xs: "0 10px 0 10px",
+          padding: "0 8px 0 8px",
+          [`@media (max-width: ${breakPoints.sm}px)`]: {
+            padding: "0 10px 0 10px",
           },
         }}
       >
@@ -61,26 +74,28 @@ const NumericStatCard = ({
             {label}
           </Box>
 
-          <Tooltip title={value} placement="bottom" enterDelay={500}>
+          <Tooltip tooltip={value} placement="bottom">
             <Box
               sx={{
-                fontSize: {
-                  xl: "55px",
-                  lg: "50px",
-                  md: "36px",
-                  sm: "35px",
-                  xs: "35px",
-                },
                 fontWeight: 600,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                maxWidth: {
-                  md: 187,
-                  xs: 200,
+                maxWidth: 187,
+                flexFlow: "row",
+                fontSize: 55,
+                [`@media (max-width: ${breakPoints.sm}px)`]: {
+                  fontSize: 35,
+                  maxWidth: 200,
+                  flexFlow: "column",
                 },
-                flexFlow: {
-                  md: "row",
-                  xs: "column",
+                [`@media (max-width: ${breakPoints.md}px)`]: {
+                  fontSize: 35,
+                },
+                [`@media (max-width: ${breakPoints.lg}px)`]: {
+                  fontSize: 36,
+                },
+                [`@media (max-width: ${breakPoints.xl}px)`]: {
+                  fontSize: 50,
                 },
               }}
             >
@@ -113,23 +128,7 @@ const NumericStatCard = ({
     );
   };
 
-  return (
-    <Box
-      sx={{
-        fontFamily: "Inter,sans-serif",
-        color: "#07193E",
-        maxWidth: "300px",
-        display: "flex",
-        marginLeft: "auto",
-        marginRight: "auto",
-        cursor: "default",
-        position: "relative",
-        width: "100%",
-      }}
-    >
-      {getContent()}
-    </Box>
-  );
+  return <StatCardMain>{getContent()}</StatCardMain>;
 };
 
 export default NumericStatCard;

@@ -14,46 +14,46 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Box, Tooltip } from "@mui/material";
 import React from "react";
+import get from "lodash/get";
+import styled from "styled-components";
+import { Box, breakPoints, Tooltip } from "mds";
+
+const CounterCardMain = styled.div(({ theme }) => ({
+  fontFamily: "Inter,sans-serif",
+  color: get(theme, "signalColors.main", "#07193E"),
+  maxWidth: "300px",
+  display: "flex",
+  marginLeft: "auto",
+  marginRight: "auto",
+  cursor: "default",
+  position: "relative",
+  width: "100%",
+}));
 
 const CounterCard = ({
   counterValue,
   label = "",
   icon = null,
   actions = null,
-  loading = false,
 }: {
   counterValue: string | number;
   label?: any;
   icon?: any;
   actions?: any;
-  loading?: boolean;
 }) => {
   return (
-    <Box
-      sx={{
-        fontFamily: "Inter,sans-serif",
-        color: "#07193E",
-        maxWidth: "300px",
-        display: "flex",
-        marginLeft: "auto",
-        marginRight: "auto",
-        cursor: "default",
-        position: "relative",
-        width: "100%",
-      }}
-    >
+    <CounterCardMain>
       <Box
         sx={{
           flex: 1,
           display: "flex",
           width: "100%",
-          padding: {
-            sm: "0 8px 0 8px",
-            xs: "0 10px 0 10px",
-          },
+          padding: "0 8px 0 8px",
           position: "absolute",
+          [`@media (max-width: ${breakPoints.md}px)`]: {
+            padding: "0 10px 0 10px",
+          },
         }}
       >
         <Box
@@ -75,36 +75,28 @@ const CounterCard = ({
             {label}
           </Box>
 
-          <Tooltip title={counterValue} placement="bottom" enterDelay={500}>
+          <Tooltip tooltip={counterValue} placement="bottom">
             <Box
               sx={{
-                fontSize:
-                  counterValue.toString().length >= 5
-                    ? {
-                        xl: "50px",
-                        lg: "45px",
-                        md: "28px",
-                        sm: "28px",
-                        xs: "20px",
-                      }
-                    : {
-                        xl: "55px",
-                        lg: "50px",
-                        md: "36px",
-                        sm: "35px",
-                        xs: "35px",
-                      },
-
                 fontWeight: 600,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                maxWidth: {
-                  md: 187,
-                  xs: 200,
+                maxWidth: 187,
+                flexFlow: "row",
+                fontSize: counterValue.toString().length >= 5 ? 50 : 55,
+                [`@media (max-width: ${breakPoints.sm}px)`]: {
+                  flexFlow: "column",
+                  maxWidth: 200,
+                  fontSize: counterValue.toString().length >= 5 ? 20 : 35,
                 },
-                flexFlow: {
-                  md: "row",
-                  xs: "column",
+                [`@media (max-width: ${breakPoints.md}px)`]: {
+                  fontSize: counterValue.toString().length >= 5 ? 28 : 35,
+                },
+                [`@media (max-width: ${breakPoints.lg}px)`]: {
+                  fontSize: counterValue.toString().length >= 5 ? 28 : 36,
+                },
+                [`@media (max-width: ${breakPoints.xl}px)`]: {
+                  fontSize: counterValue.toString().length >= 5 ? 45 : 50,
                 },
               }}
             >
@@ -137,7 +129,7 @@ const CounterCard = ({
           </Box>
         </Box>
       </Box>
-    </Box>
+    </CounterCardMain>
   );
 };
 

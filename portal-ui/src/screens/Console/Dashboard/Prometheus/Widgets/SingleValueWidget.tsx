@@ -15,73 +15,65 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect, useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import api from "../../../../../common/api";
-import { Loader } from "mds";
+import { useSelector } from "react-redux";
+import { Box, Loader } from "mds";
+import styled from "styled-components";
+import get from "lodash/get";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { splitSizeMetric, widgetDetailsToPanel } from "../utils";
 import { IDashboardPanel } from "../types";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../store";
+import api from "../../../../../common/api";
 
 interface ISingleValueWidget {
   title: string;
   panelItem: IDashboardPanel;
   timeStart: any;
   timeEnd: any;
-  propLoading: boolean;
-
-  classes: any;
   apiPrefix: string;
   renderFn?: (arg: Record<string, any>) => any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...widgetCommon,
-    loadingAlign: {
-      width: "100%",
-      textAlign: "center",
-      margin: "auto",
-    },
-    metric: {
-      fontSize: 60,
-      lineHeight: 1,
-      color: "#07193E",
-      fontWeight: 700,
-    },
-    titleElement: {
-      fontSize: 10,
-      color: "#767676",
-      fontWeight: 700,
-    },
-    containerAlignment: {
-      display: "flex",
-      height: 140,
-      flexDirection: "column",
-      justifyContent: "center",
-      "& .unitText": {
-        color: "#767676",
-        fontSize: 12,
-      },
-    },
-  });
+const SingleValueWidgetMain = styled.div(({ theme }) => ({
+  display: "flex",
+  height: 140,
+  flexDirection: "column",
+  justifyContent: "center",
+  "& .unitText": {
+    color: get(theme, "mutedText", "#87888d"),
+    fontSize: 12,
+  },
+  "& .loadingAlign": {
+    width: "100%",
+    textAlign: "center",
+    margin: "auto",
+  },
+  "& .metric": {
+    fontSize: 60,
+    lineHeight: 1,
+    color: get(theme, "signalColors.main", "#07193E"),
+    fontWeight: 700,
+  },
+  "& .titleElement": {
+    fontSize: 10,
+    color: get(theme, "mutedText", "#87888d"),
+    fontWeight: 700,
+  },
+  ...widgetCommon(theme),
+}));
 
 const SingleValueWidget = ({
   title,
   panelItem,
   timeStart,
   timeEnd,
-  propLoading,
-  classes,
   apiPrefix,
   renderFn,
 }: ISingleValueWidget) => {
   const dispatch = useAppDispatch();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<string>("");
   const widgetVersion = useSelector(
@@ -132,24 +124,20 @@ const SingleValueWidget = ({
     return renderFn({ valueToRender, loading, title, id: panelItem.id });
   }
   return (
-    <div className={classes.containerAlignment}>
+    <SingleValueWidgetMain>
       {loading && (
-        <div className={classes.loadingAlign}>
+        <Box className={"loadingAlign"}>
           <Loader />
-        </div>
+        </Box>
       )}
       {!loading && (
         <Fragment>
-          <div className={classes.metric}>{splitSizeMetric(data)}</div>
-          <div className={classes.titleElement}>{title}</div>
+          <Box className={"metric"}>{splitSizeMetric(data)}</Box>
+          <Box className={"titleElement"}>{title}</Box>
         </Fragment>
       )}
-    </div>
+    </SingleValueWidgetMain>
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage: setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(SingleValueWidget));
+export default SingleValueWidget;

@@ -15,34 +15,81 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { IDashboardPanel } from "../types";
-import { Box } from "@mui/material";
+import styled from "styled-components";
+import get from "lodash/get";
+import { Box, breakPoints, Loader, ReportedUsageIcon } from "mds";
+import { Cell, Pie, PieChart } from "recharts";
+import { useSelector } from "react-redux";
 import api from "../../../../../common/api";
+import { IDashboardPanel } from "../types";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
-
 import {
   calculateBytes,
   capacityColors,
   niceBytesInt,
 } from "../../../../../common/utils";
-import { Cell, Pie, PieChart } from "recharts";
-import { Loader, ReportedUsageIcon } from "mds";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../store";
-import { useSelector } from "react-redux";
+
+const CapacityItemMain = styled.div(({ theme }) => ({
+  flex: 1,
+  display: "flex",
+  alignItems: "center",
+  flexFlow: "row",
+  "& .usableLabel": {
+    color: get(theme, "mutedText", "#87888d"),
+    fontSize: "10px",
+    display: "flex",
+    flexFlow: "column",
+    alignItems: "center",
+    textAlign: "center",
+  },
+  "& .usedLabel": {
+    color: get(theme, "mutedText", "#87888d"),
+    fontWeight: "bold",
+    fontSize: "14px",
+  },
+  "& .totalUsed": {
+    display: "flex",
+    "& .value": {
+      fontSize: "50px",
+      fontFamily: "Inter",
+      fontWeight: 600,
+      alignSelf: "flex-end",
+      lineHeight: 1,
+    },
+    "& .unit": {
+      color: get(theme, "mutedText", "#87888d"),
+      fontWeight: "bold",
+      fontSize: "14px",
+      marginLeft: "12px",
+      alignSelf: "flex-end",
+    },
+  },
+  "& .ofUsed": {
+    marginTop: "5px",
+    "& .value": {
+      color: get(theme, "mutedText", "#87888d"),
+      fontWeight: "bold",
+      fontSize: "14px",
+      textAlign: "right",
+    },
+  },
+  [`@media (max-width: ${breakPoints.sm}px)`]: {
+    flexFlow: "column",
+  },
+}));
 
 const CapacityItem = ({
   value,
   timeStart,
   timeEnd,
-  propLoading,
   apiPrefix,
 }: {
   value: IDashboardPanel;
   timeStart: any;
   timeEnd: any;
-  propLoading: boolean;
   apiPrefix: string;
 }) => {
   const dispatch = useAppDispatch();
@@ -134,23 +181,13 @@ const CapacityItem = ({
     },
   ];
   return (
-    <Box
-      sx={{
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        flexFlow: {
-          sm: "row",
-          xs: "column",
-        },
-      }}
-    >
+    <CapacityItemMain>
       <Box
         sx={{
           fontSize: "16px",
           fontWeight: 600,
-          alignSelf: {
-            xs: "flex-start",
+          [`@media (max-width: ${breakPoints.sm}px)`]: {
+            alignSelf: "flex-start",
           },
         }}
       >
@@ -161,9 +198,9 @@ const CapacityItem = ({
           position: "relative",
           width: 110,
           height: 110,
-          marginLeft: {
-            sm: "auto",
-            xs: "",
+          marginLeft: "auto",
+          [`@media (max-width: ${breakPoints.sm}px)`]: {
+            marginLeft: "",
           },
         }}
       >
@@ -177,24 +214,12 @@ const CapacityItem = ({
             left: "50%",
             transform: "translate(-50%, -50%)",
             fontWeight: "bold",
-            color: "#000",
             fontSize: 12,
           }}
         >
           {`${totalUsableFreeRatio}%`}
           <br />
-          <Box
-            sx={{
-              color: "#8F9090",
-              fontSize: "10px",
-              display: "flex",
-              flexFlow: "column",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            Free
-          </Box>
+          <Box className={"usableLabel"}>Free</Box>
         </Box>
         <PieChart width={110} height={110}>
           <Pie
@@ -218,55 +243,19 @@ const CapacityItem = ({
         sx={{
           display: "flex",
           alignItems: "center",
-          marginLeft: {
-            sm: "auto",
-            xs: "",
+          marginLeft: "auto",
+          [`@media (max-width: ${breakPoints.sm}px)`]: {
+            marginLeft: "",
           },
         }}
       >
         <Box>
-          <Box
-            sx={{
-              color: "#5E5E5E",
-              fontWeight: "bold",
-              fontSize: "14px",
-            }}
-          >
-            Used:
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              "& .value": {
-                fontSize: "50px",
-                fontFamily: "Inter",
-                fontWeight: 600,
-                alignSelf: "flex-end",
-                lineHeight: 1,
-              },
-              "& .unit": {
-                color: "#5E5E5E",
-                fontWeight: "bold",
-                fontSize: "14px",
-                marginLeft: "12px",
-                alignSelf: "flex-end",
-              },
-            }}
-          >
+          <Box className={"usedLabel"}>Used:</Box>
+          <Box className={"totalUsed"}>
             <div className="value">{usedConvert.total}</div>
             <div className="unit">{usedConvert.unit}</div>
           </Box>
-          <Box
-            sx={{
-              marginTop: "5px",
-              "& .value": {
-                color: "#5E5E5E",
-                fontWeight: "bold",
-                fontSize: "14px",
-                textAlign: "right",
-              },
-            }}
-          >
+          <Box className={"ofUsed"}>
             <div className="value">Of: {niceBytesInt(totalUsable)}</div>
           </Box>
         </Box>
@@ -288,7 +277,7 @@ const CapacityItem = ({
           </Box>
         </Box>
       </Box>
-    </Box>
+    </CapacityItemMain>
   );
 };
 

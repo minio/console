@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Card, CardHeader } from "@mui/material";
-import { Link } from "react-router-dom";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import makeStyles from "@mui/styles/makeStyles";
 import React, { Fragment } from "react";
+import styled from "styled-components";
+import get from "lodash/get";
+import { Box } from "mds";
+import { Link } from "react-router-dom";
 import { widgetCommon } from "../Common/FormComponents/common/styleLibrary";
 
 export interface ISubInterface {
@@ -36,69 +34,48 @@ interface ICommonCard {
   moreLink?: string;
   rightComponent?: any;
   extraMargin?: boolean;
-  classes: any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...widgetCommon,
-    cardRoot: {
-      ...widgetCommon.singleValueContainer,
-      "&.MuiPaper-root": {
-        borderRadius: 10,
-      },
-    },
-    metricText: {
-      fontSize: 70,
-      lineHeight: 1.1,
-      color: "#07193E",
+const CommonCardItem = styled.div(({ theme }) => ({
+  ...widgetCommon(theme),
+  "& .metricText": {
+    fontSize: 70,
+    lineHeight: 1.1,
+    color: get(theme, "signalColors.main", "#07193E"),
+    fontWeight: "bold",
+  },
+  "& .unitText": {
+    fontSize: 10,
+    color: get(theme, "mutedText", "#87888d"),
+    fontWeight: "normal",
+  },
+  "& .subHeaderContainer": {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  "& .subMessage": {
+    fontSize: 10,
+    color: get(theme, "mutedText", "#87888d"),
+    "&.bold": {
       fontWeight: "bold",
     },
-    unitText: {
-      fontSize: 10,
-      color: "#767676",
-      fontWeight: "normal",
-    },
-    subHearderContainer: {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-    subMessage: {
-      fontSize: 10,
-      color: "#767676",
-      "&.bold": {
-        fontWeight: "bold",
-      },
-    },
-    headerContainer: {
-      display: "flex",
-      justifyContent: "space-between",
-    },
-    viewAll: {
-      fontSize: 10,
-      color: "#C83B51",
-      textTransform: "capitalize",
-
-      "& a, & a:hover, & a:visited, & a:active": {
-        color: "#C83B51",
-      },
-    },
-    extraMargin: {
-      margin: "10px 20px 10px 0",
-    },
-  });
-
-const cardSubStyles = makeStyles({
-  root: { backgroundColor: "#fff", padding: 0 },
-  title: {
-    ...widgetCommon.titleContainer,
   },
-  content: {
-    maxWidth: "100%",
+  "& .headerContainer": {
+    display: "flex",
+    justifyContent: "space-between",
   },
-});
+  "& .viewAll": {
+    fontSize: 10,
+    color: get(theme, "signalColors.danger", "#C83B51"),
+    textTransform: "capitalize",
+
+    "& a, & a:hover, & a:visited, & a:active": {
+      color: get(theme, "signalColors.danger", "#C83B51"),
+    },
+  },
+}));
 
 const CommonCard = ({
   title,
@@ -108,31 +85,29 @@ const CommonCard = ({
   moreLink,
   rightComponent,
   extraMargin = false,
-  classes,
 }: ICommonCard) => {
-  const subStyles = cardSubStyles();
   const SubHeader = () => {
     return (
       <Fragment>
-        <div className={classes.subHearderContainer}>
-          <div className={classes.leftSide}>
+        <div className={"subHeaderContainer"}>
+          <div className={"leftSide"}>
             <div>
-              <span className={classes.metricText}>
+              <span className={"metricText"}>
                 {metricValue}
-                <span className={classes.unitText}>{metricUnit}</span>
+                <span className={"unitText"}>{metricUnit}</span>
               </span>
             </div>
             {subMessage && (
-              <div
-                className={`${classes.subMessage} ${
-                  subMessage.fontWeight ? subMessage.fontWeight : ""
-                }`}
+              <Box
+                sx={{
+                  fontWeight: subMessage.fontWeight || "normal",
+                }}
               >
                 {subMessage.message}
-              </div>
+              </Box>
             )}
           </div>
-          <div className={classes.rightSide}>{rightComponent}</div>
+          <div className={"rightSide"}>{rightComponent}</div>
         </div>
       </Fragment>
     );
@@ -141,11 +116,11 @@ const CommonCard = ({
   const Header = () => {
     return (
       <Fragment>
-        <div className={classes.headerContainer}>
-          <span className={classes.title}>{title}</span>
+        <div className={"headerContainer"}>
+          <span className={"titleContainer"}>{title}</span>
           {moreLink && (
             <Fragment>
-              <span className={classes.viewAll}>
+              <span className={"viewAll"}>
                 <Link to={moreLink}>View All</Link>
               </span>
             </Fragment>
@@ -157,29 +132,23 @@ const CommonCard = ({
 
   return (
     <Fragment>
-      <Card
-        className={`${classes.cardRoot} ${
-          extraMargin ? classes.extraMargin : ""
-        }`}
+      <Box
+        withBorders
+        sx={{
+          height: 200,
+          padding: 16,
+          margin: extraMargin ? "10px 20px 10px 0" : "",
+        }}
       >
         {metricValue !== "" && (
-          <CardHeader
-            title={<Header />}
-            subheader={
-              <Fragment>
-                <SubHeader />
-              </Fragment>
-            }
-            classes={{
-              root: subStyles.root,
-              title: subStyles.title,
-              content: subStyles.content,
-            }}
-          />
+          <CommonCardItem>
+            <Header />
+            <SubHeader />
+          </CommonCardItem>
         )}
-      </Card>
+      </Box>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(CommonCard);
+export default CommonCard;

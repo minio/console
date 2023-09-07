@@ -15,7 +15,24 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
+import styled from "styled-components";
+import get from "lodash/get";
+import { Box, breakPoints } from "mds";
+
+const DualSTCardContent = styled.div(({ theme }) => ({
+  fontFamily: "Inter,sans-serif",
+  color: get(theme, "signalColors.main", "#07193E"),
+  maxWidth: "321px",
+  display: "flex",
+  marginLeft: "auto",
+  marginRight: "auto",
+  cursor: "default",
+  "& .stat-text": {
+    color: get(theme, "mutedText", "#87888d"),
+    fontSize: "12px",
+    marginTop: "8px",
+  },
+}));
 
 const DualStatCard = ({
   statItemLeft = null,
@@ -34,9 +51,9 @@ const DualStatCard = ({
         sx={{
           flex: 1,
           display: "flex",
-          padding: {
-            sm: "0 8px 0 8px",
-            xs: "0 10px 0 10px",
+          padding: "0 8px 0 8px",
+          [`@media (max-width: ${breakPoints.sm}px)`]: {
+            padding: "0 10px 0 10px",
           },
         }}
       >
@@ -60,26 +77,12 @@ const DualStatCard = ({
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: "5px",
+              gap: 5,
               justifyContent: "space-between",
-              paddingBottom: {
-                md: "0px",
-                xs: "10px",
-              },
-              fontSize: {
-                xl: "55px",
-                lg: "50px",
-                md: "45px",
-                xs: "35px",
-              },
+              paddingBottom: 0,
+              fontSize: 55,
               flexFlow: "row",
               fontWeight: 600,
-
-              "& .stat-text": {
-                color: "#696969",
-                fontSize: "12px",
-                marginTop: "8px",
-              },
               "& .stat-value": {
                 textAlign: "center",
                 height: "50px",
@@ -89,6 +92,15 @@ const DualStatCard = ({
                 marginTop: "8px",
                 height: "10px",
                 width: "10px",
+              },
+              [`@media (max-width: ${breakPoints.sm}px)`]: {
+                fontSize: 35,
+              },
+              [`@media (max-width: ${breakPoints.lg}px)`]: {
+                fontSize: 45,
+              },
+              [`@media (max-width: ${breakPoints.xl}px)`]: {
+                fontSize: 50,
               },
             }}
           >
@@ -114,21 +126,7 @@ const DualStatCard = ({
     );
   };
 
-  return (
-    <Box
-      sx={{
-        fontFamily: "Inter,sans-serif",
-        color: "#07193E",
-        maxWidth: "321px",
-        display: "flex",
-        marginLeft: "auto",
-        marginRight: "auto",
-        cursor: "default",
-      }}
-    >
-      {getContent()}
-    </Box>
-  );
+  return <DualSTCardContent>{getContent()}</DualSTCardContent>;
 };
 
 export default DualStatCard;

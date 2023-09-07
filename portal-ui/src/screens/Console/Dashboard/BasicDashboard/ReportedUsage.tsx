@@ -14,9 +14,45 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Box, Tooltip } from "@mui/material";
 import React from "react";
+import get from "lodash/get";
+import styled from "styled-components";
+import { Box, Tooltip } from "mds";
 import { Cell, Pie, PieChart } from "recharts";
+
+const ReportedUsageMain = styled.div(({ theme }) => ({
+  maxHeight: "110px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  fontSize: "19px",
+
+  padding: "10px",
+  "& .unit-value": {
+    fontSize: "50px",
+    color: get(theme, "signalColors.main", "#07193E"),
+  },
+  "& .unit-type": {
+    fontSize: "18px",
+    color: get(theme, "mutedText", "#87888d"),
+    marginTop: "20px",
+    marginLeft: "5px",
+  },
+
+  "& .usage-label": {
+    display: "flex",
+    alignItems: "center",
+    fontSize: "16px",
+    fontWeight: 600,
+    marginRight: "20px",
+    marginTop: "-10px",
+    "& .min-icon": {
+      marginLeft: "10px",
+      height: 16,
+      width: 16,
+    },
+  },
+}));
 
 const ReportedUsage = ({
   usageValue,
@@ -37,47 +73,13 @@ const ReportedUsage = ({
   ];
 
   return (
-    <Box
-      sx={{
-        maxHeight: "110px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        fontSize: "19px",
-
-        padding: "10px",
-        "& .unit-value": {
-          fontSize: "50px",
-          color: "#07193E",
-        },
-        "& .unit-type": {
-          fontSize: "18px",
-          color: "#5E5E5E",
-          marginTop: "20px",
-          marginLeft: "5px",
-        },
-
-        "& .usage-label": {
-          display: "flex",
-          alignItems: "center",
-          fontSize: "16px",
-          fontWeight: 600,
-          marginRight: "20px",
-          marginTop: "-10px",
-          "& .min-icon": {
-            marginLeft: "10px",
-            height: 16,
-            width: 16,
-          },
-        },
-      }}
-    >
+    <ReportedUsageMain>
       <Box>
         <div className="usage-label">
           <span>Reported Usage</span>
         </div>
 
-        <Tooltip title={`${usageValue} Bytes`}>
+        <Tooltip tooltip={`${usageValue} Bytes`}>
           <label
             className={"unit-value"}
             style={{
@@ -122,7 +124,7 @@ const ReportedUsage = ({
           </div>
         </Box>
       </Box>
-    </Box>
+    </ReportedUsageMain>
   );
 };
 

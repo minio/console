@@ -15,8 +15,35 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
-import { Loader, NetworkPutIcon } from "mds";
+import styled from "styled-components";
+import get from "lodash/get";
+import { Box, Loader, NetworkPutIcon } from "mds";
+
+const NetworkPutBase = styled.div(({ theme }) => ({
+  "& .putLabel": {
+    display: "flex",
+    gap: 10,
+    alignItems: "center",
+    marginTop: "10px",
+
+    "& .min-icon": {
+      height: 15,
+      width: 15,
+      fill: get(theme, "signalColors.info", "#2781B0"),
+    },
+
+    "& .putText": {
+      fontSize: "18px",
+      color: get(theme, "mutedText", "#87888d"),
+      fontWeight: "bold",
+    },
+    "& .valueText": {
+      fontSize: 50,
+      fontFamily: "Inter",
+      fontWeight: 600,
+    },
+  },
+}));
 
 const NetworkPutItem = ({
   value,
@@ -28,46 +55,17 @@ const NetworkPutItem = ({
   id?: number;
 }) => {
   return (
-    <Box>
-      <Box
-        sx={{
-          display: "flex",
-          gap: "10px",
-          alignItems: "center",
-          marginTop: "10px",
-
-          "& .min-icon": {
-            height: "15px",
-            width: "15px",
-            fill: "#2781b0",
-          },
-        }}
-      >
-        <Box
-          sx={{
-            fontSize: "18px",
-            color: "#696969",
-            fontWeight: "normal",
-          }}
-        >
-          PUT
-        </Box>
+    <NetworkPutBase>
+      <Box className={"putLabel"}>
+        <Box className={"putText"}>PUT</Box>
         {loading ? (
           <Loader style={{ width: "15px", height: "15px" }} />
         ) : (
           <NetworkPutIcon />
         )}
       </Box>
-      <Box
-        sx={{
-          fontSize: "50px",
-          fontFamily: "Inter",
-          fontWeight: 600,
-        }}
-      >
-        {value}
-      </Box>
-    </Box>
+      <Box className={"valueText"}>{value}</Box>
+    </NetworkPutBase>
   );
 };
 

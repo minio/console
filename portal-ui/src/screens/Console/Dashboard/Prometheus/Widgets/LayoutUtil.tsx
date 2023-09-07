@@ -14,15 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Box } from "@mui/material";
-import { SxProps, Theme } from "@mui/material/styles";
+import { Box } from "mds";
+import { CSSObject } from "styled-components";
+import { breakPoints } from "mds";
 
 export type DLayoutColumnProps = {
   componentId: number;
-  sx?: SxProps<Theme>;
+  sx?: CSSObject;
 };
 export type DLayoutRowProps = {
-  sx?: SxProps<Theme>;
+  sx?: CSSObject;
   columns: DLayoutColumnProps[];
 };
 
@@ -31,12 +32,14 @@ export const summaryPanelsLayout: DLayoutRowProps[] = [
     sx: {
       minWidth: 0,
       display: "grid",
-      gridTemplateColumns: {
-        md: "1fr 1fr 1fr 1fr",
-        sm: "1fr 1fr",
-        xs: "1fr",
-      },
       gap: "30px",
+      gridTemplateColumns: "1fr 1fr 1fr 1fr",
+      [`@media (max-width: ${breakPoints.sm}px)`]: {
+        gridTemplateColumns: "1fr",
+      },
+      [`@media (max-width: ${breakPoints.md}px)`]: {
+        gridTemplateColumns: "1fr 1fr",
+      },
     },
     columns: [
       {
@@ -57,11 +60,11 @@ export const summaryPanelsLayout: DLayoutRowProps[] = [
     sx: {
       display: "grid",
       minWidth: 0, // important to avoid css grid blow out.
-      gridTemplateColumns: {
-        md: "1fr 1fr",
-        xs: "1fr",
-      },
       gap: "30px",
+      gridTemplateColumns: "1fr 1fr",
+      [`@media (max-width: ${breakPoints.md}px)`]: {
+        gridTemplateColumns: "1fr",
+      },
     },
     columns: [
       {
@@ -76,11 +79,11 @@ export const summaryPanelsLayout: DLayoutRowProps[] = [
     sx: {
       display: "grid",
       minWidth: 0,
-      gridTemplateColumns: {
-        md: "1fr 1fr 1fr",
-        xs: "1fr",
-      },
       gap: "30px",
+      gridTemplateColumns: "1fr 1fr 1fr",
+      [`@media (max-width: ${breakPoints.md}px)`]: {
+        gridTemplateColumns: "1fr",
+      },
     },
     columns: [
       {
@@ -98,11 +101,11 @@ export const summaryPanelsLayout: DLayoutRowProps[] = [
     sx: {
       display: "grid",
       minWidth: 0,
-      gridTemplateColumns: {
-        sm: "1fr 1fr",
-        xs: "1fr",
-      },
       gap: "30px",
+      gridTemplateColumns: "1fr 1fr",
+      [`@media (max-width: ${breakPoints.md}px)`]: {
+        gridTemplateColumns: "1fr",
+      },
     },
     columns: [
       {
@@ -117,11 +120,11 @@ export const summaryPanelsLayout: DLayoutRowProps[] = [
     sx: {
       display: "grid",
       minWidth: 0,
-      gridTemplateColumns: {
-        sm: "1fr 1fr",
-        xs: "1fr",
-      },
       gap: "30px",
+      gridTemplateColumns: "1fr 1fr",
+      [`@media (max-width: ${breakPoints.md}px)`]: {
+        gridTemplateColumns: "1fr",
+      },
     },
     columns: [
       {
@@ -151,11 +154,11 @@ export const trafficPanelsLayout: DLayoutRowProps[] = [
     sx: {
       display: "grid",
       minWidth: 0,
-      gridTemplateColumns: {
-        sm: "1fr 1fr",
-        xs: "1fr",
-      },
       gap: "30px",
+      gridTemplateColumns: "1fr 1fr",
+      [`@media (max-width: ${breakPoints.md}px)`]: {
+        gridTemplateColumns: "1fr",
+      },
     },
     columns: [
       {

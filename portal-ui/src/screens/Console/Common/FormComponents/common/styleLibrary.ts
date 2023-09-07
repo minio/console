@@ -17,6 +17,7 @@
 // This object contains variables that will be used across form components.
 
 import { breakPoints } from "mds";
+import get from "lodash/get";
 
 const inputLabelBase = {
   fontWeight: 600,
@@ -416,16 +417,16 @@ export const typesSelection = {
   },
 };
 
-export const widgetCommon = {
-  singleValueContainer: {
+export const widgetCommon = (theme: any) => ({
+  "& .singleValueContainer": {
     height: 200,
-    border: "#eaeaea 1px solid",
-    backgroundColor: "#fff",
-    borderRadius: "3px",
+    border: `${get(theme, "borderColor", "#eaeaea")} 1px solid`,
+    borderRadius: 2,
+    backgroundColor: get(theme, "bgColor", "#fff"),
     padding: 16,
   },
-  titleContainer: {
-    color: "#404143",
+  "& .titleContainer": {
+    color: get(theme, "mutedText", "#87888d"),
     fontSize: 16,
     fontWeight: 600,
     paddingBottom: 14,
@@ -433,38 +434,38 @@ export const widgetCommon = {
     display: "flex" as const,
     justifyContent: "space-between" as const,
   },
-  contentContainer: {
+  "& .contentContainer": {
     justifyContent: "center" as const,
     alignItems: "center" as const,
     display: "flex" as const,
     width: "100%",
     height: 140,
   },
-  singleLegendContainer: {
+  "& .singleLegendContainer": {
     display: "flex",
     alignItems: "center",
     padding: "0 10px",
     maxWidth: "100%",
   },
-  colorContainer: {
+  "& .colorContainer": {
     width: 8,
     height: 8,
     minWidth: 8,
     marginRight: 5,
   },
-  legendLabel: {
+  "& .legendLabel": {
     fontSize: "80%",
-    color: "#393939",
+    color: get(theme, "mutedText", "#87888d"),
     whiteSpace: "nowrap" as const,
     overflow: "hidden" as const,
     textOverflow: "ellipsis" as const,
   },
-  zoomChartCont: {
+  "& .zoomChartCont": {
     position: "relative" as const,
     height: 340,
     width: "100%",
   },
-};
+});
 
 export const tooltipCommon = {
   customTooltip: {
@@ -643,44 +644,6 @@ export const inputFieldStyles = {
   },
   error: {
     color: "#b53b4b",
-  },
-};
-
-const commonStateIcon = {
-  marginRight: 10,
-  lineHeight: 1,
-  display: "inline-flex",
-  marginTop: 6,
-};
-
-export const commonDashboardInfocard: any = {
-  redState: {
-    color: "#F55B5B",
-    ...commonStateIcon,
-  },
-  greenState: {
-    color: "#9FF281",
-    ...commonStateIcon,
-  },
-  yellowState: {
-    color: "#F7A25A",
-    ...commonStateIcon,
-  },
-  greyState: {
-    color: "grey",
-    ...commonStateIcon,
-  },
-  healthStatusIcon: {
-    position: "absolute" as const,
-    fontSize: 8,
-    left: 18,
-    height: 10,
-    bottom: 2,
-    marginRight: 10,
-    "& .min-icon": {
-      width: 5,
-      height: 5,
-    },
   },
 };
 

@@ -46,7 +46,6 @@ export const componentToUse = (
           panelItem={value}
           timeStart={timeStart}
           timeEnd={timeEnd}
-          propLoading={loading}
           apiPrefix={apiPrefix}
         />
       );
@@ -86,7 +85,6 @@ export const componentToUse = (
           panelItem={value}
           timeStart={timeStart}
           timeEnd={timeEnd}
-          propLoading={loading}
           apiPrefix={apiPrefix}
           iconWidget={value.widgetIcon}
           renderFn={renderFn}
@@ -100,7 +98,6 @@ export const componentToUse = (
               value={value}
               timeStart={timeStart}
               timeEnd={timeEnd}
-              propLoading={loading}
               apiPrefix={apiPrefix}
             />
           </DashboardItemBox>
@@ -112,7 +109,6 @@ export const componentToUse = (
           panelItem={value}
           timeStart={timeStart}
           timeEnd={timeEnd}
-          propLoading={loading}
           apiPrefix={apiPrefix}
         />
       );
@@ -124,7 +120,6 @@ export const componentToUse = (
           panelItem={value}
           timeStart={timeStart}
           timeEnd={timeEnd}
-          propLoading={loading}
           hideYAxis={value.disableYAxis}
           xAxisFormatter={value.xAxisFormatter}
           yAxisFormatter={value.yAxisFormatter}
@@ -140,7 +135,6 @@ export const componentToUse = (
           panelItem={value}
           timeStart={timeStart}
           timeEnd={timeEnd}
-          propLoading={loading}
           apiPrefix={apiPrefix}
           zoomActivated={zoomActivated}
         />
