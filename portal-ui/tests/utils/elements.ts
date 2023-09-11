@@ -191,3 +191,7 @@ export const locationEmpty = Selector("div").withAttribute(
   "id",
   "empty-results",
 );
+//----------------------------------------------------
+// Login Window
+//----------------------------------------------------
+export const loginButton = Selector("button").withAttribute("id", "do-login");
