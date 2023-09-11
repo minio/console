@@ -251,7 +251,7 @@ test-start-docker-nginx-w-subpath:
 test-initialize-minio-nginx: test-start-docker-minio-w-redirect-url test-start-docker-nginx-w-subpath
 
 cleanup-minio-nginx:
-	@(docker stop minio test-nginx & docker rm test-nginx & docker network rm test-network)
+	@(docker stop minio test-nginx & docker network rm test-network)
 
 test:
 	@echo "execute test and get coverage"
