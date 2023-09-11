@@ -229,6 +229,30 @@ cleanup-permissions:
 	@(env bash $(PWD)/portal-ui/tests/scripts/cleanup-env.sh)
 	@(docker stop minio)
 
+initialize-docker-network:
+	@(docker network create test-network)
+
+test-start-docker-minio-w-redirect-url: initialize-docker-network
+	@(docker run \
+    -e MINIO_BROWSER_REDIRECT_URL='http://localhost:8000/console/subpath/' \
+    -e MINIO_SERVER_URL='http://localhost:9000' \
+    -v /data1 -v /data2 -v /data3 -v /data4 \
+    -d --network host --name minio --rm\
+    quay.io/minio/minio:latest server /data{1...4}) 
+
+test-start-docker-nginx-w-subpath:
+	@(docker run \
+	--network host \
+	-d --rm \
+	--add-host=host.docker.internal:host-gateway \
+	-v ./portal-ui/tests/subpath-nginx/nginx.conf:/etc/nginx/nginx.conf \
+	--name test-nginx nginx)
+
+test-initialize-minio-nginx: test-start-docker-minio-w-redirect-url test-start-docker-nginx-w-subpath
+
+cleanup-minio-nginx:
+	@(docker stop minio test-nginx & docker network rm test-network)
+
 test:
 	@echo "execute test and get coverage"
 	@(cd restapi && mkdir coverage && GO111MODULE=on go test -test.v -coverprofile=coverage/coverage.out)

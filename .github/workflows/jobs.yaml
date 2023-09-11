@@ -200,6 +200,55 @@ jobs:
         run: |
           make console
 
+  test-nginx-subpath:
+    name: Test Subpath with Nginx
+    needs:
+      - compile-binary
+    runs-on: [ubuntu-latest]
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        go-version: [1.21.x]
+        os: [ubuntu-latest]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NVMRC }}
+      - name: Install MinIO JS
+        working-directory: ./
+        continue-on-error: false
+        run: |
+          yarn add minio
+
+      - uses: actions/cache@v3
+        name: Console Binary Cache
+        with:
+          path: |
+            ./console
+          key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+      - name: clean-previous-containers-if-any
+        run: |
+          docker stop minio || true;
+          docker container prune -f || true;
+
+      - name: Start Console, MinIO and Nginx
+        run: |
+          (CONSOLE_SUBPATH=/console/subpath ./console server ) & (make test-initialize-minio-nginx)
+
+      - name: Install TestCafe
+        run: npm install testcafe@3.0.0
+
+      - name: Run TestCafe Tests
+        run: npx testcafe "chrome:headless" portal-ui/tests/subpath-nginx/ -q --skip-js-errors -c 3
+
+      - name: Clean up docker
+        if: always()
+        run: |
+          make cleanup-minio-nginx
+
   all-permissions-1:
     name: Permissions Tests Part 1
     needs:
