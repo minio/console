@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
@@ -37,7 +38,7 @@ func registerLogoutHandlers(api *operations.ConsoleAPI) {
 	api.AuthLogoutHandler = authApi.LogoutHandlerFunc(func(params authApi.LogoutParams, session *models.Principal) middleware.Responder {
 		err := getLogoutResponse(session, params)
 		if err != nil {
-			return authApi.NewLogoutDefault(err.Code).WithPayload(err.APIError)
+			api.Logger("IDP logout failed: %v", err.APIError)
 		}
 		// Custom response writer to expire the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
@@ -101,7 +102,14 @@ func logoutFromIDPProvider(r *http.Request, state string) error {
 		params.Add("client_id", providerCfg.ClientID)
 		params.Add("client_secret", providerCfg.ClientSecret)
 		params.Add("refresh_token", refreshToken.Value)
-		_, err := http.PostForm(providerCfg.EndSessionEndpoint, params)
+		client := &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					RootCAs: GlobalRootCAs,
+				},
+			},
+		}
+		_, err := client.PostForm(providerCfg.EndSessionEndpoint, params)
 		if err != nil {
 			return err
 		}
