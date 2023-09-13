@@ -1228,11 +1228,6 @@ export interface SubnetOrganization {
   shortName?: string;
 }
 
-export interface CheckVersionResponse {
-  current_version?: string;
-  latest_version?: string;
-}
-
 export interface PermissionResource {
   resource?: string;
   conditionOperator?: string;
@@ -1848,23 +1843,6 @@ export class Api<
         path: `/session`,
         method: "GET",
         secure: true,
-        format: "json",
-        ...params,
-      }),
-  };
-  checkVersion = {
-    /**
-     * No description
-     *
-     * @tags System
-     * @name CheckMinIoVersion
-     * @summary Checks the current MinIO version against the latest
-     * @request GET:/check-version
-     */
-    checkMinIoVersion: (params: RequestParams = {}) =>
-      this.request<CheckVersionResponse, ApiError>({
-        path: `/check-version`,
-        method: "GET",
         format: "json",
         ...params,
       }),

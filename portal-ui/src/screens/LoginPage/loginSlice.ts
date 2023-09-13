@@ -16,11 +16,7 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LoginDetails } from "api/consoleApi";
-import {
-  doLoginAsync,
-  getFetchConfigurationAsync,
-  getVersionAsync,
-} from "./loginThunks";
+import { doLoginAsync, getFetchConfigurationAsync } from "./loginThunks";
 
 export interface LoginState {
   accessKey: string;
@@ -31,8 +27,6 @@ export interface LoginState {
   loginStrategy: LoginDetails;
   loginSending: boolean;
   loadingFetchConfiguration: boolean;
-  latestMinIOVersion: string;
-  loadingVersion: boolean;
   isK8S: boolean;
   navigateTo: string;
   ssoEmbeddedIDPDisplay: boolean;
@@ -49,8 +43,6 @@ const initialState: LoginState = {
   },
   loginSending: false,
   loadingFetchConfiguration: true,
-  latestMinIOVersion: "",
-  loadingVersion: true,
   isK8S: false,
   backgroundAnimation: false,
   navigateTo: "",
@@ -83,18 +75,6 @@ export const loginSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getVersionAsync.pending, (state, action) => {
-        state.loadingVersion = true;
-      })
-      .addCase(getVersionAsync.rejected, (state, action) => {
-        state.loadingVersion = false;
-      })
-      .addCase(getVersionAsync.fulfilled, (state, action) => {
-        state.loadingVersion = false;
-        if (action.payload) {
-          state.latestMinIOVersion = action.payload;
-        }
-      })
       .addCase(getFetchConfigurationAsync.pending, (state, action) => {
         state.loadingFetchConfiguration = true;
       })
