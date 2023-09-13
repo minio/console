@@ -1,3 +1,5 @@
+# @format
+
 swagger: "2.0"
 info:
   title: MinIO Console Server
@@ -23,7 +25,7 @@ securityDefinitions:
     type: apiKey
 # Apply the key security definition to all APIs
 security:
-  - key: [ ]
+  - key: []
 paths:
   /login:
     get:
@@ -39,7 +41,7 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - Auth
     post:
@@ -59,7 +61,7 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - Auth
   /login/oauth2/auth:
@@ -79,7 +81,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/ApiError"
-      security: [ ]
+      security: []
       tags:
         - Auth
 
@@ -118,23 +120,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Auth
-
-  /check-version:
-    get:
-      summary: Checks the current MinIO version against the latest
-      operationId: CheckMinIOVersion
-      responses:
-        200:
-          description: A successful response.
-          schema:
-            $ref: "#/definitions/checkVersionResponse"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/ApiError"
-      security: [ ]
-      tags:
-        - System
 
   /account/change-password:
     post:
@@ -297,8 +282,8 @@ paths:
     get:
       summary: List Objects
       security:
-        - key: [ ]
-        - anonymous: [ ]
+        - key: []
+        - anonymous: []
       operationId: ListObjects
       parameters:
         - name: bucket_name
@@ -417,8 +402,8 @@ paths:
     post:
       summary: Uploads an Object.
       security:
-        - key: [ ]
-        - anonymous: [ ]
+        - key: []
+        - anonymous: []
       consumes:
         - multipart/form-data
       parameters:
@@ -444,8 +429,8 @@ paths:
       summary: Download Multiple Objects
       operationId: DownloadMultipleObjects
       security:
-        - key: [ ]
-        - anonymous: [ ]
+        - key: []
+        - anonymous: []
       produces:
         - application/octet-stream
       parameters:
@@ -477,8 +462,8 @@ paths:
       summary: Download Object
       operationId: Download Object
       security:
-        - key: [ ]
-        - anonymous: [ ]
+        - key: []
+        - anonymous: []
       produces:
         - application/octet-stream
       parameters:
@@ -2953,7 +2938,7 @@ paths:
         - name: order
           in: query
           type: string
-          enum: [ timeDesc, timeAsc ]
+          enum: [timeDesc, timeAsc]
           default: timeDesc
         - name: timeStart
           in: query
@@ -4375,7 +4360,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [ form, redirect, service-account, redirect-service-account ]
+        enum: [form, redirect, service-account, redirect-service-account]
       redirectRules:
         type: array
         items:
@@ -4474,7 +4459,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ ok ]
+        enum: [ok]
       operator:
         type: boolean
       distributedMode:
@@ -4505,7 +4490,7 @@ definitions:
           type: string
       values:
         type: array
-        items: { }
+        items: {}
   resultTarget:
     type: object
     properties:
@@ -4928,7 +4913,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [ replication ]
+        enum: [replication]
       syncMode:
         type: string
       bandwidth:
@@ -5688,14 +5673,6 @@ definitions:
       company:
         type: string
       shortName:
-        type: string
-
-  checkVersionResponse:
-    type: object
-    properties:
-      current_version:
-        type: string
-      latest_version:
         type: string
 
   permissionResource:

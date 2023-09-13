@@ -2561,30 +2561,6 @@ func init() {
         }
       }
     },
-    "/check-version": {
-      "get": {
-        "security": [],
-        "tags": [
-          "System"
-        ],
-        "summary": "Checks the current MinIO version against the latest",
-        "operationId": "CheckMinIOVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/checkVersionResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      }
-    },
     "/configs": {
       "get": {
         "tags": [
@@ -6092,17 +6068,6 @@ func init() {
           "type": "string"
         },
         "selectedUser": {
-          "type": "string"
-        }
-      }
-    },
-    "checkVersionResponse": {
-      "type": "object",
-      "properties": {
-        "current_version": {
-          "type": "string"
-        },
-        "latest_version": {
           "type": "string"
         }
       }
@@ -11637,30 +11602,6 @@ func init() {
         }
       }
     },
-    "/check-version": {
-      "get": {
-        "security": [],
-        "tags": [
-          "System"
-        ],
-        "summary": "Checks the current MinIO version against the latest",
-        "operationId": "CheckMinIOVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/checkVersionResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      }
-    },
     "/configs": {
       "get": {
         "tags": [
@@ -15317,17 +15258,6 @@ func init() {
           "type": "string"
         },
         "selectedUser": {
-          "type": "string"
-        }
-      }
-    },
-    "checkVersionResponse": {
-      "type": "object",
-      "properties": {
-        "current_version": {
-          "type": "string"
-        },
-        "latest_version": {
           "type": "string"
         }
       }

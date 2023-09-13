@@ -76,21 +76,3 @@ export const getFetchConfigurationAsync = createAsyncThunk(
       });
   },
 );
-
-export const getVersionAsync = createAsyncThunk(
-  "login/getVersionAsync",
-  async (_, { getState, rejectWithValue, dispatch }) => {
-    return api.checkVersion
-      .checkMinIoVersion()
-      .then((res) => {
-        if (res.data !== undefined) {
-          return res.data.latest_version;
-        }
-      })
-      .catch(async (res) => {
-        const err = (await res.json()) as ApiError;
-        dispatch(setErrorSnackMessage(errorToHandler(err)));
-        return rejectWithValue(false);
-      });
-  },
-);

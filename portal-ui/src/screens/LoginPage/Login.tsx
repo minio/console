@@ -21,7 +21,7 @@ import { loginStrategyType } from "./login.types";
 import MainError from "../Console/Common/MainError/MainError";
 import { AppState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
-import { getFetchConfigurationAsync, getVersionAsync } from "./loginThunks";
+import { getFetchConfigurationAsync } from "./loginThunks";
 import { resetForm } from "./loginSlice";
 import StrategyForm from "./StrategyForm";
 import { getLogoVar } from "../../config";
@@ -57,9 +57,6 @@ const Login = () => {
   const loadingFetchConfiguration = useSelector(
     (state: AppState) => state.login.loadingFetchConfiguration,
   );
-  const loadingVersion = useSelector(
-    (state: AppState) => state.login.loadingVersion,
-  );
   const navigateTo = useSelector((state: AppState) => state.login.navigateTo);
 
   const isK8S = useSelector((state: AppState) => state.login.isK8S);
@@ -80,12 +77,6 @@ const Login = () => {
       dispatch(getFetchConfigurationAsync());
     }
   }, [loadingFetchConfiguration, dispatch]);
-
-  useEffect(() => {
-    if (loadingVersion) {
-      dispatch(getVersionAsync());
-    }
-  }, [dispatch, loadingVersion]);
 
   let loginComponent;
 
