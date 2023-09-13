@@ -963,6 +963,12 @@ func unmarshalPrometheus(ctx context.Context, httpClnt *http.Client, endpoint st
 		return true
 	}
 
+	prometheusBearer := getPrometheusAuthToken()
+
+	if prometheusBearer != "" {
+		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", prometheusBearer))
+	}
+
 	resp, err := httpClnt.Do(req)
 	if err != nil {
 		ErrorWithContext(ctx, fmt.Errorf("Unable to fetch labels from prometheus: %w", err))
@@ -992,6 +998,13 @@ func testPrometheusURL(ctx context.Context, url string) bool {
 		ErrorWithContext(ctx, fmt.Errorf("error Building Request: (%v)", err))
 		return false
 	}
+
+	prometheusBearer := getPrometheusAuthToken()
+
+	if prometheusBearer != "" {
+		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", prometheusBearer))
+	}
+
 	response, err := httpClnt.Do(req)
 	if err != nil {
 		ErrorWithContext(ctx, fmt.Errorf("default Prometheus URL not reachable, trying root testing: (%v)", err))
