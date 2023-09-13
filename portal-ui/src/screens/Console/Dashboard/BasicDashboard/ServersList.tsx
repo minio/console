@@ -15,14 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import ListSubheader from "@mui/material/ListSubheader";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import Collapse from "@mui/material/Collapse";
+import { Accordion, Box, breakPoints } from "mds";
 import ServerInfoItem from "./ServerInfoItem";
-import { Box } from "@mui/material";
 import DriveInfoItem from "./DriveInfoItem";
-import { MenuCollapsedIcon, MenuExpandedIcon } from "mds";
 import { ServerProperties } from "api/consoleApi";
 
 const ServersList = ({ data }: { data: ServerProperties[] }) => {
@@ -38,128 +33,63 @@ const ServersList = ({ data }: { data: ServerProperties[] }) => {
     <Box>
       <Box
         sx={{
-          marginBottom: "10px",
+          fontSize: 18,
+          lineHeight: 2,
+          fontWeight: 700,
         }}
       >
         Servers ({data.length})
       </Box>
-      <List
-        sx={{ width: "100%", flex: 1, padding: "0" }}
-        component="nav"
-        aria-labelledby="nested-list-subheader"
-      >
+      <Box>
         {data.map((serverInfo, index) => {
           const key = `${serverInfo.endpoint}-${index}`;
           const isExpanded = expanded === key;
           return (
-            <React.Fragment key={key}>
-              <ListItemButton
-                disableRipple
-                onClick={() => {
-                  if (!isExpanded) {
-                    handleClick(key);
-                  } else {
-                    handleClick("");
-                  }
-                }}
-                className={isExpanded ? "expanded" : ""}
+            <Accordion
+              key={key}
+              expanded={isExpanded}
+              onTitleClick={() => {
+                if (!isExpanded) {
+                  handleClick(key);
+                } else {
+                  handleClick("");
+                }
+              }}
+              id={"key"}
+              title={<ServerInfoItem server={serverInfo} index={index} />}
+              sx={{ marginBottom: 15 }}
+            >
+              <Box
+                useBackground
+                sx={{ padding: "10px 30px", fontWeight: "bold" }}
+              >
+                Drives ({serverInfo.drives?.length})
+              </Box>
+              <Box
                 sx={{
+                  flex: 1,
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  borderTop: index === 0 ? "1px solid #f1f1f1" : "",
-                  borderBottom: "1px solid #f1f1f1",
-                  borderLeft: "1px solid #f1f1f1",
-                  borderRight: "1px solid #f1f1f1",
-                  padding: "3px 10px 3px 10px",
-
-                  "&:hover": {
-                    background: "#bebbbb0d",
+                  flexDirection: "column",
+                  padding: "15px 30px",
+                  gap: 15,
+                  [`@media (max-width: ${breakPoints.sm}px)`]: {
+                    padding: "10px 10px",
                   },
                 }}
               >
-                <ServerInfoItem server={serverInfo} index={index} />
-                <Box
-                  sx={{
-                    height: "25px",
-                    width: "25px",
-                    background: "#FBFAFA",
-                    borderRadius: "2px",
-                    "&:hover": {
-                      background: "#fafafa",
-                    },
-                    display: {
-                      md: "block",
-                      xs: "none",
-                    },
-                    "& .collapse-icon": {
-                      fill: "#494949",
-                      "& g  rect": {
-                        fill: "#ffffff",
-                      },
-                    },
-                    "& .expand-icon": {
-                      fill: "#494949",
-                      "& rect": {
-                        fill: "#ffffff",
-                      },
-                    },
-                  }}
-                >
-                  {isExpanded ? (
-                    <MenuCollapsedIcon className="collapse-icon" />
-                  ) : (
-                    <MenuExpandedIcon className="expand-icon" />
-                  )}
-                </Box>
-              </ListItemButton>
-              {isExpanded ? (
-                <Box
-                  key={`${serverInfo.endpoint}-${index}`}
-                  sx={{
-                    border: "1px solid #f1f1f1",
-                    borderTop: "0",
-                  }}
-                >
-                  <ListSubheader
-                    key={`${index}-drive-details`}
-                    component="div"
-                    sx={{ paddingLeft: "30px" }}
-                  >
-                    Drives ({serverInfo.drives?.length})
-                  </ListSubheader>
-
-                  <Collapse
-                    in={isExpanded}
-                    timeout="auto"
-                    unmountOnExit
-                    sx={{
-                      width: "100%",
-                      flex: 1,
-                      display: "flex",
-                      padding: { md: "15px 30px", xs: "10px 10px" },
-                      "& .MuiCollapse-wrapperInner": {
-                        display: "flex",
-                        flexFlow: "column",
-                        gap: "15px",
-                      },
-                    }}
-                  >
-                    {serverInfo.drives?.map((driveInfo, index) => {
-                      return (
-                        <DriveInfoItem
-                          drive={driveInfo}
-                          key={`${driveInfo.endpoint}-${index}`}
-                        />
-                      );
-                    })}
-                  </Collapse>
-                </Box>
-              ) : null}
-            </React.Fragment>
+                {serverInfo.drives?.map((driveInfo, index) => {
+                  return (
+                    <DriveInfoItem
+                      drive={driveInfo}
+                      key={`${driveInfo.endpoint}-${index}`}
+                    />
+                  );
+                })}
+              </Box>
+            </Accordion>
           );
         })}
-      </List>
+      </Box>
     </Box>
   );
 };

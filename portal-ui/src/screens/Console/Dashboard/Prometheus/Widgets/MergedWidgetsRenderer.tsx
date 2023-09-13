@@ -16,8 +16,8 @@
 
 import React from "react";
 import { componentToUse } from "../widgetUtils";
-import MergedWidgets from "../MergedWidgets";
 import { IDashboardPanel } from "../types";
+import MergedWidgets from "../MergedWidgets";
 import EntityStateItemRenderer from "./EntityStateItemRenderer";
 import NetworkItem from "./NetworkItem";
 import DashboardItemBox from "../../DashboardItemBox";
@@ -46,7 +46,6 @@ const MergedWidgetsRenderer = ({
             info={info}
             timeStart={timeStart}
             timeEnd={timeEnd}
-            loading={loading}
             apiPrefix={apiPrefix}
           />
         </DashboardItemBox>
@@ -61,7 +60,6 @@ const MergedWidgetsRenderer = ({
             timeEnd={timeEnd}
             timeStart={timeStart}
             value={info}
-            propLoading={loading}
           />
         </DashboardItemBox>
       );

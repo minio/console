@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { niceDays } from "../../../../common/utils";
-import { Box } from "@mui/material";
-import { CircleIcon } from "mds";
+import styled from "styled-components";
 import get from "lodash/get";
-import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
+import { Box, breakPoints, CircleIcon } from "mds";
+import { niceDays } from "../../../../common/utils";
 import {
   getDriveStatusColor,
   getNetworkStatusColor,
@@ -29,84 +25,121 @@ import {
 } from "./Utils";
 import { ServerProperties } from "api/consoleApi";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...commonDashboardInfocard,
-  });
-
 interface ICardProps {
-  classes?: any;
   server: ServerProperties;
   index: number;
 }
 
+const ServerStatItemMain = styled.div(({ theme }) => ({
+  alignItems: "baseline",
+  padding: "5px",
+  display: "flex",
+  gap: "5px",
+  "& .StatBox": {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexFlow: "column",
+    "& .stat-text": {
+      color: get(theme, "mutedText", "#87888d"),
+      fontSize: "12px",
+    },
+    "& .stat-value": {
+      fontSize: "18px",
+      color: get(theme, "signalColors.main", "#07193E"),
+      display: "flex",
+      fontWeight: 500,
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      "& .stat-container": {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexFlow: "column",
+        marginLeft: "5px",
+        maxWidth: "40px",
+        "&:first-of-type(svg)": {
+          fill: get(theme, "mutedText", "#87888d"),
+        },
+        "& .stat-indicator": {
+          marginRight: "0px",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+          "& svg.min-icon": {
+            width: "10px",
+            height: "10px",
+          },
+          "&.good": {
+            "& svg.min-icon": {
+              fill: get(theme, "signalColors.good", "#4CCB92"),
+            },
+          },
+          "&.warn": {
+            "& svg.min-icon": {
+              fill: get(theme, "signalColors.warning", "#FFBD62"),
+            },
+          },
+          "&.bad": {
+            "& svg.min-icon": {
+              fill: get(theme, "signalColors.danger", "#C51B3F"),
+            },
+          },
+        },
+      },
+    },
+  },
+}));
+
+const ServerInfoItemMain = styled.div(({ theme }) => ({
+  display: "flex",
+  alignItems: "flex-start",
+  flexFlow: "column",
+  flex: 1,
+  "& .server-state": {
+    marginLeft: "8px",
+    "& .min-icon": {
+      height: "14px",
+      width: "14px",
+    },
+    "&.good": {
+      "& svg.min-icon": {
+        fill: get(theme, "signalColors.good", "#4CCB92"),
+      },
+    },
+    "&.warn": {
+      "& svg.min-icon": {
+        fill: get(theme, "signalColors.warning", "#FFBD62"),
+      },
+    },
+    "&.bad": {
+      "& svg.min-icon": {
+        fill: get(theme, "signalColors.danger", "#C51B3F"),
+      },
+    },
+  },
+}));
+
 const ServerStatItem = ({
   label = "",
   value = "",
-  statusColor = "",
+  statusColor = "warn",
   hasStatus = false,
 }: {
   label?: string;
   value?: any;
   hasStatus?: boolean;
-  statusColor: string | undefined;
+  statusColor?: "good" | "warn" | "bad";
 }) => {
   return (
-    <Box
-      sx={{
-        alignItems: "baseline",
-        padding: "5px",
-        display: "flex",
-        gap: "5px",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexFlow: "column",
-          "& .stat-text": { color: "#5E5E5E", fontSize: "12px" },
-          "& .stat-value": {
-            fontSize: "18px",
-            color: "#07193E",
-            display: "flex",
-            fontWeight: 500,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          },
-        }}
-      >
+    <ServerStatItemMain>
+      <Box className={"StatBox"}>
         <div className="stat-value">
           {value}{" "}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexFlow: "column",
-              marginLeft: "5px",
-              maxWidth: "40px",
-              "&:first-of-type(svg)": {
-                fill: "#848484",
-              },
-            }}
-          >
+          <Box className={"stat-container"}>
             {hasStatus ? (
-              <Box
-                sx={{
-                  marginRight: "0px",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                  "& svg.min-icon": {
-                    fill: statusColor,
-                    width: "10px",
-                    height: "10px",
-                  },
-                }}
-              >
+              <Box className={`stat-indicator ${statusColor}`}>
                 <CircleIcon />
               </Box>
             ) : (
@@ -116,7 +149,7 @@ const ServerStatItem = ({
         </div>
         <div className="stat-text">{label}</div>
       </Box>
-    </Box>
+    </ServerStatItemMain>
   );
 };
 
@@ -135,14 +168,7 @@ const ServerInfoItem = ({ server }: ICardProps) => {
     ? server.drives.filter((element) => element.state === "ok").length
     : 0;
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "flex-start",
-        flexFlow: "column",
-        flex: 1,
-      }}
-    >
+    <ServerInfoItemMain>
       <Box
         sx={{
           display: "flex",
@@ -152,10 +178,9 @@ const ServerInfoItem = ({ server }: ICardProps) => {
           justifyContent: "space-between",
           width: "100%",
           paddingLeft: "20px",
-
-          flexFlow: {
-            sm: "row",
-            xs: "column",
+          flexFlow: "row",
+          [`@media (max-width: ${breakPoints.md}px)`]: {
+            flexFlow: "column",
           },
         }}
       >
@@ -174,16 +199,7 @@ const ServerInfoItem = ({ server }: ICardProps) => {
             {server.endpoint || ""}
           </Box>
           {server?.state && (
-            <Box
-              sx={{
-                marginLeft: "8px",
-                "& .min-icon": {
-                  fill: serverStatusColor(server.state),
-                  height: "14px",
-                  width: "14px",
-                },
-              }}
-            >
+            <Box className={`server-state ${serverStatusColor(server.state)}`}>
               <CircleIcon />
             </Box>
           )}
@@ -195,10 +211,7 @@ const ServerInfoItem = ({ server }: ICardProps) => {
             alignItems: "center",
             justifyContent: "center",
             flex: "1.5",
-            gap: {
-              md: "5%",
-              xs: "5%",
-            },
+            gap: "5%",
           }}
         >
           <ServerStatItem
@@ -213,15 +226,14 @@ const ServerInfoItem = ({ server }: ICardProps) => {
             hasStatus={true}
             value={`${activeNetwork}/${networkTotal}`}
           />
-
           <ServerStatItem
-            statusColor={"green"}
+            statusColor={"good"}
             label={"Up time"}
             value={server?.uptime ? niceDays(`${server.uptime}`) : "N/A"}
           />
         </Box>
         <ServerStatItem
-          statusColor={"green"}
+          statusColor={"good"}
           label={""}
           value={
             <Box
@@ -246,7 +258,7 @@ const ServerInfoItem = ({ server }: ICardProps) => {
           }
         />
       </Box>
-    </Box>
+    </ServerInfoItemMain>
   );
 };
-export default withStyles(styles)(ServerInfoItem);
+export default ServerInfoItem;

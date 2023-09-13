@@ -15,23 +15,45 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
+import styled from "styled-components";
+import get from "lodash/get";
+import { CircleIcon, DrivesIcon, ServersIcon, Box } from "mds";
 import EntityStateStatItem from "./EntityStateStatItem";
-import { Box } from "@mui/material";
-import { CircleIcon, DrivesIcon, ServersIcon } from "mds";
 import DualStatCard from "./DualStatCard";
 import { IDashboardPanel } from "../types";
+
+const StateIndicator = styled.div(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  marginTop: "5px",
+  gap: 8,
+  "&.online": {
+    "& .min-icon": {
+      margin: 0,
+      fill: get(theme, "signalColors.good", "#4CCB92"),
+    },
+  },
+  "&.offline": {
+    "& .min-icon": {
+      margin: 0,
+      fill: get(theme, "signalColors.danger", "#C51B3F"),
+    },
+  },
+  "& .indicatorText": {
+    color: get(theme, "mutedText", "#C51B3F"),
+    fontSize: 12,
+  },
+}));
 
 const EntityStateItemRenderer = ({
   info,
   timeStart,
   timeEnd,
-  loading,
   apiPrefix,
 }: {
   info: IDashboardPanel;
   timeStart: any;
   timeEnd: any;
-  loading: boolean;
   apiPrefix: string;
 }) => {
   const { mergedPanels = [], id } = info;
@@ -42,22 +64,12 @@ const EntityStateItemRenderer = ({
       panelItem={leftPanel}
       timeStart={timeStart}
       timeEnd={timeEnd}
-      propLoading={loading}
       apiPrefix={apiPrefix}
       statLabel={
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginTop: "5px",
-            "& .min-icon": {
-              fill: "#4CCB92",
-            },
-          }}
-        >
+        <StateIndicator className={"online"}>
           <CircleIcon />
-          <div className="stat-text">Online</div>
-        </Box>
+          <Box className="indicatorText">Online</Box>
+        </StateIndicator>
       }
     />
   );
@@ -66,22 +78,12 @@ const EntityStateItemRenderer = ({
       panelItem={rightPanel}
       timeStart={timeStart}
       timeEnd={timeEnd}
-      propLoading={loading}
       apiPrefix={apiPrefix}
       statLabel={
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginTop: "5px",
-            "& .min-icon": {
-              fill: "#C83B51",
-            },
-          }}
-        >
+        <StateIndicator className={"offline"}>
           <CircleIcon />
-          <div className="stat-text">Offline</div>
-        </Box>
+          <Box className="indicatorText">Offline</Box>
+        </StateIndicator>
       }
     />
   );

@@ -15,8 +15,35 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
-import { Loader, NetworkGetIcon } from "mds";
+import styled from "styled-components";
+import get from "lodash/get";
+import { Loader, NetworkGetIcon, Box } from "mds";
+
+const NetworkGetBase = styled.div(({ theme }) => ({
+  "& .putLabel": {
+    display: "flex",
+    gap: 10,
+    alignItems: "center",
+    marginTop: "10px",
+
+    "& .min-icon": {
+      height: 15,
+      width: 15,
+      fill: get(theme, "signalColors.good", "#4CCB92"),
+    },
+
+    "& .getText": {
+      fontSize: "18px",
+      color: get(theme, "mutedText", "#87888d"),
+      fontWeight: "bold",
+    },
+    "& .valueText": {
+      fontSize: 50,
+      fontFamily: "Inter",
+      fontWeight: 600,
+    },
+  },
+}));
 
 const NetworkGetItem = ({
   value,
@@ -28,44 +55,17 @@ const NetworkGetItem = ({
   id?: number;
 }) => {
   return (
-    <Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          marginTop: "10px",
-          gap: "10px",
-          "& .min-icon": {
-            height: "15px",
-            width: "15px",
-            fill: "#4ccb92",
-          },
-        }}
-      >
-        <Box
-          sx={{
-            fontSize: "18px",
-            color: "#696969",
-          }}
-        >
-          GET
-        </Box>
+    <NetworkGetBase>
+      <Box className={"putLabel"}>
+        <Box className={"getText"}>GET</Box>
         {loading ? (
           <Loader style={{ width: "15px", height: "15px" }} />
         ) : (
           <NetworkGetIcon />
         )}
       </Box>
-      <Box
-        sx={{
-          fontSize: "50px",
-          fontFamily: "Inter",
-          fontWeight: 600,
-        }}
-      >
-        {value}
-      </Box>
-    </Box>
+      <Box className={"valueText"}>{value}</Box>
+    </NetworkGetBase>
   );
 };
 

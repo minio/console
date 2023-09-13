@@ -15,32 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import PrDashboard from "./Prometheus/PrDashboard";
-import Grid from "@mui/material/Grid";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-
+import { Grid, ProgressBar } from "mds";
+import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../store";
 import { getUsageAsync } from "./dashboardThunks";
-import { useSelector } from "react-redux";
-import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { selFeatures } from "../consoleSlice";
-import HelpMenu from "../HelpMenu";
 import { setHelpName } from "../../../systemSlice";
-import { ProgressBar } from "mds";
+import PrDashboard from "./Prometheus/PrDashboard";
+import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
+import HelpMenu from "../HelpMenu";
 
-interface IDashboardSimple {
-  classes: any;
-}
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...containerForHeader,
-  });
-
-const Dashboard = ({ classes }: IDashboardSimple) => {
+const Dashboard = () => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -73,7 +58,7 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
       )}
       {loading ? (
         <Grid container>
-          <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12}>
             <ProgressBar />
           </Grid>
         </Grid>
@@ -84,4 +69,4 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
   );
 };
 
-export default withStyles(styles)(Dashboard);
+export default Dashboard;

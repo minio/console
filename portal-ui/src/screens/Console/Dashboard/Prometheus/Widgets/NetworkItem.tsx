@@ -15,24 +15,45 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
+import styled from "styled-components";
+import get from "lodash/get";
+import { Box, breakPoints, SpeedtestIcon } from "mds";
 import { IDashboardPanel } from "../types";
-import { Box } from "@mui/material";
-import { SpeedtestIcon } from "mds";
 import SingleValueWidget from "./SingleValueWidget";
 import NetworkGetItem from "./NetworkGetItem";
 import NetworkPutItem from "./NetworkPutItem";
+
+const NetworkItemBase = styled.div(({ theme }) => ({
+  flex: 1,
+  display: "flex",
+  alignItems: "center",
+  flexFlow: "row",
+  gap: "15px",
+  "& .unitText": {
+    fontSize: "14px",
+    color: get(theme, "mutedText", "#87888d"),
+    marginLeft: "5px",
+  },
+  "& .unit": {
+    color: get(theme, "mutedText", "#87888d"),
+    fontSize: "18px",
+    marginLeft: "12px",
+    marginTop: "10px",
+  },
+  [`@media (max-width: ${breakPoints.sm}px)`]: {
+    flexFlow: "column",
+  },
+}));
 
 const NetworkItem = ({
   value,
   timeStart,
   timeEnd,
-  propLoading,
   apiPrefix,
 }: {
   value: IDashboardPanel;
   timeStart: any;
   timeEnd: any;
-  propLoading: boolean;
   apiPrefix: string;
 }) => {
   const { mergedPanels = [] } = value;
@@ -44,7 +65,6 @@ const NetworkItem = ({
       panelItem={leftPanel}
       timeStart={timeStart}
       timeEnd={timeEnd}
-      propLoading={propLoading}
       apiPrefix={apiPrefix}
       renderFn={({ valueToRender, loading, title, id }) => {
         return (
@@ -64,7 +84,6 @@ const NetworkItem = ({
       panelItem={rightPanel}
       timeStart={timeStart}
       timeEnd={timeEnd}
-      propLoading={propLoading}
       apiPrefix={apiPrefix}
       renderFn={({ valueToRender, loading, title, id }) => {
         return (
@@ -80,23 +99,7 @@ const NetworkItem = ({
   );
 
   return (
-    <Box
-      sx={{
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        flexFlow: {
-          sm: "row",
-          xs: "column",
-        },
-        gap: "15px",
-        "& .unitText": {
-          fontSize: "14px",
-          color: "#5E5E5E",
-          marginLeft: "5px",
-        },
-      }}
-    >
+    <NetworkItemBase>
       <Box
         sx={{
           fontSize: "16px",
@@ -110,9 +113,9 @@ const NetworkItem = ({
           position: "relative",
           width: 110,
           height: 110,
-          marginLeft: {
-            sm: "auto",
-            xs: "",
+          marginLeft: "auto",
+          [`@media (max-width: ${breakPoints.sm}px)`]: {
+            marginLeft: "0",
           },
         }}
       >
@@ -126,7 +129,6 @@ const NetworkItem = ({
             left: "50%",
             transform: "translate(-50%, -50%)",
             fontWeight: "bold",
-            color: "#000",
             fontSize: 12,
           }}
         >
@@ -137,9 +139,9 @@ const NetworkItem = ({
         sx={{
           display: "flex",
           alignItems: "center",
-          marginLeft: {
-            sm: "auto",
-            xs: "",
+          marginLeft: "auto",
+          [`@media (max-width: ${breakPoints.sm}px)`]: {
+            marginLeft: "0",
           },
         }}
       >
@@ -148,12 +150,6 @@ const NetworkItem = ({
             display: "flex",
             alignItems: "center",
             "& .value": { fontSize: "50px", fontFamily: "Inter" },
-            "& .unit": {
-              color: "#5E5E5E",
-              fontSize: "18px",
-              marginLeft: "12px",
-              marginTop: "10px",
-            },
           }}
         >
           {rightCmp}
@@ -173,7 +169,7 @@ const NetworkItem = ({
       >
         <SpeedtestIcon />
       </Box>
-    </Box>
+    </NetworkItemBase>
   );
 };
 

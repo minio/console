@@ -15,8 +15,39 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
-import { Loader, SuccessIcon } from "mds";
+import styled from "styled-components";
+import get from "lodash/get";
+import { Box, Loader, SuccessIcon } from "mds";
+
+const TimeStatBase = styled.div(({ theme }) => ({
+  display: "grid",
+  alignItems: "center",
+  gap: 8,
+  height: 33,
+  paddingLeft: 15,
+  gridTemplateColumns: "20px 1.5fr .5fr 20px",
+  background: get(theme, "boxBackground", "#FBFAFA"), // #EBF9EE
+  "& .min-icon": {
+    height: "12px",
+    width: "12px",
+    fill: get(theme, "signalColors.good", "#4CCB92"),
+  },
+  "& .ok-icon": {
+    height: "8px",
+    width: "8px",
+    fill: get(theme, "signalColors.good", "#4CCB92"),
+    color: get(theme, "signalColors.good", "#4CCB92"),
+  },
+  "& .timeStatLabel": {
+    fontSize: "12px",
+    color: get(theme, "signalColors.good", "#4CCB92"),
+    fontWeight: 600,
+  },
+  "& .timeStatValue": {
+    fontSize: "12px",
+    color: get(theme, "signalColors.good", "#4CCB92"),
+  },
+}));
 
 const TimeStatItem = ({
   icon,
@@ -30,46 +61,12 @@ const TimeStatItem = ({
   loading?: boolean;
 }) => {
   return (
-    <Box
-      sx={{
-        display: "grid",
-        alignItems: "center",
-        gap: "8px",
-        height: "33px",
-        paddingLeft: "15px",
-        gridTemplateColumns: {
-          xs: "20px 1.5fr .5fr 20px",
-        },
-        background: "#EBF9EE",
-
-        "& .min-icon": {
-          height: "12px",
-          width: "12px",
-          fill: "#4CCB92",
-        },
-
-        "& .ok-icon": {
-          height: "8px",
-          width: "8px",
-          fill: "#4CCB92",
-          color: "#4CCB92",
-        },
-      }}
-      className="dashboard-time-stat-item"
-    >
+    <TimeStatBase className="dashboard-time-stat-item">
       {loading ? <Loader style={{ width: 10, height: 10 }} /> : icon}
-      <Box
-        sx={{
-          fontSize: "12px",
-          color: "#4CCB92",
-          fontWeight: 600,
-        }}
-      >
-        {label}
-      </Box>
-      <Box sx={{ fontSize: "12px", color: "#4CCB92" }}>{value}</Box>
+      <Box className={"timeStatLabel"}>{label}</Box>
+      <Box className={"timeStatValue"}>{value}</Box>
       {value !== "n/a" ? <SuccessIcon className="ok-icon" /> : null}
-    </Box>
+    </TimeStatBase>
   );
 };
 

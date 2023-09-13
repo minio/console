@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, breakPoints } from "mds";
 import TimeStatItem from "../../TimeStatItem";
 import { SimpleWidgetRenderProps } from "./HealActivityRenderer";
 
@@ -44,9 +44,9 @@ const ScanActivityRenderer = ({
           <Box>
             <Box
               sx={{
-                display: {
-                  md: "inline",
-                  xs: "none",
+                display: "inline",
+                [`@media (max-width: ${breakPoints.sm}px)`]: {
+                  display: "none",
                 },
               }}
             >

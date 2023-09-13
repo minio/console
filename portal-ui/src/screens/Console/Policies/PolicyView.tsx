@@ -15,20 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import SearchBox from "../Common/SearchBox";
-import { Theme } from "@mui/material/styles";
-import { searchField } from "../Common/FormComponents/common/styleLibrary";
 import { DisabledIcon, EnabledIcon, Box, Grid } from "mds";
+import SearchBox from "../Common/SearchBox";
 import { STATUS_COLORS } from "../Dashboard/BasicDashboard/Utils";
-import makeStyles from "@mui/styles/makeStyles";
 import { IAMStatement } from "./types";
-
-const useStyles = makeStyles((theme: Theme) => ({
-  searchField: {
-    ...searchField.searchField,
-    maxWidth: 380,
-  },
-}));
 
 const rowGridStyle = {
   display: "grid",
@@ -57,8 +47,6 @@ const PolicyView = ({
 }: {
   policyStatements: IAMStatement[];
 }) => {
-  const classes = useStyles();
-
   const [filter, setFilter] = useState<string>("");
 
   return (
@@ -77,8 +65,10 @@ const PolicyView = ({
             <SearchBox
               placeholder={"Search"}
               onChange={setFilter}
-              overrideClass={classes.searchField}
               value={filter}
+              sx={{
+                maxWidth: 380,
+              }}
             />
           </Grid>
         </Grid>

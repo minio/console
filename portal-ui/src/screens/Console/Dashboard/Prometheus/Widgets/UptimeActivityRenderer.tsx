@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "@mui/material";
+import { Box } from "mds";
 import TimeStatItem from "../../TimeStatItem";
 
 export type SimpleWidgetRenderProps = {
@@ -34,8 +34,8 @@ const UptimeActivityRenderer = ({
     <Box
       sx={{
         display: "flex",
-        height: "47px",
-        borderRadius: "2px",
+        height: 47,
+        borderRadius: 2,
 
         "& .dashboard-time-stat-item": {
           height: "100%",

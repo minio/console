@@ -15,29 +15,25 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Box } from "@mui/material";
-import api from "../../../../../common/api";
+import { Loader, Box } from "mds";
+import { useSelector } from "react-redux";
 import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { IDashboardPanel } from "../types";
-import { Loader } from "mds";
-
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../store";
-import { useSelector } from "react-redux";
+import api from "../../../../../common/api";
 
 const EntityStateStatItem = ({
   panelItem,
   timeStart,
   timeEnd,
-  propLoading,
   apiPrefix,
   statLabel,
 }: {
   panelItem: IDashboardPanel;
   timeStart: any;
   timeEnd: any;
-  propLoading: boolean;
   apiPrefix: string;
   statLabel: any;
 }) => {

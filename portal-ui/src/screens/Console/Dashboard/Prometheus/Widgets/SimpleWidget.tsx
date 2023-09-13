@@ -15,63 +15,53 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { connect, useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import styled from "styled-components";
+import get from "lodash/get";
+import { useSelector } from "react-redux";
+import { Loader } from "mds";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
 import { IDashboardPanel } from "../types";
-
 import { ErrorResponseHandler } from "../../../../../common/types";
-import { Loader } from "mds";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../../../store";
 
 interface ISimpleWidget {
-  classes: any;
   iconWidget: any;
   title: string;
   panelItem: IDashboardPanel;
   timeStart: any;
   timeEnd: any;
-  propLoading: boolean;
-
   apiPrefix: string;
   renderFn?: undefined | null | ((arg: Record<string, any>) => any);
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    mainWidgetContainer: {
-      display: "inline-flex",
-      color: "#072A4D",
-      alignItems: "center",
-    },
-    icon: {
-      color: "#072A4D",
-      fill: "#072A4D",
-      marginRight: 5,
-      marginLeft: 12,
-    },
-    widgetLabel: {
-      fontWeight: "bold",
-      textTransform: "uppercase",
-      marginRight: 10,
-    },
-    widgetValue: {
-      marginRight: 25,
-    },
-  });
+const SimpleWidgetMain = styled.span(({ theme }) => ({
+  display: "inline-flex",
+  color: get(theme, "signalColors.main", "#07193E"),
+  alignItems: "center",
+  "& .icon": {
+    color: get(theme, "signalColors.main", "#07193E"),
+    fill: get(theme, "signalColors.main", "#07193E"),
+    marginRight: 5,
+    marginLeft: 12,
+  },
+  "& .widgetLabel": {
+    fontWeight: "bold",
+    textTransform: "uppercase",
+    marginRight: 10,
+  },
+  "& .widgetValue": {
+    marginRight: 25,
+  },
+}));
 
 const SimpleWidget = ({
-  classes,
   iconWidget,
   title,
   panelItem,
   timeStart,
   timeEnd,
-  propLoading,
   apiPrefix,
   renderFn,
 }: ISimpleWidget) => {
@@ -132,23 +122,19 @@ const SimpleWidget = ({
   return (
     <Fragment>
       {loading && (
-        <div className={classes.loadingAlign}>
+        <div className={"loadingAlign"}>
           <Loader />
         </div>
       )}
       {!loading && (
-        <span className={classes.mainWidgetContainer}>
-          <span className={classes.icon}>{iconWidget ? iconWidget : null}</span>
-          <span className={classes.widgetLabel}>{title}: </span>
-          <span className={classes.widgetValue}>{data}</span>
-        </span>
+        <SimpleWidgetMain>
+          <span className={"icon"}>{iconWidget ? iconWidget : null}</span>
+          <span className={"widgetLabel"}>{title}: </span>
+          <span className={"widgetValue"}>{data}</span>
+        </SimpleWidgetMain>
       )}
     </Fragment>
   );
 };
 
-const connector = connect(null, {
-  setErrorSnackMessage: setErrorSnackMessage,
-});
-
-export default withStyles(styles)(connector(SimpleWidget));
+export default SimpleWidget;
