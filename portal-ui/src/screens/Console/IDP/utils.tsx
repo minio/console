@@ -156,6 +156,7 @@ export const ldapFormFields = {
     tooltip: "Disable SSL certificate verification ",
     placeholder: "myldapserver.com:636",
     type: "toggle",
+    editOnly: false,
   },
   server_addr: {
     required: true,
@@ -166,6 +167,7 @@ export const ldapFormFields = {
     tooltip: 'AD/LDAP server address e.g. "myldapserver.com:636"',
     placeholder: "myldapserver.com:636",
     type: "text",
+    editOnly: false,
   },
   lookup_bind_dn: {
     required: true,
@@ -177,6 +179,7 @@ export const ldapFormFields = {
       "DN (Distinguished Name) for LDAP read-only service account used to perform DN and group lookups",
     placeholder: "cn=admin,dc=min,dc=io",
     type: "text",
+    editOnly: false,
   },
   lookup_bind_password: {
     required: true,
@@ -188,6 +191,7 @@ export const ldapFormFields = {
       "Password for LDAP read-only service account used to perform DN and group lookups",
     placeholder: "admin",
     type: "password",
+    editOnly: true,
   },
   user_dn_search_base_dn: {
     required: true,
@@ -198,6 +202,7 @@ export const ldapFormFields = {
     tooltip: "",
     placeholder: "DC=example,DC=net",
     type: "text",
+    editOnly: false,
   },
   user_dn_search_filter: {
     required: true,
@@ -208,6 +213,7 @@ export const ldapFormFields = {
     tooltip: "",
     placeholder: "(sAMAcountName=%s)",
     type: "text",
+    editOnly: false,
   },
   group_search_base_dn: {
     required: false,
@@ -216,6 +222,7 @@ export const ldapFormFields = {
     tooltip: "",
     placeholder: "ou=swengg,dc=min,dc=io",
     type: "text",
+    editOnly: false,
   },
   group_search_filter: {
     required: false,
@@ -224,5 +231,6 @@ export const ldapFormFields = {
     tooltip: "",
     placeholder: "(&(objectclass=groupofnames)(member=%d))",
     type: "text",
+    editOnly: false,
   },
 };

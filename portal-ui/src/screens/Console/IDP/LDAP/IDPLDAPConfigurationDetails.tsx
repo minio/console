@@ -18,15 +18,20 @@ import React, { Fragment, useEffect, useState } from "react";
 import {
   Box,
   Button,
+  ConsoleIcon,
   EditIcon,
   FormLayout,
   Grid,
+  HelpBox,
   InputBox,
   Loader,
   PageLayout,
   RefreshIcon,
   Switch,
   Tabs,
+  Tooltip,
+  ValuePair,
+  WarnIcon,
 } from "mds";
 import { api } from "api";
 import { ConfigurationKV } from "api/consoleApi";
@@ -40,7 +45,6 @@ import {
 } from "../../../../systemSlice";
 import { ldapFormFields, ldapHelpBoxContents } from "../utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
-import LabelValuePair from "../../Common/UsageBarWrapper/LabelValuePair";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import AddIDPConfigurationHelpBox from "../AddIDPConfigurationHelpbox";
 import LDAPEntitiesQuery from "./LDAPEntitiesQuery";
@@ -63,12 +67,14 @@ const IDPLDAPConfigurationDetails = () => {
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const [hasConfiguration, setHasConfiguration] = useState<boolean>(false);
   const [fields, setFields] = useState<any>({});
+  const [overrideFields, setOverrideFields] = useState<any>({});
   const [record, setRecord] = useState<ConfigurationKV[] | undefined>(
     undefined,
   );
   const [editMode, setEditMode] = useState<boolean>(false);
   const [resetOpen, setResetOpen] = useState<boolean>(false);
   const [curTab, setCurTab] = useState<string>("configuration");
+  const [envOverride, setEnvOverride] = useState<boolean>(false);
 
   const toggleEditMode = () => {
     if (editMode && record) {
@@ -79,13 +85,20 @@ const IDPLDAPConfigurationDetails = () => {
 
   const parseFields = (record: ConfigurationKV[]) => {
     let fields: any = {};
+    let ovrFlds: any = {};
     if (record && record.length > 0) {
       const enabled = record.find((item: any) => item.key === "enable");
 
       let totalCoincidences = 0;
+      let totalOverride = 0;
 
       record.forEach((item: any) => {
-        fields[item.key] = item.value;
+        if (item.env_override) {
+          fields[item.key] = item.env_override.value;
+          ovrFlds[item.key] = item.env_override.name;
+        } else {
+          fields[item.key] = item.value;
+        }
 
         if (
           enabledConfigLDAP.includes(item.key) &&
@@ -96,16 +109,27 @@ const IDPLDAPConfigurationDetails = () => {
         ) {
           totalCoincidences++;
         }
+
+        if (enabledConfigLDAP.includes(item.key) && item.env_override) {
+          totalOverride++;
+        }
       });
-      const hasConfig = totalCoincidences === enabledConfigLDAP.length;
-      if (hasConfig && enabled && enabled.value !== "off") {
+
+      const hasConfig = totalCoincidences !== 0;
+
+      if (hasConfig && ((enabled && enabled.value !== "off") || !enabled)) {
         setIsEnabled(true);
       } else {
         setIsEnabled(false);
       }
 
+      if (totalOverride !== 0) {
+        setEnvOverride(true);
+      }
+
       setHasConfiguration(hasConfig);
     }
+    setOverrideFields(ovrFlds);
     setFields(fields);
   };
 
@@ -164,6 +188,7 @@ const IDPLDAPConfigurationDetails = () => {
         setRecord(keyVals);
         parseFields(keyVals);
         dispatch(setServerNeedsRestart(res.data.restart || false));
+        setFields({ ...fields, lookup_bind_password: "" });
 
         if (!res.data.restart) {
           dispatch(setSnackBarMessage("Configuration saved successfully"));
@@ -281,22 +306,41 @@ const IDPLDAPConfigurationDetails = () => {
                     actions={
                       !editMode ? (
                         <Fragment>
-                          <Button
-                            id={"edit"}
-                            type="button"
-                            variant={"callAction"}
-                            icon={<EditIcon />}
-                            onClick={toggleEditMode}
-                            label={"Edit Configuration"}
-                            disabled={loading}
-                          />
-                          {hasConfiguration && (
+                          <Tooltip
+                            tooltip={
+                              envOverride
+                                ? "Configuration cannot be edited in this module as LDAP environment variables are set for this MinIO instance."
+                                : ""
+                            }
+                          >
                             <Button
-                              id={"is-configuration-enabled"}
-                              onClick={() => toggleConfiguration(!isEnabled)}
-                              label={isEnabled ? "Disable LDAP" : "Enable LDAP"}
-                              variant={isEnabled ? "secondary" : "regular"}
+                              id={"edit"}
+                              type="button"
+                              variant={"callAction"}
+                              icon={<EditIcon />}
+                              onClick={toggleEditMode}
+                              label={"Edit Configuration"}
+                              disabled={loading || envOverride}
                             />
+                          </Tooltip>
+                          {hasConfiguration && (
+                            <Tooltip
+                              tooltip={
+                                envOverride
+                                  ? "Configuration cannot be disabled / enabled in this module as LDAP environment variables are set for this MinIO instance."
+                                  : ""
+                              }
+                            >
+                              <Button
+                                id={"is-configuration-enabled"}
+                                onClick={() => toggleConfiguration(!isEnabled)}
+                                label={
+                                  isEnabled ? "Disable LDAP" : "Enable LDAP"
+                                }
+                                variant={isEnabled ? "secondary" : "regular"}
+                                disabled={envOverride}
+                              />
+                            </Tooltip>
                           )}
                           <Button
                             id={"refresh-idp-config"}
@@ -337,6 +381,27 @@ const IDPLDAPConfigurationDetails = () => {
                               />
                             }
                           >
+                            {editMode && hasConfiguration ? (
+                              <Box sx={{ marginBottom: 15 }}>
+                                <HelpBox
+                                  title={
+                                    <Box
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        flexGrow: 1,
+                                      }}
+                                    >
+                                      Lookup Bind Password must be re-entered to
+                                      change LDAP configurations
+                                    </Box>
+                                  }
+                                  iconComponent={<WarnIcon />}
+                                  help={null}
+                                />
+                              </Box>
+                            ) : null}
                             {Object.entries(formFields).map(([key, value]) =>
                               renderFormField(key, value),
                             )}
@@ -349,7 +414,7 @@ const IDPLDAPConfigurationDetails = () => {
                                 gap: "15px",
                               }}
                             >
-                              {editMode && (
+                              {editMode && hasConfiguration && (
                                 <Button
                                   id={"clear"}
                                   type="button"
@@ -358,26 +423,22 @@ const IDPLDAPConfigurationDetails = () => {
                                   label={"Reset Configuration"}
                                 />
                               )}
-                              {editMode && (
-                                <Button
-                                  id={"cancel"}
-                                  type="button"
-                                  variant="regular"
-                                  onClick={toggleEditMode}
-                                  label={"Cancel"}
-                                />
-                              )}
-                              {editMode && (
-                                <Button
-                                  id={"save-key"}
-                                  type="submit"
-                                  variant="callAction"
-                                  color="primary"
-                                  disabled={loading || !validSave()}
-                                  label={"Save"}
-                                  onClick={saveRecord}
-                                />
-                              )}
+                              <Button
+                                id={"cancel"}
+                                type="button"
+                                variant="regular"
+                                onClick={toggleEditMode}
+                                label={"Cancel"}
+                              />
+                              <Button
+                                id={"save-key"}
+                                type="submit"
+                                variant="callAction"
+                                color="primary"
+                                disabled={loading || !validSave()}
+                                label={"Save"}
+                                onClick={saveRecord}
+                              />
                             </Box>
                           </FormLayout>
                         </Fragment>
@@ -397,20 +458,68 @@ const IDPLDAPConfigurationDetails = () => {
                               },
                             }}
                           >
-                            <LabelValuePair
+                            <ValuePair
                               label={"LDAP Enabled"}
                               value={isEnabled ? "Yes" : "No"}
                             />
                             {hasConfiguration && (
                               <Fragment>
                                 {Object.entries(formFields).map(
-                                  ([key, value]) => (
-                                    <LabelValuePair
-                                      key={key}
-                                      label={value.label}
-                                      value={fields[key] ? fields[key] : ""}
-                                    />
-                                  ),
+                                  ([key, value]) => {
+                                    if (!value.editOnly) {
+                                      let label: React.ReactNode = value.label;
+                                      let val: React.ReactNode = fields[key]
+                                        ? fields[key]
+                                        : "";
+
+                                      if (overrideFields[key]) {
+                                        label = (
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              alignItems: "center",
+                                              gap: 5,
+                                              "& .min-icon": {
+                                                height: 20,
+                                                width: 20,
+                                              },
+                                              "& span": {
+                                                height: 20,
+                                                display: "flex",
+                                                alignItems: "center",
+                                              },
+                                            }}
+                                          >
+                                            <span>{value.label}</span>
+                                            <Tooltip
+                                              tooltip={`This value is set from the ${overrideFields[key]} environment variable`}
+                                              placement={"right"}
+                                            >
+                                              <span className={"muted"}>
+                                                <ConsoleIcon />
+                                              </span>
+                                            </Tooltip>
+                                          </Box>
+                                        );
+
+                                        val = (
+                                          <i>
+                                            <span className={"muted"}>
+                                              {val}
+                                            </span>
+                                          </i>
+                                        );
+                                      }
+                                      return (
+                                        <ValuePair
+                                          key={key}
+                                          label={label}
+                                          value={val}
+                                        />
+                                      );
+                                    }
+                                    return null;
+                                  },
                                 )}
                               </Fragment>
                             )}
