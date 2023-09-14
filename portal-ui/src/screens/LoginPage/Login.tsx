@@ -29,12 +29,6 @@ import { RedirectRule } from "api/consoleApi";
 import { redirectRules } from "./login.utils";
 import { setHelpName } from "../../systemSlice";
 
-export interface LoginStrategyPayload {
-  accessKey: string;
-  secretKey: string;
-  sts?: string;
-}
-
 export const getTargetPath = () => {
   let targetPath = "/browser";
   if (

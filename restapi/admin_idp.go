@@ -198,6 +198,7 @@ func getIDPConfiguration(ctx context.Context, idpType, name string, client Minio
 	if err != nil {
 		return nil, err
 	}
+
 	return &models.IdpServerConfiguration{
 		Name: config.Name,
 		Type: config.Type,
