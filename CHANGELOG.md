@@ -2,6 +2,23 @@
 
 # Changelog
 
+## Release v0.39.0
+Features:
+- Removed TableWrapper
+- Migrated Register page components to mds
+- Moved EditBucketReplication to screen
+- Upgrade go version in git workflows to 1.21.1
+- Migrated Metrics pages and components to mds
+- Added CONSOLE_PROMETHEUS_AUTH_TOKEN flag support
+
+Bug Fix:
+- Fixed an issue while deleting objects with similar prefixes
+- Fix regression on login path when using redirect url
+- Load the available CA in logout API
+- Improvements to LDAP Configuration page
+- Remove unused check-version api
+
+
 ## Release v0.38.0
 
 Features:
