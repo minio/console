@@ -2,6 +2,21 @@
 
 # Changelog
 
+## Release v0.39.0
+
+Features:
+
+- Migrated metrics page to mds
+- Migrated Register page to mds
+
+
+Bug Fix:
+
+- Fixed LDAP configuration page issues
+- Load available certificates in logout
+- Updated dependencies & go version
+- Fixed delete objects functionality
+
 ## Release v0.38.0
 
 Features:
