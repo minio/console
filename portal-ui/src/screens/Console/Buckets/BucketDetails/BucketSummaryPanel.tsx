@@ -441,6 +441,7 @@ const BucketSummary = () => {
                       setAccessPolicyScreenOpen(true);
                     }}
                     isLoading={bucketLoading}
+                    helpTip={<Fragment>I'm a helptip!</Fragment>}
                   />
                 </SecureComponent>
 
@@ -463,6 +464,7 @@ const BucketSummary = () => {
                       setEnableEncryptionScreenOpen(true);
                     }}
                     isLoading={loadingEncryption}
+                    helpTip={<Fragment>I'm a helptip!</Fragment>}
                   />
                 </SecureComponent>
 
@@ -526,6 +528,7 @@ const BucketSummary = () => {
                   value={quotaEnabled ? "Enabled" : "Disabled"}
                   onEdit={setBucketQuota}
                   isLoading={loadingQuota}
+                  helpTip={<Fragment>I'm a helptip!</Fragment>}
                 />
               </Box>
               <Box
@@ -618,6 +621,7 @@ const BucketSummary = () => {
                       setRetentionConfigOpen(true);
                     }}
                     isLoading={loadingRetention}
+                    helpTip={<Fragment>I'm a helptip!</Fragment>}
                   />
 
                   <ValuePair

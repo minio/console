@@ -218,7 +218,7 @@ const AddLifecycleModal = ({
               currentValue={ilmType}
               id="ilm_type"
               name="ilm_type"
-              label="Type of lifecycle"
+              label="Type of Lifecycle"
               onChange={(e) => {
                 setIlmType(e.target.value as "expiry" | "transition");
               }}
@@ -226,6 +226,8 @@ const AddLifecycleModal = ({
                 { value: "expiry", label: "Expiry" },
                 { value: "transition", label: "Transition" },
               ]}
+              helpTip={<Fragment>I'm a helptip!</Fragment>}
+              helpTipPlacement="right"
             />
             {versioningInfo?.status === "Enabled" && (
               <Select
@@ -240,6 +242,8 @@ const AddLifecycleModal = ({
                   { value: "current", label: "Current Version" },
                   { value: "noncurrent", label: "Non-Current Version" },
                 ]}
+                helpTip={<Fragment>I'm a helptip!</Fragment>}
+                helpTipPlacement="right"
               />
             )}
 
@@ -276,6 +280,8 @@ const AddLifecycleModal = ({
                   setStorageClass(value as string);
                 }}
                 options={tiersList}
+                helpTip={<Fragment>I'm a helptip!</Fragment>}
+                helpTipPlacement="right"
               />
             )}
             <Grid item xs={12} sx={formFieldRowFilter}>

@@ -28,6 +28,7 @@ import {
   InputBox,
   Switch,
   ServiceAccountIcon,
+  HelpTip
 } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
@@ -190,11 +191,17 @@ const AddServiceAccount = () => {
               />
               {isRestrictedByPolicy && (
                 <Grid item xs={12}>
-                  <Box>
-                    <PanelTitle>
+                  <Box><HelpTip
+                        content={<Fragment>Policy Document Structure
+                          <br/>
+                          <a target="blank" href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#policy-document-structure">Guide to writing access policies</a>
+                        </Fragment>}
+                        placement="right"
+                      >
+                    <PanelTitle >
                       Current User Policy - edit the JSON to remove permissions
                       for this Access Key
-                    </PanelTitle>
+                    </PanelTitle></HelpTip>
                   </Box>
                   <Grid item xs={12} sx={{ ...modalStyleUtils.formScrollable }}>
                     <CodeMirrorWrapper
@@ -203,6 +210,7 @@ const AddServiceAccount = () => {
                         setPolicyJSON(value);
                       }}
                       editorHeight={"350px"}
+                     
                     />
                   </Grid>
                 </Grid>

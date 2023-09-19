@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { Button, ChangeAccessPolicyIcon, Grid } from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
@@ -98,6 +98,7 @@ const ServiceAccountPolicy = ({
                 setPolicyDefinition(value);
               }}
               editorHeight={"350px"}
+              helptip={<Fragment>I'm a helptip</Fragment>}
             />
           </Grid>
           <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>

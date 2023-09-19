@@ -24,6 +24,7 @@ import {
   HelpBox,
   SectionTitle,
   TiersIcon,
+  HelpTip,
 } from "mds";
 import { useSelector } from "react-redux";
 import { api } from "api";
@@ -292,7 +293,12 @@ const BucketLifecyclePanel = () => {
           </SecureComponent>
         }
       >
-        Lifecycle Rules
+        <HelpTip
+          content={<Fragment>I'm a helptip!</Fragment>}
+          placement="right"
+        >
+          Lifecycle Rules
+        </HelpTip>
       </SectionTitle>
       <Grid container>
         <Grid item xs={12}>

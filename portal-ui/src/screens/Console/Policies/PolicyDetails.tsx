@@ -31,6 +31,7 @@ import {
   SectionTitle,
   Tabs,
   TrashIcon,
+  HelpTip,
 } from "mds";
 import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 
@@ -531,9 +532,12 @@ const PolicyDetails = () => {
                         dispatch(setHelpName("policy_details_policy"))
                       }
                     >
-                      <SectionTitle separator sx={{ marginBottom: 15 }}>
-                        Raw Policy
-                      </SectionTitle>
+                      <HelpTip
+                        content={<Fragment>I'm a helptip</Fragment>}
+                        placement="right"
+                      >
+                        <SectionTitle>Raw Policy</SectionTitle>
+                      </HelpTip>
                       <form
                         noValidate
                         autoComplete="off"

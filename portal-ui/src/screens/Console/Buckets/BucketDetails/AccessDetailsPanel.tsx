@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { DataTable, SectionTitle, Tabs } from "mds";
+import { DataTable, SectionTitle, Tabs, HelpTip } from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import {
@@ -145,7 +145,14 @@ const AccessDetails = () => {
 
   return (
     <Fragment>
-      <SectionTitle separator>Access Audit</SectionTitle>
+      <SectionTitle separator>
+        <HelpTip
+          content={<Fragment>I'm a helptip!</Fragment>}
+          placement="right"
+        >
+          Access Audit
+        </HelpTip>
+      </SectionTitle>
       <Tabs
         currentTabOrPath={curTab}
         onTabClick={(newValue: string) => {

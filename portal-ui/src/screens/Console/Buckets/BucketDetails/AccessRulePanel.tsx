@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { AddIcon, Button, DataTable, SectionTitle } from "mds";
+import { AddIcon, Button, DataTable, SectionTitle, HelpTip } from "mds";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { api } from "api";
@@ -194,7 +194,12 @@ const AccessRule = () => {
           </SecureComponent>
         }
       >
-        Anonymous Access
+        <HelpTip
+          content={<Fragment>I'm a helptip!</Fragment>}
+          placement="right"
+        >
+          Anonymous Access
+        </HelpTip>
       </SectionTitle>
       <SecureComponent
         scopes={[IAM_SCOPES.S3_GET_BUCKET_POLICY, IAM_SCOPES.S3_GET_ACTIONS]}

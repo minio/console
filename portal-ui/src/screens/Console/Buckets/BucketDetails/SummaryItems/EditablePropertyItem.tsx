@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { ActionLink, Box, ValuePair } from "mds";
+import { ActionLink, Box, HelpTip, ValuePair } from "mds";
 import { SecureComponent } from "../../../../../common/SecureComponent";
 
 import EditActionButton from "./EditActionButton";
@@ -29,6 +29,7 @@ type EditablePropertyItemProps = {
   onEdit: () => void;
   secureCmpProps?: Record<any, any>;
   disabled?: boolean;
+  helpTip?: any;
 };
 
 const SecureAction = ({
@@ -63,6 +64,7 @@ const EditablePropertyItem = ({
   value = null,
   onEdit,
   disabled = false,
+  helpTip,
 }: EditablePropertyItemProps) => {
   return (
     <Box
@@ -76,19 +78,37 @@ const EditablePropertyItem = ({
       <ValuePair
         label={property}
         value={
-          <SecureAction
-            resourceName={resourceName}
-            iamScopes={iamScopes}
-            secureCmpProps={secureCmpProps}
-          >
-            <ActionLink
-              isLoading={isLoading}
-              onClick={onEdit}
-              label={value}
-              sx={{ fontWeight: "bold" }}
-              disabled={disabled}
-            />
-          </SecureAction>
+          helpTip ? (
+            <SecureAction
+              resourceName={resourceName}
+              iamScopes={iamScopes}
+              secureCmpProps={secureCmpProps}
+            >
+              <HelpTip placement="left" content={helpTip}>
+                <ActionLink
+                  isLoading={isLoading}
+                  onClick={onEdit}
+                  label={value}
+                  sx={{ fontWeight: "bold" }}
+                  disabled={disabled}
+                />
+              </HelpTip>
+            </SecureAction>
+          ) : (
+            <SecureAction
+              resourceName={resourceName}
+              iamScopes={iamScopes}
+              secureCmpProps={secureCmpProps}
+            >
+              <ActionLink
+                isLoading={isLoading}
+                onClick={onEdit}
+                label={value}
+                sx={{ fontWeight: "bold" }}
+                disabled={disabled}
+              />
+            </SecureAction>
+          )
         }
       />
       <SecureAction

@@ -27,6 +27,7 @@ import {
   HelpBox,
   SectionTitle,
   TrashIcon,
+  HelpTip,
 } from "mds";
 import api from "../../../../common/api";
 import {
@@ -303,7 +304,12 @@ const BucketReplicationPanel = () => {
           </Box>
         }
       >
-        Replication
+        <HelpTip
+          content={<Fragment>I'm a helptip!</Fragment>}
+          placement="right"
+        >
+          Replication
+        </HelpTip>
       </SectionTitle>
       <Grid container>
         <Grid item xs={12}>

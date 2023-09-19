@@ -28,6 +28,7 @@ import {
   ServiceAccountCredentialsIcon,
   ServiceAccountIcon,
   Switch,
+  HelpTip
 } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
@@ -212,11 +213,15 @@ const AddServiceAccount = () => {
               />
               {isRestrictedByPolicy && (
                 <Grid item xs={12}>
-                  <Box>
+                  <Box><HelpTip
+                        content={<Fragment>I'm a helptip</Fragment>}
+                        placement="right"
+                      >
                     <PanelTitle>
                       Current User Policy - edit the JSON to remove permissions
                       for this Access Key
                     </PanelTitle>
+                    </HelpTip>
                   </Box>
                   <Grid item xs={12} sx={{ ...modalStyleUtils.formScrollable }}>
                     <CodeMirrorWrapper

@@ -350,6 +350,8 @@ const AddBucket = () => {
                           "Versioning",
                         )
                   }
+                  helpTip={<Fragment>I'm a helptip</Fragment>}
+                  helpTipPlacement="right"
                 />
                 {versioningEnabled && distributedSetup && !lockingEnabled && (
                   <Fragment>
@@ -361,6 +363,8 @@ const AddBucket = () => {
                         dispatch(setExcludeFolders(e.target.checked));
                       }}
                       indicatorLabels={["Enabled", "Disabled"]}
+                      helpTip={<Fragment>I'm a helptip</Fragment>}
+                      helpTipPlacement="right"
                     />
                     <CSVMultiSelector
                       elements={excludedPrefixes}
@@ -411,6 +415,8 @@ const AddBucket = () => {
                           "Locking",
                         )
                   }
+                  helpTip={<Fragment>I'm a helptip</Fragment>}
+                  helpTipPlacement="right"
                 />
                 <Switch
                   value="bucket_quota"
@@ -422,6 +428,8 @@ const AddBucket = () => {
                   }}
                   label={"Quota"}
                   disabled={!distributedSetup}
+                  helpTip={<Fragment>I'm a helptip</Fragment>}
+                  helpTipPlacement="right"
                 />
                 {quotaEnabled && distributedSetup && (
                   <Fragment>
@@ -465,6 +473,8 @@ const AddBucket = () => {
                       dispatch(setRetention(event.target.checked));
                     }}
                     label={"Retention"}
+                    helpTip={<Fragment>I'm a helptip</Fragment>}
+                    helpTipPlacement="right"
                   />
                 )}
                 {retentionEnabled && distributedSetup && (
@@ -485,6 +495,8 @@ const AddBucket = () => {
                         { value: "compliance", label: "Compliance" },
                         { value: "governance", label: "Governance" },
                       ]}
+                      helpTip={<Fragment>I'm a helptip</Fragment>}
+                      helpTipPlacement="right"
                     />
                     <InputBox
                       type="number"
@@ -510,6 +522,8 @@ const AddBucket = () => {
                           disabled={false}
                         />
                       }
+                      helpTip={<Fragment>I'm a helptip</Fragment>}
+                      helpTipPlacement="right"
                     />
                   </Fragment>
                 )}

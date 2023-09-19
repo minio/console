@@ -26,6 +26,7 @@ import {
   DataTable,
   Grid,
   SectionTitle,
+  HelpTip,
 } from "mds";
 import { api } from "api";
 import { NotificationConfig } from "api/consoleApi";
@@ -165,7 +166,12 @@ const BucketEventsPanel = () => {
           </SecureComponent>
         }
       >
-        Events
+        <HelpTip
+          content={<Fragment>I'm a helptip!</Fragment>}
+          placement="right"
+        >
+          Events
+        </HelpTip>
       </SectionTitle>
 
       <Grid container>
