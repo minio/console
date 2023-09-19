@@ -47,7 +47,7 @@ import { errorToHandler } from "api/errors";
 import HelpMenu from "../HelpMenu";
 import { ACCOUNT_TABLE_COLUMNS } from "./AccountUtils";
 import { useAppDispatch } from "store";
-import { ApiError, ServiceAccounts } from "api/consoleApi";
+import { ServiceAccounts } from "api/consoleApi";
 import {
   setErrorSnackMessage,
   setHelpName,
@@ -104,9 +104,12 @@ const Account = () => {
           const sortedRows = res.data.sort(usersSort);
           setRecords(sortedRows);
         })
-        .catch(async (res) => {
-          const err = (await res.json()) as ApiError;
-          dispatch(setErrorSnackMessage(errorToHandler(err)));
+        .catch((res) => {
+          dispatch(
+            setErrorSnackMessage(
+              errorToHandler(res?.error || "Error retrieving access keys"),
+            ),
+          );
           setLoading(false);
         });
     }
