@@ -96,8 +96,19 @@ const BucketEventsPanel = () => {
     }
   }, [loadingEvents, dispatch, bucketName, displayEvents]);
 
-  const eventsDisplay = (events: string[]) => {
-    return <Fragment>{events.join(", ")}</Fragment>;
+  const eventsDisplay = (events: string[] | null) => {
+    if (!events) {
+      return "other";
+    }
+
+    const cleanEvents = events.reduce((acc: string[], read: string) => {
+      if (!acc.includes(read)) {
+        return [...acc, read];
+      }
+      return acc;
+    }, []);
+
+    return <Fragment>{cleanEvents.join(", ")}</Fragment>;
   };
 
   const confirmDeleteEvent = (evnt: NotificationConfig) => {

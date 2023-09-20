@@ -7445,7 +7445,8 @@ func init() {
         "delete",
         "get",
         "replica",
-        "ilm"
+        "ilm",
+        "scanner"
       ]
     },
     "objectBucketLifecycle": {
@@ -16635,7 +16636,8 @@ func init() {
         "delete",
         "get",
         "replica",
-        "ilm"
+        "ilm",
+        "scanner"
       ]
     },
     "objectBucketLifecycle": {
