@@ -167,7 +167,19 @@ const BucketEventsPanel = () => {
         }
       >
         <HelpTip
-          content={<Fragment>I'm a helptip!</Fragment>}
+          content={
+            <Fragment>
+              MinIO{" "}
+              <a
+                target="blank"
+                href="https://min.io/docs/minio/kubernetes/upstream/administration/monitoring.html"
+              >
+                bucket notifications
+              </a>{" "}
+              allow administrators to send notifications to supported external
+              services on certain object or bucket events.
+            </Fragment>
+          }
           placement="right"
         >
           Events

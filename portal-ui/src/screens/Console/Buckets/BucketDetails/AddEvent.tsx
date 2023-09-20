@@ -165,9 +165,16 @@ const AddEvent = ({
                 label={"ARN"}
                 value={arn}
                 options={arnValues || []}
-                helptip={<Fragment>
-<a target="blank" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html">Amazon Resource Name</a>
-               </Fragment>}
+                helptip={
+                  <Fragment>
+                    <a
+                      target="blank"
+                      href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html"
+                    >
+                      Amazon Resource Name
+                    </a>
+                  </Fragment>
+                }
               />
             </Grid>
             <Grid item xs={12} sx={formFieldStyles.formFieldRow}>

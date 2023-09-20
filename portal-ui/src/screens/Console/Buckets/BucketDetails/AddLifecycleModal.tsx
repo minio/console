@@ -16,7 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
 import get from "lodash/get";
 import {
   Button,
@@ -46,7 +45,6 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { baseUrl } from "history";
 import { IAM_PAGES } from "common/SecureComponent/permissions";
 
 interface IReplicationModal {
@@ -79,7 +77,7 @@ const AddLifecycleModal = ({
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
-  const navigate = useNavigate();
+
   /*To be removed on component replacement*/
   const formFieldRowFilter = {
     "& .MuiPaper-root": { padding: 0 },
@@ -230,10 +228,32 @@ const AddLifecycleModal = ({
                 { value: "expiry", label: "Expiry" },
                 { value: "transition", label: "Transition" },
               ]}
-              helpTip={<Fragment>
-                Select <a target="blank" href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/create-lifecycle-management-expiration-rule.html">Expiry</a> to delete Objects per this rule. Select <a target="blank" href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-minio.html">Transition</a> to move Objects to a remote storage <a target="blank" href="https://min.io/docs/minio/windows/administration/object-management/transition-objects-to-minio.html#configure-the-remote-storage-tier">Tier</a> per this rule.
-              
-               </Fragment>}
+              helpTip={
+                <Fragment>
+                  Select{" "}
+                  <a
+                    target="blank"
+                    href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/create-lifecycle-management-expiration-rule.html"
+                  >
+                    Expiry
+                  </a>{" "}
+                  to delete Objects per this rule. Select{" "}
+                  <a
+                    target="blank"
+                    href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-minio.html"
+                  >
+                    Transition
+                  </a>{" "}
+                  to move Objects to a remote storage{" "}
+                  <a
+                    target="blank"
+                    href="https://min.io/docs/minio/windows/administration/object-management/transition-objects-to-minio.html#configure-the-remote-storage-tier"
+                  >
+                    Tier
+                  </a>{" "}
+                  per this rule.
+                </Fragment>
+              }
               helpTipPlacement="right"
             />
             {versioningInfo?.status === "Enabled" && (
@@ -249,13 +269,19 @@ const AddLifecycleModal = ({
                   { value: "current", label: "Current Version" },
                   { value: "noncurrent", label: "Non-Current Version" },
                 ]}
-                helpTip={<Fragment>Select whether to apply the rule to current or non-current Object
-
-<a target="blank" href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/create-lifecycle-management-expiration-rule.html#expire-versioned-objects"> Versions</a>
-
-                </Fragment>}
-
-
+                helpTip={
+                  <Fragment>
+                    Select whether to apply the rule to current or non-current
+                    Object
+                    <a
+                      target="blank"
+                      href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/create-lifecycle-management-expiration-rule.html#expire-versioned-objects"
+                    >
+                      {" "}
+                      Versions
+                    </a>
+                  </Fragment>
+                }
                 helpTipPlacement="right"
               />
             )}
@@ -293,11 +319,19 @@ const AddLifecycleModal = ({
                   setStorageClass(value as string);
                 }}
                 options={tiersList}
-                helpTip={<Fragment>
-Configure a <a onClick={()=>navigate(IAM_PAGES.TIERS_ADD)} color="secondary" style={{textDecoration: "underline"}}>
-  remote tier
-</a> to receive transitioned Objects
-                </Fragment>}
+                helpTip={
+                  <Fragment>
+                    Configure a{" "}
+                    <a
+                      href={IAM_PAGES.TIERS_ADD}
+                      color="secondary"
+                      style={{ textDecoration: "underline" }}
+                    >
+                      remote tier
+                    </a>{" "}
+                    to receive transitioned Objects
+                  </Fragment>
+                }
                 helpTipPlacement="right"
               />
             )}

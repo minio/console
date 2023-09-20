@@ -533,7 +533,16 @@ const PolicyDetails = () => {
                       }
                     >
                       <HelpTip
-                        content={<Fragment>I'm a helptip</Fragment>}
+                        content={
+                          <Fragment>
+                            <a
+                              target="blank"
+                              href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#policy-document-structure"
+                            >
+                              Guide to access policy structure
+                            </a>
+                          </Fragment>
+                        }
                         placement="right"
                       >
                         <SectionTitle>Raw Policy</SectionTitle>
@@ -555,6 +564,16 @@ const PolicyDetails = () => {
                                 }
                               }}
                               editorHeight={"350px"}
+                              helptip={
+                                <Fragment>
+                                  <a
+                                    target="blank"
+                                    href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#policy-document-structure"
+                                  >
+                                    Guide to access policy structure
+                                  </a>
+                                </Fragment>
+                              }
                             />
                           </Grid>
                           <Grid

@@ -305,7 +305,19 @@ const BucketReplicationPanel = () => {
         }
       >
         <HelpTip
-          content={<Fragment>I'm a helptip!</Fragment>}
+          content={
+            <Fragment>
+              MinIO{" "}
+              <a
+                target="blank"
+                href="https://min.io/docs/minio/kubernetes/upstream/administration/bucket-replication.html"
+              >
+                server-side bucket replication
+              </a>{" "}
+              is an automatic bucket-level configuration that synchronizes
+              objects between a source and destination bucket.
+            </Fragment>
+          }
           placement="right"
         >
           Replication

@@ -54,7 +54,19 @@ const PolicyView = ({
       <Grid item xs={12}>
         <Grid container sx={{ display: "flex", alignItems: "center" }}>
           <HelpTip
-            content={<Fragment>I'm a helptip!</Fragment>}
+            content={
+              <Fragment>
+                Define which actions are permitted on a specified resource.
+                Learn more about{" "}
+                <a
+                  target="blank"
+                  href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html"
+                >
+                  IAM conditional statements
+                </a>
+                .
+              </Fragment>
+            }
             placement="right"
           >
             <Grid item xs={12} sm={6} sx={{ fontWeight: "bold" }}>
