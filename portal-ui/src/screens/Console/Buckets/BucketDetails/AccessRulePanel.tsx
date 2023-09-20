@@ -195,7 +195,7 @@ const AccessRule = () => {
         }
       >
         <HelpTip
-          content={<Fragment>I'm a helptip!</Fragment>}
+          content={<Fragment>Setting an <a href="https://min.io/docs/minio/linux/reference/minio-mc/mc-anonymous-set.html" target="blank">Anonymous</a> policy allows clients to access the Bucket or prefix contents and perform actions consistent with the specified policy without authentication</Fragment>}
           placement="right"
         >
           Anonymous Access

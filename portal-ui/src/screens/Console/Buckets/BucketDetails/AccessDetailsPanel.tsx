@@ -147,7 +147,7 @@ const AccessDetails = () => {
     <Fragment>
       <SectionTitle separator>
         <HelpTip
-          content={<Fragment>I'm a helptip!</Fragment>}
+          content={<Fragment>Understand which <a target="blank" href="https://min.io/docs/minio/linux/administration/identity-access-management/policy-based-access-control.html#">Policies</a> and <a target="blank" href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html">Users</a> are authorized to access this Bucket</Fragment>}
           placement="right"
         >
           Access Audit

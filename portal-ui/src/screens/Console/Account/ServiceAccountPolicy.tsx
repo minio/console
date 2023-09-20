@@ -98,7 +98,10 @@ const ServiceAccountPolicy = ({
                 setPolicyDefinition(value);
               }}
               editorHeight={"350px"}
-              helptip={<Fragment>I'm a helptip</Fragment>}
+              helptip={<Fragment>Policy Document Structure
+                <br/>
+                <a target="blank" href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#policy-document-structure">Guide to writing access policies</a>
+              </Fragment>}
             />
           </Grid>
           <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>

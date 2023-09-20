@@ -115,7 +115,7 @@ const AddAccessRule = ({
           value={selectedAccess}
           options={accessOptions}
           disabled={false}
-          helpTip={<Fragment>I'm a helptip!</Fragment>}
+          helpTip={<Fragment>Select the desired level of access available to unauthenticated Users</Fragment>}
           helpTipPlacement="right"
         />
         <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
