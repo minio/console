@@ -24,10 +24,14 @@ import {
   ProgressBar,
 } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setModalErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { api } from "api";
-import { ChangeUserPasswordRequest } from "api/consoleApi";
+import { ApiError, ChangeUserPasswordRequest } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 
@@ -77,13 +81,19 @@ const ChangeUserPassword = ({
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");
+        dispatch(
+          setSnackBarMessage(
+            `Successfully updated the password for the user ${userName}.`,
+          ),
+        );
         closeModal();
       })
-      .catch((err) => {
+      .catch(async (res) => {
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");
-        dispatch(setModalErrorSnackMessage(errorToHandler(err)));
+        const err = (await res.json()) as ApiError;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
       });
   };
 

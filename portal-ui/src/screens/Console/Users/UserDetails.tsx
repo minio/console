@@ -351,6 +351,7 @@ const UserDetails = () => {
                       onClick={changeUserPassword}
                       icon={<PasswordKeyIcon />}
                       variant={"regular"}
+                      disabled={userLoggedIn === userName}
                     />
                   </TooltipWrapper>
                 </Fragment>
