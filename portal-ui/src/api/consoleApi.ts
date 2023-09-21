@@ -291,6 +291,7 @@ export enum NotificationEventType {
   Get = "get",
   Replica = "replica",
   Ilm = "ilm",
+  Scanner = "scanner",
 }
 
 export interface NotificationConfig {

@@ -54,15 +54,22 @@ const DeleteEvent = ({
       return;
     }
 
-    const events = get(bucketEvent, "events", []);
+    const events: string[] = get(bucketEvent, "events", []);
     const prefix = get(bucketEvent, "prefix", "");
     const suffix = get(bucketEvent, "suffix", "");
+
+    const cleanEvents = events.reduce((acc: string[], currVal: string) => {
+      if (!acc.includes(currVal)) {
+        return [...acc, currVal];
+      }
+      return acc;
+    }, []);
 
     invokeDeleteApi(
       "DELETE",
       `/api/v1/buckets/${selectedBucket}/events/${bucketEvent.arn}`,
       {
-        events,
+        events: cleanEvents,
         prefix,
         suffix,
       },
