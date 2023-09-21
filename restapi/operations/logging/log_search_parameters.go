@@ -86,6 +86,10 @@ type LogSearchParams struct {
 	/*
 	  In: query
 	*/
+	TimeEnd *string
+	/*
+	  In: query
+	*/
 	TimeStart *string
 }
 
@@ -117,6 +121,11 @@ func (o *LogSearchParams) BindRequest(r *http.Request, route *middleware.Matched
 
 	qPageSize, qhkPageSize, _ := qs.GetOK("pageSize")
 	if err := o.bindPageSize(qPageSize, qhkPageSize, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qTimeEnd, qhkTimeEnd, _ := qs.GetOK("timeEnd")
+	if err := o.bindTimeEnd(qTimeEnd, qhkTimeEnd, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -229,6 +238,24 @@ func (o *LogSearchParams) bindPageSize(rawData []string, hasKey bool, formats st
 		return errors.InvalidType("pageSize", "query", "int32", raw)
 	}
 	o.PageSize = &value
+
+	return nil
+}
+
+// bindTimeEnd binds and validates parameter TimeEnd from query.
+func (o *LogSearchParams) bindTimeEnd(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+	o.TimeEnd = &raw
 
 	return nil
 }
