@@ -35,7 +35,7 @@ import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import { ApiError, ContentType } from "api/consoleApi";
+import { ContentType } from "api/consoleApi";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import AddServiceAccountHelpBox from "./AddServiceAccountHelpBox";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
@@ -83,10 +83,9 @@ const AddServiceAccount = () => {
           });
         })
 
-        .catch(async (res) => {
+        .catch((res) => {
           setAddSending(false);
-          const err = (await res.json()) as ApiError;
-          dispatch(setErrorSnackMessage(errorToHandler(err)));
+          dispatch(setErrorSnackMessage(errorToHandler(res.error)));
         });
     }
   }, [addSending, setAddSending, dispatch, policyJSON, accessKey, secretKey]);
