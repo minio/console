@@ -26,11 +26,16 @@ import {
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../systemSlice";
+import {
+  setModalErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { api } from "api";
 import { AccountChangePasswordRequest } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
+import { useNavigate } from "react-router-dom";
+import WarningMessage from "../Common/WarningMessage/WarningMessage";
 
 interface IChangePasswordProps {
   open: boolean;
@@ -39,6 +44,7 @@ interface IChangePasswordProps {
 
 const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [reNewPassword, setReNewPassword] = useState<string>("");
@@ -86,14 +92,26 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
         setNewPassword("");
         setReNewPassword("");
         setCurrentPassword("");
+        dispatch(
+          setSnackBarMessage(
+            "Successfully updated the password. Please login again.",
+          ),
+        );
         closeModal();
+        setTimeout(() => {
+          navigate("/logout");
+        }, 5000); // time around the snackbar closes.
       })
       .catch((err) => {
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");
         setCurrentPassword("");
-        dispatch(setModalErrorSnackMessage(errorToHandler(err)));
+        const errObj = err.err || {
+          message: `Unable to update password. ${err.status} ${err.statusText}`,
+          detailedMessage: "",
+        };
+        dispatch(setModalErrorSnackMessage(errorToHandler(errObj)));
       });
   };
 
@@ -113,6 +131,25 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
         This will change your Console password. Please note your new password
         down, as it will be required to log into Console after this session.
       </div>
+      <WarningMessage
+        title={""}
+        label={
+          <div>
+            <div>
+              If you are looking to change MINIO_ROOT_USER credentials, Please
+              refer to{" "}
+              <a
+                target="_blank"
+                rel="noopener"
+                href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html#id4?ref=con"
+              >
+                rotating
+              </a>{" "}
+              credentials .
+            </div>
+          </div>
+        }
+      />
       <form
         noValidate
         autoComplete="off"
