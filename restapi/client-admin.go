@@ -524,6 +524,7 @@ func GetConsoleHTTPClient(address string, clientIP string) *http.Client {
 	client, ok := httpClients.m[address]
 	httpClients.Unlock()
 	if ok {
+        client.Transport.(*ConsoleTransport).ClientIP = clientIP
 		return client
 	}
 
