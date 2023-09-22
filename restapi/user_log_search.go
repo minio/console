@@ -80,6 +80,12 @@ func getLogSearchResponse(session *models.Principal, params logApi.LogSearchPara
 	if params.TimeStart != nil && *params.TimeStart != "" {
 		endpoint = fmt.Sprintf("%s&timeStart=%s", endpoint, *params.TimeStart)
 	}
+
+	// timeEnd
+	if params.TimeEnd != nil && *params.TimeEnd != "" {
+		endpoint = fmt.Sprintf("%s&timeEnd=%s", endpoint, *params.TimeEnd)
+	}
+
 	// page size and page number
 	endpoint = fmt.Sprintf("%s&pageSize=%d", endpoint, *params.PageSize)
 	endpoint = fmt.Sprintf("%s&pageNo=%d", endpoint, *params.PageNo)
