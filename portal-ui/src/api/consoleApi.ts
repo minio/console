@@ -4567,6 +4567,7 @@ export class Api<
         /** @default "timeDesc" */
         order?: "timeDesc" | "timeAsc";
         timeStart?: string;
+        timeEnd?: string;
       },
       params: RequestParams = {},
     ) =>
