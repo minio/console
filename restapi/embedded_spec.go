@@ -3878,6 +3878,11 @@ func init() {
             "type": "string",
             "name": "timeStart",
             "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "timeEnd",
+            "in": "query"
           }
         ],
         "responses": {
@@ -12919,6 +12924,11 @@ func init() {
           {
             "type": "string",
             "name": "timeStart",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "timeEnd",
             "in": "query"
           }
         ],
