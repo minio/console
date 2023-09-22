@@ -27,14 +27,14 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import {
+  setErrorSnackMessage,
   setModalErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { api } from "api";
-import { AccountChangePasswordRequest } from "api/consoleApi";
+import { AccountChangePasswordRequest, ApiError } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
-import { useNavigate } from "react-router-dom";
 import WarningMessage from "../Common/WarningMessage/WarningMessage";
 
 interface IChangePasswordProps {
@@ -44,7 +44,6 @@ interface IChangePasswordProps {
 
 const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [reNewPassword, setReNewPassword] = useState<string>("");
@@ -92,26 +91,16 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
         setNewPassword("");
         setReNewPassword("");
         setCurrentPassword("");
-        dispatch(
-          setSnackBarMessage(
-            "Successfully updated the password. Please login again.",
-          ),
-        );
+        dispatch(setSnackBarMessage("Successfully updated the password."));
         closeModal();
-        setTimeout(() => {
-          navigate("/logout");
-        }, 5000); // time around the snackbar closes.
       })
-      .catch((err) => {
+      .catch(async (res) => {
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");
         setCurrentPassword("");
-        const errObj = err.err || {
-          message: `Unable to update password. ${err.status} ${err.statusText}`,
-          detailedMessage: "",
-        };
-        dispatch(setModalErrorSnackMessage(errorToHandler(errObj)));
+        const err = (await res.json()) as ApiError;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
       });
   };
 
