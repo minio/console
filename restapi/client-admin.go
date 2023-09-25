@@ -520,18 +520,14 @@ func GetConsoleHTTPClient(address string, clientIP string) *http.Client {
 		address = u.Hostname()
 	}
 
-	httpClients.Lock()
-	client, ok := httpClients.m[address]
-	httpClients.Unlock()
-	if ok {
-        client.Transport.(*ConsoleTransport).ClientIP = clientIP
-		return client
+	client := PrepareConsoleHTTPClient(isLocalIPAddress(address), clientIP)
+
+	if client.Transport != nil {
+		if transport, ok := client.Transport.(*ConsoleTransport); ok {
+			transport.ClientIP = clientIP
+		}
 	}
 
-	client = PrepareConsoleHTTPClient(isLocalIPAddress(address), clientIP)
-	httpClients.Lock()
-	httpClients.m[address] = client
-	httpClients.Unlock()
 	return client
 }
 
