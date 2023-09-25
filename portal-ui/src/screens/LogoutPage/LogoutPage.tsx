@@ -32,6 +32,10 @@ const LogoutPage = () => {
       const deleteSession = () => {
         clearSession();
         dispatch(userLogged(false));
+
+        // Disconnect OB Websocket
+        dispatch({ type: "socket/OBDisconnect" });
+
         localStorage.setItem("userLoggedIn", "");
         localStorage.setItem("redirect-path", "");
         dispatch(resetSession());
@@ -44,7 +48,7 @@ const LogoutPage = () => {
           deleteSession();
         })
         .catch((err: ErrorResponseHandler) => {
-          console.log(err);
+          console.error(err);
           deleteSession();
         });
     };
