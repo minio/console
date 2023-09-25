@@ -25,7 +25,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/minio/console/pkg/utils"
@@ -480,15 +479,6 @@ func newAdminFromCreds(accessKey, secretKey, endpoint string, tlsEnabled bool) (
 	}
 
 	return minioClient, nil
-}
-
-// httpClient is a custom http client, this client should not be called directly and instead be
-// called using GetConsoleHTTPClient() to ensure is initialized and the certificates are loaded correctly
-var httpClients = struct {
-	sync.Mutex
-	m map[string]*http.Client
-}{
-	m: make(map[string]*http.Client),
 }
 
 // isLocalAddress returns true if the url contains an IPv4/IPv6 hostname
