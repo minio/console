@@ -291,6 +291,7 @@ export enum NotificationEventType {
   Get = "get",
   Replica = "replica",
   Ilm = "ilm",
+  Scanner = "scanner",
 }
 
 export interface NotificationConfig {
@@ -4566,6 +4567,7 @@ export class Api<
         /** @default "timeDesc" */
         order?: "timeDesc" | "timeAsc";
         timeStart?: string;
+        timeEnd?: string;
       },
       params: RequestParams = {},
     ) =>

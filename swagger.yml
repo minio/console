@@ -2943,6 +2943,9 @@ paths:
         - name: timeStart
           in: query
           type: string
+        - name: timeEnd
+          in: query
+          type: string
       responses:
         200:
           description: A successful response.
@@ -4058,6 +4061,7 @@ definitions:
       - get
       - replica
       - ilm
+      - scanner
   notificationConfig:
     type: object
     required:

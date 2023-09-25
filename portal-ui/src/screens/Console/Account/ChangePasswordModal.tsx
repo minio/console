@@ -26,11 +26,16 @@ import {
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { setModalErrorSnackMessage } from "../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setModalErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { api } from "api";
-import { AccountChangePasswordRequest } from "api/consoleApi";
+import { AccountChangePasswordRequest, ApiError } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
+import WarningMessage from "../Common/WarningMessage/WarningMessage";
 
 interface IChangePasswordProps {
   open: boolean;
@@ -86,14 +91,16 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
         setNewPassword("");
         setReNewPassword("");
         setCurrentPassword("");
+        dispatch(setSnackBarMessage("Successfully updated the password."));
         closeModal();
       })
-      .catch((err) => {
+      .catch(async (res) => {
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");
         setCurrentPassword("");
-        dispatch(setModalErrorSnackMessage(errorToHandler(err)));
+        const err = (await res.json()) as ApiError;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
       });
   };
 
@@ -113,6 +120,25 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
         This will change your Console password. Please note your new password
         down, as it will be required to log into Console after this session.
       </div>
+      <WarningMessage
+        title={""}
+        label={
+          <div>
+            <div>
+              If you are looking to change MINIO_ROOT_USER credentials, Please
+              refer to{" "}
+              <a
+                target="_blank"
+                rel="noopener"
+                href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html#id4?ref=con"
+              >
+                rotating
+              </a>{" "}
+              credentials .
+            </div>
+          </div>
+        }
+      />
       <form
         noValidate
         autoComplete="off"

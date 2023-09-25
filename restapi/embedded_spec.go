@@ -3878,6 +3878,11 @@ func init() {
             "type": "string",
             "name": "timeStart",
             "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "timeEnd",
+            "in": "query"
           }
         ],
         "responses": {
@@ -7445,7 +7450,8 @@ func init() {
         "delete",
         "get",
         "replica",
-        "ilm"
+        "ilm",
+        "scanner"
       ]
     },
     "objectBucketLifecycle": {
@@ -12919,6 +12925,11 @@ func init() {
             "type": "string",
             "name": "timeStart",
             "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "timeEnd",
+            "in": "query"
           }
         ],
         "responses": {
@@ -16635,7 +16646,8 @@ func init() {
         "delete",
         "get",
         "replica",
-        "ilm"
+        "ilm",
+        "scanner"
       ]
     },
     "objectBucketLifecycle": {

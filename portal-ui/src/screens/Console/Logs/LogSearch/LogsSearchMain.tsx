@@ -119,9 +119,9 @@ const LogsSearchMain = () => {
             queryParams !== "" ? `${queryParams}` : ""
           }&pageSize=100&pageNo=${nextPage}&order=${
             sortOrder === "DESC" ? "timeDesc" : "timeAsc"
-          }${timeStart !== null ? `&timeStart=${timeStart.toISO()}` : ""}${
-            timeEnd !== null ? `&timeEnd=${timeEnd.toISO()}` : ""
-          }`,
+          }${
+            timeStart !== null ? `&timeStart=${timeStart.toUTC().toISO()}` : ""
+          }${timeEnd !== null ? `&timeEnd=${timeEnd.toUTC().toISO()}` : ""}`,
         )
         .then((res: ISearchResponse) => {
           const fetchedResults = res.results || [];

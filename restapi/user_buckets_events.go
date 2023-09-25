@@ -77,6 +77,8 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 				eventTypePretty = models.NotificationEventTypeReplica
 			case notification.ObjectTransitionAll:
 				eventTypePretty = models.NotificationEventTypeIlm
+			case notification.ObjectScannerManyVersions, notification.ObjectScannerBigPrefix:
+				eventTypePretty = models.NotificationEventTypeScanner
 			default:
 				continue
 			}

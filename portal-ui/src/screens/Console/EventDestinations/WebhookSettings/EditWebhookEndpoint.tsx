@@ -218,7 +218,9 @@ const EditEndpointModal = ({
                     <Tooltip
                       tooltip={
                         overrideValues.enable
-                          ? `This value is set from the ${overrideValues.enable.overrideEnv} environment variable`
+                          ? `This value is set from the ${
+                              overrideValues.enable?.overrideEnv || "N/A"
+                            } environment variable`
                           : ""
                       }
                       placement={"left"}
@@ -245,7 +247,9 @@ const EditEndpointModal = ({
                     <Tooltip
                       tooltip={
                         overrideValues.enable
-                          ? `This value is set from the ${overrideValues.endpoint.overrideEnv} environment variable`
+                          ? `This value is set from the ${
+                              overrideValues.endpoint?.overrideEnv || "N/A"
+                            } environment variable`
                           : ""
                       }
                       placement={"left"}
@@ -272,7 +276,9 @@ const EditEndpointModal = ({
                     <Tooltip
                       tooltip={
                         overrideValues.enable
-                          ? `This value is set from the ${overrideValues.auth_token.overrideEnv} environment variable`
+                          ? `This value is set from the ${
+                              overrideValues.auth_token?.overrideEnv || "N/A"
+                            } environment variable`
                           : ""
                       }
                       placement={"left"}

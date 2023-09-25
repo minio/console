@@ -59,6 +59,7 @@ export const openIDFormFields = {
     placeholder:
       "https://identity-provider-url/.well-known/openid-configuration",
     type: "text",
+    editOnly: false,
   },
   client_id: {
     required: true,
@@ -69,6 +70,7 @@ export const openIDFormFields = {
     tooltip: "Identity provider Client ID",
     placeholder: "Enter Client ID",
     type: "text",
+    editOnly: false,
   },
   client_secret: {
     required: true,
@@ -79,6 +81,7 @@ export const openIDFormFields = {
     tooltip: "Identity provider Client Secret",
     placeholder: "Enter Client Secret",
     type: "password",
+    editOnly: true,
   },
   claim_name: {
     required: false,
@@ -87,6 +90,7 @@ export const openIDFormFields = {
     placeholder: "Enter Claim Name",
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
+    editOnly: false,
   },
   display_name: {
     required: false,
@@ -95,6 +99,7 @@ export const openIDFormFields = {
     placeholder: "Enter Display Name",
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
+    editOnly: false,
   },
   claim_prefix: {
     required: false,
@@ -103,6 +108,7 @@ export const openIDFormFields = {
     placeholder: "Enter Claim Prefix",
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
+    editOnly: false,
   },
   scopes: {
     required: false,
@@ -111,6 +117,7 @@ export const openIDFormFields = {
     placeholder: "openid,profile,email",
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
+    editOnly: false,
   },
   redirect_uri: {
     required: false,
@@ -119,6 +126,7 @@ export const openIDFormFields = {
     placeholder: "https://console-endpoint-url/oauth_callback",
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
+    editOnly: false,
   },
   role_policy: {
     required: false,
@@ -127,6 +135,7 @@ export const openIDFormFields = {
     placeholder: "readonly",
     type: "text",
     hasError: (s: string, editMode: boolean) => "",
+    editOnly: false,
   },
   claim_userinfo: {
     required: false,
@@ -135,6 +144,7 @@ export const openIDFormFields = {
     placeholder: "Claim User Info",
     type: "toggle",
     hasError: (s: string, editMode: boolean) => "",
+    editOnly: false,
   },
   redirect_uri_dynamic: {
     required: false,
@@ -143,6 +153,7 @@ export const openIDFormFields = {
     placeholder: "Redirect URI Dynamic",
     type: "toggle",
     hasError: (s: string, editMode: boolean) => "",
+    editOnly: false,
   },
 };
 
