@@ -23,7 +23,7 @@ require (
 	github.com/minio/kes v0.22.3
 	github.com/minio/madmin-go/v3 v3.0.18
 	github.com/minio/mc v0.0.0-20230907224855-9dcef8825fae
-	github.com/minio/minio-go/v7 v7.0.63
+	github.com/minio/minio-go/v7 v7.0.64-0.20230920204636-e783c9ba11b3
 	github.com/minio/selfupdate v0.6.0
 	github.com/minio/websocket v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0

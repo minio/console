@@ -36,6 +36,7 @@ type LogSearchURL struct {
 	Order     *string
 	PageNo    *int32
 	PageSize  *int32
+	TimeEnd   *string
 	TimeStart *string
 
 	_basePath string
@@ -108,6 +109,14 @@ func (o *LogSearchURL) Build() (*url.URL, error) {
 	}
 	if pageSizeQ != "" {
 		qs.Set("pageSize", pageSizeQ)
+	}
+
+	var timeEndQ string
+	if o.TimeEnd != nil {
+		timeEndQ = *o.TimeEnd
+	}
+	if timeEndQ != "" {
+		qs.Set("timeEnd", timeEndQ)
 	}
 
 	var timeStartQ string

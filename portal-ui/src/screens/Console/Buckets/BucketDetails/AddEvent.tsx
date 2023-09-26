@@ -105,6 +105,11 @@ const AddEvent = ({
       value: NotificationEventType.Replica,
     },
     { label: "ILM - Object Transitioned", value: NotificationEventType.Ilm },
+    {
+      label:
+        "SCANNER - Object has too many versions / Prefixes has too many sub-folders",
+      value: NotificationEventType.Scanner,
+    },
   ];
 
   const handleClick = (event: React.ChangeEvent<HTMLInputElement>) => {

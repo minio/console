@@ -14,21 +14,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import {
   BackLink,
+  Box,
+  breakPoints,
   Button,
+  ConsoleIcon,
   EditIcon,
+  FormLayout,
+  Grid,
+  HelpBox,
+  InputBox,
   PageLayout,
   RefreshIcon,
-  TrashIcon,
-  Box,
-  Grid,
-  Switch,
-  InputBox,
-  FormLayout,
-  breakPoints,
   ScreenTitle,
+  Switch,
+  Tooltip,
+  TrashIcon,
+  ValuePair,
+  WarnIcon,
 } from "mds";
 import { useNavigate, useParams } from "react-router-dom";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
@@ -42,7 +47,6 @@ import {
 import api from "../../../common/api";
 import useApi from "../Common/Hooks/useApi";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
-import LabelValuePair from "../Common/UsageBarWrapper/LabelValuePair";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 
@@ -74,10 +78,12 @@ const IDPConfigurationDetails = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const [fields, setFields] = useState<any>({});
+  const [overrideFields, setOverrideFields] = useState<any>({});
   const [originalFields, setOriginalFields] = useState<any>({});
   const [record, setRecord] = useState<any>({});
   const [editMode, setEditMode] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [envOverride, setEnvOverride] = useState<boolean>(false);
 
   const onSuccess = (res: any) => {
     dispatch(setServerNeedsRestart(res.restart === true));
@@ -102,24 +108,45 @@ const IDPConfigurationDetails = ({
     onEnabledError,
   );
 
+  const parseFields = useCallback(
+    (record: any) => {
+      let fields: any = {};
+      let overrideFields: any = {};
+      let totEnv = 0;
+
+      if (record.info) {
+        record.info.forEach((item: any) => {
+          if (item.key === "enable") {
+            setIsEnabled(item.value === "on");
+          }
+
+          if (item.isEnv) {
+            overrideFields[
+              item.key
+            ] = `MINIO_IDENTITY_OPENID_${item.key.toUpperCase()}${
+              configurationName !== "_" ? `_${configurationName}` : ""
+            }`;
+            totEnv++;
+          }
+
+          fields[item.key] = item.value;
+        });
+
+        if (totEnv > 0) {
+          setEnvOverride(true);
+        }
+      }
+      setFields(fields);
+      setOverrideFields(overrideFields);
+    },
+    [configurationName],
+  );
+
   const toggleEditMode = () => {
     if (editMode) {
       parseFields(record);
     }
     setEditMode(!editMode);
-  };
-
-  const parseFields = (record: any) => {
-    let fields: any = {};
-    if (record.info) {
-      record.info.forEach((item: any) => {
-        if (item.key === "enable") {
-          setIsEnabled(item.value === "on");
-        }
-        fields[item.key] = item.value;
-      });
-    }
-    setFields(fields);
   };
 
   const parseOriginalFields = (record: any) => {
@@ -157,7 +184,7 @@ const IDPConfigurationDetails = ({
     if (loading) {
       loadRecord();
     }
-  }, [dispatch, loading, configurationName, endpoint]);
+  }, [dispatch, loading, configurationName, endpoint, parseFields]);
 
   const validSave = () => {
     for (const [key, value] of Object.entries(formFields)) {
@@ -255,6 +282,27 @@ const IDPConfigurationDetails = ({
           }}
         >
           <Grid container>
+            {editMode ? (
+              <Grid item xs={12} sx={{ marginBottom: 15 }}>
+                <HelpBox
+                  title={
+                    <Box
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        flexGrow: 1,
+                      }}
+                    >
+                      Client Secret must be re-entered to change OpenID
+                      configurations
+                    </Box>
+                  }
+                  iconComponent={<WarnIcon />}
+                  help={null}
+                />
+              </Grid>
+            ) : null}
             <Grid xs={12} item>
               {Object.entries(formFields).map(([key, value]) =>
                 renderFormField(key, value),
@@ -298,26 +346,72 @@ const IDPConfigurationDetails = ({
   const renderViewForm = () => {
     return (
       <Box
+        withBorders
         sx={{
           display: "grid",
           gridTemplateColumns: "1fr",
           gridAutoFlow: "dense",
           gap: 3,
           padding: "15px",
-          border: "1px solid #eaeaea",
           [`@media (min-width: ${breakPoints.sm}px)`]: {
             gridTemplateColumns: "2fr 1fr",
             gridAutoFlow: "row",
           },
         }}
       >
-        {Object.entries(formFields).map(([key, value]) => (
-          <LabelValuePair
-            key={key}
-            label={value.label}
-            value={fields[key] ? fields[key] : ""}
-          />
-        ))}
+        {Object.entries(formFields).map(([key, value]) => {
+          if (!value.editOnly) {
+            let label: React.ReactNode = value.label;
+            let val: React.ReactNode = fields[key] ? fields[key] : "";
+
+            if (value.type === "toggle" && fields[key]) {
+              if (val !== "on") {
+                val = "Off";
+              } else {
+                val = "On";
+              }
+            }
+
+            if (overrideFields[key]) {
+              label = (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 5,
+                    "& .min-icon": {
+                      height: 20,
+                      width: 20,
+                    },
+                    "& span": {
+                      height: 20,
+                      display: "flex",
+                      alignItems: "center",
+                    },
+                  }}
+                >
+                  <span>{value.label}</span>
+                  <Tooltip
+                    tooltip={`This value is set from the ${overrideFields[key]} environment variable`}
+                    placement={"right"}
+                  >
+                    <span className={"muted"}>
+                      <ConsoleIcon />
+                    </span>
+                  </Tooltip>
+                </Box>
+              );
+
+              val = (
+                <i>
+                  <span className={"muted"}>{val}</span>
+                </i>
+              );
+            }
+            return <ValuePair key={key} label={label} value={val} />;
+          }
+          return null;
+        })}
       </Box>
     );
   };
@@ -351,32 +445,58 @@ const IDPConfigurationDetails = ({
             actions={
               <Fragment>
                 {configurationName !== "_" && (
-                  <Button
-                    id={"delete-idp-config"}
-                    onClick={() => {
-                      setDeleteOpen(true);
-                    }}
-                    label={"Delete Configuration"}
-                    icon={<TrashIcon />}
-                    variant={"secondary"}
-                  />
+                  <Tooltip
+                    tooltip={
+                      envOverride
+                        ? "This configuration cannot be deleted using this module as this was set using OpenID environment variables."
+                        : ""
+                    }
+                  >
+                    <Button
+                      id={"delete-idp-config"}
+                      onClick={() => {
+                        setDeleteOpen(true);
+                      }}
+                      label={"Delete Configuration"}
+                      icon={<TrashIcon />}
+                      variant={"secondary"}
+                      disabled={envOverride}
+                    />
+                  </Tooltip>
                 )}
                 {!editMode && (
-                  <Button
-                    id={"edit"}
-                    type="button"
-                    variant={"callAction"}
-                    icon={<EditIcon />}
-                    onClick={toggleEditMode}
-                    label={"Edit"}
-                  />
+                  <Tooltip
+                    tooltip={
+                      envOverride
+                        ? "Configuration cannot be edited in this module as OpenID environment variables are set for this MinIO instance."
+                        : ""
+                    }
+                  >
+                    <Button
+                      id={"edit"}
+                      type="button"
+                      variant={"callAction"}
+                      icon={<EditIcon />}
+                      onClick={toggleEditMode}
+                      label={"Edit"}
+                      disabled={envOverride}
+                    />
+                  </Tooltip>
                 )}
-                <Button
-                  id={"is-configuration-enabled"}
-                  onClick={() => toggleConfiguration(!isEnabled)}
-                  label={isEnabled ? "Disable" : "Enable"}
-                  disabled={loadingEnabledSave}
-                />
+                <Tooltip
+                  tooltip={
+                    envOverride
+                      ? "Configuration cannot be disabled / enabled in this module as OpenID environment variables are set for this MinIO instance."
+                      : ""
+                  }
+                >
+                  <Button
+                    id={"is-configuration-enabled"}
+                    onClick={() => toggleConfiguration(!isEnabled)}
+                    label={isEnabled ? "Disable" : "Enable"}
+                    disabled={loadingEnabledSave || envOverride}
+                  />
+                </Tooltip>
                 <Button
                   id={"refresh-idp-config"}
                   onClick={() => setLoading(true)}
