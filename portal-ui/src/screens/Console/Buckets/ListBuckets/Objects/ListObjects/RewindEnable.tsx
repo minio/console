@@ -15,18 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-
+import { DateTime } from "luxon";
 import { Button, Grid, ProgressBar, Switch } from "mds";
+import { useSelector } from "react-redux";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DateTimePickerWrapper from "../../../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   resetRewind,
-  setLoadingObjects,
+  setReloadObjectsList,
   setRewindEnable,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
-import { DateTime } from "luxon";
 
 interface IRewindEnable {
   closeModalAndRefresh: () => void;
@@ -76,7 +75,7 @@ const RewindEnable = ({
         }),
       );
     }
-    dispatch(setLoadingObjects(true));
+    dispatch(setReloadObjectsList(true));
 
     closeModalAndRefresh();
   };

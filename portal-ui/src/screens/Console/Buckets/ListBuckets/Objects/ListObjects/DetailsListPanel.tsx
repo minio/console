@@ -15,10 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import { Button, ClosePanelIcon, Grid } from "mds";
-import makeStyles from "@mui/styles/makeStyles";
+import { Box, Button, ClosePanelIcon } from "mds";
 
 interface IDetailsListPanel {
   open: boolean;
@@ -27,51 +24,44 @@ interface IDetailsListPanel {
   children: React.ReactNode;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    detailsList: {
-      borderColor: "#EAEDEE",
-      borderWidth: 0,
-      borderStyle: "solid",
-      borderRadius: 3,
-      borderBottomLeftRadius: 0,
-      borderBottomRightRadius: 0,
-      width: 0,
-      transitionDuration: "0.3s",
-      overflowX: "hidden",
-      overflowY: "auto",
-      position: "relative",
-      opacity: 0,
-      marginLeft: -1,
-      "&.open": {
-        width: 300,
-        minWidth: 300,
-        borderLeftWidth: 1,
-        opacity: 1,
-      },
-      "@media (max-width: 799px)": {
-        "&.open": {
-          width: "100%",
-          minWidth: "100%",
-          borderLeftWidth: 0,
-        },
-      },
-    },
-  }),
-);
-
 const DetailsListPanel = ({
   open,
   closePanel,
   className = "",
   children,
 }: IDetailsListPanel) => {
-  const classes = useStyles();
-
   return (
-    <Grid
-      item
-      className={`${classes.detailsList} ${open ? "open" : ""} ${className}`}
+    <Box
+      id={"details-panel"}
+      sx={{
+        borderColor: "#EAEDEE",
+        borderWidth: 0,
+        borderStyle: "solid",
+        borderRadius: 3,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+        width: 0,
+        transitionDuration: "0.3s",
+        overflowX: "hidden",
+        overflowY: "auto",
+        position: "relative",
+        opacity: 0,
+        marginLeft: -1,
+        "&.open": {
+          width: 300,
+          minWidth: 300,
+          borderLeftWidth: 1,
+          opacity: 1,
+        },
+        "@media (max-width: 799px)": {
+          "&.open": {
+            width: "100%",
+            minWidth: "100%",
+            borderLeftWidth: 0,
+          },
+        },
+      }}
+      className={`${open ? "open" : ""} ${className}`}
     >
       <Button
         variant={"text"}
@@ -90,7 +80,7 @@ const DetailsListPanel = ({
         }}
       />
       {children}
-    </Grid>
+    </Box>
   );
 };
 

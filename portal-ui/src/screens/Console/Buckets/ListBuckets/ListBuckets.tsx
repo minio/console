@@ -46,7 +46,6 @@ import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { useSelector } from "react-redux";
 import { selFeatures } from "../../consoleSlice";
-import { setLoadingObjects } from "../../ObjectBrowser/objectBrowserSlice";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { api } from "../../../../api";
 import { Bucket } from "../../../../api/consoleApi";
@@ -91,7 +90,6 @@ const ListBuckets = () => {
           if (res.data) {
             setLoading(false);
             setRecords(res.data.buckets || []);
-            dispatch(setLoadingObjects(true));
           } else if (res.error) {
             setLoading(false);
             dispatch(setErrorSnackMessage(errorToHandler(res.error)));

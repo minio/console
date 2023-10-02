@@ -17,121 +17,26 @@
 import React, { Fragment, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { api } from "api";
 import { AppState, useAppDispatch } from "../../../../store";
-import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
-
-import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
+import { decodeURLString, encodeURLString } from "../../../../common/utils";
 import {
-  errorInConnection,
-  newMessage,
   resetMessages,
-  setIsOpeningOD,
   setIsVersioned,
   setLoadingLocking,
   setLoadingObjectInfo,
-  setLoadingObjects,
-  setLoadingRecords,
   setLoadingVersioning,
   setLoadingVersions,
   setLockingEnabled,
   setObjectDetailsView,
-  setRecords,
+  setRequestInProgress,
   setSelectedObjectView,
-  setSimplePathHandler,
   setVersionsModeEnabled,
 } from "../../ObjectBrowser/objectBrowserSlice";
+import ListObjects from "../ListBuckets/Objects/ListObjects/ListObjects";
 import hasPermission from "../../../../common/SecureComponent/accessControl";
-import { IMessageEvent } from "websocket";
-import { wsProtocol } from "../../../../utils/wsUtils";
-import {
-  WebsocketRequest,
-  WebsocketResponse,
-} from "../ListBuckets/Objects/ListObjects/types";
-import { decodeURLString, encodeURLString } from "../../../../common/utils";
-import { permissionItems } from "../ListBuckets/Objects/utils";
-import { setErrorSnackMessage } from "../../../../systemSlice";
 import OBHeader from "../../ObjectBrowser/OBHeader";
-import { api } from "api";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...containerForHeader,
-  });
-
-let objectsWS: WebSocket;
-let currentRequestID: number = 0;
-let errorCounter: number = 0;
-let wsInFlight: boolean = false;
-
-const initWSConnection = (
-  openCallback?: () => void,
-  onMessageCallback?: (message: IMessageEvent) => void,
-  connErrorCallback?: (message: string) => void,
-) => {
-  if (wsInFlight) {
-    return;
-  }
-  wsInFlight = true;
-  const url = new URL(window.location.toString());
-  const isDev = process.env.NODE_ENV === "development";
-  const port = isDev ? "9090" : url.port;
-
-  // check if we are using base path, if not this always is `/`
-  const baseLocation = new URL(document.baseURI);
-  const baseUrl = baseLocation.pathname;
-
-  const wsProt = wsProtocol(url.protocol);
-
-  objectsWS = new WebSocket(
-    `${wsProt}://${url.hostname}:${port}${baseUrl}ws/objectManager`,
-  );
-
-  objectsWS.onopen = () => {
-    wsInFlight = false;
-    if (openCallback) {
-      openCallback();
-    }
-    errorCounter = 0;
-  };
-
-  if (onMessageCallback) {
-    objectsWS.onmessage = onMessageCallback;
-  }
-
-  const reconnectFn = () => {
-    if (errorCounter <= 5) {
-      initWSConnection(() => {}, onMessageCallback, connErrorCallback);
-      errorCounter += 1;
-    } else {
-      console.error(
-        "Websocket not available. Please review that your environment settings are enabled to allow websocket connections and that requests are made from the same origin.",
-      );
-      if (connErrorCallback) {
-        connErrorCallback(
-          "Couldn't establish WebSocket connection. Please review your configuration and try again.",
-        );
-      }
-    }
-  };
-
-  objectsWS.onclose = () => {
-    wsInFlight = false;
-    console.warn("Websocket Disconnected. Attempting Reconnection...");
-
-    // We reconnect after 3 seconds
-    setTimeout(reconnectFn, 3000);
-  };
-
-  objectsWS.onerror = () => {
-    wsInFlight = false;
-    console.error("Error in websocket connection. Attempting reconnection...");
-    // Onclose will be triggered by specification, reconnect function will be executed there to avoid duplicated requests
-  };
-};
 
 const BrowserHandler = () => {
   const dispatch = useAppDispatch();
@@ -151,159 +56,100 @@ const BrowserHandler = () => {
   const showDeleted = useSelector(
     (state: AppState) => state.objectBrowser.showDeleted,
   );
-  const allowResources = useSelector(
-    (state: AppState) => state.console.session.allowResources,
-  );
-  const loadingObjects = useSelector(
-    (state: AppState) => state.objectBrowser.loadingObjects,
+  const requestInProgress = useSelector(
+    (state: AppState) => state.objectBrowser.requestInProgress,
   );
   const loadingLocking = useSelector(
     (state: AppState) => state.objectBrowser.loadingLocking,
   );
-  const loadRecords = useSelector(
-    (state: AppState) => state.objectBrowser.loadRecords,
-  );
-  const selectedInternalPaths = useSelector(
-    (state: AppState) => state.objectBrowser.selectedInternalPaths,
+  const reloadObjectsList = useSelector(
+    (state: AppState) => state.objectBrowser.reloadObjectsList,
   );
   const simplePath = useSelector(
     (state: AppState) => state.objectBrowser.simplePath,
   );
-  const isOpeningOD = useSelector(
-    (state: AppState) => state.objectBrowser.isOpeningObjectDetail,
-  );
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode,
   );
+  const selectedBucket = useSelector(
+    (state: AppState) => state.objectBrowser.selectedBucket,
+  );
+  const records = useSelector((state: AppState) => state.objectBrowser.records);
 
   const bucketName = params.bucketName || "";
   const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
   const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
 
-  /*WS Request Handlers*/
-  const onMessageCallBack = useCallback(
-    (message: IMessageEvent) => {
-      // reset start status
-      dispatch(setLoadingObjects(false));
+  const initWSRequest = useCallback(
+    (path: string) => {
+      let currDate = new Date();
 
-      const response: WebsocketResponse = JSON.parse(message.data.toString());
-      if (currentRequestID === response.request_id) {
-        // If response is not from current request, we can omit
-        if (response.request_id !== currentRequestID) {
-          return;
-        }
+      let date = currDate.toISOString();
 
-        if (
-          response.error ===
-          "The Access Key Id you provided does not exist in our records."
-        ) {
-          // Session expired.
-          window.location.reload();
-        } else if (response.error === "Access Denied.") {
-          const internalPathsPrefix = response.prefix;
-          let pathPrefix = "";
-
-          if (internalPathsPrefix) {
-            const decodedPath = decodeURLString(internalPathsPrefix);
-
-            pathPrefix = decodedPath.endsWith("/")
-              ? decodedPath
-              : decodedPath + "/";
-          }
-
-          const permitItems = permissionItems(
-            response.bucketName || bucketName,
-            pathPrefix,
-            allowResources || [],
-          );
-
-          if (!permitItems || permitItems.length === 0) {
-            dispatch(
-              setErrorSnackMessage({
-                errorMessage: response.error,
-                detailedError: response.error,
-              }),
-            );
-          } else {
-            dispatch(setRecords(permitItems));
-          }
-
-          return;
-        }
-
-        // This indicates final messages is received.
-        if (response.request_end) {
-          dispatch(setLoadingObjects(false));
-          dispatch(setLoadingRecords(false));
-          return;
-        }
-
-        if (response.data) {
-          dispatch(newMessage(response.data));
-        }
+      if (rewindDate !== null && rewindEnabled) {
+        date = rewindDate;
       }
+
+      const payloadData = {
+        bucketName,
+        path,
+        rewindMode: rewindEnabled || showDeleted,
+        date: date,
+      };
+
+      dispatch({ type: "socket/OBRequest", payload: payloadData });
     },
-    [dispatch, allowResources, bucketName],
+    [bucketName, showDeleted, rewindDate, rewindEnabled, dispatch],
   );
 
-  const initWSRequest = useCallback(
-    (path: string, date: Date) => {
-      if (objectsWS && objectsWS.readyState === 1) {
-        try {
-          const newRequestID = currentRequestID + 1;
-          dispatch(resetMessages());
-          dispatch(errorInConnection(false));
+  // Common path load
+  const pathLoad = useCallback(
+    (forceLoad: boolean = false) => {
+      const decodedInternalPaths = decodeURLString(internalPaths);
 
-          const request: WebsocketRequest = {
-            bucket_name: bucketName,
-            prefix: encodeURLString(path),
-            mode: rewindEnabled || showDeleted ? "rewind" : "objects",
-            date: date.toISOString(),
-            request_id: newRequestID,
-          };
+      // We exit Versions mode in case of path change
+      dispatch(setVersionsModeEnabled({ status: false }));
 
-          objectsWS.send(JSON.stringify(request));
+      let searchPath = decodedInternalPaths;
 
-          // We store the new ID for the requestID
-          currentRequestID = newRequestID;
-        } catch (e) {
-          console.error(e);
-        }
-      } else {
-        // Socket is disconnected, we request reconnection but will need to recreate call
-        const dupRequest = () => {
-          initWSRequest(path, date);
-        };
+      if (!decodedInternalPaths.endsWith("/") && decodedInternalPaths !== "") {
+        searchPath = `${decodedInternalPaths
+          .split("/")
+          .slice(0, -1)
+          .join("/")}/`;
+      }
 
-        const fatalWSError = (message: string) => {
-          dispatch(
-            setErrorSnackMessage({
-              errorMessage: message,
-              detailedError: message,
-            }),
-          );
-          dispatch(errorInConnection(true));
-        };
+      if (searchPath === "/") {
+        searchPath = "";
+      }
 
-        initWSConnection(dupRequest, onMessageCallBack, fatalWSError);
+      // If the path is different of the actual path or reload objects list is requested, then we initialize a new request to load a new record set.
+      if (
+        searchPath !== simplePath ||
+        bucketName !== selectedBucket ||
+        forceLoad
+      ) {
+        dispatch(setRequestInProgress(true));
+        initWSRequest(searchPath);
       }
     },
-    [bucketName, rewindEnabled, showDeleted, dispatch, onMessageCallBack],
+    [
+      internalPaths,
+      dispatch,
+      simplePath,
+      selectedBucket,
+      bucketName,
+      initWSRequest,
+    ],
   );
 
   useEffect(() => {
     return () => {
-      const request: WebsocketRequest = {
-        mode: "cancel",
-        request_id: currentRequestID,
-      };
-
-      if (objectsWS && objectsWS.readyState === 1) {
-        objectsWS.send(JSON.stringify(request));
-      }
+      dispatch({ type: "socket/OBCancelLast" });
     };
-  }, []);
+  }, [dispatch]);
 
+  // Object Details handler
   useEffect(() => {
     const decodedIPaths = decodeURLString(internalPaths);
 
@@ -312,9 +158,6 @@ const BrowserHandler = () => {
     if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
       dispatch(setObjectDetailsView(false));
       dispatch(setSelectedObjectView(null));
-      dispatch(
-        setSimplePathHandler(decodedIPaths === "" ? "/" : decodedIPaths),
-      );
       dispatch(setLoadingLocking(true));
     } else {
       dispatch(setLoadingObjectInfo(true));
@@ -325,96 +168,26 @@ const BrowserHandler = () => {
           `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`,
         ),
       );
-      dispatch(
-        setSimplePathHandler(
-          `${decodedIPaths.split("/").slice(0, -1).join("/")}/`,
-        ),
-      );
     }
   }, [bucketName, internalPaths, rewindDate, rewindEnabled, dispatch]);
 
-  // Direct file access effect / prefix
+  // Navigation Listing Request
   useEffect(() => {
-    if (!loadingObjects && !loadRecords && !rewindEnabled && !isOpeningOD) {
-      // No requests are in progress, We review current path, if it doesn't end in '/' and current list is empty then we trigger a new request.
-      const decodedInternalPaths = decodeURLString(internalPaths);
+    pathLoad(false);
+  }, [pathLoad]);
 
-      if (
-        !decodedInternalPaths.endsWith("/") &&
-        simplePath !== decodedInternalPaths &&
-        decodedInternalPaths !== ""
-      ) {
-        setLoadingRecords(true);
-        const parentPath = `${decodedInternalPaths
-          .split("/")
-          .slice(0, -1)
-          .join("/")}/`;
-
-        initWSRequest(parentPath, new Date());
-      }
+  // Reload Handler
+  useEffect(() => {
+    if (reloadObjectsList && records.length === 0 && !requestInProgress) {
+      pathLoad(true);
     }
-    dispatch(setIsOpeningOD(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    loadingObjects,
-    loadRecords,
-    dispatch,
-    internalPaths,
-    initWSRequest,
-    rewindEnabled,
-    simplePath,
-  ]);
+  }, [reloadObjectsList, records, requestInProgress, pathLoad]);
 
   const displayListObjects =
     hasPermission(bucketName, [
       IAM_SCOPES.S3_LIST_BUCKET,
       IAM_SCOPES.S3_ALL_LIST_BUCKET,
     ]) || anonymousMode;
-
-  // Common objects list
-  useEffect(() => {
-    // begin watch if bucketName in bucketList and start pressed
-    if (loadingObjects && displayListObjects) {
-      let pathPrefix = "";
-      if (internalPaths) {
-        const decodedPath = decodeURLString(internalPaths);
-
-        // internalPaths are selected (file details), we split and get parent folder
-        if (selectedInternalPaths === internalPaths) {
-          pathPrefix = `${decodeURLString(internalPaths)
-            .split("/")
-            .slice(0, -1)
-            .join("/")}/`;
-        } else {
-          pathPrefix = decodedPath.endsWith("/")
-            ? decodedPath
-            : decodedPath + "/";
-        }
-      }
-
-      let requestDate = new Date();
-
-      if (rewindEnabled && rewindDate) {
-        requestDate = new Date(rewindDate);
-      }
-      initWSRequest(pathPrefix, requestDate);
-    } else {
-      dispatch(setLoadingObjects(false));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    loadingObjects,
-    internalPaths,
-    dispatch,
-    rewindDate,
-    rewindEnabled,
-    displayListObjects,
-    initWSRequest,
-  ]);
-
-  useEffect(() => {
-    dispatch(setVersionsModeEnabled({ status: false }));
-  }, [internalPaths, dispatch]);
 
   useEffect(() => {
     if (loadingVersioning && !anonymousMode) {
@@ -468,43 +241,6 @@ const BrowserHandler = () => {
     }
   }, [bucketName, loadingLocking, dispatch, displayListObjects]);
 
-  useEffect(() => {
-    // when a bucket param changes, (i.e /browser/:bucketName),  re-init e.g with KBar, this should not apply for resources prefixes.
-    const permitItems = permissionItems(bucketName, "", allowResources || []);
-
-    if (bucketName && (!permitItems || permitItems.length === 0)) {
-      dispatch(resetMessages());
-      dispatch(setLoadingRecords(true));
-      dispatch(setLoadingObjects(true));
-
-      let pathPrefix = "";
-      if (internalPaths) {
-        const decodedPath = decodeURLString(internalPaths);
-
-        // internalPaths are selected (file details), we split and get parent folder
-        if (selectedInternalPaths === internalPaths) {
-          pathPrefix = `${decodeURLString(internalPaths)
-            .split("/")
-            .slice(0, -1)
-            .join("/")}/`;
-        } else {
-          pathPrefix = decodedPath.endsWith("/")
-            ? decodedPath
-            : decodedPath + "/";
-        }
-      }
-
-      initWSRequest(pathPrefix, new Date());
-    }
-  }, [
-    bucketName,
-    dispatch,
-    initWSRequest,
-    allowResources,
-    internalPaths,
-    selectedInternalPaths,
-  ]);
-
   return (
     <Fragment>
       {!anonymousMode && <OBHeader bucketName={bucketName} />}
@@ -513,4 +249,4 @@ const BrowserHandler = () => {
   );
 };
 
-export default withStyles(styles)(BrowserHandler);
+export default BrowserHandler;
