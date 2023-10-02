@@ -188,7 +188,7 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 			args: args{
 				sites: errorSites1,
 			},
-			expStatusCode: 0,
+			expStatusCode: 500,
 			expectedError: true,
 		},
 
