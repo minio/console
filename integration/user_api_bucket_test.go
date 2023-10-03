@@ -2166,6 +2166,9 @@ func TestListBuckets(t *testing.T) {
 		}
 	}
 
+	// Waiting to retrieve the new list of buckets
+	time.Sleep(3 * time.Second)
+
 	// 2. List buckets
 	listBucketsResponse, listBucketsError := ListBuckets()
 	assert.Nil(listBucketsError)
