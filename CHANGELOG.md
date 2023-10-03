@@ -2,6 +2,20 @@
 
 # Changelog
 
+## Release v0.40.0
+
+Features:
+
+- Updated OpenID page
+- Added New bucket event types support
+
+
+Bug Fix:
+
+- Fixed crash in access keys page
+- Fixed AuditLog filters issue
+- Fixed multiple issues with Object Browser
+
 ## Release v0.39.0
 
 Features:
