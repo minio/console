@@ -213,6 +213,10 @@ const Console = ({ classes }: IConsoleProps) => {
   const kmsIsEnabled = (features && features.includes("kms")) || false;
   const obOnly = !!features?.includes("object-browser-only");
 
+  useEffect(() => {
+    dispatch({ type: "socket/OBConnect" });
+  }, [dispatch]);
+
   const restartServer = () => {
     dispatch(serverIsLoading(true));
     api.service

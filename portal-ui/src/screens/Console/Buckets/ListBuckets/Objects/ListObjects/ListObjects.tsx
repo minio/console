@@ -22,17 +22,17 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useDropzone } from "react-dropzone";
-import { Theme } from "@mui/material/styles";
+import get from "lodash/get";
 import {
   AccessRuleIcon,
   ActionsList,
+  Box,
   BucketsIcon,
   Button,
+  Checkbox,
   DeleteIcon,
   DownloadIcon,
+  Grid,
   HistoryIcon,
   PageLayout,
   PreviewIcon,
@@ -40,29 +40,22 @@ import {
   ScreenTitle,
   ShareIcon,
 } from "mds";
+import { api } from "api";
+import { Badge } from "@mui/material"; // TODO: Remove this
+import { errorToHandler } from "api/errors";
+import { BucketQuota } from "api/consoleApi";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useDropzone } from "react-dropzone";
 import { DateTime } from "luxon";
-import createStyles from "@mui/styles/createStyles";
-import Grid from "@mui/material/Grid";
-import get from "lodash/get";
 import {
   decodeURLString,
   encodeURLString,
   niceBytesInt,
 } from "../../../../../../common/utils";
-
-import {
-  actionsTray,
-  containerForHeader,
-  objectBrowserCommon,
-  objectBrowserExtras,
-  searchField,
-  tableStyles,
-} from "../../../../Common/FormComponents/common/styleLibrary";
-import { Badge } from "@mui/material";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import { AllowedPreviews, previewObjectType } from "../utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
-
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   IAM_SCOPES,
@@ -72,18 +65,16 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../../../../common/SecureComponent";
-import withSuspense from "../../../../Common/Components/withSuspense";
-import UploadFilesButton from "../../UploadFilesButton";
-import DetailsListPanel from "./DetailsListPanel";
-import ObjectDetailPanel from "./ObjectDetailPanel";
-import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
-import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
-
 import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../../../systemSlice";
-
+import { isVersionedMode } from "../../../../../../utils/validationFunctions";
+import {
+  extractFileExtn,
+  getPolicyAllowedFileExtensions,
+  getSessionGrantsWildCard,
+} from "../../UploadPermissionUtils";
 import {
   makeid,
   removeTrace,
@@ -99,15 +90,12 @@ import {
   resetRewind,
   setAnonymousAccessOpen,
   setDownloadRenameModal,
-  setLoadingObjects,
-  setLoadingRecords,
   setLoadingVersions,
   setNewObject,
   setObjectDetailsView,
   setPreviewOpen,
+  setReloadObjectsList,
   setRetentionConfig,
-  setSearchObjects,
-  setSelectedBucket,
   setSelectedObjects,
   setSelectedObjectView,
   setSelectedPreview,
@@ -116,34 +104,28 @@ import {
   setVersionsModeEnabled,
   updateProgress,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
-import makeStyles from "@mui/styles/makeStyles";
 import {
   selBucketDetailsInfo,
   selBucketDetailsLoading,
   setBucketDetailsLoad,
   setBucketInfo,
 } from "../../../BucketDetails/bucketDetailsSlice";
-import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
-import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
-import ListObjectsTable from "./ListObjectsTable";
 import {
   downloadSelected,
   openAnonymousAccess,
   openPreview,
   openShare,
 } from "../../../../ObjectBrowser/objectBrowserThunks";
-
+import withSuspense from "../../../../Common/Components/withSuspense";
+import UploadFilesButton from "../../UploadFilesButton";
+import DetailsListPanel from "./DetailsListPanel";
+import ObjectDetailPanel from "./ObjectDetailPanel";
+import VersionsNavigator from "../ObjectDetails/VersionsNavigator";
+import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
+import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
+import ListObjectsTable from "./ListObjectsTable";
 import FilterObjectsSB from "../../../../ObjectBrowser/FilterObjectsSB";
 import AddAccessRule from "../../../BucketDetails/AddAccessRule";
-import { isVersionedMode } from "../../../../../../utils/validationFunctions";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
-import { BucketQuota } from "api/consoleApi";
-import {
-  extractFileExtn,
-  getPolicyAllowedFileExtensions,
-  getSessionGrantsWildCard,
-} from "../../UploadPermissionUtils";
 
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects")),
@@ -156,82 +138,26 @@ const PreviewFileModal = withSuspense(
   React.lazy(() => import("../Preview/PreviewFileModal")),
 );
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    badgeOverlap: {
-      "& .MuiBadge-badge": {
-        top: 10,
-        right: 1,
-        width: 5,
-        height: 5,
-        minWidth: 5,
-      },
-    },
-    ...tableStyles,
-    ...actionsTray,
-    ...searchField,
-
-    searchField: {
-      ...searchField.searchField,
-      maxWidth: 380,
-    },
-    screenTitleContainer: {
-      border: "#EAEDEE 1px solid",
-      padding: "0 5px",
-    },
-    labelStyle: {
-      color: "#969FA8",
-      fontSize: "12px",
-    },
-    breadcrumbsContainer: {
-      padding: "12px 14px 5px",
-    },
-    fullContainer: {
-      width: "100%",
-      position: "relative",
-      "&.detailsOpen": {
-        "@media (max-width: 799px)": {
-          display: "none",
-        },
-      },
-    },
-    hideListOnSmall: {
-      "@media (max-width: 799px)": {
-        display: "none",
-      },
-    },
-    actionsSection: {
-      display: "flex",
-      justifyContent: "space-between",
-      width: "100%",
-    },
-    ...objectBrowserExtras,
-    ...objectBrowserCommon,
-    ...containerForHeader,
-  }),
-);
-
 const baseDnDStyle = {
   borderWidth: 2,
   borderRadius: 2,
-  borderColor: "#eeeeee",
+  borderColor: "transparent",
   outline: "none",
 };
 
 const activeDnDStyle = {
   borderStyle: "dashed",
-  backgroundColor: "#fafafa",
+  backgroundColor: "transparent",
   borderColor: "#2196f3",
 };
 
 const acceptDnDStyle = {
   borderStyle: "dashed",
-  backgroundColor: "#fafafa",
+  backgroundColor: "transparent",
   borderColor: "#00e676",
 };
 
 const ListObjects = () => {
-  const classes = useStyles();
   const dispatch = useAppDispatch();
   const params = useParams();
   const navigate = useNavigate();
@@ -246,7 +172,6 @@ const ListObjects = () => {
   const versionsMode = useSelector(
     (state: AppState) => state.objectBrowser.versionsMode,
   );
-
   const showDeleted = useSelector(
     (state: AppState) => state.objectBrowser.showDeleted,
   );
@@ -256,13 +181,12 @@ const ListObjects = () => {
   const selectedInternalPaths = useSelector(
     (state: AppState) => state.objectBrowser.selectedInternalPaths,
   );
-  const loadingObjects = useSelector(
-    (state: AppState) => state.objectBrowser.loadingObjects,
+  const requestInProgress = useSelector(
+    (state: AppState) => state.objectBrowser.requestInProgress,
   );
   const simplePath = useSelector(
     (state: AppState) => state.objectBrowser.simplePath,
   );
-
   const versioningConfig = useSelector(
     (state: AppState) => state.objectBrowser.versionInfo,
   );
@@ -300,13 +224,12 @@ const ListObjects = () => {
   const [canShareFile, setCanShareFile] = useState<boolean>(false);
   const [canPreviewFile, setCanPreviewFile] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
-
   const [metaData, setMetaData] = useState<any>(null);
   const [isMetaDataLoaded, setIsMetaDataLoaded] = useState(false);
 
   const isVersioningApplied = isVersionedMode(versioningConfig.status);
-  const bucketName = params.bucketName || "";
 
+  const bucketName = params.bucketName || "";
   const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
   const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
 
@@ -400,12 +323,6 @@ const ListObjects = () => {
   }, [bucketName, selectedObjects, fetchMetadata]);
 
   useEffect(() => {
-    dispatch(setSearchObjects(""));
-    dispatch(setLoadingObjects(true));
-    dispatch(setSelectedObjects([]));
-  }, [simplePath, dispatch]);
-
-  useEffect(() => {
     if (rewindEnabled) {
       if (bucketToRewind !== bucketName) {
         dispatch(resetRewind());
@@ -413,8 +330,6 @@ const ListObjects = () => {
       }
     }
   }, [rewindEnabled, bucketToRewind, bucketName, dispatch]);
-
-  // END OF WS HANDLERS
 
   useEffect(() => {
     if (folderUpload.current !== null) {
@@ -477,11 +392,11 @@ const ListObjects = () => {
     if (
       selectedObjects.length === 0 &&
       selectedInternalPaths === null &&
-      !loadingObjects
+      !requestInProgress
     ) {
       dispatch(setObjectDetailsView(false));
     }
-  }, [selectedObjects, selectedInternalPaths, dispatch, loadingObjects]);
+  }, [selectedObjects, selectedInternalPaths, dispatch, requestInProgress]);
 
   useEffect(() => {
     if (!iniLoad) {
@@ -492,20 +407,19 @@ const ListObjects = () => {
 
   // bucket info
   useEffect(() => {
-    if ((loadingObjects || loadingBucket) && !anonymousMode) {
+    if ((requestInProgress || loadingBucket) && !anonymousMode) {
       api.buckets
         .bucketInfo(bucketName)
         .then((res) => {
           dispatch(setBucketDetailsLoad(false));
           dispatch(setBucketInfo(res.data));
-          dispatch(setSelectedBucket(bucketName));
         })
         .catch((err) => {
           dispatch(setBucketDetailsLoad(false));
           dispatch(setErrorSnackMessage(errorToHandler(err)));
         });
     }
-  }, [bucketName, loadingBucket, dispatch, anonymousMode, loadingObjects]);
+  }, [bucketName, loadingBucket, dispatch, anonymousMode, requestInProgress]);
 
   // Load retention Config
 
@@ -528,7 +442,7 @@ const ListObjects = () => {
     if (refresh) {
       dispatch(setSnackBarMessage(`Objects deleted successfully.`));
       dispatch(setSelectedObjects([]));
-      dispatch(setLoadingObjects(true));
+      dispatch(setReloadObjectsList(true));
     }
   };
 
@@ -544,7 +458,7 @@ const ListObjects = () => {
     e.preventDefault();
     var newFiles: File[] = [];
 
-    for (var i = 0; i < e.target.files.length; i++) {
+    for (let i = 0; i < e.target.files.length; i++) {
       newFiles.push(e.target.files[i]);
     }
     uploadObject(newFiles, "");
@@ -637,7 +551,7 @@ const ListObjects = () => {
             };
 
             xhr.withCredentials = false;
-            xhr.onload = function (event) {
+            xhr.onload = function () {
               // resolve promise only when HTTP code is ok
               if (xhr.status >= 200 && xhr.status < 300) {
                 dispatch(completeObject(identity));
@@ -669,7 +583,7 @@ const ListObjects = () => {
               }
             };
 
-            xhr.upload.addEventListener("error", (event) => {
+            xhr.upload.addEventListener("error", () => {
               reject(errorMessage);
               dispatch(
                 failObject({
@@ -703,7 +617,7 @@ const ListObjects = () => {
             };
             xhr.onloadend = () => {
               if (files.length === 0) {
-                dispatch(setLoadingObjects(true));
+                dispatch(setReloadObjectsList(true));
               }
             };
             xhr.onabort = () => {
@@ -756,8 +670,7 @@ const ListObjects = () => {
             dispatch(setErrorSnackMessage(err));
           }
           // We force objects list reload after all promises were handled
-          dispatch(setLoadingObjects(true));
-          dispatch(setSelectedObjects([]));
+          dispatch(setReloadObjectsList(true));
         });
       };
 
@@ -771,14 +684,13 @@ const ListObjects = () => {
       if (acceptedFiles && acceptedFiles.length > 0 && canUpload) {
         let newFolderPath: string = acceptedFiles[0].path;
         //Should we filter by allowed file extensions if any?.
-        let allowedFiles = [];
+        let allowedFiles = acceptedFiles;
+
         if (allowedFileExtensions.length > 0) {
           allowedFiles = acceptedFiles.filter((file) => {
             const fileExtn = extractFileExtn(file.name);
             return allowedFileExtensions.includes(fileExtn);
           });
-        } else {
-          allowedFiles = acceptedFiles;
         }
 
         if (allowedFiles.length) {
@@ -885,10 +797,9 @@ const ListObjects = () => {
     }
 
     dispatch(setObjectDetailsView(false));
-    dispatch(setSelectedObjects([]));
 
     if (forceRefresh) {
-      dispatch(setLoadingObjects(true));
+      dispatch(setReloadObjectsList(true));
     }
   };
 
@@ -1049,7 +960,7 @@ const ListObjects = () => {
             <FilterObjectsSB />
           </div>
         )}
-        <Grid item xs={12} className={classes.screenTitleContainer}>
+        <Box withBorders sx={{ padding: "0 5px" }}>
           <ScreenTitle
             icon={
               <span>
@@ -1059,9 +970,18 @@ const ListObjects = () => {
             title={bucketName}
             subTitle={
               !anonymousMode ? (
-                <Fragment>
-                  <span className={classes.detailsSpacer}>
-                    Created on:&nbsp;&nbsp;
+                <Box
+                  sx={{
+                    "& .detailsSpacer": {
+                      marginRight: 18,
+                      "@media (max-width: 600px)": {
+                        marginRight: 0,
+                      },
+                    },
+                  }}
+                >
+                  <span className={"detailsSpacer"}>
+                    Created on:&nbsp;
                     <strong>
                       {bucketInfo?.creation_date
                         ? createdTime.toFormat(
@@ -1070,13 +990,13 @@ const ListObjects = () => {
                         : ""}
                     </strong>
                   </span>
-                  <span className={classes.detailsSpacer}>
-                    Access:&nbsp;&nbsp;&nbsp;
+                  <span className={"detailsSpacer"}>
+                    Access:&nbsp;&nbsp;
                     <strong>{bucketInfo?.access || ""}</strong>
                   </span>
                   {bucketInfo && (
                     <Fragment>
-                      <span className={classes.detailsSpacer}>
+                      <span className={"detailsSpacer"}>
                         {bucketInfo.size && (
                           <Fragment>{niceBytesInt(bucketInfo.size)}</Fragment>
                         )}
@@ -1098,7 +1018,7 @@ const ListObjects = () => {
                       </span>
                     </Fragment>
                   )}
-                </Fragment>
+                </Box>
               ) : null
             }
             actions={
@@ -1114,7 +1034,7 @@ const ListObjects = () => {
                           color="secondary"
                           variant="dot"
                           invisible={!rewindEnabled}
-                          className={classes.badgeOverlap}
+                          className={""}
                           sx={{ height: 16 }}
                         >
                           <HistoryIcon
@@ -1153,8 +1073,7 @@ const ListObjects = () => {
                         dispatch(setLoadingVersions(true));
                       } else {
                         dispatch(resetMessages());
-                        dispatch(setLoadingRecords(true));
-                        dispatch(setLoadingObjects(true));
+                        dispatch(setReloadObjectsList(true));
                       }
                     }}
                     disabled={
@@ -1204,17 +1123,24 @@ const ListObjects = () => {
             }
             bottomBorder={false}
           />
-        </Grid>
+        </Box>
         <div
           id="object-list-wrapper"
           {...getRootProps({ style: { ...dndStyles } })}
         >
           <input {...getInputProps()} />
-          <Grid
-            item
-            xs={12}
-            className={classes.tableBlock}
-            sx={{ border: "#EAEDEE 1px solid", borderTop: 0 }}
+          <Box
+            withBorders
+            sx={{
+              display: "flex",
+              borderTop: 0,
+              padding: 0,
+              "& .hideListOnSmall": {
+                "@media (max-width: 799px)": {
+                  display: "none",
+                },
+              },
+            }}
           >
             {versionsMode ? (
               <Fragment>
@@ -1237,37 +1163,52 @@ const ListObjects = () => {
                 <Grid
                   item
                   xs={12}
-                  className={`${classes.fullContainer} ${
-                    detailsOpen ? "detailsOpen" : ""
-                  } `}
+                  sx={{
+                    width: "100%",
+                    position: "relative",
+                    "&.detailsOpen": {
+                      "@media (max-width: 799px)": {
+                        display: "none",
+                      },
+                    },
+                  }}
+                  className={detailsOpen ? "detailsOpen" : ""}
                 >
                   {!anonymousMode && (
-                    <Grid item xs={12} className={classes.breadcrumbsContainer}>
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{
+                        padding: "12px 14px 5px",
+                      }}
+                    >
                       <BrowserBreadcrumbs
                         bucketName={bucketName}
                         internalPaths={pageTitle}
                         additionalOptions={
                           !isVersioningApplied || rewindEnabled ? null : (
-                            <div>
-                              <CheckboxWrapper
-                                name={"deleted_objects"}
-                                id={"showDeletedObjects"}
-                                value={"deleted_on"}
-                                label={"Show deleted objects"}
-                                onChange={setDeletedAction}
-                                checked={showDeleted}
-                                overrideLabelClasses={classes.labelStyle}
-                                className={classes.overrideShowDeleted}
-                                noTopMargin
-                              />
-                            </div>
+                            <Checkbox
+                              name={"deleted_objects"}
+                              id={"showDeletedObjects"}
+                              value={"deleted_on"}
+                              label={"Show deleted objects"}
+                              onChange={setDeletedAction}
+                              checked={showDeleted}
+                              sx={{
+                                marginLeft: 5,
+                                "@media (max-width: 600px)": {
+                                  marginLeft: 0,
+                                  flexDirection: "row" as const,
+                                },
+                              }}
+                            />
                           )
                         }
                         hidePathButton={false}
                       />
                     </Grid>
                   )}
-                  <ListObjectsTable internalPaths={selectedInternalPaths} />
+                  <ListObjectsTable />
                 </Grid>
               </SecureComponent>
             )}
@@ -1285,7 +1226,7 @@ const ListObjects = () => {
                   closePanel={() => {
                     onClosePanel(false);
                   }}
-                  className={`${versionsMode ? classes.hideListOnSmall : ""}`}
+                  className={`${versionsMode ? "hideListOnSmall" : ""}`}
                 >
                   {selectedObjects.length > 0 && (
                     <ActionsList
@@ -1305,7 +1246,7 @@ const ListObjects = () => {
                 </DetailsListPanel>
               </SecureComponent>
             )}
-          </Grid>
+          </Box>
         </div>
       </PageLayout>
     </Fragment>

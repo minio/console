@@ -32,7 +32,8 @@ export interface ObjectBrowserState {
   objectManager: ObjectManager;
   searchObjects: string;
   loadingVersions: boolean;
-  loadingObjects: boolean;
+  reloadObjectsList: boolean;
+  requestInProgress: boolean;
   loadingObjectInfo: boolean;
   versionsMode: boolean;
   versionedFile: string;
@@ -43,7 +44,6 @@ export interface ObjectBrowserState {
   selectedInternalPaths: string | null;
   simplePath: string | null;
   records: BucketObjectItem[];
-  loadRecords: boolean;
   loadingVersioning: boolean;
   versionInfo: BucketVersioningResponse;
   lockingEnabled: boolean | undefined;
@@ -53,7 +53,6 @@ export interface ObjectBrowserState {
   selectedPreview: BucketObjectItem | null;
   previewOpen: boolean;
   shareFileModalOpen: boolean;
-  isOpeningObjectDetail: boolean;
   retentionConfig: GetBucketRetentionConfig | null;
   longFileOpen: boolean;
   anonymousAccessOpen: boolean;

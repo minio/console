@@ -23,7 +23,7 @@ fixture("Delete Objects With Prefix Only policy").page(
   "http://localhost:9090/",
 );
 
-export const sideBar = Selector("div.MuiGrid-root.MuiGrid-item");
+export const sideBar = Selector("#details-panel");
 export const sideBarDeleteButton = sideBar.find("button").withText("Delete");
 const bucket1 = "test-1";
 const test1BucketBrowseButton = testBucketBrowseButtonFor(bucket1);

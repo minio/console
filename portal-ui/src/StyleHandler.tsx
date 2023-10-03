@@ -22,8 +22,6 @@ import {
 } from "@mui/material/styles";
 import theme from "./theme/main";
 import "react-virtualized/styles.css";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
 
 import { generateOverrideTheme } from "./utils/stylesUtils";
 import "./index.css";

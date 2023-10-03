@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import { useDispatch } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
@@ -31,6 +32,9 @@ import createUserReducer from "./screens/Console/Users/AddUsersSlice";
 import licenseReducer from "./screens/Console/License/licenseSlice";
 import registerReducer from "./screens/Console/Support/registerSlice";
 import destinationSlice from "./screens/Console/EventDestinations/destinationsSlice";
+import { objectBrowserWSMiddleware } from "./websockets/objectBrowserWSMiddleware";
+
+let objectsWS: WebSocket;
 
 const rootReducer = combineReducers({
   system: systemReducer,
@@ -52,6 +56,8 @@ const rootReducer = combineReducers({
 
 export const store = configureStore({
   reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(objectBrowserWSMiddleware(objectsWS)),
 });
 
 if (process.env.NODE_ENV !== "production" && module.hot) {
@@ -60,7 +66,7 @@ if (process.env.NODE_ENV !== "production" && module.hot) {
   });
 }
 
-export type AppState = ReturnType<typeof store.getState>;
+export type AppState = ReturnType<typeof rootReducer>;
 
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<AppDispatch>();

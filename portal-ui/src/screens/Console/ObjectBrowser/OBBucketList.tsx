@@ -58,7 +58,6 @@ import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { Bucket } from "../../../api/consoleApi";
 import { api } from "../../../api";
 import { errorToHandler } from "../../../api/errors";
-import { setLoadingObjects } from "./objectBrowserSlice";
 import HelpMenu from "../HelpMenu";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -104,7 +103,6 @@ const OBListBuckets = () => {
             if (res.data) {
               setLoading(false);
               setRecords(res.data.buckets || []);
-              dispatch(setLoadingObjects(true));
             }
           })
           .catch((err) => {
