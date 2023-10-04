@@ -65,7 +65,7 @@
   "proxy": "http://localhost:9090/",
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@playwright/test": "1.35.0",
+    "@playwright/test": "^1.38.1",
     "@types/lodash": "^4.14.199",
     "@types/luxon": "^3.3.0",
     "@types/minio": "7.1.1",
