@@ -15,14 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import get from "lodash/get";
 import { useSelector } from "react-redux";
-import { Box } from "@mui/material";
-import { withStyles } from "@mui/styles";
 import {
   ActionsList,
+  Box,
   Button,
   DeleteIcon,
   DownloadIcon,
+  Grid,
   InspectMenuIcon,
   LegalHoldIcon,
   Loader,
@@ -35,17 +36,10 @@ import {
   TagsIcon,
   VersionsIcon,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import get from "lodash/get";
-import Grid from "@mui/material/Grid";
-import {
-  actionsTray,
-  detailsPanel,
-  spacingUtils,
-  textStyleUtils,
-} from "../../../../Common/FormComponents/common/styleLibrary";
+import { api } from "api";
+import { downloadObject } from "../../../../ObjectBrowser/utils";
+import { BucketObject, BucketVersioningResponse } from "api/consoleApi";
 import { AllowedPreviews, previewObjectType } from "../utils";
-
 import {
   decodeURLString,
   niceBytes,
@@ -57,19 +51,10 @@ import {
   permissionTooltipHelper,
 } from "../../../../../../common/SecureComponent/permissions";
 import { AppState, useAppDispatch } from "../../../../../../store";
-import ShareFile from "../ObjectDetails/ShareFile";
-import SetRetention from "../ObjectDetails/SetRetention";
-import DeleteObject from "../ListObjects/DeleteObject";
-import SetLegalHoldModal from "../ObjectDetails/SetLegalHoldModal";
 import {
   hasPermission,
   SecureComponent,
 } from "../../../../../../common/SecureComponent";
-import PreviewFileModal from "../Preview/PreviewFileModal";
-import ObjectMetaData from "../ObjectDetails/ObjectMetaData";
-import { displayFileIconName } from "./utils";
-import TagsModal from "../ObjectDetails/TagsModal";
-import InspectObject from "./InspectObject";
 import { selDistSet } from "../../../../../../systemSlice";
 import {
   setLoadingObjectInfo,
@@ -77,40 +62,17 @@ import {
   setSelectedVersion,
   setVersionsModeEnabled,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
+import { displayFileIconName } from "./utils";
+import PreviewFileModal from "../Preview/PreviewFileModal";
+import ObjectMetaData from "../ObjectDetails/ObjectMetaData";
+import ShareFile from "../ObjectDetails/ShareFile";
+import SetRetention from "../ObjectDetails/SetRetention";
+import DeleteObject from "../ListObjects/DeleteObject";
+import SetLegalHoldModal from "../ObjectDetails/SetLegalHoldModal";
+import TagsModal from "../ObjectDetails/TagsModal";
+import InspectObject from "./InspectObject";
 import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
 import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
-import { downloadObject } from "../../../../ObjectBrowser/utils";
-import { BucketObject, BucketVersioningResponse } from "api/consoleApi";
-import { api } from "api";
-
-const styles = () =>
-  createStyles({
-    ObjectDetailsTitle: {
-      display: "flex",
-      alignItems: "center",
-      "& .min-icon": {
-        width: 26,
-        height: 26,
-        minWidth: 26,
-        minHeight: 26,
-      },
-    },
-    objectNameContainer: {
-      whiteSpace: "nowrap",
-      textOverflow: "ellipsis",
-      overflow: "hidden",
-      alignItems: "center",
-      marginLeft: 10,
-    },
-    capitalizeFirst: {
-      textTransform: "capitalize",
-    },
-
-    ...actionsTray,
-    ...spacingUtils,
-    ...textStyleUtils,
-    ...detailsPanel,
-  });
 
 const emptyFile: BucketObject = {
   is_latest: true,
@@ -125,7 +87,6 @@ const emptyFile: BucketObject = {
 };
 
 interface IObjectDetailPanelProps {
-  classes: any;
   internalPaths: string;
   bucketName: string;
   versioningInfo: BucketVersioningResponse;
@@ -134,7 +95,6 @@ interface IObjectDetailPanelProps {
 }
 
 const ObjectDetailPanel = ({
-  classes,
   internalPaths,
   bucketName,
   versioningInfo,
@@ -652,14 +612,40 @@ const ObjectDetailPanel = ({
       {loadingObjectInfo ? (
         <Fragment>{loaderForContainer}</Fragment>
       ) : (
-        <Fragment>
+        <Box
+          sx={{
+            "& .ObjectDetailsTitle": {
+              display: "flex",
+              alignItems: "center",
+              "& .min-icon": {
+                width: 26,
+                height: 26,
+                minWidth: 26,
+                minHeight: 26,
+              },
+            },
+            "& .objectNameContainer": {
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              alignItems: "center",
+              marginLeft: 10,
+            },
+            "& .capitalizeFirst": {
+              textTransform: "capitalize",
+            },
+            "& .detailContainer": {
+              padding: "0 22px",
+              marginBottom: 10,
+              fontSize: 14,
+            },
+          }}
+        >
           <ActionsList
             title={
-              <div className={classes.ObjectDetailsTitle}>
+              <div className={"ObjectDetailsTitle"}>
                 {displayFileIconName(objectName || "", true)}
-                <span className={classes.objectNameContainer}>
-                  {objectName}
-                </span>
+                <span className={"objectNameContainer"}>{objectName}</span>
               </div>
             }
             items={multiActionButtons}
@@ -710,19 +696,19 @@ const ObjectDetailPanel = ({
             </Grid>
           </TooltipWrapper>
           <SimpleHeader icon={<ObjectInfoIcon />} label={"Object Info"} />
-          <Box className={classes.detailContainer}>
+          <Box className={"detailContainer"}>
             <strong>Name:</strong>
             <br />
             <div style={{ overflowWrap: "break-word" }}>{objectName}</div>
           </Box>
           {selectedVersion !== "" && (
-            <Box className={classes.detailContainer}>
+            <Box className={"detailContainer"}>
               <strong>Version ID:</strong>
               <br />
               {selectedVersion}
             </Box>
           )}
-          <Box className={classes.detailContainer}>
+          <Box className={"detailContainer"}>
             <strong>Size:</strong>
             <br />
             {niceBytes(`${actualInfo.size || "0"}`)}
@@ -730,7 +716,7 @@ const ObjectDetailPanel = ({
           {actualInfo.version_id &&
             actualInfo.version_id !== "null" &&
             selectedVersion === "" && (
-              <Box className={classes.detailContainer}>
+              <Box className={"detailContainer"}>
                 <strong>Versions:</strong>
                 <br />
                 {versions.length} version{versions.length !== 1 ? "s" : ""},{" "}
@@ -738,18 +724,18 @@ const ObjectDetailPanel = ({
               </Box>
             )}
           {selectedVersion === "" && (
-            <Box className={classes.detailContainer}>
+            <Box className={"detailContainer"}>
               <strong>Last Modified:</strong>
               <br />
               {calculateLastModifyTime(actualInfo.last_modified || "")}
             </Box>
           )}
-          <Box className={classes.detailContainer}>
+          <Box className={"detailContainer"}>
             <strong>ETAG:</strong>
             <br />
             {actualInfo.etag || "N/A"}
           </Box>
-          <Box className={classes.detailContainer}>
+          <Box className={"detailContainer"}>
             <strong>Tags:</strong>
             <br />
             {tagKeys.length === 0
@@ -763,7 +749,7 @@ const ObjectDetailPanel = ({
                   );
                 })}
           </Box>
-          <Box className={classes.detailContainer}>
+          <Box className={"detailContainer"}>
             <SecureComponent
               scopes={[
                 IAM_SCOPES.S3_GET_OBJECT_LEGAL_HOLD,
@@ -778,7 +764,7 @@ const ObjectDetailPanel = ({
               </Fragment>
             </SecureComponent>
           </Box>
-          <Box className={classes.detailContainer}>
+          <Box className={"detailContainer"}>
             <SecureComponent
               scopes={[
                 IAM_SCOPES.S3_GET_OBJECT_RETENTION,
@@ -789,7 +775,7 @@ const ObjectDetailPanel = ({
               <Fragment>
                 <strong>Retention Policy:</strong>
                 <br />
-                <span className={classes.capitalizeFirst}>
+                <span className={"capitalizeFirst"}>
                   {actualInfo.version_id && actualInfo.version_id !== "null" ? (
                     <Fragment>
                       {actualInfo.retention_mode
@@ -810,17 +796,17 @@ const ObjectDetailPanel = ({
           {!actualInfo.is_delete_marker && (
             <Fragment>
               <SimpleHeader label={"Metadata"} icon={<MetadataIcon />} />
-              <Box className={classes.detailContainer}>
+              <Box className={"detailContainer"}>
                 {actualInfo && metaData ? (
                   <ObjectMetaData metaData={metaData} linear />
                 ) : null}
               </Box>
             </Fragment>
           )}
-        </Fragment>
+        </Box>
       )}
     </Fragment>
   );
 };
 
-export default withStyles(styles)(ObjectDetailPanel);
+export default ObjectDetailPanel;

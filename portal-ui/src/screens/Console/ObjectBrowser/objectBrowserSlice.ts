@@ -34,7 +34,8 @@ const defaultRewind = {
 const initialState: ObjectBrowserState = {
   selectedBucket: "",
   versionsMode: false,
-  loadingObjects: true,
+  reloadObjectsList: false,
+  requestInProgress: true,
   objectDetailsOpen: false,
   loadingVersions: true,
   loadingObjectInfo: true,
@@ -59,7 +60,6 @@ const initialState: ObjectBrowserState = {
   simplePath: null,
   // object browser
   records: [],
-  loadRecords: true,
   loadingVersioning: true,
   versionInfo: {},
   lockingEnabled: false,
@@ -69,7 +69,6 @@ const initialState: ObjectBrowserState = {
   selectedPreview: null,
   previewOpen: false,
   shareFileModalOpen: false,
-  isOpeningObjectDetail: false,
   anonymousAccessOpen: false,
   retentionConfig: {
     mode: undefined,
@@ -247,8 +246,8 @@ export const objectBrowserSlice = createSlice({
     setSearchObjects: (state, action: PayloadAction<string>) => {
       state.searchObjects = action.payload;
     },
-    setLoadingObjects: (state, action: PayloadAction<boolean>) => {
-      state.loadingObjects = action.payload;
+    setRequestInProgress: (state, action: PayloadAction<boolean>) => {
+      state.requestInProgress = action.payload;
     },
     setSearchVersions: (state, action: PayloadAction<string>) => {
       state.searchVersions = action.payload;
@@ -313,8 +312,13 @@ export const objectBrowserSlice = createSlice({
     resetMessages: (state) => {
       state.records = [];
     },
-    setLoadingRecords: (state, action: PayloadAction<boolean>) => {
-      state.loadRecords = action.payload;
+    setReloadObjectsList: (state, action: PayloadAction<boolean>) => {
+      state.reloadObjectsList = action.payload;
+
+      // If we initialize a request, then we must clean the records list
+      if (action.payload) {
+        state.records = [];
+      }
     },
     setSelectedObjects: (state, action: PayloadAction<string[]>) => {
       state.selectedObjects = action.payload;
@@ -352,9 +356,6 @@ export const objectBrowserSlice = createSlice({
           action.payload.objectInfo.size || 0;
       }
     },
-    setIsOpeningOD: (state, action: PayloadAction<boolean>) => {
-      state.isOpeningObjectDetail = action.payload;
-    },
     setRetentionConfig: (
       state,
       action: PayloadAction<GetBucketRetentionConfig | null>,
@@ -373,7 +374,7 @@ export const objectBrowserSlice = createSlice({
     errorInConnection: (state, action: PayloadAction<boolean>) => {
       state.connectionError = action.payload;
       if (action.payload) {
-        state.loadingObjects = false;
+        state.requestInProgress = false;
         state.loadingObjectInfo = false;
         state.objectDetailsOpen = false;
       }
@@ -394,7 +395,7 @@ export const {
   openList,
   closeList,
   setSearchObjects,
-  setLoadingObjects,
+  setRequestInProgress,
   cancelObjectInList,
   setSearchVersions,
   setSelectedVersion,
@@ -418,9 +419,8 @@ export const {
   setSelectedPreview,
   setPreviewOpen,
   setShareFileModalOpen,
-  setLoadingRecords,
+  setReloadObjectsList,
   restoreLocalObjectList,
-  setIsOpeningOD,
   setRetentionConfig,
   setSelectedBucket,
   setLongFileOpen,

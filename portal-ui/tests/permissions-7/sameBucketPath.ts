@@ -45,7 +45,7 @@ test
         .navigateTo(`http://localhost:9090/browser`)
         .click(testBucketBrowseButton)
         .wait(1500)
-        .click(Selector("input").withAttribute("id", "showDeletedObjects"))
+        .click(Selector("label").withText("Show deleted objects"))
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText(
             "firstlevel",

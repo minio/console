@@ -37,6 +37,8 @@ export class BucketsListPage {
 
   async clickOnBucketRow(bucketName: string) {
     const bucketRow = this.locateBucket(bucketName);
+    await this.page.waitForTimeout(2500);
+    await this.refreshBucketsBtn.click();
     await bucketRow.click();
   }
   async goToCreateBucket() {

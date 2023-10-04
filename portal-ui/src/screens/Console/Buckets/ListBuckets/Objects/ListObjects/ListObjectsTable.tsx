@@ -24,10 +24,9 @@ import { AppState, useAppDispatch } from "../../../../../../store";
 import { selFeatures } from "../../../../consoleSlice";
 import { encodeURLString } from "../../../../../../common/utils";
 import {
-  setIsOpeningOD,
-  setLoadingObjects,
   setLoadingVersions,
   setObjectDetailsView,
+  setReloadObjectsList,
   setSelectedObjects,
   setSelectedObjectView,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
@@ -73,11 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface IListObjectTable {
-  internalPaths: string | null;
-}
-
-const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
+const ListObjectsTable = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
   const params = useParams();
@@ -94,8 +89,8 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
     (state: AppState) => state.objectBrowser.objectDetailsOpen,
   );
 
-  const loadingObjects = useSelector(
-    (state: AppState) => state.objectBrowser.loadingObjects,
+  const requestInProgress = useSelector(
+    (state: AppState) => state.objectBrowser.requestInProgress,
   );
 
   const features = useSelector(selFeatures);
@@ -154,11 +149,7 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
     }`;
 
     // for anonymous start download
-    if (
-      anonymousMode &&
-      internalPaths !== null &&
-      !object.name?.endsWith("/")
-    ) {
+    if (anonymousMode && !object.name?.endsWith("/")) {
       downloadObject(
         dispatch,
         bucketName,
@@ -174,7 +165,6 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
     if (!anonymousMode) {
       dispatch(setObjectDetailsView(true));
       dispatch(setLoadingVersions(true));
-      dispatch(setIsOpeningOD(true));
     }
     dispatch(
       setSelectedObjectView(
@@ -195,7 +185,7 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
     const newSortDirection = get(sortData, "sortDirection", "DESC");
     setCurrentSortField(sortData.sortBy);
     setSortDirection(newSortDirection);
-    dispatch(setLoadingObjects(true));
+    dispatch(setReloadObjectsList(true));
   };
 
   const selectAllItems = () => {
@@ -255,7 +245,7 @@ const ListObjectsTable = ({ internalPaths }: IListObjectTable) => {
     <DataTable
       itemActions={tableActions}
       columns={rewindEnabled ? rewindModeColumns : listModeColumns}
-      isLoading={loadingObjects}
+      isLoading={requestInProgress}
       entityName="Objects"
       idField="name"
       records={payload}

@@ -34,6 +34,8 @@ test("create a new bucket", async ({ page }) => {
 
   await page.getByLabel("Bucket Name*").fill(bucketName);
   await page.getByRole("button", { name: "Create Bucket" }).click();
+  await page.waitForTimeout(2000);
+  await page.locator("#refresh-buckets").click();
   await page.getByPlaceholder("Search Buckets").fill(bucketName);
 
   await expect(page.locator(`#manageBucket-${bucketName}`)).toBeTruthy();
