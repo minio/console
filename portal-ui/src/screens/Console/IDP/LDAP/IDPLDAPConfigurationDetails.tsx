@@ -32,6 +32,7 @@ import {
   Tooltip,
   ValuePair,
   WarnIcon,
+  ScreenTitle,
 } from "mds";
 import { api } from "api";
 import { ConfigurationKV } from "api/consoleApi";
@@ -44,7 +45,6 @@ import {
   setSnackBarMessage,
 } from "../../../../systemSlice";
 import { ldapFormFields, ldapHelpBoxContents } from "../utils";
-import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import AddIDPConfigurationHelpBox from "../AddIDPConfigurationHelpbox";
 import LDAPEntitiesQuery from "./LDAPEntitiesQuery";
@@ -302,6 +302,7 @@ const IDPLDAPConfigurationDetails = () => {
               content: (
                 <Fragment>
                   <ScreenTitle
+                    icon={null}
                     title={editMode ? "Edit Configuration" : ""}
                     actions={
                       !editMode ? (
