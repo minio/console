@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import {
   Button,
   Loader,
@@ -137,6 +137,30 @@ const SetRetentionConfig = ({
                 { value: "compliance", label: "Compliance" },
                 { value: "governance", label: "Governance" },
               ]}
+              helpTip={
+                <Fragment>
+                  {" "}
+                  <a
+                    href="https://min.io/docs/minio/macos/administration/object-management/object-retention.html#minio-object-locking-compliance"
+                    target="blank"
+                  >
+                    Compliance
+                  </a>{" "}
+                  lock protects Objects from write operations by all users,
+                  including the MinIO root user.
+                  <br />
+                  <br />
+                  <a
+                    href="https://min.io/docs/minio/macos/administration/object-management/object-retention.html#minio-object-locking-governance"
+                    target="blank"
+                  >
+                    Governance
+                  </a>{" "}
+                  lock protects Objects from write operations by non-privileged
+                  users.
+                </Fragment>
+              }
+              helpTipPlacement="right"
             />
             <RadioGroup
               currentValue={retentionUnit as string}

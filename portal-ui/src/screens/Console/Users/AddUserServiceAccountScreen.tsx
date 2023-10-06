@@ -28,6 +28,7 @@ import {
   ServiceAccountCredentialsIcon,
   ServiceAccountIcon,
   Switch,
+  HelpTip,
 } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
@@ -213,10 +214,24 @@ const AddServiceAccount = () => {
               {isRestrictedByPolicy && (
                 <Grid item xs={12}>
                   <Box>
-                    <PanelTitle>
-                      Current User Policy - edit the JSON to remove permissions
-                      for this Access Key
-                    </PanelTitle>
+                    <HelpTip
+                      content={
+                        <Fragment>
+                          <a
+                            target="blank"
+                            href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#policy-document-structure"
+                          >
+                            Guide to access policy structure
+                          </a>
+                        </Fragment>
+                      }
+                      placement="right"
+                    >
+                      <PanelTitle>
+                        Current User Policy - edit the JSON to remove
+                        permissions for this Access Key
+                      </PanelTitle>
+                    </HelpTip>
                   </Box>
                   <Grid item xs={12} sx={{ ...modalStyleUtils.formScrollable }}>
                     <CodeMirrorWrapper
@@ -225,6 +240,16 @@ const AddServiceAccount = () => {
                         setPolicyJSON(value);
                       }}
                       editorHeight={"350px"}
+                      helptip={
+                        <Fragment>
+                          <a
+                            target="blank"
+                            href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#policy-document-structure"
+                          >
+                            Guide to access policy structure
+                          </a>
+                        </Fragment>
+                      }
                     />
                   </Grid>
                 </Grid>

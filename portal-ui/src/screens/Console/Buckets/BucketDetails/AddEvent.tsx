@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, Fragment } from "react";
 import { Button, DataTable, EventSubscriptionIcon, Grid, InputBox } from "mds";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
@@ -170,6 +170,16 @@ const AddEvent = ({
                 label={"ARN"}
                 value={arn}
                 options={arnValues || []}
+                helptip={
+                  <Fragment>
+                    <a
+                      target="blank"
+                      href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html"
+                    >
+                      Amazon Resource Name
+                    </a>
+                  </Fragment>
+                }
               />
             </Grid>
             <Grid item xs={12} sx={formFieldStyles.formFieldRow}>

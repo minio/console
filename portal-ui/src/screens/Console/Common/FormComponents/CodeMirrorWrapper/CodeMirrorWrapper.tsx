@@ -26,6 +26,7 @@ interface ICodeWrapper {
   tooltip?: string;
   onChange: (value: string) => any;
   editorHeight?: string | number;
+  helptip?: any;
 }
 
 const CodeMirrorWrapper = ({
@@ -35,6 +36,7 @@ const CodeMirrorWrapper = ({
   mode = "json",
   onChange,
   editorHeight = 250,
+  helptip,
 }: ICodeWrapper) => {
   return (
     <CodeEditor
@@ -59,6 +61,8 @@ const CodeMirrorWrapper = ({
           </TooltipWrapper>
         </Fragment>
       }
+      helpTip={helptip}
+      helpTipPlacement="right"
     />
   );
 };

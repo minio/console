@@ -17,7 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { DataTable, SectionTitle, Tabs } from "mds";
+import { DataTable, SectionTitle, Tabs, HelpTip } from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import {
@@ -145,7 +145,32 @@ const AccessDetails = () => {
 
   return (
     <Fragment>
-      <SectionTitle separator>Access Audit</SectionTitle>
+      <SectionTitle separator>
+        <HelpTip
+          content={
+            <Fragment>
+              Understand which{" "}
+              <a
+                target="blank"
+                href="https://min.io/docs/minio/linux/administration/identity-access-management/policy-based-access-control.html#"
+              >
+                Policies
+              </a>{" "}
+              and{" "}
+              <a
+                target="blank"
+                href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html"
+              >
+                Users
+              </a>{" "}
+              are authorized to access this Bucket.
+            </Fragment>
+          }
+          placement="right"
+        >
+          Access Audit
+        </HelpTip>
+      </SectionTitle>
       <Tabs
         currentTabOrPath={curTab}
         onTabClick={(newValue: string) => {

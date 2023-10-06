@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { DisabledIcon, EnabledIcon, Box, Grid } from "mds";
+import { DisabledIcon, EnabledIcon, Box, Grid, HelpTip } from "mds";
 import SearchBox from "../Common/SearchBox";
 import { STATUS_COLORS } from "../Dashboard/BasicDashboard/Utils";
 import { IAMStatement } from "./types";
@@ -53,9 +53,26 @@ const PolicyView = ({
     <Grid container>
       <Grid item xs={12}>
         <Grid container sx={{ display: "flex", alignItems: "center" }}>
-          <Grid item xs={12} sm={6} sx={{ fontWeight: "bold" }}>
-            Statements
-          </Grid>
+          <HelpTip
+            content={
+              <Fragment>
+                Define which actions are permitted on a specified resource.
+                Learn more about{" "}
+                <a
+                  target="blank"
+                  href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html"
+                >
+                  IAM conditional statements
+                </a>
+                .
+              </Fragment>
+            }
+            placement="right"
+          >
+            <Grid item xs={12} sm={6} sx={{ fontWeight: "bold" }}>
+              Statements
+            </Grid>
+          </HelpTip>
           <Grid
             item
             xs={12}

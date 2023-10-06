@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { Button, ChangeAccessPolicyIcon, Grid } from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
@@ -98,6 +98,16 @@ const ServiceAccountPolicy = ({
                 setPolicyDefinition(value);
               }}
               editorHeight={"350px"}
+              helptip={
+                <Fragment>
+                  <a
+                    target="blank"
+                    href="https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#policy-document-structure"
+                  >
+                    Guide to access policy structure
+                  </a>
+                </Fragment>
+              }
             />
           </Grid>
           <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
