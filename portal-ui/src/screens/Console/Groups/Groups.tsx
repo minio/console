@@ -29,6 +29,7 @@ import {
   Grid,
   Box,
   ProgressBar,
+  ActionLink,
 } from "mds";
 
 import { api } from "api";
@@ -56,7 +57,6 @@ import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
-import AButton from "../Common/AButton/AButton";
 import SearchBox from "../Common/SearchBox";
 
 const DeleteGroup = withSuspense(React.lazy(() => import("./DeleteGroup")));
@@ -372,13 +372,13 @@ const Groups = () => {
                             <br />
                             <br />
                             To get started,{" "}
-                            <AButton
+                            <ActionLink
                               onClick={() => {
                                 navigate(`${IAM_PAGES.GROUPS_ADD}`);
                               }}
                             >
                               Create a Group
-                            </AButton>
+                            </ActionLink>
                             .
                           </SecureComponent>
                         </Fragment>

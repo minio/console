@@ -16,14 +16,21 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
-import { Button, FormLayout, Grid, InputBox, LockIcon, ProgressBar } from "mds";
+import {
+  Button,
+  FileSelector,
+  FormLayout,
+  Grid,
+  InputBox,
+  LockIcon,
+  ProgressBar,
+} from "mds";
 import { Tier } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 
 interface ITierCredentialsModal {
@@ -152,9 +159,12 @@ const UpdateTierCredentialsModal = ({
                 id="creds"
                 label="Credentials"
                 name="creds"
-                onChange={(encodedValue, fileName) => {
-                  setEncodedCreds(encodedValue);
-                  setCreds(fileName);
+                returnEncodedData
+                onChange={(_, fileName, encodedValue) => {
+                  if (encodedValue) {
+                    setEncodedCreds(encodedValue);
+                    setCreds(fileName);
+                  }
                 }}
                 value={creds}
               />

@@ -19,6 +19,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Theme } from "@mui/material/styles";
 import {
+  ActionLink,
   BucketsIcon,
   Button,
   DataTable,
@@ -51,7 +52,6 @@ import { useSelector } from "react-redux";
 import { selFeatures } from "../consoleSlice";
 import AutoColorIcon from "../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import AButton from "../Common/AButton/AButton";
 import makeStyles from "@mui/styles/makeStyles";
 import { niceBytesInt } from "../../../common/utils";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
@@ -313,13 +313,13 @@ const OBListBuckets = () => {
                         >
                           <br />
                           To get started,&nbsp;
-                          <AButton
+                          <ActionLink
                             onClick={() => {
                               navigate(IAM_PAGES.ADD_BUCKETS);
                             }}
                           >
                             Create a Bucket.
-                          </AButton>
+                          </ActionLink>
                         </SecureComponent>
                       </Fragment>
                     }
