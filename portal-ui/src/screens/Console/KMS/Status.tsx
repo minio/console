@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { Box, Grid } from "@mui/material";
+import { SectionTitle } from "mds";
 import api from "../../../common/api";
 
 import { ErrorResponseHandler } from "../../../common/types";
@@ -32,7 +33,6 @@ import Tab from "@mui/material/Tab";
 import { TabPanel } from "../../shared/tabs";
 
 import LabelValuePair from "../Common/UsageBarWrapper/LabelValuePair";
-import SectionTitle from "../Common/SectionTitle";
 import LabelWithIcon from "../Buckets/BucketDetails/SummaryItems/LabelWithIcon";
 import {
   Bar,

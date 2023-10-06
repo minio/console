@@ -27,6 +27,7 @@ import {
   DataTable,
   Grid,
   ProgressBar,
+  ActionLink,
 } from "mds";
 
 import { User, UsersList } from "./types";
@@ -46,7 +47,6 @@ import {
   viewUserPermissions,
 } from "../../../common/SecureComponent/permissions";
 import api from "../../../common/api";
-import AButton from "../Common/AButton/AButton";
 import SearchBox from "../Common/SearchBox";
 import withSuspense from "../Common/Components/withSuspense";
 
@@ -446,13 +446,13 @@ const ListUsers = () => {
                             <br />
                             <br />
                             To get started,{" "}
-                            <AButton
+                            <ActionLink
                               onClick={() => {
                                 navigate(`${IAM_PAGES.USER_ADD}`);
                               }}
                             >
                               Create a User
-                            </AButton>
+                            </ActionLink>
                             .
                           </SecureComponent>
                         </Fragment>

@@ -15,9 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import Box from "@mui/material/Box";
+import { PageLayout, Box } from "mds";
 import Copyright from "../common/Copyright";
-import { PageLayout } from "mds";
 
 const NotFound: React.FC = () => {
   return (
@@ -51,7 +50,7 @@ const NotFound: React.FC = () => {
         >
           Sorry, the page could not be found.
         </Box>
-        <Box mt={5}>
+        <Box sx={{ marginTop: 20 }}>
           <Copyright />
         </Box>
       </Box>
