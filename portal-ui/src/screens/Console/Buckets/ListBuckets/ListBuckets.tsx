@@ -30,6 +30,7 @@ import {
   Grid,
   breakPoints,
   ProgressBar,
+  ActionLink,
 } from "mds";
 
 import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
@@ -53,7 +54,6 @@ import { errorToHandler } from "../../../../api/errors";
 import HelpMenu from "../../HelpMenu";
 import AutoColorIcon from "../../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
-import AButton from "../../Common/AButton/AButton";
 import SearchBox from "../../Common/SearchBox";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
 import BulkLifecycleModal from "./BulkLifecycleModal";
@@ -438,13 +438,13 @@ const ListBuckets = () => {
                         >
                           <br />
                           To get started,&nbsp;
-                          <AButton
+                          <ActionLink
                             onClick={() => {
                               navigate(IAM_PAGES.ADD_BUCKETS);
                             }}
                           >
                             Create a Bucket.
-                          </AButton>
+                          </ActionLink>
                         </SecureComponent>
                       </Fragment>
                     }

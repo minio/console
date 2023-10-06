@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import {
+  ActionLink,
   AddIcon,
   Box,
   Button,
@@ -44,7 +45,6 @@ import {
   settingsCommon,
   tableStyles,
 } from "../Common/FormComponents/common/styleLibrary";
-import AButton from "../Common/AButton/AButton";
 import SearchBox from "../Common/SearchBox";
 
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
@@ -298,13 +298,13 @@ const ListEventDestinations = ({ classes }: IListNotificationEndpoints) => {
                           <br />
                           <br />
                           To get started,{" "}
-                          <AButton
+                          <ActionLink
                             onClick={() => {
                               navigate(IAM_PAGES.EVENT_DESTINATIONS_ADD);
                             }}
                           >
                             Add an Event Destination
-                          </AButton>
+                          </ActionLink>
                           .
                         </Fragment>
                       }

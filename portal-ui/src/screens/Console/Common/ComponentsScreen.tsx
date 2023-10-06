@@ -15,9 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { DialogContentText, Grid } from "@mui/material";
-import SectionTitle from "./SectionTitle";
-import { Button, ConfirmDeleteIcon, PageLayout } from "mds";
+import { Button, ConfirmDeleteIcon, PageLayout, SectionTitle, Grid } from "mds";
 import ConfirmDialog from "./ModalWrapper/ConfirmDialog";
 import PageHeaderWrapper from "./PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
@@ -38,7 +36,7 @@ const ComponentsScreen = () => {
       <PageHeaderWrapper label={"Components"} actions={<HelpMenu />} />
 
       <PageLayout>
-        <Grid container spacing={1}>
+        <Grid container>
           <Grid item xs={12}>
             <SectionTitle>Confirm Dialogs</SectionTitle>
           </Grid>
@@ -68,10 +66,10 @@ const ComponentsScreen = () => {
                 setDialogOpen(false);
               }}
               confirmationContent={
-                <DialogContentText>
+                <Fragment>
                   Are you sure you want to delete bucket <b>bucket</b>
                   ? <br />A bucket can only be deleted if it's empty.
-                </DialogContentText>
+                </Fragment>
               }
             />
           </Grid>

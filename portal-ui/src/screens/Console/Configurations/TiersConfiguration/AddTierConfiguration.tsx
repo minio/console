@@ -18,26 +18,20 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import get from "lodash/get";
-import { Theme } from "@mui/material/styles";
 import {
   BackLink,
   breakPoints,
   Button,
+  FileSelector,
   Grid,
-  PageLayout,
   InputBox,
+  PageLayout,
   SectionTitle,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  fileInputStyles,
-  formFieldStyles,
-  modalBasic,
-  modalStyleUtils,
-  settingsCommon,
-} from "../../Common/FormComponents/common/styleLibrary";
-import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { ApiError } from "api/consoleApi";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import {
   azureServiceName,
   gcsServiceName,
@@ -45,48 +39,14 @@ import {
   s3ServiceName,
   tierTypes,
 } from "./utils";
-
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
-
-import RegionSelectWrapper from "./RegionSelectWrapper";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
+import RegionSelectWrapper from "./RegionSelectWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
-import { ApiError } from "api/consoleApi";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalBasic,
-    ...settingsCommon,
-    ...formFieldStyles,
-    lambdaNotifTitle: {
-      color: "#07193E",
-      fontSize: 16,
-      fontFamily: "Inter,sans-serif",
-      paddingLeft: 18,
-    },
-    fileInputFieldCss: {
-      margin: "0",
-    },
-    fileTextBoxContainer: {
-      maxWidth: " 100%",
-      flex: 1,
-    },
-    fileReselectCss: {
-      maxWidth: " 100%",
-      flex: 1,
-    },
-    ...fileInputStyles,
-  });
-
-interface IAddNotificationEndpointProps {
-  classes: any;
-}
-
-const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
+const AddTierConfiguration = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
@@ -425,17 +385,15 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
                   {type === gcsServiceName && (
                     <FileSelector
                       accept=".json"
-                      classes={{
-                        fileInputField: classes.fileInputFieldCss,
-                        textBoxContainer: classes.fileTextBoxContainer,
-                        fileReselect: classes.fileReselectCss,
-                      }}
                       id="creds"
                       label="Credentials"
                       name="creds"
-                      onChange={(encodedValue, fileName) => {
-                        setEncodedCreds(encodedValue);
-                        setCreds(fileName);
+                      returnEncodedData
+                      onChange={(_, fileName, encodedValue) => {
+                        if (encodedValue) {
+                          setEncodedCreds(encodedValue);
+                          setCreds(fileName);
+                        }
                       }}
                       value={creds}
                       required
@@ -530,4 +488,4 @@ const AddTierConfiguration = ({ classes }: IAddNotificationEndpointProps) => {
   );
 };
 
-export default withStyles(styles)(AddTierConfiguration);
+export default AddTierConfiguration;
