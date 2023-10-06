@@ -15,19 +15,24 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Box, Button, FormLayout, IAMPoliciesIcon, ProgressBar } from "mds";
-
+import {
+  Box,
+  Button,
+  FormLayout,
+  IAMPoliciesIcon,
+  ProgressBar,
+  Grid,
+} from "mds";
 import { useSelector } from "react-redux";
-import Grid from "@mui/material/Grid";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { IPolicyItem } from "../Users/types";
 import { ErrorResponseHandler } from "../../../common/types";
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import api from "../../../common/api";
-import PolicySelectors from "../Policies/PolicySelectors";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "./AddUsersSlice";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import api from "../../../common/api";
+import PolicySelectors from "../Policies/PolicySelectors";
 
 interface ISetUserPoliciesProps {
   closeModalAndRefresh: () => void;
