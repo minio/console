@@ -20,13 +20,12 @@ import {
   setSecretKey,
   setSelectedGroups,
   setSelectedPolicies,
-  setShowPassword,
   setUserName,
 } from "../AddUsersSlice";
 import { AppState } from "../../../../store";
-import api from "../../../../common/api";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../systemSlice";
+import api from "../../../../common/api";
 
 export const resetFormAsync = createAsyncThunk(
   "resetForm/resetFormAsync",
@@ -35,7 +34,6 @@ export const resetFormAsync = createAsyncThunk(
     dispatch(setUserName(""));
     dispatch(setSecretKey(""));
     dispatch(setSelectedPolicies([]));
-    dispatch(setShowPassword(false));
   },
 );
 
