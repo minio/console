@@ -15,14 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, Fragment } from "react";
+import { ConfirmDeleteIcon, Grid, InputBox } from "mds";
 import { ErrorResponseHandler } from "../../../common/types";
-import useApi from "../Common/Hooks/useApi";
-import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import useApi from "../Common/Hooks/useApi";
+import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import WarningMessage from "../Common/WarningMessage/WarningMessage";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { ConfirmDeleteIcon, Grid } from "mds";
 
 interface IDeleteKMSModalProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -80,7 +79,7 @@ const DeleteKMSModal = ({
           </Grid>
           To continue please type <b>{selectedItem}</b> in the box.
           <Grid item xs={12}>
-            <InputBoxWrapper
+            <InputBox
               id="retype-key"
               name="retype-key"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

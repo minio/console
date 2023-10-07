@@ -15,9 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { Box } from "@mui/material";
-import { Button, CopyIcon } from "mds";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { Button, CopyIcon, InputBox, Box, breakPoints } from "mds";
 
 const KeyRevealer = ({ value }: { value: string }) => {
   const [shown, setShown] = useState<boolean>(false);
@@ -27,13 +25,13 @@ const KeyRevealer = ({ value }: { value: string }) => {
       sx={{
         display: "flex",
         alignItems: "center",
-        flexFlow: {
-          sm: "row",
-          xs: "column",
+        flexFlow: "row",
+        [`@media (max-width: ${breakPoints.sm}px)`]: {
+          flexFlow: "column",
         },
       }}
     >
-      <InputBoxWrapper
+      <InputBox
         id="inspect-dec-key"
         name="inspect-dec-key"
         placeholder=""
@@ -42,9 +40,7 @@ const KeyRevealer = ({ value }: { value: string }) => {
         onChange={() => {}}
         value={value}
         overlayIcon={<CopyIcon />}
-        extraInputProps={{
-          readOnly: true,
-        }}
+        readOnly={true}
         overlayAction={() => navigator.clipboard.writeText(value)}
       />
 

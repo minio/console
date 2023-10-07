@@ -104,43 +104,6 @@ export const tooltipHelper = {
   },
 };
 
-const checkBoxBasic = {
-  width: 16,
-  height: 16,
-  borderRadius: 2,
-};
-
-export const checkboxIcons = {
-  unCheckedIcon: {
-    ...checkBoxBasic,
-    border: "1px solid #c3c3c3",
-    boxShadow: "inset 0px 1px 3px rgba(0,0,0,0.1)",
-  },
-  checkedIcon: {
-    ...checkBoxBasic,
-    border: "1px solid #FFFFFF",
-    backgroundColor: "#4CCB92",
-    boxShadow: "inset 0px 1px 3px rgba(0,0,0,0.1)",
-    width: 14,
-    height: 14,
-    marginLeft: 1,
-    "&:before": {
-      content: "''",
-      display: "block",
-      marginLeft: -2,
-      marginTop: -2,
-      width: 16,
-      height: 16,
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      borderRadius: 2,
-      border: "1px solid #ccc",
-    },
-  },
-};
-
 export const containerForHeader = {
   container: {
     position: "relative" as const,

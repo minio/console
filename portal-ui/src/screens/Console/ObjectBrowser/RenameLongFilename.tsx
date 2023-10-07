@@ -15,23 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import Grid from "@mui/material/Grid";
-import createStyles from "@mui/styles/createStyles";
-import { Button, EditIcon } from "mds";
-import makeStyles from "@mui/styles/makeStyles";
-import { Theme } from "@mui/material/styles";
-import {
-  containerForHeader,
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../Common/FormComponents/common/styleLibrary";
+import { Button, EditIcon, FormLayout, Grid, InputBox, Switch } from "mds";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { useAppDispatch } from "../../../store";
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { downloadObject } from "./utils";
 import { BucketObject } from "api/consoleApi";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 
 interface IRenameLongFilename {
   open: boolean;
@@ -42,15 +31,6 @@ interface IRenameLongFilename {
   closeModal: () => void;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    ...modalStyleUtils,
-    ...formFieldStyles,
-    ...spacingUtils,
-    ...containerForHeader,
-  }),
-);
-
 const RenameLongFileName = ({
   open,
   closeModal,
@@ -59,7 +39,6 @@ const RenameLongFileName = ({
   actualInfo,
   bucketName,
 }: IRenameLongFilename) => {
-  const classes = useStyles();
   const dispatch = useAppDispatch();
 
   const [newFileName, setNewFileName] = useState<string>(currentItem);
@@ -93,42 +72,36 @@ const RenameLongFileName = ({
           doDownload(e);
         }}
       >
-        <Grid container>
-          <Grid item xs={12} className={classes.modalFormScrollable}>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <InputBoxWrapper
-                id="download-filename"
-                name="download-filename"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setNewFileName(event.target.value);
-                }}
-                label=""
-                type={"text"}
-                value={newFileName}
-                error={
-                  newFileName.length > 200 && !acceptLongName
-                    ? "Filename should be less than 200 characters long."
-                    : ""
-                }
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.formFieldRow}>
-              <FormSwitchWrapper
-                value="acceptLongName"
-                id="acceptLongName"
-                name="acceptLongName"
-                checked={acceptLongName}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setAcceptLongName(event.target.checked);
-                  if (event.target.checked) {
-                    setNewFileName(currentItem);
-                  }
-                }}
-                label={"Use Original Name"}
-              />
-            </Grid>
-          </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
+        <FormLayout withBorders={false} containerPadding={false}>
+          <InputBox
+            id="download-filename"
+            name="download-filename"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setNewFileName(event.target.value);
+            }}
+            label=""
+            type={"text"}
+            value={newFileName}
+            error={
+              newFileName.length > 200 && !acceptLongName
+                ? "Filename should be less than 200 characters long."
+                : ""
+            }
+          />
+          <Switch
+            value="acceptLongName"
+            id="acceptLongName"
+            name="acceptLongName"
+            checked={acceptLongName}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setAcceptLongName(event.target.checked);
+              if (event.target.checked) {
+                setNewFileName(currentItem);
+              }
+            }}
+            label={"Use Original Name"}
+          />
+          <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
             <Button
               id={"download-file"}
               type="submit"
@@ -138,7 +111,7 @@ const RenameLongFileName = ({
               label={"Download File"}
             />
           </Grid>
-        </Grid>
+        </FormLayout>
       </form>
     </ModalWrapper>
   );

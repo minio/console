@@ -23,8 +23,15 @@ import {
   formFieldStyles,
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
-import CommentBoxWrapper from "../../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
-import { Switch, InputBox, Grid, Box, ReadBox, RadioGroup } from "mds";
+import {
+  Switch,
+  InputBox,
+  Grid,
+  Box,
+  ReadBox,
+  RadioGroup,
+  CommentBox,
+} from "mds";
 
 interface IConfMySqlProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -298,13 +305,13 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
-        <CommentBoxWrapper
+        <CommentBox
           id="comment"
           name="comment"
           label="Comment"
           placeholder="Enter custom notes if any"
           value={comment}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          onChange={(e) => {
             setComment(e.target.value);
           }}
         />
