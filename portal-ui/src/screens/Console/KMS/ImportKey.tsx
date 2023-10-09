@@ -19,22 +19,22 @@ import {
   AddAccessRuleIcon,
   BackLink,
   Button,
+  CodeEditor,
   FormLayout,
   Grid,
+  InputBox,
   PageLayout,
 } from "mds";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { useNavigate } from "react-router-dom";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import useApi from "../Common/Hooks/useApi";
 import KMSHelpBox from "./KMSHelpbox";
-import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
-import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 
 export const emptyContent = '{\n    "bytes": ""\n}';
 
@@ -107,48 +107,42 @@ const ImportKey = () => {
                 importRecord(e);
               }}
             >
-              <Grid container>
-                <Grid item xs={12}>
-                  <InputBoxWrapper
-                    id="key-name"
-                    name="key-name"
-                    label="Key Name"
-                    autoFocus={true}
-                    value={keyName}
-                    error={validateKeyName(keyName)}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setKeyName(e.target.value);
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <CodeMirrorWrapper
-                    label={"Set key Content"}
-                    value={keyContent}
-                    onChange={(value) => {
-                      setKeyContent(value);
-                    }}
-                    editorHeight={"350px"}
-                  />
-                </Grid>
-                <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
-                  <Button
-                    id={"clear"}
-                    type="button"
-                    variant="regular"
-                    onClick={resetForm}
-                    label={"Clear"}
-                  />
+              <InputBox
+                id="key-name"
+                name="key-name"
+                label="Key Name"
+                autoFocus={true}
+                value={keyName}
+                error={validateKeyName(keyName)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setKeyName(e.target.value);
+                }}
+              />
+              <CodeEditor
+                label={"Set key Content"}
+                value={keyContent}
+                onChange={(value) => {
+                  setKeyContent(value);
+                }}
+                editorHeight={"350px"}
+              />
+              <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+                <Button
+                  id={"clear"}
+                  type="button"
+                  variant="regular"
+                  onClick={resetForm}
+                  label={"Clear"}
+                />
 
-                  <Button
-                    id={"import-key"}
-                    type="submit"
-                    variant="callAction"
-                    color="primary"
-                    disabled={loading || !validSave}
-                    label={"Import"}
-                  />
-                </Grid>
+                <Button
+                  id={"import-key"}
+                  type="submit"
+                  variant="callAction"
+                  color="primary"
+                  disabled={loading || !validSave}
+                  label={"Import"}
+                />
               </Grid>
             </form>
           </FormLayout>

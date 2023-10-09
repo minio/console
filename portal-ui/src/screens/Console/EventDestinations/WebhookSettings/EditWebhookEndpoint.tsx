@@ -15,11 +15,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Button, ConsoleIcon, Grid, ProgressBar, Tooltip } from "mds";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import {
+  Button,
+  ConsoleIcon,
+  FormLayout,
+  Grid,
+  InputBox,
+  ProgressBar,
+  ReadBox,
+  Switch,
+  Tooltip,
+} from "mds";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Webhook } from "@mui/icons-material";
-import { formFieldStyles } from "../../Common/FormComponents/common/styleLibrary";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import CallToActionIcon from "@mui/icons-material/CallToAction";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import {
@@ -31,8 +40,6 @@ import {
 import { useAppDispatch } from "../../../../store";
 
 import { IConfigurationSys } from "../../Configurations/types";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 import { overrideFields } from "../../Configurations/utils";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
@@ -200,12 +207,12 @@ const EditEndpointModal = ({
         onClose={onCloseEndpoint}
         titleIcon={icon}
       >
-        {hasOverride.length > 0 ? (
-          <Fragment>
-            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-              <PredefinedList
+        <FormLayout withBorders={false} containerPadding={false}>
+          {hasOverride.length > 0 ? (
+            <Fragment>
+              <ReadBox
                 label={"Enabled"}
-                content={overrideValues.enable?.value || "-"}
+                sx={{ width: "100%" }}
                 actionButton={
                   <Grid
                     item
@@ -229,12 +236,12 @@ const EditEndpointModal = ({
                     </Tooltip>
                   </Grid>
                 }
-              />
-            </Grid>
-            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-              <PredefinedList
+              >
+                {overrideValues.enable?.value || "-"}
+              </ReadBox>
+              <ReadBox
                 label={"Endpoint"}
-                content={overrideValues.endpoint?.value || "-"}
+                sx={{ width: "100%" }}
                 actionButton={
                   <Grid
                     item
@@ -258,12 +265,12 @@ const EditEndpointModal = ({
                     </Tooltip>
                   </Grid>
                 }
-              />
-            </Grid>
-            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-              <PredefinedList
+              >
+                {overrideValues.endpoint?.value || "-"}
+              </ReadBox>
+              <ReadBox
                 label={"Auth Token"}
-                content={overrideValues.auth_token?.value || "-"}
+                sx={{ width: "100%" }}
                 actionButton={
                   <Grid
                     item
@@ -287,13 +294,13 @@ const EditEndpointModal = ({
                     </Tooltip>
                   </Grid>
                 }
-              />
-            </Grid>
-          </Fragment>
-        ) : (
-          <Fragment>
-            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-              <FormSwitchWrapper
+              >
+                {overrideValues.auth_token?.value || "-"}
+              </ReadBox>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Switch
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const value = e.target.checked ? "on" : "off";
                   setEndpointState(value);
@@ -304,9 +311,7 @@ const EditEndpointModal = ({
                 value={"switch_on"}
                 checked={endpointState === "on"}
               />
-            </Grid>
-            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-              <InputBoxWrapper
+              <InputBox
                 id="endpoint"
                 name="endpoint"
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -325,9 +330,7 @@ const EditEndpointModal = ({
                 }
                 required
               />
-            </Grid>
-            <Grid item xs={12} sx={{ ...formFieldStyles.formFieldRow }}>
-              <InputBoxWrapper
+              <InputBox
                 id="auth-token"
                 name="auth-token"
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -336,49 +339,39 @@ const EditEndpointModal = ({
                 label="Auth Token"
                 value={authToken}
               />
-            </Grid>
-            {saving && (
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  marginBottom: 10,
-                }}
-              >
-                <ProgressBar />
+              {saving && (
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    marginBottom: 10,
+                  }}
+                >
+                  <ProgressBar />
+                </Grid>
+              )}
+              <Grid item sx={modalStyleUtils.modalButtonBar}>
+                <Button
+                  id={"reset"}
+                  type="button"
+                  variant="regular"
+                  disabled={saving}
+                  onClick={onCloseEndpoint}
+                  label={"Cancel"}
+                />
+                <Button
+                  id={"save-lifecycle"}
+                  type="submit"
+                  variant="callAction"
+                  color="primary"
+                  disabled={saving || invalidInputs.length !== 0}
+                  label={"Update"}
+                  onClick={updateWebhook}
+                />
               </Grid>
-            )}
-            <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Button
-                id={"reset"}
-                type="button"
-                variant="regular"
-                disabled={saving}
-                onClick={onCloseEndpoint}
-                label={"Cancel"}
-                sx={{
-                  marginRight: 10,
-                }}
-              />
-              <Button
-                id={"save-lifecycle"}
-                type="submit"
-                variant="callAction"
-                color="primary"
-                disabled={saving || invalidInputs.length !== 0}
-                label={"Update"}
-                onClick={updateWebhook}
-              />
-            </Grid>
-          </Fragment>
-        )}
+            </Fragment>
+          )}
+        </FormLayout>
       </ModalWrapper>
     </Fragment>
   );

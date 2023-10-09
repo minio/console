@@ -18,13 +18,21 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-import { Box, Grid, InputBox, RadioGroup, ReadBox, Select, Switch } from "mds";
+import {
+  Box,
+  CommentBox,
+  Grid,
+  InputBox,
+  RadioGroup,
+  ReadBox,
+  Select,
+  Switch,
+} from "mds";
 import { IElementValue } from "../../Configurations/types";
 import {
   formFieldStyles,
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
-import CommentBoxWrapper from "../../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
 
 interface IConfPostgresProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -385,13 +393,13 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
         />
       </Grid>
       <Grid item xs={12} className={classes.formFieldRow}>
-        <CommentBoxWrapper
+        <CommentBox
           id="comment"
           name="comment"
           label="Comment"
           placeholder="Enter custom notes if any"
           value={comment}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          onChange={(e) => {
             setComment(e.target.value);
           }}
         />

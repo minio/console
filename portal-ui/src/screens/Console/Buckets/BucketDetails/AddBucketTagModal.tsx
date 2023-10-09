@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { AddNewTagIcon, Button } from "mds";
-import { Grid } from "@mui/material";
+import { AddNewTagIcon, Box, Button, FormLayout, Grid, InputBox } from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -25,7 +24,6 @@ import {
   modalStyleUtils,
   spacingUtils,
 } from "../../Common/FormComponents/common/styleLibrary";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
@@ -96,35 +94,31 @@ const AddBucketTagModal = ({
       }}
       titleIcon={<AddNewTagIcon />}
     >
-      <Grid container>
-        <div className={classes.spacerBottom}>
+      <FormLayout withBorders={false} containerPadding={false}>
+        <Box sx={{ marginBottom: 15 }}>
           <strong>Bucket</strong>: {bucketName}
-        </div>
-        <Grid item xs={12} className={classes.formFieldRow}>
-          <InputBoxWrapper
-            value={newKey}
-            label={"New Tag Key"}
-            id={"newTagKey"}
-            name={"newTagKey"}
-            placeholder={"Enter New Tag Key"}
-            onChange={(e: any) => {
-              setNewKey(e.target.value);
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} className={classes.formFieldRow}>
-          <InputBoxWrapper
-            value={newLabel}
-            label={"New Tag Label"}
-            id={"newTagLabel"}
-            name={"newTagLabel"}
-            placeholder={"Enter New Tag Label"}
-            onChange={(e: any) => {
-              setNewLabel(e.target.value);
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} className={classes.modalButtonBar}>
+        </Box>
+        <InputBox
+          value={newKey}
+          label={"New Tag Key"}
+          id={"newTagKey"}
+          name={"newTagKey"}
+          placeholder={"Enter New Tag Key"}
+          onChange={(e: any) => {
+            setNewKey(e.target.value);
+          }}
+        />
+        <InputBox
+          value={newLabel}
+          label={"New Tag Label"}
+          id={"newTagLabel"}
+          name={"newTagLabel"}
+          placeholder={"Enter New Tag Label"}
+          onChange={(e: any) => {
+            setNewLabel(e.target.value);
+          }}
+        />
+        <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
           <Button
             id={"clear"}
             type="button"
@@ -144,7 +138,7 @@ const AddBucketTagModal = ({
             label={"Save"}
           />
         </Grid>
-      </Grid>
+      </FormLayout>
     </ModalWrapper>
   );
 };

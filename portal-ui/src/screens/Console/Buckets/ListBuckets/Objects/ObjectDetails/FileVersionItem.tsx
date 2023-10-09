@@ -27,10 +27,10 @@ import {
   IconButton,
   Tooltip,
   Grid,
+  Checkbox,
 } from "mds";
 import { niceBytes } from "../../../../../../common/utils";
 import SpecificVersionPill from "./SpecificVersionPill";
-import CheckboxWrapper from "../../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import { BucketObject } from "api/consoleApi";
 
 interface IFileVersionItem {
@@ -242,24 +242,19 @@ const FileVersionItem = ({
               <Grid container>
                 <Grid item xs md={4} className={"versionContainer"}>
                   {checkable && (
-                    <CheckboxWrapper
+                    <Checkbox
                       checked={isChecked}
                       id={`select-${versionInfo.version_id}`}
-                      label={""}
                       name={`select-${versionInfo.version_id}`}
                       onChange={(e) => {
                         e.stopPropagation();
-                        e.preventDefault();
                         onCheck(versionInfo.version_id || "");
                       }}
                       value={versionInfo.version_id || ""}
                       disabled={versionInfo.is_delete_marker}
-                      overrideCheckboxStyles={{
-                        paddingLeft: 0,
-                        height: 34,
-                        width: 25,
+                      sx={{
+                        width: "initial",
                       }}
-                      noTopMargin
                     />
                   )}
                   {displayFileIconName(fileName, true)} v{index.toString()}

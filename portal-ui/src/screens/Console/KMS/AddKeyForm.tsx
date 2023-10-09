@@ -15,12 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { AddAccessRuleIcon, Button, FormLayout, PageLayout, Grid } from "mds";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import {
+  AddAccessRuleIcon,
+  Button,
+  FormLayout,
+  PageLayout,
+  Grid,
+  InputBox,
+} from "mds";
 import { ErrorResponseHandler } from "../../../common/types";
+import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import useApi from "../Common/Hooks/useApi";
 import KMSHelpBox from "./KMSHelpbox";
-import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 
 interface IAddKeyFormProps {
   onSuccess: () => void;
@@ -71,7 +77,7 @@ const AddKeyForm = ({ onSuccess, onError }: IAddKeyFormProps) => {
         >
           <Grid container>
             <Grid item xs={12}>
-              <InputBoxWrapper
+              <InputBox
                 id="key-name"
                 name="key-name"
                 label="Key Name"

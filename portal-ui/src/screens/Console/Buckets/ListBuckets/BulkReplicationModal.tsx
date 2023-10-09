@@ -15,7 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Select, InputBox, Switch, FormLayout, Tooltip, Grid } from "mds";
+import {
+  FormLayout,
+  Grid,
+  InputBox,
+  ReadBox,
+  Select,
+  Switch,
+  Tooltip,
+} from "mds";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
@@ -27,7 +35,6 @@ import {
   wizardCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
@@ -325,10 +332,12 @@ const AddBulkReplicationModal = ({
             componentRender: (
               <Fragment>
                 <Grid item xs={12}>
-                  <PredefinedList
+                  <ReadBox
+                    sx={{ width: "100%" }}
                     label="Local Buckets to replicate"
-                    content={bucketsToAlter.join(", ")}
-                  />
+                  >
+                    {bucketsToAlter.join(", ")}
+                  </ReadBox>
                 </Grid>
                 <h4>Remote Endpoint Configuration</h4>
                 <span className={classes.descriptionText}>
