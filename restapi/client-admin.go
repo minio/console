@@ -512,12 +512,6 @@ func GetConsoleHTTPClient(address string, clientIP string) *http.Client {
 
 	client := PrepareConsoleHTTPClient(isLocalIPAddress(address), clientIP)
 
-	if client.Transport != nil {
-		if transport, ok := client.Transport.(*ConsoleTransport); ok {
-			transport.ClientIP = clientIP
-		}
-	}
-
 	return client
 }
 
