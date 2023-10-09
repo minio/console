@@ -123,7 +123,7 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 		},
 	}
 
-	srInfo, err := adminClient.addSiteReplicationInfo(ctx, sites)
+	srInfo, err := adminClient.addSiteReplicationInfo(ctx, sites, madmin.SRAddOptions{})
 	assert.Nil(err)
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
 }
@@ -159,7 +159,7 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 		DeploymentID: "12345",
 	}
 
-	srInfo, err := adminClient.editSiteReplicationInfo(ctx, site)
+	srInfo, err := adminClient.editSiteReplicationInfo(ctx, site, madmin.SREditOptions{})
 	assert.Nil(err)
 	assert.Equal(expValueMock, srInfo, fmt.Sprintf("Failed on %s: length of lists is not the same", function))
 }
