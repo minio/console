@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+
 import get from "lodash/get";
 import {
   Button,
@@ -44,6 +45,7 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { IAM_PAGES } from "common/SecureComponent/permissions";
 
 interface IReplicationModal {
   open: boolean;
@@ -218,7 +220,7 @@ const AddLifecycleModal = ({
               currentValue={ilmType}
               id="ilm_type"
               name="ilm_type"
-              label="Type of lifecycle"
+              label="Type of Lifecycle"
               onChange={(e) => {
                 setIlmType(e.target.value as "expiry" | "transition");
               }}
@@ -226,6 +228,33 @@ const AddLifecycleModal = ({
                 { value: "expiry", label: "Expiry" },
                 { value: "transition", label: "Transition" },
               ]}
+              helpTip={
+                <Fragment>
+                  Select{" "}
+                  <a
+                    target="blank"
+                    href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/create-lifecycle-management-expiration-rule.html"
+                  >
+                    Expiry
+                  </a>{" "}
+                  to delete Objects per this rule. Select{" "}
+                  <a
+                    target="blank"
+                    href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/transition-objects-to-minio.html"
+                  >
+                    Transition
+                  </a>{" "}
+                  to move Objects to a remote storage{" "}
+                  <a
+                    target="blank"
+                    href="https://min.io/docs/minio/windows/administration/object-management/transition-objects-to-minio.html#configure-the-remote-storage-tier"
+                  >
+                    Tier
+                  </a>{" "}
+                  per this rule.
+                </Fragment>
+              }
+              helpTipPlacement="right"
             />
             {versioningInfo?.status === "Enabled" && (
               <Select
@@ -240,6 +269,20 @@ const AddLifecycleModal = ({
                   { value: "current", label: "Current Version" },
                   { value: "noncurrent", label: "Non-Current Version" },
                 ]}
+                helpTip={
+                  <Fragment>
+                    Select whether to apply the rule to current or non-current
+                    Object
+                    <a
+                      target="blank"
+                      href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/create-lifecycle-management-expiration-rule.html#expire-versioned-objects"
+                    >
+                      {" "}
+                      Versions
+                    </a>
+                  </Fragment>
+                }
+                helpTipPlacement="right"
               />
             )}
 
@@ -276,6 +319,20 @@ const AddLifecycleModal = ({
                   setStorageClass(value as string);
                 }}
                 options={tiersList}
+                helpTip={
+                  <Fragment>
+                    Configure a{" "}
+                    <a
+                      href={IAM_PAGES.TIERS_ADD}
+                      color="secondary"
+                      style={{ textDecoration: "underline" }}
+                    >
+                      remote tier
+                    </a>{" "}
+                    to receive transitioned Objects
+                  </Fragment>
+                }
+                helpTipPlacement="right"
               />
             )}
             <Grid item xs={12} sx={formFieldRowFilter}>

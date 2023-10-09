@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+
 import get from "lodash/get";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -116,7 +117,6 @@ const BucketSummary = () => {
     useState<boolean>(false);
   const [enableVersioningOpen, setEnableVersioningOpen] =
     useState<boolean>(false);
-
   useEffect(() => {
     dispatch(setHelpName("bucket_detail_summary"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -441,6 +441,26 @@ const BucketSummary = () => {
                       setAccessPolicyScreenOpen(true);
                     }}
                     isLoading={bucketLoading}
+                    helpTip={
+                      <Fragment>
+                        <strong>Private</strong> policy limits access to
+                        credentialled accounts with appropriate permissions
+                        <br />
+                        <strong>Public</strong> policy anyone will be able to
+                        upload, download and delete files from this Bucket once
+                        logged in
+                        <br />
+                        <strong>Custom</strong> policy can be written to define
+                        which accounts are authorized to access this Bucket
+                        <br />
+                        <br />
+                        To allow Bucket access without credentials, use the{" "}
+                        <a href={`/buckets/${bucketName}/admin/prefix`}>
+                          Anonymous
+                        </a>{" "}
+                        setting
+                      </Fragment>
+                    }
                   />
                 </SecureComponent>
 
@@ -463,6 +483,26 @@ const BucketSummary = () => {
                       setEnableEncryptionScreenOpen(true);
                     }}
                     isLoading={loadingEncryption}
+                    helpTip={
+                      <Fragment>
+                        MinIO supports enabling automatic{" "}
+                        <a
+                          href="https://min.io/docs/minio/kubernetes/upstream/administration/server-side-encryption/server-side-encryption-sse-kms.html"
+                          target="blank"
+                        >
+                          SSE-KMS
+                        </a>{" "}
+                        and{" "}
+                        <a
+                          href="https://min.io/docs/minio/kubernetes/upstream/administration/server-side-encryption/server-side-encryption-sse-s3.html"
+                          target="blank"
+                        >
+                          SSE-S3
+                        </a>{" "}
+                        encryption of all objects written to a bucket using a
+                        specific External Key (EK) stored on the external KMS.
+                      </Fragment>
+                    }
                   />
                 </SecureComponent>
 
@@ -526,6 +566,19 @@ const BucketSummary = () => {
                   value={quotaEnabled ? "Enabled" : "Disabled"}
                   onEdit={setBucketQuota}
                   isLoading={loadingQuota}
+                  helpTip={
+                    <Fragment>
+                      Setting a{" "}
+                      <a
+                        href="https://min.io/docs/minio/linux/reference/minio-mc/mc-quota-set.html"
+                        target="blank"
+                      >
+                        quota
+                      </a>{" "}
+                      assigns a hard limit to a bucket beyond which MinIO does
+                      not allow writes.
+                    </Fragment>
+                  }
                 />
               </Box>
               <Box
@@ -618,6 +671,19 @@ const BucketSummary = () => {
                       setRetentionConfigOpen(true);
                     }}
                     isLoading={loadingRetention}
+                    helpTip={
+                      <Fragment>
+                        MinIO{" "}
+                        <a
+                          target="blank"
+                          href="https://min.io/docs/minio/macos/administration/object-management.html#object-retention"
+                        >
+                          Object Locking
+                        </a>{" "}
+                        enforces Write-Once Read-Many (WORM) immutability to
+                        protect versioned objects from deletion.
+                      </Fragment>
+                    }
                   />
 
                   <ValuePair

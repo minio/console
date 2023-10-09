@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createUserAsync, resetFormAsync } from "./thunk/AddUsersThunk";
 
@@ -21,7 +22,6 @@ export interface ICreateUser {
   secretKey: string;
   selectedGroups: string[];
   selectedPolicies: string[];
-  showPassword: boolean;
   sendEnabled: boolean;
   addLoading: boolean;
   apinoerror: boolean;
@@ -30,7 +30,6 @@ export interface ICreateUser {
 
 const initialState: ICreateUser = {
   addLoading: false,
-  showPassword: false,
   sendEnabled: false,
   apinoerror: false,
   userName: "",
@@ -60,9 +59,6 @@ export const createUserSlice = createSlice({
     setSelectedPolicies: (state, action: PayloadAction<string[]>) => {
       state.selectedPolicies = action.payload;
     },
-    setShowPassword: (state, action: PayloadAction<boolean>) => {
-      state.showPassword = action.payload;
-    },
     setSendEnabled: (state) => {
       state.sendEnabled = state.userName.trim() !== "";
     },
@@ -77,7 +73,6 @@ export const createUserSlice = createSlice({
         state.selectedGroups = [];
         state.secretKey = "";
         state.selectedPolicies = [];
-        state.showPassword = false;
       })
       .addCase(createUserAsync.pending, (state, action) => {
         state.addLoading = true;
@@ -96,7 +91,6 @@ export const {
   setSelectedGroups,
   setSecretKey,
   setSelectedPolicies,
-  setShowPassword,
   setAddLoading,
   setSendEnabled,
   setApinoerror,

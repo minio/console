@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import {
   AddAccessRuleIcon,
@@ -115,6 +115,13 @@ const AddAccessRule = ({
           value={selectedAccess}
           options={accessOptions}
           disabled={false}
+          helpTip={
+            <Fragment>
+              Select the desired level of access available to unauthenticated
+              Users
+            </Fragment>
+          }
+          helpTipPlacement="right"
         />
         <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
           <Button

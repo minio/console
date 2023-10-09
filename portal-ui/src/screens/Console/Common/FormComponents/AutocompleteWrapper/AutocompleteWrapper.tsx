@@ -33,7 +33,7 @@ import {
   inputFieldStyles,
   tooltipHelper,
 } from "../common/styleLibrary";
-import { HelpIcon } from "mds";
+import { HelpIcon, HelpTip } from "mds";
 
 interface selectorTypes {
   label: string;
@@ -50,6 +50,7 @@ interface SelectProps {
   onChange: (returnedValue: string) => void;
   disabled?: boolean;
   classes: any;
+  helptip?: any;
 }
 
 const styles = (theme: Theme) =>
@@ -85,6 +86,7 @@ const AutocompleteWrapper = ({
   tooltip = "",
   value,
   disabled = false,
+  helptip,
 }: SelectProps) => {
   const [internalValue, setInternalValue] = useState<selectorTypes>(options[0]);
 
@@ -100,7 +102,10 @@ const AutocompleteWrapper = ({
       <Grid item xs={12} className={classes.fieldContainer}>
         {label !== "" && (
           <InputLabel htmlFor={id} className={classes.inputLabel}>
-            <span>{label}</span>
+            <HelpTip content={helptip} placement="right">
+              {" "}
+              <span>{label}</span>
+            </HelpTip>
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>
                 <Tooltip title={tooltip} placement="top-start">
