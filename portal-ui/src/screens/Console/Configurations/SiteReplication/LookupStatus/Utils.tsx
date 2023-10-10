@@ -1,6 +1,6 @@
-import { Box } from "@mui/material";
 import React from "react";
 import { StatsResponseType } from "../SiteReplicationStatus";
+import { Box } from "mds";
 
 export function syncStatus(mismatch: boolean, set: boolean): string | boolean {
   if (!set) {

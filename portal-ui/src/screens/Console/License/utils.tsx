@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Box } from "@mui/material";
 import LicenseLink from "./LicenseLink";
 import { openFAQModal } from "./licenseSlice";
 import store from "../../../store";
 import FAQModal from "./FAQModal";
+import { Box } from "mds";
 
 export const LICENSE_PLANS = {
   COMMUNITY: "community",

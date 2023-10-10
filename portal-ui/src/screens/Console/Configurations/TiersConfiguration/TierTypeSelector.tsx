@@ -16,11 +16,19 @@
 
 import React, { Fragment, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box } from "@mui/material";
+
 import { tierTypes } from "./utils";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import TierTypeCard from "./TierTypeCard";
-import { BackLink, FormLayout, HelpBox, PageLayout, TiersIcon } from "mds";
+import {
+  BackLink,
+  Box,
+  breakPoints,
+  FormLayout,
+  HelpBox,
+  PageLayout,
+  TiersIcon,
+} from "mds";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
 import { setHelpName } from "../../../../systemSlice";
@@ -116,11 +124,9 @@ const TierTypeSelector = () => {
               margin: "15px",
               display: "grid",
               gridGap: "20px",
-              gridTemplateColumns: {
-                xs: "repeat(1, 1fr)",
-                sm: "repeat(1, 1fr)",
-                md: "repeat(2, 1fr)",
-                lg: "repeat(2, 1fr)",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              [`@media (max-width: ${breakPoints.md}px)`]: {
+                gridTemplateColumns: "repeat(1, 1fr)",
               },
             }}
           >
