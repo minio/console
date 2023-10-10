@@ -15,11 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-
-import Grid from "@mui/material/Grid";
+import { ArrowIcon, Button, PageLayout, ProgressBar, Grid } from "mds";
 import { SubnetInfo } from "./types";
 import api from "../../../common/api";
-import { ArrowIcon, Button, PageLayout, ProgressBar } from "mds";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import LicensePlans from "./LicensePlans";
 import { useNavigate } from "react-router-dom";
