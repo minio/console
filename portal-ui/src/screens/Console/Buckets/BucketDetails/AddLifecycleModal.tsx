@@ -20,12 +20,13 @@ import get from "lodash/get";
 import {
   Button,
   FormLayout,
+  Grid,
   InputBox,
   LifecycleConfigIcon,
+  ProgressBar,
   RadioGroup,
   Select,
-  Grid,
-  ProgressBar,
+  Switch,
 } from "mds";
 import { useSelector } from "react-redux";
 import { api } from "api";
@@ -44,7 +45,6 @@ import { ITiersDropDown } from "../types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { IAM_PAGES } from "common/SecureComponent/permissions";
 
 interface IReplicationModal {
@@ -376,7 +376,7 @@ const AddLifecycleModal = ({
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid item xs={12}>
-                      <FormSwitchWrapper
+                      <Switch
                         value="expired_delete_marker"
                         id="expired_delete_marker"
                         name="expired_delete_marker"
