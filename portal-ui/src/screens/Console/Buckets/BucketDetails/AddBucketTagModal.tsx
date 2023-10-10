@@ -16,14 +16,7 @@
 
 import React, { useState } from "react";
 import { AddNewTagIcon, Box, Button, FormLayout, Grid, InputBox } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
@@ -35,24 +28,13 @@ interface IBucketTagModal {
   currentTags: any;
   bucketName: string;
   onCloseAndUpdate: (refresh: boolean) => void;
-
-  classes: any;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    ...spacingUtils,
-  });
 
 const AddBucketTagModal = ({
   modalOpen,
   currentTags,
   onCloseAndUpdate,
   bucketName,
-
-  classes,
 }: IBucketTagModal) => {
   const dispatch = useAppDispatch();
   const [newKey, setNewKey] = useState<string>("");
@@ -143,4 +125,4 @@ const AddBucketTagModal = ({
   );
 };
 
-export default withStyles(styles)(AddBucketTagModal);
+export default AddBucketTagModal;

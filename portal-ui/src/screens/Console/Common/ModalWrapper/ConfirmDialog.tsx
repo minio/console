@@ -15,11 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Button, ModalBox, Box } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { deleteDialogStyles } from "../FormComponents/common/styleLibrary";
+import { Box, Button, ModalBox } from "mds";
+
 interface ButtonProps {
   label?: string;
   variant?: "regular" | "callAction" | "secondary";
@@ -30,17 +27,11 @@ interface ButtonProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...deleteDialogStyles,
-  });
-
 type ConfirmDialogProps = {
   isOpen?: boolean;
   onClose: () => void;
   onCancel?: () => void;
   onConfirm: () => void;
-  classes?: any;
   title: string;
   isLoading?: boolean;
   confirmationContent: React.ReactNode | React.ReactNode[];
@@ -59,7 +50,6 @@ const ConfirmDialog = ({
   onClose,
   onCancel,
   onConfirm,
-  classes = {},
   title = "",
   isLoading,
   confirmationContent,
@@ -78,7 +68,7 @@ const ConfirmDialog = ({
       open={isOpen}
       customMaxWidth={510}
     >
-      <Box className={classes.content}>{confirmationContent}</Box>
+      <Box>{confirmationContent}</Box>
       <Box
         sx={{
           display: "flex",
@@ -110,4 +100,4 @@ const ConfirmDialog = ({
   );
 };
 
-export default withStyles(styles)(ConfirmDialog);
+export default ConfirmDialog;

@@ -16,7 +16,7 @@
 
 import React, { Fragment, useState } from "react";
 import get from "lodash/get";
-import { Box, Grid } from "@mui/material";
+import styled from "styled-components";
 import {
   AddNewTagIcon,
   Button,
@@ -24,83 +24,43 @@ import {
   EditTagIcon,
   InputBox,
   SectionTitle,
+  Box,
+  Grid,
+  Tag,
+  FormLayout,
 } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../../../../Common/FormComponents/common/styleLibrary";
-import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
-import { SecureComponent } from "../../../../../../common/SecureComponent";
-import Chip from "@mui/material/Chip";
-import CloseIcon from "@mui/icons-material/Close";
-import {
-  selDistSet,
-  setModalErrorSnackMessage,
-} from "../../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../../store";
 import { BucketObject } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { encodeURLString } from "common/utils";
 import { useSelector } from "react-redux";
+import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
+import { modalStyleUtils } from "../../../../Common/FormComponents/common/styleLibrary";
+import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
+import { SecureComponent } from "../../../../../../common/SecureComponent";
+import {
+  selDistSet,
+  setModalErrorSnackMessage,
+} from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
 
 interface ITagModal {
   modalOpen: boolean;
   bucketName: string;
   actualInfo: BucketObject;
   onCloseAndUpdate: (refresh: boolean) => void;
-  classes: any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    newTileHeader: {
-      fontSize: 18,
-      fontWeight: "bold",
-      color: "#000",
-      margin: "35px 0",
-      paddingBottom: 15,
-      display: "flex",
-      alignItems: "center",
-      "& > svg": {
-        marginRight: 10,
-      },
-    },
-    tagsForLabel: {
-      fontSize: 16,
-      margin: "20px 0 30px",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      width: "100%",
-    },
-    currentTagsContainer: {
-      fontSize: 14,
-      fontWeight: "normal",
-    },
-    noTagsForObject: {
-      color: "#858585",
-    },
-    deleteTag: {
-      color: "#C83B51",
-      marginLeft: 5,
-    },
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    ...spacingUtils,
-  });
+const DeleteTag = styled.b(({ theme }) => ({
+  color: get(theme, "signalColors.danger", "#C83B51"),
+  marginLeft: 5,
+}));
 
 const AddTagModal = ({
   modalOpen,
   onCloseAndUpdate,
   bucketName,
   actualInfo,
-  classes,
 }: ITagModal) => {
   const dispatch = useAppDispatch();
   const distributedSetup = useSelector(selDistSet);
@@ -184,9 +144,18 @@ const AddTagModal = ({
   };
 
   const tagsFor = (plural: boolean) => (
-    <div className={classes.tagsForLabel}>
+    <Box
+      sx={{
+        fontSize: 16,
+        margin: "20px 0 30px",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        width: "100%",
+      }}
+    >
       Tag{plural ? "s" : ""} for: <strong>{currentItem}</strong>
-    </div>
+    </Box>
   );
 
   return (
@@ -197,24 +166,19 @@ const AddTagModal = ({
         onClose={() => {
           onCloseAndUpdate(true);
         }}
-        titleIcon={
-          deleteEnabled ? (
-            <DisabledIcon style={{ fill: "#C83B51" }} />
-          ) : (
-            <EditTagIcon />
-          )
-        }
+        iconColor={deleteEnabled ? "delete" : "default"}
+        titleIcon={deleteEnabled ? <DisabledIcon /> : <EditTagIcon />}
       >
         {deleteEnabled ? (
           <Fragment>
             <Grid container>
               {tagsFor(false)}
               Are you sure you want to delete the tag{" "}
-              <b className={classes.deleteTag}>
+              <DeleteTag>
                 {deleteKey} : {deleteLabel}
-              </b>{" "}
+              </DeleteTag>{" "}
               ?
-              <Grid item xs={12} className={classes.modalButtonBar}>
+              <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
                 <Button
                   id={"cancel"}
                   type="button"
@@ -233,7 +197,7 @@ const AddTagModal = ({
             </Grid>
           </Fragment>
         ) : (
-          <Grid container>
+          <Box>
             <SecureComponent
               scopes={[
                 IAM_SCOPES.S3_GET_OBJECT_TAGGING,
@@ -249,11 +213,16 @@ const AddTagModal = ({
                 }}
               >
                 {tagsFor(true)}
-                <div className={classes.currentTagsContainer}>
+                <Box
+                  sx={{
+                    fontSize: 14,
+                    fontWeight: "normal",
+                  }}
+                >
                   Current Tags:
                   <br />
                   {currTagKeys.length === 0 ? (
-                    <span className={classes.noTagsForObject}>
+                    <span className={"muted"}>
                       There are no tags for this object
                     </span>
                   ) : (
@@ -273,16 +242,11 @@ const AddTagModal = ({
                               onDelete: null,
                             }}
                           >
-                            <Chip
-                              style={{
-                                textTransform: "none",
-                                marginRight: "5px",
-                                marginBottom: "5px",
-                              }}
-                              size="small"
+                            <Tag
+                              id={`${tagKey} : ${tag}`}
                               label={`${tagKey} : ${tag}`}
-                              color="primary"
-                              deleteIcon={<CloseIcon />}
+                              variant={"regular"}
+                              color={"default"}
                               onDelete={() => {
                                 onDeleteTag(tagKey, tag);
                               }}
@@ -293,7 +257,7 @@ const AddTagModal = ({
                       return null;
                     })}
                   </Box>
-                </div>
+                </Box>
               </Box>
             </SecureComponent>
             <SecureComponent
@@ -304,11 +268,11 @@ const AddTagModal = ({
               resource={bucketName}
               errorProps={{ disabled: true, onClick: null }}
             >
-              <Grid container>
+              <Box>
                 <SectionTitle icon={<AddNewTagIcon />} separator={false}>
                   Add New Tag
                 </SectionTitle>
-                <Grid item xs={12} className={classes.formFieldRow}>
+                <FormLayout containerPadding={false} withBorders={false}>
                   <InputBox
                     value={newKey}
                     label={"Tag Key"}
@@ -319,8 +283,6 @@ const AddTagModal = ({
                       setNewKey(e.target.value);
                     }}
                   />
-                </Grid>
-                <Grid item xs={12} className={classes.formFieldRow}>
                   <InputBox
                     value={newLabel}
                     label={"Tag Label"}
@@ -331,36 +293,36 @@ const AddTagModal = ({
                       setNewLabel(e.target.value);
                     }}
                   />
-                </Grid>
-                <Grid item xs={12} className={classes.modalButtonBar}>
-                  <Button
-                    id={"clear"}
-                    type="button"
-                    variant="regular"
-                    color="primary"
-                    onClick={resetForm}
-                    label={"Clear"}
-                  />
-                  <Button
-                    type="submit"
-                    variant="callAction"
-                    disabled={
-                      newLabel.trim() === "" ||
-                      newKey.trim() === "" ||
-                      isSending
-                    }
-                    onClick={addTagProcess}
-                    id="saveTag"
-                    label={"Save"}
-                  />
-                </Grid>
-              </Grid>
+                  <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+                    <Button
+                      id={"clear"}
+                      type="button"
+                      variant="regular"
+                      color="primary"
+                      onClick={resetForm}
+                      label={"Clear"}
+                    />
+                    <Button
+                      type="submit"
+                      variant="callAction"
+                      disabled={
+                        newLabel.trim() === "" ||
+                        newKey.trim() === "" ||
+                        isSending
+                      }
+                      onClick={addTagProcess}
+                      id="saveTag"
+                      label={"Save"}
+                    />
+                  </Grid>
+                </FormLayout>
+              </Box>
             </SecureComponent>
-          </Grid>
+          </Box>
         )}
       </ModalWrapper>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(AddTagModal);
+export default AddTagModal;

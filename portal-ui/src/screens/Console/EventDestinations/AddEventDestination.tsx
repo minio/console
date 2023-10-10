@@ -15,13 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-
 import get from "lodash/get";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { BackLink, Button, FormLayout, Grid, InputBox, PageLayout } from "mds";
-
+import { useNavigate, useParams } from "react-router-dom";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
 import {
   destinationList,
   notificationEndpointsFields,
@@ -29,29 +27,19 @@ import {
   notifyPostgres,
   removeEmptyFields,
 } from "./utils";
-import {
-  modalBasic,
-  settingsCommon,
-} from "../Common/FormComponents/common/styleLibrary";
-
 import { IElementValue } from "../Configurations/types";
-
-import withSuspense from "../Common/Components/withSuspense";
-
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import {
   setErrorSnackMessage,
   setHelpName,
   setServerNeedsRestart,
 } from "../../../systemSlice";
-import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../../store";
+import { setDestinationLoading } from "./destinationsSlice";
+import withSuspense from "../Common/Components/withSuspense";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import TargetTitle from "./TargetTitle";
-import { setDestinationLoading } from "./destinationsSlice";
 import HelpMenu from "../HelpMenu";
-import { api } from "api";
-import { errorToHandler } from "api/errors";
 
 const ConfMySql = withSuspense(
   React.lazy(() => import("./CustomForms/ConfMySql")),
@@ -65,20 +53,12 @@ const ConfPostgres = withSuspense(
   React.lazy(() => import("./CustomForms/ConfPostgres")),
 );
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalBasic,
-    ...settingsCommon,
-  });
-
 interface IAddNotificationEndpointProps {
   saveAndRefresh: any;
-  classes: any;
 }
 
 const AddEventDestination = ({
   saveAndRefresh,
-  classes,
 }: IAddNotificationEndpointProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -187,23 +167,16 @@ const AddEventDestination = ({
                 )}
               </Grid>
               <FormLayout>
-                <Grid
-                  item
-                  xs={12}
-                  className={classes.formFieldRow}
-                  sx={{ marginBottom: "12px" }}
-                >
-                  <InputBox
-                    id={"identifier-field"}
-                    name={"identifier-field"}
-                    label={"Identifier"}
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    tooltip={"Unique descriptive string for this destination"}
-                    placeholder="Enter Destination Identifier"
-                    required
-                  />
-                </Grid>
+                <InputBox
+                  id={"identifier-field"}
+                  name={"identifier-field"}
+                  label={"Identifier"}
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  tooltip={"Unique descriptive string for this destination"}
+                  placeholder="Enter Destination Identifier"
+                  required
+                />
                 <Grid item xs={12}>
                   {srvComponent}
                 </Grid>
@@ -233,4 +206,4 @@ const AddEventDestination = ({
   );
 };
 
-export default withStyles(styles)(AddEventDestination);
+export default AddEventDestination;

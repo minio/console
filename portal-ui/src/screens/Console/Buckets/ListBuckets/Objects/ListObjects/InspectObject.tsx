@@ -23,7 +23,6 @@ import {
   Grid,
   Box,
 } from "mds";
-import withStyles from "@mui/styles/withStyles";
 import {
   decodeURLString,
   deleteCookie,
@@ -32,27 +31,12 @@ import {
   performDownload,
 } from "../../../../../../common/utils";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../../../../Common/FormComponents/common/styleLibrary";
-import { DialogContentText } from "@mui/material";
+import { modalStyleUtils } from "../../../../Common/FormComponents/common/styleLibrary";
 import KeyRevealer from "../../../../Tools/KeyRevealer";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    ...spacingUtils,
-  });
-
 interface IInspectObjectProps {
-  classes: any;
   closeInspectModalAndRefresh: (refresh: boolean) => void;
   inspectOpen: boolean;
   inspectPath: string;
@@ -60,7 +44,6 @@ interface IInspectObjectProps {
 }
 
 const InspectObject = ({
-  classes,
   closeInspectModalAndRefresh,
   inspectOpen,
   inspectPath,
@@ -156,7 +139,7 @@ const InspectObject = ({
               }}
               description=""
             />
-            <Grid item xs={12} className={classes.modalButtonBar}>
+            <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
               <Button
                 id={"inspect"}
                 type="submit"
@@ -176,20 +159,18 @@ const InspectObject = ({
           onClose={onCloseDecKeyModal}
           titleIcon={<PasswordKeyIcon />}
         >
-          <DialogContentText>
-            <Box>
-              This will be displayed only once. It cannot be recovered.
-              <br />
-              Use secure medium to share this key.
-            </Box>
-            <Box>
-              <KeyRevealer value={decryptionKey} />
-            </Box>
-          </DialogContentText>
+          <Box>
+            This will be displayed only once. It cannot be recovered.
+            <br />
+            Use secure medium to share this key.
+          </Box>
+          <Box>
+            <KeyRevealer value={decryptionKey} />
+          </Box>
         </ModalWrapper>
       ) : null}
     </React.Fragment>
   );
 };
 
-export default withStyles(styles)(InspectObject);
+export default InspectObject;

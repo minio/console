@@ -798,7 +798,7 @@ const ObjectDetailPanel = ({
               <SimpleHeader label={"Metadata"} icon={<MetadataIcon />} />
               <Box className={"detailContainer"}>
                 {actualInfo && metaData ? (
-                  <ObjectMetaData metaData={metaData} linear />
+                  <ObjectMetaData metaData={metaData} />
                 ) : null}
               </Box>
             </Fragment>

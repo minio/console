@@ -30,8 +30,6 @@ import {
   useRegisterActions,
 } from "kbar";
 import { Action } from "kbar/lib/types";
-import { Theme } from "@mui/material/styles";
-import makeStyles from "@mui/styles/makeStyles";
 import { routesAsKbarActions } from "./kbar-actions";
 
 import { Box, MenuExpandedIcon } from "mds";
@@ -39,21 +37,6 @@ import { useSelector } from "react-redux";
 import { selFeatures } from "./consoleSlice";
 import { Bucket } from "../../api/consoleApi";
 import { api } from "../../api";
-
-const useStyles = makeStyles((theme: Theme) => ({
-  resultItem: {
-    display: "flex",
-    gap: "8px",
-    alignItems: "center",
-    fontSize: 14,
-    flex: 1,
-    justifyContent: "space-between",
-    "& .min-icon": {
-      width: "17px",
-      height: "17px",
-    },
-  },
-}));
 
 const searchStyle = {
   padding: "12px 16px",
@@ -212,7 +195,6 @@ const ResultItem = React.forwardRef(
     },
     ref: React.Ref<HTMLDivElement>,
   ) => {
-    const classes = useStyles();
     const ancestors = React.useMemo(() => {
       if (!currentRootActionId) return action.ancestors;
       const index = action.ancestors.findIndex(
@@ -238,7 +220,20 @@ const ResultItem = React.forwardRef(
           cursor: "pointer",
         }}
       >
-        <div className={classes.resultItem}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: "8px",
+            alignItems: "center",
+            fontSize: 14,
+            flex: 1,
+            justifyContent: "space-between",
+            "& .min-icon": {
+              width: "17px",
+              height: "17px",
+            },
+          }}
+        >
           <Box sx={{ height: "15px", width: "15px", marginRight: "36px" }}>
             {action.icon && action.icon}
           </Box>
@@ -292,7 +287,7 @@ const ResultItem = React.forwardRef(
           >
             <MenuExpandedIcon />
           </Box>
-        </div>
+        </Box>
         {action.shortcut?.length ? (
           <div
             aria-hidden

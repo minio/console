@@ -37,6 +37,7 @@ interface IModalProps {
   children: any;
   wideLimit?: boolean;
   titleIcon?: React.ReactNode;
+  iconColor?: "default" | "delete" | "accept";
   sx?: CSSObject;
 }
 
@@ -54,6 +55,7 @@ const ModalWrapper = ({
   classes,
   wideLimit = true,
   titleIcon = null,
+  iconColor = "default",
   sx,
 }: IModalProps) => {
   const dispatch = useAppDispatch();
@@ -105,6 +107,7 @@ const ModalWrapper = ({
       titleIcon={titleIcon}
       widthLimit={wideLimit}
       sx={sx}
+      iconColor={iconColor}
     >
       <MainError isModal={true} />
       <Snackbar

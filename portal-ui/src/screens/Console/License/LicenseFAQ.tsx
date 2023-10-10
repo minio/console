@@ -15,25 +15,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import makeStyles from "@mui/styles/makeStyles";
+import styled from "styled-components";
+import get from "lodash/get";
 
-const useStyles = makeStyles((theme) => ({
-  linkText: {
-    color: "#2781B0",
-    fontWeight: 600,
-  },
+const LinkElement = styled.a(({ theme }) => ({
+  color: get(theme, "signalColors.info", "#2781B0"),
+  fontWeight: 600,
 }));
 
-const makeLink = (text: string, link: string, className: string) => {
+const makeLink = (text: string, link: string) => {
   return (
-    <a href={link} target={"_blank"} className={className}>
+    <LinkElement href={link} target={"_blank"}>
       {text}
-    </a>
+    </LinkElement>
   );
 };
 
 const LicenseFAQ = () => {
-  const classes = useStyles();
   return (
     <Fragment>
       <h2>What is the GNU AGPL v3?</h2>
@@ -43,20 +41,14 @@ const LicenseFAQ = () => {
         {makeLink(
           "FOSS",
           "https://en.wikipedia.org/wiki/Free_and_open-source_software",
-          classes.linkText,
         )}{" "}
         license certified by the{" "}
-        {makeLink(
-          "Free Software Foundation",
-          "https://www.fsf.org/",
-          classes.linkText,
-        )}{" "}
-        and the Open Source Initiative. You can get a copy of the GNU AGPL v3
-        license with MinIO source code or at{" "}
+        {makeLink("Free Software Foundation", "https://www.fsf.org/")} and the
+        Open Source Initiative. You can get a copy of the GNU AGPL v3 license
+        with MinIO source code or at{" "}
         {makeLink(
           "https://www.gnu.org/licenses/agpl-3.0.en.html",
           "https://min.io/compliance?ref=con",
-          classes.linkText,
         )}
         .
       </p>
@@ -74,7 +66,6 @@ const LicenseFAQ = () => {
         {makeLink(
           "Free Software Foundation’s interpretation",
           "https://www.gnu.org/licenses/agpl-3.0.en.html",
-          classes.linkText,
         )}{" "}
         of the GNU AGPL v3 license.
       </p>
@@ -105,7 +96,6 @@ const LicenseFAQ = () => {
         {makeLink(
           "GPL FAQ",
           "https://www.gnu.org/licenses/gpl-faq.en.html#MereAggregation",
-          classes.linkText,
         )}
         .
       </p>

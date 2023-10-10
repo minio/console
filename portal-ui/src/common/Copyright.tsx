@@ -15,18 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
+import { Box } from "mds";
 
 export default function Copyright() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
+    <Box className={"muted"} sx={{ textAlign: "center" }}>
       {"Copyright © "}
-      <Link color="inherit" href="https://min.io/?ref=con">
-        MinIO
-      </Link>{" "}
-      {new Date().getFullYear()}
+      <a href="https://min.io/?ref=con">MinIO</a> {new Date().getFullYear()}
       {"."}
-    </Typography>
+    </Box>
   );
 }

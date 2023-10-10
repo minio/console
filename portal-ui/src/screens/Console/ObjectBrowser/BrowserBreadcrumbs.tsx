@@ -17,13 +17,18 @@
 import React, { Fragment, useState } from "react";
 import { useSelector } from "react-redux";
 import CopyToClipboard from "react-copy-to-clipboard";
-import createStyles from "@mui/styles/createStyles";
-import makeStyles from "@mui/styles/makeStyles";
-import { Theme } from "@mui/material/styles";
+import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { encodeURLString, safeDecodeURIComponent } from "../../../common/utils";
-import { Button, CopyIcon, NewPathIcon, Tooltip, Breadcrumbs } from "mds";
+import {
+  Button,
+  CopyIcon,
+  NewPathIcon,
+  Tooltip,
+  Breadcrumbs,
+  breakPoints,
+  Box,
+} from "mds";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   IAM_SCOPES,
@@ -41,14 +46,20 @@ const CreatePathModal = withSuspense(
   ),
 );
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    ...objectBrowserCommon,
-    slashSpacingStyle: {
-      margin: "0 5px",
+const BreadcrumbsMain = styled.div(() => ({
+  display: "flex",
+  "& .additionalOptions": {
+    paddingRight: "10px",
+    display: "flex",
+    alignItems: "center",
+    [`@media (max-width: ${breakPoints.lg}px)`]: {
+      display: "none",
     },
-  }),
-);
+  },
+  "& .slashSpacingStyle": {
+    margin: "0 5px",
+  },
+}));
 
 interface IObjectBrowser {
   bucketName: string;
@@ -65,7 +76,6 @@ const BrowserBreadcrumbs = ({
 }: IObjectBrowser) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const classes = useStyles();
 
   const rewindEnabled = useSelector(
     (state: AppState) => state.objectBrowser.rewind.rewindEnabled,
@@ -125,7 +135,7 @@ const BrowserBreadcrumbs = ({
 
     return (
       <Fragment key={`breadcrumbs-${index.toString()}`}>
-        <span className={classes.slashSpacingStyle}>/</span>
+        <span className={"slashSpacingStyle"}>/</span>
         {index === lastBreadcrumbsIndex ? (
           <span style={{ cursor: "default", whiteSpace: "pre" }}>
             {safeDecodeURIComponent(objectItem) /*Only for display*/}
@@ -159,7 +169,7 @@ const BrowserBreadcrumbs = ({
     versionsItem = [
       <Fragment key={`breadcrumbs-versionedItem`}>
         <span>
-          <span className={classes.slashSpacingStyle}>/</span>
+          <span className={"slashSpacingStyle"}>/</span>
           {versionedFile} - Versions
         </span>
       </Fragment>,
@@ -209,7 +219,7 @@ const BrowserBreadcrumbs = ({
 
   return (
     <Fragment>
-      <div className={classes.breadcrumbsMain}>
+      <BreadcrumbsMain>
         {createFolderOpen && (
           <CreatePathModal
             modalOpen={createFolderOpen}
@@ -251,9 +261,7 @@ const BrowserBreadcrumbs = ({
                   }}
                 />
               </CopyToClipboard>
-              <div className={classes.additionalOptions}>
-                {additionalOptions}
-              </div>
+              <Box className={"additionalOptions"}>{additionalOptions}</Box>
             </Fragment>
           }
         >
@@ -285,8 +293,26 @@ const BrowserBreadcrumbs = ({
             />
           </Tooltip>
         )}
-      </div>
-      <div className={classes.breadcrumbsSecond}>{additionalOptions}</div>
+      </BreadcrumbsMain>
+      <Box
+        sx={{
+          display: "none",
+          marginTop: 15,
+          marginBottom: 5,
+          justifyContent: "flex-start",
+          "& > div": {
+            fontSize: 12,
+            fontWeight: "normal",
+            flexDirection: "row",
+            flexWrap: "nowrap",
+          },
+          [`@media (max-width: ${breakPoints.lg}px)`]: {
+            display: "flex",
+          },
+        }}
+      >
+        {additionalOptions}
+      </Box>
     </Fragment>
   );
 };

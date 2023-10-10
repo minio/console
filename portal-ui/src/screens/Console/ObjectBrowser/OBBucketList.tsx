@@ -17,7 +17,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { Theme } from "@mui/material/styles";
 import {
   ActionLink,
   BucketsIcon,
@@ -27,16 +26,9 @@ import {
   PageLayout,
   ProgressBar,
   RefreshIcon,
+  Grid,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-
-import Grid from "@mui/material/Grid";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-} from "../Common/FormComponents/common/styleLibrary";
-
+import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 import { SecureComponent } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
@@ -52,7 +44,6 @@ import { useSelector } from "react-redux";
 import { selFeatures } from "../consoleSlice";
 import AutoColorIcon from "../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import makeStyles from "@mui/styles/makeStyles";
 import { niceBytesInt } from "../../../common/utils";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { Bucket } from "../../../api/consoleApi";
@@ -60,31 +51,9 @@ import { api } from "../../../api";
 import { errorToHandler } from "../../../api/errors";
 import HelpMenu from "../HelpMenu";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    bucketList: {
-      marginTop: 25,
-      height: "calc(100vh - 211px)",
-      "&.isEmbedded": {
-        height: "calc(100vh - 128px)",
-      },
-    },
-    searchField: {
-      ...searchField.searchField,
-      minWidth: 380,
-      "@media (max-width: 900px)": {
-        minWidth: 220,
-      },
-    },
-    ...actionsTray,
-    ...containerForHeader,
-  }),
-);
-
 const OBListBuckets = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const classes = useStyles();
 
   const [records, setRecords] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -149,7 +118,7 @@ const OBListBuckets = () => {
       )}
 
       <PageLayout>
-        <Grid item xs={12} className={classes.actionsTray} display="flex">
+        <Grid item xs={12} sx={{ ...actionsTray.actionsTray, display: "flex" }}>
           {obOnly && (
             <Grid item xs>
               <AutoColorIcon marginRight={15} marginTop={10} />
@@ -159,21 +128,24 @@ const OBListBuckets = () => {
             <SearchBox
               onChange={setFilterBuckets}
               placeholder="Filter Buckets"
-              overrideClass={classes.searchField}
               value={filterBuckets}
+              sx={{
+                minWidth: 380,
+                "@media (max-width: 900px)": {
+                  minWidth: 220,
+                },
+              }}
             />
           )}
 
           <Grid
             item
             xs={12}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"flex-end"}
             sx={{
-              "& button": {
-                marginLeft: "8px",
-              },
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: 8,
             }}
           >
             <TooltipWrapper tooltip={"Refresh"}>
@@ -194,7 +166,14 @@ const OBListBuckets = () => {
           <Grid
             item
             xs={12}
-            className={`${classes.bucketList} ${obOnly ? "isEmbedded" : ""}`}
+            sx={{
+              marginTop: 25,
+              height: "calc(100vh - 211px)",
+              "&.isEmbedded": {
+                height: "calc(100vh - 128px)",
+              },
+            }}
+            className={obOnly ? "isEmbedded" : ""}
           >
             {filteredRecords.length !== 0 && (
               <DataTable
@@ -258,9 +237,11 @@ const OBListBuckets = () => {
             {filteredRecords.length === 0 && filterBuckets !== "" && (
               <Grid
                 container
-                justifyContent={"center"}
-                alignContent={"center"}
-                alignItems={"center"}
+                sx={{
+                  justifyContent: "center",
+                  alignContent: "center",
+                  alignItems: "center",
+                }}
               >
                 <Grid item xs={8}>
                   <HelpBox
@@ -278,9 +259,11 @@ const OBListBuckets = () => {
             {!hasBuckets && (
               <Grid
                 container
-                justifyContent={"center"}
-                alignContent={"center"}
-                alignItems={"center"}
+                sx={{
+                  justifyContent: "center",
+                  alignContent: "center",
+                  alignItems: "center",
+                }}
               >
                 <Grid item xs={8}>
                   <HelpBox
