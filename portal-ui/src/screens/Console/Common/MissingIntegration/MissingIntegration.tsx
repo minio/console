@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Grid } from "@mui/material";
-import { HelpBox } from "mds";
+import { HelpBox, Grid } from "mds";
 
 interface IMissingIntegration {
   iconComponent: any;
@@ -32,9 +31,11 @@ const MissingIntegration = ({
   return (
     <Grid
       container
-      justifyContent={"center"}
-      alignContent={"center"}
-      alignItems={"center"}
+      sx={{
+        justifyContent: "center",
+        alignContent: "center",
+        alignItems: "center",
+      }}
     >
       <Grid item xs={8}>
         <HelpBox

@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import Grid from "@mui/material/Grid";
-import { ConfirmModalIcon } from "mds";
+import { ConfirmModalIcon, Grid } from "mds";
 
 interface IValidRule {
   ruleText: string;
@@ -26,7 +25,7 @@ const ValidRule = ({ ruleText }: IValidRule) => {
   return (
     <Fragment>
       <Grid container style={{ display: "flex", justifyContent: "flex-start" }}>
-        <Grid item xs={1} paddingRight={1}>
+        <Grid item xs={1}>
           <ConfirmModalIcon
             width={"16px"}
             height={"16px"}
@@ -36,8 +35,7 @@ const ValidRule = ({ ruleText }: IValidRule) => {
         <Grid
           item
           xs={9}
-          paddingLeft={1}
-          style={{
+          sx={{
             color: "#8f949c",
             display: "flex",
             justifyContent: "flex-start",
