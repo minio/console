@@ -18,10 +18,9 @@ import { DateTime } from "luxon";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Collapse from "@mui/material/Collapse";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { LogMessage } from "../types";
-import { BoxArrowDown, BoxArrowUp, WarnFilledIcon } from "mds";
+import { Box, BoxArrowDown, BoxArrowUp, WarnFilledIcon } from "mds";
 
 import getByKey from "lodash/get";
 

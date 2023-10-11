@@ -18,8 +18,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import get from "lodash/get";
 import { AppState, useAppDispatch } from "../../../../store";
-import { Box } from "@mui/material";
-import { AlertCloseIcon } from "mds";
+
+import { AlertCloseIcon, Box, breakPoints } from "mds";
 import { Portal } from "@mui/base";
 import {
   setErrorSnackMessage,
@@ -103,9 +103,9 @@ const MainError = ({ isModal = false }: IMainErrorProps) => {
           "& .message-text": {
             flex: 2,
             fontSize: "14px",
-            textAlign: {
-              md: "center",
-              xs: "left",
+            textAlign: "center",
+            [`@media (max-width: ${breakPoints.sm}px)`]: {
+              textAlign: "left",
             },
           },
 
@@ -116,9 +116,9 @@ const MainError = ({ isModal = false }: IMainErrorProps) => {
             alignItems: "center",
             justifyContent: "center",
             height: "100%",
-            marginLeft: {
-              sm: "0px",
-              xs: "10px",
+            marginLeft: 0,
+            [`@media (max-width: ${breakPoints.sm}px)`]: {
+              marginLeft: 10,
             },
 
             "& .close-btn": {
