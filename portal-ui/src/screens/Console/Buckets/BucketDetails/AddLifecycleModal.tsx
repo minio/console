@@ -74,6 +74,7 @@ const AddLifecycleModal = ({
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
   const [expandedAdv, setExpandedAdv] = useState<boolean>(false);
   const [expanded, setExpanded] = useState<boolean>(false);
+  const [expiryUnit, setExpiryUnit] = useState<string>("days");
 
   /*To be removed on component replacement*/
   const formFieldRowFilter = {
@@ -116,7 +117,11 @@ const AddLifecycleModal = ({
         valid = false;
       }
     }
+    if (!lifecycleDays || parseInt(lifecycleDays) === 0) {
+      valid = false;
+    }
     setIsFormValid(valid);
+    console.log("set to valid: ", valid, " lifecycledays: ", lifecycleDays);
   }, [ilmType, lifecycleDays, storageClass]);
 
   useEffect(() => {
@@ -142,8 +147,11 @@ const AddLifecycleModal = ({
 
       if (targetVersion === "current") {
         expiry["expiry_days"] = parseInt(lifecycleDays);
-      } else {
+      } else if (expiryUnit === "days") {
         expiry["noncurrentversion_expiration_days"] = parseInt(lifecycleDays);
+      } else {
+        expiry["newer_noncurrentversion_expiration_versions"] =
+          parseInt(lifecycleDays);
       }
 
       rules = {
@@ -154,7 +162,7 @@ const AddLifecycleModal = ({
       if (targetVersion === "current") {
         transition["transition_days"] = parseInt(lifecycleDays);
         transition["storage_class"] = storageClass;
-      } else {
+      } else if (expiryUnit === "days") {
         transition["noncurrentversion_transition_days"] =
           parseInt(lifecycleDays);
         transition["noncurrentversion_transition_storage_class"] = storageClass;
@@ -297,9 +305,17 @@ const AddLifecycleModal = ({
               overlayObject={
                 <InputUnitMenu
                   id={"expire-current-unit"}
-                  unitSelected={"days"}
-                  unitsList={[{ label: "Days", value: "days" }]}
-                  disabled={true}
+                  unitSelected={expiryUnit}
+                  unitsList={[
+                    { label: "Days", value: "days" },
+                    { label: "Versions", value: "versions" },
+                  ]}
+                  disabled={
+                    targetVersion !== "noncurrent" || ilmType !== "expiry"
+                  }
+                  onUnitChange={(newValue) => {
+                    setExpiryUnit(newValue);
+                  }}
                 />
               }
             />
