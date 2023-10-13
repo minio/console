@@ -15,18 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, Suspense } from "react";
-import ObjectBrowser from "../Console/ObjectBrowser/ObjectBrowser";
-import LoadingComponent from "../../common/LoadingComponent";
-import ObjectManager from "../Console/Common/ObjectManager/ObjectManager";
-import { ApplicationLogo } from "mds";
+import { ApplicationLogo, Button } from "mds";
 import { Route, Routes } from "react-router-dom";
 import { IAM_PAGES } from "../../common/SecureComponent/permissions";
 import { resetSession } from "../Console/consoleSlice";
 import { useAppDispatch } from "../../store";
 import { resetSystem } from "../../systemSlice";
 import { getLogoVar } from "../../config";
+import ObjectBrowser from "../Console/ObjectBrowser/ObjectBrowser";
+import LoadingComponent from "../../common/LoadingComponent";
+import ObjectManager from "../Console/Common/ObjectManager/ObjectManager";
 import ObjectManagerButton from "../Console/Common/ObjectManager/ObjectManagerButton";
-import { Button } from "@mui/material";
 
 const AnonymousAccess = () => {
   const dispatch = useAppDispatch();
@@ -61,7 +60,7 @@ const AnonymousAccess = () => {
               dispatch(resetSession());
               dispatch(resetSystem());
             }}
-            style={{ color: "white" }}
+            sx={{ color: "white", textTransform: "initial" }}
           >
             Login
           </Button>

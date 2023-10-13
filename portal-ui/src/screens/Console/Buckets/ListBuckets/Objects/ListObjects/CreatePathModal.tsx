@@ -16,21 +16,21 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, CreateNewPathIcon, InputBox, Grid } from "mds";
-import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-} from "../../../../Common/FormComponents/common/styleLibrary";
 import { connect, useSelector } from "react-redux";
+import {
+  Button,
+  CreateNewPathIcon,
+  InputBox,
+  Grid,
+  FormLayout,
+  Box,
+} from "mds";
+import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
+import { modalStyleUtils } from "../../../../Common/FormComponents/common/styleLibrary";
 import { encodeURLString } from "../../../../../../common/utils";
-
 import { BucketObjectItem } from "./types";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
-import makeStyles from "@mui/styles/makeStyles";
 
 interface ICreatePath {
   modalOpen: boolean;
@@ -39,13 +39,6 @@ interface ICreatePath {
   onClose: () => any;
   simplePath: string | null;
 }
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    ...modalStyleUtils,
-    ...formFieldStyles,
-  }),
-);
 
 const CreatePathModal = ({
   modalOpen,
@@ -56,7 +49,6 @@ const CreatePathModal = ({
 }: ICreatePath) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const classes = useStyles();
 
   const [pathUrl, setPathUrl] = useState("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
@@ -141,11 +133,11 @@ const CreatePathModal = ({
         onClose={onClose}
         titleIcon={<CreateNewPathIcon />}
       >
-        <Grid container>
-          <Grid item xs={12} className={classes.formFieldRow}>
+        <FormLayout withBorders={false} containerPadding={false}>
+          <Box className={"inputItem"} sx={{ display: "flex", gap: 8 }}>
             <strong>Current Path:</strong> <br />
-            <div
-              style={{
+            <Box
+              sx={{
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
@@ -155,21 +147,19 @@ const CreatePathModal = ({
               dir={"rtl"}
             >
               {currentPath}
-            </div>
-          </Grid>
-          <Grid item xs={12} className={classes.formFieldRow}>
-            <InputBox
-              value={pathUrl}
-              label={"New Folder Path"}
-              id={"folderPath"}
-              name={"folderPath"}
-              placeholder={"Enter the new Folder Path"}
-              onChange={inputChange}
-              onKeyPress={keyPressed}
-              required
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.modalButtonBar}>
+            </Box>
+          </Box>
+          <InputBox
+            value={pathUrl}
+            label={"New Folder Path"}
+            id={"folderPath"}
+            name={"folderPath"}
+            placeholder={"Enter the new Folder Path"}
+            onChange={inputChange}
+            onKeyPress={keyPressed}
+            required
+          />
+          <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
             <Button
               id={"clear"}
               type="button"
@@ -187,7 +177,7 @@ const CreatePathModal = ({
               label={"Create"}
             />
           </Grid>
-        </Grid>
+        </FormLayout>
       </ModalWrapper>
     </React.Fragment>
   );

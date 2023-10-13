@@ -17,36 +17,24 @@
 import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { useSelector } from "react-redux";
-import { withStyles } from "@mui/styles";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-
-import Grid from "@mui/material/Grid";
-import ShareFile from "./ShareFile";
 import {
-  actionsTray,
-  containerForHeader,
-  objectBrowserCommon,
-  objectBrowserExtras,
-  spacingUtils,
-  tableStyles,
-  textStyleUtils,
-} from "../../../../Common/FormComponents/common/styleLibrary";
+  breakPoints,
+  Button,
+  DeleteIcon,
+  DeleteNonCurrentIcon,
+  Grid,
+  ProgressBar,
+  ScreenTitle,
+  Select,
+  SelectMultipleIcon,
+  VersionsIcon,
+} from "mds";
+import ShareFile from "./ShareFile";
 
 import { decodeURLString, niceBytesInt } from "../../../../../../common/utils";
 import RestoreFileVersion from "./RestoreFileVersion";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
-import {
-  Button,
-  DeleteIcon,
-  DeleteNonCurrentIcon,
-  Select,
-  SelectMultipleIcon,
-  VersionsIcon,
-  ScreenTitle,
-  ProgressBar,
-} from "mds";
 import FileVersionItem from "./FileVersionItem";
 import PreviewFileModal from "../Preview/PreviewFileModal";
 import DeleteNonCurrent from "../ListObjects/DeleteNonCurrent";
@@ -68,54 +56,7 @@ import { BucketObject } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    versionsContainer: {
-      padding: 10,
-      "@media (max-width: 799px)": {
-        minHeight: 800,
-      },
-    },
-    noBottomBorder: {
-      borderBottom: 0,
-    },
-    versionsVirtualPanel: {
-      flexGrow: 1,
-      height: "calc(100% - 120px)",
-      overflow: "auto",
-      "@media (max-width: 799px)": {
-        height: 600,
-      },
-    },
-    screenTitleContainer: {
-      position: "relative",
-      "@media (max-width: 799px)": {
-        "&::before": {
-          display: "none",
-        },
-      },
-    },
-    sortByLabel: {
-      color: "#838383",
-      fontWeight: "bold",
-      whiteSpace: "nowrap",
-      marginRight: 12,
-      fontSize: 14,
-      "@media (max-width: 600px)": {
-        display: "none",
-      },
-    },
-    ...actionsTray,
-    ...tableStyles,
-    ...spacingUtils,
-    ...textStyleUtils,
-    ...objectBrowserCommon,
-    ...objectBrowserExtras,
-    ...containerForHeader,
-  });
-
 interface IVersionsNavigatorProps {
-  classes: any;
   internalPaths: string;
   bucketName: string;
 }
@@ -133,7 +74,6 @@ const emptyFile: BucketObject = {
 };
 
 const VersionsNavigator = ({
-  classes,
   internalPaths,
   bucketName,
 }: IVersionsNavigatorProps) => {
@@ -422,7 +362,16 @@ const VersionsNavigator = ({
           closeDeleteModalAndRefresh={closeSelectedVersions}
         />
       )}
-      <Grid container className={classes.versionsContainer}>
+      <Grid
+        container
+        sx={{
+          width: "100%",
+          padding: 10,
+          "@media (max-width: 799px)": {
+            minHeight: 800,
+          },
+        }}
+      >
         {!actualInfo && (
           <Grid item xs={12}>
             <ProgressBar />
@@ -438,11 +387,33 @@ const VersionsNavigator = ({
                 hidePathButton={true}
               />
             </Grid>
-            <Grid item xs={12} className={classes.screenTitleContainer}>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                position: "relative",
+                "& .detailsSpacer": {
+                  marginRight: 18,
+                  "@media (max-width: 600px)": {
+                    marginRight: 0,
+                  },
+                },
+                [`@media (max-width: ${breakPoints.md}px)`]: {
+                  "&::before": {
+                    display: "none",
+                  },
+                },
+              }}
+            >
               <ScreenTitle
                 icon={
-                  <span className={classes.listIcon}>
-                    <VersionsIcon />
+                  <span
+                    style={{
+                      display: "block",
+                      marginTop: "-10px",
+                    }}
+                  >
+                    <VersionsIcon style={{ width: 20, height: 20 }} />
                   </span>
                 }
                 title={`${
@@ -452,13 +423,13 @@ const VersionsNavigator = ({
                 } Versions`}
                 subTitle={
                   <Fragment>
-                    <span className={classes.detailsSpacer}>
+                    <span className={"detailsSpacer"}>
                       <strong>
                         {versions.length} Version
                         {versions.length === 1 ? "" : "s"}&nbsp;&nbsp;&nbsp;
                       </strong>
                     </span>
-                    <span className={classes.detailsSpacer}>
+                    <span className={"detailsSpacer"}>
                       <strong>{niceBytesInt(totalSpace)}</strong>
                     </span>
                   </Fragment>
@@ -523,7 +494,18 @@ const VersionsNavigator = ({
                 bottomBorder={false}
               />
             </Grid>
-            <Grid item xs={12} className={classes.versionsVirtualPanel}>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                flexGrow: 1,
+                height: "calc(100% - 120px)",
+                overflow: "auto",
+                [`@media (max-width: ${breakPoints.md}px)`]: {
+                  height: 600,
+                },
+              }}
+            >
               {actualInfo.version_id && actualInfo.version_id !== "null" && (
                 // @ts-ignore
                 <List
@@ -549,4 +531,4 @@ const VersionsNavigator = ({
   );
 };
 
-export default withStyles(styles)(VersionsNavigator);
+export default VersionsNavigator;

@@ -15,36 +15,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { IElementValue } from "../../Configurations/types";
 import {
-  formFieldStyles,
-  modalBasic,
-} from "../../Common/FormComponents/common/styleLibrary";
-import {
-  Switch,
-  InputBox,
-  Grid,
   Box,
-  ReadBox,
-  RadioGroup,
   CommentBox,
+  FormLayout,
+  Grid,
+  InputBox,
+  RadioGroup,
+  ReadBox,
+  Switch,
 } from "mds";
 
 interface IConfMySqlProps {
   onChange: (newValue: IElementValue[]) => void;
-  classes: any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalBasic,
-    ...formFieldStyles,
-  });
-
-const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
+const ConfMySql = ({ onChange }: IConfMySqlProps) => {
   //Local States
   const [useDsnString, setUseDsnString] = useState<boolean>(false);
   const [dsnString, setDsnString] = useState<string>("");
@@ -140,20 +127,18 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
   };
 
   return (
-    <Grid container>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <Switch
-          label={"Enter DNS String"}
-          checked={useDsnString}
-          id="checkedB"
-          name="checkedB"
-          onChange={switcherChangeEvt}
-          value={"dnsString"}
-        />
-      </Grid>
+    <FormLayout withBorders={false} containerPadding={false}>
+      <Switch
+        label={"Enter DNS String"}
+        checked={useDsnString}
+        id="checkedB"
+        name="checkedB"
+        onChange={switcherChangeEvt}
+        value={"dnsString"}
+      />
       {useDsnString ? (
         <React.Fragment>
-          <Grid item xs={12} className={classes.formFieldRow}>
+          <Box className={"inputItem"}>
             <InputBox
               id="dsn-string"
               name="dsn_string"
@@ -163,11 +148,11 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                 setDsnString(e.target.value);
               }}
             />
-          </Grid>
+          </Box>
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <Grid item xs={12}>
+          <Box>
             <Box
               withBorders
               useBackground
@@ -177,70 +162,59 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                 marginBottom: 12,
               }}
             >
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBox
-                  id="host"
-                  name="host"
-                  label=""
-                  placeholder="Enter Host"
-                  value={host}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setHostname(e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBox
-                  id="db-name"
-                  name="db-name"
-                  label=""
-                  placeholder="Enter DB Name"
-                  value={dbName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setDbName(e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBox
-                  id="port"
-                  name="port"
-                  label=""
-                  placeholder="Enter Port"
-                  value={port}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setPort(e.target.value);
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBox
-                  id="user"
-                  name="user"
-                  label=""
-                  placeholder="Enter User"
-                  value={user}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setUser(e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBox
-                  id="password"
-                  name="password"
-                  label=""
-                  placeholder="Enter Password"
-                  type="password"
-                  value={password}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setPassword(e.target.value);
-                  }}
-                />
-              </Grid>
+              <InputBox
+                id="host"
+                name="host"
+                label=""
+                placeholder="Enter Host"
+                value={host}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setHostname(e.target.value);
+                }}
+              />
+              <InputBox
+                id="db-name"
+                name="db-name"
+                label=""
+                placeholder="Enter DB Name"
+                value={dbName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setDbName(e.target.value);
+                }}
+              />
+              <InputBox
+                id="port"
+                name="port"
+                label=""
+                placeholder="Enter Port"
+                value={port}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPort(e.target.value);
+                }}
+              />
+              <InputBox
+                id="user"
+                name="user"
+                label=""
+                placeholder="Enter User"
+                value={user}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setUser(e.target.value);
+                }}
+              />
+              <InputBox
+                id="password"
+                name="password"
+                label=""
+                placeholder="Enter Password"
+                type="password"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPassword(e.target.value);
+                }}
+              />
             </Box>
-          </Grid>
+          </Box>
           <Grid item xs={12} sx={{ margin: "12px 0" }}>
             <ReadBox label={"Connection String"} multiLine>
               {dsnString}
@@ -248,76 +222,66 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           </Grid>
         </React.Fragment>
       )}
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBox
-          id="table"
-          name="table"
-          label="Table"
-          placeholder="Enter Table Name"
-          value={table}
-          tooltip="DB table name to store/update events, table is auto-created"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setTable(e.target.value);
-          }}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <RadioGroup
-          currentValue={format}
-          id="format"
-          name="format"
-          label="Format"
-          onChange={(e) => {
-            setFormat(e.target.value);
-          }}
-          tooltip="'namespace' reflects current bucket/object list and 'access' reflects a journal of object operations, defaults to 'namespace'"
-          selectorOptions={[
-            { label: "Namespace", value: "namespace" },
-            { label: "Access", value: "access" },
-          ]}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBox
-          id="queue-dir"
-          name="queue_dir"
-          label="Queue Dir"
-          placeholder="Enter Queue Dir"
-          value={queueDir}
-          tooltip="Staging directory for undelivered messages e.g. '/home/events'"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setQueueDir(e.target.value);
-          }}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBox
-          id="queue-limit"
-          name="queue_limit"
-          label="Queue Limit"
-          placeholder="Enter Queue Limit"
-          type="number"
-          value={queueLimit}
-          tooltip="Maximum limit for undelivered messages, defaults to '10000'"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setQueueLimit(e.target.value);
-          }}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <CommentBox
-          id="comment"
-          name="comment"
-          label="Comment"
-          placeholder="Enter custom notes if any"
-          value={comment}
-          onChange={(e) => {
-            setComment(e.target.value);
-          }}
-        />
-      </Grid>
-    </Grid>
+      <InputBox
+        id="table"
+        name="table"
+        label="Table"
+        placeholder="Enter Table Name"
+        value={table}
+        tooltip="DB table name to store/update events, table is auto-created"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setTable(e.target.value);
+        }}
+      />
+      <RadioGroup
+        currentValue={format}
+        id="format"
+        name="format"
+        label="Format"
+        onChange={(e) => {
+          setFormat(e.target.value);
+        }}
+        tooltip="'namespace' reflects current bucket/object list and 'access' reflects a journal of object operations, defaults to 'namespace'"
+        selectorOptions={[
+          { label: "Namespace", value: "namespace" },
+          { label: "Access", value: "access" },
+        ]}
+      />
+      <InputBox
+        id="queue-dir"
+        name="queue_dir"
+        label="Queue Dir"
+        placeholder="Enter Queue Dir"
+        value={queueDir}
+        tooltip="Staging directory for undelivered messages e.g. '/home/events'"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setQueueDir(e.target.value);
+        }}
+      />
+      <InputBox
+        id="queue-limit"
+        name="queue_limit"
+        label="Queue Limit"
+        placeholder="Enter Queue Limit"
+        type="number"
+        value={queueLimit}
+        tooltip="Maximum limit for undelivered messages, defaults to '10000'"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setQueueLimit(e.target.value);
+        }}
+      />
+      <CommentBox
+        id="comment"
+        name="comment"
+        label="Comment"
+        placeholder="Enter custom notes if any"
+        value={comment}
+        onChange={(e) => {
+          setComment(e.target.value);
+        }}
+      />
+    </FormLayout>
   );
 };
 
-export default withStyles(styles)(ConfMySql);
+export default ConfMySql;

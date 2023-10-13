@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import {
+  Box,
   FormLayout,
   Grid,
   InputBox,
@@ -25,18 +26,9 @@ import {
   Switch,
   Tooltip,
 } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import {
-  createTenantCommon,
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
@@ -50,36 +42,12 @@ import { errorToHandler } from "api/errors";
 interface IBulkReplicationModal {
   open: boolean;
   closeModalAndRefresh: (clearSelection: boolean) => any;
-  classes: any;
   buckets: string[];
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    resultGrid: {
-      display: "grid",
-      gridTemplateColumns: "45px auto",
-      alignItems: "center",
-      justifyContent: "stretch",
-    },
-    errorIcon: {
-      paddingTop: 5,
-      color: "#C72C48",
-    },
-    successIcon: {
-      paddingTop: 5,
-      color: "#42C91A",
-    },
-    ...spacingUtils,
-    ...modalStyleUtils,
-    ...formFieldStyles,
-    ...createTenantCommon,
-  });
 
 const AddBulkReplicationModal = ({
   open,
   closeModalAndRefresh,
-  classes,
   buckets,
 }: IBulkReplicationModal) => {
   const dispatch = useAppDispatch();
@@ -143,20 +111,30 @@ const AddBulkReplicationModal = ({
     switch (errString) {
       case "":
         return (
-          <div className={classes.successIcon}>
+          <Box
+            sx={{
+              paddingTop: 5,
+              color: "#42C91A",
+            }}
+          >
             <CheckCircleOutlineIcon />
-          </div>
+          </Box>
         );
       case "n/a":
         return null;
       default:
         if (errString) {
           return (
-            <div className={classes.errorIcon}>
+            <Box
+              sx={{
+                paddingTop: 5,
+                color: "#C72C48",
+              }}
+            >
               <Tooltip tooltip={errString} placement="top">
                 <ErrorOutlineIcon />
               </Tooltip>
-            </div>
+            </Box>
           );
         }
     }
@@ -382,14 +360,21 @@ const AddBulkReplicationModal = ({
               <Fragment>
                 <h3>Multi Bucket lifecycle Assignments Results</h3>
                 <Grid container>
-                  <Grid item xs={12} className={classes.formScrollable}>
+                  <Grid item xs={12}>
                     <h4>Buckets Results</h4>
                     {results?.results?.map((resultItem) => {
                       return (
-                        <div className={classes.resultGrid}>
+                        <Box
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "45px auto",
+                            alignItems: "center",
+                            justifyContent: "stretch",
+                          }}
+                        >
                           {LogoToShow({ errString: resultItem.error || "" })}
                           <span>{resultItem.bucketName}</span>
-                        </div>
+                        </Box>
                       );
                     })}
                   </Grid>
@@ -412,4 +397,4 @@ const AddBulkReplicationModal = ({
   );
 };
 
-export default withStyles(styles)(AddBulkReplicationModal);
+export default AddBulkReplicationModal;

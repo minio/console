@@ -15,27 +15,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { IconButtonProps } from "@mui/material";
+import styled from "styled-components";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    root: {
-      padding: 0,
-      margin: 0,
-      fontSize: ".9rem",
-    },
-  });
+const PanelTitleContainer = styled.h1(() => ({
+  padding: 0,
+  margin: 0,
+  fontSize: ".9rem",
+}));
 
-interface IPanelTitle extends IconButtonProps {
-  classes: any;
-  children: any;
+interface IPanelTitle {
+  children: React.ReactNode;
 }
 
-const PanelTitle = ({ classes, children }: IPanelTitle) => {
-  return <h1 className={classes.root}>{children}</h1>;
+const PanelTitle = ({ children }: IPanelTitle) => {
+  return <PanelTitleContainer>{children}</PanelTitleContainer>;
 };
 
-export default withStyles(styles)(PanelTitle);
+export default PanelTitle;

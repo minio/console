@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
 import {
   BucketReplicationIcon,
   Button,
@@ -25,16 +24,9 @@ import {
   Switch,
   Grid,
 } from "mds";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
-import {
-  createTenantCommon,
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { api } from "api";
@@ -43,27 +35,13 @@ import { errorToHandler } from "api/errors";
 interface IEditReplicationModal {
   closeModalAndRefresh: (refresh: boolean) => void;
   open: boolean;
-  classes: any;
   bucketName: string;
   ruleID: string;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...spacingUtils,
-    ...createTenantCommon,
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    modalFormScrollable: {
-      ...modalStyleUtils.modalFormScrollable,
-      paddingRight: 10,
-    },
-  });
-
 const EditReplicationModal = ({
   closeModalAndRefresh,
   open,
-  classes,
   bucketName,
   ruleID,
 }: IEditReplicationModal) => {
@@ -302,4 +280,4 @@ const EditReplicationModal = ({
   );
 };
 
-export default withStyles(styles)(EditReplicationModal);
+export default EditReplicationModal;

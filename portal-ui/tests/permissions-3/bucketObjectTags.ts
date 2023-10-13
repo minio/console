@@ -49,12 +49,12 @@ test
       .typeText("#newTagLabel", "test")
       .click(Selector("#saveTag:enabled"))
       .click(Selector("button").withText("Tags"), { offsetX: -1, offsetY: -1 })
-      .expect(Selector(".MuiChip-label").withText("tag1 : test").exists)
+      .expect(Selector("span").withText("tag1 : test").exists)
       .ok()
-      .click(Selector(".MuiChip-deleteIcon"))
+      .click(Selector(".deleteTagButton"))
       .click(Selector("#deleteTag"))
       .click(Selector("button").withText("Tags"))
-      .expect(Selector(".MuiChip-label").withText("tag1 : test").exists)
+      .expect(Selector("span").withText("tag1 : test").exists)
       .notOk();
   })
   .after(async (t) => {

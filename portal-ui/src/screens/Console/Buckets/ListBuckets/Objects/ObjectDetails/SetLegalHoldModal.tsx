@@ -15,35 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
-import { Button, Grid, Switch } from "mds";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../../../../Common/FormComponents/common/styleLibrary";
-
-import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import { encodeURLString } from "../../../../../../common/utils";
-
-import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
-import { useAppDispatch } from "../../../../../../store";
+import { Box, Button, FormLayout, Grid, Switch } from "mds";
 import { BucketObject, ObjectLegalHoldStatus } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    ...spacingUtils,
-  });
+import { modalStyleUtils } from "../../../../Common/FormComponents/common/styleLibrary";
+import { encodeURLString } from "../../../../../../common/utils";
+import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
+import { useAppDispatch } from "../../../../../../store";
+import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 
 interface ISetRetentionProps {
-  classes: any;
   open: boolean;
   closeModalAndRefresh: (reload: boolean) => void;
   objectName: string;
@@ -52,7 +35,6 @@ interface ISetRetentionProps {
 }
 
 const SetLegalHoldModal = ({
-  classes,
   open,
   closeModalAndRefresh,
   objectName,
@@ -109,10 +91,6 @@ const SetLegalHoldModal = ({
         closeModalAndRefresh(false);
       }}
     >
-      <Grid item xs={12} className={classes.spacerBottom}>
-        Object: {bucketName}
-      </Grid>
-
       <form
         noValidate
         autoComplete="off"
@@ -120,7 +98,10 @@ const SetLegalHoldModal = ({
           onSubmit(e);
         }}
       >
-        <Grid item xs={12} className={classes.formFieldRow}>
+        <FormLayout withBorders={false} containerPadding={false}>
+          <Box className={"inputItem"}>
+            <strong>Object</strong>: {bucketName}
+          </Box>
           <Switch
             value="legalhold"
             id="legalhold"
@@ -135,26 +116,26 @@ const SetLegalHoldModal = ({
               "To enable this feature you need to enable versioning on the bucket before creation"
             }
           />
-        </Grid>
-        <Grid item xs={12} className={classes.modalButtonBar}>
-          <Button
-            id={"clear"}
-            type="button"
-            variant="regular"
-            onClick={resetForm}
-            label={"Clear"}
-          />
-          <Button
-            id={"save"}
-            type="submit"
-            variant="callAction"
-            disabled={isSaving}
-            label={" Save"}
-          />
-        </Grid>
+          <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+            <Button
+              id={"clear"}
+              type="button"
+              variant="regular"
+              onClick={resetForm}
+              label={"Clear"}
+            />
+            <Button
+              id={"save"}
+              type="submit"
+              variant="callAction"
+              disabled={isSaving}
+              label={" Save"}
+            />
+          </Grid>
+        </FormLayout>
       </form>
     </ModalWrapper>
   );
 };
 
-export default withStyles(styles)(SetLegalHoldModal);
+export default SetLegalHoldModal;

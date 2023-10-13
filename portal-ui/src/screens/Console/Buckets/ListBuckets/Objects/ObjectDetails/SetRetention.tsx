@@ -15,37 +15,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useRef, useState } from "react";
-
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { Button, Grid, RadioGroup, Switch } from "mds";
-import {
-  formFieldStyles,
-  modalStyleUtils,
-  spacingUtils,
-} from "../../../../Common/FormComponents/common/styleLibrary";
-
-import { twoDigitDate } from "../../../../Common/FormComponents/DateSelector/utils";
-import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
-import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
-import { AppState, useAppDispatch } from "../../../../../../store";
+import { Box, Button, FormLayout, Grid, RadioGroup, Switch } from "mds";
 import { useSelector } from "react-redux";
 import { BucketObject, ObjectRetentionMode } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { encodeURLString } from "common/utils";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...formFieldStyles,
-    ...modalStyleUtils,
-    ...spacingUtils,
-  });
+import { modalStyleUtils } from "../../../../Common/FormComponents/common/styleLibrary";
+import { twoDigitDate } from "../../../../Common/FormComponents/DateSelector/utils";
+import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
+import { AppState, useAppDispatch } from "../../../../../../store";
+import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
+import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 
 interface ISetRetentionProps {
-  classes: any;
   open: boolean;
   closeModalAndRefresh: (updateInfo: boolean) => void;
   objectName: string;
@@ -58,7 +41,6 @@ interface IRefObject {
 }
 
 const SetRetention = ({
-  classes,
   open,
   closeModalAndRefresh,
   objectName,
@@ -190,9 +172,6 @@ const SetRetention = ({
         closeModalAndRefresh(false);
       }}
     >
-      <div className={classes.spacerBottom}>
-        <strong>Selected Object</strong>: {objectName}
-      </div>
       <form
         noValidate
         autoComplete="off"
@@ -200,8 +179,11 @@ const SetRetention = ({
           onSubmit(e);
         }}
       >
-        {showSwitcher && (
-          <Grid item xs={12} className={classes.formFieldRow}>
+        <FormLayout>
+          <Box className={"inputItem"}>
+            <strong>Selected Object</strong>: {objectName}
+          </Box>
+          {showSwitcher && (
             <Switch
               value="status"
               id="status"
@@ -213,9 +195,7 @@ const SetRetention = ({
               label={"Status"}
               indicatorLabels={["Enabled", "Disabled"]}
             />
-          </Grid>
-        )}
-        <Grid item xs={12} className={classes.formFieldRow}>
+          )}
           <RadioGroup
             currentValue={type}
             id="type"
@@ -232,47 +212,47 @@ const SetRetention = ({
               { label: "Compliance", value: ObjectRetentionMode.Compliance },
             ]}
           />
-        </Grid>
-        <Grid item xs={12} className={`${classes.dateSelector} `}>
-          <DateSelector
-            id="date"
-            label="Date"
-            disableOptions={dateFieldDisabled()}
-            ref={dateElement}
-            value={date}
-            borderBottom={true}
-            onDateChange={(date: string, isValid: boolean) => {
-              setIsDateValid(isValid);
-              if (isValid) {
-                setDate(date);
+          <Box className={"inputItem"}>
+            <DateSelector
+              id="date"
+              label="Date"
+              disableOptions={dateFieldDisabled()}
+              ref={dateElement}
+              value={date}
+              borderBottom={true}
+              onDateChange={(date: string, isValid: boolean) => {
+                setIsDateValid(isValid);
+                if (isValid) {
+                  setDate(date);
+                }
+              }}
+            />
+          </Box>
+          <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
+            <Button
+              id={"reset"}
+              type="button"
+              variant="regular"
+              onClick={resetForm}
+              label={"Reset"}
+            />
+            <Button
+              id={"save"}
+              type="submit"
+              variant="callAction"
+              disabled={
+                (statusEnabled && type === "") ||
+                (statusEnabled && !isDateValid) ||
+                isSaving
               }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} className={classes.modalButtonBar}>
-          <Button
-            id={"reset"}
-            type="button"
-            variant="regular"
-            onClick={resetForm}
-            label={"Reset"}
-          />
-          <Button
-            id={"save"}
-            type="submit"
-            variant="callAction"
-            disabled={
-              (statusEnabled && type === "") ||
-              (statusEnabled && !isDateValid) ||
-              isSaving
-            }
-            onClick={saveNewRetentionPolicy}
-            label={"Save"}
-          />
-        </Grid>
+              onClick={saveNewRetentionPolicy}
+              label={"Save"}
+            />
+          </Grid>
+        </FormLayout>
       </form>
     </ModalWrapper>
   );
 };
 
-export default withStyles(styles)(SetRetention);
+export default SetRetention;

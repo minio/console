@@ -16,9 +16,6 @@
 
 import React, { useState } from "react";
 import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
-import makeStyles from "@mui/styles/makeStyles";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { selFeatures } from "../../../../consoleSlice";
@@ -43,37 +40,7 @@ import { downloadObject } from "../../../../ObjectBrowser/utils";
 import { DataTable, ItemActions } from "mds";
 import { BucketObject } from "api/consoleApi";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    browsePaper: {
-      border: 0,
-      "@media (max-width: 800px)": {
-        width: 800,
-      },
-    },
-    parentWrapper: {
-      position: "relative",
-      height: "calc(100% - 60px)",
-      "@media (max-width: 800px)": {
-        overflowX: "auto",
-      },
-      "@media (max-width: 1060px)": {
-        height: "calc(100% - 115px)",
-      },
-    },
-    "@global": {
-      ".rowLine:hover  .iconFileElm": {
-        backgroundImage: "url(/images/ob_file_filled.svg)",
-      },
-      ".rowLine:hover  .iconFolderElm": {
-        backgroundImage: "url(/images/ob_folder_filled.svg)",
-      },
-    },
-  }),
-);
-
 const ListObjectsTable = () => {
-  const classes = useStyles();
   const dispatch = useAppDispatch();
   const params = useParams();
   const navigate = useNavigate();
@@ -266,7 +233,6 @@ const ListObjectsTable = () => {
 
         return "";
       }}
-      parentClassName={classes.parentWrapper}
       sx={{
         minHeight: detailsOpen ? "100%" : "initial",
       }}

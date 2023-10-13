@@ -36,13 +36,6 @@ import {
   TrashIcon,
 } from "mds";
 import { useSelector } from "react-redux";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  containerForHeader,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
 import {
   browseBucketPermissions,
   deleteBucketPermissions,
@@ -99,24 +92,7 @@ const BucketLifecyclePanel = withSuspense(
   React.lazy(() => import("./BucketLifecyclePanel")),
 );
 
-const styles = (theme: Theme) =>
-  createStyles({
-    pageContainer: {
-      height: "100%",
-    },
-    ...searchField,
-    capitalize: {
-      textTransform: "capitalize",
-    },
-
-    ...containerForHeader,
-  });
-
-interface IBucketDetailsProps {
-  classes: any;
-}
-
-const BucketDetails = ({ classes }: IBucketDetailsProps) => {
+const BucketDetails = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
@@ -255,8 +231,11 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
             >
               <span style={{ fontSize: 15 }}>Access: </span>
               <span
-                className={classes.capitalize}
-                style={{ fontWeight: 600, fontSize: 15 }}
+                style={{
+                  fontWeight: 600,
+                  fontSize: 15,
+                  textTransform: "capitalize",
+                }}
               >
                 {bucketInfo?.access?.toLowerCase()}
               </span>
@@ -421,4 +400,4 @@ const BucketDetails = ({ classes }: IBucketDetailsProps) => {
   );
 };
 
-export default withStyles(styles)(BucketDetails);
+export default BucketDetails;

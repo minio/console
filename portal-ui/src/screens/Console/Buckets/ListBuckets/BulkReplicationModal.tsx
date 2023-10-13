@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import {
+  Box,
   FormLayout,
   Grid,
   InputBox,
@@ -24,16 +25,9 @@ import {
   Switch,
   Tooltip,
 } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import get from "lodash/get";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import {
-  modalBasic,
-  wizardCommon,
-} from "../../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
@@ -48,36 +42,12 @@ import { SelectorTypes } from "../../../../common/types";
 interface IBulkReplicationModal {
   open: boolean;
   closeModalAndRefresh: (clearSelection: boolean) => any;
-  classes: any;
   buckets: string[];
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    remoteBucketList: {
-      display: "grid",
-      gridTemplateColumns: "auto auto 45px",
-      alignItems: "center",
-      justifyContent: "stretch",
-    },
-    errorIcon: {
-      color: "#C72C48",
-    },
-    successIcon: {
-      color: "#42C91A",
-    },
-    hide: {
-      opacity: 0,
-      transitionDuration: "0.3s",
-    },
-    ...modalBasic,
-    ...wizardCommon,
-  });
 
 const AddBulkReplicationModal = ({
   open,
   closeModalAndRefresh,
-  classes,
   buckets,
 }: IBulkReplicationModal) => {
   const dispatch = useAppDispatch();
@@ -233,20 +203,28 @@ const AddBulkReplicationModal = ({
     switch (errString) {
       case "":
         return (
-          <div className={classes.successIcon}>
+          <Box
+            sx={{
+              color: "#42C91A",
+            }}
+          >
             <CheckCircleOutlineIcon />
-          </div>
+          </Box>
         );
       case "n/a":
         return null;
       default:
         if (errString) {
           return (
-            <div className={classes.errorIcon}>
+            <Box
+              sx={{
+                color: "#C72C48",
+              }}
+            >
               <Tooltip tooltip={errString} placement="top">
                 <ErrorOutlineIcon />
               </Tooltip>
-            </div>
+            </Box>
           );
         }
     }
@@ -340,7 +318,7 @@ const AddBulkReplicationModal = ({
                   </ReadBox>
                 </Grid>
                 <h4>Remote Endpoint Configuration</h4>
-                <span className={classes.descriptionText}>
+                <span style={{ fontSize: 14 }}>
                   Please avoid the use of root credentials for this feature
                 </span>
                 <br />
@@ -459,24 +437,35 @@ const AddBulkReplicationModal = ({
             componentRender: (
               <Fragment>
                 <h3>Remote Bucket Assignments</h3>
-                <span className={classes.descriptionText}>
+                <span style={{ fontSize: 14 }}>
                   Please select / type the desired remote bucket were you want
                   the local data to be replicated.
                 </span>
-                <div className={classes.remoteBucketList}>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "auto auto 45px",
+                    alignItems: "center",
+                    justifyContent: "stretch",
+                    "& .hide": {
+                      opacity: 0,
+                      transitionDuration: "0.3s",
+                    },
+                  }}
+                >
                   {bucketsToAlter.map((bucketName: string, index: number) => {
                     const errorItem = stateOfItem(bucketName);
                     return (
                       <Fragment
                         key={`buckets-assignation-${index.toString()}-${bucketName}`}
                       >
-                        <div className={errorItem === "" ? classes.hide : ""}>
+                        <div className={errorItem === "" ? "hide" : ""}>
                           {bucketName}
                         </div>
-                        <div className={errorItem === "" ? classes.hide : ""}>
+                        <div className={errorItem === "" ? "hide" : ""}>
                           {itemDisplayBulk(index)}
                         </div>
-                        <div className={errorItem === "" ? classes.hide : ""}>
+                        <div className={errorItem === "" ? "hide" : ""}>
                           {responseItem && responseItem.length > 0 && (
                             <LogoToShow errString={errorItem} />
                           )}
@@ -484,7 +473,7 @@ const AddBulkReplicationModal = ({
                       </Fragment>
                     );
                   })}
-                </div>
+                </Box>
               </Fragment>
             ),
             buttons: [
@@ -508,4 +497,4 @@ const AddBulkReplicationModal = ({
   );
 };
 
-export default withStyles(styles)(AddBulkReplicationModal);
+export default AddBulkReplicationModal;

@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import {
   Box,
   CommentBox,
+  FormLayout,
   Grid,
   InputBox,
   RadioGroup,
@@ -29,23 +27,12 @@ import {
   Switch,
 } from "mds";
 import { IElementValue } from "../../Configurations/types";
-import {
-  formFieldStyles,
-  modalBasic,
-} from "../../Common/FormComponents/common/styleLibrary";
 
 interface IConfPostgresProps {
   onChange: (newValue: IElementValue[]) => void;
-  classes: any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...modalBasic,
-    ...formFieldStyles,
-  });
-
-const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
+const ConfPostgres = ({ onChange }: IConfPostgresProps) => {
   //Local States
   const [useConnectionString, setUseConnectionString] =
     useState<boolean>(false);
@@ -207,35 +194,31 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
   }, [useConnectionString]);
 
   return (
-    <Grid container>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <Switch
-          label={"Manually Configure String"}
-          checked={useConnectionString}
-          id="manualString"
-          name="manualString"
-          onChange={(e) => {
-            setUseConnectionString(e.target.checked);
-          }}
-          value={"manualString"}
-        />
-      </Grid>
+    <FormLayout containerPadding={false} withBorders={false}>
+      <Switch
+        label={"Manually Configure String"}
+        checked={useConnectionString}
+        id="manualString"
+        name="manualString"
+        onChange={(e) => {
+          setUseConnectionString(e.target.checked);
+        }}
+        value={"manualString"}
+      />
       {useConnectionString ? (
-        <React.Fragment>
-          <Grid item xs={12} className={classes.formFieldRow}>
-            <InputBox
-              id="connection-string"
-              name="connection_string"
-              label="Connection String"
-              value={connectionString}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setConnectionString(e.target.value);
-              }}
-            />
-          </Grid>
-        </React.Fragment>
+        <Fragment>
+          <InputBox
+            id="connection-string"
+            name="connection_string"
+            label="Connection String"
+            value={connectionString}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setConnectionString(e.target.value);
+            }}
+          />
+        </Fragment>
       ) : (
-        <React.Fragment>
+        <Fragment>
           <Grid item xs={12}>
             <Box
               withBorders
@@ -246,166 +229,142 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
                 marginBottom: 12,
               }}
             >
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBox
-                  id="host"
-                  name="host"
-                  label=""
-                  placeholder="Enter Host"
-                  value={host}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setHostname(e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBox
-                  id="db-name"
-                  name="db-name"
-                  label=""
-                  placeholder="Enter DB Name"
-                  value={dbName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setDbName(e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBox
-                  id="port"
-                  name="port"
-                  label=""
-                  placeholder="Enter Port"
-                  value={port}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setPort(e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <Select
-                  value={sslMode}
-                  label=""
-                  id="sslmode"
-                  name="sslmode"
-                  onChange={(value): void => {
-                    if (value) {
-                      setSslMode(value + "");
-                    }
-                  }}
-                  options={[
-                    { label: "Enter SSL Mode", value: " " },
-                    { label: "Require", value: "require" },
-                    { label: "Disable", value: "disable" },
-                    { label: "Verify CA", value: "verify-ca" },
-                    { label: "Verify Full", value: "verify-full" },
-                  ]}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBox
-                  id="user"
-                  name="user"
-                  label=""
-                  placeholder="Enter User"
-                  value={user}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setUser(e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.formFieldRow}>
-                <InputBox
-                  id="password"
-                  name="password"
-                  label=""
-                  type="password"
-                  placeholder="Enter Password"
-                  value={password}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setPassword(e.target.value);
-                  }}
-                />
-              </Grid>
+              <InputBox
+                id="host"
+                name="host"
+                label=""
+                placeholder="Enter Host"
+                value={host}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setHostname(e.target.value);
+                }}
+              />
+              <InputBox
+                id="db-name"
+                name="db-name"
+                label=""
+                placeholder="Enter DB Name"
+                value={dbName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setDbName(e.target.value);
+                }}
+              />
+              <InputBox
+                id="port"
+                name="port"
+                label=""
+                placeholder="Enter Port"
+                value={port}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPort(e.target.value);
+                }}
+              />
+              <Select
+                value={sslMode}
+                label=""
+                id="sslmode"
+                name="sslmode"
+                onChange={(value): void => {
+                  if (value) {
+                    setSslMode(value + "");
+                  }
+                }}
+                options={[
+                  { label: "Enter SSL Mode", value: " " },
+                  { label: "Require", value: "require" },
+                  { label: "Disable", value: "disable" },
+                  { label: "Verify CA", value: "verify-ca" },
+                  { label: "Verify Full", value: "verify-full" },
+                ]}
+              />
+              <InputBox
+                id="user"
+                name="user"
+                label=""
+                placeholder="Enter User"
+                value={user}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setUser(e.target.value);
+                }}
+              />
+              <InputBox
+                id="password"
+                name="password"
+                label=""
+                type="password"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPassword(e.target.value);
+                }}
+              />
             </Box>
           </Grid>
-          <Grid item xs={12} className={classes.formFieldRow}>
-            <ReadBox label={"Connection String"} multiLine>
-              {connectionString}
-            </ReadBox>
-          </Grid>
-        </React.Fragment>
+          <ReadBox label={"Connection String"} multiLine>
+            {connectionString}
+          </ReadBox>
+        </Fragment>
       )}
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBox
-          id="table"
-          name="table"
-          label="Table"
-          placeholder={"Enter Table Name"}
-          value={table}
-          tooltip="DB table name to store/update events, table is auto-created"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setTable(e.target.value);
-          }}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <RadioGroup
-          currentValue={format}
-          id="format"
-          name="format"
-          label="Format"
-          onChange={(e) => {
-            setFormat(e.target.value);
-          }}
-          tooltip="'namespace' reflects current bucket/object list and 'access' reflects a journal of object operations, defaults to 'namespace'"
-          selectorOptions={[
-            { label: "Namespace", value: "namespace" },
-            { label: "Access", value: "access" },
-          ]}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBox
-          id="queue-dir"
-          name="queue_dir"
-          label="Queue Dir"
-          placeholder="Enter Queue Directory"
-          value={queueDir}
-          tooltip="Staging directory for undelivered messages e.g. '/home/events'"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setQueueDir(e.target.value);
-          }}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <InputBox
-          id="queue-limit"
-          name="queue_limit"
-          label="Queue Limit"
-          placeholder="Enter Queue Limit"
-          type="number"
-          value={queueLimit}
-          tooltip="Maximum limit for undelivered messages, defaults to '10000'"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setQueueLimit(e.target.value);
-          }}
-        />
-      </Grid>
-      <Grid item xs={12} className={classes.formFieldRow}>
-        <CommentBox
-          id="comment"
-          name="comment"
-          label="Comment"
-          placeholder="Enter custom notes if any"
-          value={comment}
-          onChange={(e) => {
-            setComment(e.target.value);
-          }}
-        />
-      </Grid>
-    </Grid>
+      <InputBox
+        id="table"
+        name="table"
+        label="Table"
+        placeholder={"Enter Table Name"}
+        value={table}
+        tooltip="DB table name to store/update events, table is auto-created"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setTable(e.target.value);
+        }}
+      />
+      <RadioGroup
+        currentValue={format}
+        id="format"
+        name="format"
+        label="Format"
+        onChange={(e) => {
+          setFormat(e.target.value);
+        }}
+        tooltip="'namespace' reflects current bucket/object list and 'access' reflects a journal of object operations, defaults to 'namespace'"
+        selectorOptions={[
+          { label: "Namespace", value: "namespace" },
+          { label: "Access", value: "access" },
+        ]}
+      />
+      <InputBox
+        id="queue-dir"
+        name="queue_dir"
+        label="Queue Dir"
+        placeholder="Enter Queue Directory"
+        value={queueDir}
+        tooltip="Staging directory for undelivered messages e.g. '/home/events'"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setQueueDir(e.target.value);
+        }}
+      />
+      <InputBox
+        id="queue-limit"
+        name="queue_limit"
+        label="Queue Limit"
+        placeholder="Enter Queue Limit"
+        type="number"
+        value={queueLimit}
+        tooltip="Maximum limit for undelivered messages, defaults to '10000'"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setQueueLimit(e.target.value);
+        }}
+      />
+      <CommentBox
+        id="comment"
+        name="comment"
+        label="Comment"
+        placeholder="Enter custom notes if any"
+        value={comment}
+        onChange={(e) => {
+          setComment(e.target.value);
+        }}
+      />
+    </FormLayout>
   );
 };
 
-export default withStyles(styles)(ConfPostgres);
+export default ConfPostgres;
