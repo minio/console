@@ -18,6 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import get from "lodash/get";
 import {
+  Accordion,
   Button,
   FormLayout,
   Grid,
@@ -32,12 +33,6 @@ import { useSelector } from "react-redux";
 import { api } from "api";
 import { BucketVersioningResponse, Tier } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Typography,
-} from "@mui/material";
 import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import { selDistSet, setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
@@ -77,6 +72,8 @@ const AddLifecycleModal = ({
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
+  const [expandedAdv, setExpandedAdv] = useState<boolean>(false);
+  const [expanded, setExpanded] = useState<boolean>(false);
 
   /*To be removed on component replacement*/
   const formFieldRowFilter = {
@@ -336,63 +333,64 @@ const AddLifecycleModal = ({
               />
             )}
             <Grid item xs={12} sx={formFieldRowFilter}>
-              <Accordion>
-                <AccordionSummary>
-                  <Typography>Filters</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid item xs={12}>
-                    <InputBox
-                      id="prefix"
-                      name="prefix"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setPrefix(e.target.value);
-                      }}
-                      label="Prefix"
-                      value={prefix}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <QueryMultiSelector
-                      name="tags"
-                      label="Tags"
-                      elements={""}
-                      onChange={(vl: string) => {
-                        setTags(vl);
-                      }}
-                      keyPlaceholder="Tag Key"
-                      valuePlaceholder="Tag Value"
-                      withBorder
-                    />
-                  </Grid>
-                </AccordionDetails>
+              <Accordion
+                title={"Filters"}
+                id={"lifecycle-filters"}
+                expanded={expanded}
+                onTitleClick={() => setExpanded(!expanded)}
+              >
+                <Grid item xs={12}>
+                  <InputBox
+                    id="prefix"
+                    name="prefix"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setPrefix(e.target.value);
+                    }}
+                    label="Prefix"
+                    value={prefix}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <QueryMultiSelector
+                    name="tags"
+                    label="Tags"
+                    elements={""}
+                    onChange={(vl: string) => {
+                      setTags(vl);
+                    }}
+                    keyPlaceholder="Tag Key"
+                    valuePlaceholder="Tag Value"
+                    withBorder
+                  />
+                </Grid>
               </Accordion>
             </Grid>
             {ilmType === "expiry" && targetVersion === "noncurrent" && (
               <Grid item xs={12} sx={formFieldRowFilter}>
-                <Accordion>
-                  <AccordionSummary>
-                    <Typography>Advanced</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Grid item xs={12}>
-                      <Switch
-                        value="expired_delete_marker"
-                        id="expired_delete_marker"
-                        name="expired_delete_marker"
-                        checked={expiredObjectDM}
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>,
-                        ) => {
-                          setExpiredObjectDM(event.target.checked);
-                        }}
-                        label={"Expire Delete Marker"}
-                        description={
-                          "Remove the reference to the object if no versions are left"
-                        }
-                      />
-                    </Grid>
-                  </AccordionDetails>
+                <Accordion
+                  title={"Advanced"}
+                  id={"lifecycle-advanced-filters"}
+                  expanded={expandedAdv}
+                  onTitleClick={() => setExpandedAdv(!expandedAdv)}
+                  sx={{ marginTop: 15 }}
+                >
+                  <Grid item xs={12}>
+                    <Switch
+                      value="expired_delete_marker"
+                      id="expired_delete_marker"
+                      name="expired_delete_marker"
+                      checked={expiredObjectDM}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>,
+                      ) => {
+                        setExpiredObjectDM(event.target.checked);
+                      }}
+                      label={"Expire Delete Marker"}
+                      description={
+                        "Remove the reference to the object if no versions are left"
+                      }
+                    />
+                  </Grid>
                 </Accordion>
               </Grid>
             )}
