@@ -41,7 +41,7 @@ type ObjectsRequest struct {
 
 type WSResponse struct {
 	RequestID  int64            `json:"request_id,omitempty"`
-	Error      string           `json:"error,omitempty"`
+	Error      *CodedAPIError   `json:"error,omitempty"`
 	RequestEnd bool             `json:"request_end,omitempty"`
 	Prefix     string           `json:"prefix,omitempty"`
 	BucketName string           `json:"bucketName,omitempty"`

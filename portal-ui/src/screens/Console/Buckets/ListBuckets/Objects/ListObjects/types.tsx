@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { BucketObject } from "api/consoleApi";
+import { ApiError, BucketObject } from "api/consoleApi";
 import { IFileInfo } from "../ObjectDetails/types";
 
 export interface BucketObjectItem {
@@ -38,11 +38,16 @@ export interface WebsocketRequest {
 
 export interface WebsocketResponse {
   request_id: number;
-  error?: string;
+  error?: WebsocketErrorResponse;
   request_end?: boolean;
   data?: ObjectResponse[];
   prefix?: string;
   bucketName?: string;
+}
+
+export interface WebsocketErrorResponse {
+  Code: number;
+  APIError: ApiError;
 }
 
 export interface ObjectResponse {

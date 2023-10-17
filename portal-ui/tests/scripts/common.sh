@@ -49,6 +49,7 @@ create_policies() {
   mc admin policy create minio conditions-policy-$TIMESTAMP portal-ui/tests/policies/conditionsPolicy.json
   mc admin policy create minio conditions-policy-2-$TIMESTAMP portal-ui/tests/policies/conditionsPolicy2.json
   mc admin policy create minio conditions-policy-3-$TIMESTAMP portal-ui/tests/policies/conditionsPolicy3.json
+  mc admin policy create minio conditions-policy-4-$TIMESTAMP portal-ui/tests/policies/conditionsPolicy4.json
 }
 
 create_users() {
@@ -79,6 +80,7 @@ create_users() {
   mc admin user add minio conditions-$TIMESTAMP conditions1234
   mc admin user add minio conditions-2-$TIMESTAMP conditions1234
   mc admin user add minio conditions-3-$TIMESTAMP conditions1234
+  mc admin user add minio conditions-4-$TIMESTAMP conditions1234
 }
 
 create_buckets() {
@@ -114,4 +116,5 @@ assign_policies() {
   mc admin policy attach minio conditions-policy-$TIMESTAMP --user conditions-$TIMESTAMP
   mc admin policy attach minio conditions-policy-2-$TIMESTAMP --user conditions-2-$TIMESTAMP
   mc admin policy attach minio conditions-policy-3-$TIMESTAMP --user conditions-3-$TIMESTAMP
+  mc admin policy attach minio conditions-policy-4-$TIMESTAMP --user conditions-4-$TIMESTAMP
 }
