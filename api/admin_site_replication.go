@@ -192,9 +192,13 @@ func editSiteReplication(ctx context.Context, client MinioAdmin, params *siteRep
 	}
 	qs := runtime.Values(params.HTTPRequest.URL.Query())
 	_, qhkDisableILMExpiryReplication, _ := qs.GetOK("disable-ilm-expiry-replication")
+	_, qhkEnableILMExpiryReplication, _ := qs.GetOK("enable-ilm-expiry-replication")
 	var opts madmin.SREditOptions
 	if qhkDisableILMExpiryReplication {
 		opts.DisableILMExpiryReplication = true
+	}
+	if qhkEnableILMExpiryReplication {
+		opts.EnableILMExpiryReplication = true
 	}
 	eRes, err := client.editSiteReplicationInfo(ctx, *peerSiteInfo, opts)
 	if err != nil {
