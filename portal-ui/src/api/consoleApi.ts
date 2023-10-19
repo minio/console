@@ -1707,10 +1707,9 @@ export class HttpClient<SecurityDataType = unknown> {
             ? { "Content-Type": type }
             : {}),
         },
-        signal:
-          (cancelToken
-            ? this.createAbortSignal(cancelToken)
-            : requestParams.signal) || null,
+        signal: cancelToken
+          ? this.createAbortSignal(cancelToken)
+          : requestParams.signal,
         body:
           typeof body === "undefined" || body === null
             ? null
@@ -2027,7 +2026,10 @@ export class Api<
         recursive?: boolean;
         with_versions?: boolean;
         with_metadata?: boolean;
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 20
+         */
         limit?: number;
       },
       params: RequestParams = {},
@@ -2463,9 +2465,15 @@ export class Api<
     listBucketEvents: (
       bucketName: string,
       query?: {
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 0
+         */
         offset?: number;
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 20
+         */
         limit?: number;
       },
       params: RequestParams = {},
@@ -2969,9 +2977,15 @@ export class Api<
      */
     listUserServiceAccounts: (
       query?: {
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 0
+         */
         offset?: number;
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 20
+         */
         limit?: number;
       },
       params: RequestParams = {},
@@ -3121,9 +3135,15 @@ export class Api<
      */
     listUsers: (
       query?: {
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 0
+         */
         offset?: number;
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 20
+         */
         limit?: number;
       },
       params: RequestParams = {},
@@ -3395,9 +3415,15 @@ export class Api<
      */
     listGroups: (
       query?: {
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 0
+         */
         offset?: number;
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 20
+         */
         limit?: number;
       },
       params: RequestParams = {},
@@ -3502,9 +3528,15 @@ export class Api<
      */
     listPolicies: (
       query?: {
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 0
+         */
         offset?: number;
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 20
+         */
         limit?: number;
       },
       params: RequestParams = {},
@@ -3587,9 +3619,15 @@ export class Api<
     listPoliciesWithBucket: (
       bucket: string,
       query?: {
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 0
+         */
         offset?: number;
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 20
+         */
         limit?: number;
       },
       params: RequestParams = {},
@@ -3640,9 +3678,15 @@ export class Api<
     listAccessRulesWithBucket: (
       bucket: string,
       query?: {
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 0
+         */
         offset?: number;
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 20
+         */
         limit?: number;
       },
       params: RequestParams = {},
@@ -3693,9 +3737,15 @@ export class Api<
     listUsersWithAccessToBucket: (
       bucket: string,
       query?: {
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 0
+         */
         offset?: number;
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 20
+         */
         limit?: number;
       },
       params: RequestParams = {},
@@ -3757,9 +3807,15 @@ export class Api<
      */
     listConfig: (
       query?: {
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 0
+         */
         offset?: number;
-        /** @format int32 */
+        /**
+         * @format int32
+         * @default 20
+         */
         limit?: number;
       },
       params: RequestParams = {},

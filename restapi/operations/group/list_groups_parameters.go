@@ -33,11 +33,21 @@ import (
 )
 
 // NewListGroupsParams creates a new ListGroupsParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewListGroupsParams() ListGroupsParams {
 
-	return ListGroupsParams{}
+	var (
+		// initialize parameters with default values
+
+		limitDefault  = int32(20)
+		offsetDefault = int32(0)
+	)
+
+	return ListGroupsParams{
+		Limit: &limitDefault,
+
+		Offset: &offsetDefault,
+	}
 }
 
 // ListGroupsParams contains all the bound params for the list groups operation
@@ -51,10 +61,12 @@ type ListGroupsParams struct {
 
 	/*
 	  In: query
+	  Default: 20
 	*/
 	Limit *int32
 	/*
 	  In: query
+	  Default: 0
 	*/
 	Offset *int32
 }
@@ -96,6 +108,7 @@ func (o *ListGroupsParams) bindLimit(rawData []string, hasKey bool, formats strf
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListGroupsParams()
 		return nil
 	}
 
@@ -119,6 +132,7 @@ func (o *ListGroupsParams) bindOffset(rawData []string, hasKey bool, formats str
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListGroupsParams()
 		return nil
 	}
 

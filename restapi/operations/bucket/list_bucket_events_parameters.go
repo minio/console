@@ -33,11 +33,21 @@ import (
 )
 
 // NewListBucketEventsParams creates a new ListBucketEventsParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewListBucketEventsParams() ListBucketEventsParams {
 
-	return ListBucketEventsParams{}
+	var (
+		// initialize parameters with default values
+
+		limitDefault  = int32(20)
+		offsetDefault = int32(0)
+	)
+
+	return ListBucketEventsParams{
+		Limit: &limitDefault,
+
+		Offset: &offsetDefault,
+	}
 }
 
 // ListBucketEventsParams contains all the bound params for the list bucket events operation
@@ -56,10 +66,12 @@ type ListBucketEventsParams struct {
 	BucketName string
 	/*
 	  In: query
+	  Default: 20
 	*/
 	Limit *int32
 	/*
 	  In: query
+	  Default: 0
 	*/
 	Offset *int32
 }
@@ -120,6 +132,7 @@ func (o *ListBucketEventsParams) bindLimit(rawData []string, hasKey bool, format
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListBucketEventsParams()
 		return nil
 	}
 
@@ -143,6 +156,7 @@ func (o *ListBucketEventsParams) bindOffset(rawData []string, hasKey bool, forma
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListBucketEventsParams()
 		return nil
 	}
 

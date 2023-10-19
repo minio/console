@@ -33,11 +33,21 @@ import (
 )
 
 // NewListPoliciesParams creates a new ListPoliciesParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewListPoliciesParams() ListPoliciesParams {
 
-	return ListPoliciesParams{}
+	var (
+		// initialize parameters with default values
+
+		limitDefault  = int32(20)
+		offsetDefault = int32(0)
+	)
+
+	return ListPoliciesParams{
+		Limit: &limitDefault,
+
+		Offset: &offsetDefault,
+	}
 }
 
 // ListPoliciesParams contains all the bound params for the list policies operation
@@ -51,10 +61,12 @@ type ListPoliciesParams struct {
 
 	/*
 	  In: query
+	  Default: 20
 	*/
 	Limit *int32
 	/*
 	  In: query
+	  Default: 0
 	*/
 	Offset *int32
 }
@@ -96,6 +108,7 @@ func (o *ListPoliciesParams) bindLimit(rawData []string, hasKey bool, formats st
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListPoliciesParams()
 		return nil
 	}
 
@@ -119,6 +132,7 @@ func (o *ListPoliciesParams) bindOffset(rawData []string, hasKey bool, formats s
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListPoliciesParams()
 		return nil
 	}
 

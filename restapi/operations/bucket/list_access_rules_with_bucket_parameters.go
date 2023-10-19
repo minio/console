@@ -33,11 +33,21 @@ import (
 )
 
 // NewListAccessRulesWithBucketParams creates a new ListAccessRulesWithBucketParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewListAccessRulesWithBucketParams() ListAccessRulesWithBucketParams {
 
-	return ListAccessRulesWithBucketParams{}
+	var (
+		// initialize parameters with default values
+
+		limitDefault  = int32(20)
+		offsetDefault = int32(0)
+	)
+
+	return ListAccessRulesWithBucketParams{
+		Limit: &limitDefault,
+
+		Offset: &offsetDefault,
+	}
 }
 
 // ListAccessRulesWithBucketParams contains all the bound params for the list access rules with bucket operation
@@ -56,10 +66,12 @@ type ListAccessRulesWithBucketParams struct {
 	Bucket string
 	/*
 	  In: query
+	  Default: 20
 	*/
 	Limit *int32
 	/*
 	  In: query
+	  Default: 0
 	*/
 	Offset *int32
 }
@@ -120,6 +132,7 @@ func (o *ListAccessRulesWithBucketParams) bindLimit(rawData []string, hasKey boo
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListAccessRulesWithBucketParams()
 		return nil
 	}
 
@@ -143,6 +156,7 @@ func (o *ListAccessRulesWithBucketParams) bindOffset(rawData []string, hasKey bo
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListAccessRulesWithBucketParams()
 		return nil
 	}
 

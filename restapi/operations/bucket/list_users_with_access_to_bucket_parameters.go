@@ -33,11 +33,21 @@ import (
 )
 
 // NewListUsersWithAccessToBucketParams creates a new ListUsersWithAccessToBucketParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewListUsersWithAccessToBucketParams() ListUsersWithAccessToBucketParams {
 
-	return ListUsersWithAccessToBucketParams{}
+	var (
+		// initialize parameters with default values
+
+		limitDefault  = int32(20)
+		offsetDefault = int32(0)
+	)
+
+	return ListUsersWithAccessToBucketParams{
+		Limit: &limitDefault,
+
+		Offset: &offsetDefault,
+	}
 }
 
 // ListUsersWithAccessToBucketParams contains all the bound params for the list users with access to bucket operation
@@ -56,10 +66,12 @@ type ListUsersWithAccessToBucketParams struct {
 	Bucket string
 	/*
 	  In: query
+	  Default: 20
 	*/
 	Limit *int32
 	/*
 	  In: query
+	  Default: 0
 	*/
 	Offset *int32
 }
@@ -120,6 +132,7 @@ func (o *ListUsersWithAccessToBucketParams) bindLimit(rawData []string, hasKey b
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListUsersWithAccessToBucketParams()
 		return nil
 	}
 
@@ -143,6 +156,7 @@ func (o *ListUsersWithAccessToBucketParams) bindOffset(rawData []string, hasKey 
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListUsersWithAccessToBucketParams()
 		return nil
 	}
 
