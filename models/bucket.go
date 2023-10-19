@@ -185,6 +185,11 @@ func (m *Bucket) ContextValidate(ctx context.Context, formats strfmt.Registry) e
 func (m *Bucket) contextValidateAccess(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Access != nil {
+
+		if swag.IsZero(m.Access) { // not required
+			return nil
+		}
+
 		if err := m.Access.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("access")
@@ -201,6 +206,11 @@ func (m *Bucket) contextValidateAccess(ctx context.Context, formats strfmt.Regis
 func (m *Bucket) contextValidateDetails(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Details != nil {
+
+		if swag.IsZero(m.Details) { // not required
+			return nil
+		}
+
 		if err := m.Details.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("details")
@@ -217,6 +227,11 @@ func (m *Bucket) contextValidateDetails(ctx context.Context, formats strfmt.Regi
 func (m *Bucket) contextValidateRwAccess(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.RwAccess != nil {
+
+		if swag.IsZero(m.RwAccess) { // not required
+			return nil
+		}
+
 		if err := m.RwAccess.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("rw_access")
@@ -322,6 +337,11 @@ func (m *BucketDetails) ContextValidate(ctx context.Context, formats strfmt.Regi
 func (m *BucketDetails) contextValidateQuota(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Quota != nil {
+
+		if swag.IsZero(m.Quota) { // not required
+			return nil
+		}
+
 		if err := m.Quota.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("details" + "." + "quota")

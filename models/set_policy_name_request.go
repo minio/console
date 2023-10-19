@@ -130,6 +130,7 @@ func (m *SetPolicyNameRequest) ContextValidate(ctx context.Context, formats strf
 func (m *SetPolicyNameRequest) contextValidateEntityType(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.EntityType != nil {
+
 		if err := m.EntityType.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("entityType")

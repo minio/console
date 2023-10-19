@@ -108,6 +108,11 @@ func (m *BucketVersioningResponse) contextValidateExcludedPrefixes(ctx context.C
 	for i := 0; i < len(m.ExcludedPrefixes); i++ {
 
 		if m.ExcludedPrefixes[i] != nil {
+
+			if swag.IsZero(m.ExcludedPrefixes[i]) { // not required
+				return nil
+			}
+
 			if err := m.ExcludedPrefixes[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("excludedPrefixes" + "." + strconv.Itoa(i))

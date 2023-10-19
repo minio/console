@@ -102,6 +102,11 @@ func (m *ListPoliciesResponse) contextValidatePolicies(ctx context.Context, form
 	for i := 0; i < len(m.Policies); i++ {
 
 		if m.Policies[i] != nil {
+
+			if swag.IsZero(m.Policies[i]) { // not required
+				return nil
+			}
+
 			if err := m.Policies[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("policies" + "." + strconv.Itoa(i))

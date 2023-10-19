@@ -99,6 +99,11 @@ func (m *MultiBucketResponseState) contextValidateReplicationState(ctx context.C
 	for i := 0; i < len(m.ReplicationState); i++ {
 
 		if m.ReplicationState[i] != nil {
+
+			if swag.IsZero(m.ReplicationState[i]) { // not required
+				return nil
+			}
+
 			if err := m.ReplicationState[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("replicationState" + "." + strconv.Itoa(i))

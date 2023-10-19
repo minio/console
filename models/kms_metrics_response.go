@@ -309,6 +309,11 @@ func (m *KmsMetricsResponse) contextValidateLatencyHistogram(ctx context.Context
 	for i := 0; i < len(m.LatencyHistogram); i++ {
 
 		if m.LatencyHistogram[i] != nil {
+
+			if swag.IsZero(m.LatencyHistogram[i]) { // not required
+				return nil
+			}
+
 			if err := m.LatencyHistogram[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("latencyHistogram" + "." + strconv.Itoa(i))

@@ -99,6 +99,11 @@ func (m *BucketLifecycleResponse) contextValidateLifecycle(ctx context.Context, 
 	for i := 0; i < len(m.Lifecycle); i++ {
 
 		if m.Lifecycle[i] != nil {
+
+			if swag.IsZero(m.Lifecycle[i]) { // not required
+				return nil
+			}
+
 			if err := m.Lifecycle[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("lifecycle" + "." + strconv.Itoa(i))

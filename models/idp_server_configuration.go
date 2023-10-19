@@ -111,6 +111,11 @@ func (m *IdpServerConfiguration) contextValidateInfo(ctx context.Context, format
 	for i := 0; i < len(m.Info); i++ {
 
 		if m.Info[i] != nil {
+
+			if swag.IsZero(m.Info[i]) { // not required
+				return nil
+			}
+
 			if err := m.Info[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("info" + "." + strconv.Itoa(i))

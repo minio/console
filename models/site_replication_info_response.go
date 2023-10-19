@@ -108,6 +108,11 @@ func (m *SiteReplicationInfoResponse) contextValidateSites(ctx context.Context, 
 	for i := 0; i < len(m.Sites); i++ {
 
 		if m.Sites[i] != nil {
+
+			if swag.IsZero(m.Sites[i]) { // not required
+				return nil
+			}
+
 			if err := m.Sites[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("sites" + "." + strconv.Itoa(i))

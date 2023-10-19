@@ -102,6 +102,11 @@ func (m *ListBucketsResponse) contextValidateBuckets(ctx context.Context, format
 	for i := 0; i < len(m.Buckets); i++ {
 
 		if m.Buckets[i] != nil {
+
+			if swag.IsZero(m.Buckets[i]) { // not required
+				return nil
+			}
+
 			if err := m.Buckets[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("buckets" + "." + strconv.Itoa(i))

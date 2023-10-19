@@ -196,6 +196,11 @@ func (m *SessionResponse) contextValidateAllowResources(ctx context.Context, for
 	for i := 0; i < len(m.AllowResources); i++ {
 
 		if m.AllowResources[i] != nil {
+
+			if swag.IsZero(m.AllowResources[i]) { // not required
+				return nil
+			}
+
 			if err := m.AllowResources[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("allowResources" + "." + strconv.Itoa(i))
@@ -214,6 +219,11 @@ func (m *SessionResponse) contextValidateAllowResources(ctx context.Context, for
 func (m *SessionResponse) contextValidateEnvConstants(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.EnvConstants != nil {
+
+		if swag.IsZero(m.EnvConstants) { // not required
+			return nil
+		}
+
 		if err := m.EnvConstants.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("envConstants")

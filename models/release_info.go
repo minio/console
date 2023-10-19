@@ -104,6 +104,11 @@ func (m *ReleaseInfo) ContextValidate(ctx context.Context, formats strfmt.Regist
 func (m *ReleaseInfo) contextValidateMetadata(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Metadata != nil {
+
+		if swag.IsZero(m.Metadata) { // not required
+			return nil
+		}
+
 		if err := m.Metadata.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("metadata")

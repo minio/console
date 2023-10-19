@@ -117,6 +117,10 @@ func (m *GetBucketRetentionConfig) ContextValidate(ctx context.Context, formats 
 
 func (m *GetBucketRetentionConfig) contextValidateMode(ctx context.Context, formats strfmt.Registry) error {
 
+	if swag.IsZero(m.Mode) { // not required
+		return nil
+	}
+
 	if err := m.Mode.ContextValidate(ctx, formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("mode")
@@ -130,6 +134,10 @@ func (m *GetBucketRetentionConfig) contextValidateMode(ctx context.Context, form
 }
 
 func (m *GetBucketRetentionConfig) contextValidateUnit(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Unit) { // not required
+		return nil
+	}
 
 	if err := m.Unit.ContextValidate(ctx, formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
