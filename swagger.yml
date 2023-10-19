@@ -884,50 +884,6 @@ paths:
       tags:
         - Bucket
 
-  /list-external-buckets:
-    post:
-      summary: Lists an External list of buckets using custom credentials
-      operationId: ListExternalBuckets
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/listExternalBucketsParams"
-      responses:
-        200:
-          description: A successful response.
-          schema:
-            $ref: "#/definitions/listBucketsResponse"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/ApiError"
-      tags:
-        - Bucket
-
-  /buckets-replication:
-    post:
-      summary: Sets Multi Bucket Replication in multiple Buckets
-      operationId: SetMultiBucketReplication
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/multiBucketReplication"
-      responses:
-        200:
-          description: A successful response.
-          schema:
-            $ref: "#/definitions/multiBucketResponseState"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/ApiError"
-      tags:
-        - Bucket
-
   /buckets/{bucket_name}/replication:
     get:
       summary: Bucket Replication
@@ -1332,6 +1288,66 @@ paths:
           description: A successful response.
           schema:
             $ref: "#/definitions/rewindResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+
+  /buckets/max-share-exp:
+    get:
+      summary: Get max expiration time for share link in seconds
+      operationId: GetMaxShareLinkExp
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/maxShareLinkExpResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+
+  /list-external-buckets:
+    post:
+      summary: Lists an External list of buckets using custom credentials
+      operationId: ListExternalBuckets
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/listExternalBucketsParams"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listBucketsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+
+  /buckets-replication:
+    post:
+      summary: Sets Multi Bucket Replication in multiple Buckets
+      operationId: SetMultiBucketReplication
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/multiBucketReplication"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/multiBucketResponseState"
         default:
           description: Generic error response.
           schema:
@@ -6120,3 +6136,12 @@ definitions:
         type: array
         items:
           type: string
+
+  maxShareLinkExpResponse:
+    type: object
+    properties:
+      exp:
+        type: number
+        format: int64
+    required:
+      - exp

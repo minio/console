@@ -1499,6 +1499,11 @@ export interface LdapPolicyEntity {
   groups?: string[];
 }
 
+export interface MaxShareLinkExpResponse {
+  /** @format int64 */
+  exp: number;
+}
+
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -2912,6 +2917,24 @@ export class Api<
         path: `/buckets/${bucketName}/rewind/${date}`,
         method: "GET",
         query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Bucket
+     * @name GetMaxShareLinkExp
+     * @summary Get max expiration time for share link in seconds
+     * @request GET:/buckets/max-share-exp
+     * @secure
+     */
+    getMaxShareLinkExp: (params: RequestParams = {}) =>
+      this.request<MaxShareLinkExpResponse, ApiError>({
+        path: `/buckets/max-share-exp`,
+        method: "GET",
         secure: true,
         format: "json",
         ...params,

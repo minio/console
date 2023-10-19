@@ -911,6 +911,29 @@ func init() {
         }
       }
     },
+    "/buckets/max-share-exp": {
+      "get": {
+        "tags": [
+          "Bucket"
+        ],
+        "summary": "Get max expiration time for share link in seconds",
+        "operationId": "GetMaxShareLinkExp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/maxShareLinkExpResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
     "/buckets/multi-lifecycle": {
       "post": {
         "tags": [
@@ -7094,6 +7117,18 @@ func init() {
         }
       }
     },
+    "maxShareLinkExpResponse": {
+      "type": "object",
+      "required": [
+        "exp"
+      ],
+      "properties": {
+        "exp": {
+          "type": "number",
+          "format": "int64"
+        }
+      }
+    },
     "metadata": {
       "type": "object",
       "properties": {
@@ -9930,6 +9965,29 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/multiBucketResponseState"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/max-share-exp": {
+      "get": {
+        "tags": [
+          "Bucket"
+        ],
+        "summary": "Get max expiration time for share link in seconds",
+        "operationId": "GetMaxShareLinkExp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/maxShareLinkExpResponse"
             }
           },
           "default": {
@@ -16322,6 +16380,18 @@ func init() {
       "properties": {
         "bucketName": {
           "type": "string"
+        }
+      }
+    },
+    "maxShareLinkExpResponse": {
+      "type": "object",
+      "required": [
+        "exp"
+      ],
+      "properties": {
+        "exp": {
+          "type": "number",
+          "format": "int64"
         }
       }
     },

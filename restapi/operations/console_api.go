@@ -256,6 +256,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		IdpGetLDAPEntitiesHandler: idp.GetLDAPEntitiesHandlerFunc(func(params idp.GetLDAPEntitiesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation idp.GetLDAPEntities has not yet been implemented")
 		}),
+		BucketGetMaxShareLinkExpHandler: bucket.GetMaxShareLinkExpHandlerFunc(func(params bucket.GetMaxShareLinkExpParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation bucket.GetMaxShareLinkExp has not yet been implemented")
+		}),
 		ObjectGetObjectMetadataHandler: object.GetObjectMetadataHandlerFunc(func(params object.GetObjectMetadataParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.GetObjectMetadata has not yet been implemented")
 		}),
@@ -731,6 +734,8 @@ type ConsoleAPI struct {
 	IdpGetConfigurationHandler idp.GetConfigurationHandler
 	// IdpGetLDAPEntitiesHandler sets the operation handler for the get l d a p entities operation
 	IdpGetLDAPEntitiesHandler idp.GetLDAPEntitiesHandler
+	// BucketGetMaxShareLinkExpHandler sets the operation handler for the get max share link exp operation
+	BucketGetMaxShareLinkExpHandler bucket.GetMaxShareLinkExpHandler
 	// ObjectGetObjectMetadataHandler sets the operation handler for the get object metadata operation
 	ObjectGetObjectMetadataHandler object.GetObjectMetadataHandler
 	// PolicyGetSAUserPolicyHandler sets the operation handler for the get s a user policy operation
@@ -1189,6 +1194,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.IdpGetLDAPEntitiesHandler == nil {
 		unregistered = append(unregistered, "idp.GetLDAPEntitiesHandler")
+	}
+	if o.BucketGetMaxShareLinkExpHandler == nil {
+		unregistered = append(unregistered, "bucket.GetMaxShareLinkExpHandler")
 	}
 	if o.ObjectGetObjectMetadataHandler == nil {
 		unregistered = append(unregistered, "object.GetObjectMetadataHandler")
@@ -1821,6 +1829,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/ldap-entities"] = idp.NewGetLDAPEntities(o.context, o.IdpGetLDAPEntitiesHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/max-share-exp"] = bucket.NewGetMaxShareLinkExp(o.context, o.BucketGetMaxShareLinkExpHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
