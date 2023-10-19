@@ -33,11 +33,21 @@ import (
 )
 
 // NewListUserServiceAccountsParams creates a new ListUserServiceAccountsParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewListUserServiceAccountsParams() ListUserServiceAccountsParams {
 
-	return ListUserServiceAccountsParams{}
+	var (
+		// initialize parameters with default values
+
+		limitDefault  = int32(20)
+		offsetDefault = int32(0)
+	)
+
+	return ListUserServiceAccountsParams{
+		Limit: &limitDefault,
+
+		Offset: &offsetDefault,
+	}
 }
 
 // ListUserServiceAccountsParams contains all the bound params for the list user service accounts operation
@@ -51,10 +61,12 @@ type ListUserServiceAccountsParams struct {
 
 	/*
 	  In: query
+	  Default: 20
 	*/
 	Limit *int32
 	/*
 	  In: query
+	  Default: 0
 	*/
 	Offset *int32
 }
@@ -96,6 +108,7 @@ func (o *ListUserServiceAccountsParams) bindLimit(rawData []string, hasKey bool,
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListUserServiceAccountsParams()
 		return nil
 	}
 
@@ -119,6 +132,7 @@ func (o *ListUserServiceAccountsParams) bindOffset(rawData []string, hasKey bool
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListUserServiceAccountsParams()
 		return nil
 	}
 

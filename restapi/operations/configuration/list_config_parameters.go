@@ -33,11 +33,21 @@ import (
 )
 
 // NewListConfigParams creates a new ListConfigParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewListConfigParams() ListConfigParams {
 
-	return ListConfigParams{}
+	var (
+		// initialize parameters with default values
+
+		limitDefault  = int32(20)
+		offsetDefault = int32(0)
+	)
+
+	return ListConfigParams{
+		Limit: &limitDefault,
+
+		Offset: &offsetDefault,
+	}
 }
 
 // ListConfigParams contains all the bound params for the list config operation
@@ -51,10 +61,12 @@ type ListConfigParams struct {
 
 	/*
 	  In: query
+	  Default: 20
 	*/
 	Limit *int32
 	/*
 	  In: query
+	  Default: 0
 	*/
 	Offset *int32
 }
@@ -96,6 +108,7 @@ func (o *ListConfigParams) bindLimit(rawData []string, hasKey bool, formats strf
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListConfigParams()
 		return nil
 	}
 
@@ -119,6 +132,7 @@ func (o *ListConfigParams) bindOffset(rawData []string, hasKey bool, formats str
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListConfigParams()
 		return nil
 	}
 

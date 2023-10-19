@@ -33,11 +33,18 @@ import (
 )
 
 // NewListObjectsParams creates a new ListObjectsParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewListObjectsParams() ListObjectsParams {
 
-	return ListObjectsParams{}
+	var (
+		// initialize parameters with default values
+
+		limitDefault = int32(20)
+	)
+
+	return ListObjectsParams{
+		Limit: &limitDefault,
+	}
 }
 
 // ListObjectsParams contains all the bound params for the list objects operation
@@ -56,6 +63,7 @@ type ListObjectsParams struct {
 	BucketName string
 	/*
 	  In: query
+	  Default: 20
 	*/
 	Limit *int32
 	/*
@@ -147,6 +155,7 @@ func (o *ListObjectsParams) bindLimit(rawData []string, hasKey bool, formats str
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListObjectsParams()
 		return nil
 	}
 

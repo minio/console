@@ -33,11 +33,21 @@ import (
 )
 
 // NewListUsersParams creates a new ListUsersParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewListUsersParams() ListUsersParams {
 
-	return ListUsersParams{}
+	var (
+		// initialize parameters with default values
+
+		limitDefault  = int32(20)
+		offsetDefault = int32(0)
+	)
+
+	return ListUsersParams{
+		Limit: &limitDefault,
+
+		Offset: &offsetDefault,
+	}
 }
 
 // ListUsersParams contains all the bound params for the list users operation
@@ -51,10 +61,12 @@ type ListUsersParams struct {
 
 	/*
 	  In: query
+	  Default: 20
 	*/
 	Limit *int32
 	/*
 	  In: query
+	  Default: 0
 	*/
 	Offset *int32
 }
@@ -96,6 +108,7 @@ func (o *ListUsersParams) bindLimit(rawData []string, hasKey bool, formats strfm
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListUsersParams()
 		return nil
 	}
 
@@ -119,6 +132,7 @@ func (o *ListUsersParams) bindOffset(rawData []string, hasKey bool, formats strf
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListUsersParams()
 		return nil
 	}
 

@@ -26,6 +26,19 @@ securityDefinitions:
 # Apply the key security definition to all APIs
 security:
   - key: []
+parameters:
+  limit:
+    name: limit
+    in: query
+    type: number
+    format: int32
+    default: 20
+  offset:
+    name: offset
+    in: query
+    type: number
+    format: int32
+    default: 0
 paths:
   /login:
     get:
@@ -306,11 +319,7 @@ paths:
           in: query
           required: false
           type: boolean
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: A successful response.
@@ -811,16 +820,8 @@ paths:
           in: path
           required: true
           type: string
-        - name: offset
-          in: query
-          required: false
-          type: integer
-          format: int32
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
+        - $ref: "#/parameters/offset"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: A successful response.
@@ -1343,16 +1344,8 @@ paths:
       summary: List User's Service Accounts
       operationId: ListUserServiceAccounts
       parameters:
-        - name: offset
-          in: query
-          required: false
-          type: integer
-          format: int32
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
+        - $ref: "#/parameters/offset"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: A successful response.
@@ -1496,16 +1489,8 @@ paths:
       summary: List Users
       operationId: ListUsers
       parameters:
-        - name: offset
-          in: query
-          required: false
-          type: integer
-          format: int32
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
+        - $ref: "#/parameters/offset"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: A successful response.
@@ -1780,16 +1765,8 @@ paths:
       summary: List Groups
       operationId: ListGroups
       parameters:
-        - name: offset
-          in: query
-          required: false
-          type: integer
-          format: int32
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
+        - $ref: "#/parameters/offset"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: A successful response.
@@ -1887,16 +1864,8 @@ paths:
       summary: List Policies
       operationId: ListPolicies
       parameters:
-        - name: offset
-          in: query
-          required: false
-          type: integer
-          format: int32
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
+        - $ref: "#/parameters/offset"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: A successful response.
@@ -1984,16 +1953,8 @@ paths:
           in: path
           required: true
           type: string
-        - name: offset
-          in: query
-          required: false
-          type: integer
-          format: int32
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
+        - $ref: "#/parameters/offset"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: A successful response.
@@ -2039,16 +2000,8 @@ paths:
           in: path
           required: true
           type: string
-        - name: offset
-          in: query
-          required: false
-          type: integer
-          format: int32
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
+        - $ref: "#/parameters/offset"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: A successful response.
@@ -2094,16 +2047,8 @@ paths:
           in: path
           required: true
           type: string
-        - name: offset
-          in: query
-          required: false
-          type: integer
-          format: int32
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
+        - $ref: "#/parameters/offset"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: A successful response.
@@ -2161,16 +2106,8 @@ paths:
       summary: List Configurations
       operationId: ListConfig
       parameters:
-        - name: offset
-          in: query
-          required: false
-          type: integer
-          format: int32
-        - name: limit
-          in: query
-          required: false
-          type: integer
-          format: int32
+        - $ref: "#/parameters/offset"
+        - $ref: "#/parameters/limit"
       responses:
         200:
           description: A successful response.

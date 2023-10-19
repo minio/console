@@ -33,11 +33,21 @@ import (
 )
 
 // NewListPoliciesWithBucketParams creates a new ListPoliciesWithBucketParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewListPoliciesWithBucketParams() ListPoliciesWithBucketParams {
 
-	return ListPoliciesWithBucketParams{}
+	var (
+		// initialize parameters with default values
+
+		limitDefault  = int32(20)
+		offsetDefault = int32(0)
+	)
+
+	return ListPoliciesWithBucketParams{
+		Limit: &limitDefault,
+
+		Offset: &offsetDefault,
+	}
 }
 
 // ListPoliciesWithBucketParams contains all the bound params for the list policies with bucket operation
@@ -56,10 +66,12 @@ type ListPoliciesWithBucketParams struct {
 	Bucket string
 	/*
 	  In: query
+	  Default: 20
 	*/
 	Limit *int32
 	/*
 	  In: query
+	  Default: 0
 	*/
 	Offset *int32
 }
@@ -120,6 +132,7 @@ func (o *ListPoliciesWithBucketParams) bindLimit(rawData []string, hasKey bool, 
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListPoliciesWithBucketParams()
 		return nil
 	}
 
@@ -143,6 +156,7 @@ func (o *ListPoliciesWithBucketParams) bindOffset(rawData []string, hasKey bool,
 	// AllowEmptyValue: false
 
 	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewListPoliciesWithBucketParams()
 		return nil
 	}
 

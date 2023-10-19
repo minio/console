@@ -651,16 +651,10 @@ func init() {
             "required": true
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
+            "$ref": "#/parameters/offset"
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
+            "$ref": "#/parameters/limit"
           }
         ],
         "responses": {
@@ -694,16 +688,10 @@ func init() {
             "required": true
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
+            "$ref": "#/parameters/offset"
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
+            "$ref": "#/parameters/limit"
           }
         ],
         "responses": {
@@ -740,16 +728,10 @@ func init() {
             "required": true
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
+            "$ref": "#/parameters/offset"
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
+            "$ref": "#/parameters/limit"
           }
         ],
         "responses": {
@@ -1185,16 +1167,10 @@ func init() {
             "required": true
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
+            "$ref": "#/parameters/offset"
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
+            "$ref": "#/parameters/limit"
           }
         ],
         "responses": {
@@ -1502,10 +1478,7 @@ func init() {
             "in": "query"
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
+            "$ref": "#/parameters/limit"
           }
         ],
         "responses": {
@@ -2570,16 +2543,10 @@ func init() {
         "operationId": "ListConfig",
         "parameters": [
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
+            "$ref": "#/parameters/offset"
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
+            "$ref": "#/parameters/limit"
           }
         ],
         "responses": {
@@ -2856,16 +2823,10 @@ func init() {
         "operationId": "ListGroups",
         "parameters": [
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
+            "$ref": "#/parameters/offset"
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
+            "$ref": "#/parameters/limit"
           }
         ],
         "responses": {
@@ -3936,16 +3897,10 @@ func init() {
         "operationId": "ListPolicies",
         "parameters": [
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
+            "$ref": "#/parameters/offset"
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
+            "$ref": "#/parameters/limit"
           }
         ],
         "responses": {
@@ -4387,16 +4342,10 @@ func init() {
         "operationId": "ListUserServiceAccounts",
         "parameters": [
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
+            "$ref": "#/parameters/offset"
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
+            "$ref": "#/parameters/limit"
           }
         ],
         "responses": {
@@ -5202,16 +5151,10 @@ func init() {
         "operationId": "ListUsers",
         "parameters": [
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "offset",
-            "in": "query"
+            "$ref": "#/parameters/offset"
           },
           {
-            "type": "integer",
-            "format": "int32",
-            "name": "limit",
-            "in": "query"
+            "$ref": "#/parameters/limit"
           }
         ],
         "responses": {
@@ -9062,6 +9005,22 @@ func init() {
       }
     }
   },
+  "parameters": {
+    "limit": {
+      "type": "number",
+      "format": "int32",
+      "default": 20,
+      "name": "limit",
+      "in": "query"
+    },
+    "offset": {
+      "type": "number",
+      "format": "int32",
+      "default": 0,
+      "name": "offset",
+      "in": "query"
+    }
+  },
   "securityDefinitions": {
     "anonymous": {
       "type": "apiKey",
@@ -9698,14 +9657,16 @@ func init() {
             "required": true
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 0,
             "name": "offset",
             "in": "query"
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 20,
             "name": "limit",
             "in": "query"
           }
@@ -9741,14 +9702,16 @@ func init() {
             "required": true
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 0,
             "name": "offset",
             "in": "query"
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 20,
             "name": "limit",
             "in": "query"
           }
@@ -9787,14 +9750,16 @@ func init() {
             "required": true
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 0,
             "name": "offset",
             "in": "query"
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 20,
             "name": "limit",
             "in": "query"
           }
@@ -10232,14 +10197,16 @@ func init() {
             "required": true
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 0,
             "name": "offset",
             "in": "query"
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 20,
             "name": "limit",
             "in": "query"
           }
@@ -10549,8 +10516,9 @@ func init() {
             "in": "query"
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 20,
             "name": "limit",
             "in": "query"
           }
@@ -11617,14 +11585,16 @@ func init() {
         "operationId": "ListConfig",
         "parameters": [
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 0,
             "name": "offset",
             "in": "query"
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 20,
             "name": "limit",
             "in": "query"
           }
@@ -11903,14 +11873,16 @@ func init() {
         "operationId": "ListGroups",
         "parameters": [
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 0,
             "name": "offset",
             "in": "query"
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 20,
             "name": "limit",
             "in": "query"
           }
@@ -12983,14 +12955,16 @@ func init() {
         "operationId": "ListPolicies",
         "parameters": [
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 0,
             "name": "offset",
             "in": "query"
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 20,
             "name": "limit",
             "in": "query"
           }
@@ -13434,14 +13408,16 @@ func init() {
         "operationId": "ListUserServiceAccounts",
         "parameters": [
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 0,
             "name": "offset",
             "in": "query"
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 20,
             "name": "limit",
             "in": "query"
           }
@@ -14249,14 +14225,16 @@ func init() {
         "operationId": "ListUsers",
         "parameters": [
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 0,
             "name": "offset",
             "in": "query"
           },
           {
-            "type": "integer",
+            "type": "number",
             "format": "int32",
+            "default": 20,
             "name": "limit",
             "in": "query"
           }
@@ -18239,6 +18217,22 @@ func init() {
           "items": {}
         }
       }
+    }
+  },
+  "parameters": {
+    "limit": {
+      "type": "number",
+      "format": "int32",
+      "default": 20,
+      "name": "limit",
+      "in": "query"
+    },
+    "offset": {
+      "type": "number",
+      "format": "int32",
+      "default": 0,
+      "name": "offset",
+      "in": "query"
     }
   },
   "securityDefinitions": {
