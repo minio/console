@@ -20,10 +20,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"reflect"
 	"testing"
 	"time"
 
+	"github.com/minio/console/pkg/auth/token"
 	"github.com/minio/console/pkg/utils"
 
 	"github.com/go-openapi/swag"
@@ -1209,6 +1211,78 @@ func Test_getAccountBuckets(t *testing.T) {
 				return
 			}
 			assert.EqualValues(t, tt.want, got, "getAccountBuckets(%v, %v)", tt.args.ctx, client)
+		})
+	}
+}
+
+func Test_getMaxShareLinkExpirationSeconds(t *testing.T) {
+	type args struct {
+		session *models.Principal
+	}
+	tests := []struct {
+		name     string
+		args     args
+		want     int64
+		wantErr  bool
+		preFunc  func()
+		postFunc func()
+	}{
+		{
+			name: "empty session returns error",
+			args: args{
+				session: nil,
+			},
+			want:    0,
+			wantErr: true,
+		},
+		{
+			name: "invalid/expired session returns error",
+			args: args{
+				session: &models.Principal{
+					STSAccessKeyID:     "",
+					STSSecretAccessKey: "",
+					STSSessionToken:    "",
+				},
+			},
+			want:    0,
+			wantErr: true,
+		},
+		{
+			name: "valid session, returns value from env variable",
+			args: args{
+				session: &models.Principal{
+					STSAccessKeyID:     "VQH975JV49JYDLK7F81G",
+					STSSecretAccessKey: "zZ2oMQrZwPWGEf1yyHneWFK2JBlGkVjYTJnfw75X",
+					STSSessionToken:    "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiJWUUg5NzVKVjQ5SllETEs3RjgxRyIsImV4cCI6MTY5Nzc0Mzg1MywicGFyZW50IjoibWluaW9hZG1pbiJ9.tRJVb3gbRFswKyNsxz_Dbw1SHoIQRRgA3xmXpXE4shScCsQXDydc7U_F9QOjL_BQDcgs65ZqWo3N2CIPmWoGDA",
+				},
+			},
+			want:    3600,
+			wantErr: false,
+			preFunc: func() {
+				os.Setenv(token.ConsoleSTSDuration, "1h")
+			},
+			postFunc: func() {
+				os.Unsetenv(token.ConsoleSTSDuration)
+			},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.preFunc != nil {
+				tt.preFunc()
+			}
+			expTime, err := getMaxShareLinkExpirationSeconds(tt.args.session)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getMaxShareLinkExpirationSeconds() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(expTime, tt.want) {
+				t.Errorf("getMaxShareLinkExpirationSeconds() got = %v, want %v", expTime, tt.want)
+			}
+			if tt.postFunc != nil {
+				tt.postFunc()
+			}
 		})
 	}
 }

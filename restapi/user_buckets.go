@@ -36,6 +36,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
+	"github.com/minio/console/pkg/auth/token"
 	"github.com/minio/console/restapi/operations"
 	bucketApi "github.com/minio/console/restapi/operations/bucket"
 	"github.com/minio/minio-go/v7/pkg/policy"
@@ -177,6 +178,14 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 			return bucketApi.NewGetBucketRewindDefault(err.Code).WithPayload(err.APIError)
 		}
 		return bucketApi.NewGetBucketRewindOK().WithPayload(getBucketRewind)
+	})
+	// get max allowed share link expiration time
+	api.BucketGetMaxShareLinkExpHandler = bucketApi.GetMaxShareLinkExpHandlerFunc(func(params bucketApi.GetMaxShareLinkExpParams, session *models.Principal) middleware.Responder {
+		val, err := getMaxShareLinkExpirationResponse(session, params)
+		if err != nil {
+			return bucketApi.NewGetMaxShareLinkExpDefault(err.Code).WithPayload(err.APIError)
+		}
+		return bucketApi.NewGetMaxShareLinkExpOK().WithPayload(val)
 	})
 }
 
@@ -1066,4 +1075,32 @@ func getBucketRewindResponse(session *models.Principal, params bucketApi.GetBuck
 	return &models.RewindResponse{
 		Objects: rewindItems,
 	}, nil
+}
+
+func getMaxShareLinkExpirationResponse(session *models.Principal, params bucketApi.GetMaxShareLinkExpParams) (*models.MaxShareLinkExpResponse, *CodedAPIError) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+
+	maxShareLinkExpSeconds, err := getMaxShareLinkExpirationSeconds(session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return &models.MaxShareLinkExpResponse{Exp: swag.Int64(maxShareLinkExpSeconds)}, nil
+}
+
+// getMaxShareLinkExpirationSeconds returns the max share link expiration time in seconds which is the sts token expiration time
+func getMaxShareLinkExpirationSeconds(session *models.Principal) (int64, error) {
+	creds := getConsoleCredentialsFromSession(session)
+
+	val, err := creds.Get()
+	if err != nil {
+		return 0, err
+	}
+
+	if val.SignerType.IsAnonymous() {
+		return 0, ErrAccessDenied
+	}
+	maxShareLinkExp := token.GetConsoleSTSDuration()
+
+	return int64(maxShareLinkExp.Seconds()), nil
 }
