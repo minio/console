@@ -102,6 +102,11 @@ func (m *Configuration) contextValidateKeyValues(ctx context.Context, formats st
 	for i := 0; i < len(m.KeyValues); i++ {
 
 		if m.KeyValues[i] != nil {
+
+			if swag.IsZero(m.KeyValues[i]) { // not required
+				return nil
+			}
+
 			if err := m.KeyValues[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("key_values" + "." + strconv.Itoa(i))

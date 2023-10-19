@@ -149,6 +149,7 @@ func (m *PutBucketRetentionRequest) ContextValidate(ctx context.Context, formats
 func (m *PutBucketRetentionRequest) contextValidateMode(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Mode != nil {
+
 		if err := m.Mode.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("mode")
@@ -165,6 +166,7 @@ func (m *PutBucketRetentionRequest) contextValidateMode(ctx context.Context, for
 func (m *PutBucketRetentionRequest) contextValidateUnit(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Unit != nil {
+
 		if err := m.Unit.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("unit")

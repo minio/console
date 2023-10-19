@@ -102,6 +102,11 @@ func (m *ListObjectsResponse) contextValidateObjects(ctx context.Context, format
 	for i := 0; i < len(m.Objects); i++ {
 
 		if m.Objects[i] != nil {
+
+			if swag.IsZero(m.Objects[i]) { // not required
+				return nil
+			}
+
 			if err := m.Objects[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("objects" + "." + strconv.Itoa(i))

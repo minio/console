@@ -95,6 +95,7 @@ func (m *BucketEventRequest) ContextValidate(ctx context.Context, formats strfmt
 func (m *BucketEventRequest) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Configuration != nil {
+
 		if err := m.Configuration.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("configuration")

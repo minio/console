@@ -228,6 +228,11 @@ func (m *AdminInfoResponse) ContextValidate(ctx context.Context, formats strfmt.
 func (m *AdminInfoResponse) contextValidateBackend(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Backend != nil {
+
+		if swag.IsZero(m.Backend) { // not required
+			return nil
+		}
+
 		if err := m.Backend.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("backend")
@@ -246,6 +251,11 @@ func (m *AdminInfoResponse) contextValidateServers(ctx context.Context, formats 
 	for i := 0; i < len(m.Servers); i++ {
 
 		if m.Servers[i] != nil {
+
+			if swag.IsZero(m.Servers[i]) { // not required
+				return nil
+			}
+
 			if err := m.Servers[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("servers" + "." + strconv.Itoa(i))
@@ -266,6 +276,11 @@ func (m *AdminInfoResponse) contextValidateWidgets(ctx context.Context, formats 
 	for i := 0; i < len(m.Widgets); i++ {
 
 		if m.Widgets[i] != nil {
+
+			if swag.IsZero(m.Widgets[i]) { // not required
+				return nil
+			}
+
 			if err := m.Widgets[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("widgets" + "." + strconv.Itoa(i))

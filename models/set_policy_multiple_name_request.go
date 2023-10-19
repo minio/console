@@ -128,6 +128,10 @@ func (m *SetPolicyMultipleNameRequest) contextValidateGroups(ctx context.Context
 
 	for i := 0; i < len(m.Groups); i++ {
 
+		if swag.IsZero(m.Groups[i]) { // not required
+			return nil
+		}
+
 		if err := m.Groups[i].ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("groups" + "." + strconv.Itoa(i))
@@ -145,6 +149,10 @@ func (m *SetPolicyMultipleNameRequest) contextValidateGroups(ctx context.Context
 func (m *SetPolicyMultipleNameRequest) contextValidateUsers(ctx context.Context, formats strfmt.Registry) error {
 
 	for i := 0; i < len(m.Users); i++ {
+
+		if swag.IsZero(m.Users[i]) { // not required
+			return nil
+		}
 
 		if err := m.Users[i].ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {

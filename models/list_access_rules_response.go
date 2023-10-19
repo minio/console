@@ -102,6 +102,11 @@ func (m *ListAccessRulesResponse) contextValidateAccessRules(ctx context.Context
 	for i := 0; i < len(m.AccessRules); i++ {
 
 		if m.AccessRules[i] != nil {
+
+			if swag.IsZero(m.AccessRules[i]) { // not required
+				return nil
+			}
+
 			if err := m.AccessRules[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("accessRules" + "." + strconv.Itoa(i))

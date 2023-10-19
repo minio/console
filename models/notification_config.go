@@ -120,6 +120,10 @@ func (m *NotificationConfig) contextValidateEvents(ctx context.Context, formats 
 
 	for i := 0; i < len(m.Events); i++ {
 
+		if swag.IsZero(m.Events[i]) { // not required
+			return nil
+		}
+
 		if err := m.Events[i].ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("events" + "." + strconv.Itoa(i))

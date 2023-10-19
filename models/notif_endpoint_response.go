@@ -99,6 +99,11 @@ func (m *NotifEndpointResponse) contextValidateNotificationEndpoints(ctx context
 	for i := 0; i < len(m.NotificationEndpoints); i++ {
 
 		if m.NotificationEndpoints[i] != nil {
+
+			if swag.IsZero(m.NotificationEndpoints[i]) { // not required
+				return nil
+			}
+
 			if err := m.NotificationEndpoints[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("notification_endpoints" + "." + strconv.Itoa(i))
