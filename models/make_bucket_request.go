@@ -170,6 +170,11 @@ func (m *MakeBucketRequest) ContextValidate(ctx context.Context, formats strfmt.
 func (m *MakeBucketRequest) contextValidateQuota(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Quota != nil {
+
+		if swag.IsZero(m.Quota) { // not required
+			return nil
+		}
+
 		if err := m.Quota.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("quota")
@@ -186,6 +191,11 @@ func (m *MakeBucketRequest) contextValidateQuota(ctx context.Context, formats st
 func (m *MakeBucketRequest) contextValidateRetention(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Retention != nil {
+
+		if swag.IsZero(m.Retention) { // not required
+			return nil
+		}
+
 		if err := m.Retention.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("retention")
@@ -202,6 +212,11 @@ func (m *MakeBucketRequest) contextValidateRetention(ctx context.Context, format
 func (m *MakeBucketRequest) contextValidateVersioning(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Versioning != nil {
+
+		if swag.IsZero(m.Versioning) { // not required
+			return nil
+		}
+
 		if err := m.Versioning.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("versioning")

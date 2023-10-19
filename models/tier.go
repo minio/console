@@ -243,6 +243,11 @@ func (m *Tier) ContextValidate(ctx context.Context, formats strfmt.Registry) err
 func (m *Tier) contextValidateAzure(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Azure != nil {
+
+		if swag.IsZero(m.Azure) { // not required
+			return nil
+		}
+
 		if err := m.Azure.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("azure")
@@ -259,6 +264,11 @@ func (m *Tier) contextValidateAzure(ctx context.Context, formats strfmt.Registry
 func (m *Tier) contextValidateGcs(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Gcs != nil {
+
+		if swag.IsZero(m.Gcs) { // not required
+			return nil
+		}
+
 		if err := m.Gcs.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("gcs")
@@ -275,6 +285,11 @@ func (m *Tier) contextValidateGcs(ctx context.Context, formats strfmt.Registry) 
 func (m *Tier) contextValidateMinio(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Minio != nil {
+
+		if swag.IsZero(m.Minio) { // not required
+			return nil
+		}
+
 		if err := m.Minio.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("minio")
@@ -291,6 +306,11 @@ func (m *Tier) contextValidateMinio(ctx context.Context, formats strfmt.Registry
 func (m *Tier) contextValidateS3(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.S3 != nil {
+
+		if swag.IsZero(m.S3) { // not required
+			return nil
+		}
+
 		if err := m.S3.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("s3")

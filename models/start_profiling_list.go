@@ -102,6 +102,11 @@ func (m *StartProfilingList) contextValidateStartResults(ctx context.Context, fo
 	for i := 0; i < len(m.StartResults); i++ {
 
 		if m.StartResults[i] != nil {
+
+			if swag.IsZero(m.StartResults[i]) { // not required
+				return nil
+			}
+
 			if err := m.StartResults[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("startResults" + "." + strconv.Itoa(i))

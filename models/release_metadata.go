@@ -134,6 +134,11 @@ func (m *ReleaseMetadata) ContextValidate(ctx context.Context, formats strfmt.Re
 func (m *ReleaseMetadata) contextValidateAuthor(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Author != nil {
+
+		if swag.IsZero(m.Author) { // not required
+			return nil
+		}
+
 		if err := m.Author.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("author")

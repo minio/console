@@ -244,6 +244,11 @@ func (m *MultiBucketReplication) contextValidateBucketsRelation(ctx context.Cont
 	for i := 0; i < len(m.BucketsRelation); i++ {
 
 		if m.BucketsRelation[i] != nil {
+
+			if swag.IsZero(m.BucketsRelation[i]) { // not required
+				return nil
+			}
+
 			if err := m.BucketsRelation[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("bucketsRelation" + "." + strconv.Itoa(i))

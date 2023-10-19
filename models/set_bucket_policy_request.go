@@ -99,6 +99,7 @@ func (m *SetBucketPolicyRequest) ContextValidate(ctx context.Context, formats st
 func (m *SetBucketPolicyRequest) contextValidateAccess(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Access != nil {
+
 		if err := m.Access.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("access")

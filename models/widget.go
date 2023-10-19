@@ -136,6 +136,11 @@ func (m *Widget) ContextValidate(ctx context.Context, formats strfmt.Registry) e
 func (m *Widget) contextValidateOptions(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Options != nil {
+
+		if swag.IsZero(m.Options) { // not required
+			return nil
+		}
+
 		if err := m.Options.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("options")
@@ -154,6 +159,11 @@ func (m *Widget) contextValidateTargets(ctx context.Context, formats strfmt.Regi
 	for i := 0; i < len(m.Targets); i++ {
 
 		if m.Targets[i] != nil {
+
+			if swag.IsZero(m.Targets[i]) { // not required
+				return nil
+			}
+
 			if err := m.Targets[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("targets" + "." + strconv.Itoa(i))
@@ -246,6 +256,11 @@ func (m *WidgetOptions) ContextValidate(ctx context.Context, formats strfmt.Regi
 func (m *WidgetOptions) contextValidateReduceOptions(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.ReduceOptions != nil {
+
+		if swag.IsZero(m.ReduceOptions) { // not required
+			return nil
+		}
+
 		if err := m.ReduceOptions.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("options" + "." + "reduceOptions")

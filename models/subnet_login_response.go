@@ -108,6 +108,11 @@ func (m *SubnetLoginResponse) contextValidateOrganizations(ctx context.Context, 
 	for i := 0; i < len(m.Organizations); i++ {
 
 		if m.Organizations[i] != nil {
+
+			if swag.IsZero(m.Organizations[i]) { // not required
+				return nil
+			}
+
 			if err := m.Organizations[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("organizations" + "." + strconv.Itoa(i))

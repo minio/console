@@ -102,6 +102,11 @@ func (m *IamPolicy) contextValidateStatement(ctx context.Context, formats strfmt
 	for i := 0; i < len(m.Statement); i++ {
 
 		if m.Statement[i] != nil {
+
+			if swag.IsZero(m.Statement[i]) { // not required
+				return nil
+			}
+
 			if err := m.Statement[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("statement" + "." + strconv.Itoa(i))

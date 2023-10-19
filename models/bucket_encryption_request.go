@@ -92,6 +92,11 @@ func (m *BucketEncryptionRequest) ContextValidate(ctx context.Context, formats s
 func (m *BucketEncryptionRequest) contextValidateEncType(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.EncType != nil {
+
+		if swag.IsZero(m.EncType) { // not required
+			return nil
+		}
+
 		if err := m.EncType.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("encType")
