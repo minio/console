@@ -20,7 +20,10 @@ import { Button, CopyIcon, ReadBox, ShareIcon, Grid, ProgressBar } from "mds";
 import CopyToClipboard from "react-copy-to-clipboard";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
-import { encodeURLString } from "../../../../../../common/utils";
+import {
+  encodeURLString,
+  niceTimeFromSeconds,
+} from "../../../../../../common/utils";
 import {
   selDistSet,
   setModalErrorSnackMessage,
@@ -154,35 +157,6 @@ const ShareFile = ({
     versionID,
   ]);
 
-  const formatTime = (seconds: number): string => {
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor((seconds % 86400) / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
-
-    const parts = [];
-
-    if (days > 0) {
-      parts.push(`${days} day${days !== 1 ? "s" : ""}`);
-    }
-
-    if (hours > 0) {
-      parts.push(`${hours} hour${hours !== 1 ? "s" : ""}`);
-    }
-
-    if (minutes > 0) {
-      parts.push(`${minutes} minute${minutes !== 1 ? "s" : ""}`);
-    }
-
-    if (remainingSeconds > 0) {
-      parts.push(
-        `${remainingSeconds} second${remainingSeconds !== 1 ? "s" : ""}`,
-      );
-    }
-
-    return parts.join(", ");
-  };
-
   return (
     <React.Fragment>
       <ModalWrapper
@@ -210,8 +184,8 @@ const ShareFile = ({
             >
               With MinIO Console, you can create a temporary URL with integrated
               access credentials for sharing objects valid for up to:{" "}
-              {formatTime(maxshareLinkExpTimeVal)}. To create a presigned URL
-              with a longer time interval please update
+              {niceTimeFromSeconds(maxshareLinkExpTimeVal)}. To create a
+              presigned URL with a longer time interval please update
               MINIO_BROWSER_SESSION_DURATION environment variable on your server
               MinIO or use MinIO Client.
               <br />
