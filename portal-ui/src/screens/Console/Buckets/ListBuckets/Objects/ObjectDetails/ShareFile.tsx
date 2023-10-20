@@ -186,8 +186,8 @@ const ShareFile = ({
               access credentials for sharing objects valid for up to:{" "}
               {niceTimeFromSeconds(maxshareLinkExpTimeVal)}. To create a
               presigned URL with a longer time interval please update
-              MINIO_BROWSER_SESSION_DURATION environment variable on your server
-              MinIO or use MinIO Client.
+              MINIO_BROWSER_SESSION_DURATION environment variable on your MinIO
+              server or use MinIO Client.
               <br />
               <br />
               The temporary URL expires after the configured time limit.
