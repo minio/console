@@ -30,6 +30,8 @@ import { useAppDispatch } from "../../../../../../store";
 import { BucketObject } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
+import { getMaxShareLinkExpTime } from "screens/Console/ObjectBrowser/objectBrowserThunks";
+import { maxShareLinkExpTime } from "screens/Console/ObjectBrowser/objectBrowserSlice";
 
 interface IShareFileProps {
   open: boolean;
@@ -46,6 +48,7 @@ const ShareFile = ({
 }: IShareFileProps) => {
   const dispatch = useAppDispatch();
   const distributedSetup = useSelector(selDistSet);
+  const maxshareLinkExpTimeVal = useSelector(maxShareLinkExpTime);
   const [shareURL, setShareURL] = useState<string>("");
   const [isLoadingVersion, setIsLoadingVersion] = useState<boolean>(true);
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
@@ -64,6 +67,10 @@ const ShareFile = ({
     setSelectedDate("");
     setShareURL("");
   };
+
+  useEffect(() => {
+    dispatch(getMaxShareLinkExpTime());
+  }, [dispatch]);
 
   useEffect(() => {
     // In case version is undefined, we get the latest version of the object
@@ -147,6 +154,35 @@ const ShareFile = ({
     versionID,
   ]);
 
+  const formatTime = (seconds: number): string => {
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    const parts = [];
+
+    if (days > 0) {
+      parts.push(`${days} day${days !== 1 ? "s" : ""}`);
+    }
+
+    if (hours > 0) {
+      parts.push(`${hours} hour${hours !== 1 ? "s" : ""}`);
+    }
+
+    if (minutes > 0) {
+      parts.push(`${minutes} minute${minutes !== 1 ? "s" : ""}`);
+    }
+
+    if (remainingSeconds > 0) {
+      parts.push(
+        `${remainingSeconds} second${remainingSeconds !== 1 ? "s" : ""}`,
+      );
+    }
+
+    return parts.join(", ");
+  };
+
   return (
     <React.Fragment>
       <ModalWrapper
@@ -173,7 +209,8 @@ const ShareFile = ({
               }}
             >
               This is a temporary URL with integrated access credentials for
-              sharing objects valid for up to 7 days.
+              sharing objects valid for up to{" "}
+              {formatTime(maxshareLinkExpTimeVal)}.
               <br />
               <br />
               The temporary URL expires after the configured time limit.
@@ -184,7 +221,7 @@ const ShareFile = ({
                 initialDate={initialDate}
                 id="date"
                 label="Active for"
-                maxDays={7}
+                maxSeconds={maxshareLinkExpTimeVal}
                 onChange={dateChanged}
                 entity="Link"
               />
