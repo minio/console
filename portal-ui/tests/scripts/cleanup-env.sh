@@ -31,6 +31,7 @@ remove_users() {
   mc admin user remove minio conditions-$TIMESTAMP
   mc admin user remove minio conditions-2-$TIMESTAMP
   mc admin user remove minio conditions-3-$TIMESTAMP
+  mc admin user remove minio conditions-4-$TIMESTAMP
 }
 
 remove_policies() {
@@ -56,6 +57,7 @@ remove_policies() {
   mc admin policy remove minio conditions-policy-$TIMESTAMP
   mc admin policy remove minio conditions-policy-2-$TIMESTAMP
   mc admin policy remove minio conditions-policy-3-$TIMESTAMP
+  mc admin policy remove minio conditions-policy-4-$TIMESTAMP
 }
 
 __init__() {

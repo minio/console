@@ -60,6 +60,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 				err := json.Unmarshal(message, &messageRequest)
 				if err != nil {
 					LogInfo("Error on message request unmarshal")
+
 					close(done)
 					return
 				}
@@ -95,6 +96,14 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 						objectRqConfigs, err := getObjectsOptionsFromReq(messageRequest)
 						if err != nil {
 							LogInfo(fmt.Sprintf("Error during Objects OptionsParse %s", err.Error()))
+
+							writeChannel <- WSResponse{
+								RequestID:  messageRequest.RequestID,
+								Error:      ErrorWithContext(ctx, err),
+								Prefix:     messageRequest.Prefix,
+								BucketName: messageRequest.BucketName,
+							}
+
 							return
 						}
 						var buffer []ObjectResponse
@@ -105,7 +114,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 							if lsObj.Err != nil {
 								writeChannel <- WSResponse{
 									RequestID:  messageRequest.RequestID,
-									Error:      lsObj.Err.Error(),
+									Error:      ErrorWithContext(ctx, lsObj.Err),
 									Prefix:     messageRequest.Prefix,
 									BucketName: messageRequest.BucketName,
 								}
@@ -159,7 +168,13 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 						objectRqConfigs, err := getObjectsOptionsFromReq(messageRequest)
 						if err != nil {
 							LogInfo(fmt.Sprintf("Error during Objects OptionsParse %s", err.Error()))
-							cancel()
+							writeChannel <- WSResponse{
+								RequestID:  messageRequest.RequestID,
+								Error:      ErrorWithContext(ctx, err),
+								Prefix:     messageRequest.Prefix,
+								BucketName: messageRequest.BucketName,
+							}
+
 							return
 						}
 
@@ -167,8 +182,13 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 
 						s3Client, err := newS3BucketClient(session, objectRqConfigs.BucketName, objectRqConfigs.Prefix, clientIP)
 						if err != nil {
-							LogError("error creating S3Client:", err)
-							close(done)
+							writeChannel <- WSResponse{
+								RequestID:  messageRequest.RequestID,
+								Error:      ErrorWithContext(ctx, err),
+								Prefix:     messageRequest.Prefix,
+								BucketName: messageRequest.BucketName,
+							}
+
 							cancel()
 							return
 						}
@@ -181,7 +201,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 							if lsObj.Err != nil {
 								writeChannel <- WSResponse{
 									RequestID:  messageRequest.RequestID,
-									Error:      lsObj.Err.String(),
+									Error:      ErrorWithContext(ctx, lsObj.Err.ToGoError()),
 									Prefix:     messageRequest.Prefix,
 									BucketName: messageRequest.BucketName,
 								}

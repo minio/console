@@ -108,6 +108,10 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedAPIError {
 				errorCode = 401
 				errorMessage = ErrInvalidLogin.Error()
 			}
+			if strings.Contains(strings.ToLower(err1.Error()), ErrAccessDenied.Error()) {
+				errorCode = 403
+				errorMessage = err1.Error()
+			}
 			// If the last error is ErrInvalidLogin, this is a login failure
 			if errors.Is(lastError, ErrInvalidLogin) {
 				errorCode = 401

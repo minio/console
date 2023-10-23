@@ -1,0 +1,44 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowUserToSeeBucketListInTheConsole",
+      "Action": [
+        "s3:ListAllMyBuckets",
+        "s3:GetBucketLocation",
+        "s3:GetBucketVersioning"
+      ],
+      "Effect": "Allow",
+      "Resource": ["arn:aws:s3:::*"]
+    },
+    {
+      "Sid": "AllowRootAndHomeListingOfCompanyBucket",
+      "Action": ["s3:ListBucket", "s3:List*"],
+      "Effect": "Allow",
+      "Resource": ["arn:aws:s3:::my-company2"],
+      "Condition": {
+        "StringEquals": {
+          "s3:prefix": ["", "home/", "home/User"],
+          "s3:delimiter": ["/"]
+        }
+      }
+    },
+    {
+      "Sid": "AllowListingOfUserFolder",
+      "Action": ["s3:ListBucket", "s3:List*"],
+      "Effect": "Allow",
+      "Resource": ["arn:aws:s3:::my-company2"],
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": ["home/User/*"]
+        }
+      }
+    },
+    {
+      "Sid": "AllowAllS3ActionsInUserFolder",
+      "Effect": "Allow",
+      "Action": ["s3:*"],
+      "Resource": ["arn:aws:s3:::my-company2/home/User/*"]
+    }
+  ]
+}

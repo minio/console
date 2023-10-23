@@ -85,6 +85,12 @@ export const objectBrowserWSMiddleware = (
         };
 
         objectsWS.onmessage = (message) => {
+          const basicErrorMessage = {
+            errorMessage: "An error occurred",
+            detailedMessage:
+              "An unknown error occurred. Please refer to Console logs to get more information.",
+          };
+
           const response: WebsocketResponse = JSON.parse(
             message.data.toString(),
           );
@@ -94,13 +100,10 @@ export const objectBrowserWSMiddleware = (
               return;
             }
 
-            if (
-              response.error ===
-              "The Access Key Id you provided does not exist in our records."
-            ) {
-              // Session expired.
+            if (response.error?.Code === 401) {
+              // Session expired. We reload this page
               window.location.reload();
-            } else if (response.error === "Access Denied.") {
+            } else if (response.error?.Code === 403) {
               const internalPathsPrefix = response.prefix;
               let pathPrefix = "";
 
@@ -119,10 +122,15 @@ export const objectBrowserWSMiddleware = (
               );
 
               if (!permitItems || permitItems.length === 0) {
+                const errorMsg = response.error.APIError;
+
                 dispatch(
                   setErrorSnackMessage({
-                    errorMessage: response.error,
-                    detailedError: response.error,
+                    errorMessage:
+                      errorMsg.message || basicErrorMessage.errorMessage,
+                    detailedError:
+                      errorMsg.detailedMessage ||
+                      basicErrorMessage.detailedMessage,
                   }),
                 );
               } else {
@@ -131,6 +139,19 @@ export const objectBrowserWSMiddleware = (
               }
 
               return;
+            } else if (response.error) {
+              const errorMsg = response.error.APIError;
+
+              dispatch(setRequestInProgress(false));
+              dispatch(
+                setErrorSnackMessage({
+                  errorMessage:
+                    errorMsg.message || basicErrorMessage.errorMessage,
+                  detailedError:
+                    errorMsg.detailedMessage ||
+                    basicErrorMessage.detailedMessage,
+                }),
+              );
             }
 
             // This indicates final messages is received.
