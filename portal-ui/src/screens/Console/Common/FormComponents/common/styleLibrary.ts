@@ -104,33 +104,6 @@ export const tooltipHelper = {
   },
 };
 
-export const containerForHeader = {
-  container: {
-    position: "relative" as const,
-    padding: "20px 35px 0",
-    "& h6": {
-      color: "#777777",
-      fontSize: 30,
-    },
-    "& p": {
-      "& span:not(*[class*='smallUnit'])": {
-        fontSize: 16,
-      },
-    },
-  },
-  sectionTitle: {
-    margin: 0,
-    marginBottom: ".8rem",
-    fontSize: "1.3rem",
-  },
-  boxy: {
-    border: "#E5E5E5 1px solid",
-    borderRadius: 2,
-    padding: 40,
-    backgroundColor: "#fff",
-  },
-};
-
 export const actionsTray = {
   label: {
     color: "#07193E",

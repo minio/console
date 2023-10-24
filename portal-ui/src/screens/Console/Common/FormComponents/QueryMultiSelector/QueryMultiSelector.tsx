@@ -216,6 +216,7 @@ const QueryMultiSelector = ({
             fontWeight: 600,
           },
         }}
+        className={"inputItem"}
       >
         <InputLabel>
           {label}

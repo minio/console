@@ -15,25 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Box, Grid } from "@mui/material";
-import { SectionTitle } from "mds";
-import api from "../../../common/api";
-
-import { ErrorResponseHandler } from "../../../common/types";
-import { hasPermission } from "../../../common/SecureComponent";
 import {
-  CONSOLE_UI_RESOURCE,
-  IAM_SCOPES,
-} from "../../../common/SecureComponent/permissions";
-
-import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
-import { useAppDispatch } from "../../../store";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import { TabPanel } from "../../shared/tabs";
-
-import LabelValuePair from "../Common/UsageBarWrapper/LabelValuePair";
-import LabelWithIcon from "../Buckets/BucketDetails/SummaryItems/LabelWithIcon";
+  Box,
+  breakPoints,
+  DisabledIcon,
+  EnabledIcon,
+  Grid,
+  PageLayout,
+  SectionTitle,
+  Tabs,
+  ValuePair,
+} from "mds";
 import {
   Bar,
   BarChart,
@@ -45,14 +37,22 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { DisabledIcon, EnabledIcon, PageLayout } from "mds";
+import api from "../../../common/api";
+import { ErrorResponseHandler } from "../../../common/types";
+import { hasPermission } from "../../../common/SecureComponent";
+import {
+  CONSOLE_UI_RESOURCE,
+  IAM_SCOPES,
+} from "../../../common/SecureComponent/permissions";
+import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
+import { useAppDispatch } from "../../../store";
+import LabelWithIcon from "../Buckets/BucketDetails/SummaryItems/LabelWithIcon";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-
 import HelpMenu from "../HelpMenu";
 
 const Status = () => {
   const dispatch = useAppDispatch();
-  const [curTab, setCurTab] = useState<number>(0);
+  const [curTab, setCurTab] = useState<string>("simple-tab-0");
 
   const [status, setStatus] = useState<any | null>(null);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(true);
@@ -184,33 +184,41 @@ const Status = () => {
       <SectionTitle>Status</SectionTitle>
       <br />
       {status && (
-        <Grid container spacing={1}>
+        <Grid container>
           <Grid item xs={12}>
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
-                gridAutoFlow: { xs: "dense", sm: "row" },
                 gap: 2,
+                gridTemplateColumns: "2fr 1fr",
+                gridAutoFlow: "row",
+                [`@media (max-width: ${breakPoints.sm}px)`]: {
+                  gridTemplateColumns: "1fr",
+                  gridAutoFlow: "dense",
+                },
               }}
             >
               <Box
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
-                  gridAutoFlow: { xs: "dense", sm: "row" },
                   gap: 2,
+                  gridTemplateColumns: "2fr 1fr",
+                  gridAutoFlow: "row",
+                  [`@media (max-width: ${breakPoints.sm}px)`]: {
+                    gridTemplateColumns: "1fr",
+                    gridAutoFlow: "dense",
+                  },
                 }}
               >
-                <LabelValuePair label={"Name:"} value={status.name} />
+                <ValuePair label={"Name:"} value={status.name} />
                 {version && (
-                  <LabelValuePair label={"Version:"} value={version.version} />
+                  <ValuePair label={"Version:"} value={version.version} />
                 )}
-                <LabelValuePair
+                <ValuePair
                   label={"Default Key ID:"}
                   value={status.defaultKeyID}
                 />
-                <LabelValuePair
+                <ValuePair
                   label={"Key Management Service Endpoints:"}
                   value={
                     <Fragment>
@@ -243,17 +251,21 @@ const Status = () => {
       <SectionTitle>Supported API endpoints</SectionTitle>
       <br />
       {apis && (
-        <Grid container spacing={1}>
+        <Grid container>
           <Grid item xs={12}>
-            <LabelValuePair
+            <ValuePair
               label={""}
               value={
                 <Box
                   sx={{
                     display: "grid",
-                    gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
-                    gridAutoFlow: { xs: "dense", sm: "row" },
                     gap: 2,
+                    gridTemplateColumns: "2fr 1fr",
+                    gridAutoFlow: "row",
+                    [`@media (max-width: ${breakPoints.sm}px)`]: {
+                      gridTemplateColumns: "1fr",
+                      gridAutoFlow: "dense",
+                    },
                   }}
                 >
                   {apis.results.map((e: any, i: number) => (
@@ -364,73 +376,56 @@ const Status = () => {
 
       <PageLayout>
         <Tabs
-          value={curTab}
-          onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-            setCurTab(newValue);
-          }}
-          indicatorColor="primary"
-          textColor="primary"
-          aria-label="cluster-tabs"
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab
-            label="Status"
-            id="simple-tab-0"
-            aria-controls="simple-tabpanel-0"
-          />
-          <Tab
-            label="APIs"
-            id="simple-tab-1"
-            aria-controls="simple-tabpanel-1"
-          />
-          <Tab
-            label="Metrics"
-            id="simple-tab-2"
-            aria-controls="simple-tabpanel-2"
-            onClick={() => {}}
-          />
-        </Tabs>
-
-        <TabPanel index={0} value={curTab}>
-          <Box
-            sx={{
-              border: "1px solid #eaeaea",
-              borderRadius: "2px",
-              display: "flex",
-              flexFlow: "column",
-              padding: "43px",
-            }}
-          >
-            {statusPanel}
-          </Box>
-        </TabPanel>
-        <TabPanel index={1} value={curTab}>
-          <Box
-            sx={{
-              border: "1px solid #eaeaea",
-              borderRadius: "2px",
-              display: "flex",
-              flexFlow: "column",
-              padding: "43px",
-            }}
-          >
-            {apisPanel}
-          </Box>
-        </TabPanel>
-        <TabPanel index={2} value={curTab}>
-          <Box
-            sx={{
-              border: "1px solid #eaeaea",
-              borderRadius: "2px",
-              display: "flex",
-              flexFlow: "column",
-              padding: "43px",
-            }}
-          >
-            {metricsPanel}
-          </Box>
-        </TabPanel>
+          currentTabOrPath={curTab}
+          onTabClick={(newValue) => setCurTab(newValue)}
+          options={[
+            {
+              tabConfig: { label: "Status", id: "simple-tab-0" },
+              content: (
+                <Box
+                  withBorders
+                  sx={{
+                    display: "flex",
+                    flexFlow: "column",
+                    padding: "43px",
+                  }}
+                >
+                  {statusPanel}
+                </Box>
+              ),
+            },
+            {
+              tabConfig: { label: "APIs", id: "simple-tab-1" },
+              content: (
+                <Box
+                  withBorders
+                  sx={{
+                    display: "flex",
+                    flexFlow: "column",
+                    padding: "43px",
+                  }}
+                >
+                  {apisPanel}
+                </Box>
+              ),
+            },
+            {
+              tabConfig: { label: "Metrics", id: "simple-tab-2" },
+              content: (
+                <Box
+                  withBorders
+                  sx={{
+                    display: "flex",
+                    flexFlow: "column",
+                    padding: "43px",
+                  }}
+                >
+                  {metricsPanel}
+                </Box>
+              ),
+            },
+          ]}
+        />
       </PageLayout>
     </Fragment>
   );
