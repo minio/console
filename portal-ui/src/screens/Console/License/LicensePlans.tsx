@@ -16,12 +16,12 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
   AGPLV3Logo,
   Box,
   breakPoints,
   Button,
+  CheckCircleIcon,
   ConsoleEnterprise,
   ConsoleStandard,
   LicenseDocIcon,

@@ -17,6 +17,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import {
   Box,
+  CheckCircleIcon,
   FormLayout,
   Grid,
   InputBox,
@@ -24,10 +25,9 @@ import {
   Select,
   Switch,
   Tooltip,
+  WarnIcon,
 } from "mds";
 import get from "lodash/get";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
@@ -208,7 +208,7 @@ const AddBulkReplicationModal = ({
               color: "#42C91A",
             }}
           >
-            <CheckCircleOutlineIcon />
+            <CheckCircleIcon />
           </Box>
         );
       case "n/a":
@@ -222,7 +222,7 @@ const AddBulkReplicationModal = ({
               }}
             >
               <Tooltip tooltip={errString} placement="top">
-                <ErrorOutlineIcon />
+                <WarnIcon />
               </Tooltip>
             </Box>
           );

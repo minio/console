@@ -38,6 +38,8 @@ import {
   InspectMenuIcon,
   LambdaIcon,
   LicenseIcon,
+  LockOpenIcon,
+  LoginIcon,
   LogsMenuIcon,
   MetricsMenuIcon,
   MonitoringMenuIcon,
@@ -54,7 +56,6 @@ import {
 import { hasPermission } from "../../common/SecureComponent";
 import EncryptionIcon from "../../icons/SidebarMenus/EncryptionIcon";
 import EncryptionStatusIcon from "../../icons/SidebarMenus/EncryptionStatusIcon";
-import { LockOpen, Login } from "@mui/icons-material";
 
 const permissionsValidation = (item: IMenuItem) => {
   return (
@@ -169,13 +170,13 @@ export const validRoutes = (
           name: "OpenID",
           id: "openID",
           path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS,
-          icon: <LockOpen />,
+          icon: <LockOpenIcon />,
         },
         {
           name: "LDAP",
           id: "ldap",
           path: IAM_PAGES.IDP_LDAP_CONFIGURATIONS,
-          icon: <Login />,
+          icon: <LoginIcon />,
         },
       ],
     },

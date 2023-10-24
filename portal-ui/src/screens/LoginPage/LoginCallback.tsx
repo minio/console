@@ -24,8 +24,7 @@ import { baseUrl } from "../../history";
 import { Paper } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Button } from "mds";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { Button, WarnIcon } from "mds";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -160,7 +159,7 @@ const LoginCallback = ({ classes }: ILoginCallBackProps) => {
           <Grid item xs={5} className={classes.theLogin}>
             <div className={classes.errorTitle}>
               <span className={classes.messageIcon}>
-                <ErrorOutlineIcon />
+                <WarnIcon />
               </span>
               <span className={classes.errorLabel}>Error from IDP</span>
             </div>

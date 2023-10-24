@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Box } from "mds";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
+import { Box, ExpandIcon } from "mds";
 
 import { IDashboardPanel } from "../types";
 
@@ -59,7 +58,7 @@ const ExpandGraphLink = ({ panelItem }: { panelItem: IDashboardPanel }) => {
         }}
         className={"zoom-graph-icon"}
       >
-        <ZoomOutMapIcon />
+        <ExpandIcon />
       </button>
     </Box>
   );

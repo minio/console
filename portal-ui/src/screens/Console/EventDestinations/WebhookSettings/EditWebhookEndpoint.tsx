@@ -21,16 +21,15 @@ import {
   FormLayout,
   Grid,
   InputBox,
+  PendingItemsIcon,
   ProgressBar,
   ReadBox,
   Switch,
   Tooltip,
+  WebhookIcon,
 } from "mds";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import { Webhook } from "@mui/icons-material";
 import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
-import CallToActionIcon from "@mui/icons-material/CallToAction";
-import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import {
   configurationIsLoading,
   setErrorSnackMessage,
@@ -182,16 +181,16 @@ const EditEndpointModal = ({
   const overrideValues = overrideFields(hasOverride);
 
   let title = "Edit Webhook";
-  let icon = <Webhook />;
+  let icon = <WebhookIcon />;
 
   switch (type) {
     case "logger_webhook":
       title = `Edit ${defaultWH ? " the Default " : ""}Logger Webhook`;
-      icon = <CallToActionIcon />;
+      icon = <ConsoleIcon />;
       break;
     case "audit_webhook":
       title = `Edit ${defaultWH ? " the Default " : ""}Audit Webhook`;
-      icon = <PendingActionsIcon />;
+      icon = <PendingItemsIcon />;
       break;
   }
 

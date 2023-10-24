@@ -14,16 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import PublicIcon from "@mui/icons-material/Public";
-import CompressIcon from "@mui/icons-material/Compress";
-import CodeIcon from "@mui/icons-material/Code";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import FindReplaceIcon from "@mui/icons-material/FindReplace";
-import VpnKeyIcon from "@mui/icons-material/VpnKey";
-import PendingActionsIcon from "@mui/icons-material/PendingActions";
-import CallToActionIcon from "@mui/icons-material/CallToAction";
 import { IElement, IElementValue, IOverrideEnv, OverrideValue } from "./types";
-import { LogsIcon } from "mds";
+import {
+  CodeIcon,
+  CompressIcon,
+  ConsoleIcon,
+  FindReplaceIcon,
+  FirstAidIcon,
+  KeyIcon,
+  LogsIcon,
+  PendingItemsIcon,
+  PublicIcon,
+} from "mds";
 
 export const configurationElements: IElement[] = [
   {
@@ -42,7 +44,7 @@ export const configurationElements: IElement[] = [
     configuration_label: "API",
   },
   {
-    icon: <LocalHospitalIcon />,
+    icon: <FirstAidIcon />,
     configuration_id: "heal",
     configuration_label: "Heal",
   },
@@ -52,29 +54,22 @@ export const configurationElements: IElement[] = [
     configuration_label: "Scanner",
   },
   {
-    icon: <VpnKeyIcon />,
+    icon: <KeyIcon />,
     configuration_id: "etcd",
     configuration_label: "Etcd",
   },
   {
-    icon: <CallToActionIcon />,
+    icon: <ConsoleIcon />,
     configuration_id: "logger_webhook",
     configuration_label: "Logger Webhook",
   },
   {
-    icon: <PendingActionsIcon />,
+    icon: <PendingItemsIcon />,
     configuration_id: "audit_webhook",
     configuration_label: "Audit Webhook",
   },
   {
-    icon: (
-      <LogsIcon
-        className={
-          "MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiTab-iconWrapper css-i4bv87-MuiSvgIcon-root"
-        }
-        style={{ width: 24, height: 24 }}
-      />
-    ),
+    icon: <LogsIcon />,
     configuration_id: "audit_kafka",
     configuration_label: "Audit Kafka",
   },
