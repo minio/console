@@ -18,12 +18,11 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { ErrorResponseHandler } from "../../../common/types";
-import { ConfirmDeleteIcon, Loader, DataTable } from "mds";
+import { ConfirmDeleteIcon, DataTable, InformativeMessage, Loader } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
-import WarningMessage from "../Common/WarningMessage/WarningMessage";
 import api from "../../../common/api";
 import { useAppDispatch } from "../../../store";
 
@@ -138,9 +137,20 @@ const DeleteUser = ({
           <Fragment>
             {hasSA ? (
               <Fragment>
-                <WarningMessage
-                  label="Click on a user to view the full listing of asociated Access Keys. All Access Keys associated with a user will be deleted along with the user. Are you sure you want to continue?"
-                  title="Warning: One or more users selected has associated Access Keys. "
+                <InformativeMessage
+                  variant={"warning"}
+                  message={
+                    <Fragment>
+                      Click on a user to view the full listing of associated
+                      Access Keys. All Access Keys associated with a user will
+                      be deleted along with the user.
+                      <br />
+                      <br />
+                      <strong>Are you sure you want to continue?</strong>
+                    </Fragment>
+                  }
+                  title="Warning: One or more users selected has associated Access Keys."
+                  sx={{ margin: "15px 0" }}
                 />
                 <DataTable
                   itemActions={tableActions}

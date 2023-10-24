@@ -15,13 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { ProgressBar, Grid, Box } from "mds";
+import { ProgressBar, Grid, Box, InformativeMessage } from "mds";
 import get from "lodash/get";
 import { BucketObjectItem } from "../ListObjects/types";
 import { AllowedPreviews, previewObjectType } from "../utils";
 import { encodeURLString } from "../../../../../../common/utils";
 import { api } from "../../../../../../api";
-import WarningMessage from "../../../../Common/WarningMessage/WarningMessage";
 
 interface IPreviewFileProps {
   bucketName: string;
@@ -177,10 +176,12 @@ const PreviewFile = ({
           )}
           {objectType === "none" && (
             <div>
-              <WarningMessage
-                label=" File couldn't be previewed using file extension or mime type. Please
+              <InformativeMessage
+                variant={"error"}
+                message=" File couldn't be previewed using file extension or mime type. Please
             try Download instead"
-                title="Preview unavailable "
+                title="Preview unavailable"
+                sx={{ margin: "15px 0" }}
               />
             </div>
           )}

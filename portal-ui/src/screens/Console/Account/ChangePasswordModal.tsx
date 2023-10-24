@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Button,
   ChangePasswordIcon,
@@ -22,6 +22,7 @@ import {
   Grid,
   FormLayout,
   ProgressBar,
+  InformativeMessage,
 } from "mds";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 
@@ -35,7 +36,6 @@ import { useAppDispatch } from "../../../store";
 import { api } from "api";
 import { AccountChangePasswordRequest, ApiError } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
-import WarningMessage from "../Common/WarningMessage/WarningMessage";
 
 interface IChangePasswordProps {
   open: boolean;
@@ -120,24 +120,24 @@ const ChangePassword = ({ open, closeModal }: IChangePasswordProps) => {
         This will change your Console password. Please note your new password
         down, as it will be required to log into Console after this session.
       </div>
-      <WarningMessage
-        title={""}
-        label={
-          <div>
-            <div>
-              If you are looking to change MINIO_ROOT_USER credentials, Please
-              refer to{" "}
-              <a
-                target="_blank"
-                rel="noopener"
-                href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html#id4?ref=con"
-              >
-                rotating
-              </a>{" "}
-              credentials .
-            </div>
-          </div>
+      <InformativeMessage
+        variant={"warning"}
+        title={"Warning"}
+        message={
+          <Fragment>
+            If you are looking to change MINIO_ROOT_USER credentials, <br />
+            Please refer to{" "}
+            <a
+              target="_blank"
+              rel="noopener"
+              href="https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html#id4?ref=con"
+            >
+              rotating
+            </a>{" "}
+            credentials.
+          </Fragment>
         }
+        sx={{ margin: "15px 0" }}
       />
       <form
         noValidate
