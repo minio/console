@@ -39,9 +39,9 @@ import {
   RefreshIcon,
   ScreenTitle,
   ShareIcon,
+  Badge,
 } from "mds";
 import { api } from "api";
-import { Badge } from "@mui/material"; // TODO: Remove this
 import { errorToHandler } from "api/errors";
 import { BucketQuota } from "api/consoleApi";
 import { useSelector } from "react-redux";
@@ -1029,14 +1029,7 @@ const ListObjects = () => {
                       id={"rewind-objects-list"}
                       label={"Rewind"}
                       icon={
-                        <Badge
-                          badgeContent=" "
-                          color="secondary"
-                          variant="dot"
-                          invisible={!rewindEnabled}
-                          className={""}
-                          sx={{ height: 16 }}
-                        >
+                        <Badge color="alert" dotOnly invisible={!rewindEnabled}>
                           <HistoryIcon
                             style={{
                               minWidth: 16,

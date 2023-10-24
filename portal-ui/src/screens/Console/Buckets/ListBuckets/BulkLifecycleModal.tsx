@@ -27,10 +27,10 @@ import {
   Switch,
   Tooltip,
   WarnIcon,
+  Wizard,
 } from "mds";
 import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import { ITiersDropDown } from "../types";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
@@ -196,20 +196,23 @@ const AddBulkReplicationModal = ({
       }}
       title="Set Lifecycle to multiple buckets"
     >
-      <GenericWizard
+      <Wizard
         loadingStep={addLoading || loadingTiers}
         wizardSteps={[
           {
             label: "Lifecycle Configuration",
             componentRender: (
               <Fragment>
-                <Grid item xs={12}>
-                  <ReadBox label="Local Buckets to replicate">
-                    {buckets.join(", ")}
-                  </ReadBox>
-                </Grid>
-                <h4>Remote Endpoint Configuration</h4>
                 <FormLayout withBorders={false} containerPadding={false}>
+                  <Grid item xs={12}>
+                    <ReadBox
+                      label="Local Buckets to replicate"
+                      sx={{ maxWidth: "440px", width: "100%" }}
+                    >
+                      {buckets.join(", ")}
+                    </ReadBox>
+                  </Grid>
+                  <h4>Remote Endpoint Configuration</h4>
                   <fieldset className={"inputItem"}>
                     <legend>Lifecycle Configuration</legend>
                     <RadioGroup

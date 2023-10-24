@@ -19,17 +19,16 @@ import {
   Box,
   CheckCircleIcon,
   FormLayout,
-  Grid,
   InputBox,
   ReadBox,
   Select,
   Switch,
   Tooltip,
   WarnIcon,
+  Wizard,
 } from "mds";
 import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { getBytes, k8sScalarUnitsExcluding } from "../../../../common/utils";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
@@ -302,28 +301,26 @@ const AddBulkReplicationModal = ({
       }}
       title="Set Multiple Bucket Replication"
     >
-      <GenericWizard
+      <Wizard
         loadingStep={addLoading || externalLoading}
         wizardSteps={[
           {
             label: "Remote Configuration",
             componentRender: (
               <Fragment>
-                <Grid item xs={12}>
+                <FormLayout containerPadding={false} withBorders={false}>
                   <ReadBox
-                    sx={{ width: "100%" }}
                     label="Local Buckets to replicate"
+                    sx={{ maxWidth: "440px", width: "100%" }}
                   >
                     {bucketsToAlter.join(", ")}
                   </ReadBox>
-                </Grid>
-                <h4>Remote Endpoint Configuration</h4>
-                <span style={{ fontSize: 14 }}>
-                  Please avoid the use of root credentials for this feature
-                </span>
-                <br />
-                <br />
-                <FormLayout containerPadding={false} withBorders={false}>
+                  <h4>Remote Endpoint Configuration</h4>
+                  <span style={{ fontSize: 14 }}>
+                    Please avoid the use of root credentials for this feature
+                    <br />
+                    <br />
+                  </span>
                   <InputBox
                     id="accessKey"
                     name="accessKey"
