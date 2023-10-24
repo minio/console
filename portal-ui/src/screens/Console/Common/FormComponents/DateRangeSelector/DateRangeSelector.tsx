@@ -15,11 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Button, OpenListIcon, SyncIcon, Grid, Box, breakPoints } from "mds";
+import {
+  Button,
+  OpenListIcon,
+  SyncIcon,
+  Grid,
+  Box,
+  breakPoints,
+  TimeIcon,
+} from "mds";
 import { DateTime } from "luxon";
-
-import ScheduleIcon from "@mui/icons-material/Schedule";
-import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import DateTimePickerWrapper from "../DateTimePickerWrapper/DateTimePickerWrapper";
 
 interface IDateRangeSelector {
@@ -154,7 +159,7 @@ const DateRangeSelector = ({
                 },
               }}
             >
-              <ScheduleIcon className="min-icon" />
+              <TimeIcon />
             </Box>
             <Box
               sx={{
@@ -197,7 +202,7 @@ const DateRangeSelector = ({
                 },
               }}
             >
-              <WatchLaterIcon className="min-icon" />
+              <TimeIcon />
             </Box>
             <Box
               sx={{

@@ -15,13 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Button, FormLayout, Grid, InputBox, ProgressBar } from "mds";
+import {
+  Button,
+  ConsoleIcon,
+  FormLayout,
+  Grid,
+  InputBox,
+  PendingItemsIcon,
+  ProgressBar,
+  WebhookIcon,
+} from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import { Webhook } from "@mui/icons-material";
-import CallToActionIcon from "@mui/icons-material/CallToAction";
-import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import {
   configurationIsLoading,
   setErrorSnackMessage,
@@ -126,16 +132,16 @@ const AddEndpointModal = ({ open, type, onCloseEndpoint }: IEndpointModal) => {
   };
 
   let title = "Add new Webhook";
-  let icon = <Webhook />;
+  let icon = <WebhookIcon />;
 
   switch (type) {
     case "logger_webhook":
       title = "New Logger Webhook";
-      icon = <CallToActionIcon />;
+      icon = <ConsoleIcon />;
       break;
     case "audit_webhook":
       title = "New Audit Webhook";
-      icon = <PendingActionsIcon />;
+      icon = <PendingItemsIcon />;
       break;
   }
 
