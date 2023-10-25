@@ -368,45 +368,6 @@ export const formFieldStyles: any = {
   },
 };
 
-export const deleteDialogStyles: any = {
-  root: {
-    "& .MuiPaper-root": {
-      padding: "1rem 2rem 2rem 1rem",
-    },
-  },
-  title: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  titleText: {
-    fontSize: 20,
-    fontWeight: 600,
-    display: "flex",
-    alignItems: "center",
-    "& svg": {
-      marginRight: 10,
-    },
-    wordBreak: "break-all",
-    whiteSpace: "normal",
-  },
-  closeContainer: {
-    "& .MuiIconButton-root": {
-      top: -20,
-      left: 30,
-      position: "relative",
-      padding: 1,
-      "&:focus, &:hover": {
-        background: "#EAEAEA",
-      },
-    },
-    "& .min-icon": {
-      height: 16,
-      width: 16,
-    },
-  },
-};
-
 export const modalStyleUtils: any = {
   modalButtonBar: {
     marginTop: 15,

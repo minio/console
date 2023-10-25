@@ -22,14 +22,14 @@ import React, {
   useState,
 } from "react";
 import { Theme } from "@mui/material/styles";
-import { Button, MainContainer } from "mds";
+import { Button, MainContainer, Snackbar } from "mds";
 import debounce from "lodash/debounce";
 import createStyles from "@mui/styles/createStyles";
 import withStyles from "@mui/styles/withStyles";
-
-import Snackbar from "@mui/material/Snackbar";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { selFeatures, selSession } from "./consoleSlice";
+import { api } from "api";
 import { AppState, useAppDispatch } from "../../store";
 import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
 import MainError from "./Common/MainError/MainError";
@@ -42,8 +42,6 @@ import {
 } from "../../common/SecureComponent/permissions";
 import { hasPermission } from "../../common/SecureComponent";
 import { IRouteRule } from "./Menu/types";
-import LoadingComponent from "../../common/LoadingComponent";
-import ComponentsScreen from "./Common/ComponentsScreen";
 import {
   menuOpen,
   selDistSet,
@@ -51,10 +49,10 @@ import {
   setServerNeedsRestart,
   setSnackBarMessage,
 } from "../../systemSlice";
-import { selFeatures, selSession } from "./consoleSlice";
-import { api } from "api";
 import MenuWrapper from "./Menu/MenuWrapper";
 import { LinearProgress } from "@mui/material";
+import LoadingComponent from "../../common/LoadingComponent";
+import ComponentsScreen from "./Common/ComponentsScreen";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
 const Heal = React.lazy(() => import("./Heal/Heal"));
@@ -150,19 +148,6 @@ const KMSRoutes = React.lazy(() => import("./KMS/KMSRoutes"));
 
 const styles = (theme: Theme) =>
   createStyles({
-    root: {
-      display: "flex",
-      "& .MuiPaper-root.MuiSnackbarContent-root": {
-        borderRadius: "0px 0px 5px 5px",
-        boxShadow: "none",
-      },
-    },
-    content: {
-      flexGrow: 1,
-      height: "100vh",
-      overflow: "auto",
-      position: "relative",
-    },
     warningBar: {
       background: theme.palette.primary.main,
       color: "white",
@@ -534,26 +519,14 @@ const Console = ({ classes }: IConsoleProps) => {
               />
             )}
             <MainError />
-            <div className={classes.snackDiv}>
-              <Snackbar
-                open={openSnackbar}
-                onClose={() => {
-                  closeSnackBar();
-                }}
-                autoHideDuration={
-                  snackBarMessage.type === "error" ? 10000 : 5000
-                }
-                message={snackBarMessage.message}
-                className={classes.snackBarExternal}
-                ContentProps={{
-                  className: `${classes.snackBar} ${
-                    snackBarMessage.type === "error"
-                      ? classes.errorSnackBar
-                      : ""
-                  }`,
-                }}
-              />
-            </div>
+            <Snackbar
+              onClose={closeSnackBar}
+              open={openSnackbar}
+              message={snackBarMessage.message}
+              variant={snackBarMessage.type === "error" ? "error" : "default"}
+              autoHideDuration={snackBarMessage.type === "error" ? 10 : 5}
+              condensed
+            />
             <Suspense fallback={<LoadingComponent />}>
               <ObjectManager />
             </Suspense>

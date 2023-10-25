@@ -31,7 +31,8 @@ const test3BucketBrowseButton = namedTestBucketBrowseButtonFor(bucket3);
 export const file = Selector(".ReactVirtualized__Table__rowColumn").withText(
   "test.txt",
 );
-export const deniedError = Selector(".message-text").withText("Access Denied.");
+export const deniedError =
+  Selector(".messageTruncation").withText("Access Denied.");
 
 test
   .before(async (t) => {
