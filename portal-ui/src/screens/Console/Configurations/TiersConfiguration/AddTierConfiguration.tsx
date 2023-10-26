@@ -454,7 +454,6 @@ const AddTierConfiguration = () => {
                     required={type !== "minio"}
                     label={"Region"}
                     id="region"
-                    name="region"
                     type={type as "azure" | "s3" | "minio" | "gcs"}
                   />
                   {type === s3ServiceName && (

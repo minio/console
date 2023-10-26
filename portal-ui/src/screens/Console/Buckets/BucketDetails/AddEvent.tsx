@@ -15,14 +15,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState, Fragment } from "react";
-import { Button, DataTable, EventSubscriptionIcon, Grid, InputBox } from "mds";
+import {
+  Autocomplete,
+  Button,
+  DataTable,
+  EventSubscriptionIcon,
+  Grid,
+  InputBox,
+} from "mds";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { api } from "api";
 import { NotificationEventType } from "api/consoleApi";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper/AutocompleteWrapper";
 import {
   formFieldStyles,
   modalBasic,
@@ -161,7 +167,7 @@ const AddEvent = ({
                 },
               }}
             >
-              <AutocompleteWrapper
+              <Autocomplete
                 onChange={(value: string) => {
                   setArn(value);
                 }}
@@ -170,7 +176,7 @@ const AddEvent = ({
                 label={"ARN"}
                 value={arn}
                 options={arnValues || []}
-                helptip={
+                helpTip={
                   <Fragment>
                     <a
                       target="blank"
