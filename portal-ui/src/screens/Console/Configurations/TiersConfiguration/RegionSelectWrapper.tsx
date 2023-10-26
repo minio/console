@@ -14,177 +14,90 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { Grid, IconButton, InputLabel, Tooltip } from "mds";
-import { InputProps as StandardInputProps } from "@mui/material/Input";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import makeStyles from "@mui/styles/makeStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  fieldBasic,
-  inputFieldStyles,
-  tooltipHelper,
-} from "../../Common/FormComponents/common/styleLibrary";
-import { HelpIcon } from "mds";
-import clsx from "clsx";
-import RegionSelect from "./RegionSelect";
+import React, { useState } from "react";
+import { Autocomplete, InputBox, SelectorType } from "mds";
+
+import s3Regions from "./s3-regions";
+import gcsRegions from "./gcs-regions";
+import azRegions from "./azure-regions";
+
+const getRegions = (type: string): any => {
+  let regions: SelectorType[] = [];
+
+  if (type === "s3") {
+    regions = s3Regions;
+  }
+  if (type === "gcs") {
+    regions = gcsRegions;
+  }
+  if (type === "azure") {
+    regions = azRegions;
+  }
+
+  return regions.map((item) => ({
+    value: item.value,
+    label: `${item.label} - ${item.value}`,
+  }));
+};
 
 interface RegionSelectBoxProps {
   label: string;
-  classes?: any;
   onChange: (value: string) => void;
-  onKeyPress?: (e: any) => void;
   value?: string | boolean;
   id: string;
-  name: string;
   disabled?: boolean;
   type: "minio" | "s3" | "gcs" | "azure";
   tooltip?: string;
-  index?: number;
-  error?: string;
   required?: boolean;
   placeholder?: string;
-  overlayId?: string;
-  overlayIcon?: any;
-  overlayAction?: () => void;
-  overlayObject?: any;
-  extraInputProps?: StandardInputProps["inputProps"];
-  noLabelMinWidth?: boolean;
-  pattern?: string;
-  autoFocus?: boolean;
-  className?: string;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...fieldBasic,
-    ...tooltipHelper,
-    textBoxContainer: {
-      flexGrow: 1,
-      position: "relative",
-      minWidth: 160,
-    },
-    overlayAction: {
-      position: "absolute",
-      right: 5,
-      top: 6,
-      "& svg": {
-        maxWidth: 15,
-        maxHeight: 15,
-      },
-      "&.withLabel": {
-        top: 5,
-      },
-    },
-    inputLabel: {
-      ...fieldBasic.inputLabel,
-      fontWeight: "normal",
-    },
-  });
-
-const inputStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    ...inputFieldStyles,
-  }),
-);
 
 const RegionSelectWrapper = ({
   label,
   onChange,
-  id,
-  name,
   type,
   tooltip = "",
-  index = 0,
-  error = "",
   required = false,
-  overlayId,
-  overlayIcon = null,
-  overlayObject = null,
-  extraInputProps = {},
-  overlayAction,
-  noLabelMinWidth = false,
-  classes,
-  className = "",
+  disabled,
+  placeholder,
 }: RegionSelectBoxProps) => {
-  const inputClasses = inputStyles();
+  const regionList = getRegions(type);
+  const [value, setValue] = useState<string>("");
 
-  let inputProps: any = {
-    "data-index": index,
-    ...extraInputProps,
-    name: name,
-    id: id,
-    classes: inputClasses,
-  };
+  if (type === "minio") {
+    return (
+      <InputBox
+        label={label}
+        disabled={disabled}
+        required={required}
+        tooltip={tooltip}
+        value={value}
+        placeholder={placeholder}
+        id={"region-list"}
+        onChange={(e) => {
+          setValue(e.target.value);
+          onChange(e.target.value);
+        }}
+      />
+    );
+  }
 
   return (
-    <React.Fragment>
-      <Grid
-        container
-        className={clsx(
-          className !== "" ? className : "",
-          error !== "" ? classes.errorInField : classes.inputBoxContainer,
-        )}
-      >
-        {label !== "" && (
-          <InputLabel htmlFor={id} noMinWidth={noLabelMinWidth}>
-            <span>
-              {label}
-              {required ? "*" : ""}
-            </span>
-            {tooltip !== "" && (
-              <div className={classes.tooltipContainer}>
-                <Tooltip tooltip={tooltip} placement="top">
-                  <div className={classes.tooltip}>
-                    <HelpIcon />
-                  </div>
-                </Tooltip>
-              </div>
-            )}
-          </InputLabel>
-        )}
-
-        <div className={classes.textBoxContainer}>
-          <RegionSelect
-            type={type}
-            inputProps={inputProps}
-            onChange={onChange}
-          />
-          {overlayIcon && (
-            <div
-              className={`${classes.overlayAction} ${
-                label !== "" ? "withLabel" : ""
-              }`}
-            >
-              <IconButton
-                onClick={
-                  overlayAction
-                    ? () => {
-                        overlayAction();
-                      }
-                    : () => null
-                }
-                id={overlayId}
-                size={"small"}
-              >
-                {overlayIcon}
-              </IconButton>
-            </div>
-          )}
-          {overlayObject && (
-            <div
-              className={`${classes.overlayAction} ${
-                label !== "" ? "withLabel" : ""
-              }`}
-            >
-              {overlayObject}
-            </div>
-          )}
-        </div>
-      </Grid>
-    </React.Fragment>
+    <Autocomplete
+      label={label}
+      disabled={disabled}
+      required={required}
+      tooltip={tooltip}
+      options={regionList}
+      value={value}
+      placeholder={placeholder}
+      id={"region-list"}
+      onChange={(newValue) => {
+        setValue(newValue);
+        onChange(newValue);
+      }}
+    />
   );
 };
 
-export default withStyles(styles)(RegionSelectWrapper);
+export default RegionSelectWrapper;
