@@ -15,158 +15,134 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Theme } from "@mui/material/styles";
-import { Tooltip } from "@mui/material";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { IFileItem } from "../../ObjectBrowser/types";
 import ProgressBarWrapper from "../ProgressBarWrapper/ProgressBarWrapper";
 import {
+  Box,
   CancelledIcon,
   DisabledIcon,
   DownloadStatIcon,
   EnabledIcon,
   UploadStatIcon,
+  Tooltip,
 } from "mds";
 import clsx from "clsx";
 import { callForObjectID } from "../../ObjectBrowser/transferManager";
+import styled from "styled-components";
+import get from "lodash/get";
 
 interface IObjectHandled {
-  classes: any;
   objectToDisplay: IFileItem;
   deleteFromList: (instanceID: string) => void;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      borderBottom: "#E2E2E2 1px solid",
-      padding: "15px 5px",
-      margin: "0 30px",
-      position: "relative",
-      "& .showOnHover": {
-        opacity: 1,
-        transitionDuration: "0.2s",
-      },
-      "&.inProgress": {
-        "& .hideOnProgress": {
-          //visibility: "hidden",
-        },
-      },
-      "&:hover": {
-        "& .showOnHover": {
-          opacity: 1,
-        },
-      },
+const ObjectHandledCloseButton = styled.button(({ theme }) => ({
+  backgroundColor: "transparent",
+  border: 0,
+  right: 0,
+  top: 5,
+  marginTop: 15,
+  position: "absolute",
+  cursor: "pointer",
+  "& .closeIcon": {
+    backgroundColor: get(theme, "buttons.regular.hover.background", "#E6EAEB"),
+    display: "block",
+    width: 18,
+    height: 18,
+    borderRadius: "100%",
+    "&:hover": {
+      backgroundColor: get(theme, "mutedText", "#E9EDEE"),
     },
-    headItem: {
-      fontSize: 14,
-      fontWeight: "bold",
-      width: "100%",
-      whiteSpace: "nowrap",
-      textOverflow: "ellipsis",
-      overflow: "hidden",
-    },
-    downloadHeader: {
-      display: "flex",
-      alignItems: "center",
-      width: "100%",
-    },
-    progressContainer: {
-      marginTop: 5,
-    },
-    objectDetails: {
-      display: "flex",
-      alignItems: "center",
-    },
-    iconContainer: {
-      paddingTop: 5,
-      marginRight: 5,
-      "& svg": {
-        width: 16,
-        height: 16,
-      },
-    },
-    completedSuccess: {
-      color: "#4CCB92",
-    },
-    inProgress: {
-      color: "#2781B0",
-    },
-    completedError: {
-      color: "#C83B51",
-    },
-    cancelledAction: {
-      color: "#FFBD62",
-    },
-    closeIcon: {
-      backgroundColor: "#E9EDEE",
-      display: "block",
-      width: 18,
-      height: 18,
-      borderRadius: "100%",
-      "&:hover": {
-        backgroundColor: "#cecbcb",
-      },
-      "&::before": {
-        width: 1,
-        height: 9,
-        top: "50%",
-        content: "' '",
-        position: "absolute",
-        transform: "translate(-50%, -50%) rotate(45deg)",
-        borderLeft: "#000 2px solid",
-      },
-      "&::after": {
-        width: 1,
-        height: 9,
-        top: "50%",
-        content: "' '",
-        position: "absolute",
-        transform: "translate(-50%, -50%) rotate(-45deg)",
-        borderLeft: "#000 2px solid",
-      },
-    },
-    closeButton: {
-      backgroundColor: "transparent",
-      border: 0,
-      right: 0,
-      top: 5,
-      marginTop: 15,
+    "&::before": {
+      width: 1,
+      height: 9,
+      top: "50%",
+      content: "' '",
       position: "absolute",
+      transform: "translate(-50%, -50%) rotate(45deg)",
+      borderLeft: `${get(theme, "fontColor", "#000")} 2px solid`,
     },
-    fileName: {
-      width: 295,
+    "&::after": {
+      width: 1,
+      height: 9,
+      top: "50%",
+      content: "' '",
+      position: "absolute",
+      transform: "translate(-50%, -50%) rotate(-45deg)",
+      borderLeft: `${get(theme, "fontColor", "#000")} 2px solid`,
     },
-    bucketName: {
-      fontSize: 12,
-      color: "#696969",
-      fontWeight: "normal",
-    },
-    errorMessage: {
-      fontSize: 12,
-      color: "#C83B51",
-      fontWeight: "normal",
-      marginTop: 6,
-      overflowWrap: "break-word",
-    },
-  });
+  },
+}));
 
-const ObjectHandled = ({
-  classes,
-  objectToDisplay,
-  deleteFromList,
-}: IObjectHandled) => {
+const ObjectInformation = styled.div(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  width: "100%",
+  "span.headItem": {
+    fontSize: 14,
+    fontWeight: "bold",
+    width: 270,
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+  },
+  "& .iconContainer": {
+    paddingTop: 5,
+    marginRight: 5,
+    "& svg": {
+      width: 16,
+      height: 16,
+    },
+  },
+  "& .completedSuccess": {
+    color: get(theme, "signalColors.good", "#4CCB92"),
+  },
+  "& .inProgress": {
+    color: get(theme, "signalColors.main", "#2781B0"),
+  },
+  "& .completedError": {
+    color: get(theme, "signalColors.danger", "#C83B51"),
+  },
+  "& .cancelledAction": {
+    color: get(theme, "signalColors.warning", "#FFBD62"),
+  },
+}));
+
+const ObjectHandled = ({ objectToDisplay, deleteFromList }: IObjectHandled) => {
   const prefix = `${objectToDisplay.prefix}`;
   return (
     <Fragment>
-      <div
-        className={`${classes.container} ${
-          objectToDisplay.percentage !== 100 ? "inProgress" : ""
-        }`}
+      <Box
+        sx={{
+          borderBottom: "#E2E2E2 1px solid",
+          padding: "15px 5px",
+          margin: "0 30px",
+          position: "relative",
+          "& .showOnHover": {
+            opacity: 1,
+            transitionDuration: "0.2s",
+          },
+          "&:hover": {
+            "& .showOnHover": {
+              opacity: 1,
+            },
+          },
+        }}
+        className={objectToDisplay.percentage !== 100 ? "inProgress" : ""}
       >
-        <div className={classes.clearListIcon}>
-          <button
+        <Box
+          sx={{
+            "& .closeButton": {
+              backgroundColor: "transparent",
+              border: 0,
+              right: 0,
+              top: 5,
+              marginTop: 15,
+              position: "absolute",
+            },
+          }}
+        >
+          <ObjectHandledCloseButton
             onClick={() => {
               if (!objectToDisplay.done) {
                 const call = callForObjectID(objectToDisplay.ID);
@@ -177,27 +153,39 @@ const ObjectHandled = ({
                 deleteFromList(objectToDisplay.instanceID);
               }
             }}
-            className={`${classes.closeButton} hideOnProgress`}
+            className={`closeButton hideOnProgress`}
           >
-            <span className={classes.closeIcon} />
-          </button>
-        </div>
-        <div className={classes.objectDetails}>
-          <div className={classes.fileName}>
-            <Tooltip title={prefix} placement="top-start">
-              <div className={classes.downloadHeader}>
+            <span className={"closeIcon"} />
+          </ObjectHandledCloseButton>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Box
+            sx={{
+              width: 295,
+              "& .bucketName": {
+                fontSize: 12,
+              },
+            }}
+          >
+            <Tooltip tooltip={prefix} placement="top">
+              <ObjectInformation>
                 <span
-                  className={clsx(classes.iconContainer, {
-                    [classes.inProgress]:
+                  className={clsx("iconContainer", {
+                    inProgress:
                       !objectToDisplay.done &&
                       !objectToDisplay.failed &&
                       !objectToDisplay.cancelled,
-                    [classes.completedSuccess]:
+                    completedSuccess:
                       objectToDisplay.done &&
                       !objectToDisplay.failed &&
                       !objectToDisplay.cancelled,
-                    [classes.completedError]: objectToDisplay.failed,
-                    [classes.cancelledAction]: objectToDisplay.cancelled,
+                    completedError: objectToDisplay.failed,
+                    cancelledAction: objectToDisplay.cancelled,
                   })}
                 >
                   {objectToDisplay.cancelled ? (
@@ -225,21 +213,25 @@ const ObjectHandled = ({
                   )}
                 </span>
                 <span
-                  className={clsx(classes.headItem, {
-                    [classes.completedError]: objectToDisplay.failed,
-                  })}
+                  className={`headItem ${
+                    objectToDisplay.failed ? "completedError" : ""
+                  }`}
                 >
                   {prefix}
                 </span>
-              </div>
+              </ObjectInformation>
             </Tooltip>
-            <span className={classes.bucketName}>
+            <Box className={"muted bucketName"}>
               <strong>Bucket: </strong>
               {objectToDisplay.bucketName}
-            </span>
-          </div>
-        </div>
-        <div className={classes.progressContainer}>
+            </Box>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            marginTop: 5,
+          }}
+        >
           {objectToDisplay.waitingForFile ? (
             <ProgressBarWrapper indeterminate value={0} ready={false} />
           ) : (
@@ -256,10 +248,10 @@ const ObjectHandled = ({
               }
             />
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(ObjectHandled);
+export default ObjectHandled;

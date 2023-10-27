@@ -15,16 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { Box } from "mds";
 import { getTimeFromTimestamp } from "../../../../../../common/utils";
 import { tooltipCommon } from "../../../../Common/FormComponents/common/styleLibrary";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...tooltipCommon,
-  });
 
 const LineChartTooltip = ({
   active,
@@ -32,41 +25,47 @@ const LineChartTooltip = ({
   label,
   linearConfiguration,
   yAxisFormatter,
-  classes,
 }: any) => {
   if (active) {
     return (
-      <div className={classes.customTooltip}>
-        <div className={classes.timeStampTitle}>
+      <Box sx={tooltipCommon.customTooltip}>
+        <Box sx={tooltipCommon.timeStampTitle}>
           {getTimeFromTimestamp(label, true)}
-        </div>
+        </Box>
         {payload &&
           payload.map((pl: any, index: number) => {
             return (
-              <div
-                className={classes.labelContainer}
+              <Box
+                sx={tooltipCommon.labelContainer}
                 key={`lbPl-${index}-${linearConfiguration[index].keyLabel}`}
               >
-                <div
-                  className={classes.labelColor}
+                <Box
+                  sx={tooltipCommon.labelColor}
                   style={{
                     backgroundColor: linearConfiguration[index].lineColor,
                   }}
                 />
-                <div className={classes.itemValue}>
-                  <span className={classes.valueContainer}>
+                <Box
+                  sx={{
+                    ...tooltipCommon.itemValue,
+                    "& span.valueContainer": {
+                      ...tooltipCommon.valueContainer,
+                    },
+                  }}
+                >
+                  <span className={"valueContainer"}>
                     {linearConfiguration[index].keyLabel}:{" "}
                     {yAxisFormatter(pl.value)}
                   </span>
-                </div>
-              </div>
+                </Box>
+              </Box>
             );
           })}
-      </div>
+      </Box>
     );
   }
 
   return null;
 };
 
-export default withStyles(styles)(LineChartTooltip);
+export default LineChartTooltip;
