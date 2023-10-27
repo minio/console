@@ -141,7 +141,6 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 
 // getBucketLifecycleResponse performs getBucketLifecycle() and serializes it to the handler's output
 func getBucketLifecycleResponse(session *models.Principal, params bucketApi.GetBucketLifecycleParams) (*models.BucketLifecycleResponse, *CodedAPIError) {
-
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
