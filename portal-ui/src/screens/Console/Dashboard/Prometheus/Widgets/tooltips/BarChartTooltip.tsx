@@ -15,51 +15,50 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
+import { Box } from "mds";
 import { tooltipCommon } from "../../../../Common/FormComponents/common/styleLibrary";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...tooltipCommon,
-  });
 
 const BarChartTooltip = ({
   active,
   payload,
   label,
   barChartConfiguration,
-  classes,
 }: any) => {
   if (active) {
     return (
-      <div className={classes.customTooltip}>
-        <div className={classes.timeStampTitle}>{label}</div>
+      <Box sx={tooltipCommon.customTooltip}>
+        <Box sx={tooltipCommon.timeStampTitle}>{label}</Box>
         {payload &&
           payload.map((pl: any, index: number) => {
             return (
-              <div
-                className={classes.labelContainer}
+              <Box
+                sx={tooltipCommon.labelContainer}
                 key={`pltiem-${index}-${label}`}
               >
-                <div
-                  className={classes.labelColor}
+                <Box
+                  sx={tooltipCommon.labelColor}
                   style={{
                     backgroundColor: barChartConfiguration[index].color,
                   }}
                 />
-                <div className={classes.itemValue}>
-                  <span className={classes.valueContainer}>{pl.value}</span>
-                </div>
-              </div>
+                <Box
+                  sx={{
+                    ...tooltipCommon.itemValue,
+                    "& span.valueContainer": {
+                      ...tooltipCommon.valueContainer,
+                    },
+                  }}
+                >
+                  <span className={"valueContainer"}>{pl.value}</span>
+                </Box>
+              </Box>
             );
           })}
-      </div>
+      </Box>
     );
   }
 
   return null;
 };
 
-export default withStyles(styles)(BarChartTooltip);
+export default BarChartTooltip;
