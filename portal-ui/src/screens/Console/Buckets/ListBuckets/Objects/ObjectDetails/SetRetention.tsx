@@ -179,7 +179,7 @@ const SetRetention = ({
           onSubmit(e);
         }}
       >
-        <FormLayout>
+        <FormLayout withBorders={false} containerPadding={false}>
           <Box className={"inputItem"}>
             <strong>Selected Object</strong>: {objectName}
           </Box>
@@ -212,22 +212,20 @@ const SetRetention = ({
               { label: "Compliance", value: ObjectRetentionMode.Compliance },
             ]}
           />
-          <Box className={"inputItem"}>
-            <DateSelector
-              id="date"
-              label="Date"
-              disableOptions={dateFieldDisabled()}
-              ref={dateElement}
-              value={date}
-              borderBottom={true}
-              onDateChange={(date: string, isValid: boolean) => {
-                setIsDateValid(isValid);
-                if (isValid) {
-                  setDate(date);
-                }
-              }}
-            />
-          </Box>
+          <DateSelector
+            id="date"
+            label="Date"
+            disableOptions={dateFieldDisabled()}
+            ref={dateElement}
+            value={date}
+            borderBottom={true}
+            onDateChange={(date: string, isValid: boolean) => {
+              setIsDateValid(isValid);
+              if (isValid) {
+                setDate(date);
+              }
+            }}
+          />
           <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
             <Button
               id={"reset"}

@@ -20,35 +20,13 @@ import React, {
   useImperativeHandle,
   useState,
 } from "react";
-import clsx from "clsx";
-import { Box, Grid, HelpIcon, InputLabel, Select, Switch, Tooltip } from "mds";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
+import { Box, HelpIcon, InputLabel, Select, Tooltip } from "mds";
 import { days, months, validDate, years } from "./utils";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...fieldBasic,
-    ...tooltipHelper,
-    fieldContainer: {
-      ...fieldBasic.fieldContainer,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingBottom: 10,
-      marginTop: 11,
-      marginBottom: 6,
-    },
-  });
-
 interface IDateSelectorProps {
-  classes: any;
   id: string;
   label: string;
   disableOptions?: boolean;
-  addSwitch?: boolean;
   tooltip?: string;
   borderBottom?: boolean;
   value?: string;
@@ -58,11 +36,9 @@ interface IDateSelectorProps {
 const DateSelector = forwardRef(
   (
     {
-      classes,
       id,
       label,
       disableOptions = false,
-      addSwitch = false,
       tooltip = "",
       borderBottom = false,
       onDateChange,
@@ -72,7 +48,6 @@ const DateSelector = forwardRef(
   ) => {
     useImperativeHandle(ref, () => ({ resetDate }));
 
-    const [dateEnabled, setDateEnabled] = useState<boolean>(false);
     const [month, setMonth] = useState<string>("");
     const [day, setDay] = useState<string>("");
     const [year, setYear] = useState<string>("");
@@ -104,8 +79,6 @@ const DateSelector = forwardRef(
     const isDateDisabled = () => {
       if (disableOptions) {
         return disableOptions;
-      } else if (addSwitch) {
-        return !dateEnabled;
       } else {
         return false;
       }
@@ -116,45 +89,43 @@ const DateSelector = forwardRef(
     const yearsForDrop = [{ value: "", label: "<Year>" }, ...years];
 
     return (
-      <Grid
-        item
-        xs={12}
-        className={clsx(classes.fieldContainer, {
-          [classes.fieldContainerBorder]: borderBottom,
-        })}
-      >
-        <div className={classes.labelContainer}>
-          <Grid container>
-            <InputLabel htmlFor={id}>
-              <span>{label}</span>
-              {tooltip !== "" && (
-                <div className={classes.tooltipContainer}>
-                  <Tooltip tooltip={tooltip} placement="top">
-                    <div className={classes.tooltip}>
-                      <HelpIcon />
-                    </div>
-                  </Tooltip>
-                </div>
-              )}
-            </InputLabel>
-            {addSwitch && (
-              <Switch
-                indicatorLabels={["Specific Date", "Default (7 Days)"]}
-                checked={dateEnabled}
-                value={"date_enabled"}
-                id="date-status"
-                name="date-status"
-                onChange={(e) => {
-                  setDateEnabled(e.target.checked);
-                  if (!e.target.checked) {
-                    onDateChange("", true);
-                  }
+      <Box className={"inputItem"}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            marginBottom: 5,
+          }}
+        >
+          <InputLabel htmlFor={id}>
+            <span>{label}</span>
+            {tooltip !== "" && (
+              <Box
+                sx={{
+                  marginLeft: 5,
+                  display: "flex",
+                  alignItems: "center",
+                  "& .min-icon": {
+                    width: 13,
+                  },
                 }}
-                switchOnly
-              />
+              >
+                <Tooltip tooltip={tooltip} placement="top">
+                  <Box
+                    sx={{
+                      "& .min-icon": {
+                        width: 13,
+                      },
+                    }}
+                  >
+                    <HelpIcon />
+                  </Box>
+                </Tooltip>
+              </Box>
             )}
-          </Grid>
-        </div>
+          </InputLabel>
+        </Box>
         <Box sx={{ display: "flex", gap: 12 }}>
           <Select
             id={`${id}-month`}
@@ -190,11 +161,14 @@ const DateSelector = forwardRef(
             options={yearsForDrop}
             label={""}
             disabled={isDateDisabled()}
+            sx={{
+              marginBottom: 12,
+            }}
           />
         </Box>
-      </Grid>
+      </Box>
     );
   },
 );
 
-export default withStyles(styles)(DateSelector);
+export default DateSelector;

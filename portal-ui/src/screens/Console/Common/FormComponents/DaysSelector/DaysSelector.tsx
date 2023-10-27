@@ -14,16 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import { Grid, InputBox, InputLabel, LinkIcon } from "mds";
+import { Box, InputBox, InputLabel, LinkIcon } from "mds";
 
 interface IDaysSelector {
-  classes: any;
   id: string;
   initialDate: Date;
   maxDays?: number;
@@ -31,74 +26,6 @@ interface IDaysSelector {
   entity: string;
   onChange: (newDate: string, isValid: boolean) => void;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    ...fieldBasic,
-    ...tooltipHelper,
-    labelContainer: {
-      display: "flex",
-      alignItems: "center",
-      marginBottom: 15,
-    },
-    fieldContainer: {
-      ...fieldBasic.fieldContainer,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingBottom: 10,
-      marginTop: 11,
-      marginBottom: 6,
-    },
-    durationInputs: {
-      display: "flex",
-      alignItems: "flex-start",
-      justifyContent: "flex-start",
-      gap: 10,
-    },
-
-    validityIndicator: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-start",
-      marginTop: 25,
-      marginLeft: 10,
-    },
-    invalidDurationText: {
-      marginTop: 15,
-      display: "flex",
-      color: "red",
-      fontSize: 11,
-    },
-    reverseInput: {
-      flexFlow: "row-reverse",
-      "& > label": {
-        fontWeight: 400,
-        marginLeft: 15,
-        marginRight: 25,
-      },
-    },
-    validityText: {
-      fontSize: 14,
-      marginTop: 15,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      "@media (max-width: 900px)": {
-        flexFlow: "column",
-      },
-      "& > .min-icon": {
-        color: "#5E5E5E",
-        width: 15,
-        height: 15,
-        marginRight: 10,
-      },
-    },
-    validTill: {
-      fontWeight: "bold",
-      marginLeft: 15,
-    },
-  });
 
 const calculateNewTime = (
   initialDate: Date,
@@ -110,7 +37,6 @@ const calculateNewTime = (
 };
 
 const DaysSelector = ({
-  classes,
   id,
   initialDate,
   label,
@@ -204,88 +130,136 @@ const DaysSelector = ({
   };
 
   return (
-    <Fragment>
-      <Grid container className={classes.fieldContainer}>
-        <Grid item xs={12} className={classes.labelContainer}>
-          <InputLabel htmlFor={id}>{label}</InputLabel>
-        </Grid>
-        <Grid item xs={12} className={classes.durationInputs}>
-          <Grid item xs className={classes.dateInputContainer}>
-            <InputBox
-              id={id}
-              className={`${classes.reverseInput} removeArrows`}
-              type="number"
-              min="0"
-              max={maxDays ? maxDays.toString() : "999"}
-              label="Days"
-              name={id}
-              onChange={(e) => {
-                setSelectedDays(parseInt(e.target.value));
-              }}
-              value={selectedDays.toString()}
-              sx={extraStyles}
-              noLabelMinWidth
-            />
-          </Grid>
-          <Grid item xs className={classes.dateInputContainer}>
-            <InputBox
-              id={id}
-              className={`${classes.reverseInput} removeArrows`}
-              type="number"
-              min="0"
-              max="23"
-              label="Hours"
-              name={id}
-              onChange={(e) => {
-                setSelectedHours(parseInt(e.target.value));
-              }}
-              value={selectedHours.toString()}
-              sx={extraStyles}
-              noLabelMinWidth
-            />
-          </Grid>
-          <Grid item xs className={classes.dateInputContainer}>
-            <InputBox
-              id={id}
-              className={`${classes.reverseInput} removeArrows`}
-              type="number"
-              min="0"
-              max="59"
-              label="Minutes"
-              name={id}
-              onChange={(e) => {
-                setSelectedMinutes(parseInt(e.target.value));
-              }}
-              value={selectedMinutes.toString()}
-              sx={extraStyles}
-              noLabelMinWidth
-            />
-          </Grid>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          className={`${classes.validityIndicator} ${classes.formFieldRow}`}
-        >
-          {validDate ? (
-            <div className={classes.validityText}>
-              <LinkIcon />
-              <div className={classes.validityLabel}>
-                {entity} will be available until:
-              </div>{" "}
-              <div className={classes.validTill}>
-                {dateSelected.toFormat("MM/dd/yyyy HH:mm:ss")}
-              </div>
+    <Box className={"inputItem"}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          marginBottom: 5,
+        }}
+      >
+        <InputLabel htmlFor={id}>{label}</InputLabel>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-evenly",
+          gap: 10,
+          "& .reverseInput": {
+            flexFlow: "row-reverse",
+            "& > label": {
+              fontWeight: 400,
+              marginLeft: 15,
+              marginRight: 25,
+            },
+          },
+        }}
+      >
+        <Box>
+          <InputBox
+            id={id}
+            className={`reverseInput removeArrows`}
+            type="number"
+            min="0"
+            max={maxDays ? maxDays.toString() : "999"}
+            label="Days"
+            name={id}
+            onChange={(e) => {
+              setSelectedDays(parseInt(e.target.value));
+            }}
+            value={selectedDays.toString()}
+            sx={extraStyles}
+            noLabelMinWidth
+          />
+        </Box>
+        <Box>
+          <InputBox
+            id={id}
+            className={`reverseInput removeArrows`}
+            type="number"
+            min="0"
+            max="23"
+            label="Hours"
+            name={id}
+            onChange={(e) => {
+              setSelectedHours(parseInt(e.target.value));
+            }}
+            value={selectedHours.toString()}
+            sx={extraStyles}
+            noLabelMinWidth
+          />
+        </Box>
+        <Box>
+          <InputBox
+            id={id}
+            className={`reverseInput removeArrows`}
+            type="number"
+            min="0"
+            max="59"
+            label="Minutes"
+            name={id}
+            onChange={(e) => {
+              setSelectedMinutes(parseInt(e.target.value));
+            }}
+            value={selectedMinutes.toString()}
+            sx={extraStyles}
+            noLabelMinWidth
+          />
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          marginTop: 25,
+          marginLeft: 10,
+          marginBottom: 15,
+          "& .validityText": {
+            fontSize: 14,
+            marginTop: 15,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            "@media (max-width: 900px)": {
+              flexFlow: "column",
+            },
+            "& > .min-icon": {
+              color: "#5E5E5E",
+              width: 15,
+              height: 15,
+              marginRight: 10,
+            },
+          },
+          "& .validTill": {
+            fontWeight: "bold",
+            marginLeft: 15,
+          },
+          "& .invalidDurationText": {
+            marginTop: 15,
+            display: "flex",
+            color: "red",
+            fontSize: 11,
+          },
+        }}
+      >
+        {validDate ? (
+          <div className={"validityText"}>
+            <LinkIcon />
+            <div>{entity} will be available until:</div>{" "}
+            <div className={"validTill"}>
+              {dateSelected.toFormat("MM/dd/yyyy HH:mm:ss")}
             </div>
-          ) : (
-            <div className={classes.invalidDurationText}>
-              Please select a valid duration.
-            </div>
-          )}
-        </Grid>
-      </Grid>
-    </Fragment>
+          </div>
+        ) : (
+          <div className={"invalidDurationText"}>
+            Please select a valid duration.
+          </div>
+        )}
+      </Box>
+    </Box>
   );
 };
 
-export default withStyles(styles)(DaysSelector);
+export default DaysSelector;
