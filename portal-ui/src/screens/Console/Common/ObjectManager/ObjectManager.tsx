@@ -15,80 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Theme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import { IconButton, Tooltip } from "@mui/material";
 import { AppState, useAppDispatch } from "../../../../store";
-import { Box, RemoveAllIcon } from "mds";
+import { Box, RemoveAllIcon, IconButton, Tooltip } from "mds";
 import ObjectHandled from "./ObjectHandled";
 import {
   cleanList,
   deleteFromList,
 } from "../../ObjectBrowser/objectBrowserSlice";
-import clsx from "clsx";
 import VirtualizedList from "../VirtualizedList/VirtualizedList";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    downloadContainer: {
-      boxShadow: "rgba(0, 0, 0, 0.08) 0 2px 10px",
-      position: "absolute",
-      right: 20,
-      top: 62,
-      width: 400,
-      overflowY: "hidden",
-      overflowX: "hidden",
-      borderRadius: 3,
-      zIndex: 1000,
-      padding: 0,
-      height: 0,
-      transitionDuration: "0.3s",
-      visibility: "hidden",
-      "&.open": {
-        visibility: "visible",
-        minHeight: 400,
-      },
-    },
-    downloadContainerAnonymous: {
-      top: 70,
-    },
-    title: {
-      fontSize: 16,
-      fontWeight: "bold",
-      textAlign: "left",
-      paddingBottom: 20,
-      borderBottom: "#E2E2E2 1px solid",
-      margin: "25px 30px 5px 30px",
-    },
-    actionsContainer: {
-      overflowY: "auto",
-      overflowX: "hidden",
-      minHeight: 250,
-      maxHeight: 335,
-      height: "100%",
-      width: "100%",
-      display: "flex",
-      flexDirection: "column",
-    },
-    cleanIcon: {
-      position: "absolute",
-      right: 28,
-      top: 25,
-    },
-    cleanButton: {
-      "& svg": {
-        width: 25,
-      },
-    },
-  });
-
-interface IObjectManager {
-  classes: any;
-}
-
-const ObjectManager = ({ classes }: IObjectManager) => {
+const ObjectManager = () => {
   const dispatch = useAppDispatch();
 
   const objects = useSelector(
@@ -114,37 +51,84 @@ const ObjectManager = ({ classes }: IObjectManager) => {
     <Fragment>
       {managerOpen && (
         <Box
-          className={clsx(classes.downloadContainer, {
-            [classes.downloadContainerAnonymous]: anonymousMode,
-            open: managerOpen,
-          })}
+          sx={{
+            boxShadow: "rgba(0, 0, 0, 0.08) 0 2px 10px",
+            position: "absolute",
+            right: 20,
+            top: 62,
+            width: 400,
+            overflowY: "hidden",
+            overflowX: "hidden",
+            borderRadius: 3,
+            zIndex: 1000,
+            padding: 0,
+            height: 0,
+            transitionDuration: "0.3s",
+            visibility: "hidden",
+            "&.open": {
+              visibility: "visible",
+              minHeight: 400,
+            },
+            "&.downloadContainerAnonymous": {
+              top: 70,
+            },
+          }}
+          className={`${anonymousMode ? "downloadContainerAnonymous" : ""} ${
+            managerOpen ? "open" : ""
+          }`}
           useBackground
           withBorders
         >
-          <div className={classes.cleanIcon}>
-            <Tooltip title={"Clean Completed Objects"} placement="bottom-start">
+          <Box
+            sx={{
+              position: "absolute",
+              right: 28,
+              top: 25,
+            }}
+          >
+            <Tooltip tooltip={"Clean Completed Objects"} placement="bottom">
               <IconButton
                 aria-label={"Clear Completed List"}
-                size={"small"}
                 onClick={() => dispatch(cleanList())}
-                className={classes.cleanButton}
               >
                 <RemoveAllIcon />
               </IconButton>
             </Tooltip>
-          </div>
-          <div className={classes.title}>Downloads / Uploads</div>
-          <div className={classes.actionsContainer}>
+          </Box>
+          <Box
+            sx={{
+              fontSize: 16,
+              fontWeight: "bold",
+              textAlign: "left",
+              paddingBottom: 20,
+              borderBottom: "#E2E2E2 1px solid",
+              margin: "25px 30px 5px 30px",
+            }}
+          >
+            Downloads / Uploads
+          </Box>
+          <Box
+            sx={{
+              overflowY: "auto",
+              overflowX: "hidden",
+              minHeight: 250,
+              maxHeight: 335,
+              height: "100%",
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <VirtualizedList
               rowRenderFunction={renderObject}
               totalItems={objects.length}
               defaultHeight={110}
             />
-          </div>
+          </Box>
         </Box>
       )}
     </Fragment>
   );
 };
 
-export default withStyles(styles)(ObjectManager);
+export default ObjectManager;
