@@ -214,7 +214,7 @@ func (c minioClient) getLifecycleRules(ctx context.Context, bucketName string) (
 }
 
 func (c minioClient) setBucketLifecycle(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
-	return c.client.SetBucketLifecycle(ctx, bucketName, config, false)
+	return c.client.SetBucketLifecycle(ctx, bucketName, config)
 }
 
 func (c minioClient) copyObject(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error) {
