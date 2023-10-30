@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { SelectorTypes } from "../../../common/types";
+import { EnvOverride } from "../../../api/consoleApi";
 
 export type KVFieldType =
   | "string"
@@ -51,15 +52,10 @@ export interface IConfigurationElement {
   url?: string;
 }
 
-export interface IEnvOverride {
-  name: string;
-  value: string;
-}
-
 export interface IElementValue {
   key: string;
   value: string;
-  env_override?: IEnvOverride;
+  env_override?: EnvOverride;
 }
 
 export interface IConfigurationSys {

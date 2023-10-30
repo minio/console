@@ -315,94 +315,11 @@ export const snackBarCommon = {
   },
 };
 
-export const inputFieldStyles = {
-  root: {
-    borderRadius: 3,
-    "&::before": {
-      borderColor: "#9c9c9c",
-    },
-    "& fieldset": {
-      borderColor: "#e5e5e5",
-    },
-    "&:hover fieldset": {
-      borderColor: "#07193E",
-    },
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#07193E",
-      borderWidth: 1,
-    },
-    "&.Mui-error + p": {
-      marginLeft: 3,
-    },
-  },
-  disabled: {
-    "&.MuiOutlinedInput-root::before": {
-      borderColor: "#e5e5e5",
-      borderBottomStyle: "solid" as const,
-      borderRadius: 3,
-    },
-  },
-  input: {
-    height: 38,
-    padding: "0 35px 0 15px",
-    color: "#07193E",
-    fontSize: 13,
-    fontWeight: 600,
-    "&:placeholder": {
-      color: "#858585",
-      opacity: 1,
-      fontWeight: 400,
-    },
-  },
-  error: {
-    color: "#b53b4b",
-  },
-};
-
 export const formFieldStyles: any = {
   formFieldRow: {
     marginBottom: ".8rem",
     "& .MuiInputLabel-root": {
       fontWeight: "normal",
-    },
-  },
-};
-
-export const deleteDialogStyles: any = {
-  root: {
-    "& .MuiPaper-root": {
-      padding: "1rem 2rem 2rem 1rem",
-    },
-  },
-  title: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  titleText: {
-    fontSize: 20,
-    fontWeight: 600,
-    display: "flex",
-    alignItems: "center",
-    "& svg": {
-      marginRight: 10,
-    },
-    wordBreak: "break-all",
-    whiteSpace: "normal",
-  },
-  closeContainer: {
-    "& .MuiIconButton-root": {
-      top: -20,
-      left: 30,
-      position: "relative",
-      padding: 1,
-      "&:focus, &:hover": {
-        background: "#EAEAEA",
-      },
-    },
-    "& .min-icon": {
-      height: 16,
-      width: 16,
     },
   },
 };

@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { RegionEntry } from "./types";
+import { SelectorType } from "mds";
 
-const s3Regions: RegionEntry[] = [
+const s3Regions: SelectorType[] = [
   { label: "US East (Ohio)", value: "us-east-2" },
   { label: "US East (N. Virginia)", value: "us-east-1" },
   { label: "US West (N. California)", value: "us-west-1" },

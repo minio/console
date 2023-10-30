@@ -429,8 +429,8 @@ export const overrideFields = (formFields: IElementValue[]): IOverrideEnv => {
     // it has override values, we construct the value
     if (envItem.env_override) {
       const value: OverrideValue = {
-        value: envItem.env_override.value,
-        overrideEnv: envItem.env_override.name,
+        value: envItem.env_override.value || "",
+        overrideEnv: envItem.env_override.name || "",
       };
 
       overrideReturn = { ...overrideReturn, [envItem.key]: value };

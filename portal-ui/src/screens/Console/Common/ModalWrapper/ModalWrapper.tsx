@@ -15,22 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import Snackbar from "@mui/material/Snackbar";
-import { Theme } from "@mui/material/styles";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import {
-  deleteDialogStyles,
-  snackBarCommon,
-} from "../FormComponents/common/styleLibrary";
-import { AppState, useAppDispatch } from "../../../../store";
-import MainError from "../MainError/MainError";
-import { setModalSnackMessage } from "../../../../systemSlice";
-import { ModalBox } from "mds";
+import { ModalBox, Snackbar } from "mds";
 import { CSSObject } from "styled-components";
+import { AppState, useAppDispatch } from "../../../../store";
+import { setModalSnackMessage } from "../../../../systemSlice";
+import MainError from "../MainError/MainError";
 
 interface IModalProps {
-  classes: any;
   onClose: () => void;
   modalOpen: boolean;
   title: string | React.ReactNode;
@@ -41,18 +32,11 @@ interface IModalProps {
   sx?: CSSObject;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    ...deleteDialogStyles,
-    ...snackBarCommon,
-  });
-
 const ModalWrapper = ({
   onClose,
   modalOpen,
   title,
   children,
-  classes,
   wideLimit = true,
   titleIcon = null,
   iconColor = "default",
@@ -111,26 +95,17 @@ const ModalWrapper = ({
     >
       <MainError isModal={true} />
       <Snackbar
+        onClose={closeSnackBar}
         open={openSnackbar}
-        className={classes.snackBarModal}
-        onClose={() => {
-          closeSnackBar();
-        }}
         message={message}
-        ContentProps={{
-          className: `${classes.snackBar} ${
-            modalSnackMessage && modalSnackMessage.type === "error"
-              ? classes.errorSnackBar
-              : ""
-          }`,
-        }}
-        autoHideDuration={
-          modalSnackMessage && modalSnackMessage.type === "error" ? 10000 : 5000
-        }
+        mode={"inline"}
+        variant={modalSnackMessage.type === "error" ? "error" : "default"}
+        autoHideDuration={modalSnackMessage.type === "error" ? 10 : 5}
+        condensed
       />
       {children}
     </ModalBox>
   );
 };
 
-export default withStyles(styles)(ModalWrapper);
+export default ModalWrapper;

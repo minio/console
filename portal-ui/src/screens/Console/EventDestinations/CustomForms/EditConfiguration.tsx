@@ -91,7 +91,7 @@ const EditConfiguration = ({
 
             const fieldsConfig: KVField[] = fieldsConfigurations[configId];
 
-            const keyVals = fieldsConfig.map((field) => {
+            const keyVals: IElementValue[] = fieldsConfig.map((field) => {
               const includedValue = values.find(
                 (element: ConfigurationKV) => element.key === field.name,
               );
@@ -102,6 +102,7 @@ const EditConfiguration = ({
                 value: field.customValueProcess
                   ? field.customValueProcess(customValue)
                   : customValue,
+                env_override: includedValue?.env_override,
               };
             });
 

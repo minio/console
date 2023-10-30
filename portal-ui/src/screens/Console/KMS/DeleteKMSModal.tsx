@@ -15,13 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, Fragment } from "react";
-import { ConfirmDeleteIcon, Grid, InputBox } from "mds";
+import { ConfirmDeleteIcon, Grid, InformativeMessage, InputBox } from "mds";
 import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
-import WarningMessage from "../Common/WarningMessage/WarningMessage";
 
 interface IDeleteKMSModalProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -70,11 +69,13 @@ const DeleteKMSModal = ({
       confirmationContent={
         <Fragment>
           <Grid item xs={12}>
-            <WarningMessage
+            <InformativeMessage
+              variant={"error"}
               title={"WARNING"}
-              label={
+              message={
                 "Please note that this is a dangerous operation. Once a key has been deleted all data that has been encrypted with it cannot be decrypted anymore, and therefore, is lost."
               }
+              sx={{ margin: "15px 0" }}
             />
           </Grid>
           To continue please type <b>{selectedItem}</b> in the box.
