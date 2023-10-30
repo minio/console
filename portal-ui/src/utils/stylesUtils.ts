@@ -42,6 +42,7 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
       loaderColor: overrideVars.loaderColor,
       boxBackground: overrideVars.boxBackground,
       mutedText: "#9c9c9c",
+      secondaryText: "#9c9c9c",
       buttons: {
         regular: {
           enabled: {

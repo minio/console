@@ -15,14 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { Theme } from "@mui/material/styles";
 import { CSSObject } from "styled-components";
-import { Menu, MenuItem } from "@mui/material";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import { Button, UploadFolderIcon, UploadIcon } from "mds";
+import { Button, DropdownSelector, UploadFolderIcon, UploadIcon } from "mds";
 import {
   IAM_SCOPES,
   permissionTooltipHelper,
@@ -39,20 +33,8 @@ interface IUploadFilesButton {
   forceDisable?: boolean;
   uploadFileFunction: (closeFunction: () => void) => void;
   uploadFolderFunction: (closeFunction: () => void) => void;
-  classes: any;
   overrideStyles?: CSSObject;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    listUploadIcons: {
-      height: 20,
-      "& .min-icon": {
-        width: 18,
-        fill: "rgba(0,0,0,0.87)",
-      },
-    },
-  });
 
 const UploadFilesButton = ({
   uploadPath,
@@ -60,9 +42,11 @@ const UploadFilesButton = ({
   forceDisable = false,
   uploadFileFunction,
   uploadFolderFunction,
-  classes,
   overrideStyles = {},
 }: IUploadFilesButton) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [uploadOptionsOpen, uploadOptionsSetOpen] = useState<boolean>(false);
+
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode,
   );
@@ -82,9 +66,9 @@ const UploadFilesButton = ({
     putObjectPermScopes,
   );
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openUploadMenu = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    uploadOptionsSetOpen(!uploadOptionsOpen);
     setAnchorEl(event.currentTarget);
   };
   const handleCloseUpload = () => {
@@ -103,6 +87,15 @@ const UploadFilesButton = ({
     false,
     true,
   );
+
+  const uploadFolderAction = (action: string) => {
+    if (action === "folder") {
+      uploadFolderFunction(handleCloseUpload);
+      return;
+    }
+
+    uploadFileFunction(handleCloseUpload);
+  };
 
   const uploadEnabled: boolean = uploadObjectAllowed || uploadFolderAllowed;
 
@@ -131,48 +124,34 @@ const UploadFilesButton = ({
           sx={overrideStyles}
         />
       </TooltipWrapper>
-      <Menu
-        id={`upload-main-menu`}
-        aria-labelledby={`upload-main`}
+      <DropdownSelector
+        id={"upload-main-menu"}
+        options={[
+          {
+            label: "Upload File",
+            icon: <UploadIcon />,
+            value: "file",
+            disabled: !uploadObjectAllowed || forceDisable,
+          },
+          {
+            label: "Upload Folder",
+            icon: <UploadFolderIcon />,
+            value: "folder",
+            disabled: !uploadFolderAllowed || forceDisable,
+          },
+        ]}
+        selectedOption={""}
+        onSelect={(nValue) => uploadFolderAction(nValue)}
+        hideTriggerAction={() => {
+          uploadOptionsSetOpen(false);
+        }}
+        open={uploadOptionsOpen}
         anchorEl={anchorEl}
-        open={openUploadMenu}
-        onClose={() => {
-          handleCloseUpload();
-        }}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-      >
-        <MenuItem
-          onClick={() => {
-            uploadFileFunction(handleCloseUpload);
-          }}
-          disabled={!uploadObjectAllowed || forceDisable}
-        >
-          <ListItemIcon className={classes.listUploadIcons}>
-            <UploadIcon />
-          </ListItemIcon>
-          <ListItemText>Upload File</ListItemText>
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            uploadFolderFunction(handleCloseUpload);
-          }}
-          disabled={!uploadFolderAllowed || forceDisable}
-        >
-          <ListItemIcon className={classes.listUploadIcons}>
-            <UploadFolderIcon />
-          </ListItemIcon>
-          <ListItemText>Upload Folder</ListItemText>
-        </MenuItem>
-      </Menu>
+        anchorOrigin={"end"}
+        useAnchorWidth={false}
+      />
     </Fragment>
   );
 };
 
-export default withStyles(styles)(UploadFilesButton);
+export default UploadFilesButton;

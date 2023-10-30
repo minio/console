@@ -152,6 +152,7 @@ const StrategyForm = ({ redirectRules }: { redirectRules: RedirectRule[] }) => {
                 }}
                 open={ssoOptionsOpen}
                 anchorEl={anchorEl}
+                useAnchorWidth={true}
               />
             )}
           </Box>

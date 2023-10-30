@@ -15,9 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { Box, Menu, MenuItem } from "@mui/material";
-import ListItemText from "@mui/material/ListItemText";
-import { DownloadIcon } from "mds";
+import { Box, DownloadIcon, DropdownSelector } from "mds";
 import { exportComponentAsPNG } from "react-component-export-image";
 import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../../src/store";
@@ -104,11 +102,19 @@ const DownloadWidgetDataButton = ({
     }
   };
 
+  const handleSelectedOption = (selectOption: string) => {
+    if (selectOption === "csv") {
+      downloadAsCSV();
+    } else if (selectOption === "png") {
+      downloadAsPNG();
+    }
+  };
+
   return (
     <Fragment>
       <Box
-        justifyItems={"center"}
         sx={{
+          justifyItems: "center",
           "& .download-icon": {
             backgroundColor: "transparent",
             border: 0,
@@ -126,33 +132,24 @@ const DownloadWidgetDataButton = ({
           },
         }}
       >
-        <button onClick={handleClick} className={"download-icon"}>
+        <button className={"download-icon"} onClick={handleClick}>
           <DownloadIcon />
         </button>
-        <Menu
-          id={`download-widget-main-menu`}
-          aria-labelledby={`download-widget-main`}
-          anchorEl={anchorEl}
-          open={openDownloadMenu}
-          onClose={() => {
+        <DropdownSelector
+          id={"download-widget-main-menu"}
+          options={[
+            { label: "Download as CSV", value: "csv" },
+            { label: "Download as PNG", value: "png" },
+          ]}
+          selectedOption={""}
+          onSelect={(value) => handleSelectedOption(value)}
+          hideTriggerAction={() => {
             handleCloseDownload();
           }}
-        >
-          <MenuItem
-            onClick={() => {
-              downloadAsCSV();
-            }}
-          >
-            <ListItemText>Download as CSV</ListItemText>
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              downloadAsPNG();
-            }}
-          >
-            <ListItemText>Download as PNG</ListItemText>
-          </MenuItem>
-        </Menu>
+          open={openDownloadMenu}
+          anchorEl={anchorEl}
+          anchorOrigin={"end"}
+        />
       </Box>
     </Fragment>
   );
