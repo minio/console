@@ -15,12 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { Fragment, useState } from "react";
 import { DateTime } from "luxon";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import Collapse from "@mui/material/Collapse";
-import Typography from "@mui/material/Typography";
 import { LogMessage } from "../types";
-import { Box, BoxArrowDown, BoxArrowUp, WarnFilledIcon } from "mds";
+import {
+  Box,
+  BoxArrowDown,
+  BoxArrowUp,
+  TableCell,
+  TableRow,
+  WarnFilledIcon,
+} from "mds";
 
 import getByKey from "lodash/get";
 
@@ -183,16 +186,14 @@ const LogLine = (props: { log: LogMessage }) => {
     <React.Fragment key={logTime.toString()}>
       <TableRow
         sx={{
-          "& > *": { borderBottom: "unset" },
           cursor: "pointer",
           borderLeft: "0",
           borderRight: "0",
         }}
-        style={{ backgroundColor: "#FDFDFD" }}
       >
         <TableCell
           onClick={() => setOpen(!open)}
-          style={{ width: 280, color: "#989898", fontSize: 12 }}
+          sx={{ width: 280, color: "#989898", fontSize: 12 }}
         >
           <Box
             sx={{
@@ -211,7 +212,7 @@ const LogLine = (props: { log: LogMessage }) => {
         </TableCell>
         <TableCell
           onClick={() => setOpen(!open)}
-          style={{ width: 200, color: "#989898", fontSize: 12 }}
+          sx={{ width: 200, color: "#989898", fontSize: 12 }}
         >
           <Box
             sx={{
@@ -224,8 +225,8 @@ const LogLine = (props: { log: LogMessage }) => {
           </Box>
         </TableCell>
         <TableCell onClick={() => setOpen(!open)}>
-          <div
-            style={{
+          <Box
+            sx={{
               display: "table",
               tableLayout: "fixed",
               width: "100%",
@@ -233,8 +234,8 @@ const LogLine = (props: { log: LogMessage }) => {
               paddingRight: 10,
             }}
           >
-            <div
-              style={{
+            <Box
+              sx={{
                 display: "table-cell",
                 whiteSpace: "nowrap",
                 textOverflow: "ellipsis",
@@ -242,10 +243,10 @@ const LogLine = (props: { log: LogMessage }) => {
               }}
             >
               {titleLogMessage}
-            </div>
-          </div>
+            </Box>
+          </Box>
         </TableCell>
-        <TableCell onClick={() => setOpen(!open)} style={{ width: 40 }}>
+        <TableCell onClick={() => setOpen(!open)} sx={{ width: 40 }}>
           <Box
             sx={{
               "& .min-icon": {
@@ -266,7 +267,7 @@ const LogLine = (props: { log: LogMessage }) => {
       {open ? (
         <TableRow>
           <TableCell
-            style={{
+            sx={{
               paddingBottom: 0,
               paddingTop: 0,
               width: 200,
@@ -277,28 +278,22 @@ const LogLine = (props: { log: LogMessage }) => {
               fontWeight: "bold",
             }}
           >
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <div style={{ marginTop: 10 }}>Log Details</div>
-            </Collapse>
+            <Box sx={{ marginTop: 10 }}>Log Details</Box>
           </TableCell>
-          <TableCell colSpan={2} style={{ paddingBottom: 0, paddingTop: 0 }}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <Typography
-                  style={{
-                    background: "#efefef",
-                    border: "1px solid #dedede",
-                    padding: 4,
-                    fontSize: 14,
-                    color: "#666666",
-                  }}
-                >
-                  {fullMessage}
-                </Typography>
-              </Box>
-            </Collapse>
+          <TableCell sx={{ paddingBottom: 0, paddingTop: 0 }} colSpan={2}>
+            <Box
+              sx={{
+                margin: 1,
+                padding: 4,
+                fontSize: 14,
+              }}
+              withBorders
+              useBackground
+            >
+              {fullMessage}
+            </Box>
           </TableCell>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0, width: 40 }} />
+          <TableCell sx={{ paddingBottom: 0, paddingTop: 0, width: 40 }} />
         </TableRow>
       ) : null}
     </React.Fragment>
