@@ -263,58 +263,6 @@ export const tooltipCommon = {
   },
 };
 
-export const snackBarCommon = {
-  snackBar: {
-    backgroundColor: "#081F44",
-    fontWeight: 400,
-    fontFamily: "Inter, sans-serif",
-    fontSize: 14,
-    boxShadow: "none" as const,
-    "&.MuiPaper-root.MuiSnackbarContent-root": {
-      borderRadius: "0px 0px 5px 5px",
-    },
-    "& div": {
-      textAlign: "center" as const,
-      padding: "6px 30px",
-      width: "100%",
-      overflowX: "hidden",
-      textOverflow: "ellipsis",
-    },
-    "&.MuiPaper-root": {
-      padding: "0px 20px 0px 20px",
-    },
-  },
-  errorSnackBar: {
-    backgroundColor: "#C72C48",
-    color: "#fff",
-  },
-  snackBarExternal: {
-    top: -1,
-    height: 33,
-    position: "fixed" as const,
-    minWidth: 348,
-    whiteSpace: "nowrap" as const,
-    left: 0,
-    width: "100%",
-    justifyContent: "center" as const,
-  },
-  snackDiv: {
-    top: "17px",
-    left: "50%",
-    position: "absolute" as const,
-  },
-  snackBarModal: {
-    top: 0,
-    position: "absolute" as const,
-    minWidth: "348px",
-    whiteSpace: "nowrap" as const,
-    height: "33px",
-    width: "100%",
-    justifyContent: "center",
-    left: 0,
-  },
-};
-
 export const formFieldStyles: any = {
   formFieldRow: {
     marginBottom: ".8rem",
