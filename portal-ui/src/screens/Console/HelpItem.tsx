@@ -31,37 +31,27 @@ const HelpItem = ({ item, displayImage = true }: IHelpItemProps) => {
         style={{
           display: "flex",
           flexDirection: "row",
-          flexWrap: "nowrap",
-          marginBottom: 20,
         }}
       >
         {displayImage && (
-          <div style={{ paddingLeft: 16, paddingRight: 16 }}>
+          <div style={{ paddingLeft: 16 }}>
             <a href={item.url} target={"_blank"}>
-              <div
+              <img
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                alt={item.title}
                 style={{
-                  backgroundColor: "#dedede",
                   width: 208,
-                  height: 62,
+                  height: 116,
+                  backgroundImage: `url(${item.img}), url(${placeholderImg})`,
+                  backgroundPosition: "center center",
+                  backgroundSize: "cover",
+                  backgroundRepeat: "no-repeat",
                 }}
-              >
-                <img
-                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                  alt={item.title}
-                  style={{
-                    width: 208,
-                    height: 116,
-                    backgroundImage: `url(${item.img}), url(${placeholderImg})`,
-                    backgroundPosition: "center center",
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                  }}
-                />
-              </div>
+              />
             </a>
           </div>
         )}
-        <div style={{ flexGrow: 1, flexBasis: "auto" }}>
+        <div style={{ flexGrow: 1, flexBasis: "auto", paddingLeft: 16 }}>
           <div
             style={{
               width: "100%",
