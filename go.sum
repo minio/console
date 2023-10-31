@@ -241,8 +241,8 @@ github.com/minio/highwayhash v1.0.2 h1:Aak5U0nElisjDCfPSG79Tgzkn2gl66NxOMspRrKnA
 github.com/minio/highwayhash v1.0.2/go.mod h1:BQskDq+xkJ12lmlUUi7U0M5Swg3EWR+dLTk+kldvVxY=
 github.com/minio/kes v0.22.3 h1:aSPW9uCMVaLax5POxvoQJxCU4MNo/KzMXA7WfmC/lRw=
 github.com/minio/kes v0.22.3/go.mod h1:wnhmdwWX2rpurNPKn3yDFImg2wuc7j3e+IU5rVkR9UY=
-github.com/minio/madmin-go/v3 v3.0.18 h1:HuuuGf+uv6O3wlbx/VgIPjXGtVQXMrNk9qcrtE5VusU=
-github.com/minio/madmin-go/v3 v3.0.18/go.mod h1:B2EgtEGrfWx+AkXv+OAcS6IHwoIJcd1p75QfDPSPd6Q=
+github.com/minio/madmin-go/v3 v3.0.29 h1:3bNLArtxIFud5wyb5/DnF5DGLBvcSJyzCA44EclX1Ow=
+github.com/minio/madmin-go/v3 v3.0.29/go.mod h1:4QN2NftLSV7MdlT50dkrenOMmNVHluxTvlqJou3hte8=
 github.com/minio/mc v0.0.0-20230907224855-9dcef8825fae h1:LteOWEz6ZnP8hm6AEScDmnyxyJLUe7v1f/cPHmOpkV8=
 github.com/minio/mc v0.0.0-20230907224855-9dcef8825fae/go.mod h1:M/RN4OtnloGZLgLd/HicgzoEQdYXYz0taYqZzoBqVrc=
 github.com/minio/md5-simd v1.1.2 h1:Gdi1DZK69+ZVMoNHRXJyNcxrMA4dSxoYHZSQbirFg34=
@@ -330,6 +330,8 @@ github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFR
 github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=
 github.com/rs/xid v1.5.0 h1:mKX4bl4iPYJtEIxp6CYiUuLQ/8DYMoz0PUdtGgMFRVc=
 github.com/rs/xid v1.5.0/go.mod h1:trrq9SKmegXys3aeAKXMUTdJsYXVwGY3RLcfgqegfbg=
+github.com/safchain/ethtool v0.3.0 h1:gimQJpsI6sc1yIqP/y8GYgiXn/NjgvpM0RNoWLVVmP0=
+github.com/safchain/ethtool v0.3.0/go.mod h1:SA9BwrgyAqNo7M+uaL6IYbxpm5wk3L7Mm6ocLW+CJUs=
 github.com/secure-io/sio-go v0.3.1 h1:dNvY9awjabXTYGsTF1PiCySl9Ltofk9GA3VdWlo7rRc=
 github.com/secure-io/sio-go v0.3.1/go.mod h1:+xbkjDzPjwh4Axd07pRKSNriS9SCiYksWnZqdnfpQxs=
 github.com/shirou/gopsutil/v3 v3.23.8 h1:xnATPiybo6GgdRoC4YoGnxXZFRc3dqQTGi73oLvvBrE=
