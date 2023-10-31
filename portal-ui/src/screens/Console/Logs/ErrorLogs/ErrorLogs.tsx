@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { Box, Button, Grid, PageLayout, Select } from "mds";
+import { Box, Button, Grid, PageLayout, Select, Table, TableBody } from "mds";
 import { useSelector } from "react-redux";
 import { ErrorResponseHandler } from "../../../../common/types";
 import { AppState, useAppDispatch } from "../../../../store";
@@ -29,10 +29,6 @@ import {
 import { setHelpName } from "../../../../systemSlice";
 import SearchBox from "../../Common/SearchBox";
 import api from "../../../../../src/common/api";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
 import LogLine from "./LogLine";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
@@ -304,7 +300,7 @@ const ErrorLogs = () => {
                 borderRadius: 4,
               }}
             >
-              <TableContainer component={Paper}>
+              <Box withBorders customBorderPadding={"0px"} useBackground>
                 <Table aria-label="collapsible table">
                   <TableBody>
                     {filteredMessages.map((m) => {
@@ -313,11 +309,11 @@ const ErrorLogs = () => {
                   </TableBody>
                 </Table>
                 {filteredMessages.length === 0 && (
-                  <div style={{ padding: 20, textAlign: "center" }}>
+                  <Box sx={{ padding: 20, textAlign: "center" }}>
                     No logs to display
-                  </div>
+                  </Box>
                 )}
-              </TableContainer>
+              </Box>
             </Box>
           </Grid>
         </Grid>
