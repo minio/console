@@ -33,7 +33,7 @@ const calculateNewTime = (
   hours: number,
   minutes: number,
 ) => {
-  return DateTime.fromJSDate(initialDate).plus({ days, hours, minutes });
+  return DateTime.fromJSDate(initialDate).plus({ hours: hours+days*24, minutes }); // Lump days into hours to avoid daylight savings causing issues
 };
 
 const DaysSelector = ({
