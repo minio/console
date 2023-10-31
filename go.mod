@@ -21,8 +21,8 @@ require (
 	github.com/minio/cli v1.24.2
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.22.3
-	github.com/minio/madmin-go/v3 v3.0.18
-	github.com/minio/mc v0.0.0-20230907224855-9dcef8825fae
+	github.com/minio/madmin-go/v3 v3.0.29
+	github.com/minio/mc v0.0.0-20231030184332-9f2fb2b6a9f8
 	github.com/minio/minio-go/v7 v7.0.64-0.20230920204636-e783c9ba11b3
 	github.com/minio/selfupdate v0.6.0
 	github.com/minio/websocket v1.6.0
@@ -43,13 +43,14 @@ require (
 
 require (
 	github.com/mattn/go-ieproxy v0.0.11
-	github.com/minio/pkg/v2 v2.0.1
+	github.com/minio/pkg/v2 v2.0.2
 )
 
 require (
 	aead.dev/mem v0.2.0 // indirect
 	aead.dev/minisign v0.2.0 // indirect
 	github.com/VividCortex/ewma v1.2.0 // indirect
+	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -126,6 +127,7 @@ require (
 	github.com/rivo/tview v0.0.0-20230909130259-ba6a2a345459 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rjeczalik/notify v0.9.3 // indirect
+	github.com/safchain/ethtool v0.3.0 // indirect
 	github.com/shirou/gopsutil/v3 v3.23.8 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
@@ -134,6 +136,7 @@ require (
 	github.com/tinylib/msgp v1.1.8 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
+	github.com/vbauerster/mpb/v8 v8.6.2 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.9 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.9 // indirect
@@ -145,10 +148,10 @@ require (
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/genproto v0.0.0-20230911183012-2d3300fd4832 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20230911183012-2d3300fd4832 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230911183012-2d3300fd4832 // indirect
-	google.golang.org/grpc v1.58.0 // indirect
+	google.golang.org/genproto v0.0.0-20230913181813-007df8e322eb // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20230913181813-007df8e322eb // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20230913181813-007df8e322eb // indirect
+	google.golang.org/grpc v1.58.3 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/h2non/filetype.v1 v1.0.5 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
