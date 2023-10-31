@@ -249,7 +249,7 @@ const DaysSelector = ({
             <LinkIcon />
             <div>{entity} will be available until:</div>{" "}
             <div className={"validTill"}>
-              {dateSelected.toFormat("MM/dd/yyyy HH:mm:ss")}
+              {dateSelected.toFormat("MM/dd/yyyy HH:mm:ss ZZZZ")}
             </div>
           </div>
         ) : (
