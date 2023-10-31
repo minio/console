@@ -33,7 +33,10 @@ const calculateNewTime = (
   hours: number,
   minutes: number,
 ) => {
-  return DateTime.fromJSDate(initialDate).plus({ days, hours, minutes });
+  return DateTime.fromJSDate(initialDate).plus({
+    hours: hours + days * 24,
+    minutes,
+  }); // Lump days into hours to avoid daylight savings causing issues
 };
 
 const DaysSelector = ({
@@ -249,7 +252,7 @@ const DaysSelector = ({
             <LinkIcon />
             <div>{entity} will be available until:</div>{" "}
             <div className={"validTill"}>
-              {dateSelected.toFormat("MM/dd/yyyy HH:mm:ss")}
+              {dateSelected.toFormat("MM/dd/yyyy HH:mm:ss ZZZZ")}
             </div>
           </div>
         ) : (
