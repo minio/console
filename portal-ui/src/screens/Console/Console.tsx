@@ -21,17 +21,13 @@ import React, {
   useLayoutEffect,
   useState,
 } from "react";
-import { Theme } from "@mui/material/styles";
-import { Button, MainContainer, Snackbar } from "mds";
+import { Box, Button, MainContainer, ProgressBar, Snackbar } from "mds";
 import debounce from "lodash/debounce";
-import createStyles from "@mui/styles/createStyles";
-import withStyles from "@mui/styles/withStyles";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selFeatures, selSession } from "./consoleSlice";
 import { api } from "api";
 import { AppState, useAppDispatch } from "../../store";
-import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
 import MainError from "./Common/MainError/MainError";
 import {
   CONSOLE_UI_RESOURCE,
@@ -50,7 +46,6 @@ import {
   setSnackBarMessage,
 } from "../../systemSlice";
 import MenuWrapper from "./Menu/MenuWrapper";
-import { LinearProgress } from "@mui/material";
 import LoadingComponent from "../../common/LoadingComponent";
 import ComponentsScreen from "./Common/ComponentsScreen";
 
@@ -146,33 +141,7 @@ const AddReplicationSites = React.lazy(
 
 const KMSRoutes = React.lazy(() => import("./KMS/KMSRoutes"));
 
-const styles = (theme: Theme) =>
-  createStyles({
-    warningBar: {
-      background: theme.palette.primary.main,
-      color: "white",
-      heigh: "60px",
-      widht: "100%",
-      lineHeight: "60px",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      "& button": {
-        marginLeft: 8,
-      },
-    },
-    progress: {
-      height: "3px",
-      backgroundColor: "#eaeaea",
-    },
-    ...snackBarCommon,
-  });
-
-interface IConsoleProps {
-  classes: any;
-}
-
-const Console = ({ classes }: IConsoleProps) => {
+const Console = () => {
   const dispatch = useAppDispatch();
   const { pathname = "" } = useLocation();
   const open = useSelector((state: AppState) => state.system.sidebarOpen);
@@ -489,33 +458,59 @@ const Console = ({ classes }: IConsoleProps) => {
         >
           <Fragment>
             {needsRestart && (
-              <div className={classes.warningBar}>
-                {isServerLoading ? (
-                  <Fragment>
-                    The server is restarting.
-                    <LinearProgress className={classes.progress} />
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    The instance needs to be restarted for configuration changes
-                    to take effect.{" "}
-                    <Button
-                      id={"restart-server"}
-                      variant="secondary"
-                      onClick={() => {
-                        restartServer();
-                      }}
-                      label={"Restart"}
-                    />
-                  </Fragment>
-                )}
-              </div>
+              <Snackbar
+                onClose={() => {}}
+                open={needsRestart}
+                variant={"warning"}
+                message={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 8,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    {isServerLoading ? (
+                      <Fragment>
+                        <ProgressBar
+                          barHeight={3}
+                          transparentBG
+                          sx={{
+                            width: "100%",
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                          }}
+                        />
+                        <span>The server is restarting.</span>
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        The instance needs to be restarted for configuration
+                        changes to take effect.{" "}
+                        <Button
+                          id={"restart-server"}
+                          variant="secondary"
+                          onClick={() => {
+                            restartServer();
+                          }}
+                          label={"Restart"}
+                        />
+                      </Fragment>
+                    )}
+                  </Box>
+                }
+                autoHideDuration={0}
+              />
             )}
             {loadingProgress < 100 && (
-              <LinearProgress
-                className={classes.progress}
+              <ProgressBar
+                barHeight={3}
                 variant="determinate"
                 value={loadingProgress}
+                sx={{ width: "100%", position: "absolute", top: 0, left: 0 }}
               />
             )}
             <MainError />
@@ -580,4 +575,4 @@ const Console = ({ classes }: IConsoleProps) => {
   );
 };
 
-export default withStyles(styles)(Console);
+export default Console;
