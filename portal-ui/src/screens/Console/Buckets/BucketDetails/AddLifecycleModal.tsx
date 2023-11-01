@@ -19,6 +19,8 @@ import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import {
   Accordion,
+  AlertIcon,
+  Box,
   Button,
   FormLayout,
   Grid,
@@ -43,6 +45,7 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { IAM_PAGES } from "common/SecureComponent/permissions";
+import { ArrowBack } from "@mui/icons-material";
 
 interface IReplicationModal {
   open: boolean;
@@ -197,7 +200,7 @@ const AddLifecycleModal = ({
         dispatch(setModalErrorSnackMessage(errorToHandler(err)));
       });
   };
-
+  const testSwitch = true;
   return (
     <ModalWrapper
       modalOpen={open}
@@ -274,10 +277,6 @@ const AddLifecycleModal = ({
                 label="Object Version"
                 onChange={(value) => {
                   setTargetVersion(value as "current" | "noncurrent");
-                  console.log(
-                    "setTargetVersion(value as 'current' | 'noncurrent'):",
-                    value,
-                  );
                 }}
                 options={[
                   { value: "current", label: "Current Version" },
@@ -302,10 +301,12 @@ const AddLifecycleModal = ({
 
             <InputBox
               error={
-                targetVersion === "current" || ilmType !== "expiry"
-                  ? ""
-                  : !isFormValid
-                  ? "Number of noncurrent versions to retain must be greater than zero"
+                lifecycleDays && !isFormValid
+                  ? parseInt(lifecycleDays) <= 0
+                    ? `Number of ${expiryUnit} to retain must be greater than zero`
+                    : parseInt(lifecycleDays) > 2147483647
+                    ? `Number of ${expiryUnit} must be less than max int32`
+                    : ""
                   : ""
               }
               id="expiry_days"
@@ -319,28 +320,38 @@ const AddLifecycleModal = ({
               label="After"
               value={lifecycleDays}
               overlayObject={
-                <Tooltip
-                  tooltip={
-                    ilmType === "expiry" &&
-                    targetVersion === "noncurrent" &&
-                    "Select expiry based on days or number of newer noncurrent versions"
-                  }
-                >
-                  <InputUnitMenu
-                    id={"expire-current-unit"}
-                    unitSelected={expiryUnit}
-                    unitsList={[
-                      { label: "Days", value: "days" },
-                      { label: "Versions", value: "versions" },
-                    ]}
-                    disabled={
-                      targetVersion !== "noncurrent" || ilmType !== "expiry"
-                    }
-                    onUnitChange={(newValue) => {
-                      setExpiryUnit(newValue);
-                    }}
-                  />
-                </Tooltip>
+                <Fragment>
+                  <Grid container sx={{ justifyContent: "center" }}>
+                    <InputUnitMenu
+                      id={"expire-current-unit"}
+                      unitSelected={expiryUnit}
+                      unitsList={[
+                        { label: "Days", value: "days" },
+                        { label: "Versions", value: "versions" },
+                      ]}
+                      disabled={
+                        targetVersion !== "noncurrent" || ilmType !== "expiry"
+                      }
+                      onUnitChange={(newValue) => {
+                        setExpiryUnit(newValue);
+                      }}
+                    />
+                    {ilmType === "expiry" && targetVersion === "noncurrent" && (
+                      <HelpTip
+                        content={
+                          <Fragment>
+                            Select to set expiry by days or newer noncurrent
+                            versions
+                          </Fragment>
+                        }
+                        placement="right"
+                      >
+                        {" "}
+                        <AlertIcon style={{ width: 15, height: 15 }} />
+                      </HelpTip>
+                    )}
+                  </Grid>
+                </Fragment>
               }
             />
 
