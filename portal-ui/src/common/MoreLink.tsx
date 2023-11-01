@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { ArrowIcon } from "mds";
+import { ArrowIcon, Box } from "mds";
 
 const MoreLink = ({
   LeadingIcon,
@@ -39,8 +39,8 @@ const MoreLink = ({
       href={link}
       target={"_blank"}
     >
-      <div
-        style={{
+      <Box
+        sx={{
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
@@ -49,16 +49,25 @@ const MoreLink = ({
         }}
       >
         {LeadingIcon && (
-          <div style={{ flexGrow: 0, flexShrink: 1, lineHeight: "12px" }}>
-            {/*@ts-ignore*/}
-            <LeadingIcon style={{ height: 16, width: 16 }} />
-          </div>
+          <Box
+            sx={{
+              flexGrow: 0,
+              flexShrink: 1,
+              lineHeight: "12px",
+              "& svg": {
+                height: 16,
+                width: 16,
+              },
+            }}
+          >
+            <LeadingIcon />
+          </Box>
         )}
-        <div style={{ flexGrow: 0, flexShrink: 1, lineHeight: "12px" }}>
+        <Box sx={{ flexGrow: 0, flexShrink: 1, lineHeight: "12px" }}>
           {text}
-        </div>
-        <div
-          style={{
+        </Box>
+        <Box
+          sx={{
             flexGrow: 0,
             flexShrink: 1,
             lineHeight: "12px",
@@ -66,8 +75,8 @@ const MoreLink = ({
           }}
         >
           <ArrowIcon style={{ width: 12 }} />
-        </div>
-      </div>
+        </Box>
+      </Box>
     </a>
   );
 };
