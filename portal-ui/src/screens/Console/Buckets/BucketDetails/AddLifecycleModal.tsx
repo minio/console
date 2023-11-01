@@ -20,7 +20,6 @@ import get from "lodash/get";
 import {
   Accordion,
   AlertIcon,
-  Box,
   Button,
   FormLayout,
   Grid,
@@ -31,7 +30,6 @@ import {
   RadioGroup,
   Select,
   Switch,
-  Tooltip,
 } from "mds";
 import { useSelector } from "react-redux";
 import { api } from "api";
@@ -45,7 +43,6 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import InputUnitMenu from "../../Common/FormComponents/InputUnitMenu/InputUnitMenu";
 import { IAM_PAGES } from "common/SecureComponent/permissions";
-import { ArrowBack } from "@mui/icons-material";
 
 interface IReplicationModal {
   open: boolean;
@@ -200,7 +197,6 @@ const AddLifecycleModal = ({
         dispatch(setModalErrorSnackMessage(errorToHandler(err)));
       });
   };
-  const testSwitch = true;
   return (
     <ModalWrapper
       modalOpen={open}
