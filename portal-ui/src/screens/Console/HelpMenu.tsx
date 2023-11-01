@@ -15,8 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { MenuItem, Paper, Tab, Tabs } from "@mui/material";
-import HelpItem from "./HelpItem";
+import ReactMarkdown from "react-markdown";
+import styled from "styled-components";
+import get from "lodash/get";
 import {
   AlertCloseIcon,
   Box,
@@ -25,14 +26,42 @@ import {
   HelpIconFilled,
   IconButton,
   MinIOTierIcon,
+  TabItemProps,
+  Tabs,
 } from "mds";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../store";
-import { TabPanel } from "../shared/tabs";
 import { setHelpTabName } from "../../systemSlice";
 import { DocItem } from "./HelpMenu.types";
+import HelpItem from "./HelpItem";
 import MoreLink from "../../common/MoreLink";
-import ReactMarkdown from "react-markdown";
+
+const HelpMenuContainer = styled.div(({ theme }) => ({
+  backgroundColor: get(theme, "bgColor", "#FFF"),
+  position: "absolute",
+  zIndex: "10",
+  border: `${get(theme, "borderColor", "#E2E2E2")} 1px solid`,
+  borderRadius: 4,
+  boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 10px",
+  width: 754,
+  "& .tabsPanels": {
+    padding: "15px 0 0",
+  },
+  "& .helpContainer": {
+    maxHeight: 400,
+    overflowY: "auto",
+    "& .helpItemBlock": {
+      padding: 5,
+      "&:hover": {
+        backgroundColor: get(
+          theme,
+          "buttons.regular.hover.background",
+          "#E6EAEB",
+        ),
+      },
+    },
+  },
+}));
 
 const HelpMenu = () => {
   const helpTopics = require("../Console/helpTopics.json");
@@ -73,7 +102,7 @@ const HelpMenu = () => {
     }, [ref]);
   }
 
-  const wrapperRef = useRef(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   useOutsideAlerter(wrapperRef);
 
   useEffect(() => {
@@ -148,7 +177,7 @@ const HelpMenu = () => {
   ]);
 
   const helpContent = (
-    <React.Fragment>
+    <Box className={"helpContainer"}>
       {headerDocs && (
         <div style={{ paddingLeft: 16, paddingRight: 16 }}>
           <div>
@@ -159,9 +188,9 @@ const HelpMenu = () => {
       )}
       {helpItems &&
         helpItems.map((aHelpItem, idx) => (
-          <MenuItem value={`${idx}`} key={`help-item-${aHelpItem}`}>
+          <Box className={"helpItemBlock"} key={`help-item-${aHelpItem}`}>
             <HelpItem item={aHelpItem} displayImage={false} />
-          </MenuItem>
+          </Box>
         ))}
       <div style={{ padding: 16 }}>
         <MoreLink
@@ -171,10 +200,10 @@ const HelpMenu = () => {
           color={"#C5293F"}
         />
       </div>
-    </React.Fragment>
+    </Box>
   );
   const helpContentVideo = (
-    <React.Fragment>
+    <Box className={"helpContainer"}>
       {headerVideo && (
         <Fragment>
           <div style={{ paddingLeft: 16, paddingRight: 16 }}>
@@ -185,9 +214,9 @@ const HelpMenu = () => {
       )}
       {helpItemsVideo &&
         helpItemsVideo.map((aHelpItem, idx) => (
-          <MenuItem value={`${idx}`} key={`help-item-${aHelpItem}`}>
+          <Box className={"helpItemBlock"} key={`help-item-${aHelpItem}`}>
             <HelpItem item={aHelpItem} />
-          </MenuItem>
+          </Box>
         ))}
       <div style={{ padding: 16 }}>
         <MoreLink
@@ -197,10 +226,10 @@ const HelpMenu = () => {
           color={"#C5293F"}
         />
       </div>
-    </React.Fragment>
+    </Box>
   );
   const helpContentBlog = (
-    <React.Fragment>
+    <Box className={"helpContainer"}>
       {headerBlog && (
         <Fragment>
           <div style={{ paddingLeft: 16, paddingRight: 16 }}>
@@ -211,9 +240,9 @@ const HelpMenu = () => {
       )}
       {helpItemsBlog &&
         helpItemsBlog.map((aHelpItem, idx) => (
-          <MenuItem value={`${idx}`} key={`help-item-${aHelpItem}`}>
+          <Box className={"helpItemBlock"} key={`help-item-${aHelpItem}`}>
             <HelpItem item={aHelpItem} />
-          </MenuItem>
+          </Box>
         ))}
       <div style={{ padding: 16 }}>
         <MoreLink
@@ -223,76 +252,53 @@ const HelpMenu = () => {
           color={"#C5293F"}
         />
       </div>
-    </React.Fragment>
+    </Box>
   );
 
-  function a11yProps(index: any) {
-    return {
-      id: `simple-tab-${index}`,
-      "aria-controls": `simple-tabpanel-${index}`,
-      style: {
-        fontWeight: "bold",
-      },
-    };
-  }
+  const constructHMTabs = () => {
+    const helpMenuElements: TabItemProps[] = [];
+
+    if (helpItems.length !== 0) {
+      helpMenuElements.push({
+        tabConfig: { label: "Documentation", id: "docs" },
+        content: helpContent,
+      });
+    }
+
+    if (helpItemsVideo.length !== 0) {
+      helpMenuElements.push({
+        tabConfig: { label: "Video", id: "video" },
+        content: helpContentVideo,
+      });
+    }
+
+    if (helpItemsBlog.length !== 0) {
+      helpMenuElements.push({
+        tabConfig: { label: "Blog", id: "blog" },
+        content: helpContentBlog,
+      });
+    }
+
+    return helpMenuElements;
+  };
 
   return (
     <Fragment>
       {helpMenuOpen && (
-        <div
-          ref={wrapperRef}
-          style={{
-            position: "absolute",
-            zIndex: "10",
-            background: "#F7F7F7 0% 0% no-repeat padding-box",
-            borderRadius: "4px",
-            width: 754,
-            boxShadow: "0px 0px 10px #0000001A",
-            border: "1px solid #E5E5E5",
-          }}
-        >
-          <Box>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <div style={{ padding: 14 }}>
-                <HelpIconFilled style={{ color: "#3874A6", width: 16 }} />
-              </div>
-              <div
-                style={{
-                  flexGrow: 1,
-                }}
-              >
-                <Tabs
-                  value={helpTabName}
-                  onChange={(e: React.ChangeEvent<{}>, newValue: string) => {
-                    dispatch(setHelpTabName(newValue));
-                  }}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  aria-label="cluster-tabs"
-                  variant="scrollable"
-                  scrollButtons="auto"
-                >
-                  {helpItems.length !== 0 && (
-                    <Tab
-                      value={"docs"}
-                      label="Documentation"
-                      {...a11yProps(0)}
-                    />
-                  )}
-                  {helpItemsVideo.length !== 0 && (
-                    <Tab value={"video"} label="Video" {...a11yProps(1)} />
-                  )}
-                  {helpItemsBlog.length !== 0 && (
-                    <Tab value={"blog"} label="Blog" {...a11yProps(2)} />
-                  )}
-                </Tabs>
-              </div>
-              <div style={{ padding: 10 }}>
+        <HelpMenuContainer ref={wrapperRef}>
+          <Tabs
+            options={constructHMTabs()}
+            currentTabOrPath={helpTabName}
+            onTabClick={(item) => dispatch(setHelpTabName(item))}
+            optionsInitialComponent={
+              <Box sx={{ margin: "10px 10px 10px 15px" }}>
+                <HelpIconFilled
+                  style={{ color: "#3874A6", width: 16, height: 16 }}
+                />
+              </Box>
+            }
+            optionsEndComponent={
+              <Box sx={{ marginRight: 15 }}>
                 <IconButton
                   onClick={() => {
                     setHelpMenuOpen(false);
@@ -301,32 +307,12 @@ const HelpMenu = () => {
                 >
                   <AlertCloseIcon style={{ color: "#919191", width: 12 }} />
                 </IconButton>
-              </div>
-            </div>
-            <Paper
-              style={{
-                maxHeight: 400,
-                overflowY: "auto",
-              }}
-            >
-              {helpItems.length !== 0 && (
-                <TabPanel index={"docs"} value={helpTabName}>
-                  {helpContent}
-                </TabPanel>
-              )}
-              {helpItemsVideo.length !== 0 && (
-                <TabPanel index={"video"} value={helpTabName}>
-                  {helpContentVideo}
-                </TabPanel>
-              )}
-              {helpItemsBlog.length !== 0 && (
-                <TabPanel index={"blog"} value={helpTabName}>
-                  {helpContentBlog}
-                </TabPanel>
-              )}
-            </Paper>
-          </Box>
-        </div>
+              </Box>
+            }
+            horizontalBarBackground
+            horizontal
+          />
+        </HelpMenuContainer>
       )}
       <Button
         id={systemHelpName ?? "help_button"}
