@@ -24,6 +24,7 @@ interface IInputUnitBox {
   unitSelected: string;
   unitsList: SelectorType[];
   disabled?: boolean;
+  tooltip?: string;
   onUnitChange?: (newValue: string) => void;
 }
 
@@ -40,6 +41,7 @@ const InputUnitMenu = ({
   unitSelected,
   unitsList,
   disabled = false,
+  tooltip,
   onUnitChange,
 }: IInputUnitBox) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

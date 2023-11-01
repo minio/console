@@ -22,12 +22,14 @@ import {
   Button,
   FormLayout,
   Grid,
+  HelpTip,
   InputBox,
   LifecycleConfigIcon,
   ProgressBar,
   RadioGroup,
   Select,
   Switch,
+  Tooltip,
 } from "mds";
 import { useSelector } from "react-redux";
 import { api } from "api";
@@ -120,8 +122,11 @@ const AddLifecycleModal = ({
     if (!lifecycleDays || parseInt(lifecycleDays) === 0) {
       valid = false;
     }
+    if (parseInt(lifecycleDays) > 2147483647) {
+      //values over int32 cannot be parsed
+      valid = false;
+    }
     setIsFormValid(valid);
-    console.log("set to valid: ", valid, " lifecycledays: ", lifecycleDays);
   }, [ilmType, lifecycleDays, storageClass]);
 
   useEffect(() => {
@@ -269,6 +274,10 @@ const AddLifecycleModal = ({
                 label="Object Version"
                 onChange={(value) => {
                   setTargetVersion(value as "current" | "noncurrent");
+                  console.log(
+                    "setTargetVersion(value as 'current' | 'noncurrent'):",
+                    value,
+                  );
                 }}
                 options={[
                   { value: "current", label: "Current Version" },
@@ -292,6 +301,13 @@ const AddLifecycleModal = ({
             )}
 
             <InputBox
+              error={
+                targetVersion === "current" || ilmType !== "expiry"
+                  ? ""
+                  : !isFormValid
+                  ? "Number of noncurrent versions to retain must be greater than zero"
+                  : ""
+              }
               id="expiry_days"
               name="expiry_days"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -303,20 +319,28 @@ const AddLifecycleModal = ({
               label="After"
               value={lifecycleDays}
               overlayObject={
-                <InputUnitMenu
-                  id={"expire-current-unit"}
-                  unitSelected={expiryUnit}
-                  unitsList={[
-                    { label: "Days", value: "days" },
-                    { label: "Versions", value: "versions" },
-                  ]}
-                  disabled={
-                    targetVersion !== "noncurrent" || ilmType !== "expiry"
+                <Tooltip
+                  tooltip={
+                    ilmType === "expiry" &&
+                    targetVersion === "noncurrent" &&
+                    "Select expiry based on days or number of newer noncurrent versions"
                   }
-                  onUnitChange={(newValue) => {
-                    setExpiryUnit(newValue);
-                  }}
-                />
+                >
+                  <InputUnitMenu
+                    id={"expire-current-unit"}
+                    unitSelected={expiryUnit}
+                    unitsList={[
+                      { label: "Days", value: "days" },
+                      { label: "Versions", value: "versions" },
+                    ]}
+                    disabled={
+                      targetVersion !== "noncurrent" || ilmType !== "expiry"
+                    }
+                    onUnitChange={(newValue) => {
+                      setExpiryUnit(newValue);
+                    }}
+                  />
+                </Tooltip>
               }
             />
 
