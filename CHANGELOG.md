@@ -2,6 +2,20 @@
 
 # Changelog
 
+## Release v0.41.0
+
+Features:
+
+- Updated pages to use mds components
+- support for resolving IPv4/IPv6
+
+
+Bug Fix:
+
+- Remove cache for ClientIP
+- Fixed override environment variables display in settings page
+- Fixed daylight savings time support in share modal
+
 ## Release v0.40.0
 
 Features:
