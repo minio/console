@@ -1416,25 +1416,6 @@ paths:
       tags:
         - ServiceAccount
 
-  /service-accounts/{access_key}:
-    delete:
-      summary: Delete Service Account
-      operationId: DeleteServiceAccount
-      parameters:
-        - name: access_key
-          in: path
-          required: true
-          type: string
-      responses:
-        204:
-          description: A successful response.
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/ApiError"
-      tags:
-        - ServiceAccount
-
   /service-accounts/delete-multi:
     delete:
       summary: Delete Multiple Service Accounts
@@ -1457,10 +1438,10 @@ paths:
       tags:
         - ServiceAccount
 
-  /service-accounts/{access_key}/policy:
+  /service-accounts/{access_key}:
     get:
-      summary: Get Service Account Policy
-      operationId: GetServiceAccountPolicy
+      summary: Get Service Account
+      operationId: GetServiceAccount
       parameters:
         - name: access_key
           in: path
@@ -1470,7 +1451,7 @@ paths:
         200:
           description: A successful response.
           schema:
-            type: string
+            $ref: "#/definitions/serviceAccount"
         default:
           description: Generic error response.
           schema:
@@ -1479,19 +1460,36 @@ paths:
         - ServiceAccount
     put:
       summary: Set Service Account Policy
-      operationId: SetServiceAccountPolicy
+      operationId: UpdateServiceAccount
       parameters:
         - name: access_key
           in: path
           required: true
           type: string
-        - name: policy
+        - name: body
           in: body
           required: true
           schema:
-            $ref: "#/definitions/addServiceAccountPolicyRequest"
+            $ref: "#/definitions/updateServiceAccountRequest"
       responses:
         200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - ServiceAccount
+    delete:
+      summary: Delete Service Account
+      operationId: DeleteServiceAccount
+      parameters:
+        - name: access_key
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
           description: A successful response.
         default:
           description: Generic error response.
@@ -3896,12 +3894,22 @@ definitions:
       policy:
         type: string
 
-  addServiceAccountPolicyRequest:
+  updateServiceAccountRequest:
     type: object
     required:
       - policy
     properties:
       policy:
+        type: string
+      secretKey:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      expiry:
+        type: string
+      status:
         type: string
 
   listPoliciesResponse:
@@ -4804,6 +4812,23 @@ definitions:
         type: array
         items:
           type: string
+  serviceAccount:
+    type: object
+    properties:
+      parentUser:
+        type: string
+      accountStatus:
+        type: string
+      impliedPolicy:
+        type: boolean
+      policy:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      expiration:
+        type: string
   serviceAccounts:
     type: array
     items:
@@ -4826,6 +4851,14 @@ definitions:
       policy:
         type: string
         title: "policy to be applied to the Service Account if any"
+      name:
+        type: string
+      description:
+        type: string
+      expiry:
+        type: string
+      comment:
+        type: string
   serviceAccountRequestCreds:
     type: object
     properties:
@@ -4835,6 +4868,14 @@ definitions:
       accessKey:
         type: string
       secretKey:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      expiry:
+        type: string
+      comment:
         type: string
   serviceAccountCreds:
     type: object

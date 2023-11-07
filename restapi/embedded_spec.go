@@ -4452,6 +4452,69 @@ func init() {
       }
     },
     "/service-accounts/{access_key}": {
+      "get": {
+        "tags": [
+          "ServiceAccount"
+        ],
+        "summary": "Get Service Account",
+        "operationId": "GetServiceAccount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccount"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ServiceAccount"
+        ],
+        "summary": "Set Service Account Policy",
+        "operationId": "UpdateServiceAccount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateServiceAccountRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "ServiceAccount"
@@ -4468,71 +4531,6 @@ func init() {
         ],
         "responses": {
           "204": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      }
-    },
-    "/service-accounts/{access_key}/policy": {
-      "get": {
-        "tags": [
-          "ServiceAccount"
-        ],
-        "summary": "Get Service Account Policy",
-        "operationId": "GetServiceAccountPolicy",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "access_key",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "ServiceAccount"
-        ],
-        "summary": "Set Service Account Policy",
-        "operationId": "SetServiceAccountPolicy",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "access_key",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "policy",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/addServiceAccountPolicyRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
             "description": "A successful response."
           },
           "default": {
@@ -5535,17 +5533,6 @@ func init() {
         "name": {
           "type": "string"
         },
-        "policy": {
-          "type": "string"
-        }
-      }
-    },
-    "addServiceAccountPolicyRequest": {
-      "type": "object",
-      "required": [
-        "policy"
-      ],
-      "properties": {
         "policy": {
           "type": "string"
         }
@@ -8061,6 +8048,32 @@ func init() {
         }
       }
     },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "accountStatus": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "expiration": {
+          "type": "string"
+        },
+        "impliedPolicy": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parentUser": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        }
+      }
+    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -8078,6 +8091,18 @@ func init() {
     "serviceAccountRequest": {
       "type": "object",
       "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "expiry": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
         "policy": {
           "type": "string",
           "title": "policy to be applied to the Service Account if any"
@@ -8088,6 +8113,18 @@ func init() {
       "type": "object",
       "properties": {
         "accessKey": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "expiry": {
+          "type": "string"
+        },
+        "name": {
           "type": "string"
         },
         "policy": {
@@ -8845,6 +8882,32 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "updateServiceAccountRequest": {
+      "type": "object",
+      "required": [
+        "policy"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "expiry": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string"
         },
         "status": {
           "type": "string"
@@ -13561,6 +13624,69 @@ func init() {
       }
     },
     "/service-accounts/{access_key}": {
+      "get": {
+        "tags": [
+          "ServiceAccount"
+        ],
+        "summary": "Get Service Account",
+        "operationId": "GetServiceAccount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccount"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ServiceAccount"
+        ],
+        "summary": "Set Service Account Policy",
+        "operationId": "UpdateServiceAccount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateServiceAccountRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "ServiceAccount"
@@ -13577,71 +13703,6 @@ func init() {
         ],
         "responses": {
           "204": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      }
-    },
-    "/service-accounts/{access_key}/policy": {
-      "get": {
-        "tags": [
-          "ServiceAccount"
-        ],
-        "summary": "Get Service Account Policy",
-        "operationId": "GetServiceAccountPolicy",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "access_key",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "ServiceAccount"
-        ],
-        "summary": "Set Service Account Policy",
-        "operationId": "SetServiceAccountPolicy",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "access_key",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "policy",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/addServiceAccountPolicyRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
             "description": "A successful response."
           },
           "default": {
@@ -14806,17 +14867,6 @@ func init() {
         "name": {
           "type": "string"
         },
-        "policy": {
-          "type": "string"
-        }
-      }
-    },
-    "addServiceAccountPolicyRequest": {
-      "type": "object",
-      "required": [
-        "policy"
-      ],
-      "properties": {
         "policy": {
           "type": "string"
         }
@@ -17327,6 +17377,32 @@ func init() {
         }
       }
     },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "accountStatus": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "expiration": {
+          "type": "string"
+        },
+        "impliedPolicy": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parentUser": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        }
+      }
+    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -17344,6 +17420,18 @@ func init() {
     "serviceAccountRequest": {
       "type": "object",
       "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "expiry": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
         "policy": {
           "type": "string",
           "title": "policy to be applied to the Service Account if any"
@@ -17354,6 +17442,18 @@ func init() {
       "type": "object",
       "properties": {
         "accessKey": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "expiry": {
+          "type": "string"
+        },
+        "name": {
           "type": "string"
         },
         "policy": {
@@ -18094,6 +18194,32 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "updateServiceAccountRequest": {
+      "type": "object",
+      "required": [
+        "policy"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "expiry": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string"
         },
         "status": {
           "type": "string"

@@ -29,8 +29,8 @@ import (
 	"strings"
 )
 
-// SetServiceAccountPolicyURL generates an URL for the set service account policy operation
-type SetServiceAccountPolicyURL struct {
+// UpdateServiceAccountURL generates an URL for the update service account operation
+type UpdateServiceAccountURL struct {
 	AccessKey string
 
 	_basePath string
@@ -41,7 +41,7 @@ type SetServiceAccountPolicyURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *SetServiceAccountPolicyURL) WithBasePath(bp string) *SetServiceAccountPolicyURL {
+func (o *UpdateServiceAccountURL) WithBasePath(bp string) *UpdateServiceAccountURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -49,21 +49,21 @@ func (o *SetServiceAccountPolicyURL) WithBasePath(bp string) *SetServiceAccountP
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *SetServiceAccountPolicyURL) SetBasePath(bp string) {
+func (o *UpdateServiceAccountURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *SetServiceAccountPolicyURL) Build() (*url.URL, error) {
+func (o *UpdateServiceAccountURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/service-accounts/{access_key}/policy"
+	var _path = "/service-accounts/{access_key}"
 
 	accessKey := o.AccessKey
 	if accessKey != "" {
 		_path = strings.Replace(_path, "{access_key}", accessKey, -1)
 	} else {
-		return nil, errors.New("accessKey is required on SetServiceAccountPolicyURL")
+		return nil, errors.New("accessKey is required on UpdateServiceAccountURL")
 	}
 
 	_basePath := o._basePath
@@ -76,7 +76,7 @@ func (o *SetServiceAccountPolicyURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *SetServiceAccountPolicyURL) Must(u *url.URL, err error) *url.URL {
+func (o *UpdateServiceAccountURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -87,17 +87,17 @@ func (o *SetServiceAccountPolicyURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *SetServiceAccountPolicyURL) String() string {
+func (o *UpdateServiceAccountURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *SetServiceAccountPolicyURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *UpdateServiceAccountURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on SetServiceAccountPolicyURL")
+		return nil, errors.New("scheme is required for a full url on UpdateServiceAccountURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on SetServiceAccountPolicyURL")
+		return nil, errors.New("host is required for a full url on UpdateServiceAccountURL")
 	}
 
 	base, err := o.Build()
@@ -111,6 +111,6 @@ func (o *SetServiceAccountPolicyURL) BuildFull(scheme, host string) (*url.URL, e
 }
 
 // StringFull returns the string representation of a complete url
-func (o *SetServiceAccountPolicyURL) StringFull(scheme, host string) string {
+func (o *UpdateServiceAccountURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

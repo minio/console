@@ -48,6 +48,7 @@ import AddUserServiceAccountHelpBox from "./AddUserServiceAccountHelpBox";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
+import DateTimePickerWrapper from "../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 
 const AddServiceAccount = () => {
   const dispatch = useAppDispatch();
@@ -65,8 +66,14 @@ const AddServiceAccount = () => {
 
   const userName = decodeURLString(params.userName || "");
 
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [comments, setComments] = useState<string>("");
+  const [expiry, setExpiry] = useState<any>();
+
   useEffect(() => {
     if (addSending) {
+      const expiryDt = expiry ? expiry.toJSDate().toISOString() : null;
       api
         .invoke(
           "POST",
@@ -77,6 +84,10 @@ const AddServiceAccount = () => {
             policy: policyJSON,
             accessKey: accessKey,
             secretKey: secretKey,
+            description: description,
+            comment: comments,
+            name: name,
+            expiry: expiryDt,
           },
         )
         .then((res) => {
@@ -100,6 +111,10 @@ const AddServiceAccount = () => {
     userName,
     accessKey,
     secretKey,
+    name,
+    description,
+    expiry,
+    comments,
   ]);
 
   useEffect(() => {
@@ -198,6 +213,7 @@ const AddServiceAccount = () => {
                 }}
                 startIcon={<PasswordKeyIcon />}
               />
+
               <Switch
                 value="serviceAccountPolicy"
                 id="serviceAccountPolicy"
@@ -254,6 +270,72 @@ const AddServiceAccount = () => {
                   </Grid>
                 </Grid>
               )}
+
+              <Grid
+                xs={12}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "start",
+                  fontWeight: 600,
+                  color: "rgb(7, 25, 62)",
+                  gap: 2,
+                  marginBottom: "15px",
+                  marginTop: "15px",
+                }}
+              >
+                <label style={{ width: "150px" }}>Expiry</label>
+                <Box
+                  sx={{
+                    padding: "2px",
+                  }}
+                >
+                  <DateTimePickerWrapper
+                    forSearchBlock={true}
+                    forFilterContained={false}
+                    value={expiry}
+                    onChange={(e) => {
+                      setExpiry(e);
+                    }}
+                    id="expiryTime"
+                    classNamePrefix={""}
+                    noInputIcon={true}
+                  />
+                </Box>
+              </Grid>
+              <InputBox
+                value={name}
+                label={"Name"}
+                id={"name"}
+                name={"name"}
+                type={"text"}
+                placeholder={"Enter a name"}
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+              />
+              <InputBox
+                value={description}
+                label={"Description"}
+                id={"description"}
+                name={"description"}
+                type={"text"}
+                placeholder={"Enter a description"}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                }}
+              />
+              <InputBox
+                value={comments}
+                label={"Comments"}
+                id={"comment"}
+                name={"comment"}
+                type={"text"}
+                placeholder={"Enter a comment"}
+                onChange={(e) => {
+                  setComments(e.target.value);
+                }}
+              />
               <Grid item xs={12} sx={{ ...modalStyleUtils.modalButtonBar }}>
                 <Button
                   id={"clear"}

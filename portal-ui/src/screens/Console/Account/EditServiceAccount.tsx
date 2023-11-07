@@ -15,7 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState, Fragment } from "react";
-import { Button, ChangeAccessPolicyIcon, Grid } from "mds";
+import {
+  Box,
+  Button,
+  ChangeAccessPolicyIcon,
+  Grid,
+  InputBox,
+  Switch,
+} from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
@@ -25,6 +32,8 @@ import { encodeURLString } from "common/utils";
 import { setErrorSnackMessage, setModalErrorSnackMessage } from "systemSlice";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
+import DateTimePickerWrapper from "../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
+import { DateTime } from "luxon";
 
 interface IServiceAccountPolicyProps {
   open: boolean;
@@ -32,23 +41,36 @@ interface IServiceAccountPolicyProps {
   closeModalAndRefresh: () => void;
 }
 
-const ServiceAccountPolicy = ({
+const EditServiceAccount = ({
   open,
   selectedAccessKey,
   closeModalAndRefresh,
 }: IServiceAccountPolicyProps) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(false);
-  const [policyDefinition, setPolicyDefinition] = useState<string>("");
+  const [policyDefinition, setPolicyDefinition] = useState<any>("");
+
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [expiry, setExpiry] = useState<any>();
+  const [status, setStatus] = useState<string | undefined>("enabled");
+
   useEffect(() => {
     if (!loading && selectedAccessKey !== "") {
       const sourceAccKey = encodeURLString(selectedAccessKey);
       setLoading(true);
       api.serviceAccounts
-        .getServiceAccountPolicy(sourceAccKey)
+        .getServiceAccount(sourceAccKey)
         .then((res) => {
           setLoading(false);
-          setPolicyDefinition(res.data);
+          const saInfo = res.data;
+
+          setName(saInfo?.name || "");
+          setExpiry(saInfo?.expiration);
+          setDescription(saInfo?.description || "");
+          setStatus(saInfo.accountStatus);
+
+          setPolicyDefinition(saInfo.policy || "");
         })
         .catch((err) => {
           setLoading(false);
@@ -61,8 +83,12 @@ const ServiceAccountPolicy = ({
   const setPolicy = (event: React.FormEvent, newPolicy: string) => {
     event.preventDefault();
     api.serviceAccounts
-      .setServiceAccountPolicy(encodeURLString(selectedAccessKey), {
+      .updateServiceAccount(encodeURLString(selectedAccessKey), {
         policy: newPolicy,
+        description: description,
+        expiry: expiry,
+        name: name,
+        status: status,
       })
       .then(() => {
         closeModalAndRefresh();
@@ -75,7 +101,7 @@ const ServiceAccountPolicy = ({
 
   return (
     <ModalWrapper
-      title="Access Key Policy"
+      title={`Edit details of - ${selectedAccessKey}`}
       modalOpen={open}
       onClose={() => {
         closeModalAndRefresh();
@@ -110,6 +136,111 @@ const ServiceAccountPolicy = ({
               }
             />
           </Grid>
+
+          <Grid
+            xs={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "start",
+              fontWeight: 600,
+              color: "rgb(7, 25, 62)",
+              gap: 2,
+              marginBottom: "15px",
+              marginTop: "15px",
+            }}
+          >
+            <label style={{ width: "150px" }}>Expiry</label>
+            <Box
+              sx={{
+                padding: "2px",
+              }}
+            >
+              <DateTimePickerWrapper
+                forSearchBlock={true}
+                forFilterContained={false}
+                value={DateTime.fromISO(expiry)}
+                onChange={(e) => {
+                  setExpiry(e);
+                }}
+                id="expiryTime"
+                classNamePrefix={""}
+                noInputIcon={true}
+              />
+            </Box>
+          </Grid>
+          <Grid
+            xs={12}
+            sx={{
+              marginBottom: "15px",
+            }}
+          >
+            <InputBox
+              value={name}
+              size={120}
+              label={"Name"}
+              id={"name"}
+              name={"name"}
+              type={"text"}
+              placeholder={"Enter a name"}
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+            />
+          </Grid>
+          <Grid
+            xs={12}
+            sx={{
+              marginBottom: "15px",
+            }}
+          >
+            <InputBox
+              size={120}
+              value={description}
+              label={"Description"}
+              id={"description"}
+              name={"description"}
+              type={"text"}
+              placeholder={"Enter a description"}
+              onChange={(e) => {
+                setDescription(e.target.value);
+              }}
+            />
+          </Grid>
+          <Grid
+            xs={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "start",
+              fontWeight: 600,
+              color: "rgb(7, 25, 62)",
+              gap: 2,
+              marginBottom: "15px",
+            }}
+          >
+            <label style={{ width: "150px" }}>Status</label>
+            <Box
+              sx={{
+                padding: "2px",
+              }}
+            >
+              <Switch
+                style={{
+                  gap: "115px",
+                }}
+                indicatorLabels={["Enabled", "Disabled"]}
+                checked={status === "on"}
+                id="saStatus"
+                name="saStatus"
+                label=""
+                onChange={(e) => {
+                  setStatus(e.target.checked ? "on" : "off");
+                }}
+                value="yes"
+              />
+            </Box>
+          </Grid>
           <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
             <Button
               id={"cancel-sa-policy"}
@@ -127,7 +258,7 @@ const ServiceAccountPolicy = ({
               variant="callAction"
               color="primary"
               disabled={loading}
-              label={"Set"}
+              label={"Update"}
             />
           </Grid>
         </Grid>
@@ -136,4 +267,4 @@ const ServiceAccountPolicy = ({
   );
 };
 
-export default ServiceAccountPolicy;
+export default EditServiceAccount;

@@ -80,7 +80,7 @@ var (
 	minioSetUserStatusMock func(accessKey string, status madmin.AccountStatus) error
 
 	minioAccountInfoMock           func(ctx context.Context) (madmin.AccountInfo, error)
-	minioAddServiceAccountMock     func(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error)
+	minioAddServiceAccountMock     func(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string, description string, name string, expiry *time.Time, status string) (madmin.Credentials, error)
 	minioListServiceAccountsMock   func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 	minioDeleteServiceAccountMock  func(ctx context.Context, serviceAccount string) error
 	minioInfoServiceAccountMock    func(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
@@ -377,8 +377,8 @@ func (ac AdminClientMock) AccountInfo(ctx context.Context) (madmin.AccountInfo, 
 	return minioAccountInfoMock(ctx)
 }
 
-func (ac AdminClientMock) addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error) {
-	return minioAddServiceAccountMock(ctx, policy, user, accessKey, secretKey)
+func (ac AdminClientMock) addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string, description string, name string, expiry *time.Time, status string) (madmin.Credentials, error) {
+	return minioAddServiceAccountMock(ctx, policy, user, accessKey, secretKey, description, name, expiry, status)
 }
 
 func (ac AdminClientMock) listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
