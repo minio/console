@@ -301,7 +301,7 @@ const AddLifecycleModal = ({
                   ? parseInt(lifecycleDays) <= 0
                     ? `Number of ${expiryUnit} to retain must be greater than zero`
                     : parseInt(lifecycleDays) > 2147483647
-                    ? `Number of ${expiryUnit} must be less than max int32`
+                    ? `Number of ${expiryUnit} must be less than 2147483647`
                     : ""
                   : ""
               }
