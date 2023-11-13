@@ -14,18 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Fragment } from "react";
 import {
   Button,
-  OpenListIcon,
   SyncIcon,
   Grid,
   Box,
   breakPoints,
   TimeIcon,
+  DateTimeInput,
 } from "mds";
 import { DateTime } from "luxon";
-import DateTimePickerWrapper from "../DateTimePickerWrapper/DateTimePickerWrapper";
 
 interface IDateRangeSelector {
   timeStart: DateTime | null;
@@ -37,23 +36,6 @@ interface IDateRangeSelector {
   startLabel?: string;
   endLabel?: string;
 }
-
-const DateFilterAdornIcon = () => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        "& .min-icon": {
-          width: "10px",
-          height: "10px",
-        },
-      }}
-    >
-      <OpenListIcon />
-    </Box>
-  );
-};
 
 const DateRangeSelector = ({
   timeStart,
@@ -119,11 +101,13 @@ const DateRangeSelector = ({
           gap: "5px",
         }}
       >
-        <Box sx={{ fontSize: "14px", fontWeight: 500, marginRight: "5px" }}>
+        <Box
+          sx={{ fontSize: "14px", fontWeight: 500, marginRight: "5px" }}
+          className={"muted"}
+        >
           {label}
         </Box>
         <Box
-          withBorders
           customBorderPadding={"0px"}
           sx={{
             display: "grid",
@@ -139,91 +123,30 @@ const DateRangeSelector = ({
             },
           }}
         >
-          <Box
-            sx={{
-              display: "grid",
-              height: 30,
-              alignItems: "center",
-              gridTemplateColumns: "12px auto 1fr",
-              gap: 5,
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                "& .min-icon": {
-                  width: "10px",
-                  height: "10px",
-                  fill: "#B4B5B4",
-                },
-              }}
-            >
-              <TimeIcon />
-            </Box>
-            <Box
-              sx={{
-                fontSize: "12px",
-                marginLeft: "8px",
-              }}
-            >
-              {startLabel}
-            </Box>
-            <Box>
-              <DateTimePickerWrapper
-                value={timeStart}
-                onChange={setTimeStart}
-                id="stTime"
-                classNamePrefix={"filter-date-"}
-                forFilterContained
-                noInputIcon={true}
-                openPickerIcon={DateFilterAdornIcon}
-              />
-            </Box>
-          </Box>
-
-          <Box
-            sx={{
-              display: "grid",
-              height: 30,
-              alignItems: "center",
-              gridTemplateColumns: "12px auto 1fr",
-              gap: 5,
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                "& .min-icon": {
-                  width: "10px",
-                  height: "10px",
-                  fill: "#B4B5B4",
-                },
-              }}
-            >
-              <TimeIcon />
-            </Box>
-            <Box
-              sx={{
-                fontSize: "12px",
-                marginLeft: "8px",
-              }}
-            >
-              {endLabel}
-            </Box>
-            <Box>
-              <DateTimePickerWrapper
-                value={timeEnd}
-                onChange={setTimeEnd}
-                id="endTime"
-                classNamePrefix={"filter-date-"}
-                forFilterContained
-                noInputIcon={true}
-                openPickerIcon={DateFilterAdornIcon}
-              />
-            </Box>
-          </Box>
+          <DateTimeInput
+            value={timeStart}
+            onChange={setTimeStart}
+            id="stTime"
+            secondsSelector={false}
+            pickerStartComponent={
+              <Fragment>
+                <TimeIcon />
+                <span>{startLabel}</span>
+              </Fragment>
+            }
+          />
+          <DateTimeInput
+            value={timeEnd}
+            onChange={setTimeEnd}
+            id="endTime"
+            secondsSelector={false}
+            pickerStartComponent={
+              <Fragment>
+                <TimeIcon />
+                <span>{endLabel}</span>
+              </Fragment>
+            }
+          />
         </Box>
 
         {triggerSync && (

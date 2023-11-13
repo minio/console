@@ -179,6 +179,10 @@ export const rewindButton = Selector("button").withAttribute(
   "id",
   "rewind-objects-list",
 );
+export const rewindToBaseInput = Selector("div").withAttribute(
+  "id",
+  "rewind-selector-DateTimeInput",
+);
 export const rewindToInput = Selector("input").withAttribute(
   "id",
   "rewind-selector",

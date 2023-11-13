@@ -19,55 +19,6 @@
 import { breakPoints } from "mds";
 import get from "lodash/get";
 
-const inputLabelBase = {
-  fontWeight: 600,
-  marginRight: 10,
-  fontSize: 14,
-  color: "#07193E",
-  textAlign: "left" as const,
-  overflow: "hidden",
-  alignItems: "center",
-  display: "flex",
-  "& span": {
-    display: "flex",
-    alignItems: "center",
-  },
-};
-
-export const fieldBasic: any = {
-  inputLabel: {
-    ...inputLabelBase,
-    minWidth: 160,
-  },
-  noMinWidthLabel: {
-    ...inputLabelBase,
-  },
-  fieldLabelError: {
-    paddingBottom: 22,
-  },
-  fieldContainer: {
-    marginBottom: 20,
-    position: "relative" as const,
-    display: "flex" as const,
-    flexWrap: "wrap",
-    "@media (max-width: 600px)": {
-      flexFlow: "column",
-    },
-  },
-  tooltipContainer: {
-    marginLeft: 5,
-    display: "flex",
-    alignItems: "center",
-    "& .min-icon": {
-      width: 13,
-    },
-  },
-  switchContainer: {
-    display: "flex",
-    maxWidth: 840,
-  },
-};
-
 export const modalBasic = {
   formScrollable: {
     maxHeight: "calc(100vh - 300px)" as const,
@@ -96,24 +47,7 @@ export const modalBasic = {
   },
 };
 
-export const tooltipHelper = {
-  tooltip: {
-    "& .min-icon": {
-      width: 13,
-    },
-  },
-};
-
 export const actionsTray = {
-  label: {
-    color: "#07193E",
-    fontSize: 13,
-    alignSelf: "center" as const,
-    whiteSpace: "nowrap" as const,
-    "&:not(:first-of-type)": {
-      marginLeft: 10,
-    },
-  },
   actionsTray: {
     display: "flex" as const,
     justifyContent: "space-between" as const,

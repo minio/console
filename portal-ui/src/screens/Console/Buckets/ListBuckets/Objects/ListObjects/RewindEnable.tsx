@@ -16,16 +16,23 @@
 
 import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
-import { Button, Grid, ProgressBar, Switch } from "mds";
+import {
+  Button,
+  DateTimeInput,
+  FormLayout,
+  Grid,
+  ProgressBar,
+  Switch,
+} from "mds";
 import { useSelector } from "react-redux";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import DateTimePickerWrapper from "../../../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import {
   resetRewind,
   setReloadObjectsList,
   setRewindEnable,
 } from "../../../../ObjectBrowser/objectBrowserSlice";
+import { modalStyleUtils } from "../../../../Common/FormComponents/common/styleLibrary";
 
 interface IRewindEnable {
   closeModalAndRefresh: () => void;
@@ -88,36 +95,31 @@ const RewindEnable = ({
       }}
       title={`Rewind - ${bucketName}`}
     >
-      <Grid item xs={12}>
-        <DateTimePickerWrapper
+      <FormLayout withBorders={false} containerPadding={false}>
+        <DateTimeInput
           value={dateSelected}
           onChange={(dateTime) => (dateTime ? setDateSelected(dateTime) : null)}
           id="rewind-selector"
           label="Rewind to"
+          timeFormat={"24h"}
+          secondsSelector={false}
           disabled={!rewindEnableButton}
         />
-      </Grid>
-      <Grid container>
+
         {rewindEnabled && (
-          <Grid item xs={12} sx={{ marginBottom: "10px" }}>
-            <Switch
-              value="status"
-              id="status"
-              name="status"
-              checked={rewindEnableButton}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setRewindEnableButton(e.target.checked);
-              }}
-              label={"Current Status"}
-              indicatorLabels={["Enabled", "Disabled"]}
-            />
-          </Grid>
+          <Switch
+            value="status"
+            id="status"
+            name="status"
+            checked={rewindEnableButton}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setRewindEnableButton(e.target.checked);
+            }}
+            label={"Current Status"}
+            indicatorLabels={["Enabled", "Disabled"]}
+          />
         )}
-        <Grid
-          item
-          xs={12}
-          style={{ justifyContent: "flex-end", display: "flex" }}
-        >
+        <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
           <Button
             type="button"
             variant="callAction"
@@ -131,12 +133,13 @@ const RewindEnable = ({
             }
           />
         </Grid>
+
         {rewindEnabling && (
           <Grid item xs={12}>
             <ProgressBar />
           </Grid>
         )}
-      </Grid>
+      </FormLayout>
     </ModalWrapper>
   );
 };

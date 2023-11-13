@@ -46,8 +46,10 @@ test
       .expect(elements.table.exists)
       .ok()
       .click(elements.rewindButton)
+      .click(elements.rewindToBaseInput)
       .expect(elements.rewindToInput.exists)
       .ok()
+      .click(elements.rewindToInput)
       .typeText(elements.rewindToInput, "01/01/2015 00:00")
       .click(elements.rewindDataButton);
   })
