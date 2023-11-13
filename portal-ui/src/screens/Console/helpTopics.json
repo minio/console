@@ -64,12 +64,43 @@
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
+        },
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
         }
       ]
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        }
+      ]
     }
   },
   "add_bucket": {
@@ -244,7 +275,14 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        }
+      ]
     }
   },
   "add_service_account": {
@@ -326,7 +364,26 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        }
+      ]
     }
   },
   "list-buckets": {
@@ -389,11 +446,24 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/an_webp/7EJO_iRiB2s/mqdefault_6s.webp?du=3000&sqp=CMnUtKoG&rs=AOn4CLBvBwFrNk3TtHJNej6IlI4sU_RniQ",
+          "title": "MinIO Feature Overview: Active-Active Replication",
+          "url": "https://www.youtube.com/watch?v=7EJO_iRiB2s",
+          "body": "Learn about MinIO's object replication capabilities and how MinIO provides resilience to common storage disruption scenarios."
+        }
+      ]
     },
     "blog": {
       "header": null,
       "links": [
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/09/active-active-email-blogpost-header.png",
+          "title": "Active-Active Example Using an Email Provider",
+          "url": "https://blog.min.io/active-active-email/",
+          "body": "Learn how to set up Active-Active site replication across 3 sites for a high availability email provider."
+        },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2021/09/denys-nevozhai-7nrsVjvALnA-unsplash.jpg",
           "title": "Multi-Site Active-Active Replication",
@@ -514,7 +584,7 @@
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "Node Failure Recovery",
           "url": "https://min.io/docs/minio/windows/operations/data-recovery/recover-after-node-failure.html#minio-restore-hardware-failure-node",
-          "body": "If a MinIO node suffers complete hardware failure,  the node begins healing operations once it rejoins the  deployment."
+          "body": "If a MinIO node suffers complete hardware failure, the node begins healing operations once it rejoins the  deployment."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
@@ -550,7 +620,14 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/QniHMNNmbfI/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB1-wTPfjWO4ky-L4UetCbYdbp4jg",
+          "title": "Overview of MinIO Erasure Coding",
+          "url": "https://www.youtube.com/watch?v=QniHMNNmbfI&t=415s",
+          "body": "Through this MinIO video you will learn about MinIO erasure coding, including erasure sets, erasure parity, and stripe size. You will also learn about how the Reed-Solomon algorithm can be optimized for storage efficiency (yielding cost savings) or data lost protection (number of servers and drives that can fail). The video also walks through the MinIO Erasure Code calculator, considerations for cluster design and the command line syntax needed to establish an erasure code deployment. "
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -562,10 +639,16 @@
           "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
         },
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/Screen-Shot-2023-10-11-at-12.43.14-PM.png",
+          "title": "Gracefully Handling Disk Failures in MinIO",
+          "url": "https://blog.min.io/troubleshooting-disk-failures/",
+          "body": "Best practices for managing and replacing failing drives in your MinIO deployment"
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w2000/2021/11/josh-rose-trYl7JYATH0-unsplash-1.jpg",
           "title": "Data Authenticity and Integrity in MinIO",
           "url": "https://blog.min.io/data-authenticity-integrity/",
-          "body": "It is critical that every party remains confident that  they are working with a true dataset. This can only be  accomplished when data authenticity and integrity are  maintained throughout the entire data lifecycle."
+          "body": "It is critical that every party remains confident that they are working with a true dataset. This can only be  accomplished when data authenticity and integrity are maintained throughout the entire data lifecycle."
         },
         {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
@@ -578,6 +661,12 @@
           "title": "Object Storage Erasure Coding vs. Block Storage RAID",
           "url": "https://blog.min.io/erasure-coding-vs-raid/",
           "body": "This blog post compares two data protection  technologies, block-level RAID and object storage  erasure coding, that share some similarities  but are in fact very different."
+        },
+        {
+          "img": "https://images.unsplash.com/photo-1597386601945-8980df52c3dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxtZWFzdXJlJTIwZ2F1Z2UlMjBkaWFsfGVufDB8fHx8MTY4OTEwMjYyMnww&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Low Level Performance Testing for Object Storage",
+          "url": "https://blog.min.io/object-storage-low-level-performance-testing/",
+          "body": "Learn how to measure your system performance with built in tools to measure drive, I/O and network metrics."
         },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2020/08/Cohasset.png",
@@ -638,6 +727,12 @@
           "title": "Versioning and Lifecycle Management",
           "url": "https://www.youtube.com/watch?v=UuxqnUgowyg",
           "body": "In this video, we will focus on versioning  and lifecycle management."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/QniHMNNmbfI/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB1-wTPfjWO4ky-L4UetCbYdbp4jg",
+          "title": "Overview of MinIO Erasure Coding",
+          "url": "https://www.youtube.com/watch?v=QniHMNNmbfI&t=415s",
+          "body": "Through this MinIO video you will learn about MinIO erasure coding, including erasure sets, erasure parity, and stripe size. You will also learn about how the Reed-Solomon algorithm can be optimized for storage efficiency (yielding cost savings) or data lost protection (number of servers and drives that can fail). The video also walks through the MinIO Erasure Code calculator, considerations for cluster design and the command line syntax needed to establish an erasure code deployment. "
         }
       ]
     },
@@ -649,6 +744,18 @@
           "title": "Object Locking, Versioning, Holds and Modes in MinIO",
           "url": "https://blog.min.io/object-locking-versioning-and-holds-in-minio/",
           "body": "Learn how MinIO supports a complete object locking framework supporting Lifecycle management, an increasingly critical element in the data ecosystem."
+        },
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/Screen-Shot-2023-10-11-at-12.43.14-PM.png",
+          "title": "Gracefully Handling Disk Failures in MinIO",
+          "url": "https://blog.min.io/troubleshooting-disk-failures/",
+          "body": "Best practices for managing and replacing failing drives in your MinIO deployment"
         }
       ]
     }
@@ -893,11 +1000,24 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/an_webp/7EJO_iRiB2s/mqdefault_6s.webp?du=3000&sqp=CMnUtKoG&rs=AOn4CLBvBwFrNk3TtHJNej6IlI4sU_RniQ",
+          "title": "MinIO Feature Overview: Active-Active Replication",
+          "url": "https://www.youtube.com/watch?v=7EJO_iRiB2s",
+          "body": "Learn about MinIO's object replication capabilities and how MinIO provides resilience to common storage disruption scenarios."
+        }
+      ]
     },
     "blog": {
       "header": null,
       "links": [
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/09/active-active-email-blogpost-header.png",
+          "title": "Active-Active Example Using an Email Provider",
+          "url": "https://blog.min.io/active-active-email/",
+          "body": "Learn how to set up Active-Active site replication across 3 sites for a high availability email provider."
+        },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
           "title": "Replication Best Practices",
@@ -958,7 +1078,14 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/an_webp/7EJO_iRiB2s/mqdefault_6s.webp?du=3000&sqp=CMnUtKoG&rs=AOn4CLBvBwFrNk3TtHJNej6IlI4sU_RniQ",
+          "title": "MinIO Feature Overview: Active-Active Replication",
+          "url": "https://www.youtube.com/watch?v=7EJO_iRiB2s",
+          "body": "Learn about MinIO's object replication capabilities and how MinIO provides resilience to common storage disruption scenarios."
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -968,6 +1095,12 @@
           "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
           "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/09/active-active-email-blogpost-header.png",
+          "title": "Active-Active Example Using an Email Provider",
+          "url": "https://blog.min.io/active-active-email/",
+          "body": "Learn how to set up Active-Active site replication across 3 sites for a high availability email provider."
         },
         {
           "img": "https://images.unsplash.com/photo-1548197193-2c2df590e23f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDU0fHxmYXN0JTIwbW90aW9uJTIwYmx1cnxlbnwwfHx8fDE2NjkxNDY0MzM&ixlib=rb-4.0.3&q=80&w=1000",
@@ -1010,7 +1143,14 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/an_webp/7EJO_iRiB2s/mqdefault_6s.webp?du=3000&sqp=CMnUtKoG&rs=AOn4CLBvBwFrNk3TtHJNej6IlI4sU_RniQ",
+          "title": "MinIO Feature Overview: Active-Active Replication",
+          "url": "https://www.youtube.com/watch?v=7EJO_iRiB2s",
+          "body": "Learn about MinIO's object replication capabilities and how MinIO provides resilience to common storage disruption scenarios."
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -1026,6 +1166,12 @@
           "title": "Faster Multi-Site Replication and Resync",
           "url": "https://blog.min.io/multi-site-replication-resync/",
           "body": "Multi-Site Active-Active Replication allows for rapid recovery."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/09/active-active-email-blogpost-header.png",
+          "title": "Active-Active Example Using an Email Provider",
+          "url": "https://blog.min.io/active-active-email/",
+          "body": "Learn how to set up Active-Active site replication across 3 sites for a high availability email provider."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2021/09/denys-nevozhai-7nrsVjvALnA-unsplash.jpg",
@@ -1089,6 +1235,12 @@
       "header": null,
       "links": [
         {
+          "img": "https://i.ytimg.com/vi/bZsNxeuzmYc/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAbvdRADQLInFIdXKfiipJQH_uuOQ",
+          "title": "MinIO Feature Overview: Object Lifecycle Management",
+          "url": "https://www.youtube.com/watch?v=bZsNxeuzmYc",
+          "body": "Learn about MinIO's object lifecycle management capabilities."
+        },
+        {
           "img": "https://i.ytimg.com/vi/Exg2KsfzHzI/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD62meNdv1khzGt61nGwddj7L3oww",
           "title": "Lifecycle Management I - Tiers",
           "url": "https://www.youtube.com/watch?v=Exg2KsfzHzI",
@@ -1110,7 +1262,14 @@
     },
     "blog": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
+        }
+      ]
     }
   },
   "list-tiers-configuration": {
@@ -1141,10 +1300,16 @@
           "body": "In this video we will cover expiration and transition of objects to an alternate tier of storage."
         },
         {
+          "img": "https://i.ytimg.com/vi/bZsNxeuzmYc/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAbvdRADQLInFIdXKfiipJQH_uuOQ",
+          "title": "MinIO Feature Overview: Object Lifecycle Management",
+          "url": "https://www.youtube.com/watch?v=bZsNxeuzmYc",
+          "body": "Learn about MinIO's object lifecycle management capabilities."
+        },
+        {
           "img": "https://i.ytimg.com/vi/UuxqnUgowyg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA8R19exGswOv_yP8ZmSy1K6zmCbw",
           "title": "Versioning and Lifecycle Management",
           "url": "https://www.youtube.com/watch?v=UuxqnUgowyg",
-          "body": "In this video, we will focus on versioning  and lifecycle management."
+          "body": "In this video, we will focus on versioning and lifecycle management."
         },
         {
           "img": "https://i.ytimg.com/vi/5fz3rE3wjGg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCq8mxi_s8tron8E3TPgTMfUbiiDw",
@@ -1156,7 +1321,14 @@
     },
     "blog": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
+        }
+      ]
     }
   },
   "tier-type-selector": {
@@ -1211,6 +1383,12 @@
           "body": "In this video we will cover expiration and transition of objects to an alternate tier of storage."
         },
         {
+          "img": "https://i.ytimg.com/vi/bZsNxeuzmYc/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAbvdRADQLInFIdXKfiipJQH_uuOQ",
+          "title": "MinIO Feature Overview: Object Lifecycle Management",
+          "url": "https://www.youtube.com/watch?v=bZsNxeuzmYc",
+          "body": "Learn about MinIO's object lifecycle management capabilities."
+        },
+        {
           "img": "https://i.ytimg.com/vi/UuxqnUgowyg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLA8R19exGswOv_yP8ZmSy1K6zmCbw",
           "title": "Versioning and Lifecycle Management",
           "url": "https://www.youtube.com/watch?v=UuxqnUgowyg",
@@ -1243,7 +1421,14 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/an_webp/7EJO_iRiB2s/mqdefault_6s.webp?du=3000&sqp=CMnUtKoG&rs=AOn4CLBvBwFrNk3TtHJNej6IlI4sU_RniQ",
+          "title": "MinIO Feature Overview: Active-Active Replication",
+          "url": "https://www.youtube.com/watch?v=7EJO_iRiB2s",
+          "body": "Learn about MinIO's object replication capabilities and how MinIO provides resilience to common storage disruption scenarios."
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -1271,6 +1456,12 @@
           "title": "Multi-SiteActive-Active Replication",
           "url": "https://blog.min.io/minio-multi-site-active-active-replication/",
           "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/09/active-active-email-blogpost-header.png",
+          "title": "Active-Active Example Using an Email Provider",
+          "url": "https://blog.min.io/active-active-email/",
+          "body": "Learn how to set up Active-Active site replication across 3 sites for a high availability email provider."
         }
       ]
     }
@@ -1411,7 +1602,38 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/mv8I1wvTCrE/mqdefault_6s.webp?du=3000&sqp=CJintaoG&rs=AOn4CLA0GvV4whY7znEVT55n_XppZ5eKHQ",
+          "title": "MinIO Authentication and Authorization Using OpenID and Keycloak",
+          "url": "https://www.youtube.com/watch?v=mv8I1wvTCrE",
+          "body": "In this video you will learn how to set up an OpenID service, Keycloak, to provide authentication and authorization as part of a MinIO deployment."
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -1462,6 +1684,12 @@
           "title": "Site Replication Overview",
           "url": "https://www.youtube.com/watch?v=iCxcv4_j35M",
           "body": "In this video, we will provide an overview of site-wide replication."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/QniHMNNmbfI/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB1-wTPfjWO4ky-L4UetCbYdbp4jg",
+          "title": "Overview of MinIO Erasure Coding",
+          "url": "https://www.youtube.com/watch?v=QniHMNNmbfI&t=415s",
+          "body": "Through this MinIO video you will learn about MinIO erasure coding, including erasure sets, erasure parity, and stripe size. You will also learn about how the Reed-Solomon algorithm can be optimized for storage efficiency (yielding cost savings) or data lost protection (number of servers and drives that can fail). The video also walks through the MinIO Erasure Code calculator, considerations for cluster design and the command line syntax needed to establish an erasure code deployment. "
         }
       ]
     },
@@ -1487,10 +1715,28 @@
           "body": "Learn how erasure coding is implemented in MinIO, and how it satisfies enterprise requirements for data protection."
         },
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/09/active-active-email-blogpost-header.png",
+          "title": "Active-Active Example Using an Email Provider",
+          "url": "https://blog.min.io/active-active-email/",
+          "body": "Learn how to set up Active-Active site replication across 3 sites for a high availability email provider."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2021/09/denys-nevozhai-7nrsVjvALnA-unsplash.jpg",
           "title": "Multi-Site Active-Active Replication",
           "url": "https://blog.min.io/minio-multi-site-active-active-replication/",
           "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
+        },
+        {
+          "img": "https://images.unsplash.com/photo-1597386601945-8980df52c3dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxtZWFzdXJlJTIwZ2F1Z2UlMjBkaWFsfGVufDB8fHx8MTY4OTEwMjYyMnww&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Low Level Performance Testing for Object Storage",
+          "url": "https://blog.min.io/object-storage-low-level-performance-testing/",
+          "body": "Learn how to measure your system performance with built in tools to measure drive, I/O and network metrics."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/Screen-Shot-2023-10-11-at-12.43.14-PM.png",
+          "title": "Gracefully Handling Disk Failures in MinIO",
+          "url": "https://blog.min.io/troubleshooting-disk-failures/",
+          "body": "Best practices for managing and replacing failing drives in your MinIO deployment"
         }
       ]
     }
@@ -1537,6 +1783,12 @@
           "title": "Introducing SUBNET Health",
           "url": "https://blog.min.io/introducing-subnet-health/",
           "body": "SUBNET Health provides a graphical user interface to key supportability components while automatically running dozens of checks on your MinIO instance to ensure it is running optimally."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/Screen-Shot-2023-10-11-at-12.43.14-PM.png",
+          "title": "Gracefully Handling Disk Failures in MinIO",
+          "url": "https://blog.min.io/troubleshooting-disk-failures/",
+          "body": "Best practices for managing and replacing failing drives in your MinIO deployment"
         }
       ]
     }
@@ -1585,7 +1837,50 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/mv8I1wvTCrE/mqdefault_6s.webp?du=3000&sqp=CJintaoG&rs=AOn4CLA0GvV4whY7znEVT55n_XppZ5eKHQ",
+          "title": "MinIO Authentication and Authorization Using OpenID and Keycloak",
+          "url": "https://www.youtube.com/watch?v=mv8I1wvTCrE",
+          "body": "In this video you will learn how to set up an OpenID service, Keycloak, to provide authentication and authorization as part of a MinIO deployment."
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -1655,7 +1950,50 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/mv8I1wvTCrE/mqdefault_6s.webp?du=3000&sqp=CJintaoG&rs=AOn4CLA0GvV4whY7znEVT55n_XppZ5eKHQ",
+          "title": "MinIO Authentication and Authorization Using OpenID and Keycloak",
+          "url": "https://www.youtube.com/watch?v=mv8I1wvTCrE",
+          "body": "In this video you will learn how to set up an OpenID service, Keycloak, to provide authentication and authorization as part of a MinIO deployment."
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -1731,7 +2069,50 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/mv8I1wvTCrE/mqdefault_6s.webp?du=3000&sqp=CJintaoG&rs=AOn4CLA0GvV4whY7znEVT55n_XppZ5eKHQ",
+          "title": "MinIO Authentication and Authorization Using OpenID and Keycloak",
+          "url": "https://www.youtube.com/watch?v=mv8I1wvTCrE",
+          "body": "In this video you will learn how to set up an OpenID service, Keycloak, to provide authentication and authorization as part of a MinIO deployment."
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -2094,11 +2475,43 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/5ptKrZzOs4c/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAkZDamqqZazUfx0zzx4Y690eRLrw",
+          "title": "MinIO Event Notifications - Overview",
+          "url": "https://www.youtube.com/watch?v=5ptKrZzOs4c",
+          "body": "Use the Event framework to see what's going on in the system using Bucket, Object, Replication and ILM events."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/Yh_1grPSBjw/mqdefault_6s.webp?du=3000&sqp=CKSLtaoG&rs=AOn4CLDPnftE6KALzW1ghJWdRYWpt4BOtQ",
+          "title": "Managing Event Notifications Using MinIO MC Commands",
+          "url": "https://www.youtube.com/watch?v=Yh_1grPSBjw",
+          "body": "This video provides an overview of the types of event notifications and how to set them up using MinIO's mc commands."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/_ZEjm4bPgVI/mqdefault_6s.webp?du=3000&sqp=CPiHtaoG&rs=AOn4CLDuJYSDGLEFh7k_Y40c_PEMDxYilw",
+          "title": "MinIO Events Notifications - Setting Up Webhooks Using Python",
+          "url": "https://www.youtube.com/watch?v=_ZEjm4bPgVI",
+          "body": "This video provides an overview of how to use Python and Flask to set up a Webhook on MinIO. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/KiWWVgfuulU/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAWW3Ly89lIRm7seH5EAfaJbrmFKA",
+          "title": "MinIO Event Notifications - Using The MinIO Python SDK to Write Custom Webhooks",
+          "url": "https://www.youtube.com/watch?v=KiWWVgfuulU",
+          "body": "This video dives deeper into using the MinIO Python SDK to setup and manage notifications."
+        }
+      ]
     },
     "blog": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
+        }
+      ]
     }
   },
   "notification_endpoints": {
@@ -2127,11 +2540,43 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/5ptKrZzOs4c/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAkZDamqqZazUfx0zzx4Y690eRLrw",
+          "title": "MinIO Event Notifications - Overview",
+          "url": "https://www.youtube.com/watch?v=5ptKrZzOs4c",
+          "body": "Use the Event framework to see what's going on in the system using Bucket, Object, Replication and ILM events."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/Yh_1grPSBjw/mqdefault_6s.webp?du=3000&sqp=CKSLtaoG&rs=AOn4CLDPnftE6KALzW1ghJWdRYWpt4BOtQ",
+          "title": "Managing Event Notifications Using MinIO MC Commands",
+          "url": "https://www.youtube.com/watch?v=Yh_1grPSBjw",
+          "body": "This video provides an overview of the types of event notifications and how to set them up using MinIO's mc commands."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/_ZEjm4bPgVI/mqdefault_6s.webp?du=3000&sqp=CPiHtaoG&rs=AOn4CLDuJYSDGLEFh7k_Y40c_PEMDxYilw",
+          "title": "MinIO Events Notifications - Setting Up Webhooks Using Python",
+          "url": "https://www.youtube.com/watch?v=_ZEjm4bPgVI",
+          "body": "This video provides an overview of how to use Python and Flask to set up a Webhook on MinIO. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/KiWWVgfuulU/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAWW3Ly89lIRm7seH5EAfaJbrmFKA",
+          "title": "MinIO Event Notifications - Using The MinIO Python SDK to Write Custom Webhooks",
+          "url": "https://www.youtube.com/watch?v=KiWWVgfuulU",
+          "body": "This video dives deeper into using the MinIO Python SDK to setup and manage notifications."
+        }
+      ]
     },
     "blog": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
+        }
+      ]
     }
   },
   "notification_type_selector": {
@@ -2160,11 +2605,43 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/5ptKrZzOs4c/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAkZDamqqZazUfx0zzx4Y690eRLrw",
+          "title": "MinIO Event Notifications - Overview",
+          "url": "https://www.youtube.com/watch?v=5ptKrZzOs4c",
+          "body": "Use the Event framework to see what's going on in the system using Bucket, Object, Replication and ILM events."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/Yh_1grPSBjw/mqdefault_6s.webp?du=3000&sqp=CKSLtaoG&rs=AOn4CLDPnftE6KALzW1ghJWdRYWpt4BOtQ",
+          "title": "Managing Event Notifications Using MinIO MC Commands",
+          "url": "https://www.youtube.com/watch?v=Yh_1grPSBjw",
+          "body": "This video provides an overview of the types of event notifications and how to set them up using MinIO's mc commands."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/_ZEjm4bPgVI/mqdefault_6s.webp?du=3000&sqp=CPiHtaoG&rs=AOn4CLDuJYSDGLEFh7k_Y40c_PEMDxYilw",
+          "title": "MinIO Events Notifications - Setting Up Webhooks Using Python",
+          "url": "https://www.youtube.com/watch?v=_ZEjm4bPgVI",
+          "body": "This video provides an overview of how to use Python and Flask to set up a Webhook on MinIO. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/KiWWVgfuulU/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAWW3Ly89lIRm7seH5EAfaJbrmFKA",
+          "title": "MinIO Event Notifications - Using The MinIO Python SDK to Write Custom Webhooks",
+          "url": "https://www.youtube.com/watch?v=KiWWVgfuulU",
+          "body": "This video dives deeper into using the MinIO Python SDK to setup and manage notifications."
+        }
+      ]
     },
     "blog": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
+        }
+      ]
     }
   },
   "object_browser": {
@@ -2234,6 +2711,12 @@
           "title": "Continuous Data Protection with MinIO Versioning and Rewind",
           "url": "https://blog.min.io/continuous-data-protection-versioning-rewind/",
           "body": "Learn how MinIO ensures that data is continuously protected using Versioning and other mechanisms."
+        },
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
         }
       ]
     }
@@ -2276,7 +2759,26 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -2334,7 +2836,26 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -2350,6 +2871,12 @@
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
+        },
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
         }
       ]
     }
@@ -2374,7 +2901,44 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -2420,7 +2984,44 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -2484,7 +3085,44 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -2500,6 +3138,12 @@
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
+        },
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
         }
       ]
     }
@@ -2540,6 +3184,12 @@
           "title": "Versioning, Metadata and Storage",
           "url": "https://blog.min.io/minio-versioning-metadata-deep-dive/",
           "body": "Learn how MinIO supports Lifecycle management through a complete object locking framework."
+        },
+        {
+          "img": "https://images.unsplash.com/photo-1597386601945-8980df52c3dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDI4fHxtZWFzdXJlJTIwZ2F1Z2UlMjBkaWFsfGVufDB8fHx8MTY4OTEwMjYyMnww&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Low Level Performance Testing for Object Storage",
+          "url": "https://blog.min.io/object-storage-low-level-performance-testing/",
+          "body": "Learn how to measure your system performance with built in tools to measure drive, I/O and network metrics."
         }
       ]
     }
@@ -2722,6 +3372,24 @@
           "title": "Creating Buckets and Users through the MinIO Console",
           "url": "https://www.youtube.com/watch?v=0PgMxz0HauA",
           "body": "Learn how to manage your storage buckets and objects with a hands-on introduction to the MinIO Console and SDKs."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/mv8I1wvTCrE/mqdefault_6s.webp?du=3000&sqp=CJintaoG&rs=AOn4CLA0GvV4whY7znEVT55n_XppZ5eKHQ",
+          "title": "MinIO Authentication and Authorization Using OpenID and Keycloak",
+          "url": "https://www.youtube.com/watch?v=mv8I1wvTCrE",
+          "body": "In this video you will learn how to set up an OpenID service, Keycloak, to provide authentication and authorization as part of a MinIO deployment."
         }
       ]
     },
@@ -2775,7 +3443,44 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -2828,6 +3533,36 @@
           "title": "Console Introduction - Add a Bucket and a User",
           "url": "https://www.youtube.com/watch?v=zqjsw4O2-4U",
           "body": "This session shows how to create AWS S3 buckets and users with MinIO Console."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/mv8I1wvTCrE/mqdefault_6s.webp?du=3000&sqp=CJintaoG&rs=AOn4CLA0GvV4whY7znEVT55n_XppZ5eKHQ",
+          "title": "MinIO Authentication and Authorization Using OpenID and Keycloak",
+          "url": "https://www.youtube.com/watch?v=mv8I1wvTCrE",
+          "body": "In this video you will learn how to set up an OpenID service, Keycloak, to provide authentication and authorization as part of a MinIO deployment."
         }
       ]
     },
@@ -2883,7 +3618,44 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -2969,7 +3741,44 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -3015,7 +3824,32 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -3061,7 +3895,44 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -3208,6 +4079,12 @@
           "title": "Versioning, Metadata and Storage",
           "url": "https://blog.min.io/minio-versioning-metadata-deep-dive/",
           "body": "Learn how MinIO supports Lifecycle management through a complete object locking framework."
+        },
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
         }
       ]
     }
@@ -3244,11 +4121,43 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/5ptKrZzOs4c/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAkZDamqqZazUfx0zzx4Y690eRLrw",
+          "title": "MinIO Event Notifications - Overview",
+          "url": "https://www.youtube.com/watch?v=5ptKrZzOs4c",
+          "body": "Use the Event framework to see what's going on in the system using Bucket, Object, Replication and ILM events."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/Yh_1grPSBjw/mqdefault_6s.webp?du=3000&sqp=CKSLtaoG&rs=AOn4CLDPnftE6KALzW1ghJWdRYWpt4BOtQ",
+          "title": "Managing Event Notifications Using MinIO MC Commands",
+          "url": "https://www.youtube.com/watch?v=Yh_1grPSBjw",
+          "body": "This video provides an overview of the types of event notifications and how to set them up using MinIO's mc commands."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/_ZEjm4bPgVI/mqdefault_6s.webp?du=3000&sqp=CPiHtaoG&rs=AOn4CLDuJYSDGLEFh7k_Y40c_PEMDxYilw",
+          "title": "MinIO Events Notifications - Setting Up Webhooks Using Python",
+          "url": "https://www.youtube.com/watch?v=_ZEjm4bPgVI",
+          "body": "This video provides an overview of how to use Python and Flask to set up a Webhook on MinIO. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/KiWWVgfuulU/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAWW3Ly89lIRm7seH5EAfaJbrmFKA",
+          "title": "MinIO Event Notifications - Using The MinIO Python SDK to Write Custom Webhooks",
+          "url": "https://www.youtube.com/watch?v=KiWWVgfuulU",
+          "body": "This video dives deeper into using the MinIO Python SDK to setup and manage notifications."
+        }
+      ]
     },
     "blog": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
+        }
+      ]
     }
   },
   "bucket_detail_replication": {
@@ -3350,6 +4259,12 @@
       "header": null,
       "links": [
         {
+          "img": "https://i.ytimg.com/vi/bZsNxeuzmYc/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAbvdRADQLInFIdXKfiipJQH_uuOQ",
+          "title": "MinIO Feature Overview: Object Lifecycle Management",
+          "url": "https://www.youtube.com/watch?v=bZsNxeuzmYc",
+          "body": "Learn about MinIO's object lifecycle management capabilities."
+        },
+        {
           "img": "https://i.ytimg.com/vi/5fz3rE3wjGg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCq8mxi_s8tron8E3TPgTMfUbiiDw",
           "title": "Lifecycle Management Lab",
           "url": "https://www.youtube.com/watch?v=5fz3rE3wjGg",
@@ -3401,7 +4316,44 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        }
+      ]
     },
     "blog": {
       "header": null,
@@ -3515,11 +4467,42 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/5ptKrZzOs4c/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAkZDamqqZazUfx0zzx4Y690eRLrw",
+          "title": "MinIO Event Notifications - Overview",
+          "url": "https://www.youtube.com/watch?v=5ptKrZzOs4c",
+          "body": "Use the Event framework to see what's going on in the system using Bucket, Object, Replication and ILM events."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/Yh_1grPSBjw/mqdefault_6s.webp?du=3000&sqp=CKSLtaoG&rs=AOn4CLDPnftE6KALzW1ghJWdRYWpt4BOtQ",
+          "title": "Managing Event Notifications Using MinIO MC Commands",
+          "url": "https://www.youtube.com/watch?v=Yh_1grPSBjw",
+          "body": "This video provides an overview of the types of event notifications and how to set them up using MinIO's mc commands."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/_ZEjm4bPgVI/mqdefault_6s.webp?du=3000&sqp=CPiHtaoG&rs=AOn4CLDuJYSDGLEFh7k_Y40c_PEMDxYilw",
+          "title": "MinIO Events Notifications - Setting Up Webhooks Using Python",
+          "url": "https://www.youtube.com/watch?v=_ZEjm4bPgVI",
+          "body": "This video provides an overview of how to use Python and Flask to set up a Webhook on MinIO. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/KiWWVgfuulU/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAWW3Ly89lIRm7seH5EAfaJbrmFKA",
+          "title": "MinIO Event Notifications - Using The MinIO Python SDK to Write Custom Webhooks",
+          "url": "https://www.youtube.com/watch?v=KiWWVgfuulU",
+          "body": "This video dives deeper into using the MinIO Python SDK to setup and manage notifications."
+        }
+      ]
     },
     "blog": {
       "header": null,
       "links": [
+        {
+          "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
+          "title": "Managing Objects with Tagging and Policies",
+          "url": "https://blog.min.io/managing-objects-tagging-policies/",
+          "body": "Learn how to use tags to enable fine-grained object access, event notifications and lifecycle management."
+        },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2023/03/SUBNET-call-home.jpg",
           "title": "SUBNET Callhome Diagnostics",
@@ -3567,7 +4550,50 @@
     },
     "video": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/vdHv9wfhu24/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDD5XCqo96ttxlkE7OgfjvB3PVfsg",
+          "title": "MinIO Identity and Access Management: Part 1 - Overview And Modification of Built In Policies",
+          "url": "https://www.youtube.com/watch?v=vdHv9wfhu24",
+          "body": "This video introduces MinIO IAM policies, including an overview of the built-in policies, and how to create and remove a policy."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/sJEFAVqoKr0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAusS0DwSCn6d4FhO4X5AdqrUaPkg",
+          "title": "MinIO Identity and Access Management: Part 2 - Using IDP to Manage Users And Groups",
+          "url": "https://www.youtube.com/watch?v=sJEFAVqoKr0&t=1s",
+          "body": "This video discusses Users and Groups, and how policies can be applied to them to enable specific permissions."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/CrBjB7vbI7M/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_su0oe9zEi161RCk93FnUTYPFIA",
+          "title": "MinIO Identity and Access Management: Part 3 - Interfacing with OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=CrBjB7vbI7M",
+          "body": "This video is focused on interfacing with OpenID and LDAP to manage access to MinIO."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/Iz8ChZ7FRrw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCIydCvZwZJFpNxl2WXbLjPaKe5EA",
+          "title": "MinIO Identity and Access Management: Part 4 - Lab - Setting Up Users, Groups, and Policies",
+          "url": "https://www.youtube.com/watch?v=Iz8ChZ7FRrw",
+          "body": "This Lab video demonstrates setting up identity and access management based Users, Groups and Policies. "
+        },
+        {
+          "img": "https://i.ytimg.com/vi/z2bRoMrQxv0/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCghaS6RnEvedzVtJ7pwXhA4HlcSg",
+          "title": "MinIO Identity and Access Management: Part 5 - Lab - Creating A Custom Policy",
+          "url": "https://www.youtube.com/watch?v=z2bRoMrQxv0",
+          "body": "This Lab video demonstrates creating custom IAM policies."
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/UGROqu7mYJs/mqdefault_6s.webp?du=3000&sqp=CKKwtaoG&rs=AOn4CLAZReamyk9ZqWVukyOrYRgDALYU2Q",
+          "title": "MinIO Identity and Access Management: Part 6 - Lab - Interfacing With OpenID and LDAP",
+          "url": "https://www.youtube.com/watch?v=UGROqu7mYJs",
+          "body": "This Lab video demonstrates interfacing with OpenID and LDAP. "
+        },
+        {
+          "img": "https://i.ytimg.com/an_webp/mv8I1wvTCrE/mqdefault_6s.webp?du=3000&sqp=CJintaoG&rs=AOn4CLA0GvV4whY7znEVT55n_XppZ5eKHQ",
+          "title": "MinIO Authentication and Authorization Using OpenID and Keycloak",
+          "url": "https://www.youtube.com/watch?v=mv8I1wvTCrE",
+          "body": "In this video you will learn how to set up an OpenID service, Keycloak, to provide authentication and authorization as part of a MinIO deployment."
+        }
+      ]
     },
     "blog": {
       "header": null,
