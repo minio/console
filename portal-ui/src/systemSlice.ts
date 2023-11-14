@@ -46,7 +46,7 @@ export interface SystemState {
   helpName: string;
   helpTabName: string;
   locationPath: string;
-  darkMode: boolean | null;
+  darkMode: boolean;
 }
 
 const initialState: SystemState = {

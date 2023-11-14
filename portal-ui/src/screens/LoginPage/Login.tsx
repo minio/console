@@ -27,8 +27,7 @@ import StrategyForm from "./StrategyForm";
 import { getLogoVar } from "../../config";
 import { RedirectRule } from "api/consoleApi";
 import { redirectRules } from "./login.utils";
-import { setDarkMode, setHelpName } from "../../systemSlice";
-import get from "lodash/get";
+import { setHelpName } from "../../systemSlice";
 
 export const getTargetPath = () => {
   let targetPath = "/browser";
@@ -74,15 +73,6 @@ const Login = () => {
       dispatch(getFetchConfigurationAsync());
     }
   }, [loadingFetchConfiguration, dispatch]);
-
-  useEffect(() => {
-    if (darkMode === null) {
-      const systemDarkMode = window.matchMedia("(prefers-color-scheme: dark)");
-      const darkModeFromSystem = get(systemDarkMode, "matches", false);
-
-      dispatch(setDarkMode(darkModeFromSystem));
-    }
-  }, [darkMode, dispatch]);
 
   let loginComponent;
 

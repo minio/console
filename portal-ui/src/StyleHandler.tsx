@@ -42,7 +42,7 @@ const StyleHandler = ({ children }: IStyleHandler) => {
   return (
     <Fragment>
       <GlobalStyles />
-      <ThemeHandler darkMode={!!darkMode} customTheme={thm}>
+      <ThemeHandler darkMode={darkMode} customTheme={thm}>
         {children}
       </ThemeHandler>
     </Fragment>
