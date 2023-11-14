@@ -43,6 +43,12 @@
           "body": "Learn how Policy-Based Access Control (PBAC)  is used to define the authorized actions and resources  to which an authenticated user has access"
         },
         {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
           "title": "Troubleshooting",
           "url": "https://min.io/docs/minio/linux/operations/troubleshooting.html",
@@ -58,6 +64,12 @@
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
@@ -249,6 +261,12 @@
           "body": "MinIO uses Policy-Based Access Control (PBAC) to define the authorized actions and resources to which an authenticated user has access."
         },
         {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
           "title": "Troubleshooting",
           "url": "https://min.io/docs/minio/linux/operations/troubleshooting.html",
@@ -264,6 +282,12 @@
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
@@ -1562,6 +1586,12 @@
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
@@ -1637,7 +1667,14 @@
     },
     "blog": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        }
+      ]
     }
   },
   "heal": {
@@ -1823,6 +1860,12 @@
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "Active Directory / LDAP Access Management",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/ad-ldap-access-management.html",
           "body": "For identities managed by the external AD/LDAP provider, MinIO uses the user’s Distinguished Name and attempts to map it against an existing policy."
@@ -1890,6 +1933,12 @@
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         }
       ]
     }
@@ -1921,6 +1970,12 @@
           "title": "User Management",
           "url": "https://min.io/docs/minio/linux/administration/identity-access-management/minio-user-management.html#",
           "body": "Each user can have one or more assigned policies that explicitly list the actions and resources to which that user has access. Users can also inherit policies from the groups in which they have membership."
+        },
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
@@ -1999,6 +2054,12 @@
       "header": null,
       "links": [
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
@@ -2040,6 +2101,12 @@
           "title": "Active Directory / LDAP Access Management",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/ad-ldap-access-management.html",
           "body": "For identities managed by the external AD/LDAP provider, MinIO uses the user’s Distinguished Name and attempts to map it against an existing policy."
+        },
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
@@ -2117,6 +2184,12 @@
     "blog": {
       "header": null,
       "links": [
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
           "title": "Access Control Best Practices",
@@ -2750,6 +2823,12 @@
           "body": "MinIO uses Policy-Based Access Control (PBAC) to define the authorized actions and resources to which an authenticated user has access."
         },
         {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
           "title": "Troubleshooting",
           "url": "https://min.io/docs/minio/linux/operations/troubleshooting.html",
@@ -2788,6 +2867,12 @@
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
@@ -2827,6 +2912,12 @@
           "body": "MinIO uses Policy-Based Access Control (PBAC) to define the authorized actions and resources to which an authenticated user has access."
         },
         {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
           "title": "Troubleshooting",
           "url": "https://min.io/docs/minio/linux/operations/troubleshooting.html",
@@ -2873,6 +2964,12 @@
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
         },
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
           "title": "Managing Objects with Tagging and Policies",
           "url": "https://blog.min.io/managing-objects-tagging-policies/",
@@ -2890,6 +2987,12 @@
           "title": "Identity and Access Management",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management.html",
           "body": "MinIO uses Policy-Based Access Control (PBAC) to define the authorized actions and resources to which an authenticated user has access."
+        },
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
@@ -2948,6 +3051,12 @@
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
@@ -2975,6 +3084,12 @@
           "body": "A group is a collection of users. Each group can have one or more assigned policies that explicitly list the actions and resources to which group members are allowed or denied access."
         },
         {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
           "title": "Troubleshooting",
           "url": "https://min.io/docs/minio/linux/operations/troubleshooting.html",
@@ -3031,6 +3146,12 @@
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
@@ -3076,6 +3197,12 @@
           "body": "MinIO uses Policy-Based Access Control (PBAC) to define the authorized actions and resources to which an authenticated user has access."
         },
         {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
           "title": "Troubleshooting",
           "url": "https://min.io/docs/minio/linux/operations/troubleshooting.html",
@@ -3138,6 +3265,12 @@
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
@@ -3407,6 +3540,12 @@
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         }
       ]
     }
@@ -3516,7 +3655,12 @@
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management.html",
           "body": "MinIO uses Policy-Based Access Control (PBAC) to define the authorized actions and resources to which an authenticated user has access."
         },
-
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
           "title": "Troubleshooting",
@@ -3568,7 +3712,14 @@
     },
     "blog": {
       "header": null,
-      "links": []
+      "links": [
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        }
+      ]
     }
   },
   "watch": {
@@ -3609,6 +3760,12 @@
           "body": "A group is a collection of users. Each group can have one or more assigned policies that explicitly list the actions and resources to which group members are allowed or denied access."
         },
         {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
           "title": "Troubleshooting",
           "url": "https://min.io/docs/minio/linux/operations/troubleshooting.html",
@@ -3671,6 +3828,12 @@
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
           "body": "This blog post focuses on the role of Identity Access Management (IAM) in protecting cloud resources and data."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         }
       ]
     }
@@ -3690,6 +3853,12 @@
           "title": "Policy Document Structure",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#policy-document-structure",
           "body": "MinIO policy documents use the same schema as AWS IAM Policy documents. See policy templates and allowed S3 Policy actions and condition keys in our docs."
+        },
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
@@ -3713,6 +3882,12 @@
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
@@ -3730,6 +3905,12 @@
           "title": "Access Managemnt",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/policy-based-access-control.html#minio-policy-actions",
           "body": "Text snippet that will be relevant to the user will  go here  made to look nice in the helpitem size  on two-three lines"
+        },
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
@@ -3788,6 +3969,12 @@
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
@@ -3819,6 +4006,12 @@
           "title": "Troubleshooting",
           "url": "https://min.io/docs/minio/linux/operations/troubleshooting.html",
           "body": "Need more help?  Check out additional Troubleshooting options"
+        },
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         }
       ]
     },
@@ -3861,6 +4054,12 @@
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
         },
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
           "title": "Securing Hybrid Cloud Storage with MinIO IAM",
           "url": "https://blog.min.io/secure-hybrid-cloud-minio-iam/",
@@ -3884,6 +4083,12 @@
           "title": "Group Management",
           "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/minio-group-management.html",
           "body": "A group is a collection of users. Each group can have one or more assigned policies that explicitly list the actions and resources to which group members are allowed or denied access."
+        },
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "OpenID Connect Access Management",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/oidc-access-management.html",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
@@ -3942,6 +4147,12 @@
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
           "body": "This blog covers the MinIO best practices with respect to S3 security and access controls."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/10/openid-minio.jpg",
+          "title": "MinIO's OpenID Connect Integration Explained",
+          "url": "https://blog.min.io/minio-openid-connect-integration",
+          "body": "Learn more about connecting MinIO to OpenID for access management."
         },
         {
           "img": "https://blog.min.io/content/images/size/w2000/2022/06/pexels-pixabay-210158.jpg",
