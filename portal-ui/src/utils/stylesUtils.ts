@@ -279,3 +279,17 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
 
   return retVal;
 };
+
+export const isDarkModeOn = () => {
+  const darkMode = localStorage.getItem("dark-mode");
+
+  if (!darkMode) {
+    return null;
+  }
+
+  return darkMode === "on";
+};
+
+export const storeDarkMode = (mode: "on" | "off") => {
+  localStorage.setItem("dark-mode", mode);
+};

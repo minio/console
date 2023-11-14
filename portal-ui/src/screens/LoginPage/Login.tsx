@@ -27,7 +27,8 @@ import StrategyForm from "./StrategyForm";
 import { getLogoVar } from "../../config";
 import { RedirectRule } from "api/consoleApi";
 import { redirectRules } from "./login.utils";
-import { setHelpName } from "../../systemSlice";
+import { setDarkMode, setHelpName } from "../../systemSlice";
+import get from "lodash/get";
 
 export const getTargetPath = () => {
   let targetPath = "/browser";
@@ -59,6 +60,8 @@ const Login = () => {
     (state: AppState) => state.login.backgroundAnimation,
   );
 
+  const darkMode = useSelector((state: AppState) => state.system.darkMode);
+
   useEffect(() => {
     if (navigateTo !== "") {
       dispatch(resetForm());
@@ -71,6 +74,15 @@ const Login = () => {
       dispatch(getFetchConfigurationAsync());
     }
   }, [loadingFetchConfiguration, dispatch]);
+
+  useEffect(() => {
+    if (darkMode === null) {
+      const systemDarkMode = window.matchMedia("(prefers-color-scheme: dark)");
+      const darkModeFromSystem = get(systemDarkMode, "matches", false);
+
+      dispatch(setDarkMode(darkModeFromSystem));
+    }
+  }, [darkMode, dispatch]);
 
   let loginComponent;
 
