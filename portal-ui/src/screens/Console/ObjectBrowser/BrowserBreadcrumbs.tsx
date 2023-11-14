@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import CopyToClipboard from "react-copy-to-clipboard";
 import styled from "styled-components";
@@ -91,6 +91,7 @@ const BrowserBreadcrumbs = ({
   );
 
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
+  const [canCreateSubpath, setCanCreateSubpath] = useState<boolean>(false);
 
   const putObjectPermScopes = [
     IAM_SCOPES.S3_PUT_OBJECT,
@@ -116,12 +117,23 @@ const BrowserBreadcrumbs = ({
     pathToCheckPerms,
     putObjectPermScopes,
   );
+  useEffect(() => {
+    sessionGrants.array.forEach((element) => {
+      console.log("check this one! ", element);
+      if (element.includes("/*")) {
+        setCanCreateSubpath(true);
+        console.log("got one!");
+      }
+    });
+  }, []);
 
   const canCreatePath =
     hasPermission(
       [pathToCheckPerms, ...sessionGrantWildCards],
       putObjectPermScopes,
-    ) || anonymousMode;
+    ) ||
+    anonymousMode ||
+    canCreateSubpath;
 
   let breadcrumbsMap = splitPaths.map((objectItem: string, index: number) => {
     const subSplit = `${splitPaths.slice(0, index + 1).join("/")}/`;
