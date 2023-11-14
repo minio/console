@@ -111,7 +111,6 @@ const BarChartWidget = ({
     const handleWindowResize = () => {
       let extMD = false;
       if (window.innerWidth >= breakPoints.md) {
-        console.log("Bigger");
         extMD = true;
       }
       setBiggerThanMd(extMD);

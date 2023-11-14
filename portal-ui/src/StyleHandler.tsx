@@ -15,24 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import {
-  StyledEngineProvider,
-  Theme,
-  ThemeProvider,
-} from "@mui/material/styles";
-import theme from "./theme/main";
+import { GlobalStyles, ThemeHandler } from "mds";
 import "react-virtualized/styles.css";
 
 import { generateOverrideTheme } from "./utils/stylesUtils";
 import "./index.css";
 import { useSelector } from "react-redux";
 import { AppState } from "./store";
-import { GlobalStyles, ThemeHandler } from "mds";
-
-declare module "@mui/styles/defaultTheme" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
 
 interface IStyleHandler {
   children: React.ReactNode;
@@ -53,11 +42,7 @@ const StyleHandler = ({ children }: IStyleHandler) => {
   return (
     <Fragment>
       <GlobalStyles />
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <ThemeHandler customTheme={thm}>{children}</ThemeHandler>
-        </ThemeProvider>
-      </StyledEngineProvider>
+      <ThemeHandler customTheme={thm}>{children}</ThemeHandler>
     </Fragment>
   );
 };

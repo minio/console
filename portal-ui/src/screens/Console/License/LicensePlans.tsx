@@ -26,10 +26,7 @@ import {
   ConsoleStandard,
   LicenseDocIcon,
 } from "mds";
-import { useTheme } from "@mui/material/styles";
 import { SubnetInfo } from "./types";
-
-import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   COMMUNITY_PLAN_FEATURES,
   ENTERPRISE_PLAN_FEATURES,
@@ -207,8 +204,25 @@ const PricingFeatureItem = (props: {
 };
 
 const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [isSmallScreen, setIsSmallScreen] = useState<boolean>(
+    window.innerWidth >= breakPoints.sm,
+  );
+
+  useEffect(() => {
+    const handleWindowResize = () => {
+      let extMD = false;
+      if (window.innerWidth >= breakPoints.sm) {
+        extMD = true;
+      }
+      setIsSmallScreen(extMD);
+    };
+
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, []);
 
   let currentPlan = !licenseInfo
     ? "community"
