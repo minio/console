@@ -16,12 +16,17 @@
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AppState } from "../../store";
-import { setErrorSnackMessage, userLogged } from "../../systemSlice";
+import {
+  setDarkMode,
+  setErrorSnackMessage,
+  userLogged,
+} from "../../systemSlice";
 import { setNavigateTo } from "./loginSlice";
 import { getTargetPath } from "./Login";
 import { api } from "api";
 import { ApiError, LoginRequest } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
+import { isDarkModeOn } from "../../utils/stylesUtils";
 
 export const doLoginAsync = createAsyncThunk(
   "login/doLoginAsync",
@@ -47,10 +52,13 @@ export const doLoginAsync = createAsyncThunk(
     return api.login
       .login(payload)
       .then((res) => {
+        const darkModeEnabled = isDarkModeOn(); // If null, then we set the dark mode as disabled per requirement. If configuration al ready set, then we establish this configuration
+
         // We set the state in redux
         dispatch(userLogged(true));
         localStorage.setItem("userLoggedIn", accessKey);
         dispatch(setNavigateTo(getTargetPath()));
+        dispatch(setDarkMode(!!darkModeEnabled));
       })
       .catch(async (res) => {
         const err = (await res.json()) as ApiError;

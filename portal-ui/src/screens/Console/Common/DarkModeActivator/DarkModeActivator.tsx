@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,39 +14,35 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
-import { GlobalStyles, ThemeHandler } from "mds";
-import "react-virtualized/styles.css";
-
-import { generateOverrideTheme } from "./utils/stylesUtils";
-import "./index.css";
+import React from "react";
+import { Button, DarkModeIcon } from "mds";
+import TooltipWrapper from "../TooltipWrapper/TooltipWrapper";
 import { useSelector } from "react-redux";
-import { AppState } from "./store";
+import { AppState, useAppDispatch } from "../../../../store";
+import { setDarkMode } from "../../../../systemSlice";
+import { storeDarkMode } from "../../../../utils/stylesUtils";
 
-interface IStyleHandler {
-  children: React.ReactNode;
-}
+const DarkModeActivator = () => {
+  const dispatch = useAppDispatch();
 
-const StyleHandler = ({ children }: IStyleHandler) => {
-  const colorVariants = useSelector(
-    (state: AppState) => state.system.overrideStyles,
-  );
   const darkMode = useSelector((state: AppState) => state.system.darkMode);
 
-  let thm = undefined;
+  const darkModeActivator = () => {
+    const currentStatus = !!darkMode;
 
-  if (colorVariants) {
-    thm = generateOverrideTheme(colorVariants);
-  }
+    dispatch(setDarkMode(!currentStatus));
+    storeDarkMode(!currentStatus ? "on" : "off");
+  };
 
   return (
-    <Fragment>
-      <GlobalStyles />
-      <ThemeHandler darkMode={darkMode} customTheme={thm}>
-        {children}
-      </ThemeHandler>
-    </Fragment>
+    <TooltipWrapper tooltip={`${darkMode ? "Light" : "Dark"} Mode`}>
+      <Button
+        id={"dark-mode-activator"}
+        icon={<DarkModeIcon />}
+        onClick={darkModeActivator}
+      />
+    </TooltipWrapper>
   );
 };
 
-export default StyleHandler;
+export default DarkModeActivator;

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { IEmbeddedCustomStyles } from "../common/types";
+import get from "lodash/get";
 
 export const getOverrideColorVariants: (
   customStyles: string,
@@ -278,4 +279,19 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
   }
 
   return retVal;
+};
+
+export const isDarkModeOn = () => {
+  const darkMode = localStorage.getItem("dark-mode");
+
+  if (!darkMode) {
+    const systemDarkMode = window.matchMedia("(prefers-color-scheme: dark)");
+    return get(systemDarkMode, "matches", false);
+  }
+
+  return darkMode === "on";
+};
+
+export const storeDarkMode = (mode: "on" | "off") => {
+  localStorage.setItem("dark-mode", mode);
 };
