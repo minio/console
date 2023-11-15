@@ -29,6 +29,7 @@ import {
   Switch,
   ServiceAccountIcon,
   HelpTip,
+  DateTimeInput,
 } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
@@ -45,7 +46,6 @@ import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 import { useAppDispatch } from "store";
 import { getRandomString } from "common/utils";
-import DateTimePickerWrapper from "../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 
 const AddServiceAccount = () => {
   const dispatch = useAppDispatch();
@@ -257,22 +257,23 @@ const AddServiceAccount = () => {
                   marginTop: "15px",
                 }}
               >
-                <label style={{ width: "150px" }}>Expiry</label>
                 <Box
                   sx={{
-                    padding: "2px",
+                    marginTop: "15px",
+                    width: "100%",
+                    "& label": { width: "180px" },
                   }}
                 >
-                  <DateTimePickerWrapper
-                    forSearchBlock={true}
-                    forFilterContained={false}
+                  <DateTimeInput
+                    noLabelMinWidth
                     value={expiry}
                     onChange={(e) => {
                       setExpiry(e);
                     }}
                     id="expiryTime"
-                    classNamePrefix={""}
-                    noInputIcon={true}
+                    label={"Expiry"}
+                    timeFormat={"24h"}
+                    secondsSelector={false}
                   />
                 </Box>
               </Grid>

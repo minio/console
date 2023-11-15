@@ -19,6 +19,7 @@ import {
   Box,
   Button,
   ChangeAccessPolicyIcon,
+  DateTimeInput,
   Grid,
   InputBox,
   Switch,
@@ -32,7 +33,6 @@ import { encodeURLString } from "common/utils";
 import { setErrorSnackMessage, setModalErrorSnackMessage } from "systemSlice";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import DateTimePickerWrapper from "../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import { DateTime } from "luxon";
 
 interface IServiceAccountPolicyProps {
@@ -66,7 +66,11 @@ const EditServiceAccount = ({
           const saInfo = res.data;
 
           setName(saInfo?.name || "");
-          setExpiry(saInfo?.expiration);
+
+          if (saInfo?.expiration) {
+            setExpiry(DateTime.fromISO(saInfo?.expiration));
+          }
+
           setDescription(saInfo?.description || "");
           setStatus(saInfo.accountStatus);
 
@@ -136,39 +140,27 @@ const EditServiceAccount = ({
               }
             />
           </Grid>
-
-          <Grid
-            xs={12}
+          <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "start",
-              fontWeight: 600,
-              color: "rgb(7, 25, 62)",
-              gap: 2,
               marginBottom: "15px",
               marginTop: "15px",
+              display: "flex",
+              width: "100%",
+              "& label": { width: "195px" },
             }}
           >
-            <label style={{ width: "150px" }}>Expiry</label>
-            <Box
-              sx={{
-                padding: "2px",
+            <DateTimeInput
+              noLabelMinWidth
+              value={expiry}
+              onChange={(e) => {
+                setExpiry(e);
               }}
-            >
-              <DateTimePickerWrapper
-                forSearchBlock={true}
-                forFilterContained={false}
-                value={DateTime.fromISO(expiry)}
-                onChange={(e) => {
-                  setExpiry(e);
-                }}
-                id="expiryTime"
-                classNamePrefix={""}
-                noInputIcon={true}
-              />
-            </Box>
-          </Grid>
+              id="expiryTime"
+              label={"Expiry"}
+              timeFormat={"24h"}
+              secondsSelector={false}
+            />
+          </Box>
           <Grid
             xs={12}
             sx={{

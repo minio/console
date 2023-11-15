@@ -29,6 +29,7 @@ import {
   ServiceAccountIcon,
   Switch,
   HelpTip,
+  DateTimeInput,
 } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
@@ -48,7 +49,6 @@ import AddUserServiceAccountHelpBox from "./AddUserServiceAccountHelpBox";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 import PanelTitle from "../Common/PanelTitle/PanelTitle";
-import DateTimePickerWrapper from "../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 
 const AddServiceAccount = () => {
   const dispatch = useAppDispatch();
@@ -271,38 +271,27 @@ const AddServiceAccount = () => {
                 </Grid>
               )}
 
-              <Grid
-                xs={12}
+              <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "start",
-                  fontWeight: 600,
-                  color: "rgb(7, 25, 62)",
-                  gap: 2,
                   marginBottom: "15px",
                   marginTop: "15px",
+                  width: "100%",
+                  "& label": { width: "180px" },
                 }}
               >
-                <label style={{ width: "150px" }}>Expiry</label>
-                <Box
-                  sx={{
-                    padding: "2px",
+                <DateTimeInput
+                  noLabelMinWidth
+                  value={expiry}
+                  onChange={(e) => {
+                    setExpiry(e);
                   }}
-                >
-                  <DateTimePickerWrapper
-                    forSearchBlock={true}
-                    forFilterContained={false}
-                    value={expiry}
-                    onChange={(e) => {
-                      setExpiry(e);
-                    }}
-                    id="expiryTime"
-                    classNamePrefix={""}
-                    noInputIcon={true}
-                  />
-                </Box>
-              </Grid>
+                  id="expiryTime"
+                  label={"Expiry"}
+                  timeFormat={"24h"}
+                  secondsSelector={false}
+                />
+              </Box>
+
               <InputBox
                 value={name}
                 label={"Name"}
