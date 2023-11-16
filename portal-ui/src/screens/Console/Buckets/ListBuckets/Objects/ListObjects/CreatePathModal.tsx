@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { connect, useSelector } from "react-redux";
 import {
@@ -31,7 +31,6 @@ import { encodeURLString } from "../../../../../../common/utils";
 import { BucketObjectItem } from "./types";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
-import { IAM_PAGES } from "common/SecureComponent/permissions";
 
 interface ICreatePath {
   modalOpen: boolean;
