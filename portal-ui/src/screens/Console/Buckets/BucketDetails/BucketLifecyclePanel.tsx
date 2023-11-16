@@ -86,7 +86,6 @@ const BucketLifecyclePanel = () => {
           .getBucketLifecycle(bucketName)
           .then((res) => {
             const records = get(res.data, "lifecycle", []);
-
             setLifecycleRecords(records || []);
             setLoadingLifecycle(false);
           })
@@ -147,7 +146,10 @@ const BucketLifecyclePanel = () => {
         }
         if (
           el.expiration &&
-          (el.expiration.days > 0 || el.expiration.noncurrent_expiration_days)
+          (el.expiration.days > 0 ||
+            el.expiration.noncurrent_expiration_days ||
+            (el.expiration.newer_noncurrent_expiration_versions &&
+              el.expiration.newer_noncurrent_expiration_versions > 0))
         ) {
           return <span>Expiry</span>;
         }
@@ -170,7 +172,10 @@ const BucketLifecyclePanel = () => {
         if (el.expiration) {
           if (el.expiration.days > 0) {
             return <span>Current</span>;
-          } else if (el.expiration.noncurrent_expiration_days) {
+          } else if (
+            el.expiration.noncurrent_expiration_days ||
+            el.expiration.newer_noncurrent_expiration_versions
+          ) {
             return <span>Non-Current</span>;
           }
         }
@@ -200,18 +205,24 @@ const BucketLifecyclePanel = () => {
         if (!el) {
           return <Fragment />;
         }
-        if (el.expiration) {
-          if (el.expiration.days > 0) {
-            return <span>{el.expiration.days} days</span>;
-          } else if (el.expiration.noncurrent_expiration_days) {
-            return <span>{el.expiration.noncurrent_expiration_days} days</span>;
-          }
-        }
         if (el.transition) {
           if (el.transition.days > 0) {
             return <span>{el.transition.days} days</span>;
           } else if (el.transition.noncurrent_transition_days) {
             return <span>{el.transition.noncurrent_transition_days} days</span>;
+          }
+        }
+        if (el.expiration) {
+          if (el.expiration.days > 0) {
+            return <span>{el.expiration.days} days</span>;
+          } else if (el.expiration.noncurrent_expiration_days) {
+            return <span>{el.expiration.noncurrent_expiration_days} days</span>;
+          } else {
+            return (
+              <span>
+                {el.expiration.newer_noncurrent_expiration_versions} versions
+              </span>
+            );
           }
         }
       },

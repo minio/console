@@ -5385,6 +5385,12 @@ func init() {
           "format": "int32",
           "default": 0
         },
+        "newer_noncurrentversion_expiration_versions": {
+          "description": "Non required, can be set in case of expiration is enabled",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
         "noncurrentversion_expiration_days": {
           "description": "Non required, can be set in case of expiration is enabled",
           "type": "integer",
@@ -6189,6 +6195,10 @@ func init() {
         },
         "delete_marker": {
           "type": "boolean"
+        },
+        "newer_noncurrent_expiration_versions": {
+          "type": "integer",
+          "format": "int64"
         },
         "noncurrent_expiration_days": {
           "type": "integer",
@@ -14656,6 +14666,12 @@ func init() {
           "format": "int32",
           "default": 0
         },
+        "newer_noncurrentversion_expiration_versions": {
+          "description": "Non required, can be set in case of expiration is enabled",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
         "noncurrentversion_expiration_days": {
           "description": "Non required, can be set in case of expiration is enabled",
           "type": "integer",
@@ -15455,6 +15471,10 @@ func init() {
         },
         "delete_marker": {
           "type": "boolean"
+        },
+        "newer_noncurrent_expiration_versions": {
+          "type": "integer",
+          "format": "int64"
         },
         "noncurrent_expiration_days": {
           "type": "integer",

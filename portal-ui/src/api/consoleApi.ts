@@ -880,6 +880,8 @@ export interface ExpirationResponse {
   delete_marker?: boolean;
   /** @format int64 */
   noncurrent_expiration_days?: number;
+  /** @format int64 */
+  newer_noncurrent_expiration_versions?: number;
 }
 
 export interface TransitionResponse {
@@ -943,6 +945,12 @@ export interface AddBucketLifecycle {
    * @default 0
    */
   noncurrentversion_transition_days?: number;
+  /**
+   * Non required, can be set in case of expiration is enabled
+   * @format int32
+   * @default 0
+   */
+  newer_noncurrentversion_expiration_versions?: number;
   /** Non required, can be set in case of transition is enabled */
   noncurrentversion_transition_storage_class?: string;
 }
