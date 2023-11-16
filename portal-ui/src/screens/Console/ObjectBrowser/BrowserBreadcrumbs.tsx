@@ -117,15 +117,15 @@ const BrowserBreadcrumbs = ({
     pathToCheckPerms,
     putObjectPermScopes,
   );
+
   useEffect(() => {
-    sessionGrants.array.forEach((element) => {
-      console.log("check this one! ", element);
-      if (element.includes("/*")) {
+    setCanCreateSubpath(false);
+    Object.keys(sessionGrants).forEach((grant) => {
+      grant.includes(pathToCheckPerms) &&
+        grant.includes("/*") &&
         setCanCreateSubpath(true);
-        console.log("got one!");
-      }
     });
-  }, []);
+  }, [pathToCheckPerms, internalPaths, sessionGrants]);
 
   const canCreatePath =
     hasPermission(
