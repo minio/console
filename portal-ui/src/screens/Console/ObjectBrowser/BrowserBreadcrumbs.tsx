@@ -238,6 +238,15 @@ const BrowserBreadcrumbs = ({
             bucketName={bucketName}
             folderName={internalPaths}
             onClose={closeAddFolderModal}
+            limitedSubPath={
+              canCreateSubpath &&
+              !(
+                hasPermission(
+                  [pathToCheckPerms, ...sessionGrantWildCards],
+                  putObjectPermScopes,
+                ) || anonymousMode
+              )
+            }
           />
         )}
         <Breadcrumbs
