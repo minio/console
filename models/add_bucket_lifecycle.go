@@ -47,6 +47,9 @@ type AddBucketLifecycle struct {
 	ExpiryDays int32 `json:"expiry_days,omitempty"`
 
 	// Non required, can be set in case of expiration is enabled
+	NewerNoncurrentversionExpirationVersions int32 `json:"newer_noncurrentversion_expiration_versions,omitempty"`
+
+	// Non required, can be set in case of expiration is enabled
 	NoncurrentversionExpirationDays int32 `json:"noncurrentversion_expiration_days,omitempty"`
 
 	// Non required, can be set in case of transition is enabled

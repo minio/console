@@ -90,7 +90,6 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 	if err != nil {
 		return nil, err
 	}
-
 	var rules []*models.ObjectBucketLifecycle
 
 	for _, rule := range lifecycleList.Rules {
@@ -115,10 +114,11 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 			Status: rule.Status,
 			Prefix: rulePrefix,
 			Expiration: &models.ExpirationResponse{
-				Date:                     rule.Expiration.Date.Format(time.RFC3339),
-				Days:                     int64(rule.Expiration.Days),
-				DeleteMarker:             rule.Expiration.DeleteMarker.IsEnabled(),
-				NoncurrentExpirationDays: int64(rule.NoncurrentVersionExpiration.NoncurrentDays),
+				Date:                              rule.Expiration.Date.Format(time.RFC3339),
+				Days:                              int64(rule.Expiration.Days),
+				DeleteMarker:                      rule.Expiration.DeleteMarker.IsEnabled(),
+				NoncurrentExpirationDays:          int64(rule.NoncurrentVersionExpiration.NoncurrentDays),
+				NewerNoncurrentExpirationVersions: int64(rule.NoncurrentVersionExpiration.NewerNoncurrentVersions),
 			},
 			Transition: &models.TransitionResponse{
 				Date:                     rule.Transition.Date.Format(time.RFC3339),
@@ -178,7 +178,7 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 	switch params.Body.Type {
 	case models.AddBucketLifecycleTypeTransition:
 		if params.Body.TransitionDays == 0 && params.Body.NoncurrentversionTransitionDays == 0 {
-			return errors.New("only one expiry configuration can be set (days or date)")
+			return errors.New("you must provide a value for transition days or date")
 		}
 
 		status := !params.Body.Disable
@@ -195,12 +195,13 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 			noncurrentVersionTransitionStorageClass := strings.ToUpper(params.Body.NoncurrentversionTransitionStorageClass)
 			opts.NoncurrentVersionTransitionDays = &noncurrentVersionTransitionDays
 			opts.NoncurrentVersionTransitionStorageClass = &noncurrentVersionTransitionStorageClass
-		} else {
+		} else if params.Body.TransitionDays > 0 {
 			tdays := strconv.Itoa(int(params.Body.TransitionDays))
 			sclass := strings.ToUpper(params.Body.StorageClass)
 			opts.TransitionDays = &tdays
 			opts.StorageClass = &sclass
 		}
+
 	case models.AddBucketLifecycleTypeExpiry:
 		// Verify if expiry items are set
 		if params.Body.NoncurrentversionTransitionDays != 0 {
@@ -220,10 +221,15 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 			ExpiredObjectDeleteMarker: &params.Body.ExpiredObjectDeleteMarker,
 		}
 
-		if params.Body.NoncurrentversionExpirationDays > 0 {
+		if params.Body.NewerNoncurrentversionExpirationVersions > 0 {
+			versions := int(params.Body.NewerNoncurrentversionExpirationVersions)
+			opts.NewerNoncurrentExpirationVersions = &versions
+		}
+		switch {
+		case params.Body.NoncurrentversionExpirationDays > 0:
 			days := int(params.Body.NoncurrentversionExpirationDays)
 			opts.NoncurrentVersionExpirationDays = &days
-		} else {
+		case params.Body.ExpiryDays > 0:
 			days := strconv.Itoa(int(params.Body.ExpiryDays))
 			opts.ExpiryDays = &days
 		}

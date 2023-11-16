@@ -42,6 +42,7 @@ interface IExpirationLifecycle {
   date: string;
   delete_marker?: boolean;
   noncurrent_expiration_days?: number;
+  newer_noncurrent_expiration_versions?: number;
 }
 
 interface ITransitionLifecycle {

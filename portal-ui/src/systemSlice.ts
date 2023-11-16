@@ -18,6 +18,7 @@ import { snackBarMessage, SRInfoStateType } from "./types";
 import { ErrorResponseHandler, IEmbeddedCustomStyles } from "./common/types";
 import { AppState } from "./store";
 import { SubnetInfo } from "./screens/Console/License/types";
+import { isDarkModeOn } from "./utils/stylesUtils";
 
 // determine whether we have the sidebar state stored on localstorage
 const initSideBarOpen = localStorage.getItem("sidebarOpen")
@@ -45,6 +46,7 @@ export interface SystemState {
   helpName: string;
   helpTabName: string;
   locationPath: string;
+  darkMode: boolean;
 }
 
 const initialState: SystemState = {
@@ -76,6 +78,7 @@ const initialState: SystemState = {
   helpName: "help",
   helpTabName: "docs",
   locationPath: "",
+  darkMode: isDarkModeOn(),
 };
 
 export const systemSlice = createSlice({
@@ -174,6 +177,9 @@ export const systemSlice = createSlice({
     setLocationPath: (state, action: PayloadAction<string>) => {
       state.locationPath = action.payload;
     },
+    setDarkMode: (state, action: PayloadAction<boolean>) => {
+      state.darkMode = action.payload;
+    },
     resetSystem: () => {
       return initialState;
     },
@@ -203,6 +209,7 @@ export const {
   setHelpName,
   setHelpTabName,
   setLocationPath,
+  setDarkMode,
 } = systemSlice.actions;
 
 export const selDistSet = (state: AppState) => state.system.distributedSetup;
