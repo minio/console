@@ -134,7 +134,9 @@ const DaysSelector = ({
     setValidDate(valid);
   }, [
     dateSelected,
-    maxSeconds,
+    maxDays,
+    maxHours,
+    maxMinutes,
     onChange,
     selectedDays,
     selectedHours,
