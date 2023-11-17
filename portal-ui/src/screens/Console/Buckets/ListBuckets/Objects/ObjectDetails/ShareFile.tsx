@@ -182,15 +182,12 @@ const ShareFile = ({
                 fontWeight: 400,
               }}
             >
-              With MinIO Console, you can create a temporary URL with integrated
-              access credentials for sharing objects valid for up to:{" "}
-              {niceTimeFromSeconds(maxshareLinkExpTimeVal)}. To create a
-              presigned URL with a longer time interval please update
-              MINIO_BROWSER_SESSION_DURATION environment variable on your MinIO
-              server or use MinIO Client.
-              <br />
-              <br />
-              The temporary URL expires after the configured time limit.
+              With MinIO Object Store, you can create a temporary URL with
+              integrated access credentials for sharing objects valid for up to:{" "}
+              {niceTimeFromSeconds(maxshareLinkExpTimeVal)} or until your
+              session expires. To create a presigned URL with a longer time
+              interval please update MINIO_STS_DURATION environment variable on
+              your MinIO server or use MinIO Client (mc).
             </Grid>
             <br />
             <Grid item xs={12}>
