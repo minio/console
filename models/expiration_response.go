@@ -43,6 +43,9 @@ type ExpirationResponse struct {
 	// delete marker
 	DeleteMarker bool `json:"delete_marker,omitempty"`
 
+	// newer noncurrent expiration versions
+	NewerNoncurrentExpirationVersions int64 `json:"newer_noncurrent_expiration_versions,omitempty"`
+
 	// noncurrent expiration days
 	NoncurrentExpirationDays int64 `json:"noncurrent_expiration_days,omitempty"`
 }
