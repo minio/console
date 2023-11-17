@@ -38,6 +38,7 @@ interface ICreatePath {
   folderName: string;
   onClose: () => any;
   simplePath: string | null;
+  limitedSubPath?: boolean;
 }
 
 const CreatePathModal = ({
@@ -46,6 +47,7 @@ const CreatePathModal = ({
   bucketName,
   onClose,
   simplePath,
+  limitedSubPath,
 }: ICreatePath) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -158,6 +160,11 @@ const CreatePathModal = ({
             onChange={inputChange}
             onKeyPress={keyPressed}
             required
+            tooltip={
+              (limitedSubPath &&
+                "You may only have write access on a limited set of subpaths within this path. Please carefully review your User permissions to understand the paths to which you may write.") ||
+              ""
+            }
           />
           <Grid item xs={12} sx={modalStyleUtils.modalButtonBar}>
             <Button
