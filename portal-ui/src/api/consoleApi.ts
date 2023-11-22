@@ -214,8 +214,13 @@ export interface AddPolicyRequest {
   policy: string;
 }
 
-export interface AddServiceAccountPolicyRequest {
+export interface UpdateServiceAccountRequest {
   policy: string;
+  secretKey?: string;
+  name?: string;
+  description?: string;
+  expiry?: string;
+  status?: string;
 }
 
 export interface ListPoliciesResponse {
@@ -727,6 +732,16 @@ export interface BulkUserGroups {
   groups: string[];
 }
 
+export interface ServiceAccount {
+  parentUser?: string;
+  accountStatus?: string;
+  impliedPolicy?: boolean;
+  policy?: string;
+  name?: string;
+  description?: string;
+  expiration?: string;
+}
+
 export type ServiceAccounts = {
   accountStatus?: string;
   name?: string;
@@ -738,6 +753,10 @@ export type ServiceAccounts = {
 export interface ServiceAccountRequest {
   /** policy to be applied to the Service Account if any */
   policy?: string;
+  name?: string;
+  description?: string;
+  expiry?: string;
+  comment?: string;
 }
 
 export interface ServiceAccountRequestCreds {
@@ -745,6 +764,10 @@ export interface ServiceAccountRequestCreds {
   policy?: string;
   accessKey?: string;
   secretKey?: string;
+  name?: string;
+  description?: string;
+  expiry?: string;
+  comment?: string;
 }
 
 export interface ServiceAccountCreds {
@@ -1720,9 +1743,10 @@ export class HttpClient<SecurityDataType = unknown> {
             ? { "Content-Type": type }
             : {}),
         },
-        signal: cancelToken
-          ? this.createAbortSignal(cancelToken)
-          : requestParams.signal,
+        signal:
+          (cancelToken
+            ? this.createAbortSignal(cancelToken)
+            : requestParams.signal) || null,
         body:
           typeof body === "undefined" || body === null
             ? null
@@ -3056,23 +3080,6 @@ export class Api<
      * No description
      *
      * @tags ServiceAccount
-     * @name DeleteServiceAccount
-     * @summary Delete Service Account
-     * @request DELETE:/service-accounts/{access_key}
-     * @secure
-     */
-    deleteServiceAccount: (accessKey: string, params: RequestParams = {}) =>
-      this.request<void, ApiError>({
-        path: `/service-accounts/${accessKey}`,
-        method: "DELETE",
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags ServiceAccount
      * @name DeleteMultipleServiceAccounts
      * @summary Delete Multiple Service Accounts
      * @request DELETE:/service-accounts/delete-multi
@@ -3094,14 +3101,14 @@ export class Api<
      * No description
      *
      * @tags ServiceAccount
-     * @name GetServiceAccountPolicy
-     * @summary Get Service Account Policy
-     * @request GET:/service-accounts/{access_key}/policy
+     * @name GetServiceAccount
+     * @summary Get Service Account
+     * @request GET:/service-accounts/{access_key}
      * @secure
      */
-    getServiceAccountPolicy: (accessKey: string, params: RequestParams = {}) =>
-      this.request<IamEntity, ApiError>({
-        path: `/service-accounts/${accessKey}/policy`,
+    getServiceAccount: (accessKey: string, params: RequestParams = {}) =>
+      this.request<ServiceAccount, ApiError>({
+        path: `/service-accounts/${accessKey}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -3112,22 +3119,39 @@ export class Api<
      * No description
      *
      * @tags ServiceAccount
-     * @name SetServiceAccountPolicy
+     * @name UpdateServiceAccount
      * @summary Set Service Account Policy
-     * @request PUT:/service-accounts/{access_key}/policy
+     * @request PUT:/service-accounts/{access_key}
      * @secure
      */
-    setServiceAccountPolicy: (
+    updateServiceAccount: (
       accessKey: string,
-      policy: AddServiceAccountPolicyRequest,
+      body: UpdateServiceAccountRequest,
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/service-accounts/${accessKey}/policy`,
+        path: `/service-accounts/${accessKey}`,
         method: "PUT",
-        body: policy,
+        body: body,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ServiceAccount
+     * @name DeleteServiceAccount
+     * @summary Delete Service Account
+     * @request DELETE:/service-accounts/{access_key}
+     * @secure
+     */
+    deleteServiceAccount: (accessKey: string, params: RequestParams = {}) =>
+      this.request<void, ApiError>({
+        path: `/service-accounts/${accessKey}`,
+        method: "DELETE",
+        secure: true,
         ...params,
       }),
   };

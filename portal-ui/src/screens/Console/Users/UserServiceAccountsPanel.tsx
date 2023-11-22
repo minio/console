@@ -25,7 +25,7 @@ import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 
 import DeleteMultipleServiceAccounts from "./DeleteMultipleServiceAccounts";
 import { selectSAs } from "../Configurations/utils";
-import ServiceAccountPolicy from "../Account/ServiceAccountPolicy";
+import EditServiceAccount from "../Account/EditServiceAccount";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_SCOPES,
@@ -66,7 +66,7 @@ const UserServiceAccountsPanel = ({
     useState<NewServiceAccount | null>(null);
   const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
-  const [policyOpen, setPolicyOpen] = useState<boolean>(false);
+  const [editOpen, setEditOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchRecords();
@@ -114,9 +114,9 @@ const UserServiceAccountsPanel = ({
     setNewServiceAccount(null);
   };
 
-  const policyModalOpen = (selectedServiceAccount: string) => {
+  const editModalOpen = (selectedServiceAccount: string) => {
     setSelectedServiceAccount(selectedServiceAccount);
-    setPolicyOpen(true);
+    setEditOpen(true);
   };
 
   const confirmDeleteServiceAccount = (selectedServiceAccount: string) => {
@@ -125,7 +125,7 @@ const UserServiceAccountsPanel = ({
   };
 
   const closePolicyModal = () => {
-    setPolicyOpen(false);
+    setEditOpen(false);
     setLoading(true);
   };
 
@@ -134,7 +134,7 @@ const UserServiceAccountsPanel = ({
       type: "view",
       onClick: (value: any) => {
         if (value) {
-          policyModalOpen(value.accessKey);
+          editModalOpen(value.accessKey);
         }
       },
     },
@@ -143,6 +143,14 @@ const UserServiceAccountsPanel = ({
       onClick: (value: any) => {
         if (value) {
           confirmDeleteServiceAccount(value.accessKey);
+        }
+      },
+    },
+    {
+      type: "edit",
+      onClick: (value: any) => {
+        if (value) {
+          editModalOpen(value.accessKey);
         }
       },
     },
@@ -181,9 +189,9 @@ const UserServiceAccountsPanel = ({
           entity="Access Key"
         />
       )}
-      {policyOpen && (
-        <ServiceAccountPolicy
-          open={policyOpen}
+      {editOpen && (
+        <EditServiceAccount
+          open={editOpen}
           selectedAccessKey={selectedServiceAccount}
           closeModalAndRefresh={closePolicyModal}
         />

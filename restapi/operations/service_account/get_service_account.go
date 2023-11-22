@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// GetServiceAccountPolicyHandlerFunc turns a function with the right signature into a get service account policy handler
-type GetServiceAccountPolicyHandlerFunc func(GetServiceAccountPolicyParams, *models.Principal) middleware.Responder
+// GetServiceAccountHandlerFunc turns a function with the right signature into a get service account handler
+type GetServiceAccountHandlerFunc func(GetServiceAccountParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetServiceAccountPolicyHandlerFunc) Handle(params GetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
+func (fn GetServiceAccountHandlerFunc) Handle(params GetServiceAccountParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// GetServiceAccountPolicyHandler interface for that can handle valid get service account policy params
-type GetServiceAccountPolicyHandler interface {
-	Handle(GetServiceAccountPolicyParams, *models.Principal) middleware.Responder
+// GetServiceAccountHandler interface for that can handle valid get service account params
+type GetServiceAccountHandler interface {
+	Handle(GetServiceAccountParams, *models.Principal) middleware.Responder
 }
 
-// NewGetServiceAccountPolicy creates a new http.Handler for the get service account policy operation
-func NewGetServiceAccountPolicy(ctx *middleware.Context, handler GetServiceAccountPolicyHandler) *GetServiceAccountPolicy {
-	return &GetServiceAccountPolicy{Context: ctx, Handler: handler}
+// NewGetServiceAccount creates a new http.Handler for the get service account operation
+func NewGetServiceAccount(ctx *middleware.Context, handler GetServiceAccountHandler) *GetServiceAccount {
+	return &GetServiceAccount{Context: ctx, Handler: handler}
 }
 
 /*
-	GetServiceAccountPolicy swagger:route GET /service-accounts/{access_key}/policy ServiceAccount getServiceAccountPolicy
+	GetServiceAccount swagger:route GET /service-accounts/{access_key} ServiceAccount getServiceAccount
 
-Get Service Account Policy
+Get Service Account
 */
-type GetServiceAccountPolicy struct {
+type GetServiceAccount struct {
 	Context *middleware.Context
-	Handler GetServiceAccountPolicyHandler
+	Handler GetServiceAccountHandler
 }
 
-func (o *GetServiceAccountPolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *GetServiceAccount) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		*r = *rCtx
 	}
-	var Params = NewGetServiceAccountPolicyParams()
+	var Params = NewGetServiceAccountParams()
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)

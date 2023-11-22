@@ -70,7 +70,7 @@ type MinioAdmin interface {
 	heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
 		forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error)
 	// Service Accounts
-	addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error)
+	addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string, name string, description string, expiry *time.Time, comment string) (madmin.Credentials, error)
 	listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 	deleteServiceAccount(ctx context.Context, serviceAccount string) error
 	infoServiceAccount(ctx context.Context, serviceAccount string) (madmin.InfoServiceAccountResp, error)
@@ -305,16 +305,20 @@ func (ac AdminClient) getLogs(ctx context.Context, node string, lineCnt int, log
 }
 
 // implements madmin.AddServiceAccount()
-func (ac AdminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error) {
+func (ac AdminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string, name string, description string, expiry *time.Time, comment string) (madmin.Credentials, error) {
 	buf, err := json.Marshal(policy)
 	if err != nil {
 		return madmin.Credentials{}, err
 	}
 	return ac.Client.AddServiceAccount(ctx, madmin.AddServiceAccountReq{
-		Policy:     buf,
-		TargetUser: user,
-		AccessKey:  accessKey,
-		SecretKey:  secretKey,
+		Policy:      buf,
+		TargetUser:  user,
+		AccessKey:   accessKey,
+		SecretKey:   secretKey,
+		Name:        name,
+		Description: description,
+		Expiration:  expiry,
+		Comment:     comment,
 	})
 }
 
