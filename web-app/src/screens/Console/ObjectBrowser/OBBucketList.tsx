@@ -27,6 +27,7 @@ import {
   ProgressBar,
   RefreshIcon,
   Grid,
+  HelpTip,
 } from "mds";
 import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 import { SecureComponent } from "../../../common/SecureComponent";
@@ -57,6 +58,7 @@ const OBListBuckets = () => {
 
   const [records, setRecords] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [clickOverride, setClickOverride] = useState<boolean>(false);
   const [filterBuckets, setFilterBuckets] = useState<string>("");
 
   const features = useSelector(selFeatures);
@@ -102,7 +104,8 @@ const OBListBuckets = () => {
     {
       type: "view",
       onClick: (bucket: Bucket) => {
-        navigate(`${IAM_PAGES.OBJECT_BROWSER_VIEW}/${bucket.name}`);
+        !clickOverride &&
+          navigate(`${IAM_PAGES.OBJECT_BROWSER_VIEW}/${bucket.name}`);
       },
     },
   ];
@@ -213,7 +216,49 @@ const OBListBuckets = () => {
                   {
                     label: "Size",
                     elementKey: "size",
-                    renderFunction: (size: number) => niceBytesInt(size || 0),
+                    renderFunction: (size: number) => (
+                      <div
+                        onMouseEnter={() => setClickOverride(true)}
+                        onMouseLeave={() => setClickOverride(false)}
+                      >
+                        <HelpTip
+                          content={
+                            <Fragment>
+                              <div>
+                                <strong> Not what you expected?</strong>
+                                <br />
+                                This Usage value is comparable to{" "}
+                                <strong>mc du --versions</strong> which
+                                represents the size of all object versions that
+                                exist in the bucket.
+                                <br />
+                                Running{" "}
+                                <a
+                                  target="_blank"
+                                  href="https://min.io/docs/minio/linux/reference/minio-mc/mc-du.html"
+                                >
+                                  mc du
+                                </a>{" "}
+                                without the <strong>--versions</strong> flag or{" "}
+                                <a
+                                  target="_blank"
+                                  href="https://man7.org/linux/man-pages/man1/df.1.html"
+                                >
+                                  df
+                                </a>{" "}
+                                will provide different values corresponding to
+                                the size of all <strong>current</strong>{" "}
+                                versions and the physical disk space occupied
+                                respectively.
+                              </div>
+                            </Fragment>
+                          }
+                          placement="right"
+                        >
+                          {niceBytesInt(size || 0)}
+                        </HelpTip>
+                      </div>
+                    ),
                   },
                   {
                     label: "Access",

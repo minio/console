@@ -13,7 +13,14 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { Fragment } from "react";
+import React, {
+  Fragment,
+  RefObject,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import get from "lodash/get";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,6 +30,7 @@ import {
   BucketsIcon,
   Checkbox,
   Grid,
+  HelpTip,
   ReportedUsageIcon,
   TotalObjectsIcon,
 } from "mds";
@@ -129,6 +137,8 @@ const BucketListItem = ({
 }: IBucketListItem) => {
   const navigate = useNavigate();
 
+  const [clickOverride, setClickOverride] = useState<boolean>(false);
+
   const usage = niceBytes(`${bucket.size}` || "0");
   const usageScalar = usage.split(" ")[0];
   const usageUnit = usage.split(" ")[1];
@@ -157,7 +167,7 @@ const BucketListItem = ({
   return (
     <BucketItemMain
       onClick={() => {
-        navigate(`/buckets/${bucket.name}/admin`);
+        !clickOverride && navigate(`/buckets/${bucket.name}/admin`);
       }}
       id={`manageBucket-${bucket.name}`}
       className={`bucket-item ${manageAllowed ? "disabled" : ""}`}
@@ -205,8 +215,53 @@ const BucketListItem = ({
           />
         </Link>
 
-        <Grid item className={"metric"}>
-          <ReportedUsageIcon />
+        <Grid
+          item
+          className={"metric"}
+          onMouseEnter={() =>
+            bucket.details?.versioning && setClickOverride(true)
+          }
+          onMouseLeave={() =>
+            bucket.details?.versioning && setClickOverride(false)
+          }
+        >
+          {bucket.details?.versioning && (
+            <HelpTip
+              content={
+                <Fragment>
+                  <div>
+                    <strong> Not what you expected?</strong>
+                    <br />
+                    This Usage value is comparable to{" "}
+                    <strong>mc du --versions</strong> which represents the size
+                    of all object versions that exist in the bucket.
+                    <br />
+                    Running{" "}
+                    <a
+                      target="_blank"
+                      href="https://min.io/docs/minio/linux/reference/minio-mc/mc-du.html"
+                    >
+                      mc du
+                    </a>{" "}
+                    without the <strong>--versions</strong> flag or{" "}
+                    <a
+                      target="_blank"
+                      href="https://man7.org/linux/man-pages/man1/df.1.html"
+                    >
+                      df
+                    </a>{" "}
+                    will provide different values corresponding to the size of
+                    all <strong>current</strong> versions and the physical disk
+                    space occupied respectively.
+                  </div>
+                </Fragment>
+              }
+              placement="top"
+            >
+              <ReportedUsageIcon />{" "}
+            </HelpTip>
+          )}
+          {!bucket.details?.versioning && <ReportedUsageIcon />}
           <span className={"metricLabel"}>Usage</span>
           <div className={"metricText"}>
             {usageScalar}

@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Fragment } from "react";
 import get from "lodash/get";
 import styled from "styled-components";
-import { Box, Tooltip } from "mds";
+import { Box, HelpTip, Tooltip } from "mds";
 import { Cell, Pie, PieChart } from "recharts";
 
 const ReportedUsageMain = styled.div(({ theme }) => ({
@@ -79,7 +79,38 @@ const ReportedUsage = ({
           <span>Reported Usage</span>
         </div>
 
-        <Tooltip tooltip={`${usageValue} Bytes`}>
+        <HelpTip
+          content={
+            <Fragment>
+              <div>
+                <strong> Not what you expected?</strong>
+                <br />
+                This Usage value is comparable to{" "}
+                <strong>mc du --versions</strong> which represents the size of
+                all object versions that exist in the buckets.
+                <br />
+                Running{" "}
+                <a
+                  target="_blank"
+                  href="https://min.io/docs/minio/linux/reference/minio-mc/mc-du.html"
+                >
+                  mc du
+                </a>{" "}
+                without the <strong>--versions</strong> flag or{" "}
+                <a
+                  target="_blank"
+                  href="https://man7.org/linux/man-pages/man1/df.1.html"
+                >
+                  df
+                </a>{" "}
+                will provide different values corresponding to the size of all{" "}
+                <strong>current</strong> versions and the physical disk space
+                occupied respectively.
+              </div>
+            </Fragment>
+          }
+          placement="left"
+        >
           <label
             className={"unit-value"}
             style={{
@@ -88,8 +119,8 @@ const ReportedUsage = ({
           >
             {total}
           </label>
-        </Tooltip>
-        <label className={"unit-type"}>{unit}</label>
+          <label className={"unit-type"}>{unit}</label>
+        </HelpTip>
       </Box>
 
       <Box>
