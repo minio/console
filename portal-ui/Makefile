@@ -20,6 +20,6 @@ find-deadcode:
 	./check-deadcode.sh
 
 prettify:
-	yarn prettier --write . --loglevel warn
+	yarn prettier --write . --log-level warn
 
 pretty: prettify
