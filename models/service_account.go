@@ -29,39 +29,45 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// ServiceAccountRequest service account request
+// ServiceAccount service account
 //
-// swagger:model serviceAccountRequest
-type ServiceAccountRequest struct {
+// swagger:model serviceAccount
+type ServiceAccount struct {
 
-	// comment
-	Comment string `json:"comment,omitempty"`
+	// account status
+	AccountStatus string `json:"accountStatus,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
 
-	// expiry
-	Expiry string `json:"expiry,omitempty"`
+	// expiration
+	Expiration string `json:"expiration,omitempty"`
+
+	// implied policy
+	ImpliedPolicy bool `json:"impliedPolicy,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
 
-	// policy to be applied to the Service Account if any
+	// parent user
+	ParentUser string `json:"parentUser,omitempty"`
+
+	// policy
 	Policy string `json:"policy,omitempty"`
 }
 
-// Validate validates this service account request
-func (m *ServiceAccountRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this service account
+func (m *ServiceAccount) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this service account request based on context it is used
-func (m *ServiceAccountRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this service account based on context it is used
+func (m *ServiceAccount) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *ServiceAccountRequest) MarshalBinary() ([]byte, error) {
+func (m *ServiceAccount) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -69,8 +75,8 @@ func (m *ServiceAccountRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ServiceAccountRequest) UnmarshalBinary(b []byte) error {
-	var res ServiceAccountRequest
+func (m *ServiceAccount) UnmarshalBinary(b []byte) error {
+	var res ServiceAccount
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

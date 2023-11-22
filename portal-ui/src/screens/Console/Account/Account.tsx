@@ -37,7 +37,7 @@ import withSuspense from "../Common/Components/withSuspense";
 
 import { selectSAs } from "../Configurations/utils";
 import DeleteMultipleServiceAccounts from "../Users/DeleteMultipleServiceAccounts";
-import ServiceAccountPolicy from "./ServiceAccountPolicy";
+import EditServiceAccount from "./EditServiceAccount";
 
 import { selFeatures } from "../consoleSlice";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
@@ -82,7 +82,7 @@ const Account = () => {
     useState<boolean>(false);
   const [selectedSAs, setSelectedSAs] = useState<string[]>([]);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
-  const [policyOpen, setPolicyOpen] = useState<boolean>(false);
+  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
 
   const userIDP = (features && features.includes("external-idp")) || false;
 
@@ -137,13 +137,13 @@ const Account = () => {
     }
   };
 
-  const policyModalOpen = (selectedServiceAccount: string) => {
+  const editModalOpen = (selectedServiceAccount: string) => {
     setSelectedServiceAccount(selectedServiceAccount);
-    setPolicyOpen(true);
+    setIsEditOpen(true);
   };
 
   const closePolicyModal = () => {
-    setPolicyOpen(false);
+    setIsEditOpen(false);
     setLoading(true);
   };
 
@@ -157,7 +157,7 @@ const Account = () => {
       type: "view",
       onClick: (value: any) => {
         if (value) {
-          policyModalOpen(value.accessKey);
+          editModalOpen(value.accessKey);
         }
       },
     },
@@ -166,6 +166,14 @@ const Account = () => {
       onClick: (value: any) => {
         if (value) {
           confirmDeleteServiceAccount(value.accessKey);
+        }
+      },
+    },
+    {
+      type: "edit",
+      onClick: (value: any) => {
+        if (value) {
+          editModalOpen(value.accessKey);
         }
       },
     },
@@ -195,9 +203,9 @@ const Account = () => {
         />
       )}
 
-      {policyOpen && (
-        <ServiceAccountPolicy
-          open={policyOpen}
+      {isEditOpen && (
+        <EditServiceAccount
+          open={isEditOpen}
           selectedAccessKey={selectedServiceAccount}
           closeModalAndRefresh={closePolicyModal}
         />

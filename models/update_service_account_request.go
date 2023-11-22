@@ -31,18 +31,33 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// AddServiceAccountPolicyRequest add service account policy request
+// UpdateServiceAccountRequest update service account request
 //
-// swagger:model addServiceAccountPolicyRequest
-type AddServiceAccountPolicyRequest struct {
+// swagger:model updateServiceAccountRequest
+type UpdateServiceAccountRequest struct {
+
+	// description
+	Description string `json:"description,omitempty"`
+
+	// expiry
+	Expiry string `json:"expiry,omitempty"`
+
+	// name
+	Name string `json:"name,omitempty"`
 
 	// policy
 	// Required: true
 	Policy *string `json:"policy"`
+
+	// secret key
+	SecretKey string `json:"secretKey,omitempty"`
+
+	// status
+	Status string `json:"status,omitempty"`
 }
 
-// Validate validates this add service account policy request
-func (m *AddServiceAccountPolicyRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this update service account request
+func (m *UpdateServiceAccountRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validatePolicy(formats); err != nil {
@@ -55,7 +70,7 @@ func (m *AddServiceAccountPolicyRequest) Validate(formats strfmt.Registry) error
 	return nil
 }
 
-func (m *AddServiceAccountPolicyRequest) validatePolicy(formats strfmt.Registry) error {
+func (m *UpdateServiceAccountRequest) validatePolicy(formats strfmt.Registry) error {
 
 	if err := validate.Required("policy", "body", m.Policy); err != nil {
 		return err
@@ -64,13 +79,13 @@ func (m *AddServiceAccountPolicyRequest) validatePolicy(formats strfmt.Registry)
 	return nil
 }
 
-// ContextValidate validates this add service account policy request based on context it is used
-func (m *AddServiceAccountPolicyRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this update service account request based on context it is used
+func (m *UpdateServiceAccountRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *AddServiceAccountPolicyRequest) MarshalBinary() ([]byte, error) {
+func (m *UpdateServiceAccountRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -78,8 +93,8 @@ func (m *AddServiceAccountPolicyRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *AddServiceAccountPolicyRequest) UnmarshalBinary(b []byte) error {
-	var res AddServiceAccountPolicyRequest
+func (m *UpdateServiceAccountRequest) UnmarshalBinary(b []byte) error {
+	var res UpdateServiceAccountRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -96,20 +96,20 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 		return saApi.NewListUserServiceAccountsOK().WithPayload(serviceAccounts)
 	})
 
-	api.ServiceAccountGetServiceAccountPolicyHandler = saApi.GetServiceAccountPolicyHandlerFunc(func(params saApi.GetServiceAccountPolicyParams, session *models.Principal) middleware.Responder {
-		serviceAccounts, err := getServiceAccountPolicyResponse(session, params)
+	api.ServiceAccountGetServiceAccountHandler = saApi.GetServiceAccountHandlerFunc(func(params saApi.GetServiceAccountParams, session *models.Principal) middleware.Responder {
+		serviceAccounts, err := getServiceAccountInfo(session, params)
 		if err != nil {
-			return saApi.NewGetServiceAccountPolicyDefault(err.Code).WithPayload(err.APIError)
+			return saApi.NewGetServiceAccountDefault(err.Code).WithPayload(err.APIError)
 		}
-		return saApi.NewGetServiceAccountPolicyOK().WithPayload(serviceAccounts)
+		return saApi.NewGetServiceAccountOK().WithPayload(serviceAccounts)
 	})
 
-	api.ServiceAccountSetServiceAccountPolicyHandler = saApi.SetServiceAccountPolicyHandlerFunc(func(params saApi.SetServiceAccountPolicyParams, session *models.Principal) middleware.Responder {
-		err := getSetServiceAccountPolicyResponse(session, params)
+	api.ServiceAccountUpdateServiceAccountHandler = saApi.UpdateServiceAccountHandlerFunc(func(params saApi.UpdateServiceAccountParams, session *models.Principal) middleware.Responder {
+		err := updateSetServiceAccountResponse(session, params)
 		if err != nil {
-			return saApi.NewSetServiceAccountPolicyDefault(err.Code).WithPayload(err.APIError)
+			return saApi.NewUpdateServiceAccountDefault(err.Code).WithPayload(err.APIError)
 		}
-		return saApi.NewSetServiceAccountPolicyOK()
+		return saApi.NewUpdateServiceAccountOK()
 	})
 
 	// Delete multiple service accounts
@@ -122,7 +122,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 }
 
 // createServiceAccount adds a service account to the userClient and assigns a policy to him if defined.
-func createServiceAccount(ctx context.Context, userClient MinioAdmin, policy string) (*models.ServiceAccountCreds, error) {
+func createServiceAccount(ctx context.Context, userClient MinioAdmin, policy string, name string, description string, expiry *time.Time, comment string) (*models.ServiceAccountCreds, error) {
 	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
 	// we override with the user provided iam policy
 	var iamPolicy *iampolicy.Policy
@@ -133,7 +133,7 @@ func createServiceAccount(ctx context.Context, userClient MinioAdmin, policy str
 		}
 		iamPolicy = iamp
 	}
-	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", "", "")
+	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", "", "", name, description, expiry, comment)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +141,7 @@ func createServiceAccount(ctx context.Context, userClient MinioAdmin, policy str
 }
 
 // createServiceAccount adds a service account with the given credentials to the userClient and assigns a policy to him if defined.
-func createServiceAccountCreds(ctx context.Context, userClient MinioAdmin, policy string, accessKey string, secretKey string) (*models.ServiceAccountCreds, error) {
+func createServiceAccountCreds(ctx context.Context, userClient MinioAdmin, policy string, accessKey string, secretKey string, name string, description string, expiry *time.Time, comment string) (*models.ServiceAccountCreds, error) {
 	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
 	// we override with the user provided iam policy
 	var iamPolicy *iampolicy.Policy
@@ -152,7 +152,7 @@ func createServiceAccountCreds(ctx context.Context, userClient MinioAdmin, polic
 		}
 		iamPolicy = iamp
 	}
-	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", accessKey, secretKey)
+	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", accessKey, secretKey, name, description, expiry, comment)
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,14 @@ func getCreateServiceAccountResponse(session *models.Principal, params saApi.Cre
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
 
-	saCreds, err := createServiceAccount(ctx, userAdminClient, params.Body.Policy)
+	var parsedExpiry time.Time
+	if params.Body.Expiry != "" {
+		parsedExpiry, err = time.Parse(time.RFC3339, params.Body.Expiry)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+	}
+	saCreds, err := createServiceAccount(ctx, userAdminClient, params.Body.Policy, params.Body.Name, params.Body.Description, &parsedExpiry, params.Body.Comment)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -182,7 +189,7 @@ func getCreateServiceAccountResponse(session *models.Principal, params saApi.Cre
 }
 
 // createServiceAccount adds a service account to a given user and assigns a policy to him if defined.
-func createAUserServiceAccount(ctx context.Context, userClient MinioAdmin, policy string, user string) (*models.ServiceAccountCreds, error) {
+func createAUserServiceAccount(ctx context.Context, userClient MinioAdmin, policy string, user string, name string, description string, expiry *time.Time, comment string) (*models.ServiceAccountCreds, error) {
 	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
 	// we override with the user provided iam policy
 	var iamPolicy *iampolicy.Policy
@@ -194,14 +201,14 @@ func createAUserServiceAccount(ctx context.Context, userClient MinioAdmin, polic
 		iamPolicy = iamp
 	}
 
-	creds, err := userClient.addServiceAccount(ctx, iamPolicy, user, "", "")
+	creds, err := userClient.addServiceAccount(ctx, iamPolicy, user, "", "", name, description, expiry, comment)
 	if err != nil {
 		return nil, err
 	}
 	return &models.ServiceAccountCreds{AccessKey: creds.AccessKey, SecretKey: creds.SecretKey, URL: getMinIOServer()}, nil
 }
 
-func createAUserServiceAccountCreds(ctx context.Context, userClient MinioAdmin, policy string, user string, accessKey string, secretKey string) (*models.ServiceAccountCreds, error) {
+func createAUserServiceAccountCreds(ctx context.Context, userClient MinioAdmin, policy string, user string, accessKey string, secretKey string, name string, description string, expiry *time.Time, comment string) (*models.ServiceAccountCreds, error) {
 	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
 	// we override with the user provided iam policy
 	var iamPolicy *iampolicy.Policy
@@ -213,7 +220,7 @@ func createAUserServiceAccountCreds(ctx context.Context, userClient MinioAdmin, 
 		iamPolicy = iamp
 	}
 
-	creds, err := userClient.addServiceAccount(ctx, iamPolicy, user, accessKey, secretKey)
+	creds, err := userClient.addServiceAccount(ctx, iamPolicy, user, accessKey, secretKey, name, description, expiry, comment)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +245,15 @@ func getCreateAUserServiceAccountResponse(session *models.Principal, params user
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
-	saCreds, err := createAUserServiceAccount(ctx, userAdminClient, params.Body.Policy, name)
+
+	var parsedExpiry time.Time
+	if params.Body.Expiry != "" {
+		parsedExpiry, err = time.Parse(time.RFC3339, params.Body.Expiry)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+	}
+	saCreds, err := createAUserServiceAccount(ctx, userAdminClient, params.Body.Policy, name, params.Body.Name, params.Body.Description, &parsedExpiry, params.Body.Comment)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -275,7 +290,15 @@ func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params
 			return nil, ErrorWithContext(ctx, errors.New("Access Key already in use"))
 		}
 	}
-	saCreds, err := createAUserServiceAccountCreds(ctx, userAdminClient, serviceAccount.Policy, user, serviceAccount.AccessKey, serviceAccount.SecretKey)
+
+	var parsedExpiry time.Time
+	if serviceAccount.Expiry != "" {
+		parsedExpiry, err = time.Parse(time.RFC3339, serviceAccount.Expiry)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+	}
+	saCreds, err := createAUserServiceAccountCreds(ctx, userAdminClient, serviceAccount.Policy, user, serviceAccount.AccessKey, serviceAccount.SecretKey, serviceAccount.Name, serviceAccount.Description, &parsedExpiry, serviceAccount.Comment)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -309,7 +332,15 @@ func getCreateServiceAccountCredsResponse(session *models.Principal, params saAp
 		}
 	}
 
-	saCreds, err := createServiceAccountCreds(ctx, userAdminClient, serviceAccount.Policy, serviceAccount.AccessKey, serviceAccount.SecretKey)
+	var parsedExpiry time.Time
+	if params.Body.Expiry != "" {
+		parsedExpiry, err = time.Parse(time.RFC3339, params.Body.Expiry)
+		if err != nil {
+			return nil, ErrorWithContext(ctx, err)
+		}
+	}
+
+	saCreds, err := createServiceAccountCreds(ctx, userAdminClient, serviceAccount.Policy, serviceAccount.AccessKey, serviceAccount.SecretKey, params.Body.Name, params.Body.Description, &parsedExpiry, params.Body.Comment)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -392,60 +423,89 @@ func getDeleteServiceAccountResponse(session *models.Principal, params saApi.Del
 	return nil
 }
 
-// getServiceAccountPolicy gets policy for a service account
-func getServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessKey string) (string, error) {
-	serviceAccountInfo, err := userClient.infoServiceAccount(ctx, accessKey)
+// getServiceAccountDetails gets policy for a service account
+func getServiceAccountDetails(ctx context.Context, userClient MinioAdmin, accessKey string) (*models.ServiceAccount, error) {
+	saInfo, err := userClient.infoServiceAccount(ctx, accessKey)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
+
+	var policyJSON string
 	var policy iampolicy.Policy
-	json.Unmarshal([]byte(serviceAccountInfo.Policy), &policy)
+	json.Unmarshal([]byte(saInfo.Policy), &policy)
 	if policy.Statements == nil {
-		return "", nil
+		policyJSON = ""
+	} else {
+		policyJSON = saInfo.Policy
 	}
-	return serviceAccountInfo.Policy, nil
+
+	expiry := ""
+	if saInfo.Expiration != nil {
+		expiry = saInfo.Expiration.Format(time.RFC3339)
+	}
+
+	sa := models.ServiceAccount{
+		AccountStatus: saInfo.AccountStatus,
+		Description:   saInfo.Description,
+		Expiration:    expiry,
+		ImpliedPolicy: saInfo.ImpliedPolicy,
+		Name:          saInfo.Name,
+		ParentUser:    saInfo.ParentUser,
+		Policy:        policyJSON,
+	}
+	return &sa, nil
 }
 
-// getServiceAccountPolicyResponse authenticates the user and calls
-// getServiceAccountPolicy to get the policy for a service account
-func getServiceAccountPolicyResponse(session *models.Principal, params saApi.GetServiceAccountPolicyParams) (string, *CodedAPIError) {
+// getServiceAccountInfo authenticates the user and calls
+// getServiceAccountInfo to get the policy for a service account
+func getServiceAccountInfo(session *models.Principal, params saApi.GetServiceAccountParams) (*models.ServiceAccount, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	accessKey, err := utils.DecodeBase64(params.AccessKey)
 	if err != nil {
-		return "", ErrorWithContext(ctx, err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
-		return "", ErrorWithContext(ctx, err)
+		return nil, ErrorWithContext(ctx, err)
 	}
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
 
-	serviceAccounts, err := getServiceAccountPolicy(ctx, userAdminClient, accessKey)
+	serviceAccount, err := getServiceAccountDetails(ctx, userAdminClient, accessKey)
 	if err != nil {
-		return "", ErrorWithContext(ctx, err)
+		return nil, ErrorWithContext(ctx, err)
 	}
-	return serviceAccounts, nil
+
+	return serviceAccount, nil
 }
 
 // setServiceAccountPolicy sets policy for a service account
-func setServiceAccountPolicy(ctx context.Context, userClient MinioAdmin, accessKey string, policy string) error {
-	err := userClient.updateServiceAccount(ctx, accessKey, madmin.UpdateServiceAccountReq{NewPolicy: json.RawMessage(policy)})
+func updateServiceAccountDetails(ctx context.Context, userClient MinioAdmin, accessKey string, policy string, expiry time.Time, name string, description string, status string, secretKey string) error {
+	req := madmin.UpdateServiceAccountReq{
+		NewPolicy:      json.RawMessage(policy),
+		NewSecretKey:   secretKey,
+		NewStatus:      status,
+		NewName:        name,
+		NewDescription: description,
+		NewExpiration:  &expiry,
+	}
+
+	err := userClient.updateServiceAccount(ctx, accessKey, req)
 	return err
 }
 
-// getSetServiceAccountPolicyResponse authenticates the user and calls
+// updateSetServiceAccountResponse authenticates the user and calls
 // getSetServiceAccountPolicy to set the policy for a service account
-func getSetServiceAccountPolicyResponse(session *models.Principal, params saApi.SetServiceAccountPolicyParams) *CodedAPIError {
+func updateSetServiceAccountResponse(session *models.Principal, params saApi.UpdateServiceAccountParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	accessKey, err := utils.DecodeBase64(params.AccessKey)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
-	policy := *params.Policy.Policy
+	policy := *params.Body.Policy
 	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
@@ -454,7 +514,14 @@ func getSetServiceAccountPolicyResponse(session *models.Principal, params saApi.
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
 
-	err = setServiceAccountPolicy(ctx, userAdminClient, accessKey, policy)
+	var parsedExpiry time.Time
+	if params.Body.Expiry != "" {
+		parsedExpiry, err = time.Parse(time.RFC3339, params.Body.Expiry)
+		if err != nil {
+			return ErrorWithContext(ctx, err)
+		}
+	}
+	err = updateServiceAccountDetails(ctx, userAdminClient, accessKey, policy, parsedExpiry, params.Body.Name, params.Body.Description, params.Body.Status, params.Body.SecretKey)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}
