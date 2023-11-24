@@ -215,6 +215,10 @@ const ListObjects = () => {
     (state: AppState) => state.objectBrowser.anonymousAccessOpen,
   );
 
+  const records = useSelector(
+    (state: AppState) => state.objectBrowser?.records || [],
+  );
+
   const loadingBucket = useSelector(selBucketDetailsLoading);
   const bucketInfo = useSelector(selBucketDetailsInfo);
 
@@ -291,6 +295,20 @@ const ListObjects = () => {
     (state: AppState) => state.objectBrowser.selectedObjects,
   );
 
+  const checkForDelMarker = (): boolean => {
+    let isObjDelMarker = false;
+    if (selectedObjects.length === 1) {
+      let matchingRec = records.find((obj) => {
+        return obj.name === `${selectedObjects[0]}` && obj.delete_flag;
+      });
+
+      isObjDelMarker = !!matchingRec;
+    }
+    return isObjDelMarker;
+  };
+
+  const isSelObjectDelMarker = checkForDelMarker();
+
   const fetchMetadata = useCallback(() => {
     const objectName = selectedObjects[0];
 
@@ -317,10 +335,10 @@ const ListObjects = () => {
   }, [bucketName, selectedObjects, isMetaDataLoaded]);
 
   useEffect(() => {
-    if (bucketName && selectedObjects.length === 1) {
+    if (bucketName && !isSelObjectDelMarker) {
       fetchMetadata();
     }
-  }, [bucketName, selectedObjects, fetchMetadata]);
+  }, [bucketName, selectedObjects, fetchMetadata, isSelObjectDelMarker]);
 
   useEffect(() => {
     if (rewindEnabled) {
@@ -834,7 +852,7 @@ const ListObjects = () => {
         dispatch(downloadSelected(bucketName));
       },
       label: "Download",
-      disabled: !canDownload || selectedObjects?.length === 0,
+      disabled: !canDownload || isSelObjectDelMarker,
       icon: <DownloadIcon />,
       tooltip: canDownload
         ? downloadToolTip
@@ -848,7 +866,8 @@ const ListObjects = () => {
         dispatch(openShare());
       },
       label: "Share",
-      disabled: selectedObjects.length !== 1 || !canShareFile,
+      disabled:
+        selectedObjects.length !== 1 || !canShareFile || isSelObjectDelMarker,
       icon: <ShareIcon />,
       tooltip: canShareFile ? "Share Selected File" : "Sharing unavailable",
     },
@@ -857,7 +876,8 @@ const ListObjects = () => {
         dispatch(openPreview());
       },
       label: "Preview",
-      disabled: selectedObjects.length !== 1 || !canPreviewFile,
+      disabled:
+        selectedObjects.length !== 1 || !canPreviewFile || isSelObjectDelMarker,
       icon: <PreviewIcon />,
       tooltip: canPreviewFile ? "Preview Selected File" : "Preview unavailable",
     },
