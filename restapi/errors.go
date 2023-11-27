@@ -53,6 +53,7 @@ var (
 	ErrAvoidSelfAccountDelete           = errors.New("logged in user cannot be deleted by itself")
 	ErrAccessDenied                     = errors.New("access denied")
 	ErrOauth2Provider                   = errors.New("unable to contact configured identity provider")
+	ErrOauth2Login                      = errors.New("unable to login using configured identity provider")
 	ErrNonUniqueAccessKey               = errors.New("access key already in use")
 	ErrRemoteTierExists                 = errors.New("specified remote tier already exists")
 	ErrRemoteTierNotFound               = errors.New("specified remote tier was not found")
@@ -84,10 +85,12 @@ type CodedAPIError struct {
 func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedAPIError {
 	errorCode := 500
 	errorMessage := ErrDefault.Error()
+	var detailedMessage string
 	var err1 error
 	var exists bool
 	if len(err) > 0 {
 		if err1, exists = err[0].(error); exists {
+			detailedMessage = err1.Error()
 			var lastError error
 			if len(err) > 1 {
 				if err2, lastExists := err[1].(error); lastExists {
@@ -105,6 +108,7 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedAPIError {
 				errorMessage = ErrNotFound.Error()
 			}
 			if errors.Is(err1, ErrInvalidLogin) {
+				detailedMessage = ""
 				errorCode = 401
 				errorMessage = ErrInvalidLogin.Error()
 			}
@@ -114,10 +118,12 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedAPIError {
 			}
 			// If the last error is ErrInvalidLogin, this is a login failure
 			if errors.Is(lastError, ErrInvalidLogin) {
+				detailedMessage = ""
 				errorCode = 401
 				errorMessage = err1.Error()
 			}
 			if strings.Contains(err1.Error(), ErrLoginNotAllowed.Error()) {
+				detailedMessage = ""
 				errorCode = 400
 				errorMessage = ErrLoginNotAllowed.Error()
 			}
@@ -211,6 +217,7 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedAPIError {
 				errorMessage = ErrAccessDenied.Error()
 			}
 			if madmin.ToErrorResponse(err1).Code == "InvalidAccessKeyId" {
+
 				errorCode = 401
 				errorMessage = ErrInvalidSession.Error()
 			}
@@ -261,7 +268,7 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedAPIError {
 			}
 		}
 	}
-	return &CodedAPIError{Code: errorCode, APIError: &models.APIError{Message: errorMessage, DetailedMessage: err1.Error()}}
+	return &CodedAPIError{Code: errorCode, APIError: &models.APIError{Message: errorMessage, DetailedMessage: detailedMessage}}
 }
 
 // Error receives an errors object and parse it against k8sErrors, returns the right errors code paired with a generic errors message
