@@ -17,32 +17,32 @@
 import React, { Fragment } from "react";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import PreviewFileContent from "./PreviewFileContent";
-import { BucketObjectItem } from "../ListObjects/types";
 import { ObjectPreviewIcon } from "mds";
+import { BucketObject } from "../../../../../../api/consoleApi";
 
 interface IPreviewFileProps {
   open: boolean;
   bucketName: string;
-  object: BucketObjectItem | null;
+  actualInfo: BucketObject;
   onClosePreview: () => void;
 }
 
 const PreviewFileModal = ({
   open,
   bucketName,
-  object,
+  actualInfo,
   onClosePreview,
 }: IPreviewFileProps) => {
   return (
     <Fragment>
       <ModalWrapper
         modalOpen={open}
-        title={`Preview - ${object?.name}`}
+        title={`Preview - ${actualInfo?.name}`}
         onClose={onClosePreview}
         wideLimit={false}
         titleIcon={<ObjectPreviewIcon />}
       >
-        <PreviewFileContent bucketName={bucketName} object={object} />
+        <PreviewFileContent bucketName={bucketName} actualInfo={actualInfo} />
       </ModalWrapper>
     </Fragment>
   );
