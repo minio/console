@@ -265,8 +265,8 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		PolicyGetSAUserPolicyHandler: policy.GetSAUserPolicyHandlerFunc(func(params policy.GetSAUserPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation policy.GetSAUserPolicy has not yet been implemented")
 		}),
-		ServiceAccountGetServiceAccountPolicyHandler: service_account.GetServiceAccountPolicyHandlerFunc(func(params service_account.GetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation service_account.GetServiceAccountPolicy has not yet been implemented")
+		ServiceAccountGetServiceAccountHandler: service_account.GetServiceAccountHandlerFunc(func(params service_account.GetServiceAccountParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation service_account.GetServiceAccount has not yet been implemented")
 		}),
 		SiteReplicationGetSiteReplicationInfoHandler: site_replication.GetSiteReplicationInfoHandlerFunc(func(params site_replication.GetSiteReplicationInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation site_replication.GetSiteReplicationInfo has not yet been implemented")
@@ -502,9 +502,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		PolicySetPolicyMultipleHandler: policy.SetPolicyMultipleHandlerFunc(func(params policy.SetPolicyMultipleParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation policy.SetPolicyMultiple has not yet been implemented")
 		}),
-		ServiceAccountSetServiceAccountPolicyHandler: service_account.SetServiceAccountPolicyHandlerFunc(func(params service_account.SetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation service_account.SetServiceAccountPolicy has not yet been implemented")
-		}),
 		ObjectShareObjectHandler: object.ShareObjectHandlerFunc(func(params object.ShareObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.ShareObject has not yet been implemented")
 		}),
@@ -549,6 +546,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		BucketUpdateMultiBucketReplicationHandler: bucket.UpdateMultiBucketReplicationHandlerFunc(func(params bucket.UpdateMultiBucketReplicationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.UpdateMultiBucketReplication has not yet been implemented")
+		}),
+		ServiceAccountUpdateServiceAccountHandler: service_account.UpdateServiceAccountHandlerFunc(func(params service_account.UpdateServiceAccountParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation service_account.UpdateServiceAccount has not yet been implemented")
 		}),
 		UserUpdateUserGroupsHandler: user.UpdateUserGroupsHandlerFunc(func(params user.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user.UpdateUserGroups has not yet been implemented")
@@ -740,8 +740,8 @@ type ConsoleAPI struct {
 	ObjectGetObjectMetadataHandler object.GetObjectMetadataHandler
 	// PolicyGetSAUserPolicyHandler sets the operation handler for the get s a user policy operation
 	PolicyGetSAUserPolicyHandler policy.GetSAUserPolicyHandler
-	// ServiceAccountGetServiceAccountPolicyHandler sets the operation handler for the get service account policy operation
-	ServiceAccountGetServiceAccountPolicyHandler service_account.GetServiceAccountPolicyHandler
+	// ServiceAccountGetServiceAccountHandler sets the operation handler for the get service account operation
+	ServiceAccountGetServiceAccountHandler service_account.GetServiceAccountHandler
 	// SiteReplicationGetSiteReplicationInfoHandler sets the operation handler for the get site replication info operation
 	SiteReplicationGetSiteReplicationInfoHandler site_replication.GetSiteReplicationInfoHandler
 	// SiteReplicationGetSiteReplicationStatusHandler sets the operation handler for the get site replication status operation
@@ -898,8 +898,6 @@ type ConsoleAPI struct {
 	PolicySetPolicyHandler policy.SetPolicyHandler
 	// PolicySetPolicyMultipleHandler sets the operation handler for the set policy multiple operation
 	PolicySetPolicyMultipleHandler policy.SetPolicyMultipleHandler
-	// ServiceAccountSetServiceAccountPolicyHandler sets the operation handler for the set service account policy operation
-	ServiceAccountSetServiceAccountPolicyHandler service_account.SetServiceAccountPolicyHandler
 	// ObjectShareObjectHandler sets the operation handler for the share object operation
 	ObjectShareObjectHandler object.ShareObjectHandler
 	// SiteReplicationSiteReplicationEditHandler sets the operation handler for the site replication edit operation
@@ -930,6 +928,8 @@ type ConsoleAPI struct {
 	GroupUpdateGroupHandler group.UpdateGroupHandler
 	// BucketUpdateMultiBucketReplicationHandler sets the operation handler for the update multi bucket replication operation
 	BucketUpdateMultiBucketReplicationHandler bucket.UpdateMultiBucketReplicationHandler
+	// ServiceAccountUpdateServiceAccountHandler sets the operation handler for the update service account operation
+	ServiceAccountUpdateServiceAccountHandler service_account.UpdateServiceAccountHandler
 	// UserUpdateUserGroupsHandler sets the operation handler for the update user groups operation
 	UserUpdateUserGroupsHandler user.UpdateUserGroupsHandler
 	// UserUpdateUserInfoHandler sets the operation handler for the update user info operation
@@ -1204,8 +1204,8 @@ func (o *ConsoleAPI) Validate() error {
 	if o.PolicyGetSAUserPolicyHandler == nil {
 		unregistered = append(unregistered, "policy.GetSAUserPolicyHandler")
 	}
-	if o.ServiceAccountGetServiceAccountPolicyHandler == nil {
-		unregistered = append(unregistered, "service_account.GetServiceAccountPolicyHandler")
+	if o.ServiceAccountGetServiceAccountHandler == nil {
+		unregistered = append(unregistered, "service_account.GetServiceAccountHandler")
 	}
 	if o.SiteReplicationGetSiteReplicationInfoHandler == nil {
 		unregistered = append(unregistered, "site_replication.GetSiteReplicationInfoHandler")
@@ -1441,9 +1441,6 @@ func (o *ConsoleAPI) Validate() error {
 	if o.PolicySetPolicyMultipleHandler == nil {
 		unregistered = append(unregistered, "policy.SetPolicyMultipleHandler")
 	}
-	if o.ServiceAccountSetServiceAccountPolicyHandler == nil {
-		unregistered = append(unregistered, "service_account.SetServiceAccountPolicyHandler")
-	}
 	if o.ObjectShareObjectHandler == nil {
 		unregistered = append(unregistered, "object.ShareObjectHandler")
 	}
@@ -1488,6 +1485,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.BucketUpdateMultiBucketReplicationHandler == nil {
 		unregistered = append(unregistered, "bucket.UpdateMultiBucketReplicationHandler")
+	}
+	if o.ServiceAccountUpdateServiceAccountHandler == nil {
+		unregistered = append(unregistered, "service_account.UpdateServiceAccountHandler")
 	}
 	if o.UserUpdateUserGroupsHandler == nil {
 		unregistered = append(unregistered, "user.UpdateUserGroupsHandler")
@@ -1844,7 +1844,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/service-accounts/{access_key}/policy"] = service_account.NewGetServiceAccountPolicy(o.context, o.ServiceAccountGetServiceAccountPolicyHandler)
+	o.handlers["GET"]["/service-accounts/{access_key}"] = service_account.NewGetServiceAccount(o.context, o.ServiceAccountGetServiceAccountHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -2157,10 +2157,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/set-policy-multi"] = policy.NewSetPolicyMultiple(o.context, o.PolicySetPolicyMultipleHandler)
-	if o.handlers["PUT"] == nil {
-		o.handlers["PUT"] = make(map[string]http.Handler)
-	}
-	o.handlers["PUT"]["/service-accounts/{access_key}/policy"] = service_account.NewSetServiceAccountPolicy(o.context, o.ServiceAccountSetServiceAccountPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -2221,6 +2217,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/buckets/{bucket_name}/replication/{rule_id}"] = bucket.NewUpdateMultiBucketReplication(o.context, o.BucketUpdateMultiBucketReplicationHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/service-accounts/{access_key}"] = service_account.NewUpdateServiceAccount(o.context, o.ServiceAccountUpdateServiceAccountHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

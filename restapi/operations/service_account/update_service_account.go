@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// SetServiceAccountPolicyHandlerFunc turns a function with the right signature into a set service account policy handler
-type SetServiceAccountPolicyHandlerFunc func(SetServiceAccountPolicyParams, *models.Principal) middleware.Responder
+// UpdateServiceAccountHandlerFunc turns a function with the right signature into a update service account handler
+type UpdateServiceAccountHandlerFunc func(UpdateServiceAccountParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn SetServiceAccountPolicyHandlerFunc) Handle(params SetServiceAccountPolicyParams, principal *models.Principal) middleware.Responder {
+func (fn UpdateServiceAccountHandlerFunc) Handle(params UpdateServiceAccountParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// SetServiceAccountPolicyHandler interface for that can handle valid set service account policy params
-type SetServiceAccountPolicyHandler interface {
-	Handle(SetServiceAccountPolicyParams, *models.Principal) middleware.Responder
+// UpdateServiceAccountHandler interface for that can handle valid update service account params
+type UpdateServiceAccountHandler interface {
+	Handle(UpdateServiceAccountParams, *models.Principal) middleware.Responder
 }
 
-// NewSetServiceAccountPolicy creates a new http.Handler for the set service account policy operation
-func NewSetServiceAccountPolicy(ctx *middleware.Context, handler SetServiceAccountPolicyHandler) *SetServiceAccountPolicy {
-	return &SetServiceAccountPolicy{Context: ctx, Handler: handler}
+// NewUpdateServiceAccount creates a new http.Handler for the update service account operation
+func NewUpdateServiceAccount(ctx *middleware.Context, handler UpdateServiceAccountHandler) *UpdateServiceAccount {
+	return &UpdateServiceAccount{Context: ctx, Handler: handler}
 }
 
 /*
-	SetServiceAccountPolicy swagger:route PUT /service-accounts/{access_key}/policy ServiceAccount setServiceAccountPolicy
+	UpdateServiceAccount swagger:route PUT /service-accounts/{access_key} ServiceAccount updateServiceAccount
 
 Set Service Account Policy
 */
-type SetServiceAccountPolicy struct {
+type UpdateServiceAccount struct {
 	Context *middleware.Context
-	Handler SetServiceAccountPolicyHandler
+	Handler UpdateServiceAccountHandler
 }
 
-func (o *SetServiceAccountPolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *UpdateServiceAccount) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		*r = *rCtx
 	}
-	var Params = NewSetServiceAccountPolicyParams()
+	var Params = NewUpdateServiceAccountParams()
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)

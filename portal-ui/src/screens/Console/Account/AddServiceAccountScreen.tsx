@@ -29,6 +29,7 @@ import {
   Switch,
   ServiceAccountIcon,
   HelpTip,
+  DateTimeInput,
 } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
@@ -59,6 +60,11 @@ const AddServiceAccount = () => {
     useState<NewServiceAccount | null>(null);
   const [policyJSON, setPolicyJSON] = useState<string>("");
 
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [comments, setComments] = useState<string>("");
+  const [expiry, setExpiry] = useState<any>();
+
   useEffect(() => {
     dispatch(setHelpName("add_service_account"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,12 +72,17 @@ const AddServiceAccount = () => {
 
   useEffect(() => {
     if (addSending) {
+      const expiryDt = expiry ? expiry.toJSDate().toISOString() : null;
       api.serviceAccountCredentials
         .createServiceAccountCreds(
           {
             policy: policyJSON,
             accessKey: accessKey,
             secretKey: secretKey,
+            description: description,
+            comment: comments,
+            name: name,
+            expiry: expiryDt,
           },
           { type: ContentType.Json },
         )
@@ -89,7 +100,18 @@ const AddServiceAccount = () => {
           dispatch(setErrorSnackMessage(errorToHandler(res.error)));
         });
     }
-  }, [addSending, setAddSending, dispatch, policyJSON, accessKey, secretKey]);
+  }, [
+    addSending,
+    setAddSending,
+    dispatch,
+    policyJSON,
+    accessKey,
+    secretKey,
+    name,
+    description,
+    expiry,
+    comments,
+  ]);
 
   useEffect(() => {
     if (isRestrictedByPolicy) {
@@ -221,6 +243,73 @@ const AddServiceAccount = () => {
                   </Grid>
                 </Grid>
               )}
+
+              <Grid
+                xs={12}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "start",
+                  fontWeight: 600,
+                  color: "rgb(7, 25, 62)",
+                  gap: 2,
+                  marginBottom: "15px",
+                  marginTop: "15px",
+                }}
+              >
+                <Box
+                  sx={{
+                    marginTop: "15px",
+                    width: "100%",
+                    "& label": { width: "180px" },
+                  }}
+                >
+                  <DateTimeInput
+                    noLabelMinWidth
+                    value={expiry}
+                    onChange={(e) => {
+                      setExpiry(e);
+                    }}
+                    id="expiryTime"
+                    label={"Expiry"}
+                    timeFormat={"24h"}
+                    secondsSelector={false}
+                  />
+                </Box>
+              </Grid>
+              <InputBox
+                value={name}
+                label={"Name"}
+                id={"name"}
+                name={"name"}
+                type={"text"}
+                placeholder={"Enter a name"}
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+              />
+              <InputBox
+                value={description}
+                label={"Description"}
+                id={"description"}
+                name={"description"}
+                type={"text"}
+                placeholder={"Enter a description"}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                }}
+              />
+              <InputBox
+                value={comments}
+                label={"Comments"}
+                id={"comment"}
+                name={"comment"}
+                type={"text"}
+                placeholder={"Enter a comment"}
+                onChange={(e) => {
+                  setComments(e.target.value);
+                }}
+              />
               <Grid item xs={12} sx={{ ...modalStyleUtils.modalButtonBar }}>
                 <Button
                   id={"clear"}

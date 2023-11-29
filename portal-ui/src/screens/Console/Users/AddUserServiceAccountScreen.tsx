@@ -29,6 +29,7 @@ import {
   ServiceAccountIcon,
   Switch,
   HelpTip,
+  DateTimeInput,
 } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
@@ -65,8 +66,14 @@ const AddServiceAccount = () => {
 
   const userName = decodeURLString(params.userName || "");
 
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [comments, setComments] = useState<string>("");
+  const [expiry, setExpiry] = useState<any>();
+
   useEffect(() => {
     if (addSending) {
+      const expiryDt = expiry ? expiry.toJSDate().toISOString() : null;
       api
         .invoke(
           "POST",
@@ -77,6 +84,10 @@ const AddServiceAccount = () => {
             policy: policyJSON,
             accessKey: accessKey,
             secretKey: secretKey,
+            description: description,
+            comment: comments,
+            name: name,
+            expiry: expiryDt,
           },
         )
         .then((res) => {
@@ -100,6 +111,10 @@ const AddServiceAccount = () => {
     userName,
     accessKey,
     secretKey,
+    name,
+    description,
+    expiry,
+    comments,
   ]);
 
   useEffect(() => {
@@ -198,6 +213,7 @@ const AddServiceAccount = () => {
                 }}
                 startIcon={<PasswordKeyIcon />}
               />
+
               <Switch
                 value="serviceAccountPolicy"
                 id="serviceAccountPolicy"
@@ -254,6 +270,61 @@ const AddServiceAccount = () => {
                   </Grid>
                 </Grid>
               )}
+
+              <Box
+                sx={{
+                  marginBottom: "15px",
+                  marginTop: "15px",
+                  width: "100%",
+                  "& label": { width: "180px" },
+                }}
+              >
+                <DateTimeInput
+                  noLabelMinWidth
+                  value={expiry}
+                  onChange={(e) => {
+                    setExpiry(e);
+                  }}
+                  id="expiryTime"
+                  label={"Expiry"}
+                  timeFormat={"24h"}
+                  secondsSelector={false}
+                />
+              </Box>
+
+              <InputBox
+                value={name}
+                label={"Name"}
+                id={"name"}
+                name={"name"}
+                type={"text"}
+                placeholder={"Enter a name"}
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+              />
+              <InputBox
+                value={description}
+                label={"Description"}
+                id={"description"}
+                name={"description"}
+                type={"text"}
+                placeholder={"Enter a description"}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                }}
+              />
+              <InputBox
+                value={comments}
+                label={"Comments"}
+                id={"comment"}
+                name={"comment"}
+                type={"text"}
+                placeholder={"Enter a comment"}
+                onChange={(e) => {
+                  setComments(e.target.value);
+                }}
+              />
               <Grid item xs={12} sx={{ ...modalStyleUtils.modalButtonBar }}>
                 <Button
                   id={"clear"}
