@@ -32,7 +32,7 @@ import TooltipWrapper from "../TooltipWrapper/TooltipWrapper";
 import { modalStyleUtils } from "../FormComponents/common/styleLibrary";
 
 const WarningBlock = styled.div(({ theme }) => ({
-  color: "red", // TODO: Change this to themed color variant in mds
+  color: get(theme, "signalColors.danger", "#C51B3F"),
   fontSize: ".85rem",
   margin: ".5rem 0 .5rem 0",
   display: "flex",
