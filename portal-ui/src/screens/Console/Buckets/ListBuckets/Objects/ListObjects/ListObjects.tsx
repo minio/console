@@ -359,6 +359,8 @@ const ListObjects = () => {
   useEffect(() => {
     if (selectedObjects.length === 1) {
       const objectName = selectedObjects[0];
+      const isPrefix = objectName.endsWith("/");
+
       let objectType: AllowedPreviews = previewObjectType(metaData, objectName);
 
       if (objectType !== "none" && canDownload) {
@@ -367,7 +369,7 @@ const ListObjects = () => {
         setCanPreviewFile(false);
       }
 
-      if (objectName.endsWith("/") || canDownload) {
+      if (canDownload && !isPrefix) {
         setCanShareFile(true);
       } else {
         setCanShareFile(false);
