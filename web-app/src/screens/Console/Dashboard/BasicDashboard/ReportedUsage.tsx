@@ -17,7 +17,7 @@
 import React, { Fragment } from "react";
 import get from "lodash/get";
 import styled from "styled-components";
-import { Box, HelpTip, Tooltip } from "mds";
+import { Box, HelpTip } from "mds";
 import { Cell, Pie, PieChart } from "recharts";
 
 const ReportedUsageMain = styled.div(({ theme }) => ({

@@ -13,14 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, {
-  Fragment,
-  RefObject,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { Fragment, useState } from "react";
 import get from "lodash/get";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
