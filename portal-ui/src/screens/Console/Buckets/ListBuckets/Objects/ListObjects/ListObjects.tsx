@@ -547,7 +547,12 @@ const ListObjects = () => {
             }
 
             if (encodedPath !== "") {
-              uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
+              uploadUrl = `${uploadUrl}?prefix=${encodedPath}&fileName=${encodeURLString(
+                fileName,
+              )}`;
+            } else {
+              // if passed as prefix it would be treated as folder in backend
+              uploadUrl = `${uploadUrl}?fileName=${encodeURLString(fileName)}`;
             }
 
             const identity = encodeURLString(
