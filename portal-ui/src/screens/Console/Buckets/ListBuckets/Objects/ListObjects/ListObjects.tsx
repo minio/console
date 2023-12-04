@@ -127,6 +127,8 @@ import ListObjectsTable from "./ListObjectsTable";
 import FilterObjectsSB from "../../../../ObjectBrowser/FilterObjectsSB";
 import AddAccessRule from "../../../BucketDetails/AddAccessRule";
 
+import sanitize from "sanitize-filename";
+
 const DeleteMultipleObjects = withSuspense(
   React.lazy(() => import("./DeleteMultipleObjects")),
 );
@@ -546,12 +548,16 @@ const ListObjects = () => {
               );
             }
 
+            const sanitizedFileName = sanitize(fileName);
+
             if (encodedPath !== "") {
               uploadUrl = `${uploadUrl}?prefix=${encodedPath}${encodeURLString(
-                fileName,
+                sanitizedFileName,
               )}`;
             } else {
-              uploadUrl = `${uploadUrl}?prefix=${encodeURLString(fileName)}`;
+              uploadUrl = `${uploadUrl}?prefix=${encodeURLString(
+                sanitizedFileName,
+              )}`;
             }
 
             const identity = encodeURLString(
