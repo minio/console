@@ -38,7 +38,7 @@ type DeleteObjectURL struct {
 	AllVersions        *bool
 	Bypass             *bool
 	NonCurrentVersions *bool
-	Path               string
+	Prefix             string
 	Recursive          *bool
 	VersionID          *string
 
@@ -107,9 +107,9 @@ func (o *DeleteObjectURL) Build() (*url.URL, error) {
 		qs.Set("non_current_versions", nonCurrentVersionsQ)
 	}
 
-	pathQ := o.Path
-	if pathQ != "" {
-		qs.Set("path", pathQ)
+	prefixQ := o.Prefix
+	if prefixQ != "" {
+		qs.Set("prefix", prefixQ)
 	}
 
 	var recursiveQ string
