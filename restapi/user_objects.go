@@ -63,6 +63,7 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	})
 	// delete object
 	api.ObjectDeleteObjectHandler = objectApi.DeleteObjectHandlerFunc(func(params objectApi.DeleteObjectParams, session *models.Principal) middleware.Responder {
+		fmt.Println("ObjectDeleteObjectHandler", params.Prefix)
 		if err := getDeleteObjectResponse(session, params); err != nil {
 			return objectApi.NewDeleteObjectDefault(err.Code).WithPayload(err.APIError)
 		}
@@ -70,6 +71,8 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	})
 	// delete multiple objects
 	api.ObjectDeleteMultipleObjectsHandler = objectApi.DeleteMultipleObjectsHandlerFunc(func(params objectApi.DeleteMultipleObjectsParams, session *models.Principal) middleware.Responder {
+		fmt.Println("ObjectDeleteMultipleObjectsHandler", params)
+
 		if err := getDeleteMultiplePathsResponse(session, params); err != nil {
 			return objectApi.NewDeleteMultipleObjectsDefault(err.Code).WithPayload(err.APIError)
 		}
@@ -764,8 +767,8 @@ func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteO
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	var prefix string
-	if params.Path != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Path)
+	if params.Prefix != "" {
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 		if err != nil {
 			return ErrorWithContext(ctx, err)

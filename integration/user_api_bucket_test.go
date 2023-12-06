@@ -423,8 +423,9 @@ func DeleteObject(bucketName, path string, recursive, allVersions bool) (*http.R
 	   DELETE:
 	   {{baseUrl}}/buckets/bucketName/objects?path=Y2VzYXJpby50eHQ=&recursive=false&all_versions=false
 	*/
-	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects?path=" +
-		path + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
+	prefixEncoded := base64.StdEncoding.EncodeToString([]byte(path))
+	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects?prefix=" +
+		prefixEncoded + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
 		strconv.FormatBool(allVersions)
 	request, err := http.NewRequest(
 		"DELETE",
@@ -1639,7 +1640,6 @@ func TestDeleteObject(t *testing.T) {
 	assert := assert.New(t)
 	bucketName := "testdeleteobjectbucket1"
 	fileName := "testdeleteobjectfile"
-	path := "dGVzdGRlbGV0ZW9iamVjdGZpbGUxLnR4dA==" // fileName encoded base64
 	numberOfFiles := 2
 
 	// 1. Create bucket
@@ -1662,8 +1662,9 @@ func TestDeleteObject(t *testing.T) {
 		}
 	}
 
+	objPathFull := fileName + "1.txt" // would be encoded in DeleteObject util method.
 	// 3. Delete only one object from the bucket.
-	deleteResponse, deleteError := DeleteObject(bucketName, path, false, false)
+	deleteResponse, deleteError := DeleteObject(bucketName, objPathFull, false, false)
 	assert.Nil(deleteError)
 	if deleteError != nil {
 		log.Println(deleteError)

@@ -80,7 +80,7 @@ const DeleteObject = ({
     const recursive = decodedSelectedObject.endsWith("/");
     invokeDeleteApi(
       "DELETE",
-      `/api/v1/buckets/${selectedBucket}/objects?path=${selectedObject}${
+      `/api/v1/buckets/${selectedBucket}/objects?prefix=${selectedObject}${
         selectedVersion !== ""
           ? `&version_id=${selectedVersion}`
           : `&recursive=${recursive}&all_versions=${deleteVersions}`

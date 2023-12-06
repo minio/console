@@ -25,6 +25,8 @@ import { hasPermission } from "../../../../../../common/SecureComponent";
 import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions";
 import { useSelector } from "react-redux";
 import { BucketVersioningResponse } from "api/consoleApi";
+import { api } from "../../../../../../api";
+import { encodeURLString } from "../../../../../../common/utils";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -86,13 +88,37 @@ const DeleteObject = ({
     }
 
     if (toSend) {
-      invokeDeleteApi(
-        "POST",
-        `/api/v1/buckets/${selectedBucket}/delete-objects?all_versions=${deleteVersions}${
-          bypassGovernance ? "&bypass=true" : ""
-        }`,
-        toSend,
-      );
+      if (selectedObjects.length === 1) {
+        const firstObject = selectedObjects[0];
+        api.buckets
+          .deleteObject(selectedBucket, {
+            prefix: encodeURLString(firstObject),
+            all_versions: deleteVersions,
+            bypass: bypassGovernance,
+            recursive: firstObject.endsWith("/"), //if it is just a prefix
+          })
+          .then(onDelSuccess)
+          .catch((err) => {
+            dispatch(
+              setErrorSnackMessage({
+                errorMessage: `Could not delete object. ${err.statusText}. ${
+                  retentionConfig
+                    ? "Please check retention mode and if object is WORM protected."
+                    : ""
+                }`,
+                detailedError: "",
+              }),
+            );
+          });
+      } else {
+        invokeDeleteApi(
+          "POST",
+          `/api/v1/buckets/${selectedBucket}/delete-objects?all_versions=${deleteVersions}${
+            bypassGovernance ? "&bypass=true" : ""
+          }`,
+          toSend,
+        );
+      }
     }
   };
 
