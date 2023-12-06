@@ -21,6 +21,7 @@ package integration
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -395,9 +396,10 @@ func UploadAnObject(bucketName, fileName string) (*http.Response, error) {
 		contentType + boundaryEnd
 	arrayOfBytes := []byte(file)
 	requestDataBody := bytes.NewReader(arrayOfBytes)
+	apiURL := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/upload" + "?prefix=" + base64.StdEncoding.EncodeToString([]byte(fileName))
 	request, err := http.NewRequest(
 		"POST",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/upload",
+		apiURL,
 		requestDataBody,
 	)
 	if err != nil {
@@ -488,9 +490,11 @@ func PutObjectsRetentionStatus(bucketName, prefix, versionID, mode, expires stri
 	}
 	requestDataJSON, _ := json.Marshal(requestDataAdd)
 	requestDataBody := bytes.NewReader(requestDataJSON)
+	apiURL := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/retention?prefix=" + prefix + "&version_id=" + versionID
+
 	request, err := http.NewRequest(
 		"PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/retention?prefix="+prefix+"&version_id="+versionID,
+		apiURL,
 		requestDataBody,
 	)
 	if err != nil {
@@ -726,9 +730,10 @@ func PutObjectsLegalholdStatus(bucketName, prefix, status, versionID string) (*h
 	}
 	requestDataJSON, _ := json.Marshal(requestDataAdd)
 	requestDataBody := bytes.NewReader(requestDataJSON)
+	apiURL := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/legalhold?prefix=" + prefix + "&version_id=" + versionID
 	request, err := http.NewRequest(
 		"PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/legalhold?prefix="+prefix+"&version_id="+versionID,
+		apiURL,
 		requestDataBody,
 	)
 	if err != nil {
@@ -747,8 +752,8 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	// Variables
 	assert := assert.New(t)
 	bucketName := "testputobjectslegalholdstatus"
-	fileName := "testputobjectslegalholdstatus.txt"
-	prefix := "dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0" // encoded base64
+	objName := "testputobjectslegalholdstatus.txt" // // encoded base64 of testputobjectslegalholdstatus.txt =  dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0
+	objectNameEncoded := "dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0"
 	status := "enabled"
 
 	// 1. Create bucket
@@ -759,7 +764,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	// 2. Add object
 	uploadResponse, uploadError := UploadAnObject(
 		bucketName,
-		fileName,
+		objName,
 	)
 	assert.Nil(uploadError)
 	if uploadError != nil {
@@ -776,7 +781,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	}
 
 	// Get versionID
-	listResponse, _ := ListObjects(bucketName, prefix, "true")
+	listResponse, _ := ListObjects(bucketName, "", "true")
 	bodyBytes, _ := io.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
 	err := json.Unmarshal(bodyBytes, &listObjs)
@@ -814,7 +819,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 			// 3. Put Objects Legal Status
 			putResponse, putError := PutObjectsLegalholdStatus(
 				bucketName,
-				prefix,
+				objectNameEncoded,
 				status,
 				tt.args.versionID,
 			)
