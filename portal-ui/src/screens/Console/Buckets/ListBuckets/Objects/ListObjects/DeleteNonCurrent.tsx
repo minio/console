@@ -59,7 +59,7 @@ const DeleteNonCurrentVersions = ({
     if (deleteLoading) {
       api.buckets
         .deleteObject(selectedBucket, {
-          path: selectedObject,
+          prefix: selectedObject,
           non_current_versions: true,
           bypass: bypassGovernance,
         })
