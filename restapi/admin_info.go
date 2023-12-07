@@ -881,9 +881,9 @@ func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoP
 	prometheusURL := ""
 
 	if !*params.DefaultOnly {
-		promUrl := getPrometheusURL()
-		if promUrl != "" {
-			prometheusURL = promUrl
+		promURL := getPrometheusURL()
+		if promURL != "" {
+			prometheusURL = promURL
 		}
 	}
 
