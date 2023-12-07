@@ -53,6 +53,34 @@ const ReportedUsageMain = styled.div(({ theme }) => ({
     },
   },
 }));
+export const usageClarifyingContent = 
+  <Fragment>
+  <div>
+    <strong> Not what you expected?</strong>
+    <br />
+    This Usage value is comparable to{" "}
+    <strong>mc du --versions</strong> which represents the size of
+    all object versions that exist in the buckets.
+    <br />
+    Running{" "}
+    <a
+      target="_blank"
+      href="https://min.io/docs/minio/linux/reference/minio-mc/mc-du.html"
+    >
+      mc du
+    </a>{" "}
+    without the <strong>--versions</strong> flag or{" "}
+    <a
+      target="_blank"
+      href="https://man7.org/linux/man-pages/man1/df.1.html"
+    >
+      df
+    </a>{" "}
+    will provide different values corresponding to the size of all{" "}
+    <strong>current</strong> versions and the physical disk space
+    occupied respectively.
+  </div>
+</Fragment>
 
 const ReportedUsage = ({
   usageValue,
@@ -63,6 +91,7 @@ const ReportedUsage = ({
   total: number | string;
   unit: string;
 }) => {
+  
   const plotValues = [
     { value: total, color: "#D6D6D6", label: "Free Space" },
     {
@@ -81,33 +110,7 @@ const ReportedUsage = ({
 
         <HelpTip
           content={
-            <Fragment>
-              <div>
-                <strong> Not what you expected?</strong>
-                <br />
-                This Usage value is comparable to{" "}
-                <strong>mc du --versions</strong> which represents the size of
-                all object versions that exist in the buckets.
-                <br />
-                Running{" "}
-                <a
-                  target="_blank"
-                  href="https://min.io/docs/minio/linux/reference/minio-mc/mc-du.html"
-                >
-                  mc du
-                </a>{" "}
-                without the <strong>--versions</strong> flag or{" "}
-                <a
-                  target="_blank"
-                  href="https://man7.org/linux/man-pages/man1/df.1.html"
-                >
-                  df
-                </a>{" "}
-                will provide different values corresponding to the size of all{" "}
-                <strong>current</strong> versions and the physical disk space
-                occupied respectively.
-              </div>
-            </Fragment>
+            usageClarifyingContent
           }
           placement="left"
         >
