@@ -21,6 +21,7 @@ package integration
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -395,9 +396,10 @@ func UploadAnObject(bucketName, fileName string) (*http.Response, error) {
 		contentType + boundaryEnd
 	arrayOfBytes := []byte(file)
 	requestDataBody := bytes.NewReader(arrayOfBytes)
+	apiURL := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/upload" + "?prefix=" + base64.StdEncoding.EncodeToString([]byte(fileName))
 	request, err := http.NewRequest(
 		"POST",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/upload",
+		apiURL,
 		requestDataBody,
 	)
 	if err != nil {
@@ -421,8 +423,9 @@ func DeleteObject(bucketName, path string, recursive, allVersions bool) (*http.R
 	   DELETE:
 	   {{baseUrl}}/buckets/bucketName/objects?path=Y2VzYXJpby50eHQ=&recursive=false&all_versions=false
 	*/
-	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects?path=" +
-		path + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
+	prefixEncoded := base64.StdEncoding.EncodeToString([]byte(path))
+	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects?prefix=" +
+		prefixEncoded + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
 		strconv.FormatBool(allVersions)
 	request, err := http.NewRequest(
 		"DELETE",
@@ -488,9 +491,11 @@ func PutObjectsRetentionStatus(bucketName, prefix, versionID, mode, expires stri
 	}
 	requestDataJSON, _ := json.Marshal(requestDataAdd)
 	requestDataBody := bytes.NewReader(requestDataJSON)
+	apiURL := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/retention?prefix=" + prefix + "&version_id=" + versionID
+
 	request, err := http.NewRequest(
 		"PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/retention?prefix="+prefix+"&version_id="+versionID,
+		apiURL,
 		requestDataBody,
 	)
 	if err != nil {
@@ -726,9 +731,10 @@ func PutObjectsLegalholdStatus(bucketName, prefix, status, versionID string) (*h
 	}
 	requestDataJSON, _ := json.Marshal(requestDataAdd)
 	requestDataBody := bytes.NewReader(requestDataJSON)
+	apiURL := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/legalhold?prefix=" + prefix + "&version_id=" + versionID
 	request, err := http.NewRequest(
 		"PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/legalhold?prefix="+prefix+"&version_id="+versionID,
+		apiURL,
 		requestDataBody,
 	)
 	if err != nil {
@@ -747,8 +753,8 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	// Variables
 	assert := assert.New(t)
 	bucketName := "testputobjectslegalholdstatus"
-	fileName := "testputobjectslegalholdstatus.txt"
-	prefix := "dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0" // encoded base64
+	objName := "testputobjectslegalholdstatus.txt" // // encoded base64 of testputobjectslegalholdstatus.txt =  dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0
+	objectNameEncoded := "dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0"
 	status := "enabled"
 
 	// 1. Create bucket
@@ -759,7 +765,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	// 2. Add object
 	uploadResponse, uploadError := UploadAnObject(
 		bucketName,
-		fileName,
+		objName,
 	)
 	assert.Nil(uploadError)
 	if uploadError != nil {
@@ -776,7 +782,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	}
 
 	// Get versionID
-	listResponse, _ := ListObjects(bucketName, prefix, "true")
+	listResponse, _ := ListObjects(bucketName, "", "true")
 	bodyBytes, _ := io.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
 	err := json.Unmarshal(bodyBytes, &listObjs)
@@ -814,7 +820,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 			// 3. Put Objects Legal Status
 			putResponse, putError := PutObjectsLegalholdStatus(
 				bucketName,
-				prefix,
+				objectNameEncoded,
 				status,
 				tt.args.versionID,
 			)
@@ -1634,7 +1640,6 @@ func TestDeleteObject(t *testing.T) {
 	assert := assert.New(t)
 	bucketName := "testdeleteobjectbucket1"
 	fileName := "testdeleteobjectfile"
-	path := "dGVzdGRlbGV0ZW9iamVjdGZpbGUxLnR4dA==" // fileName encoded base64
 	numberOfFiles := 2
 
 	// 1. Create bucket
@@ -1657,8 +1662,9 @@ func TestDeleteObject(t *testing.T) {
 		}
 	}
 
+	objPathFull := fileName + "1.txt" // would be encoded in DeleteObject util method.
 	// 3. Delete only one object from the bucket.
-	deleteResponse, deleteError := DeleteObject(bucketName, path, false, false)
+	deleteResponse, deleteError := DeleteObject(bucketName, objPathFull, false, false)
 	assert.Nil(deleteError)
 	if deleteError != nil {
 		log.Println(deleteError)

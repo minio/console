@@ -522,6 +522,8 @@ const ListObjects = () => {
               relativeFolderPath = fileWebkitRelativePath;
             }
 
+            let prefixPath = "";
+
             if (path !== "" || relativeFolderPath !== "") {
               const finalFolderPath = relativeFolderPath
                 .split("/")
@@ -530,25 +532,29 @@ const ListObjects = () => {
 
               const pathClean = path.endsWith("/") ? path.slice(0, -1) : path;
 
-              encodedPath = encodeURLString(
-                `${pathClean}${
-                  !pathClean.endsWith("/") &&
-                  finalFolderPath !== "" &&
-                  !finalFolderPath.startsWith("/")
-                    ? "/"
-                    : ""
-                }${finalFolderPath}${
-                  !finalFolderPath.endsWith("/") ||
-                  (finalFolderPath.trim() === "" && !path.endsWith("/"))
-                    ? "/"
-                    : ""
-                }`,
-              );
+              prefixPath = `${pathClean}${
+                !pathClean.endsWith("/") &&
+                finalFolderPath !== "" &&
+                !finalFolderPath.startsWith("/")
+                  ? "/"
+                  : ""
+              }${finalFolderPath}${
+                !finalFolderPath.endsWith("/") ||
+                (finalFolderPath.trim() === "" && !path.endsWith("/"))
+                  ? "/"
+                  : ""
+              }`;
             }
 
-            if (encodedPath !== "") {
-              uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
+            if (prefixPath !== "") {
+              uploadUrl = `${uploadUrl}?prefix=${encodeURLString(
+                prefixPath + fileName,
+              )}`;
+            } else {
+              uploadUrl = `${uploadUrl}?prefix=${encodeURLString(fileName)}`;
             }
+
+            encodedPath = encodeURLString(prefixPath);
 
             const identity = encodeURLString(
               `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`,

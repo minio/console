@@ -339,7 +339,7 @@ paths:
           in: path
           required: true
           type: string
-        - name: path
+        - name: prefix
           in: query
           required: true
           type: string

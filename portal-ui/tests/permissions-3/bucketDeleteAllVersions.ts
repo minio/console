@@ -17,11 +17,8 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
-import { bucketsElement } from "../utils/elements-menu";
 import { testBucketBrowseButtonFor } from "../utils/functions";
 import { Selector } from "testcafe";
-import * as constants from "../utils/constants";
-import { deleteAllVersions } from "../utils/elements";
 
 fixture("For user with Bucket Read & Write permissions").page(
   "http://localhost:9090",
@@ -45,6 +42,9 @@ test
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
       .wait(1000);
   })("All versions of an object can be deleted from a bucket", async (t) => {
+    const versionRows = Selector(
+      "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)",
+    );
     await t
       .useRole(roles.bucketReadWrite)
       .navigateTo("http://localhost:9090/browser")
@@ -55,11 +55,7 @@ test
       .click(elements.deleteButton)
       .click(elements.deleteAllVersions)
       .click(Selector("button:enabled").withExactText("Delete").nth(1))
-      .expect(
-        Selector(
-          "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)",
-        ).exists,
-      )
+      .expect(versionRows.exists)
       .notOk();
   })
   .after(async (t) => {

@@ -1534,7 +1534,7 @@ func init() {
           },
           {
             "type": "string",
-            "name": "path",
+            "name": "prefix",
             "in": "query",
             "required": true
           },
@@ -10684,7 +10684,7 @@ func init() {
           },
           {
             "type": "string",
-            "name": "path",
+            "name": "prefix",
             "in": "query",
             "required": true
           },
