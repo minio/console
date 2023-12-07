@@ -2,13 +2,26 @@
 
 # Changelog
 
+## Release v0.42.0
+
+Features:
+
+- Introducing Dark Mode
+
+Bug Fix:
+
+- Fixed vulnerabilities
+- Changes on Upload and Delete object urls
+- Fixed blocking subpath creation if not enough permissions
+- Removed share object option at prefix level
+- Updated allowed actions for a deleted object
+
 ## Release v0.41.0
 
 Features:
 
 - Updated pages to use mds components
 - support for resolving IPv4/IPv6
-
 
 Bug Fix:
 
@@ -23,7 +36,6 @@ Features:
 - Updated OpenID page
 - Added New bucket event types support
 
-
 Bug Fix:
 
 - Fixed crash in access keys page
@@ -36,7 +48,6 @@ Features:
 
 - Migrated metrics page to mds
 - Migrated Register page to mds
-
 
 Bug Fix:
 
