@@ -881,7 +881,10 @@ func getAdminInfoResponse(session *models.Principal, params systemApi.AdminInfoP
 	prometheusURL := ""
 
 	if !*params.DefaultOnly {
-		prometheusURL = getPrometheusURL()
+		promUrl := getPrometheusURL()
+		if promUrl != "" {
+			prometheusURL = promUrl
+		}
 	}
 
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
