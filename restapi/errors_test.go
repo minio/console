@@ -72,9 +72,10 @@ func TestError(t *testing.T) {
 		"ErrRemoteTierUppercase":              {code: 400, err: ErrRemoteTierUppercase},
 		"ErrRemoteTierBucketNotFound":         {code: 400, err: ErrRemoteTierBucketNotFound},
 		"ErrRemoteInvalidCredentials":         {code: 403, err: ErrRemoteInvalidCredentials},
+		"ErrTooFewNodes":                      {code: 500, err: ErrTooFewNodes},
 		"ErrUnableToGetTenantUsage":           {code: 500, err: ErrUnableToGetTenantUsage},
 		"ErrTooManyNodes":                     {code: 500, err: ErrTooManyNodes},
-		"ErrTooFewNodes":                      {code: 500, err: ErrTooFewNodes},
+		"ErrAccessDenied":                     {code: 403, err: ErrAccessDenied},
 		"ErrTooFewAvailableNodes":             {code: 500, err: ErrTooFewAvailableNodes},
 		"ErrFewerThanFourNodes":               {code: 500, err: ErrFewerThanFourNodes},
 		"ErrUnableToGetTenantLogs":            {code: 500, err: ErrUnableToGetTenantLogs},
@@ -119,17 +120,7 @@ func TestError(t *testing.T) {
 				APIError: &models.APIError{Message: ErrInvalidLogin.Error(), DetailedMessage: ""},
 			},
 		})
-	tests = append(tests,
-		testError{
-			name: "accessDenied error omits detailedMessage",
-			args: args{
-				err: []interface{}{ErrAccessDenied},
-			},
-			want: &CodedAPIError{
-				Code:     int(403),
-				APIError: &models.APIError{Message: ErrAccessDenied.Error(), DetailedMessage: ""},
-			},
-		})
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Error(tt.args.err...)
