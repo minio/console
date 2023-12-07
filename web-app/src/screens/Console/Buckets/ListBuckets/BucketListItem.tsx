@@ -220,12 +220,7 @@ const BucketListItem = ({
           }
         >
           {bucket.details?.versioning && (
-            <HelpTip
-              content={
-                usageClarifyingContent
-              }
-              placement="top"
-            >
+            <HelpTip content={usageClarifyingContent} placement="top">
               <ReportedUsageIcon />{" "}
             </HelpTip>
           )}

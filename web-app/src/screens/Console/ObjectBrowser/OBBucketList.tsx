@@ -223,9 +223,7 @@ const OBListBuckets = () => {
                         onMouseLeave={() => setClickOverride(false)}
                       >
                         <HelpTip
-                          content={
-                           usageClarifyingContent
-                          }
+                          content={usageClarifyingContent}
                           placement="right"
                         >
                           {niceBytesInt(size || 0)}
