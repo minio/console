@@ -2092,7 +2092,7 @@ export class Api<
     deleteObject: (
       bucketName: string,
       query: {
-        path: string;
+        prefix: string;
         version_id?: string;
         recursive?: boolean;
         all_versions?: boolean;

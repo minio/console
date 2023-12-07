@@ -71,7 +71,7 @@ type DeleteObjectParams struct {
 	  Required: true
 	  In: query
 	*/
-	Path string
+	Prefix string
 	/*
 	  In: query
 	*/
@@ -113,8 +113,8 @@ func (o *DeleteObjectParams) BindRequest(r *http.Request, route *middleware.Matc
 		res = append(res, err)
 	}
 
-	qPath, qhkPath, _ := qs.GetOK("path")
-	if err := o.bindPath(qPath, qhkPath, route.Formats); err != nil {
+	qPrefix, qhkPrefix, _ := qs.GetOK("prefix")
+	if err := o.bindPrefix(qPrefix, qhkPrefix, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -216,10 +216,10 @@ func (o *DeleteObjectParams) bindNonCurrentVersions(rawData []string, hasKey boo
 	return nil
 }
 
-// bindPath binds and validates parameter Path from query.
-func (o *DeleteObjectParams) bindPath(rawData []string, hasKey bool, formats strfmt.Registry) error {
+// bindPrefix binds and validates parameter Prefix from query.
+func (o *DeleteObjectParams) bindPrefix(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	if !hasKey {
-		return errors.Required("path", "query", rawData)
+		return errors.Required("prefix", "query", rawData)
 	}
 	var raw string
 	if len(rawData) > 0 {
@@ -229,10 +229,10 @@ func (o *DeleteObjectParams) bindPath(rawData []string, hasKey bool, formats str
 	// Required: true
 	// AllowEmptyValue: false
 
-	if err := validate.RequiredString("path", "query", raw); err != nil {
+	if err := validate.RequiredString("prefix", "query", raw); err != nil {
 		return err
 	}
-	o.Path = raw
+	o.Prefix = raw
 
 	return nil
 }
