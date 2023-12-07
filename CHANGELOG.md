@@ -2,6 +2,12 @@
 
 # Changelog
 
+## Release v0.42.1
+
+Bug Fix:
+
+- Reset go version to 1.19
+
 ## Release v0.42.0
 
 Features:
