@@ -17,6 +17,7 @@
 package audit
 
 import (
+	"github.com/google/uuid"
 	"net/http"
 	"os"
 	"strings"
@@ -100,7 +101,7 @@ func ToEntry(w http.ResponseWriter, r *http.Request, reqClaims map[string]interf
 	var requestID interface{}
 	requestID = r.Context().Value(utils.ContextRequestID)
 	if requestID == nil {
-		requestID, _ = utils.NewUUID()
+		requestID = uuid.NewString()
 	}
 	entry.RequestID = requestID.(string)
 

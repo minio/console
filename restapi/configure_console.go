@@ -23,6 +23,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"github.com/google/uuid"
 	"io"
 	"io/fs"
 	"log"
@@ -192,11 +193,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 
 func ContextMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestID, err := utils.NewUUID()
-		if err != nil && err != auth.ErrNoAuthToken {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		requestID := uuid.NewString()
 		ctx := context.WithValue(r.Context(), utils.ContextRequestID, requestID)
 		ctx = context.WithValue(ctx, utils.ContextRequestUserAgent, r.UserAgent())
 		ctx = context.WithValue(ctx, utils.ContextRequestHost, r.Host)

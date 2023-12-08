@@ -19,18 +19,7 @@ package utils
 import (
 	"context"
 	"encoding/base64"
-
-	"github.com/google/uuid"
 )
-
-// NewUUID - get a random UUID.
-func NewUUID() (string, error) {
-	u, err := uuid.NewRandom()
-	if err != nil {
-		return "", err
-	}
-	return u.String(), nil
-}
 
 // DecodeBase64 : decoded base64 input into utf-8 text
 func DecodeBase64(s string) (string, error) {
