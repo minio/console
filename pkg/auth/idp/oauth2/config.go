@@ -20,9 +20,7 @@ package oauth2
 
 import (
 	"crypto/sha1"
-	"strconv"
 	"strings"
-	"time"
 
 	"github.com/minio/console/pkg/auth/token"
 	"github.com/minio/pkg/v2/env"
@@ -105,16 +103,4 @@ func getSaltForIDPHmac() string {
 // getIDPScopes return default scopes during the IDP login request
 func getIDPScopes() string {
 	return env.Get(ConsoleIDPScopes, "openid,profile,email")
-}
-
-// getIDPTokenExpiration return default token expiration for access token
-func getIDPTokenExpiration() time.Duration {
-	expiration := 12 * 3600
-	if expStr := env.Get(ConsoleIDPTokenExpiration, ""); expStr != "" {
-		if exp, err := strconv.Atoi(expStr); err == nil {
-			expiration = exp
-		}
-	}
-
-	return time.Duration(expiration) * time.Second
 }
