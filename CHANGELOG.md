@@ -2,6 +2,12 @@
 
 # Changelog
 
+## Release v0.42.2
+
+Bug Fix:
+
+- Hidden Prometheus metrics if URL is empty
+
 ## Release v0.42.1
 
 Bug Fix:
