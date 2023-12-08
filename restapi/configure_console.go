@@ -23,7 +23,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/google/uuid"
 	"io"
 	"io/fs"
 	"log"
@@ -35,6 +34,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/minio/console/pkg/logger"
 	"github.com/minio/console/pkg/utils"

@@ -17,11 +17,12 @@
 package audit
 
 import (
-	"github.com/google/uuid"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/golang-jwt/jwt/v4"
 
