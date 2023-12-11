@@ -16,7 +16,10 @@
 
 package utils
 
-import "testing"
+import (
+	"context"
+	"testing"
+)
 
 func TestDecodeInput(t *testing.T) {
 	type args struct {
@@ -86,6 +89,39 @@ func TestDecodeInput(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("DecodeBase64() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestClientIPFromContext(t *testing.T) {
+	type args struct {
+		ctx context.Context
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "working return",
+			args: args{
+				ctx: context.Background(),
+			},
+			want: "127.0.0.1",
+		},
+		{
+			name: "context contains ip",
+			args: args{
+				ctx: context.WithValue(context.Background(), ContextClientIP, "10.0.0.1"),
+			},
+			want: "10.0.0.1",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ClientIPFromContext(tt.args.ctx); got != tt.want {
+				t.Errorf("ClientIPFromContext() = %v, want %v", got, tt.want)
 			}
 		})
 	}

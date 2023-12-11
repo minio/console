@@ -35,6 +35,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/minio/console/pkg/logger"
 	"github.com/minio/console/pkg/utils"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -192,11 +194,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 
 func ContextMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestID, err := utils.NewUUID()
-		if err != nil && err != auth.ErrNoAuthToken {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		requestID := uuid.NewString()
 		ctx := context.WithValue(r.Context(), utils.ContextRequestID, requestID)
 		ctx = context.WithValue(ctx, utils.ContextRequestUserAgent, r.UserAgent())
 		ctx = context.WithValue(ctx, utils.ContextRequestHost, r.Host)
