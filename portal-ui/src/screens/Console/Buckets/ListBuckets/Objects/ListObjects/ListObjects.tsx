@@ -311,9 +311,9 @@ const ListObjects = () => {
 
   const fetchMetadata = useCallback(() => {
     const objectName = selectedObjects[0];
+    const encodedPath = encodeURLString(objectName);
 
-    if (!isMetaDataLoaded) {
-      const encodedPath = encodeURLString(objectName);
+    if (!isMetaDataLoaded && encodedPath) {
       api.buckets
         .getObjectMetadata(bucketName, {
           prefix: encodedPath,
