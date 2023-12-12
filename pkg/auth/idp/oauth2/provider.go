@@ -28,11 +28,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/minio-go/v7/pkg/set"
-
 	"github.com/minio/console/pkg/auth/token"
 	"github.com/minio/console/pkg/auth/utils"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/minio/minio-go/v7/pkg/set"
+	"github.com/minio/pkg/v2/env"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/oauth2"
 	xoauth2 "golang.org/x/oauth2"
@@ -331,14 +331,18 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state, roleARN
 		}
 		client.RefreshToken = oauth2Token.RefreshToken
 
-		expiration := token.GetConsoleSTSDuration()
-		if exp := getIDPTokenExpiration(); exp > 0 {
-			expiration = exp
-		}
+		envStsDuration := env.Get(token.ConsoleSTSDuration, "")
+		stsDuration, err := time.ParseDuration(envStsDuration)
 
-		// Use the expiration configured in the token itself if it is closer than the configured value
-		if exp := oauth2Token.Expiry.Sub(time.Now().UTC()); exp < expiration {
-			expiration = exp
+		expiration := 12 * time.Hour
+
+		if err == nil && stsDuration > 0 {
+			expiration = stsDuration
+		} else {
+			// Use the expiration configured in the token itself if it is closer than the configured value
+			if exp := oauth2Token.Expiry.Sub(time.Now().UTC()); exp < expiration {
+				expiration = exp
+			}
 		}
 
 		// Minimum duration in S3 spec is 15 minutes, do not bother returning

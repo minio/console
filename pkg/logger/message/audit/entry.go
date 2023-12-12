@@ -22,6 +22,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/minio/console/pkg/utils"
@@ -100,7 +102,7 @@ func ToEntry(w http.ResponseWriter, r *http.Request, reqClaims map[string]interf
 	var requestID interface{}
 	requestID = r.Context().Value(utils.ContextRequestID)
 	if requestID == nil {
-		requestID, _ = utils.NewUUID()
+		requestID = uuid.NewString()
 	}
 	entry.RequestID = requestID.(string)
 

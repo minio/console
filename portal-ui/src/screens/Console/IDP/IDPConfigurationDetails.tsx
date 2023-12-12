@@ -121,11 +121,10 @@ const IDPConfigurationDetails = ({
           }
 
           if (item.isEnv) {
-            overrideFields[
-              item.key
-            ] = `MINIO_IDENTITY_OPENID_${item.key.toUpperCase()}${
-              configurationName !== "_" ? `_${configurationName}` : ""
-            }`;
+            overrideFields[item.key] =
+              `MINIO_IDENTITY_OPENID_${item.key.toUpperCase()}${
+                configurationName !== "_" ? `_${configurationName}` : ""
+              }`;
             totEnv++;
           }
 

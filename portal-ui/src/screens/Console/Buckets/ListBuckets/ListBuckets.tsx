@@ -247,8 +247,8 @@ const ListBuckets = () => {
                     !hasBuckets
                       ? ""
                       : bulkSelect
-                      ? "Unselect Buckets"
-                      : "Select Multiple Buckets"
+                        ? "Unselect Buckets"
+                        : "Select Multiple Buckets"
                   }
                 >
                   <Button
@@ -269,8 +269,8 @@ const ListBuckets = () => {
                       !hasBuckets
                         ? ""
                         : selectedBuckets.length === filteredRecords.length
-                        ? "Unselect All Buckets"
-                        : "Select All Buckets"
+                          ? "Unselect All Buckets"
+                          : "Select All Buckets"
                     }
                   >
                     <Button
@@ -287,15 +287,15 @@ const ListBuckets = () => {
                     !hasBuckets
                       ? ""
                       : !canPutLifecycle
-                      ? permissionTooltipHelper(
-                          IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
-                          "configure lifecycle for the selected buckets",
-                        )
-                      : selectedBuckets.length === 0
-                      ? bulkSelect
-                        ? "Please select at least one bucket on which to configure Lifecycle"
-                        : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
-                      : "Set Lifecycle"
+                        ? permissionTooltipHelper(
+                            IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
+                            "configure lifecycle for the selected buckets",
+                          )
+                        : selectedBuckets.length === 0
+                          ? bulkSelect
+                            ? "Please select at least one bucket on which to configure Lifecycle"
+                            : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
+                          : "Set Lifecycle"
                   }
                 >
                   <Button
@@ -314,10 +314,10 @@ const ListBuckets = () => {
                     !hasBuckets
                       ? ""
                       : selectedBuckets.length === 0
-                      ? bulkSelect
-                        ? "Please select at least one bucket on which to configure Replication"
-                        : "Use the Select Multiple Buckets button to choose buckets on which to configure Replication"
-                      : "Set Replication"
+                        ? bulkSelect
+                          ? "Please select at least one bucket on which to configure Replication"
+                          : "Use the Select Multiple Buckets button to choose buckets on which to configure Replication"
+                        : "Set Replication"
                   }
                 >
                   <Button

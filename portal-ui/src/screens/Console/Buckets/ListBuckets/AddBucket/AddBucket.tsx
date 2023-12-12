@@ -339,9 +339,7 @@ const AddBucket = () => {
                   }
                   tooltip={
                     versioningAllowed
-                      ? lockingEnabled && versioningEnabled
-                        ? "You must disable Locking before Versioning can be disabled"
-                        : ""
+                      ? ""
                       : permissionTooltipHelper(
                           [
                             IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
@@ -352,12 +350,19 @@ const AddBucket = () => {
                   }
                   helpTip={
                     <Fragment>
+                      {lockingEnabled && versioningEnabled && (
+                        <strong>
+                          {" "}
+                          You must disable Object Locking before Versioning can
+                          be disabled <br />
+                        </strong>
+                      )}
                       MinIO supports keeping multiple{" "}
                       <a
                         href="https://min.io/docs/minio/kubernetes/upstream/administration/object-management/object-versioning.html#minio-bucket-versioning"
                         target="blank"
                       >
-                        “versions”
+                        versions
                       </a>{" "}
                       of an object in a single bucket.
                       <br />
@@ -399,6 +404,7 @@ const AddBucket = () => {
                           from versioning if Object Locking is not enabled.
                           <br />
                           MinIO requires versioning to support replication.
+                          <br />
                           Objects in excluded prefixes do not replicate to any
                           peer site or remote site.
                         </Fragment>
@@ -440,11 +446,7 @@ const AddBucket = () => {
                   label={"Object Locking"}
                   tooltip={
                     lockingAllowed
-                      ? `${
-                          versioningEnabled
-                            ? "Exclude Folders & Exclude Prefixes options will not be available if this option is enabled."
-                            : ""
-                        }`
+                      ? ``
                       : permissionTooltipHelper(
                           [
                             IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
@@ -456,6 +458,13 @@ const AddBucket = () => {
                   }
                   helpTip={
                     <Fragment>
+                      {retentionEnabled && (
+                        <strong>
+                          {" "}
+                          You must disable Retention before Object Locking can
+                          be disabled <br />
+                        </strong>
+                      )}
                       You can only enable{" "}
                       <a
                         href="https://min.io/docs/minio/macos/administration/object-management.html#object-retention"
@@ -464,6 +473,12 @@ const AddBucket = () => {
                         Object Locking
                       </a>{" "}
                       when first creating a bucket.
+                      <br />
+                      <br />
+                      <a href="https://min.io/docs/minio/windows/administration/object-management/object-versioning.html#exclude-folders-from-versioning">
+                        Exclude folders and prefixes
+                      </a>{" "}
+                      options will not be available if this option is enabled.
                     </Fragment>
                   }
                   helpTipPlacement="right"
