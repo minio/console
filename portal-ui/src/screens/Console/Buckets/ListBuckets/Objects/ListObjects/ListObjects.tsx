@@ -950,11 +950,16 @@ const ListObjects = () => {
           bucketName={bucketName}
         />
       )}
-      {previewOpen && (
+      {previewOpen && selectedPreview && (
         <PreviewFileModal
           open={previewOpen}
           bucketName={bucketName}
-          object={selectedPreview}
+          actualInfo={{
+            name: selectedPreview.name || "",
+            last_modified: "",
+            version_id: selectedPreview.version_id || "",
+            size: selectedPreview.size || 0,
+          }}
           onClosePreview={closePreviewWindow}
         />
       )}

@@ -17,28 +17,33 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { ProgressBar, Grid, Box, InformativeMessage } from "mds";
 import get from "lodash/get";
-import { BucketObjectItem } from "../ListObjects/types";
 import { AllowedPreviews, previewObjectType } from "../utils";
 import { encodeURLString } from "../../../../../../common/utils";
 import { api } from "../../../../../../api";
+import PreviewPDF from "./PreviewPDF";
+import { downloadObject } from "../../../../ObjectBrowser/utils";
+import { useAppDispatch } from "../../../../../../store";
+import { BucketObject } from "../../../../../../api/consoleApi";
 
 interface IPreviewFileProps {
   bucketName: string;
-  object: BucketObjectItem | null;
+  actualInfo: BucketObject;
   isFullscreen?: boolean;
 }
 
 const PreviewFile = ({
   bucketName,
-  object,
+  actualInfo,
   isFullscreen = false,
 }: IPreviewFileProps) => {
+  const dispatch = useAppDispatch();
+
   const [loading, setLoading] = useState<boolean>(true);
 
   const [metaData, setMetaData] = useState<any>(null);
   const [isMetaDataLoaded, setIsMetaDataLoaded] = useState(false);
 
-  const objectName = object?.name || "";
+  const objectName = actualInfo?.name || "";
 
   const fetchMetadata = useCallback(() => {
     if (!isMetaDataLoaded) {
@@ -71,12 +76,12 @@ const PreviewFile = ({
 
   let path = "";
 
-  if (object) {
-    const encodedPath = encodeURLString(object.name);
+  if (actualInfo) {
+    const encodedPath = encodeURLString(actualInfo.name || "");
     let basename = document.baseURI.replace(window.location.origin, "");
     path = `${window.location.origin}${basename}api/v1/buckets/${bucketName}/objects/download?preview=true&prefix=${encodedPath}`;
-    if (object.version_id) {
-      path = path.concat(`&version_id=${object.version_id}`);
+    if (actualInfo.version_id) {
+      path = path.concat(`&version_id=${actualInfo.version_id}`);
     }
   }
 
@@ -174,6 +179,18 @@ const PreviewFile = ({
               onLoad={iframeLoaded}
             />
           )}
+          {objectType === "pdf" && (
+            <Fragment>
+              <PreviewPDF
+                path={path}
+                onLoad={iframeLoaded}
+                loading={loading}
+                downloadFile={() =>
+                  downloadObject(dispatch, bucketName, path, actualInfo)
+                }
+              />
+            </Fragment>
+          )}
           {objectType === "none" && (
             <div>
               <InformativeMessage
@@ -188,7 +205,8 @@ const PreviewFile = ({
           {objectType !== "none" &&
             objectType !== "video" &&
             objectType !== "audio" &&
-            objectType !== "image" && (
+            objectType !== "image" &&
+            objectType !== "pdf" && (
               <div className={`iframeBase ${loading ? "iframeHidden" : ""}`}>
                 <iframe
                   src={path}

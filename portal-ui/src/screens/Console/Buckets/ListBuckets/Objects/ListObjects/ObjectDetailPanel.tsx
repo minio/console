@@ -570,13 +570,7 @@ const ObjectDetailPanel = ({
         <PreviewFileModal
           open={previewOpen}
           bucketName={bucketName}
-          object={{
-            name: actualInfo.name || "",
-            version_id: actualInfo.version_id || "null",
-            size: actualInfo.size || 0,
-            content_type: "",
-            last_modified: actualInfo.last_modified || "",
-          }}
+          actualInfo={actualInfo}
           onClosePreview={() => {
             setPreviewOpen(false);
           }}
