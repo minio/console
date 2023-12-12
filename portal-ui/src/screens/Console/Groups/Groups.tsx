@@ -231,11 +231,11 @@ const Groups = () => {
                     checkedGroups.length < 1
                       ? "Please select Groups on which you want to apply Policies"
                       : applyPolicy
-                      ? "Select Policy"
-                      : permissionTooltipHelper(
-                          applyPolicyPermissions,
-                          "apply policies to Groups",
-                        )
+                        ? "Select Policy"
+                        : permissionTooltipHelper(
+                            applyPolicyPermissions,
+                            "apply policies to Groups",
+                          )
                   }
                 >
                   <Button
@@ -261,11 +261,11 @@ const Groups = () => {
                     checkedGroups.length === 0
                       ? "Select Groups to delete"
                       : getGroup
-                      ? "Delete Selected"
-                      : permissionTooltipHelper(
-                          getGroupPermissions,
-                          "delete Groups",
-                        )
+                        ? "Delete Selected"
+                        : permissionTooltipHelper(
+                            getGroupPermissions,
+                            "delete Groups",
+                          )
                   }
                 >
                   <Button
