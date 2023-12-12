@@ -284,25 +284,25 @@ const UserDetails = () => {
                       enableEnabled || disableEnabled
                         ? ""
                         : hasPermission(
-                            CONSOLE_UI_RESOURCE,
-                            enableUserPermissions,
-                          )
-                        ? permissionTooltipHelper(
-                            disableUserPermissions,
-                            "disable users",
-                          )
-                        : hasPermission(
-                            CONSOLE_UI_RESOURCE,
-                            disableUserPermissions,
-                          )
-                        ? permissionTooltipHelper(
-                            enableUserPermissions,
-                            "enable users",
-                          )
-                        : permissionTooltipHelper(
-                            enableDisableUserPermissions,
-                            "enable or disable users",
-                          )
+                              CONSOLE_UI_RESOURCE,
+                              enableUserPermissions,
+                            )
+                          ? permissionTooltipHelper(
+                              disableUserPermissions,
+                              "disable users",
+                            )
+                          : hasPermission(
+                                CONSOLE_UI_RESOURCE,
+                                disableUserPermissions,
+                              )
+                            ? permissionTooltipHelper(
+                                enableUserPermissions,
+                                "enable users",
+                              )
+                            : permissionTooltipHelper(
+                                enableDisableUserPermissions,
+                                "enable or disable users",
+                              )
                     }
                   >
                     <Switch

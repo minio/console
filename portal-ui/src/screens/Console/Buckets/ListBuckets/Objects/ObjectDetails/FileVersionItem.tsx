@@ -212,7 +212,9 @@ const FileVersionItem = ({
   let lastModified = DateTime.now();
 
   if (versionInfo.last_modified) {
-    lastModified = DateTime.fromISO(versionInfo.last_modified);
+    lastModified = DateTime.fromISO(
+      versionInfo.last_modified,
+    ) as DateTime<true>;
   }
 
   return (

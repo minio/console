@@ -846,7 +846,7 @@ const ListObjects = () => {
   let createdTime = DateTime.now();
 
   if (bucketInfo?.creation_date) {
-    createdTime = DateTime.fromISO(bucketInfo.creation_date);
+    createdTime = DateTime.fromISO(bucketInfo.creation_date) as DateTime<true>;
   }
 
   const downloadToolTip =

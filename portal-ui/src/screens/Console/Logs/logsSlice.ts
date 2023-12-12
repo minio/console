@@ -49,9 +49,8 @@ export const logsSlice = createSlice({
       ) {
         for (let m in msgs) {
           if (msgs[m].time.getFullYear() === 1) {
-            msgs[
-              m
-            ].ConsoleMsg = `${msgs[m].ConsoleMsg}\n${action.payload.ConsoleMsg}`;
+            msgs[m].ConsoleMsg =
+              `${msgs[m].ConsoleMsg}\n${action.payload.ConsoleMsg}`;
           }
         }
       } else {
