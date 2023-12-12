@@ -330,7 +330,7 @@ const VersionsNavigator = ({
         <PreviewFileModal
           open={previewOpen}
           bucketName={bucketName}
-          object={{
+          actualInfo={{
             name: actualInfo.name || "",
             version_id:
               objectToShare && objectToShare.version_id
