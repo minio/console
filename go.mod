@@ -21,9 +21,9 @@ require (
 	github.com/minio/cli v1.24.2
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.22.3
-	github.com/minio/madmin-go/v3 v3.0.29
+	github.com/minio/madmin-go/v3 v3.0.34
 	github.com/minio/mc v0.0.0-20231030184332-9f2fb2b6a9f8
-	github.com/minio/minio-go/v7 v7.0.64-0.20230920204636-e783c9ba11b3
+	github.com/minio/minio-go/v7 v7.0.65-0.20231130060928-54e115c40e66
 	github.com/minio/selfupdate v0.6.0
 	github.com/minio/websocket v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -43,7 +43,7 @@ require (
 
 require (
 	github.com/mattn/go-ieproxy v0.0.11
-	github.com/minio/pkg/v2 v2.0.2
+	github.com/minio/pkg/v2 v2.0.5
 )
 
 require (
@@ -156,4 +156,9 @@ require (
 	gopkg.in/h2non/filetype.v1 v1.0.5 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
+
+replace (
+	github.com/minio/madmin-go/v3 v3.0.34 => github.com/shtripat/madmin-go/v3 v3.0.0-20231213103602-e8c5c0055b28
+	github.com/minio/mc v0.0.0-20231030184332-9f2fb2b6a9f8 => github.com/shtripat/mc v0.0.0-20231213104014-9da1fe3d3424
 )

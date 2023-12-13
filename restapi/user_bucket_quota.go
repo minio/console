@@ -85,7 +85,7 @@ func setBucketQuota(ctx context.Context, ac *AdminClient, bucket *string, bucket
 			return err
 		}
 	} else {
-		if err := ac.Client.SetBucketQuota(ctx, *bucket, &madmin.BucketQuota{}); err != nil {
+		if err := ac.Client.SetBucketQuota(ctx, *bucket, &madmin.BucketQuota{}, madmin.SetBucketQuotaOptions{}); err != nil {
 			return err
 		}
 	}

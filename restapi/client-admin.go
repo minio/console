@@ -381,7 +381,7 @@ func (ac AdminClient) addRemoteBucket(ctx context.Context, bucket string, target
 }
 
 func (ac AdminClient) setBucketQuota(ctx context.Context, bucket string, quota *madmin.BucketQuota) error {
-	return ac.Client.SetBucketQuota(ctx, bucket, quota)
+	return ac.Client.SetBucketQuota(ctx, bucket, quota, madmin.SetBucketQuotaOptions{})
 }
 
 func (ac AdminClient) getBucketQuota(ctx context.Context, bucket string) (madmin.BucketQuota, error) {
