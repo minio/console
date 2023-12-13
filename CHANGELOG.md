@@ -2,6 +2,17 @@
 
 # Changelog
 
+## Release v0.43.0
+
+Features:
+
+- Updated PDF preview method
+
+Bug Fix:
+
+- Fixed vulnerabilities
+- Prevented non-necessary metadata calls in object browser
+
 ## Release v0.42.2
 
 Bug Fix:
