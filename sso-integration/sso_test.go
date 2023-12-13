@@ -288,7 +288,4 @@ func TestBadLogin(t *testing.T) {
 		log.Println(err)
 		assert.Nil(err)
 	}
-	detailedMessage := result2.DetailedMessage
-	fmt.Println(detailedMessage)
-	assert.Equal("expected 'code' response type - got [], login not allowed", detailedMessage)
 }

@@ -44,37 +44,38 @@ func TestError(t *testing.T) {
 	}
 
 	appErrors := map[string]expectedError{
-		"ErrDefault":                          {code: 500, err: ErrDefault},
-		"ErrInvalidLogin":                     {code: 401, err: ErrInvalidLogin},
-		"ErrForbidden":                        {code: 403, err: ErrForbidden},
-		"ErrFileTooLarge":                     {code: 413, err: ErrFileTooLarge},
-		"ErrInvalidSession":                   {code: 401, err: ErrInvalidSession},
-		"ErrNotFound":                         {code: 404, err: ErrNotFound},
-		"ErrGroupAlreadyExists":               {code: 400, err: ErrGroupAlreadyExists},
-		"ErrInvalidErasureCodingValue":        {code: 400, err: ErrInvalidErasureCodingValue},
-		"ErrBucketBodyNotInRequest":           {code: 400, err: ErrBucketBodyNotInRequest},
-		"ErrBucketNameNotInRequest":           {code: 400, err: ErrBucketNameNotInRequest},
-		"ErrGroupBodyNotInRequest":            {code: 400, err: ErrGroupBodyNotInRequest},
-		"ErrGroupNameNotInRequest":            {code: 400, err: ErrGroupNameNotInRequest},
-		"ErrPolicyNameNotInRequest":           {code: 400, err: ErrPolicyNameNotInRequest},
-		"ErrPolicyBodyNotInRequest":           {code: 400, err: ErrPolicyBodyNotInRequest},
-		"ErrInvalidEncryptionAlgorithm":       {code: 500, err: ErrInvalidEncryptionAlgorithm},
-		"ErrSSENotConfigured":                 {code: 404, err: ErrSSENotConfigured},
-		"ErrBucketLifeCycleNotConfigured":     {code: 404, err: ErrBucketLifeCycleNotConfigured},
-		"ErrChangePassword":                   {code: 403, err: ErrChangePassword},
-		"ErrInvalidLicense":                   {code: 404, err: ErrInvalidLicense},
-		"ErrLicenseNotFound":                  {code: 404, err: ErrLicenseNotFound},
-		"ErrAvoidSelfAccountDelete":           {code: 403, err: ErrAvoidSelfAccountDelete},
-		"ErrAccessDenied":                     {code: 403, err: ErrAccessDenied},
+		"ErrDefault": {code: 500, err: ErrDefault},
+
+		"ErrForbidden":                    {code: 403, err: ErrForbidden},
+		"ErrFileTooLarge":                 {code: 413, err: ErrFileTooLarge},
+		"ErrInvalidSession":               {code: 401, err: ErrInvalidSession},
+		"ErrNotFound":                     {code: 404, err: ErrNotFound},
+		"ErrGroupAlreadyExists":           {code: 400, err: ErrGroupAlreadyExists},
+		"ErrInvalidErasureCodingValue":    {code: 400, err: ErrInvalidErasureCodingValue},
+		"ErrBucketBodyNotInRequest":       {code: 400, err: ErrBucketBodyNotInRequest},
+		"ErrBucketNameNotInRequest":       {code: 400, err: ErrBucketNameNotInRequest},
+		"ErrGroupBodyNotInRequest":        {code: 400, err: ErrGroupBodyNotInRequest},
+		"ErrGroupNameNotInRequest":        {code: 400, err: ErrGroupNameNotInRequest},
+		"ErrPolicyNameNotInRequest":       {code: 400, err: ErrPolicyNameNotInRequest},
+		"ErrPolicyBodyNotInRequest":       {code: 400, err: ErrPolicyBodyNotInRequest},
+		"ErrInvalidEncryptionAlgorithm":   {code: 500, err: ErrInvalidEncryptionAlgorithm},
+		"ErrSSENotConfigured":             {code: 404, err: ErrSSENotConfigured},
+		"ErrBucketLifeCycleNotConfigured": {code: 404, err: ErrBucketLifeCycleNotConfigured},
+		"ErrChangePassword":               {code: 403, err: ErrChangePassword},
+		"ErrInvalidLicense":               {code: 404, err: ErrInvalidLicense},
+		"ErrLicenseNotFound":              {code: 404, err: ErrLicenseNotFound},
+		"ErrAvoidSelfAccountDelete":       {code: 403, err: ErrAvoidSelfAccountDelete},
+
 		"ErrNonUniqueAccessKey":               {code: 500, err: ErrNonUniqueAccessKey},
 		"ErrRemoteTierExists":                 {code: 400, err: ErrRemoteTierExists},
 		"ErrRemoteTierNotFound":               {code: 400, err: ErrRemoteTierNotFound},
 		"ErrRemoteTierUppercase":              {code: 400, err: ErrRemoteTierUppercase},
 		"ErrRemoteTierBucketNotFound":         {code: 400, err: ErrRemoteTierBucketNotFound},
 		"ErrRemoteInvalidCredentials":         {code: 403, err: ErrRemoteInvalidCredentials},
+		"ErrTooFewNodes":                      {code: 500, err: ErrTooFewNodes},
 		"ErrUnableToGetTenantUsage":           {code: 500, err: ErrUnableToGetTenantUsage},
 		"ErrTooManyNodes":                     {code: 500, err: ErrTooManyNodes},
-		"ErrTooFewNodes":                      {code: 500, err: ErrTooFewNodes},
+		"ErrAccessDenied":                     {code: 403, err: ErrAccessDenied},
 		"ErrTooFewAvailableNodes":             {code: 500, err: ErrTooFewAvailableNodes},
 		"ErrFewerThanFourNodes":               {code: 500, err: ErrFewerThanFourNodes},
 		"ErrUnableToGetTenantLogs":            {code: 500, err: ErrUnableToGetTenantLogs},
@@ -96,6 +97,7 @@ func TestError(t *testing.T) {
 			},
 		})
 	}
+
 	tests = append(tests,
 		testError{
 			name: "passing multiple errors but ErrInvalidLogin is last",
@@ -104,9 +106,21 @@ func TestError(t *testing.T) {
 			},
 			want: &CodedAPIError{
 				Code:     int(401),
-				APIError: &models.APIError{Message: ErrDefault.Error(), DetailedMessage: ErrDefault.Error()},
+				APIError: &models.APIError{Message: ErrDefault.Error(), DetailedMessage: ""},
 			},
 		})
+	tests = append(tests,
+		testError{
+			name: "login error omits detailedMessage",
+			args: args{
+				err: []interface{}{ErrInvalidLogin},
+			},
+			want: &CodedAPIError{
+				Code:     int(401),
+				APIError: &models.APIError{Message: ErrInvalidLogin.Error(), DetailedMessage: ""},
+			},
+		})
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Error(tt.args.err...)
