@@ -278,7 +278,7 @@ export const niceTimeFromSeconds = (seconds: number): string => {
     );
   }
 
-  return parts.join(", ");
+  return parts.join(" and ");
 };
 
 // seconds / minutes /hours / Days / Years calculator

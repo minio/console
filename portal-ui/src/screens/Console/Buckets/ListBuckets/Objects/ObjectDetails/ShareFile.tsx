@@ -16,7 +16,15 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, CopyIcon, ReadBox, ShareIcon, Grid, ProgressBar } from "mds";
+import {
+  Button,
+  CopyIcon,
+  ReadBox,
+  ShareIcon,
+  Grid,
+  ProgressBar,
+  Tooltip,
+} from "mds";
 import CopyToClipboard from "react-copy-to-clipboard";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
@@ -182,12 +190,28 @@ const ShareFile = ({
                 fontWeight: 400,
               }}
             >
-              With MinIO Object Store, you can create a temporary URL with
-              integrated access credentials for sharing objects valid for up to:{" "}
-              {niceTimeFromSeconds(maxshareLinkExpTimeVal)} or until your
-              session expires. To create a presigned URL with a longer time
-              interval please update MINIO_STS_DURATION environment variable on
-              your MinIO server or use MinIO Client (mc).
+              <Tooltip
+                placement="right"
+                tooltip={
+                  <span>
+                    You can reset your session by logging out and logging back
+                    in to the web UI. <br /> <br />
+                    You can increase the maximum configuration time by setting
+                    the MINIO_STS_DURATION environment variable on all your
+                    nodes. <br /> <br />
+                    You can use <b>mc share</b> as an alternative to this UI,
+                    where the session length does not limit the URL validity.
+                  </span>
+                }
+              >
+                <span>
+                  The following URL lets you share this object without requiring
+                  a login. <br />
+                  The URL expires automatically at the earlier of your
+                  configured time ({niceTimeFromSeconds(maxshareLinkExpTimeVal)}
+                  ) or the expiration of your current web session.
+                </span>
+              </Tooltip>
             </Grid>
             <br />
             <Grid item xs={12}>
