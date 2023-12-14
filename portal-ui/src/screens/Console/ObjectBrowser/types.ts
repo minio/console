@@ -57,6 +57,7 @@ export interface ObjectBrowserState {
   longFileOpen: boolean;
   anonymousAccessOpen: boolean;
   connectionError: boolean;
+  maxShareLinkExpTime: number;
 }
 
 export interface ObjectManager {

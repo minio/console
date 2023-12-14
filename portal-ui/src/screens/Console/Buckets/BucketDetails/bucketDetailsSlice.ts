@@ -31,7 +31,7 @@ const initialState: BucketDetailsState = {
 };
 
 export const bucketDetailsSlice = createSlice({
-  name: "trace",
+  name: "bucketDetails",
   initialState,
   reducers: {
     setBucketDetailsTab: (state, action: PayloadAction<string>) => {

@@ -24,6 +24,7 @@ import {
   BucketVersioningResponse,
   GetBucketRetentionConfig,
 } from "api/consoleApi";
+import { AppState } from "store";
 
 const defaultRewind = {
   rewindEnabled: false,
@@ -76,6 +77,7 @@ const initialState: ObjectBrowserState = {
     validity: 0,
   },
   longFileOpen: false,
+  maxShareLinkExpTime: 0,
 };
 
 export const objectBrowserSlice = createSlice({
@@ -371,6 +373,9 @@ export const objectBrowserSlice = createSlice({
     setAnonymousAccessOpen: (state, action: PayloadAction<boolean>) => {
       state.anonymousAccessOpen = action.payload;
     },
+    setMaxShareLinkExpTime: (state, action: PayloadAction<number>) => {
+      state.maxShareLinkExpTime = action.payload;
+    },
     errorInConnection: (state, action: PayloadAction<boolean>) => {
       state.connectionError = action.payload;
       if (action.payload) {
@@ -425,7 +430,11 @@ export const {
   setSelectedBucket,
   setLongFileOpen,
   setAnonymousAccessOpen,
+  setMaxShareLinkExpTime,
   errorInConnection,
 } = objectBrowserSlice.actions;
+
+export const maxShareLinkExpTime = (state: AppState) =>
+  state.objectBrowser.maxShareLinkExpTime;
 
 export default objectBrowserSlice.reducer;

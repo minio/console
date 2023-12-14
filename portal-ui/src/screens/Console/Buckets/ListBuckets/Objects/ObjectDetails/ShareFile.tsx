@@ -16,11 +16,22 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, CopyIcon, ReadBox, ShareIcon, Grid, ProgressBar } from "mds";
+import {
+  Button,
+  CopyIcon,
+  ReadBox,
+  ShareIcon,
+  Grid,
+  ProgressBar,
+  Tooltip,
+} from "mds";
 import CopyToClipboard from "react-copy-to-clipboard";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
-import { encodeURLString } from "../../../../../../common/utils";
+import {
+  encodeURLString,
+  niceTimeFromSeconds,
+} from "../../../../../../common/utils";
 import {
   selDistSet,
   setModalErrorSnackMessage,
@@ -30,6 +41,8 @@ import { useAppDispatch } from "../../../../../../store";
 import { BucketObject } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
+import { getMaxShareLinkExpTime } from "screens/Console/ObjectBrowser/objectBrowserThunks";
+import { maxShareLinkExpTime } from "screens/Console/ObjectBrowser/objectBrowserSlice";
 
 interface IShareFileProps {
   open: boolean;
@@ -46,6 +59,7 @@ const ShareFile = ({
 }: IShareFileProps) => {
   const dispatch = useAppDispatch();
   const distributedSetup = useSelector(selDistSet);
+  const maxshareLinkExpTimeVal = useSelector(maxShareLinkExpTime);
   const [shareURL, setShareURL] = useState<string>("");
   const [isLoadingVersion, setIsLoadingVersion] = useState<boolean>(true);
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
@@ -64,6 +78,10 @@ const ShareFile = ({
     setSelectedDate("");
     setShareURL("");
   };
+
+  useEffect(() => {
+    dispatch(getMaxShareLinkExpTime());
+  }, [dispatch]);
 
   useEffect(() => {
     // In case version is undefined, we get the latest version of the object
@@ -172,11 +190,28 @@ const ShareFile = ({
                 fontWeight: 400,
               }}
             >
-              This is a temporary URL with integrated access credentials for
-              sharing objects valid for up to 7 days.
-              <br />
-              <br />
-              The temporary URL expires after the configured time limit.
+              <Tooltip
+                placement="right"
+                tooltip={
+                  <span>
+                    You can reset your session by logging out and logging back
+                    in to the web UI. <br /> <br />
+                    You can increase the maximum configuration time by setting
+                    the MINIO_STS_DURATION environment variable on all your
+                    nodes. <br /> <br />
+                    You can use <b>mc share</b> as an alternative to this UI,
+                    where the session length does not limit the URL validity.
+                  </span>
+                }
+              >
+                <span>
+                  The following URL lets you share this object without requiring
+                  a login. <br />
+                  The URL expires automatically at the earlier of your
+                  configured time ({niceTimeFromSeconds(maxshareLinkExpTimeVal)}
+                  ) or the expiration of your current web session.
+                </span>
+              </Tooltip>
             </Grid>
             <br />
             <Grid item xs={12}>
@@ -184,7 +219,7 @@ const ShareFile = ({
                 initialDate={initialDate}
                 id="date"
                 label="Active for"
-                maxDays={7}
+                maxSeconds={maxshareLinkExpTimeVal}
                 onChange={dateChanged}
                 entity="Link"
               />

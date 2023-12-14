@@ -29,6 +29,7 @@ import {
   failObject,
   setAnonymousAccessOpen,
   setDownloadRenameModal,
+  setMaxShareLinkExpTime,
   setNewObject,
   setPreviewOpen,
   setSelectedPreview,
@@ -37,6 +38,7 @@ import {
 } from "./objectBrowserSlice";
 import { setSnackBarMessage } from "../../../systemSlice";
 import { DateTime } from "luxon";
+import { api } from "api";
 
 export const downloadSelected = createAsyncThunk(
   "objectBrowser/downloadSelected",
@@ -201,5 +203,19 @@ export const openAnonymousAccess = createAsyncThunk(
     ) {
       dispatch(setAnonymousAccessOpen(true));
     }
+  },
+);
+
+export const getMaxShareLinkExpTime = createAsyncThunk(
+  "objectBrowser/maxShareLinkExpTime",
+  async (_, { rejectWithValue, dispatch }) => {
+    return api.buckets
+      .getMaxShareLinkExp()
+      .then((res) => {
+        dispatch(setMaxShareLinkExpTime(res.data.exp));
+      })
+      .catch(async (res) => {
+        return rejectWithValue(res.error);
+      });
   },
 );

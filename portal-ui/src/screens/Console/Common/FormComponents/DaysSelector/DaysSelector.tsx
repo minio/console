@@ -18,10 +18,14 @@ import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { Box, InputBox, InputLabel, LinkIcon } from "mds";
 
+const DAY_SECONDS = 86400;
+const HOUR_SECONDS = 3600;
+const HOUR_MINUTES = 60;
+
 interface IDaysSelector {
   id: string;
   initialDate: Date;
-  maxDays?: number;
+  maxSeconds: number;
   label: string;
   entity: string;
   onChange: (newDate: string, isValid: boolean) => void;
@@ -43,15 +47,26 @@ const DaysSelector = ({
   id,
   initialDate,
   label,
-  maxDays,
+  maxSeconds,
   entity,
   onChange,
 }: IDaysSelector) => {
-  const [selectedDays, setSelectedDays] = useState<number>(7);
+  const maxDays = Math.floor(maxSeconds / DAY_SECONDS);
+  const maxHours = Math.floor((maxSeconds % DAY_SECONDS) / HOUR_SECONDS);
+  const maxMinutes = Math.floor((maxSeconds % HOUR_SECONDS) / HOUR_MINUTES);
+
+  const [selectedDays, setSelectedDays] = useState<number>(0);
   const [selectedHours, setSelectedHours] = useState<number>(0);
   const [selectedMinutes, setSelectedMinutes] = useState<number>(0);
   const [validDate, setValidDate] = useState<boolean>(true);
   const [dateSelected, setDateSelected] = useState<DateTime>(DateTime.now());
+
+  // Set initial values
+  useEffect(() => {
+    setSelectedDays(maxDays);
+    setSelectedHours(maxHours);
+    setSelectedMinutes(maxMinutes);
+  }, [maxDays, maxHours, maxMinutes]);
 
   useEffect(() => {
     if (
@@ -82,9 +97,11 @@ const DaysSelector = ({
   // Basic validation for inputs
   useEffect(() => {
     let valid = true;
+
     if (
       selectedDays < 0 ||
-      (maxDays && selectedDays > maxDays) ||
+      selectedDays > 7 ||
+      selectedDays > maxDays ||
       isNaN(selectedDays)
     ) {
       valid = false;
@@ -98,12 +115,16 @@ const DaysSelector = ({
       valid = false;
     }
 
-    if (
-      maxDays &&
-      selectedDays === maxDays &&
-      (selectedHours !== 0 || selectedMinutes !== 0)
-    ) {
-      valid = false;
+    if (selectedDays === maxDays) {
+      if (selectedHours > maxHours) {
+        valid = false;
+      }
+
+      if (selectedHours === maxHours) {
+        if (selectedMinutes > maxMinutes) {
+          valid = false;
+        }
+      }
     }
 
     if (selectedDays <= 0 && selectedHours <= 0 && selectedMinutes <= 0) {
@@ -114,6 +135,8 @@ const DaysSelector = ({
   }, [
     dateSelected,
     maxDays,
+    maxHours,
+    maxMinutes,
     onChange,
     selectedDays,
     selectedHours,
@@ -165,7 +188,7 @@ const DaysSelector = ({
             className={`reverseInput removeArrows`}
             type="number"
             min="0"
-            max={maxDays ? maxDays.toString() : "999"}
+            max="7"
             label="Days"
             name={id}
             onChange={(e) => {

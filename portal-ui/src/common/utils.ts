@@ -251,6 +251,36 @@ export const erasureCodeCalc = (
   };
 };
 
+// 92400 seconds -> 1 day, 1 hour, 40 minutes.
+export const niceTimeFromSeconds = (seconds: number): string => {
+  const days = Math.floor(seconds / (3600 * 24));
+  const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  const parts = [];
+
+  if (days > 0) {
+    parts.push(`${days} day${days !== 1 ? "s" : ""}`);
+  }
+
+  if (hours > 0) {
+    parts.push(`${hours} hour${hours !== 1 ? "s" : ""}`);
+  }
+
+  if (minutes > 0) {
+    parts.push(`${minutes} minute${minutes !== 1 ? "s" : ""}`);
+  }
+
+  if (remainingSeconds > 0) {
+    parts.push(
+      `${remainingSeconds} second${remainingSeconds !== 1 ? "s" : ""}`,
+    );
+  }
+
+  return parts.join(" and ");
+};
+
 // seconds / minutes /hours / Days / Years calculator
 export const niceDays = (secondsValue: string, timeVariant: string = "s") => {
   let seconds = parseFloat(secondsValue);
@@ -258,6 +288,7 @@ export const niceDays = (secondsValue: string, timeVariant: string = "s") => {
   return niceDaysInt(seconds, timeVariant);
 };
 
+// niceDaysInt returns the string in the max unit found e.g. 92400 seconds -> 1 day
 export const niceDaysInt = (seconds: number, timeVariant: string = "s") => {
   switch (timeVariant) {
     case "ns":
