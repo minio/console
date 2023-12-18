@@ -2,6 +2,12 @@
 
 # Changelog
 
+## Release v0.43.1
+
+Bug Fix:
+
+- Update Share Object UI to reflect maximum expiration time in UI
+
 ## Release v0.43.0
 
 Features:
