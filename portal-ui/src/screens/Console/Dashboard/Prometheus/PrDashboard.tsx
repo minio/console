@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { useSelector } from "react-redux";
 import {
   Box,
   Button,
@@ -31,7 +30,7 @@ import {
 import { IDashboardPanel } from "./types";
 import { panelsConfiguration } from "./utils";
 import { componentToUse } from "./widgetUtils";
-import { AppState, useAppDispatch } from "../../../../store";
+import { useAppDispatch, useAppSelector } from "../../../../store";
 import {
   DLayoutColumnProps,
   DLayoutRowProps,
@@ -57,16 +56,12 @@ interface IPrDashboard {
 
 const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
   const dispatch = useAppDispatch();
-  const loadingUsage = useSelector(
-    (state: AppState) => state.dashboard.loadingUsage,
+  const status = useAppSelector((state) => state.dashboard.status);
+  const zoomOpen = useAppSelector((state) => state.dashboard.zoom.openZoom);
+  const zoomWidget = useAppSelector(
+    (state) => state.dashboard.zoom.widgetRender,
   );
-  const zoomOpen = useSelector(
-    (state: AppState) => state.dashboard.zoom.openZoom,
-  );
-  const zoomWidget = useSelector(
-    (state: AppState) => state.dashboard.zoom.widgetRender,
-  );
-  const features = useSelector(selFeatures);
+  const features = useAppSelector(selFeatures);
   const obOnly = !!features?.includes("object-browser-only");
   let hideMenu = false;
   if (features?.includes("hide-menu")) {
@@ -78,9 +73,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
   const panelInformation = panelsConfiguration;
-  const [curTab, setCurTab] = useState<string>(
-    usage?.advancedMetricsStatus === "not configured" ? "info" : "usage",
-  );
+  const [curTab, setCurTab] = useState<string>("info");
 
   const getPanelDetails = (id: number) => {
     return panelInformation.find((panel) => panel.id === id);
@@ -186,7 +179,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
                   onClick={() => {
                     dispatch(getUsageAsync());
                   }}
-                  disabled={loadingUsage}
+                  disabled={status === "loading"}
                   icon={<SyncIcon />}
                   label={"Sync"}
                 />
@@ -210,8 +203,8 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
     tabConfig: { label: "Info", id: "info", disabled: false },
     content: (
       <Fragment>
-        {(!usage || loadingUsage) && <ProgressBar />}
-        {usage && !loadingUsage && (
+        {(!usage || status === "loading") && <ProgressBar />}
+        {usage && status === "idle" && (
           <Fragment>
             {searchBox}
             <BasicDashboard usage={usage} />
@@ -321,13 +314,7 @@ const PrDashboard = ({ apiPrefix = "admin", usage }: IPrDashboard) => {
     },
   ];
 
-  let tabsOptions: TabItemProps[];
-
-  if (!prometheusOptionsDisabled) {
-    tabsOptions = [...prometheusTabs, infoTab];
-  } else {
-    tabsOptions = [infoTab, ...prometheusTabs];
-  }
+  let tabsOptions: TabItemProps[] = [infoTab, ...prometheusTabs];
 
   return (
     <PageLayout
