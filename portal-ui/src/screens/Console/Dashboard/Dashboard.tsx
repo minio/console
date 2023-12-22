@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Grid, ProgressBar } from "mds";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../store";
 import { getUsageAsync } from "./dashboardThunks";
@@ -27,7 +26,7 @@ import HelpMenu from "../HelpMenu";
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [iniLoad, setIniLoad] = useState<boolean>(false);
 
   const usage = useSelector((state: AppState) => state.dashboard.usage);
   const features = useSelector(selFeatures);
@@ -40,31 +39,22 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    if (loading) {
-      setLoading(false);
+    if (!iniLoad) {
+      setIniLoad(true);
       dispatch(getUsageAsync());
     }
-  }, [loading, dispatch]);
+  }, [iniLoad, dispatch]);
 
   useEffect(() => {
     dispatch(setHelpName("metrics"));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch]);
 
   return (
     <Fragment>
       {!hideMenu && (
         <PageHeaderWrapper label="Metrics" actions={<HelpMenu />} />
       )}
-      {loading ? (
-        <Grid container>
-          <Grid item xs={12}>
-            <ProgressBar />
-          </Grid>
-        </Grid>
-      ) : (
-        <PrDashboard usage={usage} />
-      )}
+      <PrDashboard usage={usage} />
     </Fragment>
   );
 };

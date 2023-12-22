@@ -23,17 +23,17 @@ import { AdminInfoResponse } from "api/consoleApi";
 export interface DashboardState {
   zoom: zoomState;
   usage: AdminInfoResponse | null;
-  loadingUsage: boolean;
+  status: "idle" | "loading" | "failed";
   widgetLoadVersion: number;
 }
 
 const initialState: DashboardState = {
+  status: "idle",
   zoom: {
     openZoom: false,
     widgetRender: null,
   },
   usage: null,
-  loadingUsage: true,
   widgetLoadVersion: 0,
 };
 export const dashboardSlice = createSlice({
@@ -55,13 +55,13 @@ export const dashboardSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getUsageAsync.pending, (state) => {
-        state.loadingUsage = true;
+        state.status = "loading";
       })
       .addCase(getUsageAsync.rejected, (state) => {
-        state.loadingUsage = false;
+        state.status = "failed";
       })
       .addCase(getUsageAsync.fulfilled, (state, action) => {
-        state.loadingUsage = false;
+        state.status = "idle";
         state.usage = action.payload;
       });
   },
