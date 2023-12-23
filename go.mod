@@ -20,7 +20,7 @@ require (
 	github.com/klauspost/compress v1.17.4
 	github.com/minio/cli v1.24.2
 	github.com/minio/highwayhash v1.0.2
-	github.com/minio/kes v0.23.0
+	github.com/minio/kes v0.22.3
 	github.com/minio/madmin-go/v3 v3.0.37
 	github.com/minio/mc v0.0.0-20231220084513-fb5dd2588c58
 	github.com/minio/minio-go/v7 v7.0.66
@@ -101,7 +101,6 @@ require (
 	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
 	github.com/minio/colorjson v1.0.6 // indirect
 	github.com/minio/filepath v1.0.0 // indirect
-	github.com/minio/kes-go v0.2.1 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/sha256-simd v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
