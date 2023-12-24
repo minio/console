@@ -54,7 +54,7 @@ type ProviderConfig struct {
 // https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
 func (pc ProviderConfig) GetOauth2Provider(name string, scopes []string, r *http.Request, idpClient, stsClient *http.Client) (provider *Provider, err error) {
 	var ddoc DiscoveryDoc
-	ddoc, err = parseDiscoveryDoc(pc.URL, idpClient)
+	ddoc, err = parseDiscoveryDoc(r.Context(), pc.URL, idpClient)
 	if err != nil {
 		return nil, err
 	}

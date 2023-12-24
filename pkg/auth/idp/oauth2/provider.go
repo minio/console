@@ -154,7 +154,7 @@ var requiredResponseTypes = set.CreateStringSet("code")
 // We only support Authentication with the Authorization Code Flow - spec:
 // https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
 func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.Client) (*Provider, error) {
-	ddoc, err := parseDiscoveryDoc(GetIDPURL(), httpClient)
+	ddoc, err := parseDiscoveryDoc(r.Context(), GetIDPURL(), httpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -384,9 +384,9 @@ func validateOauth2State(state string, keyFunc StateKeyFunc) error {
 
 // parseDiscoveryDoc parses a discovery doc from an OAuth provider
 // into a DiscoveryDoc struct that have the correct endpoints
-func parseDiscoveryDoc(ustr string, httpClient *http.Client) (DiscoveryDoc, error) {
+func parseDiscoveryDoc(ctx context.Context, ustr string, httpClient *http.Client) (DiscoveryDoc, error) {
 	d := DiscoveryDoc{}
-	req, err := http.NewRequest(http.MethodGet, ustr, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, ustr, nil)
 	if err != nil {
 		return d, err
 	}

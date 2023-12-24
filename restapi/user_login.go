@@ -178,8 +178,6 @@ func isKubernetes() bool {
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
 func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders oauth2.OpenIDPCfg) (ld *models.LoginDetails, apiErr *CodedAPIError) {
-	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
-	defer cancel()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	var redirectRules []*models.RedirectRule
 
@@ -230,7 +228,8 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 	}
 
 	if len(openIDProviders) > 0 && len(redirectRules) == 0 {
-		return nil, ErrorWithContext(ctx, errors.New(403, "no reachable or configured IDP found, login not allowed"), ErrOauth2Provider)
+		loginStrategy = models.LoginDetailsLoginStrategyForm
+		// No IDP configured fallback to username/password
 	}
 
 	loginDetails = &models.LoginDetails{
