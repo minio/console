@@ -256,7 +256,10 @@ cleanup-minio-nginx:
 
 test:
 	@echo "execute test and get coverage"
-	@(cd restapi && mkdir coverage && GO111MODULE=on go test -test.v -coverprofile=coverage/coverage.out)
+	# https://stackoverflow.com/questions/19200235/golang-tests-in-sub-directory
+	# Note: go test ./... will run tests on the current folder and all subfolders.
+	# This is needed because tests can be in the folder or sub-folder(s), let's include them all please!.
+	@(cd restapi && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage.out)
 
 
 test-pkg:
