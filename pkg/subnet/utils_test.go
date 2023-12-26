@@ -17,11 +17,12 @@
 package subnet
 
 import (
-	"github.com/minio/madmin-go/v3"
-	"github.com/minio/mc/cmd"
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/minio/madmin-go/v3"
+	"github.com/minio/mc/cmd"
 )
 
 func Test_subnetBaseURL(t *testing.T) {
@@ -531,7 +532,8 @@ func Test_getDriveSpaceInfo(t *testing.T) {
 			},
 			want:  2,
 			want1: 2,
-		}, {
+		},
+		{
 			name: "basic two servers two disks",
 			args: args{
 				admInfo: madmin.InfoMessage{
@@ -565,7 +567,8 @@ func Test_getDriveSpaceInfo(t *testing.T) {
 			},
 			want:  4,
 			want1: 4,
-		}, {
+		},
+		{
 			name: "no servers",
 			args: args{
 				admInfo: madmin.InfoMessage{
