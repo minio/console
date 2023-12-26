@@ -25,9 +25,9 @@ import (
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/minio/cli"
+	"github.com/minio/console/api"
+	"github.com/minio/console/api/operations"
 	"github.com/minio/console/pkg/certs"
-	"github.com/minio/console/restapi"
-	"github.com/minio/console/restapi/operations"
 )
 
 // starts the server
@@ -39,12 +39,12 @@ var serverCmd = cli.Command{
 	Flags: []cli.Flag{
 		cli.StringFlag{
 			Name:  "host",
-			Value: restapi.GetHostname(),
+			Value: api.GetHostname(),
 			Usage: "bind to a specific HOST, HOST can be an IP or hostname",
 		},
 		cli.IntFlag{
 			Name:  "port",
-			Value: restapi.GetPort(),
+			Value: api.GetPort(),
 			Usage: "bind to specific HTTP port",
 		},
 		// This is kept here for backward compatibility,
@@ -53,7 +53,7 @@ var serverCmd = cli.Command{
 		// works for both HTTP and HTTPS setup.
 		cli.StringFlag{
 			Name:   "tls-host",
-			Value:  restapi.GetHostname(),
+			Value:  api.GetHostname(),
 			Hidden: true,
 		},
 		cli.StringFlag{
@@ -63,12 +63,12 @@ var serverCmd = cli.Command{
 		},
 		cli.IntFlag{
 			Name:  "tls-port",
-			Value: restapi.GetTLSPort(),
+			Value: api.GetTLSPort(),
 			Usage: "bind to specific HTTPS port",
 		},
 		cli.StringFlag{
 			Name:  "tls-redirect",
-			Value: restapi.GetTLSRedirect(),
+			Value: api.GetTLSRedirect(),
 			Usage: "toggle HTTP->HTTPS redirect",
 		},
 		cli.StringFlag{
@@ -92,15 +92,15 @@ var serverCmd = cli.Command{
 	},
 }
 
-func buildServer() (*restapi.Server, error) {
-	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
+func buildServer() (*api.Server, error) {
+	swaggerSpec, err := loads.Embedded(api.SwaggerJSON, api.FlatSwaggerJSON)
 	if err != nil {
 		return nil, err
 	}
 
-	api := operations.NewConsoleAPI(swaggerSpec)
-	api.Logger = restapi.LogInfo
-	server := restapi.NewServer(api)
+	consoleAPI := operations.NewConsoleAPI(swaggerSpec)
+	consoleAPI.Logger = api.LogInfo
+	server := api.NewServer(consoleAPI)
 
 	parser := flags.NewParser(server, flags.Default)
 	parser.ShortDescription = "MinIO Console Server"
@@ -111,7 +111,7 @@ func buildServer() (*restapi.Server, error) {
 	// register all APIs
 	server.ConfigureAPI()
 
-	for _, optsGroup := range api.CommandLineOptionsGroups {
+	for _, optsGroup := range consoleAPI.CommandLineOptionsGroups {
 		_, err := parser.AddGroup(optsGroup.ShortDescription, optsGroup.LongDescription, optsGroup.Options)
 		if err != nil {
 			return nil, err
@@ -140,7 +140,7 @@ func loadAllCerts(ctx *cli.Context) error {
 	}
 
 	// load the certificates and the CAs
-	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager, err = certs.GetAllCertificatesAndCAs()
+	api.GlobalRootCAs, api.GlobalPublicCerts, api.GlobalTLSCertsManager, err = certs.GetAllCertificatesAndCAs()
 	if err != nil {
 		return fmt.Errorf("unable to load certificates at %s: failed with %w", certs.GlobalCertsDir.Get(), err)
 	}
@@ -152,12 +152,12 @@ func loadAllCerts(ctx *cli.Context) error {
 		swaggerServerCACertificate := ctx.String("tls-ca")
 		// load tls cert and key from swagger server tls-certificate and tls-key flags
 		if swaggerServerCertificate != "" && swaggerServerCertificateKey != "" {
-			if err = restapi.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
+			if err = api.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
 				return err
 			}
 			x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate)
 			if err == nil {
-				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs...)
+				api.GlobalPublicCerts = append(api.GlobalPublicCerts, x509Certs...)
 			}
 		}
 
@@ -165,13 +165,13 @@ func loadAllCerts(ctx *cli.Context) error {
 		if swaggerServerCACertificate != "" {
 			caCert, caCertErr := os.ReadFile(swaggerServerCACertificate)
 			if caCertErr == nil {
-				restapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
+				api.GlobalRootCAs.AppendCertsFromPEM(caCert)
 			}
 		}
 	}
 
-	if restapi.GlobalTLSCertsManager != nil {
-		restapi.GlobalTLSCertsManager.ReloadOnSignal(syscall.SIGHUP)
+	if api.GlobalTLSCertsManager != nil {
+		api.GlobalTLSCertsManager.ReloadOnSignal(syscall.SIGHUP)
 	}
 
 	return nil
