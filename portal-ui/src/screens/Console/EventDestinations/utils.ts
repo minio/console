@@ -28,7 +28,6 @@ export const notifyNats = "notify_nats";
 export const notifyElasticsearch = "notify_elasticsearch";
 export const notifyWebhooks = "notify_webhook";
 export const notifyNsq = "notify_nsq";
-
 export const notificationTransform = (
   notificationElements: NotificationEndpointItem[],
 ) => {
@@ -48,65 +47,69 @@ export class DestType {
   static Func: string = "functions";
 }
 
+const getImgBaseURL = () => {
+  return `${document.baseURI}`;
+};
+
 export const destinationList = [
   {
     actionTrigger: notifyPostgres,
     targetTitle: "PostgreSQL",
-    logo: "/postgres-logo.svg",
+    logo: `${getImgBaseURL()}postgres-logo.svg`,
     category: DestType.DB,
   },
   {
     actionTrigger: notifyKafka,
     targetTitle: "Kafka",
-    logo: "/kafka-logo.svg",
+    logo: `${getImgBaseURL()}kafka-logo.svg`,
     category: DestType.Queue,
   },
   {
     actionTrigger: notifyAmqp,
     targetTitle: "AMQP",
-    logo: "/amqp-logo.svg",
+    logo: `${getImgBaseURL()}amqp-logo.svg`,
     category: DestType.Queue,
   },
   {
     actionTrigger: notifyMqtt,
     targetTitle: "MQTT",
-    logo: "/mqtt-logo.svg",
+    logo: `${getImgBaseURL()}mqtt-logo.svg`,
     category: DestType.Queue,
   },
   {
     actionTrigger: notifyRedis,
     targetTitle: "Redis",
-    logo: "/redis-logo.svg",
+    logo: `${getImgBaseURL()}redis-logo.svg`,
     category: DestType.Queue,
   },
   {
     actionTrigger: notifyNats,
     targetTitle: "NATS",
-    logo: "/nats-logo.svg",
+    logo: `${getImgBaseURL()}nats-logo.svg`,
     category: DestType.Queue,
   },
   {
     actionTrigger: notifyMysql,
     targetTitle: "Mysql",
-    logo: "/mysql-logo.svg",
+    logo: `${getImgBaseURL()}mysql-logo.svg`,
     category: DestType.DB,
   },
   {
     actionTrigger: notifyElasticsearch,
     targetTitle: "Elastic Search",
-    logo: "/elasticsearch-logo.svg",
+    logo: `${getImgBaseURL()}elasticsearch-logo.svg`,
     category: DestType.DB,
   },
   {
     actionTrigger: notifyWebhooks,
     targetTitle: "Webhook",
-    logo: "/webhooks-logo.svg",
+    logo: `${getImgBaseURL()}webhooks-logo.svg`,
     category: DestType.Func,
   },
   {
     actionTrigger: notifyNsq,
     targetTitle: "NSQ",
-    logo: "/nsq-logo.svg",
+    logo: `${getImgBaseURL()}nsq-logo.svg`,
     category: DestType.Queue,
   },
 ];
